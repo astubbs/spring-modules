@@ -26,6 +26,7 @@ import org.apache.hivemind.Resource;
 import org.apache.hivemind.impl.DefaultClassResolver;
 import org.apache.hivemind.impl.RegistryBuilder;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ClassPathResource;
@@ -34,7 +35,7 @@ import org.springframework.core.io.ClassPathResource;
  * @author Rob Harrop
  * @author Thierry Templier
  */
-public class RegistryFactoryBean implements FactoryBean, InitializingBean {
+public class RegistryFactoryBean implements FactoryBean, InitializingBean, DisposableBean {
 
 	private static final Log log = LogFactory.getLog(RegistryFactoryBean.class);
 
@@ -92,6 +93,13 @@ public class RegistryFactoryBean implements FactoryBean, InitializingBean {
 
 	public void setConfigLocations(org.springframework.core.io.Resource[] configLocations) {
 		this.configLocations = configLocations;
+	}
+
+	public void destroy() throws Exception {
+		if( registry!=null ) {
+			registry.shutdown();
+			log.info("Hivemind registry shutdown");
+		}
 	}
 
 }
