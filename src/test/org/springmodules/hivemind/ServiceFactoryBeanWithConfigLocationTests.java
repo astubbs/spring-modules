@@ -9,6 +9,8 @@ import org.apache.hivemind.Registry;
 import org.apache.hivemind.impl.RegistryBuilder;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 
 /**
@@ -16,7 +18,7 @@ import org.springframework.context.ApplicationContextException;
  * @author Thierry Templier
  */
 public class ServiceFactoryBeanWithConfigLocationTests extends TestCase {
-	public static final String HIVEMODULE_CONFIG="classpath:/org/springmodules/hivemind/hivemodule.xml";
+	public static final String HIVEMODULE_CONFIG="/org/springmodules/hivemind/hivemodule.xml";
 
     public void testGetServiceByInterface() throws Exception {
         Object service = getService(null, MessageService.class);
@@ -54,14 +56,13 @@ public class ServiceFactoryBeanWithConfigLocationTests extends TestCase {
     }
 
     public void testWithoutServiceInterface() throws Exception {
-        ServiceFactoryBean bean = new ServiceFactoryBean();
-        bean.setRegistry(RegistryBuilder.constructDefaultRegistry());
+        ServiceFactoryBean bean = getServiceFactoryBean();
 
         try {
             bean.afterPropertiesSet();
 
         } catch (ApplicationContextException ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
         }
     }
 
@@ -73,19 +74,24 @@ public class ServiceFactoryBeanWithConfigLocationTests extends TestCase {
             bean.afterPropertiesSet();
 
         } catch (ApplicationContextException ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
         }
     }
 
-    private Object getService(String serviceName, Class serviceInterface) throws Exception {
+	private ServiceFactoryBean getServiceFactoryBean() throws Exception {
 		RegistryFactoryBean registryBean = new RegistryFactoryBean();
-		/*List configLocations=new ArrayList();
-		configLocations.add(HIVEMODULE_CONFIG);
-		registryBean.setConfigLocations(configLocations);*/
+		Resource[] configLocations=new Resource[1];
+		configLocations[0]=new ClassPathResource(HIVEMODULE_CONFIG);
+		registryBean.setConfigLocations(configLocations);
 		registryBean.afterPropertiesSet();
 		Registry reg = (Registry)registryBean.getObject();
 		ServiceFactoryBean bean = new ServiceFactoryBean();
 		bean.setRegistry(reg);
+		return bean;
+	}
+
+    private Object getService(String serviceName, Class serviceInterface) throws Exception {
+		ServiceFactoryBean bean = getServiceFactoryBean();
 		bean.setServiceInterface(serviceInterface);
 		bean.setServiceName(serviceName);
 		bean.afterPropertiesSet();
