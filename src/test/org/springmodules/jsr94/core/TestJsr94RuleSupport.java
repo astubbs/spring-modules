@@ -61,7 +61,7 @@ public class TestJsr94RuleSupport extends TestCase {
 	 * BusinessInterface implementation as subclass of Jsr94RuleSupport
 	 * @author janm
 	 */
-	class SubclassedBusinessBean extends Jsr94RuleSupport implements BusinessInterface {
+	static class SubclassedBusinessBean extends Jsr94RuleSupport implements BusinessInterface {
 		
 		public List businessMethod() {
 			List inputList = new ArrayList();
@@ -74,7 +74,7 @@ public class TestJsr94RuleSupport extends TestCase {
 	 * BusinessInterface implementation using Jsr94RuleSupport as subclass
 	 * @author janm
 	 */
-	class DependencyBusinessBean implements BusinessInterface {
+	static class DependencyBusinessBean implements BusinessInterface {
 		private Jsr94RuleSupport support;
 		
 		public DependencyBusinessBean(Jsr94RuleSupport support) {

@@ -54,8 +54,8 @@ public class DefaultRuleSource extends AbstractRuleSource {
 	 * @see org.springmodules.jsr94.support.AbstractRuleSource#registerRuleExecutionSets()
 	 */
 	protected void registerRuleExecutionSets() throws RuleExecutionSetCreateException, RemoteException, IOException, RuleExecutionSetRegisterException {
-		RuleExecutionSet ruleExecutionSet = ruleAdministrator.getLocalRuleExecutionSetProvider(null).createRuleExecutionSet(source.getInputStream(), null);
-		ruleAdministrator.registerRuleExecutionSet(bindUri, ruleExecutionSet, null);
+		RuleExecutionSet ruleExecutionSet = ruleAdministrator.getLocalRuleExecutionSetProvider(providerProperties).createRuleExecutionSet(source.getInputStream(), rulesetProperties);
+		ruleAdministrator.registerRuleExecutionSet(bindUri, ruleExecutionSet, registrationProperties);
 	}
 
 	/* (non-Javadoc)

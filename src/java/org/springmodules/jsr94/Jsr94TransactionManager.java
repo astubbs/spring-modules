@@ -38,7 +38,7 @@ public class Jsr94TransactionManager extends AbstractPlatformTransactionManager 
 	 * Jsr94TransactionObject
 	 * @author janm
 	 */
-	class Jsr94TransactionObject {
+	static class Jsr94TransactionObject {
 		private StatefulRuleSession session;
 		private boolean hasTransaction;
 
