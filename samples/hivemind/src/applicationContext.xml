@@ -16,7 +16,7 @@
 			<ref local="hivemindRegistry"/>
 		</property>
 		<property name="serviceInterface">
-			<value>service.ISampleService</value>
+			<value>org.springmodules.samples.hivemind.service.ISampleService</value>
 		</property>
 		<property name="serviceName">
 			<value>interfaces.SampleService</value>
