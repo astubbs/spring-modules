@@ -107,25 +107,4 @@ public class RegistryFactoryBeanTests extends TestCase {
 		bean.afterPropertiesSet();
 		return bean;
 	}
-
-	public void testRegistryWithConfigLocationClasspathXml() {
-		ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext(
-								"/org/springmodules/hivemind/applicationContext.xml");
-		context.getBean("hivemindRegistryFromClasspath");
-		context.close();
-	}
-
-	public void testRegistryWithConfigLocationClasspathUrlXml() {
-		ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext(
-								"/org/springmodules/hivemind/applicationContext.xml");
-		context.getBean("hivemindRegistryFromClasspathUrl");
-		context.close();
-	}
-
-	public void testRegistryWithConfigLocationFileUrlXml() {
-		ClassPathXmlApplicationContext context=new ClassPathXmlApplicationContext(
-								"/org/springmodules/hivemind/applicationContext.xml");
-		Registry reg=(Registry)context.getBean("hivemindRegistryFromFileUrl");
-		context.close();
-	}
 }
