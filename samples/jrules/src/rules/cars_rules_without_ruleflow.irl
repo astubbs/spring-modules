@@ -1,0 +1,66 @@
+import org.springmodules.samples.jrules.model.Car;
+
+ruleset Cars
+{
+};
+
+/* ############################
+            Methods
+   ############################ */
+
+function void displayMessage(String ?message) {
+	System.out.println(?message);
+}
+
+/* ############################
+            Rules
+   ############################ */
+
+rule prices_rules.car_volkswagen1
+{
+	when
+	{
+    	?car: Car();
+		evaluate((?car.getMark() equals "Volkswagen") && (?car.getPrice() <= 100.0f));
+	}
+	then
+	{
+		retract ?car;
+		?car.setGoodBargain(true);
+		displayMessage("-> " + ?car.isGoodBargain());
+		displayMessage(?car.getId() + " - "+?car.getName()+" : " + "Good bargain!");
+	}
+};
+
+rule prices_rules.car_volkswagen2
+{
+	when
+	{
+    	?car: Car();
+		evaluate((?car.getMark() equals "Volkswagen") && (?car.getPrice() <= 1000.0f));
+	}
+	then
+	{
+		retract ?car;
+		?car.setGoodBargain(true);
+		displayMessage("-> " + ?car.isGoodBargain());
+		displayMessage(?car.getId() + " - "+?car.getName()+" : " + "Good bargain!");
+	}
+};
+
+rule prices_rules.car_peugeot
+{
+	when
+	{
+    	?car: Car();
+		evaluate((?car.getMark() equals "Peugeot") && (?car.getPrice() <= 1000.0f)
+												   && (?car.getYear()>=2000));
+	}
+	then
+	{
+		retract ?car;
+		?car.setGoodBargain(true);
+		displayMessage("-> " + ?car.isGoodBargain());
+		displayMessage(?car.getId() + " - "+?car.getName()+" : " + "Good bargain!");
+	}
+};
