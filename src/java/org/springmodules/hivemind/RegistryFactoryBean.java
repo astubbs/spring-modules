@@ -34,6 +34,7 @@ import org.springframework.core.io.ClassPathResource;
 /**
  * <code>FactoryBean</code> implementation that creates a HiveMind
  * <code>Registry</code>.
+ * 
  * @author Rob Harrop
  * @author Thierry Templier
  */
@@ -48,6 +49,8 @@ public class RegistryFactoryBean implements FactoryBean, InitializingBean, Dispo
 
 	/**
 	 * Gets the <code>Registry</code>
+	 * 
+	 * @return the Registry
 	 */
 	public Object getObject() throws Exception {
 		return this.registry;
@@ -92,6 +95,12 @@ public class RegistryFactoryBean implements FactoryBean, InitializingBean, Dispo
 		log.info("Hivemind registry loaded");
 	}
 
+	/**
+	 * Specify the locations of the Hivemind configuration files
+	 * and configure the <code>RegistryBuilder</code> to finally construct the
+	 * Hivemind <code>Registry</code>. 
+	 * @param configLocations locations of the Hivemind configuration files 
+	 */
 	public void setConfigLocations(org.springframework.core.io.Resource[] configLocations) {
 		if (configLocations != null) {
 			RegistryBuilder builder = new RegistryBuilder();

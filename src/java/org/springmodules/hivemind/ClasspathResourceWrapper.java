@@ -28,14 +28,31 @@ import org.springframework.context.ApplicationContextException;
 import org.springframework.core.io.ClassPathResource;
 
 /**
+ * Default wrapper on a Spring resource. It extends the Hivemind
+ * <code>ClasspathResource</code> to delegate the resource management
+ * to Spring in the case of classpath resource.
+ * 
  * @author Thierry Templier
  */
 public class ClasspathResourceWrapper extends ClasspathResource {
 
+	/**
+	 * The Hivemind <code>ClassResolver</code>.
+	 */
 	private ClassResolver classResolver;
 
+	/**
+	 * The wrapped Spring <code>ClassPathResource</code>.
+	 */
 	private ClassPathResource resource;
 
+	/**
+	 * Constructor of the wrapper. This constructor needs to have
+	 * an Hivemind <code>ClassResolver</code>.
+	 * 
+	 * @param classResolver the Hivemind class resolver
+	 * @param resource the Spring resource to wrap
+	 */
 	public ClasspathResourceWrapper(ClassResolver classResolver, ClassPathResource resource) {
 		super(classResolver, resource.getFilename());
 		this.classResolver = classResolver;
@@ -50,7 +67,10 @@ public class ClasspathResourceWrapper extends ClasspathResource {
 	}
 
 	/**
+	 * Gets the URL of the resource from the internal Spring resource. 
 	 * @see org.apache.hivemind.Resource#getResourceURL()
+	 * 
+	 * @return the URL
 	 */
 	public URL getResourceURL() {
 		try {
@@ -63,7 +83,11 @@ public class ClasspathResourceWrapper extends ClasspathResource {
 	}
 
 	/**
+	 * Uses to create a new resource from an other one. It uses the internal
+	 * Spring resource and its <code>createRelative</code> method.
 	 * @see org.apache.hivemind.util.AbstractResource#newResource(java.lang.String)
+	 * 
+	 * @return the new resource
 	 */
 	protected Resource newResource(String name) {
 		return new ClasspathResourceWrapper(classResolver,

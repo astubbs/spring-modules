@@ -26,12 +26,24 @@ import org.apache.hivemind.util.FileResource;
 import org.springframework.context.ApplicationContextException;
 
 /**
+ * Default wrapper on a Spring resource. It extends the Hivemind
+ * <code>FileResource</code> to delegate the resource management
+ * to Spring in the case of file resource.
+ * 
  * @author Thierry Templier
  */
 public class DefaultResourceWrapper extends FileResource {
 
+	/**
+	 * The wrapped Spring <code>ClassPathResource</code>.
+	 */
 	private org.springframework.core.io.Resource resource;
 
+	/**
+	 * Constructor of the wrapper.
+	 * 
+	 * @param resource the Spring resource to wrap
+	 */
 	public DefaultResourceWrapper(org.springframework.core.io.Resource resource) {
 		super(resource.getFilename());
 		this.resource = resource;
@@ -45,7 +57,10 @@ public class DefaultResourceWrapper extends FileResource {
 	}
 
 	/**
+	 * Gets the URL of the resource from the internal Spring resource. 
 	 * @see org.apache.hivemind.Resource#getResourceURL()
+	 * 
+	 * @return the URL
 	 */
 	public URL getResourceURL() {
 		try {
@@ -57,7 +72,11 @@ public class DefaultResourceWrapper extends FileResource {
 	}
 
 	/**
+	 * Uses to create a new resource from an other one. It uses the internal
+	 * Spring resource and its <code>createRelative</code> method.
 	 * @see org.apache.hivemind.util.AbstractResource#newResource(java.lang.String)
+	 * 
+	 * @return the new resource
 	 */
 	protected Resource newResource(String name) {
 		try {

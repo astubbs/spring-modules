@@ -26,6 +26,7 @@ import org.springframework.context.ApplicationContextException;
  * <code>FactoryBean</code> implementation that acts as an adapter to a
  * HiveMind <code>Registry</code> allowing for any HiveMind service to
  * be exposed as a Spring bean.
+ * 
  * @author Rob Harrop
  * @see Registry
  */
@@ -58,7 +59,11 @@ public class ServiceFactoryBean implements FactoryBean, InitializingBean {
 		this.registry = registry;
 	}
 
-
+	/**
+	 * Gets the Hivemind service from the <code>Registry</code>.
+	 * 
+	 * @return the service
+	 */
 	public Object getObject() throws Exception {
 		return getServiceObject();
 	}
@@ -72,6 +77,12 @@ public class ServiceFactoryBean implements FactoryBean, InitializingBean {
 		return false;
 	}
 
+	/**
+	 * Checks if the registry and serviceInterface properties are
+	 * specified. If no corresponding service is configured in the
+	 * Hivemind <code>Registry</code>, an <code>ApplicationContextException</code>
+	 * is thrown.
+	 */
 	public void afterPropertiesSet() throws Exception {
 		if (registry == null) {
 			throw new ApplicationContextException("Property [registry] of class [" + ServiceFactoryBean.class
@@ -99,6 +110,11 @@ public class ServiceFactoryBean implements FactoryBean, InitializingBean {
 		}
 	}
 
+	/**
+	 * Get the Hivemind service from the <code>Registry</code>.
+	 * 
+	 * @return the service 
+	 */
 	private Object getServiceObject() {
 		if (serviceName == null) {
 			return registry.getService(serviceInterface);
