@@ -1,7 +1,7 @@
+/**
+ * 
+ */
 package org.springmodules.jsr94.factory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.rules.RuleExecutionSetNotFoundException;
 import javax.rules.RuleRuntime;
@@ -9,22 +9,39 @@ import javax.rules.StatelessRuleSession;
 import javax.rules.admin.RuleAdministrator;
 
 import org.springframework.core.io.ClassPathResource;
-import org.springmodules.jsr94.factory.RuleAdministratorFactoryBean;
-import org.springmodules.jsr94.factory.RuleRuntimeFactoryBean;
 import org.springmodules.jsr94.rulesource.DefaultRuleSource;
 
-public class TestDefaultRuleSource extends AbstractRuleServiceProviderTestCase {
+/**
+ * This class tests DefaultRuleSource instantiation and execution using DefaultRuleSource
+ * with just the ruleServiceProvider property set. This is typical scenario for local 
+ * single-VM deployment.
+ * 
+ * The ruleAdministrator and ruleRuntime properties be null if ruleServiceProvider is set!
+ * 
+ * This test represents the following Spring bean configuration:
+ * 
+ * <code>
+ * <pre>
+ * &lt;bean id="foo" class="...DefaultRuleSource"&gt;
+ *     &lt;property name="source"&gt;&lt;value&gt;foo&lt;/value&gt;&lt;/property&gt;
+ *     &lt;property name="ruleServiceProvider"&gt;&lt;ref bean="ruleServiceProvider"/&gt;&lt;/property&gt;
+ * &lt;/bean&gt;
+ * </pre>
+ * </code>
+ * 
+ * @see org.springmodules.jsr94.factory.TestRuntimeAndAdministratorDefaultRuleSource
+ * @author janm
+ */
+public class TestProviderDefaultRuleSource  extends AbstractDefaultRuleSourceTestCase {
 	
 	private RuleAdministrator ruleAdministrator;
 	private RuleRuntime ruleRuntime;
-	private static final String BIND_URI = "test";
-	private static final String RULES_RESOURCE = "org/springmodules/jsr94/test.drl";
 
 	/**
 	 * Create new instance of TestDefaultRuleSource
 	 * @throws Exception If anything goes wrong
 	 */
-	public TestDefaultRuleSource() throws Exception {
+	public TestProviderDefaultRuleSource() throws Exception {
 		RuleRuntimeFactoryBean ruleRuntimeFactoryBean = new RuleRuntimeFactoryBean();
 		ruleRuntimeFactoryBean.setServiceProvider(getProvider());
 		ruleRuntimeFactoryBean.afterPropertiesSet();
@@ -35,17 +52,17 @@ public class TestDefaultRuleSource extends AbstractRuleServiceProviderTestCase {
 		ruleAdministrator = (RuleAdministrator)ruleAdministratorFactoryBean.getObject();
 		ruleRuntime = (RuleRuntime)ruleRuntimeFactoryBean.getObject();
 	}
-
+	
 	/**
 	 * Tests the getObject() and afterPropertiesSet() methods
 	 */
 	public void testInitialization() throws Exception {
 		DefaultRuleSource source = new DefaultRuleSource();
-		
+
 		// test the afterPropertiesSet() calls
 		try {
 			source.afterPropertiesSet();
-			fail("ruleAdministrator, ruleRuntime, bindUri and source not set");
+			fail("ruleServiceProvider, bindUri and source not set");
 		} catch (IllegalArgumentException ex) {
 			// expected
 		}
@@ -63,14 +80,33 @@ public class TestDefaultRuleSource extends AbstractRuleServiceProviderTestCase {
 		} catch (IllegalArgumentException ex) {
 			// expected
 		}
+
+		source.setRuleServiceProvider(getProvider());
 		source.setRuleAdministrator(ruleAdministrator);
 		try {
 			source.afterPropertiesSet();
-			fail("ruleRuntime not set");
+			fail("ruleServiceProvider AND ruleAdministrator set");
 		} catch (IllegalArgumentException ex) {
 			// expected
 		}
+		source.setRuleAdministrator(null);
 		source.setRuleRuntime(ruleRuntime);
+		try {
+			source.afterPropertiesSet();
+			fail("ruleServiceProvider AND ruleRuntime set");
+		} catch (IllegalArgumentException ex) {
+			// expected
+		}
+		source.setRuleAdministrator(ruleAdministrator);
+		try {
+			source.afterPropertiesSet();
+			fail("ruleServiceProvider AND ruleRuntime and ruleAdministrator set");
+		} catch (IllegalArgumentException ex) {
+			// expected
+		}
+		
+		source.setRuleAdministrator(null);
+		source.setRuleRuntime(null);
 		source.afterPropertiesSet();
 		
 		try {
@@ -84,32 +120,16 @@ public class TestDefaultRuleSource extends AbstractRuleServiceProviderTestCase {
 		assertNotNull("Created session is null", session);
 		session.release();
 	}
-	
-	/**
-	 * Test session creation & execution
-	 * @throws Exception If anything goes wrong
-	 */
-	public void testStatelessExecution() throws Exception {
-		// create the source
-		DefaultRuleSource source = new DefaultRuleSource();
-		source.setBindUri(BIND_URI);
-		source.setSource(new ClassPathResource(RULES_RESOURCE));
-		source.setRuleAdministrator(ruleAdministrator);
-		source.setRuleRuntime(ruleRuntime);
-		source.afterPropertiesSet();
 
-		// get the stateless session
-		StatelessRuleSession session = (StatelessRuleSession)source.createSession(BIND_URI, null, RuleRuntime.STATELESS_SESSION_TYPE);
-		
-		// execute it
-		List facts = new ArrayList();
-		facts.add("Gecko");
-		facts = session.executeRules(facts);
-		
-		assertTrue("Facts does not contain Gecko", facts.contains("Gecko"));
-		assertTrue("Facts does not contain a:Gecko", facts.contains("a:Gecko"));
-		
-		session.release();
+	/* (non-Javadoc)
+	 * @see org.springmodules.jsr94.factory.AbstractDefaultRuleSourceTestCase#setProperties(org.springmodules.jsr94.rulesource.DefaultRuleSource)
+	 */
+	protected void setProperties(DefaultRuleSource ruleSource) throws Exception {
+		ruleSource.setBindUri(BIND_URI);
+		ruleSource.setSource(new ClassPathResource(RULES_RESOURCE));
+		ruleSource.setRuleAdministrator(null);
+		ruleSource.setRuleServiceProvider(getProvider());
+		ruleSource.setRuleRuntime(null);
 	}
-	
+		
 }

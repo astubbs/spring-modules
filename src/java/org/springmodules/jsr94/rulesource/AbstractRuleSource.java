@@ -1,5 +1,5 @@
 /**
- * 
+ * JSR-94 support
  */
 package org.springmodules.jsr94.rulesource;
 
@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.rules.RuleExecutionSetNotFoundException;
 import javax.rules.RuleRuntime;
+import javax.rules.RuleServiceProvider;
 import javax.rules.RuleSession;
 import javax.rules.RuleSessionCreateException;
 import javax.rules.RuleSessionTypeUnsupportedException;
@@ -16,6 +17,8 @@ import javax.rules.admin.RuleAdministrator;
 import javax.rules.admin.RuleExecutionSetCreateException;
 import javax.rules.admin.RuleExecutionSetRegisterException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -32,6 +35,11 @@ import org.springframework.beans.factory.InitializingBean;
 public abstract class AbstractRuleSource implements RuleSource, InitializingBean {
 
 	/**
+	 * Shared final Log instance
+	 */
+	protected static final Log logger = LogFactory.getLog(AbstractRuleSource.class);
+
+	/**
 	 * RuleAdministrator instance
 	 */
 	protected RuleAdministrator ruleAdministrator;
@@ -40,6 +48,11 @@ public abstract class AbstractRuleSource implements RuleSource, InitializingBean
 	 * RuleRuntime instance
 	 */
 	protected RuleRuntime ruleRuntime;
+
+	/**
+	 * RuleServiceProvider implementation
+	 */
+	private RuleServiceProvider ruleServiceProvider;
 
 	/**
 	 * Implementations must override this method to register rule execution sets
@@ -67,6 +80,16 @@ public abstract class AbstractRuleSource implements RuleSource, InitializingBean
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public final void afterPropertiesSet() throws Exception {
+		if (ruleServiceProvider != null && ruleAdministrator != null) throw new IllegalArgumentException("ruleServiceProvider and ruleAdministrator set on " + getClass().getName());
+		if (ruleServiceProvider != null && ruleRuntime != null) throw new IllegalArgumentException("ruleServiceProvider and ruleRuntime set on " + getClass().getName());
+		if (ruleServiceProvider != null /* && ruleAdministrator == null && ruleRuntime == null */) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Using ruleServiceProvider " + ruleServiceProvider.toString() + " to create ruleAdministrator and ruleRuntime.");
+			}
+			ruleAdministrator = ruleServiceProvider.getRuleAdministrator();
+			ruleRuntime = ruleServiceProvider.getRuleRuntime();
+		}
+
 		if (ruleAdministrator == null) throw new IllegalArgumentException("Must set ruleAdministrator on " + getClass().getName());
 		if (ruleRuntime == null) throw new IllegalArgumentException("Must set ruleRuntime on " + getClass().getName());
 		initRuleSource();
@@ -87,6 +110,14 @@ public abstract class AbstractRuleSource implements RuleSource, InitializingBean
 	 */
 	public final void setRuleRuntime(RuleRuntime ruleRuntime) {
 		this.ruleRuntime = ruleRuntime;
+	}
+
+	/**
+	 * Sets new value for field ruleServiceProvider
+	 * @param ruleServiceProvider The ruleServiceProvider to set.
+	 */
+	public final void setRuleServiceProvider(RuleServiceProvider ruleServiceProvider) {
+		this.ruleServiceProvider = ruleServiceProvider;
 	}
 
 }
