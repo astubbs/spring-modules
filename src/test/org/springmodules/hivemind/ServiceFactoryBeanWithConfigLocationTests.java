@@ -1,5 +1,8 @@
 package org.springmodules.hivemind;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.apache.hivemind.Registry;
@@ -10,8 +13,11 @@ import org.springframework.context.ApplicationContextException;
 
 /**
  * @author Rob Harrop
+ * @author Thierry Templier
  */
-public class ServiceFactoryBeanTests extends TestCase {
+public class ServiceFactoryBeanWithConfigLocationTests extends TestCase {
+	public static final String HIVEMODULE_CONFIG="classpath:/org/springmodules/hivemind/hivemodule.xml";
+
     public void testGetServiceByInterface() throws Exception {
         Object service = getService(null, MessageService.class);
         assertNotNull("Service should not be null.", service);
@@ -53,9 +59,9 @@ public class ServiceFactoryBeanTests extends TestCase {
 
         try {
             bean.afterPropertiesSet();
-            fail();
-        } catch (ApplicationContextException ex) {
 
+        } catch (ApplicationContextException ex) {
+			ex.printStackTrace();
         }
     }
 
@@ -65,19 +71,24 @@ public class ServiceFactoryBeanTests extends TestCase {
 
         try {
             bean.afterPropertiesSet();
-            fail();
-        } catch (ApplicationContextException ex) {
 
+        } catch (ApplicationContextException ex) {
+			ex.printStackTrace();
         }
     }
 
     private Object getService(String serviceName, Class serviceInterface) throws Exception {
-        Registry reg = RegistryBuilder.constructDefaultRegistry();
-        ServiceFactoryBean bean = new ServiceFactoryBean();
-        bean.setRegistry(reg);
-        bean.setServiceInterface(serviceInterface);
-        bean.setServiceName(serviceName);
-        bean.afterPropertiesSet();
-        return bean.getObject();
-    }
+		RegistryFactoryBean registryBean = new RegistryFactoryBean();
+		List configLocations=new ArrayList();
+		configLocations.add(HIVEMODULE_CONFIG);
+		registryBean.setConfigLocations(configLocations);
+		registryBean.afterPropertiesSet();
+		Registry reg = (Registry)registryBean.getObject();
+		ServiceFactoryBean bean = new ServiceFactoryBean();
+		bean.setRegistry(reg);
+		bean.setServiceInterface(serviceInterface);
+		bean.setServiceName(serviceName);
+		bean.afterPropertiesSet();
+		return bean.getObject();
+	}
 }

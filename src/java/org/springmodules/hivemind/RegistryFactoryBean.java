@@ -1,17 +1,24 @@
 package org.springmodules.hivemind;
 
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.io.Resource;
-import org.springframework.context.ApplicationContextException;
-import org.apache.hivemind.Registry;
-import org.apache.hivemind.impl.RegistryBuilder;
-import org.apache.hivemind.impl.DefaultClassResolver;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hivemind.ClassResolver;
+import org.apache.hivemind.Registry;
+import org.apache.hivemind.Resource;
+import org.apache.hivemind.impl.DefaultClassResolver;
+import org.apache.hivemind.impl.RegistryBuilder;
+import org.apache.hivemind.util.AbstractResource;
+import org.apache.hivemind.util.ClasspathResource;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @author Rob Harrop
+ * @author Thierry Templier
  */
 public class RegistryFactoryBean implements FactoryBean, InitializingBean{
 
@@ -19,7 +26,7 @@ public class RegistryFactoryBean implements FactoryBean, InitializingBean{
 
     private Registry registry;
 
-    private String configLocation;
+    private List configLocations;
 
     public Object getObject() throws Exception {
         return this.registry;
@@ -34,10 +41,28 @@ public class RegistryFactoryBean implements FactoryBean, InitializingBean{
     }
 
     public void afterPropertiesSet() throws Exception {
-        this.registry = RegistryBuilder.constructDefaultRegistry();
+		if( configLocations!=null ) {
+			RegistryBuilder builder = new RegistryBuilder();
+			ClassResolver resolver = new DefaultClassResolver();
+
+			log.info("Loading standard Hivemind modules");
+			builder.processModules(resolver);
+			HivemindResourceLoader pathResolver=new DefaultHivemindResourceLoader(resolver);
+			for(Iterator i=configLocations.iterator();i.hasNext();) {
+				String configLocation=(String)i.next();
+				Resource resource=pathResolver.getResource(configLocation);
+				log.info("Loading modules from "+resource.getName()+" ("+configLocation+")");
+				builder.processModule(resolver, resource);
+			}
+
+			this.registry = builder.constructRegistry(Locale.getDefault());
+		} else {
+			this.registry = RegistryBuilder.constructDefaultRegistry();
+		}
+		log.info("Hivemind registry loaded");
     }
 
-    public void setConfigLocation(String configLocation) {
-        this.configLocation = configLocation;
+    public void setConfigLocations(List configLocations) {
+        this.configLocations = configLocations;
     }
 }
