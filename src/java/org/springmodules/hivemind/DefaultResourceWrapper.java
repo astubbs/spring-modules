@@ -59,9 +59,9 @@ public class DefaultResourceWrapper extends FileResource {
 	/**
 	 * @see org.apache.hivemind.util.AbstractResource#newResource(java.lang.String)
 	 */
-	protected Resource newResource(String arg0) {
+	protected Resource newResource(String name) {
 		try {
-			return new DefaultResourceWrapper(this.resource.createRelative(arg0));
+			return new DefaultResourceWrapper(this.resource.createRelative(name));
 		}
 		catch (IOException ex) {
 			throw new ApplicationContextException("Error during creation of a new resource");
