@@ -28,21 +28,34 @@ public class DefaultRuleSource extends AbstractRuleSource {
 	 * The bindUri
 	 */
 	private String bindUri;
-	
+
 	/**
-	 * Map passed to the localExecutionSetProvider
+	 * Local Rule execution set provider properties -- passed to the getLocalRuleExecutionSetProvider method.
+	 * This field can be null.
+	 * @see javax.rules.admin.RuleAdministrator#getLocalRuleExecutionSetProvider(java.util.Map)
 	 */
 	private Map providerProperties;
-	
-	
-	private Map executionSetProperties;
+
+	/**
+	 * Local ruleset properties -- passed to the createRuleExecutionSet method
+	 * This field can be null.
+	 * @see javax.rules.admin.LocalRuleExecutionSetProvider#createRuleExecutionSet(java.io.InputStream, java.util.Map)
+	 */
+	private Map rulesetProperties;
+
+	/**
+	 * Rule execution set registration properties -- passed to the registerRuleExecutionSet method
+	 * This field can be null.
+	 * @see javax.rules.admin.RuleAdministrator#registerRuleExecutionSet(java.lang.String, javax.rules.admin.RuleExecutionSet, java.util.Map)
+	 */
+	private Map registrationProperties;
 
 	/* (non-Javadoc)
 	 * @see org.springmodules.jsr94.support.AbstractRuleSource#registerRuleExecutionSets()
 	 */
 	protected void registerRuleExecutionSets() throws RuleExecutionSetCreateException, RemoteException, IOException, RuleExecutionSetRegisterException {
 		RuleExecutionSet ruleExecutionSet = ruleAdministrator.getLocalRuleExecutionSetProvider(null).createRuleExecutionSet(source.getInputStream(), null);
-		ruleAdministrator.registerRuleExecutionSet(bindUri, ruleExecutionSet, null);		
+		ruleAdministrator.registerRuleExecutionSet(bindUri, ruleExecutionSet, null);
 	}
 
 	/* (non-Javadoc)
@@ -67,6 +80,30 @@ public class DefaultRuleSource extends AbstractRuleSource {
 	 */
 	public final void setSource(Resource source) {
 		this.source = source;
+	}
+
+	/**
+	 * Sets new value for field providerProperties
+	 * @param providerProperties The providerProperties to set.
+	 */
+	public final void setProviderProperties(Map providerProperties) {
+		this.providerProperties = providerProperties;
+	}
+
+	/**
+	 * Sets new value for field registrationProperties
+	 * @param registrationProperties The registrationProperties to set.
+	 */
+	public final void setRegistrationProperties(Map registrationProperties) {
+		this.registrationProperties = registrationProperties;
+	}
+
+	/**
+	 * Sets new value for field rulesetProperties
+	 * @param rulesetProperties The rulesetProperties to set.
+	 */
+	public final void setRulesetProperties(Map rulesetProperties) {
+		this.rulesetProperties = rulesetProperties;
 	}
 
 }
