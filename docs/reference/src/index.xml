@@ -5,6 +5,7 @@
 <!ENTITY preface			SYSTEM "preface.xml">
 <!ENTITY overview			SYSTEM "overview.xml">
 <!ENTITY hivemind			SYSTEM "hivemind.xml">
+<!ENTITY jsr94				SYSTEM "jsr94.xml">
 ]>
 
 
@@ -24,6 +25,10 @@
             	<surname>Harrop</surname>
             </author>
             <author>
+            	<firstname>Jan</firstname>
+            	<surname>Machecek</surname>
+            </author>
+            <author>
             	<firstname>Thierry</firstname>
             	<surname>Templier</surname>
             </author>
@@ -40,4 +45,6 @@
 
 	    &hivemind;
 	
+	    &jsr94;
+
 </book>
