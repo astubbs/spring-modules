@@ -23,14 +23,27 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContextException;
 
 /**
+ * <code>FactoryBean</code> implementation that acts as an adapter to a
+ * HiveMind <code>Registry</code> allowing for any HiveMind service to
+ * be exposed as a Spring bean.
  * @author Rob Harrop
+ * @see Registry
  */
 public class ServiceFactoryBean implements FactoryBean, InitializingBean {
 
+	/**
+	 * The HiveMind <code>Registry</code> from which services are accessed.
+	 */
 	private Registry registry;
 
+	/**
+	 * The name of the HiveMind service to access.
+	 */
 	private String serviceName;
 
+	/**
+	 * The <code>Class</code> name of the of the HiveMind service.
+	 */
 	private Class serviceInterface;
 
 	public void setServiceInterface(Class serviceInterface) {

@@ -32,6 +32,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ClassPathResource;
 
 /**
+ * <code>FactoryBean</code> implementation that creates a HiveMind
+ * <code>Registry</code>.
  * @author Rob Harrop
  * @author Thierry Templier
  */
@@ -39,10 +41,14 @@ public class RegistryFactoryBean implements FactoryBean, InitializingBean, Dispo
 
 	private static final Log log = LogFactory.getLog(RegistryFactoryBean.class);
 
+	/**
+	 * The HiveMind <code>Registry</code> instance managed by this class.
+	 */
 	private Registry registry;
 
-	private org.springframework.core.io.Resource[] configLocations;
-
+	/**
+	 * Gets the <code>Registry</code>
+	 */
 	public Object getObject() throws Exception {
 		return this.registry;
 	}
@@ -72,32 +78,45 @@ public class RegistryFactoryBean implements FactoryBean, InitializingBean, Dispo
 		}
 	}
 
+	/**
+	 * If no <code>Registry</code> exists constructs the default
+	 * <code>Registry</code>.
+	 */
 	public void afterPropertiesSet() throws Exception {
+
+		if (this.registry == null) {
+			log.info("Loading default HiveMind registry.");
+			this.registry = RegistryBuilder.constructDefaultRegistry();
+		}
+
+		log.info("Hivemind registry loaded");
+	}
+
+	public void setConfigLocations(org.springframework.core.io.Resource[] configLocations) {
 		if (configLocations != null) {
 			RegistryBuilder builder = new RegistryBuilder();
 			ClassResolver resolver = new DefaultClassResolver();
 
 			log.info("Loading standard Hivemind modules");
 			builder.processModules(resolver);
+
 			for (int index = 0; index < configLocations.length; index++) {
-				log.info("Loading module : "+configLocations[index]);
+				if (log.isInfoEnabled()) {
+					log.info("Loading module : " + configLocations[index]);
+				}
+
 				builder.processModule(resolver, wrapSpringResource(resolver, configLocations[index]));
 			}
 
 			this.registry = builder.constructRegistry(Locale.getDefault());
 		}
-		else {
-			this.registry = RegistryBuilder.constructDefaultRegistry();
-		}
-		log.info("Hivemind registry loaded");
 	}
 
-	public void setConfigLocations(org.springframework.core.io.Resource[] configLocations) {
-		this.configLocations = configLocations;
-	}
-
+	/**
+	 * Shuts down the internal HiveMind <code>Registry</code>.
+	 */
 	public void destroy() throws Exception {
-		if( registry!=null ) {
+		if (registry != null) {
 			registry.shutdown();
 			log.info("Hivemind registry shutdown");
 		}
