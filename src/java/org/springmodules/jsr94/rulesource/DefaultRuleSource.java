@@ -55,6 +55,10 @@ public class DefaultRuleSource extends AbstractRuleSource {
 	 */
 	protected void registerRuleExecutionSets() throws RuleExecutionSetCreateException, RemoteException, IOException, RuleExecutionSetRegisterException {
 		RuleExecutionSet ruleExecutionSet = ruleAdministrator.getLocalRuleExecutionSetProvider(providerProperties).createRuleExecutionSet(source.getInputStream(), rulesetProperties);
+		if (bindUri == null) {
+			logger.info("Using RuleExecutionSet().getName() as bindUri");
+			bindUri = ruleExecutionSet.getName();
+		}
 		ruleAdministrator.registerRuleExecutionSet(bindUri, ruleExecutionSet, registrationProperties);
 	}
 
@@ -63,7 +67,7 @@ public class DefaultRuleSource extends AbstractRuleSource {
 	 */
 	protected void initRuleSource() throws Exception {
 		if (source == null) throw new IllegalArgumentException("Must set source on " + getClass().getName());
-		if (bindUri == null) throw new IllegalArgumentException("Must set bindUri on " + getClass().getName());
+		
 	}
 
 	/**
