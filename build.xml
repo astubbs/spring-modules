@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-  Build file for the Spring Framework.
+  Build file for the Spring Modules.
 
   This script requires a "lib" directory containing the necessary third party JAR files.
   See project.properties for the definitions of the properties used in this file.
