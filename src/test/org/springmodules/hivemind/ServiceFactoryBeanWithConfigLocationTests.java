@@ -79,9 +79,9 @@ public class ServiceFactoryBeanWithConfigLocationTests extends TestCase {
 
     private Object getService(String serviceName, Class serviceInterface) throws Exception {
 		RegistryFactoryBean registryBean = new RegistryFactoryBean();
-		List configLocations=new ArrayList();
+		/*List configLocations=new ArrayList();
 		configLocations.add(HIVEMODULE_CONFIG);
-		registryBean.setConfigLocations(configLocations);
+		registryBean.setConfigLocations(configLocations);*/
 		registryBean.afterPropertiesSet();
 		Registry reg = (Registry)registryBean.getObject();
 		ServiceFactoryBean bean = new ServiceFactoryBean();

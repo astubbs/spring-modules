@@ -6,6 +6,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.apache.hivemind.Registry;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 /**
  * @author Rob Harrop
@@ -43,8 +46,8 @@ public class RegistryFactoryBeanTests extends TestCase {
 
 	private RegistryFactoryBean getRegistryFactoryBean(String configLocation) throws Exception {
 		RegistryFactoryBean bean = new RegistryFactoryBean();
-		List configLocations=new ArrayList();
-		configLocations.add(configLocation);
+		Resource[] configLocations=new Resource[1];
+		configLocations[0]=new ClassPathResource("/org/springmodules/hivemind/hivemodule.xml");
 		bean.setConfigLocations(configLocations);
 		bean.afterPropertiesSet();
 		return bean;
