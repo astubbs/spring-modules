@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<module id="org.springmodules.hivemind1" version="1.0.0">
+    <service-point id="FooServiceThree" interface="org.springmodules.hivemind.FooService"/>
+    <service-point id="FooServiceFour" interface="org.springmodules.hivemind.FooService"/>
+
+    <implementation service-id="org.springmodules.hivemind1.FooServiceThree">
+        <create-instance class="org.springmodules.hivemind.FooServiceThree"/>
+    </implementation>
+
+    <implementation service-id="org.springmodules.hivemind1.FooServiceFour">
+        <create-instance class="org.springmodules.hivemind.FooServiceFour"/>
+    </implementation>
+</module>
