@@ -5,7 +5,7 @@ package org.springmodules.jsr94;
 
 /**
  * Maps checked RuleSessionTypeUnsupportedException to unchecked Jsr94Exception subclass 
- * @see RuleSessionTypeUnsupportedException
+ * @see javax.rules.RuleSessionTypeUnsupportedException
  * @author janm
  */
 public class Jsr94RuleSessionTypeUnsupportedException extends Jsr94Exception {
