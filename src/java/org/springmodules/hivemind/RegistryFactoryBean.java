@@ -80,6 +80,7 @@ public class RegistryFactoryBean implements FactoryBean, InitializingBean, Dispo
 			log.info("Loading standard Hivemind modules");
 			builder.processModules(resolver);
 			for (int index = 0; index < configLocations.length; index++) {
+				log.info("Loading module : "+configLocations[index]);
 				builder.processModule(resolver, wrapSpringResource(resolver, configLocations[index]));
 			}
 
