@@ -1,0 +1,10 @@
+target
+dist
+release
+build.properties
+*.log
+.classes
+.testclasses
+bin
+junit-reports
+classes
