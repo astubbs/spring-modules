@@ -1,0 +1,5 @@
+<?xml version="1.0"?>      
+<module id="service" version="1.0.0">
+    <sub-module descriptor="configuration-interface.xml"/>
+    <sub-module descriptor="configuration-impl.xml"/>
+</module>

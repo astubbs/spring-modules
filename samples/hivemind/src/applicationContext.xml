@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="hivemindRegistry" class="org.springmodules.hivemind.RegistryFactoryBean">
+		<property name="configLocations">
+			<value>configuration.xml</value>
+			<!-- value>classpath:/configuration.xml</value -->
+			<!--value>file:/c:/applications/springmodules/xml/configuration.xml</value-->
+		</property>
+	</bean>
+
+	<bean id="hivemindService" class="org.springmodules.hivemind.ServiceFactoryBean">
+		<property name="registry">
+			<ref local="hivemindRegistry"/>
+		</property>
+		<property name="serviceInterface">
+			<value>service.ISampleService</value>
+		</property>
+		<property name="serviceName">
+			<value>interfaces.SampleService</value>
+		</property>
+	</bean>
+
+</beans>
