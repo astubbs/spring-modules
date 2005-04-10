@@ -76,7 +76,7 @@
 		<mkdir dir="${build.dir}"/>
 
 		<javac destdir="${build.dir}" source="1.3" target="1.3" debug="true"
-				deprecation="false" optimize="false" failonerror="true">
+					 deprecation="false" optimize="false" failonerror="true">
 			<src path="${src.dir}"/>
 			<classpath refid="lib-classpath"/>
 		</javac>
@@ -97,14 +97,14 @@
 	<target name="launch" description="Launch the sample application">
 
 		<java classname="${main.class}" fork="yes" failonerror="true">
-			<classpath refid="lib-classpath" />
-			<classpath refid="dist-classpath" />
+			<classpath refid="lib-classpath"/>
+			<classpath refid="dist-classpath"/>
 		</java>
 
 	</target>
 
 	<target name="dist" depends="build">
-		<!-- 
+<!--
 			Delegate to build target by depending on it. dist is just to offer
 			a generic target name across all Spring sample apps that may be used
 			for autobuilds testing.

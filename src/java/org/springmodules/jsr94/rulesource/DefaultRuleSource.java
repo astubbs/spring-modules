@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94.rulesource;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import org.springframework.core.io.Resource;
 
 /**
  * This class allows a session to be created from rules loaded from a given Resource.
+ *
  * @author janm
  */
 public class DefaultRuleSource extends AbstractRuleSource {
@@ -30,24 +32,27 @@ public class DefaultRuleSource extends AbstractRuleSource {
 	private String bindUri;
 
 	/**
-	 * Local Rule execution set provider properties -- passed to the getLocalRuleExecutionSetProvider method.
-	 * This field can be null.
-	 * @see javax.rules.admin.RuleAdministrator#getLocalRuleExecutionSetProvider(java.util.Map)
-	 */
+		 * Local Rule execution set provider properties -- passed to the getLocalRuleExecutionSetProvider method.
+		 * This field can be null.
+		 *
+		 * @see javax.rules.admin.RuleAdministrator#getLocalRuleExecutionSetProvider(java.util.Map)
+		 */
 	private Map providerProperties;
 
 	/**
-	 * Local ruleset properties -- passed to the createRuleExecutionSet method
-	 * This field can be null.
-	 * @see javax.rules.admin.LocalRuleExecutionSetProvider#createRuleExecutionSet(java.io.InputStream, java.util.Map)
-	 */
+		 * Local ruleset properties -- passed to the createRuleExecutionSet method
+		 * This field can be null.
+		 *
+		 * @see javax.rules.admin.LocalRuleExecutionSetProvider#createRuleExecutionSet(java.io.InputStream, java.util.Map)
+		 */
 	private Map rulesetProperties;
 
 	/**
-	 * Rule execution set registration properties -- passed to the registerRuleExecutionSet method
-	 * This field can be null.
-	 * @see javax.rules.admin.RuleAdministrator#registerRuleExecutionSet(java.lang.String, javax.rules.admin.RuleExecutionSet, java.util.Map)
-	 */
+		 * Rule execution set registration properties -- passed to the registerRuleExecutionSet method
+		 * This field can be null.
+		 *
+		 * @see javax.rules.admin.RuleAdministrator#registerRuleExecutionSet(java.lang.String, javax.rules.admin.RuleExecutionSet, java.util.Map)
+		 */
 	private Map registrationProperties;
 
 	/* (non-Javadoc)
@@ -67,37 +72,41 @@ public class DefaultRuleSource extends AbstractRuleSource {
 	 */
 	protected void initRuleSource() throws Exception {
 		if (source == null) throw new IllegalArgumentException("Must set source on " + getClass().getName());
-		
+
 	}
 
 	/**
-	 * Sets new value for field bindUri
-	 * @param bindUri The bindUri to set.
-	 */
+		 * Sets new value for field bindUri
+		 *
+		 * @param bindUri The bindUri to set.
+		 */
 	public final void setBindUri(String bindUri) {
 		this.bindUri = bindUri;
 	}
 
 	/**
-	 * Sets new value for field source
-	 * @param source The source to set.
-	 */
+		 * Sets new value for field source
+		 *
+		 * @param source The source to set.
+		 */
 	public final void setSource(Resource source) {
 		this.source = source;
 	}
 
 	/**
-	 * Sets new value for field providerProperties
-	 * @param providerProperties The providerProperties to set.
-	 */
+		 * Sets new value for field providerProperties
+		 *
+		 * @param providerProperties The providerProperties to set.
+		 */
 	public final void setProviderProperties(Map providerProperties) {
 		this.providerProperties = providerProperties;
 	}
 
 	/**
-	 * Sets new value for field registrationProperties
-	 * @param registrationProperties The registrationProperties to set.
-	 */
+		 * Sets new value for field registrationProperties
+		 *
+		 * @param registrationProperties The registrationProperties to set.
+		 */
 	public final void setRegistrationProperties(Map registrationProperties) {
 		this.registrationProperties = registrationProperties;
 	}

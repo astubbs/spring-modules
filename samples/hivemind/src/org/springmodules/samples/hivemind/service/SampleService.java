@@ -26,13 +26,14 @@ import org.springmodules.samples.hivemind.dao.ISampleDao;
  * @author Thierry Templier
  */
 public class SampleService implements ISampleService {
+
 	private ISampleDao dao;
 
 	private static final Log log = LogFactory.getLog(SampleService.class);
 
 	public SampleService() {
-		if( log.isDebugEnabled() ) {
-			System.out.println("Creation of a new instance of SampleService ("+toString()+")");
+		if (log.isDebugEnabled()) {
+			System.out.println("Creation of a new instance of SampleService (" + toString() + ")");
 		}
 	}
 
@@ -40,9 +41,9 @@ public class SampleService implements ISampleService {
 	 * @see service.IMonService#executeService(java.lang.String)
 	 */
 	public void executeService(String param) {
-		if( log.isDebugEnabled() ) {
-			System.out.println("The instance of the service is "+toString());
-			System.out.println("Execution of the executeService method with the param "+param);
+		if (log.isDebugEnabled()) {
+			System.out.println("The instance of the service is " + toString());
+			System.out.println("Execution of the executeService method with the param " + param);
 		}
 		dao.executeDao(param);
 	}

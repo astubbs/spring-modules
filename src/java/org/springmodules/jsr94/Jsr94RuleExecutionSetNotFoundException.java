@@ -1,11 +1,12 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94;
 
 /**
  * Maps checked RuleExecutionSetNotFoundException to unchecked exception
- * 
+ *
  * @author janm
  */
 public class Jsr94RuleExecutionSetNotFoundException extends Jsr94Exception {

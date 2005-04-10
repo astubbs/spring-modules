@@ -1,622 +1,673 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="jsr94">
-  <title>JSR94</title>
-
-  <sect1>
-    <title>Introduction</title>
-
-    <para>As described in the scope section of the specification document,
-    JSR94 defines a lightweight-programming interface. Its aim is to
-    constitute a standard API for acquiring and using a rule engine.</para>
-
-    <para>"The scope of the specification specifically excludes defining a
-    standard rule description language to describe the rules within a rule
-    execution set. The specification targets both the J2SE and J2EE (managed)
-    environments.</para>
-
-    <para>The following items are in the scope of the specification:</para>
-
-    <itemizedlist>
-      <listitem>
-        <para>Τhe restrictions and limits imposed by a compliant
-        implementation.</para>
-      </listitem>
-
-      <listitem>
-        <para>Τhe mechanisms to acquire interfaces to a compliant
-        implementation.</para>
-      </listitem>
-
-      <listitem>
-        <para>Τhe mechanisms to acquire interfaces to a compliant
-        implementation.</para>
-      </listitem>
-
-      <listitem>
-        <para>Τhe mechanisms to acquire interfaces to a compliant
-        implementation.</para>
-      </listitem>
-
-      <listitem>
-        <para>Τhe interfaces through which rule execution sets are invoked by
-        runtime clients of a complaint implementation.</para>
-      </listitem>
-
-      <listitem>
-        <para>Τhe interfaces through which rule execution sets are loaded from
-        external resources and registered for use by runtime clients of a
-        compliant implementation.</para>
-      </listitem>
-    </itemizedlist>
-
-    <para>The following items are outside the scope of the
-    specification:</para>
-
-    <itemizedlist>
-      <listitem>
-        <para>Τhe binary representation of rules and rule execution
-        sets.</para>
-      </listitem>
-
-      <listitem>
-        <para>Τhe syntax and file-formats of rules and rule execution
-        sets.</para>
-      </listitem>
-
-      <listitem>
-        <para>Τhe semantics of interpreting rules and rule execution
-        sets.</para>
-      </listitem>
-
-      <listitem>
-        <para>Τhe mechanism by which rules and rule execution sets are
-        transformed for use by a rule engine.</para>
-      </listitem>
-
-      <listitem>
-        <para>All minimal system requirements required to support a compliant
-        implementation."</para>
-      </listitem>
-    </itemizedlist>
-
-    <para>Spring Modules provides a support for this specification in order to
-    simply the use of its APIs according to the philosophy of the Spring
-    framework.</para>
-  </sect1>
-
-  <sect1>
-    <title>JSR94 support</title>
-
-    <para>This section describes the different abstractions to configure in
-    order to administer and use rule engines with the JSR94 support.</para>
-
-    <sect2>
-      <title>Provider</title>
-
-      <para>The first step to use JSR94 in a local scenario is to configure
-      the rule engine provider. You must specify its name with the
-      <emphasis>provider</emphasis> property and its implementation class with
-      the <emphasis>providerClass</emphasis> property.</para>
-
-      <para>These properties are specific to the used rule engine. For more
-      informations about the configuration of different rule engines, see the
-      following configuration section.</para>
-
-      <para>Here is a sample configuration of a rule provider:</para>
-
-      <programlisting>&lt;bean id="ruleServiceProvider"
-      class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean"&gt;
-  &lt;property name="provider"&gt;
-    &lt;value&gt;org.jcp.jsr94.jess&lt;/value&gt;
-  &lt;/property&gt;
-  &lt;property name="providerClass"&gt;
-    &lt;value&gt;org.jcp.jsr94.jess.RuleServiceProviderImpl&lt;/value&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para><emphasis>Important note</emphasis>: When you get the JSR94
-      RuleAdministrator and RuleRuntime from JNDI, you don't need to configure
-      this bean in Spring.</para>
-    </sect2>
-
-    <sect2>
-      <title>Administration</title>
-
-      <para>There are two possibilities to configure the RuleAdministrator
-      abstraction:</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>Local configuration as a bean.</para>
-        </listitem>
-
-        <listitem>
-          <para>Remote access from JNDI.</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>These two scenarios are supported. Firstly, the local
-      configuration uses the RuleAdministratorFactoryBean which needs to have
-      a reference to the JSR94 provider, configured in the previous section,
-      with its <emphasis>serviceProvider</emphasis> property.</para>
-
-      <programlisting>&lt;bean id="ruleAdministrator"
-      class="org.springmodules.jsr94.factory.RuleAdministratorFactoryBean"&gt;
-  &lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Secondly, the remote access from JNDI uses the
-      JNDIRuleAdministratorFactoryBean where you can specify the JNDI name
-      with the <emphasis>jndiName</emphasis> property.</para>
-
-      <programlisting>&lt;bean id="ruleAdministrator"
-      class="org.springmodules.jsr94.factory.JndiRuleAdministratorFactoryBean"&gt;
-  &lt;property name="jndiName"&gt;&lt;value&gt;jndiRuleAdministrator&lt;/value&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-    </sect2>
-
-    <sect2>
-      <title>Execution</title>
-
-      <para>As for the RuleRuntime abstraction, there are two possibilities to
-      configure the RuleRuntime abstraction (local and from JNDI).</para>
-
-      <para>Here is a sample of local configuration as bean:</para>
-
-      <programlisting>&lt;bean id="ruleRuntime" class="org.springmodules.jsr94.factory.RuleRuntimeFactoryBean"&gt;
-  &lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Here is a sample of JNDI access:</para>
-
-      <programlisting>&lt;bean id="ruleRuntime"
-      class="org.springmodules.jsr94.factory.JndiRuleRuntimeFactoryBean"&gt;
-  &lt;property name="jndiName"&gt;&lt;value&gt;jndiRuleRuntime&lt;/value&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-    </sect2>
-
-    <sect2>
-      <title>Defintion of ruleset</title>
-
-      <para>To administer and execute rules, the JSR94 support introduces the
-      <emphasis>RuleSource</emphasis> abstraction. It provides two different
-      features:</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>Automatic configuration of the rule or rulset for a rule
-          engine.</para>
-        </listitem>
-
-        <listitem>
-          <para>Wrapper of JSR94 APIs for execution.</para>
-        </listitem>
-      </itemizedlist>
-
-      <para><emphasis>Important note</emphasis>: A
-      <emphasis>RuleSource</emphasis> is a representation of an unique rule or
-      ruleset.</para>
-
-      <para>These two features work respectively upon the JSR94
-      <emphasis>RuleAdministrator</emphasis> and
-      <emphasis>RuleRuntime</emphasis> abstractions. That's why , to configure
-      the RuleSource, you need to inject these two beans previously configured
-      (see the two previous sections).</para>
-
-      <para>You need too to specify some specific properties for the
-      rule:</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>Bind uri of the rule. The value of the
-          <emphasis>bindUri</emphasis> property will be use when invoking the
-          corresponding rule.</para>
-        </listitem>
-
-        <listitem>
-          <para>Implementation of the rule. The JSR94 support is based on the
-          Spring resource concept and the <emphasis>source</emphasis> property
-          is managed in this way. So, by default, the ruleset source file is
-          looked for in the classpath.</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>Here is a sample configuration of a rule using the
-      <emphasis>DefaultRuleSource</emphasis> class:</para>
-
-      <programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
-  &lt;property name="ruleRuntime"&gt;&lt;ref local="ruleRuntime"/&gt;&lt;/property&gt;
-  &lt;property name="ruleAdministrator"&gt;&lt;ref local="ruleAdministrator"/&gt;&lt;/property&gt;
-  &lt;property name="source"&gt;&lt;value&gt;/testagent.drl&lt;/value&gt;&lt;/property&gt;
-  &lt;property name="bindUri"&gt;&lt;value&gt;testagent&lt;/value&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para><emphasis>Important note</emphasis>: If you don't specify the
-      bindUri property, the JSR94 support will use the string returned by the
-      <emphasis>getName</emphasis> method of the underlying
-      <emphasis>RuleExecutionSet</emphasis> created for the
-      <emphasis>RuleSource</emphasis>.</para>
-
-      <para>On the other hand, JSR94 provides some ways to specify additional
-      configuration properties for specific rule engines.</para>
-
-      <para>Firstly some rule engines need to have custom properties to
-      configure rules. These properties can be specify with the
-      <emphasis>ruleSetProperties</emphasis> property of the type
-      <emphasis>Map</emphasis>. This property is passed to the
-      <emphasis>createRuleExecutionSet</emphasis> method (the last argument)
-      of the JSR94 LocalRuleExecutionSetProvider interface. For example,
-      JRules needs to specifiy the <emphasis>rulesetProperties</emphasis>
-      property (see the configuration section).</para>
-
-      <para>Then some parameters needs to be specified in order to get an
-      implementation of the JSR94 <emphasis>LocalRuleExecutionSetProvider
-      </emphasis>abstraction. These properties can be specify with the
-      <emphasis>providerProperties</emphasis> property as a map.</para>
-
-      <para>Finally some parameters needs to be specified in order to register
-      a JSR94 <emphasis>RuleExecutionSet</emphasis> implementation.</para>
-
-      <para>Here is the the code of the registerRuleExecutionSets method of
-      <emphasis>DefaultRuleSource</emphasis> class to show how the previous
-      maps are used. Note that the <emphasis>DefaultRuleSource</emphasis>
-      class is the default implementation of the
-      <emphasis>RuleSource</emphasis> interface of the JSR94 support.</para>
-
-      <programlisting>RuleExecutionSet ruleExecutionSet
-       = ruleAdministrator.getLocalRuleExecutionSetProvider(providerProperties)
-                          .createRuleExecutionSet(source.getInputStream(),
-                                                  rulesetProperties);
-ruleAdministrator.registerRuleExecutionSet(bindUri, ruleExecutionSet,
-                                           registrationProperties);</programlisting>
-    </sect2>
-
-    <sect2>
-      <title>Configure the execution template</title>
-
-      <para>In order to execute rules, you need to use the dedicated
-      <emphasis>JSR94Template</emphasis> class. This class must be configured
-      with a RuleSource instance.</para>
-
-      <para>There are two ways to configure this class.</para>
-
-      <para>Firstly, you can define the template directly in Spring as a bean.
-      In this way, you can make your service extend the
-      <emphasis>Jsr94Support</emphasis> abstract class. This class defines
-      get/set methods for the <emphasis>JSR94Template</emphasis> and provides
-      the associated template to the service thanks to the
-      <emphasis>getJSR94Template</emphasis> method.</para>
-
-      <programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
-  ...
-&lt;/bean&gt;
-
-&lt;bean id="jsr94Template" class="org.springmodules.jsr94.core.Jsr94Template"&gt;
-  &lt;property name="ruleSource"&gt;&lt;ref local="ruleSource"/&gt;&lt;/property&gt;
-&lt;/bean&gt;
-    
-&lt;bean id="myService" class="MyService"&gt;
-  &lt;property name="template"&gt;&lt;ref local="jsr94Template"/&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Secondly, you can directly inject the configured
-      <emphasis>RuleSource</emphasis> in your service. You can too make your
-      service extend the
-      <emphasis><emphasis>Jsr94</emphasis>Support</emphasis> abstract class.
-      This class defines get/set methods for the RuleSource, create
-      automatically and provides the associated template to the service thanks
-      to the <emphasis>getJSR94Template</emphasis> method.</para>
-
-      <programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
-  ...
-&lt;/bean&gt;
-
-&lt;bean id="myService" class="MyService"&gt;
-  &lt;property name="ruleSource"&gt;&lt;ref local="ruleSource"/&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Then the MyService class can directly use the template (injected
-      or created with the <emphasis>RuleSource</emphasis>) with the help of
-      the <emphasis>getJSR94Template</emphasis> method.</para>
-
-      <programlisting>public class MyServiceImpl extends JSR94Support implements MyService {
-  public void serviceMethod() {
-    getJSR94Template.execute(...);
-  }
-}</programlisting>
-
-      <para><emphasis>Important note</emphasis>: Because Java doesn't support
-      multiple inheritance, you can't always extend Jsr94Support class because
-      your service classes already has a super class. In this case, you need
-      to define the get/set methods or instance the template by
-      yourself.</para>
-    </sect2>
-
-    <sect2>
-      <title>Using the execution template</title>
-
-      <para>In order to execute rules, you need to use the JSR94Template class
-      configured in the preivous section.</para>
-
-      <para>JSR94 defines two session modes to execute rules. A session is a
-      runtime connection between the client and the rule engine.</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>Stateless mode. "A stateless rule session provides a
-          high-performance and simple API that executes a rule execution set
-          with a List of input objects." (quotation of the JSR94
-          specification)</para>
-        </listitem>
-
-        <listitem>
-          <para>Stateful mode. "A stateful rule session allows a client to
-          have a prolonged interaction with a rule execution set. Input
-          objects can be progressively added to the session and output objects
-          can be queried repeatedly." (quotation of the JSR94
-          specification)</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>So this template defines two corresponding executing methods:
-      executeStateless for stateless sessions and executeStateful for stateful
-      ones.</para>
-
-      <para>To execute rules in a stateless mode, you need to use the
-      following execute method of the template.</para>
-
-      <programlisting>public Object executeStateless(final String uri, final Map properties,
-                               final StatelessRuleSessionCallback callback) {
-  //...
-}</programlisting>
-
-      <para>This method needs an implementation of the callback interface,
-      <emphasis>StatelessRuleSessionCallback</emphasis>. This interface
-      defines a method to which an instance of
-      <emphasis>StatelessRuleSession</emphasis> is provided. The developer
-      doesn't need to deal with the release of the resources and the
-      management of technical exceptions.</para>
-
-      <para>Moreover, if you need to specify additional parameters to create
-      the session, you can use the second parameter of the method (named
-      properties and which is a map).</para>
-
-      <programlisting>public interface StatelessRuleSessionCallback {
-  Object execute(StatelessRuleSession session)
-             throws InvalidRuleSessionException, RemoteException;
-}</programlisting>
-
-      <para>Here is a sample of use:</para>
-
-      <programlisting>List inputObjects=...;
-List outputObjects=getTemplate().executeStateless("ruleBindUri",null,
-  new StatelessRuleSessionCallback() {
-    public Object execute(StatelessRuleSession session)
-                      throws InvalidRuleSessionException, RemoteException {
-      return session.executeRules(inputObjects);
-    }
-});</programlisting>
-
-      <para>The JSR94 support uses the same features to execute rules in a
-      stateful mode. Here is the dedicated executing method.</para>
-
-      <programlisting>public Object executeStateful(final String uri, final Map properties,
-                              final StatefulRuleSessionCallback callback) {
-  //...
-}</programlisting>
-
-      <para>This method needs an implementation of the callback interface,
-      <emphasis>StatefulRuleSessionCallback</emphasis>. This interface defines
-      a method to which an instance of
-      <emphasis>StatefulRuleSession</emphasis> is provided. As for stateless
-      sessions, the developer doesn't need to deal with the release of the
-      resources and the management of technical exception.</para>
-
-      <para>Moreover, if you need to specify additional parameters to create
-      the session, you can use the second parameter of the method (named
-      properties and which is a map).</para>
-
-      <programlisting>public interface StatefulRuleSessionCallback {
-  Object execute(StatefulRuleSession session)
-             throws InvalidRuleSessionException, InvalidHandleException, RemoteException;
-}</programlisting>
-
-      <para>Here is a sample of use:</para>
-
-      <programlisting>List inputObjects=...;
-List outputObjects=getTemplate().executeStateful("ruleBindUri",null,
-  new StatefulRuleSessionCallback() {
-    public Object execute(StatelessRuleSession session)
-                      throws InvalidRuleSessionException, RemoteException {
-      statefulRuleSession.addObjects(inputs);
-      statefulRuleSession.executeRules();
-      return statefulRuleSession.getObjects();
-    }
-});</programlisting>
-    </sect2>
-  </sect1>
-
-  <sect1>
-    <title>Configuration with different engines</title>
-
-    <para>This section will describe the way to configure different rule
-    engines with Spring using the JSR 94 support. This section describes the
-    configuration of the following rule engines:</para>
-
-    <itemizedlist>
-      <listitem>
-        <para>Ilog JRules. See <ulink
-        url="http://www.ilog.com/products/jrules/">http://www.ilog.com/products/jrules/</ulink>.</para>
-      </listitem>
-
-      <listitem>
-        <para>Jess. See <ulink
-        url="http://herzberg.ca.sandia.gov/jess/">http://herzberg.ca.sandia.gov/jess/</ulink>.</para>
-      </listitem>
-
-      <listitem>
-        <para>Drools. See <ulink
-        url="http://drools.org/">http://drools.org/</ulink>.</para>
-      </listitem>
-    </itemizedlist>
-
-    <sect2>
-      <title>JRules</title>
-
-      <para>With JSR94, you can only access rules configured in an embedded
-      rule engine. At the time of writing, JRules 5.0 doesn't provide an
-      implementation of JSR94 to execute and administer rules deployed in an
-      BRES (Business Rule Engine Server).</para>
-
-      <para><emphasis>Important note</emphasis>: To use the BRES with Spring,
-      you need to make your own integration code direclty based on the JRules
-      APIs.</para>
-
-      <para>Firstly you need to configure the JSR94 provider specific to
-      JRules. The name of the class for JRules is
-      <emphasis>ilog.rules.server.jsr94.IlrRuleServiceProvider</emphasis>.
-      There is no need to define specific parameters for the RuleRuntime and
-      RuleAdministrator beans.</para>
-
-      <programlisting>&lt;bean id="ruleServiceProvider"
-      class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean"&gt;
-  &lt;property name="provider"&gt;&lt;value&gt;http://www.ilog.com&lt;/value&gt;&lt;/property&gt;
-  &lt;property name="providerClass"&gt;
-    &lt;value&gt;ilog.rules.server.jsr94.IlrRuleServiceProvider&lt;/value&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="ruleRuntime" class="org.springmodules.jsr94.factory.RuleRuntimeFactoryBean"&gt;
-  &lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="ruleAdministrator"
-      class="org.springmodules.jsr94.factory.RuleAdministratorFactoryBean"&gt;
-  &lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Then you need to configure the different rulesets for the embedded
-      rule engine. In order to do this, the DefaultRuleSource can be used. You
-      need to inject the instances of RuleRuntime and RuleAdministrator,
-      specifiy the source of the ruleset (an irl file in the case of JRule and
-      the binding uri for this ruleset.</para>
-
-      <para><emphasis>Note</emphasis>: The language to write JRules' ruleset
-      is IRL (Ilog Rule Language). This language is similar to Java and
-      introduce specific keyworks for rules.</para>
-
-      <para>Endly, you need to configure specific properties for
-      JRules:</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>IlrName: This key describes the internal name of the
-          configured ruleset.</para>
-        </listitem>
-
-        <listitem>
-          <para>IlrRulesInILR: This key specifies that the ruleset of the
-          configured file is written in IRL.</para>
-        </listitem>
-      </itemizedlist>
-
-      <programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
-  &lt;property name="ruleRuntime"&gt;&lt;ref local="ruleRuntime"/&gt;&lt;/property&gt;
-  &lt;property name="ruleAdministrator"&gt;&lt;ref local="ruleAdministrator"/&gt;&lt;/property&gt;
-  &lt;property name="source"&gt;&lt;value&gt;/cars_rules.irl&lt;/value&gt;&lt;/property&gt;
-  &lt;property name="bindUri"&gt;&lt;value&gt;cars&lt;/value&gt;&lt;/property&gt;
-  &lt;property name="rulesetProperties"&gt;
-    &lt;map&gt;
-      &lt;entry key="IlrName"&gt;&lt;value&gt;cars_rules&lt;/value&gt;&lt;/entry&gt;
-      &lt;entry key="IlrRulesInILR"&gt;&lt;value&gt;true&lt;/value&gt;&lt;/entry&gt;
-    &lt;/map&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-    </sect2>
-
-    <sect2>
-      <title>Jess</title>
-
-      <para>The reference implementation of the JSR94 specification is a
-      wrapper for the Jess rule engine. We have used the samples provided in
-      the specification to describe the configuration of this rule
-      engine.</para>
-
-      <para>Firstly you need to configure the RuleServiceProvider,
-      RuleAdministrator and RuleRuntime abstractions as beans in
-      Spring.</para>
-
-      <programlisting>&lt;bean id="ruleServiceProvider"
-      class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean"&gt;
-  &lt;property name="provider"&gt;&lt;value&gt;org.jcp.jsr94.jess&lt;/value&gt;&lt;/property&gt;
-  &lt;property name="providerClass"&gt;
-    &lt;value&gt;org.jcp.jsr94.jess.RuleServiceProviderImpl&lt;/value&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="ruleRuntime"
-      class="org.springmodules.jsr94.factory.RuleRuntimeFactoryBean"&gt;
-  &lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="ruleAdministrator"
-      class="org.springmodules.jsr94.factory.RuleAdministratorFactoryBean"&gt;
-  &lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Then you need to configure rules in Spring using the JSR94
-      support.</para>
-
-      <programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
-  &lt;property name="ruleRuntime"&gt;&lt;ref local="ruleRuntime"/&gt;&lt;/property&gt;
-  &lt;property name="ruleAdministrator"&gt;&lt;ref local="ruleAdministrator"/&gt;&lt;/property&gt;
-  &lt;property name="source"&gt;&lt;value&gt;/org/jcp/jsr94/tck/tck_res_1.xml&lt;/value&gt;&lt;/property&gt;
-  &lt;property name="bindUri"&gt;&lt;value&gt;tck_res_1&lt;/value&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Jess doesn't need specific additional configuration for the rule
-      source.</para>
-    </sect2>
-
-    <sect2>
-      <title>Drools</title>
-
-      <para>An other interesting rule engine is Drools. It provides too an
-      integration with JSR94. We have used the samples provided in the Drools
-      distribution to describe its configuration.</para>
-
-      <para>Firstly you need to configure the RuleServiceProvider,
-      RuleAdministrator and RuleRuntime abstractions as beans in
-      Spring.</para>
-
-      <programlisting>&lt;bean id="ruleServiceProvider"
-      class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean"&gt;
-  &lt;property name="provider"&gt;&lt;value&gt;http://drools.org/&lt;/value&gt;&lt;/property&gt;
-  &lt;property name="providerClass"&gt;
-    &lt;value&gt;org.drools.jsr94.rules.RuleServiceProviderImpl&lt;/value&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="ruleRuntime" class="org.springmodules.jsr94.factory.RuleRuntimeFactoryBean"&gt;
-  &lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="ruleAdministrator" class="org.springmodules.jsr94.factory.RuleAdministratorFactoryBean"&gt;
-  &lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Then you need to configure rules in Spring using the JSR94
-      support.</para>
-
-      <programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
-  &lt;property name="ruleRuntime"&gt;&lt;ref local="ruleRuntime"/&gt;&lt;/property&gt;
-  &lt;property name="ruleAdministrator"&gt;&lt;ref local="ruleAdministrator"/&gt;&lt;/property&gt;
-  &lt;property name="source"&gt;&lt;value&gt;/testagent.drl&lt;/value&gt;&lt;/property&gt;
-  &lt;property name="bindUri"&gt;&lt;value&gt;testagent&lt;/value&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>As Jess, Drools doesn't need specific additional configuration for
-      the rule source.</para>
-    </sect2>
-  </sect1>
+	<title>JSR94</title>
+
+	<sect1>
+		<title>Introduction</title>
+
+		<para>As described in the scope section of the specification document,
+			JSR94 defines a lightweight-programming interface. Its aim is to
+			constitute a standard API for acquiring and using a rule engine.</para>
+
+		<para>"The scope of the specification specifically excludes defining a
+			standard rule description language to describe the rules within a rule
+			execution set. The specification targets both the J2SE and J2EE (managed)
+			environments.</para>
+
+		<para>The following items are in the scope of the specification:</para>
+
+		<itemizedlist>
+			<listitem>
+				<para>Τhe restrictions and limits imposed by a compliant
+					implementation.</para>
+			</listitem>
+
+			<listitem>
+				<para>Τhe mechanisms to acquire interfaces to a compliant
+					implementation.</para>
+			</listitem>
+
+			<listitem>
+				<para>Τhe mechanisms to acquire interfaces to a compliant
+					implementation.</para>
+			</listitem>
+
+			<listitem>
+				<para>Τhe mechanisms to acquire interfaces to a compliant
+					implementation.</para>
+			</listitem>
+
+			<listitem>
+				<para>Τhe interfaces through which rule execution sets are invoked by
+					runtime clients of a complaint implementation.</para>
+			</listitem>
+
+			<listitem>
+				<para>Τhe interfaces through which rule execution sets are loaded from
+					external resources and registered for use by runtime clients of a
+					compliant implementation.</para>
+			</listitem>
+		</itemizedlist>
+
+		<para>The following items are outside the scope of the
+			specification:</para>
+
+		<itemizedlist>
+			<listitem>
+				<para>Τhe binary representation of rules and rule execution
+					sets.</para>
+			</listitem>
+
+			<listitem>
+				<para>Τhe syntax and file-formats of rules and rule execution
+					sets.</para>
+			</listitem>
+
+			<listitem>
+				<para>Τhe semantics of interpreting rules and rule execution
+					sets.</para>
+			</listitem>
+
+			<listitem>
+				<para>Τhe mechanism by which rules and rule execution sets are
+					transformed for use by a rule engine.</para>
+			</listitem>
+
+			<listitem>
+				<para>All minimal system requirements required to support a compliant
+					implementation."</para>
+			</listitem>
+		</itemizedlist>
+
+		<para>Spring Modules provides a support for this specification in order to
+			simply the use of its APIs according to the philosophy of the Spring
+			framework.</para>
+	</sect1>
+
+	<sect1>
+		<title>JSR94 support</title>
+
+		<para>This section describes the different abstractions to configure in
+			order to administer and use rule engines with the JSR94 support.</para>
+
+		<sect2>
+			<title>Provider</title>
+
+			<para>The first step to use JSR94 in a local scenario is to configure
+				the rule engine provider. You must specify its name with the
+				<emphasis>provider</emphasis>property and its implementation class with
+				the
+				<emphasis>providerClass</emphasis>property.
+			</para>
+
+			<para>These properties are specific to the used rule engine. For more
+				informations about the configuration of different rule engines, see the
+				following configuration section.</para>
+
+			<para>Here is a sample configuration of a rule provider:</para>
+
+			<programlisting>&lt;bean id="ruleServiceProvider"
+				class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean"&gt;
+				&lt;property name="provider"&gt;
+				&lt;value&gt;org.jcp.jsr94.jess&lt;/value&gt;
+				&lt;/property&gt;
+				&lt;property name="providerClass"&gt;
+				&lt;value&gt;org.jcp.jsr94.jess.RuleServiceProviderImpl&lt;/value&gt;
+				&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>
+				<emphasis>Important note</emphasis>: When you get the JSR94
+				RuleAdministrator and RuleRuntime from JNDI, you don't need to configure
+				this bean in Spring.
+			</para>
+		</sect2>
+
+		<sect2>
+			<title>Administration</title>
+
+			<para>There are two possibilities to configure the RuleAdministrator
+				abstraction:</para>
+
+			<itemizedlist>
+				<listitem>
+					<para>Local configuration as a bean.</para>
+				</listitem>
+
+				<listitem>
+					<para>Remote access from JNDI.</para>
+				</listitem>
+			</itemizedlist>
+
+			<para>These two scenarios are supported. Firstly, the local
+				configuration uses the RuleAdministratorFactoryBean which needs to have
+				a reference to the JSR94 provider, configured in the previous section,
+				with its
+				<emphasis>serviceProvider</emphasis>property.
+			</para>
+
+			<programlisting>&lt;bean id="ruleAdministrator"
+				class="org.springmodules.jsr94.factory.RuleAdministratorFactoryBean"&gt;
+				&lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>Secondly, the remote access from JNDI uses the
+				JNDIRuleAdministratorFactoryBean where you can specify the JNDI name
+				with the
+				<emphasis>jndiName</emphasis>property.
+			</para>
+
+			<programlisting>&lt;bean id="ruleAdministrator"
+				class="org.springmodules.jsr94.factory.JndiRuleAdministratorFactoryBean"&gt;
+				&lt;property name="jndiName"&gt;&lt;value&gt;jndiRuleAdministrator&lt;/value&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+		</sect2>
+
+		<sect2>
+			<title>Execution</title>
+
+			<para>As for the RuleRuntime abstraction, there are two possibilities to
+				configure the RuleRuntime abstraction (local and from JNDI).</para>
+
+			<para>Here is a sample of local configuration as bean:</para>
+
+			<programlisting>&lt;bean id="ruleRuntime" class="org.springmodules.jsr94.factory.RuleRuntimeFactoryBean"&gt;
+				&lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>Here is a sample of JNDI access:</para>
+
+			<programlisting>&lt;bean id="ruleRuntime"
+				class="org.springmodules.jsr94.factory.JndiRuleRuntimeFactoryBean"&gt;
+				&lt;property name="jndiName"&gt;&lt;value&gt;jndiRuleRuntime&lt;/value&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+		</sect2>
+
+		<sect2>
+			<title>Defintion of ruleset</title>
+
+			<para>To administer and execute rules, the JSR94 support introduces the
+				<emphasis>RuleSource</emphasis>abstraction. It provides two different
+				features:
+			</para>
+
+			<itemizedlist>
+				<listitem>
+					<para>Automatic configuration of the rule or rulset for a rule
+						engine.</para>
+				</listitem>
+
+				<listitem>
+					<para>Wrapper of JSR94 APIs for execution.</para>
+				</listitem>
+			</itemizedlist>
+
+			<para>
+				<emphasis>Important note</emphasis>: A
+				<emphasis>RuleSource</emphasis>is a representation of an unique rule or
+				ruleset.
+			</para>
+
+			<para>These two features work respectively upon the JSR94
+				<emphasis>RuleAdministrator</emphasis>and
+				<emphasis>RuleRuntime</emphasis>abstractions. That's why , to configure
+				the RuleSource, you need to inject these two beans previously configured
+				(see the two previous sections).
+			</para>
+
+			<para>You need too to specify some specific properties for the
+				rule:</para>
+
+			<itemizedlist>
+				<listitem>
+					<para>Bind uri of the rule. The value of the
+						<emphasis>bindUri</emphasis>property will be use when invoking the
+						corresponding rule.
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>Implementation of the rule. The JSR94 support is based on the
+						Spring resource concept and the
+						<emphasis>source</emphasis>property
+						is managed in this way. So, by default, the ruleset source file is
+						looked for in the classpath.
+					</para>
+				</listitem>
+			</itemizedlist>
+
+			<para>Here is a sample configuration of a rule using the
+				<emphasis>DefaultRuleSource</emphasis>class:
+			</para>
+
+			<programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
+				&lt;property name="ruleRuntime"&gt;&lt;ref local="ruleRuntime"/&gt;&lt;/property&gt;
+				&lt;property name="ruleAdministrator"&gt;&lt;ref local="ruleAdministrator"/&gt;&lt;/property&gt;
+				&lt;property name="source"&gt;&lt;value&gt;/testagent.drl&lt;/value&gt;&lt;/property&gt;
+				&lt;property name="bindUri"&gt;&lt;value&gt;testagent&lt;/value&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>
+				<emphasis>Important note</emphasis>: If you don't specify the
+				bindUri property, the JSR94 support will use the string returned by the
+				<emphasis>getName</emphasis>method of the underlying
+				<emphasis>RuleExecutionSet</emphasis>created for the
+				<emphasis>RuleSource</emphasis>.
+			</para>
+
+			<para>On the other hand, JSR94 provides some ways to specify additional
+				configuration properties for specific rule engines.</para>
+
+			<para>Firstly some rule engines need to have custom properties to
+				configure rules. These properties can be specify with the
+				<emphasis>ruleSetProperties</emphasis>property of the type
+				<emphasis>Map</emphasis>. This property is passed to the
+				<emphasis>createRuleExecutionSet</emphasis>method (the last argument)
+				of the JSR94 LocalRuleExecutionSetProvider interface. For example,
+				JRules needs to specifiy the
+				<emphasis>rulesetProperties</emphasis>
+				property (see the configuration section).
+			</para>
+
+			<para>Then some parameters needs to be specified in order to get an
+				implementation of the JSR94
+				<emphasis>LocalRuleExecutionSetProvider
+				</emphasis>abstraction. These properties can be specify with the
+				<emphasis>providerProperties</emphasis>property as a map.
+			</para>
+
+			<para>Finally some parameters needs to be specified in order to register
+				a JSR94
+				<emphasis>RuleExecutionSet</emphasis>implementation.
+			</para>
+
+			<para>Here is the the code of the registerRuleExecutionSets method of
+				<emphasis>DefaultRuleSource</emphasis>class to show how the previous
+				maps are used. Note that the
+				<emphasis>DefaultRuleSource</emphasis>
+				class is the default implementation of the
+				<emphasis>RuleSource</emphasis>interface of the JSR94 support.
+			</para>
+
+			<programlisting>RuleExecutionSet ruleExecutionSet
+				= ruleAdministrator.getLocalRuleExecutionSetProvider(providerProperties)
+				.createRuleExecutionSet(source.getInputStream(),
+				rulesetProperties);
+				ruleAdministrator.registerRuleExecutionSet(bindUri, ruleExecutionSet,
+				registrationProperties);</programlisting>
+		</sect2>
+
+		<sect2>
+			<title>Configure the execution template</title>
+
+			<para>In order to execute rules, you need to use the dedicated
+				<emphasis>JSR94Template</emphasis>class. This class must be configured
+				with a RuleSource instance.
+			</para>
+
+			<para>There are two ways to configure this class.</para>
+
+			<para>Firstly, you can define the template directly in Spring as a bean.
+				In this way, you can make your service extend the
+				<emphasis>Jsr94Support</emphasis>abstract class. This class defines
+				get/set methods for the
+				<emphasis>JSR94Template</emphasis>and provides
+				the associated template to the service thanks to the
+				<emphasis>getJSR94Template</emphasis>method.
+			</para>
+
+			<programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
+				...
+				&lt;/bean&gt;
+
+				&lt;bean id="jsr94Template" class="org.springmodules.jsr94.core.Jsr94Template"&gt;
+				&lt;property name="ruleSource"&gt;&lt;ref local="ruleSource"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;
+
+				&lt;bean id="myService" class="MyService"&gt;
+				&lt;property name="template"&gt;&lt;ref local="jsr94Template"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>Secondly, you can directly inject the configured
+				<emphasis>RuleSource</emphasis>in your service. You can too make your
+				service extend the
+				<emphasis>
+					<emphasis>Jsr94</emphasis>Support
+				</emphasis>abstract class.
+				This class defines get/set methods for the RuleSource, create
+				automatically and provides the associated template to the service thanks
+				to the
+				<emphasis>getJSR94Template</emphasis>method.
+			</para>
+
+			<programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
+				...
+				&lt;/bean&gt;
+
+				&lt;bean id="myService" class="MyService"&gt;
+				&lt;property name="ruleSource"&gt;&lt;ref local="ruleSource"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>Then the MyService class can directly use the template (injected
+				or created with the
+				<emphasis>RuleSource</emphasis>) with the help of
+				the
+				<emphasis>getJSR94Template</emphasis>method.
+			</para>
+
+			<programlisting>public class MyServiceImpl extends JSR94Support implements MyService {
+				public void serviceMethod() {
+				getJSR94Template.execute(...);
+				}
+				}</programlisting>
+
+			<para>
+				<emphasis>Important note</emphasis>: Because Java doesn't support
+				multiple inheritance, you can't always extend Jsr94Support class because
+				your service classes already has a super class. In this case, you need
+				to define the get/set methods or instance the template by
+				yourself.
+			</para>
+		</sect2>
+
+		<sect2>
+			<title>Using the execution template</title>
+
+			<para>In order to execute rules, you need to use the JSR94Template class
+				configured in the preivous section.</para>
+
+			<para>JSR94 defines two session modes to execute rules. A session is a
+				runtime connection between the client and the rule engine.</para>
+
+			<itemizedlist>
+				<listitem>
+					<para>Stateless mode. "A stateless rule session provides a
+						high-performance and simple API that executes a rule execution set
+						with a List of input objects." (quotation of the JSR94
+						specification)</para>
+				</listitem>
+
+				<listitem>
+					<para>Stateful mode. "A stateful rule session allows a client to
+						have a prolonged interaction with a rule execution set. Input
+						objects can be progressively added to the session and output objects
+						can be queried repeatedly." (quotation of the JSR94
+						specification)</para>
+				</listitem>
+			</itemizedlist>
+
+			<para>So this template defines two corresponding executing methods:
+				executeStateless for stateless sessions and executeStateful for stateful
+				ones.</para>
+
+			<para>To execute rules in a stateless mode, you need to use the
+				following execute method of the template.</para>
+
+			<programlisting>public Object executeStateless(final String uri, final Map properties,
+				final StatelessRuleSessionCallback callback) {
+				//...
+				}</programlisting>
+
+			<para>This method needs an implementation of the callback interface,
+				<emphasis>StatelessRuleSessionCallback</emphasis>. This interface
+				defines a method to which an instance of
+				<emphasis>StatelessRuleSession</emphasis>is provided. The developer
+				doesn't need to deal with the release of the resources and the
+				management of technical exceptions.
+			</para>
+
+			<para>Moreover, if you need to specify additional parameters to create
+				the session, you can use the second parameter of the method (named
+				properties and which is a map).</para>
+
+			<programlisting>public interface StatelessRuleSessionCallback {
+				Object execute(StatelessRuleSession session)
+				throws InvalidRuleSessionException, RemoteException;
+				}</programlisting>
+
+			<para>Here is a sample of use:</para>
+
+			<programlisting>List inputObjects=...;
+				List outputObjects=getTemplate().executeStateless("ruleBindUri",null,
+				new StatelessRuleSessionCallback() {
+				public Object execute(StatelessRuleSession session)
+				throws InvalidRuleSessionException, RemoteException {
+				return session.executeRules(inputObjects);
+				}
+				});</programlisting>
+
+			<para>The JSR94 support uses the same features to execute rules in a
+				stateful mode. Here is the dedicated executing method.</para>
+
+			<programlisting>public Object executeStateful(final String uri, final Map properties,
+				final StatefulRuleSessionCallback callback) {
+				//...
+				}</programlisting>
+
+			<para>This method needs an implementation of the callback interface,
+				<emphasis>StatefulRuleSessionCallback</emphasis>. This interface defines
+				a method to which an instance of
+				<emphasis>StatefulRuleSession</emphasis>is provided. As for stateless
+				sessions, the developer doesn't need to deal with the release of the
+				resources and the management of technical exception.
+			</para>
+
+			<para>Moreover, if you need to specify additional parameters to create
+				the session, you can use the second parameter of the method (named
+				properties and which is a map).</para>
+
+			<programlisting>public interface StatefulRuleSessionCallback {
+				Object execute(StatefulRuleSession session)
+				throws InvalidRuleSessionException, InvalidHandleException, RemoteException;
+				}</programlisting>
+
+			<para>Here is a sample of use:</para>
+
+			<programlisting>List inputObjects=...;
+				List outputObjects=getTemplate().executeStateful("ruleBindUri",null,
+				new StatefulRuleSessionCallback() {
+				public Object execute(StatelessRuleSession session)
+				throws InvalidRuleSessionException, RemoteException {
+				statefulRuleSession.addObjects(inputs);
+				statefulRuleSession.executeRules();
+				return statefulRuleSession.getObjects();
+				}
+				});</programlisting>
+		</sect2>
+	</sect1>
+
+	<sect1>
+		<title>Configuration with different engines</title>
+
+		<para>This section will describe the way to configure different rule
+			engines with Spring using the JSR 94 support. This section describes the
+			configuration of the following rule engines:</para>
+
+		<itemizedlist>
+			<listitem>
+				<para>Ilog JRules. See
+					<ulink
+						url="http://www.ilog.com/products/jrules/">http://www.ilog.com/products/jrules/</ulink>.
+				</para>
+			</listitem>
+
+			<listitem>
+				<para>Jess. See
+					<ulink
+						url="http://herzberg.ca.sandia.gov/jess/">http://herzberg.ca.sandia.gov/jess/</ulink>.
+				</para>
+			</listitem>
+
+			<listitem>
+				<para>Drools. See
+					<ulink
+						url="http://drools.org/">http://drools.org/</ulink>.
+				</para>
+			</listitem>
+		</itemizedlist>
+
+		<sect2>
+			<title>JRules</title>
+
+			<para>With JSR94, you can only access rules configured in an embedded
+				rule engine. At the time of writing, JRules 5.0 doesn't provide an
+				implementation of JSR94 to execute and administer rules deployed in an
+				BRES (Business Rule Engine Server).</para>
+
+			<para>
+				<emphasis>Important note</emphasis>: To use the BRES with Spring,
+				you need to make your own integration code direclty based on the JRules
+				APIs.
+			</para>
+
+			<para>Firstly you need to configure the JSR94 provider specific to
+				JRules. The name of the class for JRules is
+				<emphasis>ilog.rules.server.jsr94.IlrRuleServiceProvider</emphasis>.
+				There is no need to define specific parameters for the RuleRuntime and
+				RuleAdministrator beans.
+			</para>
+
+			<programlisting>&lt;bean id="ruleServiceProvider"
+				class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean"&gt;
+				&lt;property name="provider"&gt;&lt;value&gt;http://www.ilog.com&lt;/value&gt;&lt;/property&gt;
+				&lt;property name="providerClass"&gt;
+				&lt;value&gt;ilog.rules.server.jsr94.IlrRuleServiceProvider&lt;/value&gt;
+				&lt;/property&gt;
+				&lt;/bean&gt;
+
+				&lt;bean id="ruleRuntime" class="org.springmodules.jsr94.factory.RuleRuntimeFactoryBean"&gt;
+				&lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;
+
+				&lt;bean id="ruleAdministrator"
+				class="org.springmodules.jsr94.factory.RuleAdministratorFactoryBean"&gt;
+				&lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>Then you need to configure the different rulesets for the embedded
+				rule engine. In order to do this, the DefaultRuleSource can be used. You
+				need to inject the instances of RuleRuntime and RuleAdministrator,
+				specifiy the source of the ruleset (an irl file in the case of JRule and
+				the binding uri for this ruleset.</para>
+
+			<para>
+				<emphasis>Note</emphasis>: The language to write JRules' ruleset
+				is IRL (Ilog Rule Language). This language is similar to Java and
+				introduce specific keyworks for rules.
+			</para>
+
+			<para>Endly, you need to configure specific properties for
+				JRules:</para>
+
+			<itemizedlist>
+				<listitem>
+					<para>IlrName: This key describes the internal name of the
+						configured ruleset.</para>
+				</listitem>
+
+				<listitem>
+					<para>IlrRulesInILR: This key specifies that the ruleset of the
+						configured file is written in IRL.</para>
+				</listitem>
+			</itemizedlist>
+
+			<programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
+				&lt;property name="ruleRuntime"&gt;&lt;ref local="ruleRuntime"/&gt;&lt;/property&gt;
+				&lt;property name="ruleAdministrator"&gt;&lt;ref local="ruleAdministrator"/&gt;&lt;/property&gt;
+				&lt;property name="source"&gt;&lt;value&gt;/cars_rules.irl&lt;/value&gt;&lt;/property&gt;
+				&lt;property name="bindUri"&gt;&lt;value&gt;cars&lt;/value&gt;&lt;/property&gt;
+				&lt;property name="rulesetProperties"&gt;
+				&lt;map&gt;
+				&lt;entry key="IlrName"&gt;&lt;value&gt;cars_rules&lt;/value&gt;&lt;/entry&gt;
+				&lt;entry key="IlrRulesInILR"&gt;&lt;value&gt;true&lt;/value&gt;&lt;/entry&gt;
+				&lt;/map&gt;
+				&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+		</sect2>
+
+		<sect2>
+			<title>Jess</title>
+
+			<para>The reference implementation of the JSR94 specification is a
+				wrapper for the Jess rule engine. We have used the samples provided in
+				the specification to describe the configuration of this rule
+				engine.</para>
+
+			<para>Firstly you need to configure the RuleServiceProvider,
+				RuleAdministrator and RuleRuntime abstractions as beans in
+				Spring.</para>
+
+			<programlisting>&lt;bean id="ruleServiceProvider"
+				class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean"&gt;
+				&lt;property name="provider"&gt;&lt;value&gt;org.jcp.jsr94.jess&lt;/value&gt;&lt;/property&gt;
+				&lt;property name="providerClass"&gt;
+				&lt;value&gt;org.jcp.jsr94.jess.RuleServiceProviderImpl&lt;/value&gt;
+				&lt;/property&gt;
+				&lt;/bean&gt;
+
+				&lt;bean id="ruleRuntime"
+				class="org.springmodules.jsr94.factory.RuleRuntimeFactoryBean"&gt;
+				&lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;
+
+				&lt;bean id="ruleAdministrator"
+				class="org.springmodules.jsr94.factory.RuleAdministratorFactoryBean"&gt;
+				&lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>Then you need to configure rules in Spring using the JSR94
+				support.</para>
+
+			<programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
+				&lt;property name="ruleRuntime"&gt;&lt;ref local="ruleRuntime"/&gt;&lt;/property&gt;
+				&lt;property name="ruleAdministrator"&gt;&lt;ref local="ruleAdministrator"/&gt;&lt;/property&gt;
+				&lt;property name="source"&gt;&lt;value&gt;/org/jcp/jsr94/tck/tck_res_1.xml&lt;/value&gt;&lt;/property&gt;
+				&lt;property name="bindUri"&gt;&lt;value&gt;tck_res_1&lt;/value&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>Jess doesn't need specific additional configuration for the rule
+				source.</para>
+		</sect2>
+
+		<sect2>
+			<title>Drools</title>
+
+			<para>An other interesting rule engine is Drools. It provides too an
+				integration with JSR94. We have used the samples provided in the Drools
+				distribution to describe its configuration.</para>
+
+			<para>Firstly you need to configure the RuleServiceProvider,
+				RuleAdministrator and RuleRuntime abstractions as beans in
+				Spring.</para>
+
+			<programlisting>&lt;bean id="ruleServiceProvider"
+				class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean"&gt;
+				&lt;property name="provider"&gt;&lt;value&gt;http://drools.org/&lt;/value&gt;&lt;/property&gt;
+				&lt;property name="providerClass"&gt;
+				&lt;value&gt;org.drools.jsr94.rules.RuleServiceProviderImpl&lt;/value&gt;
+				&lt;/property&gt;
+				&lt;/bean&gt;
+
+				&lt;bean id="ruleRuntime" class="org.springmodules.jsr94.factory.RuleRuntimeFactoryBean"&gt;
+				&lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;
+
+				&lt;bean id="ruleAdministrator" class="org.springmodules.jsr94.factory.RuleAdministratorFactoryBean"&gt;
+				&lt;property name="serviceProvider"&gt;&lt;ref local="ruleServiceProvider"/&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>Then you need to configure rules in Spring using the JSR94
+				support.</para>
+
+			<programlisting>&lt;bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource"&gt;
+				&lt;property name="ruleRuntime"&gt;&lt;ref local="ruleRuntime"/&gt;&lt;/property&gt;
+				&lt;property name="ruleAdministrator"&gt;&lt;ref local="ruleAdministrator"/&gt;&lt;/property&gt;
+				&lt;property name="source"&gt;&lt;value&gt;/testagent.drl&lt;/value&gt;&lt;/property&gt;
+				&lt;property name="bindUri"&gt;&lt;value&gt;testagent&lt;/value&gt;&lt;/property&gt;
+				&lt;/bean&gt;</programlisting>
+
+			<para>As Jess, Drools doesn't need specific additional configuration for
+				the rule source.</para>
+		</sect2>
+	</sect1>
 </chapter>

@@ -1,5 +1,5 @@
-<?xml version="1.0"?>      
+<?xml version="1.0"?>
 <module id="interfaces" version="1.0.0">
-  <service-point id="SampleService" interface="org.springmodules.samples.hivemind.service.ISampleService"/>
-  <service-point id="SampleDao" interface="org.springmodules.samples.hivemind.dao.ISampleDao"/>
+	<service-point id="SampleService" interface="org.springmodules.samples.hivemind.service.ISampleService"/>
+	<service-point id="SampleDao" interface="org.springmodules.samples.hivemind.dao.ISampleDao"/>
 </module>

@@ -1,10 +1,12 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94.support;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.jsr94.rulesource.RuleSource;
+
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * @author janm
@@ -25,9 +27,10 @@ public abstract class Jsr94Accessor implements InitializingBean {
 	}
 
 	/**
-	 * Gets the value of ruleSource 
-	 * @return Value of ruleSource.
-	 */
+		 * Gets the value of ruleSource
+		 *
+		 * @return Value of ruleSource.
+		 */
 	public final RuleSource getRuleSource() {
 		return ruleSource;
 	}

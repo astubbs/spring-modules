@@ -1,16 +1,16 @@
 <preface id="preface">
-    <title>Preface</title>
-    <para>
-        This document provides a reference guide to Spring Modules' features.
-        Since this document is still a work-in-progress, if you have any
-        requests or comments, please post them on the user mailing list or
+	<title>Preface</title>
+	<para>
+		This document provides a reference guide to Spring Modules' features.
+		Since this document is still a work-in-progress, if you have any
+		requests or comments, please post them on the user mailing list or
 		on the forum at the java.net project page:
-        <ulink url="https://springmodules.dev.java.net/"/> 
-    </para>
-    <para>
-        Before we go on, a few words of gratitude: Chris Bauer (of the
-        Hibernate team) prepared and adapted the DocBook-XSL software in
-		order  to be able to create Hibernate's reference guide, also allowing
-        us to create this one.
-    </para>
+		<ulink url="https://springmodules.dev.java.net/"/>
+	</para>
+	<para>
+		Before we go on, a few words of gratitude: Chris Bauer (of the
+		Hibernate team) prepared and adapted the DocBook-XSL software in
+		order to be able to create Hibernate's reference guide, also allowing
+		us to create this one.
+	</para>
 </preface>

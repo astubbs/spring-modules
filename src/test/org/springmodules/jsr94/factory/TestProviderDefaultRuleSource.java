@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94.factory;
 
 import javax.rules.RuleExecutionSetNotFoundException;
@@ -8,8 +9,9 @@ import javax.rules.RuleRuntime;
 import javax.rules.StatelessRuleSession;
 import javax.rules.admin.RuleAdministrator;
 
-import org.springframework.core.io.ClassPathResource;
 import org.springmodules.jsr94.rulesource.DefaultRuleSource;
+
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * This class tests DefaultRuleSource instantiation and execution using DefaultRuleSource
@@ -32,15 +34,17 @@ import org.springmodules.jsr94.rulesource.DefaultRuleSource;
  * @see org.springmodules.jsr94.factory.TestRuntimeAndAdministratorDefaultRuleSource
  * @author janm
  */
-public class TestProviderDefaultRuleSource  extends AbstractDefaultRuleSourceTestCase {
-	
+public class TestProviderDefaultRuleSource extends AbstractDefaultRuleSourceTestCase {
+
 	private RuleAdministrator ruleAdministrator;
+
 	private RuleRuntime ruleRuntime;
 
 	/**
-	 * Create new instance of TestDefaultRuleSource
-	 * @throws Exception If anything goes wrong
-	 */
+		 * Create new instance of TestDefaultRuleSource
+		 *
+		 * @throws Exception If anything goes wrong
+		 */
 	public TestProviderDefaultRuleSource() throws Exception {
 		RuleRuntimeFactoryBean ruleRuntimeFactoryBean = new RuleRuntimeFactoryBean();
 		ruleRuntimeFactoryBean.setServiceProvider(getProvider());
@@ -48,11 +52,11 @@ public class TestProviderDefaultRuleSource  extends AbstractDefaultRuleSourceTes
 		RuleAdministratorFactoryBean ruleAdministratorFactoryBean = new RuleAdministratorFactoryBean();
 		ruleAdministratorFactoryBean.setServiceProvider(getProvider());
 		ruleAdministratorFactoryBean.afterPropertiesSet();
-		
-		ruleAdministrator = (RuleAdministrator)ruleAdministratorFactoryBean.getObject();
-		ruleRuntime = (RuleRuntime)ruleRuntimeFactoryBean.getObject();
+
+		ruleAdministrator = (RuleAdministrator) ruleAdministratorFactoryBean.getObject();
+		ruleRuntime = (RuleRuntime) ruleRuntimeFactoryBean.getObject();
 	}
-	
+
 	/**
 	 * Tests the getObject() and afterPropertiesSet() methods
 	 */
@@ -63,21 +67,24 @@ public class TestProviderDefaultRuleSource  extends AbstractDefaultRuleSourceTes
 		try {
 			source.afterPropertiesSet();
 			fail("ruleServiceProvider, bindUri and source not set");
-		} catch (IllegalArgumentException ex) {
+		}
+		catch (IllegalArgumentException ex) {
 			// expected
 		}
 		source.setBindUri(BIND_URI);
 		try {
 			source.afterPropertiesSet();
 			fail("ruleAdministrator, ruleRuntime and source not set");
-		} catch (IllegalArgumentException ex) {
+		}
+		catch (IllegalArgumentException ex) {
 			// expected
 		}
 		source.setSource(new ClassPathResource(RULES_RESOURCE));
 		try {
 			source.afterPropertiesSet();
 			fail("ruleAdministrator, ruleRuntime not set");
-		} catch (IllegalArgumentException ex) {
+		}
+		catch (IllegalArgumentException ex) {
 			// expected
 		}
 
@@ -86,7 +93,8 @@ public class TestProviderDefaultRuleSource  extends AbstractDefaultRuleSourceTes
 		try {
 			source.afterPropertiesSet();
 			fail("ruleServiceProvider AND ruleAdministrator set");
-		} catch (IllegalArgumentException ex) {
+		}
+		catch (IllegalArgumentException ex) {
 			// expected
 		}
 		source.setRuleAdministrator(null);
@@ -94,29 +102,32 @@ public class TestProviderDefaultRuleSource  extends AbstractDefaultRuleSourceTes
 		try {
 			source.afterPropertiesSet();
 			fail("ruleServiceProvider AND ruleRuntime set");
-		} catch (IllegalArgumentException ex) {
+		}
+		catch (IllegalArgumentException ex) {
 			// expected
 		}
 		source.setRuleAdministrator(ruleAdministrator);
 		try {
 			source.afterPropertiesSet();
 			fail("ruleServiceProvider AND ruleRuntime and ruleAdministrator set");
-		} catch (IllegalArgumentException ex) {
+		}
+		catch (IllegalArgumentException ex) {
 			// expected
 		}
-		
+
 		source.setRuleAdministrator(null);
 		source.setRuleRuntime(null);
 		source.afterPropertiesSet();
-		
+
 		try {
 			source.createSession(BIND_URI + "-foo", null, RuleRuntime.STATELESS_SESSION_TYPE);
 			fail("Ruleset at uri " + BIND_URI + "-foo exists!");
-		} catch (RuleExecutionSetNotFoundException ex) {
+		}
+		catch (RuleExecutionSetNotFoundException ex) {
 			// expected
 		}
-		
-		StatelessRuleSession session = (StatelessRuleSession)source.createSession(BIND_URI, null, RuleRuntime.STATELESS_SESSION_TYPE);
+
+		StatelessRuleSession session = (StatelessRuleSession) source.createSession(BIND_URI, null, RuleRuntime.STATELESS_SESSION_TYPE);
 		assertNotNull("Created session is null", session);
 		session.release();
 	}
@@ -131,5 +142,5 @@ public class TestProviderDefaultRuleSource  extends AbstractDefaultRuleSourceTes
 		ruleSource.setRuleServiceProvider(getProvider());
 		ruleSource.setRuleRuntime(null);
 	}
-		
+
 }

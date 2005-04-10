@@ -1,0 +1,138 @@
+/*
+* Copyright 2002-2004 the original author or authors.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*      http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+package org.springmodules.workflow.osworkflow.configuration;
+
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import com.opensymphony.workflow.FactoryException;
+import com.opensymphony.workflow.InvalidWorkflowDescriptorException;
+import com.opensymphony.workflow.config.DefaultConfiguration;
+import com.opensymphony.workflow.loader.WorkflowDescriptor;
+import com.opensymphony.workflow.loader.WorkflowLoader;
+import com.opensymphony.workflow.spi.memory.MemoryWorkflowStore;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.xml.sax.SAXException;
+
+import org.springframework.beans.FatalBeanException;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
+
+/**
+ * @author Rob Harrop
+ */
+public class ConfigurationBean extends DefaultConfiguration {
+
+	/**
+	 * Name of the default persistence class used by instances of this
+	 * class.
+	 */
+	private static final String DEFAULT_PERSISTENCE_CLASS = MemoryWorkflowStore.class.getName();
+
+	/**
+	 * <code>Log</code> instance for this class.
+	 */
+	private static final Log logger = LogFactory.getLog(ConfigurationBean.class);
+
+	/**
+	 * Spring <code>ResourceLoader</code> used to load workflow <code>Resource</code>s.
+	 */
+	protected ResourceLoader resourceLoader = new DefaultResourceLoader(getClass().getClassLoader());
+
+	/**
+	 * Stores any arguments that are to be passed to
+	 */
+	private Map persistenceArgs = new HashMap();
+
+	/**
+	 * Stores loaded workflows
+	 */
+	private Map workflows = new HashMap();
+
+	/**
+	 * Creates a new <code>ConfigurationBean</code> with <code>MemoryWorkflowStore</code>
+	 * as the persistence class.
+	 */
+	public ConfigurationBean() {
+		setPersistence(MemoryWorkflowStore.class.getName());
+	}
+
+	public Map getPersistenceArgs() {
+		return this.persistenceArgs;
+	}
+
+	public void setPersistenceArgs(Map persistenceArgs) {
+		Assert.notNull(persistenceArgs, "persistenceArgs cannot be null");
+		this.persistenceArgs = persistenceArgs;
+	}
+
+	public void setWorkflowLocations(Properties workflowLocations) {
+		Assert.notNull(workflowLocations, "workflowLocations cannot be null");
+
+		Enumeration workflowNames = workflowLocations.propertyNames();
+		while (workflowNames.hasMoreElements()) {
+			String name = (String) workflowNames.nextElement();
+			String resourceLocation = workflowLocations.getProperty(name);
+
+			if (logger.isInfoEnabled()) {
+				logger.info("Loading workflow [" + name + "] from [" + resourceLocation + "].");
+			}
+
+			workflows.put(name, loadWorkflowDescriptor(resourceLocation, name));
+		}
+
+	}
+
+	public WorkflowDescriptor getWorkflow(String name) throws FactoryException {
+		return (WorkflowDescriptor) this.workflows.get(name);
+	}
+
+	public String[] getWorkflowNames() throws FactoryException {
+		Set names = this.workflows.keySet();
+		return (String[]) names.toArray(new String[names.size()]);
+	}
+
+	public boolean removeWorkflow(String string) throws FactoryException {
+		throw new UnsupportedOperationException("Operation removeWorkflow(String) not supported.");
+	}
+
+	private WorkflowDescriptor loadWorkflowDescriptor(String resourceLocation, String name) {
+		Resource resource = this.resourceLoader.getResource(resourceLocation);
+		WorkflowDescriptor workflowDescriptor = null;
+		try {
+			workflowDescriptor = WorkflowLoader.load(resource.getURL());
+		}
+		catch (IOException ex) {
+			throw new FatalBeanException("Unable to load workflow resource [" + resourceLocation + "].", ex);
+		}
+		catch (InvalidWorkflowDescriptorException ex) {
+			throw new FatalBeanException("Descriptor for workflow [" + name + "] in [" + resourceLocation + "] is invalid.", ex);
+		}
+		catch (SAXException ex) {
+			throw new FatalBeanException("XML in descriptorfor workflow [" + name + "] in [" + resourceLocation + "] is invalid.", ex);
+		}
+		return workflowDescriptor;
+	}
+
+}

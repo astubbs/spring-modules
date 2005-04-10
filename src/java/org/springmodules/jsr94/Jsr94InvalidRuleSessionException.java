@@ -1,13 +1,14 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94;
 
 /**
  * Maps checked InvalidRuleSessionException to unchecked Jsr94InvalidRuleSessionException
- * 
- * @see javax.rules.InvalidRuleSessionException
+ *
  * @author janm
+ * @see javax.rules.InvalidRuleSessionException
  */
 public class Jsr94InvalidRuleSessionException extends Jsr94Exception {
 

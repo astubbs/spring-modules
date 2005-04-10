@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94.support;
 
 import java.rmi.RemoteException;
@@ -10,8 +11,9 @@ import javax.rules.StatelessRuleSession;
 
 /**
  * Implement this interface to execute methods on a StatelessRuleSession.
- * @see StatelessRuleSession
+ *
  * @author janm
+ * @see StatelessRuleSession
  */
 public interface StatelessRuleSessionCallback {
 

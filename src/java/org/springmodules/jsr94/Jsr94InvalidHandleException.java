@@ -1,13 +1,14 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94;
 
 /**
  * Maps checked InvalidHandleException to Jsr94InvalidHandleException
- * 
- * @see javax.rules.InvalidHandleException
+ *
  * @author janm
+ * @see javax.rules.InvalidHandleException
  */
 public class Jsr94InvalidHandleException extends Jsr94Exception {
 

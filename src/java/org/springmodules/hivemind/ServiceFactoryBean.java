@@ -21,14 +21,24 @@ import org.apache.hivemind.Registry;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContextException;
+import org.springframework.util.Assert;
 
 /**
- * <code>FactoryBean</code> implementation that acts as an adapter to a
- * HiveMind <code>Registry</code> allowing for any HiveMind service to
- * be exposed as a Spring bean.
- * 
+ * <code>FactoryBean</code> implementation that acts as an adapter to a HiveMind <code>Registry</code>
+ * allowing for any HiveMind service to be exposed as a Spring bean.
+ * <p/>
+ * Both the <code>serviceInterface</code> and <code>registry</code> properties are required. By default,
+ * services are retreived from the HiveMind <code>Registry</code> using the service interface only.
+ * If a value is supplied for the <code>serviceName</code> property, then both the service interface
+ * and service name will be used when looking for the service in HiveMind.
+ *
  * @author Rob Harrop
+ * @author Thierry Templier
  * @see Registry
+ * @see RegistryFactoryBean
+ * @see #setServiceInterface(Class)
+ * @see #setServiceName(String)
+ * @see #setRegistry(org.apache.hivemind.Registry)
  */
 public class ServiceFactoryBean implements FactoryBean, InitializingBean {
 
@@ -47,22 +57,30 @@ public class ServiceFactoryBean implements FactoryBean, InitializingBean {
 	 */
 	private Class serviceInterface;
 
+	/**
+	 * Sets the interface of the HiveMind service to be accessed.
+	 */
 	public void setServiceInterface(Class serviceInterface) {
+		Assert.isTrue(serviceInterface.isInterface(), "Cannot use a Class for the service interface");
 		this.serviceInterface = serviceInterface;
 	}
 
+	/**
+	 * Sets the service name of the HiveMind service to be accessed.
+	 */
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
 	}
 
+	/**
+	 * Sets the HiveMind <code>Registry</code> used to load services.
+	 */
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
 	}
 
 	/**
 	 * Gets the Hivemind service from the <code>Registry</code>.
-	 * 
-	 * @return the service
 	 */
 	public Object getObject() throws Exception {
 		return getServiceObject();
@@ -78,10 +96,8 @@ public class ServiceFactoryBean implements FactoryBean, InitializingBean {
 	}
 
 	/**
-	 * Checks if the registry and serviceInterface properties are
-	 * specified. If no corresponding service is configured in the
-	 * Hivemind <code>Registry</code>, an <code>ApplicationContextException</code>
-	 * is thrown.
+	 * Checks if the registry and serviceInterface properties are specified. If no corresponding service is
+	 * configured in the Hivemind <code>Registry</code>, an <code>ApplicationContextException</code> is thrown.
 	 */
 	public void afterPropertiesSet() throws Exception {
 		if (registry == null) {
@@ -112,8 +128,6 @@ public class ServiceFactoryBean implements FactoryBean, InitializingBean {
 
 	/**
 	 * Get the Hivemind service from the <code>Registry</code>.
-	 * 
-	 * @return the service 
 	 */
 	private Object getServiceObject() {
 		if (serviceName == null) {

@@ -1,16 +1,16 @@
-<?xml version="1.0"?>      
+<?xml version="1.0"?>
 <module id="implementations" version="1.0.0">
-  <implementation service-id="interfaces.SampleService">
-    <invoke-factory model="primitive">
-      <construct class="org.springmodules.samples.hivemind.service.SampleService">
-        <set-service property="dao" service-id="interfaces.SampleDao"/>
-      </construct>
-    </invoke-factory>
-  </implementation>
+	<implementation service-id="interfaces.SampleService">
+		<invoke-factory model="primitive">
+			<construct class="org.springmodules.samples.hivemind.service.SampleService">
+				<set-service property="dao" service-id="interfaces.SampleDao"/>
+			</construct>
+		</invoke-factory>
+	</implementation>
 
-  <implementation service-id="interfaces.SampleDao">
-    <create-instance class="org.springmodules.samples.hivemind.dao.SampleDao" model="primitive">
-        <!--set property="configurationFile">test.xml</set-->
-    </create-instance>
-  </implementation>
+	<implementation service-id="interfaces.SampleDao">
+		<create-instance class="org.springmodules.samples.hivemind.dao.SampleDao" model="primitive">
+			<!--set property="configurationFile">test.xml</set-->
+		</create-instance>
+	</implementation>
 </module>

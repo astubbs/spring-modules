@@ -1,8 +1,7 @@
+
 package org.springmodules.jsr94.factory;
 
 import javax.rules.RuleRuntime;
-
-import org.springmodules.jsr94.factory.RuleRuntimeFactoryBean;
 
 /**
  * @author janm
@@ -18,13 +17,14 @@ public class TestRuleRuntimeFactoryBean extends AbstractRuleServiceProviderTestC
 		try {
 			bean.afterPropertiesSet();
 			fail("serviceProvider not set");
-		} catch (IllegalArgumentException ex) {
+		}
+		catch (IllegalArgumentException ex) {
 			// expected
 		}
 		bean.setServiceProvider(getProvider());
 		bean.afterPropertiesSet();
-		
-		RuleRuntime runtime = (RuleRuntime)bean.getObject();
+
+		RuleRuntime runtime = (RuleRuntime) bean.getObject();
 		assertNotNull("Created RuleRuntime is null", runtime);
 	}
 }

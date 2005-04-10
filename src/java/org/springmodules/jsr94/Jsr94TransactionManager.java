@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94;
 
 import java.rmi.RemoteException;
@@ -8,13 +9,14 @@ import java.rmi.RemoteException;
 import javax.rules.InvalidRuleSessionException;
 import javax.rules.StatefulRuleSession;
 
+import org.springmodules.jsr94.rulesource.RuleSource;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springmodules.jsr94.rulesource.RuleSource;
 
 /**
  * Manages JSR94 transactions for stateful sessions. Stateless sessions do not need transaction
@@ -28,48 +30,55 @@ public class Jsr94TransactionManager extends AbstractPlatformTransactionManager 
 	 * The serialVersionUID
 	 */
 	private static final long serialVersionUID = 3905803076144084279L;
-	
+
 	/**
 	 * The ruleSource
 	 */
 	private RuleSource ruleSource;
 
 	/**
-	 * Jsr94TransactionObject
-	 * @author janm
-	 */
+		 * Jsr94TransactionObject
+		 *
+		 * @author janm
+		 */
 	static class Jsr94TransactionObject {
+
 		private StatefulRuleSession session;
+
 		private boolean hasTransaction;
 
 		/**
-		 * Gets the value of session 
-		 * @return Value of session.
-		 */
+				 * Gets the value of session
+				 *
+				 * @return Value of session.
+				 */
 		public final StatefulRuleSession getSession() {
 			return session;
 		}
 
 		/**
-		 * Sets new value for field session
-		 * @param session The session to set.
-		 */
+				 * Sets new value for field session
+				 *
+				 * @param session The session to set.
+				 */
 		public final void setSession(StatefulRuleSession session) {
 			this.session = session;
 		}
 
 		/**
-		 * Gets the value of hasTransaction 
-		 * @return Value of hasTransaction.
-		 */
+				 * Gets the value of hasTransaction
+				 *
+				 * @return Value of hasTransaction.
+				 */
 		public final boolean hasTransaction() {
 			return hasTransaction;
 		}
 
 		/**
-		 * Sets new value for field hasTransaction
-		 * @param hasTransaction The hasTransaction to set.
-		 */
+				 * Sets new value for field hasTransaction
+				 *
+				 * @param hasTransaction The hasTransaction to set.
+				 */
 		public final void setHasTransaction(boolean hasTransaction) {
 			this.hasTransaction = hasTransaction;
 		}
@@ -77,9 +86,10 @@ public class Jsr94TransactionManager extends AbstractPlatformTransactionManager 
 	}
 
 	/**
-	 * Releases the session 
-	 * @throws TransactionException If the session cannot be released
-	 */
+		 * Releases the session
+		 *
+		 * @throws TransactionException If the session cannot be released
+		 */
 	private void release() throws TransactionException {
 		try {
 			if (TransactionSynchronizationManager.hasResource(ruleSource)) {
@@ -88,9 +98,11 @@ public class Jsr94TransactionManager extends AbstractPlatformTransactionManager 
 				session.release();
 				logger.debug("Session released");
 			}
-		} catch (InvalidRuleSessionException ex) {
+		}
+		catch (InvalidRuleSessionException ex) {
 			throw new Jsr94TransactionException(ex);
-		} catch (RemoteException ex) {
+		}
+		catch (RemoteException ex) {
 			throw new Jsr94TransactionException(ex);
 		}
 	}
@@ -158,9 +170,10 @@ public class Jsr94TransactionManager extends AbstractPlatformTransactionManager 
 	}
 
 	/**
-	 * Sets new value for field ruleSource
-	 * @param ruleSource The ruleSource to set.
-	 */
+		 * Sets new value for field ruleSource
+		 *
+		 * @param ruleSource The ruleSource to set.
+		 */
 	public final void setRuleSource(RuleSource ruleSource) {
 		this.ruleSource = ruleSource;
 	}

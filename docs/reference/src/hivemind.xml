@@ -1,84 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="hivemind">
-  <title>Hivemind</title>
+	<title>Hivemind</title>
 
-  <sect1>
-    <title>Introduction</title>
+	<sect1>
+		<title>Introduction</title>
 
-    <para>Hivemind is an other ligthweight container which works around the
-    concept of services.</para>
-    <para>TODO: Describe the concepts of Hivemind in more details.</para>
-  </sect1>
+		<para>Hivemind is an other ligthweight container which works around the
+			concept of services.</para>
+		<para>TODO: Describe the concepts of Hivemind in more details.</para>
+	</sect1>
 
-  <sect1>
-    <title>Configure an Hivemind registry</title>
+	<sect1>
+		<title>Configure an Hivemind registry</title>
 
-    <para>Firstly you need to configure the Hivemind registry which is the
-    factory to get service instances.</para>
+		<para>Firstly you need to configure the Hivemind registry which is the
+			factory to get service instances.</para>
 
-    <para>There are two ways configure this registry with the
-    RegistryFactoryBean class:</para>
+		<para>There are two ways configure this registry with the
+			RegistryFactoryBean class:</para>
 
-    <itemizedlist>
-      <listitem>
-        <para>No configuration location is specified. In this case, Hivemind
-        looks for an xml file named hivemodule.xml in the META-INF
-        directory.</para>
-      </listitem>
+		<itemizedlist>
+			<listitem>
+				<para>No configuration location is specified. In this case, Hivemind
+					looks for an xml file named hivemodule.xml in the META-INF
+					directory.</para>
+			</listitem>
 
-      <listitem>
-        <para>One or several configuration locations are specified. In this,
-        Hivemind uses these files to configure its registry instance.</para>
-      </listitem>
-    </itemizedlist>
+			<listitem>
+				<para>One or several configuration locations are specified. In this,
+					Hivemind uses these files to configure its registry instance.</para>
+			</listitem>
+		</itemizedlist>
 
-    <para>Here is an sample of a configuration of a Hivemind registry:</para>
+		<para>Here is an sample of a configuration of a Hivemind registry:</para>
 
-    <programlisting>&lt;bean id="hivemindRegistry" class="org.springmodules.hivemind.RegistryFactoryBean"&gt;
-  &lt;property name="configLocations"&gt;
-    &lt;value&gt;configuration.xml&lt;/value&gt;
-    &lt;!-- value&gt;classpath:/configuration.xml&lt;/value --&gt;
-    &lt;!--value&gt;file:/c:/applications/springmodules/xml/configuration.xml&lt;/value--&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;</programlisting>
+		<programlisting>&lt;bean id="hivemindRegistry" class="org.springmodules.hivemind.RegistryFactoryBean"&gt;
+			&lt;property name="configLocations"&gt;
+			&lt;value&gt;configuration.xml&lt;/value&gt;
+			&lt;!-- value&gt;classpath:/configuration.xml&lt;/value --&gt;
+			&lt;!--value&gt;file:/c:/applications/springmodules/xml/configuration.xml&lt;/value--&gt;
+			&lt;/property&gt;
+			&lt;/bean&gt;</programlisting>
 
-    <para><emphasis>Important note</emphasis>: As the configuration locations
-    are specified in the Spring context, you can use its facilites to manage
-    io resources (classpath, urls). Moreover, you can specify multiple
-    locations for a same RegistryFactoryBean.</para>
-  </sect1>
+		<para>
+			<emphasis>Important note</emphasis>: As the configuration locations
+			are specified in the Spring context, you can use its facilites to manage
+			io resources (classpath, urls). Moreover, you can specify multiple
+			locations for a same RegistryFactoryBean.
+		</para>
+	</sect1>
 
-  <sect1>
-    <title>Configure Hivemind services</title>
+	<sect1>
+		<title>Configure Hivemind services</title>
 
-    <para>Once that the Hivemind registry is configured, you can configure
-    services that you want to use in Spring. In this case, Spring delegates to
-    the Hivemind registry to get the configured service.</para>
+		<para>Once that the Hivemind registry is configured, you can configure
+			services that you want to use in Spring. In this case, Spring delegates to
+			the Hivemind registry to get the configured service.</para>
 
-    <para>As Hivemind needs to know the service interface and its name, the
-    ServiceFactoryBean class needs to be configured with the
-    <emphasis>serviceInterface</emphasis> and <emphasis>serviceName</emphasis>
-    properties.</para>
+		<para>As Hivemind needs to know the service interface and its name, the
+			ServiceFactoryBean class needs to be configured with the
+			<emphasis>serviceInterface</emphasis>and
+			<emphasis>serviceName</emphasis>
+			properties.
+		</para>
 
-    <para>Here is an sample of a configuration of a Hivemind service in
-    Spring:</para>
+		<para>Here is an sample of a configuration of a Hivemind service in
+			Spring:</para>
 
-    <programlisting>&lt;bean id="hivemindRegistry" class="org.springmodules.hivemind.RegistryFactoryBean"&gt;
-  &lt;property name="configLocations"&gt;
-    &lt;value&gt;configuration.xml&lt;/value&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;
+		<programlisting>&lt;bean id="hivemindRegistry" class="org.springmodules.hivemind.RegistryFactoryBean"&gt;
+			&lt;property name="configLocations"&gt;
+			&lt;value&gt;configuration.xml&lt;/value&gt;
+			&lt;/property&gt;
+			&lt;/bean&gt;
 
-&lt;bean id="hivemindService" class="org.springmodules.hivemind.ServiceFactoryBean"&gt;
-  &lt;property name="registry"&gt;
-    &lt;ref local="hivemindRegistry"/&gt;
-  &lt;/property&gt;
-  &lt;property name="serviceInterface"&gt;
-    &lt;value&gt;org.springmodules.samples.hivemind.service.ISampleService&lt;/value&gt;
-  &lt;/property&gt;
-  &lt;property name="serviceName"&gt;
-    &lt;value&gt;interfaces.SampleService&lt;/value&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-  </sect1>
+			&lt;bean id="hivemindService" class="org.springmodules.hivemind.ServiceFactoryBean"&gt;
+			&lt;property name="registry"&gt;
+			&lt;ref local="hivemindRegistry"/&gt;
+			&lt;/property&gt;
+			&lt;property name="serviceInterface"&gt;
+			&lt;value&gt;org.springmodules.samples.hivemind.service.ISampleService&lt;/value&gt;
+			&lt;/property&gt;
+			&lt;property name="serviceName"&gt;
+			&lt;value&gt;interfaces.SampleService&lt;/value&gt;
+			&lt;/property&gt;
+			&lt;/bean&gt;</programlisting>
+	</sect1>
 </chapter>

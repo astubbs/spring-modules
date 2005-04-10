@@ -25,13 +25,14 @@ import org.apache.commons.logging.LogFactory;
  * @author Thierry Templier
  */
 public class SampleDao implements ISampleDao {
+
 	private String configurationFile;
 
 	private static final Log log = LogFactory.getLog(SampleDao.class);
 
 	public SampleDao() {
-		if( log.isDebugEnabled() ) {
-			System.out.println("Creation of a new instance of SampleDao ("+toString()+")");
+		if (log.isDebugEnabled()) {
+			System.out.println("Creation of a new instance of SampleDao (" + toString() + ")");
 		}
 	}
 
@@ -39,10 +40,10 @@ public class SampleDao implements ISampleDao {
 	 * @see dao.IMonDao#executeDao(java.lang.String)
 	 */
 	public void executeDao(String param) {
-		if( log.isDebugEnabled() ) {
-			System.out.println("The instance of the service is "+toString());
-			System.out.println("The value of configurationFile is "+configurationFile);
-			System.out.println("Execution of the executeService method with the param "+param);
+		if (log.isDebugEnabled()) {
+			System.out.println("The instance of the service is " + toString());
+			System.out.println("The value of configurationFile is " + configurationFile);
+			System.out.println("Execution of the executeService method with the param " + param);
 		}
 	}
 

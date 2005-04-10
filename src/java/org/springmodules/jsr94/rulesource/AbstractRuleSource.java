@@ -1,6 +1,7 @@
 /**
  * JSR-94 support
  */
+
 package org.springmodules.jsr94.rulesource;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import javax.rules.admin.RuleExecutionSetRegisterException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -60,11 +62,12 @@ public abstract class AbstractRuleSource implements RuleSource, InitializingBean
 	protected abstract void registerRuleExecutionSets() throws RuleExecutionSetCreateException, RemoteException, IOException, RuleExecutionSetRegisterException;
 
 	/**
-	 * Subclasses may override this method to perform additional initialization.
-	 * This method is called last in the afterPropertiesSet
-	 * @throws Exception If the additional initialization fails
-	 * @see AbstractRuleSource#afterPropertiesSet()
-	 */
+		 * Subclasses may override this method to perform additional initialization.
+		 * This method is called last in the afterPropertiesSet
+		 *
+		 * @throws Exception If the additional initialization fails
+		 * @see AbstractRuleSource#afterPropertiesSet()
+		 */
 	protected void initRuleSource() throws Exception {
 		// noop
 	}
@@ -97,17 +100,19 @@ public abstract class AbstractRuleSource implements RuleSource, InitializingBean
 	}
 
 	/**
-	 * Sets new value for field ruleAdministrator
-	 * @param ruleAdministrator The ruleAdministrator to set.
-	 */
+		 * Sets new value for field ruleAdministrator
+		 *
+		 * @param ruleAdministrator The ruleAdministrator to set.
+		 */
 	public final void setRuleAdministrator(RuleAdministrator ruleAdministrator) {
 		this.ruleAdministrator = ruleAdministrator;
 	}
 
 	/**
-	 * Sets new value for field ruleRuntime
-	 * @param ruleRuntime The ruleRuntime to set.
-	 */
+		 * Sets new value for field ruleRuntime
+		 *
+		 * @param ruleRuntime The ruleRuntime to set.
+		 */
 	public final void setRuleRuntime(RuleRuntime ruleRuntime) {
 		this.ruleRuntime = ruleRuntime;
 	}

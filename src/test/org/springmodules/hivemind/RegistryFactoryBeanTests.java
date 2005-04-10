@@ -1,15 +1,11 @@
+
 package org.springmodules.hivemind;
 
-import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import junit.framework.TestCase;
-
 import org.apache.hivemind.Registry;
-import org.apache.hivemind.util.URLResource;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -20,26 +16,27 @@ import org.springframework.core.io.UrlResource;
  * @author Thierry Templier
  */
 public class RegistryFactoryBeanTests extends TestCase {
-	public static final String HIVEMODULE_CONFIG_CLASSPATH="org/springmodules/hivemind/hivemodule.xml";
 
-    public void testGetRegistry() throws Exception {
-        RegistryFactoryBean bean = getRegistryFactoryBean();
-        Registry reg = (Registry)bean.getObject();
+	public static final String HIVEMODULE_CONFIG_CLASSPATH = "org/springmodules/hivemind/hivemodule.xml";
 
-        assertNotNull("Registry should not be null", reg);
+	public void testGetRegistry() throws Exception {
+		RegistryFactoryBean bean = getRegistryFactoryBean();
+		Registry reg = (Registry) bean.getObject();
 
-        bean.destroy();
-    }
-
-    public void testRegistryIsSingleton() throws Exception {
-        RegistryFactoryBean bean = getRegistryFactoryBean();
-        Registry reg1 = (Registry)bean.getObject();
-        Registry reg2 = (Registry)bean.getObject();
-
-        assertSame("References do not point to same object", reg1, reg2);
+		assertNotNull("Registry should not be null", reg);
 
 		bean.destroy();
-    }
+	}
+
+	public void testRegistryIsSingleton() throws Exception {
+		RegistryFactoryBean bean = getRegistryFactoryBean();
+		Registry reg1 = (Registry) bean.getObject();
+		Registry reg2 = (Registry) bean.getObject();
+
+		assertSame("References do not point to same object", reg1, reg2);
+
+		bean.destroy();
+	}
 
 	private RegistryFactoryBean getRegistryFactoryBean() throws Exception {
 		RegistryFactoryBean bean = new RegistryFactoryBean();
@@ -49,42 +46,42 @@ public class RegistryFactoryBeanTests extends TestCase {
 
 	public void testRegistryWithConfigLocationClasspath() throws Exception {
 		RegistryFactoryBean bean = getRegistryFactoryBeanFromClasspath(HIVEMODULE_CONFIG_CLASSPATH);
-		Registry reg = (Registry)bean.getObject();
+		Registry reg = (Registry) bean.getObject();
 
-		reg.getService("org.springmodules.hivemind1.FooServiceThree",FooService.class);
-		reg.getService("org.springmodules.hivemind1.FooServiceFour",FooService.class);
+		reg.getService("org.springmodules.hivemind1.FooServiceThree", FooService.class);
+		reg.getService("org.springmodules.hivemind1.FooServiceFour", FooService.class);
 
 		bean.destroy();
 	}
 
 	public void testRegistryWithConfigLocationFile() throws Exception {
-		URL configUrl=getClass().getClassLoader().getResource(HIVEMODULE_CONFIG_CLASSPATH);
-		String configFile=configUrl.getFile();
+		URL configUrl = getClass().getClassLoader().getResource(HIVEMODULE_CONFIG_CLASSPATH);
+		String configFile = configUrl.getFile();
 		RegistryFactoryBean bean = getRegistryFactoryBeanFromFile(configFile);
-		Registry reg = (Registry)bean.getObject();
+		Registry reg = (Registry) bean.getObject();
 
-		reg.getService("org.springmodules.hivemind1.FooServiceThree",FooService.class);
-		reg.getService("org.springmodules.hivemind1.FooServiceFour",FooService.class);
+		reg.getService("org.springmodules.hivemind1.FooServiceThree", FooService.class);
+		reg.getService("org.springmodules.hivemind1.FooServiceFour", FooService.class);
 
 		bean.destroy();
 	}
 
 	public void testRegistryWithConfigLocationUrl() throws Exception {
-		URL configUrl=getClass().getClassLoader().getResource(HIVEMODULE_CONFIG_CLASSPATH);
-		String configFile=configUrl.getFile();
-		RegistryFactoryBean bean = getRegistryFactoryBeanFromUrl("file:"+configFile);
-		Registry reg = (Registry)bean.getObject();
+		URL configUrl = getClass().getClassLoader().getResource(HIVEMODULE_CONFIG_CLASSPATH);
+		String configFile = configUrl.getFile();
+		RegistryFactoryBean bean = getRegistryFactoryBeanFromUrl("file:" + configFile);
+		Registry reg = (Registry) bean.getObject();
 
-		reg.getService("org.springmodules.hivemind1.FooServiceThree",FooService.class);
-		reg.getService("org.springmodules.hivemind1.FooServiceFour",FooService.class);
+		reg.getService("org.springmodules.hivemind1.FooServiceThree", FooService.class);
+		reg.getService("org.springmodules.hivemind1.FooServiceFour", FooService.class);
 
 		bean.destroy();
 	}
 
 	private RegistryFactoryBean getRegistryFactoryBeanFromClasspath(String configLocation) throws Exception {
 		RegistryFactoryBean bean = new RegistryFactoryBean();
-		Resource[] configLocations=new Resource[1];
-		configLocations[0]=new ClassPathResource(configLocation);
+		Resource[] configLocations = new Resource[1];
+		configLocations[0] = new ClassPathResource(configLocation);
 		bean.setConfigLocations(configLocations);
 		bean.afterPropertiesSet();
 		return bean;
@@ -92,8 +89,8 @@ public class RegistryFactoryBeanTests extends TestCase {
 
 	private RegistryFactoryBean getRegistryFactoryBeanFromFile(String configLocation) throws Exception {
 		RegistryFactoryBean bean = new RegistryFactoryBean();
-		Resource[] configLocations=new Resource[1];
-		configLocations[0]=new FileSystemResource(configLocation);
+		Resource[] configLocations = new Resource[1];
+		configLocations[0] = new FileSystemResource(configLocation);
 		bean.setConfigLocations(configLocations);
 		bean.afterPropertiesSet();
 		return bean;
@@ -101,8 +98,8 @@ public class RegistryFactoryBeanTests extends TestCase {
 
 	private RegistryFactoryBean getRegistryFactoryBeanFromUrl(String configLocation) throws Exception {
 		RegistryFactoryBean bean = new RegistryFactoryBean();
-		Resource[] configLocations=new Resource[1];
-		configLocations[0]=new UrlResource(configLocation);
+		Resource[] configLocations = new Resource[1];
+		configLocations[0] = new UrlResource(configLocation);
 		bean.setConfigLocations(configLocations);
 		bean.afterPropertiesSet();
 		return bean;

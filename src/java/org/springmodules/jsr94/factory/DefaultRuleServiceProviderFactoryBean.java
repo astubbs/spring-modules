@@ -1,6 +1,7 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94.factory;
 
 import javax.rules.RuleServiceProvider;
@@ -86,9 +87,10 @@ public class DefaultRuleServiceProviderFactoryBean implements FactoryBean, Initi
 	}
 
 	/**
-	 * Sets new value for field provider
-	 * @param provider The provider to set.
-	 */
+		 * Sets new value for field provider
+		 *
+		 * @param provider The provider to set.
+		 */
 	public final void setProvider(String provider) {
 		this.provider = provider;
 	}

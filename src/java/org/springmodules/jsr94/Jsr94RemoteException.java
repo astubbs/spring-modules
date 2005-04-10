@@ -1,13 +1,14 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94;
 
 /**
  * Maps checked RemoteException to unchecked Jsr94RemoteException
- * 
- * @see java.rmi.RemoteException
+ *
  * @author janm
+ * @see java.rmi.RemoteException
  */
 public class Jsr94RemoteException extends Jsr94Exception {
 

@@ -1,13 +1,14 @@
 /**
  * 
  */
+
 package org.springmodules.jsr94;
 
 /**
- * Maps checked RuleSessionCreateException to unchecked Jsr94Exception 
- * 
- * @see javax.rules.RuleSessionCreateException
+ * Maps checked RuleSessionCreateException to unchecked Jsr94Exception
+ *
  * @author janm
+ * @see javax.rules.RuleSessionCreateException
  */
 public class Jsr94RuleSessionCreateException extends Jsr94Exception {
 

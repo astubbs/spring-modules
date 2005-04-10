@@ -1,8 +1,7 @@
+
 package org.springmodules.jsr94.factory;
 
 import javax.rules.admin.RuleAdministrator;
-
-import org.springmodules.jsr94.factory.RuleAdministratorFactoryBean;
 
 /**
  * @author janm
@@ -18,14 +17,15 @@ public class TestRuleAdministratorFactoryBean extends AbstractRuleServiceProvide
 		try {
 			bean.afterPropertiesSet();
 			fail("serviceProvider not set");
-		} catch (IllegalArgumentException ex) {
+		}
+		catch (IllegalArgumentException ex) {
 			// expected
 		}
 		bean.setServiceProvider(getProvider());
 		bean.afterPropertiesSet();
 
-		RuleAdministrator administrator = (RuleAdministrator)bean.getObject();
+		RuleAdministrator administrator = (RuleAdministrator) bean.getObject();
 		assertNotNull("Created RuleAdministrator is null", administrator);
 	}
-	
+
 }

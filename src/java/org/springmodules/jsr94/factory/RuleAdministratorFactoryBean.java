@@ -1,3 +1,4 @@
+
 package org.springmodules.jsr94.factory;
 
 import javax.rules.RuleServiceProvider;
@@ -32,9 +33,10 @@ public class RuleAdministratorFactoryBean extends AbstractInitializingFactoryBea
 	}
 
 	/**
-	 * Sets new value for field serviceProvider
-	 * @param serviceProvider The serviceProvider to set.
-	 */
+		 * Sets new value for field serviceProvider
+		 *
+		 * @param serviceProvider The serviceProvider to set.
+		 */
 	public final void setServiceProvider(RuleServiceProvider serviceProvider) {
 		this.serviceProvider = serviceProvider;
 	}
