@@ -24,7 +24,7 @@ import org.springframework.core.io.Resource;
  *
  * @author janm
  */
-public class TestMockRuntimeAndAdministratorRuleSource extends TestCase {
+public class MockRuntimeAndAdministratorRuleSourceTests extends TestCase {
 
 	private MockControl controlRuleExecutionSetProvider;
 

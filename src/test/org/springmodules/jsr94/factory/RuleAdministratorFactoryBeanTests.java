@@ -1,19 +1,19 @@
 
 package org.springmodules.jsr94.factory;
 
-import javax.rules.RuleRuntime;
+import javax.rules.admin.RuleAdministrator;
 
 /**
  * @author janm
  *
  */
-public class TestRuleRuntimeFactoryBean extends AbstractRuleServiceProviderTestCase {
+public class RuleAdministratorFactoryBeanTests extends AbstractRuleServiceProviderTestCase {
 
 	/**
 	 * Tests the getObject() and afterPropertiesSet() methods
 	 */
 	public void testGetObject() throws Exception {
-		RuleRuntimeFactoryBean bean = new RuleRuntimeFactoryBean();
+		RuleAdministratorFactoryBean bean = new RuleAdministratorFactoryBean();
 		try {
 			bean.afterPropertiesSet();
 			fail("serviceProvider not set");
@@ -24,7 +24,8 @@ public class TestRuleRuntimeFactoryBean extends AbstractRuleServiceProviderTestC
 		bean.setServiceProvider(getProvider());
 		bean.afterPropertiesSet();
 
-		RuleRuntime runtime = (RuleRuntime) bean.getObject();
-		assertNotNull("Created RuleRuntime is null", runtime);
+		RuleAdministrator administrator = (RuleAdministrator) bean.getObject();
+		assertNotNull("Created RuleAdministrator is null", administrator);
 	}
+
 }

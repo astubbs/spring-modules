@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 
 package org.springmodules.jsr94.factory;
 
@@ -12,10 +15,10 @@ import org.springframework.core.io.ClassPathResource;
 
 /**
  * This class tests DefaultRuleSource instantiation and execution using DefaultRuleSource
- * with ruleAdministrator and ruleRuntime properties set. This is a typical scenarion in 
- * JNDI deployment, where the ruleRuntime and ruleAdministrator are JNDI-configured resources.
+ * with just the ruleServiceProvider property set. This is typical scenario for local 
+ * single-VM deployment.
  * 
- * The ruleServiceProvider property must be null!
+ * The ruleAdministrator and ruleRuntime properties be null if ruleServiceProvider is set!
  * 
  * This test represents the following Spring bean configuration:
  * 
@@ -23,16 +26,15 @@ import org.springframework.core.io.ClassPathResource;
  * <pre>
  * &lt;bean id="foo" class="...DefaultRuleSource"&gt;
  *     &lt;property name="source"&gt;&lt;value&gt;foo&lt;/value&gt;&lt;/property&gt;
- *     &lt;property name="ruleRuntime"&gt;&lt;ref bean="ruleRuntime"/&gt;&lt;/property&gt;
- *     &lt;property name="ruleAdministrator"&gt;&lt;ref bean="ruleAdministrator"/&gt;&lt;/property&gt;
+ *     &lt;property name="ruleServiceProvider"&gt;&lt;ref bean="ruleServiceProvider"/&gt;&lt;/property&gt;
  * &lt;/bean&gt;
  * </pre>
  * </code>
  * 
- * @see org.springmodules.jsr94.factory.TestProviderDefaultRuleSource
+ * @see org.springmodules.jsr94.factory.TestRuntimeAndAdministratorDefaultRuleSource
  * @author janm
  */
-public class TestRuntimeAndAdministratorDefaultRuleSource extends AbstractDefaultRuleSourceTestCase {
+public class ProviderDefaultRuleSourceTests extends AbstractDefaultRuleSourceTestCase {
 
 	private RuleAdministrator ruleAdministrator;
 
@@ -43,7 +45,7 @@ public class TestRuntimeAndAdministratorDefaultRuleSource extends AbstractDefaul
 		 *
 		 * @throws Exception If anything goes wrong
 		 */
-	public TestRuntimeAndAdministratorDefaultRuleSource() throws Exception {
+	public ProviderDefaultRuleSourceTests() throws Exception {
 		RuleRuntimeFactoryBean ruleRuntimeFactoryBean = new RuleRuntimeFactoryBean();
 		ruleRuntimeFactoryBean.setServiceProvider(getProvider());
 		ruleRuntimeFactoryBean.afterPropertiesSet();
@@ -64,7 +66,7 @@ public class TestRuntimeAndAdministratorDefaultRuleSource extends AbstractDefaul
 		// test the afterPropertiesSet() calls
 		try {
 			source.afterPropertiesSet();
-			fail("ruleAdministrator, ruleRuntime, bindUri and source not set");
+			fail("ruleServiceProvider, bindUri and source not set");
 		}
 		catch (IllegalArgumentException ex) {
 			// expected
@@ -85,15 +87,36 @@ public class TestRuntimeAndAdministratorDefaultRuleSource extends AbstractDefaul
 		catch (IllegalArgumentException ex) {
 			// expected
 		}
+
+		source.setRuleServiceProvider(getProvider());
 		source.setRuleAdministrator(ruleAdministrator);
 		try {
 			source.afterPropertiesSet();
-			fail("ruleRuntime not set");
+			fail("ruleServiceProvider AND ruleAdministrator set");
 		}
 		catch (IllegalArgumentException ex) {
 			// expected
 		}
+		source.setRuleAdministrator(null);
 		source.setRuleRuntime(ruleRuntime);
+		try {
+			source.afterPropertiesSet();
+			fail("ruleServiceProvider AND ruleRuntime set");
+		}
+		catch (IllegalArgumentException ex) {
+			// expected
+		}
+		source.setRuleAdministrator(ruleAdministrator);
+		try {
+			source.afterPropertiesSet();
+			fail("ruleServiceProvider AND ruleRuntime and ruleAdministrator set");
+		}
+		catch (IllegalArgumentException ex) {
+			// expected
+		}
+
+		source.setRuleAdministrator(null);
+		source.setRuleRuntime(null);
 		source.afterPropertiesSet();
 
 		try {
@@ -115,9 +138,9 @@ public class TestRuntimeAndAdministratorDefaultRuleSource extends AbstractDefaul
 	protected void setProperties(DefaultRuleSource ruleSource) throws Exception {
 		ruleSource.setBindUri(BIND_URI);
 		ruleSource.setSource(new ClassPathResource(RULES_RESOURCE));
-		ruleSource.setRuleAdministrator(ruleAdministrator);
-		ruleSource.setRuleServiceProvider(null);
-		ruleSource.setRuleRuntime(ruleRuntime);
+		ruleSource.setRuleAdministrator(null);
+		ruleSource.setRuleServiceProvider(getProvider());
+		ruleSource.setRuleRuntime(null);
 	}
 
 }
