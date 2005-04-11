@@ -8,3 +8,6 @@ build.properties
 bin
 junit-reports
 classes
+*.iml
+*.ipr
+*.iws
