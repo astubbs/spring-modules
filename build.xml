@@ -6,7 +6,7 @@
   This script requires a "lib" directory containing the necessary third party JAR files.
   See project.properties for the definitions of the properties used in this file.
 
-  Building Spring requires J2SE 1.4; the "dist" JARs are built with Sun's JDK 1.4.2.
+  Building Spring Modules requires J2SE 1.4; the "dist" JARs are built with Sun's JDK 1.4.2.
   Note: To successfully run the tests, you need to use Xerces or any other JAXP parser
   that properly supports XML includes. A simple way to achieve this is to put
   xml-apis.jar and xercesImpl.jar into your "JAVA_HOME/jre/lib/ext" directory.
@@ -14,8 +14,16 @@
 
 <project name="spring-modules" default="usage" basedir=".">
 
+	<!-- create timestamps -->
+	<tstamp/>
+
+	<!-- import component build files -->
+	<import file="builddocs.xml"/>
+
+	<!-- load project properties -->
 	<property file="project.properties"/>
 
+	<!-- all libraries for the classpath -->
 	<path id="all-libs">
 
 		<fileset dir="${lib.dir}">
@@ -100,51 +108,35 @@
 
 	<target name="modulejars" depends="build,initdist" description="Create module-specific JAR files">
 
-		<delete>
-			<fileset dir="${dist.dir}">
-				<include name="springmodules-*.jar"/>
-			</fileset>
-		</delete>
+		<makejar jarfile="${dist.dir}/springmodules-hivemind-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${target.classes.dir}">
+					<include name="org/springmodules/hivemind/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
 
-		<jar jarfile="${dist.dir}/springmodules-hivemind.jar">
-			<fileset dir="${target.classes.dir}">
-				<include name="org/springmodules/hivemind/**"/>
-			</fileset>
-			<manifest>
-				<attribute name="Implementation-Title" value="${springmodules-title}"/>
-				<attribute name="Implementation-Version" value="${springmodules-version}"/>
-				<attribute name="Springmodules-Version" value="${springmodules-version}"/>
-			</manifest>
-		</jar>
-
-		<jar jarfile="${dist.dir}/springmodules-jsr94.jar">
-			<fileset dir="${target.classes.dir}">
-				<include name="org/springmodules/jsr94/**"/>
-			</fileset>
-			<manifest>
-				<attribute name="Implementation-Title" value="${springmodules-title}"/>
-				<attribute name="Implementation-Version" value="${springmodules-version}"/>
-				<attribute name="Springmodules-Version" value="${springmodules-version}"/>
-			</manifest>
-		</jar>
+		<makejar jarfile="${dist.dir}/springmodules-jsr94-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${target.classes.dir}">
+					<include name="org/springmodules/jsr94/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
 
 	</target>
 
 
 	<target name="fulljar" depends="build,initdist" description="Create full JAR file with all Spring classes">
 
-		<delete file="${dist.dir}/springmodules.jar"/>
+		<makejar jarfile="${dist.dir}/springmodules-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${target.classes.dir}">
+					<include name="org/springmodules/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
 
-		<jar jarfile="${dist.dir}/springmodules.jar">
-			<fileset dir="${target.classes.dir}">
-				<include name="org/springmodules/**"/>
-			</fileset>
-			<manifest>
-				<attribute name="Implementation-Title" value="${springmodules-title}"/>
-				<attribute name="Implementation-Version" value="${springmodules-version}"/>
-				<attribute name="Springmodules-Version" value="${springmodules-version}"/>
-			</manifest>
-		</jar>
 
 	</target>
 
@@ -178,26 +170,11 @@
 			<packageset dir="${src.dir}">
 				<include name="org/springmodules/**"/>
 			</packageset>
-			<!-- Unfortunately, jDocs have switched off their package listing, so we can't link to jDocs :( -->
-<!--link href="http://java.sun.com/j2ee/1.4/docs/api"/>
-			<link href="http://java.sun.com/j2se/1.4.2/docs/api"/>
-			<link href="http://aopalliance.sourceforge.net/doc"/-->
-			<!--link href="http://cglib.sourceforge.net/apidocs"/-->
-			<!--link href="http://httpunit.sourceforge.net/doc/api/"/-->
-<!--link href="http://jakarta.apache.org/commons/collections/apidocs-COLLECTIONS_3_0/"/>
-			<link href="http://jakarta.apache.org/commons/httpclient/apidocs/"/>
-			<link href="http://jakarta.apache.org/commons/logging/api/"/>
-			<link href="http://www.junit.org/junit/javadoc/"/>
-			<link href="http://logging.apache.org/log4j/docs/api/"/-->
 		</javadoc>
 
 	</target>
 
 
-<!--
-		This task depends on the Commons Attributes compile step,
-		as some tests require source-level attribute support.
-	-->
 	<target name="buildtests" description="Compile test source tree java files into class files">
 
 		<mkdir dir="${target.testclasses.dir}"/>
@@ -362,112 +339,21 @@
 
 	</target>
 
+	<macrodef name="makejar">
+		<attribute name="jarfile"/>
+		<element name="jar-contents"/>
+		<sequential>
+			<delete file="@{jarfile}"/>
+			<jar jarfile="@{jarfile}">
+				<jar-contents/>
+				<manifest>
+					<attribute name="Implementation-Title" value="${springmodules.title}"/>
+					<attribute name="Implementation-Version" value="${springmodules.version}"/>
+					<attribute name="Spring-Modules-Version" value="${springmodules.version}"/>
+				</manifest>
+			</jar>
+		</sequential>
+	</macrodef>
 
-	<target name="doc.prepare" description="Extra preparation for the documentation">
-
-		<fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
-			<condition>
-				<not>
-					<available file="${basedir}/${doc.ref.dir}/lib"/>
-				</not>
-			</condition>
-		</fail>
-
-	</target>
-
-
-	<target name="doc.pdf" depends="doc.prepare" description="Compile reference documentation to pdf">
-
-		<mkdir dir="${basedir}/${dist.ref.dir}/pdf/images"/>
-
-		<copy todir="${basedir}/${dist.ref.dir}/pdf/images">
-			<fileset dir="${basedir}/${doc.ref.dir}/src/images">
-				<include name="*.gif"/>
-				<include name="*.svg"/>
-				<include name="*.jpg"/>
-			</fileset>
-		</copy>
-
-		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${doc.ref.dir}">
-			<classpath>
-				<fileset dir="${basedir}/${doc.ref.dir}/lib">
-					<include name="**/*.jar"/>
-				</fileset>
-			</classpath>
-			<arg value="-o"/>
-			<arg value="${basedir}/${dist.ref.dir}/pdf/docbook_fop.tmp"/>
-			<arg value="${basedir}/${doc.ref.dir}/src/index.xml"/>
-			<arg value="${basedir}/${doc.ref.dir}/styles/fopdf.xsl"/>
-		</java>
-
-		<java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${doc.ref.dir}">
-			<classpath>
-				<fileset dir="${basedir}/${doc.ref.dir}/lib">
-					<include name="**/*.jar"/>
-				</fileset>
-			</classpath>
-			<arg value="${basedir}/${dist.ref.dir}/pdf/docbook_fop.tmp"/>
-			<arg value="${basedir}/${dist.ref.dir}/pdf/springmodules-reference.pdf"/>
-		</java>
-
-		<delete file="${dist.ref.dir}/pdf/docbook_fop.tmp"/>
-
-	</target>
-
-
-	<target name="doc.html" depends="doc.prepare" description="Compile reference documentation to chunked html">
-
-		<mkdir dir="${dist.ref.dir}/html/images"/>
-
-		<copy todir="${basedir}/${dist.ref.dir}/html/images">
-			<fileset dir="${basedir}/${doc.ref.dir}/src/images">
-				<include name="*.gif"/>
-				<include name="*.svg"/>
-				<include name="*.jpg"/>
-			</fileset>
-		</copy>
-
-		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${dist.ref.dir}/html/">
-			<classpath>
-				<fileset dir="${basedir}/${doc.ref.dir}/lib">
-					<include name="**/*.jar"/>
-				</fileset>
-			</classpath>
-			<arg value="${basedir}/${doc.ref.dir}/src/index.xml"/>
-			<arg value="${basedir}/${doc.ref.dir}/styles/html_chunk.xsl"/>
-		</java>
-
-	</target>
-
-
-	<target name="doc.htmlsingle" description="Compile reference documentation to single html">
-
-		<mkdir dir="${dist.ref.dir}/html_single/images"/>
-
-		<copy todir="${basedir}/${dist.ref.dir}/html_single/images">
-			<fileset dir="${basedir}/${doc.ref.dir}/src/images">
-				<include name="*.gif"/>
-				<include name="*.svg"/>
-				<include name="*.jpg"/>
-			</fileset>
-		</copy>
-
-		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${doc.ref.dir}">
-			<classpath>
-				<fileset dir="${basedir}/${doc.dir}/reference/lib">
-					<include name="**/*.jar"/>
-				</fileset>
-			</classpath>
-			<arg value="-o"/>
-			<arg value="${basedir}/${dist.ref.dir}/html_single/index.html"/>
-			<arg value="${basedir}/${doc.ref.dir}/src/index.xml"/>
-			<arg value="${basedir}/${doc.ref.dir}/styles/html.xsl"/>
-		</java>
-
-	</target>
-
-
-	<target name="doc.all" depends="doc.html,doc.htmlsingle,doc.pdf"
-					description="Generate and copy reference documentation"/>
 
 </project>

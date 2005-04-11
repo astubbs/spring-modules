@@ -78,15 +78,29 @@ public class ConfigurationBean extends DefaultConfiguration {
 		setPersistence(MemoryWorkflowStore.class.getName());
 	}
 
+	/**
+	 * Gets the <code>Map</code> of arguments to be passed to the persistence object
+	 */
 	public Map getPersistenceArgs() {
 		return this.persistenceArgs;
 	}
 
+	/**
+	 * Sets the arguments to be passed to the persistence object.
+	 */
 	public void setPersistenceArgs(Map persistenceArgs) {
-		Assert.notNull(persistenceArgs, "persistenceArgs cannot be null");
+		Assert.notEmpty(persistenceArgs, "persistenceArgs cannot be null or empty");
 		this.persistenceArgs = persistenceArgs;
 	}
 
+	/**
+	 * Sets the locations of the workflow definition files as a <code>Properties</code> instance.
+	 * The key of each entry corresponds to the logical name for the workflow definition and
+	 * the value of each entry is the location of the definition file.
+	 * <p/>
+	 * Locations are specified as Spring-style resource paths and classpath: resources
+	 * are fully supported.
+	 */
 	public void setWorkflowLocations(Properties workflowLocations) {
 		Assert.notNull(workflowLocations, "workflowLocations cannot be null");
 
@@ -104,20 +118,38 @@ public class ConfigurationBean extends DefaultConfiguration {
 
 	}
 
+	/**
+	 * Gets a <code>WorkflowDescriptor</code> by name.
+	 */
 	public WorkflowDescriptor getWorkflow(String name) throws FactoryException {
-		return (WorkflowDescriptor) this.workflows.get(name);
+		WorkflowDescriptor wd = (WorkflowDescriptor) this.workflows.get(name);
+
+		if (wd == null) {
+			throw new FactoryException("Unknown workflow name [" + name + "].");
+		}
+
+		return wd;
 	}
 
+	/**
+	 * Gets the names of all configured workflows.
+	 */
 	public String[] getWorkflowNames() throws FactoryException {
 		Set names = this.workflows.keySet();
 		return (String[]) names.toArray(new String[names.size()]);
 	}
 
+	/**
+	 * Unsupported operation.
+	 */
 	public boolean removeWorkflow(String string) throws FactoryException {
 		throw new UnsupportedOperationException("Operation removeWorkflow(String) not supported.");
 	}
 
-	private WorkflowDescriptor loadWorkflowDescriptor(String resourceLocation, String name) {
+	/**
+	 * Loads a <code>WorkflowDescriptor</code> from the specified location using the <code>WorkflowLoader</code> class.
+	 */
+	protected WorkflowDescriptor loadWorkflowDescriptor(String resourceLocation, String name) {
 		Resource resource = this.resourceLoader.getResource(resourceLocation);
 		WorkflowDescriptor workflowDescriptor = null;
 		try {

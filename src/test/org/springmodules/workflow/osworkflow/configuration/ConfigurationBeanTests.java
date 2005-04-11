@@ -5,9 +5,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Arrays;
 
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.StoreException;
+import com.opensymphony.workflow.FactoryException;
+import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.query.WorkflowExpressionQuery;
 import com.opensymphony.workflow.query.WorkflowQuery;
 import com.opensymphony.workflow.spi.Step;
@@ -15,6 +19,8 @@ import com.opensymphony.workflow.spi.WorkflowEntry;
 import com.opensymphony.workflow.spi.WorkflowStore;
 import com.opensymphony.workflow.spi.memory.MemoryWorkflowStore;
 import junit.framework.TestCase;
+
+import org.springframework.util.ClassUtils;
 
 /**
  * @author robh
@@ -44,6 +50,7 @@ public class ConfigurationBeanTests extends TestCase {
 		bean.setPersistence(MockWorkflowStore.class.getName());
 
 		Map args = new HashMap();
+		args.put("foo", "bar");
 		bean.setPersistenceArgs(args);
 
 		MockWorkflowStore store = (MockWorkflowStore) bean.getWorkflowStore();
@@ -57,6 +64,51 @@ public class ConfigurationBeanTests extends TestCase {
 			fail("Should not be able to set workflowLocations to null");
 		}
 		catch (IllegalArgumentException e) {
+			// success
+		}
+	}
+
+	public void testNullAndEmptyPersistenceArgs() throws Exception {
+		try {
+			new ConfigurationBean().setPersistenceArgs(null);
+			fail("Should not be able to set persistenceArgs to null");
+		}
+		catch(IllegalArgumentException ex) {
+			// success
+		}
+
+		try {
+			new ConfigurationBean().setPersistenceArgs(new HashMap());
+			fail("Should not be able to set persistenceArgs to an empty Map");
+		}
+		catch(IllegalArgumentException ex) {
+			// success
+		}
+	}
+
+	public void testLoadWorkflows() throws Exception {
+		Properties locations = new Properties();
+		locations.put("foo", ClassUtils.classPackageAsResourcePath(getClass()) + "/fooFlow.xml");
+		locations.put("bar", ClassUtils.classPackageAsResourcePath(getClass()) + "/barFlow.xml");
+
+		ConfigurationBean bean = new ConfigurationBean();
+		bean.setWorkflowLocations(locations);
+
+		String[] names = bean.getWorkflowNames();
+		Arrays.sort(names);
+		assertTrue(Arrays.binarySearch(names, "foo") > -1);
+		assertTrue(Arrays.binarySearch(names, "bar") > -1);
+
+		WorkflowDescriptor wd = bean.getWorkflow("foo");
+		assertNotNull("Workflow descriptor should not be null", wd);
+
+	}
+
+	public void testGetNonExistentWorkflowDescriptor() throws Exception {
+		try {
+			new ConfigurationBean().getWorkflow("foo");
+			fail("Accessing a non-existent workflow should throw FactoryException");
+		} catch(FactoryException ex) {
 			// success
 		}
 	}
