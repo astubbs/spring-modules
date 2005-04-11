@@ -40,6 +40,13 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 
 /**
+ * Supports Spring-style configuration of OSWorkflow resources.
+ * <p/>
+ * Workflow descriptor resources are configured through the <code>workflowLocations</code> property. This property
+ * accepts a <code>Properties</code> instance and treats the key of each entry as the workflow name and the value
+ * as the resource path. All standard Spring resource paths are supported including <code>classpath:</code> style
+ * resources.
+ * <p/>
  * @author Rob Harrop
  */
 public class ConfigurationBean extends DefaultConfiguration {
