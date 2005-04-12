@@ -1,0 +1,32 @@
+<project name="Spring Modules Clover" default="clover.build">
+
+	<!-- load clover tasks -->
+	<taskdef resource="clovertasks"/>
+	<typedef resource="clovertypes"/>
+
+	<!-- load project properties -->
+	<property file="project.properties"/>
+
+	<target name="with.clover">
+		<mkdir dir="${target.clover.dir}"/>
+		<clover-setup initstring="${target.clover.dir}/clover.db">
+			<files>
+				<exclude name="**/*Exception.java"/>
+				<exclude name="**/*Tests.java"/>
+				<exclude name="**/Mock*.java"/>
+				<exclude name="**/Foo*.java"/>
+			</files>
+
+		</clover-setup>
+	</target>
+
+	<!-- Builds Clover HTML report -->
+	<target name="clover.html" depends="clean, with.clover, tests"
+					description="Run Clover tests and generate HTML coverage reports">
+		<clover-report>
+			<current outfile="${target.clover.dir}/clover_html" title="${springmodules.title}" summary="true">
+				<format type="html"/>
+			</current>
+		</clover-report>
+	</target>
+</project>

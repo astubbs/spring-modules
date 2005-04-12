@@ -19,6 +19,7 @@
 
 	<!-- import component build files -->
 	<import file="builddocs.xml"/>
+	<import file="buildclover.xml"/>
 
 	<!-- load project properties -->
 	<property file="project.properties"/>
@@ -73,18 +74,14 @@
 	</target>
 
 
+	<!-- Initialize the distribution directory -->
 	<target name="initdist" description="Initialize the distribution directory">
 
 		<mkdir dir="${dist.dir}"/>
 
 	</target>
 
-
-<!--
-		Compile the main source tree.
-		This task depends on the Commons Attributes compile step,
-		as some classes must ship with attributes.
-	-->
+	<!-- Compile main source tree -->
 	<target name="build" description="Compile main source tree java files into class files">
 
 		<mkdir dir="${target.classes.dir}"/>
@@ -175,7 +172,7 @@
 	</target>
 
 
-	<target name="buildtests" description="Compile test source tree java files into class files">
+	<target name="buildtests" depends="build" description="Compile test source tree java files into class files">
 
 		<mkdir dir="${target.testclasses.dir}"/>
 
