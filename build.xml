@@ -18,6 +18,7 @@
 	<tstamp/>
 
 	<!-- import component build files -->
+	<import file="buildsandbox.xml"/>
 	<import file="builddocs.xml"/>
 	<import file="buildclover.xml"/>
 
@@ -61,15 +62,6 @@
 
 		<delete dir="${dist.dir}"/>
 		<delete dir="${javadocs.dir}"/>
-
-	</target>
-
-
-	<target name="doc.clean" description="Delete temporary and distribution directories for docs">
-
-		<delete quiet="true" dir="${basedir}/${dist.ref.dir}/pdf"/>
-		<delete quiet="true" dir="${basedir}/${dist.ref.dir}/html_single"/>
-		<delete quiet="true" dir="${basedir}/${dist.ref.dir}/html"/>
 
 	</target>
 

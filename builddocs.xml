@@ -3,6 +3,16 @@
 	<!-- load project properties -->
 	<property file="project.properties"/>
 
+
+	<target name="doc.clean" description="Delete temporary and distribution directories for docs">
+
+		<delete quiet="true" dir="${basedir}/${dist.ref.dir}/pdf"/>
+		<delete quiet="true" dir="${basedir}/${dist.ref.dir}/html_single"/>
+		<delete quiet="true" dir="${basedir}/${dist.ref.dir}/html"/>
+
+	</target>
+
+
 	<target name="doc.prepare" description="Extra preparation for the documentation">
 		<fail message="XSLT supporting lib not installed. Please see docs/reference/readme.txt for instructions.">
 			<condition>
