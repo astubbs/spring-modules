@@ -51,7 +51,7 @@ import org.springframework.validation.Errors;
  */
 public class DefaultValidatorFactory implements Serializable, ValidatorFactory {
 
-    private static final String ERRORS_KEY = "org.springframework.commons.Errors";
+    private static final String ERRORS_KEY = "org.springframework.validation.Errors";
 
     private static Log log = LogFactory.getLog(DefaultValidatorFactory.class);
 
