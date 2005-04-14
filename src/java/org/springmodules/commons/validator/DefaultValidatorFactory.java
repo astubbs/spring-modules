@@ -86,7 +86,7 @@ public class DefaultValidatorFactory implements Serializable, ValidatorFactory {
                     ValidatorResourcesInitializer.initialize(
                             validatorResources, bin, false);
                 } catch (IOException e) {
-                    log.error("Error loading commons rules in file: "
+                    log.error("Error loading validation rules in file: "
                             + resources[i].getFile().getName(), e);
                 } finally {
                     bin.close();

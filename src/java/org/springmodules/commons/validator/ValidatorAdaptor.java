@@ -25,7 +25,7 @@ import org.apache.commons.validator.ValidatorException;
 import org.springframework.validation.Errors;
 
 /**
- * Adaptor for the validator-validator. Provides xml-configured commons
+ * Adaptor for the validator-validator. Provides xml-configured validation
  * services for Spring.
  * 
  * <p>The following properties must be initialized before the supports() or
@@ -46,7 +46,7 @@ public class ValidatorAdaptor implements Serializable {
 	}
 
 	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	 * Public commons methods
+	 * Public validation methods
 	 */
 
 	/**
@@ -73,7 +73,7 @@ public class ValidatorAdaptor implements Serializable {
 	 * @param beanName String containing the name of the bean to validate. This
 	 * 		value is used to locate rules with which to validate the bean.
 	 * @param obj Object to validate.
-	 * @param errors Errors instance to which commons errors will be added.
+	 * @param errors Errors instance to which validation errors will be added.
 	 */
 	public void validate(String beanName, Object obj, Errors errors) {
 		Validator validator = factory.getValidator(beanName, obj, errors);

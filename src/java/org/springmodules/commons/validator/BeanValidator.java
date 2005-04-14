@@ -23,7 +23,7 @@ import org.springframework.validation.Errors;
  * Wrapper for the validator validator to be used with the spring framework.
  * 
  * <p>Use this class to validate beans with a known base class name. The name of
- * the object's base class is used to resolve commons rules for the bean
+ * the object's base class is used to resolve validation rules for the bean
  * being validated.</p>
  * 
  * <p>The following properties must be initialized (only if using zero-argument
@@ -35,7 +35,7 @@ import org.springframework.validation.Errors;
  * <p>The following is an optional setting.</p>
  * <ul>
  * <li>useFullyQualifiedBeanName (defaults to false) allows specification of
- * 		fully qualified bean (form) names in the commons.xml file.</li>
+ * 		fully qualified bean (form) names in the validation.xml file.</li>
  * </ul>
  * 
  * @author dmiller

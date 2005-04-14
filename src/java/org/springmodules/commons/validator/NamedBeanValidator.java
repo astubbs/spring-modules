@@ -27,7 +27,7 @@ import org.springframework.validation.Errors;
  * 
  * <p>Use this class to validate any generic bean that does not have a known
  * class name. The bean (class) name can be configured in the Application Context.
- * Such a configuration has the advantage of automatic commons by the Spring
+ * Such a configuration has the advantage of automatic validation by the Spring
  * framework (e.g. in MVC controllers), but has the downside of needing a
  * separate NamedBeanValidator for each different type of been to be validated.</p>
  * 
@@ -35,7 +35,7 @@ import org.springframework.validation.Errors;
  * can be used to validate multiple beans of different types at runtime. The 
  * downside to this approach is that the bean name must be specified when the
  * validate() method is invoked. Consequently, the Spring framework will not be 
- * able to perform automatic commons (e.g. in MVC controllers) because the
+ * able to perform automatic validation (e.g. in MVC controllers) because the
  * convenience method does not comply with the
  * org.springframework.commons.Validator interface.</p>
  *  
@@ -43,7 +43,7 @@ import org.springframework.validation.Errors;
  * validate() methods may be invoked (for zero-argument construction only):</p>
  * <ul>
  * <li>validatorFactory</li>
- * <li>beanName (only necessary for automatic commons by Spring e.g. in MVC
+ * <li>beanName (only necessary for automatic validation by Spring e.g. in MVC
  *  controllers)</li>
  * </ul>
  * 
@@ -102,7 +102,7 @@ public class NamedBeanValidator implements org.springframework.validation.Valida
 	 */
 
 	/**
-	 * Convenience method to perform commons on any bean at runtime. This
+	 * Convenience method to perform validation on any bean at runtime. This
 	 * method allows a single NamedBeanValidator instance to validate multiple
 	 * bean types. However, it must be invoked explicitly as it does not comply
 	 * with the validate signature in the Validator interface.
@@ -110,7 +110,7 @@ public class NamedBeanValidator implements org.springframework.validation.Valida
 	 * @param beanName String containing the name of the bean to validate. This
 	 * 		value is used to locate rules with which to validate the bean.
 	 * @param obj Object to validate.
-	 * @param errors Errors instance to which commons errors will be added.
+	 * @param errors Errors instance to which validation errors will be added.
 	 */
 	public void validate(String beanName, Object obj, Errors errors) {
 		validator.validate(beanName, obj, errors);

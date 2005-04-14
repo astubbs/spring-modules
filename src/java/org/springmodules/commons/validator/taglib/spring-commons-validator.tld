@@ -6,7 +6,7 @@
 	<tlibversion>1.0</tlibversion>
 	<jspversion>1.1</jspversion>
 	<shortname>Spring-Commons-Validator</shortname>
-	<uri>http://www.springmodules.org/tags/spring-commons-validator</uri>
+	<uri>http://www.springmodules.org/tags/commons-validator</uri>
 	
 	<tag>
 		<name>javascript</name>

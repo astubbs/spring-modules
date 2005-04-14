@@ -59,7 +59,7 @@ public class FieldChecks implements Serializable {
      * zero not including whitespace.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -68,7 +68,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>ActionErrors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return true if meets stated requirements, false otherwise.
@@ -96,7 +96,7 @@ public class FieldChecks implements Serializable {
      * Checks if the field isn't null based on the values of other fields.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -105,7 +105,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * @param validator
      *            The <code>Validator</code> instance, used to access other
      *            field values.
@@ -205,7 +205,7 @@ public class FieldChecks implements Serializable {
      * attribute.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -214,7 +214,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return true if field matches mask, false otherwise.
@@ -246,7 +246,7 @@ public class FieldChecks implements Serializable {
      * Checks if the field can safely be converted to a byte primitive.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -255,7 +255,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return A Byte if valid, null otherwise.
@@ -284,7 +284,7 @@ public class FieldChecks implements Serializable {
      * Checks if the field can safely be converted to a short primitive.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -293,7 +293,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return A Short if valid, otherwise null.
@@ -322,7 +322,7 @@ public class FieldChecks implements Serializable {
      * Checks if the field can safely be converted to an int primitive.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -331,7 +331,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return An Integer if valid, a null otherwise.
@@ -362,7 +362,7 @@ public class FieldChecks implements Serializable {
      * Checks if the field can safely be converted to a long primitive.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -371,7 +371,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return A Long if valid, a null otherwise.
@@ -401,7 +401,7 @@ public class FieldChecks implements Serializable {
      * Checks if the field can safely be converted to a float primitive.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -410,7 +410,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return A Float if valid, a null otherwise.
@@ -440,7 +440,7 @@ public class FieldChecks implements Serializable {
      * Checks if the field can safely be converted to a double primitive.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -449,7 +449,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return A Double if valid, a null otherwise.
@@ -481,14 +481,14 @@ public class FieldChecks implements Serializable {
      * <code>java.text.SimpleDateFormat</code>. If the field has a
      * datePatternStrict variable, that will be used to format
      * <code>java.text.SimpleDateFormat</code> and the length will be checked
-     * so '2/12/1999' will not pass commons with the format 'MM/dd/yyyy'
+     * so '2/12/1999' will not pass validation with the format 'MM/dd/yyyy'
      * because the month isn't two digits. If no datePattern variable is
      * specified, then the field gets the DateFormat.SHORT format for the
      * locale. The setLenient method is set to <code>false</code> for all
      * variations.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -497,7 +497,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return A Date if valid, a null if blank or invalid.
@@ -548,7 +548,7 @@ public class FieldChecks implements Serializable {
      *        org.apache.struts.action.Errors,
      *        javax.servlet.http.HttpServletRequest)}
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -557,7 +557,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return True if in range, false otherwise.
@@ -572,7 +572,7 @@ public class FieldChecks implements Serializable {
      * the vars attribute).
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -581,7 +581,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return True if in range, false otherwise.
@@ -619,7 +619,7 @@ public class FieldChecks implements Serializable {
      * the vars attribute).
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -628,7 +628,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return True if in range, false otherwise.
@@ -667,7 +667,7 @@ public class FieldChecks implements Serializable {
      * the vars attribute).
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -676,7 +676,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return True if in range, false otherwise.
@@ -713,7 +713,7 @@ public class FieldChecks implements Serializable {
      * Checks if the field is a valid credit card number.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -722,7 +722,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return The credit card as a Long, a null if invalid, blank, or null.
@@ -753,7 +753,7 @@ public class FieldChecks implements Serializable {
      * Checks if a field has a valid e-mail address.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -762,7 +762,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return True if valid, false otherwise.
@@ -791,7 +791,7 @@ public class FieldChecks implements Serializable {
      * A <code>Null</code> will be considered an error.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -800,7 +800,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return True if stated conditions met.
@@ -838,7 +838,7 @@ public class FieldChecks implements Serializable {
      * value. A <code>Null</code> will be considered an error.
      * 
      * @param bean
-     *            The bean commons is being performed on.
+     *            The bean validation is being performed on.
      * @param va
      *            The <code>ValidatorAction</code> that is currently being
      *            performed.
@@ -847,7 +847,7 @@ public class FieldChecks implements Serializable {
      *            field being validated.
      * @param errors
      *            The <code>Errors</code> object to add errors to if any
-     *            commons errors occur.
+     *            validation errors occur.
      * -param request
      *            Current request object.
      * @return True if stated conditions met.

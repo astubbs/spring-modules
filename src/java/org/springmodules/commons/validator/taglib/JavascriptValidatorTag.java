@@ -48,8 +48,8 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.support.RequestContext;
 
 /**
- * Custom tag that generates JavaScript for client side commons based
- * on the commons rules loaded by a <code>ValidatorFactory</code>.
+ * Custom tag that generates JavaScript for client side validation based
+ * on the validation rules loaded by a <code>ValidatorFactory</code>.
  * <p/>
  * <p>The validator resources needed for this tag are retrieved from a
  * ValidatorFactory bean defined in the web application context or one
@@ -84,7 +84,7 @@ public class JavascriptValidatorTag extends BodyTagSupport {
 	protected int page = 0;
 
 	/**
-	 * This will be used as is for the JavaScript commons method name if it has a value.  This is
+	 * This will be used as is for the JavaScript validation method name if it has a value.  This is
 	 * the method name of the main JavaScript method that the form calls to perform validations.
 	 */
 	protected String methodName = null;
@@ -128,8 +128,8 @@ public class JavascriptValidatorTag extends BodyTagSupport {
 
 	/**
 	 * Gets the key (form name) that will be used
-	 * to retrieve a set of commons rules to be
-	 * performed on the bean passed in for commons.
+	 * to retrieve a set of validation rules to be
+	 * performed on the bean passed in for validation.
 	 */
 	public String getFormName() {
 		return formName;
@@ -137,8 +137,8 @@ public class JavascriptValidatorTag extends BodyTagSupport {
 
 	/**
 	 * Sets the key (form name) that will be used
-	 * to retrieve a set of commons rules to be
-	 * performed on the bean passed in for commons.
+	 * to retrieve a set of validation rules to be
+	 * performed on the bean passed in for validation.
 	 * Specifying a form name places a
 	 * &lt;script&gt; &lt;/script&gt; tag around the javascript.
 	 */
@@ -168,7 +168,7 @@ public class JavascriptValidatorTag extends BodyTagSupport {
 
 	/**
 	 * Gets the method name that will be used for the Javascript
-	 * commons method name if it has a value.  This overrides
+	 * validation method name if it has a value.  This overrides
 	 * the auto-generated method name based on the key (form name)
 	 * passed in.
 	 */
@@ -178,7 +178,7 @@ public class JavascriptValidatorTag extends BodyTagSupport {
 
 	/**
 	 * Sets the method name that will be used for the Javascript
-	 * commons method name if it has a value.  This overrides
+	 * validation method name if it has a value.  This overrides
 	 * the auto-generated method name based on the key (form name)
 	 * passed in.
 	 */
@@ -576,7 +576,7 @@ public class JavascriptValidatorTag extends BodyTagSupport {
 		sb.append("      return true; \n");
 		sb.append("        else \n");
 
-		// Always return true if there aren't any Javascript commons methods
+		// Always return true if there aren't any Javascript validation methods
 		if (methods == null || methods.length() == 0) {
 			sb.append("       return true; \n");
 		}
