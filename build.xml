@@ -92,6 +92,12 @@
 			</fileset>
 		</copy>
 
+        <copy todir="${target.classes.dir}/META-INF" preservelastmodified="true">
+            <fileset dir="${src.dir}/org/springmodules/commons/validator/taglib">
+                <include name="*.tld"/>
+            </fileset>
+        </copy>
+
 	</target>
 
 
@@ -117,6 +123,9 @@
             <jar-contents>
                 <fileset dir="${target.classes.dir}">
                     <include name="org/springmodules/commons/validator/**"/>
+                </fileset>
+                <fileset dir="${target.classes.dir}">
+                    <include name="META-INF/**"/>
                 </fileset>
             </jar-contents>
         </makejar>
