@@ -22,9 +22,9 @@ import junit.framework.TestCase;
  * @author janm
  *
  */
-public class TestSearchEngineFriendlyHandlerAdapter extends TestCase {
+public class SearchEngineFriendlyHandlerAdapterTest extends TestCase {
 
-	private static final Log logger = LogFactory.getLog(TestSearchEngineFriendlyHandlerAdapter.class);
+	private static final Log logger = LogFactory.getLog(SearchEngineFriendlyHandlerAdapterTest.class);
 	private static final String GET = "get";
 
 	private List suffixes;
@@ -37,7 +37,7 @@ public class TestSearchEngineFriendlyHandlerAdapter extends TestCase {
 	/**
 	 * .ctor
 	 */
-	public TestSearchEngineFriendlyHandlerAdapter() {
+	public SearchEngineFriendlyHandlerAdapterTest() {
 		super();
 		suffixes = new ArrayList();
 		suffixes.add(".html");
