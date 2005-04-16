@@ -18,6 +18,7 @@ package org.springmodules.commons.validator;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -76,12 +77,7 @@ public class FieldChecks implements Serializable {
     public static boolean validateRequired(Object bean, ValidatorAction va,
             Field field, Errors errors) {
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (GenericValidator.isBlankOrNull(value)) {
             Resources.rejectValue(errors, field, va);
@@ -121,12 +117,7 @@ public class FieldChecks implements Serializable {
                 .getResource(org.apache.commons.validator.Validator.BEAN_KEY);
         boolean required = false;
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         int i = 0;
         String fieldJoin = "AND";
@@ -222,12 +213,7 @@ public class FieldChecks implements Serializable {
     public static boolean validateMask(Object bean, ValidatorAction va,
             Field field, Errors errors) {
         String mask = field.getVarValue("mask");
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
         try {
             if (!GenericValidator.isBlankOrNull(value)
                     && !GenericValidator.matchRegexp(value, mask)) {
@@ -264,12 +250,7 @@ public class FieldChecks implements Serializable {
             Field field, Errors errors) {
 
         Byte result = null;
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             result = GenericTypeValidator.formatByte(value);
@@ -302,12 +283,7 @@ public class FieldChecks implements Serializable {
             Field field, Errors errors) {
         Short result = null;
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             result = GenericTypeValidator.formatShort(value);
@@ -340,12 +316,7 @@ public class FieldChecks implements Serializable {
             Field field, Errors errors) {
         Integer result = null;
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             result = GenericTypeValidator.formatInt(value);
@@ -380,12 +351,7 @@ public class FieldChecks implements Serializable {
             Field field, Errors errors) {
         Long result = null;
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             result = GenericTypeValidator.formatLong(value);
@@ -418,12 +384,7 @@ public class FieldChecks implements Serializable {
     public static Float validateFloat(Object bean, ValidatorAction va,
             Field field, Errors errors) {
         Float result = null;
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             result = GenericTypeValidator.formatFloat(value);
@@ -457,12 +418,7 @@ public class FieldChecks implements Serializable {
     public static Double validateDouble(Object bean, ValidatorAction va,
             Field field, Errors errors) {
         Double result = null;
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             result = GenericTypeValidator.formatDouble(value);
@@ -506,12 +462,7 @@ public class FieldChecks implements Serializable {
             Field field, Errors errors) {
 
         Date result = null;
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
         String datePattern = field.getVarValue("datePattern");
         String datePatternStrict = field.getVarValue("datePatternStrict");
 
@@ -588,12 +539,7 @@ public class FieldChecks implements Serializable {
      */
     public static boolean validateIntRange(Object bean, ValidatorAction va,
             Field field, Errors errors) {
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             try {
@@ -636,12 +582,7 @@ public class FieldChecks implements Serializable {
     public static boolean validateDoubleRange(Object bean, ValidatorAction va,
             Field field, Errors errors) {
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             try {
@@ -684,12 +625,7 @@ public class FieldChecks implements Serializable {
     public static boolean validateFloatRange(Object bean, ValidatorAction va,
             Field field, Errors errors) {
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             try {
@@ -731,12 +667,7 @@ public class FieldChecks implements Serializable {
             Field field, Errors errors) {
 
         Long result = null;
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             result = GenericTypeValidator.formatCreditCard(value);
@@ -770,12 +701,7 @@ public class FieldChecks implements Serializable {
     public static boolean validateEmail(Object bean, ValidatorAction va,
             Field field, Errors errors) {
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)
                 && !GenericValidator.isEmail(value)) {
@@ -808,12 +734,7 @@ public class FieldChecks implements Serializable {
     public static boolean validateMaxLength(Object bean, ValidatorAction va,
             Field field, Errors errors) {
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (value != null) {
             try {
@@ -855,12 +776,7 @@ public class FieldChecks implements Serializable {
     public static boolean validateMinLength(Object bean, ValidatorAction va,
             Field field, Errors errors) {
 
-        String value;
-        if (isString(bean)) {
-            value = (String)bean;
-        } else {
-            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
-        }
+        String value = extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)) {
             try {
@@ -892,4 +808,16 @@ public class FieldChecks implements Serializable {
         return (o == null) ? true : String.class.isInstance(o);
     }
 
+    private static String extractValue(Object bean, Field field) {
+        String value;
+        if (isString(bean)) {
+            value = (String)bean;
+        }
+        if (bean instanceof Map) {
+            value = (String) ((Map)bean).get(field.getProperty());
+        } else {
+            value = ValidatorUtil.getValueAsString(bean, field.getProperty());
+        }
+        return value;
+    }
 }
