@@ -6,6 +6,7 @@
 	<!ENTITY overview			SYSTEM "overview.xml">
 	<!ENTITY hivemind			SYSTEM "hivemind.xml">
 	<!ENTITY jsr94				SYSTEM "jsr94.xml">
+	<!ENTITY validator			SYSTEM "validator.xml">
 	]>
 
 
@@ -32,6 +33,10 @@
 				<firstname>Thierry</firstname>
 				<surname>Templier</surname>
 			</author>
+			<author>
+				<firstname>Thomas</firstname>
+				<surname>Risberg</surname>
+			</author>
 		</authorgroup>
 
 		<legalnotice>Copies of this document may be made for your own use and for distribution to others, provided that you
@@ -48,5 +53,7 @@
 	&hivemind;
 
 	&jsr94;
+
+	&validator;
 
 </book>

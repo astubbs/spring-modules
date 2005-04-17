@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="validator">
+	<title>Commons Validator</title>
+
+	<sect1>
+		<title>Introduction</title>
+
+		<para>The Commons Validator is a library that allows you to perform validation based on
+		rules specified in XML configuration files.</para>
+		<para>TODO: Describe the concepts of Commons Validator in more details.</para>
+	</sect1>
+
+	<sect1>
+		<title>Configure an Validator Factory</title>
+
+		<para>Firstly you need to configure the Validator Factory which is the
+			factory to get Validator instances.</para>
+
+	</sect1>
+
+</chapter>
