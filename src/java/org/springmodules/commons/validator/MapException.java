@@ -21,22 +21,15 @@ import org.springframework.validation.*;
 import java.util.*;
 
 /**
- * Default implementation of the Errors interface, supporting
- * registration and evaluation of binding errors.
+ * Map implementation of the Errors interface, supporting
+ * registration and evaluation of map entry errors.
  * Slightly unusual, as it <i>is</i> an exception.
- *
- * <p>This is mainly a framework-internal class. Normally, application
- * code will work with the Errors interface, or a DataBinder that in
- * turn exposes a BindException via <code>getErrors()</code>.
- *
- * <p>Supports exporting a model, suitable for example for web MVC.
- * Thus, it is sometimes used as parameter type instead of the Errors interface
- * itself - if extracting the model makes sense in the particular context.
- *
+ * 
  * @author Rod Johnson
  * @author Juergen Hoeller
+ * @author Thomas Risberg
  * @see #getModel
- * @see org.springframework.validation.DataBinder#getErrors
+ * @see org.springframework.validation.BindException
  */
 public class MapException extends Exception implements Errors {
 
