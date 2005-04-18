@@ -52,12 +52,6 @@ import org.springframework.util.Assert;
 public class ConfigurationBean extends DefaultConfiguration {
 
 	/**
-	 * Name of the default persistence class used by instances of this
-	 * class.
-	 */
-	private static final String DEFAULT_PERSISTENCE_CLASS = MemoryWorkflowStore.class.getName();
-
-	/**
 	 * <code>Log</code> instance for this class.
 	 */
 	private static final Log logger = LogFactory.getLog(ConfigurationBean.class);

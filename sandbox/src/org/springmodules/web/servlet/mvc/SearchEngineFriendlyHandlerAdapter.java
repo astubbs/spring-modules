@@ -224,7 +224,7 @@ public class SearchEngineFriendlyHandlerAdapter implements HandlerAdapter {
 			} else {
 				url.append(requestUri);
 			}
-			servletPath = request.getServletPath().replace(queryStringSeparator + queryString, "");
+			servletPath = request.getServletPath().replaceAll(queryStringSeparator + queryString, "");
 		}
 
 		public String getQueryString() {

@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 /**
  * Wrapper for the validator validator to be used with the spring framework.
@@ -51,7 +52,7 @@ import org.springframework.validation.Errors;
  *
  * @author Daniel Miller
  */
-public class NamedBeanValidator implements org.springframework.validation.Validator, Serializable {
+public class NamedBeanValidator implements Validator, Serializable {
 
 	private Log log = LogFactory.getLog(NamedBeanValidator.class);
 

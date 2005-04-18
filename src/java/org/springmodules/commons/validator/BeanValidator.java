@@ -19,6 +19,7 @@ package org.springmodules.commons.validator;
 import java.io.Serializable;
 
 import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 /**
  * Wrapper for the validator validator to be used with the spring framework.
@@ -41,7 +42,7 @@ import org.springframework.validation.Errors;
  *
  * @author Daniel Miller
  */
-public class BeanValidator implements org.springframework.validation.Validator, Serializable {
+public class BeanValidator implements Validator, Serializable {
 
 	private boolean useFullyQualifiedBeanName = false;
 

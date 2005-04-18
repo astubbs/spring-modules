@@ -33,6 +33,7 @@ import org.springframework.validation.Errors;
 
 /**
  * @author Daniel Miller
+ * @author Rob Harrop
  */
 public class Resources {
 
@@ -106,20 +107,20 @@ public class Resources {
 		List args = new ArrayList();
 		String actionName = va.getName();
 
-		if (field.getArg0(actionName) != null) {
-			args.add(0, getMessage(field.getArg0(actionName)));
+		if (field.getArg(actionName, 0) != null) {
+			args.add(0, getMessage(field.getArg(actionName, 0)));
 		}
 
-		if (field.getArg1(actionName) != null) {
-			args.add(1, getMessage(field.getArg1(actionName)));
+		if (field.getArg(actionName, 1) != null) {
+			args.add(1, getMessage(field.getArg(actionName, 1)));
 		}
 
-		if (field.getArg2(actionName) != null) {
-			args.add(2, getMessage(field.getArg2(actionName)));
+		if (field.getArg(actionName, 2) != null) {
+			args.add(2, getMessage(field.getArg(actionName, 2)));
 		}
 
-		if (field.getArg3(actionName) != null) {
-			args.add(3, getMessage(field.getArg3(actionName)));
+		if (field.getArg(actionName, 3) != null) {
+			args.add(3, getMessage(field.getArg(actionName, 3)));
 		}
 
 		return args.toArray();
@@ -131,7 +132,7 @@ public class Resources {
 	 * create a MessageSourceResolvable with the argument key as its code.
 	 */
 	public static Object getMessage(Arg arg) {
-		if (arg.getResource()) {
+		if (arg.isResource()) {
 			return createMessage(arg.getKey());
 		}
 		else {

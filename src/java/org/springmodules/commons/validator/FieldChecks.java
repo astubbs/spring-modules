@@ -27,7 +27,7 @@ import org.apache.commons.validator.Field;
 import org.apache.commons.validator.GenericTypeValidator;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.ValidatorAction;
-import org.apache.commons.validator.ValidatorUtil;
+import org.apache.commons.validator.util.ValidatorUtils;
 
 import org.springframework.validation.Errors;
 
@@ -108,8 +108,8 @@ public class FieldChecks implements Serializable {
 																											Field field, Errors errors,
 																											org.apache.commons.validator.Validator validator) {
 
-		Object form = validator
-				.getResource(org.apache.commons.validator.Validator.BEAN_KEY);
+		Object form = validator.getParameterValue(org.apache.commons.validator.Validator.BEAN_PARAM);
+
 		boolean required = false;
 
 		String value = extractValue(bean, field);
@@ -145,7 +145,7 @@ public class FieldChecks implements Serializable {
 				}
 			}
 
-			dependVal = ValidatorUtil.getValueAsString(form, dependProp);
+			dependVal = ValidatorUtils.getValueAsString(form, dependProp);
 			if (dependTest.equals(FIELD_TEST_NULL)) {
 				if ((dependVal != null) && (dependVal.length() > 0)) {
 					thisRequired = false;
@@ -761,7 +761,7 @@ public class FieldChecks implements Serializable {
 			value = (String) ((Map) bean).get(field.getProperty());
 		}
 		else {
-			value = ValidatorUtil.getValueAsString(bean, field.getProperty());
+			value = ValidatorUtils.getValueAsString(bean, field.getProperty());
 		}
 		return value;
 	}

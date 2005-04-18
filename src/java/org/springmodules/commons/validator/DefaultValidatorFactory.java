@@ -16,10 +16,8 @@
 
 package org.springmodules.commons.validator;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Locale;
 
 import org.apache.commons.logging.Log;
@@ -27,131 +25,110 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.Form;
 import org.apache.commons.validator.Validator;
 import org.apache.commons.validator.ValidatorResources;
-import org.apache.commons.validator.ValidatorResourcesInitializer;
+import org.xml.sax.SAXException;
 
+import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 
 /**
- * Factory generates initialized instances of the validator validator.
- * <p/>
- * <p/>
- * The following properties must be initialized and the <code>init()</code>
- * method must be executed before the <code>getValidator()</code> or
- * <code>hasRulesForBean()</code> methods may be invoked:
- * </p>
- * <ul>
- * <li>resources</li>
- * </ul>
- * <p/>
- * <p/>
- * Alternately, an array of <code>Resources</code> may be supplied to the
- * single-argument constructor.
- * </p>
- *
  * @author Daniel Miller
+ * @author Rob Harrop
  */
-public class DefaultValidatorFactory implements Serializable, ValidatorFactory {
+public class DefaultValidatorFactory implements ValidatorFactory, InitializingBean {
 
-	private static final String ERRORS_KEY = "org.springframework.validation.Errors";
+	/**
+	 * Key used to store the Spring <code>Errors</code> instance in the <code>Validator</code>
+	 */
+	public static final String ERRORS_KEY = "org.springframework.validation.Errors";
 
+	/**
+	 * The <code>Log</code> instance used by this class.
+	 */
 	private static Log log = LogFactory.getLog(DefaultValidatorFactory.class);
 
-	private ValidatorResources validatorResources = null;
+	/**
+	 * the Commons Validator <code>ValidatorResources</code> used to load validation configuration.
+	 */
+	private ValidatorResources validatorResources;
 
-	private Resource[] resources;
-
-	public DefaultValidatorFactory() {
+	/**
+	 * Checks that the <code>ValidatorResources</code> exists and has been configured with resources
+	 * via a call to <code>setValidationConfigLocations</code>.
+	 *
+	 * @throws FatalBeanException if <code>setValidationConfigLocations()</code> has not been called.
+	 */
+	public void afterPropertiesSet() throws Exception {
+		if (this.validatorResources == null) {
+			throw new FatalBeanException("Unable to locate validation configuration. Property [validationLocations] is required.");
+		}
 	}
 
-	public DefaultValidatorFactory(Resource[] resources) {
-		this.resources = resources;
+	/**
+	 * Sets the locations of the validation configuration files from which to load validation rules. Creates an instance
+	 * of <code>ValidatorResources</code> from the specified configuration files.
+	 *
+	 * @see Resource
+	 * @see ValidatorResources
+	 */
+	public void setValidationConfigLocations(Resource[] validationConfigLocations) {
+
+		if (log.isInfoEnabled()) {
+			log.info("Loading validation configurations from [" + StringUtils.arrayToCommaDelimitedString(validationConfigLocations) + "]");
+		}
+
 		try {
-			this.init();
+			InputStream[] inputStreams = new InputStream[validationConfigLocations.length];
+
+			for (int i = 0; i < inputStreams.length; i++) {
+				inputStreams[i] = validationConfigLocations[i].getInputStream();
+			}
+
+			this.validatorResources = new ValidatorResources(inputStreams);
 		}
 		catch (IOException e) {
-			log.warn("Could not initialize ValidatorFactory", e);
+			throw new FatalBeanException("Unable to read validation configuration due to IOException.", e);
+		}
+		catch (SAXException e) {
+			throw new FatalBeanException("Unable to parse validation configuration XML", e);
 		}
 	}
 
 	/**
-	 * Initialize this ValidatorFactory instance. Initialize the
-	 * <code>validatorResources</code> object with <code>Resources</code>,
-	 * which have already been set using <code>setResources</code> or as an
-	 * argument to the constructor.
+	 * Gets a new instance of a <code>org.apache.commons.validator.Validator</code> for the given bean.
+	 *
+	 * @param beanName The name of the bean for which this <code>Validator</code> will be created
+	 * @see org.apache.commons.validator.Validator
 	 */
-	public void init() throws IOException {
-		validatorResources = new ValidatorResources();
-		for (int i = 0; i < resources.length; i++) {
-			InputStream in = resources[i].getInputStream();
-			if (in != null) {
-				BufferedInputStream bin = new BufferedInputStream(in);
-				try {
-					ValidatorResourcesInitializer.initialize(
-							validatorResources, bin, false);
-				}
-				catch (IOException e) {
-					log.error("Error loading validation rules in file: "
-							+ resources[i].getFile().getName(), e);
-				}
-				finally {
-					bin.close();
-				}
-			}
-			else {
-				log.info("Skipping rules file '"
-						+ resources[i].getFile().getName()
-						+ "'. Stream was null.");
-			}
-		}
-		validatorResources.process();
-		this.resources = null; // Release resources
-	}
-
-	/**
-		 * Gets a new instance of a validator for the given bean (form).
-		 *
-		 * @param beanName The name of the bean for which this validator will be created.
-		 */
 	public Validator getValidator(String beanName, Object bean, Errors errors) {
 		Validator validator = new Validator(validatorResources, beanName);
-		validator.addResource(ERRORS_KEY, errors);
-		validator.addResource(Validator.BEAN_KEY, bean);
+		validator.setParameter(ERRORS_KEY, errors);
+		validator.setParameter(Validator.BEAN_PARAM, bean);
 		return validator;
 	}
 
-	/**
-		 * @param resources The resources to set.
-		 */
-	public void setResources(Resource[] resources) {
-		this.resources = resources;
-	}
 
 	/**
-		 * Returns true if this validator factory can create a validator that
-		 * supports the given <code>beanName</code> and <code>locale</code>.
-		 *
-		 * @param beanName String name of the bean to be validated.
-		 * @param locale Locale of the validator to create.
-		 * @return true if this validator factory can create a validator for the
-		 *         given bean name, false otherwise.
-		 */
+	 * Returns true if this validator factory can create a validator that
+	 * supports the given <code>beanName</code> and <code>locale</code>.
+	 *
+	 * @param beanName name of the bean to be validated.
+	 * @param locale <code>Locale</code> to search under.
+	 * @return <code>true</code> if this validator factory can create a validator for
+	 *         the given bean name, <code>false otherwise.
+	 */
 	public boolean hasRulesForBean(String beanName, Locale locale) {
-		Form form = validatorResources.get(locale, beanName);
+		Form form = validatorResources.getForm(locale, beanName);
 		return (form != null ? true : false);
 	}
 
 	/**
-	 * @return Returns the wrapped validator validatorResources.
+	 * Gets the managed instance of <code>ValidatorResources</code>.
 	 */
 	public ValidatorResources getValidatorResources() {
 		return validatorResources;
 	}
 
-	/**
-		 * @param validatorResources The validatorResources to set.
-		 */
-	public void setValidatorResources(ValidatorResources validatorResources) {
-		this.validatorResources = validatorResources;
-	}
 }
