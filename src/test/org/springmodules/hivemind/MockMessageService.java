@@ -4,7 +4,7 @@ package org.springmodules.hivemind;
 /**
  * @author Rob Harrop
  */
-public class ConfigurableMessageService implements MessageService {
+public class MockMessageService implements MessageService {
 
 	private String message = "Hello World!";
 

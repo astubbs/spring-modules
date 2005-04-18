@@ -14,7 +14,7 @@ import junit.framework.TestCase;
  *
  * @author janm
  */
-public abstract class AbstractRuleServiceProviderTestCase extends TestCase {
+public abstract class AbstractRuleServiceProviderTests extends TestCase {
 
 	/**
 	 * Rule provider name

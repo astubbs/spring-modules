@@ -3,7 +3,7 @@ package org.springmodules.jsr94.factory;
 
 import javax.rules.RuleServiceProvider;
 
-public class DefaultRuleServiceProviderFactoryBeanTests extends AbstractRuleServiceProviderTestCase {
+public class DefaultRuleServiceProviderFactoryBeanTests extends AbstractRuleServiceProviderTests {
 
 	public void testAfterPropertiesSet() throws Exception {
 		DefaultRuleServiceProviderFactoryBean bean = new DefaultRuleServiceProviderFactoryBean();

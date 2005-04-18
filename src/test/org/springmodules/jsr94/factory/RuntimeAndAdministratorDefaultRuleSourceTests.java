@@ -32,7 +32,7 @@ import org.springframework.core.io.ClassPathResource;
  * @see org.springmodules.jsr94.factory.TestProviderDefaultRuleSource
  * @author janm
  */
-public class RuntimeAndAdministratorDefaultRuleSourceTests extends AbstractDefaultRuleSourceTestCase {
+public class RuntimeAndAdministratorDefaultRuleSourceTests extends AbstractDefaultRuleSourceTests {
 
 	private RuleAdministrator ruleAdministrator;
 
@@ -110,7 +110,7 @@ public class RuntimeAndAdministratorDefaultRuleSourceTests extends AbstractDefau
 	}
 
 	/* (non-Javadoc)
-	 * @see org.springmodules.jsr94.factory.AbstractDefaultRuleSourceTestCase#setProperties(org.springmodules.jsr94.rulesource.DefaultRuleSource)
+	 * @see org.springmodules.jsr94.factory.AbstractDefaultRuleSourceTests#setProperties(org.springmodules.jsr94.rulesource.DefaultRuleSource)
 	 */
 	protected void setProperties(DefaultRuleSource ruleSource) throws Exception {
 		ruleSource.setBindUri(BIND_URI);

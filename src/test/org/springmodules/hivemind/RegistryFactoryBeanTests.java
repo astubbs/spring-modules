@@ -38,11 +38,6 @@ public class RegistryFactoryBeanTests extends TestCase {
 		bean.destroy();
 	}
 
-	private RegistryFactoryBean getRegistryFactoryBean() throws Exception {
-		RegistryFactoryBean bean = new RegistryFactoryBean();
-		bean.afterPropertiesSet();
-		return bean;
-	}
 
 	public void testRegistryWithConfigLocationClasspath() throws Exception {
 		RegistryFactoryBean bean = getRegistryFactoryBeanFromClasspath(HIVEMODULE_CONFIG_CLASSPATH);
@@ -78,6 +73,18 @@ public class RegistryFactoryBeanTests extends TestCase {
 		bean.destroy();
 	}
 
+	public void testFactoryBeanImplementation() throws Exception {
+		RegistryFactoryBean bean = getRegistryFactoryBean();
+
+		assertTrue("RegistryFactoryBean should return a singleton", bean.isSingleton());
+		assertEquals("RegistryFactoryBean should return Registry", Registry.class, bean.getObjectType());
+	}
+
+	private RegistryFactoryBean getRegistryFactoryBean() throws Exception {
+		RegistryFactoryBean bean = new RegistryFactoryBean();
+		bean.afterPropertiesSet();
+		return bean;
+	}
 	private RegistryFactoryBean getRegistryFactoryBeanFromClasspath(String configLocation) throws Exception {
 		RegistryFactoryBean bean = new RegistryFactoryBean();
 		Resource[] configLocations = new Resource[1];

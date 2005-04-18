@@ -16,15 +16,26 @@
 
 package org.springmodules.commons.validator;
 
-import org.springframework.validation.*;
+import java.util.Collections;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
-import java.util.*;
+import org.springframework.validation.DefaultMessageCodesResolver;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.MessageCodesResolver;
+import org.springframework.validation.ObjectError;
 
 /**
  * Map implementation of the Errors interface, supporting
  * registration and evaluation of map entry errors.
  * Slightly unusual, as it <i>is</i> an exception.
- * 
+ *
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @author Thomas Risberg
@@ -55,6 +66,7 @@ public class MapException extends Exception implements Errors {
 
 	/**
 	 * Create a new BindException instance.
+	 *
 	 * @param target target object to bind onto
 	 * @param name name of the target object
 	 * @see DefaultMessageCodesResolver
@@ -78,6 +90,7 @@ public class MapException extends Exception implements Errors {
 	/**
 	 * Set the strategy to use for resolving errors into message codes.
 	 * Default is DefaultMessageCodesResolver.
+	 *
 	 * @see DefaultMessageCodesResolver
 	 */
 	public void setMessageCodesResolver(MessageCodesResolver messageCodesResolver) {
@@ -163,14 +176,15 @@ public class MapException extends Exception implements Errors {
 		String fixedField = fixedField(field);
 		Object newVal = target.get(fixedField);
 		FieldError fe = new FieldError(
-				getObjectName(), fixedField, newVal, false,
-				resolveMessageCodes(errorCode, field), errorArgs, defaultMessage);
+						getObjectName(), fixedField, newVal, false,
+						resolveMessageCodes(errorCode, field), errorArgs, defaultMessage);
 		addError(fe);
 	}
 
 	/**
 	 * Resolve the given error code into message codes.
 	 * Calls the MessageCodesResolver with appropriate parameters.
+	 *
 	 * @param errorCode the error code to resolve into message codes
 	 * @return the resolved message codes
 	 * @see #setMessageCodesResolver
@@ -182,6 +196,7 @@ public class MapException extends Exception implements Errors {
 	/**
 	 * Resolve the given error code into message codes for the given field.
 	 * Calls the MessageCodesResolver with appropriate parameters.
+	 *
 	 * @param errorCode the error code to resolve into message codes
 	 * @param field the field to resolve message codes for
 	 * @return the resolved message codes
@@ -197,6 +212,7 @@ public class MapException extends Exception implements Errors {
 	 * Add an ObjectError or FieldError to the errors list.
 	 * <p>Intended to be used by subclasses like DataBinder,
 	 * or by cooperating strategies like a BindingErrorProcessor.
+	 *
 	 * @see org.springframework.validation.ObjectError
 	 * @see org.springframework.validation.FieldError
 	 * @see org.springframework.validation.DataBinder
@@ -288,13 +304,14 @@ public class MapException extends Exception implements Errors {
 
 	/**
 	 * Check whether the given FieldError matches the given field.
+	 *
 	 * @param field the field that we are looking up FieldErrors for
 	 * @param fieldError the candidate FieldError
 	 * @return whether the FieldError matches the given field
 	 */
 	protected boolean isMatchingFieldError(String field, FieldError fieldError) {
 		return (field.equals(fieldError.getField()) ||
-				(field.endsWith("*") && fieldError.getField().startsWith(field.substring(0, field.length() - 1))));
+							 (field.endsWith("*") && fieldError.getField().startsWith(field.substring(0, field.length() - 1))));
 	}
 
 	public Object getFieldValue(String field) {
@@ -319,6 +336,7 @@ public class MapException extends Exception implements Errors {
 	 * will do this for you when rendering its form or success view. When
 	 * building the ModelAndView yourself, you need to include the attributes
 	 * from the model Map returned by this method yourself.
+	 *
 	 * @see #getObjectName
 	 * @see #ERROR_KEY_PREFIX
 	 * @see org.springframework.web.servlet.ModelAndView

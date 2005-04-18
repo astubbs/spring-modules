@@ -20,7 +20,7 @@ import org.springmodules.jsr94.rulesource.DefaultRuleSource;
  * @see org.springmodules.jsr94.factory.TestRuntimeAndAdministratorDefaultRuleSource
  * @see org.springmodules.jsr94.factory.TestProviderDefaultRuleSource
  */
-public abstract class AbstractDefaultRuleSourceTestCase extends AbstractRuleServiceProviderTestCase {
+public abstract class AbstractDefaultRuleSourceTests extends AbstractRuleServiceProviderTests {
 
 	protected static final String BIND_URI = "test";
 

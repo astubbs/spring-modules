@@ -18,7 +18,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  * @author janm
  */
-public class TestJsr94RuleSupport extends TestCase {
+public class Jsr94RuleSupportTests extends TestCase {
 
 	private ApplicationContext context = new ClassPathXmlApplicationContext("org/springmodules/jsr94/rulesource.xml");
 

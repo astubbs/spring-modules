@@ -5,7 +5,7 @@
 	<service-point id="FooServiceTwo" interface="org.springmodules.hivemind.FooService"/>
 
 	<implementation service-id="org.springmodules.hivemind.MessageService">
-		<create-instance class="org.springmodules.hivemind.ConfigurableMessageService"/>
+		<create-instance class="org.springmodules.hivemind.MockMessageService"/>
 	</implementation>
 
 	<implementation service-id="org.springmodules.hivemind.FooServiceOne">

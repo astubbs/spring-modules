@@ -113,6 +113,15 @@ public class ConfigurationBeanTests extends TestCase {
 		}
 	}
 
+	public void testRemoveWorkflowIsUnsupported() throws Exception {
+		try {
+			new ConfigurationBean().removeWorkflow("foo");
+			fail("removeWorkflow should throw UnsupportedOperationException");
+		} catch(UnsupportedOperationException ex){
+			// success
+		}
+	}
+
 	public static class MockWorkflowStore implements WorkflowStore {
 
 		private Map args;

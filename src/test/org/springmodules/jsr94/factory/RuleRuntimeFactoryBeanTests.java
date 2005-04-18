@@ -7,7 +7,7 @@ import javax.rules.RuleRuntime;
  * @author janm
  *
  */
-public class RuleRuntimeFactoryBeanTests extends AbstractRuleServiceProviderTestCase {
+public class RuleRuntimeFactoryBeanTests extends AbstractRuleServiceProviderTests {
 
 	/**
 	 * Tests the getObject() and afterPropertiesSet() methods

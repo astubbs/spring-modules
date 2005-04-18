@@ -92,11 +92,11 @@
 			</fileset>
 		</copy>
 
-        <copy todir="${target.classes.dir}/META-INF" preservelastmodified="true">
-            <fileset dir="${src.dir}/org/springmodules/commons/validator/taglib">
-                <include name="*.tld"/>
-            </fileset>
-        </copy>
+		<copy todir="${target.classes.dir}/META-INF" preservelastmodified="true">
+			<fileset dir="${src.dir}/org/springmodules/commons/validator/taglib">
+				<include name="*.tld"/>
+			</fileset>
+		</copy>
 
 	</target>
 
@@ -119,16 +119,27 @@
 			</jar-contents>
 		</makejar>
 
-        <makejar jarfile="${dist.dir}/springmodules-validator-${springmodules.version}.jar">
-            <jar-contents>
-                <fileset dir="${target.classes.dir}">
-                    <include name="org/springmodules/commons/validator/**"/>
-                </fileset>
-                <fileset dir="${target.classes.dir}">
-                    <include name="META-INF/**"/>
-                </fileset>
-            </jar-contents>
-        </makejar>
+		<makejar jarfile="${dist.dir}/springmodules-validator-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${target.classes.dir}">
+					<include name="org/springmodules/commons/validator/**"/>
+				</fileset>
+				<fileset dir="${target.classes.dir}">
+					<include name="META-INF/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
+		<makejar jarfile="${dist.dir}/springmodules-osworkflow-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${target.classes.dir}">
+					<include name="org/springmodules/workflow/osworkflow/**"/>
+				</fileset>
+				<fileset dir="${target.classes.dir}">
+					<include name="META-INF/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
 
 	</target>
 
@@ -332,6 +343,7 @@
 				<include name="lib/drools/**"/>
 				<include name="lib/hivemind/**"/>
 				<include name="lib/jakarta-commons/**"/>
+				<include name="lib/j2ee/**"/>
 				<include name="lib/janino/**"/>
 				<include name="lib/javassist/**"/>
 				<include name="lib/jsr94/**"/>

@@ -31,7 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * 
  * @author janm
  */
-public class TestJsr94Template extends TestCase {
+public class Jsr94TemplateTests extends TestCase {
 
 	private Handle browserHandle;
 

@@ -76,6 +76,12 @@ public class ServiceFactoryBeanTests extends TestCase {
 		}
 	}
 
+	public void testFactoryBeanImplementation() throws Exception {
+		ServiceFactoryBean bean = new ServiceFactoryBean();
+
+		assertFalse("ServiceFactoryBean does not return singletons", bean.isSingleton());
+	}
+
 	private Object getService(String serviceName, Class serviceInterface) throws Exception {
 		Registry reg = RegistryBuilder.constructDefaultRegistry();
 		ServiceFactoryBean bean = new ServiceFactoryBean();

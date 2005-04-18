@@ -7,7 +7,7 @@ import javax.rules.admin.RuleAdministrator;
  * @author janm
  *
  */
-public class RuleAdministratorFactoryBeanTests extends AbstractRuleServiceProviderTestCase {
+public class RuleAdministratorFactoryBeanTests extends AbstractRuleServiceProviderTests {
 
 	/**
 	 * Tests the getObject() and afterPropertiesSet() methods
