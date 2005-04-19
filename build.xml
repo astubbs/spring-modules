@@ -343,6 +343,7 @@
 				<include name="lib/aopalliance/**"/>
 				<include name="lib/cglib/**"/>
 				<include name="lib/drools/**"/>
+				<include name="lib/easymock/**"/>
 				<include name="lib/hivemind/**"/>
 				<include name="lib/jakarta-commons/**"/>
 				<include name="lib/j2ee/**"/>
