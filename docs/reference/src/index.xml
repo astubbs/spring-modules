@@ -7,7 +7,7 @@
 	<!ENTITY hivemind			SYSTEM "hivemind.xml">
 	<!ENTITY jsr94				SYSTEM "jsr94.xml">
 	<!ENTITY validator			SYSTEM "validator.xml">
-	<!ENTITY osworkflow     SYSTEM "osworkflow.xml">
+	<!ENTITY osworkflow 		SYSTEM "osworkflow.xml">
 	]>
 
 
