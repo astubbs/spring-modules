@@ -18,6 +18,14 @@ Package org.springmodules.hivemind
 * Added ServiceFactoryBean allowing for any HiveMind service to be exposed as a Spring bean.
 
 Package org.springmodules.jsr94
+* Added DefaultRuleServiceProviderFactoryBean allowing to configure a specific JSR94 provider
+* Added RuleAdministratorFactoryBean allowing to configure a RuleAdministrator for a specific provider
+* Added RuleRuntimeFactoryBean allowing to configure a RuleRuntime for a specific provider
+* Added DefaultRuleSource allowing for a ruleset to be configured with either a JSR94 provider or a RuleAdministrator/RuleRutime
+* Added Jsr94Template to fire rules basing on a configured RuleSource
+* Added StatefulRuleSessionCallback to work directly on a StatefulRuleSession with the Jsr94Template
+* Added StatelessRuleSessionCallback to work directly on a StatelessRuleSession with the Jsr94Template
+* Added Jsr94Accessor allowing to inject a RuleSource in components using JSR94
 
 Package org.springmodules.workflow.osworkflow.configuration
 * Added ConfigurationBean allowing for Spring-style configuration of the OSWorkflow engine.
