@@ -1,0 +1,23 @@
+SPRING MODULES CHANGELOG
+========================
+http://springmodules.dev.java.net
+
+Changes in version 0.1 (20.05.2005)
+-----------------------------------
+
+Package org.springmodules.commons.validator
+* Moved code from Spring sandbox
+* Removed most calls to deprecated Commons Validator APIs
+* Introduced AbstractBeanValidator
+* Renamed BeanValidator to DefaultBeanValidator
+* Renamed NamedBeanValidator to ConfigurableBeanValidator
+* Removed ValidatorAdaptor and moved logic into DefaultValidatorFactory
+
+Package org.springmodules.hivemind
+* Added RegistryFactoryBean allowing for a HiveMind Registry to be started inside a Spring ApplicationContext
+* Added ServiceFactoryBean allowing for any HiveMind service to be exposed as a Spring bean.
+
+Package org.springmodules.jsr94
+
+Package org.springmodules.workflow.osworkflow.configuration
+* Added ConfigurationBean allowing for Spring-style configuration of the OSWorkflow engine.
