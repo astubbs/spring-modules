@@ -26,7 +26,7 @@ import org.apache.lucene.search.Query;
  * 
  * @author Thierry Templier
  */
-public interface QueryConstructor {
+public interface QueryCreator {
 
 	/**
 	 * This method must be implemented to specify the query
@@ -36,5 +36,5 @@ public interface QueryConstructor {
 	 * @return the built query
 	 * @throws ParseException
 	 */
-	public Query constructQuery(Analyzer analyzer) throws ParseException;
+	public Query createQuery(Analyzer analyzer) throws ParseException;
 }

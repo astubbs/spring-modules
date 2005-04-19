@@ -25,7 +25,7 @@ import org.apache.lucene.search.Query;
 import org.springmodules.lucene.search.core.HitExtractor;
 import org.springmodules.lucene.search.core.LuceneSearchTemplate;
 import org.springmodules.lucene.search.factory.SearcherFactory;
-import org.springmodules.lucene.search.query.QueryConstructor;
+import org.springmodules.lucene.search.query.QueryCreator;
 
 /**
  * @author Thierry Templier
@@ -52,8 +52,8 @@ public abstract class SimpleLuceneSearchQuery extends LuceneSearchQuery {
 		return getTemplate().search(new QueryContructorImpl(),new HitExtractorImpl());
 	}
 
-	protected class QueryContructorImpl implements QueryConstructor {
-		public Query constructQuery(Analyzer analyzer) throws ParseException {
+	protected class QueryContructorImpl implements QueryCreator {
+		public Query createQuery(Analyzer analyzer) throws ParseException {
 			return constructSearchQuery();
 		}
 	}

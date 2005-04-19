@@ -28,12 +28,12 @@ import org.apache.lucene.search.Query;
  * 
  * @author Thierry Templier
  */
-public abstract class ParsedQueryConstructor implements QueryConstructor {
+public abstract class ParsedQueryCreator implements QueryCreator {
 
 	/**
 	 * @see org.springmodules.lucene.search.query.QueryConstructor#constructQuery(org.apache.lucene.analysis.Analyzer)
 	 */
-	public final Query constructQuery(Analyzer analyzer) throws ParseException {
+	public final Query createQuery(Analyzer analyzer) throws ParseException {
 		QueryParams params=configureQuery();
 		String[] tokens=params.getToken();
 		Query query=null;

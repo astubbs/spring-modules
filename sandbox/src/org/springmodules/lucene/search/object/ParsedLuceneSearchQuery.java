@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.springmodules.lucene.search.core.HitExtractor;
-import org.springmodules.lucene.search.query.ParsedQueryConstructor;
-import org.springmodules.lucene.search.query.ParsedQueryConstructor.QueryParams;
+import org.springmodules.lucene.search.query.ParsedQueryCreator;
+import org.springmodules.lucene.search.query.ParsedQueryCreator.QueryParams;
 
 /**
  * @author Thierry Templier
@@ -48,7 +48,7 @@ public abstract class ParsedLuceneSearchQuery extends LuceneSearchQuery {
 		return getTemplate().search(new ParsedQueryConstructorImpl(),new HitExtractorImpl());
 	}
 
-	protected class ParsedQueryConstructorImpl extends ParsedQueryConstructor {
+	protected class ParsedQueryConstructorImpl extends ParsedQueryCreator {
 		public QueryParams configureQuery() {
 			return configureSearchQuery();
 		}

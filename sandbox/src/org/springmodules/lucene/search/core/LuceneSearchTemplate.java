@@ -29,7 +29,7 @@ import org.apache.lucene.search.Sort;
 import org.springmodules.lucene.search.LuceneSearchException;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
-import org.springmodules.lucene.search.query.QueryConstructor;
+import org.springmodules.lucene.search.query.QueryCreator;
 
 /**
  * Template class to make search using Lucene.
@@ -97,34 +97,34 @@ public class LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	public List search(QueryConstructor queryConstructor,HitExtractor extractor) {
+	public List search(QueryCreator queryConstructor,HitExtractor extractor) {
 		return doSearch(queryConstructor,extractor,null,null);
 	}
 
-	public List search(QueryConstructor queryConstructor,HitExtractor extractor,Filter filter) {
+	public List search(QueryCreator queryConstructor,HitExtractor extractor,Filter filter) {
 		return doSearch(queryConstructor,extractor,filter,null);
 	}
 
-	public List search(QueryConstructor queryConstructor,HitExtractor extractor,Sort sort) {
+	public List search(QueryCreator queryConstructor,HitExtractor extractor,Sort sort) {
 		return doSearch(queryConstructor,extractor,null,sort);
 	}
 
-	public List search(QueryConstructor queryConstructor,HitExtractor extractor,Filter filter,Sort sort) {
+	public List search(QueryCreator queryConstructor,HitExtractor extractor,Filter filter,Sort sort) {
 		return doSearch(queryConstructor,extractor,filter,sort);
 	}
 
-	private List doSearch(QueryConstructor queryConstructor,HitExtractor extractor,Filter filter,Sort sort) {
+	private List doSearch(QueryCreator queryConstructor,HitExtractor extractor,Filter filter,Sort sort) {
 		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
 			Hits hits=null;
 			if( filter!=null && sort!=null ) {
-				hits=searcher.search(queryConstructor.constructQuery(getAnalyzer()),filter,sort);
+				hits=searcher.search(queryConstructor.createQuery(getAnalyzer()),filter,sort);
 			} else if( filter!=null ) { 
-				hits=searcher.search(queryConstructor.constructQuery(getAnalyzer()),filter);
+				hits=searcher.search(queryConstructor.createQuery(getAnalyzer()),filter);
 			} else if( sort!=null ) { 
-				hits=searcher.search(queryConstructor.constructQuery(getAnalyzer()),sort);
+				hits=searcher.search(queryConstructor.createQuery(getAnalyzer()),sort);
 			} else { 
-				hits=searcher.search(queryConstructor.constructQuery(getAnalyzer()));
+				hits=searcher.search(queryConstructor.createQuery(getAnalyzer()));
 			}
 			return extractHits(hits,extractor);
 		} catch (IOException ex) {
