@@ -121,7 +121,7 @@ public class DefaultValidatorFactory implements ValidatorFactory, InitializingBe
 	 */
 	public boolean hasRulesForBean(String beanName, Locale locale) {
 		Form form = validatorResources.getForm(locale, beanName);
-		return (form != null ? true : false);
+		return (form != null);
 	}
 
 	/**
