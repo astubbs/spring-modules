@@ -19,6 +19,10 @@ package org.springmodules.lucene.search.factory;
 import org.apache.lucene.search.Searcher;
 import org.springframework.transaction.support.ResourceHolderSupport;
 
+/**
+ * 
+ * @author Thierry Templier
+ */
 public class SearcherHolder extends ResourceHolderSupport {
 
 	private final Searcher searcher;
