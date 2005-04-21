@@ -17,9 +17,11 @@
 package org.springmodules.workflow.osworkflow;
 
 import java.util.Map;
+import java.util.List;
 
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
+import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.basic.BasicWorkflow;
 import com.opensymphony.workflow.config.Configuration;
 import com.opensymphony.workflow.config.DefaultConfiguration;
@@ -59,27 +61,20 @@ public class OsWorkflowTemplate implements InitializingBean {
 	}
 
 	public void initialize() {
-		this.initialize(this.initialAction.intValue(), null, WorkflowContext.getCaller());
+		this.initialize(this.initialAction.intValue(), null);
 	}
 
 	public void initialize(final Map inputs) {
-		this.initialize(this.initialAction.intValue(), inputs, WorkflowContext.getCaller());
+		this.initialize(this.initialAction.intValue(), inputs);
 	}
 
-	public void initialize(final Map inputs, final String caller) {
-		this.initialize(this.initialAction.intValue(), inputs, caller);
-	}
 
 	public void initialize(final int initialAction) {
-		this.initialize(initialAction, null, WorkflowContext.getCaller());
+		this.initialize(initialAction, null);
 	}
 
 	public void initialize(final int initialAction, final Map inputs) {
-		this.initialize(initialAction, inputs, WorkflowContext.getCaller());
-	}
-
-	public void initialize(final int initialAction, final Map inputs, final String caller) {
-		execute(caller, new OsWorkflowCallback(){
+		this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				long id = workflow.initialize(OsWorkflowTemplate.this.workflowName, initialAction, inputs);
 				WorkflowContext.setInstanceId(id);
@@ -88,19 +83,49 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
-	public Object execute(String caller, OsWorkflowCallback callback) {
-		Workflow workflow = createWorkflow(caller);
-		workflow.setConfiguration(this.configuration);
+	public void doAction(final int actionId) {
+		this.doAction(actionId, null);
+	}
+
+	public void doAction(final int actionId, final Map inputs) {
+		this.execute(new OsWorkflowCallback(){
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				workflow.doAction(WorkflowContext.getInstanceId(), actionId, inputs);
+				return null;
+			}
+		});
+	}
+
+	public WorkflowDescriptor getWorkflowDescriptor() {
+		return (WorkflowDescriptor)this.execute(new OsWorkflowCallback(){
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				return workflow.getWorkflowDescriptor(OsWorkflowTemplate.this.workflowName);
+			}
+		});
+	}
+
+	public List getHistorySteps() {
+		return (List)this.execute(new OsWorkflowCallback(){
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				return workflow.getHistorySteps(WorkflowContext.getInstanceId());
+			}
+		});
+	}
+
+	public Object execute(OsWorkflowCallback callback) {
 		try {
-       return callback.doWithWorkflow(workflow);
-		} catch(WorkflowException ex) {
+			Workflow workflow = createWorkflow(WorkflowContext.getCaller());
+			workflow.setConfiguration(this.configuration);
+			return callback.doWithWorkflow(workflow);
+		}
+		catch (WorkflowException ex) {
 			// TODO: proper exception translation
 			throw new org.springmodules.workflow.WorkflowException("", ex);
 		}
 	}
 
 
-	protected Workflow createWorkflow(String caller) {
+	protected Workflow createWorkflow(String caller) throws WorkflowException {
 		return new BasicWorkflow(caller);
 	}
 

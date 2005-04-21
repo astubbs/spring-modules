@@ -43,6 +43,16 @@ public class WorkflowContextTests extends TestCase {
 		}
 	}
 
+	public void testGetInstanceIdWithNoContext() {
+		try {
+			WorkflowContext.getInstanceId();
+			fail("Should not be able to get instance Id with it being set");
+		}
+		catch (InvalidWorkflowContextStateException ex) {
+			// success
+		}
+	}
+
 	public void testGetAndSetInstanceId() throws Exception {
 		final long instanceId = 1L;
 		final long innerInstanceId = 2L;
