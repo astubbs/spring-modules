@@ -18,25 +18,25 @@ package org.springmodules.workflow.osworkflow;
 
 import java.util.Map;
 
-import com.opensymphony.workflow.config.Configuration;
-import com.opensymphony.workflow.config.DefaultConfiguration;
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
 import com.opensymphony.workflow.basic.BasicWorkflow;
-import org.springmodules.workflow.osworkflow.support.WorkflowContextManager;
+import com.opensymphony.workflow.config.Configuration;
+import com.opensymphony.workflow.config.DefaultConfiguration;
+import org.springmodules.workflow.osworkflow.support.WorkflowContext;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
 /**
  * @author Rob Harrop
  */
-public class OsWorkflowTemplate implements InitializingBean{
+public class OsWorkflowTemplate implements InitializingBean {
 
 	private Configuration configuration = new DefaultConfiguration();
 
-	private Integer initialStep = new Integer(1);
+	private Integer initialAction = new Integer(0);
 
 	private String workflowName;
 
@@ -44,8 +44,8 @@ public class OsWorkflowTemplate implements InitializingBean{
 		this.configuration = configuration;
 	}
 
-	public void setInitialStep(Integer initialStep) {
-		this.initialStep = initialStep;
+	public void setInitialAction(Integer initialAction) {
+		this.initialAction = initialAction;
 	}
 
 	public void setWorkflowName(String workflowName) {
@@ -53,54 +53,55 @@ public class OsWorkflowTemplate implements InitializingBean{
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		if(!StringUtils.hasText(this.workflowName)) {
+		if (!StringUtils.hasText(this.workflowName)) {
 			throw new FatalBeanException("Property [workflowName] is required.");
 		}
 	}
 
 	public void initialize() {
-		this.initialize(this.initialStep.intValue(), null, getCallerFromWorkflowContext());
+		this.initialize(this.initialAction.intValue(), null, WorkflowContext.getCaller());
 	}
 
-	public void initialize(Map params) {
-		this.initialize(this.initialStep.intValue(), params, getCallerFromWorkflowContext());
+	public void initialize(final Map inputs) {
+		this.initialize(this.initialAction.intValue(), inputs, WorkflowContext.getCaller());
 	}
 
-	public void initialize(Map params, String caller) {
-		this.initialize(this.initialStep.intValue(), params, caller);
+	public void initialize(final Map inputs, final String caller) {
+		this.initialize(this.initialAction.intValue(), inputs, caller);
 	}
 
-	public void initialize(int initialStep) {
-		this.initialize(initialStep, null, getCallerFromWorkflowContext());
+	public void initialize(final int initialAction) {
+		this.initialize(initialAction, null, WorkflowContext.getCaller());
 	}
 
-	public void initialize(int initialStep, Map params) {
-		this.initialize(initialStep, params, getCallerFromWorkflowContext());
+	public void initialize(final int initialAction, final Map inputs) {
+		this.initialize(initialAction, inputs, WorkflowContext.getCaller());
 	}
 
-	public void initialize(int initialStep, Map params, String caller) {
+	public void initialize(final int initialAction, final Map inputs, final String caller) {
+		execute(caller, new OsWorkflowCallback(){
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				long id = workflow.initialize(OsWorkflowTemplate.this.workflowName, initialAction, inputs);
+				WorkflowContext.setInstanceId(id);
+				return null;
+			}
+		});
+	}
+
+	public Object execute(String caller, OsWorkflowCallback callback) {
 		Workflow workflow = createWorkflow(caller);
 		workflow.setConfiguration(this.configuration);
 		try {
-			long id = workflow.initialize(caller, initialStep, params);
-			bindWorkflowIdToContext(id);
-		}
-		catch (WorkflowException e) {
-			throw new RuntimeException(e);
+       return callback.doWithWorkflow(workflow);
+		} catch(WorkflowException ex) {
+			// TODO: proper exception translation
+			throw new org.springmodules.workflow.WorkflowException("", ex);
 		}
 	}
 
 
 	protected Workflow createWorkflow(String caller) {
 		return new BasicWorkflow(caller);
-	}
-
-	private void bindWorkflowIdToContext(long id) {
-		WorkflowContextManager.bindResource(this.workflowName, new Long(id));
-	}
-
-	private String getCallerFromWorkflowContext() {
-		return (String) WorkflowContextManager.getResource("caller");
 	}
 
 }

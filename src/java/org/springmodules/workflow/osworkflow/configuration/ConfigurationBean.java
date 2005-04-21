@@ -72,6 +72,11 @@ public class ConfigurationBean extends DefaultConfiguration {
 	private Map workflows = new HashMap();
 
 	/**
+	 * Indicates whether this instance is initialized or not
+	 */
+	private boolean initialized;
+
+	/**
 	 * Creates a new <code>ConfigurationBean</code> with <code>MemoryWorkflowStore</code>
 	 * as the persistence class.
 	 */
@@ -117,6 +122,7 @@ public class ConfigurationBean extends DefaultConfiguration {
 			workflows.put(name, loadWorkflowDescriptor(resourceLocation, name));
 		}
 
+		this.initialized = true;
 	}
 
 	/**
@@ -138,6 +144,13 @@ public class ConfigurationBean extends DefaultConfiguration {
 	public String[] getWorkflowNames() throws FactoryException {
 		Set names = this.workflows.keySet();
 		return (String[]) names.toArray(new String[names.size()]);
+	}
+
+	/**
+	 * Indicates whether this instance has been initialized or not.
+	 */
+	public boolean isInitialized() {
+		return this.initialized;
 	}
 
 	/**
