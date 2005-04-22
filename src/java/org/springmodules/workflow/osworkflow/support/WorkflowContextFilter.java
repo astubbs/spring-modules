@@ -18,14 +18,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 public class WorkflowContextFilter extends OncePerRequestFilter {
 
-	private static final String INSTANCE_ID = "org.springmodules.workflow.osworkflow.instanceId";
+	public static final String DEFAULT_INSTANCE_ID_KEY = "org.springmodules.workflow.osworkflow.instanceId";
+
+	private String instanceIdKey = DEFAULT_INSTANCE_ID_KEY;
 
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 
 		HttpSession session = request.getSession();
 
-		Long instanceId = (Long) session.getAttribute(INSTANCE_ID);
+		Long instanceId = (Long) session.getAttribute(instanceIdKey);
 
 		if (instanceId != null) {
 			WorkflowContext.setInstanceId(instanceId.longValue());
@@ -33,7 +35,7 @@ public class WorkflowContextFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 
 		if (WorkflowContext.hasInstanceId()) {
-			session.setAttribute(INSTANCE_ID, new Long(WorkflowContext.getInstanceId()));
+			session.setAttribute(instanceIdKey, new Long(WorkflowContext.getInstanceId()));
 		}
 
 	}

@@ -18,9 +18,12 @@ package org.springmodules.workflow.osworkflow;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
+import com.opensymphony.workflow.spi.Step;
 import com.opensymphony.workflow.basic.BasicWorkflow;
 import com.opensymphony.workflow.config.Configuration;
 import com.opensymphony.workflow.config.DefaultConfiguration;
@@ -111,6 +114,44 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
+	public List getCurrentSteps() {
+		return (List) this.execute(new OsWorkflowCallback() {
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				return workflow.getCurrentSteps(WorkflowContext.getInstanceId());
+			}
+		});
+	}
+
+	public List getHistoryStepDescriptors() {
+		return (List) this.execute(new OsWorkflowCallback() {
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				List steps = workflow.getHistorySteps(WorkflowContext.getInstanceId());
+		    return convertStepsToStepDescriptors(steps, workflow);
+			}
+		});
+	}
+
+	public List getCurrentStepDescriptors() {
+		return (List) this.execute(new OsWorkflowCallback() {
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				List steps = workflow.getCurrentSteps(WorkflowContext.getInstanceId());
+		    return convertStepsToStepDescriptors(steps, workflow);
+			}
+		});
+	}
+
+	public int[] getAvailableActions() {
+		return this.getAvailableActions(null);
+	}
+
+	public int[] getAvailableActions(final Map inputs) {
+		return (int[])this.execute(new OsWorkflowCallback(){
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				return workflow.getAvailableActions(WorkflowContext.getInstanceId(), inputs);
+			}
+		});
+	}
+
 	public int getEntryState() {
 		Integer state = (Integer) this.execute(new OsWorkflowCallback() {
 					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -133,6 +174,18 @@ public class OsWorkflowTemplate implements InitializingBean {
 		}
 	}
 
+	private List convertStepsToStepDescriptors(List steps, Workflow workflow) {
+		WorkflowDescriptor descriptor = workflow.getWorkflowDescriptor(OsWorkflowTemplate.this.workflowName);
+
+		List stepDescriptors = new ArrayList();
+
+		for (int i = 0; i < steps.size(); i++) {
+			Step step = (Step) steps.get(i);
+			stepDescriptors.add(descriptor.getStep(step.getStepId()));
+		}
+
+		return Collections.unmodifiableList(stepDescriptors);
+	}
 
 	protected Workflow createWorkflow(String caller) throws WorkflowException {
 		return new BasicWorkflow(caller);

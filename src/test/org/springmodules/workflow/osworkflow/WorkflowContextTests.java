@@ -52,6 +52,12 @@ public class WorkflowContextTests extends TestCase {
 		}
 	}
 
+	public void testHasInstanceId() throws Exception {
+		assertFalse(WorkflowContext.hasInstanceId());
+		WorkflowContext.setInstanceId(1);
+		assertTrue(WorkflowContext.hasInstanceId());
+	}
+
 	public void testGetAndSetInstanceId() throws Exception {
 		final long instanceId = 1L;
 		final long innerInstanceId = 2L;

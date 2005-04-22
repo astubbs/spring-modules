@@ -4,9 +4,12 @@ package org.springmodules.workflow.osworkflow;
 import java.util.Properties;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
+import com.opensymphony.workflow.loader.StepDescriptor;
 import com.opensymphony.workflow.basic.BasicWorkflow;
 import junit.framework.TestCase;
 import org.springmodules.workflow.osworkflow.configuration.ConfigurationBean;
@@ -144,9 +147,10 @@ public class OsWorkflowTemplateTests extends TestCase {
 	}
 
 	public void testDoAction() throws Exception {
+		bindMockInstanceIdToContext();
+
 		final int actionId = 1;
 		final MockControl ctl = createMockWorkflowControl();
-		WorkflowContext.setInstanceId(MOCK_INSTANCE_ID);
 		OsWorkflowTemplate template = createMockTemplateForDoAction(ctl, actionId, null);
 
 		setProperties(template);
@@ -156,10 +160,11 @@ public class OsWorkflowTemplateTests extends TestCase {
 	}
 
 	public void testDoActionWithInputs() throws Exception {
+		bindMockInstanceIdToContext();
+
 		final int actionId = 1;
 		final MockControl ctl = createMockWorkflowControl();
 		final Map inputs = new HashMap();
-		WorkflowContext.setInstanceId(MOCK_INSTANCE_ID);
 		OsWorkflowTemplate template = createMockTemplateForDoAction(ctl, actionId, inputs);
 
 		setProperties(template);
@@ -169,7 +174,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 	}
 
 	public void testGetWorkflowDescriptor() {
-		WorkflowContext.setInstanceId(MOCK_INSTANCE_ID);
+		bindMockInstanceIdToContext();
 
 		final MockControl ctl = createMockWorkflowControl();
 
@@ -188,6 +193,114 @@ public class OsWorkflowTemplateTests extends TestCase {
 		setProperties(template);
 		assertNull(template.getWorkflowDescriptor());
 		ctl.verify();
+	}
+
+	public void testGetHistorySteps() {
+		bindMockInstanceIdToContext();
+
+		final MockControl ctl = createMockWorkflowControl();
+		final List mockSteps = new ArrayList();
+
+		OsWorkflowTemplate template = new OsWorkflowTemplate(){
+			protected Workflow createWorkflow(String caller) throws WorkflowException {
+				Workflow workflow = (Workflow)ctl.getMock();
+				workflow.setConfiguration(OsWorkflowTemplateTests.this.configuration);
+				workflow.getHistorySteps(MOCK_INSTANCE_ID);
+				ctl.setReturnValue(mockSteps);
+        ctl.replay();
+
+				return workflow;
+			}
+		};
+
+		setProperties(template);
+
+		assertEquals("Incorrect value returned for history steps", mockSteps, template.getHistorySteps());
+
+		ctl.verify();
+	}
+
+	public void testGetHistoryStepDescriptors() {
+		OsWorkflowTemplate template = new OsWorkflowTemplate();
+		setProperties(template);
+
+		List historyStepDescriptors = null;
+
+		template.initialize();
+		template.doAction(1);
+
+		historyStepDescriptors = template.getHistoryStepDescriptors();
+
+		assertEquals(1, historyStepDescriptors.size());
+		assertEquals("Decision Time", ((StepDescriptor)historyStepDescriptors.get(0)).getName());
+
+		template.doAction(3);
+
+		historyStepDescriptors = template.getHistoryStepDescriptors();
+
+		assertEquals(2, historyStepDescriptors.size());
+		assertEquals("Spruce Up", ((StepDescriptor)historyStepDescriptors.get(1)).getName());
+
+	}
+
+	public void testGetCurrentStepDescriptors() {
+		OsWorkflowTemplate template = new OsWorkflowTemplate();
+		setProperties(template);
+	}
+
+	public void testGetCurrentSteps() {
+		bindMockInstanceIdToContext();
+
+		final MockControl ctl = createMockWorkflowControl();
+		final List mockSteps = new ArrayList();
+
+		OsWorkflowTemplate template = new OsWorkflowTemplate(){
+			protected Workflow createWorkflow(String caller) throws WorkflowException {
+				Workflow workflow = (Workflow)ctl.getMock();
+				workflow.setConfiguration(OsWorkflowTemplateTests.this.configuration);
+				workflow.getCurrentSteps(MOCK_INSTANCE_ID);
+				ctl.setReturnValue(mockSteps);
+        ctl.replay();
+
+				return workflow;
+			}
+		};
+
+		setProperties(template);
+
+		assertEquals("Incorrect value returned for current steps", mockSteps, template.getCurrentSteps());
+
+		ctl.verify();
+	}
+
+	public void testGetEntryState() {
+		bindMockInstanceIdToContext();
+
+		final MockControl ctl = createMockWorkflowControl();
+		final int mockEntryState = 98;
+
+		OsWorkflowTemplate template = new OsWorkflowTemplate(){
+			protected Workflow createWorkflow(String caller) throws WorkflowException {
+				Workflow workflow = (Workflow)ctl.getMock();
+
+				// expect setConfiguration
+				workflow.setConfiguration(OsWorkflowTemplateTests.this.configuration);
+				workflow.getEntryState(MOCK_INSTANCE_ID);
+				ctl.setReturnValue(mockEntryState);
+
+				ctl.replay();
+				return workflow;
+			}
+		};
+
+		setProperties(template);
+
+		assertEquals("Incorrect entry state returned", mockEntryState, template.getEntryState());
+		ctl.verify();
+	}
+
+	private void bindMockInstanceIdToContext() {
+		WorkflowContext.setInstanceId(MOCK_INSTANCE_ID);
 	}
 
 
