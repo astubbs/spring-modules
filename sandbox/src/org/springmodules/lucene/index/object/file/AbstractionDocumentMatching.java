@@ -1,4 +1,4 @@
-package org.springmodules.lucene.index.object;
+package org.springmodules.lucene.index.object.file;
 
 /**
  * @author Thierry Templier

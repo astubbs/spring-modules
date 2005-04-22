@@ -20,12 +20,10 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springmodules.lucene.index.LuceneCloseIndexException;
 import org.springmodules.lucene.search.LuceneCannotGetSearcherException;
+import org.springmodules.resource.support.ResourceSynchronizationManager;
 
 /**
  * @author Brian McCallister
@@ -72,17 +70,33 @@ public abstract class IndexWriterFactoryUtils {
 	 * @throws IOException
 	 */
 	public static IndexWriter doGetIndexWriter(IndexFactory indexFactory,boolean allowSynchronization) throws IOException {
-		IndexWriterHolder indexWriterHolder = (IndexWriterHolder) TransactionSynchronizationManager.getResource(indexFactory);
-		if (indexWriterHolder != null) {
-			return indexWriterHolder.getIndexWriter();
+		IndexHolder indexHolder = (IndexHolder) ResourceSynchronizationManager.getResource(indexFactory);
+		if (indexHolder != null && indexHolder.getIndexWriter()!=null ) {
+			System.err.println("!! writer = "+indexHolder.getIndexWriter()+" !!");
+			return indexHolder.getIndexWriter();
 		}
+
+		boolean bindHolder=true;
+		if( indexHolder!=null ) {
+			bindHolder=false;
+		}
+
 		IndexWriter writer = indexFactory.getIndexWriter();
-		if (allowSynchronization && TransactionSynchronizationManager.isSynchronizationActive()) {
-			logger.debug("Registering reader synchronization for Lucene index read");
-			indexWriterHolder = new IndexWriterHolder(writer);
-			TransactionSynchronizationManager.bindResource(indexFactory, indexWriterHolder);
-			TransactionSynchronizationManager.registerSynchronization(new IndexWriterSynchronization(indexWriterHolder, indexFactory));
+		if (allowSynchronization && ResourceSynchronizationManager.isSynchronizationActive()) {
+			logger.debug("Registering reader synchronization for Lucene index write");
+			if( indexHolder==null ) {
+				indexHolder = new IndexHolder(null,writer);
+			} else {
+				indexHolder.setIndexWriter(writer);
+			}
+
+			if( bindHolder ) {
+				ResourceSynchronizationManager.bindResource(indexFactory, indexHolder);
+			}
+
+			ResourceSynchronizationManager.registerSynchronization(new IndexSynchronization(indexHolder, indexFactory));
 		}
+		System.err.println("!! writer = "+writer+" !!");
 		return writer;
     }
 
@@ -104,38 +118,11 @@ public abstract class IndexWriterFactoryUtils {
 	 * @throws IOException
 	 */
 	public static void doCloseIndexWriterIfNecessary(IndexFactory indexFactory,IndexWriter indexWriter) throws IOException {
-		if (indexWriter == null || TransactionSynchronizationManager.hasResource(indexFactory)) {
+		if (indexWriter == null || ResourceSynchronizationManager.hasResource(indexFactory)) {
 			return;
 		}
 
 		indexWriter.close();
 	}
 
-	/**
-	 * Callback for resource cleanup at the end of an use of index read.
-	 */
-	private static class IndexWriterSynchronization extends TransactionSynchronizationAdapter {
-
-		private final IndexWriterHolder indexWriterHolder;
-
-		private final IndexFactory indexFactory;
-
-		public IndexWriterSynchronization(IndexWriterHolder indexWriterHolder, IndexFactory indexFactory) {
-			this.indexWriterHolder = indexWriterHolder;
-			this.indexFactory = indexFactory;
-		}
-
-		public void suspend() {
-			TransactionSynchronizationManager.unbindResource(this.indexFactory);
-		}
-
-		public void resume() {
-			TransactionSynchronizationManager.bindResource(this.indexFactory, this.indexWriterHolder);
-		}
-
-		public void beforeCompletion() {
-			TransactionSynchronizationManager.unbindResource(this.indexFactory);
-			closeIndexWriterIfNecessary(this.indexFactory, this.indexWriterHolder.getIndexWriter() );
-		}
-	}
 }

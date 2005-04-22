@@ -21,10 +21,9 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springmodules.lucene.index.LuceneCloseIndexException;
 import org.springmodules.lucene.search.LuceneCannotGetSearcherException;
+import org.springmodules.resource.support.ResourceSynchronizationManager;
 
 /**
  * @author Brian McCallister
@@ -71,16 +70,29 @@ public abstract class IndexReaderFactoryUtils {
 	 * @throws IOException
 	 */
 	public static IndexReader doGetIndexReader(IndexFactory indexFactory,boolean allowSynchronization) throws IOException {
-		IndexReaderHolder indexReaderHolder = (IndexReaderHolder) TransactionSynchronizationManager.getResource(indexFactory);
-		if (indexReaderHolder != null) {
-			return indexReaderHolder.getIndexReader();
+		IndexHolder indexHolder = (IndexHolder) ResourceSynchronizationManager.getResource(indexFactory);
+		if (indexHolder != null && indexHolder.getIndexReader()!=null ) {
+			return indexHolder.getIndexReader();
 		}
+
+		boolean bindHolder=true;
+		if( indexHolder!=null ) {
+			bindHolder=false;
+		}
+
 		IndexReader reader = indexFactory.getIndexReader();
-		if (allowSynchronization && TransactionSynchronizationManager.isSynchronizationActive()) {
+		if (allowSynchronization && ResourceSynchronizationManager.isSynchronizationActive()) {
 			logger.debug("Registering reader synchronization for Lucene index read");
-			indexReaderHolder = new IndexReaderHolder(reader);
-			TransactionSynchronizationManager.bindResource(indexFactory, indexReaderHolder);
-			TransactionSynchronizationManager.registerSynchronization(new IndexReaderSynchronization(indexReaderHolder, indexFactory));
+			if( indexHolder==null ) {
+				indexHolder = new IndexHolder(reader,null);
+			} else {
+				indexHolder.setIndexReader(reader);
+			}
+
+			if( bindHolder ) {
+				ResourceSynchronizationManager.bindResource(indexFactory, indexHolder);
+				ResourceSynchronizationManager.registerSynchronization(new IndexSynchronization(indexHolder, indexFactory));
+			}
 		}
 		return reader;
     }
@@ -103,38 +115,11 @@ public abstract class IndexReaderFactoryUtils {
 	 * @throws IOException
 	 */
 	public static void doCloseIndexReaderIfNecessary(IndexFactory indexFactory,IndexReader indexReader) throws IOException {
-		if (indexReader == null || TransactionSynchronizationManager.hasResource(indexFactory)) {
+		if (indexReader == null || ResourceSynchronizationManager.hasResource(indexFactory)) {
 			return;
 		}
 
 		indexReader.close();
 	}
 
-	/**
-	 * Callback for resource cleanup at the end of an use of index read.
-	 */
-	private static class IndexReaderSynchronization extends TransactionSynchronizationAdapter {
-
-		private final IndexReaderHolder indexReaderHolder;
-
-		private final IndexFactory indexFactory;
-
-		public IndexReaderSynchronization(IndexReaderHolder indexReaderHolder, IndexFactory indexFactory) {
-			this.indexReaderHolder = indexReaderHolder;
-			this.indexFactory = indexFactory;
-		}
-
-		public void suspend() {
-			TransactionSynchronizationManager.unbindResource(this.indexFactory);
-		}
-
-		public void resume() {
-			TransactionSynchronizationManager.bindResource(this.indexFactory, this.indexReaderHolder);
-		}
-
-		public void beforeCompletion() {
-			TransactionSynchronizationManager.unbindResource(this.indexFactory);
-			closeIndexReaderIfNecessary(this.indexFactory, this.indexReaderHolder.getIndexReader() );
-		}
-	}
 }

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.object;
+package org.springmodules.lucene.index.object.file;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,7 +29,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.springmodules.lucene.index.LuceneWriteIndexException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
-import org.springmodules.lucene.index.object.handlers.TextDocumentHandler;
+import org.springmodules.lucene.index.object.AbstractIndexer;
+import org.springmodules.lucene.index.object.file.handlers.TextDocumentHandler;
 
 /**
  * @author Thierry Templier
