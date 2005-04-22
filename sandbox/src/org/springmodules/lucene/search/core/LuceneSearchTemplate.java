@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Sort;
@@ -127,6 +128,19 @@ public class LuceneSearchTemplate {
 				hits=searcher.search(queryConstructor.createQuery(getAnalyzer()));
 			}
 			return extractHits(hits,extractor);
+		} catch (IOException ex) {
+			throw new LuceneSearchException("Error during the search",ex);
+		} catch (ParseException ex) {
+			throw new LuceneSearchException("Error during the parse of the query",ex);
+		} finally {
+			SearcherFactoryUtils.closeSearcherIfNecessary(getSearcherFactory(),searcher);
+		}
+	}
+
+	private void search(QueryCreator queryConstructor,HitCollector results) {
+		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
+		try {
+			searcher.search(queryConstructor.createQuery(getAnalyzer()),results);
 		} catch (IOException ex) {
 			throw new LuceneSearchException("Error during the search",ex);
 		} catch (ParseException ex) {

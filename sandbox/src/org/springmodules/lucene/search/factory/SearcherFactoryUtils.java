@@ -21,11 +21,10 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.search.Searcher;
-import org.springframework.transaction.support.TransactionSynchronizationAdapter;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springmodules.lucene.index.LuceneCloseIndexException;
 import org.springmodules.lucene.search.LuceneCannotGetSearcherException;
 import org.springmodules.lucene.search.core.SmartSearcher;
+import org.springmodules.resource.support.ResourceSynchronizationManager;
 
 /**
  * @author Brian McCallister
@@ -72,19 +71,32 @@ public abstract class SearcherFactoryUtils {
 	 * @throws IOException
 	 */
 	public static Searcher doGetSearcher(SearcherFactory searcherFactory,boolean allowSynchronization) throws IOException {
-		SearcherHolder searcherHolder = (SearcherHolder) TransactionSynchronizationManager.getResource(searcherFactory);
-		if (searcherHolder != null) {
+		SearcherHolder searcherHolder = (SearcherHolder) ResourceSynchronizationManager.getResource(searcherFactory);
+		if (searcherHolder != null && searcherHolder.getSearcher()!=null ) {
 			return searcherHolder.getSearcher();
 		}
+
+		boolean bindHolder=true;
+		if( searcherHolder!=null ) {
+			bindHolder=false;
+		}
+
 		Searcher searcher = searcherFactory.getSearcher();
-		if (allowSynchronization && TransactionSynchronizationManager.isSynchronizationActive()) {
-			logger.debug("Registering searcher synchronization for Lucene search");
-			searcherHolder = new SearcherHolder(searcher);
-			TransactionSynchronizationManager.bindResource(searcherFactory, searcherHolder);
-			TransactionSynchronizationManager.registerSynchronization(new SearcherSynchronization(searcherHolder, searcherFactory));
+		if (allowSynchronization && ResourceSynchronizationManager.isSynchronizationActive()) {
+			logger.debug("Registering searcher synchronization for Lucene index search");
+			if( searcherHolder==null ) {
+				searcherHolder = new SearcherHolder(searcher);
+			} else {
+				searcherHolder.setSearcher(searcher);
+			}
+
+			if( bindHolder ) {
+				ResourceSynchronizationManager.bindResource(searcherFactory, searcherHolder);
+				ResourceSynchronizationManager.registerSynchronization(new SearcherSynchronization(searcherHolder, searcherFactory));
+			}
 		}
 		return searcher;
-    }
+     }
 
 	/**
 	 * @param searcherFactory
@@ -104,7 +116,7 @@ public abstract class SearcherFactoryUtils {
 	 * @throws IOException
 	 */
 	public static void doCloseSearcherIfNecessary(SearcherFactory searcherFactory,Searcher searcher) throws IOException {
-		if (searcher == null || TransactionSynchronizationManager.hasResource(searcherFactory)) {
+		if (searcher == null || ResourceSynchronizationManager.hasResource(searcherFactory)) {
 			return;
 		}
 		if( searcher instanceof SmartSearcher && !((SmartSearcher)searcher).shouldClose() ) {
@@ -114,31 +126,4 @@ public abstract class SearcherFactoryUtils {
 		searcher.close();
 	}
 
-	/**
-	 * Callback for resource cleanup at the end of an use of search.
-	 */
-	private static class SearcherSynchronization extends TransactionSynchronizationAdapter {
-
-		private final SearcherHolder searcherHolder;
-
-		private final SearcherFactory searcherFactory;
-
-		public SearcherSynchronization(SearcherHolder searcherHolder, SearcherFactory searcherFactory) {
-			this.searcherHolder = searcherHolder;
-			this.searcherFactory = searcherFactory;
-		}
-
-		public void suspend() {
-			TransactionSynchronizationManager.unbindResource(this.searcherFactory);
-		}
-
-		public void resume() {
-			TransactionSynchronizationManager.bindResource(this.searcherFactory, this.searcherHolder);
-		}
-
-		public void beforeCompletion() {
-			TransactionSynchronizationManager.unbindResource(this.searcherFactory);
-			closeSearcherIfNecessary(this.searcherFactory, this.searcherHolder.getSearcher() );
-		}
-	}
 }

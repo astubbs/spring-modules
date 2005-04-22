@@ -17,15 +17,15 @@
 package org.springmodules.lucene.search.factory;
 
 import org.apache.lucene.search.Searcher;
-import org.springframework.transaction.support.ResourceHolderSupport;
+import org.springmodules.lucene.index.factory.ResourceHolderDefinition;
 
 /**
  * 
  * @author Thierry Templier
  */
-public class SearcherHolder extends ResourceHolderSupport {
+public class SearcherHolder extends ResourceHolderDefinition {
 
-	private final Searcher searcher;
+	private Searcher searcher;
 
 	public SearcherHolder(Searcher searcher) {
 		this.searcher = searcher;
@@ -33,6 +33,10 @@ public class SearcherHolder extends ResourceHolderSupport {
 
 	public Searcher getSearcher() {
 		return this.searcher;
+	}
+
+	public void setSearcher(Searcher searcher) {
+		this.searcher = searcher;
 	}
 
 }
