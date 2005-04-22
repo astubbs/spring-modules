@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"
+>
+
+<beans>
+	<!-- Cache Manager -->
+	<bean id="cacheManager"
+		class="org.springmodules.cache.provider.oscache.OscacheManagerFactoryBean">
+	</bean>
+
+	<!-- Cache Provider -->
+	<bean id="cacheProvider"
+		class="org.springmodules.cache.provider.oscache.OscacheFacade">
+		<property name="cacheManager" ref="cacheManager" />
+		<property name="cacheProfiles">
+			<props>
+				<prop key="test">[refreshPeriod=4][groups=testGroup]</prop>
+			</props>
+		</property>
+	</bean>
+</beans>
