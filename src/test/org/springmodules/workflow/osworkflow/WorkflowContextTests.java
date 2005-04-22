@@ -1,8 +1,7 @@
 
-package org.springmodules.workflow.osworkflow.support;
+package org.springmodules.workflow.osworkflow;
 
 import junit.framework.TestCase;
-import org.springmodules.workflow.osworkflow.OsWorkflowTemplate;
 
 /**
  * @author robh

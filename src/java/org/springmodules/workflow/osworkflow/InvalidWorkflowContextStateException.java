@@ -1,5 +1,5 @@
 
-package org.springmodules.workflow.osworkflow.support;
+package org.springmodules.workflow.osworkflow;
 
 import org.springmodules.workflow.WorkflowException;
 

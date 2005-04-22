@@ -16,16 +16,15 @@
 
 package org.springmodules.workflow.osworkflow;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
-import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.basic.BasicWorkflow;
 import com.opensymphony.workflow.config.Configuration;
 import com.opensymphony.workflow.config.DefaultConfiguration;
-import org.springmodules.workflow.osworkflow.support.WorkflowContext;
+import com.opensymphony.workflow.loader.WorkflowDescriptor;
 
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.InitializingBean;
@@ -88,7 +87,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	}
 
 	public void doAction(final int actionId, final Map inputs) {
-		this.execute(new OsWorkflowCallback(){
+		this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				workflow.doAction(WorkflowContext.getInstanceId(), actionId, inputs);
 				return null;
@@ -97,7 +96,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	}
 
 	public WorkflowDescriptor getWorkflowDescriptor() {
-		return (WorkflowDescriptor)this.execute(new OsWorkflowCallback(){
+		return (WorkflowDescriptor) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				return workflow.getWorkflowDescriptor(OsWorkflowTemplate.this.workflowName);
 			}
@@ -105,11 +104,21 @@ public class OsWorkflowTemplate implements InitializingBean {
 	}
 
 	public List getHistorySteps() {
-		return (List)this.execute(new OsWorkflowCallback(){
+		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				return workflow.getHistorySteps(WorkflowContext.getInstanceId());
 			}
 		});
+	}
+
+	public int getEntryState() {
+		Integer state = (Integer) this.execute(new OsWorkflowCallback() {
+					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+						return new Integer(workflow.getEntryState(WorkflowContext.getInstanceId()));
+					}
+				});
+
+		return state.intValue();
 	}
 
 	public Object execute(OsWorkflowCallback callback) {

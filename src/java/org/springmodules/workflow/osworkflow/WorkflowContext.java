@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.springmodules.workflow.osworkflow.support;
+package org.springmodules.workflow.osworkflow;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,6 +64,10 @@ public abstract class WorkflowContext {
 			return val.longValue();
 		}
 
+	}
+
+	public static boolean hasInstanceId() {
+		return getResourceMap().containsKey(INSTANCE_ID);
 	}
 
 	private static Map getResourceMap() {

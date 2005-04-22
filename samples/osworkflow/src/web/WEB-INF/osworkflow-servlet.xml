@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
+		<property name="prefix"><value>/WEB-INF/jsp/</value></property>
+		<property name="suffix"><value>.jsp</value></property>
+	</bean>
+
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/*.html">workflowController</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<bean id="workflowController" class="org.springmodules.examples.workflow.osworkflow.web.WorkflowController">
+		  <property name="workflow">
+				<ref bean="documentApprovalWorkflow"/>
+		  </property>
+		<property name="methodNameResolver">
+			<ref local="resolver"/>
+		</property>
+	</bean>
+
+	<bean id="resolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver">
+		<!--<property name="mappings">
+			<props>
+				<prop key="/doUpload.html">handleUpload</prop>
+			</props>
+		</property>-->
+	</bean>
+</beans>

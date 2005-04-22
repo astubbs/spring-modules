@@ -10,7 +10,6 @@ import com.opensymphony.workflow.WorkflowException;
 import com.opensymphony.workflow.basic.BasicWorkflow;
 import junit.framework.TestCase;
 import org.springmodules.workflow.osworkflow.configuration.ConfigurationBean;
-import org.springmodules.workflow.osworkflow.support.WorkflowContext;
 import org.easymock.MockControl;
 
 import org.springframework.beans.FatalBeanException;
