@@ -25,6 +25,19 @@
 	<!-- load project properties -->
 	<property file="project.properties"/>
 
+    <!-- classpath for the Commons-Attributes compiler -->
+    <path id="attribute-compiler-classpath">
+        <fileset dir="${lib.dir}/jakarta-commons">
+            <include name="commons-attributes-compiler-2.1.jar" />
+        </fileset>
+        <fileset dir="${lib.dir}/jakarta-commons">
+            <include name="commons-collections.jar" />
+        </fileset>
+        <fileset dir="${lib.dir}/xdoclet">
+            <include name="xjavadoc-1.1.jar" />
+        </fileset>
+    </path>
+    
 	<!-- all libraries for the classpath -->
 	<path id="all-libs">
 

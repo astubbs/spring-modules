@@ -69,7 +69,7 @@
 	</target>
 
 
-	<target name="sandbox.buildtests" depends="sandbox.build" description="Compile test source tree Java files into class files">
+	<target name="sandbox.buildtests" depends="sandbox.build,sandbox.compiletestattr" description="Compile test source tree Java files into class files">
 
 		<mkdir dir="${sandbox.target.testclasses.dir}"/>
 
@@ -90,6 +90,9 @@
 			<fileset dir="${sandbox.test.dir}">
 				<include name="**/*.xml"/>
 			</fileset>
+            <fileset dir="${sandbox.test.dir}">
+                <include name="**/*.ccf"/>
+            </fileset>
 		</copy>
 
 	</target>
@@ -197,5 +200,16 @@
 		</javadoc>
 
 	</target>
-	
+
+    <target name="sandbox.compiletestattr">
+        <taskdef resource="org/apache/commons/attributes/anttasks.properties">
+            <classpath refid="attribute-compiler-classpath" />
+        </taskdef>
+        <attribute-compiler destdir="${sandbox.test.dir}">
+            <fileset dir="${sandbox.test.dir}">
+                <include name="org/springmodules/cache/integration/CacheableImpl.java"/>
+            </fileset>    
+        </attribute-compiler>
+    </target>
+
 </project>
