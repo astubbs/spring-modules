@@ -26,9 +26,9 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/22 02:19:21 $
+ * @version $Revision: 1.1 $ $Date: 2005/04/22 02:37:23 $
  */
-public final class AbstractCacheEntryTests extends TestCase {
+public final class CacheEntryTests extends TestCase {
 
   /**
    * Primary object that is under test.
@@ -41,7 +41,7 @@ public final class AbstractCacheEntryTests extends TestCase {
    * @param name
    *          the name of the Test Case.
    */
-  public AbstractCacheEntryTests(String name) {
+  public CacheEntryTests(String name) {
     super(name);
   }
 

@@ -34,9 +34,9 @@ import org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/22 02:19:00 $
+ * @version $Revision: 1.1 $ $Date: 2005/04/22 02:37:24 $
  */
-public final class AbstractCachingAttributeSourceTests extends TestCase {
+public final class CachingAttributeSourceTests extends TestCase {
 
   /**
    * Primary object (instance of the class to test).
@@ -59,7 +59,7 @@ public final class AbstractCachingAttributeSourceTests extends TestCase {
    * @param name
    *          the name of the Test Case.
    */
-  public AbstractCachingAttributeSourceTests(String name) {
+  public CachingAttributeSourceTests(String name) {
     super(name);
   }
 

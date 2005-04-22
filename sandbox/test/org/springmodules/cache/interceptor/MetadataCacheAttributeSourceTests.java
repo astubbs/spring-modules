@@ -30,9 +30,9 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/22 02:19:26 $
+ * @version $Revision: 1.1 $ $Date: 2005/04/22 02:36:04 $
  */
-public class AbstractMetadataCacheAttributeSourceTests extends TestCase {
+public class MetadataCacheAttributeSourceTests extends TestCase {
 
   /**
    * Primary object (instance of the class to test).
@@ -45,7 +45,7 @@ public class AbstractMetadataCacheAttributeSourceTests extends TestCase {
    * @param name
    *          the name of the Test Case.
    */
-  public AbstractMetadataCacheAttributeSourceTests(String name) {
+  public MetadataCacheAttributeSourceTests(String name) {
     super(name);
   }
 

@@ -37,9 +37,9 @@ import org.springmodules.cache.mock.MockCacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/22 02:19:26 $
+ * @version $Revision: 1.1 $ $Date: 2005/04/22 02:36:05 $
  */
-public final class AbstractNameMatchCacheAttributeSourceTests extends TestCase {
+public final class NameMatchCacheAttributeSourceTests extends TestCase {
 
   /**
    * Primary object (instance of the class to test).
@@ -70,7 +70,7 @@ public final class AbstractNameMatchCacheAttributeSourceTests extends TestCase {
    * @param name
    *          the name of the Test Case.
    */
-  public AbstractNameMatchCacheAttributeSourceTests(String name) {
+  public NameMatchCacheAttributeSourceTests(String name) {
     super(name);
   }
 

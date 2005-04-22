@@ -38,9 +38,9 @@ import org.springmodules.cache.mock.MockCacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/22 02:19:27 $
+ * @version $Revision: 1.1 $ $Date: 2005/04/22 02:36:04 $
  */
-public final class AbstractSingleMetadataCacheAttributeSourceTests extends
+public final class SingleMetadataCacheAttributeSourceTests extends
     TestCase {
 
   /**
@@ -83,7 +83,7 @@ public final class AbstractSingleMetadataCacheAttributeSourceTests extends
    * @param name
    *          the name of the Test Case.
    */
-  public AbstractSingleMetadataCacheAttributeSourceTests(String name) {
+  public SingleMetadataCacheAttributeSourceTests(String name) {
     super(name);
   }
 
