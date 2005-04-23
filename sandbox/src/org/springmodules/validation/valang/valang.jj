@@ -1,0 +1,291 @@
+options {
+	STATIC = false;
+	DEBUG_PARSER = false;
+}
+PARSER_BEGIN(ValangParser)
+
+package org.springmodules.validation.valang;
+
+import org.springmodules.validation.predicates.Operator;
+import org.springmodules.validation.predicates.OperatorConstants;
+import org.springmodules.validation.predicates.GenericTestPredicate;
+import org.springmodules.validation.predicates.BasicValidationRule;
+
+import org.springmodules.validation.functions.Function;
+import org.springmodules.validation.functions.LiteralFunction;
+import org.springmodules.validation.functions.BeanPropertyFunction;
+import org.springmodules.validation.functions.LengthOfFunction;
+
+import org.springmodules.validation.valang.ValangVisitor;
+import org.springmodules.validation.valang.DefaultVisitor;
+
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.functors.AndPredicate;
+import org.apache.commons.collections.functors.OrPredicate;
+import org.apache.commons.collections.functors.NotPredicate;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.math.BigDecimal;
+
+import java.util.Collection;
+import java.util.ArrayList;
+
+public class ValangParser
+{
+	private static Log log = LogFactory.getLog(ValangParser.class);
+	
+	private DefaultVisitor visitor = new DefaultVisitor();
+		
+	public DefaultVisitor getVisitor() {
+	   if (this.visitor == null) {
+	       throw new IllegalStateException("Visistor is not set on parser");
+	   }
+	   return this.visitor;
+	}
+	
+}
+
+PARSER_END(ValangParser)
+
+SKIP :
+{
+	" "
+|	"\t"
+|	"\n"
+|	"\r"
+}
+
+TOKEN [IGNORE_CASE] :
+{
+	< AND : "AND" >
+|	< OR : "OR" >
+|	< NOT : "NOT" >
+|	< BETWEEN : "BETWEEN" >
+|	< NOT_BETWEEN: "NOT BETWEEN" >
+|	< IN : "IN" >
+|	< NOT_IN : "NOT IN" >
+|	< IS_NULL : "IS NULL" | "NULL" >
+|	< IS_NOT_NULL : "IS NOT NULL" | "NOT NULL" >
+|	< HAS_TEXT : "HAS TEXT" >
+|	< HAS_NO_TEXT: "HAS NO TEXT" >
+|	< HAS_LENGTH: "HAS LENGTH" >
+|	< HAS_NO_LENGTH: "HAS NO LENGTH" >
+|	< TRUE : "TRUE" | "YES" >
+|	< FALSE : "FALSE" | "NO" >
+|	< DOT : "DOT" >
+|   < UNDERSCORE : "_" >
+|	< MORE_THAN_OR_EQUAL : ">=" | "=>" >
+|	< MORE_THAN : ">" >
+|	< LESS_THAN_OR_EQUAL : "<=" | "=<" >
+|	< LESS_THAN : "<" >
+|	< NOT_EQUAL : "!=" | "<>" | "><" >
+|	< EQUALS : "=" | "==" >
+}
+
+TOKEN :
+{
+	< NUM : ("-")?(["0"-"9"])+ | ("-")?(["0"-"9"])+"." (["0"-"9"])* >
+|	< STRING : "\'" (~["\'", "\\"])* "\'" >
+|	< DATE : "[" (~["[", "]"])* "]" >
+|	< #DIGIT : ["0"-"9"] >
+|	< #LOWERLETTER : ["a"-"z"] >
+|	< #UPPERLETTER : ["A"-"Z"] >
+|	< PATH : ( <LOWERLETTER> | <UNDERSCORE> ) ( <LOWERLETTER> | <UPPERLETTER> | <DIGIT> | <DOT> | <UNDERSCORE> )* >
+}
+
+Collection parseValidation() :
+{
+	Predicate predicate = null;
+	Collection rules = new ArrayList();
+	String message = null;
+	String field = null;
+}
+{
+	(
+		( 
+			"{" 
+			<PATH> { field = token.image; }
+			":"
+			predicate = predicates() 
+			":" 
+			<STRING> { message = token.image.substring(1, token.image.length() - 1); } 
+			"}"
+		)
+		{
+			rules.add(new BasicValidationRule(field, predicate, message));
+		}
+	)+
+	<EOF>
+	{
+		return rules;
+	}
+}
+
+Predicate not() :
+{
+	Predicate predicate = null;
+}
+{
+	<NOT> predicate = expression() { return NotPredicate.getInstance(predicate); }
+}
+
+Predicate predicates() :
+{
+	Predicate predicate1 = null;
+	Predicate predicate2 = null;
+	boolean andTest = false;
+	boolean orTest = false;
+}
+{
+	(
+		predicate1 = expression()			
+		(
+			(
+				<AND>	{ andTest = true; }
+			|	<OR>	{ orTest = true; }
+			)
+			predicate2 = expression()
+			{
+				if (andTest) {
+					predicate1 = AndPredicate.getInstance(predicate1, predicate2);
+					andTest = false;
+				} else if (orTest) {
+					predicate1 = OrPredicate.getInstance(predicate1, predicate2);
+					orTest = false;
+				}
+			}
+		)*
+	)
+	{
+		return predicate1;
+	}
+}
+
+Predicate expression() :
+{
+	Predicate predicate = null;
+}
+{
+	(
+		"(" predicate = predicates() ")"
+	|	predicate = not()
+	|	predicate = predicate()
+	)
+	{
+		return predicate;
+	}
+}
+
+
+Predicate predicate() :
+{
+	Function leftFunction = null;
+	Function rightFunction1 = null;
+	Function rightFunction2 = null;
+	Function tmpFunction = null;
+	Operator operator = null;
+	boolean notBetween = false;
+	boolean notIn = false;
+	Collection functions = new ArrayList();
+}
+{
+	(
+		leftFunction = function()
+		(
+			(
+	    		operator = operator()
+	    	   	(
+	                rightFunction1 = function()
+	            )?
+	    	)
+	    	{
+	    		return new GenericTestPredicate(leftFunction, operator, rightFunction1);
+	    	}
+	    |	(
+				( <BETWEEN> | <NOT_BETWEEN> { notBetween = true; } )
+				(
+					rightFunction1 = function()
+					<AND>
+					rightFunction2 = function()
+				)
+				{
+					if (notBetween) {
+						return new GenericTestPredicate(leftFunction, OperatorConstants.NOT_BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));
+					} else {
+						return new GenericTestPredicate(leftFunction, OperatorConstants.BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));
+					}
+				}
+	    	)
+	    |	(
+				( <IN> | <NOT_IN> { notIn = true; } )
+				(
+					(
+					    LOOKAHEAD(2)
+						tmpFunction = function() { functions.add(tmpFunction); }
+						","
+					)*
+					tmpFunction = function() { functions.add(tmpFunction); }
+				) 
+				{
+					if (notIn) {
+						return new GenericTestPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, new LiteralFunction(functions));
+					} else {
+						return new GenericTestPredicate(leftFunction, OperatorConstants.IN_OPERATOR, new LiteralFunction(functions));
+					}
+				}
+	    	)
+		)
+	)
+}
+
+Function function() :
+{
+    String function = null;
+    Function parentFunction = null;
+}
+{
+    (
+        LOOKAHEAD(2)
+        ( "!" | <PATH> ) { function = token.image; } "(" parentFunction = function() ")" { return getVisitor().getFunction(function, parentFunction); }
+    |   parentFunction = pathOrLiteral()   { return parentFunction; }
+    )
+}
+
+Function pathOrLiteral() :
+{}
+{
+    (
+        <TRUE>      { return new LiteralFunction(Boolean.TRUE); }
+    |   <FALSE>     { return new LiteralFunction(Boolean.FALSE); }
+    |   <STRING>    { return new LiteralFunction(token.image.substring(1, token.image.length() - 1)); }
+    |   <NUM>       { return new LiteralFunction(new BigDecimal(token.image)); }
+    |   <PATH>      { return new BeanPropertyFunction(token.image); }
+    )
+}
+
+Operator operator() :
+{
+	Operator operator = null;
+}
+{
+	(
+		<NOT_EQUAL>		{ operator = OperatorConstants.NOT_EQUAL_OPERATOR; }
+	|	<MORE_THAN_OR_EQUAL>	{ operator = OperatorConstants.MORE_THAN_OR_EQUAL_OPERATOR; }
+	|	<MORE_THAN>		{ operator = OperatorConstants.MORE_THAN_OPERATOR; }
+	|	<LESS_THAN_OR_EQUAL>	{ operator = OperatorConstants.LESS_THAN_OR_EQUAL_OPERATOR; }
+	|	<LESS_THAN>		{ operator = OperatorConstants.LESS_THAN_OPERATOR; }
+	|	<EQUALS>		{ operator = OperatorConstants.EQUALS_OPERATOR; }
+	|	<IS_NULL>		{ operator = OperatorConstants.NULL_OPERATOR; }
+	|	<IS_NOT_NULL>		{ operator = OperatorConstants.NOT_NULL_OPERATOR; }
+	|	<HAS_TEXT>		{ operator = OperatorConstants.HAS_TEXT_OPERATOR; }
+	|	<HAS_NO_TEXT>		{ operator = OperatorConstants.HAS_NO_TEXT_OPERATOR; }
+	|	<HAS_LENGTH>		{ operator = OperatorConstants.HAS_LENGTH_OPERATOR; }
+	|	<HAS_NO_LENGTH>		{ operator = OperatorConstants.HAS_NO_LENGTH_OPERATOR; }
+	)
+	{
+		return operator;
+	}
+}
+
