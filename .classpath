@@ -1,30 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/java"/>
-	<classpathentry kind="src" path="src/test"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="samples/hivemind/src"/>
+	<classpathentry kind="src" path="samples/jrules/src"/>
+	<classpathentry kind="src" path="samples/osworkflow/src/java"/>
+	<classpathentry output="target/sandbox/classes" kind="src" path="sandbox/src"/>
+	<classpathentry output="target/sandbox/test-classes" kind="src" path="sandbox/test"/>
+	<classpathentry output="target/classes" kind="src" path="src/java"/>
+	<classpathentry output="target/test-classes" kind="src" path="src/test"/>
 	<classpathentry kind="lib" path="lib/ant/ant.jar"/>
+	<classpathentry kind="lib" path="lib/ant/ant-junit.jar"/>
+	<classpathentry kind="lib" path="lib/ant/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="lib/antlr/antlr-2.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/aopalliance/aopalliance.jar"/>
 	<classpathentry kind="lib" path="lib/cglib/cglib-nodep-2.1-dev.jar"/>
+	<classpathentry kind="lib" path="lib/clover/clover.jar"/>
+	<classpathentry kind="lib" path="lib/concurrent/concurrent-1.3.4.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-base-2.0-beta-21.jar"/>
-	<classpathentry kind="lib" path="lib/hivemind/hivemind-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/janino/janino-2.1.0.jar"/>
-	<classpathentry kind="lib" path="lib/javassist/javassist-2.6.jar"/>
-	<classpathentry kind="lib" path="lib/jsr94/jsr94-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/junit/junit.jar"/>
-	<classpathentry kind="lib" path="lib/opensymphony/oscore-2.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/oro/oro-2.0.6.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring.jar"/>
-	<classpathentry kind="lib" path="lib/ant/ant-junit.jar"/>
-	<classpathentry kind="lib" path="lib/ant/ant-launcher.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-core-2.0-beta-21.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-io-2.0-beta-21.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-java-2.0-beta-21.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-jsr94-2.0-beta-21.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-smf-2.0-beta-21.jar"/>
-	<classpathentry kind="lib" path="lib/opensymphony/osworkflow-2.8.0-dev.jar"/>
+	<classpathentry kind="lib" path="lib/easymock/easymock.jar"/>
+	<classpathentry kind="lib" path="lib/easymock/easymockclassextension.jar"/>
+	<classpathentry kind="lib" path="lib/ehcache/ehcache-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/hivemind/hivemind-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/hsqldb/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/jstl.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-attributes-api-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-attributes-compiler-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-digester.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-validator.jar"/>
+	<classpathentry kind="lib" path="lib/janino/janino-2.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/javassist/javassist-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/jcs/jcs-1.2.4-dev.jar"/>
+	<classpathentry kind="lib" path="lib/jdbi/jdbi-1.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/jsr94/jsr94-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/junit/junit.jar"/>
+	<classpathentry kind="lib" path="lib/log4j/log4j-1.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/lucene/lucene-1.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/opensymphony/oscache-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/opensymphony/oscore-2.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/opensymphony/osworkflow-2.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/opensymphony/propertyset-1.3-21Apr04.jar"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="lib" path="lib/oro/oro-2.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-mock.jar"/>
+	<classpathentry kind="lib" path="lib/xdoclet/xjavadoc-1.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/stevendevijver/download/springmodules/springmodules/lib/jakarta-commons/commons-pool-1.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
