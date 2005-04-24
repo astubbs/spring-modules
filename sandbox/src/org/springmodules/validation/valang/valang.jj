@@ -201,7 +201,7 @@ Predicate predicate() :
 	            )?
 	    	)
 	    	{
-	    		return new GenericTestPredicate(leftFunction, operator, rightFunction1);
+	    		return getVisitor().getPredicate(leftFunction, operator, rightFunction1);
 	    	}
 	    |	(
 				( <BETWEEN> | <NOT_BETWEEN> { notBetween = true; } )
@@ -212,9 +212,9 @@ Predicate predicate() :
 				)
 				{
 					if (notBetween) {
-						return new GenericTestPredicate(leftFunction, OperatorConstants.NOT_BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));
 					} else {
-						return new GenericTestPredicate(leftFunction, OperatorConstants.BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));
 					}
 				}
 	    	)
@@ -230,9 +230,9 @@ Predicate predicate() :
 				) 
 				{
 					if (notIn) {
-						return new GenericTestPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, new LiteralFunction(functions));
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, new LiteralFunction(functions));
 					} else {
-						return new GenericTestPredicate(leftFunction, OperatorConstants.IN_OPERATOR, new LiteralFunction(functions));
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, new LiteralFunction(functions));
 					}
 				}
 	    	)

@@ -187,7 +187,7 @@ public class ValangParser implements ValangParserConstants {
         jj_la1[4] = jj_gen;
         ;
       }
-                        {if (true) return new GenericTestPredicate(leftFunction, operator, rightFunction1);}
+                        {if (true) return getVisitor().getPredicate(leftFunction, operator, rightFunction1);}
       break;
     case BETWEEN:
     case NOT_BETWEEN:
@@ -208,9 +208,9 @@ public class ValangParser implements ValangParserConstants {
       jj_consume_token(AND);
       rightFunction2 = function();
                                         if (notBetween) {
-                                                {if (true) return new GenericTestPredicate(leftFunction, OperatorConstants.NOT_BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));}
+                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));}
                                         } else {
-                                                {if (true) return new GenericTestPredicate(leftFunction, OperatorConstants.BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));}
+                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));}
                                         }
       break;
     case IN:
@@ -242,9 +242,9 @@ public class ValangParser implements ValangParserConstants {
       tmpFunction = function();
                                                                    functions.add(tmpFunction);
                                         if (notIn) {
-                                                {if (true) return new GenericTestPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, new LiteralFunction(functions));}
+                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, new LiteralFunction(functions));}
                                         } else {
-                                                {if (true) return new GenericTestPredicate(leftFunction, OperatorConstants.IN_OPERATOR, new LiteralFunction(functions));}
+                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, new LiteralFunction(functions));}
                                         }
       break;
     default:
