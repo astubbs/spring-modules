@@ -15,11 +15,14 @@
  */ 
 package org.springmodules.validation.valang;
 
+import org.apache.commons.collections.Predicate;
 import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LengthOfFunction;
 import org.springmodules.validation.functions.LowerCaseFunction;
 import org.springmodules.validation.functions.NotFunction;
 import org.springmodules.validation.functions.UpperCaseFunction;
+import org.springmodules.validation.predicates.GenericTestPredicate;
+import org.springmodules.validation.predicates.Operator;
 
 /**
  * <p>Allows registration of custom functions. Custom functions can overwrite default functions.
@@ -80,5 +83,9 @@ public class DefaultVisitor implements ValangVisitor {
 	
 	public ValangVisitor getVisitor() {
 		return this.visitor;
+	}
+	
+	public Predicate getPredicate(Function leftFunction, Operator operator, Function rightFunction) {
+		return new GenericTestPredicate(leftFunction, operator, rightFunction);
 	}
 }
