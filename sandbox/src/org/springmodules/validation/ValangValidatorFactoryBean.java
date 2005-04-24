@@ -23,6 +23,8 @@ import org.springmodules.validation.valang.ValangVisitor;
  * 
  * <p>A custom visitor can be registered to use custom functions in the Valang syntax.
  * 
+ * <p>Custom property editors can be registered using org.springmodules.validation.CustomPropertyEditor.
+ * 
  * @author Steven Devijver
  * @since 23-04-2005
  */
@@ -31,6 +33,7 @@ public class ValangValidatorFactoryBean implements FactoryBean, InitializingBean
 	private String valang = null;
 	private Validator validator = null;
 	private ValangVisitor visitor = null;
+	private Collection customPropertyEditors = null;
 	
 	public ValangValidatorFactoryBean() {
 		super();
@@ -52,6 +55,19 @@ public class ValangValidatorFactoryBean implements FactoryBean, InitializingBean
 	 */
 	public void setVisitor(ValangVisitor visitor) {
 		this.visitor = visitor;
+	}
+	
+	/**
+	 * <p>Sets custom property editors on BeanWrapper instances (optional).
+	 * 
+	 * @param customPropertyEditors the custom editors.
+	 */
+	public void setCustomPropertyEditors(Collection customPropertyEditors) {
+		this.customPropertyEditors = customPropertyEditors;
+	}
+	
+	private Collection getCustomPropertyEditors() {
+		return this.customPropertyEditors;
 	}
 	
 	private String getValang() {
@@ -100,6 +116,22 @@ public class ValangValidatorFactoryBean implements FactoryBean, InitializingBean
 				} else {
 					beanWrapper = new BeanWrapperImpl(target);
 				}
+				if (getCustomPropertyEditors() != null) {
+					for (Iterator iter = getCustomPropertyEditors().iterator(); iter.hasNext();) {
+						CustomPropertyEditor customPropertyEditor = (CustomPropertyEditor)iter.next();
+						if (customPropertyEditor.getRequiredType() == null) {
+							throw new IllegalArgumentException("[requiredType] is required on CustomPropertyEditor instances!");
+						} else if (customPropertyEditor.getPropertyEditor() == null) {
+							throw new IllegalArgumentException("[propertyEditor] is required on CustomPropertyEditor instances!");
+						}
+						if (StringUtils.hasLength(customPropertyEditor.getPropertyPath())) {
+							beanWrapper.registerCustomEditor(customPropertyEditor.getRequiredType(), customPropertyEditor.getPropertyPath(), customPropertyEditor.getPropertyEditor());
+						} else {
+							beanWrapper.registerCustomEditor(customPropertyEditor.getRequiredType(), customPropertyEditor.getPropertyEditor());
+						}
+					}
+				}
+				
 				for (Iterator iter = rules.iterator(); iter.hasNext();) {
 					ValidationRule rule = (ValidationRule)iter.next();
 					rule.validate(beanWrapper, errors);
