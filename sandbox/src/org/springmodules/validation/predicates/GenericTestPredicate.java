@@ -3,6 +3,7 @@ package org.springmodules.validation.predicates;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.commons.collections.Predicate;
@@ -40,6 +41,7 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 	public boolean evaluate(Object target) {
 		Object leftValue = getLeftFunction().getResult(target);
 		Object rightValue = null;
+		boolean dates = false;
 		
 		if (getRightFunction() != null) {
 			rightValue = getRightFunction().getResult(target);
@@ -52,6 +54,8 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 			rightValue = new BigDecimal(rightValue.toString());
 		}
 		
+		dates = leftValue instanceof Date && rightValue instanceof Date;
+		
 		if (getOperator() instanceof Operator.NullOperator) {
 			return leftValue == null;
 		} else if (getOperator() instanceof Operator.NotNullOperator) {
@@ -59,22 +63,38 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 		} else if (getOperator() instanceof Operator.EqualsOperator) {
 			if (leftValue instanceof BigDecimal) {
 				return ((BigDecimal)leftValue).compareTo(rightValue) == 0;
+			} else if (dates) {
+				return ((Date)leftValue).getTime() == ((Date)rightValue).getTime();
 			} else {
 				return leftValue.equals(rightValue);
 			}
 		} else if (getOperator() instanceof Operator.NotEqualsOperator) {
 			if (leftValue instanceof BigDecimal) {
 				return ((BigDecimal)leftValue).compareTo(rightValue) != 0;
+			} else if (dates) {
+				return ((Date)leftValue).getTime() != ((Date)rightValue).getTime();
 			} else {
 				return !leftValue.equals(rightValue);
 			}
 		} else if (getOperator() instanceof Operator.LessThanOperator) {
+			if (dates) {
+				return ((Date)leftValue).getTime() < ((Date)rightValue).getTime();
+			}
 			return ((BigDecimal)leftValue).compareTo(rightValue) < 0;
 		} else if (getOperator() instanceof Operator.LessThanOrEqualOperator) {
+			if (dates) {
+				return ((Date)leftValue).getTime() <= ((Date)rightValue).getTime();
+			}
 			return ((BigDecimal)leftValue).compareTo(rightValue) <= 0;
 		} else if (getOperator() instanceof Operator.MoreThanOperator) {
+			if (dates) {
+				return ((Date)leftValue).getTime() > ((Date)rightValue).getTime();
+			}
 			return ((BigDecimal)leftValue).compareTo(rightValue) > 0;
 		} else if (getOperator() instanceof Operator.MoreThanOrEqualOperator) {
+			if (dates) {
+				return ((Date)leftValue).getTime() >= ((Date)rightValue).getTime();
+			}
 			return ((BigDecimal)leftValue).compareTo(rightValue) >= 0;
 		} else if (getOperator() instanceof Operator.InOperator) {
 			Collection predicates = new ArrayList();
