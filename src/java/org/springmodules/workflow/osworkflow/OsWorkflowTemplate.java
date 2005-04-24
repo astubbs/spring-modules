@@ -126,7 +126,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				List steps = workflow.getHistorySteps(WorkflowContext.getInstanceId());
-		    return convertStepsToStepDescriptors(steps, workflow);
+				return convertStepsToStepDescriptors(steps, workflow);
 			}
 		});
 	}
@@ -135,7 +135,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				List steps = workflow.getCurrentSteps(WorkflowContext.getInstanceId());
-		    return convertStepsToStepDescriptors(steps, workflow);
+				return convertStepsToStepDescriptors(steps, workflow);
 			}
 		});
 	}
@@ -145,9 +145,30 @@ public class OsWorkflowTemplate implements InitializingBean {
 	}
 
 	public int[] getAvailableActions(final Map inputs) {
-		return (int[])this.execute(new OsWorkflowCallback(){
+		return (int[]) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				return workflow.getAvailableActions(WorkflowContext.getInstanceId(), inputs);
+			}
+		});
+	}
+
+	public List getAvailableActionDescriptors() {
+		return this.getAvailableActionDescriptors(null);
+	}
+
+	public List getAvailableActionDescriptors(final Map inputs) {
+		return (List) this.execute(new OsWorkflowCallback() {
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				WorkflowDescriptor descriptor = workflow.getWorkflowDescriptor(OsWorkflowTemplate.this.workflowName);
+
+				int[] availableActions = workflow.getAvailableActions(WorkflowContext.getInstanceId(), inputs);
+				List actionDescriptors = new ArrayList(availableActions.length);
+
+				for (int i = 0; i < availableActions.length; i++) {
+					actionDescriptors.add(descriptor.getAction(availableActions[i]));
+				}
+
+				return actionDescriptors;
 			}
 		});
 	}

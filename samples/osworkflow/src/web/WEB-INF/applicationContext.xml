@@ -3,13 +3,6 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
 
-	<bean id="documentApprovalWorkflow"
-				class="org.springmodules.examples.workflow.osworkflow.service.OsWorkflowDocumentApprovalWorkflow">
-		<property name="workflowTemplate">
-			<ref local="workflowTemplate"/>
-		</property>
-	</bean>
-
 	<bean id="workflowTemplate" class="org.springmodules.workflow.osworkflow.OsWorkflowTemplate">
 		<property name="configuration">
 			<ref local="configuration"/>

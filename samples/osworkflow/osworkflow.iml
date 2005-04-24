@@ -36,7 +36,9 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/opensymphony/osworkflow-2.7.0.jar!/" />
         </CLASSES>
-        <JAVADOC />
+        <JAVADOC>
+          <root url="file://R:/opt/osworkflow-2.7.0/docs/api" />
+        </JAVADOC>
         <SOURCES />
       </library>
     </orderEntry>
@@ -80,6 +82,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/j2ee/jstl.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/jakarta-taglibs/standard.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -160,6 +171,11 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/commons-validator.jar" />
       <url>jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-validator.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/standard.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/jakarta-taglibs/standard.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />

@@ -17,12 +17,12 @@
 
 	<servlet-mapping>
 		<servlet-name>osworkflow</servlet-name>
-		<url-pattern>*.html</url-pattern>
+		<url-pattern>/approval/*</url-pattern>
 	</servlet-mapping>
 
 	<filter>
-		<filter-class>org.springmodules.workflow.osworkflow.support.WorkflowContextFilter</filter-class>
 		<filter-name>workflow</filter-name>
+		<filter-class>org.springmodules.workflow.osworkflow.support.WorkflowContextFilter</filter-class>
 	</filter>
 
 	<filter-mapping>

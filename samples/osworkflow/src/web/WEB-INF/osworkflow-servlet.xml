@@ -12,18 +12,15 @@
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<props>
-				<prop key="/*.html">workflowController</prop>
+				<prop key="/approval/*">workflowController</prop>
 			</props>
 		</property>
 	</bean>
 	
 	<bean id="workflowController" class="org.springmodules.examples.workflow.osworkflow.web.WorkflowController">
-		  <property name="workflow">
-				<ref bean="documentApprovalWorkflow"/>
+		  <property name="template">
+				<ref bean="workflowTemplate"/>
 		  </property>
-		<property name="methodNameResolver">
-			<ref local="resolver"/>
-		</property>
 	</bean>
 
 	<bean id="resolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver">

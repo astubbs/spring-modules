@@ -1,33 +1,33 @@
 
 package org.springmodules.examples.workflow.osworkflow.web;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springmodules.examples.workflow.osworkflow.service.DocumentApprovalWorkflow;
+import org.springmodules.workflow.osworkflow.WorkflowContext;
+import org.springmodules.workflow.osworkflow.OsWorkflowTemplate;
 
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * 
  * @author robh
  */
-public class WorkflowController extends MultiActionController {
+public class WorkflowController implements Controller {
 
-	private DocumentApprovalWorkflow workflow;
+	private OsWorkflowTemplate template;
 
-	public void setWorkflow(DocumentApprovalWorkflow workflow) {
-		this.workflow = workflow;
+	public void setTemplate(OsWorkflowTemplate template) {
+		this.template = template;
 	}
 
-	public ModelAndView start(HttpServletRequest request, HttpServletResponse response) {
-    workflow.start();
-		return new ModelAndView("status");
+	public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+		
 	}
-	public ModelAndView doUpload(HttpServletRequest request, HttpServletResponse response) {
-		workflow.uploadDocument();
-		return new ModelAndView("status");
-	}
-	
+
 }

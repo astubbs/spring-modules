@@ -1,26 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE workflow PUBLIC
-  "-//OpenSymphony Group//DTD OSWorkflow 2.7//EN"
-  "http://www.opensymphony.com/osworkflow/workflow_2_7.dtd">
+	"-//OpenSymphony Group//DTD OSWorkflow 2.7//EN"
+	"http://www.opensymphony.com/osworkflow/workflow_2_7.dtd">
 <workflow>
-  <initial-actions>
-    <action id="0" name="Start">
-      <results>
-        <unconditional-result old-status="Finished" status="Started" step="1"/>
-      </results>
-    </action>
-  </initial-actions>
-  <steps>
-      <step id="1" name="Awaiting Document">
-				<actions>
-					<action id="1" name="Upload Document">
-						 <results>
-							 <unconditional-result old-status="Finished" status="Document Uploaded" step="2"/>
-						 </results>
-					</action>
-				</actions>
-      </step>
-		<step id="2" name="With Reviewer"/>
-  </steps>
+	<initial-actions>
+		<action id="0" name="Start" view="start">
+			<results>
+				<unconditional-result old-status="Finished" status="Started" step="1"/>
+			</results>
+		</action>
+	</initial-actions>
+	<steps>
+		<step id="1" name="Awaiting Document">
+			<actions>
+				<action id="1" name="Upload Document" view="upload">
+					<results>
+						<unconditional-result old-status="Finished" status="Document Uploaded" step="2"/>
+					</results>
+				</action>
+			</actions>
+		</step>
+		<step id="2" name="With Reviewer">
+			<actions>
+				<action id="2" name="Approve Document" view="approve">
+					<results>
+						<unconditional-result old-status="Finished" status="Document Approved" step="3"/>
+					</results>
+				</action>
+				<action id="3" name="Pass Back" view="passBack">
+					<results>
+						<unconditional-result old-status="Finished" status="Document Passed Back" step="1"/>
+					</results>
+				</action>
+			</actions>
+		</step>
+		<step id="3" name="Finished"/>
+	</steps>
 </workflow>
 

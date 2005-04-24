@@ -34,7 +34,13 @@ public class OsWorkflowDocumentApprovalWorkflow implements DocumentApprovalWorkf
 		return this.workflowTemplate.getHistorySteps();
 	}
 
+	public List getAvailableActionDescriptors() {
+		WorkflowContext.setCaller("robh");
+		return this.workflowTemplate.getAvailableActionDescriptors();
+	}
+
 	public int getState() {
+		WorkflowContext.setCaller("robh");
 		return this.workflowTemplate.getEntryState();
 	}
 }
