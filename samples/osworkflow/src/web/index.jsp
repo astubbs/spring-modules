@@ -2,6 +2,6 @@
 <html>
   <head><title>OSWorkflow Sample - Document Approval</title></head>
   <body>
-	  <a href="/approval/start">Start New Approval Workflow</a><br>
+	  <a href="/approval/start">Start New Document Approval Workflow</a><br>
   </body>
 </html>

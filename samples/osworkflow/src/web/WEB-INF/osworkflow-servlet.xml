@@ -45,7 +45,7 @@
 		</property>
 	</bean>
 
-	<bean id="uploadDocumentForm" class="org.springmodules.examples.workflow.osworkflow.web.UploadDocumentForm"
+	<bean id="uploadDocumentForm" class="org.springmodules.examples.workflow.osworkflow.web.EditDocumentForm"
 				parent="workflowController"/>
 
 	<bean id="passBackForm" class="org.springmodules.examples.workflow.osworkflow.web.PassBackForm"

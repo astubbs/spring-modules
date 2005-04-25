@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springmodules.workflow.osworkflow.OsWorkflowTemplate;
+import org.springmodules.examples.workflow.osworkflow.model.Document;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;

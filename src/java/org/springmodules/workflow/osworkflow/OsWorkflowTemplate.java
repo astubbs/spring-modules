@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
@@ -28,6 +29,7 @@ import com.opensymphony.workflow.basic.BasicWorkflow;
 import com.opensymphony.workflow.config.Configuration;
 import com.opensymphony.workflow.config.DefaultConfiguration;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
+import com.opensymphony.module.propertyset.PropertySet;
 
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.InitializingBean;
@@ -103,6 +105,12 @@ public class OsWorkflowTemplate implements InitializingBean {
 		this.doAction(actionId, null);
 	}
 
+	public void doAction(final int actionId, Object inputKey, Object inputVal) {
+		Map inputs = new HashMap();
+		inputs.put(inputKey, inputVal);
+		this.doAction(actionId, inputs);
+	}
+
 	public void doAction(final int actionId, final Map inputs) {
 		this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -111,6 +119,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 			}
 		});
 	}
+
 
 	public WorkflowDescriptor getWorkflowDescriptor() {
 		return (WorkflowDescriptor) this.execute(new OsWorkflowCallback() {
@@ -198,6 +207,13 @@ public class OsWorkflowTemplate implements InitializingBean {
 		return state.intValue();
 	}
 
+	public PropertySet getPropertySet() {
+		return (PropertySet) this.execute(new OsWorkflowCallback(){
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				return workflow.getPropertySet(getInstanceId());
+			}
+		});
+	}
 	public Object execute(OsWorkflowCallback callback) {
 		try {
 			Workflow workflow = createWorkflow(OsWorkflowTemplate.this.contextManager.getCaller());
