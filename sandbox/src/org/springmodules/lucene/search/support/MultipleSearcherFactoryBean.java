@@ -18,12 +18,10 @@ package org.springmodules.lucene.search.support;
 
 import java.util.List;
 
-import org.apache.lucene.store.Directory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.lucene.search.factory.MultipleSearcherFactory;
 import org.springmodules.lucene.search.factory.SearcherFactory;
-import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
 
 /**
  * Factory bean to configure a factory to make search on several

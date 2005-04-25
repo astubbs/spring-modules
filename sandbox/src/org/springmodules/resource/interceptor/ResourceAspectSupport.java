@@ -16,23 +16,12 @@
 
 package org.springmodules.resource.interceptor;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Properties;
 
-import org.aopalliance.aop.AspectException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.transaction.NoTransactionException;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.util.ClassUtils;
 import org.springmodules.resource.ResourceManager;
-import org.springmodules.resource.ResourceStatus;
 
 /**
  * @author Thierry Templier

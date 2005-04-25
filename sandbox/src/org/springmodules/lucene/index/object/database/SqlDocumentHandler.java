@@ -19,8 +19,6 @@ package org.springmodules.lucene.index.object.database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import org.apache.lucene.document.Document;
 
 /**

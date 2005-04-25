@@ -15,11 +15,10 @@
 
 package org.springmodules.lucene;
 
+import org.springframework.transaction.CannotCreateTransactionException;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.CannotCreateTransactionException;
 
 /**
  * copied from Spring test framework since it is not in the mocks jar =(

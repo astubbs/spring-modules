@@ -22,8 +22,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
-import org.springmodules.lucene.search.factory.SearcherFactory;
-import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
 
 /**
  * Simple factory bean to configure a factory to manipulate an index.

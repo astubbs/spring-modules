@@ -16,8 +16,6 @@
 
 package org.springmodules.lucene.index.factory;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.store.Directory;
 
 /**
  * @author Thierry Templier

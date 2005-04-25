@@ -37,15 +37,14 @@ import org.apache.commons.validator.ValidatorAction;
 import org.apache.commons.validator.ValidatorResources;
 import org.apache.commons.validator.ValidatorUtil;
 import org.apache.commons.validator.Var;
-import org.springmodules.commons.validator.Resources;
-import org.springmodules.commons.validator.ValidatorFactory;
-
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.support.RequestContext;
+import org.springmodules.commons.validator.Resources;
+import org.springmodules.commons.validator.ValidatorFactory;
 
 /**
  * Custom tag that generates JavaScript for client side validation based

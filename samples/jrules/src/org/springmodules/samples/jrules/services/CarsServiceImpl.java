@@ -25,7 +25,6 @@ import javax.rules.InvalidRuleSessionException;
 import javax.rules.StatefulRuleSession;
 import javax.rules.StatelessRuleSession;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.jsr94.core.Jsr94Template;
 import org.springmodules.jsr94.support.StatefulRuleSessionCallback;
 import org.springmodules.jsr94.support.StatelessRuleSessionCallback;

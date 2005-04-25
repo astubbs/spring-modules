@@ -21,8 +21,6 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.lucene.index.core.LuceneIndexTemplate;
 import org.springmodules.lucene.index.factory.IndexFactory;
-import org.springmodules.lucene.search.core.LuceneSearchTemplate;
-import org.springmodules.lucene.search.factory.SearcherFactory;
 
 /**
  * @author Thierry Templier

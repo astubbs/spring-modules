@@ -7,7 +7,6 @@
 package org.springmodules.lucene.search.factory;
 
 import org.springmodules.resource.support.ResourceSynchronizationAdapter;
-import org.springmodules.resource.support.ResourceSynchronizationManager;
 
 /**
  * Callback for resource cleanup at the end of an use of index search.

@@ -16,15 +16,10 @@
 
 package org.springmodules.lucene.index.support;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.store.Directory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.RAMBufferedIndexFactoryProxy;
-import org.springmodules.lucene.index.factory.SimpleIndexFactory;
-import org.springmodules.lucene.search.factory.SearcherFactory;
-import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
 
 /**
  * RAM Buffered factory bean to configure a factory to manipulate an index.

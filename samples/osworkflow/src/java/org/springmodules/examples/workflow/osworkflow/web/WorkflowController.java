@@ -1,19 +1,12 @@
 
 package org.springmodules.examples.workflow.osworkflow.web;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springmodules.examples.workflow.osworkflow.service.DocumentApprovalWorkflow;
-import org.springmodules.workflow.osworkflow.WorkflowContext;
-import org.springmodules.workflow.osworkflow.OsWorkflowTemplate;
-
-import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
-import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
+import org.springmodules.workflow.osworkflow.OsWorkflowTemplate;
 
 /**
  * @author robh

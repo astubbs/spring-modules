@@ -16,8 +16,6 @@
 
 package org.springmodules.resource;
 
-import java.io.IOException;
-
 import org.springframework.core.NestedRuntimeException;
 
 /**

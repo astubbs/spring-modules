@@ -16,10 +16,6 @@
 
 package org.springmodules.lucene.index.object;
 
-import java.io.File;
-
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.store.Directory;
 import org.springmodules.lucene.index.factory.IndexFactory;
 
 /**

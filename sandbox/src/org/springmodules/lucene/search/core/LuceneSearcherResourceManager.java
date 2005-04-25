@@ -16,16 +16,10 @@
 
 package org.springmodules.lucene.search.core;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searcher;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.lucene.index.core.AbstractResourceManager;
-import org.springmodules.lucene.index.factory.IndexFactory;
-import org.springmodules.lucene.index.factory.IndexHolder;
-import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
-import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
 import org.springmodules.lucene.search.factory.SearcherHolder;
