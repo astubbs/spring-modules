@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
 import com.opensymphony.workflow.loader.StepDescriptor;
+import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.opensymphony.workflow.basic.BasicWorkflow;
 import junit.framework.TestCase;
 import org.springmodules.workflow.osworkflow.configuration.ConfigurationBean;
@@ -45,9 +46,23 @@ public class OsWorkflowTemplateTests extends TestCase {
 	}
 
 	public void testWithoutWorkflowName() throws Exception {
+		OsWorkflowTemplate template = new OsWorkflowTemplate();
+		template.setContextManager(this.manager);
 		try {
-			new OsWorkflowTemplate().afterPropertiesSet();
+			template.afterPropertiesSet();
 			fail("Cannot create OsWorkflowTemplate without workflow name");
+		}
+		catch (FatalBeanException ex) {
+			//success
+		}
+	}
+
+	public void testWithoutManager() throws Exception {
+    OsWorkflowTemplate template = new OsWorkflowTemplate();
+		template.setWorkflowName(WAKE_UP);
+		try {
+			template.afterPropertiesSet();
+			fail("Cannot create OsWorkflowTemplate without context manager");
 		}
 		catch (FatalBeanException ex) {
 			//success
@@ -66,7 +81,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 			}
 		};
 
-		template.setManager(this.manager);
+		template.setContextManager(this.manager);
 
 		Object retVal = template.execute(new OsWorkflowCallback() {
 					public Object doWithWorkflow(Workflow innerWorkflow) throws WorkflowException {
@@ -250,6 +265,20 @@ public class OsWorkflowTemplateTests extends TestCase {
 	public void testGetCurrentStepDescriptors() throws Exception {
 		OsWorkflowTemplate template = new OsWorkflowTemplate();
 		setProperties(template);
+
+		List currentStepDescriptors = null;
+
+		template.initialize();
+
+		currentStepDescriptors = template.getCurrentStepDescriptors();
+		assertEquals(1, currentStepDescriptors.size());
+		assertEquals("Decision Time", ((StepDescriptor)currentStepDescriptors.get(0)).getName());
+
+		template.doAction(1);
+
+		currentStepDescriptors = template.getCurrentStepDescriptors();
+		assertEquals(1, currentStepDescriptors.size());
+		assertEquals("Spruce Up", ((StepDescriptor)currentStepDescriptors.get(0)).getName());
 	}
 
 	public void testGetCurrentSteps()  throws Exception{
@@ -303,6 +332,48 @@ public class OsWorkflowTemplateTests extends TestCase {
 		ctl.verify();
 	}
 
+	public void testGetAvailableActions() throws Exception {
+		OsWorkflowTemplate template = new OsWorkflowTemplate();
+		setProperties(template);
+
+		template.initialize();
+
+		int[] actions = null;
+
+		actions = template.getAvailableActions();
+
+		assertEquals("Invalid number of actions", 2, actions.length);
+		assertEquals("Invalid action", 1, actions[0]);
+		assertEquals("Invalid action", 2, actions[1]);
+
+		template.doAction(1);
+
+		actions = template.getAvailableActions();
+		assertEquals(1, actions.length);
+		assertEquals(3, actions[0]);
+	}
+
+	public void testGetAvailableActionDescriptors() throws Exception {
+		OsWorkflowTemplate template = new OsWorkflowTemplate();
+		setProperties(template);
+
+		template.initialize();
+
+		List actionDescriptors = null;
+
+		actionDescriptors = template.getAvailableActionDescriptors();
+
+		assertEquals(2, actionDescriptors.size());
+		assertEquals("Get out of Bed", ((ActionDescriptor)actionDescriptors.get(0)).getName());
+		assertEquals("Go Back to Sleep", ((ActionDescriptor)actionDescriptors.get(1)).getName());
+
+		template.doAction(1);
+
+		actionDescriptors = template.getAvailableActionDescriptors();
+		assertEquals(1, actionDescriptors.size());
+		assertEquals("Get Dressed", ((ActionDescriptor)actionDescriptors.get(0)).getName());
+	}
+
 	private void bindMockInstanceIdToContext() {
 		this.manager.setInstanceId(MOCK_INSTANCE_ID);
 	}
@@ -319,7 +390,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 	private void setProperties(OsWorkflowTemplate template) throws Exception {
 		template.setConfiguration(configuration);
 		template.setWorkflowName(WAKE_UP);
-		template.setManager(this.manager);
+		template.setContextManager(this.manager);
 		template.afterPropertiesSet();
 	}
 

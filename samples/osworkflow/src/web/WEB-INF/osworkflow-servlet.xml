@@ -10,24 +10,40 @@
 	</bean>
 
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<ref local="callerInterceptor"/>
+			</list>
+		</property>
 		<property name="mappings">
 			<props>
-				<prop key="/approval/*">workflowController</prop>
+				<prop key="/start">workflowController</prop>
+				<prop key="/status">workflowController</prop>
+				<prop key="/execute/upload">uploadDocumentForm</prop>
 			</props>
 		</property>
 	</bean>
 	
-	<bean id="workflowController" class="org.springmodules.examples.workflow.osworkflow.web.WorkflowController">
+	<bean id="workflowController" class="org.springmodules.examples.workflow.osworkflow.web.DocumentApprovalController">
 		  <property name="template">
 				<ref bean="workflowTemplate"/>
 		  </property>
+		<property name="methodNameResolver">
+			<ref local="resolver"/>
+		</property>
 	</bean>
 
-	<bean id="resolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver">
-		<!--<property name="mappings">
-			<props>
-				<prop key="/doUpload.html">handleUpload</prop>
-			</props>
-		</property>-->
+	<bean id="uploadDocumentForm" class="org.springmodules.examples.workflow.osworkflow.web.UploadDocumentForm">
+		<property name="template">
+			<ref bean="workflowTemplate"/>
+		</property>
+	</bean>
+
+	<bean id="resolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver"/>
+
+	<bean id="callerInterceptor" class="org.springmodules.examples.workflow.osworkflow.web.CallerHandlerInterceptor">
+		<property name="contextManager">
+			<ref bean="workflowContextManager"/>
+		</property>
 	</bean>
 </beans>

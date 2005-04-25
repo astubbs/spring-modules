@@ -5,7 +5,7 @@
 	"http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
-	
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
@@ -30,7 +30,35 @@
 		<servlet-name>osworkflow</servlet-name>
 	</filter-mapping>
 
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Approval Workflow</web-resource-name>
+			<url-pattern>/approval/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>manager</role-name>
+		</auth-constraint>
+	</security-constraint>
+
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>OSWorkflow Sample</realm-name>
+		<form-login-config>
+			<form-login-page>/login.jsp</form-login-page>
+			<form-error-page>/error.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+
+	<security-role>
+		<description>
+			The role that is required to log in to the OSWorkflow Sample Application
+		</description>
+		<role-name>manager</role-name>
+	</security-role>
+
+
 </web-app>

@@ -12,7 +12,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Tomcat 5.0.28" level="application_server_libraries" />
-    <orderEntry type="module" module-name="springmodules" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -96,6 +95,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="springmodules" />
     <orderEntryProperties />
   </component>
   <component name="WebModuleBuildComponent">
@@ -136,6 +136,11 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/hsqldb.jar" />
       <url>jar://$MODULE_DIR$/../../lib/hsqldb/hsqldb.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/jsp-api.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/j2ee/jsp-api.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
@@ -201,11 +206,6 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/junit.jar" />
       <url>jar://$MODULE_DIR$/../../lib/junit/junit.jar!/</url>
-    </containerElement>
-    <containerElement type="library" level="module">
-      <attribute name="method" value="1" />
-      <attribute name="URI" value="/WEB-INF/lib/log4j-1.2.9.jar" />
-      <url>jar://$MODULE_DIR$/../../lib/log4j/log4j-1.2.9.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />

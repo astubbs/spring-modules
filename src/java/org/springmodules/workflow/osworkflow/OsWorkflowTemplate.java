@@ -44,7 +44,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 
 	private String workflowName;
 
-	private WorkflowContextManager manager;
+	private WorkflowContextManager contextManager;
 
 	public void setConfiguration(Configuration configuration) {
 		this.configuration = configuration;
@@ -58,8 +58,12 @@ public class OsWorkflowTemplate implements InitializingBean {
 		this.workflowName = workflowName;
 	}
 
-	public void setManager(WorkflowContextManager manager) {
-		this.manager = manager;
+	public void setContextManager(WorkflowContextManager contextManager) {
+		this.contextManager = contextManager;
+	}
+
+	public WorkflowContextManager getContextManager() {
+		return this.contextManager;
 	}
 
 	public void afterPropertiesSet() throws Exception {
@@ -67,8 +71,8 @@ public class OsWorkflowTemplate implements InitializingBean {
 			throw new FatalBeanException("Property [workflowName] is required.");
 		}
 
-		if(this.manager == null) {
-			throw new FatalBeanException("Property [manager] is required");
+		if(this.contextManager == null) {
+			throw new FatalBeanException("Property [contextManager] is required");
 		}
 	}
 
@@ -89,7 +93,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 		this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				long id = workflow.initialize(OsWorkflowTemplate.this.workflowName, initialAction, inputs);
-				OsWorkflowTemplate.this.manager.setInstanceId(id);
+				OsWorkflowTemplate.this.contextManager.setInstanceId(id);
 				return null;
 			}
 		});
@@ -102,7 +106,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public void doAction(final int actionId, final Map inputs) {
 		this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				workflow.doAction(OsWorkflowTemplate.this.manager.getInstanceId(), actionId, inputs);
+				workflow.doAction(OsWorkflowTemplate.this.contextManager.getInstanceId(), actionId, inputs);
 				return null;
 			}
 		});
@@ -119,7 +123,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public List getHistorySteps() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				return workflow.getHistorySteps(OsWorkflowTemplate.this.manager.getInstanceId());
+				return workflow.getHistorySteps(OsWorkflowTemplate.this.contextManager.getInstanceId());
 			}
 		});
 	}
@@ -127,7 +131,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public List getCurrentSteps() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				return workflow.getCurrentSteps(OsWorkflowTemplate.this.manager.getInstanceId());
+				return workflow.getCurrentSteps(OsWorkflowTemplate.this.contextManager.getInstanceId());
 			}
 		});
 	}
@@ -135,7 +139,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public List getHistoryStepDescriptors() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				List steps = workflow.getHistorySteps(OsWorkflowTemplate.this.manager.getInstanceId());
+				List steps = workflow.getHistorySteps(OsWorkflowTemplate.this.contextManager.getInstanceId());
 				return convertStepsToStepDescriptors(steps, workflow);
 			}
 		});
@@ -144,7 +148,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public List getCurrentStepDescriptors() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				List steps = workflow.getCurrentSteps(OsWorkflowTemplate.this.manager.getInstanceId());
+				List steps = workflow.getCurrentSteps(OsWorkflowTemplate.this.contextManager.getInstanceId());
 				return convertStepsToStepDescriptors(steps, workflow);
 			}
 		});
@@ -157,7 +161,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public int[] getAvailableActions(final Map inputs) {
 		return (int[]) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				return workflow.getAvailableActions(OsWorkflowTemplate.this.manager.getInstanceId(), inputs);
+				return workflow.getAvailableActions(OsWorkflowTemplate.this.contextManager.getInstanceId(), inputs);
 			}
 		});
 	}
@@ -171,7 +175,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				WorkflowDescriptor descriptor = workflow.getWorkflowDescriptor(OsWorkflowTemplate.this.workflowName);
 
-				int[] availableActions = workflow.getAvailableActions(OsWorkflowTemplate.this.manager.getInstanceId(), inputs);
+				int[] availableActions = workflow.getAvailableActions(OsWorkflowTemplate.this.contextManager.getInstanceId(), inputs);
 				List actionDescriptors = new ArrayList(availableActions.length);
 
 				for (int i = 0; i < availableActions.length; i++) {
@@ -186,7 +190,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public int getEntryState() {
 		Integer state = (Integer) this.execute(new OsWorkflowCallback() {
 					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-						return new Integer(workflow.getEntryState(OsWorkflowTemplate.this.manager.getInstanceId()));
+						return new Integer(workflow.getEntryState(OsWorkflowTemplate.this.contextManager.getInstanceId()));
 					}
 				});
 
@@ -195,7 +199,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 
 	public Object execute(OsWorkflowCallback callback) {
 		try {
-			Workflow workflow = createWorkflow(OsWorkflowTemplate.this.manager.getCaller());
+			Workflow workflow = createWorkflow(OsWorkflowTemplate.this.contextManager.getCaller());
 			workflow.setConfiguration(this.configuration);
 			return callback.doWithWorkflow(workflow);
 		}
