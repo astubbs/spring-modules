@@ -3,8 +3,11 @@ package org.springmodules.validation.predicates;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.commons.collections.iterators.IteratorEnumeration;
+import org.springmodules.util.dateparser.DateParseException;
+import org.springmodules.util.dateparser.DefaultDateParser;
 import org.springmodules.validation.functions.BeanPropertyFunction;
 import org.springmodules.validation.functions.LiteralFunction;
 
@@ -179,9 +182,43 @@ public class TestGenericTestPredicate extends TestCase {
 		assertFalse(Boolean.TRUE, OperatorConstants.NOT_EQUAL_OPERATOR, Boolean.TRUE);
 	}
 
+	public void testDateEqualsOperatorSuccess() {
+		assertTrue(md("20050409"), OperatorConstants.EQUALS_OPERATOR, md("2005-04-09"));
+		assertFalse(md("20050409"), OperatorConstants.EQUALS_OPERATOR, md("2005-04-08"));
+	}
 	
+	public void testDateNotEqualOperatorSuccess() {
+		assertTrue(md("20050409"), OperatorConstants.NOT_EQUAL_OPERATOR, md("2005-04-08"));
+		assertFalse(md("20050409"), OperatorConstants.NOT_EQUAL_OPERATOR, md("2005-04-09"));
+	}
 	
+	public void testDateLessThanOperatorSuccess() {
+		assertTrue(md("20050409"), OperatorConstants.LESS_THAN_OPERATOR, md("2005-04-10"));
+		assertFalse(md("20050409"), OperatorConstants.LESS_THAN_OPERATOR, md("2005-04-08"));
+	}
 	
+	public void testDateLessThanOrEqualOperatorSuccess() {
+		assertTrue(md("20050409"), OperatorConstants.LESS_THAN_OR_EQUAL_OPERATOR, md("2005-04-10"));
+		assertFalse(md("20050409"), OperatorConstants.LESS_THAN_OR_EQUAL_OPERATOR, md("2005-04-08"));
+	}
+	
+	public void testDateMoreThanOperatorSuccess() {
+		assertTrue(md("20050409"), OperatorConstants.MORE_THAN_OPERATOR, md("2005-04-08"));
+		assertFalse(md("20050409"), OperatorConstants.MORE_THAN_OPERATOR, md("2005-04-09"));
+	}
+	
+	public void testDateMoreThanOrEqualOperatorSuccess() {
+		assertTrue(md("20050409"), OperatorConstants.MORE_THAN_OR_EQUAL_OPERATOR, md("2005-04-08"));
+		assertFalse(md("20050409"), OperatorConstants.MORE_THAN_OR_EQUAL_OPERATOR, md("2005-04-10"));
+	}
+	
+	public Date md(String s) {
+		try {
+			return new DefaultDateParser().parse(s);
+		} catch (DateParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	
 	public TestGenericTestPredicate() {
