@@ -210,5 +210,5 @@ public class TestValangParser extends TestCase {
 		;
 		assertTrue(validate(new Person(7, "Benjamin"), text));
 		assertFalse(validate(new Person(30, "Steven"), text));
-	}		public void testParser19Dates1() throws DateParseException {		String text = 			"{ dateOfBirth : dateOfBirth >= [1970-01-01] : 'You must be born after 1 january 1970.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("1974-11-24")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("1950-07-14")), text));	}
+	}		public void testParser19Dates1() throws DateParseException {		String text = 			"{ dateOfBirth : dateOfBirth >= [1970-01-01] : 'You must be born after 1 january 1970.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("1974-11-24")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("1950-07-14")), text));	}		public void testParser20Dates2() throws DateParseException {		String text =			"{ dateOfBirth : dateOfBirth >= [T<d] and [T>d] > dateOfBirth : 'You must be born today.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("T")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("T-1d")), text));	}
 }
