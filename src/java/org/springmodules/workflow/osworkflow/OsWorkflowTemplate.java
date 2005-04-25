@@ -106,7 +106,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public void doAction(final int actionId, final Map inputs) {
 		this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				workflow.doAction(OsWorkflowTemplate.this.contextManager.getInstanceId(), actionId, inputs);
+				workflow.doAction(getInstanceId(), actionId, inputs);
 				return null;
 			}
 		});
@@ -123,7 +123,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public List getHistorySteps() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				return workflow.getHistorySteps(OsWorkflowTemplate.this.contextManager.getInstanceId());
+				return workflow.getHistorySteps(getInstanceId());
 			}
 		});
 	}
@@ -131,7 +131,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public List getCurrentSteps() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				return workflow.getCurrentSteps(OsWorkflowTemplate.this.contextManager.getInstanceId());
+				return workflow.getCurrentSteps(getInstanceId());
 			}
 		});
 	}
@@ -139,7 +139,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public List getHistoryStepDescriptors() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				List steps = workflow.getHistorySteps(OsWorkflowTemplate.this.contextManager.getInstanceId());
+				List steps = workflow.getHistorySteps(getInstanceId());
 				return convertStepsToStepDescriptors(steps, workflow);
 			}
 		});
@@ -148,7 +148,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public List getCurrentStepDescriptors() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				List steps = workflow.getCurrentSteps(OsWorkflowTemplate.this.contextManager.getInstanceId());
+				List steps = workflow.getCurrentSteps(getInstanceId());
 				return convertStepsToStepDescriptors(steps, workflow);
 			}
 		});
@@ -161,10 +161,11 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public int[] getAvailableActions(final Map inputs) {
 		return (int[]) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-				return workflow.getAvailableActions(OsWorkflowTemplate.this.contextManager.getInstanceId(), inputs);
+				return workflow.getAvailableActions(getInstanceId(), inputs);
 			}
 		});
 	}
+
 
 	public List getAvailableActionDescriptors() {
 		return this.getAvailableActionDescriptors(null);
@@ -175,7 +176,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				WorkflowDescriptor descriptor = workflow.getWorkflowDescriptor(OsWorkflowTemplate.this.workflowName);
 
-				int[] availableActions = workflow.getAvailableActions(OsWorkflowTemplate.this.contextManager.getInstanceId(), inputs);
+				int[] availableActions = workflow.getAvailableActions(getInstanceId(), inputs);
 				List actionDescriptors = new ArrayList(availableActions.length);
 
 				for (int i = 0; i < availableActions.length; i++) {
@@ -190,7 +191,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public int getEntryState() {
 		Integer state = (Integer) this.execute(new OsWorkflowCallback() {
 					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-						return new Integer(workflow.getEntryState(OsWorkflowTemplate.this.contextManager.getInstanceId()));
+						return new Integer(workflow.getEntryState(getInstanceId()));
 					}
 				});
 
@@ -226,4 +227,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 		return new BasicWorkflow(caller);
 	}
 
+	protected long getInstanceId() {
+		return this.contextManager.getInstanceId();
+	}
 }
