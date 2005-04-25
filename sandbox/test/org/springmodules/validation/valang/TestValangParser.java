@@ -1,7 +1,7 @@
 package org.springmodules.validation.valang;
 
 import java.io.StringReader;
-import java.util.Collection;
+import java.util.Collection;import java.util.Date;
 import java.util.Iterator;
 
 import junit.framework.TestCase;
@@ -10,7 +10,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
-import org.springmodules.validation.predicates.ValidationRule;
+import org.springmodules.util.dateparser.DateParseException;import org.springmodules.util.dateparser.DefaultDateParser;import org.springmodules.validation.predicates.ValidationRule;
 
 /**
  * @author sdevijve
@@ -30,16 +30,16 @@ public class TestValangParser extends TestCase {
 		private int age = 0;
 		private String firstName = null;
 		private String size = null;
-		
+		private Date dateOfBirth = null;
 		public Person(int age, String firstName) { super(); setAge(age); setFirstName(firstName); }
 		public Person(String size) { super(); setSize(size); }
-		
+		public Person(Date dateOfBirth) { super(); setDateOfBirth(dateOfBirth); }
 		public int getAge() { return this.age; }
 		public void setAge(int age) { this.age = age; }
 		public String getFirstName() { return this.firstName; }
 		public void setFirstName(String firstName) { this.firstName = firstName; }
 		public String getSize() { return this.size; }
-		public void setSize(String size) { this.size = size; }
+		public void setSize(String size) { this.size = size; }				public Date getDateOfBirth() { return this.dateOfBirth; }		public void setDateOfBirth(Date dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 	}
 	
 	private ValangParser getParser(String text) {
@@ -210,5 +210,5 @@ public class TestValangParser extends TestCase {
 		;
 		assertTrue(validate(new Person(7, "Benjamin"), text));
 		assertFalse(validate(new Person(30, "Steven"), text));
-	}
+	}		public void testParser19Dates1() throws DateParseException {		String text = 			"{ dateOfBirth : dateOfBirth >= [1970-01-01] : 'You must be born after 1 january 1970.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("1974-11-24")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("1950-07-14")), text));	}
 }

@@ -11,6 +11,7 @@ import org.apache.commons.collections.functors.NotPredicate;
 import org.apache.commons.collections.functors.OrPredicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springmodules.util.dateparser.DateParseException;
 import org.springmodules.validation.functions.BeanPropertyFunction;
 import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LiteralFunction;
@@ -128,6 +129,7 @@ public class ValangParser implements ValangParserConstants {
     case FALSE:
     case NUM:
     case STRING:
+    case DATE:
     case PATH:
     case 41:
       predicate = predicate();
@@ -170,6 +172,7 @@ public class ValangParser implements ValangParserConstants {
       case FALSE:
       case NUM:
       case STRING:
+      case DATE:
       case PATH:
       case 41:
         rightFunction1 = function();
@@ -273,6 +276,7 @@ public class ValangParser implements ValangParserConstants {
       case FALSE:
       case NUM:
       case STRING:
+      case DATE:
       case PATH:
         parentFunction = pathOrLiteral();
                                              {if (true) return parentFunction;}
@@ -303,6 +307,14 @@ public class ValangParser implements ValangParserConstants {
     case NUM:
       jj_consume_token(NUM);
                       {if (true) return new LiteralFunction(new BigDecimal(token.image));}
+      break;
+    case DATE:
+      jj_consume_token(DATE);
+                          try {
+                                        {if (true) return new LiteralFunction(getVisitor().getDateParser().parse(token.image.substring(1, token.image.length() - 1)));}
+                                  } catch (DateParseException e) {
+                                        {if (true) throw new ParseException(e.getMessage());}
+                                  }
       break;
     case PATH:
       jj_consume_token(PATH);
@@ -391,7 +403,7 @@ public class ValangParser implements ValangParserConstants {
   }
 
   final private boolean jj_3R_11() {
-    if (jj_scan_token(PATH)) return true;
+    if (jj_scan_token(DATE)) return true;
     return false;
   }
 
@@ -432,7 +444,10 @@ public class ValangParser implements ValangParserConstants {
     jj_scanpos = xsp;
     if (jj_3R_10()) {
     jj_scanpos = xsp;
-    if (jj_3R_11()) return true;
+    if (jj_3R_11()) {
+    jj_scanpos = xsp;
+    if (jj_3R_12()) return true;
+    }
     }
     }
     }
@@ -453,6 +468,11 @@ public class ValangParser implements ValangParserConstants {
     if (jj_scan_token(34)) return true;
     }
     if (jj_scan_token(38)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_12() {
+    if (jj_scan_token(PATH)) return true;
     return false;
   }
 
@@ -483,7 +503,7 @@ public class ValangParser implements ValangParserConstants {
       jj_la1_1();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x0,0x60,0x60,0x300c0080,0x300c0000,0x300,0xc00,0xfc3ff00,0x0,0x300c0000,0x300c0000,0xfc3f000,};
+      jj_la1_0 = new int[] {0x0,0x60,0x60,0x700c0080,0x700c0000,0x300,0xc00,0xfc3ff00,0x0,0x700c0000,0x700c0000,0xfc3f000,};
    }
    private static void jj_la1_1() {
       jj_la1_1 = new int[] {0x8,0x0,0x0,0x244,0x204,0x0,0x0,0x0,0x204,0x4,0x4,0x0,};

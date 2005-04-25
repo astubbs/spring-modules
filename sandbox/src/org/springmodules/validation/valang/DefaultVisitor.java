@@ -16,6 +16,7 @@
 package org.springmodules.validation.valang;
 
 import org.apache.commons.collections.Predicate;
+import org.springmodules.util.dateparser.DefaultDateParser;
 import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LengthOfFunction;
 import org.springmodules.validation.functions.LowerCaseFunction;
@@ -42,6 +43,7 @@ import org.springmodules.validation.predicates.Operator;
 public class DefaultVisitor implements ValangVisitor {
 
 	private ValangVisitor visitor = null;
+	private DefaultDateParser dateParser = new DefaultDateParser();
 	
 	public DefaultVisitor() {
 		super();
@@ -87,5 +89,9 @@ public class DefaultVisitor implements ValangVisitor {
 	
 	public Predicate getPredicate(Function leftFunction, Operator operator, Function rightFunction) {
 		return new GenericTestPredicate(leftFunction, operator, rightFunction);
+	}
+	
+	public DefaultDateParser getDateParser() {
+		return this.dateParser;
 	}
 }

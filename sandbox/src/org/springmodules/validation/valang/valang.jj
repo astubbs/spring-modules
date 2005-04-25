@@ -19,6 +19,8 @@ import org.springmodules.validation.functions.LengthOfFunction;
 import org.springmodules.validation.valang.ValangVisitor;
 import org.springmodules.validation.valang.DefaultVisitor;
 
+import org.springmodules.util.dateparser.DateParseException;
+
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.functors.AndPredicate;
 import org.apache.commons.collections.functors.OrPredicate;
@@ -261,6 +263,12 @@ Function pathOrLiteral() :
     |   <FALSE>     { return new LiteralFunction(Boolean.FALSE); }
     |   <STRING>    { return new LiteralFunction(token.image.substring(1, token.image.length() - 1)); }
     |   <NUM>       { return new LiteralFunction(new BigDecimal(token.image)); }
+    |	<DATE>		{ try {
+    					return new LiteralFunction(getVisitor().getDateParser().parse(token.image.substring(1, token.image.length() - 1))); 
+    				  } catch (DateParseException e) {
+    				  	throw new ParseException(e.getMessage());
+    				  }
+    				}
     |   <PATH>      { return new BeanPropertyFunction(token.image); }
     )
 }
