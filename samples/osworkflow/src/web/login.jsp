@@ -3,7 +3,7 @@
   <head><title>Simple jsp page</title></head>
   <body>
 		<h1>Login</h1>
-		<form name="loginForm" action="j_security_check" method="post">
+		<form name="loginForm" action="j_acegi_security_check" method="post">
 		    <table border="0">
 					<tr>
 						<td>Username</td>

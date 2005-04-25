@@ -6,6 +6,14 @@
 
 <web-app>
 
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/applicationContext.xml
+			/WEB-INF/acegiSecurity.xml
+		</param-value>
+	</context-param>
+
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
@@ -21,44 +29,23 @@
 	</servlet-mapping>
 
 	<filter>
-		<filter-name>workflow</filter-name>
-		<filter-class>org.springmodules.workflow.osworkflow.support.WorkflowContextFilter</filter-class>
+		<filter-name>Acegi Filter Chain Proxy</filter-name>
+		<filter-class>net.sf.acegisecurity.util.FilterToBeanProxy</filter-class>
+		<init-param>
+			<param-name>targetClass</param-name>
+			<param-value>net.sf.acegisecurity.util.FilterChainProxy</param-value>
+		</init-param>
 	</filter>
 
 	<filter-mapping>
-		<filter-name>workflow</filter-name>
-		<servlet-name>osworkflow</servlet-name>
+		<filter-name>Acegi Filter Chain Proxy</filter-name>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Approval Workflow</web-resource-name>
-			<url-pattern>/approval/*</url-pattern>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>manager</role-name>
-		</auth-constraint>
-	</security-constraint>
 
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-
-	<login-config>
-		<auth-method>FORM</auth-method>
-		<realm-name>OSWorkflow Sample</realm-name>
-		<form-login-config>
-			<form-login-page>/login.jsp</form-login-page>
-			<form-error-page>/error.jsp</form-error-page>
-		</form-login-config>
-	</login-config>
-
-	<security-role>
-		<description>
-			The role that is required to log in to the OSWorkflow Sample Application
-		</description>
-		<role-name>manager</role-name>
-	</security-role>
 
 
 </web-app>

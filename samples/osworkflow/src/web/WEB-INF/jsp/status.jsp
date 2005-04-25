@@ -7,6 +7,7 @@
 </head>
 <body>
 <strong>Current Instance:</strong> <c:out value="${instanceId}"/><br>
+<strong><c:out value="${state}"/></strong><br>
 <h2>Available Actions</h2>
 <c:forEach var="action" items="${availableActions}">
     <a href="execute/<c:out value="${action.view}"/>"><c:out value="${action.name}"/></a><br>
@@ -19,5 +20,7 @@
 <c:forEach var="step" items="${historySteps}">
 	<c:out value="${step.name}"/><br>
 </c:forEach>
+<br>
+<a href="/index.jsp">Home</a>
 </body>
 </html>

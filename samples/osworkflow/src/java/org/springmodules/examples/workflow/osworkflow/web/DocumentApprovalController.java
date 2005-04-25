@@ -12,6 +12,8 @@ import org.springmodules.workflow.osworkflow.OsWorkflowTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
+import com.opensymphony.workflow.spi.Step;
+
 /**
  * @author robh
  */
@@ -32,8 +34,9 @@ public class DocumentApprovalController extends MultiActionController {
 		Map model = new HashMap();
 		model.put("instanceId", new Long(this.template.getContextManager().getInstanceId()));
 		model.put("currentSteps", this.template.getCurrentStepDescriptors());
-		model.put("historyStep", this.template.getHistoryStepDescriptors());
+		model.put("historySteps", this.template.getHistoryStepDescriptors());
 		model.put("availableActions", this.template.getAvailableActionDescriptors());
+		model.put("state", ((Step)this.template.getCurrentSteps().get(0)).getStatus());
 		return new ModelAndView("status", model);
 	}
 }
