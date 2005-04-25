@@ -54,6 +54,6 @@
 	<classpathentry kind="lib" path="lib/spring/spring-mock.jar"/>
 	<classpathentry kind="lib" path="lib/xdoclet/xjavadoc-1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/stevendevijver/download/springmodules/springmodules/lib/jakarta-commons/commons-pool-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-pool-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
