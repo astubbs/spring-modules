@@ -15,9 +15,12 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.mock.web.MockFilterConfig;
+import org.springframework.web.context.support.StaticWebApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
 import org.easymock.MockControl;
-import org.springmodules.workflow.osworkflow.WorkflowContext;
+import org.springmodules.workflow.osworkflow.WorkflowContextManager;
+import org.springmodules.workflow.osworkflow.ThreadLocalWorkflowContextManager;
 
 /**
  * @author robh
@@ -38,10 +41,18 @@ public class WorkflowContextFilterTests extends TestCase {
 
 	private MockControl control = MockControl.createControl(FilterChain.class);
 
+	private WorkflowContextManager manager = new ThreadLocalWorkflowContextManager();
+
 	public void setUp() throws Exception {
-		WorkflowContext.clear();
+		this.manager.clear();
 		this.request.setSession(this.session);
 		this.filter.init(config);
+
+		StaticWebApplicationContext wac = new StaticWebApplicationContext();
+		wac.setServletContext(this.context);
+		wac.getDefaultListableBeanFactory().registerSingleton("workflowContextManager", this.manager);
+		wac.refresh();
+		this.context.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, wac);
 	}
 
 	public void testPickupFromSession() throws Exception {
@@ -51,7 +62,7 @@ public class WorkflowContextFilterTests extends TestCase {
 		this.filter.doFilter(request, response, getMockFilterChain());
 
 		control.verify();
-		assertEquals(id.longValue(), WorkflowContext.getInstanceId());
+		assertEquals(id.longValue(), this.manager.getInstanceId());
 	}
 
 	public void testAddToSession() throws Exception {
@@ -60,7 +71,7 @@ public class WorkflowContextFilterTests extends TestCase {
 		final Long id = new Long(13);
 		this.filter.doFilter(request, response, new FilterChain() {
 			public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
-				WorkflowContext.setInstanceId(id.longValue());
+				WorkflowContextFilterTests.this.manager.setInstanceId(id.longValue());
 			}
 		});
 
@@ -70,7 +81,7 @@ public class WorkflowContextFilterTests extends TestCase {
 
 	public void testWithoutWorkflowAction() throws Exception {
 		assertSessionHasNoInstanceId();
-		assertFalse(WorkflowContext.hasInstanceId());
+		assertFalse(this.manager.isInstanceIdBound());
 
 		this.filter.doFilter(request, response, new FilterChain() {
 			public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse) throws IOException, ServletException {
@@ -78,7 +89,7 @@ public class WorkflowContextFilterTests extends TestCase {
 			}
 		});
 
-		assertFalse(WorkflowContext.hasInstanceId());
+		assertFalse(this.manager.isInstanceIdBound());
 		assertSessionHasNoInstanceId();
 	}
 

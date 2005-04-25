@@ -20,7 +20,7 @@ public class WorkflowController implements Controller {
 	}
 
 	public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-		
+		 return null;
 	}
 
 }

@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * @author Rob Harrop
  */
-public abstract class WorkflowContext {
+public class ThreadLocalWorkflowContextManager implements WorkflowContextManager {
 
 	private static final String CALLER = "caller";
 
@@ -34,12 +34,12 @@ public abstract class WorkflowContext {
 		}
 	};
 
-	public static void setCaller(String caller) {
+	public void setCaller(String caller) {
 		getResourceMap().put(CALLER, caller);
 	}
 
 
-	public static String getCaller() {
+	public String getCaller() {
 		String caller = (String) getResourceMap().get(CALLER);
 
 		if (caller == null) {
@@ -50,11 +50,11 @@ public abstract class WorkflowContext {
 		}
 	}
 
-	public static void setInstanceId(long instanceId) {
+	public void setInstanceId(long instanceId) {
 		getResourceMap().put(INSTANCE_ID, new Long(instanceId));
 	}
 
-	public static long getInstanceId() {
+	public long getInstanceId() {
 		Long val = (Long) getResourceMap().get(INSTANCE_ID);
 
 		if (val == null) {
@@ -66,15 +66,19 @@ public abstract class WorkflowContext {
 
 	}
 
-	public static boolean hasInstanceId() {
+	public boolean isInstanceIdBound() {
 		return getResourceMap().containsKey(INSTANCE_ID);
+	}
+
+	public boolean isCallerBound() {
+		return getResourceMap().containsKey(CALLER);
 	}
 
 	private static Map getResourceMap() {
 		return ((Map) resources.get());
 	}
 
-	public static void clear() {
+	public void clear() {
 		getResourceMap().clear();
 	}
 }

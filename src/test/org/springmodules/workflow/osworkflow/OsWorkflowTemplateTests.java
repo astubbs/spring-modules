@@ -30,9 +30,11 @@ public class OsWorkflowTemplateTests extends TestCase {
 
 	private ConfigurationBean configuration;
 
+	private WorkflowContextManager manager = new ThreadLocalWorkflowContextManager();
+
 	public void setUp() {
-		WorkflowContext.clear();
-		WorkflowContext.setCaller("robh");
+		this.manager.clear();
+		this.manager.setCaller("robh");
 
 		Properties workflowLocations = new Properties();
 		workflowLocations.put(WAKE_UP, "classpath:org/springmodules/workflow/osworkflow/wakeUp.xml");
@@ -52,7 +54,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 		}
 	}
 
-	public void testExecute() {
+	public void testExecute()  throws Exception{
 		MockControl ctl = createMockWorkflowControl();
 		final Workflow workflow = (Workflow) ctl.getMock();
 		final Object returnObject = new Object();
@@ -64,6 +66,8 @@ public class OsWorkflowTemplateTests extends TestCase {
 			}
 		};
 
+		template.setManager(this.manager);
+
 		Object retVal = template.execute(new OsWorkflowCallback() {
 					public Object doWithWorkflow(Workflow innerWorkflow) throws WorkflowException {
 						assertSame("Incorrect workflow object passed in", workflow, innerWorkflow);
@@ -74,7 +78,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 		assertSame("Incorrect value returned by execute", retVal, returnObject);
 	}
 
-	public void testDefaultCreatWorkflowImplementation() {
+	public void testDefaultCreatWorkflowImplementation() throws Exception {
 		OsWorkflowTemplate template = new OsWorkflowTemplate();
 		setProperties(template);
 
@@ -87,7 +91,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 		});
 	}
 
-	public void testInitialize() {
+	public void testInitialize()  throws Exception{
 		MockControl ctl = createMockWorkflowControl();
 		OsWorkflowTemplate template = createMockTemplateForInitialize(ctl, 0, null);
 
@@ -100,7 +104,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 	}
 
 
-	public void testInitializeWithSpecificInitialAction() {
+	public void testInitializeWithSpecificInitialAction()  throws Exception{
 		int initialAction = 0;
 		MockControl ctl = createMockWorkflowControl();
 
@@ -173,7 +177,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 		ctl.verify();
 	}
 
-	public void testGetWorkflowDescriptor() {
+	public void testGetWorkflowDescriptor()  throws Exception{
 		bindMockInstanceIdToContext();
 
 		final MockControl ctl = createMockWorkflowControl();
@@ -195,7 +199,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 		ctl.verify();
 	}
 
-	public void testGetHistorySteps() {
+	public void testGetHistorySteps() throws Exception {
 		bindMockInstanceIdToContext();
 
 		final MockControl ctl = createMockWorkflowControl();
@@ -220,7 +224,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 		ctl.verify();
 	}
 
-	public void testGetHistoryStepDescriptors() {
+	public void testGetHistoryStepDescriptors()  throws Exception{
 		OsWorkflowTemplate template = new OsWorkflowTemplate();
 		setProperties(template);
 
@@ -243,12 +247,12 @@ public class OsWorkflowTemplateTests extends TestCase {
 
 	}
 
-	public void testGetCurrentStepDescriptors() {
+	public void testGetCurrentStepDescriptors() throws Exception {
 		OsWorkflowTemplate template = new OsWorkflowTemplate();
 		setProperties(template);
 	}
 
-	public void testGetCurrentSteps() {
+	public void testGetCurrentSteps()  throws Exception{
 		bindMockInstanceIdToContext();
 
 		final MockControl ctl = createMockWorkflowControl();
@@ -273,7 +277,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 		ctl.verify();
 	}
 
-	public void testGetEntryState() {
+	public void testGetEntryState() throws Exception {
 		bindMockInstanceIdToContext();
 
 		final MockControl ctl = createMockWorkflowControl();
@@ -300,21 +304,23 @@ public class OsWorkflowTemplateTests extends TestCase {
 	}
 
 	private void bindMockInstanceIdToContext() {
-		WorkflowContext.setInstanceId(MOCK_INSTANCE_ID);
+		this.manager.setInstanceId(MOCK_INSTANCE_ID);
 	}
 
 
 	private void assertContextHasMockInstanceId() {
-		assertEquals("InstanceId is incorrect", MOCK_INSTANCE_ID, WorkflowContext.getInstanceId());
+		assertEquals("InstanceId is incorrect", MOCK_INSTANCE_ID, this.manager.getInstanceId());
 	}
 
 	private MockControl createMockWorkflowControl() {
 		return MockControl.createControl(Workflow.class);
 	}
 
-	private void setProperties(OsWorkflowTemplate template) {
+	private void setProperties(OsWorkflowTemplate template) throws Exception {
 		template.setConfiguration(configuration);
 		template.setWorkflowName(WAKE_UP);
+		template.setManager(this.manager);
+		template.afterPropertiesSet();
 	}
 
 	private OsWorkflowTemplate createMockTemplateForDoAction(final MockControl ctl, final int actionId, final Map inputs) {

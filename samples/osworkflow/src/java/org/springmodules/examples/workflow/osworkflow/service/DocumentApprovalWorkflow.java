@@ -13,8 +13,4 @@ public interface DocumentApprovalWorkflow {
 	void uploadDocument();
 
 	List getHistorySteps();
-
-	List getAvailableActionDescriptors();
-
-	int getState();
 }
