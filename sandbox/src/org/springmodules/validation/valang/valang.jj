@@ -13,13 +13,12 @@ import org.springmodules.validation.predicates.BasicValidationRule;
 
 import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LiteralFunction;
+import org.springmodules.validation.functions.DateLiteralFunction;
 import org.springmodules.validation.functions.BeanPropertyFunction;
 import org.springmodules.validation.functions.LengthOfFunction;
 
 import org.springmodules.validation.valang.ValangVisitor;
 import org.springmodules.validation.valang.DefaultVisitor;
-
-import org.springmodules.util.dateparser.DateParseException;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.functors.AndPredicate;
@@ -267,12 +266,7 @@ Function pathOrLiteral() :
     |   <FALSE>     { return new LiteralFunction(Boolean.FALSE); }
     |   <STRING>    { return new LiteralFunction(token.image.substring(1, token.image.length() - 1)); }
     |   <NUM>       { return new LiteralFunction(new BigDecimal(token.image)); }
-    |	<DATE>		{ try {
-    					return new LiteralFunction(getVisitor().getDateParser().parse(token.image.substring(1, token.image.length() - 1))); 
-    				  } catch (DateParseException e) {
-    				  	throw new ParseException("Could not parse date at line " + token.beginLine + ", column " + token.beginColumn + ".");
-    				  }
-    				}
+    |	<DATE>		{ return new DateLiteralFunction(token.image.substring(1, token.image.length() - 1), getVisitor().getDateParser(), token.beginLine, token.beginColumn); }
     |   <PATH>      { return new BeanPropertyFunction(token.image); }
     )
 }

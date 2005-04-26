@@ -11,8 +11,8 @@ import org.apache.commons.collections.functors.NotPredicate;
 import org.apache.commons.collections.functors.OrPredicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.util.dateparser.DateParseException;
 import org.springmodules.validation.functions.BeanPropertyFunction;
+import org.springmodules.validation.functions.DateLiteralFunction;
 import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LiteralFunction;
 import org.springmodules.validation.predicates.BasicValidationRule;
@@ -314,11 +314,7 @@ public class ValangParser implements ValangParserConstants {
       break;
     case DATE:
       jj_consume_token(DATE);
-                          try {
-                                        {if (true) return new LiteralFunction(getVisitor().getDateParser().parse(token.image.substring(1, token.image.length() - 1)));}
-                                  } catch (DateParseException e) {
-                                        {if (true) throw new ParseException("Could not parse date at line " + token.beginLine + ", column " + token.beginColumn + ".");}
-                                  }
+                          {if (true) return new DateLiteralFunction(token.image.substring(1, token.image.length() - 1), getVisitor().getDateParser(), token.beginLine, token.beginColumn);}
       break;
     case PATH:
       jj_consume_token(PATH);
@@ -406,6 +402,17 @@ public class ValangParser implements ValangParserConstants {
     finally { jj_save(1, xla); }
   }
 
+  final private boolean jj_3_1() {
+    if (jj_3R_4()) return true;
+    if (jj_scan_token(40)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_8() {
+    if (jj_scan_token(FALSE)) return true;
+    return false;
+  }
+
   final private boolean jj_3R_7() {
     if (jj_scan_token(TRUE)) return true;
     return false;
@@ -449,11 +456,6 @@ public class ValangParser implements ValangParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_12() {
-    if (jj_scan_token(PATH)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_4() {
     Token xsp;
     xsp = jj_scanpos;
@@ -461,6 +463,11 @@ public class ValangParser implements ValangParserConstants {
     jj_scanpos = xsp;
     if (jj_3R_5()) return true;
     }
+    return false;
+  }
+
+  final private boolean jj_3R_12() {
+    if (jj_scan_token(PATH)) return true;
     return false;
   }
 
@@ -476,17 +483,6 @@ public class ValangParser implements ValangParserConstants {
 
   final private boolean jj_3R_9() {
     if (jj_scan_token(STRING)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_3R_4()) return true;
-    if (jj_scan_token(40)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_8() {
-    if (jj_scan_token(FALSE)) return true;
     return false;
   }
 
