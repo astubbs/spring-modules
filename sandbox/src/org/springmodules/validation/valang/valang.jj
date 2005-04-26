@@ -25,6 +25,8 @@ import org.apache.commons.collections.functors.AndPredicate;
 import org.apache.commons.collections.functors.OrPredicate;
 import org.apache.commons.collections.functors.NotPredicate;
 
+import org.springmodules.util.dateparser.DateParseException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -266,7 +268,14 @@ Function pathOrLiteral() :
     |   <FALSE>     { return new LiteralFunction(Boolean.FALSE); }
     |   <STRING>    { return new LiteralFunction(token.image.substring(1, token.image.length() - 1)); }
     |   <NUM>       { return new LiteralFunction(new BigDecimal(token.image)); }
-    |	<DATE>		{ return new DateLiteralFunction(token.image.substring(1, token.image.length() - 1), getVisitor().getDateParser(), token.beginLine, token.beginColumn); }
+    |	<DATE>		{
+    					try {
+							getVisitor().getDateParser().parse(token.image.substring(1, token.image.length() - 1));    					
+    					} catch (DateParseException e) {
+    						throw new ParseException("Could not parse date [" + token.image.substring(1, token.image.length() - 1) + "] at line " + token.beginLine + ", column " + token.beginColumn + ".");
+    					} 
+    					return new DateLiteralFunction(token.image.substring(1, token.image.length() - 1), getVisitor().getDateParser(), token.beginLine, token.beginColumn); 
+    				}
     |   <PATH>      { return new BeanPropertyFunction(token.image); }
     )
 }
