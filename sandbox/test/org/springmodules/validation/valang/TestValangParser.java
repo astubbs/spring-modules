@@ -13,7 +13,7 @@ import org.springframework.validation.Errors;
 import org.springmodules.util.dateparser.DateParseException;import org.springmodules.util.dateparser.DefaultDateParser;import org.springmodules.validation.predicates.ValidationRule;
 
 /**
- * @author sdevijve
+ * @author Steven Devijver
  *
  */
 public class TestValangParser extends TestCase {
