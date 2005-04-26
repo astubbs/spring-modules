@@ -29,6 +29,8 @@
 			<src path="${sandbox.src.dir}"/>
 			<classpath refid="all-libs"/>
 			<classpath location="${target.classes.dir}"/>
+			<!-- exclude packages that contain compilation errors -->
+			<exclude name="org/springmodules/dwr/**/*.java"/>
 		</javac>
 
 		<copy todir="${sandbox.target.classes.dir}" preservelastmodified="true">
@@ -80,6 +82,10 @@
 			<classpath location="${target.classes.dir}"/>
 			<classpath location="${sandbox.target.classes.dir}"/>
 			<classpath location="${target.testclasses.dir}"/>
+			<!-- exclude packages that contain compilation errors -->
+			<exclude name="org/springmodules/dwr/**/*.java"/>
+			<exclude name="org/springmodules/lucene/**/*.java"/>
+			
 		</javac>
 
 		<!-- Pick up logging config from test directory -->
