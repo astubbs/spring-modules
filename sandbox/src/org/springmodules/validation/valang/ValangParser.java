@@ -31,6 +31,10 @@ public class ValangParser implements ValangParserConstants {
            return this.visitor;
         }
 
+        public void setVisitor(DefaultVisitor visitor) {
+                this.visitor = visitor;
+        }
+
   final public Collection parseValidation() throws ParseException {
         Predicate predicate = null;
         Collection rules = new ArrayList();
@@ -313,7 +317,7 @@ public class ValangParser implements ValangParserConstants {
                           try {
                                         {if (true) return new LiteralFunction(getVisitor().getDateParser().parse(token.image.substring(1, token.image.length() - 1)));}
                                   } catch (DateParseException e) {
-                                        {if (true) throw new ParseException(e.getMessage());}
+                                        {if (true) throw new ParseException("Could not parse date at line " + token.beginLine + ", column " + token.beginColumn + ".");}
                                   }
       break;
     case PATH:
@@ -402,32 +406,6 @@ public class ValangParser implements ValangParserConstants {
     finally { jj_save(1, xla); }
   }
 
-  final private boolean jj_3R_11() {
-    if (jj_scan_token(DATE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_10() {
-    if (jj_scan_token(NUM)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_9() {
-    if (jj_scan_token(STRING)) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_3R_4()) return true;
-    if (jj_scan_token(40)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_8() {
-    if (jj_scan_token(FALSE)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_7() {
     if (jj_scan_token(TRUE)) return true;
     return false;
@@ -483,6 +461,32 @@ public class ValangParser implements ValangParserConstants {
     jj_scanpos = xsp;
     if (jj_3R_5()) return true;
     }
+    return false;
+  }
+
+  final private boolean jj_3R_11() {
+    if (jj_scan_token(DATE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_10() {
+    if (jj_scan_token(NUM)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_9() {
+    if (jj_scan_token(STRING)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_3R_4()) return true;
+    if (jj_scan_token(40)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_8() {
+    if (jj_scan_token(FALSE)) return true;
     return false;
   }
 

@@ -47,6 +47,10 @@ public class ValangParser
 	   return this.visitor;
 	}
 	
+	public void setVisitor(DefaultVisitor visitor) {
+		this.visitor = visitor;
+	}
+	
 }
 
 PARSER_END(ValangParser)
@@ -266,7 +270,7 @@ Function pathOrLiteral() :
     |	<DATE>		{ try {
     					return new LiteralFunction(getVisitor().getDateParser().parse(token.image.substring(1, token.image.length() - 1))); 
     				  } catch (DateParseException e) {
-    				  	throw new ParseException(e.getMessage());
+    				  	throw new ParseException("Could not parse date at line " + token.beginLine + ", column " + token.beginColumn + ".");
     				  }
     				}
     |   <PATH>      { return new BeanPropertyFunction(token.image); }
