@@ -75,7 +75,9 @@ public class DefaultVisitor implements ValangVisitor {
 	}
 
 	/**
-	 * <p>Register a custom visitor to look up custom functions.
+	 * <p>Register a custom visitor to look up custom functions. Lookup of functions
+	 * will first be delegated to this visitor. If no function has been returned (null)
+	 * lookup will be handled by DefaultVisitor.
 	 * 
 	 * @param visitor the custom visitor
 	 */
