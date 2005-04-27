@@ -13,6 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 package org.springmodules.workflow.osworkflow.support;
 
 import java.util.Map;
@@ -29,30 +30,26 @@ import net.sf.acegisecurity.context.security.SecureContext;
  */
 public class AcegiRoleCondition implements Condition {
 
-	private static final String ROLE_KEY = "role";
+	public static final String ROLE = "role";
 
 	public boolean passesCondition(Map transientVars, Map args, PropertySet ps) throws WorkflowException {
-		if (!args.containsKey(ROLE_KEY)) {
-			throw new WorkflowException("Condition [" + getClass().getName() + "] expects argument [" + ROLE_KEY + "].");
+		Object role = args.get(ROLE);
+
+		if (role == null) {
+			throw new WorkflowException("Condition [" + getClass().getName() + "] expects argument [" + ROLE + "].");
 		}
 
-		Object role = args.get(ROLE_KEY);
+		SecureContext secureContext = (SecureContext) ContextHolder.getContext();
+		GrantedAuthority[] authorities = secureContext.getAuthentication().getAuthorities();
 
-		if (role != null) {
-			SecureContext secureContext = (SecureContext) ContextHolder.getContext();
-			GrantedAuthority[] authorities = secureContext.getAuthentication().getAuthorities();
-
-			for (int i = 0; i < authorities.length; i++) {
-				GrantedAuthority authority = authorities[i];
-				if (role.equals(authority.getAuthority())) {
-					return true;
-				}
+		for (int i = 0; i < authorities.length; i++) {
+			GrantedAuthority authority = authorities[i];
+			if (role.equals(authority.getAuthority())) {
+				return true;
 			}
+		}
 
-			return false;
-		}
-		else {
-			return true;
-		}
+		return false;
+
 	}
 }
