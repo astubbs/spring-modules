@@ -98,8 +98,8 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 			return ((BigDecimal)leftValue).compareTo(rightValue) >= 0;
 		} else if (getOperator() instanceof Operator.InOperator) {
 			Collection predicates = new ArrayList();
-			for (Iterator iter = getIterator(rightValue); iter.hasNext();) {
-				predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)iter.next()));
+			for (Iterator iter = getIterator(rightValue); iter.hasNext();) {				Object o = iter.next();				if (o instanceof Function) {
+					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)o));				} else {					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, new LiteralFunction(o)));				}
 			}
 			if (predicates.isEmpty()) {
 				throw new IllegalStateException("IN expression contains no elements!");
@@ -107,8 +107,8 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 			return AnyPredicate.getInstance(predicates).evaluate(target);
 		} else if (getOperator() instanceof Operator.NotInOperator) {
 			Collection predicates = new ArrayList();
-			for (Iterator iter = getIterator(rightValue); iter.hasNext();) {
-				predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)iter.next()));
+			for (Iterator iter = getIterator(rightValue); iter.hasNext();) {				Object o = iter.next();				if (o instanceof Function) {
+					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)o));				} else {					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, new LiteralFunction(o)));				}
 			}
 			if (predicates.isEmpty()) {
 				throw new IllegalStateException("NOT IN expression contains no elements!");

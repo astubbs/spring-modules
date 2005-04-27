@@ -16,6 +16,7 @@ import org.springmodules.validation.functions.LiteralFunction;
 import org.springmodules.validation.functions.DateLiteralFunction;
 import org.springmodules.validation.functions.BeanPropertyFunction;
 import org.springmodules.validation.functions.LengthOfFunction;
+import org.springmodules.validation.functions.MapEntryFunction;
 
 import org.springmodules.validation.valang.ValangVisitor;
 import org.springmodules.validation.valang.DefaultVisitor;
@@ -214,6 +215,8 @@ Predicate predicate(Function fieldFunction) :
 	boolean notBetween = false;
 	boolean notIn = false;
 	Collection functions = new ArrayList();
+	boolean collectionProperty = false;
+	Function collectionFunction = null;
 }
 {
 	(
@@ -252,12 +255,21 @@ Predicate predicate(Function fieldFunction) :
 						","
 					)*
 					tmpFunction = function(fieldFunction) { functions.add(tmpFunction); }
+				|	"@" <PATH> { collectionProperty = true; collectionFunction = new BeanPropertyFunction(token.image); }
 				) 
 				{
-					if (notIn) {
-						return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, new LiteralFunction(functions));
+					if (collectionProperty) {
+						if (notIn) {
+							return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, collectionFunction);
+						} else {
+							return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, collectionFunction);
+						}
 					} else {
-						return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, new LiteralFunction(functions));
+						if (notIn) {
+							return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, new LiteralFunction(functions));
+						} else {
+							return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, new LiteralFunction(functions));
+						}
 					}
 				}
 	    	)
@@ -277,13 +289,16 @@ Function function(Function fieldFunction) :
         { function = token.image; } 
         "(" parentFunction = function(fieldFunction) ")" 
         { return getVisitor().getFunction(function, parentFunction); }
-    |   parentFunction = pathOrLiteral()   { return parentFunction; }
+    |   parentFunction = pathOrLiteral(fieldFunction)   { return parentFunction; }
     |	"?" { return fieldFunction; }
     )
 }
 
-Function pathOrLiteral() :
-{}
+Function pathOrLiteral(Function fieldFunction) :
+{
+	String path = null;
+	Function function = null;
+}
 {
     (
         <TRUE>      { return new LiteralFunction(Boolean.TRUE); }
@@ -299,6 +314,7 @@ Function pathOrLiteral() :
     					return new DateLiteralFunction(token.image.substring(1, token.image.length() - 1), getVisitor().getDateParser(), token.beginLine, token.beginColumn); 
     				}
     |   <PATH>      { return new BeanPropertyFunction(token.image); }
+    |	"$" <PATH> { path = token.image; } "(" function = function(fieldFunction) ")" { return new MapEntryFunction(new BeanPropertyFunction(path), function, token.beginLine, token.beginColumn); }
     )
 }
 

@@ -79,8 +79,10 @@ public interface ValangParserConstants {
     "\"}\"",
     "\"(\"",
     "\")\"",
+    "\"@\"",
     "\"!\"",
     "\"?\"",
+    "\"$\"",
   };
 
 }
