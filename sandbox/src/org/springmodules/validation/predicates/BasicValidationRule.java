@@ -1,9 +1,6 @@
 package org.springmodules.validation.predicates;
 
-import org.apache.commons.collections.Predicate;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.validation.Errors;
+import java.util.ArrayList;import java.util.Collection;import java.util.Iterator;import org.apache.commons.collections.Predicate;import org.springframework.beans.BeanWrapper;import org.springframework.beans.BeanWrapperImpl;import org.springframework.util.StringUtils;import org.springframework.validation.Errors;import org.springmodules.validation.functions.Function;
 
 
 /**
@@ -18,13 +15,13 @@ public class BasicValidationRule implements ValidationRule {
 	private Predicate predicate = null;
 	private String field = null;
 	private String errorMessage = null;
-	
+	private String errorKey = null;	private Collection errorArgs = null;	
 	public BasicValidationRule(String field, Predicate predicate, String errorMessage) {
 		super();
 		setField(field);
 		setPredicate(predicate);
 		setErrorMessage(errorMessage);
-	}
+	}	/*	 * JIRA-MOD-20: added error key and error args to validation rule, kudos to Cèsar Ordiñana.	 */	public BasicValidationRule(String field, Predicate predicate, String errorKey, String errorMessage, Collection errorArgs) {		this(field, predicate, errorMessage);		setErrorKey(errorKey);		setErrorArgs(errorArgs);	}
 
 	private void setPredicate(Predicate predicate) {
 		if (predicate == null) {
@@ -58,7 +55,7 @@ public class BasicValidationRule implements ValidationRule {
 	private String getField() {
 		return this.field;
 	}
-	
+	private void setErrorKey(String errorKey) {		this.errorKey = errorKey;	}		private String getErrorKey() {		return this.errorKey;	}	private void setErrorArgs(Collection errorArgs) {		this.errorArgs = errorArgs;	}		private Collection getErrorArgs() {		return this.errorArgs;	}	
 	public void validate(Object target, Errors errors) {
 		BeanWrapper beanWrapper = null;
 		if (target instanceof BeanWrapper) {
@@ -66,8 +63,8 @@ public class BasicValidationRule implements ValidationRule {
 		} else {
 			beanWrapper = new BeanWrapperImpl(target);
 		}
-		if (!getPredicate().evaluate(beanWrapper)) {
-			errors.rejectValue(getField(), getField(), getErrorMessage());
+		if (!getPredicate().evaluate(beanWrapper)) {			/*			 * JIRA-MOD-20: take into account error key and error args for localization, kudos to Cèsar Ordiñana.			 */			if (StringUtils.hasLength(getErrorKey())) {				if (getErrorArgs() != null && !getErrorArgs().isEmpty()) {					Collection tmpColl = new ArrayList();					for (Iterator iter = getErrorArgs().iterator(); iter.hasNext();) {						tmpColl.add(((Function)iter.next()).getResult(target));					}					errors.rejectValue(getField(), getErrorKey(), tmpColl.toArray(), getErrorMessage());				} else {					errors.rejectValue(getField(), getErrorKey(), getErrorMessage());				}			} else {				errors.rejectValue(getField(), getField(), getErrorMessage());			}
+			
 		}
 	}
 }
