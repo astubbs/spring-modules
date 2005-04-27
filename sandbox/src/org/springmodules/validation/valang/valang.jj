@@ -217,6 +217,9 @@ Predicate predicate(Function fieldFunction) :
 	Collection functions = new ArrayList();
 	boolean collectionProperty = false;
 	Function collectionFunction = null;
+	int beginLine = 0;
+	int beginColumn = 0;
+	String path = null;
 }
 {
 	(
@@ -255,7 +258,11 @@ Predicate predicate(Function fieldFunction) :
 						","
 					)*
 					tmpFunction = function(fieldFunction) { functions.add(tmpFunction); }
-				|	"@" <PATH> { collectionProperty = true; collectionFunction = new BeanPropertyFunction(token.image); }
+				|	LOOKAHEAD(2) "@" <PATH> { collectionProperty = true; collectionFunction = new BeanPropertyFunction(token.image); }
+				|	LOOKAHEAD(2) "@" "$" <PATH> 
+					{ path = token.image; beginLine = token.beginLine; beginColumn = token.beginColumn; } 
+					"(" tmpFunction = function(fieldFunction) ")" 
+					{ collectionProperty = true; collectionFunction = new MapEntryFunction(new BeanPropertyFunction(path), tmpFunction, beginLine, beginColumn); }
 				) 
 				{
 					if (collectionProperty) {
