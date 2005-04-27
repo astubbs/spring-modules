@@ -108,20 +108,38 @@ Collection parseValidation() :
 	Collection rules = new ArrayList();
 	String message = null;
 	String field = null;
+	String errorKey = null;
+	Collection errorArgs = new ArrayList();
+	Function function = null;
+	Function fieldFunction = null;
 }
 {
 	(
 		( 
 			"{" 
-			<PATH> { field = token.image; }
+			<PATH> { field = token.image; fieldFunction = new BeanPropertyFunction(field); }
 			":"
-			predicate = predicates() 
+			predicate = predicates(fieldFunction) 
 			":" 
 			<STRING> { message = token.image.substring(1, token.image.length() - 1); } 
+			[
+				":"
+				<STRING> { errorKey = token.image.substring(1, token.image.length() - 1); }
+				[
+					":"
+					(
+						LOOKAHEAD(2)
+						function = function(fieldFunction) { errorArgs.add(function); }
+						","
+					)*
+					function = function(fieldFunction) { errorArgs.add(function); } 
+				]
+			]
 			"}"
 		)
 		{
-			rules.add(new BasicValidationRule(field, predicate, message));
+			/* JIRA-MOD-20: take into account error key and error args for localization, kudos to Cèsar Ordiñana. */
+			rules.add(new BasicValidationRule(field, predicate, errorKey, message, errorArgs));
 		}
 	)+
 	<EOF>
@@ -130,15 +148,15 @@ Collection parseValidation() :
 	}
 }
 
-Predicate not() :
+Predicate not(Function fieldFunction) :
 {
 	Predicate predicate = null;
 }
 {
-	<NOT> predicate = expression() { return NotPredicate.getInstance(predicate); }
+	<NOT> predicate = expression(fieldFunction) { return NotPredicate.getInstance(predicate); }
 }
 
-Predicate predicates() :
+Predicate predicates(Function fieldFunction) :
 {
 	Predicate predicate1 = null;
 	Predicate predicate2 = null;
@@ -147,13 +165,13 @@ Predicate predicates() :
 }
 {
 	(
-		predicate1 = expression()			
+		predicate1 = expression(fieldFunction)			
 		(
 			(
 				<AND>	{ andTest = true; }
 			|	<OR>	{ orTest = true; }
 			)
-			predicate2 = expression()
+			predicate2 = expression(fieldFunction)
 			{
 				if (andTest) {
 					predicate1 = AndPredicate.getInstance(predicate1, predicate2);
@@ -170,15 +188,15 @@ Predicate predicates() :
 	}
 }
 
-Predicate expression() :
+Predicate expression(Function fieldFunction) :
 {
 	Predicate predicate = null;
 }
 {
 	(
-		"(" predicate = predicates() ")"
-	|	predicate = not()
-	|	predicate = predicate()
+		"(" predicate = predicates(fieldFunction) ")"
+	|	predicate = not(fieldFunction)
+	|	predicate = predicate(fieldFunction)
 	)
 	{
 		return predicate;
@@ -186,7 +204,7 @@ Predicate expression() :
 }
 
 
-Predicate predicate() :
+Predicate predicate(Function fieldFunction) :
 {
 	Function leftFunction = null;
 	Function rightFunction1 = null;
@@ -199,12 +217,12 @@ Predicate predicate() :
 }
 {
 	(
-		leftFunction = function()
+		leftFunction = function(fieldFunction)
 		(
 			(
 	    		operator = operator()
 	    	   	(
-	                rightFunction1 = function()
+	                rightFunction1 = function(fieldFunction)
 	            )?
 	    	)
 	    	{
@@ -213,9 +231,9 @@ Predicate predicate() :
 	    |	(
 				( <BETWEEN> | <NOT_BETWEEN> { notBetween = true; } )
 				(
-					rightFunction1 = function()
+					rightFunction1 = function(fieldFunction)
 					<AND>
-					rightFunction2 = function()
+					rightFunction2 = function(fieldFunction)
 				)
 				{
 					if (notBetween) {
@@ -230,10 +248,10 @@ Predicate predicate() :
 				(
 					(
 					    LOOKAHEAD(2)
-						tmpFunction = function() { functions.add(tmpFunction); }
+						tmpFunction = function(fieldFunction) { functions.add(tmpFunction); }
 						","
 					)*
-					tmpFunction = function() { functions.add(tmpFunction); }
+					tmpFunction = function(fieldFunction) { functions.add(tmpFunction); }
 				) 
 				{
 					if (notIn) {
@@ -247,7 +265,7 @@ Predicate predicate() :
 	)
 }
 
-Function function() :
+Function function(Function fieldFunction) :
 {
     String function = null;
     Function parentFunction = null;
@@ -255,8 +273,12 @@ Function function() :
 {
     (
         LOOKAHEAD(2)
-        ( "!" | <PATH> ) { function = token.image; } "(" parentFunction = function() ")" { return getVisitor().getFunction(function, parentFunction); }
+        ( "!" | <PATH> ) 
+        { function = token.image; } 
+        "(" parentFunction = function(fieldFunction) ")" 
+        { return getVisitor().getFunction(function, parentFunction); }
     |   parentFunction = pathOrLiteral()   { return parentFunction; }
+    |	"?" { return fieldFunction; }
     )
 }
 
@@ -303,4 +325,5 @@ Operator operator() :
 		return operator;
 	}
 }
+
 
