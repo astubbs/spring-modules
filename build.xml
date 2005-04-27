@@ -154,6 +154,13 @@
 			</jar-contents>
 		</makejar>
 
+        <makejar jarfile="${dist.dir}/springmodules-cache-${springmodules.version}.jar">
+            <jar-contents>
+                <fileset dir="${target.classes.dir}">
+                    <include name="org/springmodules/cache/**"/>
+                </fileset>
+            </jar-contents>
+        </makejar>
 	</target>
 
 
@@ -204,8 +211,18 @@
 
 	</target>
 
+    <target name="compiletestattr" description="Compile Commons-Attributes annotations in test source tree java files">
+        <taskdef resource="org/apache/commons/attributes/anttasks.properties">
+            <classpath refid="attribute-compiler-classpath" />
+        </taskdef>
+        <attribute-compiler destdir="${test.dir}">
+            <fileset dir="${test.dir}">
+                <include name="org/springmodules/cache/integration/CacheableImpl.java"/>
+            </fileset>    
+        </attribute-compiler>
+    </target>
 
-	<target name="buildtests" depends="build" description="Compile test source tree java files into class files">
+	<target name="buildtests" depends="build,compiletestattr" description="Compile test source tree java files into class files">
 
 		<mkdir dir="${target.testclasses.dir}"/>
 
