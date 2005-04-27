@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="cache">
+  <title>Cache</title>
+
+  <sect1 id="cache-introduction">
+    <title>Introduction</title>
+
+    <para>The Cache Module provides declarative caching services to the <ulink
+    url="http://www.springframework.org">Spring Framework</ulink>.</para>
+
+	<sect2 id="cache-introduction-features">
+	<title>Features</title>
+
+    <para><itemizedlist>
+        <listitem>
+          <para>Declarative caching services are enabled by Spring AOP.
+          </para>
+
+          <para>Two advices are provided:</para>
+
+          <orderedlist>
+            <listitem>
+              <para><literal>org.springmodules.cache.interceptor.caching.CachingInterceptor</literal>.
+              Stores in the cache the return values of the advised
+              methods.</para>
+            </listitem>
+
+            <listitem>
+              <para><literal>org.springmodules.cache.interceptor.flush.CacheFlushInterceptor</literal>.
+              Flushes the cache or parts of the cache before or after
+              executing the advised methods.</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+
+        <listitem>
+          <para>Caching services can be defined completely in the Spring
+          configuration file. Optionally, caching services can be enabled
+          using source-level metadata, providing a similar programming model
+          to<literal> .NET ServicedComponents</literal>.</para>
+        </listitem>
+
+        <listitem>
+          <para>The Cache Module automatically generates the key of the
+          entries stored in the cache by combining the hash codes of the
+          advised method and its arguments. Custom key generators can be
+          created by implementing the interface<literal>
+          org.springmodules.cache.key.CacheKeyGenerator</literal>.</para>
+        </listitem>
+
+        <listitem>
+          <para>Instead of imposing the use of a particular cache
+          implementation, the Cache Module lets you choose a cache provider
+          that better suites the needs of your project. The supported cache
+          providers are:</para>
+
+          <para><orderedlist>
+              <listitem>
+                <para><ulink
+                url="http://ehcache.sourceforge.net/">EHCache</ulink>.</para>
+              </listitem>
+
+              <listitem>
+                <para><ulink
+                url="http://jakarta.apache.org/jcs/index.html">JCS</ulink>.</para>
+              </listitem>
+
+              <listitem>
+                <para><ulink
+                url="http://www.opensymphony.com/oscache">OSCache</ulink>.</para>
+              </listitem>
+            </orderedlist></para>
+        </listitem>
+      </itemizedlist></para>
+      
+      </sect2>
+  </sect1>
+
+  <sect1 id="cache-uses">
+    <title>Uses</title>
+
+    <para>Caching services can be used to improve application performance. A
+    very common example is the caching of data retrieved from a database. Even
+    though ORM frameworks such as <ulink
+    url="http://www.ibatis.com/">iBATIS</ulink> and <ulink
+    url="http://www.hibernate.org/">Hibernate</ulink> already provide built-in
+    caching, the Cache Module can be useful when:</para>
+
+    <para><itemizedlist>
+        <listitem>
+          <para>Executing methods that perform heavy calculations, are
+          time-consuming and/or are resource-hungry.</para>
+        </listitem>
+
+        <listitem>
+          <para>When using straight JDBC, <ulink
+          url="http://www.springframework.org/docs/reference/jdbc.html">Spring
+          JDBC</ulink>, or any ORM framework that does not support
+          caching.</para>
+        </listitem>
+
+        <listitem>
+          <para>When you want to choose the cache implementation to use and/or
+          you want to have more control on the cache.</para>
+        </listitem>
+      </itemizedlist></para>
+  </sect1>
+
+  <sect1 id="cache-getting-started">
+    <title>Getting Started</title>
+
+    <para> Please follow the following steps to configure caching and
+    cache-flushing:</para>
+  </sect1>
+</chapter>
