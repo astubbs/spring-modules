@@ -8,6 +8,7 @@
 	<!ENTITY jsr94				SYSTEM "jsr94.xml">
 	<!ENTITY validator			SYSTEM "validator.xml">
 	<!ENTITY osworkflow 		SYSTEM "osworkflow.xml">
+	<!ENTITY cache 				SYSTEM "cache.xml">
 	]>
 
 
@@ -38,6 +39,10 @@
 				<firstname>Thomas</firstname>
 				<surname>Risberg</surname>
 			</author>
+			<author>
+				<firstname>Alex</firstname>
+				<surname>Ruiz</surname>
+			</author>
 		</authorgroup>
 
 		<legalnotice>Copies of this document may be made for your own use and for distribution to others, provided that you
@@ -59,4 +64,5 @@
 
 	&osworkflow;
 
+	&cache;
 </book>
