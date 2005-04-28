@@ -258,11 +258,7 @@ Predicate predicate(Function fieldFunction) :
 						","
 					)*
 					tmpFunction = function(fieldFunction) { functions.add(tmpFunction); }
-				|	LOOKAHEAD(2) "@" <PATH> { collectionProperty = true; collectionFunction = new BeanPropertyFunction(token.image); }
-				|	LOOKAHEAD(2) "@" "$" <PATH> 
-					{ path = token.image; beginLine = token.beginLine; beginColumn = token.beginColumn; } 
-					"(" tmpFunction = function(fieldFunction) ")" 
-					{ collectionProperty = true; collectionFunction = new MapEntryFunction(new BeanPropertyFunction(path), tmpFunction, beginLine, beginColumn); }
+				|	"@" collectionFunction = beanProperty(fieldFunction) { collectionProperty = true; }
 				) 
 				{
 					if (collectionProperty) {
@@ -296,12 +292,12 @@ Function function(Function fieldFunction) :
         { function = token.image; } 
         "(" parentFunction = function(fieldFunction) ")" 
         { return getVisitor().getFunction(function, parentFunction); }
-    |   parentFunction = pathOrLiteral(fieldFunction)   { return parentFunction; }
+    |   parentFunction = beanPropertyOrLiteral(fieldFunction)   { return parentFunction; }
     |	"?" { return fieldFunction; }
     )
 }
 
-Function pathOrLiteral(Function fieldFunction) :
+Function beanPropertyOrLiteral(Function fieldFunction) :
 {
 	String path = null;
 	Function function = null;
@@ -320,10 +316,50 @@ Function pathOrLiteral(Function fieldFunction) :
     					} 
     					return new DateLiteralFunction(token.image.substring(1, token.image.length() - 1), getVisitor().getDateParser(), token.beginLine, token.beginColumn); 
     				}
-    |   <PATH>      { return new BeanPropertyFunction(token.image); }
-    |	"$" <PATH> { path = token.image; } "(" function = function(fieldFunction) ")" { return new MapEntryFunction(new BeanPropertyFunction(path), function, token.beginLine, token.beginColumn); }
+    |   function = beanProperty(fieldFunction) { return function; }
     )
 }
+
+Function beanProperty(Function fieldFunction) :
+{
+	Function function = null;
+}
+{
+	(
+		function = path()
+	|	function = mapEntry(fieldFunction)
+	)
+	{
+		return function;
+	}
+}	
+
+Function path() :
+{}
+{
+	<PATH>		{ return new BeanPropertyFunction(token.image); }
+}
+
+Function mapEntry(Function fieldFunction) :
+{
+	Function pathFunction = null;
+	Function function = null;
+	int beginLine = 0;
+	int beginColumn = 0;
+}
+{
+	"$"
+	{ 
+		beginLine = token.beginLine; 
+		beginColumn = token.beginColumn; 
+	}
+	pathFunction = path() 
+	"(" function = function(fieldFunction) ")"
+	{
+		return new MapEntryFunction(pathFunction, function, beginLine, beginColumn);
+	}
+}
+
 
 Operator operator() :
 {

@@ -80,9 +80,9 @@ public interface ValangParserConstants {
     "\"(\"",
     "\")\"",
     "\"@\"",
-    "\"$\"",
     "\"!\"",
     "\"?\"",
+    "\"$\"",
   };
 
 }
