@@ -216,10 +216,6 @@ Predicate predicate(Function fieldFunction) :
 	boolean notIn = false;
 	Collection functions = new ArrayList();
 	boolean collectionProperty = false;
-	Function collectionFunction = null;
-	int beginLine = 0;
-	int beginColumn = 0;
-	String path = null;
 }
 {
 	(
@@ -258,21 +254,16 @@ Predicate predicate(Function fieldFunction) :
 						","
 					)*
 					tmpFunction = function(fieldFunction) { functions.add(tmpFunction); }
-				|	"@" collectionFunction = beanProperty(fieldFunction) { collectionProperty = true; }
+				|	"@" tmpFunction = beanProperty(fieldFunction) { collectionProperty = true; }
 				) 
 				{
-					if (collectionProperty) {
-						if (notIn) {
-							return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, collectionFunction);
-						} else {
-							return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, collectionFunction);
-						}
+					if (!collectionProperty) {
+						tmpFunction = new LiteralFunction(functions);
+					}
+					if (notIn) {
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, tmpFunction);
 					} else {
-						if (notIn) {
-							return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, new LiteralFunction(functions));
-						} else {
-							return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, new LiteralFunction(functions));
-						}
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, tmpFunction);
 					}
 				}
 	    	)
@@ -299,9 +290,17 @@ Function function(Function fieldFunction) :
 
 Function beanPropertyOrLiteral(Function fieldFunction) :
 {
-	String path = null;
 	Function function = null;
 }
+{
+    (
+		function = literal() { return function; }
+    |   function = beanProperty(fieldFunction) { return function; }
+    )
+}
+
+Function literal() :
+{}
 {
     (
         <TRUE>      { return new LiteralFunction(Boolean.TRUE); }
@@ -316,8 +315,7 @@ Function beanPropertyOrLiteral(Function fieldFunction) :
     					} 
     					return new DateLiteralFunction(token.image.substring(1, token.image.length() - 1), getVisitor().getDateParser(), token.beginLine, token.beginColumn); 
     				}
-    |   function = beanProperty(fieldFunction) { return function; }
-    )
+	)
 }
 
 Function beanProperty(Function fieldFunction) :
@@ -326,12 +324,9 @@ Function beanProperty(Function fieldFunction) :
 }
 {
 	(
-		function = path()
-	|	function = mapEntry(fieldFunction)
+		function = path() { return function; }
+	|	function = mapEntry(fieldFunction) { return function; }
 	)
-	{
-		return function;
-	}
 }	
 
 Function path() :
