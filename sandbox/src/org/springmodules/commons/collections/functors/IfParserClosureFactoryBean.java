@@ -18,6 +18,7 @@ import org.springmodules.commons.collections.functors.parser.Parser;
  * 
  * @author Steven Devijver
  * @since 28-04-2005
+ * @see org.apache.commons.collections.functors.IfClosure
  */
 public class IfParserClosureFactoryBean
 		implements
