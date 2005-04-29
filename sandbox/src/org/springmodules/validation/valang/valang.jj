@@ -83,8 +83,6 @@ TOKEN [IGNORE_CASE] :
 |	< HAS_NO_LENGTH: "HAS NO LENGTH" >
 |	< TRUE : "TRUE" | "YES" >
 |	< FALSE : "FALSE" | "NO" >
-|	< DOT : "DOT" >
-|   < UNDERSCORE : "_" >
 |	< MORE_THAN_OR_EQUAL : ">=" | "=>" >
 |	< MORE_THAN : ">" >
 |	< LESS_THAN_OR_EQUAL : "<=" | "=<" >
@@ -98,6 +96,8 @@ TOKEN :
 	< NUM : ("-")?(["0"-"9"])+ | ("-")?(["0"-"9"])+"." (["0"-"9"])* >
 |	< STRING : "\'" (~["\'", "\\"])* "\'" >
 |	< DATE : "[" (~["[", "]"])* "]" >
+|	< #DOT : "." >
+|   < #UNDERSCORE : "_" >
 |	< #DIGIT : ["0"-"9"] >
 |	< #LOWERLETTER : ["a"-"z"] >
 |	< #UPPERLETTER : ["A"-"Z"] >

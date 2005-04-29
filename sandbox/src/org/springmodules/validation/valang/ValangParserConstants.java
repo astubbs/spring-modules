@@ -19,17 +19,17 @@ public interface ValangParserConstants {
   int HAS_NO_LENGTH = 17;
   int TRUE = 18;
   int FALSE = 19;
-  int DOT = 20;
-  int UNDERSCORE = 21;
-  int MORE_THAN_OR_EQUAL = 22;
-  int MORE_THAN = 23;
-  int LESS_THAN_OR_EQUAL = 24;
-  int LESS_THAN = 25;
-  int NOT_EQUAL = 26;
-  int EQUALS = 27;
-  int NUM = 28;
-  int STRING = 29;
-  int DATE = 30;
+  int MORE_THAN_OR_EQUAL = 20;
+  int MORE_THAN = 21;
+  int LESS_THAN_OR_EQUAL = 22;
+  int LESS_THAN = 23;
+  int NOT_EQUAL = 24;
+  int EQUALS = 25;
+  int NUM = 26;
+  int STRING = 27;
+  int DATE = 28;
+  int DOT = 29;
+  int UNDERSCORE = 30;
   int DIGIT = 31;
   int LOWERLETTER = 32;
   int UPPERLETTER = 33;
@@ -58,8 +58,6 @@ public interface ValangParserConstants {
     "\"HAS NO LENGTH\"",
     "<TRUE>",
     "<FALSE>",
-    "\"DOT\"",
-    "\"_\"",
     "<MORE_THAN_OR_EQUAL>",
     "\">\"",
     "<LESS_THAN_OR_EQUAL>",
@@ -69,6 +67,8 @@ public interface ValangParserConstants {
     "<NUM>",
     "<STRING>",
     "<DATE>",
+    "\".\"",
+    "\"_\"",
     "<DIGIT>",
     "<LOWERLETTER>",
     "<UPPERLETTER>",
