@@ -1,6 +1,6 @@
 package org.springmodules.validation.predicates;
 
-import java.util.ArrayList;import java.util.Collection;import java.util.Iterator;import org.apache.commons.collections.Predicate;import org.springframework.beans.BeanWrapper;import org.springframework.beans.BeanWrapperImpl;import org.springframework.util.StringUtils;import org.springframework.validation.Errors;import org.springmodules.validation.functions.Function;
+import java.util.ArrayList;import java.util.Collection;import java.util.Iterator;import java.util.Map;import org.apache.commons.collections.Predicate;import org.springframework.beans.BeanWrapper;import org.springframework.beans.BeanWrapperImpl;import org.springframework.util.StringUtils;import org.springframework.validation.Errors;import org.springmodules.validation.functions.Function;
 
 
 /**
@@ -56,14 +56,14 @@ public class BasicValidationRule implements ValidationRule {
 		return this.field;
 	}
 	private void setErrorKey(String errorKey) {		this.errorKey = errorKey;	}		private String getErrorKey() {		return this.errorKey;	}	private void setErrorArgs(Collection errorArgs) {		this.errorArgs = errorArgs;	}		private Collection getErrorArgs() {		return this.errorArgs;	}	
-	public void validate(Object target, Errors errors) {
-		BeanWrapper beanWrapper = null;
-		if (target instanceof BeanWrapper) {
-			beanWrapper = (BeanWrapper)target;
+	public void validate(Object target, Errors errors) {		Object tmpTarget = null;
+
+		if (target instanceof BeanWrapper || target instanceof Map) {
+			tmpTarget = target;
 		} else {
-			beanWrapper = new BeanWrapperImpl(target);
+			tmpTarget = new BeanWrapperImpl(target);
 		}
-		if (!getPredicate().evaluate(beanWrapper)) {			/*			 * JIRA-MOD-20: take into account error key and error args for localization, kudos to Cèsar Ordiñana.			 */			if (StringUtils.hasLength(getErrorKey())) {				if (getErrorArgs() != null && !getErrorArgs().isEmpty()) {					Collection tmpColl = new ArrayList();					for (Iterator iter = getErrorArgs().iterator(); iter.hasNext();) {						tmpColl.add(((Function)iter.next()).getResult(target));					}					errors.rejectValue(getField(), getErrorKey(), tmpColl.toArray(), getErrorMessage());				} else {					errors.rejectValue(getField(), getErrorKey(), getErrorMessage());				}			} else {				errors.rejectValue(getField(), getField(), getErrorMessage());			}
+		if (!getPredicate().evaluate(tmpTarget)) {			/*			 * JIRA-MOD-20: take into account error key and error args for localization, kudos to Cèsar Ordiñana.			 */			if (StringUtils.hasLength(getErrorKey())) {				if (getErrorArgs() != null && !getErrorArgs().isEmpty()) {					Collection tmpColl = new ArrayList();					for (Iterator iter = getErrorArgs().iterator(); iter.hasNext();) {						tmpColl.add(((Function)iter.next()).getResult(tmpTarget));					}					errors.rejectValue(getField(), getErrorKey(), tmpColl.toArray(), getErrorMessage());				} else {					errors.rejectValue(getField(), getErrorKey(), getErrorMessage());				}			} else {				errors.rejectValue(getField(), getField(), getErrorMessage());			}
 			
 		}
 	}
