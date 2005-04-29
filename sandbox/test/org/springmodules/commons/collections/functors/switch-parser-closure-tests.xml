@@ -12,7 +12,7 @@
 				<entry key="totalAmount &lt; 1000 and lower(customer.qualification) not in 'silver', 'gold'">
 					<ref bean="applyLowPriority"/>
 				</entry>
-				<entry key="totalAmount &gt;= 1000 and totalAmount &lt; 5000 and lower(customer.qualification) not in 'gold'">
+				<entry key="(totalAmount &gt;= 1000 and totalAmount &lt; 5000 and lower(customer.qualification) not in 'gold') or (totalAmount &lt; 1000 and lower(customer.qualification) in 'silver')">
 					<ref bean="applyMediumPriority"/>
 				</entry>
 				<entry key="totalAmount &gt;= 5000 or lower(customer.qualification) in 'gold'">

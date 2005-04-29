@@ -23,5 +23,29 @@ public class SwitchParserClosureFactoryBeanTests extends AbstractOrderTestCase {
 		getClosure().execute(order);
 		assertEquals("low", getPriority(order));
 	}
+	
+	public void test2() {
+		Object order = getOrder(1000, "bronze");
+		getClosure().execute(order);
+		assertEquals("medium", getPriority(order));
+	}
+	
+	public void test3() {
+		Object order = getOrder(500, "silver");
+		getClosure().execute(order);
+		assertEquals("medium", getPriority(order));
+	}
+	
+	public void test4() {
+		Object order = getOrder(500, "gold");
+		getClosure().execute(order);
+		assertEquals("high", getPriority(order));
+	}
+	
+	public void test5() {
+		Object order = getOrder(5000, "bronze");
+		getClosure().execute(order);
+		assertEquals("high", getPriority(order));
+	}
 
 }
