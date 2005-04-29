@@ -9,13 +9,13 @@ import junit.framework.TestCase;
  * @author Steven Devijver
  * @since 25-04-2005
  */
-public class TestDefaultDateParser extends TestCase {
+public class DefaultDateParserTests extends TestCase {
 
-	public TestDefaultDateParser() {
+	public DefaultDateParserTests() {
 		super();
 	}
 
-	public TestDefaultDateParser(String arg0) {
+	public DefaultDateParserTests(String arg0) {
 		super(arg0);
 	}
 

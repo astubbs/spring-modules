@@ -14,13 +14,13 @@ import org.springmodules.validation.valang.ValangParser;
  * @author Steven Devijver
  * @since 28-04-2005
  */
-public class TestParser extends TestCase {
+public class ParserTests extends TestCase {
 
-	public TestParser() {
+	public ParserTests() {
 		super();
 	}
 
-	public TestParser(String arg0) {
+	public ParserTests(String arg0) {
 		super(arg0);
 	}
 

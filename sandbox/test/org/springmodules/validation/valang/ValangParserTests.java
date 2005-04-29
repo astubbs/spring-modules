@@ -1,28 +1,18 @@
 package org.springmodules.validation.valang;
 
-import java.io.StringReader;
-import java.util.Collection;import java.util.Date;import java.util.HashMap;import java.util.Map;
-import java.util.Iterator;
-
-import junit.framework.TestCase;
-
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
-import org.springmodules.util.dateparser.DateParseException;import org.springmodules.util.dateparser.DefaultDateParser;import org.springmodules.validation.predicates.ValidationRule;
+import java.io.StringReader;import java.util.Collection;import java.util.Date;import java.util.HashMap;import java.util.Iterator;import java.util.Map;import junit.framework.TestCase;import org.springframework.beans.BeanWrapperImpl;import org.springframework.validation.BindException;import org.springframework.validation.Errors;import org.springmodules.util.dateparser.DateParseException;import org.springmodules.util.dateparser.DefaultDateParser;import org.springmodules.validation.predicates.ValidationRule;
 
 /**
  * @author Steven Devijver
  *
  */
-public class TestValangParser extends TestCase {
+public class ValangParserTests extends TestCase {
 
-	public TestValangParser() {
+	public ValangParserTests() {
 		super();
 	}
 
-	public TestValangParser(String arg0) {
+	public ValangParserTests(String arg0) {
 		super(arg0);
 	}
 	
@@ -55,13 +45,13 @@ public class TestValangParser extends TestCase {
 		}
 	}
 	
-	private boolean validate(Person target, String text) {
+	private boolean validate(Object target, String text) {
 		Collection rules = parseRules(text);
-		Errors errors = new BindException(target, "person");
-		BeanWrapper beanWrapper = new BeanWrapperImpl(target);
+		Errors errors = new BindException(target, "person");		Object tmpTarget = null;		if (!(target instanceof Map)) {
+			tmpTarget = new BeanWrapperImpl(target);		} else {			tmpTarget = target;		}
 		for (Iterator iter = rules.iterator(); iter.hasNext();) {
 			ValidationRule rule = (ValidationRule)iter.next();
-			rule.validate(beanWrapper, errors);
+			rule.validate(tmpTarget, errors);
 		}
 		return !errors.hasErrors();
 	}
@@ -210,4 +200,4 @@ public class TestValangParser extends TestCase {
 		;
 		assertTrue(validate(new Person(7, "Benjamin"), text));
 		assertFalse(validate(new Person(30, "Steven"), text));
-	}		public void testParser19Dates1() throws DateParseException {		String text = 			"{ dateOfBirth : dateOfBirth >= [1970-01-01] : 'You must be born after 1 january 1970.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("1974-11-24")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("1950-07-14")), text));	}		public void testParser20Dates2() throws DateParseException {		String text =			"{ dateOfBirth : ? is null or (dateOfBirth >= [T<d] and [T>d] > dateOfBirth) : 'You must be born today.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("T")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("T-1d")), text));	}		public void testParser21ErrorKey() {		String text =			"{ age : age >= 18 : 'Customers must be 18 years or older.' : '18_years_or_older' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(7, "Benjamin"), text));	}		public void testParser22ErrorArgs() {		String text =			"{ age : ? >= minAge : 'Customers must be older than {0}.' : 'not_old_enough' : minAge }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(7, "Benjamin"), text));	}		public void testParser23InCollection() {		String text =			"{ size : ? in @sizes and ? in @$map('sizes') : 'Size is not correct.' }";		;		assertTrue(validate(new Person("M"), text));		assertFalse(validate(new Person("XXL"), text));	}		public void testParser23MapKey() {		String text = 			"{ firstName : ? = $map('firstName') : 'First name is not correct.' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(30, "Marie-Claire"), text));	}	}
+	}		public void testParser19Dates1() throws DateParseException {		String text = 			"{ dateOfBirth : dateOfBirth >= [1970-01-01] : 'You must be born after 1 january 1970.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("1974-11-24")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("1950-07-14")), text));	}		public void testParser20Dates2() throws DateParseException {		String text =			"{ dateOfBirth : ? is null or (dateOfBirth >= [T<d] and [T>d] > dateOfBirth) : 'You must be born today.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("T")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("T-1d")), text));	}		public void testParser21ErrorKey() {		String text =			"{ age : age >= 18 : 'Customers must be 18 years or older.' : '18_years_or_older' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(7, "Benjamin"), text));	}		public void testParser22ErrorArgs() {		String text =			"{ age : ? >= minAge : 'Customers must be older than {0}.' : 'not_old_enough' : minAge }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(7, "Benjamin"), text));	}		public void testParser23InCollection() {		String text =			"{ size : ? in @sizes and ? in @$map('sizes') : 'Size is not correct.' }";		;		assertTrue(validate(new Person("M"), text));		assertFalse(validate(new Person("XXL"), text));	}		public void testParser23MapKey() {		String text = 			"{ firstName : ? = $map('firstName') : 'First name is not correct.' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(30, "Marie-Claire"), text));	}		public void testParser25MapTarget() {		Map customer = new HashMap();		customer.put("name", "Steven");		Map order = new HashMap();		order.put("customer", customer);				String text =			"{ customer.name : ? = 'Steven' : 'Customer name is incorrect.' }"		;		assertTrue(validate(order, text));	}	}
