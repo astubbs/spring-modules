@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.functors.AndPredicate;
+import org.apache.commons.collections.functors.AndPredicate;import org.apache.commons.collections.functors.FalsePredicate;
 import org.apache.commons.collections.functors.AnyPredicate;
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.functions.Function;
@@ -103,7 +103,7 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 			}
 			if (predicates.isEmpty()) {
 				throw new IllegalStateException("IN expression contains no elements!");
-			}
+			} else if (predicates.size() == 1) {				predicates.add(FalsePredicate.getInstance());			}
 			return AnyPredicate.getInstance(predicates).evaluate(target);
 		} else if (getOperator() instanceof Operator.NotInOperator) {
 			Collection predicates = new ArrayList();
@@ -112,7 +112,7 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 			}
 			if (predicates.isEmpty()) {
 				throw new IllegalStateException("NOT IN expression contains no elements!");
-			}
+			} else if (predicates.size() == 1) {				predicates.add(FalsePredicate.getInstance());			}
 			return !AnyPredicate.getInstance(predicates).evaluate(target);
 		} else if (getOperator() instanceof Operator.BetweenOperator) {
 			Object[] array = getArray(rightValue);
