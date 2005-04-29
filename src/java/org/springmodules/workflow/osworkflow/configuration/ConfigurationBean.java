@@ -96,6 +96,7 @@ public class ConfigurationBean extends DefaultConfiguration {
 	 */
 	public void setPersistenceArgs(Map persistenceArgs) {
 		Assert.notEmpty(persistenceArgs, "persistenceArgs cannot be null or empty");
+        logger.info("Setting persistence args");
 		this.persistenceArgs = persistenceArgs;
 	}
 
