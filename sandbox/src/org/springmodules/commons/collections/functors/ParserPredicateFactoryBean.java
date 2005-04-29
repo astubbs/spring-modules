@@ -5,7 +5,7 @@ import java.io.StringReader;
 import org.apache.commons.collections.Predicate;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springmodules.commons.collections.functors.parser.Parser;
+import org.springmodules.validation.valang.ValangParser;
 
 /**
  * <p>ParserPredicateFactoryBean creates a predicate based on a simple syntax.
@@ -77,7 +77,7 @@ public class ParserPredicateFactoryBean
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		this.predicate = new Parser(new StringReader(getSyntax())).parse();
+		this.predicate = new ValangParser(new StringReader(getSyntax())).parseExpression();
 	}
 
 }

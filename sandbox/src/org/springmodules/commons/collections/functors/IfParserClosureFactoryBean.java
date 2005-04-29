@@ -6,7 +6,7 @@ import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.functors.IfClosure;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springmodules.commons.collections.functors.parser.Parser;
+import org.springmodules.validation.valang.ValangParser;
 
 /**
  * <p>Closure that takes a decision syntax and a true and false closure.
@@ -97,7 +97,7 @@ public class IfParserClosureFactoryBean
 	}
 
 	public void afterPropertiesSet() throws Exception {
-		this.closure = IfClosure.getInstance(new Parser(new StringReader(getSyntax())).parse(), getTrueClosure(), getFalseClosure());
+		this.closure = IfClosure.getInstance(new ValangParser(new StringReader(getSyntax())).parseExpression(), getTrueClosure(), getFalseClosure());
 	}
 
 }
