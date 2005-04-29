@@ -15,11 +15,17 @@
  */ 
 package org.springmodules.validation.functions;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
 /**
- * <p>Function taking the value from a bean property. 
+ * <p>Function taking the value from a bean property or a java.util.Map instance. 
  * 
  * @author Steven Devijver
  * @since Apr 23, 2005
@@ -48,10 +54,40 @@ public class BeanPropertyFunction implements Function {
 		BeanWrapper beanWrapper = null;
 		if (target instanceof BeanWrapper) {
 			beanWrapper = (BeanWrapper)target;
+		} else if (target instanceof Map) {
+			return getValue((Map)target, split(getField()));
 		} else {
 			beanWrapper = new BeanWrapperImpl(target);
 		}
 		return beanWrapper.getPropertyValue(getField());
 	}
+	
+	private String[] split(String path) {
+		return StringUtils.split(path, '.');
+	}
 
+	private String[] pop(String[] path) {
+		Collection coll = new ArrayList();
+		for (int i = 1; i < path.length; i++) {
+			coll.add(path[i]);
+		}
+		return (String[])coll.toArray(new String[] {});
+	}
+	
+	private Object getValue(Map map, String[] path) {
+		if (path.length > 0) {
+			Object result = MapUtils.getObject(map, path[0]);
+			if (path.length > 1) {
+				if (result instanceof Map) {
+					return getValue((Map)result, pop(path));
+				} else {
+					throw new IllegalArgumentException("[" + path[0] + "] did not return an instance of java.util.Map!");
+				}
+			} else {
+				return result;
+			}
+		}
+		
+		return null;
+	}
 }
