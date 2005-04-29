@@ -34,17 +34,17 @@ import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
 /**
  * @author Thierry Templier
  */
-public class TestSimpleSearcherFactory implements SearcherFactory,TestSearcherEvent {
+public class MockSimpleSearcherFactory implements SearcherFactory,SearcherEvent {
 	private SearcherFactory target;
 	private boolean searcherClosed=false;
 
-	public TestSimpleSearcherFactory(SimpleSearcherFactory searcherFactory) {
+	public MockSimpleSearcherFactory(SimpleSearcherFactory searcherFactory) {
 		this.target=searcherFactory;
 	}
 
 	public Searcher getSearcher() throws IOException {
 		searcherClosed=false;
-		return new TestSearcher(target.getSearcher(),this);
+		return new MockSearcher(target.getSearcher(),this);
 	}
 
 	public boolean isSearcherClosed() {

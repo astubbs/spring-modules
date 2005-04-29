@@ -88,7 +88,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 	final public void testSearchQueryCreatorHitExtractor() throws Exception {
 		//Initialization of the index
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
-		TestSimpleSearcherFactory searcherFactory=new TestSimpleSearcherFactory(targetSearcherFactory);
+		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
 		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
@@ -135,7 +135,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 
 		//Initialization of the index
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
-		TestSimpleSearcherFactory searcherFactory=new TestSimpleSearcherFactory(targetSearcherFactory);
+		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
 		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
@@ -165,7 +165,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 
 		//Initialization of the index
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
-		TestSimpleSearcherFactory searcherFactory=new TestSimpleSearcherFactory(targetSearcherFactory);
+		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
 		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
@@ -198,7 +198,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 
 		//Initialization of the index
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
-		TestSimpleSearcherFactory searcherFactory=new TestSimpleSearcherFactory(targetSearcherFactory);
+		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
 		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
@@ -226,7 +226,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 	final public void testSearchSearcherCallback() {
 		//Initialization of the index
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
-		TestSimpleSearcherFactory searcherFactory=new TestSimpleSearcherFactory(targetSearcherFactory);
+		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
 		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());

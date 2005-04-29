@@ -34,11 +34,11 @@ import org.apache.lucene.search.TopFieldDocs;
 /**
  * @author Thierry Templier
  */
-public class TestSearcher extends Searcher {
+public class MockSearcher extends Searcher {
 	private Searcher target;
-	private TestSearcherEvent searcherEvent;
+	private SearcherEvent searcherEvent;
 
-	public TestSearcher(Searcher searcher,TestSearcherEvent searcherEvent) {
+	public MockSearcher(Searcher searcher,SearcherEvent searcherEvent) {
 		this.target=searcher;
 		this.searcherEvent=searcherEvent;
 	}
