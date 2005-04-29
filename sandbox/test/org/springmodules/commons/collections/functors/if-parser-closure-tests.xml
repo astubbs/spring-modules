@@ -6,7 +6,8 @@
 	<bean id="chain" class="org.springmodules.commons.collections.functors.ChainedClosureFactoryBean" abstract="true"/>
 	<bean id="applyPriorityClosure" class="org.springmodules.commons.collections.functors.ApplyPriorityClosure" abstract="true"/>
 	<bean id="map" class="java.util.HashMap" abstract="true"/>
-	
+
+	<!-- Rules -->
 	<bean id="applyPriority" parent="chain">
 		<description>apply priority to order</description>
 		<property name="closures">
@@ -16,7 +17,6 @@
 		</property>
 	</bean>
 	
-	<!-- Rules -->
 	<bean id="lowPriorityRule" parent="rule">
 		<description>handle order with low priority if total amount is lower than 1000
        and customer is not silver or gold.</description>
