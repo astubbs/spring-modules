@@ -17,6 +17,7 @@ import org.springmodules.validation.functions.DateLiteralFunction;
 import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LiteralFunction;
 import org.springmodules.validation.functions.MapEntryFunction;
+import org.springmodules.validation.functions.TargetBeanFunction;
 import org.springmodules.validation.predicates.BasicValidationRule;
 import org.springmodules.validation.predicates.Operator;
 import org.springmodules.validation.predicates.OperatorConstants;
@@ -36,6 +37,15 @@ public class ValangParser implements ValangParserConstants {
         public void setVisitor(DefaultVisitor visitor) {
                 this.visitor = visitor;
         }
+
+  final public Predicate parseExpression() throws ParseException {
+        Predicate predicate = null;
+        Function targetBeanFunction = new TargetBeanFunction();
+    predicate = predicates(targetBeanFunction);
+    jj_consume_token(0);
+                                                           {if (true) return predicate;}
+    throw new Error("Missing return statement in function");
+  }
 
   final public Collection parseValidation() throws ParseException {
         Predicate predicate = null;
@@ -547,17 +557,6 @@ public class ValangParser implements ValangParserConstants {
     finally { jj_save(2, xla); }
   }
 
-  final private boolean jj_3_1() {
-    if (jj_3R_5()) return true;
-    if (jj_scan_token(37)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_17() {
-    if (jj_scan_token(DATE)) return true;
-    return false;
-  }
-
   final private boolean jj_3R_16() {
     if (jj_scan_token(NUM)) return true;
     return false;
@@ -685,6 +684,17 @@ public class ValangParser implements ValangParserConstants {
     if (jj_3R_7()) return true;
     }
     }
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_3R_5()) return true;
+    if (jj_scan_token(37)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_17() {
+    if (jj_scan_token(DATE)) return true;
     return false;
   }
 

@@ -17,6 +17,7 @@ import org.springmodules.validation.functions.DateLiteralFunction;
 import org.springmodules.validation.functions.BeanPropertyFunction;
 import org.springmodules.validation.functions.LengthOfFunction;
 import org.springmodules.validation.functions.MapEntryFunction;
+import org.springmodules.validation.functions.TargetBeanFunction;
 
 import org.springmodules.validation.valang.ValangVisitor;
 import org.springmodules.validation.valang.DefaultVisitor;
@@ -101,6 +102,15 @@ TOKEN :
 |	< #LOWERLETTER : ["a"-"z"] >
 |	< #UPPERLETTER : ["A"-"Z"] >
 |	< PATH : ( <LOWERLETTER> | <UNDERSCORE> ) ( <LOWERLETTER> | <UPPERLETTER> | <DIGIT> | <DOT> | <UNDERSCORE> )* >
+}
+
+Predicate parseExpression() :
+{
+	Predicate predicate = null;
+	Function targetBeanFunction = new TargetBeanFunction();
+}
+{
+	predicate = predicates(targetBeanFunction) <EOF> { return predicate; }
 }
 
 Collection parseValidation() :
