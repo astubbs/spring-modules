@@ -7,6 +7,9 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 
+import org.springmodules.validation.valang.ParseException;
+import org.springmodules.validation.valang.ValangParser;
+
 /**
  * @author Steven Devijver
  * @since 28-04-2005
@@ -71,7 +74,7 @@ public class TestParser extends TestCase {
 	
 	private boolean parse(String text, Order order) {
 		try {
-			return new Parser(new StringReader(text)).parse().evaluate(order);
+			return new ValangParser(new StringReader(text)).parseExpression().evaluate(order);
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
