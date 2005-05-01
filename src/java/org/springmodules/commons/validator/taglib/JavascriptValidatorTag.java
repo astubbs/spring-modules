@@ -43,7 +43,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.support.RequestContext;
-import org.springmodules.commons.validator.Resources;
+import org.springmodules.commons.validator.MessageUtils;
 import org.springmodules.commons.validator.ValidatorFactory;
 
 /**
@@ -56,7 +56,7 @@ import org.springmodules.commons.validator.ValidatorFactory;
  * (<code>org.springmodules.commons.validator.ValidatorFactory</code>).</p>
  *
  * @author David Winterfeldt.
- * @author Daniel Miller (Springframework adaptation)
+ * @author Daniel Miller
  */
 public class JavascriptValidatorTag extends BodyTagSupport {
 
@@ -408,7 +408,7 @@ public class JavascriptValidatorTag extends BodyTagSupport {
 							continue;
 						}
 
-						String message = Resources.getMessage(messages, locale, va, field);
+						String message = MessageUtils.getMessage(messages, locale, va, field);
 
 						message = (message != null) ? message : "";
 

@@ -21,107 +21,107 @@ package org.springmodules.cache.provider.oscache;
 import java.io.InputStream;
 import java.util.Properties;
 
+import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.Resource;
 import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManagerFactoryBean;
 
-import com.opensymphony.oscache.general.GeneralCacheAdministrator;
+import org.springframework.core.io.Resource;
 
 /**
- * <p>
+ * <p/>
  * FactoryBean that exposes a OSCache <code>GeneralCacheAdministrator</code>
  * singleton, configured from a specified config location.
  * </p>
- * <p>
+ * <p/>
  * If no config location is specified, a <code>GeneralCacheAdministrator</code>
  * will be configured from "oscache.properties" in the root of the class path.
  * </p>
- * 
+ *
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:17 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/01 15:15:30 $
  */
 public final class OscacheManagerFactoryBean extends
-    AbstractConfigurationResourceCacheManagerFactoryBean {
+		AbstractConfigurationResourceCacheManagerFactoryBean {
 
-  /**
-   * Message logger.
-   */
-  private static Log logger = LogFactory
-      .getLog(OscacheManagerFactoryBean.class);
 
-  /**
-   * The cache manager managed by this factory.
-   */
-  private GeneralCacheAdministrator cacheManager;
+	/**
+	 * Message logger.
+	 */
+	private static Log logger = LogFactory.getLog(OscacheManagerFactoryBean.class);
 
-  /**
-   * Constructor.
-   */
-  public OscacheManagerFactoryBean() {
-    super();
-  }
+	/**
+	 * The cache manager managed by this factory.
+	 */
+	private GeneralCacheAdministrator cacheManager;
 
-  /**
-   * Builds the cache manager after all the properties of this factory has been
-   * set by the BeanFactory.
-   */
-  public void afterPropertiesSet() throws Exception {
-    logger.info("Creating OSCache cache manager");
+	/**
+	 * Constructor.
+	 */
+	public OscacheManagerFactoryBean() {
+		super();
+	}
 
-    Resource configLocation = super.getConfigLocation();
-    if (null == configLocation) {
-      this.cacheManager = new GeneralCacheAdministrator();
-    }
+	/**
+	 * Builds the cache manager after all the properties of this factory has been
+	 * set by the BeanFactory.
+	 */
+	public void afterPropertiesSet() throws Exception {
+		logger.info("Creating OSCache cache manager");
 
-    else {
-      InputStream inputStream = configLocation.getInputStream();
-      Properties properties = new Properties();
-      properties.load(inputStream);
+		Resource configLocation = super.getConfigLocation();
+		if (null == configLocation) {
+			this.cacheManager = new GeneralCacheAdministrator();
+		}
+		else {
+			InputStream inputStream = configLocation.getInputStream();
+			Properties properties = new Properties();
+			properties.load(inputStream);
 
-      this.cacheManager = new GeneralCacheAdministrator(properties);
-    }
-  }
+			this.cacheManager = new GeneralCacheAdministrator(properties);
+		}
+	}
 
-  /**
-   * Shuts down the cache manager before this factory is destroyed by the
-   * BeanFactory.
-   */
-  public void destroy() throws Exception {
-    if (this.cacheManager == null) {
-      logger
-          .info("The OSCache cache manager was not built. No need to shut it down.");
-    } else {
-      logger.info("Shutting down the OSCache cache manager.");
-      this.cacheManager.flushAll();
-      this.cacheManager.destroy();
-    }
-  }
+	/**
+	 * Shuts down the cache manager before this factory is destroyed by the
+	 * BeanFactory.
+	 */
+	public void destroy() throws Exception {
+		if (this.cacheManager == null) {
+			logger
+			.info("The OSCache cache manager was not built. No need to shut it down.");
+		}
+		else {
+			logger.info("Shutting down the OSCache cache manager.");
+			this.cacheManager.flushAll();
+			this.cacheManager.destroy();
+		}
+	}
 
-  /**
-   * Returns <code>{@link #cacheManager}</code>.
-   * 
-   * @return the cache manager managed by this factory.
-   */
-  public Object getObject() throws Exception {
-    return this.cacheManager;
-  }
+	/**
+		 * Returns <code>{@link #cacheManager}</code>.
+		 *
+		 * @return the cache manager managed by this factory.
+		 */
+	public Object getObject() throws Exception {
+		return this.cacheManager;
+	}
 
-  /**
-   * Returns the type of <code>{@link #cacheManager}</code>.
-   * 
-   * @return the type of the cache manager managed by this factory.
-   */
-  public Class getObjectType() {
-    Class objectType = null;
+	/**
+		 * Returns the type of <code>{@link #cacheManager}</code>.
+		 *
+		 * @return the type of the cache manager managed by this factory.
+		 */
+	public Class getObjectType() {
+		Class objectType = null;
 
-    if (null == this.cacheManager) {
-      objectType = GeneralCacheAdministrator.class;
-    } else {
-      objectType = this.cacheManager.getClass();
-    }
+		if (null == this.cacheManager) {
+			objectType = GeneralCacheAdministrator.class;
+		}
+		else {
+			objectType = this.cacheManager.getClass();
+		}
 
-    return objectType;
-  }
+		return objectType;
+	}
 }

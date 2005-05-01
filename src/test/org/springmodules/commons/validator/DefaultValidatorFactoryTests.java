@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.validation.Errors;
 
 import org.apache.commons.validator.Validator;
+import org.easymock.MockControl;
 
 /**
  * @author robh
@@ -44,7 +45,9 @@ public class DefaultValidatorFactoryTests extends TestCase {
 	public void testGetValidator() throws Exception {
 		DefaultValidatorFactory factory = getFactory();
 
-		Errors errors = new MapException(new HashMap(), "fooBean");
+		MockControl control = MockControl.createControl(Errors.class);
+
+		Errors errors = (Errors) control.getMock();
 		Object bean = new Object();
 
 		Validator val = factory.getValidator("fooBean", bean, errors);

@@ -1,13 +1,12 @@
 /*
- * Copyright 2001-2004 The Apache Software Foundation
- * Copyright 2002-2004 the original author or authors.
- * 
+ * Copyright 2002-2005 the original author or authors.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -19,7 +18,6 @@ package org.springmodules.commons.validator;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,23 +30,23 @@ import org.apache.commons.validator.util.ValidatorUtils;
 import org.springframework.validation.Errors;
 
 /**
- * This class contains the default validations that are used in the
- * validator-rules.xml file.
- * </p>
+ * This class contains the default validations that are used in the validator-rules.xml file.
  * <p/>
- * In general passing in a null or blank will return a null Object or a false
- * boolean. However, nulls and blanks do not result in an error being added to
- * the errors.
+ * In general passing in a <code>null</code> or blank will return a <code>null</code> <code>Object</code> or a
+ * <code>false</code> <code>boolean</code>. However, <code>null</code>s and blanks do not result in an error being added to
+ * the <code>Error</code>s.
  *
  * @author David Winterfeldt
  * @author James Turner
  * @author Rob Leland
  * @author Daniel Miller
+ * @author Rob Harrop
  */
 public class FieldChecks implements Serializable {
 
+
 	/**
-	 * Commons Logging instance.
+	 * <code>Log</code> used by this class.
 	 */
 	private static final Log log = LogFactory.getLog(FieldChecks.class);
 
@@ -59,27 +57,20 @@ public class FieldChecks implements Serializable {
 	public static final String FIELD_TEST_EQUAL = "EQUAL";
 
 	/**
-	 * Checks if the field isn't null and length of the field is greater than
-	 * zero not including whitespace.
+	 * Checks if the field isn't null and length of the field is greater than zero not including whitespace.
 	 *
 	 * @param bean The bean validation is being performed on.
-	 * @param va The <code>ValidatorAction</code> that is currently being
-	 * performed.
-	 * @param field The <code>Field</code> object associated with the current
-	 * field being validated.
-	 * @param errors The <code>ActionErrors</code> object to add errors to if any
-	 * validation errors occur.
-	 * -param request
-	 * Current request object.
-	 * @return true if meets stated requirements, false otherwise.
+	 * @param va The <code>ValidatorAction</code> that is currently being performed.
+	 * @param field The <code>Field</code> object associated with the current field being validated.
+	 * @param errors The <code>Errors</code> object to add errors to if any validation errors occur.
+	 * @return <code>true</code> if meets stated requirements, <code>false</code> otherwise.
 	 */
-	public static boolean validateRequired(Object bean, ValidatorAction va,
-																										Field field, Errors errors) {
+	public static boolean validateRequired(Object bean, ValidatorAction va, Field field, Errors errors) {
 
 		String value = extractValue(bean, field);
 
 		if (GenericValidator.isBlankOrNull(value)) {
-			Resources.rejectValue(errors, field, va);
+			rejectValue(errors, field, va);
 			return false;
 		}
 		else {
@@ -180,7 +171,7 @@ public class FieldChecks implements Serializable {
 
 		if (required) {
 			if (GenericValidator.isBlankOrNull(value)) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 				return false;
 			}
 			else {
@@ -212,7 +203,7 @@ public class FieldChecks implements Serializable {
 		try {
 			if (!GenericValidator.isBlankOrNull(value)
 							&& !GenericValidator.matchRegexp(value, mask)) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 				return false;
 			}
 			else {
@@ -248,7 +239,7 @@ public class FieldChecks implements Serializable {
 		if (!GenericValidator.isBlankOrNull(value)) {
 			result = GenericTypeValidator.formatByte(value);
 			if (result == null) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 			}
 		}
 		return result;
@@ -277,7 +268,7 @@ public class FieldChecks implements Serializable {
 		if (!GenericValidator.isBlankOrNull(value)) {
 			result = GenericTypeValidator.formatShort(value);
 			if (result == null) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 			}
 		}
 		return result;
@@ -307,7 +298,7 @@ public class FieldChecks implements Serializable {
 			result = GenericTypeValidator.formatInt(value);
 
 			if (result == null) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 			}
 		}
 
@@ -338,7 +329,7 @@ public class FieldChecks implements Serializable {
 			result = GenericTypeValidator.formatLong(value);
 
 			if (result == null) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 			}
 		}
 		return result;
@@ -367,7 +358,7 @@ public class FieldChecks implements Serializable {
 			result = GenericTypeValidator.formatFloat(value);
 
 			if (result == null) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 			}
 		}
 
@@ -397,7 +388,7 @@ public class FieldChecks implements Serializable {
 			result = GenericTypeValidator.formatDouble(value);
 
 			if (result == null) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 			}
 		}
 
@@ -452,7 +443,7 @@ public class FieldChecks implements Serializable {
 			}
 
 			if (result == null) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 			}
 		}
 
@@ -496,9 +487,8 @@ public class FieldChecks implements Serializable {
 	 * field being validated.
 	 * @param errors The <code>Errors</code> object to add errors to if any
 	 * validation errors occur.
-	 * -param request
-	 * Current request object.
-	 * @return True if in range, false otherwise.
+	 *
+	 * @return <code>true</code> if in range, <code>false</code> otherwise.
 	 */
 	public static boolean validateIntRange(Object bean, ValidatorAction va,
 																										Field field, Errors errors) {
@@ -511,13 +501,13 @@ public class FieldChecks implements Serializable {
 				int max = Integer.parseInt(field.getVarValue("max"));
 
 				if (!GenericValidator.isInRange(intValue, min, max)) {
-					Resources.rejectValue(errors, field, va);
+					rejectValue(errors, field, va);
 
 					return false;
 				}
 			}
 			catch (Exception e) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 				return false;
 			}
 		}
@@ -551,13 +541,13 @@ public class FieldChecks implements Serializable {
 				double max = Double.parseDouble(field.getVarValue("max"));
 
 				if (!GenericValidator.isInRange(doubleValue, min, max)) {
-					Resources.rejectValue(errors, field, va);
+					rejectValue(errors, field, va);
 
 					return false;
 				}
 			}
 			catch (Exception e) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 				return false;
 			}
 		}
@@ -590,12 +580,12 @@ public class FieldChecks implements Serializable {
 				float min = Float.parseFloat(field.getVarValue("min"));
 				float max = Float.parseFloat(field.getVarValue("max"));
 				if (!GenericValidator.isInRange(floatValue, min, max)) {
-					Resources.rejectValue(errors, field, va);
+					rejectValue(errors, field, va);
 					return false;
 				}
 			}
 			catch (Exception e) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 				return false;
 			}
 		}
@@ -627,7 +617,7 @@ public class FieldChecks implements Serializable {
 			result = GenericTypeValidator.formatCreditCard(value);
 
 			if (result == null) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 			}
 		}
 
@@ -655,7 +645,7 @@ public class FieldChecks implements Serializable {
 
 		if (!GenericValidator.isBlankOrNull(value)
 						&& !GenericValidator.isEmail(value)) {
-			Resources.rejectValue(errors, field, va);
+			rejectValue(errors, field, va);
 			return false;
 		}
 		else {
@@ -688,13 +678,13 @@ public class FieldChecks implements Serializable {
 				int max = Integer.parseInt(field.getVarValue("maxlength"));
 
 				if (!GenericValidator.maxLength(value, max)) {
-					Resources.rejectValue(errors, field, va);
+					rejectValue(errors, field, va);
 
 					return false;
 				}
 			}
 			catch (Exception e) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 				return false;
 			}
 		}
@@ -727,13 +717,13 @@ public class FieldChecks implements Serializable {
 				int min = Integer.parseInt(field.getVarValue("minlength"));
 
 				if (!GenericValidator.minLength(value, min)) {
-					Resources.rejectValue(errors, field, va);
+					rejectValue(errors, field, va);
 
 					return false;
 				}
 			}
 			catch (Exception e) {
-				Resources.rejectValue(errors, field, va);
+				rejectValue(errors, field, va);
 				return false;
 			}
 		}
@@ -742,27 +732,39 @@ public class FieldChecks implements Serializable {
 	}
 
 	/**
-	 * Return <code>true</code> if the specified object is a String or a
-	 * <code>null</code> value.
+	 * Extracts the value of the given bean. If the bean is <code>null</code>, the returned value is also <code>null</code>.
+	 * If the bean is a <code>String</code> then the bean itself is returned. In all other cases, the <code>ValidatorUtils</code>
+	 * class is used to extract the bean value using the <code>Field</code> object supplied.
 	 *
-	 * @param o Object to be tested
-	 * @return The string value
+	 * @see ValidatorUtils#getValueAsString(Object, String)
 	 */
-	protected static boolean isString(Object o) {
-		return (o == null) ? true : String.class.isInstance(o);
-	}
+	protected static String extractValue(Object bean, Field field) {
+		String value = null;
 
-	private static String extractValue(Object bean, Field field) {
-		String value;
-		if (isString(bean)) {
-			value = (String) bean;
+		if (bean == null) {
+			return null;
 		}
-		if (bean instanceof Map) {
-			value = (String) ((Map) bean).get(field.getProperty());
+		else if (bean instanceof String) {
+			value = (String) bean;
 		}
 		else {
 			value = ValidatorUtils.getValueAsString(bean, field.getProperty());
 		}
+
 		return value;
+	}
+
+	protected static void rejectValue(Errors errors, Field field,
+																								 ValidatorAction va) {
+		String fieldCode = field.getKey();
+		String errorCode = MessageUtils.getMessageKey(va, field);
+		Object[] args = MessageUtils.getArgs(va, field);
+
+		if (log.isDebugEnabled()) {
+			log.debug("Rejecting value [field='" + fieldCode + "', errorCode='"
+					+ errorCode + "']");
+		}
+
+		errors.rejectValue(fieldCode, errorCode, args, errorCode);
 	}
 }

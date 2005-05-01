@@ -35,49 +35,19 @@ import org.springframework.validation.Errors;
  * @author Daniel Miller
  * @author Rob Harrop
  */
-public class Resources {
-
-	private static Log log = LogFactory.getLog(Resources.class);
+public abstract class MessageUtils {
 
 	/**
-	 * Reject the value of the given Field for the specified ValidatorAction by
-	 * calling <code>errors.rejectValue()</code>.
-	 * <p/>
-	 * <p/>
-	 * Note: this implementation uses the key of the Fields message for the
-	 * given ValidatorAction as the default message.
-	 * </p>
-	 *
-	 * @param errors the <code>Errors</code> instance with which to reject the
-	 * value.
-	 * @param field the <code>Field</code> to be rejected.
-	 * @param va the <code>ValidatorAction</code> that rejected the value.
+	 * <code>Log</code> used by this class
 	 */
-	public static void rejectValue(Errors errors, Field field,
-																							ValidatorAction va) {
-		String fieldCode = field.getKey();
-		String errorCode = Resources.getMsgKey(va, field);
-		Object[] args = Resources.getArgs(va, field);
-		String defaultMsg = errorCode;
-
-		log.debug("Rejecting value [field='" + fieldCode + "', errorCode='"
-				+ errorCode + "']");
-
-		errors.rejectValue(fieldCode, errorCode, args, defaultMsg);
-	}
+	private static Log log = LogFactory.getLog(MessageUtils.class);
 
 	/**
-	 * Gets the <code>ActionError</code> based on the
-	 * <code>ValidatorAction</code> message and the <code>Field</code>'s
+	 * Gets the <code>ActionError</code> based on the <code>ValidatorAction</code> message and the <code>Field</code>'s
 	 * arg objects.
 	 * <p/>
-	 * -param request
-	 * the servlet request
-	 *
-	 * @param va Validator action
-	 * @param field the validator Field
 	 */
-	public static String getMsgKey(ValidatorAction va, Field field) {
+	public static String getMessageKey(ValidatorAction va, Field field) {
 		return (field.getMsg(va.getName()) != null ? field.getMsg(va.getName())
 							 : va.getMsg());
 	}
@@ -176,7 +146,7 @@ public class Resources {
 	 */
 	public static String getMessage(MessageSource messages, Locale locale,
 																												ValidatorAction va, Field field) {
-		String code = getMsgKey(va, field);
+		String code = getMessageKey(va, field);
 		Object[] args = getArgs(va, field);
 		String defaultMsg = code;
 		return messages.getMessage(code, args, defaultMsg, locale);
