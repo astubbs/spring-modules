@@ -16,20 +16,21 @@
 
 package org.springmodules.workflow.osworkflow;
 
-import java.util.List;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
-import com.opensymphony.workflow.spi.Step;
 import com.opensymphony.workflow.basic.BasicWorkflow;
 import com.opensymphony.workflow.config.Configuration;
 import com.opensymphony.workflow.config.DefaultConfiguration;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
-import com.opensymphony.module.propertyset.PropertySet;
+import com.opensymphony.workflow.query.WorkflowExpressionQuery;
+import com.opensymphony.workflow.spi.Step;
 
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.InitializingBean;
@@ -39,6 +40,7 @@ import org.springframework.util.StringUtils;
  * @author Rob Harrop
  */
 public class OsWorkflowTemplate implements InitializingBean {
+
 
 	private Configuration configuration = new DefaultConfiguration();
 
@@ -73,7 +75,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 			throw new FatalBeanException("Property [workflowName] is required.");
 		}
 
-		if(this.contextManager == null) {
+		if (this.contextManager == null) {
 			throw new FatalBeanException("Property [contextManager] is required");
 		}
 	}
@@ -208,12 +210,55 @@ public class OsWorkflowTemplate implements InitializingBean {
 	}
 
 	public PropertySet getPropertySet() {
-		return (PropertySet) this.execute(new OsWorkflowCallback(){
+		return (PropertySet) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				return workflow.getPropertySet(getInstanceId());
 			}
 		});
 	}
+
+	public boolean canInitialize(final String workflowName, final int initialStep) {
+		return this.canInitialize(workflowName, initialStep, null);
+	}
+
+	public boolean canInitialize(final String workflowName, final int initialStep, final Map inputs) {
+		Boolean returnValue = (Boolean) this.execute(new OsWorkflowCallback() {
+					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+						boolean canInit = workflow.canInitialize(workflowName, initialStep, inputs);
+						return (canInit) ? Boolean.TRUE : Boolean.FALSE;
+					}
+				});
+		return returnValue.booleanValue();
+	}
+
+	public boolean canModifyEntryState(final int newState) {
+		Boolean returnValue = (Boolean) this.execute(new OsWorkflowCallback() {
+					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+						boolean canModify = workflow.canModifyEntryState(getInstanceId(), newState);
+						return (canModify) ? Boolean.TRUE : Boolean.FALSE;
+					}
+				});
+
+		return returnValue.booleanValue();
+	}
+
+	public void changeEntryState(final int newState) {
+		this.execute(new OsWorkflowCallback() {
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				workflow.changeEntryState(getInstanceId(), newState);
+				return null;
+			}
+		});
+	}
+
+	public List query(final WorkflowExpressionQuery query) {
+		return (List) this.execute(new OsWorkflowCallback() {
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				return workflow.query(query);
+			}
+		});
+	}
+
 	public Object execute(OsWorkflowCallback callback) {
 		try {
 			Workflow workflow = createWorkflow(OsWorkflowTemplate.this.contextManager.getCaller());

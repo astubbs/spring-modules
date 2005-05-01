@@ -29,7 +29,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  */
 public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerInterceptorAdapter {
 
-	private static final String INSTANCE_ID_KEY = "org.springmodules.workflow.osworkflow.instanceId";
+	public static final String SESSION_KEY_INSTANCE_ID = "org.springmodules.workflow.osworkflow.instanceId";
 
 	private WorkflowContextManager contextManager;
 
@@ -55,7 +55,7 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 		if (isSessionStorageEnabled()) {
 			HttpSession session = request.getSession();
 
-			Object instanceId = session.getAttribute(INSTANCE_ID_KEY);
+			Object instanceId = session.getAttribute(SESSION_KEY_INSTANCE_ID);
 
 			if ((instanceId != null) && (instanceId instanceof Long)) {
 				this.contextManager.setInstanceId(((Long) instanceId).longValue());
@@ -73,7 +73,7 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 		if (isSessionStorageEnabled()) {
 			HttpSession session = request.getSession();
 
-			session.setAttribute(INSTANCE_ID_KEY, new Long(this.contextManager.getInstanceId()));
+			session.setAttribute(SESSION_KEY_INSTANCE_ID, new Long(this.contextManager.getInstanceId()));
 		}
 	}
 

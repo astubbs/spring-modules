@@ -47,10 +47,10 @@ import org.springframework.util.Assert;
  * as the resource path. All standard Spring resource paths are supported including <code>classpath:</code> style
  * resources.
  * <p/>
+ *
  * @author Rob Harrop
  */
 public class ConfigurationBean extends DefaultConfiguration {
-
 	/**
 	 * <code>Log</code> instance for this class.
 	 */
@@ -96,7 +96,6 @@ public class ConfigurationBean extends DefaultConfiguration {
 	 */
 	public void setPersistenceArgs(Map persistenceArgs) {
 		Assert.notEmpty(persistenceArgs, "persistenceArgs cannot be null or empty");
-        logger.info("Setting persistence args");
 		this.persistenceArgs = persistenceArgs;
 	}
 
