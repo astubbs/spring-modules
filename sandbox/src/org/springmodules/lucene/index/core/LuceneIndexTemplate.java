@@ -30,8 +30,31 @@ import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 
 /**
+ * <b>This is the central class in the lucene indexing core package.</b>
+ * It simplifies the use of lucene to index documents or datas using
+ * index reader and writer. It helps to avoid common errors and to
+ * manage these resource in a flexible manner.
+ * It executes core CCI workflow, leaving application code to focus on
+ * the way to create lucene document and make some operations on the
+ * index.
+ *
+ * <p>This class is based on the IndexFactory abstraction which is a
+ * factory to create IndexReader and IndexWriter for the configured
+ * Directory. So the template doesn't need to always hold resources and
+ * this avoids some locking problems on the index .
+ *
+ * <p>Can be used within a service implementation via direct instantiation
+ * with a IndexFactory reference, or get prepared in an application context
+ * and given to services as bean reference. Note: The IndexFactory should
+ * always be configured as a bean in the application context, in the first case
+ * given to the service directly, in the second case to the prepared template.
+ * 
  * @author Brian McCallister
  * @author Thierry Templier
+ * @see DocumentCreator
+ * @see DocumentsCreator
+ * @see RecordExtractor
+ * @see org.springmodules.lucene.index.factory
  */
 public class LuceneIndexTemplate {
 
@@ -114,10 +137,10 @@ public class LuceneIndexTemplate {
 	/**
 	 * Be careful to use this method in a correct context.
 	 */
-	public void isDeleted(int internalDocumentId) {
+	public boolean isDeleted(int internalDocumentId) {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
-			reader.isDeleted(internalDocumentId);
+			return reader.isDeleted(internalDocumentId);
 		} finally {
 			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
 		}
@@ -126,10 +149,10 @@ public class LuceneIndexTemplate {
 	/**
 	 * Be careful to use this method in a correct context.
 	 */
-	public void hasDeletions() {
+	public boolean hasDeletions() {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
-			reader.hasDeletions();
+			return reader.hasDeletions();
 		} finally {
 			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
 		}

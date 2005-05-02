@@ -16,6 +16,8 @@
 
 package org.springmodules.lucene.index.factory;
 
+import java.io.IOException;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 

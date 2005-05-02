@@ -30,5 +30,5 @@ public interface ReaderCallback {
 	 * @return
 	 * @throws IOException
 	 */
-	public Object doWithReader(IndexReader reader) throws IOException;
+	Object doWithReader(IndexReader reader) throws IOException;
 }

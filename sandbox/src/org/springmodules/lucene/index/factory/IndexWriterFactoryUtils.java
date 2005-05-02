@@ -72,7 +72,6 @@ public abstract class IndexWriterFactoryUtils {
 	public static IndexWriter doGetIndexWriter(IndexFactory indexFactory,boolean allowSynchronization) throws IOException {
 		IndexHolder indexHolder = (IndexHolder) ResourceSynchronizationManager.getResource(indexFactory);
 		if (indexHolder != null && indexHolder.getIndexWriter()!=null ) {
-			System.err.println("!! writer = "+indexHolder.getIndexWriter()+" !!");
 			return indexHolder.getIndexWriter();
 		}
 
@@ -96,7 +95,6 @@ public abstract class IndexWriterFactoryUtils {
 
 			ResourceSynchronizationManager.registerSynchronization(new IndexSynchronization(indexHolder, indexFactory));
 		}
-		System.err.println("!! writer = "+writer+" !!");
 		return writer;
     }
 

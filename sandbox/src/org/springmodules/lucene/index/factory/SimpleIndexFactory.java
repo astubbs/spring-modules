@@ -45,7 +45,6 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	 */
 	public IndexReader getIndexReader() {
 		try {
-			System.err.println("directory = "+directory);
 			return IndexReader.open(directory);
 		} catch(IOException ex) {
 			throw new LuceneOpenIndexException("Error during opening the reader",ex);
@@ -57,7 +56,6 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	 */
 	public IndexWriter getIndexWriter() {
 		try {
-			System.err.println("directory = "+directory);
 			boolean create = !IndexReader.indexExists(directory);
 			IndexWriter writer = new IndexWriter(directory,analyzer,create);
 			setIndexWriterParameters(writer);

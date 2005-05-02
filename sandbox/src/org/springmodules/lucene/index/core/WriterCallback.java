@@ -29,5 +29,5 @@ public interface WriterCallback {
 	 * @param writer
 	 * @throws IOException
 	 */
-	void doWithWriter(IndexWriter writer) throws IOException;
+	Object doWithWriter(IndexWriter writer) throws IOException;
 }
