@@ -106,7 +106,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 
 		assertEquals(results.size(),1);
 		assertEquals((String)results.get(0),"a Lucene support sample");
-		assertEquals(searcherFactory.isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
 
 		//Second search
 		results=template.search(new QueryCreator() {
@@ -123,7 +123,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		assertEquals((String)results.get(0),"a sample");
 		assertEquals((String)results.get(1),"a Lucene support sample");
 		assertEquals((String)results.get(2),"a different sample");
-		assertEquals(searcherFactory.isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
 	}
 
 	/*
@@ -154,7 +154,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		assertEquals(results.size(),2);
 		assertEquals((String)results.get(0),"a Lucene support sample");
 		assertEquals((String)results.get(1),"a different sample");
-		assertEquals(searcherFactory.isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
 	}
 
 	/*
@@ -185,7 +185,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		assertEquals((String)results.get(0),"a different sample");
 		assertEquals((String)results.get(1),"a sample");
 		assertEquals((String)results.get(2),"a Lucene support sample");
-		assertEquals(searcherFactory.isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
 	}
 
 	/*
@@ -217,7 +217,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		assertEquals(results.size(),2);
 		assertEquals((String)results.get(0),"a different sample");
 		assertEquals((String)results.get(1),"a Lucene support sample");
-		assertEquals(searcherFactory.isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
 	}
 
 	/*
@@ -238,7 +238,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		});
 
 		assertEquals(result,"lucene");
-		assertEquals(searcherFactory.isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
 	}
 
 }

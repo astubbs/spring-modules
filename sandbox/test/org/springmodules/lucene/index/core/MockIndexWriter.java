@@ -30,9 +30,9 @@ import org.apache.lucene.store.RAMDirectory;
  * @author Thierry Templier
  */
 public class MockIndexWriter extends IndexWriter {
-	private IndexWriterEvent indexWriterEvent;
+	private IndexWriterCallListener indexWriterEvent;
 
-	public MockIndexWriter(Directory directory,Analyzer analyzer,IndexWriterEvent indexWriterEvent) throws IOException {
+	public MockIndexWriter(Directory directory,Analyzer analyzer,IndexWriterCallListener indexWriterEvent) throws IOException {
 		super(directory,analyzer,false);
 		this.indexWriterEvent=indexWriterEvent;
 	}

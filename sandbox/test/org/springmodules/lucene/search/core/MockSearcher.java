@@ -36,9 +36,9 @@ import org.apache.lucene.search.TopFieldDocs;
  */
 public class MockSearcher extends Searcher {
 	private Searcher target;
-	private SearcherEvent searcherEvent;
+	private SearcherCallListener searcherEvent;
 
-	public MockSearcher(Searcher searcher,SearcherEvent searcherEvent) {
+	public MockSearcher(Searcher searcher,SearcherCallListener searcherEvent) {
 		this.target=searcher;
 		this.searcherEvent=searcherEvent;
 	}

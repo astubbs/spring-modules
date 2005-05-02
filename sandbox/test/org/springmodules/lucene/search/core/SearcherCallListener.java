@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.core;
+package org.springmodules.lucene.search.core;
 
 /**
- * Event interface to detect the index writer closes.
+ * Event interface to detect the searcher closes.
  * 
  * @author Thierry Templier
  */
-public interface IndexWriterEvent {
-	public void indexWriterClosed();
-	public void indexWriterOptimize();
-	public void indexWriterAddDocument();
+public interface SearcherCallListener {
+	public int getNumberSearchersCreated();
+	public void searcherCreated();
+
+	public boolean isSearcherClosed();
+	public void searcherClosed();
 }

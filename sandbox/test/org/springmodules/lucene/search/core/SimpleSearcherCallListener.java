@@ -17,10 +17,26 @@
 package org.springmodules.lucene.search.core;
 
 /**
- * Event interface to detect the searcher closes.
- * 
  * @author Thierry Templier
  */
-public interface SearcherEvent {
-	public void searcherClosed();
+public class SimpleSearcherCallListener implements SearcherCallListener {
+	private int numberSearchersCreated=0;
+	private boolean searcherClosed=false;
+
+	public int getNumberSearchersCreated() {
+		return numberSearchersCreated;
+	}
+
+	public void searcherCreated() {
+		numberSearchersCreated++;
+	}
+
+	public boolean isSearcherClosed() {
+		return searcherClosed;
+	}
+
+	public void searcherClosed() {
+		searcherClosed=true;
+	}
+
 }

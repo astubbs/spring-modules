@@ -38,173 +38,44 @@ import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
 /**
  * @author Thierry Templier
  */
-public class MockSimpleIndexFactory implements IndexFactory,IndexReaderEvent,IndexWriterEvent {
+public class MockSimpleIndexFactory implements IndexFactory {
 	private SimpleIndexFactory target;
-
-	//Reader state variables
-	private boolean indexReaderUndeletedAll=false;
-	private int indexReaderDeletedId=-1;
-	private boolean indexReaderHasDeletions=false;
-	private boolean indexReaderMaxDoc=false;
-	private boolean indexReaderNumDocs=false;
-	private int indexReaderIsDeleted=-1;
-	private boolean readerClosed=false;
-
-	//Writer state variables
-	private boolean indexWriterOptimize=false;
-	private int indexWriterAddDocuments=0;
-	private boolean writerClosed=false;
+	private IndexWriterCallListener writerListener;
+	private IndexReaderCallListener readerListener;
 
 	public MockSimpleIndexFactory(SimpleIndexFactory indexFactory) {
 		this.target=indexFactory;
-	}
-
-	private void doInitReaderVariables() {
-		indexReaderUndeletedAll=false;
-		indexReaderDeletedId=-1;
-		indexReaderHasDeletions=false;
-		indexReaderMaxDoc=false;
-		indexReaderNumDocs=false;
-		indexReaderIsDeleted=-1;
+		this.writerListener=new SimpleIndexWriterCallListener();
+		this.readerListener=new SimpleIndexReaderCallListener();
 	}
 
 	/**
 	 * @see org.springmodules.lucene.index.factory.IndexFactory#getIndexReader()
 	 */
 	public IndexReader getIndexReader() {
-		doInitReaderVariables();
-		return new MockIndexReader(target.getIndexReader(),this);
-	}
-
-	private void doInitWriterVariables() {
-		indexWriterOptimize=false;
-		indexWriterAddDocuments=0;
-		writerClosed=false;
+		readerListener.readerCreated();
+		return new MockIndexReader(target.getIndexReader(),readerListener);
 	}
 
 	/**
 	 * @see org.springmodules.lucene.index.factory.IndexFactory#getIndexWriter()
 	 */
 	public IndexWriter getIndexWriter() {
-		doInitWriterVariables();
+		writerListener.writerCreated();
 		try {
-			return new MockIndexWriter(target.getDirectory(),target.getAnalyzer(),this);
+			return new MockIndexWriter(target.getDirectory(),target.getAnalyzer(),writerListener);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error during the creation of a TestIndexWriter");
 		}
 	}
 
-	/**
-	 * @see org.springmodules.lucene.index.core.TestIndexEvent#indexReaderClosed()
-	 */
-	public void indexReaderClosed() {
-		readerClosed=true;
+	public IndexReaderCallListener getReaderListener() {
+		return readerListener;
 	}
 
-	public boolean isReaderClosed() {
-		return readerClosed;
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.core.TestIndexEvent#indexWriterClosed()
-	 */
-	public void indexWriterClosed() {
-		writerClosed=true;
-	}
-
-	public boolean isWriterClosed() {
-		return writerClosed;
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.core.TestIndexReaderEvent#indexReaderDeleted(int)
-	 */
-	public void indexReaderDeleted(int id) {
-		this.indexReaderDeletedId=id;
-	}
-
-	public int getIndexReaderDeletedId() {
-		return indexReaderDeletedId;
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.core.TestIndexReaderEvent#indexReaderUndeletedAll()
-	 */
-	public void indexReaderUndeletedAll() {
-		this.indexReaderUndeletedAll=true;
-		
-	}
-
-	public boolean isIndexReaderUndeletedAll() {
-		return indexReaderUndeletedAll;
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.core.TestIndexReaderEvent#indexReaderHashDeletions()
-	 */
-	public void indexReaderHasDeletions() {
-		indexReaderHasDeletions=true;
-	}
-
-	public boolean isIndexReaderHasDeletions() {
-		return indexReaderHasDeletions;
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.core.TestIndexReaderEvent#indexReaderMaxDoc()
-	 */
-	public void indexReaderMaxDoc() {
-		indexReaderMaxDoc=true;
-	}
-
-	public boolean isIndexReaderMaxDoc() {
-		return indexReaderMaxDoc;
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.core.TestIndexReaderEvent#indexReaderNumDocs()
-	 */
-	public void indexReaderNumDocs() {
-		indexReaderNumDocs=true;
-	}
-
-	public boolean isIndexReaderNumDocs() {
-		return indexReaderNumDocs;
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.core.TestIndexReaderEvent#indexReaderIsDeleted(int)
-	 */
-	public void indexReaderIsDeleted(int id) {
-		indexReaderIsDeleted=id;
-	}
-
-	public int getIndexReaderIsDeleted() {
-		return indexReaderIsDeleted;
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.core.IndexWriterEvent#indexWriterOptimize()
-	 */
-	public void indexWriterOptimize() {
-		indexWriterOptimize=true;
-	}
-
-	public boolean isIndexWriterOptimize() {
-		return indexWriterOptimize;
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.core.IndexWriterEvent#indexWriterAddDocuments()
-	 */
-	public void indexWriterAddDocument() {
-		indexWriterAddDocuments++;
-	}
-
-
-	public int getIndexWriterAddDocuments() {
-		return indexWriterAddDocuments;
+	public IndexWriterCallListener getWriterListener() {
+		return writerListener;
 	}
 
 }

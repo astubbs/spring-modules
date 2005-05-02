@@ -21,12 +21,28 @@ package org.springmodules.lucene.index.core;
  * 
  * @author Thierry Templier
  */
-public interface IndexReaderEvent {
+public interface IndexReaderCallListener {
+	public int getNumberReadersCreated();
+	public void readerCreated();
+
 	public void indexReaderClosed();
+	public boolean isReaderClosed();
+
 	public void indexReaderDeleted(int id);
+	public int getIndexReaderDeletedId();
+
 	public void indexReaderIsDeleted(int id);
+	public int getIndexReaderIsDeleted();
+
 	public void indexReaderUndeletedAll();
+	public boolean isIndexReaderUndeletedAll();
+
 	public void indexReaderHasDeletions();
+	public boolean isIndexReaderHasDeletions();
+
 	public void indexReaderMaxDoc();
+	public boolean isIndexReaderMaxDoc();
+
 	public void indexReaderNumDocs();
+	public boolean isIndexReaderNumDocs();
 }

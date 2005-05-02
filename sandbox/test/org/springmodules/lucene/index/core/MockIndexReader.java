@@ -35,9 +35,9 @@ import org.apache.lucene.store.RAMDirectory;
  */
 public class MockIndexReader extends IndexReader {
 	private IndexReader target;
-	private IndexReaderEvent indexReaderEvent;
+	private IndexReaderCallListener indexReaderEvent;
 
-	public MockIndexReader(IndexReader indexReader,IndexReaderEvent indexReaderEvent) {
+	public MockIndexReader(IndexReader indexReader,IndexReaderCallListener indexReaderEvent) {
 		super(new RAMDirectory());
 		this.target=indexReader;
 		this.indexReaderEvent=indexReaderEvent;
@@ -241,7 +241,6 @@ public class MockIndexReader extends IndexReader {
 	 * @see org.apache.lucene.index.IndexReader#doDelete(int)
 	 */
 	protected void doDelete(int id) throws IOException {
-		System.err.println("doDelete : "+id);
 		if( indexReaderEvent!=null ) {
 			indexReaderEvent.indexReaderDeleted(id);
 		}
