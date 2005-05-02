@@ -16,42 +16,12 @@
 
 package org.springmodules.lucene.index.object.database;
 
+
 /**
  * @author Thierry Templier
  */
-public class SqlRequest {
-	private final String sql;
-	private final Object[] params;
-	private final int[] types;
-
-	public SqlRequest(String sql) {
-		this(sql,null,null);
-	}
-
-	public SqlRequest(String sql,Object[] params,int[] types) {
-		this.sql=sql;
-		this.params=params;
-		this.types=types;
-	}
-	/**
-	 * @return
-	 */
-	public Object[] getParams() {
-		return params;
-	}
-
-	/**
-	 * @return
-	 */
-	public String getSql() {
-		return sql;
-	}
-
-	/**
-	 * @return
-	 */
-	public int[] getTypes() {
-		return types;
-	}
-
+public interface DatabaseIndexingListener {
+	public void beforeIndexingRequest(SqlRequest request);
+	public void afterIndexingRequest(SqlRequest request);
+	public void onErrorIndexingRequest(SqlRequest request,Exception ex);
 }

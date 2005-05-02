@@ -19,6 +19,7 @@ package org.springmodules.lucene.index.object.database;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,10 +42,12 @@ import org.springmodules.lucene.index.object.AbstractIndexer;
  */
 public class DatabaseIndexer extends AbstractIndexer {
 	private Map requestDocumentHandlers;
+	private List listeners;
 
 	public DatabaseIndexer(IndexFactory indexFactory) {
 		setIndexFactory(indexFactory);
 		requestDocumentHandlers=new HashMap();
+		listeners=new ArrayList();
 		registerDefautHandlers();
 	}
 
@@ -63,9 +66,46 @@ public class DatabaseIndexer extends AbstractIndexer {
 		}
 	}
 
+	public void addListener(DatabaseIndexingListener listener) {
+		if( listener!=null ) {
+			listeners.add(listener);
+		}
+	}
+
+	public void removeListener(DatabaseIndexingListener listener) {
+		if( listener!=null ) {
+			listeners.remove(listener);
+		}
+	}
+
+	protected void fireListenersOnBeforeRequest(SqlRequest request) {
+		for(Iterator i=listeners.iterator();i.hasNext();) {
+			DatabaseIndexingListener listener=(DatabaseIndexingListener)i.next();
+			listener.beforeIndexingRequest(request);
+		}
+	}
+
+	protected void fireListenersOnAfterRequest(SqlRequest request) {
+		for(Iterator i=listeners.iterator();i.hasNext();) {
+			DatabaseIndexingListener listener=(DatabaseIndexingListener)i.next();
+			listener.afterIndexingRequest(request);
+		}
+	}
+
+	protected void fireListenersOnErrorRequest(SqlRequest request,Exception ex) {
+		for(Iterator i=listeners.iterator();i.hasNext();) {
+			DatabaseIndexingListener listener=(DatabaseIndexingListener)i.next();
+			listener.onErrorIndexingRequest(request,ex);
+		}
+	}
+
 	private List indexResultSql(DataSource dataSource,SqlRequest request,SqlDocumentHandler handler) {
 		IndexingMappingQuery query=new IndexingMappingQuery(dataSource,request,handler);
-		return query.execute(request.getParams());
+		if( request.getParams()!=null ) {
+			return query.execute(request.getParams());
+		} else {
+			return query.execute();
+		}
 	}
 
 	/**
@@ -86,15 +126,21 @@ public class DatabaseIndexer extends AbstractIndexer {
 									SqlDocumentHandler handler,boolean optimizeIndex) {
 		IndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(getIndexFactory());
 		try {
+			fireListenersOnBeforeRequest(request);
 			List documents=indexResultSql(dataSource,request,handler);
 			if( documents!=null ) {
 				addDocumentsInIndex(writer,documents);
 			}
+
 			//Optimize the index
 			if( optimizeIndex ) {
 				writer.optimize();
 			}
+
+			fireListenersOnAfterRequest(request);
 		} catch(IOException ex) {
+			logger.error("Error during indexing the request",ex);
+			fireListenersOnErrorRequest(request,ex);
 			throw new LuceneWriteIndexException("Error during indexing the database",ex);
 		} finally {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(getIndexFactory(),writer);
@@ -116,18 +162,20 @@ public class DatabaseIndexer extends AbstractIndexer {
 		private SqlDocumentHandler handler;
 
 		public IndexingMappingQuery(DataSource ds,SqlRequest request,SqlDocumentHandler handler) {
-		  super(ds, request.getSql());
-		  this.request=request;
-		  this.handler=handler;
-		  int[] types=request.getTypes();
-		  for(int cpt=0;cpt<types.length;cpt++) {
-			super.declareParameter(new SqlParameter(types[cpt]));
-		  }
-		  compile();
+			super(ds, request.getSql());
+			this.request=request;
+			this.handler=handler;
+			int[] types=request.getTypes();
+			if( types!=null ) {
+				for(int cpt=0;cpt<types.length;cpt++) {
+					super.declareParameter(new SqlParameter(types[cpt]));
+				}
+			}
+			compile();
 		}
 
 		public Object mapRow(ResultSet rs, int rowNumber) throws SQLException {
 			return handler.getDocument(request.getSql(),rs);
 		} 
-	  }
+	}
 }
