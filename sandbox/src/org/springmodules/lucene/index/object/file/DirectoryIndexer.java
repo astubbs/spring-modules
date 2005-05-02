@@ -17,10 +17,13 @@
 package org.springmodules.lucene.index.object.file;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,24 +40,18 @@ import org.springmodules.lucene.index.object.file.handlers.TextDocumentHandler;
  */
 public class DirectoryIndexer extends AbstractIndexer {
 	private Map fileDocumentHandlers;
+	private List listeners;
 
 	public DirectoryIndexer(IndexFactory indexFactory) {
 		setIndexFactory(indexFactory);
 		fileDocumentHandlers=new HashMap();
+		listeners=new ArrayList();
 		registerDefautHandlers();
 	}
 
 	protected void registerDefautHandlers() {
 		//Register a default handler for text file (.txt)
-		registerDocumentHandler(new DocumentExtensionMatching() {
-			public boolean matchExtension(String extension) {
-				if( extension.equals("txt") ) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-		},new TextDocumentHandler());
+		registerDocumentHandler(new DocumentExtensionMatching("txt"),new TextDocumentHandler());
 	}
 
 	public void registerDocumentHandler(DocumentMatching matching,FileDocumentHandler handler) {
@@ -69,7 +66,62 @@ public class DirectoryIndexer extends AbstractIndexer {
 		}
 	}
 
+	public void addListener(DocumentIndexingListener listener) {
+		if( listener!=null ) {
+			listeners.add(listener);
+		}
+	}
+
+	public void removeListener(DocumentIndexingListener listener) {
+		if( listener!=null ) {
+			listeners.remove(listener);
+		}
+	}
+
+	protected void fireListenersOnBeforeDirectory(File file) {
+		for(Iterator i=listeners.iterator();i.hasNext();) {
+			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			listener.beforeIndexingDirectory(file);
+		}
+	}
+
+	protected void fireListenersOnAfterDirectory(File file) {
+		for(Iterator i=listeners.iterator();i.hasNext();) {
+			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			listener.afterIndexingDirectory(file);
+		}
+	}
+
+	protected void fireListenersOnBeforeFile(File file) {
+		for(Iterator i=listeners.iterator();i.hasNext();) {
+			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			listener.beforeIndexingFile(file);
+		}
+	}
+
+	protected void fireListenersOnAfterFile(File file) {
+		for(Iterator i=listeners.iterator();i.hasNext();) {
+			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			listener.afterIndexingFile(file);
+		}
+	}
+
+	protected void fireListenersOnErrorFile(File file,Exception ex) {
+		for(Iterator i=listeners.iterator();i.hasNext();) {
+			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			listener.onErrorIndexingFile(file,ex);
+		}
+	}
+
+	protected void fireListenersOnNoHandlerAvailable(File file) {
+		for(Iterator i=listeners.iterator();i.hasNext();) {
+			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			listener.onNotAvailableHandler(file);
+		}
+	}
+
 	private void indexDirectory(IndexWriter writer,File dirToParse) throws IOException {
+		fireListenersOnBeforeDirectory(dirToParse);
 		File[] files = dirToParse.listFiles();
 		for(int cpt=0;cpt<files.length;cpt++) {
 			File currentFile = files[cpt];
@@ -79,6 +131,7 @@ public class DirectoryIndexer extends AbstractIndexer {
 				indexFile(writer, currentFile);
 			}
 		}
+		fireListenersOnAfterDirectory(dirToParse);
 	}
 
 	private FileDocumentHandler getDocumentHandler(String fileName) {
@@ -92,31 +145,37 @@ public class DirectoryIndexer extends AbstractIndexer {
 		return null;
 	}
 
-	private Document doCallHandler(File file,FileReader reader,FileDocumentHandler handler) throws IOException {
-		return handler.getDocument(file,reader);
+	private Document doCallHandler(File file,FileInputStream inputStream,FileDocumentHandler handler) throws IOException {
+		return handler.getDocument(file,inputStream);
 	}
 
 	private void indexFile(IndexWriter writer,File file) throws IOException {
 		FileDocumentHandler handler = getDocumentHandler(file.getPath());
 		if( handler!=null ) {
-			FileReader reader=null;
+			fireListenersOnBeforeFile(file);
+			FileInputStream inputStream=null;
 			try {
-				reader=new FileReader(file);
-				Document document=doCallHandler(file,reader,handler);
+				inputStream=new FileInputStream(file);
+				Document document=doCallHandler(file,inputStream,handler);
 				if( document!=null ) {
-					System.out.println("fichier "+file.getName()+" indexe...");
 					writer.addDocument(document);
 				}
+				fireListenersOnAfterFile(file);
 			} catch(IOException ex) {
-				ex.printStackTrace();
+				fireListenersOnErrorFile(file,ex);
+			} catch(Exception ex) {
+				logger.error("Error during indexing the file "+file.getName(),ex);
+				fireListenersOnErrorFile(file,ex);
 			} finally {
 				try {
-					if( reader!=null ) {
-						reader.close();
+					if( inputStream!=null ) {
+						inputStream.close();
 					}
 				} catch(Exception ex) {
 				}
 			}
+		} else {
+			fireListenersOnNoHandlerAvailable(file);
 		}
 	}
 
@@ -124,7 +183,20 @@ public class DirectoryIndexer extends AbstractIndexer {
 		index(dirToParse,false);
 	}
 
+	private boolean checkBaseDirectory(String dirToParse) {
+		File dir=new File(dirToParse);
+		if( !dir.exists() ) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	public void index(String dirToParse,boolean optimizeIndex) {
+		if( !checkBaseDirectory(dirToParse) ) {
+			throw new RuntimeException("The base directory doesn't exist!");
+		}
+
 		IndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(getIndexFactory());
 		try {
 			File file=new File(dirToParse);
@@ -139,6 +211,7 @@ public class DirectoryIndexer extends AbstractIndexer {
 				writer.optimize();
 			}
 		} catch(IOException ex) {
+			logger.error("Error during indexing the directory : "+dirToParse,ex);
 			throw new LuceneWriteIndexException("Error during indexing the directory : "+dirToParse,ex);
 		} finally {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(getIndexFactory(),writer);

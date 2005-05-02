@@ -19,7 +19,13 @@ package org.springmodules.lucene.index.object.file;
 /**
  * @author Thierry Templier
  */
-public abstract class DocumentExtensionMatching extends AbstractionDocumentMatching implements DocumentMatching {
+public class DocumentExtensionMatching extends AbstractionDocumentMatching implements DocumentMatching {
+
+	private String extension;
+
+	public DocumentExtensionMatching(String extension) {
+		this.extension=extension;
+	}
 
 	/**
 	 * @see org.springmodules.lucene.index.object.DocumentMatching#match(java.lang.String)
@@ -33,6 +39,12 @@ public abstract class DocumentExtensionMatching extends AbstractionDocumentMatch
 		}
 	}
 
-	public abstract boolean matchExtension(String extension);
+	public boolean matchExtension(String extension) {
+		if( extension.equals(this.extension) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 }
