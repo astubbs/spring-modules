@@ -1,5 +1,5 @@
 =========================================
-== Spring/Hivemind sample application  ==
+==   Spring/JSR94 sample application   ==
 =========================================
 
 @author Thierry Templier
