@@ -45,7 +45,6 @@ public class FSDirectoryFactoryBean implements FactoryBean, InitializingBean
         if (location == null) throw new BeanInitializationException("Must specify a location property");
         if (!location.isDirectory()) throw new BeanInitializationException("location must be a directory");
         directory = FSDirectory.getDirectory(location,create);
-        System.out.println("FSDirectoryFactoryBean.afterPropertiesSet = "+directory);
     }
 
     /**
