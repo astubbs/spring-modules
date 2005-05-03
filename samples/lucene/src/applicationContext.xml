@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!--
+	     DATASOURCES
+	-->
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>org.hsqldb.jdbcDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:hsqldb:hsql://localhost:9001</value>
+		</property>
+		<property name="username">
+			<value>sa</value>
+		</property>
+		<property name="password">
+			<value/>
+		</property>
+    </bean>
+
+	<!--
+	     INDEXES
+	-->
+
+    <bean id="fsDirectory" class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean">
+    	<property name="location">
+    		<value>C:/temp/lucene</value>
+    	</property>
+    </bean>
+
+	<bean id="indexFactory" class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean">
+        <property name="directory"><ref local="fsDirectory" /></property>
+        <property name="analyzer">
+            <bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
+        </property>
+	</bean>
+
+	<!--
+	     INDEXING
+	-->
+
+    <bean id="indexingDirectory" class="org.springmodules.samples.lucene.index.console.SimpleDirectoryIndexingImpl">
+    	<property name="indexFactory"><ref local="indexFactory"/></property>
+    </bean>
+
+    <bean id="indexingDatabase" class="org.springmodules.samples.lucene.index.console.SimpleDatabaseIndexingImpl">
+    	<property name="indexFactory"><ref local="indexFactory"/></property>
+    	<property name="dataSource"><ref local="dataSource"/></property>
+    </bean>
+
+	<bean id="indexAccessor" class="org.springmodules.samples.lucene.index.service.IndexAccessorImpl">
+    	<property name="indexFactory"><ref local="indexFactory"/></property>
+	</bean>
+
+	<!--
+	     SEARCHING
+	-->
+
+    <bean id="searcherFactory" class="org.springmodules.lucene.search.factory.SimpleSearcherFactory">
+        <property name="directory"><ref local="fsDirectory" /></property>
+    </bean>
+
+    <!--bean id="multiSearcherFactory" class="org.springmodules.lucene.search.support.MultipleSearcherFactory">
+    	<property name="directories">
+    		<list>
+	    	    <ref local="ramDirectory"/>
+    		    <ref local="fsDirectory"/>
+    		</list>
+    	</property>
+    </bean-->
+
+	<bean id="searchService" class="org.springmodules.samples.lucene.searching.service.SearchServiceImpl">
+        <!--property name="searcherFactory"><ref bean="multiSearcherFactory" /></property-->
+        <property name="searcherFactory"><ref bean="searcherFactory" /></property>
+        <property name="analyzer">
+            <bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
+        </property>
+	</bean>
+
+    <bean id="searcher" class="org.springmodules.samples.lucene.searching.console.SimpleSearcherImpl">
+        <property name="searchService"><ref local="searchService" /></property>
+    </bean>
+</beans>

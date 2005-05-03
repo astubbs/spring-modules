@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+
+<project name="spring-lucene" basedir="." default="usage">
+
+	<property name="name" value="spring-lucene"/>
+
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value=".classes"/>
+	<property name="dist.dir" value="dist"/>
+	<property name="war.dir" value="war"/>
+	<property name="webinf.dir" value="${war.dir}/WEB-INF"/>
+	<property name="weblib.dir" value="${war.dir}/WEB-INF/lib"/>
+
+	<property name="springmodules.root" value="../.."/>
+	<property name="springmodules.dist" value="${springmodules.root}/dist"/>
+	<property name="springmodules.samples" value="${springmodules.root}/samples"/>
+	<property name="springmodules.samples.lucene" value="${springmodules.samples}/lucene"/>
+
+	<property name="main.directory.indexing.class" value="org.springmodules.samples.lucene.index.console.SimpleDirectoryIndexingImpl"/>
+	<property name="main.database.indexing.class" value="org.springmodules.samples.lucene.index.console.SimpleDatabaseIndexingImpl"/>
+
+	<property name="server.hsqldb.class" value="org.hsqldb.Server"/>
+	<property name="admin.hsqldb.class" value="org.hsqldb.util.DatabaseManager"/>
+
+	<path id="lib-classpath">
+
+		<fileset dir="${springmodules.dist}">
+			<include name="*.jar"/>
+			<!--exclude name="*dev*.jar"/-->
+		</fileset>
+		<fileset dir="${springmodules.root}/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${springmodules.samples.lucene}/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+
+	</path>
+
+	<path id="dist-classpath">
+
+		<fileset dir="${dist.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${springmodules.dist}">
+			<include name="**/*.jar"/>
+			<!--exclude name="**/*dev*.jar"/-->
+		</fileset>
+		<fileset dir="${springmodules.root}/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${springmodules.samples.lucene}/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+
+	</path>
+
+	<path id="hsqldb-classpath">
+
+		<fileset dir="${springmodules.root}/lib/hsqldb">
+			<include name="hsqldb.jar"/>
+		</fileset>
+
+	</path>
+
+	<target name="usage">
+
+		<echo message=""/>
+		<echo message="Spring Lucene build file"/>
+		<echo message="------------------------------------------------------"/>
+		<echo message=""/>
+		<echo message="Available targets are:"/>
+		<echo message=""/>
+		<echo message="clean    --> Clean output dirs"/>
+		<echo message="build    --> Compile main Java sources and copy libraries"/>
+		<echo message="starthsqldb --> Launch the sample db"/>
+		<echo message="adminhsqldb --> Administer the sample db"/>
+		<echo message="all      --> Clean, build, warfile"/>
+		<echo message=""/>
+
+	</target>
+
+
+	<target name="clean" description="Clean output dirs (build, weblib, dist)">
+
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+
+	</target>
+
+	<target name="build" description="Compile main source tree java files into class files, generate jar files">
+
+		<mkdir dir="${build.dir}"/>
+
+		<javac destdir="${build.dir}" source="1.3" target="1.3" debug="true"
+					 deprecation="false" optimize="false" failonerror="true">
+			<src path="${src.dir}"/>
+			<classpath refid="lib-classpath"/>
+		</javac>
+
+		<copy todir="${build.dir}" preservelastmodified="true">
+			<fileset dir="${src.dir}">
+				<include name="**/*.xml"/>
+				<include name="**/*.properties"/>
+			</fileset>
+		</copy>
+
+		<mkdir dir="${dist.dir}"/>
+
+		<jar jarfile="${dist.dir}/${name}.jar" compress="true" basedir="${build.dir}"/>
+
+	</target>
+
+	<target name="war" depends="build" description="Make the war">
+
+		<copy todir="${webinf.dir}" preservelastmodified="true">
+			<fileset dir="${src.dir}">
+				<include name="applicationContext.xml"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${weblib.dir}" preservelastmodified="true">
+			<fileset dir="${dist.dir}">
+				<include name="${name}.jar"/>
+			</fileset>
+			<fileset dir="${springmodules.dist}">
+				<include name="**/*.jar"/>
+				<!--exclude name="**/*dev*.jar"/-->
+			</fileset>
+			<fileset dir="${springmodules.root}/lib/aopalliance">
+				<include name="**/*.jar"/>
+			</fileset>
+			<fileset dir="${springmodules.root}/lib/cglib">
+				<include name="**/*.jar"/>
+			</fileset>
+			<fileset dir="${springmodules.root}/lib/hsqldb">
+				<include name="**/*.jar"/>
+			</fileset>
+			<fileset dir="${springmodules.root}/lib/j2ee">
+				<include name="jstl.jar"/>
+			</fileset>
+			<!--fileset dir="${springmodules.root}/lib/jakarta-commons">
+				<include name="**/*.jar"/>
+			</fileset-->
+			<fileset dir="${springmodules.root}/lib/jakarta-taglibs">
+				<include name="standard.jar"/>
+			</fileset>
+			<fileset dir="${springmodules.root}/lib/log4j">
+				<include name="**/*.jar"/>
+			</fileset>
+			<fileset dir="${springmodules.root}/lib/lucene">
+				<include name="**/*.jar"/>
+			</fileset>
+			<fileset dir="${springmodules.root}/lib/spring">
+				<include name="**/*.jar"/>
+			</fileset>
+			<fileset dir="${springmodules.samples.lucene}/lib">
+				<include name="**/*.jar"/>
+			</fileset>
+			
+		</copy>
+
+		<war warfile="${dist.dir}/${name}.war" basedir="${war.dir}" webxml="${war.dir}/WEB-INF/web.xml">
+			<include name="*"/>
+			<include name="jsp/**"/>
+			<include name="images/**"/>
+			<include name="WEB-INF/*.*"/>
+			<include name="WEB-INF/lib/**"/>
+			<include name="WEB-INF/classes/**"/>
+			<exclude name="WEB-INF/web.xml"/>
+			<exclude name="**/.*"/>
+		</war>
+
+	</target>
+
+	<target name="indexing" depends="build" description="Index every directories and database">
+
+		<echo message="Indexing the directory..."/>
+		<java classname="${main.directory.indexing.class}" fork="yes" failonerror="true">
+			<classpath refid="lib-classpath"/>
+			<classpath refid="dist-classpath"/>
+		</java>
+
+		<echo message="Indexing the database..."/>
+		<java classname="${main.database.indexing.class}" fork="yes" failonerror="true">
+			<classpath refid="lib-classpath"/>
+			<classpath refid="dist-classpath"/>
+		</java>
+
+	</target>
+
+	<target name="starthsqldb" description="Launch the sample db">
+
+		<java classname="${server.hsqldb.class}" fork="yes" failonerror="true">
+			<arg line="-port 9001 -database db/test"/>
+			<classpath refid="hsqldb-classpath"/>
+		</java>
+
+	</target>
+
+	<target name="adminhsqldb" description="Administer the sample db">
+
+		<java classname="${admin.hsqldb.class}" fork="yes" failonerror="true">
+			<classpath refid="hsqldb-classpath"/>
+		</java>
+
+	</target>
+
+	<target name="dist" depends="build,war">
+<!--
+			Delegate to build target by depending on it. dist is just to offer
+			a generic target name across all Spring sample apps that may be used
+			for autobuilds testing.
+		-->
+	</target>
+
+
+	<target name="all" depends="clean,build" description="Clean,build"/>
+
+</project>

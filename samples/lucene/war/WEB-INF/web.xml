@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC
+                 "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
+                 "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app id="WebApp">
+    <display-name>SpringLucene</display-name>
+
+    <context-param> 
+        <param-name>contextConfigLocation</param-name> 
+        <param-value>/WEB-INF/applicationContext.xml</param-value> 
+    </context-param> 
+
+    <!--listener> 
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class> 
+    </listener-->
+
+	<servlet>
+		<servlet-name>context</servlet-name>
+		<servlet-class>org.springframework.web.context.ContextLoaderServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+    <servlet>
+        <servlet-name>lucene</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>lucene</servlet-name>
+        <url-pattern>/lucene/*</url-pattern>
+    </servlet-mapping>
+
+	<taglib>
+		<taglib-uri>/spring</taglib-uri>
+		<taglib-location>/WEB-INF/spring.tld</taglib-location>
+	</taglib>
+</web-app>
