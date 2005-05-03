@@ -22,9 +22,6 @@ import org.apache.lucene.search.Searcher;
 
 /**
  * @author Thierry Templier
- *
- * Pour changer le modèle de ce commentaire de type généré, allez à :
- * Fenêtre&gt;Préférences&gt;Java&gt;Génération de code&gt;Code et commentaires
  */
 public interface SearcherFactory {
 	public Searcher getSearcher() throws IOException;
