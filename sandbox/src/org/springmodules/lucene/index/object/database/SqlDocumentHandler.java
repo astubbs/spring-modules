@@ -25,6 +25,5 @@ import org.apache.lucene.document.Document;
  * @author Thierry Templier
  */
 public interface SqlDocumentHandler {
-	public Document getDocument(String sql,ResultSet rs) throws SQLException;
-
+	public Document getDocument(SqlRequest request,ResultSet rs) throws SQLException;
 }

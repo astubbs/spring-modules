@@ -175,7 +175,7 @@ public class DatabaseIndexer extends AbstractIndexer {
 		}
 
 		public Object mapRow(ResultSet rs, int rowNumber) throws SQLException {
-			return handler.getDocument(request.getSql(),rs);
+			return handler.getDocument(request,rs);
 		} 
 	}
 }
