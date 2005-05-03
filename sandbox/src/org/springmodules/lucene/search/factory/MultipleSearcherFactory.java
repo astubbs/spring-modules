@@ -33,6 +33,9 @@ import org.apache.lucene.store.Directory;
 public class MultipleSearcherFactory implements SearcherFactory {
 	private List directories;
 
+	public MultipleSearcherFactory() {
+	}
+
 	public MultipleSearcherFactory(List directories) {
 		this.directories=directories;
 	}

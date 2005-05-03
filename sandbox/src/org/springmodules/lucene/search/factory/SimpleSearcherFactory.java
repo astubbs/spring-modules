@@ -30,6 +30,9 @@ import org.apache.lucene.store.Directory;
 public class SimpleSearcherFactory implements SearcherFactory {
 	private Directory directory;
 
+	public SimpleSearcherFactory() {
+	}
+
 	public SimpleSearcherFactory(Directory directory) {
 		this.directory=directory;
 	}
