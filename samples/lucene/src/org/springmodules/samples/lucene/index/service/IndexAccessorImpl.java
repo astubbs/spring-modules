@@ -16,22 +16,28 @@
 
 package org.springmodules.samples.lucene.index.service;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.springmodules.lucene.index.core.DocumentCreator;
 import org.springmodules.lucene.index.support.LuceneIndexSupport;
+import org.springmodules.lucene.index.support.file.DocumentHandler;
+import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 import org.springmodules.lucene.util.FileUtils;
+import org.springmodules.samples.lucene.index.FileExtensionNotSupported;
 import org.springmodules.samples.lucene.index.domain.IndexInformations;
+import org.springmodules.samples.lucene.index.web.FileDocumentHolder;
 
 /**
  * @author Thierry Templier
  */
 public class IndexAccessorImpl extends LuceneIndexSupport implements IndexAccessor {
+	private DocumentHandlerManager documentHandlerManager;
 
 	public IndexInformations getIndexInformations() {
 		boolean hasDeletions=getTemplate().hasDeletions();
@@ -55,22 +61,33 @@ public class IndexAccessorImpl extends LuceneIndexSupport implements IndexAccess
 		});
 	}
 
-	public void addDocument(final File file) {
+	public void addDocument(final FileDocumentHolder holder) {
 		getTemplate().addDocument(new DocumentCreator() {
 			public Document createDocument() throws IOException {
-				FileInputStream inputStream=null;
+				InputStream inputStream=null;
 				try {
-					inputStream=new FileInputStream(file);
-					Document document = new Document();
-					//The text is analyzed and indexed but not stored
-					document.add(Field.Text("contents", new InputStreamReader(inputStream)));
-					document.add(Field.Keyword("type", "file"));
-					document.add(Field.Keyword("filename", file.getCanonicalPath()));
-					return document;
+					inputStream=new ByteArrayInputStream(holder.getFile());
+					DocumentHandler documentHandler=documentHandlerManager.getDocumentHandler(holder.getFilename());
+					if( documentHandler!=null ) {
+						Map description=new HashMap();
+						description.put(DocumentHandler.FILENAME,holder.getFilename());
+						return documentHandler.getDocument(description,inputStream);
+					} else {
+						throw new FileExtensionNotSupported("No handler for this file extension");
+					}
 				} finally {
 					FileUtils.closeInputStream(inputStream);
 				}
 			}
 		});
 	}
+
+	public DocumentHandlerManager getDocumentHandlerManager() {
+		return documentHandlerManager;
+	}
+
+	public void setDocumentHandlerManager(DocumentHandlerManager manager) {
+		documentHandlerManager = manager;
+	}
+
 }
