@@ -34,8 +34,8 @@ import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
  * It simplifies the use of lucene to index documents or datas using
  * index reader and writer. It helps to avoid common errors and to
  * manage these resource in a flexible manner.
- * It executes core CCI workflow, leaving application code to focus on
- * the way to create lucene document and make some operations on the
+ * It executes core Lucene workflow, leaving application code to focus on
+ * the way to create Lucene document and make some operations on the
  * index.
  *
  * <p>This class is based on the IndexFactory abstraction which is a
@@ -122,7 +122,6 @@ public class LuceneIndexTemplate {
 	/**
 	 * Be careful to use this method in a correct context.
 	 */
-	//TODO: make an precise javadoc about the context 
 	public void undeleteDocuments() {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
@@ -153,6 +152,18 @@ public class LuceneIndexTemplate {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			return reader.hasDeletions();
+		} finally {
+			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+		}
+	}
+
+	/**
+	 * Be careful to use this method in a correct context.
+	 */
+	public void flushDeletes() {
+		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		try {
+			//TODO: implement this method.
 		} finally {
 			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
 		}
