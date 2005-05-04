@@ -43,8 +43,20 @@
 	     INDEXING
 	-->
 
+	<bean id="documentHandlerManager" class="org.springmodules.lucene.index.support.file.SimpleDocumentHandlerManagerFactoryBean">
+		<property name="documentHandlers">
+			<map>
+				<entry key="pdf"><bean class="org.springmodules.samples.lucene.index.file.handlers.PdfBoxDocumentHandler"/></entry>
+				<entry key="rtf"><bean class="org.springmodules.samples.lucene.index.file.handlers.DefaultRtfDocumentHandler"/></entry>
+				<entry key="xls"><bean class="org.springmodules.samples.lucene.index.file.handlers.JExcelDocumentHandler"/></entry>
+				<entry key="doc"><bean class="org.springmodules.samples.lucene.index.file.handlers.PoiWordDocumentHandler"/></entry>
+			</map>
+		</property>
+	</bean>
+
     <bean id="indexingDirectory" class="org.springmodules.samples.lucene.index.console.SimpleDirectoryIndexingImpl">
     	<property name="indexFactory"><ref local="indexFactory"/></property>
+    	<property name="documentHandlerManager"><ref local="documentHandlerManager"/></property>
     </bean>
 
     <bean id="indexingDatabase" class="org.springmodules.samples.lucene.index.console.SimpleDatabaseIndexingImpl">
@@ -54,6 +66,7 @@
 
 	<bean id="indexAccessor" class="org.springmodules.samples.lucene.index.service.IndexAccessorImpl">
     	<property name="indexFactory"><ref local="indexFactory"/></property>
+    	<property name="documentHandlerManager"><ref local="documentHandlerManager"/></property>
 	</bean>
 
 	<!--
