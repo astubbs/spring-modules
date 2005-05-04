@@ -33,7 +33,7 @@ public abstract class SimpleLuceneSearchQuery extends LuceneSearchQuery {
 	/**
 	 * @return
 	 */
-	protected abstract Query constructSearchQuery();
+	protected abstract Query constructSearchQuery(String textToSearch) throws ParseException;
 
 	/**
 	 * @param id
@@ -47,12 +47,18 @@ public abstract class SimpleLuceneSearchQuery extends LuceneSearchQuery {
 	 * @see org.springmodules.lucene.search.object.LuceneSearchQuery#search(java.lang.String)
 	 */
 	public final List search(String textToSearch) {
-		return getTemplate().search(new QueryContructorImpl(),new HitExtractorImpl());
+		return getTemplate().search(new QueryContructorImpl(textToSearch),new HitExtractorImpl());
 	}
 
 	protected class QueryContructorImpl implements QueryCreator {
+		private String textToSearch;
+
+		public QueryContructorImpl(String textToSearch) {
+			this.textToSearch=textToSearch;
+		}
+
 		public Query createQuery(Analyzer analyzer) throws ParseException {
-			return constructSearchQuery();
+			return constructSearchQuery(textToSearch);
 		}
 	}
 
