@@ -16,31 +16,30 @@
 
 package org.springmodules.samples.lucene.index.file.handlers;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.pdfbox.cos.COSDocument;
-import org.pdfbox.pdfparser.PDFParser;
 import org.pdfbox.searchengine.lucene.LucenePDFDocument;
-import org.springmodules.lucene.index.object.file.FileDocumentHandler;
+import org.springmodules.lucene.index.support.file.DocumentHandler;
 
 /**
  * @author Thierry Templier
  */
-public class PdfBoxDocumentHandler implements FileDocumentHandler {
+public class PdfBoxDocumentHandler implements DocumentHandler {
 
 	/**
 	 * @see org.springmodules.lucene.index.object.file.FileDocumentHandler#getDocument(java.io.File, java.io.FileReader)
 	 */
-	public Document getDocument(File file, InputStream inputStream) throws IOException {
+	public Document getDocument(Map description, InputStream inputStream) throws IOException {
 		//The text is analyzed and indexed but not stored
 		Document document=LucenePDFDocument.getDocument(inputStream);
-		document.add(Field.Keyword("type", "file"));
-		document.add(Field.Keyword("filename", file.getCanonicalPath()));
+		if( description.get(DocumentHandler.FILENAME)!=null ) {
+			document.add(Field.Keyword("type", "file"));
+			document.add(Field.Keyword("filename", (String)description.get(DocumentHandler.FILENAME)));
+		}
 		return document;
 	}
 

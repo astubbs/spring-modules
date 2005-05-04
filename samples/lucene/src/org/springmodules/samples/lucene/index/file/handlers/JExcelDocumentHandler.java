@@ -16,11 +16,9 @@
 
 package org.springmodules.samples.lucene.index.file.handlers;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.util.Map;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -29,14 +27,12 @@ import jxl.read.biff.BiffException;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.poi.hdf.extractor.WordDocument;
-import org.pdfbox.searchengine.lucene.LucenePDFDocument;
-import org.springmodules.lucene.index.object.file.FileDocumentHandler;
+import org.springmodules.lucene.index.support.file.DocumentHandler;
 
 /**
  * @author Thierry Templier
  */
-public class JExcelDocumentHandler implements FileDocumentHandler {
+public class JExcelDocumentHandler implements DocumentHandler {
 
 	protected String extractText(InputStream inputStream) throws IOException {
 		StringBuffer text=new StringBuffer();
@@ -72,15 +68,17 @@ public class JExcelDocumentHandler implements FileDocumentHandler {
 	/**
 	 * @see org.springmodules.lucene.index.object.file.FileDocumentHandler#getDocument(java.io.File, java.io.FileReader)
 	 */
-	public Document getDocument(File file, InputStream inputStream) throws IOException {
+	public Document getDocument(Map description, InputStream inputStream) throws IOException {
 		Document document=new Document();
 		String text=extractText(inputStream);
 		if( text!=null || text.length()>0 ) {
 			//The text is analyzed and indexed but not stored
 			document.add(Field.UnStored("contents",text));
 		}
-		document.add(Field.Keyword("type", "file"));
-		document.add(Field.Keyword("filename", file.getCanonicalPath()));
+		if( description.get(DocumentHandler.FILENAME)!=null ) {
+			document.add(Field.Keyword("type", "file"));
+			document.add(Field.Keyword("filename", (String)description.get(DocumentHandler.FILENAME)));
+		}
 		return document;
 	}
 

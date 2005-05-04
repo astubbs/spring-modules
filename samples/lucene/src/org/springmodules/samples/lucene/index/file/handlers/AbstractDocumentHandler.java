@@ -16,12 +16,13 @@
 
 package org.springmodules.samples.lucene.index.file.handlers;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.springmodules.lucene.index.support.file.DocumentHandler;
 
 /**
  * @author Thierry Templier
@@ -33,15 +34,17 @@ public abstract class AbstractDocumentHandler {
 	/**
 	 * @see org.springmodules.lucene.index.object.file.FileDocumentHandler#getDocument(java.io.File, java.io.FileReader)
 	 */
-	public final Document getDocument(File file, InputStream inputStream) throws IOException {
+	public final Document getDocument(Map description, InputStream inputStream) throws IOException {
 		Document document=new Document();
 		String text=extractText(inputStream);
 		if( text!=null && text.length()>0 ) {
 			//The text is analyzed and indexed but not stored
 			document.add(Field.UnStored("contents",text));
 		}
-		document.add(Field.Keyword("type", "file"));
-		document.add(Field.Keyword("filename", file.getCanonicalPath()));
+		if( description.get(DocumentHandler.FILENAME)!=null ) {
+			document.add(Field.Keyword("type", "file"));
+			document.add(Field.Keyword("filename", (String)description.get(DocumentHandler.FILENAME)));
+		}
 		return document;
 	}
 

@@ -16,22 +16,18 @@
 
 package org.springmodules.samples.lucene.index.file.handlers;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.apache.poi.hdf.extractor.WordDocument;
-import org.pdfbox.searchengine.lucene.LucenePDFDocument;
-import org.springmodules.lucene.index.object.file.FileDocumentHandler;
+import org.springmodules.lucene.index.support.file.DocumentHandler;
 
 /**
  * @author Thierry Templier
  */
-public class PoiWordDocumentHandler extends AbstractDocumentHandler implements FileDocumentHandler {
+public class PoiWordDocumentHandler extends AbstractDocumentHandler implements DocumentHandler {
 
 	protected String extractText(InputStream inputStream) throws IOException {
 		WordDocument wordDocument=new WordDocument(inputStream);
