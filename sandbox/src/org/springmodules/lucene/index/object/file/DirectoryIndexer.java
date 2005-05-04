@@ -39,31 +39,30 @@ import org.springmodules.lucene.util.FileUtils;
  * @author Thierry Templier
  */
 public class DirectoryIndexer extends AbstractIndexer {
-	private Map fileDocumentHandlers;
+	private DocumentHandlerManager documentHandlerManager;
 	private List listeners;
 
 	public DirectoryIndexer(IndexFactory indexFactory) {
+		this(indexFactory,null);
+	}
+
+	public DirectoryIndexer(IndexFactory indexFactory,DocumentHandlerManager documentHandlerManager) {
 		setIndexFactory(indexFactory);
-		fileDocumentHandlers=new HashMap();
-		listeners=new ArrayList();
-		registerDefautHandlers();
-	}
-
-	protected void registerDefautHandlers() {
-		//Register a default handler for text file (.txt)
-		registerDocumentHandler(new DocumentExtensionMatching("txt"),new TextDocumentHandler());
-	}
-
-	public void registerDocumentHandler(DocumentMatching matching,FileDocumentHandler handler) {
-		if( matching!=null && handler!=null ) {
-			fileDocumentHandlers.put(matching,handler);
+		if( documentHandlerManager==null ) {
+			this.documentHandlerManager=new SimpleDocumentHandlerManager();
+			this.documentHandlerManager.registerDefautHandlers();
+		} else {
+			this.documentHandlerManager=documentHandlerManager;
 		}
+		listeners=new ArrayList();
+	}
+
+	public void registerDocumentHandler(DocumentMatching matching,DocumentHandler handler) {
+		documentHandlerManager.registerDocumentHandler(matching,handler);
 	}
 
 	public void unregisterDocumentHandler(DocumentMatching matching) {
-		if( matching!=null ) {
-			fileDocumentHandlers.remove(matching);
-		}
+		documentHandlerManager.unregisterDocumentHandler(matching);
 	}
 
 	public void addListener(DocumentIndexingListener listener) {
@@ -134,23 +133,18 @@ public class DirectoryIndexer extends AbstractIndexer {
 		fireListenersOnAfterDirectory(dirToParse);
 	}
 
-	private FileDocumentHandler getDocumentHandler(String fileName) {
-		Set keys=fileDocumentHandlers.keySet();
-		for(Iterator i=keys.iterator();i.hasNext();) {
-			DocumentMatching matching=(DocumentMatching)i.next();
-			if( matching.match(fileName) ) {
-				return (FileDocumentHandler)fileDocumentHandlers.get(matching);
-			}
-		}
-		return null;
+	private DocumentHandler getDocumentHandler(String fileName) {
+		return documentHandlerManager.getDocumentHandler(fileName);
 	}
 
-	private Document doCallHandler(File file,FileInputStream inputStream,FileDocumentHandler handler) throws IOException {
-		return handler.getDocument(file,inputStream);
+	private Document doCallHandler(File file,FileInputStream inputStream,DocumentHandler handler) throws IOException {
+		Map description=new HashMap();
+		description.put(DocumentHandler.FILENAME,file.getAbsolutePath());
+		return handler.getDocument(description,inputStream);
 	}
 
 	private void indexFile(IndexWriter writer,File file) throws IOException {
-		FileDocumentHandler handler = getDocumentHandler(file.getPath());
+		DocumentHandler handler = getDocumentHandler(file.getPath());
 		if( handler!=null ) {
 			fireListenersOnBeforeFile(file);
 			FileInputStream inputStream=null;
@@ -212,4 +206,5 @@ public class DirectoryIndexer extends AbstractIndexer {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(getIndexFactory(),writer);
 		}
 	}
+
 }
