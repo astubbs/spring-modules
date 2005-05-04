@@ -18,7 +18,6 @@ package org.springmodules.lucene.index.object.file;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +33,7 @@ import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 import org.springmodules.lucene.index.object.AbstractIndexer;
 import org.springmodules.lucene.index.object.file.handlers.TextDocumentHandler;
+import org.springmodules.lucene.util.FileUtils;
 
 /**
  * @author Thierry Templier
@@ -167,12 +167,7 @@ public class DirectoryIndexer extends AbstractIndexer {
 				logger.error("Error during indexing the file "+file.getName(),ex);
 				fireListenersOnErrorFile(file,ex);
 			} finally {
-				try {
-					if( inputStream!=null ) {
-						inputStream.close();
-					}
-				} catch(Exception ex) {
-				}
+				FileUtils.closeInputStream(inputStream);
 			}
 		} else {
 			fireListenersOnNoHandlerAvailable(file);
