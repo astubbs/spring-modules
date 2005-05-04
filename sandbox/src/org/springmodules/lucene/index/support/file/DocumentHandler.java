@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.object.file;
+package org.springmodules.lucene.index.support.file;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
+import org.apache.lucene.document.Document;
 
 /**
  * @author Thierry Templier
  */
-public interface DocumentMatching {
-	public boolean match(String fileName);
+public interface DocumentHandler {
+	public final static String FILENAME="filename";
+
+	public Document getDocument(Map description,InputStream inputStream) throws IOException;
 }

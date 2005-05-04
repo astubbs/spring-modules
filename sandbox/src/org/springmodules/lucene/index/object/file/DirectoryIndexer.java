@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -32,7 +31,10 @@ import org.springmodules.lucene.index.LuceneWriteIndexException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 import org.springmodules.lucene.index.object.AbstractIndexer;
-import org.springmodules.lucene.index.object.file.handlers.TextDocumentHandler;
+import org.springmodules.lucene.index.support.file.DocumentHandler;
+import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
+import org.springmodules.lucene.index.support.file.DocumentMatching;
+import org.springmodules.lucene.index.support.file.SimpleDocumentHandlerManager;
 import org.springmodules.lucene.util.FileUtils;
 
 /**

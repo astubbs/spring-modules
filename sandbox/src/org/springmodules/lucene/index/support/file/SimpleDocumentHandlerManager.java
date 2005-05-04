@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.object.file;
+package org.springmodules.lucene.index.support.file;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.springmodules.lucene.index.object.file.handlers.TextDocumentHandler;
+import org.springmodules.lucene.index.support.file.handler.TextDocumentHandler;
 
 /**
  * @author Thierry Templier

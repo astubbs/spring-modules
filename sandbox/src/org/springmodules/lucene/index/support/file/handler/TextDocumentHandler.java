@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.object.file.handlers;
+package org.springmodules.lucene.index.support.file.handler;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,7 +23,7 @@ import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.springmodules.lucene.index.object.file.DocumentHandler;
+import org.springmodules.lucene.index.support.file.DocumentHandler;
 
 /**
  * @author Thierry Templier

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.object.file;
+package org.springmodules.lucene.index.support.file;
 
 /**
  * @author Thierry Templier
@@ -30,10 +30,10 @@ public class DocumentExtensionMatching extends AbstractionDocumentMatching imple
 	/**
 	 * @see org.springmodules.lucene.index.object.DocumentMatching#match(java.lang.String)
 	 */
-	public boolean match(String fileName) {
+	public boolean match(String name) {
 		int index=-1;
-		if( (index=fileName.lastIndexOf("."))!=-1 ) {
-			return matchExtension(fileName.substring(index+1));
+		if( (index=name.lastIndexOf("."))!=-1 ) {
+			return matchExtension(name.substring(index+1));
 		} else {
 			return false;
 		}
