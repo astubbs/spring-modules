@@ -8,11 +8,37 @@
         <property name="indexAccessor"><ref bean="indexAccessor"/></property>
     </bean>
 
+    <bean id="addDocumentController" class="org.springmodules.samples.lucene.index.web.AddDocumentController">
+        <property name="indexAccessor"><ref bean="indexAccessor"/></property>
+        <property name="sessionForm"><value>true</value></property>
+        <property name="commandName"><value>textDocumentHolder</value></property>
+        <property name="commandClass">
+            <value>org.springmodules.samples.lucene.index.web.TextDocumentHolder</value>
+        </property>
+    </bean>
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	    <!-- one of the properties available; the maximum file size in bytes -->
+    	<property name="maxUploadSize">
+	        <value>10000000</value>
+    	</property>
+	</bean>
+
+    <bean id="addDocumentUploadController" class="org.springmodules.samples.lucene.index.web.AddDocumentUploadController">
+        <property name="indexAccessor"><ref bean="indexAccessor"/></property>
+        <property name="sessionForm"><value>true</value></property>
+        <property name="commandName"><value>fileDocumentHolder</value></property>
+        <property name="commandClass">
+            <value>org.springmodules.samples.lucene.index.web.FileDocumentHolder</value>
+        </property>
+    </bean>
+
     <bean id="searchController" class="org.springmodules.samples.lucene.searching.web.SearchController">
         <property name="searchService"><ref bean="searchService"/></property>
         <property name="sessionForm"><value>true</value></property>
         <property name="commandName"><value>webQuery</value></property>
-        <property name="commandClass"><value>org.springmodules.samples.lucene.searching.web.WebQuery</value>
+        <property name="commandClass">
+            <value>org.springmodules.samples.lucene.searching.web.WebQuery</value>
         </property>
         <property name="formView"><value>searchForm</value></property>
         <!--property name="successView"><value>viewResult</value></property-->
@@ -23,7 +49,9 @@
         <property name="mappings">
             <props>
                 <prop key="/search">searchController</prop>
-                <prop key="/infosIndex">infosIndexController</prop>
+                <prop key="/index">infosIndexController</prop>
+                <prop key="/addDocument">addDocumentController</prop>
+                <prop key="/addUploadedDocument">addDocumentUploadController</prop>
             </props>
         </property>
     </bean>
