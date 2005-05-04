@@ -98,34 +98,34 @@ public class LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	public List search(QueryCreator queryConstructor,HitExtractor extractor) {
-		return doSearch(queryConstructor,extractor,null,null);
+	public List search(QueryCreator queryCreator,HitExtractor extractor) {
+		return doSearch(queryCreator,extractor,null,null);
 	}
 
-	public List search(QueryCreator queryConstructor,HitExtractor extractor,Filter filter) {
-		return doSearch(queryConstructor,extractor,filter,null);
+	public List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter) {
+		return doSearch(queryCreator,extractor,filter,null);
 	}
 
-	public List search(QueryCreator queryConstructor,HitExtractor extractor,Sort sort) {
-		return doSearch(queryConstructor,extractor,null,sort);
+	public List search(QueryCreator queryCreator,HitExtractor extractor,Sort sort) {
+		return doSearch(queryCreator,extractor,null,sort);
 	}
 
-	public List search(QueryCreator queryConstructor,HitExtractor extractor,Filter filter,Sort sort) {
-		return doSearch(queryConstructor,extractor,filter,sort);
+	public List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter,Sort sort) {
+		return doSearch(queryCreator,extractor,filter,sort);
 	}
 
-	private List doSearch(QueryCreator queryConstructor,HitExtractor extractor,Filter filter,Sort sort) {
+	private List doSearch(QueryCreator queryCreator,HitExtractor extractor,Filter filter,Sort sort) {
 		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
 			Hits hits=null;
 			if( filter!=null && sort!=null ) {
-				hits=searcher.search(queryConstructor.createQuery(getAnalyzer()),filter,sort);
+				hits=searcher.search(queryCreator.createQuery(getAnalyzer()),filter,sort);
 			} else if( filter!=null ) { 
-				hits=searcher.search(queryConstructor.createQuery(getAnalyzer()),filter);
+				hits=searcher.search(queryCreator.createQuery(getAnalyzer()),filter);
 			} else if( sort!=null ) { 
-				hits=searcher.search(queryConstructor.createQuery(getAnalyzer()),sort);
+				hits=searcher.search(queryCreator.createQuery(getAnalyzer()),sort);
 			} else { 
-				hits=searcher.search(queryConstructor.createQuery(getAnalyzer()));
+				hits=searcher.search(queryCreator.createQuery(getAnalyzer()));
 			}
 			return extractHits(hits,extractor);
 		} catch (IOException ex) {
@@ -137,10 +137,10 @@ public class LuceneSearchTemplate {
 		}
 	}
 
-	private void search(QueryCreator queryConstructor,HitCollector results) {
+	public void search(QueryCreator queryCreator,HitCollector results) {
 		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
-			searcher.search(queryConstructor.createQuery(getAnalyzer()),results);
+			searcher.search(queryCreator.createQuery(getAnalyzer()),results);
 		} catch (IOException ex) {
 			throw new LuceneSearchException("Error during the search",ex);
 		} catch (ParseException ex) {
