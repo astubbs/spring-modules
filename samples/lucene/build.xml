@@ -177,6 +177,7 @@
 
 		<echo message="Indexing the directory..."/>
 		<java classname="${main.directory.indexing.class}" fork="yes" failonerror="true">
+			<arg line="c:/temp/lucene-documents"/>
 			<classpath refid="lib-classpath"/>
 			<classpath refid="dist-classpath"/>
 		</java>
