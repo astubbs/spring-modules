@@ -22,12 +22,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.object.file.DirectoryIndexer;
-import org.springmodules.lucene.index.object.file.DocumentExtensionMatching;
 import org.springmodules.lucene.index.object.file.DocumentIndexingListener;
-import org.springmodules.samples.lucene.index.file.handlers.DefaultRtfDocumentHandler;
-import org.springmodules.samples.lucene.index.file.handlers.JExcelDocumentHandler;
-import org.springmodules.samples.lucene.index.file.handlers.PdfBoxDocumentHandler;
-import org.springmodules.samples.lucene.index.file.handlers.PoiWordDocumentHandler;
+import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 import org.springmodules.samples.lucene.util.ExecutionTimeUtils;
 
 /**
@@ -38,6 +34,7 @@ import org.springmodules.samples.lucene.util.ExecutionTimeUtils;
 public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,InitializingBean {
 
 	private IndexFactory indexFactory;
+	private DocumentHandlerManager documentHandlerManager;
 	private DirectoryIndexer indexer;
 
 	public SimpleDirectoryIndexingImpl() {
@@ -48,26 +45,8 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 	 */
 	public void afterPropertiesSet() throws Exception {
 		if( indexFactory!=null ) {
-			this.indexer=new DirectoryIndexer(indexFactory);
+			this.indexer=new DirectoryIndexer(indexFactory,documentHandlerManager);
 		}
-	}
-
-	public void prepareDirectoryHandlers() {
-		//Register the pdfbox handler for pdf file (.pdf)
-		this.indexer.registerDocumentHandler(new DocumentExtensionMatching("pdf"),
-		                                     new PdfBoxDocumentHandler());
-
-		//Register the poi handler for word file (.doc)
-		this.indexer.registerDocumentHandler(new DocumentExtensionMatching("doc"),
-		                                     new PoiWordDocumentHandler());
-
-		//Register the poi handler for rtf file (.rtf)
-		this.indexer.registerDocumentHandler(new DocumentExtensionMatching("rtf"),
-											 new DefaultRtfDocumentHandler());
-
-		//Register the jExcel handler for xls file (.xls)
-		this.indexer.registerDocumentHandler(new DocumentExtensionMatching("xls"),
-											 new JExcelDocumentHandler());
 	}
 
 	public void indexDirectory(String directory) {
@@ -112,24 +91,28 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 	public static void main(String[] args) {
 		ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext("/applicationContext.xml");
 		DirectoryIndexing indexing=(DirectoryIndexing)ctx.getBean("indexingDirectory");
-		indexing.prepareDirectoryHandlers();
 		indexing.prepareListeners();
 		String directory="c:/temp/lucene-documents";
+		if( args.length==1 ) {
+			directory=args[0];
+		}
 		indexing.indexDirectory(directory);
 	}
 
-	/**
-	 * @return
-	 */
 	public IndexFactory getIndexFactory() {
 		return indexFactory;
 	}
 
-	/**
-	 * @param factory
-	 */
 	public void setIndexFactory(IndexFactory factory) {
 		indexFactory = factory;
+	}
+
+	public DocumentHandlerManager getDocumentHandlerManager() {
+		return documentHandlerManager;
+	}
+
+	public void setDocumentHandlerManager(DocumentHandlerManager manager) {
+		documentHandlerManager = manager;
 	}
 
 }

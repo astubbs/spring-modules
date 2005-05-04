@@ -22,7 +22,6 @@ package org.springmodules.samples.lucene.index.console;
 public interface DirectoryIndexing {
 
 	//Directories indexing
-	public void prepareDirectoryHandlers();
 	public void prepareListeners();
 	public void indexDirectory(String directory);
 }
