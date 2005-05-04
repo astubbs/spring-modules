@@ -33,3 +33,20 @@ in your classpath (e.g. in "%JAVA_HOME%/jre/lib/ext"; included in JDK 1.4).
 
 You need to start the hsqldb database before launch the sample
 application ("build.bat starthsqldb").
+
+Before using, the application
+
+3. CONSOLE APPLICATION
+
+To use the console application, just do:
+"build.bat indexing"
+See the build.xml file to see where files to index are located.
+
+3. WEB APPLICATION
+
+To use the web application, you can use the following uri:
+- http://<server>:<port>/<context>/lucene/index. This shows
+  some statistics on the index and allow you to index text
+  directly and an uploaded file.
+- http://<server>:<port>/<context>/lucene/index. This allows
+  you to make a search on the index.
