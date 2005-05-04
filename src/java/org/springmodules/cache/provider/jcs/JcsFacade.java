@@ -23,6 +23,7 @@ import java.io.Serializable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.jcs.engine.CacheElement;
 import org.apache.jcs.engine.behavior.ICacheElement;
 import org.apache.jcs.engine.behavior.IElementAttributes;
 import org.apache.jcs.engine.control.CompositeCache;
@@ -45,7 +46,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:59 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/04 00:15:48 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -130,7 +131,20 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
                   + cacheGroup);
         }
 
-        if (StringUtils.isNotEmpty(cacheGroup)) {
+        if (StringUtils.isEmpty(cacheGroup)) {
+          try {
+            cache.removeAll();
+          } catch (Exception exception) {
+            StringBuffer messageBuffer = new StringBuffer(64);
+            messageBuffer
+                .append("Exception thrown when flushing cache. Variable 'cacheProfile': ");
+            messageBuffer.append(cacheProfile);
+            String errorMessage = messageBuffer.toString();
+
+            logger.error(errorMessage, exception);
+            throw new CacheWrapperException(errorMessage, exception);
+          }
+        } else {
           GroupId groupId = new GroupId(cacheName, cacheGroup);
           cache.remove(groupId);
         }
@@ -195,7 +209,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
       } else {
         Serializable key = this.getKey(cacheKey, profile);
 
-        ICacheElement newCacheElement = new JcsCacheElement(cache
+        ICacheElement newCacheElement = new CacheElement(cache
             .getCacheName(), key, objectToCache);
 
         IElementAttributes elementAttributes = cache.getElementAttributes()

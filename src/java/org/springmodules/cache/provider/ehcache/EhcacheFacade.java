@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:15 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/04 00:15:02 $
  */
 public final class EhcacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -177,7 +177,7 @@ public final class EhcacheFacade extends AbstractCacheProviderFacadeImpl {
           logger.info(logMessage);
         }
       } else {
-        EhcacheElement newCacheElement = new EhcacheElement(cacheKey,
+        Element newCacheElement = new Element(cacheKey,
             (Serializable) objectToCache);
 
         cache.put(newCacheElement);
@@ -192,22 +192,20 @@ public final class EhcacheFacade extends AbstractCacheProviderFacadeImpl {
   public void removeFromCache(Serializable cacheKey, String cacheProfileId) {
     CacheProfile cacheProfile = super.getCacheProfile(cacheProfileId);
 
-    if (cacheProfile != null) {
-      EhcacheCacheProfile profile = (EhcacheCacheProfile) cacheProfile;
+    EhcacheCacheProfile profile = (EhcacheCacheProfile) cacheProfile;
 
-      String cacheName = profile.getCacheName();
-      if (StringUtils.isNotEmpty(cacheName)) {
-        Cache cache = this.cacheManager.getCache(cacheName);
+    String cacheName = profile.getCacheName();
+    if (StringUtils.isNotEmpty(cacheName)) {
+      Cache cache = this.cacheManager.getCache(cacheName);
 
-        if (cache == null) {
-          if (logger.isInfoEnabled()) {
-            String logMessage = "Method 'removeFromCache(CacheKey, String)'. Could not find EHCache cache: "
-                + cacheName;
-            logger.info(logMessage);
-          }
-        } else {
-          cache.remove(cacheKey);
+      if (cache == null) {
+        if (logger.isInfoEnabled()) {
+          String logMessage = "Method 'removeFromCache(CacheKey, String)'. Could not find EHCache cache: "
+              + cacheName;
+          logger.info(logMessage);
         }
+      } else {
+        cache.remove(cacheKey);
       }
     }
   }
