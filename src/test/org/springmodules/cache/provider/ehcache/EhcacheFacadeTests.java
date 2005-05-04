@@ -1,5 +1,5 @@
 /* 
- * Created on Nov 10, 2004
+ * Created on May 3, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,13 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2004 the original author or authors.
+ * Copyright @2005 the original author or authors.
  */
-
 package org.springmodules.cache.provider.ehcache;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,15 +25,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.CacheWrapperException;
 import org.springmodules.cache.EntryRetrievalException;
-import org.springmodules.cache.key.CacheKey;
-import org.springmodules.cache.mock.FixedValueCacheKey;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
-import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileValidator;
 
 /**
@@ -46,24 +36,19 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:26 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/04 00:17:44 $
  */
-public final class EhcacheFacadeTests extends TestCase {
+public class EhcacheFacadeTests extends TestCase {
 
   /**
-   * Message logger for EHCACHE.
+   * An EHCache Cache.
    */
-  private static Log ehcacheLogger = LogFactory.getLog("net.sf.ehcache");
-
-  /**
-   * The name of the cache (<code>{@link #mockCache}</code>).
-   */
-  private static final String EXISTING_CACHE_NAME = "CACHE";
+  private Cache cache;
 
   /**
    * Key used to store/retrieve an entry of the cache.
    */
-  private CacheKey cacheKey;
+  private String cacheKey;
 
   /**
    * EHCache Cache Manager.
@@ -71,44 +56,34 @@ public final class EhcacheFacadeTests extends TestCase {
   private CacheManager cacheManager;
 
   /**
+   * Name of the EHCache to use.
+   */
+  private String cacheName;
+
+  /**
    * Configuration options for the caching services.
    */
   private EhcacheCacheProfile cacheProfile;
 
   /**
-   * Primary object (instance of the class to test).
+   * Id used by <code>{@link #ehcacheFacade}</code> to get
+   * <code>{@link #cacheProfile}</code>.
+   */
+  private String cacheProfileId;
+
+  /**
+   * Primary object that is under test.
    */
   private EhcacheFacade ehcacheFacade;
-
-  /**
-   * Mock object that simulates an EHCache Cache.
-   */
-  private Cache mockCache;
-
-  /**
-   * Controls the behavior of <code>{@link #mockCache}</code>.
-   */
-  private MockClassControl mockCacheControl;
 
   /**
    * Constructor.
    * 
    * @param name
-   *          the name of the Test Case.
+   *          the name of the test case to construct.
    */
   public EhcacheFacadeTests(String name) {
     super(name);
-  }
-
-  /**
-   * Returns how many times the method <code>{@link Cache#getName()}</code> is
-   * called when accessing the cache.
-   * 
-   * @return the number of times the method <code>getName()</code> is called
-   *         when accessing the cache.
-   */
-  private int callCountForMethodGetNameWhenAccessingCache() {
-    return ehcacheLogger.isDebugEnabled() ? 4 : 3;
   }
 
   /**
@@ -117,79 +92,33 @@ public final class EhcacheFacadeTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.cacheKey = new FixedValueCacheKey("KEY");
+    this.cacheKey = "key";
+
+    this.cacheManager = CacheManager.create();
+    this.cacheName = "testCache";
+
+    this.cache = this.cacheManager.getCache(this.cacheName);
+
+    this.cacheProfile = new EhcacheCacheProfile();
+    this.cacheProfile.setCacheName(this.cacheName);
+
+    this.cacheProfileId = "cacheProfile";
+
+    Map cacheProfiles = new HashMap();
+    cacheProfiles.put(this.cacheProfileId, this.cacheProfile);
 
     this.ehcacheFacade = new EhcacheFacade();
-  }
-
-  /**
-   * Sets up <code>{@link #cacheManager}</code>.
-   */
-  private void setUpCacheManager() throws Exception {
-    this.cacheManager = CacheManager.create();
     this.ehcacheFacade.setCacheManager(this.cacheManager);
+    this.ehcacheFacade.setCacheProfiles(cacheProfiles);
   }
 
   /**
-   * Sets up <code>{@link #cacheProfile}</code>.
-   */
-  private void setUpCacheProfile() {
-    this.cacheProfile = new EhcacheCacheProfile();
-    this.cacheProfile.setCacheName(EXISTING_CACHE_NAME);
-  }
-
-  /**
-   * Sets up:
-   * <ul>
-   * <li><code>{@link #mockCache}</code></li>
-   * <li><code>{@link #mockCacheControl}</code></li>
-   * </ul>
-   */
-  private void setUpMockCache() throws Exception {
-    // set up the constructor arguments for the class to mock.
-    Class[] constructorTypes = new Class[] { String.class, int.class,
-        boolean.class, boolean.class, long.class, long.class };
-
-    Object[] constructorArgs = new Object[] { EXISTING_CACHE_NAME,
-        new Integer(10), new Boolean(false), new Boolean(false), new Long(300),
-        new Long(600) };
-
-    // set up the class to mock.
-    Class classToMock = Cache.class;
-
-    // set up the methods to mock
-    Method getMethod = classToMock.getMethod("get",
-        new Class[] { Serializable.class });
-    Method getNameMethod = classToMock.getMethod("getName", null);
-    Method putMethod = classToMock.getMethod("put",
-        new Class[] { Element.class });
-    Method removeMethod = classToMock.getMethod("remove",
-        new Class[] { Serializable.class });
-    Method removeAllMethod = classToMock.getMethod("removeAll", null);
-    Method[] methodsToMock = new Method[] { getMethod, getNameMethod,
-        putMethod, removeMethod, removeAllMethod };
-
-    // create the mock control.
-    this.mockCacheControl = MockClassControl.createControl(classToMock,
-        constructorTypes, constructorArgs, methodsToMock);
-    // create the mock object.
-    this.mockCache = (Cache) this.mockCacheControl.getMock();
-  }
-
-  /**
-   * Cleans up the test fixture.
+   * Tears down the test fixture.
    */
   protected void tearDown() throws Exception {
     super.tearDown();
 
-    try {
-      if (this.cacheManager != null) {
-        this.cacheManager.removeCache(EXISTING_CACHE_NAME);
-        this.cacheManager.shutdown();
-      }
-    } catch (Exception exception) {
-      // ignore exception
-    }
+    this.cacheManager.shutdown();
   }
 
   /**
@@ -199,7 +128,6 @@ public final class EhcacheFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheProfileEditor() {
-
     AbstractCacheProfileEditor cacheProfileEditor = this.ehcacheFacade
         .getCacheProfileEditor();
 
@@ -220,7 +148,6 @@ public final class EhcacheFacadeTests extends TestCase {
    * equal to <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
-
     CacheProfileValidator cacheProfileValidator = this.ehcacheFacade
         .getCacheProfileValidator();
 
@@ -236,419 +163,214 @@ public final class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onFlushCache(EhcacheCacheProfile)}</code>
-   * flushes the cache.
+   * <code>{@link EhcacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
+   * flushes the cache specified in the given cache profile.
    */
   public void testOnFlushCache() throws Exception {
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
-
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // expectation: remove all elements of the cache.
-    this.mockCache.removeAll();
-
-    // set the state of the mock control to 'replay'.
-    this.mockCacheControl.replay();
-
-    // the cache manager should have the cache we are going to work with.
-    this.cacheManager.addCache(this.mockCache);
+    this.cache.put(new Element(this.cacheKey, "A Value"));
 
     // execute the method to test.
     this.ehcacheFacade.onFlushCache(this.cacheProfile);
 
-    // verify that the expectations of the mock control were met.
-    this.mockCacheControl.verify();
+    Object cachedValue = this.cache.get(this.cacheKey);
+    assertNull("The cache '" + this.cacheName + "' should be empty",
+        cachedValue);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onFlushCache(EhcacheCacheProfile)}</code>
-   * throws a <code>{@link CacheWrapperException}</code> wrapping any
-   * exception thrown by the cache.
+   * <code>{@link EhcacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
+   * does not flush any cache if the cache specified in the given cache profile
+   * does not exist.
    */
-  public void testOnFlushCacheWhenCacheThrowsException() throws Exception {
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
-
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // expectation: remove all elements of the cache. The cache should throw
-    // an exception.
-    this.mockCache.removeAll();
-    this.mockCacheControl.setThrowable(new IllegalStateException());
-
-    // set the state of the mock control to 'replay'.
-    this.mockCacheControl.replay();
-
-    // the cache manager should have the cache we are going to work with.
-    this.cacheManager.addCache(this.mockCache);
+  public void testOnFlushCacheWhenCacheIsNotFound() throws Exception {
+    this.cache.put(new Element(this.cacheKey, "A Value"));
 
     // execute the method to test.
-    try {
-      this.ehcacheFacade.onFlushCache(this.cacheProfile);
-      fail("A CacheWrapperException should have been thrown");
-    } catch (CacheWrapperException exception) {
-      // we expect this exception.
-    }
-
-    // verify that the expectations of the mock control were met.
-    this.mockCacheControl.verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhcacheFacade#onFlushCache(EhcacheCacheProfile)}</code> does
-   * not flush the cache if the cache manager does not contain a cache that has
-   * the same name as the one specified in the cache profile.
-   */
-  public void testOnFlushCacheWithCacheProfileHavingNotExistingCacheName()
-      throws Exception {
-
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
-
-    this.cacheProfile.setCacheName("NOT_EXISTING_CACHE");
-
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // set the state of the mock control to 'replay'.
-    this.mockCacheControl.replay();
-
-    // the cache manager should have the cache we are going to work with.
-    this.cacheManager.addCache(this.mockCache);
-
-    // execute the method to test.
+    this.cacheProfile.setCacheName("NonExistingCache");
     this.ehcacheFacade.onFlushCache(this.cacheProfile);
 
-    // verify that the expectations of the mock control were met.
-    this.mockCacheControl.verify();
+    Object cachedValue = this.cache.get(this.cacheKey);
+    assertNotNull("The cache '" + this.cacheName + "' should not be empty",
+        cachedValue);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onGetFromCache(Serializable, CacheProfile)}</code>
-   * throws a <code>{@link CacheWrapperException}</code> wrapping any
-   * exception thrown by the cache.
+   * <code>{@link EhcacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
+   * does not flush any cache if the name of thec cache specified in the given
+   * cache profile is empty.
    */
-  public void testOnGetFromCacheWhenCacheThrowsException() throws Exception {
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
-
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // expectation: try to get an entry from the cache. The cache should throw
-    // an exception.
-    this.mockCache.get(this.cacheKey);
-    this.mockCacheControl.setThrowable(new IllegalStateException());
-
-    // set the state of the mock control to 'replay'.
-    this.mockCacheControl.replay();
-
-    // the cache manager should have the cache we are going to work with.
-    this.cacheManager.addCache(this.mockCache);
+  public void testOnFlushCacheWhenCacheNameIsEmpty() throws Exception {
+    this.cache.put(new Element(this.cacheKey, "A Value"));
 
     // execute the method to test.
-    try {
-      this.ehcacheFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
-      fail("A CacheWrapperException should have been thrown");
-    } catch (CacheWrapperException exception) {
-      // we are expecting this exception.
-    }
+    this.cacheProfile.setCacheName("");
+    this.ehcacheFacade.onFlushCache(this.cacheProfile);
 
-    // verify that the expectations of the mock control were met.
-    this.mockCacheControl.verify();
+    Object cachedValue = this.cache.get(this.cacheKey);
+    assertNotNull("The cache '" + this.cacheName + "' should not be empty",
+        cachedValue);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onGetFromCache(Serializable, CacheProfile)}</code>
-   * returns an entry from the cache stored under the specified key.
+   * <code>{@link EhcacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * retrieves, from the cache specified in the given cache profile, the entry
+   * stored under the given key.
    */
-  public void testOnGetFromCacheWhenObjectToRetrieveIsCached() throws Exception {
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
+  public void testOnGetFromCache() throws Exception {
+    String objectToStore = "An Object";
+    this.cache.put(new Element(this.cacheKey, objectToStore));
 
-    // entry to be returned by the cache.
-    Serializable cachedObject = "A String :)";
-    Element cachedElement = new Element(this.cacheKey, cachedObject);
-
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // expectation: get an entry from the cache.
-    this.mockCache.get(this.cacheKey);
-    this.mockCacheControl.setReturnValue(cachedElement);
-
-    // set the state of the mock control to 'replay'.
-    this.mockCacheControl.replay();
-
-    // the cache manager should have the cache we are going to work with.
-    this.cacheManager.addCache(this.mockCache);
-
-    // execute the method to test.
-    Object returnedObject = this.ehcacheFacade.onGetFromCache(this.cacheKey,
-        this.cacheProfile);
-    assertSame("<Cached object>", cachedObject, returnedObject);
-
-    // verify that the expectations of the mock control were met.
-    this.mockCacheControl.verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhcacheFacade#onGetFromCache(Serializable, CacheProfile)}</code>
-   * returns <code>null</code> if there is not any entry in the cache stored
-   * under the specified key.
-   */
-  public void testOnGetFromCacheWhenObjectToRetrieveIsNotCached()
-      throws Throwable {
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
-
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // expectation: try to get an entry from the cache. The cache should not
-    // have the entry.
-    this.mockCache.get(this.cacheKey);
-    this.mockCacheControl.setReturnValue(null);
-
-    // set the state of the mock control to 'replay'.
-    this.mockCacheControl.replay();
-
-    // the cache manager should have the cache we are going to work with.
-    this.cacheManager.addCache(this.mockCache);
-
-    // execute the method to test.
-    Object returnedObject = this.ehcacheFacade.onGetFromCache(this.cacheKey,
+    Object cachedObject = this.ehcacheFacade.onGetFromCache(this.cacheKey,
         this.cacheProfile);
 
-    assertNull("The returned object should be null", returnedObject);
-
-    // verify that the expectations of the mock control were met.
-    this.mockCacheControl.verify();
+    assertEquals("<Cached object>", objectToStore, cachedObject);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onGetFromCache(Serializable, CacheProfile)}</code>
-   * throws a <code>{@link EntryRetrievalException}</code> if the name of the
-   * cache specified in the cache profile does not match any cache in the cache
-   * manager.
+   * <code>{@link EhcacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * throws a <code>{@link EntryRetrievalException}</code> if the specified
+   * cache does not exist.
    */
-  public void testOnGetFromCacheWithCacheProfileHavingNotExistingCacheName()
-      throws Throwable {
-
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
-
-    this.cacheProfile.setCacheName("NOT_EXISTING_CACHE");
-
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // set the state of the mock control to 'replay'.
-    this.mockCacheControl.replay();
-
+  public void testOnGetFromCacheWhenCacheIsNotFound() {
     // execute the method to test.
-    this.cacheManager.addCache(this.mockCache);
+    this.cacheProfile.setCacheName("NonExistingCache");
 
     try {
       this.ehcacheFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
-      fail("A EntryRetrievalException should have been thrown");
+      fail("We are expecting a 'EntryRetrievalException'");
+
     } catch (EntryRetrievalException exception) {
       // we are expecting this exception.
     }
-
-    // verify that the expectations of the mock control were met.
-    this.mockCacheControl.verify();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onPutInCache(Serializable, CacheProfile, Object)}</code>
-   * stores entries in the cache.
+   * <code>{@link EhcacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * returns <code>null</code> if the name of the cache, specified in the
+   * given cache profile, is empty.
    */
-  public void testOnPutInCache() throws Throwable {
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
-
-    // object to store in the cache.
-    Serializable objectToCache = "A String :)";
-    EhcacheElement newCacheElement = new EhcacheElement(this.cacheKey,
-        objectToCache);
-
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // expectation: store the object in the cache.
-    this.mockCache.put(newCacheElement);
-
-    // set the state of the mock control to 'replay'.
-    this.mockCacheControl.replay();
-
-    // the cache manager should have the cache we are going to work with.
-    this.cacheManager.addCache(this.mockCache);
-
+  public void testOnGetFromCacheWhenCacheNameIsEmpty() throws Exception {
     // execute the method to test.
+    this.cacheProfile.setCacheName("");
+
+    Object cachedObject = this.ehcacheFacade.onGetFromCache(this.cacheKey,
+        this.cacheProfile);
+
+    assertNull("The retrieved object should be null", cachedObject);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link EhcacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * returns <code>null</code> if the specified key does not exist in the
+   * cache.
+   */
+  public void testOnGetFromCacheWhenKeyIsNotFound() throws Exception {
+    // execute the method to test.
+    Object cachedObject = this.ehcacheFacade.onGetFromCache("NonExistingKey",
+        this.cacheProfile);
+
+    assertNull("The retrieved object should be null", cachedObject);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link EhcacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
+   * stores an entry in the cache specified in the given cache profile using the
+   * given key.
+   */
+  public void testOnPutInCache() throws Exception {
+    String objectToCache = "An Object";
     this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
         objectToCache);
 
-    // verify that the expectations of the mock control were met.
-    this.mockCacheControl.verify();
+    Object cachedObject = this.cache.get(this.cacheKey).getValue();
+    assertSame("<Cached object>", objectToCache, cachedObject);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onPutInCache(Serializable, CacheProfile, Object)}</code>
-   * does not store objects in the cache if the cache manager does not contain a
-   * cache that has the same name as the one specified in the cache profile.
+   * <code>{@link EhcacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
+   * does not store any entry in any cache if the cache specified in the given
+   * cache profile does not exist.
    */
-  public void testOnPutInCacheWithCacheProfileHavingNotExistingCacheName()
-      throws Exception {
-
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
-
-    this.cacheProfile.setCacheName("NOT_EXISTING_CACHE");
-
-    // object to store in the cache.
-    Serializable objectToCache = "A String :)";
-
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // set the state of the mock control to 'replay'.
-    this.mockCacheControl.replay();
-
-    // the cache manager should have the cache we are going to work with.
-    this.cacheManager.addCache(this.mockCache);
-
-    // execute the method to test.
+  public void testOnPutInCacheWhenCacheIsNotFound() throws Exception {
+    this.cacheProfile.setCacheName("NonExistingCache");
     this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-        objectToCache);
+        "An Object");
 
-    // verify that the expectations of the mock control were met.
-    this.mockCacheControl.verify();
+    Element cacheElement = this.cache.get(this.cacheKey);
+    assertNull("The retrieved object should be null", cacheElement);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#removeFromCache(Serializable, String)}</code>
-   * removes from the cache the object stored under the given key.
+   * <code>{@link EhcacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
+   * does not store any entry in any cache if the name of the cache, specified
+   * in the given cache profile, is empty. given key.
+   */
+  public void testOnPutInCacheWhenCacheNameIsEmpty() throws Exception {
+    this.cacheProfile.setCacheName("");
+    this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
+        "An Object");
+
+    Element cacheElement = this.cache.get(this.cacheKey);
+    assertNull("The retrieved object should be null", cacheElement);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link EhcacheFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * removes the entry stored under the given key from the cache specified in
+   * the given cache profile.
    */
   public void testRemoveFromCache() throws Exception {
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
-    String cacheProfileId = "myId";
+    this.cache.put(new Element(this.cacheKey, "An Object"));
 
-    Map cacheProfiles = new HashMap();
-    cacheProfiles.put(cacheProfileId, this.cacheProfile);
-    this.ehcacheFacade.setCacheProfiles(cacheProfiles);
+    this.ehcacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
 
-    // expectation: get the name of the cache.
-    this.mockCache.getName();
-    this.mockCacheControl.setReturnValue(EXISTING_CACHE_NAME, this
-        .callCountForMethodGetNameWhenAccessingCache());
-
-    // expectation: remove the object stored under the given key.
-    this.mockCache.remove(this.cacheKey);
-    this.mockCacheControl.setReturnValue(true);
-
-    // set the state of the mock controls to 'replay'.
-    this.mockCacheControl.replay();
-
-    // the cache manager should have the cache we are going to work with.
-    this.cacheManager.addCache(this.mockCache);
-
-    // execute the method to test.
-    this.ehcacheFacade.removeFromCache(this.cacheKey, cacheProfileId);
-
-    // verify that the expectations of the mock controls were met.
-    this.mockCacheControl.verify();
+    Element cacheElement = this.cache.get(this.cacheKey);
+    assertNull("The element with key '" + this.cacheKey
+        + "' should have been removed from the cache", cacheElement);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#removeFromCache(Serializable, String)}</code>
-   * does not remove any object from the cache if there is not any cache profile
-   * stored under the given id.
+   * <code>{@link EhcacheFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * does not remove any entry if the cache, specified in the given cache
+   * profile, cannot be found.
    */
-  public void testRemoveFromCacheWithCacheProfileIsNull() throws Exception {
-    this.setUpCacheManager();
-    this.setUpMockCache();
-    this.setUpCacheProfile();
+  public void testRemoveFromCacheWhenCacheIsNotFound() throws Exception {
+    this.cache.put(new Element(this.cacheKey, "An Object"));
+    this.cacheProfile.setCacheName("NonExistingCache");
 
-    this.ehcacheFacade.setCacheProfiles(new HashMap());
+    this.ehcacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
 
-    // set the state of the mock controls to 'replay'.
-    this.mockCacheControl.replay();
-
-    // execute the method to test.
-    this.ehcacheFacade.removeFromCache(this.cacheKey, "myId");
-
-    // verify that the expectations of the mock controls were met.
-    this.mockCacheControl.verify();
+    Element cacheElement = this.cache.get(this.cacheKey);
+    assertNotNull("The element with key '" + this.cacheKey
+        + "' should not have been removed from the cache", cacheElement);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#removeFromCache(Serializable, String)}</code>
-   * does not remove any object from the cache if the cache profile does not
-   * have the name of the cache to use.
+   * <code>{@link EhcacheFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * does not remove any entry if the name of the cache, specified in the given
+   * cache profile, is empty.
    */
-  public void testRemoveFromCacheWithEmptyCacheName() throws Exception {
-    this.setUpCacheManager();
-    this.setUpMockCache();
+  public void testRemoveFromCacheWhenCacheNameIsEmpty() throws Exception {
+    this.cache.put(new Element(this.cacheKey, "An Object"));
+    this.cacheProfile.setCacheName("");
 
-    this.cacheProfile = new EhcacheCacheProfile();
-    String cacheProfileId = "myId";
+    this.ehcacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
 
-    Map cacheProfiles = new HashMap();
-    cacheProfiles.put(cacheProfileId, this.cacheProfile);
-    this.ehcacheFacade.setCacheProfiles(cacheProfiles);
-
-    // set the state of the mock controls to 'replay'.
-    this.mockCacheControl.replay();
-
-    // execute the method to test.
-    this.ehcacheFacade.removeFromCache(this.cacheKey, cacheProfileId);
-
-    // verify that the expectations of the mock controls were met.
-    this.mockCacheControl.verify();
+    Element cacheElement = this.cache.get(this.cacheKey);
+    assertNotNull("The element with key '" + this.cacheKey
+        + "' should not have been removed from the cache", cacheElement);
   }
 
   /**
@@ -658,8 +380,6 @@ public final class EhcacheFacadeTests extends TestCase {
    */
   public void testValidateCacheManagerWithCacheManagerEqualToActive()
       throws Exception {
-
-    this.setUpCacheManager();
     this.ehcacheFacade.validateCacheManager();
   }
 
@@ -687,8 +407,6 @@ public final class EhcacheFacadeTests extends TestCase {
    */
   public void testValidateCacheManagerWithCacheManagerNotAliveAndFailQuietlyIsEnabled()
       throws Exception {
-
-    this.setUpCacheManager();
     this.ehcacheFacade.setFailQuietlyEnabled(true);
     this.cacheManager.shutdown();
 
@@ -708,7 +426,6 @@ public final class EhcacheFacadeTests extends TestCase {
   public void testValidateCacheManagerWithCacheManagerNotAliveAndFailQuietlyNotEnabled()
       throws Exception {
 
-    this.setUpCacheManager();
     this.ehcacheFacade.setFailQuietlyEnabled(false);
     this.cacheManager.shutdown();
 
