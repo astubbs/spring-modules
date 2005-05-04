@@ -20,24 +20,28 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.springmodules.lucene.index.object.file.FileDocumentHandler;
+import org.springmodules.lucene.index.object.file.DocumentHandler;
 
 /**
  * @author Thierry Templier
  */
-public class TextDocumentHandler implements FileDocumentHandler {
+public class TextDocumentHandler implements DocumentHandler {
 
 	/**
 	 * @see org.springmodules.lucene.index.object.FileDocumentHandler#getDocument(java.io.File,java.io.FileReader)
 	 */
-	public Document getDocument(File file,InputStream inputStream) throws IOException {
+	public Document getDocument(Map description,InputStream inputStream) throws IOException {
 		Document document = new Document();
 		//The text is analyzed and indexed but not stored
 		document.add(Field.Text("contents", new InputStreamReader(inputStream)));
-		document.add(Field.Keyword("filename", file.getCanonicalPath()));
+		if( description.get(DocumentHandler.FILENAME)!=null ) {
+			document.add(Field.Keyword("type", "file"));
+			document.add(Field.Keyword("filename", (String)description.get(DocumentHandler.FILENAME)));
+		}
 		return document;
 	}
 
