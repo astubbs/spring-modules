@@ -16,10 +16,8 @@
 
 package org.springmodules.samples.lucene.index.console;
 
-import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import javax.sql.DataSource;
 
@@ -32,10 +30,6 @@ import org.springmodules.lucene.index.object.database.DatabaseIndexer;
 import org.springmodules.lucene.index.object.database.DatabaseIndexingListener;
 import org.springmodules.lucene.index.object.database.SqlDocumentHandler;
 import org.springmodules.lucene.index.object.database.SqlRequest;
-import org.springmodules.lucene.index.object.file.DirectoryIndexer;
-import org.springmodules.lucene.index.object.file.DocumentExtensionMatching;
-import org.springmodules.lucene.index.object.file.DocumentIndexingListener;
-import org.springmodules.lucene.index.object.file.handlers.PdfBoxDocumentHandler;
 
 /**
  * Main class to index all datas (directories and databases)

@@ -17,7 +17,6 @@
 package org.springmodules.samples.lucene.index.console;
 
 import java.io.File;
-import java.util.Date;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,10 +24,10 @@ import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.object.file.DirectoryIndexer;
 import org.springmodules.lucene.index.object.file.DocumentExtensionMatching;
 import org.springmodules.lucene.index.object.file.DocumentIndexingListener;
-import org.springmodules.lucene.index.object.file.handlers.DefaultRtfDocumentHandler;
-import org.springmodules.lucene.index.object.file.handlers.JExcelDocumentHandler;
-import org.springmodules.lucene.index.object.file.handlers.PdfBoxDocumentHandler;
-import org.springmodules.lucene.index.object.file.handlers.PoiWordDocumentHandler;
+import org.springmodules.samples.lucene.index.file.handlers.DefaultRtfDocumentHandler;
+import org.springmodules.samples.lucene.index.file.handlers.JExcelDocumentHandler;
+import org.springmodules.samples.lucene.index.file.handlers.PdfBoxDocumentHandler;
+import org.springmodules.samples.lucene.index.file.handlers.PoiWordDocumentHandler;
 import org.springmodules.samples.lucene.util.ExecutionTimeUtils;
 
 /**
@@ -59,16 +58,16 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 		                                     new PdfBoxDocumentHandler());
 
 		//Register the poi handler for word file (.doc)
-		/*this.indexer.registerDocumentHandler(new DocumentExtensionMatching("doc"),
-		                                     new PoiWordDocumentHandler());*/
+		this.indexer.registerDocumentHandler(new DocumentExtensionMatching("doc"),
+		                                     new PoiWordDocumentHandler());
 
 		//Register the poi handler for rtf file (.rtf)
-		/*this.indexer.registerDocumentHandler(new DocumentExtensionMatching("rtf"),
-											 new DefaultRtfDocumentHandler());*/
+		this.indexer.registerDocumentHandler(new DocumentExtensionMatching("rtf"),
+											 new DefaultRtfDocumentHandler());
 
 		//Register the jExcel handler for xls file (.xls)
-		/*this.indexer.registerDocumentHandler(new DocumentExtensionMatching("xls"),
-											 new JExcelDocumentHandler());*/
+		this.indexer.registerDocumentHandler(new DocumentExtensionMatching("xls"),
+											 new JExcelDocumentHandler());
 	}
 
 	public void indexDirectory(String directory) {
