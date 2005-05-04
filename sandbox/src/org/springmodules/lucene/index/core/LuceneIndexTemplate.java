@@ -24,6 +24,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.springmodules.lucene.index.LuceneAddDocumentIndexException;
 import org.springmodules.lucene.index.LuceneManipulateIndexException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
@@ -160,7 +161,7 @@ public class LuceneIndexTemplate {
 	/**
 	 * Be careful to use this method in a correct context.
 	 */
-	public void flushDeletes() {
+	public void flush() {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			//TODO: implement this method.
@@ -193,14 +194,34 @@ public class LuceneIndexTemplate {
 		}
 	}
 
+	private void doAddDocument(IndexWriter writer,Document document,
+								Analyzer analyzer) throws IOException {
+		if( document!=null ) {
+			if( analyzer==null ) {
+				writer.addDocument(document);
+			} else if( getAnalyzer()==null ) {
+				writer.addDocument(document);
+			} else if( analyzer!=null ) {
+				writer.addDocument(document,analyzer);
+			} else if( getAnalyzer()!=null ) {
+				writer.addDocument(document,getAnalyzer());
+			} else {
+				writer.addDocument(document);
+			}
+		} else {
+			throw new LuceneAddDocumentIndexException("The document created is null.");
+		}
+	}
+
 	public void addDocument(DocumentCreator creator) {
+		addDocument(creator,null);
+	}
+
+	public void addDocument(DocumentCreator creator,Analyzer analyze) {
 		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
 		try {
-			if( getAnalyzer()==null ) {
-				writer.addDocument(creator.createDocument());
-			} else {
-				writer.addDocument(creator.createDocument(),getAnalyzer());
-			}
+			Document document=creator.createDocument();
+			doAddDocument(writer,document,null);
 		} catch(IOException ex) {
 			throw new LuceneManipulateIndexException("Error during adding a document.",ex);
 		} finally {
@@ -209,16 +230,15 @@ public class LuceneIndexTemplate {
 	}
 
 	public void addDocuments(DocumentsCreator creator) {
+		addDocuments(creator,null);
+	}
+
+	public void addDocuments(DocumentsCreator creator,Analyzer analyzer) {
 		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
 		try {
-			if( getAnalyzer()==null ) {
-				for(Iterator i=creator.createDocuments().iterator();i.hasNext();) {
-					writer.addDocument((Document)i.next());
-				}
-			} else {
-				for(Iterator i=creator.createDocuments().iterator();i.hasNext();) {
-					writer.addDocument((Document)i.next(),getAnalyzer());
-				}
+			for(Iterator i=creator.createDocuments().iterator();i.hasNext();) {
+				Document document=(Document)i.next();
+				doAddDocument(writer,document,analyzer);
 			}
 		} catch(IOException ex) {
 			throw new LuceneManipulateIndexException("Error during adding a document.",ex);
