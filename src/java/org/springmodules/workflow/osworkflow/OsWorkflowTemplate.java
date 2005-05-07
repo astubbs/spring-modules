@@ -52,9 +52,8 @@ import org.springframework.util.StringUtils;
  * class. Instead, the workflow name is set via the required <code>workflowName</code> property. The same workflow name
  * is used for all operations.
  * <p/>
- * Workflow context parameters such as the caller name and current instance ID are managed by an implementation of
- * <code>WorkflowContextManager</code>. Out of the box, the <code>ThreadLocalWorkflowContextManager</code> maintains
- * workflow context information on a per-thread basis, which is ideal for web applications. It is intended that context
+ * Workflow context parameters such as the caller name and current instance ID are stored in an <code>OsWorkflowContext</code>
+ * which is bound to the current thread using the <code>OsWorkflowContextHolder</code>. It is intended that context
  * information be set externally to the core application code. For this purpose, Spring Modules provides the
  * <code>AbstractWorkflowContextHandlerInterceptor</code> (and its implementations) which allows for context information
  * to be managed transparently in a web environment.
@@ -66,12 +65,12 @@ import org.springframework.util.StringUtils;
  * @see org.springmodules.workflow.WorkflowException
  * @see #execute(OsWorkflowCallback)
  * @see OsWorkflowContext
+ * @see OsWorkflowContextHolder
  * @see org.springmodules.workflow.osworkflow.web.AbstractWorkflowContextHandlerInterceptor
  * @see #setWorkflowName(String)
  * @since 0.2
  */
 public class OsWorkflowTemplate implements InitializingBean {
-
 
 	/**
 	 * The <code>Configuration</code> used to load workflow definitions. Uses the OSWorkflow <code>DefaultConfiguration</code>
@@ -213,7 +212,12 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
-
+	/**
+	 * Gets the <code>WorkflowDescriptor</code> for the configured workflow.
+	 *
+	 * @see #getWorkflowName()
+	 * @see #setWorkflowName(String)
+	 */
 	public WorkflowDescriptor getWorkflowDescriptor() {
 		return (WorkflowDescriptor) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -222,6 +226,9 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
+	/**
+	 * Gets the <code>List</code> of history <code>Step</code>s for the current workflow instance.
+	 */
 	public List getHistorySteps() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -230,6 +237,9 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
+	/**
+	 * Gets the <code>List</code> of current <code>Step</code>s for the current workflow instance.
+	 */
 	public List getCurrentSteps() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -238,6 +248,9 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
+	/**
+	 * Gets the <code>List</code> of history <code>StepDescriptor</code>s for the current workflow instance.
+	 */
 	public List getHistoryStepDescriptors() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -247,6 +260,9 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
+	/**
+	 * Gets the <code>List</code> of current <code>StepDescriptor</code>s for the current workflow instance.
+	 */
 	public List getCurrentStepDescriptors() {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -256,10 +272,16 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
+	/**
+	 * Gets the IDs of actions available to the caller on the current workflow instance.
+	 */
 	public int[] getAvailableActions() {
 		return this.getAvailableActions(null);
 	}
 
+	/**
+	 * Gets the IDs of actions available to the caller that match the supplied inputs on the current workflow instance.
+	 */
 	public int[] getAvailableActions(final Map inputs) {
 		return (int[]) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -268,11 +290,17 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
-
+	/**
+	 * Gets a <code>List</code> of the <code>ActionDescriptor</code>s available to the caller on the current workflow instance.
+	 */
 	public List getAvailableActionDescriptors() {
 		return this.getAvailableActionDescriptors(null);
 	}
 
+	/**
+	 * Gets a <code>List</code> of the <code>ActionDescriptor</code>s available to the caller that match the supplied
+	 * inputs on the current workflow instance.
+	 */
 	public List getAvailableActionDescriptors(final Map inputs) {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -290,6 +318,9 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
+	/**
+	 * Gets the entry state for the current workflow instance.
+	 */
 	public int getEntryState() {
 		Integer state = (Integer) this.execute(new OsWorkflowCallback() {
 					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -300,6 +331,11 @@ public class OsWorkflowTemplate implements InitializingBean {
 		return state.intValue();
 	}
 
+	/**
+	 * Gets the <code>PropertySet</code> for the current workflow instance.
+	 *
+	 * @return
+	 */
 	public PropertySet getPropertySet() {
 		return (PropertySet) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -308,20 +344,37 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
-	public boolean canInitialize(final String workflowName, final int initialStep) {
-		return this.canInitialize(workflowName, initialStep, null);
+	/**
+	 * Returns <code>true</code> if the configured workflow can be configured with the supplied initial step.
+	 *
+	 * @see #setWorkflowName(String)
+	 * @see #getWorkflowName()
+	 */
+	public boolean canInitialize(final int initialStep) {
+		return this.canInitialize(initialStep, null);
 	}
 
-	public boolean canInitialize(final String workflowName, final int initialStep, final Map inputs) {
+	/**
+	 * Returns <code>true</code> if the configured workflow can be configured with the supplied initial step and inputs.
+	 *
+	 * @see #setWorkflowName(String)
+	 * @see #getWorkflowName()
+	 */
+	public boolean canInitialize(final int initialStep, final Map inputs) {
 		Boolean returnValue = (Boolean) this.execute(new OsWorkflowCallback() {
 					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-						boolean canInit = workflow.canInitialize(workflowName, initialStep, inputs);
+						boolean canInit = workflow.canInitialize(OsWorkflowTemplate.this.workflowName, initialStep, inputs);
 						return (canInit) ? Boolean.TRUE : Boolean.FALSE;
 					}
 				});
 		return returnValue.booleanValue();
 	}
 
+	/**
+	 * Returns <code>true</code> if the entry state of the current workflow can be modified to the supplied state.
+	 *
+	 * @see #changeEntryState(int)
+	 */
 	public boolean canModifyEntryState(final int newState) {
 		Boolean returnValue = (Boolean) this.execute(new OsWorkflowCallback() {
 					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -333,6 +386,11 @@ public class OsWorkflowTemplate implements InitializingBean {
 		return returnValue.booleanValue();
 	}
 
+	/**
+	 * Changes the entry state of the current workflow to the supplied state.
+	 *
+	 * @see #canModifyEntryState(int)
+	 */
 	public void changeEntryState(final int newState) {
 		this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -342,6 +400,13 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
+	/**
+	 * Executes the supplied <code>WorkflowExpressionQuery</code> and returns a <code>List</code> of IDs that match the
+	 * query criteria.
+	 *
+	 * @see com.opensymphony.workflow.query.WorkflowExpressionQuery
+	 * @see com.opensymphony.workflow.Workflow#query(com.opensymphony.workflow.query.WorkflowExpressionQuery)
+	 */
 	public List query(final WorkflowExpressionQuery query) {
 		return (List) this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
@@ -350,6 +415,10 @@ public class OsWorkflowTemplate implements InitializingBean {
 		});
 	}
 
+	/**
+	 * Executes the supplied <code>OsWorkflowCallback</code> against the current workflow instance as the caller bound
+	 * to the current <code>OsWorkflowContext</code>.
+	 */
 	public Object execute(OsWorkflowCallback callback) {
 		try {
 			Workflow workflow = createWorkflow(OsWorkflowContextHolder.getWorkflowContext().getCaller());
@@ -362,20 +431,30 @@ public class OsWorkflowTemplate implements InitializingBean {
 		}
 	}
 
-
+	/**
+	 * Creates a <code>Workflow</code> for the supplied caller.
+	 */
 	protected Workflow createWorkflow(String caller) throws WorkflowException {
 		return new BasicWorkflow(caller);
 	}
 
-
+	/**
+	 * Binds the supplied instance ID to the current <code>OsWorkflowContext</code>.
+	 */
 	protected void bindInstanceIdToWorkflowContext(long id) {
 		OsWorkflowContextHolder.getWorkflowContext().setInstanceId(id);
 	}
 
+	/**
+	 * Retrieves the instance ID bound to the current <code>OsWorkflowContext</code>.
+	 */
 	protected long getInstanceId() {
 		return OsWorkflowContextHolder.getWorkflowContext().getInstanceId();
 	}
 
+	/**
+	 * Converts a <code>List</code> of <code>Step</code>s to a <code>List</code> of <code>StepDescriptor</code>s.
+	 */
 	private List convertStepsToStepDescriptors(List steps, Workflow workflow) {
 		WorkflowDescriptor descriptor = workflow.getWorkflowDescriptor(OsWorkflowTemplate.this.workflowName);
 

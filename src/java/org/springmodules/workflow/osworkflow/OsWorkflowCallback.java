@@ -13,15 +13,27 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 package org.springmodules.workflow.osworkflow;
 
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
 
 /**
- * @author robh
+ * Callback interface for OSWorkflow code. To be used with the <code>OsWorkflowTemplate.execute()</code>
+ * method, assumably often as anonymous classes within a method implementation.
+ *
+ * @author Rob Harrop
  */
 public interface OsWorkflowCallback {
 
+	/**
+	 * Callback method invoked by the <code>OsWorkflowTemplate</code> with a <code>Workflow</code> instance configured the
+	 * current caller.
+	 *
+	 * @param workflow the <code>Workflow</code> instance to use.
+	 * @return any return object or <code>null</code>.
+	 * @throws WorkflowException in the case of OSWorkflow errors.
+	 */
 	Object doWithWorkflow(Workflow workflow) throws WorkflowException;
 }
