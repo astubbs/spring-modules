@@ -13,7 +13,7 @@
 	<steps>
 		<step id="1" name="Awaiting Document">
 			<actions>
-				<action id="1" name="Upload Document" view="upload">
+				<action id="1" name="Create Document" view="upload">
 					<restrict-to>
 						<conditions>
 							<condition type="class">

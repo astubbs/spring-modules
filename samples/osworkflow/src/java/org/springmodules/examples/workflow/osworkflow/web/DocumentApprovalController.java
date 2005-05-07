@@ -17,7 +17,10 @@ import com.opensymphony.workflow.spi.Step;
 import com.opensymphony.workflow.spi.WorkflowEntry;
 import com.opensymphony.module.propertyset.PropertySet;
 import org.springmodules.workflow.osworkflow.OsWorkflowTemplate;
+
+import org.springmodules.workflow.osworkflow.OsWorkflowContextHolder;
 import org.springmodules.examples.workflow.osworkflow.service.DocumentApprovalWorkflow;
+
 import org.springmodules.examples.workflow.osworkflow.model.Document;
 
 import org.springframework.web.servlet.ModelAndView;
@@ -45,6 +48,7 @@ public class DocumentApprovalController extends MultiActionController {
 	public ModelAndView status(HttpServletRequest request, HttpServletResponse response) {
 
 		Map model = new HashMap();
+
 		model.put("document", workflow.getCurrentDocument());
 		model.put("comments", workflow.getCurrentComments());
 		model.put("currentSteps", workflow.getCurrentStepDescriptors());

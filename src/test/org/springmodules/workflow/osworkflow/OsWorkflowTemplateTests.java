@@ -11,6 +11,7 @@ import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.map.MapPropertySet;
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
+import com.opensymphony.workflow.WorkflowContext;
 import com.opensymphony.workflow.query.WorkflowExpressionQuery;
 import com.opensymphony.workflow.basic.BasicWorkflow;
 import com.opensymphony.workflow.loader.ActionDescriptor;
@@ -35,11 +36,9 @@ public class OsWorkflowTemplateTests extends TestCase {
 
 	private ConfigurationBean configuration;
 
-	private WorkflowContextManager manager = new ThreadLocalWorkflowContextManager();
-
 	public void setUp() {
-		this.manager.clear();
-		this.manager.setCaller("robh");
+		OsWorkflowContextHolder.clearWorkflowContext();
+		OsWorkflowContextHolder.getWorkflowContext().setCaller("robh");
 
 		Properties workflowLocations = new Properties();
 		workflowLocations.put(WAKE_UP, "classpath:org/springmodules/workflow/osworkflow/wakeUp.xml");
@@ -51,22 +50,9 @@ public class OsWorkflowTemplateTests extends TestCase {
 
 	public void testWithoutWorkflowName() throws Exception {
 		OsWorkflowTemplate template = new OsWorkflowTemplate();
-		template.setContextManager(this.manager);
 		try {
 			template.afterPropertiesSet();
 			fail("Cannot create OsWorkflowTemplate without workflow name");
-		}
-		catch (FatalBeanException ex) {
-			//success
-		}
-	}
-
-	public void testWithoutManager() throws Exception {
-		OsWorkflowTemplate template = new OsWorkflowTemplate();
-		template.setWorkflowName(WAKE_UP);
-		try {
-			template.afterPropertiesSet();
-			fail("Cannot create OsWorkflowTemplate without context manager");
 		}
 		catch (FatalBeanException ex) {
 			//success
@@ -85,7 +71,6 @@ public class OsWorkflowTemplateTests extends TestCase {
 			}
 		};
 
-		template.setContextManager(this.manager);
 
 		Object retVal = template.execute(new OsWorkflowCallback() {
 					public Object doWithWorkflow(Workflow innerWorkflow) throws WorkflowException {
@@ -576,12 +561,12 @@ public class OsWorkflowTemplateTests extends TestCase {
 	}
 
 	private void bindMockInstanceIdToContext() {
-		this.manager.setInstanceId(MOCK_INSTANCE_ID);
+		OsWorkflowContextHolder.getWorkflowContext().setInstanceId(MOCK_INSTANCE_ID);
 	}
 
 
 	private void assertContextHasMockInstanceId() {
-		assertEquals("InstanceId is incorrect", MOCK_INSTANCE_ID, this.manager.getInstanceId());
+		assertEquals("InstanceId is incorrect", MOCK_INSTANCE_ID, OsWorkflowContextHolder.getWorkflowContext().getInstanceId());
 	}
 
 	private MockControl createMockWorkflowControl() {
@@ -591,7 +576,6 @@ public class OsWorkflowTemplateTests extends TestCase {
 	private void setProperties(OsWorkflowTemplate template) throws Exception {
 		template.setConfiguration(configuration);
 		template.setWorkflowName(WAKE_UP);
-		template.setContextManager(this.manager);
 		template.afterPropertiesSet();
 	}
 

@@ -65,13 +65,13 @@ import org.springframework.util.StringUtils;
  * @see WorkflowException
  * @see org.springmodules.workflow.WorkflowException
  * @see #execute(OsWorkflowCallback)
- * @see WorkflowContextManager
+ * @see OsWorkflowContext
  * @see org.springmodules.workflow.osworkflow.web.AbstractWorkflowContextHandlerInterceptor
- * @see #setContextManager(WorkflowContextManager)
  * @see #setWorkflowName(String)
  * @since 0.2
  */
 public class OsWorkflowTemplate implements InitializingBean {
+
 
 	/**
 	 * The <code>Configuration</code> used to load workflow definitions. Uses the OSWorkflow <code>DefaultConfiguration</code>
@@ -88,11 +88,6 @@ public class OsWorkflowTemplate implements InitializingBean {
 	 * The name of the workflow definition to use.
 	 */
 	private String workflowName;
-
-	/**
-	 * The <code>WorkflowContextManager</code> used to manage caller and instance ID context.
-	 */
-	private WorkflowContextManager contextManager;
 
 	/**
 	 * Sets the <code>Configuration<code> used to load workflow definitions.
@@ -123,20 +118,6 @@ public class OsWorkflowTemplate implements InitializingBean {
 	}
 
 	/**
-	 * Sets the <code>WorkflowContextManager</code> to use. Required.
-	 */
-	public void setContextManager(WorkflowContextManager contextManager) {
-		this.contextManager = contextManager;
-	}
-
-	/**
-	 * Gets the <code>WorkflowContextManager</code>.
-	 */
-	public WorkflowContextManager getContextManager() {
-		return this.contextManager;
-	}
-
-	/**
 	 * Checks that both the <code>workflowName</code> and <code>contextManager</code> properties have both been specified.
 	 *
 	 * @throws FatalBeanException if any of the required properties is not set.
@@ -144,10 +125,6 @@ public class OsWorkflowTemplate implements InitializingBean {
 	public void afterPropertiesSet() throws Exception {
 		if (!StringUtils.hasText(this.workflowName)) {
 			throw new FatalBeanException("Property [workflowName] is required.");
-		}
-
-		if (this.contextManager == null) {
-			throw new FatalBeanException("Property [contextManager] is required");
 		}
 	}
 
@@ -185,14 +162,14 @@ public class OsWorkflowTemplate implements InitializingBean {
 	 * from the <code>WorkflowContextManager</code>. The resulting workflow instance ID is stored using the
 	 * <code>WorkflowContextManager</code>.
 	 *
-	 * @see WorkflowContextManager#getCaller()
-	 * @see WorkflowContextManager#setInstanceId(long)
+	 * @see OsWorkflowContext#getCaller()
+	 * @see OsWorkflowContext#setInstanceId(long)
 	 */
 	public void initialize(final int initialAction, final Map inputs) {
 		this.execute(new OsWorkflowCallback() {
 			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
 				long id = workflow.initialize(OsWorkflowTemplate.this.workflowName, initialAction, inputs);
-				OsWorkflowTemplate.this.contextManager.setInstanceId(id);
+				bindInstanceIdToWorkflowContext(id);
 				return null;
 			}
 		});
@@ -225,7 +202,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 	 * Do the workflow action specified by the given action ID passing in the supplied inputs. The workflow instance ID
 	 * to execute the action against is retreived from the <code>WorkflowContextManager</code>.
 	 *
-	 * @see WorkflowContextManager#getInstanceId()
+	 * @see OsWorkflowContext#getInstanceId()
 	 */
 	public void doAction(final int actionId, final Map inputs) {
 		this.execute(new OsWorkflowCallback() {
@@ -375,7 +352,7 @@ public class OsWorkflowTemplate implements InitializingBean {
 
 	public Object execute(OsWorkflowCallback callback) {
 		try {
-			Workflow workflow = createWorkflow(OsWorkflowTemplate.this.contextManager.getCaller());
+			Workflow workflow = createWorkflow(OsWorkflowContextHolder.getWorkflowContext().getCaller());
 			workflow.setConfiguration(this.configuration);
 			return callback.doWithWorkflow(workflow);
 		}
@@ -390,8 +367,13 @@ public class OsWorkflowTemplate implements InitializingBean {
 		return new BasicWorkflow(caller);
 	}
 
+
+	protected void bindInstanceIdToWorkflowContext(long id) {
+		OsWorkflowContextHolder.getWorkflowContext().setInstanceId(id);
+	}
+
 	protected long getInstanceId() {
-		return this.contextManager.getInstanceId();
+		return OsWorkflowContextHolder.getWorkflowContext().getInstanceId();
 	}
 
 	private List convertStepsToStepDescriptors(List steps, Workflow workflow) {

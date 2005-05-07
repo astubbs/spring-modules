@@ -20,7 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springmodules.workflow.osworkflow.WorkflowContextManager;
+import org.springmodules.workflow.osworkflow.OsWorkflowContextHolder;
+import org.springmodules.workflow.osworkflow.OsWorkflowContext;
 
 import org.springframework.web.bind.RequestUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,17 +36,11 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 
 	private static final String DEFAULT_OVERRIDE_REQUEST_PARAMETER = "instanceId";
 
-	private WorkflowContextManager contextManager;
-
 	private boolean sessionStorageEnabled = true;
 
 	private boolean allowOverrideWithRequestParameter = true;
 
 	private String overrideRequestParameterKey = DEFAULT_OVERRIDE_REQUEST_PARAMETER;
-
-	public void setContextManager(WorkflowContextManager contextManager) {
-		this.contextManager = contextManager;
-	}
 
 	public void setSessionStorageEnabled(boolean sessionStorageEnabled) {
 		this.sessionStorageEnabled = sessionStorageEnabled;
@@ -74,12 +69,14 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		this.contextManager.setCaller(getCaller(request));
+		OsWorkflowContext context = OsWorkflowContextHolder.getWorkflowContext();
+		context.setCaller(getCaller(request));
 
 		if (isAllowOverrideWithRequestParameter()) {
 			long instanceId = RequestUtils.getLongParameter(request, getOverrideRequestParameterKey(), Long.MIN_VALUE);
-			if (instanceId != Long.MIN_VALUE) {
-				this.contextManager.setInstanceId(instanceId);
+			boolean set = (instanceId != Long.MIN_VALUE);
+			if (set) {
+				context.setInstanceId(instanceId);
 			}
 		}
 		else if (isSessionStorageEnabled()) {
@@ -88,7 +85,7 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 			Object instanceId = session.getAttribute(SESSION_KEY_INSTANCE_ID);
 
 			if ((instanceId != null) && (instanceId instanceof Long)) {
-				this.contextManager.setInstanceId(((Long) instanceId).longValue());
+				context.setInstanceId(((Long) instanceId).longValue());
 			}
 		}
 
@@ -98,10 +95,13 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
 			throws Exception {
 
-		if (isSessionStorageEnabled() && this.contextManager.isInstanceIdBound()) {
+		OsWorkflowContext context = OsWorkflowContextHolder.getWorkflowContext();
+
+		if (isSessionStorageEnabled() && context.hasInstanceId()) {
+
 			HttpSession session = request.getSession();
 
-			session.setAttribute(SESSION_KEY_INSTANCE_ID, new Long(this.contextManager.getInstanceId()));
+			session.setAttribute(SESSION_KEY_INSTANCE_ID, new Long(context.getInstanceId()));
 		}
 	}
 
