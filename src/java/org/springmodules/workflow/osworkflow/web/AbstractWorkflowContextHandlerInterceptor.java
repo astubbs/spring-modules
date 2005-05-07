@@ -13,6 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 package org.springmodules.workflow.osworkflow.web;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springmodules.workflow.osworkflow.WorkflowContextManager;
 
+import org.springframework.web.bind.RequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -31,9 +33,15 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 
 	public static final String SESSION_KEY_INSTANCE_ID = "org.springmodules.workflow.osworkflow.instanceId";
 
+	private static final String DEFAULT_OVERRIDE_REQUEST_PARAMETER = "instanceId";
+
 	private WorkflowContextManager contextManager;
 
 	private boolean sessionStorageEnabled = true;
+
+	private boolean allowOverrideWithRequestParameter = true;
+
+	private String overrideRequestParameterKey = DEFAULT_OVERRIDE_REQUEST_PARAMETER;
 
 	public void setContextManager(WorkflowContextManager contextManager) {
 		this.contextManager = contextManager;
@@ -43,8 +51,24 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 		this.sessionStorageEnabled = sessionStorageEnabled;
 	}
 
+	public void setAllowOverrideWithRequestParameter(boolean allowOverrideWithRequestParameter) {
+		this.allowOverrideWithRequestParameter = allowOverrideWithRequestParameter;
+	}
+
+	public void setOverrideRequestParameterKey(String overrideRequestParameterKey) {
+		this.overrideRequestParameterKey = overrideRequestParameterKey;
+	}
+
 	protected boolean isSessionStorageEnabled() {
 		return sessionStorageEnabled;
+	}
+
+	protected boolean isAllowOverrideWithRequestParameter() {
+		return allowOverrideWithRequestParameter;
+	}
+
+	protected String getOverrideRequestParameterKey() {
+		return overrideRequestParameterKey;
 	}
 
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -52,7 +76,13 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 
 		this.contextManager.setCaller(getCaller(request));
 
-		if (isSessionStorageEnabled()) {
+		if (isAllowOverrideWithRequestParameter()) {
+			long instanceId = RequestUtils.getLongParameter(request, getOverrideRequestParameterKey(), Long.MIN_VALUE);
+			if (instanceId != Long.MIN_VALUE) {
+				this.contextManager.setInstanceId(instanceId);
+			}
+		}
+		else if (isSessionStorageEnabled()) {
 			HttpSession session = request.getSession();
 
 			Object instanceId = session.getAttribute(SESSION_KEY_INSTANCE_ID);
@@ -65,12 +95,10 @@ public abstract class AbstractWorkflowContextHandlerInterceptor extends HandlerI
 		return true;
 	}
 
-	public void postHandle(
-			HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
+	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
 			throws Exception {
 
-
-		if (isSessionStorageEnabled()) {
+		if (isSessionStorageEnabled() && this.contextManager.isInstanceIdBound()) {
 			HttpSession session = request.getSession();
 
 			session.setAttribute(SESSION_KEY_INSTANCE_ID, new Long(this.contextManager.getInstanceId()));

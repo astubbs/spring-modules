@@ -26,4 +26,9 @@
 
 	<bean id="workflowContextManager" class="org.springmodules.workflow.osworkflow.ThreadLocalWorkflowContextManager"/>
 
+	<bean id="workflow" class="org.springmodules.examples.workflow.osworkflow.service.OsWorkflowDocumentApprovalWorkflow">
+		<property name="template">
+			<ref local="workflowTemplate"/>
+		</property>
+	</bean>
 </beans>

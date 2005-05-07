@@ -15,45 +15,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/opensymphony/propertyset-1.3-21Apr04.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/opensymphony/oscache-2.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/opensymphony/osworkflow-2.7.0.jar!/" />
-        </CLASSES>
-        <JAVADOC>
-          <root url="file://R:/opt/osworkflow-2.7.0/docs/api" />
-        </JAVADOC>
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-logging.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/opensymphony/oscore-2.2.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -71,7 +33,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/log4j/log4j-1.2.9.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/aopalliance/aopalliance.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -80,7 +42,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/j2ee/jstl.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/opensymphony/propertyset-1.3-21Apr04.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -89,7 +51,34 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/jakarta-taglibs/standard.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/opensymphony/oscore-2.2.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/cglib/cglib-nodep-2.1-dev.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-logging.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/acegi/acegi-security-0.8.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -99,7 +88,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/acegi/acegi-security-0.8.2.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/jakarta-taglibs/standard.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -125,6 +114,81 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/acegi-security-0.8.2.jar" />
       <url>jar://$MODULE_DIR$/../../lib/acegi/acegi-security-0.8.2.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/ant-junit.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/ant/ant-junit.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/ant-launcher.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/ant/ant-launcher.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/ant.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/ant/ant.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/antlr-2.7.2.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/antlr/antlr-2.7.2.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/aopalliance.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/aopalliance/aopalliance.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/cglib-nodep-2.1-dev.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/cglib/cglib-nodep-2.1-dev.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/clover.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/clover/clover.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/concurrent-1.3.4.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/concurrent/concurrent-1.3.4.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/drools-base-2.0-beta-21.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/drools/drools-base-2.0-beta-21.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/drools-core-2.0-beta-21.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/drools/drools-core-2.0-beta-21.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/drools-io-2.0-beta-21.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/drools/drools-io-2.0-beta-21.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/drools-java-2.0-beta-21.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/drools/drools-java-2.0-beta-21.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/drools-jsr94-2.0-beta-21.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/drools/drools-jsr94-2.0-beta-21.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/drools-smf-2.0-beta-21.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/drools/drools-smf-2.0-beta-21.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/dwr-0.4.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/dwr/dwr-0.4.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
@@ -163,6 +227,21 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/xml-apis.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/j2ee/xml-apis.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-attributes-api-2.1.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-attributes-api-2.1.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-attributes-compiler-2.1.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-attributes-compiler-2.1.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/commons-beanutils.jar" />
       <url>jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-beanutils.jar!/</url>
     </containerElement>
@@ -188,6 +267,11 @@
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/commons-pool-1.2.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-pool-1.2.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/commons-validator.jar" />
       <url>jar://$MODULE_DIR$/../../lib/jakarta-commons/commons-validator.jar!/</url>
     </containerElement>
@@ -195,6 +279,11 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/standard.jar" />
       <url>jar://$MODULE_DIR$/../../lib/jakarta-taglibs/standard.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/janino-2.1.0.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/janino/janino-2.1.0.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
@@ -220,6 +309,11 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib/junit.jar" />
       <url>jar://$MODULE_DIR$/../../lib/junit/junit.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/log4j-1.2.9.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/log4j/log4j-1.2.9.jar!/</url>
     </containerElement>
     <containerElement type="library" level="module">
       <attribute name="method" value="1" />
@@ -261,14 +355,19 @@
       <attribute name="URI" value="/WEB-INF/lib/spring.jar" />
       <url>jar://$MODULE_DIR$/../../lib/spring/spring.jar!/</url>
     </containerElement>
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/xjavadoc-1.1.jar" />
+      <url>jar://$MODULE_DIR$/../../lib/xdoclet/xjavadoc-1.1.jar!/</url>
+    </containerElement>
     <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/src/web/WEB-INF/web.xml" version="2.3" />
     <webroots>
       <root url="file://$MODULE_DIR$/src/web" relative="/" />
+      <root url="file://$MODULE_DIR$/src/web/WEB-INF" relative="/WEB-INF" />
     </webroots>
   </component>
   <component name="WeblogicWebModuleProperties">
     <option name="IS_RUN_APPC" value="false" />
   </component>
-  <component name="com.fuhrer.idea.plugin.jboss.JBossWebModule" />
 </module>
 

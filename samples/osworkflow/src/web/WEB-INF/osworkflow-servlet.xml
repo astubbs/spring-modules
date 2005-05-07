@@ -25,6 +25,9 @@
 			<props>
 				<prop key="/start">centralWorkflowController</prop>
 				<prop key="/status">centralWorkflowController</prop>
+				<prop key="/logout">centralWorkflowController</prop>
+				<prop key="/underway">centralWorkflowController</prop>
+				<prop key="/execute/approve">centralWorkflowController</prop>
 				<prop key="/execute/upload">uploadDocumentForm</prop>
 				<prop key="/execute/passBack">passBackForm</prop>
 			</props>
@@ -32,8 +35,8 @@
 	</bean>
 
 	<bean id="workflowController" abstract="true">
-		<property name="template">
-			<ref bean="workflowTemplate"/>
+		<property name="workflow">
+			<ref bean="workflow"/>
 		</property>
 	</bean>
 

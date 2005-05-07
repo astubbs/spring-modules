@@ -1,7 +1,8 @@
 
 package org.springmodules.examples.workflow.osworkflow.web;
 
-import org.springmodules.workflow.osworkflow.OsWorkflowTemplate;
+import org.springmodules.examples.workflow.osworkflow.model.Comment;
+import org.springmodules.examples.workflow.osworkflow.service.DocumentApprovalWorkflow;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -12,19 +13,19 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 public class PassBackForm extends SimpleFormController {
 
-	private OsWorkflowTemplate template;
+	private DocumentApprovalWorkflow workflow;
 
 	public PassBackForm() {
 		setFormView("passBack");
-		setCommandClass(Object.class);
+		setCommandClass(Comment.class);
 	}
 
-	public void setTemplate(OsWorkflowTemplate template) {
-		this.template = template;
+	public void setWorkflow(DocumentApprovalWorkflow workflow) {
+		this.workflow = workflow;
 	}
 
 	protected ModelAndView onSubmit(Object command) throws Exception {
-		template.doAction(3);
+		this.workflow.passBack((Comment) command);
 		return new ModelAndView(new RedirectView("/approval/status"));
 	}
 }

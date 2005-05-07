@@ -20,7 +20,7 @@
 					<td>Content</td>
 					<td>
 						<spring:bind path="command.content">
-	  					<input type="text" name="<c:out value="${status.expression}"/>" value="<c:out value="${status.value}"/>"/>
+	  					<textarea name="<c:out value="${status.expression}"/>"><c:out value="${status.value}"/></textarea>
   					</spring:bind>
 					</td>
 				</tr>
