@@ -11,11 +11,10 @@ import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.module.propertyset.map.MapPropertySet;
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
-import com.opensymphony.workflow.WorkflowContext;
-import com.opensymphony.workflow.query.WorkflowExpressionQuery;
 import com.opensymphony.workflow.basic.BasicWorkflow;
 import com.opensymphony.workflow.loader.ActionDescriptor;
 import com.opensymphony.workflow.loader.StepDescriptor;
+import com.opensymphony.workflow.query.WorkflowExpressionQuery;
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springmodules.workflow.osworkflow.configuration.ConfigurationBean;
@@ -26,7 +25,6 @@ import org.springframework.beans.FatalBeanException;
  * @author robh
  */
 public class OsWorkflowTemplateTests extends TestCase {
-
 
 	private static final String WAKE_UP = "wakeup";
 
@@ -424,61 +422,6 @@ public class OsWorkflowTemplateTests extends TestCase {
 		assertEquals("PropertySets don't match", ps, result);
 	}
 
-	public void testCanInitialize() throws Exception {
-		final String workflowName = "fooflow";
-		final int initialAction = 12;
-		final MockControl ctl = createMockWorkflowControl();
-
-		OsWorkflowTemplate template = new OsWorkflowTemplate() {
-			protected Workflow createWorkflow(String caller) throws WorkflowException {
-				Workflow workflow = (Workflow) ctl.getMock();
-
-				workflow.setConfiguration(OsWorkflowTemplateTests.this.configuration);
-				ctl.setVoidCallable();
-				workflow.canInitialize(workflowName, initialAction, null);
-				ctl.setReturnValue(true);
-				ctl.replay();
-
-				return workflow;
-			}
-		};
-
-		setProperties(template);
-
-		boolean result = template.canInitialize(workflowName, initialAction);
-
-		ctl.verify();
-		assertTrue(result);
-	}
-
-	public void testCanInitializeWithInputs() throws Exception {
-		final String workflowName = "fooflow";
-		final int initialAction = 12;
-		final Map inputs = new HashMap();
-		final MockControl ctl = createMockWorkflowControl();
-
-		OsWorkflowTemplate template = new OsWorkflowTemplate() {
-			protected Workflow createWorkflow(String caller) throws WorkflowException {
-				Workflow workflow = (Workflow) ctl.getMock();
-
-				workflow.setConfiguration(OsWorkflowTemplateTests.this.configuration);
-				ctl.setVoidCallable();
-				workflow.canInitialize(workflowName, initialAction, inputs);
-				ctl.setReturnValue(false);
-				ctl.replay();
-
-				return workflow;
-			}
-		};
-
-		setProperties(template);
-
-		boolean result = template.canInitialize(workflowName, initialAction, inputs);
-
-		ctl.verify();
-		assertFalse(result);
-	}
-
 	public void testCanModifyEntryState() throws Exception {
 		bindMockInstanceIdToContext();
 
@@ -533,7 +476,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 	}
 
 	public void testQuery() throws Exception {
-     bindMockInstanceIdToContext();
+		bindMockInstanceIdToContext();
 
 		final WorkflowExpressionQuery query = new WorkflowExpressionQuery();
 		final List mockResult = new ArrayList();
