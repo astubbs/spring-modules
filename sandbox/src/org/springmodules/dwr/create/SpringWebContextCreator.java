@@ -18,13 +18,13 @@ package org.springmodules.dwr.create;
 
 import uk.ltd.getahead.dwr.Creator;
 import uk.ltd.getahead.dwr.ExecutionContext;
-import org.w3c.dom.Element;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.context.ApplicationContext;
 
-import javax.servlet.ServletContext;
+import java.util.Map;
 
 /**
  * A <code>Creator</code> implementation which allows looking up beans from an
@@ -76,15 +76,15 @@ public class SpringWebContextCreator implements Creator {
      *                                  argument does not contain an argument
      *                                  specifying the bean to lookup
      */
-    public void init(Element config) throws IllegalArgumentException {
+    public void init(Map config) throws IllegalArgumentException {
         // make sure the bean name attribute has been specified
-        if(!config.hasAttribute(BEAN_NAME_ATTR)) {
+        if(config.get(BEAN_NAME_ATTR) == null) {
             throw new IllegalArgumentException("the attribute '" +
                     BEAN_NAME_ATTR + "' has not been specified");
         }
 
         // set the name of the bean to create
-        beanName = config.getAttribute(BEAN_NAME_ATTR);
+        beanName = (String) config.get(BEAN_NAME_ATTR);
     }
 
     /**
@@ -113,10 +113,9 @@ public class SpringWebContextCreator implements Creator {
     public Object getInstance() {
         // make sure the application context is set
         if(applicationContext == null) {
-            ServletContext servletContext =
-                    ExecutionContext.get().getServletContext();
-            applicationContext = WebApplicationContextUtils.
-                    getWebApplicationContext(servletContext);
+            ExecutionContext ctx = ExecutionContext.get();
+            applicationContext = RequestContextUtils.getWebApplicationContext(
+                    ctx.getHttpServletRequest(), ctx.getServletContext());
         }
 
         // get the specified bean name from the application context
