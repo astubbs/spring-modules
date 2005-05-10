@@ -53,14 +53,19 @@ public class ValangParser implements ValangParserConstants {
         String message = null;
         String field = null;
         String errorKey = null;
-        Collection errorArgs = new ArrayList();
+        Collection errorArgs = null;
         Function function = null;
         Function fieldFunction = null;
     label_1:
     while (true) {
       jj_consume_token(35);
       jj_consume_token(PATH);
-                                 field = token.image; fieldFunction = new BeanPropertyFunction(field);
+                                field = token.image;
+                                fieldFunction = new BeanPropertyFunction(field);
+                                /* MOD-26: re-initiliaze error key and arguments to null for every rule.
+				   kudos to Cèsar Ordiñana for reporting this bug. */
+                                errorKey = null;
+                                errorArgs = new ArrayList();
       jj_consume_token(36);
       predicate = predicates(fieldFunction);
       jj_consume_token(36);
@@ -557,31 +562,6 @@ public class ValangParser implements ValangParserConstants {
     finally { jj_save(2, xla); }
   }
 
-  final private boolean jj_3R_16() {
-    if (jj_scan_token(NUM)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_15() {
-    if (jj_scan_token(STRING)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_14() {
-    if (jj_scan_token(FALSE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_13() {
-    if (jj_scan_token(TRUE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_9() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_11() {
     Token xsp;
     xsp = jj_scanpos;
@@ -695,6 +675,31 @@ public class ValangParser implements ValangParserConstants {
 
   final private boolean jj_3R_17() {
     if (jj_scan_token(DATE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_16() {
+    if (jj_scan_token(NUM)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_15() {
+    if (jj_scan_token(STRING)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_14() {
+    if (jj_scan_token(FALSE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_13() {
+    if (jj_scan_token(TRUE)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_9() {
+    if (jj_3R_11()) return true;
     return false;
   }
 

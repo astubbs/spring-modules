@@ -120,7 +120,7 @@ Collection parseValidation() :
 	String message = null;
 	String field = null;
 	String errorKey = null;
-	Collection errorArgs = new ArrayList();
+	Collection errorArgs = null;
 	Function function = null;
 	Function fieldFunction = null;
 }
@@ -128,7 +128,15 @@ Collection parseValidation() :
 	(
 		( 
 			"{" 
-			<PATH> { field = token.image; fieldFunction = new BeanPropertyFunction(field); }
+			<PATH> 
+			{ 
+				field = token.image; 
+				fieldFunction = new BeanPropertyFunction(field);
+				/* MOD-26: re-initiliaze error key and arguments to null for every rule.
+				   kudos to Cèsar Ordiñana for reporting this bug. */ 
+				errorKey = null; 
+				errorArgs = new ArrayList(); 
+			}
 			":"
 			predicate = predicates(fieldFunction) 
 			":" 
