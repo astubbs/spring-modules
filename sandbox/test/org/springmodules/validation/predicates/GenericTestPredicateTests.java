@@ -172,6 +172,40 @@ public class GenericTestPredicateTests extends TestCase {
 		assertFalse("five", OperatorConstants.HAS_NO_LENGTH_OPERATOR, null);
 	}
 
+	public void testIsBlankIsNotBlankOperatorSuccess() {
+		assertTrue("", OperatorConstants.IS_BLANK_OPERATOR, null);
+		assertTrue(null, OperatorConstants.IS_BLANK_OPERATOR, null);
+		assertFalse("five", OperatorConstants.IS_BLANK_OPERATOR, null);
+		
+		assertTrue("five", OperatorConstants.IS_NOT_BLANK_OPERATOR, null);
+		assertFalse("", OperatorConstants.IS_NOT_BLANK_OPERATOR, null);
+		assertFalse(null, OperatorConstants.IS_NOT_BLANK_OPERATOR, null);
+	}
+	
+	public void testIsWordIsNotWordOperatorSuccess() {
+		assertTrue("five", OperatorConstants.IS_WORD_OPERATOR, null);
+		assertFalse("five six", OperatorConstants.IS_WORD_OPERATOR, null);
+		
+		assertTrue("five six", OperatorConstants.IS_NOT_WORD_OPERATOR, null);
+		assertFalse("five", OperatorConstants.IS_NOT_WORD_OPERATOR, null);
+	}
+	
+	public void testIsUpperCaseIsNotUpperCaseOperatorSuccess() {
+		assertTrue("FIVE", OperatorConstants.IS_UPPER_CASE_OPERATOR, null);
+		assertFalse("five", OperatorConstants.IS_UPPER_CASE_OPERATOR, null);
+		
+		assertTrue("five", OperatorConstants.IS_NOT_UPPER_CASE_OPERATOR, null);
+		assertFalse("FIVE", OperatorConstants.IS_NOT_UPPER_CASE_OPERATOR, null);
+	}
+	
+	public void testIsLowerCaseIsNotLowerCaseOperatorSuccess() {
+		assertTrue("five", OperatorConstants.IS_LOWER_CASE_OPERATOR, null);
+		assertFalse("Five", OperatorConstants.IS_LOWER_CASE_OPERATOR, null);
+		
+		assertTrue("Five", OperatorConstants.IS_NOT_LOWER_CASE_OPERATOR, null);
+		assertFalse("five", OperatorConstants.IS_NOT_LOWER_CASE_OPERATOR, null);
+	}
+	
 	public void testBooleanEqualsOperatorSuccess() {
 		assertTrue(Boolean.TRUE, OperatorConstants.EQUALS_OPERATOR, Boolean.TRUE);
 		assertFalse(Boolean.TRUE, OperatorConstants.EQUALS_OPERATOR, Boolean.FALSE);

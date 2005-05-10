@@ -78,9 +78,17 @@ TOKEN [IGNORE_CASE] :
 |	< IS_NULL : "IS NULL" | "NULL" >
 |	< IS_NOT_NULL : "IS NOT NULL" | "NOT NULL" >
 |	< HAS_TEXT : "HAS TEXT" >
-|	< HAS_NO_TEXT: "HAS NO TEXT" >
-|	< HAS_LENGTH: "HAS LENGTH" >
-|	< HAS_NO_LENGTH: "HAS NO LENGTH" >
+|	< HAS_NO_TEXT : "HAS NO TEXT" >
+|	< HAS_LENGTH : "HAS LENGTH" >
+|	< HAS_NO_LENGTH : "HAS NO LENGTH" >
+|	< IS_BLANK : "IS BLANK" >
+|	< IS_NOT_BLANK : "IS NOT BLANK" >
+|	< IS_UPPER_CASE : "IS UPPERCASE" | "IS UPPER CASE" | "IS UPPER" >
+|	< IS_NOT_UPPER_CASE : "IS NOT UPPERCASE" | "IS NOT UPPER CASE" | "IS NOT UPPER" >
+|	< IS_LOWER_CASE : "IS LOWERCASE" | "IS LOWER CASE" | "IS LOWER" >
+|	< IS_NOT_LOWER_CASE : "IS NOT LOWERCASE" | "IS NOT LOWER CASE" | "IS NOT LOWER" >
+|	< IS_WORD : "IS WORD" >
+|	< IS_NOT_WORD : "IS NOT WORD" >
 |	< TRUE : "TRUE" | "YES" >
 |	< FALSE : "FALSE" | "NO" >
 |	< MORE_THAN_OR_EQUAL : ">=" | "=>" >
@@ -240,10 +248,8 @@ Predicate predicate(Function fieldFunction) :
 		leftFunction = function(fieldFunction)
 		(
 			(
-	    		operator = operator()
-	    	   	(
-	                rightFunction1 = function(fieldFunction)
-	            )?
+	    		operator = binaryOperator() rightFunction1 = function(fieldFunction)
+			|	operator = unaryOperator()
 	    	)
 	    	{
 	    		return getVisitor().getPredicate(leftFunction, operator, rightFunction1);
@@ -374,7 +380,7 @@ Function mapEntry(Function fieldFunction) :
 }
 
 
-Operator operator() :
+Operator binaryOperator() :
 {
 	Operator operator = null;
 }
@@ -386,12 +392,32 @@ Operator operator() :
 	|	<LESS_THAN_OR_EQUAL>	{ operator = OperatorConstants.LESS_THAN_OR_EQUAL_OPERATOR; }
 	|	<LESS_THAN>		{ operator = OperatorConstants.LESS_THAN_OPERATOR; }
 	|	<EQUALS>		{ operator = OperatorConstants.EQUALS_OPERATOR; }
-	|	<IS_NULL>		{ operator = OperatorConstants.NULL_OPERATOR; }
+	)
+	{
+		return operator;	
+	}
+}
+
+Operator unaryOperator() :
+{
+	Operator operator = null;
+}
+{
+	(
+		<IS_NULL>		{ operator = OperatorConstants.NULL_OPERATOR; }
 	|	<IS_NOT_NULL>		{ operator = OperatorConstants.NOT_NULL_OPERATOR; }
 	|	<HAS_TEXT>		{ operator = OperatorConstants.HAS_TEXT_OPERATOR; }
 	|	<HAS_NO_TEXT>		{ operator = OperatorConstants.HAS_NO_TEXT_OPERATOR; }
 	|	<HAS_LENGTH>		{ operator = OperatorConstants.HAS_LENGTH_OPERATOR; }
 	|	<HAS_NO_LENGTH>		{ operator = OperatorConstants.HAS_NO_LENGTH_OPERATOR; }
+	|	<IS_BLANK>		{ operator = OperatorConstants.IS_BLANK_OPERATOR; }
+	|	<IS_NOT_BLANK>	{ operator = OperatorConstants.IS_NOT_BLANK_OPERATOR; }
+	|	<IS_WORD>		{ operator = OperatorConstants.IS_WORD_OPERATOR; }
+	|	<IS_NOT_WORD>	{ operator = OperatorConstants.IS_NOT_WORD_OPERATOR; }
+	|	<IS_UPPER_CASE>		{ operator = OperatorConstants.IS_UPPER_CASE_OPERATOR; }
+	|	<IS_NOT_UPPER_CASE>		{ operator = OperatorConstants.IS_NOT_UPPER_CASE_OPERATOR; }
+	|	<IS_LOWER_CASE>		{ operator = OperatorConstants.IS_LOWER_CASE_OPERATOR; }
+	|	<IS_NOT_LOWER_CASE>		{ operator = OperatorConstants.IS_NOT_LOWER_CASE_OPERATOR; }
 	)
 	{
 		return operator;

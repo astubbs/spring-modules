@@ -25,5 +25,5 @@ public interface OperatorConstants {
 	public static final Operator HAS_NO_TEXT_OPERATOR = new Operator.HasNoTextOperator() {};
 	public static final Operator HAS_LENGTH_OPERATOR = new Operator.HasLengthOperator() {};
 	public static final Operator HAS_NO_LENGTH_OPERATOR = new Operator.HasNoLengthOperator() {};
-
+	public static final Operator IS_BLANK_OPERATOR = new Operator.IsBlankOperator() {};		public static final Operator IS_NOT_BLANK_OPERATOR = new Operator.IsNotBlankOperator() {};		public static final Operator IS_WORD_OPERATOR = new Operator.IsWordOperator() {};		public static final Operator IS_NOT_WORD_OPERATOR = new Operator.IsNotWordOperator() {};		public static final Operator IS_LOWER_CASE_OPERATOR = new Operator.IsLowerCaseOperator() {};		public static final Operator IS_NOT_LOWER_CASE_OPERATOR = new Operator.IsNotLowerCaseOperator() {};		public static final Operator IS_UPPER_CASE_OPERATOR = new Operator.IsUpperCaseOperator() {};		public static final Operator IS_NOT_UPPER_CASE_OPERATOR = new Operator.IsNotUpperCaseOperator() {};
 }

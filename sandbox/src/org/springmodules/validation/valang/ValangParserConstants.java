@@ -17,23 +17,31 @@ public interface ValangParserConstants {
   int HAS_NO_TEXT = 15;
   int HAS_LENGTH = 16;
   int HAS_NO_LENGTH = 17;
-  int TRUE = 18;
-  int FALSE = 19;
-  int MORE_THAN_OR_EQUAL = 20;
-  int MORE_THAN = 21;
-  int LESS_THAN_OR_EQUAL = 22;
-  int LESS_THAN = 23;
-  int NOT_EQUAL = 24;
-  int EQUALS = 25;
-  int NUM = 26;
-  int STRING = 27;
-  int DATE = 28;
-  int DOT = 29;
-  int UNDERSCORE = 30;
-  int DIGIT = 31;
-  int LOWERLETTER = 32;
-  int UPPERLETTER = 33;
-  int PATH = 34;
+  int IS_BLANK = 18;
+  int IS_NOT_BLANK = 19;
+  int IS_UPPER_CASE = 20;
+  int IS_NOT_UPPER_CASE = 21;
+  int IS_LOWER_CASE = 22;
+  int IS_NOT_LOWER_CASE = 23;
+  int IS_WORD = 24;
+  int IS_NOT_WORD = 25;
+  int TRUE = 26;
+  int FALSE = 27;
+  int MORE_THAN_OR_EQUAL = 28;
+  int MORE_THAN = 29;
+  int LESS_THAN_OR_EQUAL = 30;
+  int LESS_THAN = 31;
+  int NOT_EQUAL = 32;
+  int EQUALS = 33;
+  int NUM = 34;
+  int STRING = 35;
+  int DATE = 36;
+  int DOT = 37;
+  int UNDERSCORE = 38;
+  int DIGIT = 39;
+  int LOWERLETTER = 40;
+  int UPPERLETTER = 41;
+  int PATH = 42;
 
   int DEFAULT = 0;
 
@@ -56,6 +64,14 @@ public interface ValangParserConstants {
     "\"HAS NO TEXT\"",
     "\"HAS LENGTH\"",
     "\"HAS NO LENGTH\"",
+    "\"IS BLANK\"",
+    "\"IS NOT BLANK\"",
+    "<IS_UPPER_CASE>",
+    "<IS_NOT_UPPER_CASE>",
+    "<IS_LOWER_CASE>",
+    "<IS_NOT_LOWER_CASE>",
+    "\"IS WORD\"",
+    "\"IS NOT WORD\"",
     "<TRUE>",
     "<FALSE>",
     "<MORE_THAN_OR_EQUAL>",

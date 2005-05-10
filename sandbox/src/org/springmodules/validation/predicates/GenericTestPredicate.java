@@ -1,17 +1,6 @@
 package org.springmodules.validation.predicates;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.functors.AndPredicate;import org.apache.commons.collections.functors.FalsePredicate;
-import org.apache.commons.collections.functors.AnyPredicate;
-import org.springframework.util.StringUtils;
-import org.springmodules.validation.functions.Function;
-import org.springmodules.validation.functions.LiteralFunction;
+import java.math.BigDecimal;import java.util.ArrayList;import java.util.Collection;import java.util.Date;import java.util.Iterator;import org.apache.commons.collections.Predicate;import org.apache.commons.collections.functors.AndPredicate;import org.apache.commons.collections.functors.AnyPredicate;import org.apache.commons.collections.functors.FalsePredicate;import org.springframework.util.StringUtils;import org.springmodules.validation.functions.Function;import org.springmodules.validation.functions.LiteralFunction;
 
 /**
  * <p>GenericTestPredicate can test if a property value is null or not null.
@@ -132,13 +121,13 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 			return StringUtils.hasText(leftValue != null ? leftValue.toString() : null);
 		} else if (getOperator() instanceof Operator.HasNoTextOperator) {
 			return !StringUtils.hasText(leftValue != null ? leftValue.toString() : null);
-		}
+		} else if (getOperator() instanceof Operator.IsBlankOperator) {			return org.apache.commons.lang.StringUtils.isBlank(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsNotBlankOperator) {			return org.apache.commons.lang.StringUtils.isNotBlank(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsWordOperator) {			return isWord(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsNotWordOperator) {			return !isWord(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsLowerCaseOperator) {			return isLowerCase(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsNotLowerCaseOperator) {			return !isLowerCase(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsUpperCaseOperator) {			return isUpperCase(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsNotUpperCaseOperator) {			return !isUpperCase(leftValue != null ? leftValue.toString() : null);		}
 		
 		throw new IllegalStateException("Operator class [" + getOperator().getClass().getName() + "] not supported!");
 	}
 
 	protected Predicate getPredicate(Function leftFunction, Operator operator, Function rightFunction) {
 		return new GenericTestPredicate(leftFunction, operator, rightFunction);
-	}
-
+	}	private boolean isWord(String s) {		return s != null && s.length() > 0 &&			org.apache.commons.lang.StringUtils.deleteWhitespace(s).equals(s);	}
+	private boolean isLowerCase(String s) {		return s != null && s.length() > 0 &&			s.toLowerCase().equals(s);	}	private boolean isUpperCase(String s) {		return s != null && s.length() > 0 &&			s.toUpperCase().equals(s);	}
 }

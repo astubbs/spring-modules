@@ -37,5 +37,5 @@ public interface Operator {
 	
 	public interface HasLengthOperator extends Operator {}
 	
-	public interface HasNoLengthOperator extends Operator {}
+	public interface HasNoLengthOperator extends Operator {}		public interface IsBlankOperator extends Operator {}			public interface IsNotBlankOperator extends Operator {}			public interface IsWordOperator extends Operator {}			public interface IsNotWordOperator extends Operator {}			public interface IsUpperCaseOperator extends Operator {}			public interface IsNotUpperCaseOperator extends Operator {}			public interface IsLowerCaseOperator extends Operator {}			public interface IsNotLowerCaseOperator extends Operator {}
 }
