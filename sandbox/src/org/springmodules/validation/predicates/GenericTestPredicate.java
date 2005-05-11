@@ -128,6 +128,6 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 
 	protected Predicate getPredicate(Function leftFunction, Operator operator, Function rightFunction) {
 		return new GenericTestPredicate(leftFunction, operator, rightFunction);
-	}	private boolean isWord(String s) {		return s != null && s.length() > 0 &&			org.apache.commons.lang.StringUtils.deleteWhitespace(s).equals(s);	}
-	private boolean isLowerCase(String s) {		return s != null && s.length() > 0 &&			s.toLowerCase().equals(s);	}	private boolean isUpperCase(String s) {		return s != null && s.length() > 0 &&			s.toUpperCase().equals(s);	}		private boolean isBlank(String s) {		return s == null || s.length() == 0;	}
+	}	private boolean isWord(String s) {		return s != null && s.length() > 0 &&			deleteWhitespace(s).equals(s);	}
+	private boolean isLowerCase(String s) {		return s != null && s.length() > 0 &&			s.toLowerCase().equals(s);	}	private boolean isUpperCase(String s) {		return s != null && s.length() > 0 &&			s.toUpperCase().equals(s);	}		private boolean isBlank(String s) {		return s == null || s.length() == 0;	}		private String deleteWhitespace(String s) {		return StringUtils.deleteAny(s, " \t\r\n\b");	}
 }
