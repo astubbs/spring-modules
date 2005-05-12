@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.search;
+package org.springmodules.lucene.index;
 
 import java.io.IOException;
 
-import org.apache.lucene.queryParser.ParseException;
 import org.springframework.core.NestedRuntimeException;
 import org.springmodules.lucene.LuceneException;
 
 /**
- * Root of the hierarchy of Lucene search exceptions. It extends
+ * Root of the hierarchy of Lucene index access exceptions. It extends
  * the Lucene exception.
  *
  * <p>This exception hierarchy aims to let user code find and handle the
@@ -36,22 +35,22 @@ import org.springmodules.lucene.LuceneException;
  *
  * @author Thierry Templier
  */
-public class LuceneSearchException extends LuceneException {
+public class LuceneIndexAccessException extends LuceneException {
 
 	/**
-	 * Constructor for LuceneSearchException.
+	 * Constructor for LuceneIndexAccessException.
 	 * @param msg message
 	 */
-	public LuceneSearchException(String msg,IOException ex) {
-		super(msg,ex);
+	public LuceneIndexAccessException(String msg) {
+		super(msg);
 	}
 
 	/**
-	 * Constructor for LuceneSearchException.
+	 * Constructor for LuceneIndexAccessException.
 	 * @param msg message
 	 * @param ex root cause
 	 */
-	public LuceneSearchException(String msg,ParseException ex) {
+	public LuceneIndexAccessException(String msg,IOException ex) {
 		super(msg,ex);
 	}
 

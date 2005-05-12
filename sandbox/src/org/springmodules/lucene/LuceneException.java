@@ -14,24 +14,41 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.search;
+package org.springmodules.lucene;
 
 import java.io.IOException;
 
-import org.apache.lucene.queryParser.ParseException;
 import org.springframework.core.NestedRuntimeException;
 
 /**
+ * Root of the hierarchy of Lucene exceptions.
+ *
+ * <p>This exception hierarchy aims to let user code find and handle the
+ * kind of error encountered without knowing the details of the particular
+ * index access API in use.
+ *
+ * <p>As this class is a runtime exception, there is no need for user code
+ * to catch it or subclasses if any error is to be considered fatal
+ * (the usual case).
+ *
  * @author Thierry Templier
  */
-public class LuceneCannotGetSearcherException extends NestedRuntimeException {
+public abstract class LuceneException extends NestedRuntimeException {
 
-	public LuceneCannotGetSearcherException(String msg,IOException ex) {
-		super(msg,ex);
+	/**
+	 * Constructor for LuceneException.
+	 * @param msg message
+	 */
+	public LuceneException(String msg) {
+		super(msg);
 	}
 
-	public LuceneCannotGetSearcherException(String msg,ParseException ex) {
+	/**
+	 * Constructor for LuceneException.
+	 * @param msg message
+	 * @param ex root cause
+	 */
+	public LuceneException(String msg,Throwable ex) {
 		super(msg,ex);
 	}
-
 }
