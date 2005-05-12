@@ -21,8 +21,7 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
-import org.springmodules.lucene.index.LuceneCloseIndexException;
-import org.springmodules.lucene.search.LuceneCannotGetSearcherException;
+import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.resource.support.ResourceSynchronizationManager;
 
 /**
@@ -50,7 +49,7 @@ public abstract class IndexReaderFactoryUtils {
 		try {
 			return doGetIndexReader(indexFactory, allowSynchronization);
 		} catch (IOException ex) {
-			throw new LuceneCannotGetSearcherException("Could not get Lucene reader", ex);
+			throw new LuceneIndexAccessException("Could not get Lucene reader", ex);
 		}
 	}
 
@@ -105,7 +104,7 @@ public abstract class IndexReaderFactoryUtils {
 		try {
 			doCloseIndexReaderIfNecessary(indexFactory,indexReader);
 		} catch(IOException ex) {
-			throw new LuceneCloseIndexException("Unable to close index reader",ex);
+			throw new LuceneIndexAccessException("Unable to close index reader",ex);
 		}
 	}
 

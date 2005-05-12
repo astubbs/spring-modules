@@ -21,8 +21,8 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.search.Searcher;
-import org.springmodules.lucene.index.LuceneCloseIndexException;
-import org.springmodules.lucene.search.LuceneCannotGetSearcherException;
+import org.springmodules.lucene.index.LuceneIndexAccessException;
+import org.springmodules.lucene.search.LuceneSearchException;
 import org.springmodules.lucene.search.core.SmartSearcher;
 import org.springmodules.resource.support.ResourceSynchronizationManager;
 
@@ -51,7 +51,7 @@ public abstract class SearcherFactoryUtils {
 		try {
 			return doGetSearcher(searcherFactory, allowSynchronization);
 		} catch (IOException ex) {
-			throw new LuceneCannotGetSearcherException("Could not get Lucene searcher", ex);
+			throw new LuceneSearchException("Could not get Lucene searcher", ex);
 		}
 	}
 
@@ -106,7 +106,7 @@ public abstract class SearcherFactoryUtils {
 		try {
 			doCloseSearcherIfNecessary(searcherFactory,searcher);
 		} catch(IOException ex) {
-			throw new LuceneCloseIndexException("Unable to close index searcher",ex);
+			throw new LuceneIndexAccessException("Unable to close index searcher",ex);
 		}
 	}
 

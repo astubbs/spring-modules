@@ -18,14 +18,15 @@ package org.springmodules.lucene.index.core;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.springmodules.lucene.index.LuceneAddDocumentIndexException;
-import org.springmodules.lucene.index.LuceneManipulateIndexException;
+import org.apache.lucene.store.Directory;
+import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
@@ -100,7 +101,7 @@ public class LuceneIndexTemplate {
 		try {
 			reader.delete(internalDocumentId);
 		} catch(IOException ex) {
-			throw new LuceneManipulateIndexException("Error during deleting a document.",ex);
+			throw new LuceneIndexAccessException("Error during deleting a document.",ex);
 		} finally {
 			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
 		}
@@ -114,7 +115,7 @@ public class LuceneIndexTemplate {
 		try {
 			reader.delete(term);
 		} catch(IOException ex) {
-			throw new LuceneManipulateIndexException("Error during deleting a document.",ex);
+			throw new LuceneIndexAccessException("Error during deleting a document.",ex);
 		} finally {
 			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
 		}
@@ -128,7 +129,7 @@ public class LuceneIndexTemplate {
 		try {
 			reader.undeleteAll();
 		} catch(IOException ex) {
-			throw new LuceneManipulateIndexException("Error during undeleting all documents.",ex);
+			throw new LuceneIndexAccessException("Error during undeleting all documents.",ex);
 		} finally {
 			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
 		}
@@ -209,24 +210,48 @@ public class LuceneIndexTemplate {
 				writer.addDocument(document);
 			}
 		} else {
-			throw new LuceneAddDocumentIndexException("The document created is null.");
+			throw new LuceneIndexAccessException("The document created is null.");
 		}
+	}
+
+	public void addDocument(final Document document) {
+		addDocument(document,null);
+	}
+
+	public void addDocument(final Document document,Analyzer analyzer) {
+		addDocument(new DocumentCreator() {
+			public Document createDocument() throws IOException {
+				return document;
+			}
+		},analyzer);
 	}
 
 	public void addDocument(DocumentCreator creator) {
 		addDocument(creator,null);
 	}
 
-	public void addDocument(DocumentCreator creator,Analyzer analyze) {
+	public void addDocument(DocumentCreator creator,Analyzer analyzer) {
 		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
 		try {
 			Document document=creator.createDocument();
 			doAddDocument(writer,document,null);
 		} catch(IOException ex) {
-			throw new LuceneManipulateIndexException("Error during adding a document.",ex);
+			throw new LuceneIndexAccessException("Error during adding a document.",ex);
 		} finally {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
 		}
+	}
+
+	public void addDocuments(List documents) {
+		addDocuments(documents,null);
+	}
+
+	public void addDocuments(final List documents,Analyzer analyzer) {
+		addDocuments(new DocumentsCreator() {
+			public List createDocuments() throws IOException {
+				return documents;
+			}
+		},analyzer);
 	}
 
 	public void addDocuments(DocumentsCreator creator) {
@@ -241,7 +266,22 @@ public class LuceneIndexTemplate {
 				doAddDocument(writer,document,analyzer);
 			}
 		} catch(IOException ex) {
-			throw new LuceneManipulateIndexException("Error during adding a document.",ex);
+			throw new LuceneIndexAccessException("Error during adding a document.",ex);
+		} finally {
+			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
+		}
+	}
+
+	public void addIndex(Directory directory) {
+		addIndexes(new Directory[] { directory });
+	}
+
+	public void addIndexes(Directory[] directories) {
+		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
+		try {
+			writer.addIndexes(directories);
+		} catch(IOException ex) {
+			throw new LuceneIndexAccessException("Error during adding indexes.",ex);
 		} finally {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
 		}
@@ -252,7 +292,7 @@ public class LuceneIndexTemplate {
 		try {
 			writer.optimize();
 		} catch(IOException ex) {
-			throw new LuceneManipulateIndexException("Error during optimize the index.",ex);
+			throw new LuceneIndexAccessException("Error during optimize the index.",ex);
 		} finally {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
 		}
@@ -263,7 +303,7 @@ public class LuceneIndexTemplate {
 		try {
 			callback.doWithReader(reader);
 		} catch(IOException ex) {
-			throw new LuceneManipulateIndexException("Error during reading the index.",ex);
+			throw new LuceneIndexAccessException("Error during reading the index.",ex);
 		} finally {
 			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
 		}
@@ -274,7 +314,7 @@ public class LuceneIndexTemplate {
 		try {
 			callback.doWithWriter(writer);
 		} catch(IOException ex) {
-			throw new LuceneManipulateIndexException("Error during writing the index.",ex);
+			throw new LuceneIndexAccessException("Error during writing the index.",ex);
 		} finally {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
 		}

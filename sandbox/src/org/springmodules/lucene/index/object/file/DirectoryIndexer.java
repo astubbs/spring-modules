@@ -27,14 +27,14 @@ import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
-import org.springmodules.lucene.index.LuceneWriteIndexException;
+import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 import org.springmodules.lucene.index.object.AbstractIndexer;
 import org.springmodules.lucene.index.support.file.DocumentHandler;
 import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 import org.springmodules.lucene.index.support.file.DocumentMatching;
-import org.springmodules.lucene.index.support.file.SimpleDocumentHandlerManager;
+import org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManager;
 import org.springmodules.lucene.util.FileUtils;
 
 /**
@@ -51,7 +51,7 @@ public class DirectoryIndexer extends AbstractIndexer {
 	public DirectoryIndexer(IndexFactory indexFactory,DocumentHandlerManager documentHandlerManager) {
 		setIndexFactory(indexFactory);
 		if( documentHandlerManager==null ) {
-			this.documentHandlerManager=new SimpleDocumentHandlerManager();
+			this.documentHandlerManager=new ExtensionDocumentHandlerManager();
 			this.documentHandlerManager.registerDefautHandlers();
 		} else {
 			this.documentHandlerManager=documentHandlerManager;
@@ -203,7 +203,7 @@ public class DirectoryIndexer extends AbstractIndexer {
 			}
 		} catch(IOException ex) {
 			logger.error("Error during indexing the directory : "+dirToParse,ex);
-			throw new LuceneWriteIndexException("Error during indexing the directory : "+dirToParse,ex);
+			throw new LuceneIndexAccessException("Error during indexing the directory : "+dirToParse,ex);
 		} finally {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(getIndexFactory(),writer);
 		}

@@ -22,7 +22,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
-import org.springmodules.lucene.index.LuceneOpenIndexException;
+import org.springmodules.lucene.index.LuceneIndexAccessException;
 
 /**
  * Template for index manipulation.
@@ -47,7 +47,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 		try {
 			return IndexReader.open(directory);
 		} catch(IOException ex) {
-			throw new LuceneOpenIndexException("Error during opening the reader",ex);
+			throw new LuceneIndexAccessException("Error during opening the reader",ex);
 		}
 	}
 
@@ -61,7 +61,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 			setIndexWriterParameters(writer);
 			return writer;
 		} catch(IOException ex) {
-			throw new LuceneOpenIndexException("Error during creating the writer",ex);
+			throw new LuceneIndexAccessException("Error during creating the writer",ex);
 		}
 	}
 

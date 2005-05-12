@@ -32,7 +32,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.MappingSqlQuery;
-import org.springmodules.lucene.index.LuceneWriteIndexException;
+import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 import org.springmodules.lucene.index.object.AbstractIndexer;
@@ -141,7 +141,7 @@ public class DatabaseIndexer extends AbstractIndexer {
 		} catch(IOException ex) {
 			logger.error("Error during indexing the request",ex);
 			fireListenersOnErrorRequest(request,ex);
-			throw new LuceneWriteIndexException("Error during indexing the database",ex);
+			throw new LuceneIndexAccessException("Error during indexing the database",ex);
 		} finally {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(getIndexFactory(),writer);
 		}
