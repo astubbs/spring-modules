@@ -26,10 +26,10 @@ import org.springmodules.lucene.index.support.file.handler.TextDocumentHandler;
 /**
  * @author Thierry Templier
  */
-public class SimpleDocumentHandlerManager implements DocumentHandlerManager {
+public class ExtensionDocumentHandlerManager implements DocumentHandlerManager {
 	private Map fileDocumentHandlers;
 
-	public SimpleDocumentHandlerManager() {
+	public ExtensionDocumentHandlerManager() {
 		this.fileDocumentHandlers=new HashMap();
 	}
 

@@ -26,7 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * @author Thierry Templier
  */
-public class SimpleDocumentHandlerManagerFactoryBean implements FactoryBean,InitializingBean {
+public class ExtensionDocumentHandlerManagerFactoryBean implements FactoryBean,InitializingBean {
 
 	private DocumentHandlerManager documentHandlerManager;
 	private Map documentHandlers;
@@ -56,7 +56,7 @@ public class SimpleDocumentHandlerManagerFactoryBean implements FactoryBean,Init
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		documentHandlerManager=new SimpleDocumentHandlerManager();
+		documentHandlerManager=new ExtensionDocumentHandlerManager();
 		documentHandlerManager.registerDefautHandlers();
 		if( documentHandlers!=null ) {
 			Set documentHandlersKeys=documentHandlers.keySet();
