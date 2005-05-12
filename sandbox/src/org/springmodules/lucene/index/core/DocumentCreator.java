@@ -21,15 +21,26 @@ import java.io.IOException;
 import org.apache.lucene.document.Document;
 
 /**
- * Interface to implement in order to specify the way to
- * create a Lucene document. Some index template methods
- * use it to add documents in an index.
- * 
+ * Callback interface for creating a Lucene document instance.
+ *
+ * <p>Used for input Document creation in LuceneIndexTemplate. Alternatively,
+ * Document instances can be passed into LuceneIndexTemplate's corresponding
+ * <code>addDocument</code> methods directly.
+ *
  * @author Thierry Templier
+ * @see LuceneIndexTemplate#addDocument(DocumentCreator)
+ * @see LuceneIndexTemplate#addDocument(DocumentCreator,org.apache.lucene.analysis.Analyzer)
  */
 public interface DocumentCreator {
+
 	/**
-	 * @return
+	 * Create a Lucene document instance.
+	 * <p>For use as <i>input</i> creator with LuceneIndexTemplate's
+	 * <code>addDocument</code> methods,
+	 * this method should create a <i>populated</i> Document instance.
+	 * @return the Document instance
+	 * @throws IOException if thrown by a Lucene method, to be auto-converted
+	 * to a LuceneManipulateIndexException
 	 */
 	Document createDocument() throws IOException;
 }

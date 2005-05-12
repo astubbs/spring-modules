@@ -20,15 +20,27 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Interface to implement in order to specify the way to
- * create several Lucene documents. Some index template methods
- * use it to add documents in an index.
- * 
+ * Callback interface for creating a list of Lucene document instances
+ * at the same time.
+ *
+ * <p>Used for input Document creation in LuceneIndexTemplate. Alternatively,
+ * Document instances can be passed into LuceneIndexTemplate's corresponding
+ * <code>addDocuments</code> methods directly.
+ *
  * @author Thierry Templier
+ * @see LuceneIndexTemplate#addDocuments(DocumentsCreator)
+ * @see LuceneIndexTemplate#addDocuments(DocumentsCreator,org.apache.lucene.analysis.Analyzer)
  */
 public interface DocumentsCreator {
+
 	/**
-	 * @return
+	 * Create a list of Lucene document instances.
+	 * <p>For use as <i>input</i> creator with LuceneIndexTemplate's
+	 * <code>addDocuments</code> methods,
+	 * this method should create a list of <i>populated</i> Document instances.
+	 * @return the Document instance
+	 * @throws IOException if thrown by a Lucene method, to be auto-converted
+	 * to a LuceneManipulateIndexException
 	 */
 	List createDocuments() throws IOException;
 }
