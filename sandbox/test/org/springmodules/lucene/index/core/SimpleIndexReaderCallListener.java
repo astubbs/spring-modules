@@ -27,7 +27,7 @@ public class SimpleIndexReaderCallListener implements IndexReaderCallListener {
 	private boolean indexReaderMaxDoc=false;
 	private boolean indexReaderNumDocs=false;
 	private int indexReaderIsDeleted=-1;
-	private boolean readerClosed=false;
+	private int readerClosed=0;
 
 	private void initReaderVariables() {
 		indexReaderUndeletedAll=false;
@@ -43,15 +43,15 @@ public class SimpleIndexReaderCallListener implements IndexReaderCallListener {
 	}
 
 	public void readerCreated() {
-		initReaderVariables();
+		//initReaderVariables();
 		numberReadersCreated++;
 	}
 
 	public void indexReaderClosed() {
-		readerClosed=true;
+		readerClosed++;
 	}
 
-	public boolean isReaderClosed() {
+	public int getNumberReaderClosed() {
 		return readerClosed;
 	}
 

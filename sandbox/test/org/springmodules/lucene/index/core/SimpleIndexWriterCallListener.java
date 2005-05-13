@@ -23,12 +23,13 @@ public class SimpleIndexWriterCallListener implements IndexWriterCallListener {
 	private int numberWritersCreated=0;
 	private boolean indexWriterOptimize=false;
 	private int indexWriterAddDocuments=0;
-	private boolean writerClosed=false;
+	private int writerClosed=0;
 
 	private void initWriterVariables() {
+		numberWritersCreated=0;
 		indexWriterOptimize=false;
 		indexWriterAddDocuments=0;
-		writerClosed=false;
+		writerClosed=0;
 	}
 
 	public int getNumberWritersCreated() {
@@ -36,15 +37,15 @@ public class SimpleIndexWriterCallListener implements IndexWriterCallListener {
 	}
 
 	public void writerCreated() {
-		initWriterVariables();
+		//initWriterVariables();
 		numberWritersCreated++;
 	}
 
 	public void indexWriterClosed() {
-		writerClosed=true;
+		writerClosed++;
 	}
 
-	public boolean isWriterClosed() {
+	public int getNumberWriterClosed() {
 		return writerClosed;
 	}
 
