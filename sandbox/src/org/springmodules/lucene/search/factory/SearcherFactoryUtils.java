@@ -76,22 +76,10 @@ public abstract class SearcherFactoryUtils {
 			return searcherHolder.getSearcher();
 		}
 
-		boolean bindHolder=true;
-		if( searcherHolder!=null ) {
-			bindHolder=false;
-		}
-
 		Searcher searcher = searcherFactory.getSearcher();
-		//Lazily open the searcher
-		if( searcherHolder==null ) {
-			searcherHolder = new SearcherHolder(searcher);
-		} else {
+		if( searcherHolder!=null ) {
+			//Lazily open the search if there is an IndexHolder
 			searcherHolder.setSearcher(searcher);
-		}
-
-		//Bind the searcher in the resource ThreadLocal if necessary
-		if( bindHolder ) {
-			ResourceBindingManager.bindResource(searcherFactory, searcherHolder);
 		}
 
 		return searcher;
