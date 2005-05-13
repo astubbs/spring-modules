@@ -33,15 +33,20 @@ public interface ValangParserConstants {
   int LESS_THAN = 31;
   int NOT_EQUAL = 32;
   int EQUALS = 33;
-  int NUM = 34;
-  int STRING = 35;
-  int DATE = 36;
-  int DOT = 37;
-  int UNDERSCORE = 38;
-  int DIGIT = 39;
-  int LOWERLETTER = 40;
-  int UPPERLETTER = 41;
-  int PATH = 42;
+  int ADD = 34;
+  int SUBTRACT = 35;
+  int MULTIPLY = 36;
+  int DIVIDE = 37;
+  int MOD = 38;
+  int NUM = 39;
+  int STRING = 40;
+  int DATE = 41;
+  int DOT = 42;
+  int UNDERSCORE = 43;
+  int DIGIT = 44;
+  int LOWERLETTER = 45;
+  int UPPERLETTER = 46;
+  int PATH = 47;
 
   int DEFAULT = 0;
 
@@ -80,6 +85,11 @@ public interface ValangParserConstants {
     "\"<\"",
     "<NOT_EQUAL>",
     "<EQUALS>",
+    "\"+\"",
+    "\"-\"",
+    "\"*\"",
+    "<DIVIDE>",
+    "<MOD>",
     "<NUM>",
     "<STRING>",
     "<DATE>",

@@ -18,6 +18,11 @@ import org.springmodules.validation.functions.BeanPropertyFunction;
 import org.springmodules.validation.functions.LengthOfFunction;
 import org.springmodules.validation.functions.MapEntryFunction;
 import org.springmodules.validation.functions.TargetBeanFunction;
+import org.springmodules.validation.functions.AddFunction;
+import org.springmodules.validation.functions.SubtractFunction;
+import org.springmodules.validation.functions.MultiplyFunction;
+import org.springmodules.validation.functions.DivideFunction;
+import org.springmodules.validation.functions.ModuloFunction;
 
 import org.springmodules.validation.valang.ValangVisitor;
 import org.springmodules.validation.valang.DefaultVisitor;
@@ -97,6 +102,11 @@ TOKEN [IGNORE_CASE] :
 |	< LESS_THAN : "<" >
 |	< NOT_EQUAL : "!=" | "<>" | "><" >
 |	< EQUALS : "=" | "==" >
+|	< ADD : "+" >
+|	< SUBTRACT : "-" >
+|	< MULTIPLY : "*" >
+|	< DIVIDE : "/" | "div" >
+|	< MOD : "%" | "mod" >
 }
 
 TOKEN :
@@ -221,6 +231,7 @@ Predicate expression(Function fieldFunction) :
 }
 {
 	(
+		LOOKAHEAD("(" predicates(fieldFunction) ")")
 		"(" predicate = predicates(fieldFunction) ")"
 	|	predicate = not(fieldFunction)
 	|	predicate = predicate(fieldFunction)
@@ -245,10 +256,10 @@ Predicate predicate(Function fieldFunction) :
 }
 {
 	(
-		leftFunction = function(fieldFunction)
+		leftFunction = additiveExpr(fieldFunction)
 		(
 			(
-	    		operator = binaryOperator() rightFunction1 = function(fieldFunction)
+	    		operator = binaryOperator() rightFunction1 = additiveExpr(fieldFunction)
 			|	operator = unaryOperator()
 	    	)
 	    	{
@@ -257,9 +268,9 @@ Predicate predicate(Function fieldFunction) :
 	    |	(
 				( <BETWEEN> | <NOT_BETWEEN> { notBetween = true; } )
 				(
-					rightFunction1 = function(fieldFunction)
+					rightFunction1 = additiveExpr(fieldFunction)
 					<AND>
-					rightFunction2 = function(fieldFunction)
+					rightFunction2 = additiveExpr(fieldFunction)
 				)
 				{
 					if (notBetween) {
@@ -274,10 +285,10 @@ Predicate predicate(Function fieldFunction) :
 				(
 					(
 					    LOOKAHEAD(2)
-						tmpFunction = function(fieldFunction) { functions.add(tmpFunction); }
+						tmpFunction = additiveExpr(fieldFunction) { functions.add(tmpFunction); }
 						","
 					)*
-					tmpFunction = function(fieldFunction) { functions.add(tmpFunction); }
+					tmpFunction = additiveExpr(fieldFunction) { functions.add(tmpFunction); }
 				|	"@" tmpFunction = beanProperty(fieldFunction) { collectionProperty = true; }
 				) 
 				{
@@ -298,18 +309,70 @@ Predicate predicate(Function fieldFunction) :
 Function function(Function fieldFunction) :
 {
     String function = null;
-    Function parentFunction = null;
+    Function leftFunction = null;
+    Function rightFunction = null;
 }
 {
     (
         LOOKAHEAD(2)
         ( "!" | <PATH> ) 
         { function = token.image; } 
-        "(" parentFunction = function(fieldFunction) ")" 
-        { return getVisitor().getFunction(function, parentFunction); }
-    |   parentFunction = beanPropertyOrLiteral(fieldFunction)   { return parentFunction; }
-    |	"?" { return fieldFunction; }
+        "(" leftFunction = function(fieldFunction) ")" 
+        { leftFunction = getVisitor().getFunction(function, leftFunction); }
+    |   leftFunction = beanPropertyOrLiteral(fieldFunction)
+    |	"?" { leftFunction = fieldFunction; }
+    |	"(" leftFunction = additiveExpr(fieldFunction) ")"
     )
+    {
+    	return leftFunction;
+    }
+}
+
+Function additiveExpr(Function fieldFunction) :
+{
+	Function leftFunction = null;
+	Function rightFunction = null;
+}
+{
+	leftFunction = subtractiveExpr(fieldFunction)
+	( 
+		<ADD> rightFunction = subtractiveExpr(fieldFunction) { leftFunction = new AddFunction(leftFunction, rightFunction); }
+	)*
+	{
+		return leftFunction;
+	}
+}
+
+Function subtractiveExpr(Function fieldFunction) :
+{
+	Function leftFunction = null;
+	Function rightFunction = null;
+}
+{
+	leftFunction = multiplicativeExpr(fieldFunction)
+	( 
+		<SUBTRACT> rightFunction = multiplicativeExpr(fieldFunction) { leftFunction = new SubtractFunction(leftFunction, rightFunction); }
+	)*
+	{
+		return leftFunction;
+	}
+}
+
+Function multiplicativeExpr(Function fieldFunction) :
+{
+	Function leftFunction = null;
+	Function rightFunction = null;
+}
+{
+	leftFunction = function(fieldFunction)
+	(
+		<MULTIPLY>	rightFunction = function(fieldFunction) { leftFunction = new MultiplyFunction(leftFunction, rightFunction); }
+	|	<DIVIDE>	rightFunction = function(fieldFunction) { leftFunction = new DivideFunction(leftFunction, rightFunction); }
+	|	<MOD>		rightFunction = function(fieldFunction) { leftFunction = new ModuloFunction(leftFunction, rightFunction); }
+	)*
+	{
+		return leftFunction;
+	}
 }
 
 Function beanPropertyOrLiteral(Function fieldFunction) :
