@@ -74,22 +74,10 @@ public abstract class IndexWriterFactoryUtils {
 			return indexHolder.getIndexWriter();
 		}
 
-		boolean bindHolder=true;
-		if( indexHolder!=null ) {
-			bindHolder=false;
-		}
-
 		IndexWriter writer = indexFactory.getIndexWriter();
-		//Lazily open the reader
-		if( indexHolder==null ) {
-			indexHolder = new IndexHolder(null,writer);
-		} else {
+		if( indexHolder!=null ) {
+			//Lazily open the reader if there is an IndexHolder
 			indexHolder.setIndexWriter(writer);
-		}
-
-		//Bind the reader in the resource ThreadLocal if necessary
-		if( bindHolder ) {
-			ResourceBindingManager.bindResource(indexFactory, indexHolder);
 		}
 
 		return writer;
