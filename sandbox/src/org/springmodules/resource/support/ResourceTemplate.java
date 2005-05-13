@@ -16,9 +16,7 @@
 
 package org.springmodules.resource.support;
 
-import org.springmodules.resource.ResourceException;
 import org.springmodules.resource.ResourceManager;
-import org.springmodules.resource.ResourceStatus;
 
 /**
  * @author Thierry Templier
@@ -27,13 +25,13 @@ public class ResourceTemplate {
 
 	private ResourceManager resourceManager = null;
 
-	public Object execute(ResourceCallback callback) throws ResourceException {
-		ResourceStatus status=this.resourceManager.open();
+	public Object execute(ResourceCallback callback) {
+		this.resourceManager.open();
 		Object result = null;
 		try {
 			result = callback.doWithResource();
 		} finally {
-			this.resourceManager.close(status);
+			this.resourceManager.close();
 		}
 		return result;
 	}

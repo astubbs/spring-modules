@@ -32,7 +32,6 @@ import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
-import org.springframework.transaction.interceptor.TransactionInterceptor;
 import org.springmodules.resource.ResourceManager;
 
 /**
@@ -216,7 +215,7 @@ public class ResourceProxyFactoryBean extends ProxyConfig
 		}
 		else {
 			// rely on default pointcut
-			proxyFactory.addAdvisor(new ResourceAttributeSourceAdvisor(this.resourceInterceptor));
+			proxyFactory.addAdvisor(new ResourceAdvisor(this.resourceInterceptor));
 			// Could just do the following, but it's usually less efficient because of AOP advice chain caching.
 			// proxyFactory.addInterceptor(transactionInterceptor);
 		}

@@ -18,21 +18,26 @@ package org.springmodules.resource.interceptor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.springmodules.resource.ResourceStatus;
 
 /**
  * @author Thierry Templier
  */
 public class ResourceInterceptor extends ResourceAspectSupport implements MethodInterceptor {
 
-	private ResourceStatus doOpen() {
-		System.err.println("--- interceptor doOpen ---");
-		return resourceManager.open();
+	private void doOpen() {
+		if( logger.isDebugEnabled() ) {
+			logger.debug("The interceptor is calling the resource manager to open the resource");
+		}
+
+		resourceManager.open();
 	}
 
-	public void doClose(ResourceStatus status) {
-		System.err.println("--- interceptor doClose ---");
-		resourceManager.close(status);
+	public void doClose() {
+		if( logger.isDebugEnabled() ) {
+			logger.debug("The interceptor is calling the resource manager to close the resource");
+		}
+
+		resourceManager.close();
 	}
 
 	private void doOnThrowable(Throwable ex) {
@@ -44,7 +49,7 @@ public class ResourceInterceptor extends ResourceAspectSupport implements Method
 		// as well as the method, which may be from an interface
 		Class targetClass = (invocation.getThis() != null) ? invocation.getThis().getClass() : null;
 		
-		ResourceStatus status=doOpen();
+		doOpen();
 	
 		Object retVal = null;
 		try {
@@ -59,7 +64,7 @@ public class ResourceInterceptor extends ResourceAspectSupport implements Method
 			throw ex;
 		}
 		finally {
-			doClose(status);
+			doClose();
 		}
 		return retVal;
 	}

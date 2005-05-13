@@ -20,6 +20,6 @@ package org.springmodules.resource;
  * @author Thierry Templier
  */
 public interface ResourceManager {
-	public ResourceStatus open() throws ResourceException;
-	public void close(ResourceStatus status) throws ResourceException;
+	public void open();
+	public void close();
 }

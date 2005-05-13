@@ -24,12 +24,12 @@ import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
  * 
  * @author Thierry Templier
  */
-public class ResourceAttributeSourceAdvisor extends StaticMethodMatcherPointcutAdvisor {
+public class ResourceAdvisor extends StaticMethodMatcherPointcutAdvisor {
 	
-	public ResourceAttributeSourceAdvisor() {
+	public ResourceAdvisor() {
 	}
 
-	public ResourceAttributeSourceAdvisor(ResourceInterceptor interceptor) {
+	public ResourceAdvisor(ResourceInterceptor interceptor) {
 		setResourceInterceptor(interceptor);
 	}
 
