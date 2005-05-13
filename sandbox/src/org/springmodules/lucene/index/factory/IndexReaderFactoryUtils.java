@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexReader;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
-import org.springmodules.resource.support.ResourceSynchronizationManager;
+import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
  * @author Brian McCallister
@@ -69,7 +69,7 @@ public abstract class IndexReaderFactoryUtils {
 	 * @throws IOException
 	 */
 	public static IndexReader doGetIndexReader(IndexFactory indexFactory,boolean allowSynchronization) throws IOException {
-		IndexHolder indexHolder = (IndexHolder) ResourceSynchronizationManager.getResource(indexFactory);
+		IndexHolder indexHolder = (IndexHolder) ResourceBindingManager.getResource(indexFactory);
 		if (indexHolder != null && indexHolder.getIndexReader()!=null ) {
 			return indexHolder.getIndexReader();
 		}
@@ -80,19 +80,18 @@ public abstract class IndexReaderFactoryUtils {
 		}
 
 		IndexReader reader = indexFactory.getIndexReader();
-		if (allowSynchronization && ResourceSynchronizationManager.isSynchronizationActive()) {
-			logger.debug("Registering reader synchronization for Lucene index read");
-			if( indexHolder==null ) {
-				indexHolder = new IndexHolder(reader,null);
-			} else {
-				indexHolder.setIndexReader(reader);
-			}
-
-			if( bindHolder ) {
-				ResourceSynchronizationManager.bindResource(indexFactory, indexHolder);
-				ResourceSynchronizationManager.registerSynchronization(new IndexSynchronization(indexHolder, indexFactory));
-			}
+		//Lazily open the reader
+		if( indexHolder==null ) {
+			indexHolder = new IndexHolder(reader,null);
+		} else {
+			indexHolder.setIndexReader(reader);
 		}
+
+		//Bind the reader in the resource ThreadLocal if necessary
+		if( bindHolder ) {
+			ResourceBindingManager.bindResource(indexFactory, indexHolder);
+		}
+
 		return reader;
     }
 
@@ -114,7 +113,7 @@ public abstract class IndexReaderFactoryUtils {
 	 * @throws IOException
 	 */
 	public static void doCloseIndexReaderIfNecessary(IndexFactory indexFactory,IndexReader indexReader) throws IOException {
-		if (indexReader == null || ResourceSynchronizationManager.hasResource(indexFactory)) {
+		if (indexReader == null || ResourceBindingManager.hasResource(indexFactory)) {
 			return;
 		}
 

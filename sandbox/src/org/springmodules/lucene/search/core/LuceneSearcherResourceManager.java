@@ -16,16 +16,13 @@
 
 package org.springmodules.lucene.search.core;
 
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searcher;
 import org.springframework.beans.factory.InitializingBean;
-import org.springmodules.lucene.index.core.AbstractResourceManager;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
 import org.springmodules.lucene.search.factory.SearcherHolder;
-import org.springmodules.resource.ResourceException;
-import org.springmodules.resource.ResourceStatus;
-import org.springmodules.resource.support.ResourceSynchronizationManager;
+import org.springmodules.resource.AbstractResourceManager;
+import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
  * @author Thierry Templier
@@ -43,15 +40,7 @@ public class LuceneSearcherResourceManager extends AbstractResourceManager imple
 	}
 
 	public void setSearcherFactory(SearcherFactory searcherFactory) {
-		/*if (indexFactory instanceof ResourceAwareIndexFactoryProxy) {
-			// If we got a TransactionAwareDataSourceProxy, we need to perform transactions
-			// for its underlying target DataSource, else data access code won't see
-			// properly exposed transactions (i.e. transactions for the target DataSource).
-			this.indexFactory = ((ResourceAwareIndexFactoryProxy) indexFactory).getTargetIndexFactory();
-		}
-		else {*/
-			this.searcherFactory = searcherFactory;
-		//}
+		this.searcherFactory = searcherFactory;
 	}
 
 	/**
@@ -61,44 +50,25 @@ public class LuceneSearcherResourceManager extends AbstractResourceManager imple
 		return searcherFactory;
 	}
 
-	public Object doGetResource() {
-		SearcherFactoryResourceObject txObject = new SearcherFactoryResourceObject();
-		SearcherHolder searcherHolder =
-			(SearcherHolder) ResourceSynchronizationManager.getResource(this.searcherFactory);
-		txObject.setSearcherHolder(searcherHolder);
-		return txObject;
-	}
-
 	/**
 	 * @see org.springmodules.resource.ResourceManager#open()
 	 */
-	public void doOpen(Object resource) throws ResourceException {
-		SearcherFactoryResourceObject rscObject = (SearcherFactoryResourceObject)resource;
-
-		//System.err.println("IndexReaderFactoryUtils.getIndexReader");
-		IndexSearcher indexSearcher = null;
-		/*IndexReader indexReader = IndexReaderFactoryUtils.getIndexReader(this.indexFactory, false);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Opened indexReader [" + indexReader + "] for Lucene Resource");
-		}*/
-
-		rscObject.setSearcherHolder(new SearcherHolder(indexSearcher));
-		rscObject.getSearcherHolder().setSynchronizedWithResource(true);
-
-		ResourceSynchronizationManager.bindResource(getSearcherFactory(), rscObject.getSearcherHolder());
+	public void doOpen() {
+		SearcherHolder holder=new SearcherHolder(null);
+		ResourceBindingManager.bindResource(this.searcherFactory, holder);
 	}
 
 	/**
 	 * @see org.springmodules.resource.ResourceManager#close()
 	 */
-	public void doClose(ResourceStatus status) throws ResourceException {
-		SearcherFactoryResourceObject rscObject = (SearcherFactoryResourceObject)status.getResource();
+	public void doClose() {
+		SearcherHolder holder=(SearcherHolder)ResourceBindingManager.getResource(this.searcherFactory);
 
 		// Remove the resource holder from the thread.
-		ResourceSynchronizationManager.unbindResource(this.searcherFactory);
+		ResourceBindingManager.unbindResource(this.searcherFactory);
 
 		// Close searcher.
-		Searcher searcher = rscObject.getSearcherHolder().getSearcher();
+		Searcher searcher = holder.getSearcher();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Closing Lucene searcher [" + searcher + "]");
 		}
@@ -112,30 +82,6 @@ public class LuceneSearcherResourceManager extends AbstractResourceManager imple
 		if (this.searcherFactory == null) {
 			throw new IllegalArgumentException("searcherFactory is required");
 		}
-	}
-
-	/**
-	 * Searcher resource transaction object, representing a SearcherHolder.
-	 * Used as ressource object by LuceneSearcherResourceManager.
-	 */
-	private static class SearcherFactoryResourceObject {
-
-		private SearcherHolder searcherHolder;
-
-		/**
-		 * @return
-		 */
-		public SearcherHolder getSearcherHolder() {
-			return searcherHolder;
-		}
-
-		/**
-		 * @param holder
-		 */
-		public void setSearcherHolder(SearcherHolder holder) {
-			searcherHolder = holder;
-		}
-
 	}
 
 }

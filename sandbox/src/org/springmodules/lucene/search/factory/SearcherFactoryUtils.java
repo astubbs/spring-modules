@@ -24,7 +24,7 @@ import org.apache.lucene.search.Searcher;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.search.LuceneSearchException;
 import org.springmodules.lucene.search.core.SmartSearcher;
-import org.springmodules.resource.support.ResourceSynchronizationManager;
+import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
  * @author Brian McCallister
@@ -71,7 +71,7 @@ public abstract class SearcherFactoryUtils {
 	 * @throws IOException
 	 */
 	public static Searcher doGetSearcher(SearcherFactory searcherFactory,boolean allowSynchronization) throws IOException {
-		SearcherHolder searcherHolder = (SearcherHolder) ResourceSynchronizationManager.getResource(searcherFactory);
+		SearcherHolder searcherHolder = (SearcherHolder) ResourceBindingManager.getResource(searcherFactory);
 		if (searcherHolder != null && searcherHolder.getSearcher()!=null ) {
 			return searcherHolder.getSearcher();
 		}
@@ -82,19 +82,18 @@ public abstract class SearcherFactoryUtils {
 		}
 
 		Searcher searcher = searcherFactory.getSearcher();
-		if (allowSynchronization && ResourceSynchronizationManager.isSynchronizationActive()) {
-			logger.debug("Registering searcher synchronization for Lucene index search");
-			if( searcherHolder==null ) {
-				searcherHolder = new SearcherHolder(searcher);
-			} else {
-				searcherHolder.setSearcher(searcher);
-			}
-
-			if( bindHolder ) {
-				ResourceSynchronizationManager.bindResource(searcherFactory, searcherHolder);
-				ResourceSynchronizationManager.registerSynchronization(new SearcherSynchronization(searcherHolder, searcherFactory));
-			}
+		//Lazily open the searcher
+		if( searcherHolder==null ) {
+			searcherHolder = new SearcherHolder(searcher);
+		} else {
+			searcherHolder.setSearcher(searcher);
 		}
+
+		//Bind the searcher in the resource ThreadLocal if necessary
+		if( bindHolder ) {
+			ResourceBindingManager.bindResource(searcherFactory, searcherHolder);
+		}
+
 		return searcher;
      }
 
@@ -116,7 +115,7 @@ public abstract class SearcherFactoryUtils {
 	 * @throws IOException
 	 */
 	public static void doCloseSearcherIfNecessary(SearcherFactory searcherFactory,Searcher searcher) throws IOException {
-		if (searcher == null || ResourceSynchronizationManager.hasResource(searcherFactory)) {
+		if (searcher == null || ResourceBindingManager.hasResource(searcherFactory)) {
 			return;
 		}
 		if( searcher instanceof SmartSearcher && !((SmartSearcher)searcher).shouldClose() ) {

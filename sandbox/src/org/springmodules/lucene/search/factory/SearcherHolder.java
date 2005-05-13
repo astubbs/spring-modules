@@ -17,13 +17,12 @@
 package org.springmodules.lucene.search.factory;
 
 import org.apache.lucene.search.Searcher;
-import org.springmodules.lucene.index.factory.ResourceHolderDefinition;
 
 /**
  * 
  * @author Thierry Templier
  */
-public class SearcherHolder extends ResourceHolderDefinition {
+public class SearcherHolder {
 
 	private Searcher searcher;
 

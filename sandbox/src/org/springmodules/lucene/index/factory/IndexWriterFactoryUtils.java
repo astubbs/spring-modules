@@ -22,7 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.index.IndexWriter;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
-import org.springmodules.resource.support.ResourceSynchronizationManager;
+import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
  * @author Brian McCallister
@@ -69,7 +69,7 @@ public abstract class IndexWriterFactoryUtils {
 	 * @throws IOException
 	 */
 	public static IndexWriter doGetIndexWriter(IndexFactory indexFactory,boolean allowSynchronization) throws IOException {
-		IndexHolder indexHolder = (IndexHolder) ResourceSynchronizationManager.getResource(indexFactory);
+		IndexHolder indexHolder = (IndexHolder) ResourceBindingManager.getResource(indexFactory);
 		if (indexHolder != null && indexHolder.getIndexWriter()!=null ) {
 			return indexHolder.getIndexWriter();
 		}
@@ -80,20 +80,18 @@ public abstract class IndexWriterFactoryUtils {
 		}
 
 		IndexWriter writer = indexFactory.getIndexWriter();
-		if (allowSynchronization && ResourceSynchronizationManager.isSynchronizationActive()) {
-			logger.debug("Registering reader synchronization for Lucene index write");
-			if( indexHolder==null ) {
-				indexHolder = new IndexHolder(null,writer);
-			} else {
-				indexHolder.setIndexWriter(writer);
-			}
-
-			if( bindHolder ) {
-				ResourceSynchronizationManager.bindResource(indexFactory, indexHolder);
-			}
-
-			ResourceSynchronizationManager.registerSynchronization(new IndexSynchronization(indexHolder, indexFactory));
+		//Lazily open the reader
+		if( indexHolder==null ) {
+			indexHolder = new IndexHolder(null,writer);
+		} else {
+			indexHolder.setIndexWriter(writer);
 		}
+
+		//Bind the reader in the resource ThreadLocal if necessary
+		if( bindHolder ) {
+			ResourceBindingManager.bindResource(indexFactory, indexHolder);
+		}
+
 		return writer;
     }
 
@@ -115,7 +113,7 @@ public abstract class IndexWriterFactoryUtils {
 	 * @throws IOException
 	 */
 	public static void doCloseIndexWriterIfNecessary(IndexFactory indexFactory,IndexWriter indexWriter) throws IOException {
-		if (indexWriter == null || ResourceSynchronizationManager.hasResource(indexFactory)) {
+		if (indexWriter == null || ResourceBindingManager.hasResource(indexFactory)) {
 			return;
 		}
 

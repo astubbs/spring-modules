@@ -22,7 +22,7 @@ import org.apache.lucene.index.IndexWriter;
 /**
  * @author Thierry Templier
  */
-public class IndexHolder extends ResourceHolderDefinition {
+public class IndexHolder {
 
 	private IndexReader indexReader;
 	private IndexWriter indexWriter;
