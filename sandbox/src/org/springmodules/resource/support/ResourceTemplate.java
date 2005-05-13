@@ -25,6 +25,10 @@ public class ResourceTemplate {
 
 	private ResourceManager resourceManager = null;
 
+	public ResourceTemplate(ResourceManager resourceManager) {
+		this.resourceManager=resourceManager;
+	}
+
 	public Object execute(ResourceCallback callback) {
 		this.resourceManager.open();
 		Object result = null;
