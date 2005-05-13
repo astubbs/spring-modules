@@ -51,11 +51,17 @@ import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
  * always be configured as a bean in the application context, in the first case
  * given to the service directly, in the second case to the prepared template.
  * 
+ * <p>You must be aware that the use of some methods (like undeleteDocuments,
+ * isDeleted, hasDeletions, flush) have sense only if you share the Lucene
+ * underlying resources across several template method calls. As a matter of
+ * fact, when IndexReader and IndexWriter are closed every changes deferred
+ * until the closing of these resources. Moreover some Lucene operations are
+ * incompatible if you share resources across several calls. 
+ * 
  * @author Brian McCallister
  * @author Thierry Templier
  * @see DocumentCreator
  * @see DocumentsCreator
- * @see RecordExtractor
  * @see org.springmodules.lucene.index.factory
  */
 public class LuceneIndexTemplate {
@@ -74,8 +80,11 @@ public class LuceneIndexTemplate {
 	}
 
 	/**
-	 * @param indexFactory
-	 * @param analyzer
+	 * Construct a new LuceneIndexTemplate, given an IndexFactory to obtain both
+	 * IndexReader and IndexWriter, and an Analyzer to be used unless an other
+	 * one is specified as method parameter.
+	 * @param indexFactory IndexFactory to obtain both IndexReader and IndexWriter
+	 * @param analyzer Lucene analyzer to extract tokens out of the text to index
 	 */
 	public LuceneIndexTemplate(IndexFactory indexFactory,Analyzer analyzer) {
 		setIndexFactory(indexFactory);
@@ -84,17 +93,51 @@ public class LuceneIndexTemplate {
 	}
 
 	/**
-	 * Eagerly initialize the exception translator,
-	 * creating a default one for the specified SearcherFactory if none set.
+	 * Check if the indexFactory is set. The analyzer could be not set.
 	 */
 	public void afterPropertiesSet() {
 		if (getIndexFactory() == null) {
-			throw new IllegalArgumentException("searcherFactory is required");
+			throw new IllegalArgumentException("indexFactory is required");
 		}
 	}
 
 	/**
-	 * @param internalDocumentId
+	 * Set the IndexFactory to obtain both IndexReader and IndexWriter.
+	 */
+	public void setIndexFactory(IndexFactory factory) {
+		indexFactory = factory;
+	}
+
+	/**
+	 * Return the IndexFactory used by this template.
+	 */
+	public IndexFactory getIndexFactory() {
+		return indexFactory;
+	}
+
+	/**
+	 * Set the default Lucene Analyzer used to extract tokens out of the
+	 * text to index.
+	 */
+	public void setAnalyzer(Analyzer analyzer) {
+		this.analyzer = analyzer;
+	}
+
+	/**
+	 * Return the Lucene Analyzer used by this template.
+	 */
+	public Analyzer getAnalyzer() {
+		return analyzer;
+	}
+
+	/**
+	 * Delete the document corresponding to its internal document
+	 * identifier.
+	 * Note: Lucene deletes really this document at the IndexReader
+	 * close. By default, if you don't share resources across several
+	 * calls, the document is really delete from the index before the
+	 * method returns. 
+	 * @param internalDocumentId the internal document identifier
 	 */
 	public void deleteDocument(int internalDocumentId) {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
@@ -108,9 +151,15 @@ public class LuceneIndexTemplate {
 	}
 
 	/**
-	 * @param term
+	 * Delete one or more documents corresponding to a specified value
+	 * for a field.
+	 * Note: Lucene deletes really these documents at the IndexReader
+	 * close. By default, if you don't share resources across several
+	 * calls, the document is really delete from the index before the
+	 * method returns. 
+	 * @param term the term to specify a value for a field
 	 */
-	public void deleteDocument(Term term) {
+	public void deleteDocuments(Term term) {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			reader.delete(term);
@@ -122,7 +171,11 @@ public class LuceneIndexTemplate {
 	}
 
 	/**
-	 * Be careful to use this method in a correct context.
+	 * Undelete every documents that have been marked as deleted. As
+	 * Lucene deletes really these documents at the IndexReader
+	 * close, this method is useful only if you don't share resources
+	 * across several calls. In the contrary, the call of this method
+	 * has no effect on the index.
 	 */
 	public void undeleteDocuments() {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
@@ -136,7 +189,12 @@ public class LuceneIndexTemplate {
 	}
 
 	/**
-	 * Be careful to use this method in a correct context.
+	 * Check if a document corresponding to an internal document identifier
+	 * has been marked as deleted. As Lucene deletes really these documents
+	 * at the IndexReader close, this method is useful only if you don't
+	 * share resources across several calls. In the contrary, the call of
+	 * this method will always return false.
+	 * @param internalDocumentId the internal document identifier
 	 */
 	public boolean isDeleted(int internalDocumentId) {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
@@ -148,7 +206,10 @@ public class LuceneIndexTemplate {
 	}
 
 	/**
-	 * Be careful to use this method in a correct context.
+	 * Check if an index has documents marked as deleted. As Lucene deletes
+	 * really these documents at the IndexReader close, this method is useful
+	 * only if you don't share resources across several calls. In the contrary,
+	 * the call of this method will always return false.
 	 */
 	public boolean hasDeletions() {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
@@ -160,7 +221,13 @@ public class LuceneIndexTemplate {
 	}
 
 	/**
-	 * Be careful to use this method in a correct context.
+	 * Flush every updates in the index. For example, documents marked as
+	 * deleted will really be removed and documents really added. As Lucene
+	 * deletes really these documents at the IndexReader close and adds really,
+	 * these at the IndexWriter close, this method is useful only if you
+	 * don't share resources across several calls. In the contrary, the call
+	 * of this method has no effect on the index.
+	 * Note: At this time, the method is not implemented.
 	 */
 	public void flush() {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
@@ -172,7 +239,11 @@ public class LuceneIndexTemplate {
 	}
 
 	/**
-	 * Be careful to use this method in a correct context.
+	 * Get the next document number which will be used to internally
+	 * identify a document. Be aware that, if you share resources
+	 * across several calls, this number is modified at every document
+	 * add or document marked as deleted. 
+	 * @return the next document number in the index
 	 */
 	public int getMaxDoc() {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
@@ -184,7 +255,12 @@ public class LuceneIndexTemplate {
 	}
 
 	/**
-	 * Be careful to use this method in a correct context.
+	 * Get the number of documents in the index. Be aware that, if you
+	 * share resources across several calls, this number represents the
+	 * number of documents in the index plus the number of documents which
+	 * will be added at the IndexWriter close minus the number of documents
+	 * which are marked as deleted.
+	 * @return the number of documents in the index
 	 */
 	public int getNumDocs() {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
@@ -192,25 +268,6 @@ public class LuceneIndexTemplate {
 			return reader.numDocs();
 		} finally {
 			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
-		}
-	}
-
-	private void doAddDocument(IndexWriter writer,Document document,
-								Analyzer analyzer) throws IOException {
-		if( document!=null ) {
-			if( analyzer==null ) {
-				writer.addDocument(document);
-			} else if( getAnalyzer()==null ) {
-				writer.addDocument(document);
-			} else if( analyzer!=null ) {
-				writer.addDocument(document,analyzer);
-			} else if( getAnalyzer()!=null ) {
-				writer.addDocument(document,getAnalyzer());
-			} else {
-				writer.addDocument(document);
-			}
-		} else {
-			throw new LuceneIndexAccessException("The document created is null.");
 		}
 	}
 
@@ -272,6 +329,35 @@ public class LuceneIndexTemplate {
 		}
 	}
 
+	/**
+	 * Internal method to add document using the Lucene IndexWriter and Analyzer
+	 * parameters. Be aware that, if you share resources across several calls, the
+	 * document will be really added when the IndexWriter is closed. In the contrary,
+	 * the document is add in the index before the method returns. 
+	 * @param writer the IndexWriter to use
+	 * @param document the document to add
+	 * @param analyzer the analyzer to use to extract tokens out of the text to index
+	 * @throws IOException if there is any problem during adding the document
+	 */
+	private void doAddDocument(IndexWriter writer,Document document,
+								Analyzer analyzer) throws IOException {
+		if( document!=null ) {
+			if( analyzer==null ) {
+				writer.addDocument(document);
+			} else if( getAnalyzer()==null ) {
+				writer.addDocument(document);
+			} else if( analyzer!=null ) {
+				writer.addDocument(document,analyzer);
+			} else if( getAnalyzer()!=null ) {
+				writer.addDocument(document,getAnalyzer());
+			} else {
+				writer.addDocument(document);
+			}
+		} else {
+			throw new LuceneIndexAccessException("The document created is null.");
+		}
+	}
+
 	public void addIndex(Directory directory) {
 		addIndexes(new Directory[] { directory });
 	}
@@ -318,34 +404,6 @@ public class LuceneIndexTemplate {
 		} finally {
 			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
 		}
-	}
-
-	/**
-	 * @return
-	 */
-	public Analyzer getAnalyzer() {
-		return analyzer;
-	}
-
-	/**
-	 * @param analyzer
-	 */
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
-	}
-
-	/**
-	 * @return
-	 */
-	public IndexFactory getIndexFactory() {
-		return indexFactory;
-	}
-
-	/**
-	 * @param factory
-	 */
-	public void setIndexFactory(IndexFactory factory) {
-		indexFactory = factory;
 	}
 
 }
