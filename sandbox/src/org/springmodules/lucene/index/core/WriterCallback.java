@@ -21,13 +21,33 @@ import java.io.IOException;
 import org.apache.lucene.index.IndexWriter;
 
 /**
+ * Generic callback interface for code that operates on a Lucene IndexWriter.
+ * Allows to execute any number of operations on a single IndexWriter.
+ * 
+ * <p>This is particularly useful for delegating to existing data access code
+ * that expects an IndexWriter to work on and throws IOException. For newly
+ * written code, it is strongly recommended to use LuceneIndexTemplate's more
+ * specific methods.
+ *
  * @author Brian McCallister
+ * @author Thierry Templier
+ * @see org.springmodules.lucene.index.core.LuceneIndexTemplate
  */
 public interface WriterCallback {
 
-    /**
-	 * @param writer
-	 * @throws IOException
+	/**
+	 * Gets called by <code>LuceneIndexTemplate.write</code> with an active Lucene
+	 * IndexWriter. Does not need to care about activating or closing the IndexWriter.
+	 * 
+	 * <p>Allows for returning a result object created within the callback, i.e.
+	 * a domain object or a collection of domain objects. A thrown
+	 * RuntimeException is treated as application exception: it gets propagated
+	 * to the caller of the template.
+	 * 
+	 * @param writer an active IndexWriter
+	 * @return a result object, or null if none
+	 * @throws IOException if thrown by a Lucene method, to be auto-converted
+	 * to a LuceneIndexAccessException
 	 */
 	Object doWithWriter(IndexWriter writer) throws IOException;
 }

@@ -25,6 +25,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Sort;
 import org.springmodules.lucene.search.LuceneSearchException;
@@ -33,10 +34,29 @@ import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
 import org.springmodules.lucene.search.query.QueryCreator;
 
 /**
- * Template class to make search using Lucene.
+ * <b>This is the central class in the lucene search core package.</b>
+ * It simplifies the use of lucene to search documents using searcher.
+ * It helps to avoid common errors and to manage these resource in a
+ * flexible manner.
+ * It executes core Lucene workflow, leaving application code to focus on
+ * the way to create Lucene queries and extract datas from results.
+ *
+ * <p>This class is based on the SearcherFactory abstraction which is a
+ * factory to create Searcher for a or several configured Directories.
+ * They can be local or remote. So the template doesn't need to always
+ * hold resources and you can apply different strategies for managing
+ * index resources.
+ *
+ * <p>Can be used within a service implementation via direct instantiation
+ * with a SearcherFactory reference, or get prepared in an application context
+ * and given to services as bean reference. Note: The SearcherFactory should
+ * always be configured as a bean in the application context, in the first case
+ * given to the service directly, in the second case to the prepared template.
  * 
  * @author Brian McCallister
  * @author Thierry Templier
+ * @see org.springmodules.lucene.search.query.QueryCreator
+ * @see org.springmodules.lucene.search.factory
  */
 public class LuceneSearchTemplate {
 
@@ -54,8 +74,10 @@ public class LuceneSearchTemplate {
 	}
 
 	/**
-	 * @param searcherFactory
-	 * @param analyzer
+	 * Construct a new LuceneSearchTemplate, given an SearcherFactory to obtain
+	 * a Searcher and an Analyzer to be used by the queries.
+	 * @param searcherFactory SearcherFactory to obtain Searcher
+	 * @param analyzer Lucene analyzer used by the queries
 	 */
 	public LuceneSearchTemplate(SearcherFactory searcherFactory,Analyzer analyzer) {
 		setSearcherFactory(searcherFactory);
@@ -64,8 +86,7 @@ public class LuceneSearchTemplate {
 	}
 
 	/**
-	 * Eagerly initialize the exception translator,
-	 * creating a default one for the specified SearcherFactory if none set.
+	 * Check if the searcherFactory is set. The analyzer could be not set.
 	 */
 	public void afterPropertiesSet() {
 		if (getSearcherFactory() == null) {
@@ -74,14 +95,44 @@ public class LuceneSearchTemplate {
 	}
 
 	/**
-	 * This method is used to extract datas from the hists.
-	 * 
-	 * @param hits the hists corresponding to the search
-	 * @param extractor the extractor used
-	 * @return the search results
-	 * @throws IOException
+	 * Set the SearcherFactory to obtain Searcher.
 	 */
-	protected List extractHits(Hits hits,HitExtractor extractor) throws IOException {
+	public void setSearcherFactory(SearcherFactory factory) {
+		searcherFactory = factory;
+	}
+
+	/**
+	 * Return the SearcherFactory used by this template.
+	 */
+	public SearcherFactory getSearcherFactory() {
+		return searcherFactory;
+	}
+
+	/**
+	 * Set the default Lucene Analyzer used by the queries.
+	 */
+	public void setAnalyzer(Analyzer analyzer) {
+		this.analyzer = analyzer;
+	}
+
+	/**
+	 * Return the Lucene Analyzer used by this template.
+	 */
+	public Analyzer getAnalyzer() {
+		return analyzer;
+	}
+
+	/**
+	 * Method used to extract datas from hits. These datas are
+	 * the Lucene internal document identifier, the document
+	 * itself and the score.
+	 * 
+	 * @param hits the hits corresponding to the search
+	 * @param extractor the extractor specified in the search method
+	 * @return the search results extracted
+	 * @throws IOException exception occuring when accessing documents
+	 */
+	private List extractHits(Hits hits,HitExtractor extractor) throws IOException {
 		List list=new ArrayList();
 		for(int cpt=0;cpt<hits.length();cpt++) {
 			list.add(extractor.mapHit(hits.id(cpt),hits.doc(cpt),hits.score(cpt)));
@@ -90,53 +141,163 @@ public class LuceneSearchTemplate {
 	}
 
 	/**
-	 * This method is used to execute a search based on a
-	 * specified query and extract the datas included in the
-	 * hits.
-	 * 
+	 * Invoke the given QueryCreator, constructing Lucene query.
+	 * @param queryCreator the QueryCreator to invoke
+	 * @return the constructed Query
+	 * @see QueryCreator#createQuery(Analyzer)
+	 */
+	protected Query createQuery(QueryCreator queryCreator) {
+		try {
+			return queryCreator.createQuery(getAnalyzer());
+		} catch (ParseException ex) {
+			throw new LuceneSearchException("Construction of the desired Query failed", ex);
+		}
+	}
+
+	/**
+	 * Search the index basing a Lucene query created thanks to a callback
+	 * method defined in the QueryCreator interface. In this case, the
+	 * exceptions during the query creation are managed by the template.
+	 * @param queryConstructor the query constructor
+	 * @param extractor the extractor of hit informations
+	 * @return the search results
+	 * @see QueryCreator#createQuery(Analyzer)
+	 */
+	public List search(QueryCreator queryCreator,HitExtractor extractor) {
+		return doSearch(createQuery(queryCreator),extractor,null,null);
+	}
+
+	/**
+	 * Search the index basing a Lucene query created outside the template.
+	 * In this case, the application needs to manage exceptions.
 	 * @param queryConstructor the query constructor
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	public List search(QueryCreator queryCreator,HitExtractor extractor) {
-		return doSearch(queryCreator,extractor,null,null);
+	public List search(Query query,HitExtractor extractor) {
+		return doSearch(query,extractor,null,null);
 	}
 
+	/**
+	 * Search the index basing a Lucene query created thanks to a callback
+	 * method defined in the QueryCreator interface and using a Lucene
+	 * filter. In this case, the exceptions during the query creation are
+	 * managed by the template.
+	 * @param queryConstructor the query constructor
+	 * @param extractor the extractor of hit informations
+	 * @return the search results
+	 * @see QueryCreator#createQuery(Analyzer)
+	 */
 	public List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter) {
-		return doSearch(queryCreator,extractor,filter,null);
+		return doSearch(createQuery(queryCreator),extractor,filter,null);
 	}
 
+	/**
+	 * Search the index basing a Lucene query created outside the template using
+	 * a Lucene filter. In this case, the application needs to manage exceptions.
+	 * @param queryConstructor the query constructor
+	 * @param extractor the extractor of hit informations
+	 * @return the search results
+	 */
+	public List search(Query query,HitExtractor extractor,Filter filter) {
+		return doSearch(query,extractor,filter,null);
+	}
+
+	/**
+	 * Search the index basing a Lucene query created thanks to a callback
+	 * method defined in the QueryCreator interface and using a Lucene
+	 * sort. In this case, the exceptions during the query creation are
+	 * managed by the template.
+	 * @param queryConstructor the query constructor
+	 * @param extractor the extractor of hit informations
+	 * @return the search results
+	 * @see QueryCreator#createQuery(Analyzer)
+	 */
 	public List search(QueryCreator queryCreator,HitExtractor extractor,Sort sort) {
-		return doSearch(queryCreator,extractor,null,sort);
+		return doSearch(createQuery(queryCreator),extractor,null,sort);
 	}
 
+	/**
+	 * Search the index basing a Lucene query created outside the template using
+	 * a Lucene sort. In this case, the application needs to manage exceptions.
+	 * @param queryConstructor the query constructor
+	 * @param extractor the extractor of hit informations
+	 * @return the search results
+	 */
+	public List search(Query query,HitExtractor extractor,Sort sort) {
+		return doSearch(query,extractor,null,sort);
+	}
+
+	/**
+	 * Search the index basing a Lucene query created thanks to a callback
+	 * method defined in the QueryCreator interface and using a Lucene
+	 * filter and sort. In this case, the exceptions during the query creation are
+	 * managed by the template.
+	 * @param queryConstructor the query constructor
+	 * @param extractor the extractor of hit informations
+	 * @return the search results
+	 * @see QueryCreator#createQuery(Analyzer)
+	 */
 	public List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter,Sort sort) {
-		return doSearch(queryCreator,extractor,filter,sort);
+		return doSearch(createQuery(queryCreator),extractor,filter,sort);
 	}
 
-	private List doSearch(QueryCreator queryCreator,HitExtractor extractor,Filter filter,Sort sort) {
+	/**
+	 * Search the index basing a Lucene query created outside the template using
+	 * a Lucene filter and sort. In this case, the application needs to manage
+	 * exceptions.
+	 * @param queryConstructor the query constructor
+	 * @param extractor the extractor of hit informations
+	 * @return the search results
+	 */
+	public List search(Query query,HitExtractor extractor,Filter filter,Sort sort) {
+		return doSearch(query,extractor,filter,sort);
+	}
+
+	/**
+	 * Internal method to search the index basing a Lucene query created
+	 * thanks to a callback method defined in the QueryCreator interface.
+	 * In this case, the exceptions during the query creation are managed
+	 * by the template.
+	 * This method uses sort and/or filter paramaters as Searcher search
+	 * method parameters if they are not null. 
+	 * @param query the query used
+	 * @param extractor the extractor of hit informations
+	 * @param filter the query filter
+	 * @param sort the query sorter
+	 * @return the search results
+	 */
+	private List doSearch(Query query,HitExtractor extractor,Filter filter,Sort sort) {
 		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
 			Hits hits=null;
 			if( filter!=null && sort!=null ) {
-				hits=searcher.search(queryCreator.createQuery(getAnalyzer()),filter,sort);
+				hits=searcher.search(query,filter,sort);
 			} else if( filter!=null ) { 
-				hits=searcher.search(queryCreator.createQuery(getAnalyzer()),filter);
+				hits=searcher.search(query,filter);
 			} else if( sort!=null ) { 
-				hits=searcher.search(queryCreator.createQuery(getAnalyzer()),sort);
+				hits=searcher.search(query,sort);
 			} else { 
-				hits=searcher.search(queryCreator.createQuery(getAnalyzer()));
+				hits=searcher.search(query);
 			}
 			return extractHits(hits,extractor);
 		} catch (IOException ex) {
 			throw new LuceneSearchException("Error during the search",ex);
-		} catch (ParseException ex) {
-			throw new LuceneSearchException("Error during the parse of the query",ex);
 		} finally {
 			SearcherFactoryUtils.closeSearcherIfNecessary(getSearcherFactory(),searcher);
 		}
 	}
 
+	/**
+	 * Search the index basing a Lucene query created thanks to a callback
+	 * method defined in the QueryCreator interface. In this case, the
+	 * exceptions during the query creation are managed by the template.
+	 * The results are collecting with the Lucene HitCollector parameter.
+	 * @param queryConstructor the query constructor
+	 * @param results the Lucene hit collector
+	 * @see QueryCreator#createQuery(Analyzer)
+	 * @see org.apache.lucene.search.HitCollector
+	 */
 	public void search(QueryCreator queryCreator,HitCollector results) {
 		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
@@ -151,11 +312,13 @@ public class LuceneSearchTemplate {
 	}
 
 	/**
-	 * This method is used to work directly with a Lucene searcher
-	 * using a dedicated callback.
-	 * 
-	 * @param callback the searcher callback
-	 * @return the search results
+	 * Execute the action specified by the given action object within a
+	 * Lucene Searcher.
+	 * Note: if you share resources across several calls, the Searcher
+	 * provides to the callback is the shared instance. A new one is not
+	 * created.
+	 * @param callback the callback object that exposes the Searcher
+	 * @see SearcherCallback#doWithSearcher(Searcher)
 	 */
 	public Object search(SearcherCallback callback) {
 		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
@@ -168,34 +331,6 @@ public class LuceneSearchTemplate {
 		} finally {
 			SearcherFactoryUtils.closeSearcherIfNecessary(getSearcherFactory(),searcher);
 		}
-	}
-
-	/**
-	 * @return
-	 */
-	public Analyzer getAnalyzer() {
-		return analyzer;
-	}
-
-	/**
-	 * @return
-	 */
-	public SearcherFactory getSearcherFactory() {
-		return searcherFactory;
-	}
-
-	/**
-	 * @param analyzer
-	 */
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
-	}
-
-	/**
-	 * @param factory
-	 */
-	public void setSearcherFactory(SearcherFactory factory) {
-		searcherFactory = factory;
 	}
 
 }

@@ -27,32 +27,62 @@ import org.springmodules.resource.AbstractResourceManager;
 import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
+ * Dedicated resource manager for IndexFactory. It allows the
+ * application to manage the Lucene IndexReader and IndexWriter
+ * openings and closings. It prevents the application to lock
+ * the index during a long time.   
+ * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.factory.IndexFactory
+ * @see org.springmodules.lucene.index.factory.IndexReaderFactoryUtils#closeIndexReaderIfNecessary(IndexFactory, IndexReader)
+ * @see org.springmodules.lucene.index.factory.IndexWriterFactoryUtils#closeIndexWriterIfNecessary(IndexFactory, IndexWriter)
+ * @see org.springmodules.resource.support.ResourceBindingManager#getResource(Object)
+ * @see org.springmodules.resource.support.ResourceBindingManager#bindResource(Object, Object)
+ * @see org.springmodules.resource.support.ResourceBindingManager#unbindResource(Object)
  */
 public class LuceneIndexResourceManager extends AbstractResourceManager implements InitializingBean {
 
 	private IndexFactory indexFactory;
 
+	/**
+	 * Construct a new LuceneIndexResourceManager for bean usage.
+	 * Note: The IndexFactory has to be set before using the instance.
+	 * This constructor can be used to prepare a LuceneIndexTemplate via a BeanFactory,
+	 * typically setting the IndexFactory via setIndexFactory.
+	 * @see #setSearcherFactory
+	 */
 	public LuceneIndexResourceManager() {
 	}
 
+	/**
+	 * Construct a new LuceneIndexResourceManager, given an IndexFactory to manage
+	 * as a resource.
+	 * @param indexFactory IndexFactory to obtain both IndexReader and IndexWriter
+	 */
 	public LuceneIndexResourceManager(IndexFactory indexFactory) {
 		setIndexFactory(indexFactory);
-		
-	}
-
-	public void setIndexFactory(IndexFactory indexFactory) {
-		this.indexFactory = indexFactory;
 	}
 
 	/**
-	 * Return the Lucene IndexFactory that this instance manages resources for.
+	 * Set the IndexFactory that this instance manages resources for.
+	 */
+	public void setIndexFactory(IndexFactory factory) {
+		indexFactory = factory;
+	}
+
+	/**
+	 * Return the IndexFactory used by this resource manager.
 	 */
 	public IndexFactory getIndexFactory() {
 		return indexFactory;
 	}
 
 	/**
+	 * Binds an empty IndexHolder for the configured factory. The
+	 * corresponding IndexReader and IndexWriter resources will
+	 * be created lazily by a LuceneIndexTemplate, a DirectoryIndexer
+	 * or a DatabaseIndexer. It prevents the application to lock
+	 * the index during a long time. 
 	 * @see org.springmodules.resource.ResourceManager#open()
 	 */
 	public void doOpen() {
@@ -62,6 +92,8 @@ public class LuceneIndexResourceManager extends AbstractResourceManager implemen
 	}
 
 	/**
+	 * Closes the opened IndexReader and IndexWriter, and unbind the
+	 * corresponding IndexHolder.
 	 * @see org.springmodules.resource.ResourceManager#close()
 	 */
 	public void doClose() {
@@ -85,7 +117,7 @@ public class LuceneIndexResourceManager extends AbstractResourceManager implemen
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 * Check if the indexFactory is set.
 	 */
 	public void afterPropertiesSet() throws Exception {
 		if (this.indexFactory == null) {
