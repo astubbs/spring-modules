@@ -58,6 +58,7 @@
         <property name="names">
             <list>
                 <value>James Gosling</value>
+				<value>Rich Green</value>
             </list>
         </property>
     </bean>
