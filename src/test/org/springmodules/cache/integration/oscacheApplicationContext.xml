@@ -14,7 +14,7 @@
 		<property name="cacheManager" ref="cacheManager" />
 		<property name="cacheProfiles">
 			<props>
-				<prop key="test">[refreshPeriod=4][groups=testGroup]</prop>
+				<prop key="test">[refreshPeriod=1][groups=testGroup]</prop>
 			</props>
 		</property>
 	</bean>
