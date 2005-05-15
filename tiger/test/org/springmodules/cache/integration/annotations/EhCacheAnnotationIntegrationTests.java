@@ -18,7 +18,7 @@
 
 package org.springmodules.cache.integration.annotations;
 
-import org.springmodules.cache.integration.ehcache.AbstractEhcacheIntegrationTests;
+import org.springmodules.cache.integration.ehcache.AbstractEhCacheIntegrationTests;
 
 /**
  * <p>
@@ -34,15 +34,15 @@ import org.springmodules.cache.integration.ehcache.AbstractEhcacheIntegrationTes
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/01 23:20:16 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 17:58:17 $
  */
-public final class EhcacheAnnotationIntegrationTests extends
-    AbstractEhcacheIntegrationTests {
+public final class EhCacheAnnotationIntegrationTests extends
+    AbstractEhCacheIntegrationTests {
 
   /**
    * Constructor.
    */
-  public EhcacheAnnotationIntegrationTests() {
+  public EhCacheAnnotationIntegrationTests() {
     super();
   }
 
