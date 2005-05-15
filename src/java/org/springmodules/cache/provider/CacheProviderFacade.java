@@ -30,7 +30,7 @@ import org.springmodules.cache.EntryRetrievalException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:01 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/15 18:01:03 $
  */
 public interface CacheProviderFacade extends InitializingBean {
 
@@ -68,8 +68,8 @@ public interface CacheProviderFacade extends InitializingBean {
       throws EntryRetrievalException;
 
   /**
-   * Returns the value of the flag that indicates if an exception should thrown
-   * or not when an error occurrs when accessing the cache provider.
+   * Returns the value of the flag that indicates if an exception should be
+   * thrown or not when an error occurrs when accessing the cache provider.
    * 
    * @return <code>true</code> if no exception should be thrown if an error
    *         occurrs when accessing the cache provider.
