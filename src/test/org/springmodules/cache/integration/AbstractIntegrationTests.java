@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springmodules.cache.interceptor.caching.CachingAspectSupport;
 import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
 
 /**
@@ -33,7 +34,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:37 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/15 00:39:33 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
@@ -81,9 +82,11 @@ public abstract class AbstractIntegrationTests extends
    * 
    * @param expectedCachedObject
    *          the object that should have been cached.
+   * @param keyIndex
+   *          the index of the key stored in <code>entryStoredListener</code>.
    */
-  protected abstract void assertObjectWasCached(String expectedCachedObject)
-      throws Exception;
+  protected abstract void assertObjectWasCached(Object expectedCachedObject,
+      int keyIndex) throws Exception;
 
   /**
    * Getter for <code>{@link #entryStoredListener}</code>.
@@ -144,16 +147,25 @@ public abstract class AbstractIntegrationTests extends
     this.setUpEntryStoredListener();
 
     // call the method 'getName(int)' which return value should be cached.
-    String cachedObject = this.target.getName(0);
+    if (super.logger.isDebugEnabled()) {
+      super.logger.debug("Storing in the cache...");
+    }
+
+    int nameIndex = 0;
+
+    String cachedObject = this.target.getName(nameIndex);
     assertFalse("The retrieved name should not be empty", StringUtils
         .isEmpty(cachedObject));
 
     // verify the return value of the called method was cached.
-    this.assertObjectWasCached(cachedObject);
+    this.assertObjectWasCached(cachedObject, nameIndex);
 
     // call the same method again. This time the return value should be read
     // from the cache.
-    cachedObject = this.target.getName(0);
+    if (super.logger.isDebugEnabled()) {
+      super.logger.debug("Reading from the cache...");
+    }
+    cachedObject = this.target.getName(nameIndex);
 
     // verify that the element was cached only once. There should be only
     // one caching event registered in the listener.
@@ -166,9 +178,19 @@ public abstract class AbstractIntegrationTests extends
     // call the method 'updateName(int, String)'. When executed, the cache
     // (or part(s) of the cache, depending on the cache provider) should be
     // flushed.
-    this.target.updateName(0, "Rod Johnson");
+    if (super.logger.isDebugEnabled()) {
+      super.logger.debug("Flushing the cache ...");
+    }
+    this.target.updateName(nameIndex, "Rod Johnson");
 
     // verify that the cache was flushed.
     this.assertCacheWasFlushed();
+
+    // NULL_ENTRY should be cached, and null should be returned.
+    this.target.updateName(++nameIndex, null);
+    cachedObject = this.target.getName(nameIndex);
+    this.assertObjectWasCached(CachingAspectSupport.NULL_ENTRY, nameIndex);
+
+    assertNull("The returned value should be null", cachedObject);
   }
 }
