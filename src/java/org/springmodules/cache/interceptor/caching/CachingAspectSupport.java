@@ -18,8 +18,9 @@
 
 package org.springmodules.cache.interceptor.caching;
 
-import org.springmodules.cache.key.CacheKeyGenerator;
+import java.io.Serializable;
 
+import org.springmodules.cache.key.CacheKeyGenerator;
 
 /**
  * <p>
@@ -28,7 +29,7 @@ import org.springmodules.cache.key.CacheKeyGenerator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:08 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/15 00:38:04 $
  */
 public class CachingAspectSupport {
 
@@ -36,7 +37,27 @@ public class CachingAspectSupport {
    * Canonical value held in cache to indicate that the return value of the
    * method to apply caching to is <code>null</code>.
    */
-  public static final Object NULL_ENTRY = new Object();
+  public static final Serializable NULL_ENTRY = new Serializable() {
+    /**
+     * Version number of this class.
+     * 
+     * @see java.io.Serializable
+     */
+    private static final long serialVersionUID = 3257007674280522803L;
+
+    /**
+     * Returns a string representation of the object. In general, the
+     * <code>toString</code> method returns a string that "textually
+     * represents" this object.
+     * 
+     * @return a string representation of the object.
+     * 
+     * @see Object#toString()
+     */
+    public String toString() {
+      return "NULL_ENTRY";
+    }
+  };
 
   /**
    * Generates the key of a cache entry.
