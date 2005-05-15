@@ -38,7 +38,7 @@ import org.springmodules.cache.provider.ehcache.EhcacheCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:42:07 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/15 00:45:11 $
  */
 public abstract class AbstractEhcacheIntegrationTests extends
     AbstractIntegrationTests {
@@ -92,17 +92,17 @@ public abstract class AbstractEhcacheIntegrationTests extends
   }
 
   /**
-   * @see AbstractIntegrationTests#assertObjectWasCached(String)
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
-  protected final void assertObjectWasCached(String expectedCachedObject)
-      throws Exception {
+  protected final void assertObjectWasCached(Object expectedCachedObject,
+      int keyIndex) throws Exception {
 
     KeyCollectionListener entryStoredListener = super.getEntryStoredListener();
     List generatedKeys = entryStoredListener.getGeneratedKeys();
 
     // get the key that supposedly must have been used to store the entry in the
     // cache.
-    CacheKey cacheKey = (CacheKey) generatedKeys.get(0);
+    CacheKey cacheKey = (CacheKey) generatedKeys.get(keyIndex);
 
     // get the cache entry stored under the key we got.
     Element cachedElement = this.cache.get(cacheKey);

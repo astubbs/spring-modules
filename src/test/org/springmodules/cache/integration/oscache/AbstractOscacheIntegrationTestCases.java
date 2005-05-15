@@ -39,10 +39,10 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:41 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/15 00:45:11 $
  */
 public abstract class AbstractOscacheIntegrationTestCases extends
-  AbstractIntegrationTests {
+    AbstractIntegrationTests {
 
   /**
    * OSCache cache administrator managed by the Spring context. Caching and
@@ -64,8 +64,8 @@ public abstract class AbstractOscacheIntegrationTestCases extends
     super.onSetUp();
 
     // get the cache administrator from the Spring bean context.
-    this.cacheAdministrator = (GeneralCacheAdministrator) super
-      .applicationContext.getBean("cacheManager");
+    this.cacheAdministrator = (GeneralCacheAdministrator) super.applicationContext
+        .getBean("cacheManager");
   }
 
   /**
@@ -79,14 +79,19 @@ public abstract class AbstractOscacheIntegrationTestCases extends
     // get the key that supposedly must have been used to store the entry in the
     // cache.
     CacheKey cacheKey = (CacheKey) generatedKeys.get(0);
+
+    if (super.logger.isDebugEnabled()) {
+      super.logger.debug("Key of the cache element that should not exist: "
+          + cacheKey);
+    }
+
     String key = cacheKey.toString();
 
     try {
       this.cacheAdministrator.getFromCache(key);
       fail("There should not be any object cached under the key '" + cacheKey
-        + "'");
-    }
-    catch (NeedsRefreshException needsRefreshException) {
+          + "'");
+    } catch (NeedsRefreshException needsRefreshException) {
       // NeedsRefreshException should be thrown if the cache does not have the
       // object we are looking for.
     }
@@ -100,32 +105,36 @@ public abstract class AbstractOscacheIntegrationTestCases extends
     // cache profile expected to be in the map of cache profiles.
     OscacheCacheProfile expectedTestProfile = new OscacheCacheProfile();
     expectedTestProfile.setGroups("testGroup");
-    expectedTestProfile.setRefreshPeriod(4);
+    expectedTestProfile.setRefreshPeriod(1);
 
     // verify that the expected cache profile exists in the map.
     String cacheProfileId = "test";
     Object actualTestProfile = cacheProfiles.get(cacheProfileId);
     assertEquals("<Cache profile with id '" + cacheProfileId + "'>",
-                 expectedTestProfile, actualTestProfile);
+        expectedTestProfile, actualTestProfile);
   }
 
   /**
-   * @see AbstractIntegrationTests#assertObjectWasCached(String)
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
-  protected void assertObjectWasCached(String expectedCachedObject)
-    throws Exception {
+  protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
+      throws Exception {
 
     KeyCollectionListener entryStoredListener = super.getEntryStoredListener();
     List generatedKeys = entryStoredListener.getGeneratedKeys();
 
     // get the key that supposedly must have been used to store the entry in the
     // cache.
-    CacheKey cacheKey = (CacheKey) generatedKeys.get(0);
+    CacheKey cacheKey = (CacheKey) generatedKeys.get(keyIndex);
     String key = cacheKey.toString();
+
+    if (super.logger.isDebugEnabled()) {
+      super.logger.debug("Key to use: " + cacheKey);
+    }
 
     // get the cache entry stored under the key we got.
     Object actualCachedObject = this.cacheAdministrator.getFromCache(key);
+
     assertEquals("<Cached object>", expectedCachedObject, actualCachedObject);
   }
-
 }

@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.jcs.JcsCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:55 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/15 00:45:12 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractIntegrationTests {
@@ -113,9 +113,9 @@ public abstract class AbstractJcsIntegrationTests extends
   }
 
   /**
-   * @see AbstractIntegrationTests#assertObjectWasCached(String)
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
-  protected void assertObjectWasCached(String expectedCachedObject)
+  protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
       throws Exception {
 
     KeyCollectionListener entryStoredListener = super.getEntryStoredListener();
@@ -123,7 +123,7 @@ public abstract class AbstractJcsIntegrationTests extends
 
     // get the key that supposedly must have been used to store the entry in the
     // cache.
-    CacheKey cacheKey = (CacheKey) generatedKeys.get(0);
+    CacheKey cacheKey = (CacheKey) generatedKeys.get(keyIndex);
 
     // get the cache entry stored under the key we got.
     String cacheName = "testCache";
