@@ -5,12 +5,12 @@
 <beans>
 	<!-- Cache Manager -->
 	<bean id="cacheManager"
-		class="org.springmodules.cache.provider.oscache.OscacheManagerFactoryBean">
+		class="org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean">
 	</bean>
 
 	<!-- Cache Provider -->
 	<bean id="cacheProvider"
-		class="org.springmodules.cache.provider.oscache.OscacheFacade">
+		class="org.springmodules.cache.provider.oscache.OsCacheFacade">
 		<property name="cacheManager" ref="cacheManager" />
 		<property name="cacheProfiles">
 			<props>

@@ -1,5 +1,7 @@
 /* 
- * Created on Oct 29, 2004
+ * JcsCachingAttributeTest.java
+ * 
+ * Created on Sep 24, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +18,7 @@
  * Copyright @2004 the original author or authors.
  */
 
-package org.springmodules.cache.provider.ehcache;
+package org.springmodules.cache.provider.jcs;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -24,19 +26,19 @@ import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
  * <p>
- * Unit Test for <code>{@link EhcacheCacheProfile}</code>.
+ * Unit Test for <code>{@link JcsProfile}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:27 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:11 $
  */
-public final class EhcacheCacheProfileTests extends AbstractJavaBeanTests {
+public final class JcsProfileTests extends AbstractJavaBeanTests {
 
   /**
    * Primary object (instance of the class to test).
    */
-  private EhcacheCacheProfile cacheProfile;
+  private JcsProfile profile;
 
   /**
    * Constructor.
@@ -44,7 +46,7 @@ public final class EhcacheCacheProfileTests extends AbstractJavaBeanTests {
    * @param name
    *          the name of the Test Case.
    */
-  public EhcacheCacheProfileTests(String name) {
+  public JcsProfileTests(String name) {
     super(name);
   }
 
@@ -52,8 +54,9 @@ public final class EhcacheCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getEqualObjects()
    */
   protected Object[] getEqualObjects() {
-    EhcacheCacheProfile equalProfile = new EhcacheCacheProfile();
+    JcsProfile equalProfile = new JcsProfile();
     equalProfile.setCacheName("main");
+    equalProfile.setGroup("test");
 
     return new Object[] { equalProfile };
   }
@@ -62,8 +65,9 @@ public final class EhcacheCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedHashCode()
    */
   protected int getExpectedHashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(5, 7);
-    hashCodeBuilder.append(this.cacheProfile.getCacheName());
+    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(3, 7);
+    hashCodeBuilder.append(this.profile.getCacheName());
+    hashCodeBuilder.append(this.profile.getGroup());
 
     int expectedHashCode = hashCodeBuilder.toHashCode();
     return expectedHashCode;
@@ -73,8 +77,9 @@ public final class EhcacheCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedToString()
    */
   protected String getExpectedToString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this.cacheProfile);
-    toStringBuilder.append("cacheName", this.cacheProfile.getCacheName());
+    ToStringBuilder toStringBuilder = new ToStringBuilder(this.profile);
+    toStringBuilder.append("cacheName", this.profile.getCacheName());
+    toStringBuilder.append("group", this.profile.getGroup());
 
     String expectedToString = toStringBuilder.toString();
     return expectedToString;
@@ -84,8 +89,9 @@ public final class EhcacheCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getNotEqualObjects()
    */
   protected Object[] getNotEqualObjects() {
-    EhcacheCacheProfile notEqualProfile = new EhcacheCacheProfile();
+    JcsProfile notEqualProfile = new JcsProfile();
     notEqualProfile.setCacheName("temp");
+    notEqualProfile.setGroup("dev");
 
     return new Object[] { notEqualProfile };
   }
@@ -94,16 +100,17 @@ public final class EhcacheCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getPrimaryObject()
    */
   protected Object getPrimaryObject() {
-    return this.cacheProfile;
+    return this.profile;
   }
 
   /**
    * Sets up the test fixture.
    */
-  protected final void setUp() throws Exception {
+  protected void setUp() throws Exception {
     super.setUp();
 
-    this.cacheProfile = new EhcacheCacheProfile();
-    this.cacheProfile.setCacheName("main");
+    this.profile = new JcsProfile();
+    this.profile.setCacheName("main");
+    this.profile.setGroup("test");
   }
 }

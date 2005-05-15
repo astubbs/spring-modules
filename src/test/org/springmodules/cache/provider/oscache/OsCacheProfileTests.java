@@ -24,19 +24,19 @@ import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
  * <p>
- * Unit Test for <code>{@link OscacheCacheProfile}</code>.
+ * Unit Test for <code>{@link OsCacheProfile}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:49 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:26 $
  */
-public final class OscacheCacheProfileTests extends AbstractJavaBeanTests {
+public final class OsCacheProfileTests extends AbstractJavaBeanTests {
 
   /**
    * Primary object (instance of the class to test).
    */
-  private OscacheCacheProfile profile;
+  private OsCacheProfile profile;
 
   /**
    * Constructor.
@@ -44,7 +44,7 @@ public final class OscacheCacheProfileTests extends AbstractJavaBeanTests {
    * @param name
    *          the name of the Test Case.
    */
-  public OscacheCacheProfileTests(String name) {
+  public OsCacheProfileTests(String name) {
 
     super(name);
   }
@@ -54,7 +54,7 @@ public final class OscacheCacheProfileTests extends AbstractJavaBeanTests {
    */
   protected Object[] getEqualObjects() {
     String[] groups = new String[] { "Test", "Valid" };
-    OscacheCacheProfile equalProfile = new OscacheCacheProfile();
+    OsCacheProfile equalProfile = new OsCacheProfile();
     equalProfile.setCronExpression("* * 0 0 0");
     equalProfile.setGroups(groups);
     equalProfile.setRefreshPeriod(43);
@@ -92,7 +92,7 @@ public final class OscacheCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getNotEqualObjects()
    */
   protected Object[] getNotEqualObjects() {
-    OscacheCacheProfile notEqualProfile = new OscacheCacheProfile();
+    OsCacheProfile notEqualProfile = new OsCacheProfile();
     notEqualProfile.setCronExpression("0 0 0 0 0");
     notEqualProfile.setGroups("Alt");
     notEqualProfile.setRefreshPeriod(5);
@@ -113,7 +113,7 @@ public final class OscacheCacheProfileTests extends AbstractJavaBeanTests {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.profile = new OscacheCacheProfile();
+    this.profile = new OsCacheProfile();
     this.profile.setCronExpression("* * 0 0 0");
     this.profile.setGroups("Test,Valid");
     this.profile.setRefreshPeriod(43);
@@ -121,7 +121,7 @@ public final class OscacheCacheProfileTests extends AbstractJavaBeanTests {
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheCacheProfile#setGroups(String)}</code> sets the array
+   * <code>{@link OsCacheProfile#setGroups(String)}</code> sets the array
    * of groups equal to <code>null</code> if an empty String is passed as
    * argument.
    */

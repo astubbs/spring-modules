@@ -30,14 +30,14 @@ import org.springmodules.cache.provider.AbstractCacheManagerFactoryBeanTests;
 
 /**
  * <p>
- * Unit Test for <code>{@link JcsCacheManagerFactoryBean}</code>.
+ * Unit Test for <code>{@link JcsManagerFactoryBean}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:02 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:11 $
  */
-public final class JcsCacheManagerFactoryBeanTests extends
+public final class JcsManagerFactoryBeanTests extends
     AbstractCacheManagerFactoryBeanTests {
 
   /**
@@ -48,7 +48,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
   /**
    * Primary object (instance of the class to test).
    */
-  private JcsCacheManagerFactoryBean cacheManagerFactoryBean;
+  private JcsManagerFactoryBean cacheManagerFactoryBean;
 
   /**
    * Contains the location of the configuration file for
@@ -67,7 +67,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
    * @param name
    *          the name of the Test Case.
    */
-  public JcsCacheManagerFactoryBeanTests(String name) {
+  public JcsManagerFactoryBeanTests(String name) {
     super(name);
   }
 
@@ -84,7 +84,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
    * Sets up <code>{@link #cacheManagerFactoryBean}</code>.
    */
   private void setUpCacheManagerFactoryBean() {
-    this.cacheManagerFactoryBean = new JcsCacheManagerFactoryBean();
+    this.cacheManagerFactoryBean = new JcsManagerFactoryBean();
   }
 
   /**
@@ -123,7 +123,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheManagerFactoryBean#afterPropertiesSet()}</code>
+   * <code>{@link JcsManagerFactoryBean#afterPropertiesSet()}</code>
    * creates a new cache manager which properties are loaded from a
    * configuration file.
    */
@@ -157,7 +157,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheManagerFactoryBean#afterPropertiesSet()}</code>
+   * <code>{@link JcsManagerFactoryBean#afterPropertiesSet()}</code>
    * creates a new cache manager using the default configuration file,
    * "cache.ccf", if there is not any configuration file specified.
    */
@@ -193,7 +193,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheManagerFactoryBean#destroy()}</code> frees the
+   * <code>{@link JcsManagerFactoryBean#destroy()}</code> frees the
    * caches of the cache manager.
    */
   public void testDestroy() throws Exception {
@@ -221,7 +221,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheManagerFactoryBean#destroy()}</code> does not throw
+   * <code>{@link JcsManagerFactoryBean#destroy()}</code> does not throw
    * any exception if the cache manager is <code>null</code>.
    */
   public void testDestroyWithCacheManagerEqualToNull() throws Exception {
@@ -244,7 +244,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheManagerFactoryBean#getObjectType()}</code> returns
+   * <code>{@link JcsManagerFactoryBean#getObjectType()}</code> returns
    * the class of the created cache manager.
    */
   public void testGetObjectType() throws Exception {
@@ -262,7 +262,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheManagerFactoryBean#getObjectType()}</code> returns
+   * <code>{@link JcsManagerFactoryBean#getObjectType()}</code> returns
    * the class 'org.apache.jcs.engine.control.CompositeCacheManager' if the
    * cache manager has not been created yet.
    */
@@ -278,7 +278,7 @@ public final class JcsCacheManagerFactoryBeanTests extends
   }
 
   /**
-   * Verifies that <code>{@link JcsCacheManagerFactoryBean}</code> notifies
+   * Verifies that <code>{@link JcsManagerFactoryBean}</code> notifies
    * the Spring IoC container that is a singleton.
    */
   public void testIsSingleton() {

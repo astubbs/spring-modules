@@ -39,16 +39,16 @@ import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManage
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:58 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:21 $
  */
-public final class JcsCacheManagerFactoryBean extends
+public final class JcsManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
 
   /**
    * Message logger.
    */
   private static Log logger = LogFactory
-      .getLog(JcsCacheManagerFactoryBean.class);
+      .getLog(JcsManagerFactoryBean.class);
 
   /**
    * The cache manager managed by this factory.
@@ -58,7 +58,7 @@ public final class JcsCacheManagerFactoryBean extends
   /**
    * Constructor.
    */
-  public JcsCacheManagerFactoryBean() {
+  public JcsManagerFactoryBean() {
     super();
   }
 

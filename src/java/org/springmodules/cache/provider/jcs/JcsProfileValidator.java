@@ -23,19 +23,19 @@ import org.springmodules.cache.provider.CacheProfileValidator;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link JcsCacheProfile}</code>.
+ * Validates the properties of a <code>{@link JcsProfile}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:59 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:21 $
  */
-public class JcsCacheProfileValidator implements CacheProfileValidator {
+public class JcsProfileValidator implements CacheProfileValidator {
 
   /**
    * Constructor.
    */
-  public JcsCacheProfileValidator() {
+  public JcsProfileValidator() {
     super();
   }
 
@@ -60,16 +60,16 @@ public class JcsCacheProfileValidator implements CacheProfileValidator {
    * 
    * @throws IllegalArgumentException
    *           if the cache profile is not an instance of
-   *           <code>JcsCacheProfile</code>.
+   *           <code>JcsProfile</code>.
    */
   public final void validateCacheProfile(Object cacheProfile) {
-    if (cacheProfile instanceof JcsCacheProfile) {
-      JcsCacheProfile jcsCacheProfile = (JcsCacheProfile) cacheProfile;
+    if (cacheProfile instanceof JcsProfile) {
+      JcsProfile jcsCacheProfile = (JcsProfile) cacheProfile;
       String cacheName = jcsCacheProfile.getCacheName();
       this.validateCacheName(cacheName);
     } else {
       throw new IllegalArgumentException(
-          "The cache profile should be an instance of 'JcsCacheProfile'");
+          "The cache profile should be an instance of 'JcsProfile'");
     }
   }
 }

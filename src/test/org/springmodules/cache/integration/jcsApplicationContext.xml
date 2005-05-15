@@ -5,7 +5,7 @@
 <beans>
 	<!-- Cache Manager -->
 	<bean id="cacheManager" 
-		class="org.springmodules.cache.provider.jcs.JcsCacheManagerFactoryBean">
+		class="org.springmodules.cache.provider.jcs.JcsManagerFactoryBean">
 	</bean>
 
 	<!-- Cache Provider -->

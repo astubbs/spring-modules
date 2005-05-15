@@ -240,14 +240,14 @@
         article</ulink> about using EHCache with Spring.</emphasis></para>
 
         <para><programlisting>&lt;bean id="cacheProvider"
-    class="org.springmodules.cache.provider.ehcache.EhcacheFacade"&gt;
+    class="org.springmodules.cache.provider.ehcache.EhCacheFacade"&gt;
     &lt;property name="cacheManager" ref="cacheManager" /&gt;
 
     &lt;!-- Cache profiles specified as a java.util.Map --&gt;
     &lt;property name="cacheProfiles"&gt;
         &lt;map&gt;
             &lt;entry key="test"&gt;
-                &lt;bean class="org.springmodules.cache.provider.ehcache.EhcacheCacheProfile"&gt;
+                &lt;bean class="org.springmodules.cache.provider.ehcache.EhCacheProfile"&gt;
                     &lt;property name="cacheName" value="testCache" /&gt;&lt;!-- Required --&gt;
                 &lt;/bean&gt;
             &lt;/entry&gt;
@@ -267,13 +267,13 @@
         <title>JCS</title>
 
         <para><programlisting>&lt;bean id="cacheManager"
-    class="org.springmodules.cache.provider.jcs.JcsCacheManagerFactoryBean"&gt;
+    class="org.springmodules.cache.provider.jcs.JcsManagerFactoryBean"&gt;
 &lt;/bean&gt;</programlisting></para>
 
         <para>The cache manager is a singleton instance of
         <literal>org.apache.jcs.engine.control.CompositeCacheManager</literal>
         created by the bean factory
-        <literal>org.springmodules.cache.provider.jcs.JcsCacheManagerFactoryBean</literal>.</para>
+        <literal>org.springmodules.cache.provider.jcs.JcsManagerFactoryBean</literal>.</para>
 
         <para><emphasis>Please refer to the <ulink
         url="http://jakarta.apache.org/jcs/">JCS documentation</ulink> for
@@ -287,7 +287,7 @@
     &lt;property name="cacheProfiles"&gt;
         &lt;map&gt;
             &lt;entry key="test"&gt;
-                &lt;bean class="org.springmodules.cache.provider.jcs.JcsCacheProfile"&gt;
+                &lt;bean class="org.springmodules.cache.provider.jcs.JcsProfile"&gt;
                     &lt;property name="cacheName" value="testCache" /&gt;&lt;!-- Required --&gt;
                     &lt;property name="group" value="testGroup" /&gt;&lt;!-- Optional --&gt;
                 &lt;/bean&gt;
@@ -308,13 +308,13 @@
         <title>OSCache</title>
 
         <para><programlisting>&lt;bean id="cacheManager"
-    class="org.springmodules.cache.provider.oscache.OscacheManagerFactoryBean"&gt;
+    class="org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean"&gt;
 &lt;/bean&gt;</programlisting></para>
 
         <para>The cache manager is a singleton instance of
         <literal>com.opensymphony.oscache.general.GeneralCacheAdministrator</literal>
         created by the bean factory
-        <literal>org.springmodules.cache.provider.oscache.OscacheManagerFactoryBean</literal>.</para>
+        <literal>org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean</literal>.</para>
 
         <para><emphasis>Please refer to the <ulink
         url="http://www.opensymphony.com/oscache/wiki/Documentation.html">OSCache
@@ -324,14 +324,14 @@
         Wiki</ulink> a much simpler way to set up OSCache with Spring.</emphasis></para>
 
         <para><programlisting>&lt;bean id="cacheProvider"
-    class="org.springmodules.cache.provider.oscache.OscacheFacade"&gt;
+    class="org.springmodules.cache.provider.oscache.OsCacheFacade"&gt;
     &lt;property name="cacheManager" ref="cacheManager" /&gt;
 
     &lt;!-- Cache profiles specified as a java.util.Map --&gt;
     &lt;property name="cacheProfiles"&gt;
         &lt;map&gt;
             &lt;entry key="test"&gt;
-                &lt;bean class="org.springmodules.cache.provider.oscache.OscacheCacheProfile"&gt;
+                &lt;bean class="org.springmodules.cache.provider.oscache.OsCacheProfile"&gt;
                     &lt;property name="cronExpression" value="* * * * *" /&gt;&lt;!-- Optional --&gt;
                     &lt;property name="groups" value="group1,group2" /&gt;&lt;!-- Optional --&gt;
                     &lt;property name="refreshPeriod" value="600" /&gt;&lt;!-- Optional --&gt;
@@ -391,7 +391,7 @@
         <para>We are going to use EHCache as our cache provider:</para>
 
         <programlisting> 1 &lt;bean id="cacheProvider"
- 2    class="org.springmodules.cache.provider.ehcache.EhcacheFacade"&gt;
+ 2    class="org.springmodules.cache.provider.ehcache.EhCacheFacade"&gt;
  3    &lt;property name="cacheManager" ref="cacheManager" /&gt;
  4
  5    &lt;!-- Cache profiles specified as a java.util.Properties --&gt;
@@ -572,7 +572,7 @@
         <para>We are going to use OSCache as our cache provider:</para>
 
         <para><programlisting> 1 &lt;bean id="cacheProvider"
- 2     class="org.springmodules.cache.provider.oscache.OscacheFacade"&gt;
+ 2     class="org.springmodules.cache.provider.oscache.OsCacheFacade"&gt;
  3     &lt;property name="cacheManager" ref="cacheManager" /&gt;
  4
  5     &lt;!-- Cache profiles specified as a java.util.Properties --&gt;
@@ -672,7 +672,7 @@
         <para>We are going to use EHCache as our cache provider:</para>
 
         <programlisting> 1 &lt;bean id="cacheProvider"
- 2    class="org.springmodules.cache.provider.ehcache.EhcacheFacade"&gt;
+ 2    class="org.springmodules.cache.provider.ehcache.EhCacheFacade"&gt;
  3    &lt;property name="cacheManager" ref="cacheManager" /&gt;
  4
  5    &lt;!-- Cache profiles specified as a java.util.Properties --&gt;

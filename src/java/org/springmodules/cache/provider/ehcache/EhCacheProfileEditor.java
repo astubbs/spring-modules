@@ -25,39 +25,39 @@ import org.springmodules.cache.provider.CacheProfile;
 
 /**
  * <p>
- * Creates a new instance of <code>{@link EhcacheCacheProfile}</code> by
+ * Creates a new instance of <code>{@link EhCacheProfile}</code> by
  * parsing a String of the form <code>[cacheName=value]</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:15 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:14 $
  */
-public final class EhcacheCacheProfileEditor extends AbstractCacheProfileEditor {
+public final class EhCacheProfileEditor extends AbstractCacheProfileEditor {
 
   /**
-   * Validates the properties of the <code>{@link EhcacheCacheProfile}</code>
+   * Validates the properties of the <code>{@link EhCacheProfile}</code>
    * to create.
    */
-  private EhcacheCacheProfileValidator cacheProfileValidator;
+  private EhCacheProfileValidator cacheProfileValidator;
 
   /**
    * Constructor.
    */
-  public EhcacheCacheProfileEditor() {
+  public EhCacheProfileEditor() {
     super();
-    this.cacheProfileValidator = new EhcacheCacheProfileValidator();
+    this.cacheProfileValidator = new EhCacheProfileValidator();
   }
 
   /**
-   * Creates a new instance of <code>{@link EhcacheCacheProfile}</code> from
+   * Creates a new instance of <code>{@link EhCacheProfile}</code> from
    * the specified set of properties.
    * 
    * @param properties
    *          the specified set of properties.
-   * @return a new instance of <code>EhcacheCacheProfile</code>.
+   * @return a new instance of <code>EhCacheProfile</code>.
    * 
-   * @see EhcacheCacheProfileValidator#validateCacheName(String)
+   * @see EhCacheProfileValidator#validateCacheName(String)
    */
   protected CacheProfile createCacheProfile(Properties properties) {
 
@@ -68,7 +68,7 @@ public final class EhcacheCacheProfileEditor extends AbstractCacheProfileEditor 
     }
     this.cacheProfileValidator.validateCacheName(cacheName);
 
-    EhcacheCacheProfile profile = new EhcacheCacheProfile();
+    EhCacheProfile profile = new EhCacheProfile();
     profile.setCacheName(cacheName);
     return profile;
   }

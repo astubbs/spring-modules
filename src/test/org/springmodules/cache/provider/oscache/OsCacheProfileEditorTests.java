@@ -28,19 +28,19 @@ import com.opensymphony.oscache.base.CacheEntry;
 
 /**
  * <p>
- * Unit Test for <code>{@link OscacheCacheProfileEditor}</code>.
+ * Unit Test for <code>{@link OsCacheProfileEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:50 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:28 $
  */
-public final class OscacheCacheProfileEditorTests extends TestCase {
+public final class OsCacheProfileEditorTests extends TestCase {
 
   /**
    * Primary object (instance of the class to test).
    */
-  private OscacheCacheProfileEditor editor;
+  private OsCacheProfileEditor editor;
 
   /**
    * Constructor.
@@ -48,7 +48,7 @@ public final class OscacheCacheProfileEditorTests extends TestCase {
    * @param name
    *          the name of the Test Case.
    */
-  public OscacheCacheProfileEditorTests(String name) {
+  public OsCacheProfileEditorTests(String name) {
     super(name);
   }
 
@@ -57,32 +57,32 @@ public final class OscacheCacheProfileEditorTests extends TestCase {
    */
   protected void setUp() throws Exception {
     super.setUp();
-    this.editor = new OscacheCacheProfileEditor();
+    this.editor = new OsCacheProfileEditor();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link OscacheCacheProfile}</code> from
+   * <code>{@link OsCacheProfileEditor#createCacheProfile(Properties)}</code>
+   * creates a new instance of <code>{@link OsCacheProfile}</code> from
    * an empty <code>java.util.Properties</code>.
    */
   public void testCreateCacheProfileWithEmptySetOfProperties() {
     Properties properties = new Properties();
 
-    OscacheCacheProfile expectedProfile = new OscacheCacheProfile();
+    OsCacheProfile expectedProfile = new OsCacheProfile();
     CacheProfile actualProfile = this.editor.createCacheProfile(properties);
     assertEquals("<Cache profile>", expectedProfile, actualProfile);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link OscacheCacheProfile}</code>
+   * <code>{@link OsCacheProfileEditor#createCacheProfile(Properties)}</code>
+   * creates a new instance of <code>{@link OsCacheProfile}</code>
    * populated with the values of the properties "cronExpression", "groups" set
    * in a <code>java.util.Properties</code>. Also verifies that when the
    * property "refreshPeriod" (in the <code>java.util.Properties</code>) is
    * equal to "INDEFINITE_EXPIRY", the new instance of
-   * <code>{@link OscacheCacheProfile}</code> must be set with the value of
+   * <code>{@link OsCacheProfile}</code> must be set with the value of
    * <code>com.opensymphony.oscache.base.CacheEntry.INDEFINITE_EXPIRY</code>.
    */
   public void testCreateCacheProfileWithNonIntegerRefreshPeriodAndEqualToIndefiniteExpire() {
@@ -94,7 +94,7 @@ public final class OscacheCacheProfileEditorTests extends TestCase {
     properties.setProperty("groups", groups);
     properties.setProperty("refreshPeriod", "INDEFINITE_EXPIRY");
 
-    OscacheCacheProfile expectedProfile = new OscacheCacheProfile();
+    OsCacheProfile expectedProfile = new OsCacheProfile();
     expectedProfile.setCronExpression(cronExpression);
     expectedProfile.setGroups(groups);
     expectedProfile.setRefreshPeriod(CacheEntry.INDEFINITE_EXPIRY);
@@ -105,8 +105,8 @@ public final class OscacheCacheProfileEditorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link OscacheCacheProfile}</code>
+   * <code>{@link OsCacheProfileEditor#createCacheProfile(Properties)}</code>
+   * creates a new instance of <code>{@link OsCacheProfile}</code>
    * populated with the values of the properties "cronExpression", "groups" and
    * "refreshPeriod" set in a <code>java.util.Properties</code>.
    */
@@ -120,7 +120,7 @@ public final class OscacheCacheProfileEditorTests extends TestCase {
     properties.setProperty("groups", groups);
     properties.setProperty("refreshPeriod", Integer.toString(refreshPeriod));
 
-    OscacheCacheProfile expectedProfile = new OscacheCacheProfile();
+    OsCacheProfile expectedProfile = new OsCacheProfile();
     expectedProfile.setCronExpression(cronExpression);
     expectedProfile.setGroups(groups);
     expectedProfile.setRefreshPeriod(refreshPeriod);
@@ -131,8 +131,8 @@ public final class OscacheCacheProfileEditorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link OscacheCacheProfile}</code>
+   * <code>{@link OsCacheProfileEditor#createCacheProfile(Properties)}</code>
+   * creates a new instance of <code>{@link OsCacheProfile}</code>
    * populated with the values of the properties "cronExpression" and "groups"
    * set in a <code>java.util.Properties</code>.
    */
@@ -144,7 +144,7 @@ public final class OscacheCacheProfileEditorTests extends TestCase {
     properties.setProperty("cronExpression", cronExpression);
     properties.setProperty("groups", groups);
 
-    OscacheCacheProfile expectedProfile = new OscacheCacheProfile();
+    OsCacheProfile expectedProfile = new OsCacheProfile();
     expectedProfile.setCronExpression(cronExpression);
     expectedProfile.setGroups(groups);
 
@@ -154,7 +154,7 @@ public final class OscacheCacheProfileEditorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheCacheProfileEditor#createCacheProfile(Properties)}</code>
+   * <code>{@link OsCacheProfileEditor#createCacheProfile(Properties)}</code>
    * throws an <code>IllegalArgumentException</code> if the property
    * "refreshPeriod" set in a <code>java.util.Properties</code> is not an
    * integer and it is not equal to the string "INDEFINITE_EXPIRY".

@@ -30,7 +30,6 @@ import org.apache.jcs.engine.control.CompositeCache;
 import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
-import org.springmodules.cache.key.CacheKey;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
 
@@ -41,7 +40,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/04 00:17:44 $
+ * @version $Revision: 1.3 $ $Date: 2005/05/15 02:14:11 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -74,7 +73,7 @@ public final class JcsFacadeTests extends TestCase {
   /**
    * Configuration options for the caching services.
    */
-  private JcsCacheProfile[] cacheProfiles;
+  private JcsProfile[] cacheProfiles;
 
   /**
    * Name of the groups in <code>{@link #cache}</code> to use.
@@ -130,8 +129,8 @@ public final class JcsFacadeTests extends TestCase {
 
     this.cache = this.cacheManager.getCache(this.cacheName);
 
-    this.cacheProfiles = new JcsCacheProfile[] { new JcsCacheProfile(),
-        new JcsCacheProfile() };
+    this.cacheProfiles = new JcsProfile[] { new JcsProfile(),
+        new JcsProfile() };
     this.cacheProfileIds = new String[] { "firstProfile", "secondProfile" };
     this.groups = new String[] { "firstGroup", "secondGroup" };
 
@@ -139,7 +138,7 @@ public final class JcsFacadeTests extends TestCase {
 
     int cacheProfileCount = this.cacheProfiles.length;
     for (int i = 0; i < cacheProfileCount; i++) {
-      JcsCacheProfile cacheProfile = this.cacheProfiles[i];
+      JcsProfile cacheProfile = this.cacheProfiles[i];
       cacheProfile.setCacheName(this.cacheName);
       cacheProfile.setGroup(this.groups[i]);
 
@@ -173,7 +172,7 @@ public final class JcsFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link JcsFacade#getCacheProfileEditor()}</code> returns an
-   * instance of <code>{@link JcsCacheProfileEditor}</code> not equal to
+   * instance of <code>{@link JcsProfileEditor}</code> not equal to
    * <code>null</code>.
    */
   public void testGetCacheProfileEditor() {
@@ -183,7 +182,7 @@ public final class JcsFacadeTests extends TestCase {
     assertNotNull("The cache profile editor should not be null",
         cacheProfileEditor);
 
-    Class expectedClass = JcsCacheProfileEditor.class;
+    Class expectedClass = JcsProfileEditor.class;
     Class actualClass = cacheProfileEditor.getClass();
 
     assertEquals("<Class of the cache profile editor>", expectedClass,
@@ -193,7 +192,7 @@ public final class JcsFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link JcsFacade#getCacheProfileValidator()}</code> returns an an
-   * instance of <code>{@link JcsCacheProfileValidator}</code> not equal to
+   * instance of <code>{@link JcsProfileValidator}</code> not equal to
    * <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
@@ -203,7 +202,7 @@ public final class JcsFacadeTests extends TestCase {
     assertNotNull("The cache profile validator should not be null",
         cacheProfileValidator);
 
-    Class expectedClass = JcsCacheProfileValidator.class;
+    Class expectedClass = JcsProfileValidator.class;
     Class actualClass = cacheProfileValidator.getClass();
 
     assertEquals("<Class of the cache profile validator>", expectedClass,
@@ -212,11 +211,11 @@ public final class JcsFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#getKey(CacheKey, JcsCacheProfile)}</code> creates
+   * <code>{@link JcsFacade#getKey(org.springmodules.cache.key.CacheKey, JcsProfile)}</code> creates
    * a key containing the group specified in the given cache profile.
    */
   public void testGetKeyWithGroupName() {
-    JcsCacheProfile profile = new JcsCacheProfile();
+    JcsProfile profile = new JcsProfile();
     profile.setCacheName("main");
     profile.setGroup("dev");
 
@@ -231,12 +230,12 @@ public final class JcsFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#getKey(CacheKey, JcsCacheProfile)}</code> creates
+   * <code>{@link JcsFacade#getKey(org.springmodules.cache.key.CacheKey, JcsProfile)}</code> creates
    * a key that does not contain the group if the given cache profile does not
    * specify any group.
    */
   public void testGetKeyWithoutGroupName() {
-    JcsCacheProfile profile = new JcsCacheProfile();
+    JcsProfile profile = new JcsProfile();
     profile.setCacheName("main");
 
     int i = 0;

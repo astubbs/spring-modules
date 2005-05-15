@@ -32,15 +32,15 @@ package org.springmodules.cache.integration.oscache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:41 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:39 $
  */
-public final class OscacheMetadataIntegrationTests extends
-    AbstractOscacheIntegrationTestCases {
+public final class OsCacheMetadataIntegrationTests extends
+    AbstractOsCacheIntegrationTestCases {
 
   /**
    * Constructor.
    */
-  public OscacheMetadataIntegrationTests() {
+  public OsCacheMetadataIntegrationTests() {
     super();
   }
 

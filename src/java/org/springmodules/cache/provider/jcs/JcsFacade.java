@@ -46,7 +46,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/04 00:15:48 $
+ * @version $Revision: 1.5 $ $Date: 2005/05/15 02:14:20 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -71,15 +71,15 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
    */
   protected AbstractCacheProfileEditor getCacheProfileEditor() {
-    return new JcsCacheProfileEditor();
+    return new JcsProfileEditor();
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileValidator()
-   * @see JcsCacheProfileValidator#validateCacheProfile(Object)
+   * @see JcsProfileValidator#validateCacheProfile(Object)
    */
   protected CacheProfileValidator getCacheProfileValidator() {
-    return new JcsCacheProfileValidator();
+    return new JcsProfileValidator();
   }
 
   /**
@@ -92,7 +92,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
    *          entry.
    * @return the key of a cache entry.
    */
-  protected Serializable getKey(Serializable cacheKey, JcsCacheProfile profile) {
+  protected Serializable getKey(Serializable cacheKey, JcsProfile profile) {
     Serializable key = null;
 
     String group = profile.getGroup();
@@ -111,7 +111,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
    */
   protected void onFlushCache(CacheProfile cacheProfile) {
-    JcsCacheProfile profile = (JcsCacheProfile) cacheProfile;
+    JcsProfile profile = (JcsProfile) cacheProfile;
 
     String cacheName = profile.getCacheName();
     if (StringUtils.isNotEmpty(cacheName)) {
@@ -159,7 +159,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   protected Object onGetFromCache(Serializable cacheKey,
       CacheProfile cacheProfile) throws EntryRetrievalException {
 
-    JcsCacheProfile profile = (JcsCacheProfile) cacheProfile;
+    JcsProfile profile = (JcsProfile) cacheProfile;
 
     String cacheName = profile.getCacheName();
     if (StringUtils.isEmpty(cacheName)) {
@@ -193,7 +193,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
    */
   protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
       Object objectToCache) {
-    JcsCacheProfile profile = (JcsCacheProfile) cacheProfile;
+    JcsProfile profile = (JcsProfile) cacheProfile;
 
     String cacheName = profile.getCacheName();
 
@@ -237,7 +237,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     CacheProfile cacheProfile = super.getCacheProfile(cacheProfileId);
 
     if (cacheProfile != null) {
-      JcsCacheProfile profile = (JcsCacheProfile) cacheProfile;
+      JcsProfile profile = (JcsProfile) cacheProfile;
 
       String cacheName = profile.getCacheName();
 

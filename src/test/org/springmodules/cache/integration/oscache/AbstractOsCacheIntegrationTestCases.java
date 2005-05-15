@@ -26,7 +26,7 @@ import java.util.Map;
 import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyCollectionListener;
 import org.springmodules.cache.key.CacheKey;
-import org.springmodules.cache.provider.oscache.OscacheCacheProfile;
+import org.springmodules.cache.provider.oscache.OsCacheProfile;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
@@ -39,9 +39,9 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/15 00:45:11 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:40 $
  */
-public abstract class AbstractOscacheIntegrationTestCases extends
+public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractIntegrationTests {
 
   /**
@@ -53,7 +53,7 @@ public abstract class AbstractOscacheIntegrationTestCases extends
   /**
    * Constructor.
    */
-  public AbstractOscacheIntegrationTestCases() {
+  public AbstractOsCacheIntegrationTestCases() {
     super();
   }
 
@@ -103,7 +103,7 @@ public abstract class AbstractOscacheIntegrationTestCases extends
   protected void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
 
     // cache profile expected to be in the map of cache profiles.
-    OscacheCacheProfile expectedTestProfile = new OscacheCacheProfile();
+    OsCacheProfile expectedTestProfile = new OsCacheProfile();
     expectedTestProfile.setGroups("testGroup");
     expectedTestProfile.setRefreshPeriod(1);
 

@@ -31,14 +31,14 @@ import org.springmodules.cache.provider.CacheProfileValidator;
 
 /**
  * <p>
- * Unit Test for <code>{@link EhcacheFacade}</code>.
+ * Unit Test for <code>{@link EhCacheFacade}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/04 00:17:44 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:35 $
  */
-public class EhcacheFacadeTests extends TestCase {
+public class EhCacheFacadeTests extends TestCase {
 
   /**
    * An EHCache Cache.
@@ -63,7 +63,7 @@ public class EhcacheFacadeTests extends TestCase {
   /**
    * Configuration options for the caching services.
    */
-  private EhcacheCacheProfile cacheProfile;
+  private EhCacheProfile cacheProfile;
 
   /**
    * Id used by <code>{@link #ehcacheFacade}</code> to get
@@ -74,7 +74,7 @@ public class EhcacheFacadeTests extends TestCase {
   /**
    * Primary object that is under test.
    */
-  private EhcacheFacade ehcacheFacade;
+  private EhCacheFacade ehcacheFacade;
 
   /**
    * Constructor.
@@ -82,7 +82,7 @@ public class EhcacheFacadeTests extends TestCase {
    * @param name
    *          the name of the test case to construct.
    */
-  public EhcacheFacadeTests(String name) {
+  public EhCacheFacadeTests(String name) {
     super(name);
   }
 
@@ -99,7 +99,7 @@ public class EhcacheFacadeTests extends TestCase {
 
     this.cache = this.cacheManager.getCache(this.cacheName);
 
-    this.cacheProfile = new EhcacheCacheProfile();
+    this.cacheProfile = new EhCacheProfile();
     this.cacheProfile.setCacheName(this.cacheName);
 
     this.cacheProfileId = "cacheProfile";
@@ -107,7 +107,7 @@ public class EhcacheFacadeTests extends TestCase {
     Map cacheProfiles = new HashMap();
     cacheProfiles.put(this.cacheProfileId, this.cacheProfile);
 
-    this.ehcacheFacade = new EhcacheFacade();
+    this.ehcacheFacade = new EhCacheFacade();
     this.ehcacheFacade.setCacheManager(this.cacheManager);
     this.ehcacheFacade.setCacheProfiles(cacheProfiles);
   }
@@ -123,8 +123,8 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#getCacheProfileEditor()}</code> returns an
-   * instance of <code>{@link EhcacheCacheProfileEditor}</code> not equal to
+   * <code>{@link EhCacheFacade#getCacheProfileEditor()}</code> returns an
+   * instance of <code>{@link EhCacheProfileEditor}</code> not equal to
    * <code>null</code>.
    */
   public void testGetCacheProfileEditor() {
@@ -134,7 +134,7 @@ public class EhcacheFacadeTests extends TestCase {
     assertNotNull("The cache profile editor should not be null",
         cacheProfileEditor);
 
-    Class expectedClass = EhcacheCacheProfileEditor.class;
+    Class expectedClass = EhCacheProfileEditor.class;
     Class actualClass = cacheProfileEditor.getClass();
 
     assertEquals("<Class of the cache profile editor>", expectedClass,
@@ -143,8 +143,8 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#getCacheProfileValidator()}</code> returns an
-   * an instance of <code>{@link EhcacheCacheProfileValidator}</code> not
+   * <code>{@link EhCacheFacade#getCacheProfileValidator()}</code> returns an
+   * an instance of <code>{@link EhCacheProfileValidator}</code> not
    * equal to <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
@@ -154,7 +154,7 @@ public class EhcacheFacadeTests extends TestCase {
     assertNotNull("The cache profile validator should not be null",
         cacheProfileValidator);
 
-    Class expectedClass = EhcacheCacheProfileValidator.class;
+    Class expectedClass = EhCacheProfileValidator.class;
     Class actualClass = cacheProfileValidator.getClass();
 
     assertEquals("<Class of the cache profile validator>", expectedClass,
@@ -163,7 +163,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link EhCacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
    * flushes the cache specified in the given cache profile.
    */
   public void testOnFlushCache() throws Exception {
@@ -179,7 +179,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link EhCacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
    * does not flush any cache if the cache specified in the given cache profile
    * does not exist.
    */
@@ -197,7 +197,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link EhCacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
    * does not flush any cache if the name of thec cache specified in the given
    * cache profile is empty.
    */
@@ -215,7 +215,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
    * retrieves, from the cache specified in the given cache profile, the entry
    * stored under the given key.
    */
@@ -231,7 +231,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
    * throws a <code>{@link EntryRetrievalException}</code> if the specified
    * cache does not exist.
    */
@@ -250,7 +250,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
    * returns <code>null</code> if the name of the cache, specified in the
    * given cache profile, is empty.
    */
@@ -266,7 +266,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
    * returns <code>null</code> if the specified key does not exist in the
    * cache.
    */
@@ -280,7 +280,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
+   * <code>{@link EhCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
    * stores an entry in the cache specified in the given cache profile using the
    * given key.
    */
@@ -295,7 +295,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
+   * <code>{@link EhCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
    * does not store any entry in any cache if the cache specified in the given
    * cache profile does not exist.
    */
@@ -310,7 +310,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
+   * <code>{@link EhCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
    * does not store any entry in any cache if the name of the cache, specified
    * in the given cache profile, is empty. given key.
    */
@@ -325,7 +325,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * <code>{@link EhCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
    * removes the entry stored under the given key from the cache specified in
    * the given cache profile.
    */
@@ -341,7 +341,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * <code>{@link EhCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
    * does not remove any entry if the cache, specified in the given cache
    * profile, cannot be found.
    */
@@ -358,7 +358,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * <code>{@link EhCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
    * does not remove any entry if the name of the cache, specified in the given
    * cache profile, is empty.
    */
@@ -375,7 +375,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#validateCacheManager()}</code> does not throw
+   * <code>{@link EhCacheFacade#validateCacheManager()}</code> does not throw
    * any exception if the status of the Cache Manager is "Active".
    */
   public void testValidateCacheManagerWithCacheManagerEqualToActive()
@@ -385,7 +385,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#validateCacheManager()}</code> throws an
+   * <code>{@link EhCacheFacade#validateCacheManager()}</code> throws an
    * <code>IllegalStateException</code> if the cache manager is
    * <code>null</code>.
    */
@@ -401,7 +401,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#validateCacheManager()}</code> does not throw
+   * <code>{@link EhCacheFacade#validateCacheManager()}</code> does not throw
    * any exception if the cache manager is not "alive" and the flag
    * 'failQuietlyEnabled' is <code>true</code>.
    */
@@ -419,7 +419,7 @@ public class EhcacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheFacade#validateCacheManager()}</code> throws an
+   * <code>{@link EhCacheFacade#validateCacheManager()}</code> throws an
    * <code>IllegalStateException</code> if the cache manager is not "alive"
    * and the flag 'failQuietlyEnabled' is <code>false</code>.
    */

@@ -25,39 +25,39 @@ import org.springmodules.cache.provider.CacheProfile;
 
 /**
  * <p>
- * Creates a new instance of <code>{@link JcsCacheProfile}</code> by parsing a
+ * Creates a new instance of <code>{@link JcsProfile}</code> by parsing a
  * String of the form <code>[cacheName=value][group=value]</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:58 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:23 $
  */
-public final class JcsCacheProfileEditor extends AbstractCacheProfileEditor {
+public final class JcsProfileEditor extends AbstractCacheProfileEditor {
 
   /**
-   * Validates the properties of the <code>{@link JcsCacheProfile}</code> to
+   * Validates the properties of the <code>{@link JcsProfile}</code> to
    * create.
    */
-  private JcsCacheProfileValidator cacheProfileValidator;
+  private JcsProfileValidator cacheProfileValidator;
 
   /**
    * Constructor.
    */
-  public JcsCacheProfileEditor() {
+  public JcsProfileEditor() {
     super();
-    this.cacheProfileValidator = new JcsCacheProfileValidator();
+    this.cacheProfileValidator = new JcsProfileValidator();
   }
 
   /**
-   * Creates a new instance of <code>{@link JcsCacheProfile}</code> from the
+   * Creates a new instance of <code>{@link JcsProfile}</code> from the
    * specified set of properties.
    * 
    * @param properties
    *          the specified set of properties.
-   * @return a new instance of <code>JcsCacheProfile</code>.
+   * @return a new instance of <code>JcsProfile</code>.
    * 
-   * @see JcsCacheProfileValidator#validateCacheName(String)
+   * @see JcsProfileValidator#validateCacheName(String)
    */
   protected CacheProfile createCacheProfile(Properties properties) {
     String cacheName = null;
@@ -69,7 +69,7 @@ public final class JcsCacheProfileEditor extends AbstractCacheProfileEditor {
     }
     this.cacheProfileValidator.validateCacheName(cacheName);
 
-    JcsCacheProfile profile = new JcsCacheProfile();
+    JcsProfile profile = new JcsProfile();
     profile.setCacheName(cacheName);
     profile.setGroup(group);
     return profile;

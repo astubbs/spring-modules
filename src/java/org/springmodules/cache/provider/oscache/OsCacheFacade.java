@@ -39,14 +39,14 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:17 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:03 $
  */
-public final class OscacheFacade extends AbstractCacheProviderFacadeImpl {
+public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
   /**
    * Message logger.
    */
-  private static Log logger = LogFactory.getLog(OscacheFacade.class);
+  private static Log logger = LogFactory.getLog(OsCacheFacade.class);
 
   /**
    * OSCache cache manager.
@@ -56,7 +56,7 @@ public final class OscacheFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * Constructor.
    */
-  public OscacheFacade() {
+  public OsCacheFacade() {
     super();
   }
 
@@ -64,15 +64,15 @@ public final class OscacheFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
    */
   protected AbstractCacheProfileEditor getCacheProfileEditor() {
-    return new OscacheCacheProfileEditor();
+    return new OsCacheProfileEditor();
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileValidator()
-   * @see OscacheCacheProfileValidator#validateCacheProfile(Object)
+   * @see OsCacheProfileValidator#validateCacheProfile(Object)
    */
   protected CacheProfileValidator getCacheProfileValidator() {
-    return new OscacheCacheProfileValidator();
+    return new OsCacheProfileValidator();
   }
 
   /**
@@ -99,7 +99,7 @@ public final class OscacheFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
    */
   protected void onFlushCache(CacheProfile cacheProfile) {
-    OscacheCacheProfile profile = (OscacheCacheProfile) cacheProfile;
+    OsCacheProfile profile = (OsCacheProfile) cacheProfile;
     String[] groups = profile.getGroups();
 
     if (groups != null) {
@@ -118,7 +118,7 @@ public final class OscacheFacade extends AbstractCacheProviderFacadeImpl {
    */
   protected Object onGetFromCache(Serializable cacheKey,
       CacheProfile cacheProfile) {
-    OscacheCacheProfile profile = (OscacheCacheProfile) cacheProfile;
+    OsCacheProfile profile = (OsCacheProfile) cacheProfile;
 
     Integer refreshPeriod = profile.getRefreshPeriod();
     String cronExpression = profile.getCronExpression();
@@ -154,7 +154,7 @@ public final class OscacheFacade extends AbstractCacheProviderFacadeImpl {
   protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
       Object objectToCache) {
 
-    OscacheCacheProfile profile = (OscacheCacheProfile) cacheProfile;
+    OsCacheProfile profile = (OsCacheProfile) cacheProfile;
 
     String key = this.getEntryKey(cacheKey);
     String[] groups = profile.getGroups();

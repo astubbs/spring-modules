@@ -1,5 +1,5 @@
 /* 
- * Created on Oct 31, 2004
+ * Created on Jan 19, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -12,12 +12,11 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * Copyright @2004 the original author or authors.
+ *
+ * Copyright @2005 the original author or authors.
  */
 
-package org.springmodules.cache.integration.ehcache;
-
+package org.springmodules.cache.integration.oscache;
 
 /**
  * <p>
@@ -26,7 +25,7 @@ package org.springmodules.cache.integration.ehcache;
  * <p>
  * Test settings:
  * <ul>
- * <li>EHCache as cache provider</li>
+ * <li>OSCache as cache provider</li>
  * <li>The targets of the caching services are configured using a
  * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code></li>
  * </ul>
@@ -34,15 +33,15 @@ package org.springmodules.cache.integration.ehcache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:42:06 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:41 $
  */
-public final class EhcacheProxyFactoryIntegrationTests extends
-    AbstractEhcacheIntegrationTests {
+public final class OsCacheProxyFactoryIntegrationTests extends
+    AbstractOsCacheIntegrationTestCases {
 
   /**
    * Constructor.
    */
-  public EhcacheProxyFactoryIntegrationTests() {
+  public OsCacheProxyFactoryIntegrationTests() {
     super();
   }
 
@@ -51,7 +50,7 @@ public final class EhcacheProxyFactoryIntegrationTests extends
    */
   protected String[] getConfigLocations() {
     String[] configFileNames = new String[] {
-        "**/ehcacheApplicationContext.xml",
+        "**/oscacheApplicationContext.xml",
         "**/proxyFactoryApplicationContext.xml" };
     
     return configFileNames;

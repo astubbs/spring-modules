@@ -35,9 +35,9 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:15 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:19 $
  */
-public class EhcacheCacheProfile implements CacheProfile {
+public class EhCacheProfile implements CacheProfile {
 
   /**
    * Version number of this class.
@@ -54,7 +54,7 @@ public class EhcacheCacheProfile implements CacheProfile {
   /**
    * Constructor.
    */
-  public EhcacheCacheProfile() {
+  public EhCacheProfile() {
     super();
   }
 
@@ -71,10 +71,10 @@ public class EhcacheCacheProfile implements CacheProfile {
   public boolean equals(Object obj) {
     boolean equals = true;
 
-    if (null == obj || !(obj instanceof EhcacheCacheProfile)) {
+    if (null == obj || !(obj instanceof EhCacheProfile)) {
       equals = false;
     } else if (this != obj) {
-      EhcacheCacheProfile profile = (EhcacheCacheProfile) obj;
+      EhCacheProfile profile = (EhCacheProfile) obj;
 
       EqualsBuilder equalsBuilder = new EqualsBuilder();
       equalsBuilder.append(this.getCacheName(), profile.getCacheName());

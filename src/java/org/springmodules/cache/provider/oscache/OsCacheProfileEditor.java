@@ -28,41 +28,41 @@ import com.opensymphony.oscache.base.CacheEntry;
 
 /**
  * <p>
- * Creates a new instance of <code>{@link OscacheCacheProfile}</code> by
+ * Creates a new instance of <code>{@link OsCacheProfile}</code> by
  * parsing a String of the form
  * <code>[cronExpression=value][groups=value][refreshPeriod=value]</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:17 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:06 $
  */
-public final class OscacheCacheProfileEditor extends AbstractCacheProfileEditor {
+public final class OsCacheProfileEditor extends AbstractCacheProfileEditor {
 
   /**
    * Constructor.
    */
-  public OscacheCacheProfileEditor() {
+  public OsCacheProfileEditor() {
     super();
   }
 
   /**
-   * Creates a new instance of <code>{@link OscacheCacheProfile}</code> from
+   * Creates a new instance of <code>{@link OsCacheProfile}</code> from
    * the specified set of properties.
    * 
    * @param properties
    *          the specified set of properties.
-   * @return a new instance of <code>OscacheCacheProfile</code>.
+   * @return a new instance of <code>OsCacheProfile</code>.
    * 
    * @throws IllegalArgumentException
    *           if the value of the property "refreshPeriod" is not an integer or
    *           not equal to the String "INDEFINITE_EXPIRY".
    */
   protected CacheProfile createCacheProfile(Properties properties) {
-    OscacheCacheProfile cacheProfile = null;
+    OsCacheProfile cacheProfile = null;
 
     if (properties.isEmpty()) {
-      cacheProfile = new OscacheCacheProfile();
+      cacheProfile = new OsCacheProfile();
     } else {
       // set the cron expression.
       String cronExpression = properties.getProperty("cronExpression");
@@ -89,7 +89,7 @@ public final class OscacheCacheProfileEditor extends AbstractCacheProfileEditor 
       } // end 'if (StringUtils.isNotEmpty(refreshPeriodString))'
 
       // create a new cache profile after validating the given properties.
-      cacheProfile = new OscacheCacheProfile();
+      cacheProfile = new OsCacheProfile();
       cacheProfile.setCronExpression(cronExpression);
       cacheProfile.setGroups(groups);
       cacheProfile.setRefreshPeriod(refreshPeriod);

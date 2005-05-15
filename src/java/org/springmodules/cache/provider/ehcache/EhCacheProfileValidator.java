@@ -23,19 +23,19 @@ import org.springmodules.cache.provider.CacheProfileValidator;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link EhcacheCacheProfile}</code>.
+ * Validates the properties of a <code>{@link EhCacheProfile}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:15 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:13 $
  */
-public class EhcacheCacheProfileValidator implements CacheProfileValidator {
+public class EhCacheProfileValidator implements CacheProfileValidator {
 
   /**
    * Constructor.
    */
-  public EhcacheCacheProfileValidator() {
+  public EhCacheProfileValidator() {
     super();
   }
 
@@ -58,13 +58,13 @@ public class EhcacheCacheProfileValidator implements CacheProfileValidator {
    * @see CacheProfileValidator#validateCacheProfile(Object)
    */
   public final void validateCacheProfile(Object cacheProfile) {
-    if (cacheProfile instanceof EhcacheCacheProfile) {
-      EhcacheCacheProfile ehcacheCacheProfile = (EhcacheCacheProfile) cacheProfile;
+    if (cacheProfile instanceof EhCacheProfile) {
+      EhCacheProfile ehcacheCacheProfile = (EhCacheProfile) cacheProfile;
       String cacheName = ehcacheCacheProfile.getCacheName();
       this.validateCacheName(cacheName);
     } else {
       throw new IllegalArgumentException(
-          "The cache profile should be an instance of 'EhcacheCacheProfile'");
+          "The cache profile should be an instance of 'EhCacheProfile'");
     }
   }
 }

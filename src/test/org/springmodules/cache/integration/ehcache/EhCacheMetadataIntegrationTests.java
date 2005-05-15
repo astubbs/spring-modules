@@ -32,15 +32,15 @@ package org.springmodules.cache.integration.ehcache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:42:06 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:32 $
  */
-public final class EhcacheMetadataIntegrationTests extends
-    AbstractEhcacheIntegrationTests {
+public final class EhCacheMetadataIntegrationTests extends
+    AbstractEhCacheIntegrationTests {
 
   /**
    * Constructor.
    */
-  public EhcacheMetadataIntegrationTests() {
+  public EhCacheMetadataIntegrationTests() {
     super();
   }
 

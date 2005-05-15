@@ -26,19 +26,19 @@ import org.easymock.classextension.MockClassControl;
 
 /**
  * <p>
- * Unit Test for <code>{@link JcsCacheProfileValidator}</code>.
+ * Unit Test for <code>{@link JcsProfileValidator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:02 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:08 $
  */
-public final class JcsCacheProfileValidatorTests extends TestCase {
+public final class JcsProfileValidatorTests extends TestCase {
 
   /**
    * Primary object (instance of the class to test).
    */
-  private JcsCacheProfileValidator cacheProfileValidator;
+  private JcsProfileValidator cacheProfileValidator;
 
   /**
    * Controls the behavior of <code>{@link #cacheProfileValidator}</code>.
@@ -51,7 +51,7 @@ public final class JcsCacheProfileValidatorTests extends TestCase {
    * @param name
    *          the name of the Test Case.
    */
-  public JcsCacheProfileValidatorTests(String name) {
+  public JcsProfileValidatorTests(String name) {
     super(name);
   }
 
@@ -59,7 +59,7 @@ public final class JcsCacheProfileValidatorTests extends TestCase {
    * Sets up the test fixture.
    */
   private void setUpCacheProfileValidator() {
-    this.cacheProfileValidator = new JcsCacheProfileValidator();
+    this.cacheProfileValidator = new JcsProfileValidator();
   }
 
   /**
@@ -73,17 +73,17 @@ public final class JcsCacheProfileValidatorTests extends TestCase {
    *          the methods of <code>cacheProfileValidator</code> to mock.
    */
   private void setUpCacheProfileValidatorAsMockObject(Method[] methodsToMock) {
-    Class classToMock = JcsCacheProfileValidator.class;
+    Class classToMock = JcsProfileValidator.class;
 
     this.cacheProfileValidatorControl = MockClassControl.createControl(
         classToMock, null, null, methodsToMock);
-    this.cacheProfileValidator = (JcsCacheProfileValidator) this.cacheProfileValidatorControl
+    this.cacheProfileValidator = (JcsProfileValidator) this.cacheProfileValidatorControl
         .getMock();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheProfileValidator#validateCacheName(String)}</code>
+   * <code>{@link JcsProfileValidator#validateCacheName(String)}</code>
    * considers an empty String as an invalid cache name.
    */
   public void testValidateCacheNameWithEmptyString() {
@@ -99,7 +99,7 @@ public final class JcsCacheProfileValidatorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheProfileValidator#validateCacheName(String)}</code>
+   * <code>{@link JcsProfileValidator#validateCacheName(String)}</code>
    * considers a String that is not empty as a valid cache name.
    */
   public void testValidateCacheNameWithNotEmptyString() {
@@ -110,7 +110,7 @@ public final class JcsCacheProfileValidatorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheProfileValidator#validateCacheName(String)}</code>
+   * <code>{@link JcsProfileValidator#validateCacheName(String)}</code>
    * considers a String equal to <code>null</code> as an invalid cache name.
    */
   public void testValidateCacheNameWithStringEqualToNull() {
@@ -126,12 +126,12 @@ public final class JcsCacheProfileValidatorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheProfileValidator#validateCacheProfile(JcsCacheProfile)}</code>
+   * <code>{@link JcsProfileValidator#validateCacheProfile(JcsProfile)}</code>
    * validates the name of the cache set in the specified cache profile.
    */
   public void testValidateCacheProfile() throws Exception {
     // set up the methods to mock.
-    Class classToMock = JcsCacheProfileValidator.class;
+    Class classToMock = JcsProfileValidator.class;
     Method validateCacheNameMethod = classToMock.getDeclaredMethod(
         "validateCacheName", new Class[] { String.class });
     Method[] methodsToMock = new Method[] { validateCacheNameMethod };
@@ -142,7 +142,7 @@ public final class JcsCacheProfileValidatorTests extends TestCase {
 
     String cacheName = "CacheName";
 
-    JcsCacheProfile cacheProfile = new JcsCacheProfile();
+    JcsProfile cacheProfile = new JcsProfile();
     cacheProfile.setCacheName(cacheName);
 
     // expectation: validate the cache name.
@@ -160,9 +160,9 @@ public final class JcsCacheProfileValidatorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheProfileValidator#validateCacheProfile(Object)}</code>
+   * <code>{@link JcsProfileValidator#validateCacheProfile(Object)}</code>
    * throws an <code>IllegalArgumentException</code> if the specified argument
-   * is not an instance of <code>{@link JcsCacheProfile}</code>.
+   * is not an instance of <code>{@link JcsProfile}</code>.
    */
   public void testValidateCacheProfileObjectWithObjectNotInstanceOfJcsCacheProfile() {
     this.setUpCacheProfileValidator();

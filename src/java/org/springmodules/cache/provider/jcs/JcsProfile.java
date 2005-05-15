@@ -35,9 +35,9 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:58 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:22 $
  */
-public class JcsCacheProfile implements CacheProfile {
+public class JcsProfile implements CacheProfile {
 
   /**
    * Version number of this class.
@@ -59,7 +59,7 @@ public class JcsCacheProfile implements CacheProfile {
   /**
    * Constructor.
    */
-  public JcsCacheProfile() {
+  public JcsProfile() {
     super();
   }
 
@@ -76,10 +76,10 @@ public class JcsCacheProfile implements CacheProfile {
   public boolean equals(Object obj) {
     boolean equals = true;
 
-    if (null == obj || !(obj instanceof JcsCacheProfile)) {
+    if (null == obj || !(obj instanceof JcsProfile)) {
       equals = false;
     } else if (this != obj) {
-      JcsCacheProfile profile = (JcsCacheProfile) obj;
+      JcsProfile profile = (JcsProfile) obj;
 
       EqualsBuilder equalsBuilder = new EqualsBuilder();
       equalsBuilder.append(this.getCacheName(), profile.getCacheName());

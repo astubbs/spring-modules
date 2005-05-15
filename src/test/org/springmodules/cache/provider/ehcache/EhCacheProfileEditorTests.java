@@ -1,5 +1,5 @@
 /* 
- * Created on Jan 11, 2005
+ * Created on Jan 14, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,7 +16,7 @@
  * Copyright @2005 the original author or authors.
  */
 
-package org.springmodules.cache.provider.jcs;
+package org.springmodules.cache.provider.ehcache;
 
 import java.util.Properties;
 
@@ -26,19 +26,19 @@ import org.springmodules.cache.provider.CacheProfile;
 
 /**
  * <p>
- * Unit Test for <code>{@link JcsCacheProfileEditor}</code>.
+ * Unit Test for <code>{@link EhCacheProfileEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:01 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:35 $
  */
-public final class JcsCacheProfileEditorTests extends TestCase {
+public final class EhCacheProfileEditorTests extends TestCase {
 
   /**
    * Primary object (instance of the class to test).
    */
-  private JcsCacheProfileEditor factory;
+  private EhCacheProfileEditor factory;
 
   /**
    * Constructor.
@@ -46,7 +46,7 @@ public final class JcsCacheProfileEditorTests extends TestCase {
    * @param name
    *          the name of the Test Case.
    */
-  public JcsCacheProfileEditorTests(String name) {
+  public EhCacheProfileEditorTests(String name) {
     super(name);
   }
 
@@ -55,13 +55,13 @@ public final class JcsCacheProfileEditorTests extends TestCase {
    */
   protected void setUp() throws Exception {
     super.setUp();
-    this.factory = new JcsCacheProfileEditor();
+    this.factory = new EhCacheProfileEditor();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * throws an <code>IllegalArgumentException</code> if an empty
+   * <code>{@link EhCacheProfileEditor#createCacheProfile(Properties)}</code>
+   * throws an <code>IllegalArgumentException</code> when an empty
    * <code>java.util.Properties</code> is specified.
    */
   public void testCreateCacheProfileWithEmptySetOfProperties() {
@@ -77,11 +77,12 @@ public final class JcsCacheProfileEditorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * throws an <code>IllegalArgumentException</code> if the property
-   * "cacheName" set in a <code>java.util.Properties</code> is empty.
+   * <code>{@link EhCacheProfileEditor#createCacheProfile(Properties)}</code>
+   * throws an <code>IllegalArgumentException</code> when the value of the
+   * property "cacheName" set in a <code>java.util.Properties</code> is empty.
    */
   public void testCreateCacheProfileWithEmptyCacheName() {
+
     Properties properties = new Properties();
     properties.setProperty("cacheName", "");
 
@@ -95,22 +96,19 @@ public final class JcsCacheProfileEditorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link JcsCacheProfile}</code> and
-   * populates it with the values of the properties "cacheName" and "group" set
-   * in a <code>java.util.Properties</code>.
+   * <code>{@link EhCacheProfileEditor#createCacheProfile(Properties)}</code>
+   * creates a new instance of <code>{@link EhCacheProfile}</code>
+   * populated with the values of the properties "cacheName" and "group" set in
+   * a <code>java.util.Properties</code>.
    */
-  public void testCreateCacheProfile() {
+  public void testCreateCacheProfileWithNotEmptyGroup() {
     String cacheName = "main";
-    String group = "test";
 
     Properties properties = new Properties();
     properties.setProperty("cacheName", cacheName);
-    properties.setProperty("group", group);
 
-    JcsCacheProfile expectedProfile = new JcsCacheProfile();
+    EhCacheProfile expectedProfile = new EhCacheProfile();
     expectedProfile.setCacheName(cacheName);
-    expectedProfile.setGroup(group);
 
     CacheProfile actualProfile = this.factory.createCacheProfile(properties);
 

@@ -22,19 +22,19 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link OscacheCacheProfileValidator}</code>.
+ * Unit Test for <code>{@link OsCacheProfileValidator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:49 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:28 $
  */
-public final class OscacheCacheProfileValidatorTests extends TestCase {
+public final class OsCacheProfileValidatorTests extends TestCase {
 
   /**
    * Primary object (instance of the class to test).
    */
-  private OscacheCacheProfileValidator cacheProfileValidator;
+  private OsCacheProfileValidator cacheProfileValidator;
 
   /**
    * Constructor.
@@ -42,7 +42,7 @@ public final class OscacheCacheProfileValidatorTests extends TestCase {
    * @param name
    *          the name of the Test Case.
    */
-  public OscacheCacheProfileValidatorTests(String name) {
+  public OsCacheProfileValidatorTests(String name) {
     super(name);
   }
 
@@ -50,18 +50,18 @@ public final class OscacheCacheProfileValidatorTests extends TestCase {
    * Sets up the test fixture.
    */
   protected void setUp() {
-    this.cacheProfileValidator = new OscacheCacheProfileValidator();
+    this.cacheProfileValidator = new OsCacheProfileValidator();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheCacheProfileValidator#validateCacheProfile(Object)}</code>
+   * <code>{@link OsCacheProfileValidator#validateCacheProfile(Object)}</code>
    * does not throw any exception if the profile to validate is an instance of
-   * <code>{@link OscacheCacheProfile}</code>.
+   * <code>{@link OsCacheProfile}</code>.
    */
   public void testValidateCacheProfileWithInstanceOfOscacheCacheProfile() {
 
-    OscacheCacheProfile cacheProfile = new OscacheCacheProfile();
+    OsCacheProfile cacheProfile = new OsCacheProfile();
     Object object = cacheProfile;
 
     this.cacheProfileValidator.validateCacheProfile(object);
@@ -69,9 +69,9 @@ public final class OscacheCacheProfileValidatorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheCacheProfileValidator#validateCacheProfile(Object)}</code>
+   * <code>{@link OsCacheProfileValidator#validateCacheProfile(Object)}</code>
    * throws an <code>IllegalArgumentException</code> if the specified argument
-   * is not an instance of <code>{@link OscacheCacheProfile}</code>.
+   * is not an instance of <code>{@link OsCacheProfile}</code>.
    */
   public void testValidateCacheProfileObjectWithObjectNotInstanceOfOscacheCacheProfile() {
     try {

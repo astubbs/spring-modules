@@ -41,14 +41,14 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/04 00:15:02 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:15 $
  */
-public final class EhcacheFacade extends AbstractCacheProviderFacadeImpl {
+public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
   /**
    * Message logger.
    */
-  private static Log logger = LogFactory.getLog(EhcacheFacade.class);
+  private static Log logger = LogFactory.getLog(EhCacheFacade.class);
 
   /**
    * EHCache cache manager.
@@ -58,7 +58,7 @@ public final class EhcacheFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * Constructor.
    */
-  public EhcacheFacade() {
+  public EhCacheFacade() {
     super();
   }
 
@@ -66,22 +66,22 @@ public final class EhcacheFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
    */
   protected AbstractCacheProfileEditor getCacheProfileEditor() {
-    return new EhcacheCacheProfileEditor();
+    return new EhCacheProfileEditor();
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileValidator()
-   * @see EhcacheCacheProfileValidator#validateCacheProfile(Object)
+   * @see EhCacheProfileValidator#validateCacheProfile(Object)
    */
   protected CacheProfileValidator getCacheProfileValidator() {
-    return new EhcacheCacheProfileValidator();
+    return new EhCacheProfileValidator();
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
    */
   protected void onFlushCache(CacheProfile cacheProfile) {
-    EhcacheCacheProfile profile = (EhcacheCacheProfile) cacheProfile;
+    EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
     if (StringUtils.isNotEmpty(cacheName)) {
@@ -117,7 +117,7 @@ public final class EhcacheFacade extends AbstractCacheProviderFacadeImpl {
       CacheProfile cacheProfile) throws EntryRetrievalException {
 
     Object cachedObject = null;
-    EhcacheCacheProfile profile = (EhcacheCacheProfile) cacheProfile;
+    EhCacheProfile profile = (EhCacheProfile) cacheProfile;
 
     String cacheName = profile.getCacheName();
 
@@ -164,7 +164,7 @@ public final class EhcacheFacade extends AbstractCacheProviderFacadeImpl {
   protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
       Object objectToCache) {
 
-    EhcacheCacheProfile profile = (EhcacheCacheProfile) cacheProfile;
+    EhCacheProfile profile = (EhCacheProfile) cacheProfile;
 
     String cacheName = profile.getCacheName();
     if (StringUtils.isNotEmpty(cacheName)) {
@@ -192,7 +192,7 @@ public final class EhcacheFacade extends AbstractCacheProviderFacadeImpl {
   public void removeFromCache(Serializable cacheKey, String cacheProfileId) {
     CacheProfile cacheProfile = super.getCacheProfile(cacheProfileId);
 
-    EhcacheCacheProfile profile = (EhcacheCacheProfile) cacheProfile;
+    EhCacheProfile profile = (EhCacheProfile) cacheProfile;
 
     String cacheName = profile.getCacheName();
     if (StringUtils.isNotEmpty(cacheName)) {

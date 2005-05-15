@@ -39,16 +39,16 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * @version $Revision: 1.5 $ $Date: 2005/05/01 23:32:36 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:01 $
  */
-public final class OscacheManagerFactoryBean extends
+public final class OsCacheManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
 
   /**
    * Message logger.
    */
   private static Log logger = LogFactory
-      .getLog(OscacheManagerFactoryBean.class);
+      .getLog(OsCacheManagerFactoryBean.class);
 
   /**
    * The cache manager managed by this factory.
@@ -58,7 +58,7 @@ public final class OscacheManagerFactoryBean extends
   /**
    * Constructor.
    */
-  public OscacheManagerFactoryBean() {
+  public OsCacheManagerFactoryBean() {
     super();
   }
 

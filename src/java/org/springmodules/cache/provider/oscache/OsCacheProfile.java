@@ -36,9 +36,9 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:17 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:02 $
  */
-public class OscacheCacheProfile implements CacheProfile {
+public class OsCacheProfile implements CacheProfile {
 
   /**
    * Version number of this class.
@@ -67,7 +67,7 @@ public class OscacheCacheProfile implements CacheProfile {
   /**
    * Constructor.
    */
-  public OscacheCacheProfile() {
+  public OsCacheProfile() {
 
     super();
   }
@@ -85,10 +85,10 @@ public class OscacheCacheProfile implements CacheProfile {
   public boolean equals(Object obj) {
     boolean equals = true;
 
-    if (null == obj || !(obj instanceof OscacheCacheProfile)) {
+    if (null == obj || !(obj instanceof OsCacheProfile)) {
       equals = false;
     } else if (this != obj) {
-      OscacheCacheProfile profile = (OscacheCacheProfile) obj;
+      OsCacheProfile profile = (OsCacheProfile) obj;
 
       EqualsBuilder equalsBuilder = new EqualsBuilder();
       equalsBuilder.append(this.getCronExpression(), profile

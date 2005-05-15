@@ -31,7 +31,7 @@ import org.apache.jcs.engine.control.group.GroupId;
 import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyCollectionListener;
 import org.springmodules.cache.key.CacheKey;
-import org.springmodules.cache.provider.jcs.JcsCacheProfile;
+import org.springmodules.cache.provider.jcs.JcsProfile;
 
 /**
  * <p>
@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.jcs.JcsCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/15 00:45:12 $
+ * @version $Revision: 1.3 $ $Date: 2005/05/15 02:14:43 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractIntegrationTests {
@@ -101,7 +101,7 @@ public abstract class AbstractJcsIntegrationTests extends
   protected void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
 
     // cache profile expected to be in the map of cache profiles.
-    JcsCacheProfile expectedTestProfile = new JcsCacheProfile();
+    JcsProfile expectedTestProfile = new JcsProfile();
     expectedTestProfile.setGroup("testGroup");
     expectedTestProfile.setCacheName("testCache");
 

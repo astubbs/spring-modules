@@ -31,14 +31,14 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
 /**
  * <p>
- * Unit Test for <code>{@link OscacheManagerFactoryBean}</code>.
+ * Unit Test for <code>{@link OsCacheManagerFactoryBean}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:49 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:26 $
  */
-public final class OscacheManagerFactoryBeanTests extends
+public final class OsCacheManagerFactoryBeanTests extends
     AbstractCacheManagerFactoryBeanTests {
 
   /**
@@ -51,12 +51,12 @@ public final class OscacheManagerFactoryBeanTests extends
    * Message logger.
    */
   private static Log logger = LogFactory
-      .getLog(OscacheManagerFactoryBeanTests.class);
+      .getLog(OsCacheManagerFactoryBeanTests.class);
 
   /**
    * Primary object *instance of the class to test).
    */
-  private OscacheManagerFactoryBean cacheManagerFactoryBean;
+  private OsCacheManagerFactoryBean cacheManagerFactoryBean;
 
   /**
    * Contains the location of the configuration file for
@@ -75,7 +75,7 @@ public final class OscacheManagerFactoryBeanTests extends
    * @param name
    *          the name of the Test Case.
    */
-  public OscacheManagerFactoryBeanTests(String name) {
+  public OsCacheManagerFactoryBeanTests(String name) {
 
     super(name);
   }
@@ -89,7 +89,7 @@ public final class OscacheManagerFactoryBeanTests extends
     this.configLocation = new ClassPathResource(super.getPackageNameAsPath()
         + "/oscache-config.properties");
 
-    this.cacheManagerFactoryBean = new OscacheManagerFactoryBean();
+    this.cacheManagerFactoryBean = new OsCacheManagerFactoryBean();
     this.cacheManagerFactoryBean.setConfigLocation(this.configLocation);
 
     this.setUpConfigProperties();
@@ -120,7 +120,7 @@ public final class OscacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheManagerFactoryBean#afterPropertiesSet()}</code>
+   * <code>{@link OsCacheManagerFactoryBean#afterPropertiesSet()}</code>
    * creates a new cache manager which properties are loaded from a
    * configuration file.
    */
@@ -145,7 +145,7 @@ public final class OscacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheManagerFactoryBean#afterPropertiesSet()}</code>
+   * <code>{@link OsCacheManagerFactoryBean#afterPropertiesSet()}</code>
    * creates a new cache manager using the default configuration file,
    * "oscache.properties", if there is not any configuration file specified.
    */
@@ -176,7 +176,7 @@ public final class OscacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheManagerFactoryBean#destroy()}</code> flushes the
+   * <code>{@link OsCacheManagerFactoryBean#destroy()}</code> flushes the
    * cache.
    */
   public void testDestroy() throws Exception {
@@ -203,7 +203,7 @@ public final class OscacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheManagerFactoryBean#destroy()}</code> does not throw
+   * <code>{@link OsCacheManagerFactoryBean#destroy()}</code> does not throw
    * any exception if the cache manager is <code>null</code>.
    */
   public void testDestroyWithCacheManagerEqualToNull() throws Exception {
@@ -224,7 +224,7 @@ public final class OscacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheManagerFactoryBean#getObjectType()}</code> returns
+   * <code>{@link OsCacheManagerFactoryBean#getObjectType()}</code> returns
    * the class of the created cache manager.
    */
   public void testGetObjectType() throws Exception {
@@ -240,7 +240,7 @@ public final class OscacheManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link OscacheManagerFactoryBean#getObjectType()}</code> returns
+   * <code>{@link OsCacheManagerFactoryBean#getObjectType()}</code> returns
    * the class 'com.opensymphony.oscache.general.GeneralCacheAdministrator' if
    * the cache manager has not been created yet.
    */
@@ -255,7 +255,7 @@ public final class OscacheManagerFactoryBeanTests extends
   }
 
   /**
-   * Verifies that <code>{@link OscacheManagerFactoryBean}</code> notifies the
+   * Verifies that <code>{@link OsCacheManagerFactoryBean}</code> notifies the
    * Spring IoC container that is a singleton.
    */
   public void testIsSingleton() {

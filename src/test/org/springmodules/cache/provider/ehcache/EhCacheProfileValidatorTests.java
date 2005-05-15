@@ -26,19 +26,19 @@ import org.easymock.classextension.MockClassControl;
 
 /**
  * <p>
- * Unit Test for <code>{@link EhcacheCacheProfileValidator}</code>.
+ * Unit Test for <code>{@link EhCacheProfileValidator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:27 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:38 $
  */
-public final class EhcacheCacheProfileValidatorTests extends TestCase {
+public final class EhCacheProfileValidatorTests extends TestCase {
 
   /**
    * Primary object (instance of the class to test).
    */
-  private EhcacheCacheProfileValidator cacheProfileValidator;
+  private EhCacheProfileValidator cacheProfileValidator;
 
   /**
    * Controls the behavior of <code>{@link #cacheProfileValidator}</code>.
@@ -51,7 +51,7 @@ public final class EhcacheCacheProfileValidatorTests extends TestCase {
    * @param name
    *          the name of the Test Case.
    */
-  public EhcacheCacheProfileValidatorTests(String name) {
+  public EhCacheProfileValidatorTests(String name) {
     super(name);
   }
 
@@ -59,7 +59,7 @@ public final class EhcacheCacheProfileValidatorTests extends TestCase {
    * Sets up <code>{@link #cacheProfileValidator}</code>.
    */
   private void setUpCacheProfileValidator() {
-    this.cacheProfileValidator = new EhcacheCacheProfileValidator();
+    this.cacheProfileValidator = new EhCacheProfileValidator();
   }
 
   /**
@@ -73,17 +73,17 @@ public final class EhcacheCacheProfileValidatorTests extends TestCase {
    *          the methods to mock.
    */
   private void setUpCacheProfileValidatorAsMockObject(Method[] methodsToMock) {
-    Class classToMock = EhcacheCacheProfileValidator.class;
+    Class classToMock = EhCacheProfileValidator.class;
 
     this.cacheProfileValidatorControl = MockClassControl.createControl(
         classToMock, null, null, methodsToMock);
-    this.cacheProfileValidator = (EhcacheCacheProfileValidator) this.cacheProfileValidatorControl
+    this.cacheProfileValidator = (EhCacheProfileValidator) this.cacheProfileValidatorControl
         .getMock();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheCacheProfileValidator#validateCacheName(String)}</code>
+   * <code>{@link EhCacheProfileValidator#validateCacheName(String)}</code>
    * considers an empty String as an invalid cache name.
    */
   public void testValidateCacheNameWithEmptyString() {
@@ -99,7 +99,7 @@ public final class EhcacheCacheProfileValidatorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheCacheProfileValidator#validateCacheName(String)}</code>
+   * <code>{@link EhCacheProfileValidator#validateCacheName(String)}</code>
    * considers a String that is not empty as a valid cache name.
    */
   public void testValidateCacheNameWithNotEmptyString() {
@@ -111,7 +111,7 @@ public final class EhcacheCacheProfileValidatorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheCacheProfileValidator#validateCacheName(String)}</code>
+   * <code>{@link EhCacheProfileValidator#validateCacheName(String)}</code>
    * considers a String equal to <code>null</code> as an invalid cache name.
    */
   public void testValidateCacheNameWithStringEqualToNull() {
@@ -127,12 +127,12 @@ public final class EhcacheCacheProfileValidatorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheCacheProfileValidator#validateCacheProfile(EhcacheCacheProfile)}</code>.
+   * <code>{@link EhCacheProfileValidator#validateCacheProfile(EhCacheProfile)}</code>.
    * validates the name of the cache set in the specified cache profile.
    */
   public void testValidateCacheProfile() throws Exception {
     // set up the methods to mock.
-    Class classToMock = EhcacheCacheProfileValidator.class;
+    Class classToMock = EhCacheProfileValidator.class;
     Method validateCacheNameMethod = classToMock.getDeclaredMethod(
         "validateCacheName", new Class[] { String.class });
     Method[] methodsToMock = new Method[] { validateCacheNameMethod };
@@ -142,7 +142,7 @@ public final class EhcacheCacheProfileValidatorTests extends TestCase {
     this.setUpCacheProfileValidatorAsMockObject(methodsToMock);
 
     String cacheName = "CacheName";
-    EhcacheCacheProfile cacheProfile = new EhcacheCacheProfile();
+    EhCacheProfile cacheProfile = new EhCacheProfile();
     cacheProfile.setCacheName(cacheName);
 
     // expectation: validate the cache name.
@@ -160,9 +160,9 @@ public final class EhcacheCacheProfileValidatorTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhcacheCacheProfileValidator#validateCacheProfile(Object)}</code>
+   * <code>{@link EhCacheProfileValidator#validateCacheProfile(Object)}</code>
    * throws an <code>IllegalArgumentException</code> if the specified argument
-   * is not an instance of <code>{@link EhcacheCacheProfile}</code>.
+   * is not an instance of <code>{@link EhCacheProfile}</code>.
    */
   public void testValidateCacheProfileObjectWithObjectNotInstanceOfEhcacheCacheProfile() {
     this.setUpCacheProfileValidator();

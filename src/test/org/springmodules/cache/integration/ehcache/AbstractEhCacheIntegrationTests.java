@@ -28,7 +28,7 @@ import net.sf.ehcache.Element;
 import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyCollectionListener;
 import org.springmodules.cache.key.CacheKey;
-import org.springmodules.cache.provider.ehcache.EhcacheCacheProfile;
+import org.springmodules.cache.provider.ehcache.EhCacheProfile;
 
 /**
  * <p>
@@ -38,9 +38,9 @@ import org.springmodules.cache.provider.ehcache.EhcacheCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/15 00:45:11 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:32 $
  */
-public abstract class AbstractEhcacheIntegrationTests extends
+public abstract class AbstractEhCacheIntegrationTests extends
     AbstractIntegrationTests {
 
   /**
@@ -52,7 +52,7 @@ public abstract class AbstractEhcacheIntegrationTests extends
   /**
    * Constructor.
    */
-  public AbstractEhcacheIntegrationTests() {
+  public AbstractEhCacheIntegrationTests() {
     super();
   }
 
@@ -81,7 +81,7 @@ public abstract class AbstractEhcacheIntegrationTests extends
   protected final void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
 
     // cache profile expected to be in the map of cache profiles.
-    EhcacheCacheProfile expectedTestProfile = new EhcacheCacheProfile();
+    EhCacheProfile expectedTestProfile = new EhCacheProfile();
     expectedTestProfile.setCacheName("testCache");
 
     // verify that the expected cache profile exists in the map.
