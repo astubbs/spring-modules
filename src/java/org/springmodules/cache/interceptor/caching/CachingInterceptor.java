@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:09 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/17 11:00:36 $
  */
 public class CachingInterceptor extends CachingAspectSupport implements
     MethodInterceptor, InitializingBean {
@@ -154,7 +154,7 @@ public class CachingInterceptor extends CachingAspectSupport implements
       if (null == exceptionThrowByProceed) {
         if (null == cachedObject) {
           this.cacheProviderFacade.putInCache(cacheKey, cacheProfileId,
-              NULL_ENTRY);
+              CachingAspectSupport.NULL_ENTRY);
         } else {
           this.cacheProviderFacade.putInCache(cacheKey, cacheProfileId,
               cachedObject);
@@ -169,7 +169,7 @@ public class CachingInterceptor extends CachingAspectSupport implements
         this.cacheProviderFacade.cancelCacheUpdate(cacheKey);
         throw exceptionThrowByProceed;
       }
-    } else if (NULL_ENTRY == cachedObject) {
+    } else if (CachingAspectSupport.NULL_ENTRY == cachedObject) {
       cachedObject = null;
     }
 
