@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.object.file;
+package org.springmodules.lucene.index.object.directory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +37,46 @@ import org.springmodules.lucene.index.support.file.DocumentMatching;
 import org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManager;
 import org.springmodules.lucene.util.FileUtils;
 
+/**
+ * <b>This is the central class in the lucene directory indexing package.</b>
+ * It simplifies the use of lucene to index a directory specifiying the base
+ * directory and the way to index every files contained in this directory and
+ * its sub directories.
+ * It helps to avoid common errors and to manage these resource in a flexible
+ * manner.
+ * It executes core Lucene workflow, leaving application code to focus on
+ * the way to create Lucene documents from a row for a request.
+ * 
+ * <p>This class is based on a DocumentHandlerManager instance that can be
+ * injected with IoC. So several document handlers for different file types
+ * can be registred declaratively or using the registration methods of this
+ * class. By default, only the text handler is registred for files
+ * with the "txt" extension.
+ *
+ * <p>This class is based on the IndexFactory abstraction which is a
+ * factory to create IndexWriter for the configured
+ * Directory. For the execution and the indexation of the corresponding
+ * datas, the indexer uses the same IndexWriter. It calls the IndexWriterFactoryUtils
+ * class to eventually release it. So the indexer doesn't need to always
+ * hold resources during the indexation of every requests and
+ * this avoids some locking problems on the index. You can too apply
+ * different strategies for managing index resources.
+ *
+ * <p>Can be used within a service implementation via direct instantiation
+ * with a IndexFactory reference, or get prepared in an application context
+ * and given to services as bean reference. Note: The IndexFactory should
+ * always be configured as a bean in the application context, in the first case
+ * given to the service directly, in the second case to the prepared template.
+ * 
+ * @author Thierry Templier
+ * @see org.springmodules.lucene.index.object.AbstractIndexer
+ * @see org.springmodules.lucene.index.factory.IndexFactory
+ * @see org.springmodules.lucene.index.support.file.DocumentHandlerManager
+ * @see org.springmodules.lucene.index.support.file.DocumentMatching
+ * @see org.springmodules.lucene.index.support.file.DocumentHandler
+ * @see org.springmodules.lucene.index.object.directory.DocumentIndexingListener
+ * @see org.springmodules.lucene.index.factory.IndexWriterFactoryUtils#getIndexWriter(IndexFactory)
+ * @see org.springmodules.lucene.index.factory.IndexWriterFactoryUtils#releaseIndexWriter(IndexFactory, IndexWriter)
 /**
  * @author Thierry Templier
  */
@@ -77,6 +117,10 @@ public class DirectoryIndexer extends AbstractIndexer {
 		if( listener!=null ) {
 			listeners.remove(listener);
 		}
+	}
+
+	public List getListeners() {
+		return listeners;
 	}
 
 	protected void fireListenersOnBeforeDirectory(File file) {
@@ -135,7 +179,7 @@ public class DirectoryIndexer extends AbstractIndexer {
 		fireListenersOnAfterDirectory(dirToParse);
 	}
 
-	private DocumentHandler getDocumentHandler(String fileName) {
+	public DocumentHandler getDocumentHandler(String fileName) {
 		return documentHandlerManager.getDocumentHandler(fileName);
 	}
 
@@ -146,9 +190,9 @@ public class DirectoryIndexer extends AbstractIndexer {
 	}
 
 	private void indexFile(IndexWriter writer,File file) throws IOException {
+		fireListenersOnBeforeFile(file);
 		DocumentHandler handler = getDocumentHandler(file.getPath());
 		if( handler!=null ) {
-			fireListenersOnBeforeFile(file);
 			FileInputStream inputStream=null;
 			try {
 				inputStream=new FileInputStream(file);
@@ -205,7 +249,7 @@ public class DirectoryIndexer extends AbstractIndexer {
 			logger.error("Error during indexing the directory : "+dirToParse,ex);
 			throw new LuceneIndexAccessException("Error during indexing the directory : "+dirToParse,ex);
 		} finally {
-			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(getIndexFactory(),writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(getIndexFactory(),writer);
 		}
 	}
 

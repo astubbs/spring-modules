@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.object.file;
+package org.springmodules.lucene.index.object.directory;
 
 import java.io.File;
 
