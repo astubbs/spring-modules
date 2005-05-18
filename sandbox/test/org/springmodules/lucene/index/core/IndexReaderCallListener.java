@@ -17,7 +17,7 @@
 package org.springmodules.lucene.index.core;
 
 /**
- * Event interface to detect the index reader closes.
+ * Event interface to detect the index reader calls.
  * 
  * @author Thierry Templier
  */

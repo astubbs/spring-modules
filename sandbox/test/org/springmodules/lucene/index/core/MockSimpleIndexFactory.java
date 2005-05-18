@@ -63,7 +63,7 @@ public class MockSimpleIndexFactory implements IndexFactory {
 	public IndexWriter getIndexWriter() {
 		writerListener.writerCreated();
 		try {
-			return new MockIndexWriter(target.getDirectory(),target.getAnalyzer(),writerListener);
+			return new MockIndexWriter(target.getDirectory(),target.getAnalyzer(),true,writerListener);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error during the creation of a TestIndexWriter");

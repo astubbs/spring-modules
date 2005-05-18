@@ -33,7 +33,11 @@ public class MockIndexWriter extends IndexWriter {
 	private IndexWriterCallListener indexWriterEvent;
 
 	public MockIndexWriter(Directory directory,Analyzer analyzer,IndexWriterCallListener indexWriterEvent) throws IOException {
-		super(directory,analyzer,false);
+		this(directory,analyzer,false,indexWriterEvent);
+	}
+
+	public MockIndexWriter(Directory directory,Analyzer analyzer,boolean create,IndexWriterCallListener indexWriterEvent) throws IOException {
+		super(directory,analyzer,create);
 		this.indexWriterEvent=indexWriterEvent;
 	}
 
