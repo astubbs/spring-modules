@@ -24,9 +24,11 @@ import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 
 /**
- * Simple factory bean to configure a factory to manipulate an index.
+ * Simple factory bean to configure a simple factory to manipulate
+ * an index.
  * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.factory.SimpleIndexFactory
  */
 public class SimpleIndexFactoryBean implements FactoryBean,InitializingBean {
 
@@ -56,41 +58,42 @@ public class SimpleIndexFactoryBean implements FactoryBean,InitializingBean {
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	public void afterPropertiesSet() throws Exception {
-		if (getDirectory() == null) {
-			throw new IllegalArgumentException("directory is required");
-		}
-		factory=new SimpleIndexFactory(getDirectory(),getAnalyzer());
-	}
-
-	/**
-	 * @return
-	 */
-	public Directory getDirectory() {
-		return directory;
-	}
-
-	/**
-	 * @param directory
+	 * Set the Lucene Directory used by the IndexFactory.
 	 */
 	public void setDirectory(Directory directory) {
 		this.directory = directory;
 	}
 
 	/**
-	 * @return
+	 * Return the Lucene Directory used by the IndexFactory.
+	 */
+	public Directory getDirectory() {
+		return directory;
+	}
+
+	/**
+	 * Set the Lucene Analyzer used by the IndexFactory.
+	 */
+	public void setAnalyzer(Analyzer analyzer) {
+		this.analyzer = analyzer;
+	}
+
+	/**
+	 * Return the Lucene Analyzer used by the IndexFactory.
 	 */
 	public Analyzer getAnalyzer() {
 		return analyzer;
 	}
 
 	/**
-	 * @param analyzer
+	 * This method constructs a SimpleIndexFactory instance based on
+	 * the configured directory and analyzer.
 	 */
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
+	public void afterPropertiesSet() throws Exception {
+		if (getDirectory() == null) {
+			throw new IllegalArgumentException("directory is required");
+		}
+		this.factory=new SimpleIndexFactory(getDirectory(),getAnalyzer());
 	}
 
 }

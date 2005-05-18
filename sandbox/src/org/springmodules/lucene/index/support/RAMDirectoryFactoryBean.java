@@ -8,27 +8,35 @@ import org.apache.lucene.store.RAMDirectory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
-public class RAMDirectoryFactoryBean implements FactoryBean, InitializingBean
-{
+/**
+ * This Spring factory bean configures a Lucene ram
+ * directory.
+
+ * @author Brian McCallister
+ * @author Thierry Templier
+ * @see org.apache.lucene.store.RAMDirectory
+ */
+public class RAMDirectoryFactoryBean implements FactoryBean, InitializingBean {
+
     private Directory directory;
 
-    public Object getObject() throws Exception
-    {
+    public Object getObject() throws Exception {
         return directory;
     }
 
-    public Class getObjectType()
-    {
+    public Class getObjectType() {
         return Directory.class;
     }
 
-    public boolean isSingleton()
-    {
+    public boolean isSingleton() {
         return true;
     }
 
-    public void afterPropertiesSet() throws Exception
-    {
+	/**
+	 * This method constructs a ram Lucene directory.
+	 */
+    public void afterPropertiesSet() throws Exception {
         directory = new RAMDirectory();
     }
+
 }

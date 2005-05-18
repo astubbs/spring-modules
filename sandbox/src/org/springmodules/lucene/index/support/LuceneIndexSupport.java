@@ -23,6 +23,16 @@ import org.springmodules.lucene.index.core.LuceneIndexTemplate;
 import org.springmodules.lucene.index.factory.IndexFactory;
 
 /**
+ * Convenient super class for objects using Lucene indexing
+ * using a LuceneIndexTemplate instance.
+ * Requires a IndexFactory to be set if the template is not
+ * injected directly and providing a LuceneIndexTemplate based
+ * on it to subclasses.
+ *
+ * <p>This base class is mainly intended for LuceneIndexTemplate usage
+ * but can also be used when working with IndexWriterFactoryUtils and
+ * IndexReaderFactoryUtils directly or with indexer classes.
+ *
  * @author Thierry Templier
  */
 public abstract class LuceneIndexSupport implements InitializingBean {
@@ -31,56 +41,60 @@ public abstract class LuceneIndexSupport implements InitializingBean {
 	private Analyzer analyzer;
 
 	/**
-	 * @return
+	 * Set the IndexFactory to obtain both IndexReader and IndexWriter.
 	 */
-	public Analyzer getAnalyzer() {
-		return analyzer;
+	public void setIndexFactory(IndexFactory factory) {
+		indexFactory = factory;
 	}
 
 	/**
-	 * @param analyzer
-	 */
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
-	}
-
-	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	public void afterPropertiesSet() throws Exception {
-		if (this.indexFactory == null)
-			throw new BeanInitializationException("directory property required");
-		/*if (this.analyzer == null)
-			throw new BeanInitializationException("analyzer property required");*/        
-		this.template=new LuceneIndexTemplate(indexFactory,analyzer);
-	}
-
-	/**
-	 * @return
-	 */
-	public LuceneIndexTemplate getTemplate() {
-		return template;
-	}
-
-	/**
-	 * @param template
-	 */
-	public void setTemplate(LuceneIndexTemplate template) {
-		this.template = template;
-	}
-
-	/**
-	 * @return
+	 * Return the IndexFactory used by this template.
 	 */
 	public IndexFactory getIndexFactory() {
 		return indexFactory;
 	}
 
 	/**
-	 * @param factory
+	 * Set the default Lucene Analyzer used to extract tokens out of the
+	 * text to index.
 	 */
-	public void setIndexFactory(IndexFactory factory) {
-		indexFactory = factory;
+	public void setAnalyzer(Analyzer analyzer) {
+		this.analyzer = analyzer;
+	}
+
+	/**
+	 * Return the Lucene Analyzer used by this template.
+	 */
+	public Analyzer getAnalyzer() {
+		return analyzer;
+	}
+
+	/**
+	 * Set a configured template.
+	 */
+	public void setTemplate(LuceneIndexTemplate template) {
+		this.template = template;
+	}
+
+	/**
+	 * Return the LuceneIndexTemplate to use.
+	 */
+	public LuceneIndexTemplate getTemplate() {
+		return template;
+	}
+
+	/**
+	 * This method constructs a LuceneIndexTemplate basing indexFactory
+	 * and analyzer properties if it is not injected. 
+	 */
+	public void afterPropertiesSet() throws Exception {
+		if( this.template==null && this.indexFactory==null ) {
+			throw new BeanInitializationException("indexFactory property required");
+		}
+
+		if( this.template==null ) {
+			this.template=new LuceneIndexTemplate(indexFactory,analyzer);
+		}
 	}
 
 }
