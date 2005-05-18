@@ -22,55 +22,32 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springmodules.lucene.index.support.file.handler.TextDocumentHandler;
+import org.springmodules.samples.lucene.index.file.handlers.AbstractDocumentHandler;
 
 /**
+ * This class is the document handler manager which is based
+ * on the file extensions.
+ * 
+ * <p>It only adds the text document handler as default handlers.
+ * 
  * @author Thierry Templier
  */
-public class ExtensionDocumentHandlerManager implements DocumentHandlerManager {
-	private Map fileDocumentHandlers;
-
-	public ExtensionDocumentHandlerManager() {
-		this.fileDocumentHandlers=new HashMap();
-	}
+public class ExtensionDocumentHandlerManager extends DefaultDocumentHandlerManager implements DocumentHandlerManager {
 
 	/**
-	 * @see org.springmodules.lucene.index.object.file.DocumentHandlerManager#getDocumentHandler(java.lang.String)
+	 * Construct a new ExtensionDocumentHandlerManager.
 	 */
-	public DocumentHandler getDocumentHandler(String fileName) {
-		Set keys=fileDocumentHandlers.keySet();
-		for(Iterator i=keys.iterator();i.hasNext();) {
-			DocumentMatching matching=(DocumentMatching)i.next();
-			if( matching.match(fileName) ) {
-				return (DocumentHandler)fileDocumentHandlers.get(matching);
-			}
-		}
-		return null;
+	public ExtensionDocumentHandlerManager() {
+		super();
 	}
 
 	/**
+	 * This method adds the text document handler as default handlers.
 	 * @see org.springmodules.lucene.index.object.file.DocumentHandlerManager#registerDefautHandlers()
 	 */
 	public void registerDefautHandlers() {
 		//Register a default handler for text file (.txt)
 		registerDocumentHandler(new DocumentExtensionMatching("txt"),new TextDocumentHandler());
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.object.file.DocumentHandlerManager#registerDocumentHandler(org.springmodules.lucene.index.object.file.DocumentMatching, org.springmodules.lucene.index.object.file.DocumentHandler)
-	 */
-	public void registerDocumentHandler(DocumentMatching matching, DocumentHandler handler) {
-		if( matching!=null && handler!=null ) {
-			fileDocumentHandlers.put(matching,handler);
-		}
-	}
-
-	/**
-	 * @see org.springmodules.lucene.index.object.file.DocumentHandlerManager#unregisterDocumentHandler(org.springmodules.lucene.index.object.file.DocumentMatching)
-	 */
-	public void unregisterDocumentHandler(DocumentMatching matching) {
-		if( matching!=null ) {
-			fileDocumentHandlers.remove(matching);
-		}
 	}
 
 }

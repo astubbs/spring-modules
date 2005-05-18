@@ -17,11 +17,51 @@
 package org.springmodules.lucene.index.support.file;
 
 /**
+ * This is the base interface of the document handler
+ * management. It allows to register/unregister them
+ * and determines which document handler must be used
+ * according to an associated DocumentMatching class.
+ *  
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.support.file.DocumentMatching
+ * @see org.springmodules.lucene.index.support.file.DocumentHandler
  */
 public interface DocumentHandlerManager {
+
+	/**
+	 * The method determines which document handler must be used
+	 * for a name. It implicitely uses the document matching
+	 * associated with the document handlers.
+	 * 
+	 * @param name the name associated with a resource to index
+	 * @return the document handler to use
+	 * @see DocumentMatching#match(String)
+	 */
 	public DocumentHandler getDocumentHandler(String name);
+
+	/**
+	 * This method registers the default document handlers and
+	 * must be called by the implementation during the initialization.
+	 */
 	public void registerDefautHandlers();
+
+	/**
+	 * This method registers a document handler associated with a
+	 * document matching.
+	 * 
+	 * <p>The document matching paramter is used to determine when
+	 * the handler must be used to index a document.
+	 * 
+	 * @param matching the associated document matching
+	 * @param handler the document handler to register
+	 */
 	public void registerDocumentHandler(DocumentMatching matching,DocumentHandler handler);
+
+	/**
+	 * This method is used to unregister a document handler associated
+	 * with a document matching.
+	 * 
+	 * @param matching the associated document matching
+	 */
 	public void unregisterDocumentHandler(DocumentMatching matching);
 }

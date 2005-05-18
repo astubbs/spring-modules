@@ -21,6 +21,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springmodules.lucene.index.factory.IndexFactory;
 
 /**
+ * This is the base abstract class for every indexers. It is used
+ * to specify the IndexFactory to use.
  * 
  * @author Thierry Templier
  */
@@ -32,17 +34,17 @@ public abstract class AbstractIndexer {
 	protected transient Log logger = LogFactory.getLog(getClass());
 
 	/**
-	 * @return
-	 */
-	public IndexFactory getIndexFactory() {
-		return indexFactory;
-	}
-
-	/**
-	 * @param factory
+	 * Set the IndexFactory to obtain both IndexReader and IndexWriter.
 	 */
 	public void setIndexFactory(IndexFactory factory) {
 		indexFactory = factory;
+	}
+
+	/**
+	 * Return the IndexFactory used by this template.
+	 */
+	public IndexFactory getIndexFactory() {
+		return indexFactory;
 	}
 
 }

@@ -386,11 +386,7 @@ public class DirectoryIndexer extends AbstractIndexer {
 	 */
 	private boolean checkBaseDirectory(String dirToParse) {
 		File dir=new File(dirToParse);
-		if( !dir.exists() ) {
-			return false;
-		} else {
-			return true;
-		}
+		return dir.exists();
 	}
 
 	/**

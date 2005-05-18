@@ -16,8 +16,6 @@
 
 package org.springmodules.lucene.index.support.file;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -25,10 +23,20 @@ import java.util.Map;
 import org.apache.lucene.document.Document;
 
 /**
+ * This is the base interface to define different implementations
+ * in order to index different types of files.
+ * 
  * @author Thierry Templier
  */
 public interface DocumentHandler {
 	public final static String FILENAME="filename";
 
+	/**
+	 * This method indexes an InputStream and specifies some additional
+	 * properties on the Lucene document basing the description parameter.
+	 * 
+	 * @param description the description of the resource to index
+	 * @param inputStream the input stream which will be used to index
+	 */
 	public Document getDocument(Map description,InputStream inputStream) throws IOException;
 }

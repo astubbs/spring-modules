@@ -26,11 +26,37 @@ import org.apache.lucene.document.Field;
 import org.springmodules.lucene.index.support.file.DocumentHandler;
 
 /**
+ * This class is the default DocumentHandler implementation to
+ * index text.
+ * 
+ * <p>It sets the "contents" document property and this property
+ * is not store in the index. Moreover it eventually sets the
+ * "type" and "filename" properties if the informations are
+ * contained in the description parameter of the getDocument
+ * method.
+ * 
+ * <p>It can be associated with the "txt" file extension and can
+ * be used to configure the ExtensionDocumentHandlerManager with
+ * the ExtensionDocumentHandlerManagerFactoryBean factory bean.
+ *  
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.support.file.DocumentHandler
+ * @see org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManagerFactoryBean
  */
 public class TextDocumentHandler implements DocumentHandler {
 
 	/**
+	 * This method indexes an InputStream and specifies some additional
+	 * properties on the Lucene document basing the description parameter.
+	 * 
+	 * <p>This method indexes the text from the InputStream in the "contents"
+	 * property which is not stored in the index.
+	 * 
+	 * <p>If the DocumentHandler.FILENAME description property is specified
+	 * in the description map, the "type" keyword property is set with the "file"
+	 * value and the "filename" keyword property is set with the DocumentHandler.FILENAME
+	 * description property.
+	 * 
 	 * @see org.springmodules.lucene.index.object.FileDocumentHandler#getDocument(java.io.File,java.io.FileReader)
 	 */
 	public Document getDocument(Map description,InputStream inputStream) throws IOException {

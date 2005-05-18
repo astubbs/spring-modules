@@ -24,7 +24,18 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
+ * This factory bean class is used to declaratively configured
+ * a DocumentHandlerManager instance which can be used by template
+ * or indexers.
+ * 
+ * <p>The configured DocumentHandlerManager will be based on file
+ * extensions because the factory bean uses the DocumentExtensionMatching
+ * class to register the specified DocumentHandlers with the documentHandlers
+ * property.
+ * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.support.file.DocumentHandlerManager
+ * @see 
  */
 public class ExtensionDocumentHandlerManagerFactoryBean implements FactoryBean,InitializingBean {
 

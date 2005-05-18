@@ -17,8 +17,19 @@
 package org.springmodules.lucene.index.support.file;
 
 /**
+ * This is the base interface to determine when a document
+ * handler must be used to index a document.
+ * 
  * @author Thierry Templier
  */
 public interface DocumentMatching {
+
+	/**
+	 * This method determines if the name parameter matches
+	 * according to a mechanism specified in an implementation
+	 * of this interface.
+	 * @param name the name to test
+	 * @return if the name matches
+	 */
 	public boolean match(String name);
 }
