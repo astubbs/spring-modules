@@ -21,7 +21,7 @@ package org.springmodules.lucene.search.core;
  */
 public class SimpleSearcherCallListener implements SearcherCallListener {
 	private int numberSearchersCreated=0;
-	private boolean searcherClosed=false;
+	private int numberSearchersClosed=0;
 
 	public int getNumberSearchersCreated() {
 		return numberSearchersCreated;
@@ -31,12 +31,12 @@ public class SimpleSearcherCallListener implements SearcherCallListener {
 		numberSearchersCreated++;
 	}
 
-	public boolean isSearcherClosed() {
-		return searcherClosed;
+	public int getNumberSearchersClosed() {
+		return numberSearchersClosed;
 	}
 
 	public void searcherClosed() {
-		searcherClosed=true;
+		numberSearchersClosed++;
 	}
 
 }

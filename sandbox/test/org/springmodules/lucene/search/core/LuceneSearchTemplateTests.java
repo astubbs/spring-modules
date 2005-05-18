@@ -36,7 +36,9 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.RAMDirectory;
 import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
+import org.springmodules.lucene.search.query.ParsedQueryCreator;
 import org.springmodules.lucene.search.query.QueryCreator;
+import org.springmodules.lucene.search.query.ParsedQueryCreator.QueryParams;
 
 /**
  * @author Brian McCallister
@@ -86,7 +88,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 	 * Test for List search(QueryCreator, HitExtractor)
 	 */
 	final public void testSearchQueryCreatorHitExtractor() throws Exception {
-		//Initialization of the index
+		//Initialization of the searcher
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
@@ -104,9 +106,10 @@ public class LuceneSearchTemplateTests extends TestCase {
 			}
 		});
 
+		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),1);
+		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),1);
 		assertEquals(results.size(),1);
 		assertEquals((String)results.get(0),"a Lucene support sample");
-		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
 
 		//Second search
 		results=template.search(new QueryCreator() {
@@ -119,11 +122,58 @@ public class LuceneSearchTemplateTests extends TestCase {
 			}
 		});
 
+		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),2);
+		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),2);
 		assertEquals(results.size(),3);
 		assertEquals((String)results.get(0),"a sample");
 		assertEquals((String)results.get(1),"a Lucene support sample");
 		assertEquals((String)results.get(2),"a different sample");
-		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
+	}
+
+	/*
+	 * Test for List search(QueryCreator, HitExtractor)
+	 */
+	final public void testSearchParsedQueryCreatorHitExtractor() throws Exception {
+		//Initialization of the searcher
+		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
+		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
+
+		//Lucene template
+		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
+
+		//First search
+		List results=template.search(new ParsedQueryCreator() {
+			public QueryParams configureQuery() {
+				return new QueryParams("field","lucene");
+			}
+		},new HitExtractor() {
+			public Object mapHit(int id, Document document, float score) {
+				return document.get("field");
+			}
+		});
+
+		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),1);
+		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),1);
+		assertEquals(results.size(),1);
+		assertEquals((String)results.get(0),"a Lucene support sample");
+
+		//Second search
+		results=template.search(new ParsedQueryCreator() {
+			public QueryParams configureQuery() {
+				return new QueryParams("field","sample");
+			}
+		},new HitExtractor() {
+			public Object mapHit(int id, Document document, float score) {
+				return document.get("field");
+			}
+		});
+
+		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),2);
+		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),2);
+		assertEquals(results.size(),3);
+		assertEquals((String)results.get(0),"a sample");
+		assertEquals((String)results.get(1),"a Lucene support sample");
+		assertEquals((String)results.get(2),"a different sample");
 	}
 
 	/*
@@ -133,7 +183,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		TermQuery filterQuery = new TermQuery(new Term("filter", "another"));
 		Filter filter = new QueryFilter(filterQuery);
 
-		//Initialization of the index
+		//Initialization of the searcher
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
@@ -151,10 +201,11 @@ public class LuceneSearchTemplateTests extends TestCase {
 			}
 		},filter);
 
+		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),1);
 		assertEquals(results.size(),2);
 		assertEquals((String)results.get(0),"a Lucene support sample");
 		assertEquals((String)results.get(1),"a different sample");
-		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),1);
 	}
 
 	/*
@@ -163,7 +214,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 	final public void testSearchQueryCreatorHitExtractorSort() {
 		Sort sort=new Sort("sort");
 
-		//Initialization of the index
+		//Initialization of the searcher
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
@@ -181,11 +232,12 @@ public class LuceneSearchTemplateTests extends TestCase {
 			}
 		},sort);
 
+		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),1);
 		assertEquals(results.size(),3);
 		assertEquals((String)results.get(0),"a different sample");
 		assertEquals((String)results.get(1),"a sample");
 		assertEquals((String)results.get(2),"a Lucene support sample");
-		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),1);
 	}
 
 	/*
@@ -196,7 +248,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		Filter filter = new QueryFilter(filterQuery);
 		Sort sort=new Sort("sort");
 
-		//Initialization of the index
+		//Initialization of the searcher
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
@@ -214,17 +266,18 @@ public class LuceneSearchTemplateTests extends TestCase {
 			}
 		},filter,sort);
 
+		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),1);
 		assertEquals(results.size(),2);
 		assertEquals((String)results.get(0),"a different sample");
 		assertEquals((String)results.get(1),"a Lucene support sample");
-		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),1);
 	}
 
 	/*
 	 * Test for Object search(SearcherCallback)
 	 */
 	final public void testSearchSearcherCallback() {
-		//Initialization of the index
+		//Initialization of the searcher
 		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
@@ -237,8 +290,9 @@ public class LuceneSearchTemplateTests extends TestCase {
 			}
 		});
 
+		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),1);
 		assertEquals(result,"lucene");
-		assertEquals(searcherFactory.getListener().isSearcherClosed(),true);
+		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),1);
 	}
 
 }
