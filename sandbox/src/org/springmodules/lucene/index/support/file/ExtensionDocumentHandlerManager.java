@@ -16,13 +16,7 @@
 
 package org.springmodules.lucene.index.support.file;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
 import org.springmodules.lucene.index.support.file.handler.TextDocumentHandler;
-import org.springmodules.samples.lucene.index.file.handlers.AbstractDocumentHandler;
 
 /**
  * This class is the document handler manager which is based

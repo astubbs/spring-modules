@@ -21,9 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.springmodules.lucene.index.support.file.handler.TextDocumentHandler;
-import org.springmodules.samples.lucene.index.file.handlers.AbstractDocumentHandler;
-
 /**
  * This class is the default implementation of the DocumentHandlerManager
  * interface which allows to manage document handlers (registration,
