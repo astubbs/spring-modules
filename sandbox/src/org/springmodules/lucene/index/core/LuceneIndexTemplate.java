@@ -147,7 +147,7 @@ public class LuceneIndexTemplate {
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during deleting a document.",ex);
 		} finally {
-			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
 		}
 	}
 
@@ -167,7 +167,7 @@ public class LuceneIndexTemplate {
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during deleting a document.",ex);
 		} finally {
-			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
 		}
 	}
 
@@ -185,7 +185,7 @@ public class LuceneIndexTemplate {
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during undeleting all documents.",ex);
 		} finally {
-			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
 		}
 	}
 
@@ -202,7 +202,7 @@ public class LuceneIndexTemplate {
 		try {
 			return reader.isDeleted(internalDocumentId);
 		} finally {
-			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
 		}
 	}
 
@@ -217,7 +217,7 @@ public class LuceneIndexTemplate {
 		try {
 			return reader.hasDeletions();
 		} finally {
-			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
 		}
 	}
 
@@ -235,7 +235,7 @@ public class LuceneIndexTemplate {
 		try {
 			//TODO: implement this method.
 		} finally {
-			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
 		}
 	}
 
@@ -251,7 +251,7 @@ public class LuceneIndexTemplate {
 		try {
 			return reader.maxDoc();
 		} finally {
-			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
 		}
 	}
 
@@ -268,7 +268,7 @@ public class LuceneIndexTemplate {
 		try {
 			return reader.numDocs();
 		} finally {
-			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
 		}
 	}
 
@@ -331,7 +331,7 @@ public class LuceneIndexTemplate {
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during adding a document.",ex);
 		} finally {
-			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
 		}
 	}
 
@@ -398,7 +398,7 @@ public class LuceneIndexTemplate {
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during adding a document.",ex);
 		} finally {
-			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
 		}
 	}
 
@@ -489,7 +489,7 @@ public class LuceneIndexTemplate {
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during adding indexes.",ex);
 		} finally {
-			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
 		}
 	}
 
@@ -504,7 +504,7 @@ public class LuceneIndexTemplate {
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during optimize the index.",ex);
 		} finally {
-			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
 		}
 	}
 
@@ -523,7 +523,7 @@ public class LuceneIndexTemplate {
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during using the IndexReader.",ex);
 		} finally {
-			IndexReaderFactoryUtils.closeIndexReaderIfNecessary(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
 		}
 	}
 
@@ -542,7 +542,7 @@ public class LuceneIndexTemplate {
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during using the IndexWriter.",ex);
 		} finally {
-			IndexWriterFactoryUtils.closeIndexWriterIfNecessary(indexFactory,writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
 		}
 	}
 

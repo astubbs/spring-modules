@@ -107,13 +107,13 @@ public class LuceneIndexResourceManager extends AbstractResourceManager implemen
 		if (logger.isDebugEnabled()) {
 			logger.debug("Closing Lucene indexReader [" + indexReader + "]");
 		}
-		IndexReaderFactoryUtils.closeIndexReaderIfNecessary(this.indexFactory,indexReader);
+		IndexReaderFactoryUtils.releaseIndexReader(this.indexFactory,indexReader);
 
 		IndexWriter indexWriter = holder.getIndexWriter();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Closing Lucene indexWriter [" + indexWriter + "]");
 		}
-		IndexWriterFactoryUtils.closeIndexWriterIfNecessary(this.indexFactory,indexWriter);
+		IndexWriterFactoryUtils.releaseIndexWriter(this.indexFactory,indexWriter);
 	}
 
 	/**
