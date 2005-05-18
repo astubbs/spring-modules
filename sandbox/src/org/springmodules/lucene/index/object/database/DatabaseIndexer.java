@@ -77,8 +77,8 @@ public class DatabaseIndexer extends AbstractIndexer {
 	private List listeners;
 
 	/**
-	 * Construct a new DatabaseIndexer, given an IndexFactory to obtain both
-	 * IndexWriter.
+	 * Construct a new DatabaseIndexer, given an IndexFactory to obtain IndexWriter.
+	 * 
 	 * @param indexFactory IndexFactory to obtain IndexWriter
 	 */
 	public DatabaseIndexer(IndexFactory indexFactory) {
@@ -118,6 +118,8 @@ public class DatabaseIndexer extends AbstractIndexer {
 
 	/**
 	 * This method is used to unregister a request.
+	 * 
+	 * @param sqlRequest the request to execute
 	 */ 
 	public void unregisterDocumentHandler(SqlRequest sqlRequest) {
 		if( sqlRequest!=null ) {
@@ -276,7 +278,7 @@ public class DatabaseIndexer extends AbstractIndexer {
 	 * This method executes the request and adds the result of indexing
 	 * of rows in the index. It gets an IndexWriter instance from the
 	 * configured IndexFactory and releases it if necessary. It manages
-	 * too both exceptions thrown duringthe request execution and the
+	 * too both exceptions thrown during the request execution and the
 	 * indexing of rows. 
 	 * 
 	 * <p>Before the return of the method, it optmizes too the index
@@ -357,8 +359,8 @@ public class DatabaseIndexer extends AbstractIndexer {
 	 * value of the optimizeIndex parameter is true.
 	 * 
 	 * <p>If there is an error during executing a request or indexing rows,
-	 * the other requests will be executed. The error will notify to specified
-	 * listeners.
+	 * the other requests will be executed. However the error will notify to
+	 * specified listeners.
 	 *  
 	 * @param dataSource the datasource to use
 	 * @param optimizeIndex if the index must be optmized after
