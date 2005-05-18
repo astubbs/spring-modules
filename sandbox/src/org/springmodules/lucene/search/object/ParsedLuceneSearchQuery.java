@@ -18,8 +18,10 @@ package org.springmodules.lucene.search.object;
 
 import java.util.List;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.springmodules.lucene.search.core.HitExtractor;
+import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.query.ParsedQueryCreator;
 import org.springmodules.lucene.search.query.ParsedQueryCreator.QueryParams;
 
@@ -28,10 +30,14 @@ import org.springmodules.lucene.search.query.ParsedQueryCreator.QueryParams;
  */
 public abstract class ParsedLuceneSearchQuery extends LuceneSearchQuery {
 
+	public ParsedLuceneSearchQuery(SearcherFactory searcherFactory,Analyzer analyzer) {
+		super(searcherFactory,analyzer);
+	}
+
 	/**
 	 * @return
 	 */
-	protected abstract QueryParams configureSearchQuery();
+	protected abstract QueryParams configureSearchQuery(String textToSearch);
 
 	/**
 	 * @param id
@@ -45,12 +51,19 @@ public abstract class ParsedLuceneSearchQuery extends LuceneSearchQuery {
 	 * @see org.springmodules.lucene.search.object.LuceneSearchQuery#search(java.lang.String)
 	 */
 	public final List search(String textToSearch) {
-		return getTemplate().search(new ParsedQueryConstructorImpl(),new HitExtractorImpl());
+		return getTemplate().search(new ParsedQueryConstructorImpl(textToSearch),
+														new HitExtractorImpl());
 	}
 
 	protected class ParsedQueryConstructorImpl extends ParsedQueryCreator {
+		private String textToSearch;
+
+		public ParsedQueryConstructorImpl(String textToSearch) {
+			this.textToSearch=textToSearch;
+		}
+
 		public QueryParams configureQuery() {
-			return configureSearchQuery();
+			return configureSearchQuery(textToSearch);
 		}
 	}
 

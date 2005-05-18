@@ -28,6 +28,11 @@ import org.springmodules.lucene.search.factory.SearcherFactory;
 public abstract class LuceneSearchQuery {
 	private LuceneSearchTemplate template = new LuceneSearchTemplate();
 
+	public LuceneSearchQuery(SearcherFactory searcherFactory,Analyzer analyzer) {
+		this.template.setSearcherFactory(searcherFactory);
+		this.template.setAnalyzer(analyzer);
+	}
+
 	/**
 	 * @return
 	 */

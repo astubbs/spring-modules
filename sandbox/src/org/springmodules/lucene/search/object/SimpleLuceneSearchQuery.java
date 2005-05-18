@@ -23,12 +23,17 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.Query;
 import org.springmodules.lucene.search.core.HitExtractor;
+import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.query.QueryCreator;
 
 /**
  * @author Thierry Templier
  */
 public abstract class SimpleLuceneSearchQuery extends LuceneSearchQuery {
+
+	public SimpleLuceneSearchQuery(SearcherFactory searcherFactory,Analyzer analyzer) {
+		super(searcherFactory,analyzer);
+	}
 
 	/**
 	 * @return
