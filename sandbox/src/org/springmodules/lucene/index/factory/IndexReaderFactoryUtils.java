@@ -25,6 +25,13 @@ import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
+ * Helper class that provides static methods to obtain Lucene IndexReader from
+ * an IndexFactory, and to close this reader if necessary. Has special support
+ * for Spring-managed resources, e.g. for use with LuceneIndexResourceManager.
+ *
+ * <p>Used internally by LuceneIndexTemplate and the LuceneIndexResourceManager.
+ * Can also be used directly in application code.
+ *
  * @author Brian McCallister
  * @author Thierry Templier
  */
@@ -32,43 +39,36 @@ public abstract class IndexReaderFactoryUtils {
 
 	private static final Log logger = LogFactory.getLog(IndexReaderFactoryUtils.class);
 
-    /**
-	 * @param indexFactory
-	 * @return
+	/**
+	 * Get a IndexReasder from the given IndexFactory. Changes any Lucene io exception
+	 * into the Spring hierarchy of unchecked lucene index access exceptions, simplifying
+	 * calling code and making any exception that is thrown more meaningful.
+	 * <p>Is aware of a corresponding IndexReader bound to the current thread, for example
+	 * when using LuceneIndexResourceManager. Will set an IndexReader on an IndexHolder bound
+	 * to the thread.
+	 * @param indexFactory IndexFactory to get IndexReader from
+	 * @return a Lucene IndexReader from the given IndexFactory
+	 * @throws LuceneIndexAccessException
+	 * if the attempt to get an IndexReader failed
+	 * @see #doGetIndexReader(IndexFactory)
+	 * @see org.springmodules.lucene.index.core.LuceneIndexResourceManager
 	 */
 	public static IndexReader getIndexReader(IndexFactory indexFactory) {
-    	return getIndexReader(indexFactory,true);
-    }
-
-	/**
-	 * @param indexFactory
-	 * @param allowSynchronization
-	 * @return
-	 */
-	public static IndexReader getIndexReader(IndexFactory indexFactory,boolean allowSynchronization) {
 		try {
-			return doGetIndexReader(indexFactory, allowSynchronization);
+			return doGetIndexReader(indexFactory);
 		} catch (IOException ex) {
 			throw new LuceneIndexAccessException("Could not get Lucene reader", ex);
 		}
 	}
 
 	/**
-	 * @param indexFactory
-	 * @return
-	 * @throws IOException
+	 * Actually get a Lucene IndexReader for the given IndexFactory.
+	 * Same as getIndexReader, but throwing the original IOException.
+	 * @param indexFactory IndexFactory to get IndexReader from
+	 * @return a Lucene IndexReader from the given IndexFactory
+	 * @throws IOException if thrown by Lucene API methods
 	 */
 	public static IndexReader doGetIndexReader(IndexFactory indexFactory) throws IOException {
-		return doGetIndexReader(indexFactory,true);
-	}
-
-	/**
-	 * @param indexFactory
-	 * @param allowSynchronization
-	 * @return
-	 * @throws IOException
-	 */
-	public static IndexReader doGetIndexReader(IndexFactory indexFactory,boolean allowSynchronization) throws IOException {
 		IndexHolder indexHolder = (IndexHolder) ResourceBindingManager.getResource(indexFactory);
 		if (indexHolder != null && indexHolder.getIndexReader()!=null ) {
 			return indexHolder.getIndexReader();
@@ -84,23 +84,27 @@ public abstract class IndexReaderFactoryUtils {
     }
 
 	/**
-	 * @param indexFactory
-	 * @param indexReader
+	 * Close the given IndexReader if necessary, i.e. if it is not bound to the
+	 * thread.
+	 * @param indexFactory IndexFactory that the IndexReader came from
+	 * @param indexReader IndexReader to close if necessary
+	 * (if this is null, the call will be ignored)
 	 */
-	public static void closeIndexReaderIfNecessary(IndexFactory indexFactory,IndexReader indexReader) {
+	public static void releaseIndexReader(IndexFactory indexFactory,IndexReader indexReader) {
 		try {
-			doCloseIndexReaderIfNecessary(indexFactory,indexReader);
+			doReleaseIndexReader(indexFactory,indexReader);
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Unable to close index reader",ex);
 		}
 	}
 
 	/**
-	 * @param indexFactory
-	 * @param indexReader
-	 * @throws IOException
+	 * Actually close a Lucene IndexReader for the given IndexFactory.
+	 * Same as releaseIndexReader, but throwing the original IOException.
+	 * @throws IOException if thrown by Lucene methods
+	 * @see #releaseIndexReader
 	 */
-	public static void doCloseIndexReaderIfNecessary(IndexFactory indexFactory,IndexReader indexReader) throws IOException {
+	public static void doReleaseIndexReader(IndexFactory indexFactory,IndexReader indexReader) throws IOException {
 		if (indexReader == null || ResourceBindingManager.hasResource(indexFactory)) {
 			return;
 		}

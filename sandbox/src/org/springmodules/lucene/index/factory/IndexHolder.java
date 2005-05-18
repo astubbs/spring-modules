@@ -20,6 +20,13 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 
 /**
+ * Index holder, wrapping both Lucene IndexReader and IndexWriter.
+ *
+ * <p>LuceneIndexResourceManager binds instances of this class
+ * to the thread, for a given IndexFactory.
+ *
+ * <p>Note: This is an SPI class, not intended to be used by applications.
+ *
  * @author Thierry Templier
  */
 public class IndexHolder {

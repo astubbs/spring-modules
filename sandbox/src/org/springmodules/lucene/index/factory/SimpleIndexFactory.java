@@ -25,72 +25,83 @@ import org.apache.lucene.store.Directory;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 
 /**
- * Template for index manipulation.
+ * <p>This is the simplier factory to get reader and writer instances
+ * to work on a Lucene index. 
+ * 
+ * <p>This factory only constructs IndexReader and IndexWriter instances.
+ * There is no control on currency use of the different methods of the
+ * reader and the writer.
+ * 
+ * <p>Before creating an IndexWriter, this implementation checks if the
+ * index already exists. If not, it sets a flag to notify the IndexWriter
+ * to create it.
  * 
  * @author Brian McCallister
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.factory.IndexFactory
+ * @see org.springmodules.lucene.index.factory.AbstractIndexFactory
+ * @see org.springmodules.lucene.index.factory.AbstractIndexFactory#setIndexWriterParameters(IndexWriter)
+ * @see org.apache.lucene.index.IndexReader
+ * @see org.apache.lucene.index.IndexWriter
  */
 public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFactory {
 
-	private Directory directory;
-	private Analyzer analyzer;
-
-	public SimpleIndexFactory(Directory directory,Analyzer analyzer) {
-		this.directory=directory;
-		this.analyzer=analyzer;
+	/**
+	 * Construct a new SimpleIndexFactory for bean usage.
+	 * Note: The Directory and the Analyzer have to be set before using the instance.
+	 * @see #setDirectory
+	 * @see #setAnalyzer
+	 */
+	public SimpleIndexFactory() {
 	}
 
 	/**
+	 * Construct a new SimpleIndexFactory, given a Directory and an Analyzer to
+	 * obtain both IndexReader and IndexWriter.
+	 * @param directory Lucene directoy which represents an index
+	 * @param analyzer Lucene analyzer to construct an IndexWriter
+	 */
+	public SimpleIndexFactory(Directory directory,Analyzer analyzer) {
+		setDirectory(directory);
+		setAnalyzer(analyzer);
+	}
+
+	/**
+	 * Contruct a new IndexReader instance based on the directory property. This
+	 * instance will be used by the IndexTemplate to get informations about the
+	 * index and make delete operations on the index. 
+	 * @return a new reader instance on the index
 	 * @see org.springmodules.lucene.index.factory.IndexFactory#getIndexReader()
 	 */
 	public IndexReader getIndexReader() {
 		try {
-			return IndexReader.open(directory);
+			return IndexReader.open(getDirectory());
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during opening the reader",ex);
 		}
 	}
 
 	/**
+	 * Contruct a new IndexWriter instance based on the directory and analyzer
+	 * properties. This instance will be used by both the IndexTemplate and
+	 * every indexers to add documents and optimize it.
+	 * <p>Before creating an IndexWriter, this implementation checks if the
+ 	 * index already exists. If not, it sets a flag to notify the IndexWriter
+	 * to create it.
+	 * @return a new writer instance on the index
 	 * @see org.springmodules.lucene.index.factory.IndexFactory#getIndexWriter()
+	 * @see org.springmodules.lucene.index.factory.AbstractIndexFactory#setIndexWriterParameters(IndexWriter)
+	 * @see IndexReader#indexExists(org.apache.lucene.store.Directory)
 	 */
 	public IndexWriter getIndexWriter() {
 		try {
-			boolean create = !IndexReader.indexExists(directory);
-			IndexWriter writer = new IndexWriter(directory,analyzer,create);
+			boolean create = !IndexReader.indexExists(getDirectory());
+			IndexWriter writer = new IndexWriter(getDirectory(),getAnalyzer(),create);
 			setIndexWriterParameters(writer);
 			return writer;
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during creating the writer",ex);
 		}
-	}
-
-	/**
-	 * @return
-	 */
-	public Directory getDirectory() {
-		return directory;
-	}
-
-	/**
-	 * @param directory
-	 */
-	public void setDirectory(Directory directory) {
-		this.directory = directory;
-	}
-
-	/**
-	 * @return
-	 */
-	public Analyzer getAnalyzer() {
-		return analyzer;
-	}
-
-	/**
-	 * @param analyzer
-	 */
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
 	}
 
 }

@@ -21,8 +21,16 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 
 /**
- * Abstract index factory which gives access to the tuning
- * parameters of the IndexWriter.
+ * <p>This abstract index factory allows every sub classes to set the tuning
+ * parameters of an IndexWriter instance.
+ * 
+ * <p>Before return the IndexWriter instance, the getWriter method of the factory
+ * must call the setIndexWriterParameters method in order to set the tuning
+ * parameters on the instance.
+ * 
+ * <p>The tuning parameters are set to default values defined as constants in the
+ * class (DEFAULT_MERGE_FACTOR, DEFAULT_MAX_MERGE_DOCS, DEFAULT_MIN_MERGE_DOCS,
+ * DEFAULT_MAX_FIELD_LENGTH)
  * 
  * @author Thierry Templier
  */
@@ -42,33 +50,37 @@ public abstract class AbstractIndexFactory {
 	private int maxFieldLength=DEFAULT_MAX_FIELD_LENGTH;
 
 	/**
-	 * @return
-	 */
-	public Directory getDirectory() {
-		return directory;
-	}
-
-	/**
-	 * @param directory
+	 * Set the Lucene Directory to be used.
 	 */
 	public void setDirectory(Directory directory) {
 		this.directory = directory;
 	}
 
 	/**
-	 * @return
+	 * Return the Lucene Directory used by index factories.
+	 */
+	public Directory getDirectory() {
+		return directory;
+	}
+
+	/**
+	 * Set the Lucene Analyzer to be used.
+	 */
+	public void setAnalyzer(Analyzer analyzer) {
+		this.analyzer = analyzer;
+	}
+
+	/**
+	 * Return the Lucene Analyzer used by index factories.
 	 */
 	public Analyzer getAnalyzer() {
 		return analyzer;
 	}
 
 	/**
-	 * @param analyzer
+	 * 
+	 * @param writer
 	 */
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
-	}
-
 	protected void setIndexWriterParameters(IndexWriter writer) {
 		writer.setUseCompoundFile(useCompoundFile);
 		writer.mergeFactor=mergeFactor;

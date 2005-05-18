@@ -25,6 +25,14 @@ import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
+ * Helper class that provides static methods to obtain Lucene IndexWriter from
+ * an IndexFactory, and to close this writer if necessary. Has special support
+ * for Spring-managed resources, e.g. for use with LuceneIndexResourceManager.
+ *
+ * <p>Used internally by LuceneIndexTemplate, the indexer objects and the
+ * LuceneIndexResourceManager.
+ * Can also be used directly in application code.
+ *
  * @author Brian McCallister
  * @author Thierry Templier
  */
@@ -32,43 +40,36 @@ public abstract class IndexWriterFactoryUtils {
 
 	private static final Log logger = LogFactory.getLog(IndexWriterFactoryUtils.class);
 
-    /**
-	 * @param indexFactory
-	 * @return
+	/**
+	 * Get a IndexWriter from the given IndexFactory. Changes any Lucene io exception
+	 * into the Spring hierarchy of unchecked lucene index access exceptions, simplifying
+	 * calling code and making any exception that is thrown more meaningful.
+	 * <p>Is aware of a corresponding IndexWriter bound to the current thread, for example
+	 * when using LuceneIndexResourceManager. Will set an IndexWriter on an IndexHolder bound
+	 * to the thread.
+	 * @param indexFactory IndexFactory to get IndexReader from
+	 * @return a Lucene IndexWriter from the given IndexFactory
+	 * @throws LuceneIndexAccessException
+	 * if the attempt to get an IndexReader failed
+	 * @see #doGetIndexWriter(IndexFactory)
+	 * @see org.springmodules.lucene.index.core.LuceneIndexResourceManager
 	 */
 	public static IndexWriter getIndexWriter(IndexFactory indexFactory) {
-    	return getIndexWriter(indexFactory,true);
-    }
-
-	/**
-	 * @param indexFactory
-	 * @param allowSynchronization
-	 * @return
-	 */
-	public static IndexWriter getIndexWriter(IndexFactory indexFactory,boolean allowSynchronization) {
 		try {
-			return doGetIndexWriter(indexFactory, allowSynchronization);
+			return doGetIndexWriter(indexFactory);
 		} catch (IOException ex) {
 			throw new LuceneIndexAccessException("Could not get Lucene reader", ex);
 		}
 	}
 
 	/**
-	 * @param indexFactory
-	 * @return
-	 * @throws IOException
+	 * Actually get a Lucene IndexWriter for the given IndexFactory.
+	 * Same as getIndexWriter, but throwing the original IOException.
+	 * @param indexFactory IndexFactory to get IndexWriter from
+	 * @return a Lucene IndexWriter from the given IndexFactory
+	 * @throws IOException if thrown by Lucene API methods
 	 */
 	public static IndexWriter doGetIndexWriter(IndexFactory indexFactory) throws IOException {
-		return doGetIndexWriter(indexFactory,true);
-	}
-
-	/**
-	 * @param indexFactory
-	 * @param allowSynchronization
-	 * @return
-	 * @throws IOException
-	 */
-	public static IndexWriter doGetIndexWriter(IndexFactory indexFactory,boolean allowSynchronization) throws IOException {
 		IndexHolder indexHolder = (IndexHolder) ResourceBindingManager.getResource(indexFactory);
 		if (indexHolder != null && indexHolder.getIndexWriter()!=null ) {
 			return indexHolder.getIndexWriter();
@@ -84,23 +85,27 @@ public abstract class IndexWriterFactoryUtils {
     }
 
 	/**
-	 * @param indexFactory
-	 * @param indexReader
+	 * Close the given IndexWriter if necessary, i.e. if it is not bound to the
+	 * thread.
+	 * @param indexFactory IndexFactory that the IndexReader came from
+	 * @param indexWriter IndexWriter to close if necessary
+	 * (if this is null, the call will be ignored)
 	 */
-	public static void closeIndexWriterIfNecessary(IndexFactory indexFactory,IndexWriter indexReader) {
+	public static void releaseIndexWriter(IndexFactory indexFactory,IndexWriter indexWriter) {
 		try {
-			doCloseIndexWriterIfNecessary(indexFactory,indexReader);
+			doReleaseIndexWriter(indexFactory,indexWriter);
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Unable to close index writer",ex);
 		}
 	}
 
 	/**
-	 * @param indexFactory
-	 * @param indexReader
-	 * @throws IOException
+	 * Actually close a Lucene IndexWriter for the given IndexFactory.
+	 * Same as releaseIndexWriter, but throwing the original IOException.
+	 * @throws IOException if thrown by Lucene methods
+	 * @see #releaseIndexWriter
 	 */
-	public static void doCloseIndexWriterIfNecessary(IndexFactory indexFactory,IndexWriter indexWriter) throws IOException {
+	public static void doReleaseIndexWriter(IndexFactory indexFactory,IndexWriter indexWriter) throws IOException {
 		if (indexWriter == null || ResourceBindingManager.hasResource(indexFactory)) {
 			return;
 		}

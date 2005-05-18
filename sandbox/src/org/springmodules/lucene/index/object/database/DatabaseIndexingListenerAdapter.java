@@ -16,8 +16,13 @@
 
 package org.springmodules.lucene.index.object.database;
 
+import org.springmodules.lucene.index.support.database.SqlRequest;
+
 /**
+ * Database indexing listener adapter.
+ * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.object.database.DatabaseIndexingListener
  */
 public class DatabaseIndexingListenerAdapter implements DatabaseIndexingListener {
 

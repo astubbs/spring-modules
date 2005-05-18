@@ -22,9 +22,32 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 
 /**
+ * <p>This is the index factory abstraction to get reader and writer
+ * instances to work on a Lucene index. These instances can be used
+ * to get informations about it or manipulate it with the LuceneIndexTemplate
+ * class or with the different indexer classes.
+ * 
  * @author Thierry Templier
+ * @see org.apache.lucene.index.IndexReader
+ * @see org.apache.lucene.index.IndexWriter
+ * @see org.springmodules.lucene.index.core.LuceneIndexTemplate
+ * @see org.springmodules.lucene.index.object.directory.DirectoryIndexer
+ * @see org.springmodules.lucene.index.object.database.DatabaseIndexer
  */
 public interface IndexFactory {
+
+	/**
+	 * Contruct an IndexReader instance. This instance will be used by the
+	 * IndexTemplate to get informations about the index and make delete
+	 * operations on the index. 
+	 * @return the IndexReader instance
+	 */
 	IndexReader getIndexReader();
+
+	/**
+	 * Contruct an IndexWriter instance. This instance will be used by both
+	 * the IndexTemplate and every indexers to add documents and optimize it.
+	 * @return the IndexWriter instance
+	 */
 	IndexWriter getIndexWriter();
 }
