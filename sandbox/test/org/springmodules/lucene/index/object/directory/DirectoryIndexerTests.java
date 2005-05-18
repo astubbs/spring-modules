@@ -26,6 +26,7 @@ import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.store.RAMDirectory;
 import org.easymock.MockControl;
+import org.springmodules.lucene.index.LuceneIndexingException;
 import org.springmodules.lucene.index.core.MockSimpleIndexFactory;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 import org.springmodules.lucene.index.object.database.DatabaseIndexer;
@@ -367,4 +368,24 @@ public class DirectoryIndexerTests extends TestCase {
 		assertTrue(indexFactory.getWriterListener().isIndexWriterOptimize());
 	}
 
+	/*
+	 * Test pour void index(String)
+	 */
+	final public void testIndexStringIfDirectoryNotExist() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+
+		//Indexer
+		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		File baseDirectory=getBaseDirectoryToIndex();
+		File wrongBaseDirectory=new File(baseDirectory.getCanonicalPath()+"/test");
+
+		try {
+			indexer.index(wrongBaseDirectory.getAbsolutePath());
+			fail();
+		} catch(LuceneIndexingException ex) {
+		}
+	}
 }
