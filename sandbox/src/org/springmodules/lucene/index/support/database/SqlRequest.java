@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.object.database;
+package org.springmodules.lucene.index.support.database;
 
 /**
+ * Class which contains every informations about a sql request
+ * and its parameters.
+ * 
+ * <p>This is used with the DatabaseIndexer to specify the request to
+ * execute. So these requests are associated with a SqlDocumentHandler
+ * to specify how to index the datas contained by the returned ResultSet.
+ * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.object.database.DatabaseIndexer
+ * @see org.springmodules.lucene.index.support.database.SqlDocumentHandler
  */
 public class SqlRequest {
 	private final String sql;
@@ -33,23 +42,15 @@ public class SqlRequest {
 		this.params=params;
 		this.types=types;
 	}
-	/**
-	 * @return
-	 */
+
 	public Object[] getParams() {
 		return params;
 	}
 
-	/**
-	 * @return
-	 */
 	public String getSql() {
 		return sql;
 	}
 
-	/**
-	 * @return
-	 */
 	public int[] getTypes() {
 		return types;
 	}
