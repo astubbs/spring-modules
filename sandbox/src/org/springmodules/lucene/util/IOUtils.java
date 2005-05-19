@@ -21,7 +21,7 @@ import java.io.InputStream;
 /**
  * @author Thierry Templier
  */
-public abstract class FileUtils {
+public abstract class IOUtils {
 	public static void closeInputStream(InputStream inputStream) {
 		try {
 			if( inputStream!=null ) {

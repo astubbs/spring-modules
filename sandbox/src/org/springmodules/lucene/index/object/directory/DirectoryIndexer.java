@@ -36,7 +36,7 @@ import org.springmodules.lucene.index.support.file.DocumentHandler;
 import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 import org.springmodules.lucene.index.support.file.DocumentMatching;
 import org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManager;
-import org.springmodules.lucene.util.FileUtils;
+import org.springmodules.lucene.util.IOUtils;
 
 /**
  * <b>This is the central class in the lucene directory indexing package.</b>
@@ -358,7 +358,7 @@ public class DirectoryIndexer extends AbstractIndexer {
 				logger.error("Error during indexing the file "+file.getName(),ex);
 				fireListenersOnErrorFile(file,ex);
 			} finally {
-				FileUtils.closeInputStream(inputStream);
+				IOUtils.closeInputStream(inputStream);
 			}
 		} else {
 			fireListenersOnNoHandlerAvailable(file);
