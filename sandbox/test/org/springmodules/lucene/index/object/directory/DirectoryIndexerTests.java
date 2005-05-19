@@ -212,6 +212,8 @@ public class DirectoryIndexerTests extends TestCase {
 		indexer.index(baseDirectory.getAbsolutePath());
 
 		listenerControl.verify();
+		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
 		assertFalse(indexFactory.getWriterListener().isIndexWriterOptimize());
 	}
 
