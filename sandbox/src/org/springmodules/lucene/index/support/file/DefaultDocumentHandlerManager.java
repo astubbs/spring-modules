@@ -38,6 +38,7 @@ public class DefaultDocumentHandlerManager implements DocumentHandlerManager {
 	 */
 	public DefaultDocumentHandlerManager() {
 		this.documentHandlers=new HashMap();
+		registerDefautHandlers();
 	}
 
 	/**
