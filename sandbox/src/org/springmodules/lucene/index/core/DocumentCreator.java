@@ -38,7 +38,7 @@ public interface DocumentCreator {
 	 * <p>For use as <i>input</i> creator with LuceneIndexTemplate's
 	 * <code>addDocument</code> methods,
 	 * this method should create a <i>populated</i> Document instance.
-	 * @return the Document instance
+	 * @return the Lucene Document instance
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneManipulateIndexException
 	 */

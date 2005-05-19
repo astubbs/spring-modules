@@ -31,7 +31,10 @@ import org.springmodules.resource.support.ResourceBindingManager;
  * application to manage the Lucene IndexReader and IndexWriter
  * openings and closings. It prevents the application to lock
  * the index during a long time.   
- * 
+ *
+ * <p>Both IndexReader and IndexWriter are lazily opened at their
+ * first uses.
+ *  
  * @author Thierry Templier
  * @see org.springmodules.lucene.index.factory.IndexFactory
  * @see org.springmodules.lucene.index.factory.IndexReaderFactoryUtils#closeIndexReaderIfNecessary(IndexFactory, IndexReader)
@@ -49,7 +52,7 @@ public class LuceneIndexResourceManager extends AbstractResourceManager implemen
 	 * Note: The IndexFactory has to be set before using the instance.
 	 * This constructor can be used to prepare a LuceneIndexTemplate via a BeanFactory,
 	 * typically setting the IndexFactory via setIndexFactory.
-	 * @see #setSearcherFactory
+	 * @see #setIndexFactory(IndexFactory)
 	 */
 	public LuceneIndexResourceManager() {
 	}
@@ -95,6 +98,8 @@ public class LuceneIndexResourceManager extends AbstractResourceManager implemen
 	 * Closes the opened IndexReader and IndexWriter, and unbind the
 	 * corresponding IndexHolder.
 	 * @see org.springmodules.resource.ResourceManager#close()
+	 * @see IndexReaderFactoryUtils#releaseIndexReader(IndexFactory, IndexReader)
+	 * @see IndexWriterFactoryUtils#releaseIndexWriter(IndexFactory, IndexWriter)
 	 */
 	public void doClose() {
 		IndexHolder holder=(IndexHolder)ResourceBindingManager.getResource(this.indexFactory);
