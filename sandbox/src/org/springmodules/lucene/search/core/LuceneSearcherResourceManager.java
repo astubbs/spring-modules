@@ -25,20 +25,46 @@ import org.springmodules.resource.AbstractResourceManager;
 import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
+ * Dedicated resource manager for SearcherFactory. It allows the
+ * application to manage the Lucene Searcher openings and closings.
+ * 
+ * <p>Searcher is lazily opened at its first uses.
+ *  
  * @author Thierry Templier
+ * @see org.springmodules.lucene.search.factory.SearcherFactory
+ * @see org.springmodules.lucene.search.factory.SearcherFactoryUtils#getSearcher(SearcherFactory)
+ * @see org.springmodules.lucene.search.factory.SearcherFactoryUtils#closeSearcherIfNecessary(SearcherFactory, Searcher)
+ * @see org.springmodules.resource.support.ResourceBindingManager#getResource(Object)
+ * @see org.springmodules.resource.support.ResourceBindingManager#bindResource(Object, Object)
+ * @see org.springmodules.resource.support.ResourceBindingManager#unbindResource(Object)
  */
 public class LuceneSearcherResourceManager extends AbstractResourceManager implements InitializingBean {
 
 	private SearcherFactory searcherFactory;
 
+	/**
+	 * Construct a new LuceneSearcherResourceManager for bean usage.
+	 * Note: The SearcherFactory has to be set before using the instance.
+	 * This constructor can be used to prepare a LuceneSearchTemplate via a BeanFactory,
+	 * typically setting the SearcherFactory via setSearcherFactory.
+	 * @see #setSearcherFactory(SearcherFactory)
+	 */
 	public LuceneSearcherResourceManager() {
 	}
 
+	/**
+	 * Construct a new LuceneSearcherResourceManager, given an SearcherFactory to manage
+	 * as a resource.
+	 * @param searcherFactory SearcherFactory to obtain Searcher
+	 */
 	public LuceneSearcherResourceManager(SearcherFactory searcherFactory) {
 		setSearcherFactory(searcherFactory);
 		
 	}
 
+	/**
+	 * Set the SearcherFactory that this instance manages resources for.
+	 */
 	public void setSearcherFactory(SearcherFactory searcherFactory) {
 		this.searcherFactory = searcherFactory;
 	}
@@ -51,6 +77,9 @@ public class LuceneSearcherResourceManager extends AbstractResourceManager imple
 	}
 
 	/**
+	 * Binds an empty SearcherHolder for the configured factory. The
+	 * corresponding Searcher resource will
+	 * be created lazily by a LuceneSearcherTemplate or a search query. 
 	 * @see org.springmodules.resource.ResourceManager#open()
 	 */
 	public void doOpen() {
@@ -59,7 +88,10 @@ public class LuceneSearcherResourceManager extends AbstractResourceManager imple
 	}
 
 	/**
+	 * Closes the opened Searcher, and unbind the
+	 * corresponding SearcherHolder.
 	 * @see org.springmodules.resource.ResourceManager#close()
+	 * @see SearcherFactoryUtils#releaseSearcher(SearcherFactory, Searcher)
 	 */
 	public void doClose() {
 		SearcherHolder holder=(SearcherHolder)ResourceBindingManager.getResource(this.searcherFactory);
@@ -72,11 +104,11 @@ public class LuceneSearcherResourceManager extends AbstractResourceManager imple
 		if (logger.isDebugEnabled()) {
 			logger.debug("Closing Lucene searcher [" + searcher + "]");
 		}
-		SearcherFactoryUtils.closeSearcherIfNecessary(this.searcherFactory,searcher);
+		SearcherFactoryUtils.releaseSearcher(this.searcherFactory,searcher);
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 * Check if the searcherFactory is set.
 	 */
 	public void afterPropertiesSet() throws Exception {
 		if (this.searcherFactory == null) {

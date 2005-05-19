@@ -19,8 +19,33 @@ package org.springmodules.lucene.search.core;
 import org.apache.lucene.document.Document;
 
 /**
+ * Callback interface for extracting datas from hits of search
+ * result.
+ * 
+ * <p>Used for output search results in the LuceneSearchTemplate. Alternatively,
+ * the Lucene HitCollector class can be used directly. 
+ * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(Query, HitExtractor)
+ * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(Query, HitExtractor, Filter)
+ * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(Query, HitExtractor, Filter, Sort)
+ * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(Query, HitExtractor, Sort)
+ * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(QueryCreator, HitExtractor)
+ * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(QueryCreator, HitExtractor, Filter)
+ * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(QueryCreator, HitExtractor, Filter, Sort)
+ * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(QueryCreator, HitExtractor, Sort)
  */
 public interface HitExtractor {
+
+	/**
+	 * Create a Lucene independant result object from a Lucene result.
+	 * The callback method has the internal document identifier, the Lucene
+	 * document and the score of the document in the search as method
+	 * parameters. 
+	 * @param id the internal document identifier
+	 * @param document the Document instance
+	 * @param score the score of the document in the search
+	 * @return a result object
+	 */
 	public Object mapHit(int id,Document document,float score);
 }

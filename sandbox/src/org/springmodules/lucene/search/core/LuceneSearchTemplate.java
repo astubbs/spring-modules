@@ -284,7 +284,7 @@ public class LuceneSearchTemplate {
 		} catch (IOException ex) {
 			throw new LuceneSearchException("Error during the search",ex);
 		} finally {
-			SearcherFactoryUtils.closeSearcherIfNecessary(getSearcherFactory(),searcher);
+			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(),searcher);
 		}
 	}
 
@@ -307,7 +307,7 @@ public class LuceneSearchTemplate {
 		} catch (ParseException ex) {
 			throw new LuceneSearchException("Error during the parse of the query",ex);
 		} finally {
-			SearcherFactoryUtils.closeSearcherIfNecessary(getSearcherFactory(),searcher);
+			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(),searcher);
 		}
 	}
 
@@ -329,7 +329,7 @@ public class LuceneSearchTemplate {
 		} catch (ParseException ex) {
 			throw new LuceneSearchException("Error during parsing query",ex);
 		} finally {
-			SearcherFactoryUtils.closeSearcherIfNecessary(getSearcherFactory(),searcher);
+			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(),searcher);
 		}
 	}
 
