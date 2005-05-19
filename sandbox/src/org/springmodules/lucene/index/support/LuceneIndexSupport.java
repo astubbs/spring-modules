@@ -21,6 +21,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.lucene.index.core.LuceneIndexTemplate;
 import org.springmodules.lucene.index.factory.IndexFactory;
+import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 
 /**
  * Convenient super class for objects using Lucene indexing
@@ -33,12 +34,16 @@ import org.springmodules.lucene.index.factory.IndexFactory;
  * but can also be used when working with IndexWriterFactoryUtils and
  * IndexReaderFactoryUtils directly or with indexer classes.
  *
+ * <p>The DocumentHandlerManager to use can be too specify to
+ * allow different indexxing types.
+ *
  * @author Thierry Templier
  */
 public abstract class LuceneIndexSupport implements InitializingBean {
 	private LuceneIndexTemplate template;
 	private IndexFactory indexFactory;
 	private Analyzer analyzer;
+	private DocumentHandlerManager documentHandlerManager;
 
 	/**
 	 * Set the IndexFactory to obtain both IndexReader and IndexWriter.
@@ -81,6 +86,20 @@ public abstract class LuceneIndexSupport implements InitializingBean {
 	 */
 	public LuceneIndexTemplate getTemplate() {
 		return template;
+	}
+
+	/**
+	 * Set the DocumentHandlerManager to allow different indexing types
+	 */
+	public void setDocumentHandlerManager(DocumentHandlerManager documentHandlerManager) {
+		this.documentHandlerManager = documentHandlerManager;
+	}
+
+	/**
+	 * Return the DocumentHandlerManager to allow different indexing types
+	 */
+	public DocumentHandlerManager getDocumentHandlerManager() {
+		return documentHandlerManager;
 	}
 
 	/**
