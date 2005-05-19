@@ -27,6 +27,13 @@ import org.springmodules.lucene.search.core.SmartSearcherFactory;
 import org.springmodules.resource.support.ResourceBindingManager;
 
 /**
+ * Helper class that provides static methods to obtain Lucene Searcher from
+ * an SearcherFactory, and to close this searcher if necessary. Has special support
+ * for Spring-managed resources, e.g. for use with LuceneSearcherResourceManager.
+ *
+ * <p>Used internally by LuceneSearchTemplate and the LuceneIndexResourceManager.
+ * Can also be used directly in application code.
+ *
  * @author Brian McCallister
  * @author Thierry Templier
  */
@@ -34,9 +41,19 @@ public abstract class SearcherFactoryUtils {
 
 	private static final Log logger = LogFactory.getLog(SearcherFactoryUtils.class);
 
-    /**
-	 * @param searcherFactory
-	 * @return
+	/**
+	 * Get a Searcher from the given SearcherFactory. Changes any Lucene io exception
+	 * into the Spring hierarchy of unchecked lucene search exceptions, simplifying
+	 * calling code and making any exception that is thrown more meaningful.
+	 * <p>Is aware of a corresponding Searcher bound to the current thread, for example
+	 * when using LuceneSearcherResourceManager. Will set an Searcher on an SearcherHolder bound
+	 * to the thread.
+	 * @param searcherFactory SearcherFactory to get Searcher from
+	 * @return a Lucene Searcher from the given SearcherFactory
+	 * @throws LuceneSearchException
+	 * if the attempt to get an Searcher failed
+	 * @see #doGetSearcher(SearcherFactory)
+	 * @see org.springmodules.lucene.search.core.LuceneSearcherResourceManager
 	 */
 	public static Searcher getSearcher(SearcherFactory searcherFactory) {
 		try {
@@ -47,9 +64,11 @@ public abstract class SearcherFactoryUtils {
 	}
 
 	/**
-	 * @param searcherFactory
-	 * @return
-	 * @throws IOException
+	 * Actually get a Lucene Searcher for the given SearcherFactory.
+	 * Same as getSearcher, but throwing the original IOException.
+	 * @param searcherFactory SearcherFactory to get Searcher from
+	 * @return a Lucene Searcher from the given SearcherFactory
+	 * @throws IOException if thrown by Lucene API methods
 	 */
 	public static Searcher doGetSearcher(SearcherFactory searcherFactory) throws IOException {
 		SearcherHolder searcherHolder = (SearcherHolder) ResourceBindingManager.getResource(searcherFactory);
@@ -67,8 +86,12 @@ public abstract class SearcherFactoryUtils {
      }
 
 	/**
-	 * @param searcherFactory
-	 * @param searcher
+	 * Close the given Searcher if necessary, i.e. if it is not bound to the
+	 * thread.
+	 * @param searcherFactory SearcherFactory that the Searcher came from
+	 * @param searcher Searcher to close if necessary
+	 * (if this is null, the call will be ignored)
+	 * @see #doReleaseSearcher(SearcherFactory, Searcher) 
 	 */
 	public static void releaseSearcher(SearcherFactory searcherFactory,Searcher searcher) {
 		try {
@@ -79,9 +102,11 @@ public abstract class SearcherFactoryUtils {
 	}
 
 	/**
-	 * @param searcherFactory
-	 * @param searcher
-	 * @throws IOException
+	 * Actually close a Lucene Searcher for the given SearcherFactory.
+	 * Same as releaseSearcher, but throwing the original IOException.
+	 * @param searcherFactory SearcherFactory that the Searcher came from
+	 * @param searcher Searcher to close if necessary
+	 * @throws IOException if thrown by Lucene methods
 	 */
 	public static void doReleaseSearcher(SearcherFactory searcherFactory,Searcher searcher) throws IOException {
 		if (searcher == null || ResourceBindingManager.hasResource(searcherFactory)) {

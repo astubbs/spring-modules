@@ -19,7 +19,13 @@ package org.springmodules.lucene.search.factory;
 import org.apache.lucene.search.Searcher;
 
 /**
- * 
+ * Searcher holder, wrapping a Searcher.
+ *
+ * <p>LuceneSearcherResourceManager binds instances of this class
+ * to the thread, for a given SercherFactory.
+ *
+ * <p>Note: This is an SPI class, not intended to be used by applications.
+ *
  * @author Thierry Templier
  */
 public class SearcherHolder {
