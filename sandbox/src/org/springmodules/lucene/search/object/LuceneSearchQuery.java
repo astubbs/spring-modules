@@ -23,25 +23,40 @@ import org.springmodules.lucene.search.core.LuceneSearchTemplate;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 
 /**
+ * Base class for Lucene query objects that work with the Lucene API.
+ * Encapsulates a SearcherFactory and a Lucene Analyzer.
+ *
+ * <p>Works with a LuceneSearchTemplate instance underneath. Lucene query
+ * objects are an alternative to working with a LuceneSearchTemplate
+ * directly.
+ *
  * @author Thierry Templier
+ * @see #setSearcherFactory(SearcherFactory)
+ * @see #setAnalyzer(Analyzer)
  */
 public abstract class LuceneSearchQuery {
 	private LuceneSearchTemplate template = new LuceneSearchTemplate();
 
+	/**
+	 * Construct a new LuceneSearchQuery, given an SearcherFactory and an Analyzer
+	 * to obtain a Searcher and an Analyzer to be used by the query.
+	 * @param searcherFactory SearcherFactory to obtain Searcher
+	 * @param analyzer Lucene analyzer used by the queries
+	 */
 	public LuceneSearchQuery(SearcherFactory searcherFactory,Analyzer analyzer) {
 		this.template.setSearcherFactory(searcherFactory);
 		this.template.setAnalyzer(analyzer);
 	}
 
 	/**
-	 * @return
+	 * @return the LuceneSearchTemplate instance to use.
 	 */
 	public LuceneSearchTemplate getTemplate() {
 		return template;
 	}
 
 	/**
-	 * @param analyzer
+	 * Set the default Lucene Analyzer used by the queries.
 	 */
 	public void setAnalyzer(Analyzer analyzer) {
 		if( template==null ) {
@@ -51,7 +66,7 @@ public abstract class LuceneSearchQuery {
 	}
 
 	/**
-	 * @param factory
+	 * Set the SearcherFactory to obtain Searcher.
 	 */
 	public void setSearcherFactory(SearcherFactory factory) {
 		if( template==null ) {
@@ -60,5 +75,11 @@ public abstract class LuceneSearchQuery {
 		this.template.setSearcherFactory(factory);
 	}
 
+	/**
+	 * Subclasses must implement this method to make the search using the
+	 * configured SearcherFactory and Analyzer
+	 * @param textToSearch the text query to search
+	 * @return the list of results
+	 */
 	public abstract List search(String textToSearch);
 }

@@ -31,7 +31,6 @@ import org.apache.lucene.search.Sort;
 import org.springmodules.lucene.search.LuceneSearchException;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
-import org.springmodules.lucene.search.query.QueryCreator;
 
 /**
  * <b>This is the central class in the lucene search core package.</b>
@@ -67,15 +66,17 @@ public class LuceneSearchTemplate {
 	 * Construct a new LuceneSearchTemplate for bean usage.
 	 * Note: The SearcherFactory has to be set before using the instance.
 	 * This constructor can be used to prepare a LuceneSearchTemplate via a BeanFactory,
-	 * typically setting the SearcherFactory via setSearcherFactory.
+	 * typically setting the SearcherFactory via setSearcherFactory and the Analyzer
+	 * via setAnalyzer.
 	 * @see #setSearcherFactory
+	 * @see #setAnalyzer(Analyzer)
 	 */
 	public LuceneSearchTemplate() {
 	}
 
 	/**
-	 * Construct a new LuceneSearchTemplate, given an SearcherFactory to obtain
-	 * a Searcher and an Analyzer to be used by the queries.
+	 * Construct a new LuceneSearchTemplate, given an SearcherFactory and an
+	 * Analyzer to obtain a Searcher and an Analyzer to be used by the queries.
 	 * @param searcherFactory SearcherFactory to obtain Searcher
 	 * @param analyzer Lucene analyzer used by the queries
 	 */
