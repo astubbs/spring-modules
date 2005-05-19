@@ -35,6 +35,7 @@ import org.springmodules.resource.support.ResourceBindingManager;
  *
  * @author Brian McCallister
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.core.LuceneIndexResourceManager
  */
 public abstract class IndexWriterFactoryUtils {
 
@@ -90,6 +91,7 @@ public abstract class IndexWriterFactoryUtils {
 	 * @param indexFactory IndexFactory that the IndexReader came from
 	 * @param indexWriter IndexWriter to close if necessary
 	 * (if this is null, the call will be ignored)
+	 * @see #doReleaseIndexWriter(IndexFactory, IndexWriter)
 	 */
 	public static void releaseIndexWriter(IndexFactory indexFactory,IndexWriter indexWriter) {
 		try {
@@ -102,8 +104,9 @@ public abstract class IndexWriterFactoryUtils {
 	/**
 	 * Actually close a Lucene IndexWriter for the given IndexFactory.
 	 * Same as releaseIndexWriter, but throwing the original IOException.
+	 * @param indexFactory IndexFactory that the IndexReader came from
+	 * @param indexWriter IndexWriter to close if necessary
 	 * @throws IOException if thrown by Lucene methods
-	 * @see #releaseIndexWriter
 	 */
 	public static void doReleaseIndexWriter(IndexFactory indexFactory,IndexWriter indexWriter) throws IOException {
 		if (indexWriter == null || ResourceBindingManager.hasResource(indexFactory)) {

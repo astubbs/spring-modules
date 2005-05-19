@@ -29,7 +29,7 @@ import org.springmodules.lucene.index.LuceneIndexAccessException;
  * to work on a Lucene index. 
  * 
  * <p>This factory only constructs IndexReader and IndexWriter instances.
- * There is no control on currency use of the different methods of the
+ * There is no control on current use of the different methods of the
  * reader and the writer.
  * 
  * <p>Before creating an IndexWriter, this implementation checks if the

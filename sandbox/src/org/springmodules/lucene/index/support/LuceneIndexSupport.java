@@ -35,7 +35,7 @@ import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
  * IndexReaderFactoryUtils directly or with indexer classes.
  *
  * <p>The DocumentHandlerManager to use can be too specify to
- * allow different indexxing types.
+ * allow different indexing types.
  *
  * @author Thierry Templier
  */

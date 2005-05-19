@@ -34,6 +34,7 @@ import org.springmodules.resource.support.ResourceBindingManager;
  *
  * @author Brian McCallister
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.core.LuceneIndexResourceManager
  */
 public abstract class IndexReaderFactoryUtils {
 
@@ -89,6 +90,7 @@ public abstract class IndexReaderFactoryUtils {
 	 * @param indexFactory IndexFactory that the IndexReader came from
 	 * @param indexReader IndexReader to close if necessary
 	 * (if this is null, the call will be ignored)
+	 * @see #doReleaseIndexReader(IndexFactory, IndexReader)
 	 */
 	public static void releaseIndexReader(IndexFactory indexFactory,IndexReader indexReader) {
 		try {
@@ -101,8 +103,9 @@ public abstract class IndexReaderFactoryUtils {
 	/**
 	 * Actually close a Lucene IndexReader for the given IndexFactory.
 	 * Same as releaseIndexReader, but throwing the original IOException.
+	 * @param indexFactory IndexFactory that the IndexReader came from
+	 * @param indexReader IndexReader to close if necessary
 	 * @throws IOException if thrown by Lucene methods
-	 * @see #releaseIndexReader
 	 */
 	public static void doReleaseIndexReader(IndexFactory indexFactory,IndexReader indexReader) throws IOException {
 		if (indexReader == null || ResourceBindingManager.hasResource(indexFactory)) {

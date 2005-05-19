@@ -38,7 +38,7 @@ public interface IndexFactory {
 
 	/**
 	 * Contruct an IndexReader instance. This instance will be used by the
-	 * IndexTemplate to get informations about the index and make delete
+	 * LuceneIndexTemplate to get informations about the index and make delete
 	 * operations on the index. 
 	 * @return the IndexReader instance
 	 */
@@ -46,7 +46,8 @@ public interface IndexFactory {
 
 	/**
 	 * Contruct an IndexWriter instance. This instance will be used by both
-	 * the IndexTemplate and every indexers to add documents and optimize it.
+	 * the LuceneIndexTemplate and every indexers to add documents and
+	 * optimize it.
 	 * @return the IndexWriter instance
 	 */
 	IndexWriter getIndexWriter();
