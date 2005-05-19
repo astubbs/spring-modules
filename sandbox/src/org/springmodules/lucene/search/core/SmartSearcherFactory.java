@@ -16,9 +16,13 @@
 
 package org.springmodules.lucene.search.core;
 
+import org.apache.lucene.search.Searcher;
+import org.springmodules.lucene.search.factory.SearcherFactory;
+
 /**
  * @author Thierry Templier
  */
-public interface SmartSearcher {
-	public boolean shouldClose();
+public interface SmartSearcherFactory extends SearcherFactory {
+
+	public boolean shouldClose(Searcher searcher);
 }
