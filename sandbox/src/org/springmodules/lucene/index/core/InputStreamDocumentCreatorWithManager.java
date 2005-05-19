@@ -45,7 +45,7 @@ import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
  * @see org.springmodules.lucene.index.support.file.DocumentHandlerManager
  * @see org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManagerFactoryBean
  */
-public abstract class InputStreamDocumentCreatorWithManager extends InputStreamDocumentCreator {
+public abstract class InputStreamDocumentCreatorWithManager implements InputStreamDocumentCreator {
 
 	private DocumentHandlerManager documentHandlerManager;
 
@@ -101,7 +101,7 @@ public abstract class InputStreamDocumentCreatorWithManager extends InputStreamD
 	 * @see DocumentHandler#getDocument(Map, InputStream)
 	 * @see FileExtensionNotSupportedException
 	 */
-	protected final Document createDocumentFromInputStream(
+	public final Document createDocumentFromInputStream(
 	                          InputStream inputStream) throws IOException {
 		DocumentHandler documentHandler=documentHandlerManager.getDocumentHandler(getResourceName());
 		if( documentHandler!=null ) {

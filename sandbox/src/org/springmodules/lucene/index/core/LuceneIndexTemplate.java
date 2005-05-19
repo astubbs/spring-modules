@@ -17,6 +17,7 @@
 package org.springmodules.lucene.index.core;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +31,7 @@ import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
+import org.springmodules.lucene.util.IOUtils;
 
 /**
  * <b>This is the central class in the lucene indexing core package.</b>
@@ -342,8 +344,9 @@ public class LuceneIndexTemplate {
 	 * Note: Lucene adds really this document at the IndexWriter
 	 * close. By default (if you don't share resources across several
 	 * calls) the document is really added to the index before the
-	 * method returns. 
+	 * method returns.
 	 * @param creator the implementation of DocumentCreator that creates the document to add
+	 * @see DocumentCreator
 	 */
 	public void addDocument(DocumentCreator creator) {
 		addDocument(createDocument(creator),null);
@@ -359,9 +362,54 @@ public class LuceneIndexTemplate {
 	 * method returns. 
 	 * @param creator the implementation of DocumentCreator that creates the document to add
 	 * @param analyzer the Lucene analyzer to use to index
+	 * @see DocumentCreator
 	 */
 	public void addDocument(DocumentCreator documentCreator,Analyzer analyzer) {
 		addDocument(createDocument(documentCreator),analyzer);
+	}
+
+	/**
+	 * Add a document thanks to a callback method defined in the
+	 * InputStreamDocumentCreator interface, basing the analyzer parameter.
+	 * In this case, the exceptions during the document creation and the
+	 * InputStream are managed by the template. As a matter of the InputStream
+	 * must be still opened when the document is added to the index.
+	 * Note: Lucene adds really this document at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really added to the index before the
+	 * method returns. 
+	 * @param creator the implementation of DocumentCreator that creates the document to add
+	 * @see InputStreamDocumentCreator
+	 */
+	public void addDocument(InputStreamDocumentCreator creator) {
+		addDocument(creator,null);
+	}
+
+	/**
+	 * Add a document thanks to a callback method defined in the
+	 * InputStreamDocumentCreator interface, basing the analyzer parameter.
+	 * In this case, the exceptions during the document creation and the
+	 * InputStream are managed by the template. As a matter of the InputStream
+	 * must be still opened when the document is added to the index.
+	 * Note: Lucene adds really this document at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really added to the index before the
+	 * method returns. 
+	 * @param creator the implementation of DocumentCreator that creates the document to add
+	 * @param analyzer the Lucene analyzer to use to index
+	 * @see InputStreamDocumentCreator
+	 */
+	public void addDocument(InputStreamDocumentCreator documentCreator,Analyzer analyzer) {
+		InputStream inputStream=null;
+		try {
+			inputStream=documentCreator.createInputStream();
+			addDocument(documentCreator.createDocumentFromInputStream(inputStream),analyzer);
+		} catch(IOException ex) {
+			//throw new LuceneInputStreamException("Error during adding a document.",ex);
+			throw new RuntimeException("Error during adding a document.",ex);
+		} finally {
+			IOUtils.closeInputStream(inputStream);
+		}
 	}
 
 	/**
