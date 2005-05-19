@@ -21,8 +21,8 @@ import java.io.File;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.lucene.index.factory.IndexFactory;
-import org.springmodules.lucene.index.object.file.DirectoryIndexer;
-import org.springmodules.lucene.index.object.file.DocumentIndexingListener;
+import org.springmodules.lucene.index.object.directory.DirectoryIndexer;
+import org.springmodules.lucene.index.object.directory.DocumentIndexingListener;
 import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 import org.springmodules.samples.lucene.util.ExecutionTimeUtils;
 
@@ -44,9 +44,10 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if( indexFactory!=null ) {
-			this.indexer=new DirectoryIndexer(indexFactory,documentHandlerManager);
+		if( indexFactory==null ) {
+			throw new IllegalArgumentException("indexFactory is required");
 		}
+		this.indexer=new DirectoryIndexer(indexFactory,documentHandlerManager);
 	}
 
 	public void indexDirectory(String directory) {

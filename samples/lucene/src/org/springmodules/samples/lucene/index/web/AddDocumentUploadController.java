@@ -23,7 +23,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.springmodules.samples.lucene.index.FileExtensionNotSupported;
+import org.springmodules.lucene.index.FileExtensionNotSupportedException;
 import org.springmodules.samples.lucene.index.service.IndexAccessor;
 
 /**
@@ -43,7 +43,7 @@ public class AddDocumentUploadController extends SimpleFormController {
 		FileDocumentHolder holder=(FileDocumentHolder)command;
 		try {
 			indexAccessor.addDocument(holder);
-		} catch(FileExtensionNotSupported ex) {
+		} catch(FileExtensionNotSupportedException ex) {
 			return new ModelAndView("documentNotAdded","filename",holder.getFilename());
 		}
 		return new ModelAndView("documentAdded","filename",holder.getFilename());

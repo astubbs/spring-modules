@@ -28,8 +28,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.object.database.DatabaseIndexer;
 import org.springmodules.lucene.index.object.database.DatabaseIndexingListener;
-import org.springmodules.lucene.index.object.database.SqlDocumentHandler;
-import org.springmodules.lucene.index.object.database.SqlRequest;
+import org.springmodules.lucene.index.support.database.SqlDocumentHandler;
+import org.springmodules.lucene.index.support.database.SqlRequest;
 
 /**
  * Main class to index all datas (directories and databases)
@@ -49,9 +49,10 @@ public class SimpleDatabaseIndexingImpl implements DatabaseIndexing,Initializing
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if( indexFactory!=null ) {
-			this.indexer=new DatabaseIndexer(indexFactory);
+		if( indexFactory==null ) {
+			throw new IllegalArgumentException("indexFactory is required");
 		}
+		this.indexer=new DatabaseIndexer(indexFactory);
 	}
 
 	public void prepareDatabaseHandlers() {

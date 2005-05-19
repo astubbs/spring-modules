@@ -43,7 +43,7 @@
 	     INDEXING
 	-->
 
-	<bean id="documentHandlerManager" class="org.springmodules.lucene.index.support.file.SimpleDocumentHandlerManagerFactoryBean">
+	<bean id="documentHandlerManager" class="org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManagerFactoryBean">
 		<property name="documentHandlers">
 			<map>
 				<entry key="pdf"><bean class="org.springmodules.samples.lucene.index.file.handlers.PdfBoxDocumentHandler"/></entry>

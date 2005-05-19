@@ -25,11 +25,9 @@ import java.util.Map;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.springmodules.lucene.index.core.DocumentCreator;
+import org.springmodules.lucene.index.core.InputStreamDocumentCreatorWithManager;
 import org.springmodules.lucene.index.support.LuceneIndexSupport;
 import org.springmodules.lucene.index.support.file.DocumentHandler;
-import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
-import org.springmodules.lucene.util.FileUtils;
-import org.springmodules.samples.lucene.index.FileExtensionNotSupported;
 import org.springmodules.samples.lucene.index.domain.IndexInformations;
 import org.springmodules.samples.lucene.index.web.FileDocumentHolder;
 
@@ -37,7 +35,6 @@ import org.springmodules.samples.lucene.index.web.FileDocumentHolder;
  * @author Thierry Templier
  */
 public class IndexAccessorImpl extends LuceneIndexSupport implements IndexAccessor {
-	private DocumentHandlerManager documentHandlerManager;
 
 	public IndexInformations getIndexInformations() {
 		boolean hasDeletions=getTemplate().hasDeletions();
@@ -62,32 +59,21 @@ public class IndexAccessorImpl extends LuceneIndexSupport implements IndexAccess
 	}
 
 	public void addDocument(final FileDocumentHolder holder) {
-		getTemplate().addDocument(new DocumentCreator() {
-			public Document createDocument() throws IOException {
-				InputStream inputStream=null;
-				try {
-					inputStream=new ByteArrayInputStream(holder.getFile());
-					DocumentHandler documentHandler=documentHandlerManager.getDocumentHandler(holder.getFilename());
-					if( documentHandler!=null ) {
-						Map description=new HashMap();
-						description.put(DocumentHandler.FILENAME,holder.getFilename());
-						return documentHandler.getDocument(description,inputStream);
-					} else {
-						throw new FileExtensionNotSupported("No handler for this file extension");
-					}
-				} finally {
-					FileUtils.closeInputStream(inputStream);
-				}
+		getTemplate().addDocument(new InputStreamDocumentCreatorWithManager(getDocumentHandlerManager()) {
+			protected InputStream createInputStream() throws IOException {
+				return new ByteArrayInputStream(holder.getFile());
+			}
+
+			protected String getResourceName() {
+				return holder.getFilename();
+			}
+
+			protected Map getResourceDescription() {
+				Map description=new HashMap();
+				description.put(DocumentHandler.FILENAME,holder.getFilename());
+				return description;
 			}
 		});
-	}
-
-	public DocumentHandlerManager getDocumentHandlerManager() {
-		return documentHandlerManager;
-	}
-
-	public void setDocumentHandlerManager(DocumentHandlerManager manager) {
-		documentHandlerManager = manager;
 	}
 
 }
