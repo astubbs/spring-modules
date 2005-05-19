@@ -19,9 +19,17 @@ package org.springmodules.lucene.util;
 import java.io.InputStream;
 
 /**
+ * IO utilities class to manage IO resources.
+ * 
  * @author Thierry Templier
  */
 public abstract class IOUtils {
+
+	/**
+	 * This method closes the InputStream parameter.
+	 * 
+	 * @param inputStream the InputStream to close
+	 */
 	public static void closeInputStream(InputStream inputStream) {
 		try {
 			if( inputStream!=null ) {

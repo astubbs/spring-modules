@@ -27,7 +27,11 @@ import org.apache.lucene.document.Document;
  * Document instances can be passed into LuceneIndexTemplate's corresponding
  * <code>addDocument</code> methods directly.
  *
+ * <p><b>Caution</b>: If you want to use InputStream with this interface, you need to
+ * manage the stream outside the template or use the InputStreamDocumentCreator.
+ *
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.core.InputStreamDocumentCreator
  * @see LuceneIndexTemplate#addDocument(DocumentCreator)
  * @see LuceneIndexTemplate#addDocument(DocumentCreator,org.apache.lucene.analysis.Analyzer)
  */
