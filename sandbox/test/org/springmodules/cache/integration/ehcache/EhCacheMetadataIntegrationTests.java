@@ -18,7 +18,6 @@
 
 package org.springmodules.cache.integration.ehcache;
 
-
 /**
  * <p>
  * Integration test that verifies that caching and flushing work correctly.
@@ -27,22 +26,21 @@ package org.springmodules.cache.integration.ehcache;
  * Test settings:
  * <ul>
  * <li>EHCache as cache provider</li>
- * <li>The targets of the caching services are configured using a
- * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code></li>
+ * <li>Source-level metadata identify the target(s) of the caching services</li>
  * </ul>
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:29 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/19 02:20:05 $
  */
-public final class EhCacheProxyFactoryIntegrationTests extends
+public final class EhCacheMetadataIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
   /**
    * Constructor.
    */
-  public EhCacheProxyFactoryIntegrationTests() {
+  public EhCacheMetadataIntegrationTests() {
     super();
   }
 
@@ -51,9 +49,8 @@ public final class EhCacheProxyFactoryIntegrationTests extends
    */
   protected String[] getConfigLocations() {
     String[] configFileNames = new String[] {
-        "**/ehcacheApplicationContext.xml",
-        "**/proxyFactoryApplicationContext.xml" };
-    
+        "**/ehcacheApplicationContext.xml", "**/metadataApplicationContext.xml" };
+
     return configFileNames;
   }
 }

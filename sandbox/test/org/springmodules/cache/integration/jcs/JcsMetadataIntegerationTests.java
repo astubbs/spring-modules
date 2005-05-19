@@ -16,7 +16,7 @@
  * Copyright @2005 the original author or authors.
  */
 
-package org.springmodules.cache.integration.oscache;
+package org.springmodules.cache.integration.jcs;
 
 /**
  * <p>
@@ -25,22 +25,22 @@ package org.springmodules.cache.integration.oscache;
  * <p>
  * Test settings:
  * <ul>
- * <li>OSCache as cache provider</li>
+ * <li>JCS as cache provider</li>
  * <li>Source-level metadata identify the target(s) of the caching services</li>
  * </ul>
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:39 $
+ * @version $Revision: 1.3 $ $Date: 2005/05/19 02:20:07 $
  */
-public final class OsCacheMetadataIntegrationTests extends
-    AbstractOsCacheIntegrationTestCases {
+public final class JcsMetadataIntegerationTests extends
+    AbstractJcsIntegrationTests {
 
   /**
    * Constructor.
    */
-  public OsCacheMetadataIntegrationTests() {
+  public JcsMetadataIntegerationTests() {
     super();
   }
 
@@ -49,8 +49,9 @@ public final class OsCacheMetadataIntegrationTests extends
    */
   protected String[] getConfigLocations() {
     String[] configFileNames = new String[] {
-        "**/oscacheApplicationContext.xml", "**/metadataApplicationContext.xml" };
-
+        "**/jcsApplicationContext.xml",
+        "**/metadataApplicationContext.xml" };
+    
     return configFileNames;
   }
 }

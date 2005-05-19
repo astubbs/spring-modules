@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.jcs.JcsProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/15 02:14:43 $
+ * @version $Revision: 1.3 $ $Date: 2005/05/19 02:20:08 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractIntegrationTests {

@@ -38,7 +38,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:32 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/19 02:20:06 $
  */
 public abstract class AbstractEhCacheIntegrationTests extends
     AbstractIntegrationTests {

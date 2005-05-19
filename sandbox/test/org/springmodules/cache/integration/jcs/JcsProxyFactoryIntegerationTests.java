@@ -16,7 +16,8 @@
  * Copyright @2005 the original author or authors.
  */
 
-package org.springmodules.cache.integration.oscache;
+package org.springmodules.cache.integration.jcs;
+
 
 /**
  * <p>
@@ -25,7 +26,7 @@ package org.springmodules.cache.integration.oscache;
  * <p>
  * Test settings:
  * <ul>
- * <li>OSCache as cache provider</li>
+ * <li>JCS as cache provider</li>
  * <li>The targets of the caching services are configured using a
  * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code></li>
  * </ul>
@@ -33,15 +34,14 @@ package org.springmodules.cache.integration.oscache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:41 $
+ * @version $Revision: 1.3 $ $Date: 2005/05/19 02:20:07 $
  */
-public final class OsCacheProxyFactoryIntegrationTests extends
-    AbstractOsCacheIntegrationTestCases {
+public final class JcsProxyFactoryIntegerationTests extends AbstractJcsIntegrationTests {
 
   /**
    * Constructor.
    */
-  public OsCacheProxyFactoryIntegrationTests() {
+  public JcsProxyFactoryIntegerationTests() {
     super();
   }
 
@@ -50,7 +50,7 @@ public final class OsCacheProxyFactoryIntegrationTests extends
    */
   protected String[] getConfigLocations() {
     String[] configFileNames = new String[] {
-        "**/oscacheApplicationContext.xml",
+        "**/jcsApplicationContext.xml",
         "**/proxyFactoryApplicationContext.xml" };
     
     return configFileNames;

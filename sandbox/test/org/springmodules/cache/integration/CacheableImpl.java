@@ -37,7 +37,7 @@ import java.util.List;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:37 $
+ * @version $Revision: 1.3 $ $Date: 2005/05/19 02:20:00 $
  */
 public class CacheableImpl implements Cacheable {
 
