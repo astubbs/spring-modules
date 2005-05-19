@@ -26,46 +26,43 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
 
 /**
- * Searcher factory on several indexes.
+ * This is the multiple index factory to get searcher instances to search
+ * informations in several Lucene indexes. 
  * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.search.factory.SearcherFactory
  */
-public class MultipleSearcherFactory implements SearcherFactory {
-	private List directories;
+public class MultipleSearcherFactory extends AbstractMultipleSearcherFactory implements SearcherFactory {
 
+	/**
+	 * Construct a new MultipleSearcherFactory for bean usage.
+	 * Note: The Directories have to be set before using the instance.
+	 * This constructor can be used to prepare a MultipleSearcherFactory via a BeanFactory,
+	 * typically setting the Directory via setDirectories.
+	 * @see AbstractMultipleSearcherFactory#setDirectories(List)
+	 */
 	public MultipleSearcherFactory() {
 	}
 
+	/**
+	 * Construct a new MultipleSearcherFactory, given Directories to obtain
+	 * a Searcher.
+	 * @param directories Directories to obtain Searcher
+	 */
 	public MultipleSearcherFactory(List directories) {
-		this.directories=directories;
+		setDirectories(directories);
 	}
 
 	/**
+	 * This method creates a new intance of a Searcher on the configured
+	 * indexes.
+	 * 
+	 * @return a Searcher instance
 	 * @see org.springmodules.lucene.search.SearcherFactory#getSearcher()
 	 */
 	public Searcher getSearcher() throws IOException {
-		Searcher[] searchers=new Searcher[directories.size()];
-		int cpt=0;
-		for(Iterator iterator=directories.iterator();iterator.hasNext();) {
-			searchers[cpt]=new IndexSearcher((Directory)iterator.next());
-			cpt++; 
-		}
+		Searcher[] searchers = createSearchers();
 		return new MultiSearcher(searchers);
-	}
-
-
-	/**
-	 * @return
-	 */
-	public List getDirectories() {
-		return directories;
-	}
-
-	/**
-	 * @param directory
-	 */
-	public void setDirectories(List directories) {
-		this.directories = directories;
 	}
 
 }

@@ -21,8 +21,23 @@ import java.io.IOException;
 import org.apache.lucene.search.Searcher;
 
 /**
+ * <p>This is the searcher factory abstraction to get searcher
+ * instances to make searchs on a Lucene index. These instances can be used
+ * with the LuceneSearchTemplate class or with the different query classes.
+ * 
  * @author Thierry Templier
+ * @see org.springmodules.samples.lucene.searching.console.Searcher
+ * @see org.springmodules.lucene.search.core.LuceneSearchTemplate
+ * @see org.springmodules.lucene.search.object.LuceneSearchQuery
+ * @see org.springmodules.lucene.search.object.ParsedLuceneSearchQuery
  */
 public interface SearcherFactory {
+
+	/**
+	 * Contruct a Searcher instance. This instance will be used by both
+	 * the LuceneSearcherTemplate and every query classes to make searchs
+	 * on the index.
+	 * @return the Searcher instance
+	 */
 	public Searcher getSearcher() throws IOException;
 }

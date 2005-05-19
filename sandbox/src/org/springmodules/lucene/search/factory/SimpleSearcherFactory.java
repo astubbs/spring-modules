@@ -23,40 +23,42 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
 
 /**
- * Searcher factory on a single index.
+ * This is the simplier factory to get searcher instances to search
+ * informations in a single Lucene index. 
  * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.search.factory.SearcherFactory
  */
-public class SimpleSearcherFactory implements SearcherFactory {
-	private Directory directory;
+public class SimpleSearcherFactory extends AbstractSingleSearcherFactory implements SearcherFactory {
 
+	/**
+	 * Construct a new SimpleSearcherFactory for bean usage.
+	 * Note: The Directory has to be set before using the instance.
+	 * This constructor can be used to prepare a SimpleSearcherFactory via a BeanFactory,
+	 * typically setting the Directory via setDirectory.
+	 * @see AbstractSingleSearcherFactory#setDirectory(Directory)
+	 */
 	public SimpleSearcherFactory() {
 	}
 
+	/**
+	 * Construct a new SimpleSearcherFactory, given an Directory to obtain
+	 * a Searcher.
+	 * @param directory Directory to obtain Searcher
+	 */
 	public SimpleSearcherFactory(Directory directory) {
-		this.directory=directory;
+		setDirectory(directory);
 	}
 
 	/**
+	 * This method creates a new intance of a Searcher on the configured
+	 * index.
+	 * 
+	 * @return a Searcher instance
 	 * @see org.springmodules.lucene.search.SearcherFactory#getSearcher()
 	 */
 	public Searcher getSearcher() throws IOException {
-		return new IndexSearcher(directory);
-	}
-
-
-	/**
-	 * @return
-	 */
-	public Directory getDirectory() {
-		return directory;
-	}
-
-	/**
-	 * @param directory
-	 */
-	public void setDirectory(Directory directory) {
-		this.directory = directory;
+		return new IndexSearcher(getDirectory());
 	}
 
 }

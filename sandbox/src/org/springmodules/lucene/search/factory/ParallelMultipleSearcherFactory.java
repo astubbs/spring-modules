@@ -26,46 +26,43 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
 
 /**
- * Searcher factory on several indexes for parallel searchs.
+ * This is the simplier factory to get searcher instances to make parallel
+ * search of informations on several Lucene indexes. 
  * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.search.factory.SearcherFactory
  */
-public class ParallelMultipleSearcherFactory implements SearcherFactory {
-	private List directories;
+public class ParallelMultipleSearcherFactory extends AbstractMultipleSearcherFactory implements SearcherFactory {
 
+	/**
+	 * Construct a new ParallelMultipleSearcherFactory for bean usage.
+	 * Note: The Directories have to be set before using the instance.
+	 * This constructor can be used to prepare a ParallelMultipleSearcherFactory via a BeanFactory,
+	 * typically setting the Directory via setDirectories.
+	 * @see AbstractMultipleSearcherFactory#setDirectories(List)
+	 */
 	public ParallelMultipleSearcherFactory() {
 	}
 
+	/**
+	 * Construct a new ParallelMultipleSearcherFactory, given Directories to obtain
+	 * a Searcher.
+	 * @param directories Directories to obtain Searcher
+	 */
 	public ParallelMultipleSearcherFactory(List directories) {
-		this.directories=directories;
+		setDirectories(directories);
 	}
 
 	/**
+	 * This method creates a new intance of a parallel Searcher on the
+	 * configured indexes.
+	 * 
+	 * @return a Searcher instance
 	 * @see org.springmodules.lucene.search.SearcherFactory#getSearcher()
 	 */
 	public Searcher getSearcher() throws IOException {
-		Searcher[] searchers=new Searcher[directories.size()];
-		int cpt=0;
-		for(Iterator iterator=directories.iterator();iterator.hasNext();) {
-			searchers[cpt]=new IndexSearcher((Directory)iterator.next());
-			cpt++; 
-		}
+		Searcher[] searchers = createSearchers();
 		return new ParallelMultiSearcher(searchers);
-	}
-
-
-	/**
-	 * @return
-	 */
-	public List getDirectories() {
-		return directories;
-	}
-
-	/**
-	 * @param directory
-	 */
-	public void setDirectories(List directories) {
-		this.directories = directories;
 	}
 
 }
