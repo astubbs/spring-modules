@@ -20,9 +20,35 @@ import org.apache.lucene.search.Searcher;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 
 /**
+ * Subinterface of <code>javax.sql.DataSource</code>, to be implemented by
+ * special DataSources that return JDBC Connections in an unwrapped fashion.
+ *
+ * <p>Classes using this interface can query whether or not the connection
+ * should be closed after an operation. Spring's DataSourceUtils and
+ * JdbcTemplate classes automatically perform such a check.
+ *
+/**
+ * Subinterface of <code>SearcherFactory</code>, to be implemented by
+ * special SearcherFactory that return Lucene searchers in an unwrapped fashion.
+ * 
+ * <p>Useful for example when you use a remote searcher with RMI and
+ * you don't want to close it after having used it.
+ *
+ * <p>Classes using this interface can query whether or not the searcher
+ * should be closed after an operation. Spring Modules's SearcherFactoryUtils and
+ * LuceneSearchTemplate classes automatically perform such a check.
+ * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.search.factory.SearcherFactoryUtils#releaseSearcher(SearcherFactory, Searcher)
  */
 public interface SmartSearcherFactory extends SearcherFactory {
 
+	/**
+	 * This method determines if the Searcher should be closed or
+	 * not. This check is made by both the Spring Modules's
+	 * SearcherFactoryUtils and LuceneSearchTemplate classes
+	 * @param searcher the Searcher to check
+	 * @return whether the given searcher should be closed
+	 */
 	public boolean shouldClose(Searcher searcher);
 }
