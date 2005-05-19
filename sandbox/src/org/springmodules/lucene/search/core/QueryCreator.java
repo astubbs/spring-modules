@@ -14,27 +14,30 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.search.query;
+package org.springmodules.lucene.search.core;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.Query;
 
 /**
- * This is the interface where you must specify the query to
- * pass to search method.
- * 
+ * Callback interface for creating a Query for Lucene search.
+ *
+ * <p>Used for input Query creation in LuceneSearchTemplate. Alternatively,
+ * Query instances can be passed into LuceneSearchTemplate's corresponding
+ * <code>search</code> methods directly.
+ *
  * @author Thierry Templier
  */
 public interface QueryCreator {
 
 	/**
-	 * This method must be implemented to specify the query
-	 * to use in order to make a search with Lucene.
-	 * 
-	 * @param analyzer the analyzer injected
-	 * @return the built query
-	 * @throws ParseException
+	 * Subclasses must implement this method to create a Lucene query
+	 * from a string object passed into the <code>search</code> method.
+	 * @param textToSearch the passed-in text to construct a query
+	 * @return the Query
+	 * @throws ParseException if thrown by a Lucene method, to be auto-converted
+	 * to a LuceneSearchException
 	 */
 	public Query createQuery(Analyzer analyzer) throws ParseException;
 }

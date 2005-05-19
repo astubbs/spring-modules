@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.search.query;
+package org.springmodules.lucene.search.core;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
@@ -23,15 +23,28 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Query;
 
 /**
- * This class is the dedicated implements of the QueryConstructor
- * interface for the parsed query using an Lucene analyzer.
- * 
+ * Callback class for creating a Query for Lucene search basing the
+ * Lucene QueryParser and MultiFieldQueryParser classes.
+ *
+ * <p>Used for input Query creation in LuceneSearchTemplate. Alternatively,
+ * Query instances can be passed into LuceneSearchTemplate's corresponding
+ * <code>search</code> methods directly.
+ *
  * @author Thierry Templier
+ * @see org.springmodules.lucene.search.query.QueryCreator
  */
 public abstract class ParsedQueryCreator implements QueryCreator {
 
 	/**
-	 * @see org.springmodules.lucene.search.query.QueryConstructor#constructQuery(org.apache.lucene.analysis.Analyzer)
+	 * This method constructs a Lucene query using the Lucene
+	 * Analyzer class and the Lucene QueryParser or MultiFieldQueryParser
+	 * class according the params of the query returned by the configureQuery
+	 * method.
+	 * @param analyzer the Lucene Analyzer to use
+	 * @return the constructed Query
+	 * @throws ParseException if thrown by a Lucene method, to be auto-converted
+	 * to a LuceneSearchException
+	 * @see #configureQuery()
 	 */
 	public final Query createQuery(Analyzer analyzer) throws ParseException {
 		QueryParams params=configureQuery();
@@ -48,18 +61,17 @@ public abstract class ParsedQueryCreator implements QueryCreator {
 	}
 
 	/**
-	 * This method is used to specify the parameters to use get a query
-	 * with a query parser.
-	 * 
-	 * @return the query parameters
+	 * Subclasses must implement this method to configure with an instance
+	 * of QueryParams which must contains informations about the tokens
+	 * and the text to search.
+	 * @return the parameters to construct a Query
 	 */
 	public abstract QueryParams configureQuery();
 
 	/**
-	 * This method must be used to set properties on the
+	 * Subclasses must overwrite this method to specify properties on the
 	 * constructed query.
-	 * 
-	 * @param query the query
+	 * @param query the constructed Query
 	 */
 	protected void setQueryProperties(Query query) {
 		
