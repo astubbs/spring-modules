@@ -115,220 +115,6 @@
     </sect2>
 
     <sect2>
-      <title>Template approach</title>
-
-      <para>The Lucene support provides a template approach like Spring for
-      JDBC, JMS... to manipulate index.</para>
-
-      <para><emphasis>LuceneIndexTemplate</emphasis> is the central class of
-      the Lucene support core package
-      (<emphasis>org.springmodules.lucene.index.core</emphasis>) for the
-      indexing. It simplifies the use of the corresponding Lucene APIs since
-      it handles the creation and release of resources and allow you to
-      configure declaratively the resource management. This helps to avoid
-      common errors like forgetting to always close the index reader/writer.
-      It executes the common operations on an index leaving application code
-      the way to create or delete a document and questionwork on the index
-      (numDoc property, optimization of an index, deleted
-      documents...).</para>
-
-      <para><emphasis>Important note</emphasis>: You must be aware that some
-      operations have sense only when the index resources are shared between
-      several method calls (<emphasis>hasDeletions</emphasis>,
-      <emphasis>isDeleted</emphasis>, <emphasis>undeleteDocuments</emphasis>)
-      and other are incompatible in the latter context (for example, add
-      document and delete one when resources are shared between several
-      calls).</para>
-
-      <para><emphasis>Important note</emphasis>: This template can can have an
-      index reader and writer opened at the same time.</para>
-
-      <para>The template uses the <emphasis>DocumentCreator</emphasis> and
-      <emphasis>DocumentsCreator</emphasis> abstractions to create one or more
-      Lucene documents that will be added to an index. For that, they
-      respectively define a <emphasis>createDocument</emphasis> and
-      <emphasis>createDocuments</emphasis> methods.</para>
-
-      <programlisting>public interface DocumentCreator {
-  Document createDocument() throws IOException;
-}</programlisting>
-
-      <programlisting>public interface DocumentsCreator {
-  List createDocuments() throws IOException;
-}</programlisting>
-
-      <para>The template provides several methods to manipulate an
-      index.</para>
-
-      <programlisting>public class LuceneIndexTemplate {
-  //...
-  public void deleteDocument(int internalDocumentId) { ... }
-  public void deleteDocument(Term term) { ... }
-  public void undeleteDocuments() { ... }
-  public boolean isDeleted(int internalDocumentId) { ... }
-  public boolean hasDeletions() { ... }
-  public void flushDeletes() { ... }
-  public int getMaxDoc() { ... }
-  public int getNumDocs() { ... }
-  public void addDocument(DocumentCreator creator) { ... }
-  public void addDocuments(DocumentsCreator creator) { ... }
-  public void optimize() { ... }
-  //...
-}</programlisting>
-
-      <para>Here is a summary table to show which Lucene resource is used by a
-      template method:<table frame="all">
-          <title>Resource used by the template methods</title>
-
-          <tgroup cols="2">
-            <thead>
-              <row>
-                <entry align="center">LuceneIndexTemplate method
-                signature</entry>
-
-                <entry align="center">Corresponding resource used</entry>
-              </row>
-            </thead>
-
-            <tbody>
-              <row>
-                <entry align="center">void deleteDocument(int)</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">void deleteDocument(Term)</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">void undeleteDocuments()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">boolean isDeleted(int)</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">boolean hasDeletions()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">void flushDeletes()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">int getMaxDoc()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">int getNumDocs()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">void
-                addDocument(DocumentCreator)</entry>
-
-                <entry align="center">IndexWriter</entry>
-              </row>
-
-              <row>
-                <entry align="center">void
-                addDocuments(DocumentsCreator)</entry>
-
-                <entry align="center">IndexWriter</entry>
-              </row>
-
-              <row>
-                <entry align="center">void optimize()</entry>
-
-                <entry align="center">IndexWriter</entry>
-              </row>
-            </tbody>
-          </tgroup>
-        </table></para>
-
-      <para>Here is a using example of the template use:</para>
-
-      <programlisting>public class IndexAccessorImpl extends LuceneIndexSupport implements IndexAccessor {
-  public void addDocument(final File file) {
-    getTemplate().addDocument(new DocumentCreator() {
-      public Document createDocument() throws IOException {
-        FileInputStream inputStream=null;
-        try {
-          inputStream=new FileInputStream(file);
-          Document document = new Document();
-          document.add(Field.Text("contents", new InputStreamReader(inputStream)));
-          document.add(Field.Keyword("filename", file.getCanonicalPath()));
-          return document;
-        } finally {
-          FileUtils.closeInputStream(inputStream);
-        }
-      }
-    });
-  }
-}</programlisting>
-
-      <para>and the corresponding Spring configuration:</para>
-
-      <programlisting>&lt;bean id="fsDirectory"
-      class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/lucene/index&lt;/value&gt;&lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="indexFactory"
-      class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean"&gt;
-  &lt;property name="directory"&gt;&lt;ref local="fsDirectory"/&gt;&lt;/property&gt;
-  &lt;property name="analyzer"&gt;
-    &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="indexAccessor"
-      class="org.springmodules.samples.lucene.index.service.IndexAccessorImpl"&gt;
-  &lt;property name="indexFactory"&gt;&lt;ref local="indexFactory"/&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Finally the index template provides you two callbacks to work
-      directly on a <emphasis>IndexReader</emphasis> or
-      <emphasis>IndexWriter</emphasis> instance. These callback are based on
-      the <emphasis>ReaderCallBack</emphasis> interface:</para>
-
-      <programlisting>public interface ReaderCallback {
-  Object doWithReader(IndexReader reader) throws IOException;
-}</programlisting>
-
-      <para>and the <emphasis>WriterCallback</emphasis> interface:</para>
-
-      <programlisting>public interface WriterCallback {
-  Object doWithWriter(IndexWriter writer) throws IOException;
-}</programlisting>
-
-      <para>and are used by two dedicated methods of the template:</para>
-
-      <programlisting>public class LuceneIndexTemplate {
-  //...
-  public void read(ReaderCallback callback) { ... }
-  public void write(WriterCallback callback) { ... }
-  // ...
-}</programlisting>
-    </sect2>
-
-    <sect2>
       <title>Document type handling</title>
 
       <para>The support provides a generic way to handle different file
@@ -415,6 +201,277 @@
 
       <para><emphasis>Important note</emphasis>: This manager can be used in
       both template and object approach.</para>
+    </sect2>
+
+    <sect2>
+      <title>Template approach</title>
+
+      <para>The Lucene support provides a template approach like Spring for
+      JDBC, JMS... to manipulate index.</para>
+
+      <para><emphasis>LuceneIndexTemplate</emphasis> is the central class of
+      the Lucene support core package
+      (<emphasis>org.springmodules.lucene.index.core</emphasis>) for the
+      indexing. It simplifies the use of the corresponding Lucene APIs since
+      it handles the creation and release of resources and allow you to
+      configure declaratively the resource management. This helps to avoid
+      common errors like forgetting to always close the index reader/writer.
+      It executes the common operations on an index leaving application code
+      the way to create or delete a document and questionwork on the index
+      (numDoc property, optimization of an index, deleted
+      documents...).</para>
+
+      <para><emphasis>Important note</emphasis>: You must be aware that some
+      operations have sense only when the index resources are shared between
+      several method calls (<emphasis>hasDeletions</emphasis>,
+      <emphasis>isDeleted</emphasis>, <emphasis>undeleteDocuments</emphasis>)
+      and other are incompatible in the latter context (for example, add
+      document and delete one when resources are shared between several
+      calls).</para>
+
+      <para><emphasis>Important note</emphasis>: This template can can have an
+      index reader and writer opened at the same time.</para>
+
+      <para>The template uses the <emphasis>DocumentCreator</emphasis> and
+      <emphasis>DocumentsCreator</emphasis> abstractions to create one or more
+      Lucene documents that will be added to an index. For that, they
+      respectively define a <emphasis>createDocument</emphasis> and
+      <emphasis>createDocuments</emphasis> methods.</para>
+
+      <programlisting>public interface DocumentCreator {
+  Document createDocument() throws IOException;
+}</programlisting>
+
+      <programlisting>public interface DocumentsCreator {
+  List createDocuments() throws IOException;
+}</programlisting>
+
+      <para>If you need to create a Lucene <emphasis>Document</emphasis> from
+      an <emphasis>InputStream</emphasis>, you must necessarily manage the
+      stream outside the template class because the stream must be opened when
+      it calls the <emphasis>addDocument</emphasis> method of the Lucene
+      <emphasis>IndexWriter</emphasis> class. To allow the management of the
+      <emphasis>InputStream</emphasis> by the template, the support introduces
+      the <emphasis>InputStreamDocumentCreator</emphasis> interface. Its
+      subclasses must implement the self-explanatory
+      <emphasis>createInputStream</emphasis> and
+      <emphasis>createDocumentFromInputStream</emphasis> methods.</para>
+
+      <programlisting>public interface InputStreamDocumentCreator {
+  public InputStream createInputStream() throws IOException;
+  public Document createDocumentFromInputStream(
+                InputStream inputStream) throws IOException;
+}</programlisting>
+
+      <para>An interesting implementation is the
+      <emphasis>InputStreamDocumentCreatorWithManager</emphasis> abstract
+      class which allows to delegate the document creation to a
+      <emphasis>DocumentHandler</emphasis> for the resource. Its subclasses
+      must implement the <emphasis>getResourceName</emphasis> method to allow
+      the <emphasis>DocumentHandlerManager</emphasis> to select the right
+      <emphasis>DocumentHandler</emphasis> and the
+      <emphasis>getResourceDescription</emphasis> method to specify its
+      mandatory fields.</para>
+
+      <programlisting>public abstract class InputStreamDocumentCreatorWithManager
+                                implements InputStreamDocumentCreator {
+  public InputStreamDocumentCreatorWithManager(
+                  DocumentHandlerManager documentHandlerManager) { ... }
+  protected abstract String getResourceName();
+  protected abstract Map getResourceDescription();
+  public final Document createDocumentFromInputStream(
+                     InputStream inputStream) throws IOException { ... }
+}</programlisting>
+
+      <para>The template provides several methods to manipulate an
+      index.</para>
+
+      <programlisting>public class LuceneIndexTemplate {
+  //...
+  public void deleteDocument(int internalDocumentId) { ... }
+  public void deleteDocument(Term term) { ... }
+  public void undeleteDocuments() { ... }
+  public boolean isDeleted(int internalDocumentId) { ... }
+  public boolean hasDeletions() { ... }
+  public void flushDeletes() { ... }
+  public int getMaxDoc() { ... }
+  public int getNumDocs() { ... }
+  public void addDocument(Document document) { ... }
+  public void addDocument(Document document,Analyzer analyzer) { ... }
+  public void addDocument(DocumentCreator creator) { ... }
+  public void addDocument(DocumentCreator creator,Analyzer analyzer) { ... }
+  public void addDocument(InputStreamDocumentCreator creator) { ... }
+  public void addDocument(InputStreamDocumentCreator creator,Analyzer analyzer) { ... }
+  public void addDocuments(List documents) { ... }
+  public void addDocuments(List documents,Analyzer) { ... }
+  public void addDocuments(DocumentsCreator creator) { ... }
+  public void addDocuments(DocumentsCreator creator,Analyzer) { ... }
+  public void optimize() { ... }
+  //...
+}</programlisting>
+
+      <para>Here is a summary table to show which Lucene resource is used by a
+      template method:<table frame="all">
+          <title>Resource used by the template methods</title>
+
+          <tgroup cols="2">
+            <thead>
+              <row>
+                <entry align="center">LuceneIndexTemplate method
+                signature</entry>
+
+                <entry align="center">Corresponding resource used</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry align="center">void deleteDocument(int)</entry>
+
+                <entry align="center">IndexReader</entry>
+              </row>
+
+              <row>
+                <entry align="center">void deleteDocument(Term)</entry>
+
+                <entry align="center">IndexReader</entry>
+              </row>
+
+              <row>
+                <entry align="center">void undeleteDocuments()</entry>
+
+                <entry align="center">IndexReader</entry>
+              </row>
+
+              <row>
+                <entry align="center">boolean isDeleted(int)</entry>
+
+                <entry align="center">IndexReader</entry>
+              </row>
+
+              <row>
+                <entry align="center">boolean hasDeletions()</entry>
+
+                <entry align="center">IndexReader</entry>
+              </row>
+
+              <row>
+                <entry align="center">void flushDeletes()</entry>
+
+                <entry align="center">IndexReader</entry>
+              </row>
+
+              <row>
+                <entry align="center">int getMaxDoc()</entry>
+
+                <entry align="center">IndexReader</entry>
+              </row>
+
+              <row>
+                <entry align="center">int getNumDocs()</entry>
+
+                <entry align="center">IndexReader</entry>
+              </row>
+
+              <row>
+                <entry align="center">addDocument methods</entry>
+
+                <entry align="center">IndexWriter</entry>
+              </row>
+
+              <row>
+                <entry align="center">addDocuments methods</entry>
+
+                <entry align="center">IndexWriter</entry>
+              </row>
+
+              <row>
+                <entry align="center">void optimize()</entry>
+
+                <entry align="center">IndexWriter</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table></para>
+
+      <para>Here is a using example of the
+      <emphasis>LuceneIndexTemplate</emphasis> class use with both the
+      <emphasis>DocumentCreator</emphasis> and
+      <emphasis>InputStreamDocumentCreator</emphasis> interfaces:</para>
+
+      <programlisting>public class IndexAccessorImpl extends LuceneIndexSupport implements IndexAccessor {
+  public void addDocument(final String text) {
+    getTemplate().addDocument(new DocumentCreator() {
+      public Document createDocument() throws IOException {
+        Document document = new Document();
+        document.add(Field.UnStored("contents", text));
+        document.add(Field.Keyword("type", "text"));
+        document.add(Field.Keyword("filename", title));
+        return document;
+    });
+  }
+
+  public void addDocument(final File file) {
+    getTemplate().addDocument(new InputStreamDocumentCreatorWithManager(
+                                                getDocumentHandlerManager()) {
+      public InputStream createInputStream() throws IOException {
+        return new FileInputStream(file);
+      }
+      protected String getResourceName() {
+        return file.getPath();
+      }
+      protected Map getResourceDescription() {
+        Map description=new HashMap();
+        description.put(DocumentHandler.FILENAME,file.getPath());
+        return description;
+      }
+    });
+  }
+}</programlisting>
+
+      <para>and the corresponding Spring configuration:</para>
+
+      <programlisting>&lt;bean id="fsDirectory"
+      class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
+  &lt;property name="location"&gt;&lt;value&gt;C:/lucene/index&lt;/value&gt;&lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id="indexFactory"
+      class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean"&gt;
+  &lt;property name="directory"&gt;&lt;ref local="fsDirectory"/&gt;&lt;/property&gt;
+  &lt;property name="analyzer"&gt;
+    &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id="indexAccessor"
+      class="org.springmodules.samples.lucene.index.service.IndexAccessorImpl"&gt;
+  &lt;property name="indexFactory"&gt;&lt;ref local="indexFactory"/&gt;&lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+      <para>Finally the index template provides you two callbacks to work
+      directly on a <emphasis>IndexReader</emphasis> or
+      <emphasis>IndexWriter</emphasis> instance. These callback are based on
+      the <emphasis>ReaderCallBack</emphasis> interface:</para>
+
+      <programlisting>public interface ReaderCallback {
+  Object doWithReader(IndexReader reader) throws IOException;
+}</programlisting>
+
+      <para>and the <emphasis>WriterCallback</emphasis> interface:</para>
+
+      <programlisting>public interface WriterCallback {
+  Object doWithWriter(IndexWriter writer) throws IOException;
+}</programlisting>
+
+      <para>and are used by two dedicated methods of the template:</para>
+
+      <programlisting>public class LuceneIndexTemplate {
+  //...
+  public void read(ReaderCallback callback) { ... }
+  public void write(WriterCallback callback) { ... }
+  // ...
+}</programlisting>
     </sect2>
 
     <sect2>
