@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
-package org.springmodules.samples.lucene.index;
+package org.springmodules.lucene.index;
+
+import org.springmodules.lucene.LuceneException;
 
 /**
+ * Exception thrown when a document handler can't be found to
+ * index a file type.
+ * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.core.InputStreamDocumentCreatorWithManager
  */
-public class FileExtensionNotSupportedException extends RuntimeException {
+public class FileExtensionNotSupportedException extends LuceneException {
 
+	/**
+	 * Constructor for FileExtensionNotSupportedException.
+	 * @param msg message
+	 */
 	public FileExtensionNotSupportedException(String msg) {
 		super(msg);
 	}

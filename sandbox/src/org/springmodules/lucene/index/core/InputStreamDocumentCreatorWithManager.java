@@ -18,13 +18,12 @@ package org.springmodules.lucene.index.core;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.lucene.document.Document;
+import org.springmodules.lucene.index.FileExtensionNotSupportedException;
 import org.springmodules.lucene.index.support.file.DocumentHandler;
 import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
-import org.springmodules.samples.lucene.index.FileExtensionNotSupportedException;
 
 /**
  * Implementation of the DocumentCreator callback interface for creating a
