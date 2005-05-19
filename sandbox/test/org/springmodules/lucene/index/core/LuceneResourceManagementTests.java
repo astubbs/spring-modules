@@ -110,7 +110,7 @@ public class LuceneResourceManagementTests extends TestCase {
 		//Check if the document is marked for deletion
 		assertTrue(indexFactory.getReaderListener().isIndexReaderUndeletedAll());
 		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),1);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
 
 	}
 
@@ -141,7 +141,7 @@ public class LuceneResourceManagementTests extends TestCase {
 		//Check if the document is marked for deletion
 		assertTrue(indexFactory.getReaderListener().isIndexReaderUndeletedAll());
 		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),3);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),3);
 
 	}
 
@@ -188,7 +188,7 @@ public class LuceneResourceManagementTests extends TestCase {
 		//Check if the number of added documents is correct
 		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),2);
 		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWriterClosed(),1);
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
 
 	}
 
@@ -224,7 +224,7 @@ public class LuceneResourceManagementTests extends TestCase {
 		//Check if the number of added documents is correct
 		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),2);
 		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWriterClosed(),2);
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),2);
 
 	}
 

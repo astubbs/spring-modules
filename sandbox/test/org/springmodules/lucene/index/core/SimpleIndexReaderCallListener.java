@@ -51,7 +51,7 @@ public class SimpleIndexReaderCallListener implements IndexReaderCallListener {
 		readerClosed++;
 	}
 
-	public int getNumberReaderClosed() {
+	public int getNumberReadersClosed() {
 		return readerClosed;
 	}
 

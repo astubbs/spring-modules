@@ -45,7 +45,7 @@ public class SimpleIndexWriterCallListener implements IndexWriterCallListener {
 		writerClosed++;
 	}
 
-	public int getNumberWriterClosed() {
+	public int getNumberWritersClosed() {
 		return writerClosed;
 	}
 

@@ -25,7 +25,7 @@ public interface IndexWriterCallListener {
 	public int getNumberWritersCreated();
 	public void writerCreated();
 
-	public int getNumberWriterClosed();
+	public int getNumberWritersClosed();
 	public void indexWriterClosed();
 
 	public boolean isIndexWriterOptimize();

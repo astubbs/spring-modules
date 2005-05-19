@@ -26,7 +26,7 @@ public interface IndexReaderCallListener {
 	public void readerCreated();
 
 	public void indexReaderClosed();
-	public int getNumberReaderClosed();
+	public int getNumberReadersClosed();
 
 	public void indexReaderDeleted(int id);
 	public int getIndexReaderDeletedId();

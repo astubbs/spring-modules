@@ -16,9 +16,16 @@
 
 package org.springmodules.lucene.index.core;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
@@ -28,7 +35,10 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.RAMDirectory;
 import org.easymock.MockControl;
+import org.springmodules.lucene.index.FileExtensionNotSupportedException;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
+import org.springmodules.lucene.index.support.file.DocumentHandler;
+import org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManager;
 import org.springmodules.lucene.search.core.MockSimpleSearcherFactory;
 
 import junit.framework.TestCase;
@@ -95,7 +105,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the document is marked for deletion
 		assertEquals(indexFactory.getReaderListener().getIndexReaderDeletedId(),0);
 		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),1);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
 	}
 
 	/*
@@ -116,7 +126,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the document is marked for deletion
 		assertEquals(indexFactory.getReaderListener().getIndexReaderDeletedId(),1);
 		//Check if the reader of the template is closed
-				assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),1);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
 	}
 
 	final public void testUndeleteDocuments() throws Exception {
@@ -134,7 +144,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the document is marked for deletion
 		assertTrue(indexFactory.getReaderListener().isIndexReaderUndeletedAll());
 		//Check if the reader of the template is closed
-				assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),1);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
 	}
 
 	final public void testIsDeleted() throws Exception {
@@ -152,7 +162,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the document is marked for deletion
 		assertEquals(indexFactory.getReaderListener().getIndexReaderIsDeleted(),0);
 		//Check if the reader of the template is closed
-				assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),1);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
 	}
 
 	final public void testHasDeletions() throws Exception {
@@ -170,7 +180,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the document is marked for deletion
 		assertTrue(indexFactory.getReaderListener().isIndexReaderHasDeletions());
 		//Check if the reader of the template is closed
-				assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),1);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
 	}
 
 	final public void testGetMaxDoc() throws Exception {
@@ -188,7 +198,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the reader calls the maxDoc method
 		assertTrue(indexFactory.getReaderListener().isIndexReaderMaxDoc());
 		//Check if the reader of the template is closed
-				assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),1);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
 	}
 
 	final public void testGetNumDocs() throws Exception {
@@ -206,7 +216,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the reader calls the maxDoc method
 		assertTrue(indexFactory.getReaderListener().isIndexReaderNumDocs());
 		//Check if the reader of the template is closed
-				assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),1);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
 	}
 
 	final public void testAddDocument() throws Exception {
@@ -236,7 +246,148 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the writer calls the addDocument method
 		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
 		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWriterClosed(),1);
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+	}
+
+	private File getFileFromClasspath(String filename) {
+		URL url=getClass().getClassLoader().getResource(
+					"org/springmodules/lucene/index/object/files/"+filename);
+		if( url==null ) {
+			return null;
+		}
+
+		return new File(url.getFile());
+	}
+
+	final public void testAddDocumentWithInputStream() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+
+		//File to index
+		final File file=getFileFromClasspath("test.txt");
+
+		//Lucene template
+		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		final boolean[] called = {false,false};
+		template.addDocument(new InputStreamDocumentCreator() {
+			public InputStream createInputStream() throws IOException {
+				called[0]=true;
+				return new FileInputStream(file);
+			}
+
+			public Document createDocumentFromInputStream(InputStream inputStream) throws IOException {
+				called[1]=true;
+				Document document=new Document();
+				document.add(Field.Text("field", new InputStreamReader(inputStream)));
+				return document;
+			}
+		});
+
+		//Check if a writer has been opened
+		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
+		//Check if the writer calls the createInputStream and createDocumentFromInputStream methods
+		assertTrue(called[0]);
+		assertTrue(called[1]);
+		//Check if the writer calls the addDocument method
+		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
+		//Check if the writer of the template is closed
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+	}
+
+	final public void testAddDocumentWithInputStreamAndManager() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		ExtensionDocumentHandlerManager manager=new ExtensionDocumentHandlerManager();
+
+		//File to index
+		final File file=getFileFromClasspath("test.txt");
+
+		//Lucene template
+		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		final boolean[] called = {false,false,false};
+		template.addDocument(new InputStreamDocumentCreatorWithManager(manager) {
+			protected String getResourceName() {
+				called[0]=true;
+				return file.getPath();
+			}
+
+			protected Map getResourceDescription() {
+				called[1]=true;
+				Map description=new HashMap();
+				description.put(DocumentHandler.FILENAME,file.getPath());
+				return description;
+			}
+
+			public InputStream createInputStream() throws IOException {
+				called[2]=true;
+				return new FileInputStream(file);
+			}
+		});
+
+		//Check if a writer has been opened
+		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
+		//Check if the writer calls the getResourceName, getResourceDescription and
+		//createInputStream methods
+		assertTrue(called[0]);
+		assertTrue(called[1]);
+		assertTrue(called[2]);
+		//Check if the writer calls the addDocument method
+		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
+		//Check if the writer of the template is closed
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+	}
+
+	final public void testAddDocumentWithInputStreamAndManagerError() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		ExtensionDocumentHandlerManager manager=new ExtensionDocumentHandlerManager();
+
+		//File to index
+		final File file=getFileFromClasspath("test.properties");
+
+		//Lucene template
+		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		final boolean[] called = {false,false,false};
+		try {
+			template.addDocument(new InputStreamDocumentCreatorWithManager(manager) {
+				protected String getResourceName() {
+					called[0]=true;
+					return file.getPath();
+				}
+
+				protected Map getResourceDescription() {
+					called[1]=true;
+					Map description=new HashMap();
+					description.put(DocumentHandler.FILENAME,file.getPath());
+					return description;
+				}
+
+				public InputStream createInputStream() throws IOException {
+					called[2]=true;
+					return new FileInputStream(file);
+				}
+			});
+			fail();
+		} catch(FileExtensionNotSupportedException ex) {
+			//Check if a writer has been opened
+			assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),0);
+			//Check if the writer calls the getResourceName, getResourceDescription and
+			//createInputStream methods
+			assertTrue(called[0]);
+			assertFalse(called[1]);
+			assertTrue(called[2]);
+			//Check if the writer calls the addDocument method
+			assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),0);
+			//Check if the writer of the template is closed
+			assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),0);
+		}
+
 	}
 
 	final public void testAddDocuments() throws Exception {
@@ -273,7 +424,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the writer calls the addDocument method
 		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),2);
 		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWriterClosed(),1);
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
 	}
 
 	final public void testOptimize() throws Exception {
@@ -291,7 +442,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if the writer calls the optimize method
 		assertTrue(indexFactory.getWriterListener().isIndexWriterOptimize());
 		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWriterClosed(),1);
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
 	}
 
 	final public void testRead() throws Exception {
@@ -316,7 +467,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if doWithReader is called
 		assertTrue(called[0]);
 		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReaderClosed(),1);
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
 	}
 
 	final public void testWrite() throws Exception {
@@ -341,7 +492,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		//Check if doWithReader is called
 		assertTrue(called[0]);
 		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWriterClosed(),1);
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
 	}
 
 }
