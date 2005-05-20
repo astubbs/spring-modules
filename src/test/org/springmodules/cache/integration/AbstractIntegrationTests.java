@@ -34,7 +34,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/19 02:20:02 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/20 00:10:15 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {

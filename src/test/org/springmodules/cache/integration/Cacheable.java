@@ -28,7 +28,7 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/19 02:20:03 $
+ * @version $Revision: 1.3 $ $Date: 2005/05/20 00:10:15 $
  */
 public interface Cacheable extends Serializable {
 

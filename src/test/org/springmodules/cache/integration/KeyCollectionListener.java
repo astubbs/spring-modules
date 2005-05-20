@@ -31,7 +31,7 @@ import org.springmodules.cache.interceptor.caching.EntryStoredListener;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/19 02:20:01 $
+ * @version $Revision: 1.3 $ $Date: 2005/05/20 00:10:15 $
  */
 public class KeyCollectionListener implements EntryStoredListener {
 
