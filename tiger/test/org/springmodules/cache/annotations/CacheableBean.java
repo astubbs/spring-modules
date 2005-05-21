@@ -35,7 +35,7 @@ import java.util.List;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/01 23:20:15 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/21 21:26:06 $
  */
 public class CacheableBean implements
     org.springmodules.cache.integration.Cacheable {
@@ -87,9 +87,7 @@ public class CacheableBean implements
    * @param index
    *          the index of the element to update.
    * @param name
-   *          the new name. *
-   * @@org.springmodules.cache.interceptor.flush.FlushCache(cacheProfileIds="test")
-   * 
+   *          the new name.
    */
   @CacheFlush(cacheProfileIds = { "test" })
   public final void updateName(int index, String name) {
