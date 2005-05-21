@@ -27,12 +27,25 @@ import org.springmodules.cache.interceptor.flush.FlushCache;
 
 /**
  * <p>
- * TODO Document class.
+ * Implementation of
+ * <code>{@link org.springmodules.cache.interceptor.flush.CacheFlushAttributeSource}</code>
+ * for working with caching metadata in JDK 1.5+ annotation format.
+ * </p>
+ * 
+ * <p>
+ * This class reads the JDK 1.5+ <code>{@link CacheFlush}</code> annotation and
+ * exposes corresponding cache-flush attributes to our caching infrastructure.
+ * </p>
+ * 
+ * <p>
+ * This is a direct alternative to
+ * <code>{@link org.springmodules.cache.interceptor.flush.MetadataCacheFlushAttributeSource}</code>,
+ * which is able to read in source-level attributes via Commons Attributes.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/01 23:20:14 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/21 22:01:22 $
  */
 public class AnnotationCacheFlushAttributeSource extends
     AbstractCacheFlushAttributeSource {
