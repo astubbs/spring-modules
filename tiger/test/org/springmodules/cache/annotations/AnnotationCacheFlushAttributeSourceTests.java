@@ -32,9 +32,9 @@ import org.springmodules.cache.interceptor.flush.FlushCache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/01 23:20:15 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/21 21:25:31 $
  */
-public class AnnotationCacheFlushAttributeSourceTest extends TestCase {
+public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
 
   /**
    * A method containing JDK 1.5+ Annotations.
@@ -52,13 +52,14 @@ public class AnnotationCacheFlushAttributeSourceTest extends TestCase {
    * @param name
    *          the name of the test case to construct.
    */
-  public AnnotationCacheFlushAttributeSourceTest(String name) {
+  public AnnotationCacheFlushAttributeSourceTests(String name) {
     super(name);
   }
 
   /**
    * Sets up the test fixture.
    */
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 

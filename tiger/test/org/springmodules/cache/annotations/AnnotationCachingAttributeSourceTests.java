@@ -32,9 +32,9 @@ import org.springmodules.cache.interceptor.caching.Cached;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/01 23:20:15 $
+ * @version $Revision: 1.1 $ $Date: 2005/05/21 21:25:30 $
  */
-public class AnnotationCachingAttributeSourceTest extends TestCase {
+public class AnnotationCachingAttributeSourceTests extends TestCase {
 
   /**
    * A method containing JDK 1.5+ Annotations.
@@ -52,7 +52,7 @@ public class AnnotationCachingAttributeSourceTest extends TestCase {
    * @param name
    *          the name of the test case to construct.
    */
-  public AnnotationCachingAttributeSourceTest(String name) {
+  public AnnotationCachingAttributeSourceTests(String name) {
     super(name);
   }
 
