@@ -3,6 +3,6 @@
   <head><title>Login Error</title></head>
   <body>
      <h1>Login Error.</h1>
-		 <a href="/index.jsp">Home</a>
+		 <a href="index.jsp">Home</a>
   </body>
 </html>

@@ -10,9 +10,6 @@
 		<property name="workflowName">
 			<value>documentApproval</value>
 		</property>
-		<property name="contextManager">
-			<ref local="workflowContextManager"/>
-		</property>
 	</bean>
 
 	<bean id="configuration" class="org.springmodules.workflow.osworkflow.configuration.ConfigurationBean">
@@ -24,7 +21,6 @@
 		</property>
 	</bean>
 
-	<bean id="workflowContextManager" class="org.springmodules.workflow.osworkflow.ThreadLocalWorkflowContextManager"/>
 
 	<bean id="workflow" class="org.springmodules.examples.workflow.osworkflow.service.OsWorkflowDocumentApprovalWorkflow">
 		<property name="template">

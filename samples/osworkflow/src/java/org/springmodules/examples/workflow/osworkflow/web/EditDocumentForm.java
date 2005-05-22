@@ -39,7 +39,7 @@ public class EditDocumentForm extends SimpleFormController {
 	protected ModelAndView onSubmit(Object command) throws Exception {
 		Document document = (Document) command;
 		this.workflow.uploadDocument(document);
-		return new ModelAndView(new RedirectView("/approval/status"));
+		return new ModelAndView(new RedirectView("../status"));
 	}
 
 

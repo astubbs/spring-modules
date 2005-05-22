@@ -57,11 +57,7 @@
 	<bean id="resolver" class="org.springframework.web.servlet.mvc.multiaction.InternalPathMethodNameResolver"/>
 
 	<bean id="contextInterceptor"
-				class="org.springmodules.workflow.osworkflow.web.AcegiWorkflowContextHandlerInterceptor">
-		<property name="contextManager">
-			<ref bean="workflowContextManager"/>
-		</property>
-	</bean>
+				class="org.springmodules.workflow.osworkflow.web.AcegiWorkflowContextHandlerInterceptor"/>
 
 
 </beans>

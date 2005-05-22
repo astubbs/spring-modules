@@ -18,6 +18,6 @@
 	</tr>
 </table>
 
-<a href="/index.jsp">Home</a> | <a href="underway">Underway</a> | <a href="logout">Logout</a>
+<a href="../index.jsp">Home</a> | <a href="../underway">Underway</a> | <a href="../logout">Logout</a>
 </body>
 </html>

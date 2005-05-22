@@ -26,6 +26,6 @@ public class PassBackForm extends SimpleFormController {
 
 	protected ModelAndView onSubmit(Object command) throws Exception {
 		this.workflow.passBack((Comment) command);
-		return new ModelAndView(new RedirectView("/approval/status"));
+		return new ModelAndView(new RedirectView("../status"));
 	}
 }

@@ -439,6 +439,7 @@
 		<delete file="${target.release.dir}/${release-with-dependencies.zip}"/>
 
 		<fileset id="main" dir=".">
+            <exclude name="**/CVS/**/*"/>
 			<include name="dist/*.jar"/>
 			<include name="dist/*.dtd"/>
 			<include name="dist/*.tld"/>
@@ -454,6 +455,7 @@
 			<exclude name="docs/reference/html/**"/>
 			<exclude name="docs/reference/pdf/images/**"/>
 			<include name="samples/hivemind/**"/>
+			<include name="samples/osworkflow/**"/>
 			<include name="src/**"/>
 			<include name="test/**"/>
 			<include name="*.bat"/>
@@ -470,6 +472,7 @@
 			<zipfileset refid="main" prefix="${release.path}"/>
 			<zipfileset dir="." prefix="${release.path}">
 				<include name="lib/*.txt"/>
+				<include name="lib/acegi/**"/>
 				<include name="lib/ant/**"/>
 				<include name="lib/antlr/**"/>
 				<include name="lib/aopalliance/**"/>
@@ -477,10 +480,11 @@
 				<include name="lib/drools/**"/>
 				<include name="lib/easymock/**"/>
 				<include name="lib/hivemind/**"/>
-				<include name="lib/jakarta-commons/**"/>
-				<include name="lib/j2ee/**"/>
+                <include name="lib/j2ee/**"/>
+                <include name="lib/jakarta-commons/**"/>
 				<include name="lib/janino/**"/>
 				<include name="lib/javassist/**"/>
+				<include name="lib/jcs/**"/>
 				<include name="lib/jsr94/**"/>
 				<include name="lib/junit/**"/>
 				<include name="lib/log4j/**"/>

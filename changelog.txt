@@ -2,7 +2,31 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
-Changes in version 0.1 (20.05.2005)
+Changes in version 0.2 (21.05.2005)
+-----------------------------------
+
+Package org.springmodules.cache
+* Moved Wanghy Cache into Spring Modules
+
+Package org.springmodules.cache.annotations
+* Introduced annotations support for Spring Modules Cache
+
+Package org.springmodules.workflow
+* Introduced the root WorkflowException.
+
+Package org.springmodules.workflow.osworkflow
+* Added OsWorkflowTemplate for simplifying interaction with the OSWorkflow framework.
+* Added OsWorkflowContext and OsWorkflowContextHolder for managing contextual information on a per-thread basis.
+
+Package org.springmodules.workflow.osworklow.support
+* Added AcegiRoleCondition to allow for actions to be restricted based on the Acegi role of the current user.
+
+Package org.springmodules.workflow.osworkflow.web
+* Added AbstractWorkflowContextHandlerInterceptor to transparently manage OSWorkflow caller and workflow instance context.
+* Added DefaultWorkflowContextHandlerInterceptor to transparently map OSWorkflow caller to current Prinicpal when using container-managed security.
+* Added AcegiWorkflowContextHandlerInterceptor to transparently map OSWorkflow caller to current Acegi authenticated user.
+
+Changes in version 0.1 (20.04.2005)
 -----------------------------------
 
 Package org.springmodules.commons.validator
