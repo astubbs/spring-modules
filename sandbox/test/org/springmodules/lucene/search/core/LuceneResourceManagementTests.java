@@ -16,7 +16,6 @@
 
 package org.springmodules.lucene.search.core;
 
-import java.io.IOException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -31,13 +30,7 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.RAMDirectory;
-import org.springframework.jca.cci.core.CciTemplate;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
-import org.springmodules.lucene.search.query.QueryCreator;
 import org.springmodules.resource.ResourceManager;
 import org.springmodules.resource.support.ResourceBindingManager;
 import org.springmodules.resource.support.ResourceCallback;

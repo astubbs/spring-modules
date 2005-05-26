@@ -26,8 +26,8 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.RAMDirectory;
 import org.springmodules.lucene.search.core.MockSimpleSearcherFactory;
+import org.springmodules.lucene.search.core.ParsedQueryCreator.QueryParams;
 import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
-import org.springmodules.lucene.search.query.ParsedQueryCreator.QueryParams;
 
 /**
  * @author Thierry Templier

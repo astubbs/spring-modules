@@ -36,9 +36,6 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.RAMDirectory;
 import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
-import org.springmodules.lucene.search.query.ParsedQueryCreator;
-import org.springmodules.lucene.search.query.QueryCreator;
-import org.springmodules.lucene.search.query.ParsedQueryCreator.QueryParams;
 
 /**
  * @author Brian McCallister
