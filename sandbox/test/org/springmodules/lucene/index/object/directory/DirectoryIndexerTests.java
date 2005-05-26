@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.store.RAMDirectory;
@@ -29,13 +31,10 @@ import org.easymock.MockControl;
 import org.springmodules.lucene.index.LuceneIndexingException;
 import org.springmodules.lucene.index.core.MockSimpleIndexFactory;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
-import org.springmodules.lucene.index.object.database.DatabaseIndexer;
 import org.springmodules.lucene.index.support.file.DocumentExtensionMatching;
 import org.springmodules.lucene.index.support.file.DocumentHandler;
 import org.springmodules.lucene.index.support.file.DocumentMatching;
 import org.springmodules.lucene.index.support.file.handler.TextDocumentHandler;
-
-import junit.framework.TestCase;
 
 /**
  * @author Thierry Templier
@@ -66,7 +65,7 @@ public class DirectoryIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Indexer
-		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 
 		//Register a document handler
 		DocumentMatching matching=new DocumentMatching() {
@@ -91,7 +90,7 @@ public class DirectoryIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Indexer
-		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 
 		//Register a document handler
 		DocumentMatching matching=new DocumentMatching() {
@@ -119,7 +118,7 @@ public class DirectoryIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Indexer
-		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 
 		//Register a document handler
 		assertEquals(indexer.getListeners().size(),0);
@@ -138,7 +137,7 @@ public class DirectoryIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Indexer
-		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 
 		//Register a document handler
 		DocumentIndexingListener listener=new DocumentIndexingListenerAdapter();
@@ -206,7 +205,7 @@ public class DirectoryIndexerTests extends TestCase {
 		listenerControl.replay();
 
 		//Indexer
-		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 		indexer.addListener(listener);
 		File baseDirectory=getBaseDirectoryToIndex();
 		indexer.index(baseDirectory.getAbsolutePath());
@@ -249,7 +248,7 @@ public class DirectoryIndexerTests extends TestCase {
 		listenerControl.replay();
 
 		//Indexer
-		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 		indexer.registerDocumentHandler(new DocumentExtensionMatching("properties"),
 		                                new TextDocumentHandler());
 		indexer.addListener(listener);
@@ -317,7 +316,7 @@ public class DirectoryIndexerTests extends TestCase {
 		listener2Control.replay();
 
 		//Indexer
-		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 		indexer.addListener(listener1);
 		indexer.addListener(listener2);
 		File baseDirectory=getBaseDirectoryToIndex();
@@ -361,7 +360,7 @@ public class DirectoryIndexerTests extends TestCase {
 		listenerControl.replay();
 
 		//Indexer
-		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 		indexer.addListener(listener);
 		File baseDirectory=getBaseDirectoryToIndex();
 		indexer.index(baseDirectory.getAbsolutePath(),true);
@@ -380,7 +379,7 @@ public class DirectoryIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Indexer
-		DirectoryIndexer indexer=new DirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 		File baseDirectory=getBaseDirectoryToIndex();
 		File wrongBaseDirectory=new File(baseDirectory.getCanonicalPath()+"/test");
 

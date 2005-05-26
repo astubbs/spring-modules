@@ -45,7 +45,6 @@ public class DatabaseIndexerTests extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		System.out.println("in setUp(): "+this+"@"+this.hashCode());
 		//Initialization of the index
 		this.directory=new RAMDirectory();
 		//Initialization of the datasource
@@ -72,7 +71,6 @@ public class DatabaseIndexerTests extends TestCase {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		System.out.println("in tearDown(): "+this+"@"+this.hashCode());
 		//Finalization of the index
 		this.directory=null;
 		//Destoy the schema
@@ -89,7 +87,7 @@ public class DatabaseIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Indexer
-		DatabaseIndexer indexer=new DatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
 
 		//Register a document handler
 		SqlRequest request=new SqlRequest("select * from test");
@@ -110,7 +108,7 @@ public class DatabaseIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Indexer
-		DatabaseIndexer indexer=new DatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
 
 		//Register a document handler
 		SqlRequest request=new SqlRequest("select * from test");
@@ -133,7 +131,7 @@ public class DatabaseIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Indexer
-		DatabaseIndexer indexer=new DatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
 
 		//Register a document handler
 		assertEquals(indexer.getListeners().size(),0);
@@ -152,7 +150,7 @@ public class DatabaseIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Indexer
-		DatabaseIndexer indexer=new DatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
 
 		//Register a document handler
 		DatabaseIndexingListener listener=new DatabaseIndexingListenerAdapter();
@@ -174,7 +172,7 @@ public class DatabaseIndexerTests extends TestCase {
 
 		//Indexer
 		final boolean[] test=new boolean[] { false,false };
-		DatabaseIndexer indexer=new DatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
 		SqlRequest request1=new SqlRequest("select * from test");
 		indexer.registerDocumentHandler(request1,new SqlDocumentHandler() {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
@@ -228,7 +226,7 @@ public class DatabaseIndexerTests extends TestCase {
 
 		//Indexer
 		final boolean[] test=new boolean[] { false,false };
-		DatabaseIndexer indexer=new DatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
 		SqlRequest request1=new SqlRequest("select * from test1");
 		indexer.registerDocumentHandler(request1,new SqlDocumentHandler() {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
@@ -263,7 +261,7 @@ public class DatabaseIndexerTests extends TestCase {
 
 		//Indexer
 		final boolean[] test=new boolean[] { false,false };
-		DatabaseIndexer indexer=new DatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
 		SqlRequest request1=new SqlRequest("select * from test");
 		indexer.registerDocumentHandler(request1,new SqlDocumentHandler() {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
