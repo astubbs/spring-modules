@@ -46,6 +46,8 @@ import org.springmodules.lucene.index.LuceneIndexAccessException;
  */
 public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFactory {
 
+	private boolean resolveLock;
+
 	/**
 	 * Construct a new SimpleIndexFactory for bean usage.
 	 * Note: The Directory and the Analyzer have to be set before using the instance.
@@ -67,6 +69,46 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	}
 
 	/**
+	 * Set if the locking must be resolved if the index is locked.
+	 */
+	public void setResolveLock(boolean resolveLock) {
+		this.resolveLock = resolveLock;
+	}
+
+	/**
+	 * Return if the locking must be resolved if the index is locked.
+	 */
+	public boolean isResolveLock() {
+		return resolveLock;
+	}
+
+	/**
+	 * Check if the directory is specified for the factory. If not, the
+	 * method will throw a LuceneIndexAccessException exception
+	 */
+	private void checkDirectory() {
+		if( getDirectory()==null ) {
+			throw new LuceneIndexAccessException("The directory is not specified");
+		}
+	}
+
+	/**
+	 * Check the index must be unlock if the resolveLock property is
+	 * set to true 
+	 * @throws IOException if thrown by Lucene methods
+	 */
+	private void checkIndexLocking() throws IOException {
+		boolean locked = IndexReader.isLocked(getDirectory());
+		if( locked ) {
+			if( resolveLock ) {
+				IndexReader.unlock(getDirectory());
+			} else {
+				throw new LuceneIndexAccessException("The index is locked");
+			}
+		}
+	}
+
+	/**
 	 * Contruct a new IndexReader instance based on the directory property. This
 	 * instance will be used by the IndexTemplate to get informations about the
 	 * index and make delete operations on the index. 
@@ -75,7 +117,15 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	 */
 	public IndexReader getIndexReader() {
 		try {
-			return IndexReader.open(getDirectory());
+			checkDirectory();
+			checkIndexLocking();
+
+			boolean exist = IndexReader.indexExists(getDirectory());
+			if( exist ) {
+				return IndexReader.open(getDirectory());
+			} else {
+				throw new LuceneIndexAccessException("The index doesn't exist for the specified directory");
+			}
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during opening the reader",ex);
 		}
@@ -95,6 +145,9 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	 */
 	public IndexWriter getIndexWriter() {
 		try {
+			checkDirectory();
+			checkIndexLocking();
+
 			boolean create = !IndexReader.indexExists(getDirectory());
 			IndexWriter writer = new IndexWriter(getDirectory(),getAnalyzer(),create);
 			setIndexWriterParameters(writer);
