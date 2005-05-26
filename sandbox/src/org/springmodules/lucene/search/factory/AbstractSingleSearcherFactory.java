@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
+import org.springmodules.lucene.index.factory.IndexFactory;
 
 /**
  * Abstract class of every single searcher factories to
@@ -33,6 +35,7 @@ import org.apache.lucene.store.Directory;
 public abstract class AbstractSingleSearcherFactory {
 
 	private Directory directory;
+	private IndexFactory indexFactory;
 
 	/**
 	 * Return the Lucene Directory used by index factory.
@@ -42,10 +45,24 @@ public abstract class AbstractSingleSearcherFactory {
 	}
 
 	/**
-	 * Set the Lucene Directories to be used.
+	 * Set the Lucene Directory to be used.
 	 */
 	public void setDirectory(Directory directory) {
 		this.directory = directory;
+	}
+
+	/**
+	 * Return the Lucene IndexFactory used by index factory.
+	 */
+	public IndexFactory getIndexFactory() {
+		return indexFactory;
+	}
+
+	/**
+	 * Set the Lucene IndexFactory to be used.
+	 */
+	public void setIndexFactory(IndexFactory indexFactory) {
+		this.indexFactory = indexFactory;
 	}
 
 }

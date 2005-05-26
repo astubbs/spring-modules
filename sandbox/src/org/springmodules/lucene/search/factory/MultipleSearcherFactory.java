@@ -24,6 +24,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiSearcher;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
+import org.springmodules.lucene.index.factory.IndexFactory;
 
 /**
  * This is the multiple index factory to get searcher instances to search
@@ -49,8 +50,28 @@ public class MultipleSearcherFactory extends AbstractMultipleSearcherFactory imp
 	 * a Searcher.
 	 * @param directories Directories to obtain Searcher
 	 */
-	public MultipleSearcherFactory(List directories) {
+	public MultipleSearcherFactory(Directory[] directories) {
 		setDirectories(directories);
+	}
+
+	/**
+	 * Construct a new MultipleSearcherFactory, given IndexFactories to obtain
+	 * a Searcher.
+	 * @param indexFactories IndexFactories to obtain Searcher
+	 */
+	public MultipleSearcherFactory(IndexFactory[] indexFactories) {
+		setIndexFactories(indexFactories);
+	}
+
+	/**
+	 * Construct a new MultipleSearcherFactory, given Directories and
+	 * IndexFactories to obtain a Searcher.
+	 * @param directories Directories to obtain Searcher
+	 * @param indexFactories IndexFactories to obtain Searcher
+	 */
+	public MultipleSearcherFactory(Directory[] directories,IndexFactory[] indexFactories) {
+		setDirectories(directories);
+		setIndexFactories(indexFactories);
 	}
 
 	/**
