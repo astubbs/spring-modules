@@ -20,7 +20,8 @@ import java.util.List;
 
 import org.apache.lucene.document.Document;
 import org.springmodules.lucene.search.core.HitExtractor;
-import org.springmodules.lucene.search.query.ParsedQueryCreator;
+import org.springmodules.lucene.search.core.ParsedQueryCreator;
+import org.springmodules.lucene.search.core.ParsedQueryCreator.QueryParams;
 import org.springmodules.lucene.search.support.LuceneSearchSupport;
 import org.springmodules.samples.lucene.searching.domain.SearchResult;
 

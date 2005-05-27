@@ -19,11 +19,7 @@ package org.springmodules.samples.lucene.searching.console;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.lucene.document.Document;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springmodules.lucene.search.core.HitExtractor;
-import org.springmodules.lucene.search.query.ParsedQueryCreator;
-import org.springmodules.lucene.search.support.LuceneSearchSupport;
 import org.springmodules.samples.lucene.searching.service.SearchService;
 
 /**
