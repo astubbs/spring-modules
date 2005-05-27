@@ -60,7 +60,7 @@ public class IndexAccessorImpl extends LuceneIndexSupport implements IndexAccess
 
 	public void addDocument(final FileDocumentHolder holder) {
 		getTemplate().addDocument(new InputStreamDocumentCreatorWithManager(getDocumentHandlerManager()) {
-			protected InputStream createInputStream() throws IOException {
+			public InputStream createInputStream() throws IOException {
 				return new ByteArrayInputStream(holder.getFile());
 			}
 
