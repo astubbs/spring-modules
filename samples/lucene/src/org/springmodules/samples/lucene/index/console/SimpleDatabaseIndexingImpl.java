@@ -26,8 +26,8 @@ import org.apache.lucene.document.Field;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.lucene.index.factory.IndexFactory;
-import org.springmodules.lucene.index.object.database.DatabaseIndexer;
 import org.springmodules.lucene.index.object.database.DatabaseIndexingListener;
+import org.springmodules.lucene.index.object.database.DefaultDatabaseIndexer;
 import org.springmodules.lucene.index.support.database.SqlDocumentHandler;
 import org.springmodules.lucene.index.support.database.SqlRequest;
 
@@ -40,7 +40,7 @@ public class SimpleDatabaseIndexingImpl implements DatabaseIndexing,Initializing
 
 	private DataSource dataSource;
 	private IndexFactory indexFactory;
-	private DatabaseIndexer indexer;
+	private DefaultDatabaseIndexer indexer;
 
 	public SimpleDatabaseIndexingImpl() {
 	}
@@ -52,7 +52,7 @@ public class SimpleDatabaseIndexingImpl implements DatabaseIndexing,Initializing
 		if( indexFactory==null ) {
 			throw new IllegalArgumentException("indexFactory is required");
 		}
-		this.indexer=new DatabaseIndexer(indexFactory);
+		this.indexer=new DefaultDatabaseIndexer(indexFactory);
 	}
 
 	public void prepareDatabaseHandlers() {

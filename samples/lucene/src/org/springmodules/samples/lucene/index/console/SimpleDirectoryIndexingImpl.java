@@ -21,8 +21,8 @@ import java.io.File;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.lucene.index.factory.IndexFactory;
-import org.springmodules.lucene.index.object.directory.DirectoryIndexer;
-import org.springmodules.lucene.index.object.directory.DocumentIndexingListener;
+import org.springmodules.lucene.index.object.directory.DefaultDirectoryIndexer;
+import org.springmodules.lucene.index.object.directory.FileDocumentIndexingListener;
 import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 import org.springmodules.samples.lucene.util.ExecutionTimeUtils;
 
@@ -35,7 +35,7 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 
 	private IndexFactory indexFactory;
 	private DocumentHandlerManager documentHandlerManager;
-	private DirectoryIndexer indexer;
+	private DefaultDirectoryIndexer indexer;
 
 	public SimpleDirectoryIndexingImpl() {
 	}
@@ -47,7 +47,7 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 		if( indexFactory==null ) {
 			throw new IllegalArgumentException("indexFactory is required");
 		}
-		this.indexer=new DirectoryIndexer(indexFactory,documentHandlerManager);
+		this.indexer=new DefaultDirectoryIndexer(indexFactory,documentHandlerManager);
 	}
 
 	public void indexDirectory(String directory) {
@@ -55,7 +55,7 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 	}
 
 	public void prepareListeners() {
-		DocumentIndexingListener listener=new DocumentIndexingListener() {
+		FileDocumentIndexingListener listener=new FileDocumentIndexingListener() {
 			private long indexingBeginningTime=0;
 			private long indexingDocumentBeginningTime=0;
 
