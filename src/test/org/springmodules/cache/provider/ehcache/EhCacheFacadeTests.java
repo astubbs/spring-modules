@@ -36,7 +36,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:35 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/29 02:01:31 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -236,10 +236,10 @@ public class EhCacheFacadeTests extends TestCase {
    * cache does not exist.
    */
   public void testOnGetFromCacheWhenCacheIsNotFound() {
-    // execute the method to test.
     this.cacheProfile.setCacheName("NonExistingCache");
 
     try {
+      // execute the method to test.
       this.ehcacheFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
       fail("We are expecting a 'EntryRetrievalException'");
 
@@ -255,9 +255,9 @@ public class EhCacheFacadeTests extends TestCase {
    * given cache profile, is empty.
    */
   public void testOnGetFromCacheWhenCacheNameIsEmpty() throws Exception {
-    // execute the method to test.
     this.cacheProfile.setCacheName("");
 
+    // execute the method to test.
     Object cachedObject = this.ehcacheFacade.onGetFromCache(this.cacheKey,
         this.cacheProfile);
 
