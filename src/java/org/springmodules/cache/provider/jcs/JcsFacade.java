@@ -46,7 +46,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/05/15 02:14:20 $
+ * @version $Revision: 1.6 $ $Date: 2005/05/29 02:00:54 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -159,31 +159,30 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   protected Object onGetFromCache(Serializable cacheKey,
       CacheProfile cacheProfile) throws EntryRetrievalException {
 
-    JcsProfile profile = (JcsProfile) cacheProfile;
-
-    String cacheName = profile.getCacheName();
-    if (StringUtils.isEmpty(cacheName)) {
-      throw new EntryRetrievalException("The name of the JCS Cache is empty");
-    }
-
-    CompositeCache cache = this.cacheManager.getCache(cacheName);
-    if (cache == null) {
-      String logMessage = "Method 'onGetFromCache(CacheKey, CacheProfile)'. Could not find JCS cache: "
-          + cacheName;
-
-      logger.info(logMessage);
-      throw new EntryRetrievalException("Could not find JCS Cache: "
-          + cacheName);
-    }
-
     Object cachedObject = null;
-    Serializable key = this.getKey(cacheKey, profile);
-    ICacheElement cacheElement = cache.get(key);
 
-    if (cacheElement != null) {
-      cachedObject = cacheElement.getVal();
+    JcsProfile profile = (JcsProfile) cacheProfile;
+    String cacheName = profile.getCacheName();
+    
+    if (StringUtils.isNotEmpty(cacheName)) {
+      CompositeCache cache = this.cacheManager.getCache(cacheName);
+
+      if (cache == null) {
+        String logMessage = "Method 'onGetFromCache(CacheKey, CacheProfile)'. Could not find JCS cache: "
+            + cacheName;
+
+        logger.info(logMessage);
+        throw new EntryRetrievalException("Could not find JCS cache: "
+            + cacheName);
+      }
+
+      Serializable key = this.getKey(cacheKey, profile);
+      ICacheElement cacheElement = cache.get(key);
+
+      if (cacheElement != null) {
+        cachedObject = cacheElement.getVal();
+      }
     }
-
     return cachedObject;
   }
 
