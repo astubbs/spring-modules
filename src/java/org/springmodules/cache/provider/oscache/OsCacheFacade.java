@@ -39,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:03 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/29 05:09:52 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -102,7 +102,10 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
     OsCacheProfile profile = (OsCacheProfile) cacheProfile;
     String[] groups = profile.getGroups();
 
-    if (groups != null) {
+    if (groups == null || groups.length == 0) {
+      this.cacheManager.flushAll();
+    }
+    else {
       int groupCount = groups.length;
 
       for (int i = 0; i < groupCount; i++) {
