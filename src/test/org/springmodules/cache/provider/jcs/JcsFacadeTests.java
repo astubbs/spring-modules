@@ -40,7 +40,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/15 02:14:11 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/29 02:01:50 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -65,8 +65,8 @@ public final class JcsFacadeTests extends TestCase {
   private String cacheName;
 
   /**
-   * Id used by <code>{@link #jcsFacade}</code> to get
-   * <code>{@link #cacheProfiles}</code>.
+   * Ids used by <code>{@link #jcsFacade}</code> to obtain any of the cache
+   * profiles in <code>{@link #cacheProfiles}</code>.
    */
   private String[] cacheProfileIds;
 
@@ -129,13 +129,13 @@ public final class JcsFacadeTests extends TestCase {
 
     this.cache = this.cacheManager.getCache(this.cacheName);
 
-    this.cacheProfiles = new JcsProfile[] { new JcsProfile(),
-        new JcsProfile() };
+    this.cacheProfiles = new JcsProfile[] { new JcsProfile(), new JcsProfile() };
     this.cacheProfileIds = new String[] { "firstProfile", "secondProfile" };
     this.groups = new String[] { "firstGroup", "secondGroup" };
 
     Map cacheProfileMap = new HashMap();
 
+    // initialize the cache profiles.
     int cacheProfileCount = this.cacheProfiles.length;
     for (int i = 0; i < cacheProfileCount; i++) {
       JcsProfile cacheProfile = this.cacheProfiles[i];
@@ -211,8 +211,8 @@ public final class JcsFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#getKey(org.springmodules.cache.key.CacheKey, JcsProfile)}</code> creates
-   * a key containing the group specified in the given cache profile.
+   * <code>{@link JcsFacade#getKey(org.springmodules.cache.key.CacheKey, JcsProfile)}</code>
+   * creates a key containing the group specified in the given cache profile.
    */
   public void testGetKeyWithGroupName() {
     JcsProfile profile = new JcsProfile();
@@ -230,9 +230,9 @@ public final class JcsFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#getKey(org.springmodules.cache.key.CacheKey, JcsProfile)}</code> creates
-   * a key that does not contain the group if the given cache profile does not
-   * specify any group.
+   * <code>{@link JcsFacade#getKey(org.springmodules.cache.key.CacheKey, JcsProfile)}</code>
+   * creates a key that does not contain the group if the given cache profile
+   * does not specify any group.
    */
   public void testGetKeyWithoutGroupName() {
     JcsProfile profile = new JcsProfile();
@@ -242,23 +242,6 @@ public final class JcsFacadeTests extends TestCase {
     Serializable actualKey = this.jcsFacade.getKey(this.cacheKeys[i], profile);
 
     assertEquals("<Generated key>", this.cacheKeys[i], actualKey);
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * does not flush any cache or group if the cache specified in the given cache
-   * profile does not exist.
-   */
-  public void testOnFlushCacheWhenCacheIsNotFound() throws Exception {
-    this.updateCache(new Object[] { "firstObject", "secondObject" });
-
-    // execute the method to test.
-    int i = 0;
-    this.cacheProfiles[i].setCacheName("NotExistingCache");
-    this.jcsFacade.onFlushCache(this.cacheProfiles[i]);
-
-    assertEquals("<Cache size>", this.cacheKeys.length, this.cache.getSize());
   }
 
   /**
@@ -284,21 +267,26 @@ public final class JcsFacadeTests extends TestCase {
    * flushes only the specified groups of the specified cache.
    */
   public void testOnFlushCacheWithGroups() throws Exception {
-    Serializable[] keys = this.updateCache(new Object[] { "firstObject",
+    Serializable[] entryKeys = this.updateCache(new Object[] { "firstObject",
         "secondObject" });
 
     int i = 0;
+    JcsProfile cacheProfile = this.cacheProfiles[i];
+    Serializable entryKey = entryKeys[i];
+    String group = this.groups[i];
+
     // execute the method to test.
-    this.jcsFacade.onFlushCache(this.cacheProfiles[i]);
+    this.jcsFacade.onFlushCache(cacheProfile);
 
     // only one group should have been flushed.
-    ICacheElement cachedElement = this.cache.get(keys[i]);
-    assertNull("The group '" + this.groups[i] + "' should be flushed",
-        cachedElement);
+    ICacheElement cachedElement = this.cache.get(entryKey);
+    assertNull("The group '" + group + "' should be flushed", cachedElement);
 
-    i++;
-    cachedElement = this.cache.get(keys[i]);
-    assertNotNull("The group '" + this.groups[i] + "' should not be flushed",
+    entryKey = entryKeys[++i];
+    group = this.groups[i];
+
+    cachedElement = this.cache.get(entryKey);
+    assertNotNull("The group '" + group + "' should not be flushed",
         cachedElement);
   }
 
@@ -309,14 +297,183 @@ public final class JcsFacadeTests extends TestCase {
    */
   public void testOnFlushCacheWithoutGroups() throws Exception {
     this.updateCache(new Object[] { "firstObject", "secondObject" });
+    assertTrue("The size of the cache should be greater than zero", this.cache
+        .getSize() > 0);
+
+    JcsProfile cacheProfile = this.cacheProfiles[0];
+    cacheProfile.setGroup(null);
 
     // execute the method to test.
-    int i = 0;
-    this.cacheProfiles[i].setGroup(null);
-    this.jcsFacade.onFlushCache(this.cacheProfiles[i]);
+    this.jcsFacade.onFlushCache(cacheProfile);
 
     // the whole cache should be flushed.
     assertEquals("<Cache size>", 0, this.cache.getSize());
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JcsFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * retrieves, from the cache specified in the given cache profile, the entry
+   * stored under the given key.
+   */
+  public void testOnGetFromCache() throws Exception {
+    String objectToStore = "An Object";
+    this.updateCache(new Object[] { objectToStore });
+
+    int i = 0;
+    String cacheKey = this.cacheKeys[i];
+    JcsProfile cacheProfile = this.cacheProfiles[i];
+
+    // execute the method to test.
+    Object cachedObject = this.jcsFacade.onGetFromCache(cacheKey, cacheProfile);
+
+    assertSame("<Cached object>", objectToStore, cachedObject);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JcsFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * returns <code>null</code> if the name of the cache, specified in the
+   * given cache profile, is empty.
+   */
+  public void testOnGetFromCacheWhenCacheNameIsEmpty() throws Exception {
+    int i = 0;
+    String cacheKey = this.cacheKeys[i];
+    JcsProfile profile = this.cacheProfiles[i];
+    profile.setCacheName("");
+
+    // execute the method to test.
+    Object cachedObject = this.jcsFacade.onGetFromCache(cacheKey, profile);
+
+    assertNull("The retrieved object should be null", cachedObject);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JcsFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * returns <code>null</code> if the specified key does not exist in the
+   * cache.
+   */
+  public void testOnGetFromCacheWhenKeyIsNotFound() throws Exception {
+    int i = 0;
+    String cacheKey = "NonExistingKey";
+    JcsProfile profile = this.cacheProfiles[i];
+
+    // execute the method to test.
+    Object cachedObject = this.jcsFacade.onGetFromCache(cacheKey, profile);
+
+    assertNull("The retrieved object should be null", cachedObject);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JcsFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
+   * stores an entry in the cache specified in the given cache profile using the
+   * given key.
+   */
+  public void testOnPutInCache() throws Exception {
+    int i = 0;
+    String cacheKey = this.cacheKeys[i];
+    JcsProfile cacheProfile = this.cacheProfiles[i];
+    String objectToStore = "An Object";
+
+    // execute the method to test.
+    this.jcsFacade.onPutInCache(cacheKey, cacheProfile, objectToStore);
+
+    Serializable entryKey = this.jcsFacade.getKey(cacheKey, cacheProfile);
+    Object cachedObject = this.cache.get(entryKey).getVal();
+    assertSame("<Cached object>", objectToStore, cachedObject);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JcsFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
+   * does not store any entry in any cache if the name of the cache, specified
+   * in the given cache profile, is empty. given key.
+   */
+  public void testOnPutInCacheWhenCacheNameIsEmpty() throws Exception {
+    int i = 0;
+    String cacheKey = this.cacheKeys[i];
+    JcsProfile cacheProfile = this.cacheProfiles[i];
+    cacheProfile.setCacheName("");
+
+    // execute the method to test.
+    this.jcsFacade.onPutInCache(cacheKey, cacheProfile, "An Object");
+
+    Serializable entryKey = this.jcsFacade.getKey(cacheKey, cacheProfile);
+    ICacheElement cacheElement = this.cache.get(entryKey);
+    assertNull("The retrieved object should be null", cacheElement);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JcsFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * removes the entry stored under the given key from the cache specified in
+   * the given cache profile.
+   */
+  public void testRemoveFromCache() throws Exception {
+    Serializable[] entryKeys = this.updateCache(new Object[] { "An Object" });
+
+    int i = 0;
+    Serializable entryKey = entryKeys[i];
+    String cacheKey = this.cacheKeys[i];
+    String cacheProfileId = this.cacheProfileIds[i];
+
+    // execute the method to test.
+    this.jcsFacade.removeFromCache(cacheKey, cacheProfileId);
+
+    ICacheElement cacheElement = this.cache.get(entryKey);
+    assertNull("The element with key '" + cacheKey
+        + "' should have been removed from the cache", cacheElement);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JcsFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * does not remove any entry if the name of the cache, specified in the given
+   * cache profile, is empty.
+   */
+  public void testRemoveFromCacheWhenCacheNameIsEmpty() throws Exception {
+    Serializable[] entryKeys = this.updateCache(new Object[] { "An Object" });
+
+    int i = 0;
+    Serializable entryKey = entryKeys[i];
+    String cacheKey = this.cacheKeys[i];
+    String cacheProfileId = this.cacheProfileIds[i];
+    JcsProfile cacheProfile = this.cacheProfiles[i];
+    cacheProfile.setCacheName("");
+
+    // execute the method to test.
+    this.jcsFacade.removeFromCache(cacheKey, cacheProfileId);
+
+    ICacheElement cacheElement = this.cache.get(entryKey);
+    assertNotNull("The element with key '" + cacheKey
+        + "' should not have been removed from the cache", cacheElement);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JcsFacade#validateCacheManager()}</code> throws an
+   * <code>IllegalStateException</code> the cache manager is <code>null</code>.
+   */
+  public void testValidateCacheManagerWithCacheManagerEqualToNull() {
+    this.jcsFacade.setCacheManager(null);
+    try {
+      this.jcsFacade.validateCacheManager();
+      fail("An 'IllegalStateException' should have been thrown");
+    } catch (IllegalStateException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JcsFacade#validateCacheManager()}</code> does not throw any
+   * exception if the cache manager is not <code>null</code>.
+   */
+  public void testValidateCacheManagerWithCacheManagerNotEqualToNull()
+      throws Exception {
+    this.jcsFacade.validateCacheManager();
   }
 
   /**
@@ -324,23 +481,32 @@ public final class JcsFacadeTests extends TestCase {
    * 
    * @param objectsToStore
    *          the array containing the objects to store in the cache.
-   * @return the keys used to stored the objects in the cache.
+   * @return the keys used to store the objects in the cache.
    */
   protected Serializable[] updateCache(Object[] objectsToStore)
       throws Exception {
+    int objectsToStoreCount = objectsToStore.length;
     int cacheKeyCount = this.cacheKeys.length;
-    assertEquals("<Object to store count>", cacheKeyCount,
-        objectsToStore.length);
 
-    Serializable[] keys = new Serializable[cacheKeyCount];
+    assertTrue("There should be an object to store in the cache",
+        objectsToStoreCount > 0);
+    assertTrue("There should be no more than " + cacheKeyCount
+        + "objects to store in the cache", objectsToStoreCount <= cacheKeyCount);
 
-    for (int i = 0; i < cacheKeyCount; i++) {
-      keys[i] = this.jcsFacade.getKey(this.cacheKeys[i], this.cacheProfiles[i]);
-      ICacheElement cacheElement = this.createNewCacheElement(keys[i],
-          objectsToStore[i]);
+    Serializable[] entryKeys = new Serializable[objectsToStoreCount];
+
+    for (int i = 0; i < objectsToStoreCount; i++) {
+      String cacheKey = this.cacheKeys[i];
+      JcsProfile cacheProfile = this.cacheProfiles[i];
+      Serializable entryKey = this.jcsFacade.getKey(cacheKey, cacheProfile);
+      Object objectToStore = objectsToStore[i];
+
+      ICacheElement cacheElement = this.createNewCacheElement(entryKey,
+          objectToStore);
       this.cache.update(cacheElement);
+      entryKeys[i] = entryKey;
     }
 
-    return keys;
+    return entryKeys;
   }
 }
