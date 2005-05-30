@@ -1,0 +1,3 @@
+if = new abstract org.springmodules.commons.collections.functors.IfParserClosureFactoryBean
+chain = new abstract org.springmodules.commons.collections.functors.ChainedClosureFactoryBean
+applyPriorityClosure = new abstract org.springmodules.commons.collections.functors.ApplyPriorityClosure

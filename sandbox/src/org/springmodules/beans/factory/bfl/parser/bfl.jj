@@ -1,0 +1,820 @@
+options {
+	STATIC = false;
+	DEBUG_PARSER = true;
+}
+PARSER_BEGIN(BeanFactoryLanguageParser)
+package org.springmodules.beans.factory.bfl.parser;
+
+import org.springmodules.beans.factory.drivers.Bean;
+import org.springmodules.beans.factory.drivers.LiteralValue;
+import org.springmodules.beans.factory.drivers.Instance;
+import org.springmodules.beans.factory.drivers.BeanReference;
+import org.springmodules.beans.factory.drivers.LiteralList;
+import org.springmodules.beans.factory.drivers.LiteralMap;
+import org.springmodules.beans.factory.drivers.LiteralProperties;
+import org.springmodules.beans.factory.drivers.Alias;
+
+import org.springframework.util.StringUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import java.io.IOException;
+
+public class BeanFactoryLanguageParser {
+	private ClassLoader classLoader = null;
+	private ApplicationContext applicationContext = null;
+	
+	public void setClassLoader(ClassLoader classLoader) {
+		this.classLoader = classLoader;
+	}
+	
+	public ClassLoader getClassLoader() {
+		return this.classLoader;
+	}
+	
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
+	
+	public ApplicationContext getApplicationContext() {
+		return this.applicationContext;
+	}
+	
+	private LiteralValue getLiteralValue(final String value) {
+		return new LiteralValue() {
+			public String getValue() {
+				return value;
+			}
+		};
+	}
+	
+	private LiteralList getLiteralList(final Collection elements) {
+		return new LiteralList() {
+			public Collection getElements() {
+				return elements;
+			}
+		};
+	}
+	
+	private LiteralMap getLiteralMap(final Map map) {
+		return new LiteralMap() {
+			public Map getMap() {
+				return map;
+			}
+		};
+	}
+	
+	private LiteralProperties getLiteralProperties(final Map properties) {
+		return new LiteralProperties() {
+			public Map getProperties() {
+				return properties;
+			}
+		};
+	}
+	
+	private BeanReference getBeanReference(final Bean bean, final String beanName) {
+		return new BeanReference() {
+			public String getBeanName() {
+				return beanName;
+			}
+			
+			public Bean getBean() {
+				return bean;
+			}
+		};
+	}
+	
+	private Bean getBean(
+			final boolean isLazy, 
+			final boolean isAbstract, 
+			final boolean isPrototype, 
+			final BeanReference parent,
+			final Class clazz,
+			final Collection constructorArgs)
+	{
+		final Map properties = new HashMap();
+		return new Bean() {
+			private String description = null;		
+			private String initMethod = null;
+			private String destroyMethod = null;
+			private Collection dependsOn = null;
+			private String autowire = null;
+
+			public Class getClazz() {
+				return clazz;
+			}
+			
+			public boolean isLazy() {
+				return isLazy;
+			}
+			
+			public boolean isAbstract() {
+				return isAbstract;
+			}
+			
+			public boolean isSingleton() {
+				return !isPrototype;
+			}
+			
+			public BeanReference getParent() {
+				return parent;
+			}
+			
+			public Collection getConstructorArguments() {
+				return constructorArgs;
+			}
+			
+			public Map getProperties() {
+				return properties;
+			}
+			
+			public void setProperty(String propertyName, Instance value) {
+				properties.put(propertyName, value);
+			}
+			
+			public String getDescription() {
+				return this.description;
+			}
+			
+			public void setDescription(String description) {
+				this.description = description;
+			}
+			
+			public String getInitMethod() {
+				return this.initMethod;
+			}
+			
+			public void setInitMethod(String initMethod) {
+				this.initMethod = initMethod;
+			}
+			
+			public String getDestroyMethod() {
+				return this.destroyMethod;
+			}
+			
+			public void setDestroyMethod(String destroyMethod) {
+				this.destroyMethod = destroyMethod;
+			}
+			
+			public Collection getDependsOn() {
+				return this.dependsOn;
+			}
+			
+			public void setDependsOn(Collection beans) {
+				this.dependsOn = beans;
+			}
+			
+			public String getAutowire() {
+				return this.autowire;
+			}
+			
+			public void setAutowire(String autowire) {
+				this.autowire = autowire;
+			}
+		};
+	}
+	
+	private Alias getAlias(final BeanReference beanReference, final String alias) {
+		return new Alias() {
+			public BeanReference getReferencedBean() {
+				return beanReference;
+			}
+			
+			public String getAlias() {
+				return alias;
+			}
+		};
+	}
+	
+	private BeanReference findBeanReference(Collection assignments, String beanName) {
+		for (Iterator iter = assignments.iterator(); iter.hasNext();) {
+			Object o = iter.next();
+			
+			if (o instanceof BeanReference) {
+				BeanReference beanReference = (BeanReference)o;
+				if (beanName.equals(beanReference.getBeanName())) {
+					return beanReference;
+				}
+			} else if (o instanceof Alias) {
+				Alias alias = (Alias)o;
+				if (beanName.equals(alias.getAlias())) {
+					return alias.getReferencedBean();
+				}
+			}
+		}
+		
+		if (getApplicationContext() != null && applicationContext.containsBean(beanName)) {
+			return getBeanReference(null, beanName);
+		}
+		
+		return null;
+	}
+	
+	private Bean findBean(Collection assignments, String beanName) {
+		BeanReference beanReference = findBeanReference(assignments, beanName);
+		if (beanReference != null) {
+			return beanReference.getBean();
+		} else {
+			return null;
+		}
+	}
+
+}
+
+PARSER_END(BeanFactoryLanguageParser)
+
+<DEFAULT, HERE_STRING_START> SKIP :
+{
+	" "
+|	"\t"
+|	"\n"
+|	"\r"
+|	"\f"
+}
+
+TOKEN_MGR_DECLS : {
+	private String hereStringEnd = null;
+	private StringBuffer hereStringText = null;
+	
+	public String getHereStringText() {
+		return hereStringText.toString();
+	}
+}
+
+TOKEN [IGNORE_CASE] :
+{
+	< NEW : "NEW" >
+|	< ABSTRACT : "ABSTRACT" >
+|	< CHILD_OF : "CHILD OF" >
+|	< PROTOTYPE : "PROTOTYPE" >
+|	< LAZY : "LAZY" >
+|	< DESCRIPTION_FOR : "DESCRIPTION FOR" >
+|	< INIT_METHOD_FOR : "INIT METHOD FOR" >
+|	< DESTROY_METHOD_FOR : "DESTROY METHOD FOR" >
+|	< DEPENDS_ON : "DEPENDS ON" >
+|	< SET_AUTOWIRE_FOR : "SET AUTOWIRE FOR" >
+|	< TO : "TO" >
+|	< NONE : "NONE" | "NO" >
+|	< BY_NAME : "BY NAME" >
+|	< BY_TYPE : "BY TYPE" >
+|	< CONSTRUCTOR : "CONSTRUCTOR" >
+|	< AUTODETECT : "AUTODETECT" >
+|	< IMPORT : "IMPORT" >
+|	< ALIAS_FOR : "ALIAS FOR" >
+}
+
+TOKEN :
+{
+	< NUM : ("-")?(["0"-"9"])+ | ("-")?(["0"-"9"])+"." (["0"-"9"])* >
+|	< STRING : "\'" ( "\\\'" | ~["\'", "\\"])* "\'" >
+|	< IDENTIFIER : <LETTER> (<LETTER> | <DIGIT>)* >
+|	  < #LETTER:
+      [
+       "\u0024",
+       "\u0041"-"\u005a",
+       "\u005f",
+       "\u0061"-"\u007a",
+       "\u00c0"-"\u00d6",
+       "\u00d8"-"\u00f6",
+       "\u00f8"-"\u00ff",
+       "\u0100"-"\u1fff",
+       "\u3040"-"\u318f",
+       "\u3300"-"\u337f",
+       "\u3400"-"\u3d2d",
+       "\u4e00"-"\u9fff",
+       "\uf900"-"\ufaff"
+      ]
+	>
+|
+	< #DIGIT:
+      [
+       "\u0030"-"\u0039",
+       "\u0660"-"\u0669",
+       "\u06f0"-"\u06f9",
+       "\u0966"-"\u096f",
+       "\u09e6"-"\u09ef",
+       "\u0a66"-"\u0a6f",
+       "\u0ae6"-"\u0aef",
+       "\u0b66"-"\u0b6f",
+       "\u0be7"-"\u0bef",
+       "\u0c66"-"\u0c6f",
+       "\u0ce6"-"\u0cef",
+       "\u0d66"-"\u0d6f",
+       "\u0e50"-"\u0e59",
+       "\u0ed0"-"\u0ed9",
+       "\u1040"-"\u1049"
+      ]
+	>
+|	< CLASS_NAME : ( <IDENTIFIER> "." )+ <IDENTIFIER> >
+|	< PATH_ELEMENT : (<LETTER> | <DIGIT> | "-" | "_" | ".")+ >
+|	< BEAN_NAME : ( <LETTER> | "_" ) ( <LETTER> | <DIGIT> | "_" )* >
+|	< PROPERTY : ( <IDENTIFIER> | <BEAN_NAME> ) ( "." <IDENTIFIER> )+ >
+|	< HERE_STRING_START_OPERATOR : "<<<" > : HERE_STRING_START
+|	< CLASS_PATH : ( ( <IDENTIFIER> | <PATH_ELEMENT> ) "/")* ( <IDENTIFIER> | <PATH_ELEMENT> ) >
+}
+
+<HERE_STRING_START> TOKEN :
+{
+	< HERE_STRING_START_TOKEN : <IDENTIFIER> "\n" >
+	{
+		hereStringEnd = image.toString();
+		hereStringText = new StringBuffer();
+	} : HERE_STRING
+}
+
+<HERE_STRING> TOKEN :
+{
+	< HERE_STRING_TOKEN1 : ~["\n"] >
+	{
+		hereStringText.append(image.toString());
+	}
+|	< HERE_STRING_TOKEN2 : "\n" >
+	{
+		hereStringText.append(image.toString());
+	} : HERE_STRING_END
+
+}
+
+<HERE_STRING_END> TOKEN :
+{
+	< HERE_STRING_NEW_LINE_TOKEN : "\n" >
+|	< HERE_STRING_END_TOKEN : <IDENTIFIER> "\n" >
+	{
+		if (image.toString().equals(hereStringEnd)) {
+			SwitchTo(DEFAULT);
+		} else {
+			SwitchTo(HERE_STRING);
+		}
+	}
+|	< HERE_STRING_CONTINUE_TOKEN : ~[] >
+	{
+		hereStringText.append(image.toString());
+	} : HERE_STRING
+}
+
+Token beanName() :
+{
+	Token t = null;
+}
+{
+	( t = <IDENTIFIER> | t = <BEAN_NAME> ) { return t; }
+}
+
+Token property() :
+{
+	Token t = null;
+}
+{
+	( t = <CLASS_NAME> | t = <PATH_ELEMENT> | t = <PROPERTY> ) { return t; }
+}
+
+Token className() :
+{
+	Token t = null;
+}
+{
+	t = <CLASS_NAME> { return t; }
+}
+
+Token classPath() :
+{
+	Token t = null;
+}
+{
+	( t = <IDENTIFIER> | t = <PATH_ELEMENT> | t = <CLASS_PATH> ) { return t; }
+}
+
+Collection parse() :
+{
+	Collection assignments = new ArrayList();
+}
+{
+	(
+		LOOKAHEAD( dependsOn(assignments) )
+		dependsOn(assignments)
+	|	assignment(assignments)
+	|	description(assignments)
+	|	initMethod(assignments)
+	|	destroyMethod(assignments)
+	|	autowire(assignments)
+	|	importStatement(assignments)
+	|	alias(assignments)
+	)*
+	<EOF>
+	{
+		return assignments;
+	}
+}
+
+void alias(Collection assignments) :
+{
+	BeanReference beanReference = null;
+	String alias = null;
+}
+{
+	<ALIAS_FOR>
+	beanReference = findBeanReference(assignments)
+	"="
+	alias = string()
+	[ ";" ]
+	{
+		assignments.add(getAlias(beanReference, alias));
+	}
+}
+
+void importStatement(Collection assignments) :
+{
+	Token t = null;
+	String classPath = null;
+}
+{
+	<IMPORT> t = classPath() { classPath = t.image; } [ ";" ]
+	{
+		try {
+			assignments.addAll(new BeanFactoryLanguageParser(new ClassPathResource(classPath).getInputStream()).parse());
+		} catch (IOException e) {
+			throw new ParseException(e);
+		}
+	}	 
+}
+
+void description(Collection assignments) :
+{
+	String description = null;
+	Bean bean = null;
+}
+{
+	<DESCRIPTION_FOR> 
+	bean = findBean(assignments)
+	"=" 
+	(
+		description = string()
+	|	description = hereString()
+	)
+	[ ";" ]
+	{
+		bean.setDescription(description);
+	}
+}
+
+void initMethod(Collection assignments) :
+{
+	String methodName = null;
+	Bean bean = null;
+}	
+{
+	<INIT_METHOD_FOR> bean = findBean(assignments) "=" methodName = string() [ ";" ]
+	{
+		bean.setInitMethod(methodName);
+	}
+}
+
+void destroyMethod(Collection assignments) :
+{
+	String methodName = null;
+	Bean bean = null;
+}	
+{
+	<DESTROY_METHOD_FOR> bean = findBean(assignments) "=" methodName = string() [ ";" ]
+	{
+		bean.setDestroyMethod(methodName);
+	}
+}
+
+void dependsOn(Collection assignments) :
+{
+	Bean bean = null;
+	BeanReference beanReference = null;
+	Collection beans = new ArrayList();
+}
+{
+	bean = findBean(assignments)
+	<DEPENDS_ON>
+	beanReference = findBeanReference(assignments) { beans.add(beanReference); }
+	(
+		"," beanReference = findBeanReference(assignments) { beans.add(beanReference); }
+	)*
+	[ ";" ]
+	{
+		bean.setDependsOn(beans);
+	}
+}
+
+void autowire(Collection assignments) :
+{
+	Bean bean = null;
+}
+{
+	<SET_AUTOWIRE_FOR>
+	bean = findBean(assignments)
+	<TO>
+	(
+		<NONE>			{ bean.setAutowire("no"); }
+	|	<BY_NAME>		{ bean.setAutowire("byName"); }
+	|	<BY_TYPE>		{ bean.setAutowire("byType"); }
+	|	<CONSTRUCTOR>	{ bean.setAutowire("constructor"); }
+	|	<AUTODETECT>	{ bean.setAutowire("autodetect"); }
+	)
+	[ ";" ]
+}
+
+void assignment(Collection assignments) :
+{
+	String beanName = null;
+	String property = null;
+	String propertyName = "";
+	Instance instance = null;
+	Bean bean = null;
+	Token t = null;
+}
+{
+	(
+		t = beanName() { beanName = t.image; }
+		"="
+		bean = bean(assignments)
+		{
+			assignments.add(getBeanReference(bean, beanName));
+		}
+	|	t = property() { property = t.image; }
+		"="
+		instance = instance(assignments)
+		{
+			beanName = property.substring(0, property.indexOf("."));
+			propertyName = property.substring(property.indexOf(".") + 1, property.length());
+			bean = findBean(assignments, beanName);
+			
+			if (bean != null) {
+				bean.setProperty(propertyName, instance);
+			} else {
+				throw new ParseException("Could not find bean named [" + beanName + "] at line " + token.beginLine + ", column " + token.beginColumn + "!");
+			}
+		}
+	)
+	[ ";" ]
+}
+
+Instance instance(Collection assignments) :
+{
+	Instance instance = null;
+	Collection list = null;
+	Map map = null;
+	Map properties = null;
+}
+{
+	(
+		instance = numberLiteral() { return instance; }
+	|	instance = stringLiteral() { return instance; }
+	|	instance = hereStringLiteral() { return instance; }
+	|	instance = bean(assignments) { return instance; }
+	|	instance = beanReference(assignments) { return instance; }
+	|	"["  
+		{ list = new ArrayList(); }
+		[
+			instance = instance(assignments) { list.add(instance); }
+			(
+				"," instance = instance(assignments) { list.add(instance); }
+			)*
+		]
+		"]"
+		{
+			return getLiteralList(list);
+		}
+	|	"("
+		{ map = new HashMap(); }
+		[
+			mapKeyValuePair(assignments, map)
+			(
+				"," mapKeyValuePair(assignments, map)
+			)*
+		]
+		")"
+		{
+			return getLiteralMap(map);
+		}
+	|	"{"
+		{ properties = new HashMap(); }
+		[
+			propertiesKeyValuePair(properties)
+			(
+				"," propertiesKeyValuePair(properties)
+			)*
+		]
+		"}"
+		{
+			return getLiteralProperties(properties);
+		}
+	)
+}
+
+void mapKeyValuePair(Collection assignments, Map map) :
+{
+	Instance key = null;
+	Instance value = null;
+}
+{
+	key = stringLiteral() "->" value = instance(assignments) { map.put(key, value); }
+}
+
+void propertiesKeyValuePair(Map properties) :
+{
+	Instance key = null;
+	Instance value = null;
+}
+{
+	( key = stringLiteral() | key = numberLiteral() ) "->" value = stringLiteral() { properties.put(key, value); }
+}
+
+Bean bean(Collection assignments) :
+{
+	boolean isLazy = false;
+	boolean isAbstract = false;
+	boolean isPrototype = false;
+	boolean isChildOf = false;
+	BeanReference parent = null;
+	Class clazz = null;
+	Collection constructorArgs = new ArrayList();
+	Instance tmpInstance = null;
+}
+{
+	<NEW> 
+	[ <LAZY> { isLazy = true; } ] 
+	[ <ABSTRACT> { isAbstract = true; } ] 
+	[ <PROTOTYPE> { isPrototype = true; } ] 
+	( 
+		[ <CHILD_OF> { isChildOf = true; } ] 
+		parent = beanReference(assignments) 
+		[
+			"("
+				[
+					tmpInstance = instance(assignments) { constructorArgs.add(tmpInstance); }
+					(
+						"," tmpInstance = instance(assignments) { constructorArgs.add(tmpInstance); }
+					)*
+				]
+			")"
+		]
+	| 	clazz = clazz()
+		[
+			"("
+				[
+					tmpInstance = instance(assignments) { constructorArgs.add(tmpInstance); }
+					(
+						"," tmpInstance = instance(assignments) { constructorArgs.add(tmpInstance); }
+					)*
+				]
+			")"
+		]
+	)
+	{
+		return getBean(isLazy, isAbstract, isPrototype, parent, clazz, constructorArgs);
+	}
+}
+
+BeanReference beanReference(Collection assignments) :
+{
+	String beanName = null;
+	BeanReference beanReference = null;
+	int beginLine = 0;
+	int beginColumn = 0;
+	Token t = null;
+}
+{
+	t = beanName()	{ beanName = t.image; beginLine = token.beginLine; beginColumn = token.beginColumn; }
+	{ 
+		beanReference = findBeanReference(assignments, beanName);
+		
+		if (beanReference != null) {
+			return beanReference;
+		} else {
+			throw new ParseException("Could not find parent bean named [" + beanName + "] at line " + beginLine + ", column " + beginColumn + "!");
+		}
+	}	
+}
+
+Instance numberLiteral() :
+{}
+{
+	<NUM> 
+	{ 
+		return getLiteralValue(token.image);
+	}
+}
+
+Instance stringLiteral() :
+{
+	String s = null;
+}
+{
+	s = string()
+	{
+		return getLiteralValue(s);
+	}
+}
+
+Instance hereStringLiteral() :
+{
+	String s = null;
+}
+{
+	s = hereString()
+	{
+		return getLiteralValue(s);
+	}
+}	
+
+Bean findBean(Collection assignments) :
+{
+	Token t = null;
+	Bean bean = null;
+}
+{
+	t = beanName()
+	{
+		bean = findBean(assignments, t.image);
+		
+		if (bean == null) {
+			throw new ParseException("Could not find bean named [" + t.image + "] at line " + t.beginLine + ", column " + t.beginColumn + "!");
+		} else {
+			return bean;
+		}
+	}
+}
+
+BeanReference findBeanReference(Collection assignments) :
+{
+	Token t = null;
+	BeanReference beanReference = null;
+}
+{
+	t = beanName()
+	{
+		beanReference = findBeanReference(assignments, t.image);
+		
+		if (beanReference == null) {
+			throw new ParseException("Could not find bean named [" + t.image + "] at line " + t.beginLine + ", column " + t.beginColumn + "!");
+		} else {
+			return beanReference;
+		}
+	}
+}
+
+String string() :
+{
+	StringBuffer sb = new StringBuffer();
+}
+{
+	<STRING>
+	{
+		sb.append(StringUtils.replace(token.image.substring(1, token.image.length() - 1), "\\'", "'"));
+	}
+	( "+" <STRING>
+	{
+		sb.append(StringUtils.replace(token.image.substring(1, token.image.length() - 1), "\\'", "'"));	
+	}
+	)*
+	{
+		return sb.toString();
+	}
+}
+
+String hereString() :
+{}
+{
+	<HERE_STRING_START_OPERATOR> <HERE_STRING_START_TOKEN> 
+	( 
+		<HERE_STRING_TOKEN1> 
+	|	<HERE_STRING_TOKEN2> 
+	|	<HERE_STRING_NEW_LINE_TOKEN> 
+	|	<HERE_STRING_CONTINUE_TOKEN> 
+	)*
+	<HERE_STRING_END_TOKEN>
+	{
+		return token_source.getHereStringText();
+	}
+}
+
+Class clazz() :
+{
+	Token t = null;
+}
+{
+	t = className()
+	{
+		try {
+			if (getClassLoader() != null) { 
+				return Class.forName(t.image, true, getClassLoader());
+			} else {
+				return Class.forName(t.image); 
+			}
+		} catch (ClassNotFoundException e) {
+			throw new ParseException("Could not load class [" + t.image + "] at line " + t.beginLine + ", column " + t.beginColumn + "!");
+		}
+	}
+}
