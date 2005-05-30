@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.key;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -32,7 +33,7 @@ import org.aopalliance.intercept.MethodInvocation;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:23 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:31 $
  */
 public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
 
@@ -64,7 +65,7 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
   /**
    * @see CacheKeyGenerator#generateKey(MethodInvocation)
    */
-  public final CacheKey generateKey(MethodInvocation methodInvocation) {
+  public final Serializable generateKey(MethodInvocation methodInvocation) {
     HashCodeCalculator hashCodeCalculator = new HashCodeCalculator();
 
     Method method = methodInvocation.getMethod();
@@ -86,7 +87,7 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
     long checkSum = hashCodeCalculator.getCheckSum();
     int hashCode = hashCodeCalculator.getHashCode();
 
-    CacheKey cacheKey = new HashCodeCacheKey(checkSum, hashCode);
+    Serializable cacheKey = new HashCodeCacheKey(checkSum, hashCode);
     return cacheKey;
   }
 

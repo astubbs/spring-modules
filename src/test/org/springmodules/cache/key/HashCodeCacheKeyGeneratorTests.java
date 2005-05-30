@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.key;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 /**
@@ -27,7 +28,7 @@ import java.lang.reflect.Method;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:10 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/30 13:30:37 $
  */
 public final class HashCodeCacheKeyGeneratorTests extends
     AbstractCacheKeyGeneratorTests {
@@ -142,10 +143,10 @@ public final class HashCodeCacheKeyGeneratorTests extends
     long checkSum = hashCodeCalculator.getCheckSum();
     int hashCode = hashCodeCalculator.getHashCode();
 
-    CacheKey expectedCacheKey = new HashCodeCacheKey(checkSum, hashCode);
+    Serializable expectedCacheKey = new HashCodeCacheKey(checkSum, hashCode);
 
     // get the actual key.
-    CacheKey actualCacheKey = super.executeGenerateArgumentHashCode(
+    Serializable actualCacheKey = super.executeGenerateArgumentHashCode(
         toStringMethod, null);
 
     assertEquals("<Cache key>", expectedCacheKey, actualCacheKey);

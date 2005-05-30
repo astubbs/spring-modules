@@ -20,12 +20,12 @@
 
 package org.springmodules.cache.integration.oscache;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyCollectionListener;
-import org.springmodules.cache.key.CacheKey;
 import org.springmodules.cache.provider.oscache.OsCacheProfile;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -39,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/21 21:18:53 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:32 $
  */
 public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractIntegrationTests {
@@ -78,7 +78,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
 
     // get the key that supposedly must have been used to store the entry in the
     // cache.
-    CacheKey cacheKey = (CacheKey) generatedKeys.get(0);
+    Serializable cacheKey = (Serializable) generatedKeys.get(0);
 
     if (super.logger.isDebugEnabled()) {
       super.logger.debug("Key of the cache element that should not exist: "
@@ -125,7 +125,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
 
     // get the key that supposedly must have been used to store the entry in the
     // cache.
-    CacheKey cacheKey = (CacheKey) generatedKeys.get(keyIndex);
+    Serializable cacheKey = (Serializable) generatedKeys.get(keyIndex);
     String key = cacheKey.toString();
 
     if (super.logger.isDebugEnabled()) {

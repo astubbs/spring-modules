@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.key;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
@@ -33,7 +34,7 @@ import org.easymock.MockControl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:11 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/30 13:30:36 $
  */
 public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
 
@@ -82,7 +83,7 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
    * @return the key generated for the specified declaration of the invocated
    *         method.
    */
-  protected final CacheKey executeGenerateArgumentHashCode(Method method,
+  protected final Serializable executeGenerateArgumentHashCode(Method method,
       Object[] methodArguments) {
 
     CacheKeyGenerator cacheKeyGenerator = this.getCacheKeyGenerator();
@@ -99,7 +100,7 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
     this.mockMethodInvocationControl.replay();
 
     // get the key for the method.
-    CacheKey cacheKey = cacheKeyGenerator
+    Serializable cacheKey = cacheKeyGenerator
         .generateKey(this.mockMethodInvocation);
 
     // verify that the expectations of the mock control were met.
@@ -169,12 +170,12 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
         new Integer(0) };
 
     // get the key for the first method.
-    CacheKey firstCacheKey = this.executeGenerateArgumentHashCode(
+    Serializable firstCacheKey = this.executeGenerateArgumentHashCode(
         indexOfMethod, indexOfMethodArguments);
 
     // get the key for the second method.
     this.mockMethodInvocationControl.reset();
-    CacheKey secondCacheKey = this.executeGenerateArgumentHashCode(
+    Serializable secondCacheKey = this.executeGenerateArgumentHashCode(
         lastIndexOfMethod, lastIndexOfMethodArguments);
 
     assertFalse("The keys should not be equal", firstCacheKey
@@ -203,12 +204,12 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
         new Integer(4) };
 
     // get the key for the first method.
-    CacheKey firstCacheKey = this.executeGenerateArgumentHashCode(
+    Serializable firstCacheKey = this.executeGenerateArgumentHashCode(
         indexOfMethod, indexOfMethodArguments);
 
     // get the key for the second method.
     this.mockMethodInvocationControl.reset();
-    CacheKey secondCacheKey = this.executeGenerateArgumentHashCode(
+    Serializable secondCacheKey = this.executeGenerateArgumentHashCode(
         lastIndexOfMethod, lastIndexOfMethodArguments);
 
     assertFalse("The keys should not be equal", firstCacheKey
@@ -233,12 +234,12 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
         new Integer(2) };
 
     // get the key for the first method.
-    CacheKey firstCacheKey = this.executeGenerateArgumentHashCode(method,
+    Serializable firstCacheKey = this.executeGenerateArgumentHashCode(method,
         methodArguments);
 
     // get the key for the second method.
     this.mockMethodInvocationControl.reset();
-    CacheKey secondCacheKey = this.executeGenerateArgumentHashCode(method,
+    Serializable secondCacheKey = this.executeGenerateArgumentHashCode(method,
         differentMethodArguments);
 
     assertFalse("The keys should not be equal", firstCacheKey
@@ -261,12 +262,12 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
     Object[] methodArguments = new Object[] { new Integer(4), new Integer(0) };
 
     // get the key for the method.
-    CacheKey expectedCacheKey = this.executeGenerateArgumentHashCode(method,
+    Serializable expectedCacheKey = this.executeGenerateArgumentHashCode(method,
         methodArguments);
 
     // get the key for the same method.
     this.mockMethodInvocationControl.reset();
-    CacheKey actualCacheKey = this.executeGenerateArgumentHashCode(method,
+    Serializable actualCacheKey = this.executeGenerateArgumentHashCode(method,
         methodArguments);
 
     assertEquals("<Cache key>", expectedCacheKey, actualCacheKey);

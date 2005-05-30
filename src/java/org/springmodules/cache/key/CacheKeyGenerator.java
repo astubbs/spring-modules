@@ -18,6 +18,8 @@
 
 package org.springmodules.cache.key;
 
+import java.io.Serializable;
+
 import org.aopalliance.intercept.MethodInvocation;
 
 /**
@@ -27,7 +29,7 @@ import org.aopalliance.intercept.MethodInvocation;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:23 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:31 $
  */
 public interface CacheKeyGenerator {
 
@@ -38,5 +40,5 @@ public interface CacheKeyGenerator {
    *          the description of an invocation to the intercepted method.
    * @return the key for a cache entry.
    */
-  CacheKey generateKey(MethodInvocation methodInvocation);
+  Serializable generateKey(MethodInvocation methodInvocation);
 }

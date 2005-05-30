@@ -20,6 +20,7 @@
 
 package org.springmodules.cache.integration.jcs;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,6 @@ import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyCollectionListener;
-import org.springmodules.cache.key.CacheKey;
 import org.springmodules.cache.provider.jcs.JcsProfile;
 
 /**
@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.jcs.JcsProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/05/21 21:18:51 $
+ * @version $Revision: 1.6 $ $Date: 2005/05/30 13:30:35 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractIntegrationTests {
@@ -80,7 +80,7 @@ public abstract class AbstractJcsIntegrationTests extends
 
     // get the key that supposedly must have been used to store the entry in the
     // cache.
-    CacheKey cacheKey = (CacheKey) generatedKeys.get(0);
+    Serializable cacheKey = (Serializable) generatedKeys.get(0);
 
     // get the cache entry stored under the key we got.
     String cacheName = "testCache";
@@ -123,7 +123,7 @@ public abstract class AbstractJcsIntegrationTests extends
 
     // get the key that supposedly must have been used to store the entry in the
     // cache.
-    CacheKey cacheKey = (CacheKey) generatedKeys.get(keyIndex);
+    Serializable cacheKey = (Serializable) generatedKeys.get(keyIndex);
 
     // get the cache entry stored under the key we got.
     String cacheName = "testCache";

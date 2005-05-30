@@ -29,8 +29,6 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.key.CacheKey;
-import org.springmodules.cache.mock.FixedValueCacheKey;
 import org.springmodules.cache.mock.MockCacheProfile;
 
 /**
@@ -40,7 +38,7 @@ import org.springmodules.cache.mock.MockCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:42 $
+ * @version $Revision: 1.2 $ $Date: 2005/05/30 13:30:38 $
  */
 public final class AbstractCacheProviderFacadeImplTests extends TestCase {
 
@@ -54,7 +52,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * Key of the cached object to be retrieved from
    * <code>{@link #cacheProviderFacade}</code>.
    */
-  private CacheKey cacheKey;
+  private Serializable cacheKey;
 
   /**
    * Cache profile to be stored in <code>{@link #mockCacheProfileMap}</code>
@@ -149,7 +147,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
 
     this.cacheProviderFacade.setCacheProfiles(this.mockCacheProfileMap);
 
-    this.cacheKey = new FixedValueCacheKey("KEY");
+    this.cacheKey = "Key";
 
     this.cacheProfile = new MockCacheProfile();
   }

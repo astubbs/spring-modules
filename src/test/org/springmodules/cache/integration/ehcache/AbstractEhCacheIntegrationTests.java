@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.integration.ehcache;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,6 @@ import net.sf.ehcache.Element;
 
 import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyCollectionListener;
-import org.springmodules.cache.key.CacheKey;
 import org.springmodules.cache.provider.ehcache.EhCacheProfile;
 
 /**
@@ -38,7 +38,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/21 21:18:52 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:34 $
  */
 public abstract class AbstractEhCacheIntegrationTests extends
     AbstractIntegrationTests {
@@ -66,7 +66,7 @@ public abstract class AbstractEhCacheIntegrationTests extends
 
     // get the key that supposedly must have been used to store the entry in the
     // cache.
-    CacheKey cacheKey = (CacheKey) generatedKeys.get(0);
+    Serializable cacheKey = (Serializable) generatedKeys.get(0);
 
     // get the cache entry stored under the key we got.
     Element cachedElement = this.cache.get(cacheKey);
@@ -102,7 +102,7 @@ public abstract class AbstractEhCacheIntegrationTests extends
 
     // get the key that supposedly must have been used to store the entry in the
     // cache.
-    CacheKey cacheKey = (CacheKey) generatedKeys.get(keyIndex);
+    Serializable cacheKey = (Serializable) generatedKeys.get(keyIndex);
 
     // get the cache entry stored under the key we got.
     Element cachedElement = this.cache.get(cacheKey);

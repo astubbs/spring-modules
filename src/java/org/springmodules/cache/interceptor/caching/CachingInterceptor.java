@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.interceptor.caching;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
@@ -27,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.cache.EntryRetrievalException;
-import org.springmodules.cache.key.CacheKey;
 import org.springmodules.cache.key.CacheKeyGenerator;
 import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
 import org.springmodules.cache.provider.CacheProviderFacade;
@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/17 11:00:36 $
+ * @version $Revision: 1.5 $ $Date: 2005/05/30 13:30:34 $
  */
 public class CachingInterceptor extends CachingAspectSupport implements
     MethodInterceptor, InitializingBean {
@@ -121,7 +121,7 @@ public class CachingInterceptor extends CachingAspectSupport implements
     String cacheProfileId = cachingAttribute.getCacheProfileId();
 
     CacheKeyGenerator cacheKeyGenerator = super.getCacheKeyGenerator();
-    CacheKey cacheKey = cacheKeyGenerator.generateKey(methodInvocation);
+    Serializable cacheKey = cacheKeyGenerator.generateKey(methodInvocation);
 
     try {
       cachedObject = this.cacheProviderFacade.getFromCache(cacheKey,

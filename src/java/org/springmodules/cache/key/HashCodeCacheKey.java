@@ -18,6 +18,8 @@
 
 package org.springmodules.cache.key;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
@@ -27,9 +29,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:24 $
+ * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:31 $
  */
-public final class HashCodeCacheKey implements CacheKey {
+public final class HashCodeCacheKey implements Serializable {
 
   /**
    * Version number of this class.
