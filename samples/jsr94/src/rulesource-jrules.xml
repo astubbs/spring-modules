@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName">
+			<value>org.hsqldb.jdbcDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:hsqldb:hsql://localhost:9001</value>
+		</property>
+		<property name="username">
+			<value>sa</value>
+		</property>
+		<property name="password">
+			<value/>
+		</property>
+	</bean>
+
+	<!-- The `local' ruleServiceProvider; we can have as many different ruleProviders as we want -->
+	<bean id="ruleServiceProvider" class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean">
+		<property name="provider">
+			<value>http://www.ilog.com</value>
+		</property>
+		<property name="providerClass">
+			<value>ilog.rules.server.jsr94.IlrRuleServiceProvider</value>
+		</property>
+	</bean>
+
+	<!-- The local ruleRuntime. Usually, there is one ruleRuntime bean for each ruleServiceProvider bean. -->
+	<bean id="ruleRuntime" class="org.springmodules.jsr94.factory.RuleRuntimeFactoryBean">
+		<property name="serviceProvider">
+			<ref local="ruleServiceProvider"/>
+		</property>
+	</bean>
+
+	<!-- the local ruleAdministrator. Usually, there is one ruleAdministrator bean for each ruleServiceProvider bean -->
+	<bean id="ruleAdministrator" class="org.springmodules.jsr94.factory.RuleAdministratorFactoryBean">
+		<property name="serviceProvider">
+			<ref local="ruleServiceProvider"/>
+		</property>
+	</bean>
+
+	<!-- the ruleSource. There can be many ruleSource beans for each ruleAdministrator/ruleRuntime. -->
+	<bean id="ruleSource" class="org.springmodules.jsr94.rulesource.DefaultRuleSource">
+		<property name="ruleRuntime">
+			<ref local="ruleRuntime"/>
+		</property>
+		<property name="ruleAdministrator">
+			<ref local="ruleAdministrator"/>
+		</property>
+		<property name="source">
+			<value>/rules/cars_rules_without_ruleflow.irl</value>
+		</property>
+		<property name="bindUri">
+			<value>cars</value>
+		</property>
+		<property name="rulesetProperties">
+			<map>
+				<entry key="IlrName">
+					<value>cars_rules</value>
+				</entry>
+				<entry key="IlrRulesInILR">
+					<value>true</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<!-- The transaction manager -->
+	<bean id="jsr94TransactionManager" class="org.springmodules.jsr94.Jsr94TransactionManager">
+		<property name="ruleSource">
+			<ref local="ruleSource"/>
+		</property>
+	</bean>
+
+	<!-- Jsr94Template -->
+	<bean id="jsr94Template" class="org.springmodules.jsr94.core.Jsr94Template">
+		<property name="ruleSource">
+			<ref local="ruleSource"/>
+		</property>
+	</bean>
+
+	<!-- Sample Business proxy & bean -->
+<!--bean id="businessBean" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager"><ref bean="jsr94TransactionManager"/></property>
+		<property name="target"><ref local="businessBeanTarget"/></property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="statefulInTransaction*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean-->
+
+	<bean id="carsDAO" class="org.springmodules.samples.jsr94.daos.CarsDAOImpl">
+		<!--property name="template"><ref local="jsr94Template"/></property-->
+		<property name="dataSource">
+			<ref local="datasource"/>
+		</property>
+	</bean>
+
+	<bean id="carsService" class="org.springmodules.samples.jsr94.services.CarsServiceImpl">
+		<property name="template">
+			<ref local="jsr94Template"/>
+		</property>
+		<property name="carsDAO">
+			<ref local="carsDAO"/>
+		</property>
+	</bean>
+
+</beans>
