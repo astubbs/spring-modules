@@ -8,7 +8,8 @@
 1. MOTIVATION
 
 The aim of the sample is to show how to use the support
-of JSR94 1.0 in Spring Modules with JRules as rule engine.
+of JSR94 1.0 in Spring Modules with Drools and JRules as
+rule engines.
 
 This sample uses rules to find the good bargain cars in
 a database.
@@ -39,3 +40,6 @@ These files are:
 
 The JRules rules are written in irl (Ilog Rule Language). There are
 two: one without ruleflow and one with.
+
+As Drools is an open source product, you don't need additional
+libraries to make work the sample.
