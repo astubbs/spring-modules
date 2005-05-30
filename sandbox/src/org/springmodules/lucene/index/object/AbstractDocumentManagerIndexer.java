@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springmodules.lucene.index.object.directory.DocumentIndexingListener;
+import org.springmodules.lucene.index.object.directory.FileDocumentIndexingListener;
 import org.springmodules.lucene.index.support.file.DocumentHandler;
 import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 import org.springmodules.lucene.index.support.file.DocumentMatching;
