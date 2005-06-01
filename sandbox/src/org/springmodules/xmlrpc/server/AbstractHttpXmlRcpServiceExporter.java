@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/01 08:48:50 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/01 09:09:10 $
  */
 public abstract class AbstractHttpXmlRcpServiceExporter extends
     AbstractXmlRpcServiceExporter {
@@ -54,7 +54,7 @@ public abstract class AbstractHttpXmlRcpServiceExporter extends
    * @throws IOException
    *           if an input or output exception occurred.
    */
-  public final byte[] readXmlRpcRequest(HttpServletRequest request)
+  protected final byte[] readXmlRpcRequest(HttpServletRequest request)
       throws IOException {
     byte[] result = super.getXmlRpcServer().execute(request.getInputStream());
     return result;
@@ -70,7 +70,7 @@ public abstract class AbstractHttpXmlRcpServiceExporter extends
    * @throws IOException
    *           if an input or output exception occurred.
    */
-  public final void writeXmlRpcResult(HttpServletResponse response,
+  protected final void writeXmlRpcResult(HttpServletResponse response,
       byte[] result) throws IOException {
 
     response.setContentType("text/xml");
