@@ -30,7 +30,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 00:27:15 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/02 10:27:44 $
  */
 public final class ArraySerializerTests extends TestCase {
 
@@ -71,12 +71,12 @@ public final class ArraySerializerTests extends TestCase {
    * elements of the given array.
    */
   public void testSerialize() {
-    String[] objectToSerialize = new String[] { "Leia", "Luke", "Han" };
+    int[] objectToSerialize = new int[] { 0, 1, 2 };
 
     Vector expected = new Vector();
     int size = objectToSerialize.length;
     for (int i = 0; i < size; i++) {
-      expected.add(objectToSerialize[i]);
+      expected.add(new Integer(objectToSerialize[i]));
     }
 
     Object actual = this.serializer.serialize(objectToSerialize,
