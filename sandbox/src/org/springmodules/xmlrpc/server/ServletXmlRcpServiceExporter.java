@@ -25,22 +25,21 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
- * Template for exporters of business services as XML-RPC handlers. This class
- * takes care of the reading a HTTP request for a XML-RPC service and the
- * writing of the result to a HTTP response.
+ * Exports business services as XML-RPC handlers. This class takes care of the
+ * reading a HTTP request for a XML-RPC service and the writing of the result to
+ * a HTTP response.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/01 09:09:10 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 00:25:37 $
  */
-public abstract class AbstractHttpXmlRcpServiceExporter extends
-    AbstractXmlRpcServiceExporter {
+public class ServletXmlRcpServiceExporter extends AbstractXmlRpcServiceExporter {
 
   /**
    * Constructor.
    */
-  public AbstractHttpXmlRcpServiceExporter() {
+  public ServletXmlRcpServiceExporter() {
     super();
   }
 

@@ -31,15 +31,15 @@ import org.springframework.web.servlet.mvc.Controller;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/01 08:48:49 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 00:25:36 $
  */
-public class HttpXmlRcpServiceExportController extends
-    AbstractHttpXmlRcpServiceExporter implements Controller {
+public class XmlRcpServiceController extends ServletXmlRcpServiceExporter
+    implements Controller {
 
   /**
    * Constructor.
    */
-  public HttpXmlRcpServiceExportController() {
+  public XmlRcpServiceController() {
     super();
   }
 
