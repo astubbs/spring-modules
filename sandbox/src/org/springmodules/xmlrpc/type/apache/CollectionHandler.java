@@ -15,58 +15,61 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.xmlrpc.serializer;
+package org.springmodules.xmlrpc.type.apache;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.springmodules.xmlrpc.type.XmlRpcTypeHandler;
+import org.springmodules.xmlrpc.type.XmlRpcTypeHandlerRegistry;
+
 /**
  * <p>
- * Creates a new <code>{@link Vector}</code> containing each of the serialized
- * elements of the given <code>{@link Collection}</code>.
+ * Creates a new <code>{@link Vector}</code> containing each of the elements
+ * of the given <code>{@link Collection}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 00:27:18 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:50 $
  */
-public final class CollectionSerializer extends AbstractXmlRpcSerializer {
+public final class CollectionHandler extends AbstractApacheXmlRpcTypeHandler {
 
   /**
    * Constructor.
    */
-  public CollectionSerializer() {
+  public CollectionHandler() {
     super();
   }
 
   /**
-   * @see XmlRpcSerializer#getSupportedClass()
+   * @see XmlRpcTypeHandler#getSupportedClass()
    */
   public Class getSupportedClass() {
     return Collection.class;
   }
 
   /**
-   * @see XmlRpcSerializer#serialize(Object, XmlRpcSerializerRegistry)
+   * @see XmlRpcTypeHandler#handleType(Object, XmlRpcTypeHandlerRegistry)
    */
-  public Object serialize(Object obj,
-      XmlRpcSerializerRegistry serializerRegistry) {
-    Vector serialized = new Vector();
+  protected Object handle(Object obj, XmlRpcTypeHandlerRegistry registry) {
+    Vector vector = new Vector();
 
     if (obj != null) {
       Collection collection = (Collection) obj;
       Iterator iterator = collection.iterator();
+
       while (iterator.hasNext()) {
         Object item = iterator.next();
-        XmlRpcSerializer serializer = serializerRegistry.findSerializer(item);
+        XmlRpcTypeHandler serializer = registry.findTypeHandler(item);
 
-        Object serializedItem = serializer.serialize(item, serializerRegistry);
-        serialized.add(serializedItem);
+        Object covertedItem = serializer.handleType(item, registry);
+        vector.add(covertedItem);
       }
     }
 
-    return serialized;
+    return vector;
   }
 
 }

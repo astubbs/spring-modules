@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.xmlrpc.server;
+package org.springmodules.xmlrpc.server.apache;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -32,9 +32,10 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/01 08:48:49 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:44 $
  */
-public abstract class AbstractXmlRpcServiceExporter implements InitializingBean {
+public abstract class AbstractApacheXmlRpcServiceExporter implements
+    InitializingBean {
 
   /**
    * Registry of handlers. Methods of this objects will be callable over XML-RPC
@@ -50,7 +51,7 @@ public abstract class AbstractXmlRpcServiceExporter implements InitializingBean 
   /**
    * Constructor.
    */
-  public AbstractXmlRpcServiceExporter() {
+  public AbstractApacheXmlRpcServiceExporter() {
     super();
   }
 
@@ -58,6 +59,9 @@ public abstract class AbstractXmlRpcServiceExporter implements InitializingBean 
    * Initializes the XML-RCP server and sets its handlers an maximum number of
    * threads.
    * 
+   * @throws BeanCreationException
+   *           if the property '<code>handlers</code>' is <code>null</code>
+   *           or empty.
    * @see InitializingBean#afterPropertiesSet()
    */
   public final void afterPropertiesSet() {
@@ -65,7 +69,7 @@ public abstract class AbstractXmlRpcServiceExporter implements InitializingBean 
 
     if (this.handlers == null || this.handlers.isEmpty()) {
       throw new BeanCreationException(
-          "The registry of handlers should not be empty");
+          "The property 'handlers' should not be null or empty");
     }
 
     Iterator handlerIterator = this.handlers.entrySet().iterator();

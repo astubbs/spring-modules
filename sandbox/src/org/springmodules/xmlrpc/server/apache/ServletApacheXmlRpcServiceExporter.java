@@ -15,62 +15,50 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.xmlrpc.server;
+package org.springmodules.xmlrpc.server.apache;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springmodules.xmlrpc.server.ServletXmlRpcServiceExporter;
+
 /**
  * <p>
- * Exports business services as XML-RPC handlers. This class takes care of the
- * reading a HTTP request for a XML-RPC service and the writing of the result to
- * a HTTP response.
+ * Implementation of <code>{@link ServletXmlRpcServiceExporter}</code> that
+ * uses Apache implementation of XML-RPC.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 00:25:37 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:45 $
  */
-public class ServletXmlRcpServiceExporter extends AbstractXmlRpcServiceExporter {
+public class ServletApacheXmlRpcServiceExporter extends
+    AbstractApacheXmlRpcServiceExporter implements ServletXmlRpcServiceExporter {
 
   /**
    * Constructor.
    */
-  public ServletXmlRcpServiceExporter() {
+  public ServletApacheXmlRpcServiceExporter() {
     super();
   }
 
   /**
-   * Parse the request and execute the handler method, if one is found. Returns
-   * the result as XML.
-   * 
-   * @param request
-   *          the HTTP request.
-   * @return the result of the XML-RPC call as XML.
-   * @throws IOException
-   *           if an input or output exception occurred.
+   * @see ServletXmlRpcServiceExporter#readXmlRpcRequest(HttpServletRequest)
    */
-  protected final byte[] readXmlRpcRequest(HttpServletRequest request)
-      throws IOException {
+  public final byte[] readXmlRpcRequest(HttpServletRequest request)
+      throws Exception {
     byte[] result = super.getXmlRpcServer().execute(request.getInputStream());
     return result;
   }
 
   /**
-   * Writes the given result of a XML-RPC call to the response.
-   * 
-   * @param response
-   *          the HTTP response.
-   * @param result
-   *          the result of a XML-RPC call.
-   * @throws IOException
-   *           if an input or output exception occurred.
+   * @see ServletXmlRpcServiceExporter#writeXmlRpcResult(HttpServletResponse,
+   *      byte[])
    */
-  protected final void writeXmlRpcResult(HttpServletResponse response,
-      byte[] result) throws IOException {
+  public final void writeXmlRpcResult(HttpServletResponse response,
+      byte[] result) throws Exception {
 
     response.setContentType("text/xml");
     response.setContentLength(result.length);

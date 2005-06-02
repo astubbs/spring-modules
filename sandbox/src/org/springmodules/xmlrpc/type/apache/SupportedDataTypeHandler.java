@@ -15,61 +15,64 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.xmlrpc.serializer;
+package org.springmodules.xmlrpc.type.apache;
 
 import java.util.Date;
 
+import org.springmodules.xmlrpc.type.XmlRpcTypeHandler;
+import org.springmodules.xmlrpc.type.XmlRpcTypeHandlerRegistry;
+
 /**
  * <p>
- * Serializer that handles the data types supported by Apache XML-RPC.
+ * Handles the data types supported by Apache XML-RPC.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 00:39:26 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:50 $
  */
-public final class SupportedDataTypeSerializer extends AbstractXmlRpcSerializer {
+public final class SupportedDataTypeHandler extends AbstractApacheXmlRpcTypeHandler {
 
   /**
    * Serializes a <code>{@link Boolean}</code>.
    */
-  public static final SupportedDataTypeSerializer BOOLEAN_SERIALIZER = new SupportedDataTypeSerializer(
+  public static final SupportedDataTypeHandler BOOLEAN_HANDLER = new SupportedDataTypeHandler(
       Boolean.class);
 
   /**
    * Serializes an array of <code>byte</code>.
    */
-  public static final SupportedDataTypeSerializer BYTE_ARRAY_SERIALIZER = new SupportedDataTypeSerializer(
+  public static final SupportedDataTypeHandler BYTE_ARRAY_HANDLER = new SupportedDataTypeHandler(
       byte[].class);
 
   /**
    * Serializes a <code>{@link Date}</code>.
    */
-  public static final SupportedDataTypeSerializer DATE_SERIALIZER = new SupportedDataTypeSerializer(
+  public static final SupportedDataTypeHandler DATE_HANDLER = new SupportedDataTypeHandler(
       Date.class);
 
   /**
    * Serializes a <code>{@link Double}</code>.
    */
-  public static final SupportedDataTypeSerializer DOUBLE_SERIALIZER = new SupportedDataTypeSerializer(
+  public static final SupportedDataTypeHandler DOUBLE_HANDLER = new SupportedDataTypeHandler(
       Double.class);
 
   /**
    * Serializes a <code>{@link Float}</code>.
    */
-  public static final SupportedDataTypeSerializer FLOAT_SERIALIZER = new SupportedDataTypeSerializer(
+  public static final SupportedDataTypeHandler FLOAT_HANDLER = new SupportedDataTypeHandler(
       Float.class);
 
   /**
    * Serializes an <code>{@link Integer}</code>.
    */
-  public static final SupportedDataTypeSerializer INTEGER_SERIALIZER = new SupportedDataTypeSerializer(
+  public static final SupportedDataTypeHandler INTEGER_HANDLER = new SupportedDataTypeHandler(
       Integer.class);
 
   /**
    * Serializes an <code>{@link String}</code>.
    */
-  public static final SupportedDataTypeSerializer STRING_SERIALIZER = new SupportedDataTypeSerializer(
+  public static final SupportedDataTypeHandler STRING_HANDLER = new SupportedDataTypeHandler(
       String.class);
 
   /**
@@ -80,25 +83,22 @@ public final class SupportedDataTypeSerializer extends AbstractXmlRpcSerializer 
   /**
    * Constructor.
    */
-  private SupportedDataTypeSerializer(Class supportedClass) {
+  private SupportedDataTypeHandler(Class supportedClass) {
     super();
     this.supportedClass = supportedClass;
   }
 
   /**
-   * @see XmlRpcSerializer#getSupportedClass()
+   * @see XmlRpcTypeHandler#getSupportedClass()
    */
   public Class getSupportedClass() {
     return this.supportedClass;
   }
 
   /**
-   * @see XmlRpcSerializer#serialize(Object, XmlRpcSerializerRegistry)
+   * @see XmlRpcTypeHandler#handleType(Object, XmlRpcTypeHandlerRegistry)
    */
-  public Object serialize(Object obj,
-      XmlRpcSerializerRegistry serializerRegistry) {
-
-    Object serialized = (obj == null ? "" : obj);
-    return serialized;
+  protected Object handle(Object obj, XmlRpcTypeHandlerRegistry registry) {
+    return obj;
   }
 }

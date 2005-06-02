@@ -15,28 +15,29 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.xmlrpc.serializer;
+package org.springmodules.xmlrpc.type;
 
 /**
  * <p>
- * Registry of <code>{@link XmlRpcSerializer}</code>.
+ * Contains a collection of <code>{@link XmlRpcTypeHandler}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 00:27:18 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:53 $
  */
-public interface XmlRpcSerializerRegistry {
+public interface XmlRpcTypeHandlerRegistry {
 
   /**
-   * Finds a serializer that can handle the specified class.
+   * Finds a type handler that map the given object into another object instance
+   * of a class supported by XML-RPC.
    * 
    * @param targetObject
-   *          the object to serialize.
-   * @return the serializer capable of handling the specified class.
+   *          the object to handle.
+   * @return the handler that can perform the data type conversion.
    * @throws ClassNotSupportedException
-   *           if this registry does not contain the expected serializer.
+   *           if this registry does not contain the expected handler.
    */
-  XmlRpcSerializer findSerializer(Object targetObject)
+  XmlRpcTypeHandler findTypeHandler(Object targetObject)
       throws ClassNotSupportedException;
 }

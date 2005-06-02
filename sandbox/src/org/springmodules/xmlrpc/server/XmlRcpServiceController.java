@@ -20,6 +20,8 @@ package org.springmodules.xmlrpc.server;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -31,16 +33,36 @@ import org.springframework.web.servlet.mvc.Controller;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 00:25:36 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/02 23:31:43 $
  */
-public class XmlRcpServiceController extends ServletXmlRcpServiceExporter
-    implements Controller {
+public final class XmlRcpServiceController implements Controller,
+    InitializingBean {
+
+  /**
+   * Exports services as XML-RPC services.
+   */
+  private ServletXmlRpcServiceExporter xmlRpcServiceExporter;
 
   /**
    * Constructor.
    */
   public XmlRcpServiceController() {
     super();
+  }
+
+  /**
+   * Validates that <code>{@link #xmlRpcServiceExporter}</code> is not
+   * <code>null</code>.
+   * 
+   * @throws BeanCreationException
+   *           if the property 'xmlRpcServiceExporter' is <code>null</code>.
+   * @see InitializingBean#afterPropertiesSet()
+   */
+  public void afterPropertiesSet() throws Exception {
+    if (this.xmlRpcServiceExporter == null) {
+      throw new BeanCreationException(
+          "The property 'xmlRpcServiceExporter' should not be null");
+    }
   }
 
   /**
@@ -58,10 +80,21 @@ public class XmlRcpServiceController extends ServletXmlRcpServiceExporter
   public ModelAndView handleRequest(HttpServletRequest request,
       HttpServletResponse response) throws Exception {
 
-    byte[] result = super.readXmlRpcRequest(request);
-    super.writeXmlRpcResult(response, result);
+    byte[] result = this.xmlRpcServiceExporter.readXmlRpcRequest(request);
+    this.xmlRpcServiceExporter.writeXmlRpcResult(response, result);
 
     return null;
+  }
+
+  /**
+   * Setter for the field <code>{@link #xmlRpcServiceExporter}</code>.
+   * 
+   * @param xmlRpcServiceExporter
+   *          the new value to set.
+   */
+  public void setXmlRpcServiceExporter(
+      ServletXmlRpcServiceExporter xmlRpcServiceExporter) {
+    this.xmlRpcServiceExporter = xmlRpcServiceExporter;
   }
 
 }

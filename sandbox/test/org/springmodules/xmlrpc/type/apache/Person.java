@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.xmlrpc.serializer;
+package org.springmodules.xmlrpc.type.apache;
 
 import java.io.Serializable;
 
@@ -26,7 +26,7 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 10:28:11 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:46 $
  */
 public class Person implements Serializable {
 

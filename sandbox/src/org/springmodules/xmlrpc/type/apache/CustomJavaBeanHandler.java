@@ -15,56 +15,75 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.xmlrpc.serializer;
+package org.springmodules.xmlrpc.type.apache;
 
 import java.util.Hashtable;
 import java.util.List;
 
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.xmlrpc.type.XmlRpcTypeHandler;
+import org.springmodules.xmlrpc.type.XmlRpcTypeHandlerRegistry;
 
 /**
  * <p>
- * Serializes a JavaBean into a <code>{@link Hashtable}</code>. The name of
- * the JavaBean property is used as the entry key and the serialized value of
- * the JavaBean property is used as the entry value.
+ * Handlers the conversion of a JavaBean into a <code>{@link Hashtable}</code>.
+ * The name of the JavaBean property is used as the entry key and the serialized
+ * value of the JavaBean property is used as the entry value.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 10:28:12 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:49 $
  */
-public final class BeanSerializer extends AbstractXmlRpcSerializer {
+public final class CustomJavaBeanHandler extends
+    AbstractApacheXmlRpcTypeHandler implements InitializingBean {
 
   /**
-   * The names of the properties to include in the serialized object.
+   * The names of the properties to include.
    */
   private List properties;
 
   /**
-   * The class this serializer can handle.
+   * The class this type handler supports.
    */
   private Class supportedClass;
 
   /**
    * Constructor.
    */
-  public BeanSerializer() {
+  public CustomJavaBeanHandler() {
     super();
   }
 
   /**
-   * @see XmlRpcSerializer#getSupportedClass()
+   * Validates that the properties of this object has been properly set.
+   * 
+   * @throws BeanCreationException
+   *           if the property '<code>properties</code>' is
+   *           <code>null</code> or empty.
+   * @see InitializingBean#afterPropertiesSet()
+   */
+  public void afterPropertiesSet() throws Exception {
+    if (this.properties == null || this.properties.isEmpty()) {
+      throw new BeanCreationException(
+          "The property 'properties' should not be null or empty");
+    }
+  }
+
+  /**
+   * @see XmlRpcTypeHandler#getSupportedClass()
    */
   public Class getSupportedClass() {
     return this.supportedClass;
   }
 
   /**
-   * @see XmlRpcSerializer#serialize(Object, XmlRpcSerializerRegistry)
+   * @see XmlRpcTypeHandler#handleType(Object, XmlRpcTypeHandlerRegistry)
    */
-  public Object serialize(Object obj,
-      XmlRpcSerializerRegistry serializerRegistry) {
+  protected Object handle(Object obj, XmlRpcTypeHandlerRegistry registry) {
     int propertyCount = this.properties.size();
     Hashtable hashtable = new Hashtable(propertyCount);
 
@@ -74,11 +93,9 @@ public final class BeanSerializer extends AbstractXmlRpcSerializer {
         String property = (String) this.properties.get(i);
         Object propertyValue = beanWrapper.getPropertyValue(property);
 
-        XmlRpcSerializer serializer = serializerRegistry
-            .findSerializer(propertyValue);
+        XmlRpcTypeHandler serializer = registry.findTypeHandler(propertyValue);
 
-        Object serialized = serializer.serialize(propertyValue,
-            serializerRegistry);
+        Object serialized = serializer.handleType(propertyValue, registry);
         hashtable.put(property, serialized);
       }
     }
@@ -89,7 +106,8 @@ public final class BeanSerializer extends AbstractXmlRpcSerializer {
   /**
    * Setter for the field <code>{@link #properties}</code>.
    * 
-   * @param properties the new value to set.
+   * @param properties
+   *          the new value to set.
    */
   public final void setProperties(List properties) {
     this.properties = properties;

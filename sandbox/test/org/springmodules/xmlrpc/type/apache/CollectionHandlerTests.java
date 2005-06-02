@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.xmlrpc.serializer;
+package org.springmodules.xmlrpc.type.apache;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,28 +24,33 @@ import java.util.Vector;
 
 import javax.swing.JButton;
 
+import org.springmodules.xmlrpc.type.ClassNotSupportedException;
+import org.springmodules.xmlrpc.type.XmlRpcTypeHandlerRegistry;
+import org.springmodules.xmlrpc.type.apache.CollectionHandler;
+import org.springmodules.xmlrpc.type.apache.ListTypeHandlerRegistry;
+
 import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Tests for <code>{@link CollectionSerializer}</code>.
+ * Unit Tests for <code>{@link CollectionHandler}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 00:27:15 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:46 $
  */
-public final class CollectionSerializerTests extends TestCase {
+public final class CollectionHandlerTests extends TestCase {
 
   /**
    * Primary object that is under test.
    */
-  private CollectionSerializer serializer;
+  private CollectionHandler typeHandler;
 
   /**
-   * Registry of available serializers;
+   * Registry of available data type handlers;
    */
-  private XmlRpcSerializerRegistry serializerRegistry;
+  private XmlRpcTypeHandlerRegistry registry;
 
   /**
    * Constructor.
@@ -53,7 +58,7 @@ public final class CollectionSerializerTests extends TestCase {
    * @param name
    *          the name of the test case to construct.
    */
-  public CollectionSerializerTests(String name) {
+  public CollectionHandlerTests(String name) {
     super(name);
   }
 
@@ -63,15 +68,15 @@ public final class CollectionSerializerTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.serializer = new CollectionSerializer();
-    this.serializerRegistry = new ListSerializerRegistry();
+    this.typeHandler = new CollectionHandler();
+    this.registry = new ListTypeHandlerRegistry();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link CollectionSerializer#serialize(Object, XmlRpcSerializerRegistry)}</code>
-   * returns a <code>{@link Vector}</code> containing each of the serialized
-   * elements of the given collection.
+   * <code>{@link CollectionHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
+   * returns a <code>{@link Vector}</code> containing each of the elements of
+   * the given collection.
    */
   public void testSerialize() {
     List objectToSerialize = Arrays
@@ -83,38 +88,37 @@ public final class CollectionSerializerTests extends TestCase {
       expected.add(objectToSerialize.get(i));
     }
 
-    Object actual = this.serializer.serialize(objectToSerialize,
-        this.serializerRegistry);
+    Object actual = this.typeHandler.handle(objectToSerialize, this.registry);
 
     assertEquals("<Serialized object>", expected, actual);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link CollectionSerializer#serialize(Object, XmlRpcSerializerRegistry)}</code>
+   * <code>{@link CollectionHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
    * returns an empty <code>{@link Vector}</code> if the given collection is
    * equal to <code>null</code>.
    */
   public void testSerializeWithCollectionEqualToNull() {
     List objectToSerialize = null;
 
-    Vector actual = (Vector) this.serializer.serialize(objectToSerialize,
-        this.serializerRegistry);
+    Vector actual = (Vector) this.typeHandler.handle(objectToSerialize,
+        this.registry);
     assertTrue("The returned vector should be empty", actual.isEmpty());
   }
 
   /**
    * Verifies that the method
-   * <code>{@link CollectionSerializer#serialize(Object, XmlRpcSerializerRegistry)}</code>
+   * <code>{@link CollectionHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
    * throws a <code>{@link ClassNotSupportedException}</code> if the registry
-   * of serializers does not contain a serializer for the class of the elements
+   * of type handlers does not contain a handler for the class of the elements
    * of the given collection.
    */
   public void testSerializeWithCollectionHavingNotSupportedClass() {
     List objectToSerialize = new ArrayList();
     objectToSerialize.add(new JButton());
     try {
-      this.serializer.serialize(objectToSerialize, this.serializerRegistry);
+      this.typeHandler.handle(objectToSerialize, this.registry);
       fail("A 'ClassNotSupportedException' should have been thrown");
     } catch (ClassNotSupportedException exception) {
       // we are expecting this class.
@@ -123,15 +127,15 @@ public final class CollectionSerializerTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link CollectionSerializer#serialize(Object, XmlRpcSerializerRegistry)}</code>
+   * <code>{@link CollectionHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
    * returns an empty <code>{@link Vector}</code> if the given collection is
    * empty.
    */
   public void testSerializeWithEmptyCollection() {
     List objectToSerialize = new ArrayList();
 
-    Vector actual = (Vector) this.serializer.serialize(objectToSerialize,
-        this.serializerRegistry);
+    Vector actual = (Vector) this.typeHandler.handle(objectToSerialize,
+        this.registry);
     assertTrue("The returned vector should be empty", actual.isEmpty());
   }
 }

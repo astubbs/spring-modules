@@ -1,5 +1,5 @@
 /* 
- * Created on May 31, 2005
+ * Created on Jun 1, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,31 +15,34 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.xmlrpc.serializer;
+package org.springmodules.xmlrpc.type;
 
 /**
  * <p>
- * Template for XML-RPC Serializers.
+ * Exception thrown when a <code>{@link XmlRpcTypeHandler}</code> for a
+ * particular class cannot be found.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 00:27:19 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:53 $
  */
-public abstract class AbstractXmlRpcSerializer implements XmlRpcSerializer {
+public class ClassNotSupportedException extends RuntimeException {
+
+  /**
+   * Version number of this class.
+   * 
+   * @see java.io.Serializable
+   */
+  private static final long serialVersionUID = 850394859900323L;
 
   /**
    * Constructor.
+   * 
+   * @param message
+   *          the detail message.
    */
-  public AbstractXmlRpcSerializer() {
-    super();
+  public ClassNotSupportedException(String message) {
+    super(message);
   }
-
-  /**
-   * @see XmlRpcSerializer#isSupported(Class)
-   */
-  public final boolean isSupported(Class clazz) {
-    return this.getSupportedClass().isAssignableFrom(clazz);
-  }
-
 }
