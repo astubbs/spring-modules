@@ -31,7 +31,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/03 02:19:46 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/03 09:33:38 $
  */
 public abstract class AbstractApacheXmlRpcServiceExporter implements
     InitializingBean {
@@ -63,7 +63,7 @@ public abstract class AbstractApacheXmlRpcServiceExporter implements
    * @see InitializingBean#afterPropertiesSet()
    */
   public final void afterPropertiesSet() {
-    this.xmlRpcServer = new XmlRpcServer();
+    this.setXmlRpcServer(new XmlRpcServer());
 
     if (this.handlers == null || this.handlers.isEmpty()) {
       throw new BeanCreationException(
@@ -107,6 +107,15 @@ public abstract class AbstractApacheXmlRpcServiceExporter implements
    */
   public final void setHandlers(Map handlers) {
     this.handlers = handlers;
+  }
+
+  /**
+   * Setter for the field <code>{@link #xmlRpcServer}</code>.
+   * 
+   * @param xmlRpcServer the new value to set.
+   */
+  final void setXmlRpcServer(XmlRpcServer xmlRpcServer) {
+    this.xmlRpcServer = xmlRpcServer;
   }
 
 }
