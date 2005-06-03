@@ -39,7 +39,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/03 09:34:39 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/03 09:33:59 $
  */
 public class ServletApacheXmlRpcServiceExporterTests extends TestCase {
 
@@ -74,7 +74,7 @@ public class ServletApacheXmlRpcServiceExporterTests extends TestCase {
     /**
      * @see java.io.OutputStream#write(int)
      */
-    public void write(int newContent) {
+    public void write(int b) {
       // do nothing
     }
   }
