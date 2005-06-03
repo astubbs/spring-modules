@@ -17,7 +17,6 @@
  */
 package org.springmodules.xmlrpc.server.apache;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:44 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/03 02:19:46 $
  */
 public abstract class AbstractApacheXmlRpcServiceExporter implements
     InitializingBean {
@@ -56,8 +55,7 @@ public abstract class AbstractApacheXmlRpcServiceExporter implements
   }
 
   /**
-   * Initializes the XML-RCP server and sets its handlers an maximum number of
-   * threads.
+   * Initializes the XML-RCP server and sets its handlers.
    * 
    * @throws BeanCreationException
    *           if the property '<code>handlers</code>' is <code>null</code>
@@ -83,15 +81,6 @@ public abstract class AbstractApacheXmlRpcServiceExporter implements
     }
 
     this.onInitialize();
-  }
-
-  /**
-   * Returns an unmodifiable view of <code>{@link #handlers}</code>.
-   * 
-   * @return an unmodifiable view of the handlers of the XML-RPC server.
-   */
-  protected final Map getHandlers() {
-    return Collections.unmodifiableMap(this.handlers);
   }
 
   /**
