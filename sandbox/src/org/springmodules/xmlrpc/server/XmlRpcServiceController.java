@@ -33,9 +33,9 @@ import org.springframework.web.servlet.mvc.Controller;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/02 23:31:43 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/04 01:16:26 $
  */
-public final class XmlRcpServiceController implements Controller,
+public final class XmlRpcServiceController implements Controller,
     InitializingBean {
 
   /**
@@ -46,7 +46,7 @@ public final class XmlRcpServiceController implements Controller,
   /**
    * Constructor.
    */
-  public XmlRcpServiceController() {
+  public XmlRpcServiceController() {
     super();
   }
 
@@ -58,7 +58,7 @@ public final class XmlRcpServiceController implements Controller,
    *           if the property 'xmlRpcServiceExporter' is <code>null</code>.
    * @see InitializingBean#afterPropertiesSet()
    */
-  public void afterPropertiesSet() throws Exception {
+  public void afterPropertiesSet() {
     if (this.xmlRpcServiceExporter == null) {
       throw new BeanCreationException(
           "The property 'xmlRpcServiceExporter' should not be null");
