@@ -30,7 +30,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:54 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/04 01:19:03 $
  */
 public final class ReturnValueTypeHandlerAdvice implements MethodInterceptor,
     InitializingBean {
@@ -55,7 +55,7 @@ public final class ReturnValueTypeHandlerAdvice implements MethodInterceptor,
    *           <code>null</code>.
    * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
    */
-  public void afterPropertiesSet() throws Exception {
+  public void afterPropertiesSet() {
     if (this.typeHandlerRegistry == null) {
       throw new BeanCreationException(
           "The property 'typeHandlerRegistry' should not be null");
