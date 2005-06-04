@@ -35,12 +35,15 @@ import org.springmodules.xmlrpc.type.XmlRpcTypeHandlerRegistry;
  * <ul>
  * <li><code>{@link Boolean}</code></li>
  * <li><code>byte[]</code></li>
+ * <li><code>{@link Character}</code></li>
  * <li><code>{@link java.util.Collection}</code></li>
  * <li><code>{@link java.util.Date}</code></li>
  * <li><code>{@link Double}</code></li>
  * <li><code>{@link Float}</code></li>
  * <li><code>{@link Integer}</code></li>
+ * <li><code>{@link Long}</code></li>
  * <li><code>{@link java.util.Map}</code></li>
+ * <li><code>{@link Short}</code></li>
  * <li><code>{@link String}</code></li>
  * </ul>
  * Users only need to add their custom data type handlers.
@@ -48,7 +51,7 @@ import org.springmodules.xmlrpc.type.XmlRpcTypeHandlerRegistry;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:50 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/04 01:20:03 $
  */
 public final class ListTypeHandlerRegistry implements XmlRpcTypeHandlerRegistry {
 
@@ -104,7 +107,11 @@ public final class ListTypeHandlerRegistry implements XmlRpcTypeHandlerRegistry 
   private void initTypeHandlers() {
     this.typeHandlers = new ArrayList();
 
+    this.typeHandlers.add(new CharacterHandler());
     this.typeHandlers.add(new CollectionHandler());
+    this.typeHandlers.add(new MapHandler());
+    this.typeHandlers.add(new LongHandler());
+    this.typeHandlers.add(new ShortHandler());
     this.typeHandlers.add(SupportedDataTypeHandler.BOOLEAN_HANDLER);
     this.typeHandlers.add(SupportedDataTypeHandler.BYTE_ARRAY_HANDLER);
     this.typeHandlers.add(SupportedDataTypeHandler.DATE_HANDLER);
