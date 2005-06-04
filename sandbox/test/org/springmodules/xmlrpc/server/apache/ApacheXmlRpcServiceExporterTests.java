@@ -33,9 +33,9 @@ import org.springframework.beans.factory.BeanCreationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/03 02:20:10 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/04 01:21:14 $
  */
-public class AbstractApacheXmlRpcServiceExporterTests extends TestCase {
+public class ApacheXmlRpcServiceExporterTests extends TestCase {
 
   /**
    * Primary object that is under test.
@@ -48,7 +48,7 @@ public class AbstractApacheXmlRpcServiceExporterTests extends TestCase {
    * @param name
    *          the name of the test case to construct.
    */
-  public AbstractApacheXmlRpcServiceExporterTests(String name) {
+  public ApacheXmlRpcServiceExporterTests(String name) {
     super(name);
   }
 
