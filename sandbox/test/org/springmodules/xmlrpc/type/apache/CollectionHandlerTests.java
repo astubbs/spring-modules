@@ -19,6 +19,7 @@ package org.springmodules.xmlrpc.type.apache;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
@@ -26,10 +27,6 @@ import javax.swing.JButton;
 
 import org.springmodules.xmlrpc.type.ClassNotSupportedException;
 import org.springmodules.xmlrpc.type.XmlRpcTypeHandlerRegistry;
-import org.springmodules.xmlrpc.type.apache.CollectionHandler;
-import org.springmodules.xmlrpc.type.apache.ListTypeHandlerRegistry;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -38,19 +35,25 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/04 01:24:02 $
  */
-public final class CollectionHandlerTests extends TestCase {
+public final class CollectionHandlerTests extends
+    AbstractApacheXmlRpcTypeHandlerTestCase {
 
   /**
-   * Primary object that is under test.
+   * Object to be handled by <code>{@link #typeHandler}</code>
    */
-  private CollectionHandler typeHandler;
+  private List objectToHandle;
 
   /**
    * Registry of available data type handlers;
    */
   private XmlRpcTypeHandlerRegistry registry;
+
+  /**
+   * Primary object that is under test.
+   */
+  private CollectionHandler typeHandler;
 
   /**
    * Constructor.
@@ -63,62 +66,81 @@ public final class CollectionHandlerTests extends TestCase {
   }
 
   /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getExpectedHandledObject()
+   */
+  protected Object getExpectedHandledObject() {
+    Vector expected = new Vector();
+    int size = this.objectToHandle.size();
+    for (int i = 0; i < size; i++) {
+      expected.add(this.objectToHandle.get(i));
+    }
+
+    return expected;
+  }
+
+  /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getExpectedSupportedClass()
+   */
+  protected Class getExpectedSupportedClass() {
+    return Collection.class;
+  }
+
+  /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getObjectToHandle()
+   */
+  protected Object getObjectToHandle() {
+    return this.objectToHandle;
+  }
+
+  /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getTypeHandler()
+   */
+  protected AbstractApacheXmlRpcTypeHandler getTypeHandler() {
+    return this.typeHandler;
+  }
+
+  /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getTypeHandlerRegistry()
+   */
+  protected XmlRpcTypeHandlerRegistry getTypeHandlerRegistry() {
+    return this.registry;
+  }
+
+  /**
    * Sets up the test fixture.
    */
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void onSetUp() throws Exception {
+    super.onSetUp();
 
     this.typeHandler = new CollectionHandler();
     this.registry = new ListTypeHandlerRegistry();
+    this.objectToHandle = Arrays.asList(new String[] { "Leia", "Luke", "Han" });
   }
 
   /**
    * Verifies that the method
-   * <code>{@link CollectionHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
-   * returns a <code>{@link Vector}</code> containing each of the elements of
-   * the given collection.
-   */
-  public void testSerialize() {
-    List objectToSerialize = Arrays
-        .asList(new String[] { "Leia", "Luke", "Han" });
-
-    Vector expected = new Vector();
-    int size = objectToSerialize.size();
-    for (int i = 0; i < size; i++) {
-      expected.add(objectToSerialize.get(i));
-    }
-
-    Object actual = this.typeHandler.handle(objectToSerialize, this.registry);
-
-    assertEquals("<Serialized object>", expected, actual);
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link CollectionHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
+   * <code>{@link CollectionHandler#handle(Object, XmlRpcTypeHandlerRegistry)}</code>
    * returns an empty <code>{@link Vector}</code> if the given collection is
    * equal to <code>null</code>.
    */
-  public void testSerializeWithCollectionEqualToNull() {
-    List objectToSerialize = null;
-
-    Vector actual = (Vector) this.typeHandler.handle(objectToSerialize,
-        this.registry);
+  public void testHandleWithCollectionEqualToNull() {
+    Vector actual = (Vector) this.typeHandler.handle(null, this.registry);
     assertTrue("The returned vector should be empty", actual.isEmpty());
   }
 
   /**
    * Verifies that the method
-   * <code>{@link CollectionHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
+   * <code>{@link CollectionHandler#handle(Object, XmlRpcTypeHandlerRegistry)}</code>
    * throws a <code>{@link ClassNotSupportedException}</code> if the registry
    * of type handlers does not contain a handler for the class of the elements
    * of the given collection.
    */
-  public void testSerializeWithCollectionHavingNotSupportedClass() {
-    List objectToSerialize = new ArrayList();
-    objectToSerialize.add(new JButton());
+  public void testHandleWithCollectionHavingNotSupportedClass() {
+    this.objectToHandle = new ArrayList();
+
+    this.objectToHandle.add(new JButton());
     try {
-      this.typeHandler.handle(objectToSerialize, this.registry);
+      this.typeHandler.handle(this.objectToHandle, this.registry);
       fail("A 'ClassNotSupportedException' should have been thrown");
     } catch (ClassNotSupportedException exception) {
       // we are expecting this class.
@@ -127,14 +149,14 @@ public final class CollectionHandlerTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link CollectionHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
+   * <code>{@link CollectionHandler#handle(Object, XmlRpcTypeHandlerRegistry)}</code>
    * returns an empty <code>{@link Vector}</code> if the given collection is
    * empty.
    */
-  public void testSerializeWithEmptyCollection() {
-    List objectToSerialize = new ArrayList();
+  public void testHandleWithEmptyCollection() {
+    this.objectToHandle = new ArrayList();
 
-    Vector actual = (Vector) this.typeHandler.handle(objectToSerialize,
+    Vector actual = (Vector) this.typeHandler.handle(this.objectToHandle,
         this.registry);
     assertTrue("The returned vector should be empty", actual.isEmpty());
   }

@@ -22,10 +22,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.springmodules.xmlrpc.type.XmlRpcTypeHandlerRegistry;
-import org.springmodules.xmlrpc.type.apache.CustomJavaBeanHandler;
-import org.springmodules.xmlrpc.type.apache.ListTypeHandlerRegistry;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -34,9 +30,10 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/02 23:31:46 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/04 01:24:02 $
  */
-public final class CustomJavaBeanHandlerTests extends TestCase {
+public final class CustomJavaBeanHandlerTests extends
+    AbstractApacheXmlRpcTypeHandlerTestCase {
 
   /**
    * The JavaBean to serialize.
@@ -44,14 +41,14 @@ public final class CustomJavaBeanHandlerTests extends TestCase {
   private Person person;
 
   /**
-   * Primary object that is under test.
-   */
-  private CustomJavaBeanHandler typeHandler;
-
-  /**
    * Registry of available type handlers;
    */
   private XmlRpcTypeHandlerRegistry registry;
+
+  /**
+   * Primary object that is under test.
+   */
+  private CustomJavaBeanHandler typeHandler;
 
   /**
    * Constructor.
@@ -64,10 +61,50 @@ public final class CustomJavaBeanHandlerTests extends TestCase {
   }
 
   /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getExpectedHandledObject()
+   */
+  protected Object getExpectedHandledObject() {
+    Hashtable expected = new Hashtable();
+    expected.put("age", new Integer(this.person.getAge()));
+    expected.put("firstName", this.person.getFirstName());
+    expected.put("lastName", this.person.getLastName());
+
+    return expected;
+  }
+
+  /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getExpectedSupportedClass()
+   */
+  protected Class getExpectedSupportedClass() {
+    return this.person.getClass();
+  }
+
+  /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getObjectToHandle()
+   */
+  protected Object getObjectToHandle() {
+    return this.person;
+  }
+
+  /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getTypeHandler()
+   */
+  protected AbstractApacheXmlRpcTypeHandler getTypeHandler() {
+    return this.typeHandler;
+  }
+
+  /**
+   * @see AbstractApacheXmlRpcTypeHandlerTestCase#getTypeHandlerRegistry()
+   */
+  protected XmlRpcTypeHandlerRegistry getTypeHandlerRegistry() {
+    return this.registry;
+  }
+
+  /**
    * Sets up the test fixture.
    */
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void onSetUp() throws Exception {
+    super.onSetUp();
 
     this.person = new Person();
     this.person.setAge(18);
@@ -88,28 +125,11 @@ public final class CustomJavaBeanHandlerTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link CustomJavaBeanHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
+   * <code>{@link CustomJavaBeanHandler#handle(Object, XmlRpcTypeHandlerRegistry)}</code>
    * creates a <code>{@link Hashtable}</code> containing the properties of the
    * bean to handle.
    */
-  public void testSerialize() {
-    Hashtable expected = new Hashtable();
-    expected.put("age", new Integer(this.person.getAge()));
-    expected.put("firstName", this.person.getFirstName());
-    expected.put("lastName", this.person.getLastName());
-
-    Object actual = this.typeHandler.handle(this.person, this.registry);
-
-    assertEquals("<Serialized object>", expected, actual);
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link CustomJavaBeanHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
-   * creates a <code>{@link Hashtable}</code> containing the properties of the
-   * bean to handle.
-   */
-  public void testSerializeWithNullObject() {
+  public void testHandleWithNullObject() {
     Hashtable actual = (Hashtable) this.typeHandler.handle(null, this.registry);
 
     assertTrue("The obtained Hashtable should be empty", actual.isEmpty());
@@ -117,11 +137,11 @@ public final class CustomJavaBeanHandlerTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link CustomJavaBeanHandler#handleType(Object, XmlRpcTypeHandlerRegistry)}</code>
+   * <code>{@link CustomJavaBeanHandler#handle(Object, XmlRpcTypeHandlerRegistry)}</code>
    * creates a <code>{@link Hashtable}</code> containing the properties of the
    * bean to handle even if a JavaBean property is <code>null</code>.
    */
-  public void testSerializeWithNullProperty() {
+  public void testHandleWithNullProperty() {
     this.person.setLastName(null);
 
     Hashtable expected = new Hashtable();
@@ -131,7 +151,7 @@ public final class CustomJavaBeanHandlerTests extends TestCase {
 
     Object actual = this.typeHandler.handle(this.person, this.registry);
 
-    assertEquals("<Serialized object>", expected, actual);
+    assertEquals("<Handled object>", expected, actual);
   }
 
 }
