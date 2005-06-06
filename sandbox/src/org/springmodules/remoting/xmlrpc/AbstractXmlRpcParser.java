@@ -31,6 +31,7 @@ import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
 /**
  * <p>
@@ -39,14 +40,14 @@ import org.w3c.dom.NodeList;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/06 02:13:57 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/06 04:43:48 $
  */
 public abstract class AbstractXmlRpcParser {
 
   /**
    * Represents a member of a "struct" member.
    */
-  protected class StructMember {
+  protected static class StructMember {
     /**
      * Name of the member.
      */
@@ -170,6 +171,7 @@ public abstract class AbstractXmlRpcParser {
    * @throws XmlRpcParsingException
    *           if the element contains an unknown child. Only one "data" element
    *           is allowed inside an "array" element.
+   * @see #parseDataElement(Element)
    */
   protected final List parseArrayElement(Element arrayElement) {
     NodeList childNodes = arrayElement.getChildNodes();
@@ -343,7 +345,7 @@ public abstract class AbstractXmlRpcParser {
         String nodeName = node.getNodeName();
 
         if (NAME.equals(nodeName)) {
-          name = node.getNodeValue();
+          name = DomUtils.getTextValue((Element) node);
 
         } else if (VALUE.equals(nodeName)) {
           value = this.parseValueElement((Element) node);
@@ -495,11 +497,6 @@ public abstract class AbstractXmlRpcParser {
     NodeList childNodes = valueElement.getChildNodes();
     int childCount = childNodes.getLength();
 
-    if (childCount == 0) {
-      // there is no type specified, assume String.
-      return this.parseStringElement(valueElement);
-    }
-
     for (int i = 0; i < childCount; i++) {
       Node node = childNodes.item(i);
 
@@ -532,6 +529,9 @@ public abstract class AbstractXmlRpcParser {
         } else {
           throw new XmlRpcParsingException("Unknown entity '" + nodeName + "'");
         }
+      }
+      else if (node instanceof Text) {
+        return this.parseStringElement(valueElement);
       }
     }
 
