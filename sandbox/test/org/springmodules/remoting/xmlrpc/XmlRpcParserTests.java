@@ -20,18 +20,13 @@ package org.springmodules.remoting.xmlrpc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import junit.framework.TestCase;
-
 import org.apache.commons.codec.binary.Base64;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -41,14 +36,9 @@ import org.w3c.dom.Element;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/06 04:42:47 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/06 16:22:07 $
  */
-public class AbstractXmlRpcParserTests extends TestCase {
-
-  /**
-   * A DOM document used to create elements.
-   */
-  private Document document;
+public class XmlRpcParserTests extends AbstractXmlRpcParserTestCase {
 
   /**
    * Primary object that is under test.
@@ -61,158 +51,19 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * @param name
    *          the name of the test case to construct.
    */
-  public AbstractXmlRpcParserTests(String name) {
+  public XmlRpcParserTests(String name) {
     super(name);
-  }
-
-  /**
-   * Creates a new element having "array" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createArrayElement() {
-    return this.document.createElement("array");
-  }
-
-  /**
-   * Creates a new element having "base64" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createBase64Element() {
-    return this.document.createElement("base64");
-  }
-
-  /**
-   * Creates a new element having "boolean" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createBooleanElement() {
-    return this.document.createElement("boolean");
-  }
-
-  /**
-   * Creates a new element having "data" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createDataElement() {
-    return this.document.createElement("data");
-  }
-
-  /**
-   * Creates a new element having "dateTime.iso8601" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createDateTimeElement() {
-    return this.document.createElement("dateTime.iso8601");
-  }
-
-  /**
-   * Creates a new element having "double" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createDoubleElement() {
-    return this.document.createElement("double");
-  }
-
-  /**
-   * Creates a new element having "i4" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createI4Element() {
-    return this.document.createElement("i4");
-  }
-
-  /**
-   * Creates a new element having "int" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createIntElement() {
-    return this.document.createElement("int");
-  }
-
-  /**
-   * Creates a new element having "member" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createMemberElement() {
-    return this.document.createElement("member");
-  }
-
-  /**
-   * Creates a new element having "name" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createNameElement() {
-    return this.document.createElement("name");
-  }
-
-  /**
-   * Creates a new element having "param" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createParamElement() {
-    return this.document.createElement("param");
-  }
-
-  /**
-   * Creates a new element having "params" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createParamsElement() {
-    return this.document.createElement("params");
-  }
-
-  /**
-   * Creates a new element having "string" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createStringElement() {
-    return this.document.createElement("string");
-  }
-
-  /**
-   * Creates a new element having "struct" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createStructElement() {
-    return this.document.createElement("struct");
-  }
-
-  /**
-   * Creates a new element having "value" as its tag name.
-   * 
-   * @return the created element.
-   */
-  private Element createValueElement() {
-    return this.document.createElement("value");
   }
 
   /**
    * Sets up the test fixture.
    */
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void onSetUp() throws Exception {
+    super.onSetUp();
 
     this.parser = new AbstractXmlRpcParser() {
       // no extra implementation.
     };
-
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-    DocumentBuilder builder = factory.newDocumentBuilder();
-    this.document = builder.newDocument();
   }
 
   /**
@@ -222,10 +73,10 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * element is not equal to "1".
    */
   public void testParseBooleanElementWhenValueIsNotEqualToOne() {
-    Element booleanElement = this.createBooleanElement();
-    booleanElement.setTextContent("0");
+    Boolean expected = Boolean.FALSE;
+    Element booleanElement = super.createBooleanElement(expected);
 
-    assertEquals("<Boolean>", Boolean.FALSE, this.parser
+    assertEquals("<Boolean>", expected, this.parser
         .parseBooleanElement(booleanElement));
   }
 
@@ -236,8 +87,7 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * given element cannot be parsed into a date.
    */
   public void testParseDateTimeElementWhenElementTextCannotBeParsedIntoDate() {
-    Element dateElement = this.createDateTimeElement();
-    dateElement.setTextContent("Some text");
+    Element dateElement = super.createDateTimeElement("Some text");
 
     try {
       this.parser.parseDateElement(dateElement);
@@ -254,8 +104,7 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * given element cannot be parsed into a double.
    */
   public void testParseDoubleElementWhenElementTextCannotBeParsedIntoDouble() {
-    Element doubleElement = this.createDoubleElement();
-    doubleElement.setTextContent("eight");
+    Element doubleElement = super.createDoubleElement("eight");
 
     try {
       this.parser.parseDoubleElement(doubleElement);
@@ -272,8 +121,7 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * given element cannot be parsed into a integer.
    */
   public void testParseIntegerElementWhenElementTextCannotBeParsedIntoInteger() {
-    Element integerElement = this.createI4Element();
-    integerElement.setTextContent("one");
+    Element integerElement = super.createI4Element("one");
 
     try {
       this.parser.parseIntegerElement(integerElement);
@@ -289,11 +137,8 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * returns the parsed value of this "value" element.
    */
   public void testParseParameterElement() {
-    Element valueElement = this.createValueElement();
-    valueElement.setTextContent("Jedi Knight");
-
-    Element paramElement = this.createParamElement();
-    paramElement.appendChild(valueElement);
+    Element valueElement = super.createValueElement("Jedi Knight");
+    Element paramElement = super.createParamElement(valueElement);
 
     assertEquals("<Param>", "Jedi Knight", this.parser
         .parseParameterElement(paramElement));
@@ -306,33 +151,25 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * the given DOM element.
    */
   public void testParseParametersElement() {
-    Element paramsElement = this.createParamsElement();
+    Element paramsElement = super.createParamsElement();
 
     // create an array of integers.
     List expectedArray = new ArrayList();
-    Element dataElement = this.createDataElement();
+    Element dataElement = super.createDataElement();
 
     for (int i = 0; i < 5; i++) {
       Integer number = new Integer(i);
       expectedArray.add(number);
 
-      Element i4Element = this.createI4Element();
-      i4Element.setTextContent(number.toString());
-
-      Element valueElement = this.createValueElement();
-      valueElement.appendChild(i4Element);
+      Element i4Element = super.createI4Element(number);
+      Element valueElement = super.createValueElement(i4Element);
 
       dataElement.appendChild(valueElement);
     }
 
-    Element arrayElement = this.createArrayElement();
-    arrayElement.appendChild(dataElement);
-
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(arrayElement);
-
-    Element paramElement = this.createParamElement();
-    paramElement.appendChild(valueElement);
+    Element arrayElement = super.createArrayElement(dataElement);
+    Element valueElement = super.createValueElement(arrayElement);
+    Element paramElement = super.createParamElement(valueElement);
 
     paramsElement.appendChild(paramElement);
 
@@ -346,7 +183,7 @@ public class AbstractXmlRpcParserTests extends TestCase {
         .add(new AbstractXmlRpcParser.StructMember("role", "Princess"));
 
     Map expectedStruct = new HashMap();
-    Element structElement = this.createStructElement();
+    Element structElement = super.createStructElement();
 
     int structMemberCount = structMembers.size();
     for (int i = 0; i < structMemberCount; i++) {
@@ -354,33 +191,23 @@ public class AbstractXmlRpcParserTests extends TestCase {
           .get(i);
       expectedStruct.put(member.name, member.value);
 
-      Element nameElement = this.createNameElement();
-      nameElement.setTextContent(member.name);
+      Element nameElement = super.createNameElement(member.name);
+      valueElement = super.createValueElement(member.value.toString());
 
-      valueElement = this.createValueElement();
-      valueElement.setTextContent(member.value.toString());
-
-      Element memberElement = this.createMemberElement();
-      memberElement.appendChild(nameElement);
-      memberElement.appendChild(valueElement);
+      Element memberElement = super.createMemberElement(nameElement,
+          valueElement);
 
       structElement.appendChild(memberElement);
     }
 
-    valueElement = this.createValueElement();
-    valueElement.appendChild(structElement);
-
-    paramElement = this.createParamElement();
-    paramElement.appendChild(valueElement);
+    valueElement = super.createValueElement(structElement);
+    paramElement = super.createParamElement(valueElement);
 
     paramsElement.appendChild(paramElement);
 
     // add a String
-    valueElement = this.createValueElement();
-    valueElement.setTextContent("R2-D2");
-
-    paramElement = this.createParamElement();
-    paramElement.appendChild(valueElement);
+    valueElement = super.createValueElement("R2-D2");
+    paramElement = super.createParamElement(valueElement);
 
     paramsElement.appendChild(paramElement);
 
@@ -415,26 +242,20 @@ public class AbstractXmlRpcParserTests extends TestCase {
    */
   public void testParseValueElementWhenChildElementIsArray() {
     List expected = new ArrayList();
-    Element dataElement = this.createDataElement();
+    Element dataElement = super.createDataElement();
 
     for (int i = 0; i < 10; i++) {
       Integer number = new Integer(i);
       expected.add(number);
 
-      Element intElement = this.createIntElement();
-      intElement.setTextContent(number.toString());
-
-      Element valueElement = this.createValueElement();
-      valueElement.appendChild(intElement);
+      Element intElement = super.createIntElement(number);
+      Element valueElement = super.createValueElement(intElement);
 
       dataElement.appendChild(valueElement);
     }
 
-    Element arrayElement = this.createArrayElement();
-    arrayElement.appendChild(dataElement);
-
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(arrayElement);
+    Element arrayElement = super.createArrayElement(dataElement);
+    Element valueElement = super.createValueElement(arrayElement);
 
     assertEquals("<Array>", expected, this.parser
         .parseValueElement(valueElement));
@@ -449,15 +270,12 @@ public class AbstractXmlRpcParserTests extends TestCase {
   public void testParseValueElementWhenChildElementIsBase64() {
     String text = "eW91IGNhbid0IHJlYWQgdGhpcyE=";
 
-    Element base64Element = this.createBase64Element();
-    base64Element.setTextContent(text);
-
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(base64Element);
+    Element base64Element = super.createBase64Element(text);
+    Element valueElement = super.createValueElement(base64Element);
 
     byte[] expected = Base64.decodeBase64(text.getBytes());
-    assertTrue("<Byte array>", Arrays.equals(expected, this.parser
-        .parseBase64Element(base64Element)));
+    assertTrue("<Byte array>", Arrays.equals(expected, (byte[]) this.parser
+        .parseValueElement(valueElement)));
   }
 
   /**
@@ -467,13 +285,12 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * "boolean" element.
    */
   public void testParseValueElementWhenChildElementIsBoolean() {
-    Element booleanElement = this.createBooleanElement();
-    booleanElement.setTextContent("1");
+    Boolean expected = Boolean.TRUE;
 
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(booleanElement);
+    Element booleanElement = super.createBooleanElement(expected);
+    Element valueElement = super.createValueElement(booleanElement);
 
-    assertEquals("<Boolean>", Boolean.TRUE, this.parser
+    assertEquals("<Boolean>", expected, this.parser
         .parseValueElement(valueElement));
   }
 
@@ -484,9 +301,6 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * element is a "dateTime.iso8601" element.
    */
   public void testParseValueElementWhenChildElementIsDateTime() {
-    Element dateElement = this.createDateTimeElement();
-    dateElement.setTextContent("19980717T14:08:55");
-
     Calendar calendar = new GregorianCalendar();
     calendar.set(Calendar.YEAR, 1998);
     calendar.set(Calendar.MONTH, 6);
@@ -497,10 +311,12 @@ public class AbstractXmlRpcParserTests extends TestCase {
     calendar.set(Calendar.SECOND, 55);
     calendar.set(Calendar.MILLISECOND, 0);
 
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(dateElement);
+    Date expected = calendar.getTime();
 
-    assertEquals("<Date>", calendar.getTime(), this.parser
+    Element dateElement = super.createDateTimeElement(expected);
+    Element valueElement = super.createValueElement(dateElement);
+
+    assertEquals("<Date>", expected, this.parser
         .parseValueElement(valueElement));
   }
 
@@ -511,13 +327,12 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * "double" element.
    */
   public void testParseValueElementWhenChildElementIsDouble() {
-    Element doubleElement = this.createDoubleElement();
-    doubleElement.setTextContent("99.88");
+    Double expected = new Double(99.88);
 
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(doubleElement);
+    Element doubleElement = super.createDoubleElement(expected);
+    Element valueElement = super.createValueElement(doubleElement);
 
-    assertEquals("<Double>", new Double(99.88), this.parser
+    assertEquals("<Double>", expected, this.parser
         .parseValueElement(valueElement));
   }
 
@@ -528,13 +343,12 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * an "i4" element.
    */
   public void testParseValueElementWhenChildElementIsI4() {
-    Element integerElement = this.createI4Element();
-    integerElement.setTextContent("30");
+    Integer expected = new Integer(30);
 
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(integerElement);
+    Element integerElement = super.createI4Element(expected);
+    Element valueElement = super.createValueElement(integerElement);
 
-    assertEquals("<Integer>", new Integer(30), this.parser
+    assertEquals("<Integer>", expected, this.parser
         .parseValueElement(valueElement));
   }
 
@@ -545,13 +359,12 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * an "integer" element.
    */
   public void testParseValueElementWhenChildElementIsInt() {
-    Element integerElement = this.createIntElement();
-    integerElement.setTextContent("30");
+    Integer expected = new Integer(30);
 
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(integerElement);
+    Element integerElement = super.createIntElement(expected);
+    Element valueElement = super.createValueElement(integerElement);
 
-    assertEquals("<Integer>", new Integer(30), this.parser
+    assertEquals("<Integer>", expected, this.parser
         .parseValueElement(valueElement));
   }
 
@@ -562,11 +375,10 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * "string" element.
    */
   public void testParseValueElementWhenChildElementIsString() {
-    Element stringElement = this.createStringElement();
-    stringElement.setTextContent("Some text");
+    String expected = "Some text";
 
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(stringElement);
+    Element stringElement = super.createStringElement(expected);
+    Element valueElement = super.createValueElement(stringElement);
 
     assertEquals("<String>", "Some text", this.parser
         .parseValueElement(valueElement));
@@ -588,7 +400,7 @@ public class AbstractXmlRpcParserTests extends TestCase {
         .add(new AbstractXmlRpcParser.StructMember("role", "Princess"));
 
     Map expected = new HashMap();
-    Element structElement = this.createStructElement();
+    Element structElement = super.createStructElement();
 
     int structMemberCount = structMembers.size();
     for (int i = 0; i < structMemberCount; i++) {
@@ -596,21 +408,15 @@ public class AbstractXmlRpcParserTests extends TestCase {
           .get(i);
       expected.put(member.name, member.value);
 
-      Element nameElement = this.createNameElement();
-      nameElement.setTextContent(member.name);
-
-      Element valueElement = this.createValueElement();
-      valueElement.setTextContent(member.value.toString());
-
-      Element memberElement = this.createMemberElement();
-      memberElement.appendChild(nameElement);
-      memberElement.appendChild(valueElement);
+      Element nameElement = super.createNameElement(member.name);
+      Element valueElement = super.createValueElement(member.value.toString());
+      Element memberElement = super.createMemberElement(nameElement,
+          valueElement);
 
       structElement.appendChild(memberElement);
     }
 
-    Element valueElement = this.createValueElement();
-    valueElement.appendChild(structElement);
+    Element valueElement = super.createValueElement(structElement);
 
     assertEquals("<Struct>", expected, this.parser
         .parseValueElement(valueElement));
@@ -622,8 +428,9 @@ public class AbstractXmlRpcParserTests extends TestCase {
    * returns a <code>String</code> the type of the value is not specified.
    */
   public void testParseValueElementWhenValueTypeIsNotSpecified() {
-    Element valueElement = this.createStringElement();
-    valueElement.setTextContent("Some text");
+    String expected = "Some text";
+
+    Element valueElement = super.createValueElement(expected);
 
     assertEquals("<String>", "Some text", this.parser
         .parseValueElement(valueElement));
