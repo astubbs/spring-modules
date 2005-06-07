@@ -40,7 +40,7 @@ import org.w3c.dom.Text;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/06 04:43:48 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/07 04:37:09 $
  */
 public abstract class AbstractXmlRpcParser {
 
@@ -68,7 +68,7 @@ public abstract class AbstractXmlRpcParser {
      */
     public StructMember(String name, Object value) {
       super();
-      
+
       this.name = name;
       this.value = value;
     }
@@ -173,7 +173,7 @@ public abstract class AbstractXmlRpcParser {
    *           is allowed inside an "array" element.
    * @see #parseDataElement(Element)
    */
-  protected final List parseArrayElement(Element arrayElement) {
+  protected List parseArrayElement(Element arrayElement) {
     NodeList childNodes = arrayElement.getChildNodes();
     int childCount = childNodes.getLength();
 
@@ -202,7 +202,7 @@ public abstract class AbstractXmlRpcParser {
    *          the DOM element.
    * @return the new array of <code>byte</code>s.
    */
-  protected final byte[] parseBase64Element(Element base64Element) {
+  protected byte[] parseBase64Element(Element base64Element) {
     String nodeValue = DomUtils.getTextValue(base64Element);
     byte[] byteArray = Base64.decodeBase64(nodeValue.getBytes());
     return byteArray;
@@ -215,7 +215,7 @@ public abstract class AbstractXmlRpcParser {
    *          the DOM element.
    * @return the new <code>Boolean</code>.
    */
-  protected final Boolean parseBooleanElement(Element booleanElement) {
+  protected Boolean parseBooleanElement(Element booleanElement) {
     String text = DomUtils.getTextValue(booleanElement);
     Boolean bool = "1".equals(text) ? Boolean.TRUE : Boolean.FALSE;
     return bool;
@@ -227,11 +227,11 @@ public abstract class AbstractXmlRpcParser {
    * @param dataElement
    *          the DOM element.
    * @return the new array of <code>java.util.List</code>s.
-   * @see #parseDateElement(Element)
+   * @see #parseDateTimeElement(Element)
    * @see #parseDoubleElement(Element)
    * @see #parseIntegerElement(Element)
    */
-  protected final List parseDataElement(Element dataElement) {
+  protected List parseDataElement(Element dataElement) {
     List list = new ArrayList();
 
     NodeList childNodes = dataElement.getChildNodes();
@@ -261,7 +261,7 @@ public abstract class AbstractXmlRpcParser {
    * @throws XmlRpcParsingException
    *           if the value of the element cannot be parsed into a date.
    */
-  protected final Date parseDateElement(Element dateElement) {
+  protected Date parseDateTimeElement(Element dateElement) {
     String text = DomUtils.getTextValue(dateElement);
     DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
@@ -285,7 +285,7 @@ public abstract class AbstractXmlRpcParser {
    * @throws XmlRpcParsingException
    *           if the value of the element cannot be converted to a double.
    */
-  protected final Double parseDoubleElement(Element doubleElement) {
+  protected Double parseDoubleElement(Element doubleElement) {
     String nodeValue = DomUtils.getTextValue(doubleElement);
 
     Double doubleValue = null;
@@ -307,7 +307,7 @@ public abstract class AbstractXmlRpcParser {
    * @throws XmlRpcParsingException
    *           if the value of the element cannot be converted to an integer.
    */
-  protected final Integer parseIntegerElement(Element integerElement) {
+  protected Integer parseIntegerElement(Element integerElement) {
     String nodeValue = DomUtils.getTextValue(integerElement);
 
     Integer intValue = null;
@@ -331,7 +331,7 @@ public abstract class AbstractXmlRpcParser {
    *           and one "value" element are allowed inside an "member" element.
    * @see #parseValueElement(Element)
    */
-  protected final StructMember parseMemberElement(Element memberElement) {
+  protected StructMember parseMemberElement(Element memberElement) {
     String name = null;
     Object value = null;
 
@@ -369,7 +369,7 @@ public abstract class AbstractXmlRpcParser {
    *           if the element contains an unknown child.
    * @see #parseValueElement(Element)
    */
-  protected final Object parseParameterElement(Element parameterElement) {
+  protected Object parseParameterElement(Element parameterElement) {
     NodeList childNodes = parameterElement.getChildNodes();
     int childCount = childNodes.getLength();
 
@@ -401,7 +401,7 @@ public abstract class AbstractXmlRpcParser {
    * @param arguments
    *          a <code>List</code> that will store the parsed parameters.
    */
-  protected final void parseParametersElement(Element parametersElement,
+  protected void parseParametersElement(Element parametersElement,
       List parameterTypes, List arguments) {
     NodeList childNodes = parametersElement.getChildNodes();
     int childCount = childNodes.getLength();
@@ -440,7 +440,7 @@ public abstract class AbstractXmlRpcParser {
    *          the DOM element.
    * @return the new <code>String</code>.
    */
-  protected final String parseStringElement(Element stringElement) {
+  protected String parseStringElement(Element stringElement) {
     String nodeValue = DomUtils.getTextValue(stringElement);
     return nodeValue;
   }
@@ -453,7 +453,7 @@ public abstract class AbstractXmlRpcParser {
    * @return the new array of <code>java.util.Map</code>s.
    * @see #parseMemberElement(Element)
    */
-  protected final Map parseStructElement(Element structElement) {
+  protected Map parseStructElement(Element structElement) {
     Map map = new HashMap();
 
     NodeList childNodes = structElement.getChildNodes();
@@ -487,13 +487,13 @@ public abstract class AbstractXmlRpcParser {
    * @see #parseArrayElement(Element)
    * @see #parseBase64Element(Element)
    * @see #parseBooleanElement(Element)
-   * @see #parseDateElement(Element)
+   * @see #parseDateTimeElement(Element)
    * @see #parseDoubleElement(Element)
    * @see #parseIntegerElement(Element)
    * @see #parseStringElement(Element)
    * @see #parseStructElement(Element)
    */
-  protected final Object parseValueElement(Element valueElement) {
+  protected Object parseValueElement(Element valueElement) {
     NodeList childNodes = valueElement.getChildNodes();
     int childCount = childNodes.getLength();
 
@@ -512,7 +512,7 @@ public abstract class AbstractXmlRpcParser {
           return this.parseBooleanElement((Element) node);
 
         } else if (DATE_TIME.equals(nodeName)) {
-          return this.parseDateElement((Element) node);
+          return this.parseDateTimeElement((Element) node);
 
         } else if (DOUBLE.equals(nodeName)) {
           return this.parseDoubleElement((Element) node);
@@ -529,8 +529,7 @@ public abstract class AbstractXmlRpcParser {
         } else {
           throw new XmlRpcParsingException("Unknown entity '" + nodeName + "'");
         }
-      }
-      else if (node instanceof Text) {
+      } else if (node instanceof Text) {
         return this.parseStringElement(valueElement);
       }
     }
