@@ -33,10 +33,10 @@ import org.w3c.dom.NodeList;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/06 02:13:56 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/07 04:37:38 $
  */
-public class DefaultXmlRpcServerRequestParser extends AbstractXmlRpcParser
-    implements XmlRpcServerRequestParser {
+public final class DefaultXmlRpcServerRequestParser extends
+    AbstractXmlRpcParser implements XmlRpcServerRequestParser {
 
   /**
    * Name of the XML element representing the name of a XML-RPC method.
@@ -56,7 +56,7 @@ public class DefaultXmlRpcServerRequestParser extends AbstractXmlRpcParser
   public XmlRpcRemoteInvocation parseXmlRpcServerRequest(Document document) {
     Element root = document.getDocumentElement();
 
-    String methodName = null;
+    String beanAndMethodNames = null;
     List parameterTypeList = new ArrayList();
     List argumentList = new ArrayList();
 
@@ -65,7 +65,7 @@ public class DefaultXmlRpcServerRequestParser extends AbstractXmlRpcParser
       Node node = nodeList.item(i);
       if (node instanceof Element) {
         if (METHOD_NAME.equals(node.getNodeName())) {
-          methodName = DomUtils.getTextValue((Element) node);
+          beanAndMethodNames = DomUtils.getTextValue((Element) node);
 
         } else if (PARAMS.equals(node.getNodeName())) {
           super.parseParametersElement((Element) node, parameterTypeList,
@@ -86,7 +86,7 @@ public class DefaultXmlRpcServerRequestParser extends AbstractXmlRpcParser
     }
 
     XmlRpcRemoteInvocation remoteInvocation = new XmlRpcRemoteInvocation(
-        methodName, parameterTypes, arguments);
+        beanAndMethodNames, parameterTypes, arguments);
     return remoteInvocation;
   }
 }
