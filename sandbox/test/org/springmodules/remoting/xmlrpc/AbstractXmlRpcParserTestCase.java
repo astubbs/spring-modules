@@ -37,7 +37,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/06 16:19:56 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/07 04:39:33 $
  */
 public class AbstractXmlRpcParserTestCase extends TestCase {
 
@@ -71,14 +71,32 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
   /**
    * Creates a new element having "array" as its tag name.
    * 
+   * @return the created element.
+   */
+  protected final Element createArrayElement() {
+    return this.document.createElement("array");
+  }
+
+  /**
+   * Creates a new element having "array" as its tag name.
+   * 
    * @param dataElement
    *          "data" element to be added as child of the created element.
    * @return the created element.
    */
   protected final Element createArrayElement(Element dataElement) {
-    Element arrayElement = this.document.createElement("array");
+    Element arrayElement = this.createArrayElement();
     arrayElement.appendChild(dataElement);
     return arrayElement;
+  }
+
+  /**
+   * Creates a new element having "base64" as its tag name.
+   * 
+   * @return the created element.
+   */
+  protected final Element createBase64Element() {
+    return this.document.createElement("base64");
   }
 
   /**
@@ -89,9 +107,18 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
    * @return the created element.
    */
   protected final Element createBase64Element(String text) {
-    Element base64Element = this.document.createElement("base64");
+    Element base64Element = this.createBase64Element();
     base64Element.setTextContent(text);
     return base64Element;
+  }
+
+  /**
+   * Creates a new element having "boolean" as its tag name.
+   * 
+   * @return the created element.
+   */
+  protected final Element createBooleanElement() {
+    return this.document.createElement("boolean");
   }
 
   /**
@@ -103,7 +130,7 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
    * @return the created element.
    */
   protected final Element createBooleanElement(Boolean value) {
-    Element booleanElement = this.document.createElement("boolean");
+    Element booleanElement = this.createBooleanElement();
     String text = value.equals(Boolean.TRUE) ? "1" : "0";
     booleanElement.setTextContent(text);
     return booleanElement;
@@ -116,6 +143,15 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
    */
   protected final Element createDataElement() {
     return this.document.createElement("data");
+  }
+
+  /**
+   * Creates a new element having "dateTime.iso8601" as its tag name.
+   * 
+   * @return the created element.
+   */
+  protected final Element createDateTimeElement() {
+    return this.document.createElement("dateTime.iso8601");
   }
 
   /**
@@ -139,9 +175,18 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
    * @return the created element.
    */
   protected final Element createDateTimeElement(String text) {
-    Element dateTimeElement = this.document.createElement("dateTime.iso8601");
+    Element dateTimeElement = this.createDateTimeElement();
     dateTimeElement.setTextContent(text);
     return dateTimeElement;
+  }
+
+  /**
+   * Creates a new element having "double" as its tag name.
+   * 
+   * @return the created element.
+   */
+  protected final Element createDoubleElement() {
+    return this.document.createElement("double");
   }
 
   /**
@@ -163,9 +208,18 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
    * @return the created element.
    */
   protected final Element createDoubleElement(String text) {
-    Element doubleElement = this.document.createElement("double");
+    Element doubleElement = this.createDoubleElement();
     doubleElement.setTextContent(text);
     return doubleElement;
+  }
+
+  /**
+   * Creates a new element having "i4" as its tag name.
+   * 
+   * @return the created element.
+   */
+  protected final Element createI4Element() {
+    return this.document.createElement("i4");
   }
 
   /**
@@ -187,9 +241,18 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
    * @return the created element.
    */
   protected final Element createI4Element(String text) {
-    Element i4Element = this.document.createElement("i4");
+    Element i4Element = this.createI4Element();
     i4Element.setTextContent(text);
     return i4Element;
+  }
+
+  /**
+   * Creates a new element having "int" as its tag name.
+   * 
+   * @return the created element.
+   */
+  protected final Element createIntElement() {
+    return this.document.createElement("int");
   }
 
   /**
@@ -200,7 +263,7 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
    * @return the created element.
    */
   protected final Element createIntElement(Integer intValue) {
-    Element intElement = this.document.createElement("int");
+    Element intElement = this.createIntElement();
     intElement.setTextContent(intValue.toString());
     return intElement;
   }
@@ -239,12 +302,21 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
   /**
    * Creates a new element having "param" as its tag name.
    * 
+   * @return the created element.
+   */
+  protected final Element createParamElement() {
+    return this.document.createElement("param");
+  }
+
+  /**
+   * Creates a new element having "param" as its tag name.
+   * 
    * @param valueElement
    *          element to be added as child as the created element.
    * @return the created element.
    */
   protected final Element createParamElement(Element valueElement) {
-    Element paramElement = this.document.createElement("param");
+    Element paramElement = this.createParamElement();
     paramElement.appendChild(valueElement);
     return paramElement;
   }
@@ -261,12 +333,21 @@ public class AbstractXmlRpcParserTestCase extends TestCase {
   /**
    * Creates a new element having "string" as its tag name.
    * 
+   * @return the created element.
+   */
+  protected final Element createStringElement() {
+    return this.document.createElement("string");
+  }
+
+  /**
+   * Creates a new element having "string" as its tag name.
+   * 
    * @param text
    *          the text of the created element.
    * @return the created element.
    */
   protected final Element createStringElement(String text) {
-    Element stringElement = this.document.createElement("string");
+    Element stringElement = this.createStringElement();
     stringElement.setTextContent(text);
     return stringElement;
   }
