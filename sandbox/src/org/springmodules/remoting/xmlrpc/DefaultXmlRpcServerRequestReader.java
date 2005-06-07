@@ -42,7 +42,7 @@ import org.xml.sax.SAXParseException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/06 02:13:57 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/07 04:44:42 $
  */
 public class DefaultXmlRpcServerRequestReader implements InitializingBean,
     XmlRpcServerRequestReader {
@@ -80,7 +80,7 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
 
   /**
    * Flag that indicates if the XML parser should validate the XML-RPC request.
-   * Default is <code>true</code>.
+   * Default is <code>false</code>.
    */
   private boolean validating;
 
@@ -89,7 +89,6 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
    */
   public DefaultXmlRpcServerRequestReader() {
     super();
-    this.validating = true;
   }
 
   /**
@@ -111,18 +110,30 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
    * 
    * @see InitializingBean#afterPropertiesSet()
    */
-  public void afterPropertiesSet() throws Exception {
+  public final void afterPropertiesSet() throws Exception {
     if (this.entityResolver == null) {
-      this.entityResolver = new XmlRpcDtdResolver();
+      this.setEntityResolver(new XmlRpcDtdResolver());
     }
 
     if (this.errorHandler == null) {
-      this.errorHandler = new SimpleSaxErrorHandler(this.logger);
+      this.setErrorHandler(new SimpleSaxErrorHandler(this.logger));
     }
 
     if (this.parser == null) {
-      this.parser = new DefaultXmlRpcServerRequestParser();
+      this.setParser(new DefaultXmlRpcServerRequestParser());
     }
+  }
+
+  /**
+   * Delegates to the <code>{@link XmlRpcServerRequestParser}</code> the
+   * parsing of the given DOM document.
+   * 
+   * @param document
+   *          the DOM document to parse.
+   * @return the XML-RPC request created by the parser.
+   */
+  protected XmlRpcRemoteInvocation parseXmlRpcServerRequest(Document document) {
+    return this.parser.parseXmlRpcServerRequest(document);
   }
 
   /**
@@ -142,7 +153,7 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
       }
 
       Document document = docBuilder.parse(inputStream);
-      return this.parser.parseXmlRpcServerRequest(document);
+      return this.parseXmlRpcServerRequest(document);
 
     } catch (ParserConfigurationException ex) {
       throw new BeanDefinitionStoreException(
