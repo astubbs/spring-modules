@@ -37,15 +37,15 @@ import org.xml.sax.SAXParseException;
 
 /**
  * <p>
- * Default implementation of <code>{@link XmlRpcServerRequestReader}</code>.
+ * Default implementation of <code>{@link XmlRpcRequestReader}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/07 04:44:42 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/08 01:54:07 $
  */
-public class DefaultXmlRpcServerRequestReader implements InitializingBean,
-    XmlRpcServerRequestReader {
+public class DefaultXmlRpcRequestReader implements InitializingBean,
+    XmlRpcRequestReader {
 
   /**
    * SAX entity resolver to be used for parsing. By default,
@@ -76,7 +76,7 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
   /**
    * Creates a XML-RPC remote invocation from the parsed XML request.
    */
-  private XmlRpcServerRequestParser parser;
+  private XmlRpcRequestParser parser;
 
   /**
    * Flag that indicates if the XML parser should validate the XML-RPC request.
@@ -87,7 +87,7 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
   /**
    * Constructor.
    */
-  public DefaultXmlRpcServerRequestReader() {
+  public DefaultXmlRpcRequestReader() {
     super();
   }
 
@@ -104,7 +104,7 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
    * handler is <code>null</code>.
    * </p>
    * <p>
-   * Creates a new <code>{@link DefaultXmlRpcServerRequestParser}</code> if
+   * Creates a new <code>{@link DefaultXmlRpcRequestParser}</code> if
    * the XML-RPC request parser is <code>null</code>.
    * </p>
    * 
@@ -120,12 +120,12 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
     }
 
     if (this.parser == null) {
-      this.setParser(new DefaultXmlRpcServerRequestParser());
+      this.setParser(new DefaultXmlRpcRequestParser());
     }
   }
 
   /**
-   * Delegates to the <code>{@link XmlRpcServerRequestParser}</code> the
+   * Delegates to the <code>{@link XmlRpcRequestParser}</code> the
    * parsing of the given DOM document.
    * 
    * @param document
@@ -133,11 +133,11 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
    * @return the XML-RPC request created by the parser.
    */
   protected XmlRpcRemoteInvocation parseXmlRpcServerRequest(Document document) {
-    return this.parser.parseXmlRpcServerRequest(document);
+    return this.parser.parseXmlRpcRequest(document);
   }
 
   /**
-   * @see XmlRpcServerRequestReader#readXmlRpcRequest(InputStream)
+   * @see XmlRpcRequestReader#readXmlRpcRequest(InputStream)
    */
   public XmlRpcRemoteInvocation readXmlRpcRequest(InputStream inputStream) {
     try {
@@ -208,7 +208,7 @@ public class DefaultXmlRpcServerRequestReader implements InitializingBean,
    * @param parser
    *          the new value to set.
    */
-  public final void setParser(XmlRpcServerRequestParser parser) {
+  public final void setParser(XmlRpcRequestParser parser) {
     this.parser = parser;
   }
 

@@ -17,9 +17,6 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,15 +25,15 @@ import org.w3c.dom.NodeList;
 
 /**
  * <p>
- * Default implementation of <code>{@link XmlRpcServerRequestParser}</code>.
+ * Default implementation of <code>{@link XmlRpcRequestParser}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/07 04:37:38 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/08 01:54:07 $
  */
-public final class DefaultXmlRpcServerRequestParser extends
-    AbstractXmlRpcParser implements XmlRpcServerRequestParser {
+public class DefaultXmlRpcRequestParser extends AbstractXmlRpcParser
+    implements XmlRpcRequestParser {
 
   /**
    * Name of the XML element representing the name of a XML-RPC method.
@@ -46,19 +43,17 @@ public final class DefaultXmlRpcServerRequestParser extends
   /**
    * Constructor.
    */
-  public DefaultXmlRpcServerRequestParser() {
+  public DefaultXmlRpcRequestParser() {
     super();
   }
 
   /**
-   * @see XmlRpcServerRequestParser#parseXmlRpcServerRequest(Document)
+   * @see XmlRpcRequestParser#parseXmlRpcRequest(Document)
    */
-  public XmlRpcRemoteInvocation parseXmlRpcServerRequest(Document document) {
+  public XmlRpcRemoteInvocation parseXmlRpcRequest(Document document) {
     Element root = document.getDocumentElement();
-
     String beanAndMethodNames = null;
-    List parameterTypeList = new ArrayList();
-    List argumentList = new ArrayList();
+    XmlRpcRemoteInvocationArguments invocationArguments = null;
 
     NodeList nodeList = root.getChildNodes();
     for (int i = 0; i < nodeList.getLength(); i++) {
@@ -68,25 +63,13 @@ public final class DefaultXmlRpcServerRequestParser extends
           beanAndMethodNames = DomUtils.getTextValue((Element) node);
 
         } else if (PARAMS.equals(node.getNodeName())) {
-          super.parseParametersElement((Element) node, parameterTypeList,
-              argumentList);
+          invocationArguments = this.parseParametersElement((Element) node);
         }
       }
     }
 
-    Class[] parameterTypes = null;
-    if (!parameterTypeList.isEmpty()) {
-      parameterTypes = (Class[]) parameterTypeList
-          .toArray(new Class[parameterTypeList.size()]);
-    }
-
-    Object[] arguments = null;
-    if (!argumentList.isEmpty()) {
-      arguments = argumentList.toArray();
-    }
-
     XmlRpcRemoteInvocation remoteInvocation = new XmlRpcRemoteInvocation(
-        beanAndMethodNames, parameterTypes, arguments);
+        beanAndMethodNames, invocationArguments);
     return remoteInvocation;
   }
 }

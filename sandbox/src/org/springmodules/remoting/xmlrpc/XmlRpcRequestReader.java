@@ -17,12 +17,12 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-import org.w3c.dom.Document;
+import java.io.InputStream;
 
 /**
  * <p>
- * Creates a XML-RPC remote invocation from a DOM document containing the name
- * of the method and its arguments.
+ * Creates a XML-RPC remote invocation from an <code>InputStream</code>
+ * containing the XML-RPC request in XML.
  * </p>
  * <p>
  * The created remote invocation represents the request made by a client to a
@@ -31,17 +31,18 @@ import org.w3c.dom.Document;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/06 02:13:57 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/08 01:54:06 $
  */
-public interface XmlRpcServerRequestParser {
+public interface XmlRpcRequestReader {
 
   /**
-   * Creates a XML-RPC remote invocation from the specified DOM document.
+   * Creates a XML-RPC remote invocation from the specified
+   * <code>InputStream</code>.
    * 
-   * @param document
-   *          the DOM document.
+   * @param inputStream
+   *          contains the XML-RPC request in XML.
    * @return the created XML-RPC remote invocation.
    */
-  XmlRpcRemoteInvocation parseXmlRpcServerRequest(Document document);
+  XmlRpcRemoteInvocation readXmlRpcRequest(InputStream inputStream);
 
 }

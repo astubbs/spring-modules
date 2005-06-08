@@ -24,19 +24,19 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Tests for <code>{@link DefaultXmlRpcServerRequestReader}</code>.
+ * Unit Tests for <code>{@link DefaultXmlRpcRequestReader}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/07 04:39:59 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/08 01:54:05 $
  */
-public class DefaultXmlRpcServerRequestReaderTests extends TestCase {
+public class DefaultXmlRpcRequestReaderTests extends TestCase {
 
   /**
    * Primary object that is under test.
    */
-  private DefaultXmlRpcServerRequestReader requestReader;
+  private DefaultXmlRpcRequestReader requestReader;
 
   /**
    * Constructor.
@@ -44,7 +44,7 @@ public class DefaultXmlRpcServerRequestReaderTests extends TestCase {
    * @param name
    *          the name of the test case to construct.
    */
-  public DefaultXmlRpcServerRequestReaderTests(String name) {
+  public DefaultXmlRpcRequestReaderTests(String name) {
     super(name);
   }
 
@@ -54,12 +54,12 @@ public class DefaultXmlRpcServerRequestReaderTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.requestReader = new DefaultXmlRpcServerRequestReader();
+    this.requestReader = new DefaultXmlRpcRequestReader();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link DefaultXmlRpcServerRequestReader#readXmlRpcRequest(InputStream)}</code>
+   * <code>{@link DefaultXmlRpcRequestReader#readXmlRpcRequest(InputStream)}</code>
    * creates a new <code>{@link XmlRpcRemoteInvocation}</code> from the
    * specified <code>InputStream</code> containing the XML-RPC request.
    */
