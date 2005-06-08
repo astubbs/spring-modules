@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/07 04:40:56 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/08 01:57:32 $
  */
 public class XmlRpcParserTests extends AbstractXmlRpcParserTestCase {
 
@@ -74,11 +74,25 @@ public class XmlRpcParserTests extends AbstractXmlRpcParserTestCase {
     };
   }
 
+  /**
+   * Instantiates <code>{@link #parser}</code> as a mock object.
+   * 
+   * @param methodName
+   *          the name of the method to mock. It should receive a DOM element as
+   *          argument.
+   */
   private void setUpParserAsMockObject(String methodName) throws Exception {
     String[] methodNames = { methodName };
     this.setUpParserAsMockObject(methodNames);
   }
 
+  /**
+   * Instantiates <code>{@link #parser}</code> as a mock object.
+   * 
+   * @param methodNames
+   *          the names of the methods to mock. Each of the methods should
+   *          receive a DOM element as argument.
+   */
   private void setUpParserAsMockObject(String[] methodNames) throws Exception {
     Class targetClass = AbstractXmlRpcParser.class;
 
@@ -282,9 +296,9 @@ public class XmlRpcParserTests extends AbstractXmlRpcParserTestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractXmlRpcParser#parseParametersElement(Element, List, List)}</code>
-   * fills the lists with the parameter types and arguments obtain from parsing
-   * the given DOM element.
+   * <code>{@link AbstractXmlRpcParser#parseParametersElement(Element)}</code>
+   * parses the given DOM element into a
+   * <code>{@link XmlRpcRemoteInvocationArguments}</code>.
    */
   public void testParseParametersElement() throws Exception {
     this.setUpParserAsMockObject("parseParameterElement");
@@ -298,7 +312,7 @@ public class XmlRpcParserTests extends AbstractXmlRpcParserTestCase {
     for (int i = 0; i < parameterCount; i++) {
       Element paramElement = super.createParamElement();
       paramsElement.appendChild(paramElement);
-      
+
       // expectation: parse the "param" element.
       this.parser.parseParameterElement(paramElement);
       this.parserControl.setReturnValue(expectedArguments[i]);
@@ -307,17 +321,14 @@ public class XmlRpcParserTests extends AbstractXmlRpcParserTestCase {
     // set the state of the mock object to "replay".
     this.parserControl.replay();
 
-    List actualParameterTypes = new ArrayList();
-    List actualArguments = new ArrayList();
-
     // execute the method to test.
-    this.parser.parseParametersElement(paramsElement, actualParameterTypes,
-        actualArguments);
+    XmlRpcRemoteInvocationArguments invocationArguments = this.parser
+        .parseParametersElement(paramsElement);
 
-    assertEquals("<Parameter types>", Arrays.asList(expectedParameterTypes),
-        actualParameterTypes);
-    assertEquals("<Arguments>", Arrays.asList(expectedArguments),
-        actualArguments);
+    assertTrue("<Parameter types>", Arrays.equals(expectedParameterTypes,
+        invocationArguments.getParameterTypes()));
+    assertTrue("<Arguments>", Arrays.equals(expectedArguments,
+        invocationArguments.getArguments()));
 
     // verify that the expectations of the mock object were met.
     this.parserControl.verify();
