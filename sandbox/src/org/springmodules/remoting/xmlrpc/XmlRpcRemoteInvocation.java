@@ -18,6 +18,8 @@
 package org.springmodules.remoting.xmlrpc;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -31,7 +33,7 @@ import org.springframework.remoting.support.RemoteInvocation;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/07 04:38:55 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/08 01:57:03 $
  */
 public class XmlRpcRemoteInvocation extends RemoteInvocation {
 
@@ -59,18 +61,18 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
    * 
    * @param beanAndMethodNames
    *          the name of the bean and the method to execute.
-   * @param parameterTypes
-   *          the types of the arguments of the method.
-   * @param arguments
-   *          the arguments of the method.
-   * @see #setMethodName(String)
+   * @param invocationArguments
+   *          encapsulates the arguments for this invocation.
    */
   public XmlRpcRemoteInvocation(String beanAndMethodNames,
-      Class[] parameterTypes, Object[] arguments) {
+      XmlRpcRemoteInvocationArguments invocationArguments) {
     super();
-    super.setArguments(arguments);
     this.setBeanAndMethodNames(beanAndMethodNames);
-    super.setParameterTypes(parameterTypes);
+
+    if (invocationArguments != null) {
+      super.setArguments(invocationArguments.getArguments());
+      super.setParameterTypes(invocationArguments.getParameterTypes());
+    }
   }
 
   /**
@@ -141,8 +143,50 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
   public Object invoke(Object targetObject) throws NoSuchMethodException,
       IllegalAccessException, InvocationTargetException {
 
-    // TODO Implement overriden version of invoke.
-    return super.invoke(targetObject);
+    Method method = this.findMethod(targetObject);
+    return method.invoke(targetObject, super.getArguments());
+  }
+
+  /**
+   * Finds a method of the given object that matches the name and parameter
+   * types in this instance.
+   * 
+   * @param targetObject
+   *          the target object.
+   * @return the method that matches the name and parameter types in this
+   *         instance.
+   * @throws NoSuchMethodException
+   *           if there is not any matching method.
+   */
+  protected Method findMethod(Object targetObject) throws NoSuchMethodException {
+    Class targetClass = targetObject.getClass();
+    Method[] methods = targetClass.getMethods();
+    Method foundMethod = null;
+
+    String invocationMethodName = super.getMethodName();
+    Class[] invocationParameterTypes = super.getParameterTypes();
+
+    int methodCount = methods.length;
+    for (int i = 0; i < methodCount; i++) {
+      Method method = methods[i];
+
+      if (method.getName().equals(invocationMethodName)) {
+        Class[] parameterTypes = method.getParameterTypes();
+        int invocationParameterTypeCount = invocationParameterTypes.length;
+
+        if (parameterTypes.length == invocationParameterTypeCount) {
+          // TODO Finish implementation.
+        }
+      }
+    }
+
+    if (foundMethod == null) {
+      throw new NoSuchMethodException("The class '" + targetClass.getName()
+          + "' does not contain a method called '" + invocationMethodName
+          + "' with the arguments '"
+          + Arrays.toString(invocationParameterTypes));
+    }
+    return foundMethod;
   }
 
   /**
@@ -194,7 +238,7 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
     ToStringBuilder toStringBuilder = new ToStringBuilder(this);
     toStringBuilder.append("beanName", this.getBeanName());
     toStringBuilder.append("methodName", super.getMethodName());
-    toStringBuilder.append("paramterTypes", super.getParameterTypes());
+    toStringBuilder.append("parameterTypes", super.getParameterTypes());
     toStringBuilder.append("arguments", super.getArguments());
 
     String toString = toStringBuilder.toString();
