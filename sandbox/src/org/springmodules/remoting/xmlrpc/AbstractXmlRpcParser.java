@@ -40,12 +40,12 @@ import org.w3c.dom.Text;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/07 04:37:09 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/08 01:55:11 $
  */
 public abstract class AbstractXmlRpcParser {
 
   /**
-   * Represents a member of a "struct" member.
+   * Represents a member of a "struct".
    */
   protected static class StructMember {
     /**
@@ -395,17 +395,15 @@ public abstract class AbstractXmlRpcParser {
    * 
    * @param parametersElement
    *          the DOM element.
-   * @param parameterTypes
-   *          a <code>List</code> that will store the class of the parsed
-   *          parameters.
-   * @param arguments
-   *          a <code>List</code> that will store the parsed parameters.
+   * @return the parameters of the XML-RPC request/response.
    */
-  protected void parseParametersElement(Element parametersElement,
-      List parameterTypes, List arguments) {
+  protected XmlRpcRemoteInvocationArguments parseParametersElement(
+      Element parametersElement) {
     NodeList childNodes = parametersElement.getChildNodes();
     int childCount = childNodes.getLength();
 
+    XmlRpcRemoteInvocationArguments arguments = new XmlRpcRemoteInvocationArguments();
+    
     for (int i = 0; i < childCount; i++) {
       Node node = childNodes.item(i);
       if (node instanceof Element) {
@@ -414,23 +412,26 @@ public abstract class AbstractXmlRpcParser {
         if (PARAM.equals(nodeName)) {
           Object parameter = this.parseParameterElement((Element) node);
 
+          Class parameterType = null;
           if (parameter instanceof List) {
-            parameterTypes.add(List.class);
+            parameterType = List.class;
 
           } else if (parameter instanceof Map) {
-            parameterTypes.add(Map.class);
+            parameterType = Map.class;
 
           } else {
-            parameterTypes.add(parameter.getClass());
+            parameterType = parameter.getClass();
           }
 
-          arguments.add(parameter);
+          arguments.addArgument(parameter, parameterType);
 
         } else {
           throw new XmlRpcParsingException("Unknown entity '" + nodeName + "'");
         }
       }
     }
+
+    return arguments;
   }
 
   /**
