@@ -17,7 +17,7 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-import org.springframework.core.NestedRuntimeException;
+import org.springframework.core.NestedCheckedException;
 
 /**
  * <p>
@@ -27,9 +27,9 @@ import org.springframework.core.NestedRuntimeException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/06 02:13:56 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/10 01:44:01 $
  */
-public abstract class XmlRpcException extends NestedRuntimeException {
+public abstract class XmlRpcException extends NestedCheckedException {
 
   /**
    * Constructor.
