@@ -33,7 +33,7 @@ import javax.xml.stream.XMLStreamReader;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/10 01:41:39 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/10 08:48:04 $
  */
 public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
 
@@ -255,10 +255,11 @@ public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
 
     while (reader.hasNext()) {
       int event = reader.next();
-
+      String localName = null;
+      
       switch (event) {
         case XMLStreamConstants.START_ELEMENT:
-          String localName = reader.getLocalName();
+          localName = reader.getLocalName();
 
           if (XmlRpcEntity.NAME.equals(localName)) {
             name = reader.getElementText();
@@ -270,9 +271,18 @@ public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
             throw new XmlRpcParsingException("Unknown entity '" + localName
                 + "'");
           }
+          break;
+          
+        case XMLStreamConstants.END_ELEMENT:
+          localName = reader.getLocalName();
+          
+          if (XmlRpcEntity.MEMBER.equals(localName)) {
+            return new StructMember(name, value);
+          }
       }
     }
 
+    // we should never reach this point.
     return new StructMember(name, value);
   }
 
@@ -333,6 +343,9 @@ public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
           } else if (XmlRpcEntity.STRING.equalsIgnoreCase(localName)) {
             String source = reader.getElementText();
             return this.parseString(source);
+
+          } else if (XmlRpcEntity.STRUCT.equalsIgnoreCase(localName)) {
+            return this.parseStructElement(reader);
 
           }
       }
