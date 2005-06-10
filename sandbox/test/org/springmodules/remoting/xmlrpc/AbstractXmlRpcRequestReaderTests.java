@@ -18,17 +18,19 @@
 package org.springmodules.remoting.xmlrpc;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-
-import org.apache.commons.codec.binary.Base64;
+import java.util.Map;
 
 import junit.framework.TestCase;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * <p>
@@ -38,10 +40,15 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/10 01:49:28 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/10 08:49:10 $
  */
 public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
 
+  /**
+   * Message logger.
+   */
+  protected final Log logger = LogFactory.getLog(this.getClass());
+  
   /**
    * Primary object that is under test.
    */
@@ -65,6 +72,37 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
   }
 
   /**
+   * <p>
+   * Creates a new XML element having "array" as its tag name. The created XML
+   * element is wrapped by a "value" XML element.
+   * </p>
+   * <p>
+   * This method assumes the all the elements of the list are
+   * <code>Integer</code>.
+   * </p>
+   * 
+   * @param value
+   *          the value to be set as text of the element.
+   * @return the String representation of the created XML element.
+   * @see #createValueElement(Object)
+   */
+  protected String createArrayElement(List value) {
+    StringBuffer buffer = new StringBuffer();
+
+    buffer.append("<array><data>");
+
+    int size = value.size();
+    for (int i = 0; i < size; i++) {
+      Integer item = (Integer) value.get(i);
+      buffer.append(this.createI4Element(item));
+    }
+
+    buffer.append("</data></array>");
+
+    return this.createValueElement(buffer.toString());
+  }
+
+  /**
    * Creates a new XML element having "base64" as its tag name. The created XML
    * element is wrapped by a "value" XML element.
    * 
@@ -73,11 +111,12 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
    * @return the String representation of the created XML element.
    * @see #createValueElement(Object)
    */
-  protected String createBase64Element(byte[] value) throws IOException {
-    OutputStream outputStream = new ByteArrayOutputStream();
-    outputStream.write(Base64.encodeBase64(value));
+  protected String createBase64Element(byte[] value) {
+    byte[] buffer = Base64.encodeBase64(value);
+    int count = buffer.length;
 
-    String base64Element = "<base64>" + outputStream.toString() + "</base64>";
+    String base64Element = "<base64>" + new String(buffer, 0, count)
+        + "</base64>";
     return this.createValueElement(base64Element);
   }
 
@@ -111,37 +150,6 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
   }
 
   /**
-   * <p>
-   * Creates a new XML element having "array" as its tag name. The created XML
-   * element is wrapped by a "value" XML element.
-   * </p>
-   * <p>
-   * This method assumes the all the elements of the list are
-   * <code>Integer</code>.
-   * </p>
-   * 
-   * @param value
-   *          the value to be set as text of the element.
-   * @return the String representation of the created XML element.
-   * @see #createValueElement(Object)
-   */
-  protected String createI4ArrayElement(List value) {
-    StringBuffer buffer = new StringBuffer();
-
-    buffer.append("<array><data>");
-
-    int size = value.size();
-    for (int i = 0; i < size; i++) {
-      Integer item = (Integer) value.get(i);
-      buffer.append(this.createI4Element(item));
-    }
-
-    buffer.append("</data></array>");
-
-    return this.createValueElement(buffer.toString());
-  }
-
-  /**
    * Creates a new XML element having "i4" as its tag name. The created XML
    * element is wrapped by a "value" XML element.
    * 
@@ -169,6 +177,26 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
     return this.createValueElement(stringElement);
   }
 
+  protected String createStructElement(Map value) {
+    StringBuffer buffer = new StringBuffer();
+
+    buffer.append("<struct>");
+
+    Iterator entrySetIterator = value.entrySet().iterator();
+    while (entrySetIterator.hasNext()) {
+      buffer.append("<member><name>");
+      Map.Entry entry = (Map.Entry) entrySetIterator.next();
+      buffer.append(entry.getKey());
+      buffer.append("</name>");
+      buffer.append(this.createStringElement(entry.getValue().toString()));
+      buffer.append("</member>");
+    }
+
+    buffer.append("</struct>");
+
+    return this.createValueElement(buffer.toString());
+  }
+  
   /**
    * Creates a new XML element having "value" as its tag name.
    * 
@@ -218,13 +246,17 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
     Double doubleParameter = new Double(885.09);
     Integer i4Parameter = new Integer(55);
     String stringParameter = "Tie Fighter";
+    Map structParameter = new HashMap();
+    structParameter.put("firstName", "Leia");
+    structParameter.put("lastName", "Organa");
+    structParameter.put("role", "Princess");
 
     Object[] arguments = { arrayParameter, base64Parameter, booleanParameter,
-        doubleParameter, i4Parameter, stringParameter };
+        doubleParameter, i4Parameter, stringParameter, structParameter };
     String beanName = "bean";
     String methodName = "getUser";
     Class[] parameterTypes = { List.class, byte[].class, Boolean.class,
-        Double.class, Integer.class, String.class };
+        Double.class, Integer.class, String.class, Map.class };
 
     XmlRpcRemoteInvocation expectedInvocation = new XmlRpcRemoteInvocation();
     expectedInvocation.setArguments(arguments);
@@ -239,7 +271,7 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
     buffer.append(".");
     buffer.append(methodName);
     buffer.append("</methodName><params><param>");
-    buffer.append(this.createI4ArrayElement(arrayParameter));
+    buffer.append(this.createArrayElement(arrayParameter));
     buffer.append("</param><param>");
     buffer.append(this.createBase64Element(base64Parameter));
     buffer.append("</param><param>");
@@ -250,14 +282,27 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
     buffer.append(this.createI4Element(i4Parameter));
     buffer.append("</param><param>");
     buffer.append(this.createStringElement(stringParameter));
+    buffer.append("</param><param>");
+    buffer.append(this.createStructElement(structParameter));
     buffer.append("</param></params></methodCall>");
 
     String xmlRpcRequest = buffer.toString();
+    if (this.logger.isDebugEnabled()) {
+      this.logger.debug(xmlRpcRequest);
+    }
+    
     InputStream inputStream = new ByteArrayInputStream(xmlRpcRequest.getBytes());
+
+    long startTime = System.currentTimeMillis();
 
     XmlRpcRemoteInvocation actualInvocation = this.requestReader
         .readXmlRpcRequest(inputStream);
 
+    long endTime = System.currentTimeMillis();
+    if (this.logger.isDebugEnabled()) {
+      this.logger.debug("Execution time: " + (endTime - startTime) + " ms");
+    }
+    
     assertEquals("<XML-RPC remote invocation>", expectedInvocation,
         actualInvocation);
   }
