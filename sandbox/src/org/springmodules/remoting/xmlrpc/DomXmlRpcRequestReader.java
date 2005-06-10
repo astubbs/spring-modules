@@ -24,12 +24,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -37,14 +37,16 @@ import org.xml.sax.SAXParseException;
 
 /**
  * <p>
- * Default implementation of <code>{@link XmlRpcRequestReader}</code>.
+ * Implementation of <code>{@link XmlRpcRequestReader}</code> that parses the
+ * XML-RPC request using DOM.
  * </p>
+ * s
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/08 01:54:07 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/10 01:41:40 $
  */
-public class DefaultXmlRpcRequestReader implements InitializingBean,
+public class DomXmlRpcRequestReader extends AbstractDomXmlRpcParser implements
     XmlRpcRequestReader {
 
   /**
@@ -69,16 +71,6 @@ public class DefaultXmlRpcRequestReader implements InitializingBean,
   private ErrorHandler errorHandler;
 
   /**
-   * Message logger.
-   */
-  protected final Log logger = LogFactory.getLog(this.getClass());
-
-  /**
-   * Creates a XML-RPC remote invocation from the parsed XML request.
-   */
-  private XmlRpcRequestParser parser;
-
-  /**
    * Flag that indicates if the XML parser should validate the XML-RPC request.
    * Default is <code>false</code>.
    */
@@ -87,59 +79,52 @@ public class DefaultXmlRpcRequestReader implements InitializingBean,
   /**
    * Constructor.
    */
-  public DefaultXmlRpcRequestReader() {
+  public DomXmlRpcRequestReader() {
     super();
+    this.setEntityResolver(new XmlRpcDtdResolver());
+    this.setErrorHandler(new SimpleSaxErrorHandler(this.logger));
   }
 
   /**
-   * <p>
-   * Verifies that the properties of this object have been properly set.
-   * </p>
-   * <p>
-   * Creates a new <code>{@link XmlRpcDtdResolver}</code> if the entity
-   * resolver is <code>null</code>.
-   * </p>
-   * <p>
-   * Creates a new <code>{@link SimpleSaxErrorHandler}</code> if the error
-   * handler is <code>null</code>.
-   * </p>
-   * <p>
-   * Creates a new <code>{@link DefaultXmlRpcRequestParser}</code> if
-   * the XML-RPC request parser is <code>null</code>.
-   * </p>
-   * 
-   * @see InitializingBean#afterPropertiesSet()
-   */
-  public final void afterPropertiesSet() throws Exception {
-    if (this.entityResolver == null) {
-      this.setEntityResolver(new XmlRpcDtdResolver());
-    }
-
-    if (this.errorHandler == null) {
-      this.setErrorHandler(new SimpleSaxErrorHandler(this.logger));
-    }
-
-    if (this.parser == null) {
-      this.setParser(new DefaultXmlRpcRequestParser());
-    }
-  }
-
-  /**
-   * Delegates to the <code>{@link XmlRpcRequestParser}</code> the
-   * parsing of the given DOM document.
+   * Creates a XML-RPC remote invocation from the specified DOM document.
    * 
    * @param document
-   *          the DOM document to parse.
-   * @return the XML-RPC request created by the parser.
+   *          the DOM document.
+   * @return the created XML-RPC remote invocation.
+   * @see XmlRpcRemoteInvocation#XmlRpcRemoteInvocation(String,
+   *      XmlRpcRemoteInvocationArguments)
    */
-  protected XmlRpcRemoteInvocation parseXmlRpcServerRequest(Document document) {
-    return this.parser.parseXmlRpcRequest(document);
+  protected XmlRpcRemoteInvocation parseXmlRpcRequest(Document document)
+      throws XmlRpcParsingException {
+    Element root = document.getDocumentElement();
+    String serviceAndMethodNames = null;
+    XmlRpcRemoteInvocationArguments invocationArguments = null;
+
+    NodeList nodeList = root.getChildNodes();
+    for (int i = 0; i < nodeList.getLength(); i++) {
+      Node node = nodeList.item(i);
+      if (node instanceof Element) {
+        String nodeName = node.getNodeName();
+
+        if (XmlRpcEntity.METHOD_NAME.equals(nodeName)) {
+          serviceAndMethodNames = DomUtils.getTextValue((Element) node);
+
+        } else if (XmlRpcEntity.PARAMS.equals(nodeName)) {
+          invocationArguments = this.parseParametersElement((Element) node);
+        }
+      }
+    }
+
+    XmlRpcRemoteInvocation remoteInvocation = new XmlRpcRemoteInvocation(
+        serviceAndMethodNames, invocationArguments);
+    return remoteInvocation;
   }
 
   /**
    * @see XmlRpcRequestReader#readXmlRpcRequest(InputStream)
    */
-  public XmlRpcRemoteInvocation readXmlRpcRequest(InputStream inputStream) {
+  public XmlRpcRemoteInvocation readXmlRpcRequest(InputStream inputStream)
+      throws XmlRpcParsingException {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       if (this.logger.isDebugEnabled()) {
@@ -153,22 +138,22 @@ public class DefaultXmlRpcRequestReader implements InitializingBean,
       }
 
       Document document = docBuilder.parse(inputStream);
-      return this.parseXmlRpcServerRequest(document);
+      return this.parseXmlRpcRequest(document);
 
     } catch (ParserConfigurationException ex) {
-      throw new BeanDefinitionStoreException(
+      throw new XmlRpcParsingException(
           "Parser configuration exception parsing XML from XML-RPC request", ex);
 
     } catch (SAXParseException ex) {
-      throw new BeanDefinitionStoreException("Line " + ex.getLineNumber()
+      throw new XmlRpcParsingException("Line " + ex.getLineNumber()
           + " in XML document from the XML-RPC request is invalid", ex);
 
     } catch (SAXException ex) {
-      throw new BeanDefinitionStoreException(
+      throw new XmlRpcParsingException(
           "XML document from XML-RPC request is invalid", ex);
 
     } catch (IOException ex) {
-      throw new BeanDefinitionStoreException(
+      throw new XmlRpcParsingException(
           "IOException parsing XML document from XML-RPC request", ex);
 
     } finally {
@@ -200,16 +185,6 @@ public class DefaultXmlRpcRequestReader implements InitializingBean,
    */
   public final void setErrorHandler(ErrorHandler errorHandler) {
     this.errorHandler = errorHandler;
-  }
-
-  /**
-   * Setter for the field <code>{@link #parser}</code>.
-   * 
-   * @param parser
-   *          the new value to set.
-   */
-  public final void setParser(XmlRpcRequestParser parser) {
-    this.parser = parser;
   }
 
   /**

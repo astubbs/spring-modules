@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 5, 2005
+ * Created on Jun 8, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,32 +17,31 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.util.xml.DomUtils;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springmodules.remoting.xmlrpc.util.Iso8601DateTimeFormat;
 
 /**
  * <p>
- * Template for parsers of XML-RPC request or a XML-RPC response.
+ * Template for XML-RPC request/response parsers.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/08 01:55:11 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/10 01:41:40 $
  */
 public abstract class AbstractXmlRpcParser {
+
+  /**
+   * Message logger.
+   */
+  protected final Log logger = LogFactory.getLog(this.getClass());
 
   /**
    * Represents a member of a "struct".
@@ -75,87 +74,6 @@ public abstract class AbstractXmlRpcParser {
   }
 
   /**
-   * Name of the XML element representing an array.
-   */
-  protected static final String ARRAY = "array";
-
-  /**
-   * Name of the XML element representing a base64-encoded binary.
-   */
-  protected static final String BASE_64 = "base64";
-
-  /**
-   * Name of the XML element representing a boolean.
-   */
-  protected static final String BOOLEAN = "boolean";
-
-  /**
-   * Name of the XML element representing the data portion of an array.
-   */
-  protected static final String DATA = "data";
-
-  /**
-   * Format used to create a new <code>java.util.Date</code> from a XML-RPC
-   * date.
-   */
-  protected static final String DATE_FORMAT = "yyyyMMdd'T'HH:mm:ss";
-
-  /**
-   * Name of the XML element representing a date.
-   */
-  protected static final String DATE_TIME = "dateTime.iso8601";
-
-  /**
-   * Name of the XML element representing a double.
-   */
-  protected static final String DOUBLE = "double";
-
-  /**
-   * Name of the XML element representing an integer.
-   */
-  protected static final String I4 = "i4";
-
-  /**
-   * Name of the XML element representing an integer.
-   */
-  protected static final String INT = "int";
-
-  /**
-   * Name of the XML element representing a member of a struct.
-   */
-  protected static final String MEMBER = "member";
-
-  /**
-   * Name of the XML element representing the name of a member of a struct.
-   */
-  protected static final String NAME = "name";
-
-  /**
-   * Name of the XML element representing a parameter.
-   */
-  protected static final String PARAM = "param";
-
-  /**
-   * Name of the XML element representing a list of parameters.
-   */
-  protected static final String PARAMS = "params";
-
-  /**
-   * Name of the XML element representing a string.
-   */
-  protected static final String STRING = "string";
-
-  /**
-   * Name of the XML element representing a struct.
-   */
-  protected static final String STRUCT = "struct";
-
-  /**
-   * Name of the XML element representing the value of a parameter.
-   */
-  protected static final String VALUE = "value";
-
-  /**
    * Constructor.
    */
   public AbstractXmlRpcParser() {
@@ -163,380 +81,130 @@ public abstract class AbstractXmlRpcParser {
   }
 
   /**
-   * Creates a new <code>java.util.List</code> from the specified DOM element.
+   * Returns the type of the specified parameter. If the parameter is a
+   * <code>List</code> or a <code>Map</code>, <code>java.util.List</code>
+   * or <code>java.util.Map</code> is returned, independently of the parameter
+   * class. Otherwise returns the class returned by the method
+   * <code>getClass</code>.
    * 
-   * @param arrayElement
-   *          the DOM element.
-   * @return the new array of <code>java.util.List</code>s.
-   * @throws XmlRpcParsingException
-   *           if the element contains an unknown child. Only one "data" element
-   *           is allowed inside an "array" element.
-   * @see #parseDataElement(Element)
+   * @param parameter
+   *          the specified parameter.
+   * @return the type of the specified parameter.
    */
-  protected List parseArrayElement(Element arrayElement) {
-    NodeList childNodes = arrayElement.getChildNodes();
-    int childCount = childNodes.getLength();
+  protected Class getParameterType(Object parameter) {
+    Class parameterType = null;
+    if (parameter instanceof List) {
+      parameterType = List.class;
 
-    for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
+    } else if (parameter instanceof Map) {
+      parameterType = Map.class;
 
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
-
-        if (DATA.equals(nodeName)) {
-          return this.parseDataElement((Element) node);
-        }
-        throw new XmlRpcParsingException("Unknown entity '" + nodeName + "'");
-      }
+    } else {
+      parameterType = parameter.getClass();
     }
-
-    // we should not reach this point.
-    return null;
+    return parameterType;
   }
 
   /**
-   * Creates a new array of <code>byte</code>s from the specified DOM
-   * element.
+   * Creates a new array of <code>byte</code>s from the specified text.
    * 
-   * @param base64Element
-   *          the DOM element.
+   * @param source
+   *          the text to parse.
    * @return the new array of <code>byte</code>s.
    */
-  protected byte[] parseBase64Element(Element base64Element) {
-    String nodeValue = DomUtils.getTextValue(base64Element);
-    byte[] byteArray = Base64.decodeBase64(nodeValue.getBytes());
-    return byteArray;
+  protected byte[] parseBase64(String source) {
+    return Base64.decodeBase64(source.getBytes());
   }
 
   /**
-   * Creates a new <code>Boolean</code> from the specified DOM element.
+   * Creates a new <code>Boolean</code> from the specified text.
    * 
-   * @param booleanElement
-   *          the DOM element.
+   * @param source
+   *          the text to parse.
    * @return the new <code>Boolean</code>.
    */
-  protected Boolean parseBooleanElement(Element booleanElement) {
-    String text = DomUtils.getTextValue(booleanElement);
-    Boolean bool = "1".equals(text) ? Boolean.TRUE : Boolean.FALSE;
-    return bool;
+  protected Boolean parseBoolean(String source) {
+    return "1".equals(source) ? Boolean.TRUE : Boolean.FALSE;
   }
 
   /**
-   * Creates a new <code>java.util.List</code> from the specified DOM element.
+   * Creates a new <code>java.util.Date</code> from the specified text.
    * 
-   * @param dataElement
-   *          the DOM element.
-   * @return the new array of <code>java.util.List</code>s.
-   * @see #parseDateTimeElement(Element)
-   * @see #parseDoubleElement(Element)
-   * @see #parseIntegerElement(Element)
-   */
-  protected List parseDataElement(Element dataElement) {
-    List list = new ArrayList();
-
-    NodeList childNodes = dataElement.getChildNodes();
-    int childCount = childNodes.getLength();
-
-    for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
-
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
-
-        if (VALUE.equals(nodeName)) {
-          Object object = this.parseValueElement((Element) node);
-          list.add(object);
-        }
-      }
-    }
-    return list;
-  }
-
-  /**
-   * Creates a new <code>java.util.Date</code> from the specified DOM element.
-   * 
-   * @param dateElement
-   *          the DOM element.
+   * @param source
+   *          the text to parse.
    * @return the new <code>java.util.Date</code>.
    * @throws XmlRpcParsingException
    *           if the value of the element cannot be parsed into a date.
    */
-  protected Date parseDateTimeElement(Element dateElement) {
-    String text = DomUtils.getTextValue(dateElement);
-    DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-
+  protected Date parseDateTime(String source) throws XmlRpcParsingException {
+    Iso8601DateTimeFormat dateTimeFormat = new Iso8601DateTimeFormat();
     Date date = null;
 
     try {
-      date = dateFormat.parse(text);
+      date = dateTimeFormat.parse(source);
+
     } catch (ParseException exception) {
-      throw new XmlRpcParsingException("Could not parse date", exception);
+      throw new XmlRpcParsingException("'" + source + "' is not a date",
+          exception);
     }
 
     return date;
   }
 
   /**
-   * Creates a new <code>Double</code> from the specified DOM element.
+   * Creates a new <code>Double</code> from the specified text.
    * 
-   * @param doubleElement
-   *          the DOM element.
+   * @param source
+   *          the text to parse.
    * @return the new <code>Double</code>.
    * @throws XmlRpcParsingException
    *           if the value of the element cannot be converted to a double.
    */
-  protected Double parseDoubleElement(Element doubleElement) {
-    String nodeValue = DomUtils.getTextValue(doubleElement);
-
+  protected Double parseDouble(String source) throws XmlRpcParsingException {
     Double doubleValue = null;
+
     try {
-      doubleValue = new Double(nodeValue);
+      doubleValue = new Double(source);
     } catch (NumberFormatException exception) {
-      throw new XmlRpcParsingException("Could not parse double", exception);
+
+      throw new XmlRpcParsingException("'" + source + "' is not a double",
+          exception);
     }
 
     return doubleValue;
   }
 
   /**
-   * Creates a new <code>Integer</code> from the specified DOM element.
+   * Creates a new <code>Integer</code> from the specified text.
    * 
-   * @param integerElement
-   *          the DOM element.
+   * @param source
+   *          the text to parse.
    * @return the new <code>Integer</code>.
    * @throws XmlRpcParsingException
    *           if the value of the element cannot be converted to an integer.
    */
-  protected Integer parseIntegerElement(Element integerElement) {
-    String nodeValue = DomUtils.getTextValue(integerElement);
-
+  protected Integer parseInteger(String source) throws XmlRpcParsingException {
     Integer intValue = null;
+
     try {
-      intValue = new Integer(nodeValue);
+      intValue = new Integer(source);
+
     } catch (NumberFormatException exception) {
-      throw new XmlRpcParsingException("Could not parse integer", exception);
+      throw new XmlRpcParsingException("'" + source + "' is not an integer",
+          exception);
     }
 
     return intValue;
   }
 
   /**
-   * Creates a new <code>StructMember</code> from the specified DOM element.
+   * Creates a new <code>String</code> from the specified text.
    * 
-   * @param memberElement
-   *          the DOM element.
-   * @return the new <code>StructMember</code>.
-   * @throws XmlRpcParsingException
-   *           if the element contains an unknown child. Only one "name" element
-   *           and one "value" element are allowed inside an "member" element.
-   * @see #parseValueElement(Element)
-   */
-  protected StructMember parseMemberElement(Element memberElement) {
-    String name = null;
-    Object value = null;
-
-    NodeList childNodes = memberElement.getChildNodes();
-    int childCount = childNodes.getLength();
-
-    for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
-
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
-
-        if (NAME.equals(nodeName)) {
-          name = DomUtils.getTextValue((Element) node);
-
-        } else if (VALUE.equals(nodeName)) {
-          value = this.parseValueElement((Element) node);
-
-        } else {
-          throw new XmlRpcParsingException("Unknown entity '" + nodeName + "'");
-        }
-      }
-    }
-
-    return new StructMember(name, value);
-  }
-
-  /**
-   * Creates a new Object from the specified DOM element.
-   * 
-   * @param parameterElement
-   *          the DOM element.
-   * @return the new <code>StructMember</code>.
-   * @throws XmlRpcParsingException
-   *           if the element contains an unknown child.
-   * @see #parseValueElement(Element)
-   */
-  protected Object parseParameterElement(Element parameterElement) {
-    NodeList childNodes = parameterElement.getChildNodes();
-    int childCount = childNodes.getLength();
-
-    for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
-
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
-        if (VALUE.equals(nodeName)) {
-          return this.parseValueElement((Element) node);
-        }
-        throw new XmlRpcParsingException("Unknown entity '" + nodeName + "'");
-      }
-    }
-
-    // we should not reach this point.
-    return null;
-  }
-
-  /**
-   * Parses the given DOM element containing parameters for a XML-RPC
-   * request/response.
-   * 
-   * @param parametersElement
-   *          the DOM element.
-   * @return the parameters of the XML-RPC request/response.
-   */
-  protected XmlRpcRemoteInvocationArguments parseParametersElement(
-      Element parametersElement) {
-    NodeList childNodes = parametersElement.getChildNodes();
-    int childCount = childNodes.getLength();
-
-    XmlRpcRemoteInvocationArguments arguments = new XmlRpcRemoteInvocationArguments();
-    
-    for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
-
-        if (PARAM.equals(nodeName)) {
-          Object parameter = this.parseParameterElement((Element) node);
-
-          Class parameterType = null;
-          if (parameter instanceof List) {
-            parameterType = List.class;
-
-          } else if (parameter instanceof Map) {
-            parameterType = Map.class;
-
-          } else {
-            parameterType = parameter.getClass();
-          }
-
-          arguments.addArgument(parameter, parameterType);
-
-        } else {
-          throw new XmlRpcParsingException("Unknown entity '" + nodeName + "'");
-        }
-      }
-    }
-
-    return arguments;
-  }
-
-  /**
-   * Creates a new <code>String</code> from the specified DOM element.
-   * 
-   * @param stringElement
-   *          the DOM element.
+   * @param source
+   *          the text to parse.
    * @return the new <code>String</code>.
    */
-  protected String parseStringElement(Element stringElement) {
-    String nodeValue = DomUtils.getTextValue(stringElement);
-    return nodeValue;
+  protected String parseString(String source) {
+    return source;
   }
-
-  /**
-   * Creates a new <code>java.util.Map</code> from the specified DOM element.
-   * 
-   * @param structElement
-   *          the DOM element.
-   * @return the new array of <code>java.util.Map</code>s.
-   * @see #parseMemberElement(Element)
-   */
-  protected Map parseStructElement(Element structElement) {
-    Map map = new HashMap();
-
-    NodeList childNodes = structElement.getChildNodes();
-    int childCount = childNodes.getLength();
-
-    for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
-
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
-
-        if (MEMBER.equals(nodeName)) {
-          StructMember member = this.parseMemberElement((Element) node);
-          map.put(member.name, member.value);
-        }
-
-      }
-    }
-
-    return map;
-  }
-
-  /**
-   * Creates a new Object from the specified DOM element.
-   * 
-   * @param valueElement
-   *          the DOM element.
-   * @return the new <code>StructMember</code>.
-   * @throws XmlRpcParsingException
-   *           if the element contains an unknown child.
-   * @see #parseArrayElement(Element)
-   * @see #parseBase64Element(Element)
-   * @see #parseBooleanElement(Element)
-   * @see #parseDateTimeElement(Element)
-   * @see #parseDoubleElement(Element)
-   * @see #parseIntegerElement(Element)
-   * @see #parseStringElement(Element)
-   * @see #parseStructElement(Element)
-   */
-  protected Object parseValueElement(Element valueElement) {
-    NodeList childNodes = valueElement.getChildNodes();
-    int childCount = childNodes.getLength();
-
-    for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
-
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
-        if (ARRAY.equals(nodeName)) {
-          return this.parseArrayElement((Element) node);
-
-        } else if (BASE_64.equals(nodeName)) {
-          return this.parseBase64Element((Element) node);
-
-        } else if (BOOLEAN.equals(nodeName)) {
-          return this.parseBooleanElement((Element) node);
-
-        } else if (DATE_TIME.equals(nodeName)) {
-          return this.parseDateTimeElement((Element) node);
-
-        } else if (DOUBLE.equals(nodeName)) {
-          return this.parseDoubleElement((Element) node);
-
-        } else if (I4.equalsIgnoreCase(nodeName) || INT.equals(nodeName)) {
-          return this.parseIntegerElement((Element) node);
-
-        } else if (STRING.equalsIgnoreCase(nodeName)) {
-          return this.parseStringElement((Element) node);
-
-        } else if (STRUCT.equalsIgnoreCase(nodeName)) {
-          return this.parseStructElement((Element) node);
-
-        } else {
-          throw new XmlRpcParsingException("Unknown entity '" + nodeName + "'");
-        }
-      } else if (node instanceof Text) {
-        return this.parseStringElement(valueElement);
-      }
-    }
-
-    // we should not reach this point.
-    return null;
-  }
-
 }
