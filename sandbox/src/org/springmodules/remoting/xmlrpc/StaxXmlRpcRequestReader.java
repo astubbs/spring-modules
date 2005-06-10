@@ -33,7 +33,7 @@ import javax.xml.stream.XMLStreamReader;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/10 01:41:39 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/10 08:48:30 $
  */
 public class StaxXmlRpcRequestReader extends AbstractStaxXmlRpcParser implements
     XmlRpcRequestReader {
@@ -54,6 +54,9 @@ public class StaxXmlRpcRequestReader extends AbstractStaxXmlRpcParser implements
     XmlRpcRemoteInvocationArguments invocationArguments = null;
 
     XMLInputFactory factory = XMLInputFactory.newInstance();
+    if (this.logger.isDebugEnabled()) {
+      this.logger.debug("Using StAX implementation [" + factory + "]");
+    }
 
     try {
       XMLStreamReader reader = factory.createXMLStreamReader(inputStream);
