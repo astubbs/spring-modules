@@ -17,10 +17,6 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -33,7 +29,7 @@ import org.springframework.remoting.support.RemoteInvocation;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/08 01:57:03 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/10 01:44:40 $
  */
 public class XmlRpcRemoteInvocation extends RemoteInvocation {
 
@@ -45,9 +41,9 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
   private static final long serialVersionUID = 3761405300678605108L;
 
   /**
-   * Name of the bean containing the method to execute.
+   * Name of the service containing the method to execute.
    */
-  private String beanName;
+  private String serviceName;
 
   /**
    * Constructor.
@@ -59,15 +55,17 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
   /**
    * Constructor.
    * 
-   * @param beanAndMethodNames
-   *          the name of the bean and the method to execute.
+   * @param serviceAndMethodNames
+   *          the name of the service and the method to execute.
    * @param invocationArguments
    *          encapsulates the arguments for this invocation.
+   * @see #setServiceAndMethodNames(String)         
    */
-  public XmlRpcRemoteInvocation(String beanAndMethodNames,
-      XmlRpcRemoteInvocationArguments invocationArguments) {
+  public XmlRpcRemoteInvocation(String serviceAndMethodNames,
+      XmlRpcRemoteInvocationArguments invocationArguments)
+      throws XmlRpcParsingException {
     super();
-    this.setBeanAndMethodNames(beanAndMethodNames);
+    this.setServiceAndMethodNames(serviceAndMethodNames);
 
     if (invocationArguments != null) {
       super.setArguments(invocationArguments.getArguments());
@@ -96,7 +94,8 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
       EqualsBuilder equalsBuilder = new EqualsBuilder();
       equalsBuilder.append(super.getArguments(), remoteInvocation
           .getArguments());
-      equalsBuilder.append(this.getBeanName(), remoteInvocation.getBeanName());
+      equalsBuilder.append(this.getServiceName(), remoteInvocation
+          .getServiceName());
       equalsBuilder.append(super.getMethodName(), remoteInvocation
           .getMethodName());
       equalsBuilder.append(super.getParameterTypes(), remoteInvocation
@@ -109,12 +108,12 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
   }
 
   /**
-   * Getter for field <code>{@link #beanName}</code>.
+   * Getter for field <code>{@link #serviceName}</code>.
    * 
-   * @return the field <code>beanName</code>.
+   * @return the field <code>serviceName</code>.
    */
-  public final String getBeanName() {
-    return this.beanName;
+  public final String getServiceName() {
+    return this.serviceName;
   }
 
   /**
@@ -129,7 +128,7 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
   public int hashCode() {
     HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(7, 17);
     hashCodeBuilder.append(super.getArguments());
-    hashCodeBuilder.append(this.getBeanName());
+    hashCodeBuilder.append(this.getServiceName());
     hashCodeBuilder.append(super.getMethodName());
     hashCodeBuilder.append(super.getParameterTypes());
 
@@ -138,91 +137,40 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
   }
 
   /**
-   * @see RemoteInvocation#invoke(Object)
-   */
-  public Object invoke(Object targetObject) throws NoSuchMethodException,
-      IllegalAccessException, InvocationTargetException {
-
-    Method method = this.findMethod(targetObject);
-    return method.invoke(targetObject, super.getArguments());
-  }
-
-  /**
-   * Finds a method of the given object that matches the name and parameter
-   * types in this instance.
+   * Sets the name of the service to call and the method to execute.
    * 
-   * @param targetObject
-   *          the target object.
-   * @return the method that matches the name and parameter types in this
-   *         instance.
-   * @throws NoSuchMethodException
-   *           if there is not any matching method.
-   */
-  protected Method findMethod(Object targetObject) throws NoSuchMethodException {
-    Class targetClass = targetObject.getClass();
-    Method[] methods = targetClass.getMethods();
-    Method foundMethod = null;
-
-    String invocationMethodName = super.getMethodName();
-    Class[] invocationParameterTypes = super.getParameterTypes();
-
-    int methodCount = methods.length;
-    for (int i = 0; i < methodCount; i++) {
-      Method method = methods[i];
-
-      if (method.getName().equals(invocationMethodName)) {
-        Class[] parameterTypes = method.getParameterTypes();
-        int invocationParameterTypeCount = invocationParameterTypes.length;
-
-        if (parameterTypes.length == invocationParameterTypeCount) {
-          // TODO Finish implementation.
-        }
-      }
-    }
-
-    if (foundMethod == null) {
-      throw new NoSuchMethodException("The class '" + targetClass.getName()
-          + "' does not contain a method called '" + invocationMethodName
-          + "' with the arguments '"
-          + Arrays.toString(invocationParameterTypes));
-    }
-    return foundMethod;
-  }
-
-  /**
-   * Sets the name of the bean to call and the method to execute.
-   * 
-   * @param beanAndMethodNames
-   *          a String containing the names of the bean and the method separated
-   *          by a dot.
+   * @param serviceAndMethodNames
+   *          a String containing the names of the service and the method
+   *          separated by a dot.
    * @throws XmlRpcParsingException
    *           if the given String does not contain the needed fields.
    * @see RemoteInvocation#setMethodName(String)
    */
-  public final void setBeanAndMethodNames(String beanAndMethodNames) {
-    int dotIndex = beanAndMethodNames.indexOf(".");
+  public final void setServiceAndMethodNames(String serviceAndMethodNames)
+      throws XmlRpcParsingException {
+    int dotIndex = serviceAndMethodNames.indexOf(".");
 
     if (dotIndex == -1) {
       throw new XmlRpcParsingException(
-          "The given text should contain the name of the bean and the method separated by a dot");
+          "The given text should contain the name of the service and the method separated by a dot");
     }
 
-    String newBeanName = beanAndMethodNames.substring(0, dotIndex);
-    this.beanName = newBeanName;
+    String newServiceName = serviceAndMethodNames.substring(0, dotIndex);
+    this.serviceName = newServiceName;
 
-    String newMethodName = beanAndMethodNames.substring(++dotIndex,
-        beanAndMethodNames.length());
+    String newMethodName = serviceAndMethodNames.substring(++dotIndex,
+        serviceAndMethodNames.length());
     super.setMethodName(newMethodName);
   }
 
   /**
-   * Setter for the field <code>{@link #beanName}</code>.
+   * Setter for the field <code>{@link #serviceName}</code>.
    * 
-   * @param beanName
+   * @param serviceName
    *          the new value to set.
    */
-  public final void setBeanName(String beanName) {
-    this.beanName = beanName;
+  public final void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
   }
 
   /**
@@ -236,7 +184,7 @@ public class XmlRpcRemoteInvocation extends RemoteInvocation {
    */
   public String toString() {
     ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("beanName", this.getBeanName());
+    toStringBuilder.append("serviceName", this.getServiceName());
     toStringBuilder.append("methodName", super.getMethodName());
     toStringBuilder.append("parameterTypes", super.getParameterTypes());
     toStringBuilder.append("arguments", super.getArguments());
