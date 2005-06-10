@@ -31,7 +31,7 @@ import java.io.InputStream;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/08 01:54:06 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/10 01:45:28 $
  */
 public interface XmlRpcRequestReader {
 
@@ -42,7 +42,10 @@ public interface XmlRpcRequestReader {
    * @param inputStream
    *          contains the XML-RPC request in XML.
    * @return the created XML-RPC remote invocation.
+   * @throws XmlRpcParsingException
+   *           if the parsing of the request is not successful.
    */
-  XmlRpcRemoteInvocation readXmlRpcRequest(InputStream inputStream);
+  XmlRpcRemoteInvocation readXmlRpcRequest(InputStream inputStream)
+      throws XmlRpcParsingException;
 
 }
