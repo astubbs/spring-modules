@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/10 08:49:10 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/10 09:24:17 $
  */
 public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
 
@@ -48,7 +48,7 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
    * Message logger.
    */
   protected final Log logger = LogFactory.getLog(this.getClass());
-  
+
   /**
    * Primary object that is under test.
    */
@@ -196,7 +196,7 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
 
     return this.createValueElement(buffer.toString());
   }
-  
+
   /**
    * Creates a new XML element having "value" as its tag name.
    * 
@@ -250,13 +250,15 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
     structParameter.put("firstName", "Leia");
     structParameter.put("lastName", "Organa");
     structParameter.put("role", "Princess");
+    String valueParameter = "Death Star";
 
     Object[] arguments = { arrayParameter, base64Parameter, booleanParameter,
-        doubleParameter, i4Parameter, stringParameter, structParameter };
+        doubleParameter, i4Parameter, stringParameter, valueParameter,
+        structParameter };
     String beanName = "bean";
     String methodName = "getUser";
     Class[] parameterTypes = { List.class, byte[].class, Boolean.class,
-        Double.class, Integer.class, String.class, Map.class };
+        Double.class, Integer.class, String.class, String.class, Map.class };
 
     XmlRpcRemoteInvocation expectedInvocation = new XmlRpcRemoteInvocation();
     expectedInvocation.setArguments(arguments);
@@ -283,6 +285,8 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
     buffer.append("</param><param>");
     buffer.append(this.createStringElement(stringParameter));
     buffer.append("</param><param>");
+    buffer.append(this.createValueElement(valueParameter));
+    buffer.append("</param><param>");
     buffer.append(this.createStructElement(structParameter));
     buffer.append("</param></params></methodCall>");
 
@@ -290,7 +294,7 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
     if (this.logger.isDebugEnabled()) {
       this.logger.debug(xmlRpcRequest);
     }
-    
+
     InputStream inputStream = new ByteArrayInputStream(xmlRpcRequest.getBytes());
 
     long startTime = System.currentTimeMillis();
@@ -302,7 +306,7 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
     if (this.logger.isDebugEnabled()) {
       this.logger.debug("Execution time: " + (endTime - startTime) + " ms");
     }
-    
+
     assertEquals("<XML-RPC remote invocation>", expectedInvocation,
         actualInvocation);
   }
