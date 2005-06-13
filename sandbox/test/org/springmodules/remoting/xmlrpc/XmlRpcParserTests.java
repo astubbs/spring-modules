@@ -25,7 +25,7 @@ import java.util.GregorianCalendar;
 import junit.framework.TestCase;
 
 import org.apache.commons.codec.binary.Base64;
-import org.springmodules.remoting.xmlrpc.util.Iso8601DateTimeFormat;
+import org.springmodules.remoting.xmlrpc.util.XmlRpcDateTime;
 
 /**
  * <p>
@@ -34,7 +34,7 @@ import org.springmodules.remoting.xmlrpc.util.Iso8601DateTimeFormat;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/10 01:48:09 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/13 08:58:20 $
  */
 public class XmlRpcParserTests extends TestCase {
 
@@ -42,11 +42,6 @@ public class XmlRpcParserTests extends TestCase {
    * Primary object that is under test.
    */
   private AbstractXmlRpcParser parser;
-
-  /**
-   * Formats/parses dates.
-   */
-  private Iso8601DateTimeFormat dateTimeFormat;
 
   /**
    * Constructor.
@@ -67,8 +62,6 @@ public class XmlRpcParserTests extends TestCase {
     this.parser = new AbstractXmlRpcParser() {
       // no extra implementation.
     };
-
-    this.dateTimeFormat = new Iso8601DateTimeFormat();
   }
 
   /**
@@ -119,7 +112,7 @@ public class XmlRpcParserTests extends TestCase {
     calendar.set(Calendar.MILLISECOND, 0);
 
     Date expected = calendar.getTime();
-    String source = this.dateTimeFormat.format(expected);
+    String source = XmlRpcDateTime.toString(expected);
     Date actual = this.parser.parseDateTime(source);
 
     assertEquals("<Date>", expected, actual);

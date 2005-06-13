@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+
 /**
  * <p>
  * Template for XML-RPC request/response parsers that use StAX.
@@ -33,7 +34,7 @@ import javax.xml.stream.XMLStreamReader;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/10 09:23:15 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/13 08:54:58 $
  */
 public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
 
@@ -69,9 +70,8 @@ public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
           if (XmlRpcEntity.DATA.equals(localName)) {
             return this.parseDataElement(reader);
           }
-          throw new XmlRpcParsingException("Parsing '" + XmlRpcEntity.ARRAY
-              + "' element. Expected '" + XmlRpcEntity.DATA
-              + "' element but found '" + localName + "'");
+          throw new XmlRpcParsingException("Unexpected element '" + localName
+              + "'");
       }
     }
 

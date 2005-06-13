@@ -24,7 +24,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.TestCase;
 
-import org.springmodules.remoting.xmlrpc.util.Iso8601DateTimeFormat;
+import org.springmodules.remoting.xmlrpc.util.XmlRpcDateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,14 +36,9 @@ import org.w3c.dom.Element;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/10 01:49:28 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/13 08:57:09 $
  */
 public class AbstractDomXmlRpcParserTests extends TestCase {
-
-  /**
-   * Formats/parses dates.
-   */
-  private Iso8601DateTimeFormat dateTimeFormat;
 
   /**
    * A DOM document used to create elements.
@@ -174,7 +169,7 @@ public class AbstractDomXmlRpcParserTests extends TestCase {
    * @return the created element.
    */
   protected final Element createDateTimeElement(Date date) {
-    String text = this.dateTimeFormat.format(date);
+    String text = XmlRpcDateTime.toString(date);
     return this.createDateTimeElement(text);
   }
 
@@ -444,8 +439,6 @@ public class AbstractDomXmlRpcParserTests extends TestCase {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
     this.document = builder.newDocument();
-
-    this.dateTimeFormat = new Iso8601DateTimeFormat();
 
     this.onSetUp();
   }

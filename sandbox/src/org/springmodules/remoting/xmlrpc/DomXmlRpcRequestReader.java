@@ -44,7 +44,7 @@ import org.xml.sax.SAXParseException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/10 01:41:40 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/13 08:56:05 $
  */
 public class DomXmlRpcRequestReader extends AbstractDomXmlRpcParser implements
     XmlRpcRequestReader {
@@ -140,28 +140,28 @@ public class DomXmlRpcRequestReader extends AbstractDomXmlRpcParser implements
       Document document = docBuilder.parse(inputStream);
       return this.parseXmlRpcRequest(document);
 
-    } catch (ParserConfigurationException ex) {
+    } catch (ParserConfigurationException exception) {
       throw new XmlRpcParsingException(
-          "Parser configuration exception parsing XML from XML-RPC request", ex);
+          "Parser configuration exception while parsing XML-RPC request", exception);
 
-    } catch (SAXParseException ex) {
-      throw new XmlRpcParsingException("Line " + ex.getLineNumber()
-          + " in XML document from the XML-RPC request is invalid", ex);
+    } catch (SAXParseException exception) {
+      throw new XmlRpcParsingException("Line " + exception.getLineNumber()
+          + " in XML document from the XML-RPC request is invalid", exception);
 
-    } catch (SAXException ex) {
+    } catch (SAXException exception) {
       throw new XmlRpcParsingException(
-          "XML document from XML-RPC request is invalid", ex);
+          "XML document from XML-RPC request is invalid", exception);
 
-    } catch (IOException ex) {
-      throw new XmlRpcParsingException(
-          "IOException parsing XML document from XML-RPC request", ex);
+    } catch (IOException exception) {
+      throw new XmlRpcParsingException("IOException parsing XML-RPC request",
+          exception);
 
     } finally {
       if (inputStream != null) {
         try {
           inputStream.close();
-        } catch (IOException ex) {
-          this.logger.warn("Could not close InputStream", ex);
+        } catch (IOException exception) {
+          this.logger.warn("Could not close InputStream", exception);
         }
       }
     }

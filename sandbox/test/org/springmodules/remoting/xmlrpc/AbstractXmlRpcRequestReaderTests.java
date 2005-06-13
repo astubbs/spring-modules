@@ -28,9 +28,9 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springmodules.remoting.xmlrpc.util.XmlRpcBase64;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/10 09:24:17 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/13 08:57:35 $
  */
 public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
 
@@ -112,11 +112,7 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
    * @see #createValueElement(Object)
    */
   protected String createBase64Element(byte[] value) {
-    byte[] buffer = Base64.encodeBase64(value);
-    int count = buffer.length;
-
-    String base64Element = "<base64>" + new String(buffer, 0, count)
-        + "</base64>";
+    String base64Element = "<base64>" + XmlRpcBase64.toString(value) + "</base64>";
     return this.createValueElement(base64Element);
   }
 

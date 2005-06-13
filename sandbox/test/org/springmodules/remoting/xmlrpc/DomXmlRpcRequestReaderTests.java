@@ -17,7 +17,6 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-
 /**
  * <p>
  * Unit Tests for <code>{@link DomXmlRpcRequestReader}</code>.
@@ -25,7 +24,7 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/10 01:49:29 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/13 08:59:07 $
  */
 public class DomXmlRpcRequestReaderTests extends
     AbstractXmlRpcRequestReaderTests {

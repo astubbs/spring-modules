@@ -17,15 +17,15 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.remoting.xmlrpc.util.Iso8601DateTimeFormat;
+import org.springmodules.remoting.xmlrpc.util.XmlRpcBase64;
+import org.springmodules.remoting.xmlrpc.util.XmlRpcBoolean;
+import org.springmodules.remoting.xmlrpc.util.XmlRpcDateTime;
 
 /**
  * <p>
@@ -34,7 +34,7 @@ import org.springmodules.remoting.xmlrpc.util.Iso8601DateTimeFormat;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/10 01:41:40 $
+ * @version $Revision: 1.6 $ $Date: 2005/06/13 08:55:37 $
  */
 public abstract class AbstractXmlRpcParser {
 
@@ -113,7 +113,7 @@ public abstract class AbstractXmlRpcParser {
    * @return the new array of <code>byte</code>s.
    */
   protected byte[] parseBase64(String source) {
-    return Base64.decodeBase64(source.getBytes());
+    return XmlRpcBase64.toByteArray(source);
   }
 
   /**
@@ -124,7 +124,7 @@ public abstract class AbstractXmlRpcParser {
    * @return the new <code>Boolean</code>.
    */
   protected Boolean parseBoolean(String source) {
-    return "1".equals(source) ? Boolean.TRUE : Boolean.FALSE;
+    return XmlRpcBoolean.toBoolean(source);
   }
 
   /**
@@ -137,18 +137,7 @@ public abstract class AbstractXmlRpcParser {
    *           if the value of the element cannot be parsed into a date.
    */
   protected Date parseDateTime(String source) throws XmlRpcParsingException {
-    Iso8601DateTimeFormat dateTimeFormat = new Iso8601DateTimeFormat();
-    Date date = null;
-
-    try {
-      date = dateTimeFormat.parse(source);
-
-    } catch (ParseException exception) {
-      throw new XmlRpcParsingException("'" + source + "' is not a date",
-          exception);
-    }
-
-    return date;
+    return XmlRpcDateTime.toDate(source);
   }
 
   /**
