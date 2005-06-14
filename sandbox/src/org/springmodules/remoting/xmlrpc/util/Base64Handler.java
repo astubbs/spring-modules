@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 10, 2005
+ * Created on Jun 13, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -26,39 +26,31 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/13 08:54:08 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:16 $
  */
-public class XmlRpcBase64 {
-
-  /**
-   * Decodes a String containing Base64 data into octects.
-   * 
-   * @param source
-   *          String containing Base64 data.
-   * @return an array of <code>byte</code>s containing decoded data.
-   */
-  public static byte[] toByteArray(String source) {
-    return Base64.decodeBase64(source.getBytes());
-  }
-
-  /**
-   * Encodes binary data using the base64 algorithm but does not chunk the
-   * output.
-   * 
-   * @param source
-   *          binary data to encode.
-   * @return Base64 characters.
-   */
-  public static String toString(byte[] source) {
-    byte[] buffer = Base64.encodeBase64(source);
-    return new String(buffer, 0, buffer.length);
-  }
+public class Base64Handler implements ScalarHandler {
 
   /**
    * Constructor.
    */
-  public XmlRpcBase64() {
+  public Base64Handler() {
     super();
+  }
+
+  /**
+   * @see ScalarHandler#format(Object)
+   */
+  public String format(Object source) {
+    byte[] byteArraySource = (byte[]) source;
+    byte[] buffer = Base64.encodeBase64(byteArraySource);
+    return new String(buffer, 0, buffer.length);
+  }
+
+  /**
+   * @see ScalarHandler#parse(String)
+   */
+  public Object parse(String source) {
+    return Base64.decodeBase64(source.getBytes());
   }
 
 }

@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 4, 2005
+ * Created on Jun 13, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,42 +15,32 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
-
-import org.springframework.core.NestedRuntimeException;
+package org.springmodules.remoting.xmlrpc.util;
 
 /**
  * <p>
- * Abstract superclass for all exceptions thrown in the XML-RPC package and
- * subpackages.
+ * Template for implementations of <code>{@link ScalarHandler}</code> that
+ * manipulate numbers.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/14 00:47:19 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:16 $
  */
-public abstract class XmlRpcException extends NestedRuntimeException {
+public abstract class AbstractNumberHandler implements ScalarHandler {
 
   /**
    * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
    */
-  public XmlRpcException(String msg) {
-    super(msg);
+  public AbstractNumberHandler() {
+    super();
   }
 
   /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
+   * @see ScalarHandler#format(Object)
    */
-  public XmlRpcException(String msg, Throwable nestedException) {
-    super(msg, nestedException);
+  public String format(Object source) {
+    return source.toString();
   }
 
 }

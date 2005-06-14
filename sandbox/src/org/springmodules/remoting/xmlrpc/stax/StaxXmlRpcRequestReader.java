@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
+package org.springmodules.remoting.xmlrpc.stax;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +25,12 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.springmodules.remoting.xmlrpc.XmlRpcEntity;
+import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocation;
+import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocationArguments;
+import org.springmodules.remoting.xmlrpc.XmlRpcRequestReader;
+
 /**
  * <p>
  * Implementation of <code>{@link XmlRpcRequestReader}</code> that parses the
@@ -33,7 +39,7 @@ import javax.xml.stream.XMLStreamReader;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/10 08:48:30 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:22 $
  */
 public class StaxXmlRpcRequestReader extends AbstractStaxXmlRpcParser implements
     XmlRpcRequestReader {
@@ -80,8 +86,7 @@ public class StaxXmlRpcRequestReader extends AbstractStaxXmlRpcParser implements
 
     } catch (XMLStreamException exception) {
       throw new XmlRpcParsingException(
-          "XmlRpcParsingException parsing XML document from XML-RPC request",
-          exception);
+          "XmlRpcParsingException parsing XML-RPC request", exception);
 
     } finally {
       if (inputStream != null) {

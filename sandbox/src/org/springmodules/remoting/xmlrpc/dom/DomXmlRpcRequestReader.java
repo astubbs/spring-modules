@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
+package org.springmodules.remoting.xmlrpc.dom;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +26,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
+import org.springmodules.remoting.xmlrpc.XmlRpcDtdResolver;
+import org.springmodules.remoting.xmlrpc.XmlRpcEntity;
+import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocation;
+import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocationArguments;
+import org.springmodules.remoting.xmlrpc.XmlRpcRequestReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,7 +50,7 @@ import org.xml.sax.SAXParseException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/13 08:56:05 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:23 $
  */
 public class DomXmlRpcRequestReader extends AbstractDomXmlRpcParser implements
     XmlRpcRequestReader {
@@ -100,9 +106,9 @@ public class DomXmlRpcRequestReader extends AbstractDomXmlRpcParser implements
     String serviceAndMethodNames = null;
     XmlRpcRemoteInvocationArguments invocationArguments = null;
 
-    NodeList nodeList = root.getChildNodes();
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node node = nodeList.item(i);
+    NodeList childNodes = root.getChildNodes();
+    for (int i = 0; i < childNodes.getLength(); i++) {
+      Node node = childNodes.item(i);
       if (node instanceof Element) {
         String nodeName = node.getNodeName();
 
@@ -111,6 +117,10 @@ public class DomXmlRpcRequestReader extends AbstractDomXmlRpcParser implements
 
         } else if (XmlRpcEntity.PARAMS.equals(nodeName)) {
           invocationArguments = this.parseParametersElement((Element) node);
+          
+        } else {
+          throw new XmlRpcParsingException("Unexpected element '" + nodeName
+              + "'");
         }
       }
     }
@@ -142,7 +152,8 @@ public class DomXmlRpcRequestReader extends AbstractDomXmlRpcParser implements
 
     } catch (ParserConfigurationException exception) {
       throw new XmlRpcParsingException(
-          "Parser configuration exception while parsing XML-RPC request", exception);
+          "Parser configuration exception while parsing XML-RPC request",
+          exception);
 
     } catch (SAXParseException exception) {
       throw new XmlRpcParsingException("Line " + exception.getLineNumber()

@@ -30,7 +30,8 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.remoting.xmlrpc.util.XmlRpcBase64;
+import org.springmodules.remoting.xmlrpc.dom.DomXmlRpcRequestReader;
+import org.springmodules.remoting.xmlrpc.util.Base64Handler;
 
 /**
  * <p>
@@ -40,7 +41,7 @@ import org.springmodules.remoting.xmlrpc.util.XmlRpcBase64;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/13 08:57:35 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/14 00:47:21 $
  */
 public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
 
@@ -54,6 +55,11 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
    */
   private XmlRpcRequestReader requestReader;
 
+  /**
+   * Handles base64 values.
+   */
+  private Base64Handler base64Handler;
+  
   /**
    * Constructor.
    */
@@ -112,7 +118,7 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
    * @see #createValueElement(Object)
    */
   protected String createBase64Element(byte[] value) {
-    String base64Element = "<base64>" + XmlRpcBase64.toString(value) + "</base64>";
+    String base64Element = "<base64>" + this.base64Handler.format(value) + "</base64>";
     return this.createValueElement(base64Element);
   }
 
@@ -226,6 +232,7 @@ public abstract class AbstractXmlRpcRequestReaderTests extends TestCase {
 
     this.onSetUp();
     this.requestReader = this.getXmlRpcRequestReader();
+    this.base64Handler = new Base64Handler();
   }
 
   /**

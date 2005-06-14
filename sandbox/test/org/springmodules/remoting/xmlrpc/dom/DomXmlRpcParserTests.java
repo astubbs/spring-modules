@@ -15,17 +15,19 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
+package org.springmodules.remoting.xmlrpc.dom;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.easymock.classextension.MockClassControl;
+import org.springmodules.remoting.xmlrpc.AbstractDomXmlRpcParserTests;
+import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocationArguments;
+import org.springmodules.remoting.xmlrpc.util.StructMember;
 import org.w3c.dom.Element;
 
 /**
@@ -35,7 +37,7 @@ import org.w3c.dom.Element;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/10 01:49:29 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:24 $
  */
 public class DomXmlRpcParserTests extends AbstractDomXmlRpcParserTests {
 
@@ -58,6 +60,15 @@ public class DomXmlRpcParserTests extends AbstractDomXmlRpcParserTests {
    */
   public DomXmlRpcParserTests(String name) {
     super(name);
+  }
+
+  /**
+   * @see AbstractDomXmlRpcParserTests#onSetUp()
+   */
+  protected void onSetUp() throws Exception {
+    this.parser = new AbstractDomXmlRpcParser() {
+      // no extra implementation.
+    };
   }
 
   /**
@@ -189,8 +200,7 @@ public class DomXmlRpcParserTests extends AbstractDomXmlRpcParserTests {
     this.parserControl.replay();
 
     // execute the method to test.
-    AbstractXmlRpcParser.StructMember member = this.parser
-        .parseMemberElement(memberElement);
+    StructMember member = this.parser.parseMemberElement(memberElement);
 
     assertEquals("<Name>", expectedName, member.name);
     assertEquals("<Value>", expectedValue, member.value);
@@ -237,14 +247,11 @@ public class DomXmlRpcParserTests extends AbstractDomXmlRpcParserTests {
    * <code>{@link XmlRpcRemoteInvocationArguments}</code>.
    */
   public void testParseParametersElement() throws Exception {
-    Method getParameterTypeMethod = AbstractXmlRpcParser.class
-        .getDeclaredMethod("getParameterType", new Class[] { Object.class });
     Method parseParameterElementMethod = AbstractDomXmlRpcParser.class
         .getDeclaredMethod("parseParameterElement",
             new Class[] { Element.class });
 
-    Method[] methodsToMock = { getParameterTypeMethod,
-        parseParameterElementMethod };
+    Method[] methodsToMock = { parseParameterElementMethod };
 
     this.setUpParserAsMockObject(methodsToMock);
 
@@ -263,9 +270,6 @@ public class DomXmlRpcParserTests extends AbstractDomXmlRpcParserTests {
       // expectation: parse the "param" element.
       this.parser.parseParameterElement(paramElement);
       this.parserControl.setReturnValue(parameter);
-
-      this.parser.getParameterType(parameter);
-      this.parserControl.setReturnValue(expectedParameterTypes[i]);
     }
 
     // set the state of the mock object to "replay".
@@ -311,9 +315,8 @@ public class DomXmlRpcParserTests extends AbstractDomXmlRpcParserTests {
 
       // expectation: parse the "member" element.
       this.parser.parseMemberElement(memberElement);
-      this.parserControl
-          .setReturnValue(new AbstractDomXmlRpcParser.StructMember(value
-              .toString(), value));
+      this.parserControl.setReturnValue(new StructMember(value.toString(),
+          value));
     }
 
     // set the state of the mock object to "replay".
@@ -365,245 +368,17 @@ public class DomXmlRpcParserTests extends AbstractDomXmlRpcParserTests {
   /**
    * Verifies that the method
    * <code>{@link AbstractDomXmlRpcParser#parseValueElement(Element)}</code>
-   * delegates the parsing to
-   * <code>{@link AbstractXmlRpcParser#parseBase64(String)}</code> if the
-   * given "value" element contains a "base64" element.
-   */
-  public void testParseValueElementWhenChildIsBase64Element() throws Exception {
-    Method methodToMock = AbstractXmlRpcParser.class.getDeclaredMethod(
-        "parseBase64", new Class[] { String.class });
-
-    this.setUpParserAsMockObject(methodToMock);
-
-    String base64Text = "9438klkljl=ESDsd";
-    Element base64Element = super.createBase64Element(base64Text);
-    Element valueElement = super.createValueElement(base64Element);
-
-    byte[] expected = new byte[0];
-
-    // expectation: parse the "base64" element;
-    this.parser.parseBase64(base64Text);
-    this.parserControl.setReturnValue(expected);
-
-    // set the state of the mock object to "replay".
-    this.parserControl.replay();
-
-    // execute the method to test.
-    Object actual = this.parser.parseValueElement(valueElement);
-
-    assertSame("<Parsed object>", expected, actual);
-
-    // verify the expectations of the mock object were met.
-    this.parserControl.verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractDomXmlRpcParser#parseValueElement(Element)}</code>
-   * delegates the parsing to
-   * <code>{@link AbstractXmlRpcParser#parseBoolean(String)}</code> if the
-   * given "value" element contains a "boolean" element.
-   */
-  public void testParseValueElementWhenChildIsBooleanElement() throws Exception {
-    Method methodToMock = AbstractXmlRpcParser.class.getDeclaredMethod(
-        "parseBoolean", new Class[] { String.class });
-
-    this.setUpParserAsMockObject(methodToMock);
-
-    String booleanText = "1";
-    Element booleanElement = super.createBooleanElement(booleanText);
-    Element valueElement = super.createValueElement(booleanElement);
-
-    Boolean expected = Boolean.TRUE;
-
-    // expectation: parse the "boolean" element;
-    this.parser.parseBoolean(booleanText);
-    this.parserControl.setReturnValue(expected);
-
-    // set the state of the mock object to "replay".
-    this.parserControl.replay();
-
-    // execute the method to test.
-    Object actual = this.parser.parseValueElement(valueElement);
-
-    assertSame("<Parsed object>", expected, actual);
-
-    // verify the expectations of the mock object were met.
-    this.parserControl.verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractDomXmlRpcParser#parseValueElement(Element)}</code>
-   * delegates the parsing to
-   * <code>{@link AbstractXmlRpcParser#parseDateTime(String)}</code> if the
-   * given "value" element contains a "dateTime.iso8601" element.
-   */
-  public void testParseValueElementWhenChildIsDateTimeElement()
-      throws Exception {
-    Method methodToMock = AbstractXmlRpcParser.class.getDeclaredMethod(
-        "parseDateTime", new Class[] { String.class });
-
-    this.setUpParserAsMockObject(methodToMock);
-
-    String dateTimeText = "19980101T10:10:10";
-    Element dateTimeElement = super.createDateTimeElement(dateTimeText);
-    Element valueElement = super.createValueElement(dateTimeElement);
-
-    Date expected = new Date();
-
-    // expectation: parse the "dateTime.iso8601" element;
-    this.parser.parseDateTime(dateTimeText);
-    this.parserControl.setReturnValue(expected);
-
-    // set the state of the mock object to "replay".
-    this.parserControl.replay();
-
-    // execute the method to test.
-    Object actual = this.parser.parseValueElement(valueElement);
-
-    assertSame("<Parsed object>", expected, actual);
-
-    // verify the expectations of the mock object were met.
-    this.parserControl.verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractDomXmlRpcParser#parseValueElement(Element)}</code>
-   * delegates the parsing to
-   * <code>{@link AbstractXmlRpcParser#parseDouble(String)}</code> if the
-   * given "value" element contains a "double" element.
-   */
-  public void testParseValueElementWhenChildIsDoubleElement() throws Exception {
-    Method methodToMock = AbstractXmlRpcParser.class.getDeclaredMethod(
-        "parseDouble", new Class[] { String.class });
-
-    this.setUpParserAsMockObject(methodToMock);
-
-    String doubleText = "344.99";
-    Element doubleElement = super.createDoubleElement(doubleText);
-    Element valueElement = super.createValueElement(doubleElement);
-
-    Double expected = new Double(6992l);
-
-    // expectation: parse the "double" element;
-    this.parser.parseDouble(doubleText);
-    this.parserControl.setReturnValue(expected);
-
-    // set the state of the mock object to "replay".
-    this.parserControl.replay();
-
-    // execute the method to test.
-    Object actual = this.parser.parseValueElement(valueElement);
-
-    assertSame("<Parsed object>", expected, actual);
-
-    // verify the expectations of the mock object were met.
-    this.parserControl.verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractDomXmlRpcParser#parseValueElement(Element)}</code>
-   * delegates the parsing to
-   * <code>{@link AbstractXmlRpcParser#parseInteger(String)}</code> if the
-   * given "value" element contains a "i4" element.
-   */
-  public void testParseValueElementWhenChildIsI4Element() throws Exception {
-    Method methodToMock = AbstractXmlRpcParser.class.getDeclaredMethod(
-        "parseInteger", new Class[] { String.class });
-
-    this.setUpParserAsMockObject(methodToMock);
-
-    String i4Text = "99";
-    Element i4Element = super.createI4Element(i4Text);
-    Element valueElement = super.createValueElement(i4Element);
-
-    Integer expected = new Integer(88);
-
-    // expectation: parse the "i4" element;
-    this.parser.parseInteger(i4Text);
-    this.parserControl.setReturnValue(expected);
-
-    // set the state of the mock object to "replay".
-    this.parserControl.replay();
-
-    // execute the method to test.
-    Object actual = this.parser.parseValueElement(valueElement);
-
-    assertSame("<Parsed object>", expected, actual);
-
-    // verify the expectations of the mock object were met.
-    this.parserControl.verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractDomXmlRpcParser#parseValueElement(Element)}</code>
-   * delegates the parsing to
-   * <code>{@link AbstractXmlRpcParser#parseInteger(String)}</code> if the
-   * given "value" element contains a "int" element.
-   */
-  public void testParseValueElementWhenChildIsIntElement() throws Exception {
-    Method methodToMock = AbstractXmlRpcParser.class.getDeclaredMethod(
-        "parseInteger", new Class[] { String.class });
-
-    this.setUpParserAsMockObject(methodToMock);
-
-    String intText = "64";
-    Element intElement = super.createIntElement(intText);
-    Element valueElement = super.createValueElement(intElement);
-
-    Integer expected = new Integer(88);
-
-    // expectation: parse the "int" element;
-    this.parser.parseInteger(intText);
-    this.parserControl.setReturnValue(expected);
-
-    // set the state of the mock object to "replay".
-    this.parserControl.replay();
-
-    // execute the method to test.
-    Object actual = this.parser.parseValueElement(valueElement);
-
-    assertSame("<Parsed object>", expected, actual);
-
-    // verify the expectations of the mock object were met.
-    this.parserControl.verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractDomXmlRpcParser#parseValueElement(Element)}</code>
-   * delegates the parsing to
-   * <code>{@link AbstractXmlRpcParser#parseString(String)}</code> if the
-   * given "value" element contains a "string" element.
+   * returns the text of the "string" element as the parsed value.
    */
   public void testParseValueElementWhenChildIsStringElement() throws Exception {
-    Method methodToMock = AbstractXmlRpcParser.class.getDeclaredMethod(
-        "parseString", new Class[] { String.class });
-
-    this.setUpParserAsMockObject(methodToMock);
-
     String text = "Yoda";
     Element stringElement = super.createStringElement(text);
     Element valueElement = super.createValueElement(stringElement);
 
-    // expectation: parse the "string" element;
-    this.parser.parseString(text);
-    this.parserControl.setReturnValue(text);
-
-    // set the state of the mock object to "replay".
-    this.parserControl.replay();
-
     // execute the method to test.
     Object actual = this.parser.parseValueElement(valueElement);
 
-    assertSame("<Parsed object>", text, actual);
-
-    // verify the expectations of the mock object were met.
-    this.parserControl.verify();
+    assertEquals("<Parsed object>", text, actual);
   }
 
   /**
@@ -643,34 +418,17 @@ public class DomXmlRpcParserTests extends AbstractDomXmlRpcParserTests {
   /**
    * Verifies that the method
    * <code>{@link AbstractDomXmlRpcParser#parseValueElement(Element)}</code>
-   * delegates the parsing to
-   * <code>{@link AbstractXmlRpcParser#parseString(String)}</code> if the
-   * given "value" element does not contain any element specifying the data
-   * type.
+   * returns the text of the given "value" element if it does not contain any
+   * element specifying the data type.
    */
   public void testParseValueElementWhenValueTypeIsNotSpecified()
       throws Exception {
-    Method methodToMock = AbstractXmlRpcParser.class.getDeclaredMethod(
-        "parseString", new Class[] { String.class });
-
-    this.setUpParserAsMockObject(methodToMock);
-
     String text = "Yoda";
     Element valueElement = super.createValueElement(text);
-
-    // expectation: parse the "string" element;
-    this.parser.parseString(text);
-    this.parserControl.setReturnValue(text);
-
-    // set the state of the mock object to "replay".
-    this.parserControl.replay();
 
     // execute the method to test.
     Object actual = this.parser.parseValueElement(valueElement);
 
-    assertSame("<Parsed object>", text, actual);
-
-    // verify the expectations of the mock object were met.
-    this.parserControl.verify();
+    assertEquals("<Parsed object>", text, actual);
   }
 }

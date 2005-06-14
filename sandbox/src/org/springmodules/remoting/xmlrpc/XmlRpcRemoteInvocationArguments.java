@@ -19,6 +19,7 @@ package org.springmodules.remoting.xmlrpc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -29,7 +30,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/08 01:54:25 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/14 00:47:18 $
  */
 public class XmlRpcRemoteInvocationArguments {
 
@@ -64,7 +65,18 @@ public class XmlRpcRemoteInvocationArguments {
    */
   public void addArgument(Object argument, Class parameterType) {
     this.arguments.add(argument);
-    this.parameterTypes.add(parameterType);
+    
+    Class actualParameterType = null;
+    if (List.class.isAssignableFrom(parameterType)) {
+      actualParameterType = List.class;
+    }
+    else if (Map.class.isAssignableFrom(parameterType)) {
+      actualParameterType = Map.class;
+    }
+    else {
+      actualParameterType = parameterType;
+    }
+    this.parameterTypes.add(actualParameterType);
   }
 
   /**

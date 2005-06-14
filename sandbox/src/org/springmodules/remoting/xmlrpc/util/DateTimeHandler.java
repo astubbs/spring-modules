@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 8, 2005
+ * Created on Jun 13, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,20 +20,19 @@ package org.springmodules.remoting.xmlrpc.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 
 /**
  * <p>
- * Formats and parses dates using the pattern supported by XML-RPC.
+ * Parses/formats <code>java.util.Date</code> values.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/13 08:53:41 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:17 $
  */
-public class XmlRpcDateTime {
+public class DateTimeHandler implements ScalarHandler {
 
   /**
    * Pattern describing the format for date/time supported by XML-RPC.
@@ -41,14 +40,17 @@ public class XmlRpcDateTime {
   public static final String PATTERN = "yyyyMMdd'T'HH:mm:ss";
 
   /**
-   * Formats a <code>java.util.Date</code> into a date/time string.
-   * 
-   * @param date
-   *          the time value to be formatted into a time string.
-   * @return the formatted time string.
+   * Constructor.
    */
-  public static String toString(Date date) {
-    return getDateFormat().format(date);
+  public DateTimeHandler() {
+    super();
+  }
+
+  /**
+   * @see ScalarHandler#format(java.lang.Object)
+   */
+  public String format(Object source) {
+    return this.getDateFormat().format(source);
   }
 
   /**
@@ -58,33 +60,21 @@ public class XmlRpcDateTime {
    * 
    * @return the created instance of <code>java.text.DateFormat</code>.
    */
-  protected static DateFormat getDateFormat() {
+  private DateFormat getDateFormat() {
     return new SimpleDateFormat(PATTERN);
   }
 
   /**
-   * Parses text from the beginning of the given string to produce a date.
-   * 
-   * @param source
-   *          a <code>String</code> whose beginning should be parsed.
-   * @return a <code>java.util.Date</code> parsed from the string.
-   * @exception XmlRpcParsingException
-   *              if the beginning of the specified string cannot be parsed.
+   * @see ScalarHandler#parse(String)
    */
-  public static Date toDate(String source) throws XmlRpcParsingException {
+  public Object parse(String source) {
     try {
-      return getDateFormat().parse(source);
-      
+      return this.getDateFormat().parse(source);
+
     } catch (ParseException exception) {
       throw new XmlRpcParsingException("'" + source + "' is not a date",
           exception);
     }
   }
 
-  /**
-   * Constructor.
-   */
-  public XmlRpcDateTime() {
-    super();
-  }
 }

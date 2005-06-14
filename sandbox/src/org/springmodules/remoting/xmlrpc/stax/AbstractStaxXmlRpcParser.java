@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
+package org.springmodules.remoting.xmlrpc.stax;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +26,14 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springmodules.remoting.xmlrpc.XmlRpcEntity;
+import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocationArguments;
+import org.springmodules.remoting.xmlrpc.util.DefaultScalarHandlerRegistry;
+import org.springmodules.remoting.xmlrpc.util.ScalarHandlerRegistry;
+import org.springmodules.remoting.xmlrpc.util.StructMember;
 
 /**
  * <p>
@@ -34,15 +42,26 @@ import javax.xml.stream.XMLStreamReader;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/13 08:54:58 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:22 $
  */
-public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
+public abstract class AbstractStaxXmlRpcParser {
+
+  /**
+   * Message logger.
+   */
+  protected final Log logger = LogFactory.getLog(this.getClass());
+
+  /**
+   * Handles the parsing of scalar values.
+   */
+  private ScalarHandlerRegistry scalarHandlerRegistry;
 
   /**
    * Constructor.
    */
   public AbstractStaxXmlRpcParser() {
     super();
+    this.scalarHandlerRegistry = new DefaultScalarHandlerRegistry();
   }
 
   /**
@@ -174,7 +193,7 @@ public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
 
           if (XmlRpcEntity.PARAM.equals(localName)) {
             Object parameter = this.parseParameterElement(reader);
-            Class parameterType = this.getParameterType(parameter);
+            Class parameterType = parameter.getClass();
             arguments.addArgument(parameter, parameterType);
 
           } else {
@@ -296,12 +315,6 @@ public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
    * @throws XmlRpcParsingException
    *           if the element contains an unknown child.
    * @see #parseArrayElement(XMLStreamReader)
-   * @see AbstractXmlRpcParser#parseBase64(String)
-   * @see AbstractXmlRpcParser#parseBoolean(String)
-   * @see AbstractXmlRpcParser#parseDateTime(String)
-   * @see AbstractXmlRpcParser#parseDouble(String)
-   * @see AbstractXmlRpcParser#parseInteger(String)
-   * @see AbstractXmlRpcParser#parseString(String)
    * @see #parseStructElement(XMLStreamReader)
    */
   protected Object parseValueElement(XMLStreamReader reader)
@@ -320,43 +333,31 @@ public abstract class AbstractStaxXmlRpcParser extends AbstractXmlRpcParser {
           if (XmlRpcEntity.ARRAY.equals(localName)) {
             return this.parseArrayElement(reader);
 
-          } else if (XmlRpcEntity.BASE_64.equals(localName)) {
-            String source = reader.getElementText();
-            return this.parseBase64(source);
-
-          } else if (XmlRpcEntity.BOOLEAN.equals(localName)) {
-            String source = reader.getElementText();
-            return this.parseBoolean(source);
-
-          } else if (XmlRpcEntity.DATE_TIME.equals(localName)) {
-            String source = reader.getElementText();
-            return this.parseDateTime(source);
-
-          } else if (XmlRpcEntity.DOUBLE.equals(localName)) {
-            String source = reader.getElementText();
-            return this.parseDouble(source);
-
-          } else if (XmlRpcEntity.I4.equalsIgnoreCase(localName)
-              || XmlRpcEntity.INT.equals(localName)) {
-            String source = reader.getElementText();
-            return this.parseInteger(source);
-
           } else if (XmlRpcEntity.STRING.equalsIgnoreCase(localName)) {
-            String source = reader.getElementText();
-            return this.parseString(source);
+            return reader.getElementText();
 
           } else if (XmlRpcEntity.STRUCT.equalsIgnoreCase(localName)) {
             return this.parseStructElement(reader);
 
           } else {
-            throw new XmlRpcParsingException("Unknown entity '" + localName
-                + "'");
+            String source = reader.getElementText();
+            return this.scalarHandlerRegistry.parse(localName, source);
           }
         case XMLStreamConstants.CHARACTERS:
-          String source = reader.getText();
-          return this.parseString(source);
+          return reader.getText();
       }
     }
     return value;
+  }
+
+  /**
+   * Setter for the field <code>{@link #scalarHandlerRegistry}</code>.
+   * 
+   * @param scalarHandlerRegistry
+   *          the new value to set.
+   */
+  public final void setScalarHandlerRegistry(
+      ScalarHandlerRegistry scalarHandlerRegistry) {
+    this.scalarHandlerRegistry = scalarHandlerRegistry;
   }
 }

@@ -15,14 +15,22 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
+package org.springmodules.remoting.xmlrpc.dom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.xml.DomUtils;
+import org.springmodules.remoting.xmlrpc.XmlRpcEntity;
+import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocationArguments;
+import org.springmodules.remoting.xmlrpc.util.DefaultScalarHandlerRegistry;
+import org.springmodules.remoting.xmlrpc.util.ScalarHandlerRegistry;
+import org.springmodules.remoting.xmlrpc.util.StructMember;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -35,15 +43,26 @@ import org.w3c.dom.Text;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/10 01:41:40 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:23 $
  */
-public abstract class AbstractDomXmlRpcParser extends AbstractXmlRpcParser {
+public abstract class AbstractDomXmlRpcParser {
+
+  /**
+   * Message logger.
+   */
+  protected final Log logger = LogFactory.getLog(this.getClass());
+
+  /**
+   * Handles the parsing of scalar values.
+   */
+  private ScalarHandlerRegistry scalarHandlerRegistry;
 
   /**
    * Constructor.
    */
   public AbstractDomXmlRpcParser() {
     super();
+    this.scalarHandlerRegistry = new DefaultScalarHandlerRegistry();
   }
 
   /**
@@ -205,7 +224,7 @@ public abstract class AbstractDomXmlRpcParser extends AbstractXmlRpcParser {
 
         if (XmlRpcEntity.PARAM.equals(nodeName)) {
           Object parameter = this.parseParameterElement((Element) node);
-          Class parameterType = this.getParameterType(parameter);
+          Class parameterType = parameter.getClass();
           arguments.addArgument(parameter, parameterType);
 
         } else {
@@ -256,15 +275,7 @@ public abstract class AbstractDomXmlRpcParser extends AbstractXmlRpcParser {
    *          the DOM element.
    * @return the created Object.
    * @throws XmlRpcParsingException
-   *           if the element contains an unknown child.
-   * @see #parseArrayElement(Element)
-   * @see AbstractXmlRpcParser#parseBase64(String)
-   * @see AbstractXmlRpcParser#parseBoolean(String)
-   * @see AbstractXmlRpcParser#parseDateTime(String)
-   * @see AbstractXmlRpcParser#parseDouble(String)
-   * @see AbstractXmlRpcParser#parseInteger(String)
-   * @see AbstractXmlRpcParser#parseString(String)
-   * @see #parseStructElement(Element)
+   *           if the element contains an unknown child element.
    */
   protected Object parseValueElement(Element valueElement)
       throws XmlRpcParsingException {
@@ -279,45 +290,33 @@ public abstract class AbstractDomXmlRpcParser extends AbstractXmlRpcParser {
         if (XmlRpcEntity.ARRAY.equals(nodeName)) {
           return this.parseArrayElement((Element) node);
 
-        } else if (XmlRpcEntity.BASE_64.equals(nodeName)) {
-          String source = DomUtils.getTextValue((Element) node);
-          return this.parseBase64(source);
-
-        } else if (XmlRpcEntity.BOOLEAN.equals(nodeName)) {
-          String source = DomUtils.getTextValue((Element) node);
-          return this.parseBoolean(source);
-
-        } else if (XmlRpcEntity.DATE_TIME.equals(nodeName)) {
-          String source = DomUtils.getTextValue((Element) node);
-          return this.parseDateTime(source);
-
-        } else if (XmlRpcEntity.DOUBLE.equals(nodeName)) {
-          String source = DomUtils.getTextValue((Element) node);
-          return this.parseDouble(source);
-
-        } else if (XmlRpcEntity.I4.equalsIgnoreCase(nodeName)
-            || XmlRpcEntity.INT.equals(nodeName)) {
-          String source = DomUtils.getTextValue((Element) node);
-          return this.parseInteger(source);
-
         } else if (XmlRpcEntity.STRING.equalsIgnoreCase(nodeName)) {
-          String source = DomUtils.getTextValue((Element) node);
-          return this.parseString(source);
+          return DomUtils.getTextValue((Element) node);
 
         } else if (XmlRpcEntity.STRUCT.equalsIgnoreCase(nodeName)) {
           return this.parseStructElement((Element) node);
 
         } else {
-          throw new XmlRpcParsingException("Unknown entity '" + nodeName + "'");
+          String source = DomUtils.getTextValue((Element) node);
+          return this.scalarHandlerRegistry.parse(nodeName, source);
         }
       } else if (node instanceof Text) {
-        String source = DomUtils.getTextValue(valueElement);
-        return this.parseString(source);
+        return DomUtils.getTextValue(valueElement);
       }
     }
 
     // we should not reach this point.
     return null;
+  }
+
+  /**
+   * Setter for the field <code>{@link #scalarHandlerRegistry}</code>.
+   * 
+   * @param scalarHandlerRegistry the new value to set.
+   */
+  public final void setScalarHandlerRegistry(
+      ScalarHandlerRegistry scalarHandlerRegistry) {
+    this.scalarHandlerRegistry = scalarHandlerRegistry;
   }
 
 }

@@ -15,24 +15,27 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
+package org.springmodules.remoting.xmlrpc.stax;
+
+import org.springmodules.remoting.xmlrpc.AbstractXmlRpcRequestReaderTests;
+import org.springmodules.remoting.xmlrpc.XmlRpcRequestReader;
 
 /**
  * <p>
- * Unit Tests for <code>{@link DomXmlRpcRequestReader}</code>.
+ * Unit Tests for <code>{@link StaxXmlRpcRequestReader}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/13 08:59:07 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:23 $
  */
-public class DomXmlRpcRequestReaderTests extends
+public class StaxXmlRpcRequestReaderTests extends
     AbstractXmlRpcRequestReaderTests {
 
   /**
    * Primary object that is under test.
    */
-  private DomXmlRpcRequestReader requestReader;
+  private StaxXmlRpcRequestReader requestReader;
 
   /**
    * Constructor.
@@ -40,7 +43,7 @@ public class DomXmlRpcRequestReaderTests extends
    * @param name
    *          the name of the test case to construct.
    */
-  public DomXmlRpcRequestReaderTests(String name) {
+  public StaxXmlRpcRequestReaderTests(String name) {
     super(name);
   }
 
@@ -50,7 +53,7 @@ public class DomXmlRpcRequestReaderTests extends
   protected void onSetUp() throws Exception {
     super.onSetUp();
 
-    this.requestReader = new DomXmlRpcRequestReader();
+    this.requestReader = new StaxXmlRpcRequestReader();
   }
 
   /**

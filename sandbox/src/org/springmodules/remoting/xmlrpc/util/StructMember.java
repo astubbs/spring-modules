@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 4, 2005
+ * Created on Jun 13, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,42 +15,41 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
-
-import org.springframework.core.NestedRuntimeException;
+package org.springmodules.remoting.xmlrpc.util;
 
 /**
  * <p>
- * Abstract superclass for all exceptions thrown in the XML-RPC package and
- * subpackages.
+ * Represents a member of a XML-RPC struct.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/14 00:47:19 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:17 $
  */
-public abstract class XmlRpcException extends NestedRuntimeException {
+public class StructMember {
+
+  /**
+   * The name of this member.
+   */
+  public final String name;
+
+  /**
+   * The value of this member.
+   */
+  public final Object value;
 
   /**
    * Constructor.
    * 
-   * @param msg
-   *          the detail message.
+   * @param name
+   *          the new name of this member.
+   * @param value
+   *          the new value of this member.
    */
-  public XmlRpcException(String msg) {
-    super(msg);
-  }
-
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
-   */
-  public XmlRpcException(String msg, Throwable nestedException) {
-    super(msg, nestedException);
+  public StructMember(String name, Object value) {
+    super();
+    this.name = name;
+    this.value = value;
   }
 
 }

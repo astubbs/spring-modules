@@ -24,7 +24,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.TestCase;
 
-import org.springmodules.remoting.xmlrpc.util.XmlRpcDateTime;
+import org.springmodules.remoting.xmlrpc.dom.AbstractDomXmlRpcParser;
+import org.springmodules.remoting.xmlrpc.util.DateTimeHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,7 +37,7 @@ import org.w3c.dom.Element;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/13 08:57:09 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/14 00:47:21 $
  */
 public class AbstractDomXmlRpcParserTests extends TestCase {
 
@@ -44,6 +45,11 @@ public class AbstractDomXmlRpcParserTests extends TestCase {
    * A DOM document used to create elements.
    */
   protected Document document;
+
+  /**
+   * Handles date/time.
+   */
+  private DateTimeHandler dateTimeHandler;
 
   /**
    * Constructor.
@@ -169,7 +175,7 @@ public class AbstractDomXmlRpcParserTests extends TestCase {
    * @return the created element.
    */
   protected final Element createDateTimeElement(Date date) {
-    String text = XmlRpcDateTime.toString(date);
+    String text = this.dateTimeHandler.format(date);
     return this.createDateTimeElement(text);
   }
 
@@ -439,6 +445,8 @@ public class AbstractDomXmlRpcParserTests extends TestCase {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = factory.newDocumentBuilder();
     this.document = builder.newDocument();
+
+    this.dateTimeHandler = new DateTimeHandler();
 
     this.onSetUp();
   }

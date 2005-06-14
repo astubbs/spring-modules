@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 4, 2005
+ * Created on Jun 13, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,42 +15,39 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
+package org.springmodules.remoting.xmlrpc.util;
 
-import org.springframework.core.NestedRuntimeException;
+import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 
 /**
  * <p>
- * Abstract superclass for all exceptions thrown in the XML-RPC package and
- * subpackages.
+ * Parses/formats <code>Integer</code> values.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/14 00:47:19 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:17 $
  */
-public abstract class XmlRpcException extends NestedRuntimeException {
+public class IntegerHandler extends AbstractNumberHandler {
 
   /**
    * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
    */
-  public XmlRpcException(String msg) {
-    super(msg);
+  public IntegerHandler() {
+    super();
   }
 
   /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
+   * @see ScalarHandler#parse(String)
    */
-  public XmlRpcException(String msg, Throwable nestedException) {
-    super(msg, nestedException);
+  public Object parse(String source) {
+    try {
+      return new Integer(source);
+
+    } catch (NumberFormatException exception) {
+      throw new XmlRpcParsingException("'" + source
+          + "' is not an integer value", exception);
+    }
   }
 
 }
