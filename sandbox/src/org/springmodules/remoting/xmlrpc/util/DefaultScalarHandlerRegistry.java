@@ -27,40 +27,45 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:17 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/14 08:59:58 $
  */
 public class DefaultScalarHandlerRegistry implements ScalarHandlerRegistry {
 
   /**
    * Handler for Base64 values.
    */
-  private static final Base64Handler BASE_64 = new Base64Handler();
+  private ScalarHandler base64Handler;
 
   /**
    * Handler for boolean values.
    */
-  private static final BooleanHandler BOOLEAN = new BooleanHandler();
+  private ScalarHandler booleanHandler;
 
   /**
    * Handler for date/time values.
    */
-  private static final DateTimeHandler DATE_TIME = new DateTimeHandler();
+  private ScalarHandler dateTimeHandler;
 
   /**
    * Handler for double values.
    */
-  private static final DoubleHandler DOUBLE = new DoubleHandler();
+  private ScalarHandler doubleHandler;
 
   /**
    * Handler for integer values.
    */
-  private static final IntegerHandler INTEGER = new IntegerHandler();
+  private ScalarHandler integerHandler;
 
   /**
    * Constructor.
    */
   public DefaultScalarHandlerRegistry() {
     super();
+    this.setBase64Handler(new Base64Handler());
+    this.setBooleanHandler(new BooleanHandler());
+    this.setDateTimeHandler(new DateTimeHandler());
+    this.setDoubleHandler(new DoubleHandler());
+    this.setIntegerHandler(new IntegerHandler());
   }
 
   /**
@@ -70,27 +75,77 @@ public class DefaultScalarHandlerRegistry implements ScalarHandlerRegistry {
       throws XmlRpcParsingException {
 
     if (XmlRpcEntity.BASE_64.equals(xmlRpcEntityName)) {
-      return BASE_64.parse(source);
+      return this.base64Handler.parse(source);
 
     } else if (XmlRpcEntity.BOOLEAN.equals(xmlRpcEntityName)) {
-      return BOOLEAN.parse(source);
+      return this.booleanHandler.parse(source);
 
     } else if (XmlRpcEntity.DATE_TIME.equals(xmlRpcEntityName)) {
-      return DATE_TIME.parse(source);
+      return this.dateTimeHandler.parse(source);
 
     } else if (XmlRpcEntity.DOUBLE.equals(xmlRpcEntityName)) {
-      return DOUBLE.parse(source);
+      return this.doubleHandler.parse(source);
 
     } else if (XmlRpcEntity.I4.equals(xmlRpcEntityName)) {
-      return INTEGER.parse(source);
+      return this.integerHandler.parse(source);
 
     } else if (XmlRpcEntity.INT.equals(xmlRpcEntityName)) {
-      return INTEGER.parse(source);
+      return this.integerHandler.parse(source);
 
     } else {
       throw new XmlRpcParsingException("Unexpected element '"
           + xmlRpcEntityName + "'");
     }
+  }
+
+  /**
+   * Setter for the field <code>{@link #base64Handler}</code>.
+   * 
+   * @param base64Handler
+   *          the new value to set.
+   */
+  public final void setBase64Handler(ScalarHandler base64Handler) {
+    this.base64Handler = base64Handler;
+  }
+
+  /**
+   * Setter for the field <code>{@link #booleanHandler}</code>.
+   * 
+   * @param booleanHandler
+   *          the new value to set.
+   */
+  public final void setBooleanHandler(ScalarHandler booleanHandler) {
+    this.booleanHandler = booleanHandler;
+  }
+
+  /**
+   * Setter for the field <code>{@link #dateTimeHandler}</code>.
+   * 
+   * @param dateTimeHandler
+   *          the new value to set.
+   */
+  public final void setDateTimeHandler(ScalarHandler dateTimeHandler) {
+    this.dateTimeHandler = dateTimeHandler;
+  }
+
+  /**
+   * Setter for the field <code>{@link #doubleHandler}</code>.
+   * 
+   * @param doubleHandler
+   *          the new value to set.
+   */
+  public final void setDoubleHandler(ScalarHandler doubleHandler) {
+    this.doubleHandler = doubleHandler;
+  }
+
+  /**
+   * Setter for the field <code>{@link #integerHandler}</code>.
+   * 
+   * @param integerHandler
+   *          the new value to set.
+   */
+  public final void setIntegerHandler(ScalarHandler integerHandler) {
+    this.integerHandler = integerHandler;
   }
 
 }
