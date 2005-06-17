@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 8, 2005
+ * Created on Jun 17, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,52 +20,44 @@ package org.springmodules.remoting.xmlrpc.stax;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.springmodules.remoting.xmlrpc.XmlRpcEntity;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
-import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocation;
-import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocationArguments;
-import org.springmodules.remoting.xmlrpc.XmlRpcRequestReader;
+import org.springmodules.remoting.xmlrpc.XmlRpcRequestParser;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 
 /**
  * <p>
- * Implementation of <code>{@link XmlRpcRequestReader}</code> that parses the
- * XML-RPC request using StAX.
+ * TODO Document class.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:22 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:52 $
  */
-public class StaxXmlRpcRequestReader extends AbstractStaxXmlRpcParser implements
-    XmlRpcRequestReader {
+public class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser implements
+    XmlRpcRequestParser {
 
   /**
    * Constructor.
    */
-  public StaxXmlRpcRequestReader() {
+  public StaxXmlRpcRequestParser() {
     super();
   }
 
   /**
-   * @see org.springmodules.remoting.xmlrpc.XmlRpcRequestReader#readXmlRpcRequest(java.io.InputStream)
+   * @see XmlRpcRequestParser#parseRequest(InputStream)
    */
-  public XmlRpcRemoteInvocation readXmlRpcRequest(InputStream inputStream)
+  public XmlRpcRequest parseRequest(InputStream inputStream)
       throws XmlRpcParsingException {
-    String serviceAndMethodNames = null;
-    XmlRpcRemoteInvocationArguments invocationArguments = null;
-
-    XMLInputFactory factory = XMLInputFactory.newInstance();
-    if (this.logger.isDebugEnabled()) {
-      this.logger.debug("Using StAX implementation [" + factory + "]");
-    }
+    XmlRpcRequest request = new XmlRpcRequest();
 
     try {
-      XMLStreamReader reader = factory.createXMLStreamReader(inputStream);
+      XMLStreamReader reader = this.loadXmlReader(inputStream);
 
       while (reader.hasNext()) {
         int event = reader.next();
@@ -75,15 +67,16 @@ public class StaxXmlRpcRequestReader extends AbstractStaxXmlRpcParser implements
             String localName = reader.getLocalName();
 
             if (XmlRpcEntity.METHOD_NAME.equals(localName)) {
-              serviceAndMethodNames = reader.getElementText();
+              String serviceAndMethodNames = reader.getElementText();
+              request.setServiceAndMethodNames(serviceAndMethodNames);
 
             } else if (XmlRpcEntity.PARAMS.equals(localName)) {
-              invocationArguments = this.parseParametersElement(reader);
+              XmlRpcElement[] parameters = this.parseParametersElement(reader);
+              request.setParameters(parameters);
             }
         }
       }
       reader.close();
-
     } catch (XMLStreamException exception) {
       throw new XmlRpcParsingException(
           "XmlRpcParsingException parsing XML-RPC request", exception);
@@ -97,10 +90,8 @@ public class StaxXmlRpcRequestReader extends AbstractStaxXmlRpcParser implements
         }
       }
     }
-
-    XmlRpcRemoteInvocation remoteInvocation = new XmlRpcRemoteInvocation(
-        serviceAndMethodNames, invocationArguments);
-    return remoteInvocation;
+    
+    return request;
   }
 
 }

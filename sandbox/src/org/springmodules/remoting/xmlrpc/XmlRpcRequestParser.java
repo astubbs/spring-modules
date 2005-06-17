@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 13, 2005
+ * Created on Jun 15, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,39 +15,32 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc.util;
+package org.springmodules.remoting.xmlrpc;
 
-import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import java.io.InputStream;
+
+import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 
 /**
  * <p>
- * Parses/formats <code>Integer</code> values.
+ * Parses a given XML-RPC request.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:17 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/17 09:57:51 $
  */
-public class IntegerHandler extends AbstractNumberHandler {
+public interface XmlRpcRequestParser {
 
   /**
-   * Constructor.
+   * Creates a new XML-RPC request by parsing the given InputStream.
+   * 
+   * @param inputStream
+   *          the InputStream containing the XML-RPC request.
+   * @return the created XML-RPC request.
+   * @throws XmlRpcParsingException
+   *           if there are errors during the parsing.
    */
-  public IntegerHandler() {
-    super();
-  }
-
-  /**
-   * @see ScalarHandler#parse(String)
-   */
-  public Object parse(String source) {
-    try {
-      return new Integer(source);
-
-    } catch (NumberFormatException exception) {
-      throw new XmlRpcParsingException("'" + source
-          + "' is not an integer value", exception);
-    }
-  }
-
+  XmlRpcRequest parseRequest(InputStream inputStream)
+      throws XmlRpcParsingException;
 }

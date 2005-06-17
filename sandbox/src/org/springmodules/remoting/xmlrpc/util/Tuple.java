@@ -17,40 +17,39 @@
  */
 package org.springmodules.remoting.xmlrpc.util;
 
-import org.apache.commons.codec.binary.Base64;
-
 /**
  * <p>
- * Provides Base64 encoding and decoding as defined by RFC 2045.
+ * A tuple is a pair of objects accessed by first and second, respectively.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:16 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:45 $
  */
-public class Base64Handler implements ScalarHandler {
+public class Tuple {
+
+  /**
+   * The first value of this tuple.
+   */
+  public final Object first;
+
+  /**
+   * The second value of this tuple.
+   */
+  public final Object second;
 
   /**
    * Constructor.
+   * 
+   * @param first
+   *          the new first value of this tuple.
+   * @param second
+   *          the new second value of this tuple.
    */
-  public Base64Handler() {
+  public Tuple(Object first, Object second) {
     super();
-  }
-
-  /**
-   * @see ScalarHandler#format(Object)
-   */
-  public String format(Object source) {
-    byte[] byteArraySource = (byte[]) source;
-    byte[] buffer = Base64.encodeBase64(byteArraySource);
-    return new String(buffer, 0, buffer.length);
-  }
-
-  /**
-   * @see ScalarHandler#parse(String)
-   */
-  public Object parse(String source) {
-    return Base64.decodeBase64(source.getBytes());
+    this.first = first;
+    this.second = second;
   }
 
 }

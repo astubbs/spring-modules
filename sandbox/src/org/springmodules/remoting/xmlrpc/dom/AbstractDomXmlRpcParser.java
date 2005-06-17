@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 5, 2005
+ * Created on Jun 15, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,35 +17,73 @@
  */
 package org.springmodules.remoting.xmlrpc.dom;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
+import org.springframework.util.xml.SimpleSaxErrorHandler;
 import org.springmodules.remoting.xmlrpc.XmlRpcEntity;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
-import org.springmodules.remoting.xmlrpc.XmlRpcRemoteInvocationArguments;
-import org.springmodules.remoting.xmlrpc.util.DefaultScalarHandlerRegistry;
-import org.springmodules.remoting.xmlrpc.util.ScalarHandlerRegistry;
-import org.springmodules.remoting.xmlrpc.util.StructMember;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcArray;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcBase64;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcBoolean;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcDateTime;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcDouble;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcInteger;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * <p>
- * Template for XML-RPC request/response parsers that use DOM.
+ * Template for XML-RPC parsers that use DOM for parsing.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:23 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/17 09:57:55 $
  */
 public abstract class AbstractDomXmlRpcParser {
+
+  /**
+   * SAX entity resolver to be used for parsing. By default,
+   * <code>{@link XmlRpcDtdResolver}</code> will be used.
+   */
+  private EntityResolver entityResolver;
+
+  /**
+   * <p>
+   * Implementation of <code>org.xml.sax.ErrorHandler</code> for custom
+   * handling of XML parsing errors and warnings.
+   * </p>
+   * <p>
+   * If not set, a default <code>{@link SimpleSaxErrorHandler}</code> is used
+   * that simply logs warnings using the logger instance of the view class, and
+   * rethrows errors to discontinue the XML transformation.
+   * </p>
+   * 
+   * @see org.springframework.util.xml.SimpleSaxErrorHandler
+   */
+  private ErrorHandler errorHandler;
 
   /**
    * Message logger.
@@ -53,44 +91,98 @@ public abstract class AbstractDomXmlRpcParser {
   protected final Log logger = LogFactory.getLog(this.getClass());
 
   /**
-   * Handles the parsing of scalar values.
+   * Flag that indicates if the XML parser should validate the XML-RPC request.
+   * Default is <code>false</code>.
    */
-  private ScalarHandlerRegistry scalarHandlerRegistry;
+  private boolean validating;
 
   /**
    * Constructor.
    */
   public AbstractDomXmlRpcParser() {
     super();
-    this.scalarHandlerRegistry = new DefaultScalarHandlerRegistry();
+    this.setEntityResolver(new XmlRpcDtdResolver());
+    this.setErrorHandler(new SimpleSaxErrorHandler(this.logger));
   }
 
   /**
-   * Creates a new <code>java.util.List</code> from the specified DOM element.
+   * Creates a new XML document by parsing the given InputStream.
+   * 
+   * @param inputStream
+   *          the InputStream to parse.
+   * @return the created XML document.
+   * @throws XmlRpcParsingException
+   *           if there are any errors during the parsing.
+   */
+  protected Document loadXmlDocument(InputStream inputStream) {
+    try {
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      if (this.logger.isDebugEnabled()) {
+        this.logger.debug("Using JAXP implementation [" + factory + "]");
+      }
+      factory.setValidating(this.validating);
+
+      DocumentBuilder docBuilder = factory.newDocumentBuilder();
+      docBuilder.setErrorHandler(this.errorHandler);
+      if (this.entityResolver != null) {
+        docBuilder.setEntityResolver(this.entityResolver);
+      }
+
+      return docBuilder.parse(inputStream);
+
+    } catch (ParserConfigurationException exception) {
+      throw new XmlRpcParsingException(
+          "Parser configuration exception while parsing XML-RPC request",
+          exception);
+
+    } catch (SAXParseException exception) {
+      throw new XmlRpcParsingException("Line " + exception.getLineNumber()
+          + " in XML-RPC request is invalid", exception);
+
+    } catch (SAXException exception) {
+      throw new XmlRpcParsingException("XML-RPC request is invalid", exception);
+
+    } catch (IOException exception) {
+      throw new XmlRpcParsingException("IOException parsing XML-RPC request",
+          exception);
+
+    } finally {
+      if (inputStream != null) {
+        try {
+          inputStream.close();
+        } catch (IOException exception) {
+          this.logger.warn("Could not close InputStream", exception);
+        }
+      }
+    }
+  }
+
+  /**
+   * Parses the given XML element that contains a XML-RPC array.
    * 
    * @param arrayElement
-   *          the DOM element.
-   * @return the new array of <code>java.util.List</code>s.
+   *          the XML element to parse.
+   * @return the created XML-RPC array.
    * @throws XmlRpcParsingException
    *           if the element contains an unknown child. Only one "data" element
    *           is allowed inside an "array" element.
    * @see #parseDataElement(Element)
    */
-  protected List parseArrayElement(Element arrayElement)
-      throws XmlRpcParsingException {
-    NodeList childNodes = arrayElement.getChildNodes();
-    int childCount = childNodes.getLength();
+  protected XmlRpcArray parseArrayElement(Element arrayElement) {
+    NodeList children = arrayElement.getChildNodes();
+    int childCount = children.getLength();
 
     for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
+      Node child = children.item(i);
 
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
+      if (child instanceof Element) {
+        String childName = child.getNodeName();
 
-        if (XmlRpcEntity.DATA.equals(nodeName)) {
-          return this.parseDataElement((Element) node);
+        if (XmlRpcEntity.DATA.equals(childName)) {
+          Element dataElement = (Element) child;
+          return this.parseDataElement(dataElement);
         }
-        throw new XmlRpcParsingException("Unexpected element '" + nodeName
+        throw new XmlRpcParsingException("Unexpected element '" + childName
             + "'");
       }
     }
@@ -100,98 +192,108 @@ public abstract class AbstractDomXmlRpcParser {
   }
 
   /**
-   * Creates a new <code>java.util.List</code> from the specified DOM element.
+   * Parses the given XML element that contains the data of a XML-RPC array.
    * 
    * @param dataElement
-   *          the DOM element.
-   * @return the new array of <code>java.util.List</code>s.
+   *          the XML element to parse.
+   * @return the created XML-RPC array.
    * @see #parseValueElement(Element)
    */
-  protected List parseDataElement(Element dataElement)
-      throws XmlRpcParsingException {
-    List list = new ArrayList();
+  protected XmlRpcArray parseDataElement(Element dataElement) {
+    XmlRpcArray array = new XmlRpcArray();
 
-    NodeList childNodes = dataElement.getChildNodes();
-    int childCount = childNodes.getLength();
+    NodeList children = dataElement.getChildNodes();
+    int childCount = children.getLength();
 
     for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
+      Node child = children.item(i);
 
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
+      if (child instanceof Element) {
+        String childName = child.getNodeName();
 
-        if (XmlRpcEntity.VALUE.equals(nodeName)) {
-          Object object = this.parseValueElement((Element) node);
-          list.add(object);
+        if (XmlRpcEntity.VALUE.equals(childName)) {
+          Element valueElement = (Element) child;
+          XmlRpcElement element = this.parseValueElement(valueElement);
+          array.add(element);
         }
       }
     }
-    return list;
+    return array;
   }
 
   /**
-   * Creates a new <code>StructMember</code> from the specified DOM element.
+   * Parses the given XML element that contains a member of a XML-RPC complex
+   * structure.
    * 
    * @param memberElement
-   *          the DOM element.
-   * @return the new <code>StructMember</code>.
+   *          the XML element to parse.
+   * @return the created member of a XML-RPC complex structure.
    * @throws XmlRpcParsingException
-   *           if the element contains an unknown child. Only one "name" element
-   *           and one "value" element are allowed inside an "member" element.
+   *           if the element contains a child with an unknown name. Only one
+   *           element with name "name" and one element with name "value" are
+   *           allowed inside an "member" element.
+   * @throws XmlRpcParsingException
+   *           if the name of the parsed struct member is empty.
    * @see #parseValueElement(Element)
    */
-  protected StructMember parseMemberElement(Element memberElement)
-      throws XmlRpcParsingException {
+  protected XmlRpcMember parseMemberElement(Element memberElement) {
     String name = null;
-    Object value = null;
+    XmlRpcElement value = null;
 
-    NodeList childNodes = memberElement.getChildNodes();
-    int childCount = childNodes.getLength();
+    NodeList children = memberElement.getChildNodes();
+    int childCount = children.getLength();
 
     for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
+      Node child = children.item(i);
 
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
+      if (child instanceof Element) {
+        String childName = child.getNodeName();
 
-        if (XmlRpcEntity.NAME.equals(nodeName)) {
-          name = DomUtils.getTextValue((Element) node);
+        if (XmlRpcEntity.NAME.equals(childName)) {
+          Element nameElement = (Element) child;
+          name = DomUtils.getTextValue(nameElement);
 
-        } else if (XmlRpcEntity.VALUE.equals(nodeName)) {
-          value = this.parseValueElement((Element) node);
+        } else if (XmlRpcEntity.VALUE.equals(childName)) {
+          Element valueElement = (Element) value;
+          value = this.parseValueElement(valueElement);
 
         } else {
-          throw new XmlRpcParsingException("Unexpected element '" + nodeName
+          throw new XmlRpcParsingException("Unexpected element '" + childName
               + "'");
         }
       }
     }
 
-    return new StructMember(name, value);
+    if (!StringUtils.hasText(name)) {
+      throw new XmlRpcParsingException("The struct member should have a name");
+    }
+
+    return new XmlRpcMember(name, value);
   }
 
   /**
-   * Creates a new Object from the specified DOM element.
+   * Parses the given XML element that contains a single parameter of either a
+   * XML-RPC request or a XML-RPC response.
    * 
    * @param parameterElement
-   *          the DOM element.
-   * @return the created Object.
+   *          the XML element to parse.
+   * @return the created parameter.
    * @throws XmlRpcParsingException
-   *           if the element contains an unknown child.
+   *           if the element contains a child with name other than a "value".
    * @see #parseValueElement(Element)
    */
-  protected Object parseParameterElement(Element parameterElement)
-      throws XmlRpcParsingException {
-    NodeList childNodes = parameterElement.getChildNodes();
-    int childCount = childNodes.getLength();
+  protected XmlRpcElement parseParameterElement(Element parameterElement) {
+    NodeList children = parameterElement.getChildNodes();
+    int childCount = children.getLength();
 
     for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
+      Node child = children.item(i);
 
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
+      if (child instanceof Element) {
+        String nodeName = child.getNodeName();
         if (XmlRpcEntity.VALUE.equals(nodeName)) {
-          return this.parseValueElement((Element) node);
+          Element valueElement = (Element) child;
+          return this.parseValueElement(valueElement);
         }
         throw new XmlRpcParsingException("Unexpected element '" + nodeName
             + "'");
@@ -203,105 +305,134 @@ public abstract class AbstractDomXmlRpcParser {
   }
 
   /**
-   * Parses the given DOM element containing parameters for a XML-RPC
-   * request/response.
+   * Parses the given XML element that contains all the parameters or either a
+   * XML-RPC request or a XML-RPC response.
    * 
    * @param parametersElement
-   *          the DOM element.
-   * @return the parameters of the XML-RPC request/response.
+   *          the XML element to parse.
+   * @return the created parameters.
+   * @see #parseParameterElement(Element)
    */
-  protected XmlRpcRemoteInvocationArguments parseParametersElement(
-      Element parametersElement) throws XmlRpcParsingException {
-    NodeList childNodes = parametersElement.getChildNodes();
-    int childCount = childNodes.getLength();
+  protected XmlRpcElement[] parseParametersElement(Element parametersElement) {
+    List parameters = new ArrayList();
 
-    XmlRpcRemoteInvocationArguments arguments = new XmlRpcRemoteInvocationArguments();
+    NodeList children = parametersElement.getChildNodes();
+    int childCount = children.getLength();
 
     for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
+      Node child = children.item(i);
+      if (child instanceof Element) {
+        String childName = child.getNodeName();
 
-        if (XmlRpcEntity.PARAM.equals(nodeName)) {
-          Object parameter = this.parseParameterElement((Element) node);
-          Class parameterType = parameter.getClass();
-          arguments.addArgument(parameter, parameterType);
+        if (XmlRpcEntity.PARAM.equals(childName)) {
+          Element parameterElement = (Element) child;
+          XmlRpcElement parameter = this
+              .parseParameterElement(parameterElement);
+          parameters.add(parameter);
 
         } else {
-          throw new XmlRpcParsingException("Unexpected element '" + nodeName
+          throw new XmlRpcParsingException("Unexpected element '" + childName
               + "'");
         }
       }
     }
 
-    return arguments;
+    return (XmlRpcElement[]) parameters.toArray(new XmlRpcElement[parameters
+        .size()]);
   }
 
   /**
-   * Creates a new <code>java.util.Map</code> from the specified DOM element.
+   * Parses the given XML element that contains a XML-RPC complex structure.
    * 
    * @param structElement
-   *          the DOM element.
-   * @return the new array of <code>java.util.Map</code>s.
+   *          the XML element to parse.
+   * @return the created XML-RPC complex structure.
    * @see #parseMemberElement(Element)
    */
-  protected Map parseStructElement(Element structElement)
-      throws XmlRpcParsingException {
-    Map map = new HashMap();
+  protected XmlRpcStruct parseStructElement(Element structElement) {
+    XmlRpcStruct struct = new XmlRpcStruct();
 
-    NodeList childNodes = structElement.getChildNodes();
-    int childCount = childNodes.getLength();
+    NodeList children = structElement.getChildNodes();
+    int childCount = children.getLength();
 
     for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
+      Node child = children.item(i);
 
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
+      if (child instanceof Element) {
+        String childName = child.getNodeName();
 
-        if (XmlRpcEntity.MEMBER.equals(nodeName)) {
-          StructMember member = this.parseMemberElement((Element) node);
-          map.put(member.name, member.value);
+        if (XmlRpcEntity.MEMBER.equals(childName)) {
+          Element memberElement = (Element) child;
+          XmlRpcMember member = this.parseMemberElement(memberElement);
+          struct.add(member);
         }
       }
     }
 
-    return map;
+    return struct;
   }
 
   /**
-   * Creates a new Object from the specified DOM element.
+   * Parses the given XML element that contains the value of a parameter, a
+   * struct member or an element of an array.
    * 
    * @param valueElement
-   *          the DOM element.
-   * @return the created Object.
+   *          the XML element to parse.
+   * @return the created value.
    * @throws XmlRpcParsingException
    *           if the element contains an unknown child element.
    */
-  protected Object parseValueElement(Element valueElement)
-      throws XmlRpcParsingException {
-    NodeList childNodes = valueElement.getChildNodes();
-    int childCount = childNodes.getLength();
+  protected XmlRpcElement parseValueElement(Element valueElement) {
+    NodeList children = valueElement.getChildNodes();
+    int childCount = children.getLength();
 
     for (int i = 0; i < childCount; i++) {
-      Node node = childNodes.item(i);
+      Node child = children.item(i);
 
-      if (node instanceof Element) {
-        String nodeName = node.getNodeName();
-        if (XmlRpcEntity.ARRAY.equals(nodeName)) {
-          return this.parseArrayElement((Element) node);
+      if (child instanceof Element) {
+        String childName = child.getNodeName();
+        Element xmlElement = (Element) child;
 
-        } else if (XmlRpcEntity.STRING.equalsIgnoreCase(nodeName)) {
-          return DomUtils.getTextValue((Element) node);
+        if (XmlRpcEntity.ARRAY.equals(childName)) {
+          return this.parseArrayElement(xmlElement);
 
-        } else if (XmlRpcEntity.STRUCT.equalsIgnoreCase(nodeName)) {
-          return this.parseStructElement((Element) node);
+        } else if (XmlRpcEntity.BASE_64.equals(childName)) {
+          String source = DomUtils.getTextValue(xmlElement);
+          return new XmlRpcBase64(source);
+
+        } else if (XmlRpcEntity.BOOLEAN.equals(childName)) {
+          String source = DomUtils.getTextValue(xmlElement);
+          return new XmlRpcBoolean(source);
+
+        } else if (XmlRpcEntity.DATE_TIME.equals(childName)) {
+          String source = DomUtils.getTextValue(xmlElement);
+          return new XmlRpcDateTime(source);
+
+        } else if (XmlRpcEntity.DOUBLE.equals(childName)) {
+          String source = DomUtils.getTextValue(xmlElement);
+          return new XmlRpcDouble(source);
+
+        } else if (XmlRpcEntity.I4.equals(childName)
+            || XmlRpcEntity.INT.equals(childName)) {
+          String source = DomUtils.getTextValue(xmlElement);
+          return new XmlRpcInteger(source);
+
+        } else if (XmlRpcEntity.STRING.equals(childName)
+            || XmlRpcEntity.INT.equals(childName)) {
+          String source = DomUtils.getTextValue(xmlElement);
+          return new XmlRpcString(source);
+
+        } else if (XmlRpcEntity.STRUCT.equals(childName)) {
+          return this.parseStructElement(xmlElement);
 
         } else {
-          String source = DomUtils.getTextValue((Element) node);
-          return this.scalarHandlerRegistry.parse(nodeName, source);
+          throw new XmlRpcParsingException("Unexpected element '" + childName
+              + "'");
         }
-      } else if (node instanceof Text) {
-        return DomUtils.getTextValue(valueElement);
+
+      } else if (child instanceof Text) {
+        String source = DomUtils.getTextValue(valueElement);
+        return new XmlRpcString(source);
       }
     }
 
@@ -310,13 +441,32 @@ public abstract class AbstractDomXmlRpcParser {
   }
 
   /**
-   * Setter for the field <code>{@link #scalarHandlerRegistry}</code>.
+   * Setter for the field <code>{@link #entityResolver}</code>.
    * 
-   * @param scalarHandlerRegistry the new value to set.
+   * @param entityResolver
+   *          the new value to set.
    */
-  public final void setScalarHandlerRegistry(
-      ScalarHandlerRegistry scalarHandlerRegistry) {
-    this.scalarHandlerRegistry = scalarHandlerRegistry;
+  public final void setEntityResolver(EntityResolver entityResolver) {
+    this.entityResolver = entityResolver;
   }
 
+  /**
+   * Setter for the field <code>{@link #errorHandler}</code>.
+   * 
+   * @param errorHandler
+   *          the new value to set.
+   */
+  public final void setErrorHandler(ErrorHandler errorHandler) {
+    this.errorHandler = errorHandler;
+  }
+
+  /**
+   * Setter for the field <code>{@link #validating}</code>.
+   * 
+   * @param validating
+   *          the new value to set.
+   */
+  public final void setValidating(boolean validating) {
+    this.validating = validating;
+  }
 }

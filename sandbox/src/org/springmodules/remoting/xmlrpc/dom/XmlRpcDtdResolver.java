@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
+package org.springmodules.remoting.xmlrpc.dom;
 
 import java.io.IOException;
 
@@ -38,7 +38,7 @@ import org.xml.sax.InputSource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/06 02:13:56 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:56 $
  */
 public class XmlRpcDtdResolver implements EntityResolver {
 

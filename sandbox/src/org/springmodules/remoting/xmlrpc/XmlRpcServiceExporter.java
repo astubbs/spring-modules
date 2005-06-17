@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 8, 2005
+ * Created on Jun 15, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,42 +17,28 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.remoting.support.RemoteInvocationBasedExporter;
 import org.springframework.remoting.support.RemoteInvocationResult;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 
 /**
  * <p>
- * TODO Document class.
+ * Exports an object as a XML-RPC service.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:19 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/17 09:57:51 $
  */
-public class XmlRpcServiceExporter extends RemoteInvocationBasedExporter
-    implements InitializingBean {
-
-  private Object proxy;
+public interface XmlRpcServiceExporter {
 
   /**
-   * Constructor.
+   * Invokes the method (of the exposed service) specified in the given XML-RPC
+   * request.
+   * 
+   * @param xmlRpcRequest
+   *          the XML-RPC request specifying the method to execute and its
+   *          arguments.
+   * @return the result of the invocation.
    */
-  public XmlRpcServiceExporter() {
-    super();
-  }
-
-  /**
-   * @see InitializingBean#afterPropertiesSet()
-   */
-  public void afterPropertiesSet() throws Exception {
-    this.proxy = this.getProxyForService();
-  }
-
-  public RemoteInvocationResult invokeRemoteService(
-      XmlRpcRemoteInvocation invocation) {
-    RemoteInvocationResult result = invokeAndCreateResult(invocation,
-        this.proxy);
-    return result;
-  }
+  RemoteInvocationResult invoke(XmlRpcRequest xmlRpcRequest);
 }

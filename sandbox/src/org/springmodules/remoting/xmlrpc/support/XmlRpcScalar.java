@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 13, 2005
+ * Created on Jun 14, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,39 +15,23 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc.util;
-
-import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+package org.springmodules.remoting.xmlrpc.support;
 
 /**
  * <p>
- * Parses/formats <code>Double</code> values.
+ * Represents a scalar value.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/14 00:47:17 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:49 $
  */
-public class DoubleHandler extends AbstractNumberHandler {
+public interface XmlRpcScalar extends XmlRpcElement {
 
   /**
-   * Constructor.
+   * Returns the value of this scalar.
+   * 
+   * @return the value of this scalar.
    */
-  public DoubleHandler() {
-    super();
-  }
-
-  /**
-   * @see ScalarHandler#parse(String)
-   */
-  public Object parse(String source) {
-    try {
-      return new Double(source);
-
-    } catch (NumberFormatException exception) {
-      throw new XmlRpcParsingException(
-          "'" + source + "' is not a double value", exception);
-    }
-  }
-
+  Object getValue();
 }

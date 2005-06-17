@@ -17,6 +17,8 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
+import org.springframework.remoting.support.RemoteInvocationResult;
+
 /**
  * <p>
  * Creates the XML-RPC response for the executed request.
@@ -24,7 +26,7 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/10 01:51:01 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/17 09:57:50 $
  */
 public interface XmlRpcResponseWriter {
 
@@ -35,5 +37,5 @@ public interface XmlRpcResponseWriter {
    *          the result obtained from the execution of the XML-RPC request.
    * @return the response for the execute XML-RPC request.
    */
-  byte[] writeResponse(Object result);
+  byte[] writeResponse(RemoteInvocationResult result);
 }
