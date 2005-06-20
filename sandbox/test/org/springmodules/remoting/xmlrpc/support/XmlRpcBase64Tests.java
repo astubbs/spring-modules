@@ -30,7 +30,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/19 12:39:11 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 03:24:10 $
  */
 public class XmlRpcBase64Tests extends TestCase {
 
@@ -58,8 +58,8 @@ public class XmlRpcBase64Tests extends TestCase {
 
   /**
    * Verifies that the constructor
-   * <code>{@link XmlRpcBase64#XmlRpcBase64(byte[])}</code> stores as its own
-   * internal value the array of bytes passed as argument.
+   * <code>{@link XmlRpcBase64#XmlRpcBase64(byte[])}</code> stores the given
+   * array of bytes as its internal value.
    */
   public void testConstructorWithByteArrayArgument() {
     byte[] expected = { 0, 2, 6, 4 };
@@ -70,9 +70,9 @@ public class XmlRpcBase64Tests extends TestCase {
 
   /**
    * Verifies that the constructor
-   * <code>{@link XmlRpcBase64#XmlRpcBase64(String)}</code> stores as its own
-   * internal value the decoded array of bytes retrieved from the String passed
-   * as argument.
+   * <code>{@link XmlRpcBase64#XmlRpcBase64(String)}</code> decodes the given
+   * String using the base64 algorithm and stores the resulting array of bytes
+   * as its internal value.
    */
   public void testConstructorWithStringArgument() {
     byte[] expected = { 0, 2, 6, 4 };
@@ -88,7 +88,7 @@ public class XmlRpcBase64Tests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link XmlRpcBase64#getMatchingValue(Class)}</code> returns its
-   * internal value if the specified type represents an array of bytes.
+   * internal value if the given type represents an array of bytes.
    */
   public void testGetMatchingValue() {
     byte[] expected = { 0, 2, 6, 4 };
@@ -101,8 +101,8 @@ public class XmlRpcBase64Tests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link XmlRpcBase64#getMatchingValue(Class)}</code> returns
-   * <code>{@link XmlRpcElement#NOT_MATCHING}</code> if the specified type
-   * does not represent an array of bytes.
+   * <code>{@link XmlRpcElement#NOT_MATCHING}</code> if the given type does
+   * not represent an array of bytes.
    */
   public void testGetMatchingValueWhenTypeIsNotByteArray() {
     this.base64 = new XmlRpcBase64();

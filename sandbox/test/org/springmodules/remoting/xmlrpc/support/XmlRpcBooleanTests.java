@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/19 12:39:11 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 03:24:10 $
  */
 public class XmlRpcBooleanTests extends TestCase {
 
@@ -47,8 +47,8 @@ public class XmlRpcBooleanTests extends TestCase {
 
   /**
    * Verifies that the constructor
-   * <code>{@link XmlRpcBoolean#XmlRpcBoolean(Boolean)}</code> stores as its
-   * own internal value the <code>Boolean</code> passed as argument.
+   * <code>{@link XmlRpcBoolean#XmlRpcBoolean(Boolean)}</code> stores the
+   * given <code>{@link Boolean}</code> as its internal value.
    */
   public void testConstructorWithBooleanValue() {
     Boolean expected = Boolean.TRUE;
@@ -60,7 +60,7 @@ public class XmlRpcBooleanTests extends TestCase {
    * Verifies that the constructor
    * <code>{@link XmlRpcBoolean#XmlRpcBoolean(Boolean)}</code> stores
    * <code>{@link Boolean#TRUE}</code> as its internal value if the given
-   * String is equal to "1" (<code>true</code> in XML-RPC).
+   * String is equal to "1" ("1" represents <code>true</code> in XML-RPC).
    */
   public void testConstructorWithStringValueEqualToTrue() {
     this.xmlRpcBoolean = new XmlRpcBoolean("1");
@@ -71,7 +71,7 @@ public class XmlRpcBooleanTests extends TestCase {
    * Verifies that the constructor
    * <code>{@link XmlRpcBoolean#XmlRpcBoolean(Boolean)}</code> stores
    * <code>{@link Boolean#FALSE}</code> as its internal value if the given
-   * String is not equal to "1" (<code>true</code> in XML-RPC).
+   * String is not equal to "1" ("1" represents <code>true</code> in XML-RPC).
    */
   public void testConstructorWithStringValueNotEqualToTrue() {
     this.xmlRpcBoolean = new XmlRpcBoolean("0");
