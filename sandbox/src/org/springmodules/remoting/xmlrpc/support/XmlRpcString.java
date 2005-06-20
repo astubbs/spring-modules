@@ -29,7 +29,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 05:02:12 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 10:30:30 $
  */
 public class XmlRpcString implements XmlRpcScalar {
 
@@ -82,19 +82,20 @@ public class XmlRpcString implements XmlRpcScalar {
    * signed integer.</li>
    * </ul>
    * 
-   * @param type
+   * @param targetType
    *          the given type.
    * @return the value of this scalar if the given type represents a string or a
    *         64-bit signed integer.
    * 
    * @see XmlRpcElement#getMatchingValue(Class)
    */
-  public Object getMatchingValue(Class type) {
+  public Object getMatchingValue(Class targetType) {
     Object matchingValue = NOT_MATCHING;
 
-    if (String.class.equals(type)) {
+    if (String.class.equals(targetType)) {
       matchingValue = this.value;
-    } else if (Long.class.equals(type) || Long.TYPE.equals(type)) {
+      
+    } else if (Long.class.equals(targetType) || Long.TYPE.equals(targetType)) {
       try {
         matchingValue = new Long(this.value);
 

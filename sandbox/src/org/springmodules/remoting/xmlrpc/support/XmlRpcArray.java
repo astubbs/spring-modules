@@ -29,7 +29,7 @@ import java.util.List;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 05:02:12 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 10:30:30 $
  */
 public class XmlRpcArray implements XmlRpcElement {
 
@@ -57,6 +57,107 @@ public class XmlRpcArray implements XmlRpcElement {
   }
 
   /**
+   * Returns an array of objects of the specified type if the such type is
+   * supported by this XML-RPC array. Otherwise returns
+   * <code>{@link #NOT_MATCHING}</code>.
+   * 
+   * @param targetType
+   *          the target type.
+   * @return an array of objects of the specified type.
+   */
+  protected Object getArrayMatchingValue(Class targetType) {
+    Object matchingValue = null;
+
+    Class componentType = targetType.getComponentType();
+    boolean matching = true;
+
+    int valueSize = this.values.size();
+    Object array = Array.newInstance(componentType, valueSize);
+
+    for (int i = 0; i < valueSize; i++) {
+      XmlRpcElement value = (XmlRpcElement) this.values.get(i);
+      Object item = value.getMatchingValue(componentType);
+
+      if (item == NOT_MATCHING) {
+        matching = false;
+        break;
+      }
+      Array.set(array, i, item);
+    }
+
+    if (matching) {
+      matchingValue = array;
+    } else {
+      matchingValue = NOT_MATCHING;
+    }
+
+    return matchingValue;
+  }
+
+  /**
+   * Returns an collection only if this XML-RPC array contains scalar values.
+   * Otherwise returns <code>{@link #NOT_MATCHING}</code>.
+   * 
+   * @return an collection of scalar values.
+   */
+  protected Object getCollectionMatchingValue() {
+    Object matchingValue = null;
+
+    boolean matching = true;
+
+    int valueSize = this.values.size();
+    Collection collection = new ArrayList(valueSize);
+
+    for (int i = 0; i < valueSize; i++) {
+      XmlRpcElement value = (XmlRpcElement) this.values.get(i);
+      if (value instanceof XmlRpcScalar) {
+        XmlRpcScalar scalar = (XmlRpcScalar) value;
+        collection.add(scalar.getValue());
+      } else {
+        matching = false;
+      }
+    }
+
+    if (matching) {
+      matchingValue = collection;
+    } else {
+      matchingValue = NOT_MATCHING;
+    }
+
+    return matchingValue;
+  }
+
+  /**
+   * Returns:
+   * <ul>
+   * <li>An array. If the specified type is an array and all the elements of
+   * this XML-RPC array match the component type of the given type.</li>
+   * <li>A collection. If the specified type is <code>{@link Collection}</code>,
+   * <code>{@link List}</code> or <code>{@link ArrayList}</code> and the
+   * elements of this XML-RPC array are scalar values.</li>
+   * </ul>
+   * 
+   * @param targetType
+   *          the target type.
+   * @return an array or collection depending on the given target typeF.
+   * 
+   * @see XmlRpcElement#getMatchingValue(Class)
+   */
+  public Object getMatchingValue(Class targetType) {
+    Object matchingValue = NOT_MATCHING;
+
+    if (targetType.isArray()) {
+      matchingValue = this.getArrayMatchingValue(targetType);
+
+    } else if (Collection.class.equals(targetType)
+        || List.class.equals(targetType) || ArrayList.class.equals(targetType)) {
+      matchingValue = this.getCollectionMatchingValue();
+    }
+
+    return matchingValue;
+  }
+
+  /**
    * Returns the values of this array.
    * 
    * @return the values of this array.
@@ -64,58 +165,5 @@ public class XmlRpcArray implements XmlRpcElement {
   public XmlRpcElement[] getValues() {
     return (XmlRpcElement[]) this.values.toArray(new XmlRpcElement[this.values
         .size()]);
-  }
-
-  /**
-   * @see XmlRpcElement#getMatchingValue(Class)
-   */
-  public Object getMatchingValue(Class type) {
-    Object matchingValue = NOT_MATCHING;
-
-    if (type.isArray()) {
-      Class componentType = type.getComponentType();
-      boolean matching = true;
-
-      int valueSize = this.values.size();
-      Object array = Array.newInstance(componentType, valueSize);
-
-      for (int i = 0; i < valueSize; i++) {
-        XmlRpcElement value = (XmlRpcElement) this.values.get(i);
-        Object item = value.getMatchingValue(componentType);
-
-        if (item == NOT_MATCHING) {
-          matching = false;
-          break;
-        }
-        Array.set(array, i, item);
-      }
-
-      if (matching) {
-        matchingValue = array;
-      }
-
-    } else if (Collection.class.equals(type) || List.class.equals(type)
-        || ArrayList.class.equals(type)) {
-      boolean matching = true;
-
-      int valueSize = this.values.size();
-      Collection collection = new ArrayList(valueSize);
-
-      for (int i = 0; i < valueSize; i++) {
-        XmlRpcElement value = (XmlRpcElement) this.values.get(i);
-        if (value instanceof XmlRpcScalar) {
-          XmlRpcScalar scalar = (XmlRpcScalar) value;
-          collection.add(scalar.getValue());
-        } else {
-          matching = false;
-        }
-      }
-
-      if (matching) {
-        matchingValue = collection;
-      }
-    }
-
-    return matchingValue;
   }
 }

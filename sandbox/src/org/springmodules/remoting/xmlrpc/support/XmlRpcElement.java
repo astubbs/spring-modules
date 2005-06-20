@@ -24,7 +24,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:48 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 10:30:30 $
  */
 public interface XmlRpcElement {
 
@@ -35,8 +35,8 @@ public interface XmlRpcElement {
   public static final Object NOT_MATCHING = new Object();
 
   /**
-   * Returns an instance of the specified type containing the value stored in
-   * this element. If the specified type is supported
+   * Returns an instance of the specified type containing the value represented
+   * by this element. If the specified type is not supported
    * <code>{@link #NOT_MATCHING}</code> should be returned.
    * 
    * @param targetType

@@ -26,7 +26,7 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:49 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 10:30:30 $
  */
 public class XmlRpcBase64 implements XmlRpcScalar {
 
@@ -74,10 +74,10 @@ public class XmlRpcBase64 implements XmlRpcScalar {
   /**
    * @see XmlRpcElement#getMatchingValue(Class)
    */
-  public Object getMatchingValue(Class type) {
+  public Object getMatchingValue(Class targetType) {
     Object matchingValue = NOT_MATCHING;
 
-    if (type.isArray() && type.getComponentType().equals(Byte.TYPE)) {
+    if (targetType.isArray() && targetType.getComponentType().equals(Byte.TYPE)) {
       matchingValue = this.value;
     }
     return matchingValue;

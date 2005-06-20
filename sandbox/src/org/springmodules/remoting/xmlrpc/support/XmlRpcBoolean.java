@@ -24,7 +24,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 05:02:12 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 10:30:30 $
  */
 public class XmlRpcBoolean implements XmlRpcScalar {
 
@@ -82,10 +82,10 @@ public class XmlRpcBoolean implements XmlRpcScalar {
   /**
    * @see XmlRpcElement#getMatchingValue(Class)
    */
-  public Object getMatchingValue(Class type) {
+  public Object getMatchingValue(Class targetType) {
     Object matchingValue = NOT_MATCHING;
 
-    if (Boolean.class.equals(type) || Boolean.TYPE.equals(type)) {
+    if (Boolean.class.equals(targetType) || Boolean.TYPE.equals(targetType)) {
       matchingValue = this.value;
     }
     return matchingValue;

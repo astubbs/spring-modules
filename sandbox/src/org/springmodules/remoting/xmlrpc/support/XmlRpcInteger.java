@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 05:02:12 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/20 10:30:30 $
  */
 public class XmlRpcInteger implements XmlRpcScalar {
 
@@ -83,19 +83,19 @@ public class XmlRpcInteger implements XmlRpcScalar {
    * Returns the value of this scalar if the given type is equal to
    * <code>{@link Integer}</code> or <code>{@link Integer#TYPE}</code>.
    * 
-   * @param type
+   * @param targetType
    *          the given type.
    * @return the value of this scalar if the given type represents a 32-bit
    *         signed integer.
    * 
    * @see XmlRpcElement#getMatchingValue(Class)
    */
-  public Object getMatchingValue(Class type) {
+  public Object getMatchingValue(Class targetType) {
     Object matchingValue = NOT_MATCHING;
 
-    if (Integer.class.equals(type) || Integer.TYPE.equals(type)) {
+    if (Integer.class.equals(targetType) || Integer.TYPE.equals(targetType)) {
       matchingValue = this.value;
-    } else if (Long.class.equals(type) || Long.TYPE.equals(type)) {
+    } else if (Long.class.equals(targetType) || Long.TYPE.equals(targetType)) {
       matchingValue = new Long(this.value.longValue());
     }
     return matchingValue;
