@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
-import org.springmodules.remoting.xmlrpc.XmlRpcEntity;
+import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcArray;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcBase64;
@@ -60,7 +60,7 @@ import org.xml.sax.SAXParseException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/17 09:57:55 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 22:50:08 $
  */
 public abstract class AbstractDomXmlRpcParser {
 
@@ -178,7 +178,7 @@ public abstract class AbstractDomXmlRpcParser {
       if (child instanceof Element) {
         String childName = child.getNodeName();
 
-        if (XmlRpcEntity.DATA.equals(childName)) {
+        if (XmlRpcElementNames.DATA.equals(childName)) {
           Element dataElement = (Element) child;
           return this.parseDataElement(dataElement);
         }
@@ -211,7 +211,7 @@ public abstract class AbstractDomXmlRpcParser {
       if (child instanceof Element) {
         String childName = child.getNodeName();
 
-        if (XmlRpcEntity.VALUE.equals(childName)) {
+        if (XmlRpcElementNames.VALUE.equals(childName)) {
           Element valueElement = (Element) child;
           XmlRpcElement element = this.parseValueElement(valueElement);
           array.add(element);
@@ -249,12 +249,12 @@ public abstract class AbstractDomXmlRpcParser {
       if (child instanceof Element) {
         String childName = child.getNodeName();
 
-        if (XmlRpcEntity.NAME.equals(childName)) {
+        if (XmlRpcElementNames.NAME.equals(childName)) {
           Element nameElement = (Element) child;
           name = DomUtils.getTextValue(nameElement);
 
-        } else if (XmlRpcEntity.VALUE.equals(childName)) {
-          Element valueElement = (Element) value;
+        } else if (XmlRpcElementNames.VALUE.equals(childName)) {
+          Element valueElement = (Element) child;
           value = this.parseValueElement(valueElement);
 
         } else {
@@ -291,7 +291,7 @@ public abstract class AbstractDomXmlRpcParser {
 
       if (child instanceof Element) {
         String nodeName = child.getNodeName();
-        if (XmlRpcEntity.VALUE.equals(nodeName)) {
+        if (XmlRpcElementNames.VALUE.equals(nodeName)) {
           Element valueElement = (Element) child;
           return this.parseValueElement(valueElement);
         }
@@ -324,7 +324,7 @@ public abstract class AbstractDomXmlRpcParser {
       if (child instanceof Element) {
         String childName = child.getNodeName();
 
-        if (XmlRpcEntity.PARAM.equals(childName)) {
+        if (XmlRpcElementNames.PARAM.equals(childName)) {
           Element parameterElement = (Element) child;
           XmlRpcElement parameter = this
               .parseParameterElement(parameterElement);
@@ -361,7 +361,7 @@ public abstract class AbstractDomXmlRpcParser {
       if (child instanceof Element) {
         String childName = child.getNodeName();
 
-        if (XmlRpcEntity.MEMBER.equals(childName)) {
+        if (XmlRpcElementNames.MEMBER.equals(childName)) {
           Element memberElement = (Element) child;
           XmlRpcMember member = this.parseMemberElement(memberElement);
           struct.add(member);
@@ -393,36 +393,35 @@ public abstract class AbstractDomXmlRpcParser {
         String childName = child.getNodeName();
         Element xmlElement = (Element) child;
 
-        if (XmlRpcEntity.ARRAY.equals(childName)) {
+        if (XmlRpcElementNames.ARRAY.equals(childName)) {
           return this.parseArrayElement(xmlElement);
 
-        } else if (XmlRpcEntity.BASE_64.equals(childName)) {
+        } else if (XmlRpcElementNames.BASE_64.equals(childName)) {
           String source = DomUtils.getTextValue(xmlElement);
           return new XmlRpcBase64(source);
 
-        } else if (XmlRpcEntity.BOOLEAN.equals(childName)) {
+        } else if (XmlRpcElementNames.BOOLEAN.equals(childName)) {
           String source = DomUtils.getTextValue(xmlElement);
           return new XmlRpcBoolean(source);
 
-        } else if (XmlRpcEntity.DATE_TIME.equals(childName)) {
+        } else if (XmlRpcElementNames.DATE_TIME.equals(childName)) {
           String source = DomUtils.getTextValue(xmlElement);
           return new XmlRpcDateTime(source);
 
-        } else if (XmlRpcEntity.DOUBLE.equals(childName)) {
+        } else if (XmlRpcElementNames.DOUBLE.equals(childName)) {
           String source = DomUtils.getTextValue(xmlElement);
           return new XmlRpcDouble(source);
 
-        } else if (XmlRpcEntity.I4.equals(childName)
-            || XmlRpcEntity.INT.equals(childName)) {
+        } else if (XmlRpcElementNames.I4.equals(childName)
+            || XmlRpcElementNames.INT.equals(childName)) {
           String source = DomUtils.getTextValue(xmlElement);
           return new XmlRpcInteger(source);
 
-        } else if (XmlRpcEntity.STRING.equals(childName)
-            || XmlRpcEntity.INT.equals(childName)) {
+        } else if (XmlRpcElementNames.STRING.equals(childName)) {
           String source = DomUtils.getTextValue(xmlElement);
           return new XmlRpcString(source);
 
-        } else if (XmlRpcEntity.STRUCT.equals(childName)) {
+        } else if (XmlRpcElementNames.STRUCT.equals(childName)) {
           return this.parseStructElement(xmlElement);
 
         } else {

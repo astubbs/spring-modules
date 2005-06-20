@@ -20,6 +20,7 @@ package org.springmodules.remoting.xmlrpc.support;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -33,7 +34,7 @@ import org.easymock.MockControl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/19 12:39:11 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 22:51:22 $
  */
 public class XmlRpcArrayTests extends TestCase {
 
@@ -62,12 +63,33 @@ public class XmlRpcArrayTests extends TestCase {
   }
 
   /**
+   * Verifies that the method <code>{@link XmlRpcArray#getElements()}</code>
+   * returns an array containing all the values stored in the
+   * <code>XmlRpcArray</code>.
+   */
+  public void testGetElements() {
+    XmlRpcElement[] expected = { new XmlRpcBase64(new byte[0]), new XmlRpcBoolean(),
+        new XmlRpcDateTime(new Date()) };
+
+    int expectedCount = expected.length;
+
+    for (int i = 0; i < expectedCount; i++) {
+      this.array.add(expected[i]);
+    }
+
+    XmlRpcElement[] actual = this.array.getElements();
+
+    assertTrue("Expected: " + Arrays.toString(expected) + " but was: "
+        + Arrays.toString(actual), Arrays.equals(expected, actual));
+  }
+
+  /**
    * Verifies that the method
    * <code>{@link XmlRpcArray#getMatchingValue(Class)}</code> returns an array
    * of matching values if the specified type represents an array and each of
    * the values of the <code>XmlRpcArray</code> returns a matching value.
    */
-  public void testGetMatchingValueWhenTypeIsArray() {
+  public void testGetMatchingValueWhenTargetTypeIsArray() {
     MockControl firstValueControl = MockControl
         .createControl(XmlRpcElement.class);
     XmlRpcElement firstValue = (XmlRpcElement) firstValueControl.getMock();
@@ -111,7 +133,7 @@ public class XmlRpcArrayTests extends TestCase {
    * represents an array and any of the values of the <code>XmlRpcArray</code>
    * returns <code>{@link XmlRpcElement#NOT_MATCHING}</code>.
    */
-  public void testGetMatchingValueWhenTypeIsArrayAndElementReturnsNotMatchingValue() {
+  public void testGetMatchingValueWhenTargetTypeIsArrayAndElementReturnsNotMatchingValue() {
     MockControl valueControl = MockControl.createControl(XmlRpcElement.class);
     XmlRpcElement value = (XmlRpcElement) valueControl.getMock();
     this.array.add(value);
@@ -142,7 +164,7 @@ public class XmlRpcArrayTests extends TestCase {
    * <code>XmlRpcArray</code> is not an implementation of
    * <code>{@link XmlRpcScalar}</code>.
    */
-  public void testGetMatchingValueWhenTypeIsCollectionAndElementIsNotScalarValue() {
+  public void testGetMatchingValueWhenTargetTypeIsCollectionAndElementIsNotScalarValue() {
     MockControl valueControl = MockControl.createControl(XmlRpcElement.class);
     XmlRpcElement value = (XmlRpcElement) valueControl.getMock();
     this.array.add(value);
@@ -172,7 +194,7 @@ public class XmlRpcArrayTests extends TestCase {
    * of the values of the <code>XmlRpcArray</code> is an implementation of
    * <code>{@link XmlRpcScalar}</code>.
    */
-  public void testGetMatchingValueWhenTypeIsCollectionAndElementsAreScalarValues() {
+  public void testGetMatchingValueWhenTargetTypeIsCollectionAndElementsAreScalarValues() {
     MockControl firstValueControl = MockControl
         .createControl(XmlRpcScalar.class);
     XmlRpcScalar firstValue = (XmlRpcScalar) firstValueControl.getMock();
@@ -224,29 +246,8 @@ public class XmlRpcArrayTests extends TestCase {
    * <code>{@link XmlRpcElement#NOT_MATCHING}</code> if the specified type
    * does not represent an array or a collection.
    */
-  public void testGetMatchingValueWhenTypeIsNotArrayNorCollection() {
+  public void testGetMatchingValueWhenTargetTypeIsNotArrayNorCollection() {
     Object actual = this.array.getMatchingValue(Object.class);
     assertEquals("<Matching value>", XmlRpcElement.NOT_MATCHING, actual);
-  }
-
-  /**
-   * Verifies that the method <code>{@link XmlRpcArray#getValues()}</code>
-   * returns an array containing all the values stored in the
-   * <code>XmlRpcArray</code>.
-   */
-  public void testGetValues() {
-    XmlRpcElement[] expected = { new XmlRpcBase64(), new XmlRpcBoolean(),
-        new XmlRpcDateTime() };
-
-    int expectedCount = expected.length;
-
-    for (int i = 0; i < expectedCount; i++) {
-      this.array.add(expected[i]);
-    }
-
-    XmlRpcElement[] actual = this.array.getValues();
-
-    assertTrue("Expected: " + Arrays.toString(expected) + " but was: "
-        + Arrays.toString(actual), Arrays.equals(expected, actual));
   }
 }

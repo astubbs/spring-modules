@@ -17,6 +17,10 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * <p>
  * Represents a XML-RPC request.
@@ -24,7 +28,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:48 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 22:50:55 $
  */
 public class XmlRpcRequest {
 
@@ -48,6 +52,36 @@ public class XmlRpcRequest {
    */
   public XmlRpcRequest() {
     super();
+  }
+
+  /**
+   * Indicates whether some other object is "equal to" this one.
+   * 
+   * @param obj
+   *          the reference object with which to compare
+   * @return <code>true</code> if this object is the same as the obj argument;
+   *         <code>false</code> otherwise.
+   * 
+   * @see Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    boolean equals = true;
+
+    if (null == obj || !(obj instanceof XmlRpcRequest)) {
+      equals = false;
+    } else if (this != obj) {
+      XmlRpcRequest xmlRpcRequest = (XmlRpcRequest) obj;
+
+      EqualsBuilder equalsBuilder = new EqualsBuilder();
+      equalsBuilder.append(this.getMethodName(), xmlRpcRequest.getMethodName());
+      equalsBuilder.append(this.getParameters(), xmlRpcRequest.getParameters());
+      equalsBuilder.append(this.getServiceName(), xmlRpcRequest
+          .getServiceName());
+
+      equals = equalsBuilder.isEquals();
+    }
+
+    return equals;
   }
 
   /**
@@ -75,6 +109,25 @@ public class XmlRpcRequest {
    */
   public final String getServiceName() {
     return this.serviceName;
+  }
+
+  /**
+   * Returns a hash code value for the object. This method is supported for the
+   * benefit of hashtables such as those provided by
+   * <code>java.util.Hashtable</code>.
+   * 
+   * @return a hash code value for this object.
+   * 
+   * @see Object#hashCode()
+   */
+  public int hashCode() {
+    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(2281, 2287);
+    hashCodeBuilder.append(this.methodName);
+    hashCodeBuilder.append(this.parameters);
+    hashCodeBuilder.append(this.serviceName);
+
+    int hashCode = hashCodeBuilder.toHashCode();
+    return hashCode;
   }
 
   /**
@@ -132,4 +185,22 @@ public class XmlRpcRequest {
     this.serviceName = serviceName;
   }
 
+  /**
+   * Returns a string representation of the object. In general, the
+   * <code>toString</code> method returns a string that "textually represents"
+   * this object.
+   * 
+   * @return a string representation of the object.
+   * 
+   * @see Object#toString()
+   */
+  public String toString() {
+    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
+    toStringBuilder.append("serviceName", this.serviceName);
+    toStringBuilder.append("methodName", this.methodName);
+    toStringBuilder.append("parameters", this.parameters);
+
+    String toString = toStringBuilder.toString();
+    return toString;
+  }
 }

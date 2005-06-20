@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/20 04:41:28 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 22:51:22 $
  */
 public class XmlRpcIntegerTests extends TestCase {
 
@@ -73,7 +73,7 @@ public class XmlRpcIntegerTests extends TestCase {
    * <code>{@link XmlRpcDateTime#getMatchingValue(Class)}</code> returns its
    * internal value if the given type represents an integer.
    */
-  public void testGetMatchingValue() {
+  public void testGetMatchingValueWhenTargetTypeIsInteger() {
     Integer expected = new Integer(45);
     this.xmlRpcInteger = new XmlRpcInteger(expected);
 
@@ -92,7 +92,7 @@ public class XmlRpcIntegerTests extends TestCase {
    * <code>{@link XmlRpcElement#NOT_MATCHING}</code> if the specified type
    * does not represent an integer.
    */
-  public void testGetMatchingValueWhenTypeIsNotBoolean() {
+  public void testGetMatchingValueWhenTargetTypeIsNotInteger() {
     this.xmlRpcInteger = new XmlRpcInteger();
 
     Object actual = this.xmlRpcInteger.getMatchingValue(String.class);

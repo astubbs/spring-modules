@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 03:24:10 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 22:51:22 $
  */
 public class XmlRpcBooleanTests extends TestCase {
 
@@ -84,7 +84,7 @@ public class XmlRpcBooleanTests extends TestCase {
    * value stored in the <code>XmlRpcBoolean</code> when the specified type is
    * <code>boolean</code> or <code>Boolean</code>.
    */
-  public void testGetMatchingValueWhenTypeIsBoolean() {
+  public void testGetMatchingValueWhenTargetTypeIsBoolean() {
     Boolean expected = Boolean.TRUE;
     this.xmlRpcBoolean = new XmlRpcBoolean(expected);
 
@@ -103,7 +103,7 @@ public class XmlRpcBooleanTests extends TestCase {
    * <code>{@link XmlRpcElement#NOT_MATCHING}</code> if the specified type
    * does not represent a boolean.
    */
-  public void testGetMatchingValueWhenTypeIsNotBoolean() {
+  public void testGetMatchingValueWhenTargetTypeIsNotBoolean() {
     this.xmlRpcBoolean = new XmlRpcBoolean();
 
     Object actual = this.xmlRpcBoolean.getMatchingValue(String.class);

@@ -17,6 +17,10 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * <p>
  * Represents a string or a string representation of a 64-bit signed integer.
@@ -29,7 +33,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 10:30:30 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/20 22:50:54 $
  */
 public class XmlRpcString implements XmlRpcScalar {
 
@@ -37,24 +41,6 @@ public class XmlRpcString implements XmlRpcScalar {
    * The value of this scalar.
    */
   private String value;
-
-  /**
-   * Constructor.
-   */
-  public XmlRpcString() {
-    super();
-  }
-
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
-  public XmlRpcString(String value) {
-    this();
-    this.value = value;
-  }
 
   /**
    * Constructor.
@@ -67,12 +53,42 @@ public class XmlRpcString implements XmlRpcScalar {
   }
 
   /**
-   * @see XmlRpcScalar#getValue()
+   * Constructor.
+   * 
+   * @param value
+   *          the new value of this scalar.
    */
-  public Object getValue() {
-    return this.value;
+  public XmlRpcString(String value) {
+    super();
+    this.value = value;
   }
 
+  /**
+   * Indicates whether some other object is "equal to" this one.
+   * 
+   * @param obj
+   *          the reference object with which to compare
+   * @return <code>true</code> if this object is the same as the obj argument;
+   *         <code>false</code> otherwise.
+   *         
+   * @see Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    boolean equals = true;
+
+    if (null == obj || !(obj instanceof XmlRpcString)) {
+      equals = false;
+    } else if (this != obj) {
+      XmlRpcString xmlRpcString = (XmlRpcString) obj;
+
+      EqualsBuilder equalsBuilder = new EqualsBuilder();
+      equalsBuilder.append(this.getValue(), xmlRpcString.getValue());
+
+      equals = equalsBuilder.isEquals();
+    }
+
+    return equals;
+  }
   /**
    * Returns the value of this scalar if the given type is equal to:
    * <ul>
@@ -94,7 +110,7 @@ public class XmlRpcString implements XmlRpcScalar {
 
     if (String.class.equals(targetType)) {
       matchingValue = this.value;
-      
+
     } else if (Long.class.equals(targetType) || Long.TYPE.equals(targetType)) {
       try {
         matchingValue = new Long(this.value);
@@ -104,5 +120,46 @@ public class XmlRpcString implements XmlRpcScalar {
       }
     }
     return matchingValue;
+  }
+
+  /**
+   * @see XmlRpcScalar#getValue()
+   */
+  public Object getValue() {
+    return this.value;
+  }
+
+  /**
+   * Returns a hash code value for the object. This method is supported for the
+   * benefit of hashtables such as those provided by
+   * <code>java.util.Hashtable</code>.
+   * 
+   * @return a hash code value for this object.
+   * 
+   * @see Object#hashCode()
+   */
+  public int hashCode() {
+    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1217, 1223);
+    hashCodeBuilder.append(this.value);
+
+    int hashCode = hashCodeBuilder.toHashCode();
+    return hashCode;
+  }
+
+  /**
+   * Returns a string representation of the object. In general, the
+   * <code>toString</code> method returns a string that "textually represents"
+   * this object.
+   * 
+   * @return a string representation of the object.
+   * 
+   * @see Object#toString()
+   */
+  public String toString() {
+    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
+    toStringBuilder.append("value", this.value);
+
+    String toString = toStringBuilder.toString();
+    return toString;
   }
 }

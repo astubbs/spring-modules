@@ -32,7 +32,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/20 03:40:17 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 22:51:22 $
  */
 public class XmlRpcDateTimeTests extends TestCase {
 
@@ -90,7 +90,7 @@ public class XmlRpcDateTimeTests extends TestCase {
    * <code>{@link XmlRpcDateTime#getMatchingValue(Class)}</code> returns its
    * internal value if the given type is <code>{@link Date}</code>.
    */
-  public void testGetMatchingValue() {
+  public void testGetMatchingValueWhenTargetTypeIsDate() {
     Date expected = new Date();
     this.xmlRpcDateTime = new XmlRpcDateTime(expected);
 
@@ -104,8 +104,8 @@ public class XmlRpcDateTimeTests extends TestCase {
    * <code>{@link XmlRpcElement#NOT_MATCHING}</code> if the given type is not
    * <code>{@link Date}</code>.
    */
-  public void testGetMatchingValueWhenTypeIsNotDate() {
-    this.xmlRpcDateTime = new XmlRpcDateTime();
+  public void testGetMatchingValueWhenTargetTypeIsNotDate() {
+    this.xmlRpcDateTime = new XmlRpcDateTime(new Date());
     Object actual = this.xmlRpcDateTime.getMatchingValue(String.class);
     assertSame("<Value>", XmlRpcElement.NOT_MATCHING, actual);
   }

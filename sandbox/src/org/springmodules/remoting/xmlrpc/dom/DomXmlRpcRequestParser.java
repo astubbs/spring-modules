@@ -20,7 +20,7 @@ package org.springmodules.remoting.xmlrpc.dom;
 import java.io.InputStream;
 
 import org.springframework.util.xml.DomUtils;
-import org.springmodules.remoting.xmlrpc.XmlRpcEntity;
+import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 import org.springmodules.remoting.xmlrpc.XmlRpcRequestParser;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
@@ -38,7 +38,7 @@ import org.w3c.dom.NodeList;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:55 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 22:50:08 $
  */
 public class DomXmlRpcRequestParser extends AbstractDomXmlRpcParser implements
     XmlRpcRequestParser {
@@ -68,12 +68,12 @@ public class DomXmlRpcRequestParser extends AbstractDomXmlRpcParser implements
       if (child instanceof Element) {
         String childName = child.getNodeName();
 
-        if (XmlRpcEntity.METHOD_NAME.equals(childName)) {
+        if (XmlRpcElementNames.METHOD_NAME.equals(childName)) {
           Element methodElement = (Element) child;
           String serviceAndMethodNames = DomUtils.getTextValue(methodElement);
           request.setServiceAndMethodNames(serviceAndMethodNames);
 
-        } else if (XmlRpcEntity.PARAMS.equals(childName)) {
+        } else if (XmlRpcElementNames.PARAMS.equals(childName)) {
           Element parametersElement = (Element) child;
           XmlRpcElement[] parameters = this
               .parseParametersElement(parametersElement);

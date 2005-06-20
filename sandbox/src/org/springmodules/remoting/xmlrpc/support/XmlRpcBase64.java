@@ -18,6 +18,9 @@
 package org.springmodules.remoting.xmlrpc.support;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * <p>
@@ -26,7 +29,7 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 10:30:30 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 22:50:55 $
  */
 public class XmlRpcBase64 implements XmlRpcScalar {
 
@@ -37,19 +40,12 @@ public class XmlRpcBase64 implements XmlRpcScalar {
 
   /**
    * Constructor.
-   */
-  public XmlRpcBase64() {
-    super();
-  }
-
-  /**
-   * Constructor.
    * 
    * @param value
    *          the new value of this scalar.
    */
   public XmlRpcBase64(byte[] value) {
-    this();
+    super();
     this.value = value;
   }
 
@@ -60,15 +56,34 @@ public class XmlRpcBase64 implements XmlRpcScalar {
    *          the new value of this scalar.
    */
   public XmlRpcBase64(String value) {
-    this();
-    this.value = Base64.decodeBase64(value.getBytes());
+    this(Base64.decodeBase64(value.getBytes()));
   }
 
   /**
-   * @see XmlRpcScalar#getValue()
+   * Indicates whether some other object is "equal to" this one.
+   * 
+   * @param obj
+   *          the reference object with which to compare
+   * @return <code>true</code> if this object is the same as the obj argument;
+   *         <code>false</code> otherwise.
+   * 
+   * @see Object#equals(java.lang.Object)
    */
-  public Object getValue() {
-    return this.value;
+  public boolean equals(Object obj) {
+    boolean equals = true;
+
+    if (null == obj || !(obj instanceof XmlRpcBase64)) {
+      equals = false;
+    } else if (this != obj) {
+      XmlRpcBase64 xmlRpcBase64 = (XmlRpcBase64) obj;
+
+      EqualsBuilder equalsBuilder = new EqualsBuilder();
+      equalsBuilder.append(this.getValue(), xmlRpcBase64.getValue());
+
+      equals = equalsBuilder.isEquals();
+    }
+
+    return equals;
   }
 
   /**
@@ -83,4 +98,44 @@ public class XmlRpcBase64 implements XmlRpcScalar {
     return matchingValue;
   }
 
+  /**
+   * @see XmlRpcScalar#getValue()
+   */
+  public Object getValue() {
+    return this.value;
+  }
+
+  /**
+   * Returns a hash code value for the object. This method is supported for the
+   * benefit of hashtables such as those provided by
+   * <code>java.util.Hashtable</code>.
+   * 
+   * @return a hash code value for this object.
+   * 
+   * @see Object#hashCode()
+   */
+  public int hashCode() {
+    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1321, 1327);
+    hashCodeBuilder.append(this.value);
+
+    int hashCode = hashCodeBuilder.toHashCode();
+    return hashCode;
+  }
+
+  /**
+   * Returns a string representation of the object. In general, the
+   * <code>toString</code> method returns a string that "textually represents"
+   * this object.
+   * 
+   * @return a string representation of the object.
+   * 
+   * @see Object#toString()
+   */
+  public String toString() {
+    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
+    toStringBuilder.append("value", this.value);
+
+    String toString = toStringBuilder.toString();
+    return toString;
+  }
 }

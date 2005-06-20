@@ -24,7 +24,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.springmodules.remoting.xmlrpc.XmlRpcEntity;
+import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 import org.springmodules.remoting.xmlrpc.XmlRpcRequestParser;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
@@ -37,7 +37,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:52 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 22:50:24 $
  */
 public class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser implements
     XmlRpcRequestParser {
@@ -66,11 +66,11 @@ public class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser implements
           case XMLStreamConstants.START_ELEMENT:
             String localName = reader.getLocalName();
 
-            if (XmlRpcEntity.METHOD_NAME.equals(localName)) {
+            if (XmlRpcElementNames.METHOD_NAME.equals(localName)) {
               String serviceAndMethodNames = reader.getElementText();
               request.setServiceAndMethodNames(serviceAndMethodNames);
 
-            } else if (XmlRpcEntity.PARAMS.equals(localName)) {
+            } else if (XmlRpcElementNames.PARAMS.equals(localName)) {
               XmlRpcElement[] parameters = this.parseParametersElement(reader);
               request.setParameters(parameters);
             }

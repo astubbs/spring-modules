@@ -22,6 +22,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 
 /**
@@ -31,7 +34,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/20 10:30:31 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/20 22:50:55 $
  */
 public class XmlRpcDateTime implements XmlRpcScalar {
 
@@ -52,19 +55,12 @@ public class XmlRpcDateTime implements XmlRpcScalar {
 
   /**
    * Constructor.
-   */
-  public XmlRpcDateTime() {
-    super();
-  }
-
-  /**
-   * Constructor.
    * 
    * @param value
    *          the new value of this scalar.
    */
   public XmlRpcDateTime(Date value) {
-    this();
+    super();
     this.value = value;
   }
 
@@ -77,7 +73,7 @@ public class XmlRpcDateTime implements XmlRpcScalar {
    *           if the given value is not a parsable date.
    */
   public XmlRpcDateTime(String value) {
-    this();
+    super();
 
     try {
       this.value = this.dateFormat.parse(value);
@@ -89,10 +85,30 @@ public class XmlRpcDateTime implements XmlRpcScalar {
   }
 
   /**
-   * @see XmlRpcScalar#getValue()
+   * Indicates whether some other object is "equal to" this one.
+   * 
+   * @param obj
+   *          the reference object with which to compare
+   * @return <code>true</code> if this object is the same as the obj argument;
+   *         <code>false</code> otherwise.
+   * 
+   * @see Object#equals(java.lang.Object)
    */
-  public Object getValue() {
-    return this.value;
+  public boolean equals(Object obj) {
+    boolean equals = true;
+
+    if (null == obj || !(obj instanceof XmlRpcDateTime)) {
+      equals = false;
+    } else if (this != obj) {
+      XmlRpcDateTime xmlRpcDateTime = (XmlRpcDateTime) obj;
+
+      EqualsBuilder equalsBuilder = new EqualsBuilder();
+      equalsBuilder.append(this.getValue(), xmlRpcDateTime.getValue());
+
+      equals = equalsBuilder.isEquals();
+    }
+
+    return equals;
   }
 
   /**
@@ -105,5 +121,46 @@ public class XmlRpcDateTime implements XmlRpcScalar {
       matchingValue = this.value;
     }
     return matchingValue;
+  }
+
+  /**
+   * @see XmlRpcScalar#getValue()
+   */
+  public Object getValue() {
+    return this.value;
+  }
+
+  /**
+   * Returns a hash code value for the object. This method is supported for the
+   * benefit of hashtables such as those provided by
+   * <code>java.util.Hashtable</code>.
+   * 
+   * @return a hash code value for this object.
+   * 
+   * @see Object#hashCode()
+   */
+  public int hashCode() {
+    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1579, 1583);
+    hashCodeBuilder.append(this.value);
+
+    int hashCode = hashCodeBuilder.toHashCode();
+    return hashCode;
+  }
+
+  /**
+   * Returns a string representation of the object. In general, the
+   * <code>toString</code> method returns a string that "textually represents"
+   * this object.
+   * 
+   * @return a string representation of the object.
+   * 
+   * @see Object#toString()
+   */
+  public String toString() {
+    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
+    toStringBuilder.append("value", this.value);
+
+    String toString = toStringBuilder.toString();
+    return toString;
   }
 }

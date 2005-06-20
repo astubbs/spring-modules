@@ -30,7 +30,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 03:24:10 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 22:51:22 $
  */
 public class XmlRpcBase64Tests extends TestCase {
 
@@ -90,7 +90,7 @@ public class XmlRpcBase64Tests extends TestCase {
    * <code>{@link XmlRpcBase64#getMatchingValue(Class)}</code> returns its
    * internal value if the given type represents an array of bytes.
    */
-  public void testGetMatchingValue() {
+  public void testGetMatchingValueWhenTargetTypeIsByteArray() {
     byte[] expected = { 0, 2, 6, 4 };
     this.base64 = new XmlRpcBase64(expected);
 
@@ -104,8 +104,8 @@ public class XmlRpcBase64Tests extends TestCase {
    * <code>{@link XmlRpcElement#NOT_MATCHING}</code> if the given type does
    * not represent an array of bytes.
    */
-  public void testGetMatchingValueWhenTypeIsNotByteArray() {
-    this.base64 = new XmlRpcBase64();
+  public void testGetMatchingValueWhenTargetTypeIsNotByteArray() {
+    this.base64 = new XmlRpcBase64(new byte[0]);
     Object actual = this.base64.getMatchingValue(String.class);
     assertSame("<Value>", XmlRpcElement.NOT_MATCHING, actual);
   }
