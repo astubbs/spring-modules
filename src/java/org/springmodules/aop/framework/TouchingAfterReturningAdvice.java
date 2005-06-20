@@ -66,7 +66,10 @@ public class TouchingAfterReturningAdvice implements AfterReturningAdvice {
 		BeanWrapper beanWrapper = new BeanWrapperImpl(target);
 		for (int x = 0; properties != null && x < properties.length; x++) {
 			String property = properties[x];
-			beanWrapper.getPropertyValue(property);
+			Object result = beanWrapper.getPropertyValue(property);
+			if (result instanceof Collection) {
+				((Collection)result).size();
+			}
 		}
 	}
 }
