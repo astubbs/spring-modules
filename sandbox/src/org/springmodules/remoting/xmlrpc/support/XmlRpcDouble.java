@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 04:17:47 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 04:39:56 $
  */
 public class XmlRpcDouble implements XmlRpcScalar {
 
@@ -51,16 +51,6 @@ public class XmlRpcDouble implements XmlRpcScalar {
   public XmlRpcDouble(Double value) {
     this();
     this.value = value;
-  }
-
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
-  public XmlRpcDouble(double value) {
-    this(new Double(value));
   }
 
   /**

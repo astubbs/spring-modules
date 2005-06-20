@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:48 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 04:42:04 $
  */
 public class XmlRpcInteger implements XmlRpcScalar {
 
@@ -59,16 +59,6 @@ public class XmlRpcInteger implements XmlRpcScalar {
    * @param value
    *          the new value of this scalar.
    */
-  public XmlRpcInteger(int value) {
-    this(new Integer(value));
-  }
-
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
   public XmlRpcInteger(String value) {
     super();
     try {
@@ -85,7 +75,7 @@ public class XmlRpcInteger implements XmlRpcScalar {
    */
   public Object getValue() {
     return this.value;
-  }  
+  }
 
   /**
    * @see XmlRpcElement#getMatchingValue(Class)
@@ -95,8 +85,7 @@ public class XmlRpcInteger implements XmlRpcScalar {
 
     if (Integer.class.equals(type) || Integer.TYPE.equals(type)) {
       matchingValue = this.value;
-    }
-    else if (Long.class.equals(type) || Long.TYPE.equals(type)) {
+    } else if (Long.class.equals(type) || Long.TYPE.equals(type)) {
       matchingValue = new Long(this.value.longValue());
     }
     return matchingValue;
