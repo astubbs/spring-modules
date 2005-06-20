@@ -31,7 +31,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:49 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 03:40:42 $
  */
 public class XmlRpcDateTime implements XmlRpcScalar {
 
@@ -101,7 +101,7 @@ public class XmlRpcDateTime implements XmlRpcScalar {
   public Object getMatchingValue(Class type) {
     Object matchingValue = NOT_MATCHING;
 
-    if (Date.class.isAssignableFrom(type)) {
+    if (Date.class.equals(type)) {
       matchingValue = this.value;
     }
     return matchingValue;
