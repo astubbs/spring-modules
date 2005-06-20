@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:48 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 04:17:47 $
  */
 public class XmlRpcDouble implements XmlRpcScalar {
 
@@ -78,8 +78,8 @@ public class XmlRpcDouble implements XmlRpcScalar {
       this.value = new Double(value);
 
     } catch (NumberFormatException exception) {
-      throw new XmlRpcParsingException("'" + value + "' is not a double value",
-          exception);
+      throw new XmlRpcParsingException("'" + value
+          + "' is not a double-precision decimal number", exception);
     }
   }
 
