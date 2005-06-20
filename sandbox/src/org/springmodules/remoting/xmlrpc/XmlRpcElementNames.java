@@ -19,14 +19,14 @@ package org.springmodules.remoting.xmlrpc;
 
 /**
  * <p>
- * XML entities supported XML-RPC.
+ * Names of the XML elements supported by XML-RPC.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 05:02:11 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/20 22:49:25 $
  */
-public interface XmlRpcEntity {
+public interface XmlRpcElementNames {
 
   /**
    * Name of the XML entity that represents an array.
