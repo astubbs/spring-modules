@@ -1,7 +1,10 @@
 package org.springmodules.aop.framework;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -22,6 +25,7 @@ public class TouchingAfterReturningAdviceTests extends TestCase {
 			new DefaultBean() {
 				{
 					setBean(new DefaultBean());
+					setBeans(new Bean[] { new DefaultBean() });
 				}
 			},
 			new DefaultBean() {
@@ -46,15 +50,26 @@ public class TouchingAfterReturningAdviceTests extends TestCase {
 		assertEquals(BEAN_NAME, beans[0].getName());
 		assertEquals(BEAN_NAME, beans[1].getName());
 		
-		bean = (Bean)getProxy(getBean(), new String[] { "autoName" }, new String[] { "getOtherBeans" });
+		bean = (Bean)getProxy(getBean(), new Object[] { "autoName" }, new String[] { "getOtherBeans" });
 		List otherBeans = bean.getOtherBeans();
 		assertEquals(BEAN_NAME, ((Bean)otherBeans.get(0)).getName());
 		assertEquals(BEAN_NAME, ((Bean)otherBeans.get(1)).getName());
+
+		Map map = new HashMap();
+		List list = new ArrayList();
+		list.add("autoName");
+		map.put("beans", list);
+		bean = (Bean)getProxy(getBean(), new Object[] { "autoName", map  }, new String[] { "getBeans" });
+		beans = bean.getBeans();
+		assertEquals(BEAN_NAME, beans[0].getName());
+		assertEquals(BEAN_NAME, beans[1].getName());
+		assertEquals(BEAN_NAME, beans[0].getBeans()[0].getName());
+		assertEquals(BEAN_NAME, beans[1].getBeans()[0].getName());
 	}
 
 	
 	
-	private Object getProxy(Object target, String[] properties, String[] mappedNames) {
+	private Object getProxy(Object target, Object[] properties, String[] mappedNames) {
 		TouchingAfterReturningAdvice advice = new TouchingAfterReturningAdvice();
 		advice.setProperties(properties);
 		NameMatchMethodPointcutAdvisor advisor = new NameMatchMethodPointcutAdvisor(advice);

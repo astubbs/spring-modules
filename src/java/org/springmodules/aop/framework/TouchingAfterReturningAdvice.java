@@ -2,6 +2,8 @@ package org.springmodules.aop.framework;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.springframework.aop.AfterReturningAdvice;
 import org.springframework.beans.BeanWrapper;
@@ -18,6 +20,11 @@ import org.springframework.util.MethodInvoker;
  * 
  * <p>If no properties are specified collections will still be iterated entirely.
  * 
+ * <p>Property values can be either property names or maps containing property names
+ * as keys and lists containing property names as values. Maps entries represent bean
+ * properties (the key of the map entries) that are collections. All elements of those collection will
+ * be touched by the properties (the values of the map entries). This construct can
+ * be cascaded.
  * 
  * @author Steven Devijver
  * @since 20-06-2005
@@ -25,7 +32,7 @@ import org.springframework.util.MethodInvoker;
  */
 public class TouchingAfterReturningAdvice implements AfterReturningAdvice {
 
-	private String[] properties = null;
+	private Object[] properties = null;
 	
 	/**
 	 * <p>The [properties] properties takes a number of property string.
@@ -34,7 +41,7 @@ public class TouchingAfterReturningAdvice implements AfterReturningAdvice {
 	 * 
 	 * @param properties the property strings
 	 */
-	public void setProperties(String[] properties) {
+	public void setProperties(Object[] properties) {
 		this.properties = properties;
 	}
 	
@@ -55,20 +62,43 @@ public class TouchingAfterReturningAdvice implements AfterReturningAdvice {
 		
 	}
 	
-	private static void touch(Object[] objects, String[] properties) {
+	private static void touch(Object[] objects, Object[] properties) {
 		for (int i = 0; objects != null && properties != null && i < objects.length; i++) {
 			Object target = objects[i];
 			touch(target, properties);
 		}
 	}
 	
-	private static void touch(Object target, String[] properties) {
+	private static void touch(Object target, Object[] properties) {
 		BeanWrapper beanWrapper = new BeanWrapperImpl(target);
 		for (int x = 0; properties != null && x < properties.length; x++) {
-			String property = properties[x];
-			Object result = beanWrapper.getPropertyValue(property);
-			if (result instanceof Collection) {
-				((Collection)result).size();
+			Object property = properties[x];
+			if (property instanceof String) {
+				Object result = beanWrapper.getPropertyValue((String)property);
+				if (result instanceof Collection) {
+					((Collection)result).size();
+				}
+			} else if (property instanceof Map) {
+				for (Iterator iter = ((Map)property).keySet().iterator(); iter.hasNext();) {
+					Object key = (String)iter.next();
+					Object tmpProperties = ((Map)property).get(key);
+					if (!(key instanceof String)) {
+						throw new IllegalArgumentException("Maps configured in the [properties] property should have a string key!");
+					}
+					if (!(tmpProperties instanceof Collection)) {
+						throw new IllegalArgumentException("Maps configured in the [properties] property should have a list value!");
+					}
+					Object result = beanWrapper.getPropertyValue((String)key);
+					if (result instanceof Collection) {
+						touch(((Collection)result).toArray(), ((Collection)tmpProperties).toArray());
+					} else if (result instanceof Object[]) {
+						touch((Object[])result, ((Collection)tmpProperties).toArray());
+					} else {
+						touch(result, ((Collection)tmpProperties).toArray());
+					}
+				}
+			} else {
+				throw new IllegalArgumentException("[properties] property should only contain string and map instances!");
 			}
 		}
 	}
