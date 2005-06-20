@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/20 04:39:39 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 05:02:13 $
  */
 public class XmlRpcDoubleTests extends TestCase {
 
@@ -71,8 +71,8 @@ public class XmlRpcDoubleTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link XmlRpcDateTime#getMatchingValue(Class)}</code> returns its
-   * internal value if the given type represents a double-precision decimal
-   * number.
+   * internal value if the given type represents a double-precision signed
+   * floating point number.
    */
   public void testGetMatchingValue() {
     Double expected = new Double(884.09);
@@ -91,7 +91,7 @@ public class XmlRpcDoubleTests extends TestCase {
    * Verifies that the method
    * <code>{@link XmlRpcDouble#getMatchingValue(Class)}</code> returns
    * <code>{@link XmlRpcElement#NOT_MATCHING}</code> if the specified type
-   * does not represent a double-precision decimal number.
+   * does not represent a double-precision signed floating point number.
    */
   public void testGetMatchingValueWhenTypeIsNotBoolean() {
     this.xmlRpcDouble = new XmlRpcDouble();

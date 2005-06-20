@@ -19,12 +19,12 @@ package org.springmodules.remoting.xmlrpc.support;
 
 /**
  * <p>
- * Represents a boolean value.
+ * Represents a XML-RPC boolean value.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:48 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 05:02:12 $
  */
 public class XmlRpcBoolean implements XmlRpcScalar {
 

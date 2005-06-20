@@ -26,17 +26,17 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 
 /**
  * <p>
- * Represents a date/time value.
+ * Represents a XML-RPC date/time value in IS0 8601 format.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 03:40:42 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 05:02:12 $
  */
 public class XmlRpcDateTime implements XmlRpcScalar {
 
   /**
-   * Pattern describing the format for date/time supported by XML-RPC.
+   * Pattern for ISO 8601, the date and time representation standard.
    */
   public static final String PATTERN = "yyyyMMdd'T'HH:mm:ss";
 
@@ -83,8 +83,8 @@ public class XmlRpcDateTime implements XmlRpcScalar {
       this.value = this.dateFormat.parse(value);
 
     } catch (ParseException exception) {
-      throw new XmlRpcParsingException("'" + value + "' is not a date",
-          exception);
+      throw new XmlRpcParsingException("'" + value
+          + "' is not a date in ISO 8601 format", exception);
     }
   }
 

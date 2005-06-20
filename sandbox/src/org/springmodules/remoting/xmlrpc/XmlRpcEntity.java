@@ -24,7 +24,7 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 04:47:29 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 05:02:11 $
  */
 public interface XmlRpcEntity {
 
@@ -54,7 +54,8 @@ public interface XmlRpcEntity {
   String DATE_TIME = "dateTime.iso8601";
 
   /**
-   * Name of the XML entity that represents a double-precision decimal number.
+   * Name of the XML entity that represents a double-precision signed floating
+   * point number.
    */
   String DOUBLE = "double";
 

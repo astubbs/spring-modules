@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 04:42:04 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/20 05:02:12 $
  */
 public class XmlRpcInteger implements XmlRpcScalar {
 
@@ -58,6 +58,8 @@ public class XmlRpcInteger implements XmlRpcScalar {
    * 
    * @param value
    *          the new value of this scalar.
+   * @throws XmlRpcParsingException
+   *           if the given value is not a parsable number.
    */
   public XmlRpcInteger(String value) {
     super();
@@ -66,7 +68,7 @@ public class XmlRpcInteger implements XmlRpcScalar {
 
     } catch (NumberFormatException exception) {
       throw new XmlRpcParsingException("'" + value
-          + "' is not an integer value", exception);
+          + "' is not a 32-bit signed integer", exception);
     }
   }
 
@@ -78,6 +80,14 @@ public class XmlRpcInteger implements XmlRpcScalar {
   }
 
   /**
+   * Returns the value of this scalar if the given type is equal to
+   * <code>{@link Integer}</code> or <code>{@link Integer#TYPE}</code>.
+   * 
+   * @param type
+   *          the given type.
+   * @return the value of this scalar if the given type represents a 32-bit
+   *         signed integer.
+   * 
    * @see XmlRpcElement#getMatchingValue(Class)
    */
   public Object getMatchingValue(Class type) {

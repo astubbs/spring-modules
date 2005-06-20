@@ -19,12 +19,17 @@ package org.springmodules.remoting.xmlrpc.support;
 
 /**
  * <p>
- * Represents a string.
+ * Represents a string or a string representation of a 64-bit signed integer.
+ * </p>
+ * <p>
+ * The XML-RPC specification does not support 64-bit signed integers (and it is
+ * very unlikely this is going to change). 64-bit signed integers need to be
+ * represented as Strings.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:48 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 05:02:12 $
  */
 public class XmlRpcString implements XmlRpcScalar {
 
@@ -52,6 +57,16 @@ public class XmlRpcString implements XmlRpcScalar {
   }
 
   /**
+   * Constructor.
+   * 
+   * @param value
+   *          the new value of this scalar.
+   */
+  public XmlRpcString(Long value) {
+    this(value.toString());
+  }
+
+  /**
    * @see XmlRpcScalar#getValue()
    */
   public Object getValue() {
@@ -59,6 +74,19 @@ public class XmlRpcString implements XmlRpcScalar {
   }
 
   /**
+   * Returns the value of this scalar if the given type is equal to:
+   * <ul>
+   * <li><code>{@link String}</code></li>
+   * <li><code>{@link Long}</code> or <code>{@link Long#TYPE}</code>. This
+   * case is valid only if the value of this scalar can be parsed into a 64-bit
+   * signed integer.</li>
+   * </ul>
+   * 
+   * @param type
+   *          the given type.
+   * @return the value of this scalar if the given type represents a string or a
+   *         64-bit signed integer.
+   * 
    * @see XmlRpcElement#getMatchingValue(Class)
    */
   public Object getMatchingValue(Class type) {
@@ -66,11 +94,10 @@ public class XmlRpcString implements XmlRpcScalar {
 
     if (String.class.equals(type)) {
       matchingValue = this.value;
-    }
-    else if (Long.class.equals(type) || Long.TYPE.equals(type)) {
+    } else if (Long.class.equals(type) || Long.TYPE.equals(type)) {
       try {
         matchingValue = new Long(this.value);
-        
+
       } catch (NumberFormatException exception) {
         matchingValue = NOT_MATCHING;
       }

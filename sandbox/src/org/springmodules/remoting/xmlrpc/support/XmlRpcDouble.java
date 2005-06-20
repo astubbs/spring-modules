@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 04:39:56 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/20 05:02:12 $
  */
 public class XmlRpcDouble implements XmlRpcScalar {
 
@@ -59,7 +59,7 @@ public class XmlRpcDouble implements XmlRpcScalar {
    * @param value
    *          the new value of this scalar.
    * @throws XmlRpcParsingException
-   *           if the given value is not a parsable double.
+   *           if the given value is not a parsable number.
    */
   public XmlRpcDouble(String value) {
     this();
@@ -69,7 +69,8 @@ public class XmlRpcDouble implements XmlRpcScalar {
 
     } catch (NumberFormatException exception) {
       throw new XmlRpcParsingException("'" + value
-          + "' is not a double-precision decimal number", exception);
+          + "' is not a double-precision signed floating point number",
+          exception);
     }
   }
 
@@ -81,6 +82,14 @@ public class XmlRpcDouble implements XmlRpcScalar {
   }
 
   /**
+   * Returns the value of this scalar if the given type is equal to
+   * <code>{@link Double}</code> or <code>{@link Double#TYPE}</code>.
+   * 
+   * @param type
+   *          the given type.
+   * @return the value of this scalar if the given type represents a
+   *         double-precision signed floating point number.
+   * 
    * @see XmlRpcElement#getMatchingValue(Class)
    */
   public Object getMatchingValue(Class type) {

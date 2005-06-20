@@ -24,12 +24,12 @@ import java.util.List;
 
 /**
  * <p>
- * Represents an array.
+ * Represents a XML-RPC array.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:49 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/20 05:02:12 $
  */
 public class XmlRpcArray implements XmlRpcElement {
 
