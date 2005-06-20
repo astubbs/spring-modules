@@ -16,6 +16,8 @@ import org.springframework.util.MethodInvoker;
  * object. If the return value is an instance of java.util.Collection or Object[] 
  * the properties are touched on every element.
  * 
+ * <p>If no properties are specified collections will still be iterated entirely.
+ * 
  * 
  * @author Steven Devijver
  * @since 20-06-2005
@@ -37,7 +39,7 @@ public class TouchingAfterReturningAdvice implements AfterReturningAdvice {
 	}
 	
 	public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
-		if (returnValue == null || properties == null) {
+		if (returnValue == null) {
 			return;
 		}
 		
@@ -54,7 +56,7 @@ public class TouchingAfterReturningAdvice implements AfterReturningAdvice {
 	}
 	
 	private static void touch(Object[] objects, String[] properties) {
-		for (int i = 0; i < objects.length; i++) {
+		for (int i = 0; objects != null && properties != null && i < objects.length; i++) {
 			Object target = objects[i];
 			touch(target, properties);
 		}
@@ -62,7 +64,7 @@ public class TouchingAfterReturningAdvice implements AfterReturningAdvice {
 	
 	private static void touch(Object target, String[] properties) {
 		BeanWrapper beanWrapper = new BeanWrapperImpl(target);
-		for (int x = 0; x < properties.length; x++) {
+		for (int x = 0; properties != null && x < properties.length; x++) {
 			String property = properties[x];
 			beanWrapper.getPropertyValue(property);
 		}
