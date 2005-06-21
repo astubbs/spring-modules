@@ -24,7 +24,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:49 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/21 10:58:35 $
  */
 public interface XmlRpcScalar extends XmlRpcElement {
 
@@ -34,4 +34,11 @@ public interface XmlRpcScalar extends XmlRpcElement {
    * @return the value of this scalar.
    */
   Object getValue();
+
+  /**
+   * Returns the String representation of the value of this scalar.
+   * 
+   * @return the String representation of the value of this scalar.
+   */
+  String getValueAsString();
 }

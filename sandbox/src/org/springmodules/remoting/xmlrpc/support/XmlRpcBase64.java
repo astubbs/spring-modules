@@ -29,7 +29,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 22:50:55 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/21 10:58:35 $
  */
 public class XmlRpcBase64 implements XmlRpcScalar {
 
@@ -103,6 +103,14 @@ public class XmlRpcBase64 implements XmlRpcScalar {
    */
   public Object getValue() {
     return this.value;
+  }
+
+  /**
+   * @see XmlRpcScalar#getValueAsString()
+   */
+  public String getValueAsString() {
+    byte[] encodedValue = Base64.encodeBase64(this.value);
+    return new String(encodedValue, 0, encodedValue.length);
   }
 
   /**

@@ -20,6 +20,7 @@ package org.springmodules.remoting.xmlrpc.support;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 
 /**
  * <p>
@@ -28,7 +29,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/20 22:50:54 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/21 10:58:35 $
  */
 public class XmlRpcBoolean implements XmlRpcScalar {
 
@@ -70,9 +71,21 @@ public class XmlRpcBoolean implements XmlRpcScalar {
    * 
    * @param value
    *          the new value of this scalar.
+   * @throws XmlRpcParsingException
+   *           if the given value is not equal to "1" or "0" (<code>true</code>
+   *           or <code>false</code> in XML-RPC).
    */
   public XmlRpcBoolean(String value) {
-    this(TRUE.equals(value) ? Boolean.TRUE : Boolean.FALSE);
+    super();
+    if (TRUE.equals(value)) {
+      this.value = Boolean.TRUE;
+
+    } else if (FALSE.equals(value)) {
+      this.value = Boolean.FALSE;
+
+    } else {
+      throw new XmlRpcParsingException("'" + value + "' is not a boolean value");
+    }
   }
 
   /**
@@ -119,6 +132,13 @@ public class XmlRpcBoolean implements XmlRpcScalar {
    */
   public Object getValue() {
     return this.value;
+  }
+
+  /**
+   * @see XmlRpcScalar#getValueAsString()
+   */
+  public String getValueAsString() {
+    return this.value.booleanValue() ? TRUE : FALSE;
   }
 
   /**

@@ -33,7 +33,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/20 22:50:54 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/21 10:58:34 $
  */
 public class XmlRpcString implements XmlRpcScalar {
 
@@ -70,7 +70,7 @@ public class XmlRpcString implements XmlRpcScalar {
    *          the reference object with which to compare
    * @return <code>true</code> if this object is the same as the obj argument;
    *         <code>false</code> otherwise.
-   *         
+   * 
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
@@ -89,6 +89,7 @@ public class XmlRpcString implements XmlRpcScalar {
 
     return equals;
   }
+
   /**
    * Returns the value of this scalar if the given type is equal to:
    * <ul>
@@ -126,6 +127,13 @@ public class XmlRpcString implements XmlRpcScalar {
    * @see XmlRpcScalar#getValue()
    */
   public Object getValue() {
+    return this.value;
+  }
+
+  /**
+   * @see XmlRpcScalar#getValueAsString()
+   */
+  public String getValueAsString() {
     return this.value;
   }
 
