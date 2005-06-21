@@ -41,16 +41,16 @@ public class TouchingAfterReturningAdviceTests extends TestCase {
 
 	
 	public void testTouchingAdvice() {
-		Bean bean = (Bean)getProxy(getBean(), new String[] { "autoName" }, new String[] { "getBean" });
+		Bean bean = (Bean)getProxy(getBean(), new String[] { "autoName" }, new String[] { "autoName"}, new String[] { "getBean" });
 		bean.getBean();
 		assertEquals(BEAN_NAME, bean.getName());
 		
-		bean = (Bean)getProxy(getBean(), new String[] { "autoName" }, new String[] { "getBeans" });
+		bean = (Bean)getProxy(getBean(), new String[] { "autoName" }, new String[] { "#returned.{autoName}" }, new String[] { "getBeans" });
 		Bean[] beans = bean.getBeans();
 		assertEquals(BEAN_NAME, beans[0].getName());
 		assertEquals(BEAN_NAME, beans[1].getName());
 		
-		bean = (Bean)getProxy(getBean(), new Object[] { "autoName" }, new String[] { "getOtherBeans" });
+		bean = (Bean)getProxy(getBean(), new Object[] { "autoName" }, new String[] { "#returned.{autoName}" }, new String[] { "getOtherBeans" });
 		List otherBeans = bean.getOtherBeans();
 		assertEquals(BEAN_NAME, ((Bean)otherBeans.get(0)).getName());
 		assertEquals(BEAN_NAME, ((Bean)otherBeans.get(1)).getName());
@@ -59,7 +59,7 @@ public class TouchingAfterReturningAdviceTests extends TestCase {
 		List list = new ArrayList();
 		list.add("autoName");
 		map.put("beans", list);
-		bean = (Bean)getProxy(getBean(), new Object[] { "autoName", map  }, new String[] { "getBeans" });
+		bean = (Bean)getProxy(getBean(), new Object[] { "autoName", map  }, new String[] { "#returned.{beans.{autoName}}" }, new String[] { "getBeans" });
 		beans = bean.getBeans();
 		assertEquals(BEAN_NAME, beans[0].getName());
 		assertEquals(BEAN_NAME, beans[1].getName());
@@ -69,9 +69,10 @@ public class TouchingAfterReturningAdviceTests extends TestCase {
 
 	
 	
-	private Object getProxy(Object target, Object[] properties, String[] mappedNames) {
+	private Object getProxy(Object target, Object[] properties, String[] ognl, String[] mappedNames) {
 		TouchingAfterReturningAdvice advice = new TouchingAfterReturningAdvice();
 		advice.setProperties(properties);
+		advice.setOgnl(ognl);
 		NameMatchMethodPointcutAdvisor advisor = new NameMatchMethodPointcutAdvisor(advice);
 		advisor.setMappedNames(mappedNames);
 		ProxyFactory pf = new ProxyFactory(target);
