@@ -70,11 +70,10 @@ public class TouchingAfterReturningAdviceTests extends TestCase {
 	
 	
 	private Object getProxy(Object target, Object[] properties, String[] ognl, String[] mappedNames) {
-		TouchingAfterReturningAdvice advice = new TouchingAfterReturningAdvice();
-		advice.setProperties(properties);
-		advice.setOgnl(ognl);
-		NameMatchMethodPointcutAdvisor advisor = new NameMatchMethodPointcutAdvisor(advice);
+		TouchingNameMatchMethodAdvisor advisor = new TouchingNameMatchMethodAdvisor();
 		advisor.setMappedNames(mappedNames);
+		advisor.getAdvice().setProperties(properties);
+		advisor.getAdvice().setOgnl(ognl);
 		ProxyFactory pf = new ProxyFactory(target);
 		pf.addAdvisor(advisor);
 		return pf.getProxy();
