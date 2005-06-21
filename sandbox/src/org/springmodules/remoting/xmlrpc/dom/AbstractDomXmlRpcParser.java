@@ -35,11 +35,9 @@ import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcArray;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcBase64;
-import org.springmodules.remoting.xmlrpc.support.XmlRpcBoolean;
-import org.springmodules.remoting.xmlrpc.support.XmlRpcDateTime;
-import org.springmodules.remoting.xmlrpc.support.XmlRpcDouble;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
-import org.springmodules.remoting.xmlrpc.support.XmlRpcInteger;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcScalarFactory;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcScalarFactoryImpl;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
@@ -60,7 +58,7 @@ import org.xml.sax.SAXParseException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 22:50:08 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/21 02:24:30 $
  */
 public abstract class AbstractDomXmlRpcParser {
 
@@ -97,12 +95,19 @@ public abstract class AbstractDomXmlRpcParser {
   private boolean validating;
 
   /**
+   * Factory of
+   * <code>{@link org.springmodules.remoting.xmlrpc.support.XmlRpcScalar}</code>.
+   */
+  private XmlRpcScalarFactory xmlRpcScalarFactory;
+
+  /**
    * Constructor.
    */
   public AbstractDomXmlRpcParser() {
     super();
     this.setEntityResolver(new XmlRpcDtdResolver());
     this.setErrorHandler(new SimpleSaxErrorHandler(this.logger));
+    this.setXmlRpcScalarFactory(new XmlRpcScalarFactoryImpl());
   }
 
   /**
@@ -379,8 +384,9 @@ public abstract class AbstractDomXmlRpcParser {
    * @param valueElement
    *          the XML element to parse.
    * @return the created value.
-   * @throws XmlRpcParsingException
-   *           if the element contains an unknown child element.
+   * @see #parseArrayElement(Element)
+   * @see #parseStructElement(Element)
+   * @see XmlRpcScalarFactory#createScalarValue(String, String)
    */
   protected XmlRpcElement parseValueElement(Element valueElement) {
     NodeList children = valueElement.getChildNodes();
@@ -400,33 +406,12 @@ public abstract class AbstractDomXmlRpcParser {
           String source = DomUtils.getTextValue(xmlElement);
           return new XmlRpcBase64(source);
 
-        } else if (XmlRpcElementNames.BOOLEAN.equals(childName)) {
-          String source = DomUtils.getTextValue(xmlElement);
-          return new XmlRpcBoolean(source);
-
-        } else if (XmlRpcElementNames.DATE_TIME.equals(childName)) {
-          String source = DomUtils.getTextValue(xmlElement);
-          return new XmlRpcDateTime(source);
-
-        } else if (XmlRpcElementNames.DOUBLE.equals(childName)) {
-          String source = DomUtils.getTextValue(xmlElement);
-          return new XmlRpcDouble(source);
-
-        } else if (XmlRpcElementNames.I4.equals(childName)
-            || XmlRpcElementNames.INT.equals(childName)) {
-          String source = DomUtils.getTextValue(xmlElement);
-          return new XmlRpcInteger(source);
-
-        } else if (XmlRpcElementNames.STRING.equals(childName)) {
-          String source = DomUtils.getTextValue(xmlElement);
-          return new XmlRpcString(source);
-
         } else if (XmlRpcElementNames.STRUCT.equals(childName)) {
           return this.parseStructElement(xmlElement);
 
         } else {
-          throw new XmlRpcParsingException("Unexpected element '" + childName
-              + "'");
+          String source = DomUtils.getTextValue(xmlElement);
+          return this.xmlRpcScalarFactory.createScalarValue(childName, source);
         }
 
       } else if (child instanceof Text) {
@@ -467,5 +452,16 @@ public abstract class AbstractDomXmlRpcParser {
    */
   public final void setValidating(boolean validating) {
     this.validating = validating;
+  }
+
+  /**
+   * Setter for the field <code>{@link #xmlRpcScalarFactory}</code>.
+   * 
+   * @param xmlRpcScalarFactory
+   *          the new value to set.
+   */
+  public final void setXmlRpcScalarFactory(
+      XmlRpcScalarFactory xmlRpcScalarFactory) {
+    this.xmlRpcScalarFactory = xmlRpcScalarFactory;
   }
 }
