@@ -19,13 +19,13 @@ package org.springmodules.remoting.xmlrpc;
 
 /**
  * <p>
- * Exception thrown when a XML-RPC request specifies a services that does not
+ * Exception thrown when a XML-RPC request specifies a service that does not
  * exist.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:52 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/22 08:49:44 $
  */
 public class XmlRpcServiceNotFoundException extends XmlRpcException {
 

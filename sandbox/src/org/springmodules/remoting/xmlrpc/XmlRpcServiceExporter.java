@@ -27,7 +27,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/17 09:57:51 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/22 08:49:15 $
  */
 public interface XmlRpcServiceExporter {
 
@@ -39,6 +39,9 @@ public interface XmlRpcServiceExporter {
    *          the XML-RPC request specifying the method to execute and its
    *          arguments.
    * @return the result of the invocation.
+   * @throws XmlRpcMethodNotFoundException
+   *           if the method specified in the XML-RPC request does not exist.
    */
-  RemoteInvocationResult invoke(XmlRpcRequest xmlRpcRequest);
+  RemoteInvocationResult invoke(XmlRpcRequest xmlRpcRequest)
+      throws XmlRpcMethodNotFoundException;
 }

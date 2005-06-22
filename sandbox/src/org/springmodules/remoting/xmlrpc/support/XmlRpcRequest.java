@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 22:50:55 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/22 08:50:06 $
  */
 public class XmlRpcRequest {
 
@@ -52,6 +52,24 @@ public class XmlRpcRequest {
    */
   public XmlRpcRequest() {
     super();
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param serviceName
+   *          the new name of the service.
+   * @param methodName
+   *          the new name of the method to execute.
+   * @param parameters
+   *          the new parameters to pass to the method.
+   */
+  public XmlRpcRequest(String serviceName, String methodName,
+      XmlRpcElement[] parameters) {
+    this();
+    this.setMethodName(methodName);
+    this.setParameters(parameters);
+    this.setServiceName(serviceName);
   }
 
   /**
