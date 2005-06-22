@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 22:51:22 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/22 08:51:26 $
  */
 public class XmlRpcIntegerTests extends TestCase {
 
@@ -97,5 +97,18 @@ public class XmlRpcIntegerTests extends TestCase {
 
     Object actual = this.xmlRpcInteger.getMatchingValue(String.class);
     assertSame("<Matching value>", XmlRpcElement.NOT_MATCHING, actual);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcInteger#getValueAsString()}</code> returns a String
+   * containing the internal value of the <code>XmlRpcInteger</code>.
+   */
+  public void testGetValueAsString() {
+    Integer value = new Integer(85);
+    this.xmlRpcInteger = new XmlRpcInteger(value);
+
+    assertEquals("<Value as String>", value.toString(), this.xmlRpcInteger
+        .getValueAsString());
   }
 }

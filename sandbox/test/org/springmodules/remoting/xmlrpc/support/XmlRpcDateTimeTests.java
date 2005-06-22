@@ -32,7 +32,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 22:51:22 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/22 08:51:26 $
  */
 public class XmlRpcDateTimeTests extends TestCase {
 
@@ -69,12 +69,6 @@ public class XmlRpcDateTimeTests extends TestCase {
    */
   public void testConstructorWithStringArgument() {
     Calendar calendar = new GregorianCalendar();
-    calendar.set(Calendar.YEAR, 2005);
-    calendar.set(Calendar.MONTH, Calendar.JUNE);
-    calendar.set(Calendar.DATE, 19);
-    calendar.set(Calendar.HOUR, 11);
-    calendar.set(Calendar.MINUTE, 29);
-    calendar.set(Calendar.SECOND, 20);
     calendar.set(Calendar.MILLISECOND, 0);
     Date expected = calendar.getTime();
 
@@ -108,5 +102,24 @@ public class XmlRpcDateTimeTests extends TestCase {
     this.xmlRpcDateTime = new XmlRpcDateTime(new Date());
     Object actual = this.xmlRpcDateTime.getMatchingValue(String.class);
     assertSame("<Value>", XmlRpcElement.NOT_MATCHING, actual);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcDateTime#getValueAsString()}</code> returns the
+   * internal value of the <code>XmlRpcDateTime</code> formatted using the ISO
+   * 8601 format.
+   */
+  public void testGetValueAsString() {
+    Calendar calendar = new GregorianCalendar();
+    calendar.set(Calendar.MILLISECOND, 0);
+    Date date = calendar.getTime();
+    this.xmlRpcDateTime = new XmlRpcDateTime(date);
+
+    DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd'T'HH:mm:ss");
+    String expected = dateFormat.format(date);
+
+    assertEquals("<Value as String>", expected, this.xmlRpcDateTime
+        .getValueAsString());
   }
 }

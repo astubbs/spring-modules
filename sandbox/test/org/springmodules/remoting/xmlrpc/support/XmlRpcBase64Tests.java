@@ -30,14 +30,14 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 22:51:22 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/22 08:51:26 $
  */
 public class XmlRpcBase64Tests extends TestCase {
 
   /**
    * Primary object that is under test.
    */
-  private XmlRpcBase64 base64;
+  private XmlRpcBase64 xmlRpcBase64;
 
   /**
    * Constructor.
@@ -63,9 +63,9 @@ public class XmlRpcBase64Tests extends TestCase {
    */
   public void testConstructorWithByteArrayArgument() {
     byte[] expected = { 0, 2, 6, 4 };
-    this.base64 = new XmlRpcBase64(expected);
+    this.xmlRpcBase64 = new XmlRpcBase64(expected);
 
-    assertSame("<Value>", expected, this.base64.getValue());
+    assertSame("<Value>", expected, this.xmlRpcBase64.getValue());
   }
 
   /**
@@ -78,8 +78,8 @@ public class XmlRpcBase64Tests extends TestCase {
     byte[] expected = { 0, 2, 6, 4 };
     byte[] encoded = Base64.encodeBase64(expected);
 
-    this.base64 = new XmlRpcBase64(new String(encoded, 0, encoded.length));
-    byte[] actual = (byte[]) this.base64.getValue();
+    this.xmlRpcBase64 = new XmlRpcBase64(new String(encoded, 0, encoded.length));
+    byte[] actual = (byte[]) this.xmlRpcBase64.getValue();
 
     assertTrue("Expected: " + Arrays.toString(expected) + " but was: "
         + Arrays.toString(actual), Arrays.equals(expected, actual));
@@ -92,9 +92,10 @@ public class XmlRpcBase64Tests extends TestCase {
    */
   public void testGetMatchingValueWhenTargetTypeIsByteArray() {
     byte[] expected = { 0, 2, 6, 4 };
-    this.base64 = new XmlRpcBase64(expected);
+    this.xmlRpcBase64 = new XmlRpcBase64(expected);
 
-    byte[] actual = (byte[]) this.base64.getMatchingValue(expected.getClass());
+    byte[] actual = (byte[]) this.xmlRpcBase64.getMatchingValue(expected
+        .getClass());
     assertSame("<Value>", expected, actual);
   }
 
@@ -105,8 +106,24 @@ public class XmlRpcBase64Tests extends TestCase {
    * not represent an array of bytes.
    */
   public void testGetMatchingValueWhenTargetTypeIsNotByteArray() {
-    this.base64 = new XmlRpcBase64(new byte[0]);
-    Object actual = this.base64.getMatchingValue(String.class);
+    this.xmlRpcBase64 = new XmlRpcBase64(new byte[0]);
+    Object actual = this.xmlRpcBase64.getMatchingValue(String.class);
     assertSame("<Value>", XmlRpcElement.NOT_MATCHING, actual);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcBase64#getValueAsString()}</code> returns a String
+   * containing the encoded internal value of the <code>XmlRpcBase64</code>.
+   */
+  public void testGetValueAsString() {
+    byte[] value = { 0, 2, 6, 4 };
+    this.xmlRpcBase64 = new XmlRpcBase64(value);
+
+    byte[] encodedValue = Base64.encodeBase64(value);
+    String expected = new String(encodedValue, 0, encodedValue.length);
+
+    assertEquals("<Value as String>", expected, this.xmlRpcBase64
+        .getValueAsString());
   }
 }

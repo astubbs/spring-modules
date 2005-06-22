@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 22:51:22 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/22 08:51:26 $
  */
 public class XmlRpcDoubleTests extends TestCase {
 
@@ -98,5 +98,18 @@ public class XmlRpcDoubleTests extends TestCase {
 
     Object actual = this.xmlRpcDouble.getMatchingValue(String.class);
     assertSame("<Matching value>", XmlRpcElement.NOT_MATCHING, actual);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcDouble#getValueAsString()}</code> returns a String
+   * containing the internal value of the <code>XmlRpcDouble</code>.
+   */
+  public void testGetValueAsString() {
+    Double value = new Double(854.99);
+    this.xmlRpcDouble = new XmlRpcDouble(value);
+
+    assertEquals("<Value as String>", value.toString(), this.xmlRpcDouble
+        .getValueAsString());
   }
 }

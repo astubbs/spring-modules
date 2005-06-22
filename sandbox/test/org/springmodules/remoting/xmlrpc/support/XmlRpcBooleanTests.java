@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 22:51:22 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/22 08:51:26 $
  */
 public class XmlRpcBooleanTests extends TestCase {
 
@@ -108,5 +108,31 @@ public class XmlRpcBooleanTests extends TestCase {
 
     Object actual = this.xmlRpcBoolean.getMatchingValue(String.class);
     assertSame("<Matching value>", XmlRpcElement.NOT_MATCHING, actual);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcBoolean#getValueAsString()}</code> returns "0" if the
+   * internal value <code>XmlRpcBoolean</code> is
+   * <code>{@link Boolean#FALSE}</code>.
+   */
+  public void testGetValueAsStringWithValueEqualToFalse() {
+    this.xmlRpcBoolean = new XmlRpcBoolean(Boolean.FALSE);
+
+    assertEquals("<Value as String>", "0", this.xmlRpcBoolean
+        .getValueAsString());
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcBoolean#getValueAsString()}</code> returns "1" if the
+   * internal value <code>XmlRpcBoolean</code> is
+   * <code>{@link Boolean#TRUE}</code>.
+   */
+  public void testGetValueAsStringWithValueEqualToTrue() {
+    this.xmlRpcBoolean = new XmlRpcBoolean(Boolean.TRUE);
+
+    assertEquals("<Value as String>", "1", this.xmlRpcBoolean
+        .getValueAsString());
   }
 }
