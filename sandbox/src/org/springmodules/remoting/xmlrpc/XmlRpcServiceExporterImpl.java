@@ -20,32 +20,33 @@ package org.springmodules.remoting.xmlrpc;
 import java.lang.reflect.Method;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.remoting.support.RemoteExporter;
+import org.springframework.remoting.support.RemoteInvocation;
+import org.springframework.remoting.support.RemoteInvocationBasedExporter;
 import org.springframework.remoting.support.RemoteInvocationResult;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 
 /**
  * <p>
- * TODO Document class.
+ * Default implementation of <code>{@link RemoteInvocationBasedExporter}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:50 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/22 08:48:30 $
  */
-public class DefaultXmlRpcServiceExporter extends RemoteExporter implements
-    XmlRpcServiceExporter, InitializingBean {
+public class XmlRpcServiceExporterImpl extends RemoteInvocationBasedExporter
+    implements XmlRpcServiceExporter, InitializingBean {
 
   /**
-   * Service being exported.
+   * Exported service.
    */
   private Object service;
 
   /**
    * Constructor.
    */
-  public DefaultXmlRpcServiceExporter() {
+  public XmlRpcServiceExporterImpl() {
     super();
   }
 
@@ -57,44 +58,52 @@ public class DefaultXmlRpcServiceExporter extends RemoteExporter implements
   }
 
   /**
-   * @see XmlRpcServiceExporter#invoke(XmlRpcRequest)
+   * Returns a <code>{@link RemoteInvocation}</code> encapsulating the method
+   * to execute and the arguments to use.
+   * 
+   * @param xmlRpcRequest
+   *          the XML-RPC request.
+   * @return a <code>RemoteInvocation</code> created from the XML-RPC request.
+   * @throws XmlRpcMethodNotFoundException
+   *           if the method specified in the XML-RPC request does not exist.
    */
-  public RemoteInvocationResult invoke(XmlRpcRequest xmlRpcRequest) {
+  protected RemoteInvocation findMatchingMethod(XmlRpcRequest xmlRpcRequest) {
+    String requestMethodName = xmlRpcRequest.getMethodName();
+    XmlRpcElement[] requestParameters = xmlRpcRequest.getParameters();
+
     Method targetMethod = null;
+    Object[] arguments = null;
 
     Method[] methods = this.getServiceInterface().getDeclaredMethods();
     int methodCount = methods.length;
 
-    Object[] arguments = null;
-    
     for (int i = 0; i < methodCount; i++) {
       Method method = methods[i];
 
-      if (method.getName().equals(xmlRpcRequest.getMethodName())) {
-        XmlRpcElement[] requestParameters = xmlRpcRequest.getParameters();
-
+      if (method.getName().equals(requestMethodName)) {
         Class[] parameterTypes = method.getParameterTypes();
         int parameterTypeCount = parameterTypes.length;
 
-        boolean matchingMethod = false;
-        
         if (parameterTypeCount != requestParameters.length) {
           continue;
         }
-        
-        matchingMethod = true;
+
+        boolean matchingMethod = true;
         arguments = new Object[parameterTypeCount];
-        
+
         for (int j = 0; j < parameterTypeCount; j++) {
-          Object argument = requestParameters[j]
-              .getMatchingValue(parameterTypes[j]);
-          
+          XmlRpcElement requestParameter = requestParameters[j];
+          Class targetType = parameterTypes[j];
+          Object argument = requestParameter.getMatchingValue(targetType);
+
           if (argument == XmlRpcElement.NOT_MATCHING) {
             matchingMethod = false;
             break;
           }
+          
+          arguments[j] = argument;
         }
-        
+
         if (matchingMethod) {
           targetMethod = method;
           break;
@@ -103,13 +112,20 @@ public class DefaultXmlRpcServiceExporter extends RemoteExporter implements
     }
 
     if (targetMethod == null) {
-      
+      throw new XmlRpcMethodNotFoundException("Unable to find method '"
+          + requestMethodName + "'");
     }
-    else {
-      
-    }
-    
-    return null;
+
+    RemoteInvocation invocation = new RemoteInvocation(targetMethod.getName(),
+        targetMethod.getParameterTypes(), arguments);
+    return invocation;
   }
 
+  /**
+   * @see XmlRpcServiceExporter#invoke(XmlRpcRequest)
+   */
+  public RemoteInvocationResult invoke(XmlRpcRequest xmlRpcRequest) {
+    RemoteInvocation invocation = this.findMatchingMethod(xmlRpcRequest);
+    return this.invokeAndCreateResult(invocation, this.service);
+  }
 }
