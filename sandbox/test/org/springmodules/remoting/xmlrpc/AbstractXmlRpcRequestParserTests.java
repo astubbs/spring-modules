@@ -50,9 +50,9 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/22 08:50:23 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/23 01:48:09 $
  */
-public abstract class AbstractXmlRpcRequestParserImplTests extends TestCase {
+public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
 
   /**
    * Message logger.
@@ -82,7 +82,7 @@ public abstract class AbstractXmlRpcRequestParserImplTests extends TestCase {
   /**
    * Constructor.
    */
-  public AbstractXmlRpcRequestParserImplTests() {
+  public AbstractXmlRpcRequestParserTests() {
     super();
   }
 
@@ -92,7 +92,7 @@ public abstract class AbstractXmlRpcRequestParserImplTests extends TestCase {
    * @param name
    *          the name of the test case to construct.
    */
-  public AbstractXmlRpcRequestParserImplTests(String name) {
+  public AbstractXmlRpcRequestParserTests(String name) {
     super(name);
   }
 
