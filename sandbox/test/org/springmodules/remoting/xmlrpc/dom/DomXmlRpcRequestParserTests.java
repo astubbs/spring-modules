@@ -17,7 +17,7 @@
  */
 package org.springmodules.remoting.xmlrpc.dom;
 
-import org.springmodules.remoting.xmlrpc.AbstractXmlRpcRequestParserImplTests;
+import org.springmodules.remoting.xmlrpc.AbstractXmlRpcRequestParserTests;
 import org.springmodules.remoting.xmlrpc.XmlRpcRequestParser;
 
 /**
@@ -27,10 +27,10 @@ import org.springmodules.remoting.xmlrpc.XmlRpcRequestParser;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/22 08:50:42 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/23 01:49:46 $
  */
-public class DomXmlRpcRequestParserImplTests extends
-    AbstractXmlRpcRequestParserImplTests {
+public class DomXmlRpcRequestParserTests extends
+    AbstractXmlRpcRequestParserTests {
 
   /**
    * Primary object that is under test.
@@ -43,19 +43,19 @@ public class DomXmlRpcRequestParserImplTests extends
    * @param name
    *          the name of the test case to construct.
    */
-  public DomXmlRpcRequestParserImplTests(String name) {
+  public DomXmlRpcRequestParserTests(String name) {
     super(name);
   }
 
   /**
-   * @see AbstractXmlRpcRequestParserImplTests#getXmlRpcRequestParserImplementation()
+   * @see AbstractXmlRpcRequestParserTests#getXmlRpcRequestParserImplementation()
    */
   protected XmlRpcRequestParser getXmlRpcRequestParserImplementation() {
     return this.parser;
   }
 
   /**
-   * @see AbstractXmlRpcRequestParserImplTests#onSetUp()
+   * @see AbstractXmlRpcRequestParserTests#onSetUp()
    */
   protected void onSetUp() throws Exception {
     super.onSetUp();
