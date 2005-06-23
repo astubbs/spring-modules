@@ -24,88 +24,110 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/20 22:49:25 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/23 01:40:29 $
  */
 public interface XmlRpcElementNames {
 
   /**
-   * Name of the XML entity that represents an array.
+   * Name of the XML-RPC element that represents an array.
    */
   String ARRAY = "array";
 
   /**
-   * Name of the XML entity that represents a base64-encoded binary.
+   * Name of the XML-RPC element that represents a base64-encoded binary.
    */
   String BASE_64 = "base64";
 
   /**
-   * Name of the XML entity that represents a boolean.
+   * Name of the XML-RPC element that represents a boolean.
    */
   String BOOLEAN = "boolean";
 
   /**
-   * Name of the XML entity that represents the data portion of an array.
+   * Name of the XML-RPC element that represents the data portion of an array.
    */
   String DATA = "data";
 
   /**
-   * Name of the XML entity that represents a date.
+   * Name of the XML-RPC element that represents a date.
    */
   String DATE_TIME = "dateTime.iso8601";
 
   /**
-   * Name of the XML entity that represents a double-precision signed floating
-   * point number.
+   * Name of the XML-RPC element that represents a double-precision signed
+   * floating point number.
    */
   String DOUBLE = "double";
 
   /**
-   * Name of the XML entity that represents a 32-bit integer.
+   * Name of the XML-RPC element that represents a fault.
+   */
+  String FAULT = "fault";
+
+  /**
+   * Name of the XML-RPC element that represents the code of a fault.
+   */
+  String FAULT_CODE = "faultCode";
+
+  /**
+   * Name of the XML-RPC element that represents the message of a fault.
+   */
+  String FAULT_STRING = "faultString";
+
+  /**
+   * Name of the XML-RPC element that represents a 32-bit integer.
    */
   String I4 = "i4";
 
   /**
-   * Name of the XML entity that represents a 32-bit integer.
+   * Name of the XML-RPC element that represents a 32-bit integer.
    */
   String INT = "int";
 
   /**
-   * Name of the XML entity that represents a member of a struct.
+   * Name of the XML-RPC element that represents a member of a struct.
    */
   String MEMBER = "member";
 
   /**
-   * Name of the XML entity that represents the name of a XML-RPC method.
+   * Name of the XML-RPC element that represents the name of a XML-RPC method.
    */
   String METHOD_NAME = "methodName";
 
   /**
-   * Name of the XML entity that represents the name of a member of a struct.
+   * Name of the XML-RPC element that represents the response to an XML-RPC
+   * request.
+   */
+  String METHOD_RESPONSE = "methodResponse";
+
+  /**
+   * Name of the XML-RPC element that represents the name of a member of a
+   * struct.
    */
   String NAME = "name";
 
   /**
-   * Name of the XML entity that represents a parameter.
+   * Name of the XML-RPC element that represents a parameter.
    */
   String PARAM = "param";
 
   /**
-   * Name of the XML entity that represents a list of parameters.
+   * Name of the XML-RPC element that represents a list of parameters.
    */
   String PARAMS = "params";
 
   /**
-   * Name of the XML entity that represents a string.
+   * Name of the XML-RPC element that represents a string.
    */
   String STRING = "string";
 
   /**
-   * Name of the XML entity that represents a struct.
+   * Name of the XML-RPC element that represents a struct.
    */
   String STRUCT = "struct";
 
   /**
-   * Name of the XML entity that represents the value of a parameter.
+   * Name of the XML-RPC element that represents the value of a parameter.
    */
   String VALUE = "value";
 
