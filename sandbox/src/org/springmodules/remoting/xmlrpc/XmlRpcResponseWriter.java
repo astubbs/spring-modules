@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 8, 2005
+ * Created on Jun 22, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,25 +17,25 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-import org.springframework.remoting.support.RemoteInvocationResult;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcResponse;
 
 /**
  * <p>
- * Creates the XML-RPC response for the executed request.
+ * Builds a XML-RPC response.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/17 09:57:50 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/23 01:42:53 $
  */
 public interface XmlRpcResponseWriter {
 
   /**
-   * Creates the response for the executed XML-RPC request.
+   * Serializes a XML-RPC response into an array of bytes.
    * 
-   * @param result
-   *          the result obtained from the execution of the XML-RPC request.
-   * @return the response for the execute XML-RPC request.
+   * @param response
+   *          the response of the execution of a XML-RPC request.
+   * @return the given XML-RPC response as an array of bytes.
    */
-  byte[] writeResponse(RemoteInvocationResult result);
+  byte[] writeResponse(XmlRpcResponse response);
 }
