@@ -53,12 +53,12 @@ import org.xml.sax.SAXParseException;
 
 /**
  * <p>
- * Template for XML-RPC parsers that use DOM for parsing.
+ * Template for XML-RPC request/response parsers that use DOM.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/21 02:24:30 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/23 01:44:38 $
  */
 public abstract class AbstractDomXmlRpcParser {
 
@@ -119,7 +119,7 @@ public abstract class AbstractDomXmlRpcParser {
    * @throws XmlRpcParsingException
    *           if there are any errors during the parsing.
    */
-  protected Document loadXmlDocument(InputStream inputStream) {
+  protected final Document loadXmlDocument(InputStream inputStream) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       if (this.logger.isDebugEnabled()) {
@@ -136,8 +136,7 @@ public abstract class AbstractDomXmlRpcParser {
       return docBuilder.parse(inputStream);
 
     } catch (ParserConfigurationException exception) {
-      throw new XmlRpcParsingException(
-          "Parser configuration exception while parsing XML-RPC request",
+      throw new XmlRpcParsingException("Parser configuration exception",
           exception);
 
     } catch (SAXParseException exception) {
@@ -145,11 +144,11 @@ public abstract class AbstractDomXmlRpcParser {
           + " in XML-RPC request is invalid", exception);
 
     } catch (SAXException exception) {
-      throw new XmlRpcParsingException("XML-RPC request is invalid", exception);
+      throw new XmlRpcParsingException("XML-RPC payload is invalid", exception);
 
     } catch (IOException exception) {
-      throw new XmlRpcParsingException("IOException parsing XML-RPC request",
-          exception);
+      throw new XmlRpcParsingException(
+          "IOException when parsing XML-RPC payload", exception);
 
     } finally {
       if (inputStream != null) {
@@ -173,7 +172,7 @@ public abstract class AbstractDomXmlRpcParser {
    *           is allowed inside an "array" element.
    * @see #parseDataElement(Element)
    */
-  protected XmlRpcArray parseArrayElement(Element arrayElement) {
+  protected final XmlRpcArray parseArrayElement(Element arrayElement) {
     NodeList children = arrayElement.getChildNodes();
     int childCount = children.getLength();
 
@@ -204,7 +203,7 @@ public abstract class AbstractDomXmlRpcParser {
    * @return the created XML-RPC array.
    * @see #parseValueElement(Element)
    */
-  protected XmlRpcArray parseDataElement(Element dataElement) {
+  protected final XmlRpcArray parseDataElement(Element dataElement) {
     XmlRpcArray array = new XmlRpcArray();
 
     NodeList children = dataElement.getChildNodes();
@@ -241,7 +240,7 @@ public abstract class AbstractDomXmlRpcParser {
    *           if the name of the parsed struct member is empty.
    * @see #parseValueElement(Element)
    */
-  protected XmlRpcMember parseMemberElement(Element memberElement) {
+  protected final XmlRpcMember parseMemberElement(Element memberElement) {
     String name = null;
     XmlRpcElement value = null;
 
@@ -287,7 +286,7 @@ public abstract class AbstractDomXmlRpcParser {
    *           if the element contains a child with name other than a "value".
    * @see #parseValueElement(Element)
    */
-  protected XmlRpcElement parseParameterElement(Element parameterElement) {
+  protected final XmlRpcElement parseParameterElement(Element parameterElement) {
     NodeList children = parameterElement.getChildNodes();
     int childCount = children.getLength();
 
@@ -318,7 +317,7 @@ public abstract class AbstractDomXmlRpcParser {
    * @return the created parameters.
    * @see #parseParameterElement(Element)
    */
-  protected XmlRpcElement[] parseParametersElement(Element parametersElement) {
+  protected final XmlRpcElement[] parseParametersElement(Element parametersElement) {
     List parameters = new ArrayList();
 
     NodeList children = parametersElement.getChildNodes();
@@ -354,7 +353,7 @@ public abstract class AbstractDomXmlRpcParser {
    * @return the created XML-RPC complex structure.
    * @see #parseMemberElement(Element)
    */
-  protected XmlRpcStruct parseStructElement(Element structElement) {
+  protected final XmlRpcStruct parseStructElement(Element structElement) {
     XmlRpcStruct struct = new XmlRpcStruct();
 
     NodeList children = structElement.getChildNodes();
@@ -388,7 +387,7 @@ public abstract class AbstractDomXmlRpcParser {
    * @see #parseStructElement(Element)
    * @see XmlRpcScalarFactory#createScalarValue(String, String)
    */
-  protected XmlRpcElement parseValueElement(Element valueElement) {
+  protected final XmlRpcElement parseValueElement(Element valueElement) {
     NodeList children = valueElement.getChildNodes();
     int childCount = children.getLength();
 

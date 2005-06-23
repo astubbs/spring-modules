@@ -49,7 +49,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/20 22:50:24 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/23 01:45:38 $
  */
 public abstract class AbstractStaxXmlRpcParser {
 
@@ -74,7 +74,7 @@ public abstract class AbstractStaxXmlRpcParser {
    * @throws XmlRpcParsingException
    *           if there are any errors during the parsing.
    */
-  protected XMLStreamReader loadXmlReader(InputStream inputStream)
+  protected final XMLStreamReader loadXmlReader(InputStream inputStream)
       throws XMLStreamException {
     XMLInputFactory factory = XMLInputFactory.newInstance();
     if (this.logger.isDebugEnabled()) {
@@ -97,7 +97,7 @@ public abstract class AbstractStaxXmlRpcParser {
    *           is allowed inside an "array" element.
    * @see #parseDataElement(XMLStreamReader)
    */
-  protected XmlRpcArray parseArrayElement(XMLStreamReader reader)
+  protected final XmlRpcArray parseArrayElement(XMLStreamReader reader)
       throws XMLStreamException {
 
     while (reader.hasNext()) {
@@ -128,7 +128,7 @@ public abstract class AbstractStaxXmlRpcParser {
    * @return the new array of <code>java.util.List</code>s.
    * @see #parseValueElement(XMLStreamReader)
    */
-  protected XmlRpcArray parseDataElement(XMLStreamReader reader)
+  protected final XmlRpcArray parseDataElement(XMLStreamReader reader)
       throws XMLStreamException {
     XmlRpcArray array = new XmlRpcArray();
 
@@ -171,7 +171,7 @@ public abstract class AbstractStaxXmlRpcParser {
    *           if the element contains an unknown child.
    * @see #parseValueElement(XMLStreamReader)
    */
-  protected XmlRpcElement parseParameterElement(XMLStreamReader reader)
+  protected final XmlRpcElement parseParameterElement(XMLStreamReader reader)
       throws XMLStreamException {
     while (reader.hasNext()) {
       int event = reader.next();
@@ -200,7 +200,7 @@ public abstract class AbstractStaxXmlRpcParser {
    *          the <code>StreamReader</code>.
    * @return the parameters of the XML-RPC request/response.
    */
-  protected XmlRpcElement[] parseParametersElement(XMLStreamReader reader)
+  protected final XmlRpcElement[] parseParametersElement(XMLStreamReader reader)
       throws XMLStreamException {
     List parameters = new ArrayList();
 
@@ -245,7 +245,7 @@ public abstract class AbstractStaxXmlRpcParser {
    * @return the new array of <code>java.util.Map</code>s.
    * @see #parseMemberElement(XMLStreamReader)
    */
-  protected XmlRpcStruct parseStructElement(XMLStreamReader reader)
+  protected final XmlRpcStruct parseStructElement(XMLStreamReader reader)
       throws XMLStreamException {
     XmlRpcStruct struct = new XmlRpcStruct();
 
@@ -288,7 +288,7 @@ public abstract class AbstractStaxXmlRpcParser {
    *           and one "value" element are allowed inside an "member" element.
    * @see #parseValueElement(XMLStreamReader)
    */
-  protected XmlRpcMember parseMemberElement(XMLStreamReader reader)
+  protected final XmlRpcMember parseMemberElement(XMLStreamReader reader)
       throws XMLStreamException {
     String name = null;
     XmlRpcElement value = null;
@@ -343,7 +343,7 @@ public abstract class AbstractStaxXmlRpcParser {
    * @see #parseArrayElement(XMLStreamReader)
    * @see #parseStructElement(XMLStreamReader)
    */
-  protected XmlRpcElement parseValueElement(XMLStreamReader reader)
+  protected final XmlRpcElement parseValueElement(XMLStreamReader reader)
       throws XMLStreamException {
 
     while (reader.hasNext()) {
