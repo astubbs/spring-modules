@@ -17,13 +17,11 @@
  */
 package org.springmodules.remoting.xmlrpc;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationResult;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
@@ -37,7 +35,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/22 08:50:24 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/23 01:48:37 $
  */
 public class XmlRpcServiceExporterImplTests extends TestCase {
 
@@ -81,6 +79,7 @@ public class XmlRpcServiceExporterImplTests extends TestCase {
 
     this.serviceExporter.setService(this.myService);
     this.serviceExporter.setServiceInterface(serviceInterface);
+    this.serviceExporter.afterPropertiesSet();
   }
 
   /**
@@ -192,41 +191,26 @@ public class XmlRpcServiceExporterImplTests extends TestCase {
    * executes a method of the exported service.
    */
   public void testInvokeXmlRpcRequest() throws Exception {
-    Class targetClass = XmlRpcServiceExporterImpl.class;
-
-    Method findMatchingMethodMethod = targetClass.getDeclaredMethod(
-        "findMatchingMethod", new Class[] { XmlRpcRequest.class });
-
-    Method[] methodsToMock = { findMatchingMethodMethod };
-
-    MockClassControl serviceExporterControl = MockClassControl.createControl(
-        targetClass, null, null, methodsToMock);
-
-    this.serviceExporter = (XmlRpcServiceExporterImpl) serviceExporterControl
-        .getMock();
-    this.serviceExporter.setService(this.myService);
-    this.serviceExporter.setServiceInterface(MyService.class);
-    this.serviceExporter.afterPropertiesSet();
-
-    XmlRpcRequest request = new XmlRpcRequest();
     Long argument = new Long(54);
     String customerName = "Luke";
 
+    String methodName = "getCustomerName";
+    XmlRpcElement[] parameters = { new XmlRpcString(argument.toString()) };
+
+    XmlRpcRequest request = new XmlRpcRequest();
+    request.setMethodName(methodName);
+    request.setParameters(parameters);
+    
     RemoteInvocation invocation = new RemoteInvocation();
     invocation.setMethodName("getCustomerName");
     invocation.setParameterTypes(new Class[] { Long.class });
     invocation.setArguments(new Object[] { argument });
-
-    // expectation: find a matching method.
-    this.serviceExporter.findMatchingMethod(request);
-    serviceExporterControl.setReturnValue(invocation);
 
     // expectation: call the service method.
     this.myService.getCustomerName(argument);
     this.myServiceControl.setReturnValue(customerName);
 
     // set the status of the mock object to "replay"
-    serviceExporterControl.replay();
     this.myServiceControl.replay();
 
     // execute the method to test.
@@ -235,7 +219,6 @@ public class XmlRpcServiceExporterImplTests extends TestCase {
     assertEquals("<Result>", customerName, result.getValue());
 
     // verify the expectations of the mock objects were met.
-    serviceExporterControl.verify();
     this.myServiceControl.verify();
   }
 }
