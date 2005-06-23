@@ -17,6 +17,10 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * <p>
  * Represents a XML-RPC response.
@@ -24,7 +28,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/23 01:47:19 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/23 01:57:45 $
  */
 public final class XmlRpcResponse {
 
@@ -69,6 +73,37 @@ public final class XmlRpcResponse {
   }
 
   /**
+   * Indicates whether some other object is "equal to" this one.
+   * 
+   * @param obj
+   *          the reference object with which to compare
+   * @return <code>true</code> if this object is the same as the obj argument;
+   *         <code>false</code> otherwise.
+   * 
+   * @see Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    boolean equals = true;
+
+    if (null == obj || !(obj instanceof XmlRpcResponse)) {
+      equals = false;
+    } else if (this != obj) {
+      XmlRpcResponse xmlRpcResponse = (XmlRpcResponse) obj;
+
+      EqualsBuilder equalsBuilder = new EqualsBuilder();
+      equalsBuilder.append(this.getFault(), xmlRpcResponse.getFault());
+      equalsBuilder
+          .append(this.getParameters(), xmlRpcResponse.getParameters());
+      equalsBuilder
+          .append(this.isFaultThrown(), xmlRpcResponse.isFaultThrown());
+
+      equals = equalsBuilder.isEquals();
+    }
+
+    return equals;
+  }
+
+  /**
    * Getter for field <code>{@link #fault}</code>.
    * 
    * @return the field <code>fault</code>.
@@ -87,11 +122,49 @@ public final class XmlRpcResponse {
   }
 
   /**
+   * Returns a hash code value for the object. This method is supported for the
+   * benefit of hashtables such as those provided by
+   * <code>java.util.Hashtable</code>.
+   * 
+   * @return a hash code value for this object.
+   * 
+   * @see Object#hashCode()
+   */
+  public int hashCode() {
+    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1447, 1451);
+    hashCodeBuilder.append(this.fault);
+    hashCodeBuilder.append(this.faultThrown);
+    hashCodeBuilder.append(this.parameters);
+
+    int hashCode = hashCodeBuilder.toHashCode();
+    return hashCode;
+  }
+
+  /**
    * Getter for field <code>{@link #faultThrown}</code>.
    * 
    * @return the field <code>faultThrown</code>.
    */
   public boolean isFaultThrown() {
     return this.faultThrown;
+  }
+
+  /**
+   * Returns a string representation of the object. In general, the
+   * <code>toString</code> method returns a string that "textually represents"
+   * this object.
+   * 
+   * @return a string representation of the object.
+   * 
+   * @see Object#toString()
+   */
+  public String toString() {
+    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
+    toStringBuilder.append("faultThrown", this.faultThrown);
+    toStringBuilder.append("fault", this.fault);
+    toStringBuilder.append("parameters", this.parameters);
+
+    String toString = toStringBuilder.toString();
+    return toString;
   }
 }

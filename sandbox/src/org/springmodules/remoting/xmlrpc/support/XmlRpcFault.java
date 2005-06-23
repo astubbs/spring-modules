@@ -17,6 +17,9 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 
 /**
@@ -27,7 +30,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/23 01:47:19 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/23 01:57:46 $
  */
 public final class XmlRpcFault {
 
@@ -56,6 +59,33 @@ public final class XmlRpcFault {
   }
 
   /**
+   * Indicates whether some other object is "equal to" this one.
+   * 
+   * @param obj
+   *          the reference object with which to compare
+   * @return <code>true</code> if this object is the same as the obj argument;
+   *         <code>false</code> otherwise.
+   * 
+   * @see Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    boolean equals = true;
+
+    if (null == obj || !(obj instanceof XmlRpcFault)) {
+      equals = false;
+    } else if (this != obj) {
+      XmlRpcFault xmlRpcFault = (XmlRpcFault) obj;
+
+      EqualsBuilder equalsBuilder = new EqualsBuilder();
+      equalsBuilder.append(this.getFaultStruct(), xmlRpcFault.getFaultStruct());
+
+      equals = equalsBuilder.isEquals();
+    }
+
+    return equals;
+  }
+
+  /**
    * Getter for field <code>{@link #faultStruct}</code>.
    * 
    * @return the field <code>faultStruct</code>.
@@ -64,4 +94,37 @@ public final class XmlRpcFault {
     return this.faultStruct;
   }
 
+  /**
+   * Returns a hash code value for the object. This method is supported for the
+   * benefit of hashtables such as those provided by
+   * <code>java.util.Hashtable</code>.
+   * 
+   * @return a hash code value for this object.
+   * 
+   * @see Object#hashCode()
+   */
+  public int hashCode() {
+    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1433, 1439);
+    hashCodeBuilder.append(this.faultStruct);
+
+    int hashCode = hashCodeBuilder.toHashCode();
+    return hashCode;
+  }
+
+  /**
+   * Returns a string representation of the object. In general, the
+   * <code>toString</code> method returns a string that "textually represents"
+   * this object.
+   * 
+   * @return a string representation of the object.
+   * 
+   * @see Object#toString()
+   */
+  public String toString() {
+    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
+    toStringBuilder.append("faultStruct", this.faultStruct);
+
+    String toString = toStringBuilder.toString();
+    return toString;
+  }
 }
