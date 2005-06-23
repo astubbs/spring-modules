@@ -27,9 +27,9 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/21 01:03:32 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/23 01:47:01 $
  */
-public class XmlRpcScalarFactoryImpl implements XmlRpcScalarFactory {
+public final class XmlRpcScalarFactoryImpl implements XmlRpcScalarFactory {
 
   /**
    * Constructor.

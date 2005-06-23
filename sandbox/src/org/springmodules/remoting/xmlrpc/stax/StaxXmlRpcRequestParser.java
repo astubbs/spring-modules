@@ -37,10 +37,10 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 22:50:24 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/23 01:46:32 $
  */
-public class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser implements
-    XmlRpcRequestParser {
+public final class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser
+    implements XmlRpcRequestParser {
 
   /**
    * Constructor.
@@ -90,7 +90,7 @@ public class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser implements
         }
       }
     }
-    
+
     return request;
   }
 

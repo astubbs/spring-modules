@@ -34,9 +34,9 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/06/21 10:58:35 $
+ * @version $Revision: 1.7 $ $Date: 2005/06/23 01:47:02 $
  */
-public class XmlRpcDateTime implements XmlRpcScalar {
+public final class XmlRpcDateTime implements XmlRpcScalar {
 
   /**
    * Pattern for ISO 8601, the date and time representation standard.

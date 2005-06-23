@@ -29,9 +29,9 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/06/21 10:58:35 $
+ * @version $Revision: 1.7 $ $Date: 2005/06/23 01:47:01 $
  */
-public class XmlRpcInteger implements XmlRpcScalar {
+public final class XmlRpcInteger implements XmlRpcScalar {
 
   /**
    * The value of this scalar.

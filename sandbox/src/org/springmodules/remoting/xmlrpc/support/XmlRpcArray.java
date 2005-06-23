@@ -33,9 +33,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/20 22:50:54 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/23 01:47:00 $
  */
-public class XmlRpcArray implements XmlRpcElement {
+public final class XmlRpcArray implements XmlRpcElement {
 
   /**
    * Elements of this array.
@@ -96,7 +96,7 @@ public class XmlRpcArray implements XmlRpcElement {
    *          the target type.
    * @return an array of objects of the specified type.
    */
-  protected Object getArrayMatchingValue(Class targetType) {
+  private Object getArrayMatchingValue(Class targetType) {
     Object matchingValue = null;
 
     Class componentType = targetType.getComponentType();
@@ -131,7 +131,7 @@ public class XmlRpcArray implements XmlRpcElement {
    * 
    * @return an collection of scalar values.
    */
-  protected Object getCollectionMatchingValue() {
+  private Object getCollectionMatchingValue() {
     Object matchingValue = null;
 
     boolean matching = true;

@@ -38,10 +38,10 @@ import org.w3c.dom.NodeList;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 22:50:08 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/23 01:45:15 $
  */
-public class DomXmlRpcRequestParser extends AbstractDomXmlRpcParser implements
-    XmlRpcRequestParser {
+public final class DomXmlRpcRequestParser extends AbstractDomXmlRpcParser
+    implements XmlRpcRequestParser {
 
   /**
    * Constructor.

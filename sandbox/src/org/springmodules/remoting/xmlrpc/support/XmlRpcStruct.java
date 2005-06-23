@@ -35,14 +35,14 @@ import org.springframework.beans.BeanWrapperImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/20 22:50:54 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/23 01:46:59 $
  */
-public class XmlRpcStruct implements XmlRpcElement {
+public final class XmlRpcStruct implements XmlRpcElement {
 
   /**
    * Represents a member of a struct.
    */
-  public static class XmlRpcMember {
+  public static final class XmlRpcMember {
     /**
      * The name of this member.
      */
@@ -205,7 +205,7 @@ public class XmlRpcStruct implements XmlRpcElement {
    *          the target type (representing a JavaBean).
    * @return an instance of the specified target type.
    */
-  protected Object getBeanMatchingValue(Class targetType) {
+  private Object getBeanMatchingValue(Class targetType) {
     BeanWrapper beanWrapper = new BeanWrapperImpl(targetType);
     boolean matching = true;
 
@@ -255,7 +255,7 @@ public class XmlRpcStruct implements XmlRpcElement {
    * 
    * @return a map containing the members of this struct.
    */
-  protected Object getMapMatchingValue() {
+  private Object getMapMatchingValue() {
     boolean matching = true;
     Map map = new HashMap();
 

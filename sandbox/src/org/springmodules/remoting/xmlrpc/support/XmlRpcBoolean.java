@@ -29,9 +29,9 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/21 10:58:35 $
+ * @version $Revision: 1.6 $ $Date: 2005/06/23 01:47:01 $
  */
-public class XmlRpcBoolean implements XmlRpcScalar {
+public final class XmlRpcBoolean implements XmlRpcScalar {
 
   /**
    * Represents <code>false</code> in XML-RPC.

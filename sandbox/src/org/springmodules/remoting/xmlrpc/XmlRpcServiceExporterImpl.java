@@ -33,10 +33,11 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/22 08:48:30 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/23 01:43:23 $
  */
-public class XmlRpcServiceExporterImpl extends RemoteInvocationBasedExporter
-    implements XmlRpcServiceExporter, InitializingBean {
+public final class XmlRpcServiceExporterImpl extends
+    RemoteInvocationBasedExporter implements XmlRpcServiceExporter,
+    InitializingBean {
 
   /**
    * Exported service.
@@ -100,7 +101,7 @@ public class XmlRpcServiceExporterImpl extends RemoteInvocationBasedExporter
             matchingMethod = false;
             break;
           }
-          
+
           arguments[j] = argument;
         }
 

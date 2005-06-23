@@ -28,9 +28,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/22 08:50:06 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/23 01:47:02 $
  */
-public class XmlRpcRequest {
+public final class XmlRpcRequest {
 
   /**
    * The name of the method to execute.

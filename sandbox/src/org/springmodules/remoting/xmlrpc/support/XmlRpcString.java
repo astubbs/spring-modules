@@ -33,9 +33,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/21 10:58:34 $
+ * @version $Revision: 1.6 $ $Date: 2005/06/23 01:47:00 $
  */
-public class XmlRpcString implements XmlRpcScalar {
+public final class XmlRpcString implements XmlRpcScalar {
 
   /**
    * The value of this scalar.
