@@ -29,7 +29,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/06/23 01:47:01 $
+ * @version $Revision: 1.8 $ $Date: 2005/06/23 02:13:46 $
  */
 public final class XmlRpcInteger implements XmlRpcScalar {
 
@@ -118,8 +118,6 @@ public final class XmlRpcInteger implements XmlRpcScalar {
 
     if (Integer.class.equals(targetType) || Integer.TYPE.equals(targetType)) {
       matchingValue = this.value;
-    } else if (Long.class.equals(targetType) || Long.TYPE.equals(targetType)) {
-      matchingValue = new Long(this.value.longValue());
     }
     return matchingValue;
   }

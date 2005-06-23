@@ -20,7 +20,6 @@ package org.springmodules.remoting.xmlrpc.support;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 
 /**
  * <p>
@@ -30,7 +29,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/23 01:57:46 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/23 02:13:47 $
  */
 public final class XmlRpcFault {
 

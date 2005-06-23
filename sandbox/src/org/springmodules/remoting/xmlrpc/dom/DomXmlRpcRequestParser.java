@@ -20,10 +20,10 @@ package org.springmodules.remoting.xmlrpc.dom;
 import java.io.InputStream;
 
 import org.springframework.util.xml.DomUtils;
-import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 import org.springmodules.remoting.xmlrpc.XmlRpcRequestParser;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -38,7 +38,7 @@ import org.w3c.dom.NodeList;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/23 01:45:15 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/23 02:13:48 $
  */
 public final class DomXmlRpcRequestParser extends AbstractDomXmlRpcParser
     implements XmlRpcRequestParser {

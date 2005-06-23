@@ -24,20 +24,21 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 import org.springmodules.remoting.xmlrpc.XmlRpcRequestParser;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 
 /**
  * <p>
- * TODO Document class.
+ * Implementation of <code>{@link XmlRpcRequestParser}</code> that uses StAX
+ * for parsing XML.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/23 01:46:32 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/23 02:13:46 $
  */
 public final class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser
     implements XmlRpcRequestParser {

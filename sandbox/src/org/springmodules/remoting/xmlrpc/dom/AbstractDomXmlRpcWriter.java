@@ -24,7 +24,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
-import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.XmlRpcWritingException;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcArray;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcBase64;
@@ -32,6 +31,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcBoolean;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcDateTime;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcDouble;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcInteger;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcScalar;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
@@ -48,7 +48,7 @@ import org.xml.sax.ErrorHandler;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/23 01:44:57 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/23 02:13:48 $
  */
 public abstract class AbstractDomXmlRpcWriter {
 

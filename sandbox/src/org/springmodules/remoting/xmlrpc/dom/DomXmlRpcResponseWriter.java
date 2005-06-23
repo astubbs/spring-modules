@@ -29,9 +29,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.XmlRpcResponseWriter;
 import org.springmodules.remoting.xmlrpc.XmlRpcWritingException;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcFault;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcResponse;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct;
@@ -46,7 +46,7 @@ import org.w3c.dom.Element;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/23 01:44:56 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/23 02:13:48 $
  */
 public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
     implements XmlRpcResponseWriter {

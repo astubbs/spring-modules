@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.remoting.xmlrpc;
+package org.springmodules.remoting.xmlrpc.support;
 
 /**
  * <p>
@@ -24,7 +24,7 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/23 01:40:29 $
+ * @version $Revision: 1.1 $ $Date: 2005/06/23 02:13:47 $
  */
 public interface XmlRpcElementNames {
 
@@ -44,7 +44,8 @@ public interface XmlRpcElementNames {
   String BOOLEAN = "boolean";
 
   /**
-   * Name of the XML-RPC element that represents the data portion of an array.
+   * Name of the XML-RPC element that represents the data portion of a XML-RPC
+   * array.
    */
   String DATA = "data";
 
@@ -90,7 +91,8 @@ public interface XmlRpcElementNames {
   String MEMBER = "member";
 
   /**
-   * Name of the XML-RPC element that represents the name of a XML-RPC method.
+   * Name of the XML-RPC element that represents the name of a method in a
+   * XML-RPC request.
    */
   String METHOD_NAME = "methodName";
 

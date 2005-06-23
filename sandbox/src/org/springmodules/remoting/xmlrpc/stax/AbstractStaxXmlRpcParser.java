@@ -29,7 +29,6 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
-import org.springmodules.remoting.xmlrpc.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcArray;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcBase64;
@@ -37,6 +36,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcBoolean;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcDateTime;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcDouble;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcInteger;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct;
@@ -49,7 +49,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/23 01:45:38 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/23 02:13:46 $
  */
 public abstract class AbstractStaxXmlRpcParser {
 
