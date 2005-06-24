@@ -74,15 +74,23 @@ public class BeanPropertyFunction implements Function {
 		return (String[])coll.toArray(new String[] {});
 	}
 	
+	private String concat(String[] path) {
+		StringBuffer sb = new StringBuffer();
+		
+		for (int i = 0; i < path.length; i++) {
+			sb.append(path[i]);
+			sb.append(".");
+		}
+		
+		sb.setLength(sb.length() - 1);
+		return sb.toString();
+	}
+	
 	private Object getValue(Map map, String[] path) {
 		if (path.length > 0) {
 			Object result = MapUtils.getObject(map, path[0]);
 			if (path.length > 1) {
-				if (result instanceof Map) {
-					return getValue((Map)result, pop(path));
-				} else {
-					throw new IllegalArgumentException("[" + path[0] + "] did not return an instance of java.util.Map!");
-				}
+				return new BeanPropertyFunction(concat(pop(path))).getResult(result);
 			} else {
 				return result;
 			}
