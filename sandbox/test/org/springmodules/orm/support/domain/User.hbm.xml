@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+ "-//Hibernate/Hibernate Mapping DTD//EN"
+ "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+<hibernate-mapping>
+	<class name="org.springmodules.orm.support.domain.User" table="T_USERS">
+		<id column="USER_ID" name="id" access="field">
+			<generator class="native"/>
+		</id>
+		<version name="version" column="VERSION" access="field" unsaved-value="negative"/>
+		<property name="firstName" column="FIRST_NAME" access="field"/>
+		<property name="lastName" column="LAST_NAME" access="field"/>
+		<property name="username" column="USERNAME" access="field"/>
+		<property name="password" column="PASSWORD" access="field"/>
+		<property name="admin" column="ADMIN" access="field"/>
+	</class>
+	
+</hibernate-mapping>
