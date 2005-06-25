@@ -39,6 +39,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import org.xml.sax.ErrorHandler;
 
 /**
@@ -48,7 +49,7 @@ import org.xml.sax.ErrorHandler;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/23 02:13:48 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/25 07:14:52 $
  */
 public abstract class AbstractDomXmlRpcWriter {
 
@@ -140,7 +141,8 @@ public abstract class AbstractDomXmlRpcWriter {
    */
   protected final Element createMemberElement(XmlRpcMember member, Document document) {
     Element nameElement = document.createElement(XmlRpcElementNames.NAME);
-    nameElement.setTextContent(member.name);
+    Text text = document.createTextNode(member.name);
+    nameElement.appendChild(text);
 
     Element valueElement = this.createValueElement(member.value, document);
 
@@ -208,7 +210,8 @@ public abstract class AbstractDomXmlRpcWriter {
   protected final Element createScalarElement(String elementName, XmlRpcScalar value,
       Document document) {
     Element scalarElement = document.createElement(elementName);
-    scalarElement.setTextContent(value.getValueAsString());
+    Text text = document.createTextNode(value.getValueAsString());
+    scalarElement.appendChild(text);
 
     return scalarElement;
   }
