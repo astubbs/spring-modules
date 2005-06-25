@@ -27,7 +27,7 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:17 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/25 21:39:58 $
  */
 public final class CachedTests extends AbstractJavaBeanTests {
 
@@ -60,7 +60,9 @@ public final class CachedTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedHashCode()
    */
   protected int getExpectedHashCode() {
-    return this.cached.getCacheProfileId().hashCode();
+    int hash = 7;
+    hash = 31 * hash + (this.cached.getCacheProfileId().hashCode());
+    return hash;
   }
 
   /**

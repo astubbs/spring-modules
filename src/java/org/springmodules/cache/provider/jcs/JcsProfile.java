@@ -32,7 +32,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:20 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/25 21:39:58 $
  */
 public class JcsProfile implements CacheProfile {
 
@@ -120,9 +120,10 @@ public class JcsProfile implements CacheProfile {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    int result = (this.cacheName != null ? this.cacheName.hashCode() : 0);
-    result = 29 * result + (this.group != null ? this.group.hashCode() : 0);
-    return result;
+    int hash = 7;
+    hash = 31 * hash + (this.cacheName != null ? this.cacheName.hashCode() : 0);
+    hash = 31 * hash + (this.group != null ? this.group.hashCode() : 0);
+    return hash;
   }
 
   /**

@@ -29,7 +29,7 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:19 $
+ * @version $Revision: 1.3 $ $Date: 2005/06/25 21:39:57 $
  */
 public final class JcsProfileTests extends AbstractJavaBeanTests {
 
@@ -63,9 +63,10 @@ public final class JcsProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedHashCode()
    */
   protected int getExpectedHashCode() {
-    int result = (this.cacheProfile.getCacheName().hashCode());
-    result = 29 * result + (this.cacheProfile.getGroup().hashCode());
-    return result;
+    int hash = 7;
+    hash = 31 * hash + this.cacheProfile.getCacheName().hashCode();
+    hash = 31 * hash + this.cacheProfile.getGroup().hashCode();
+    return hash;
   }
 
   /**

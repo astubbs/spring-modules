@@ -28,7 +28,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/25 06:53:17 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/25 21:39:57 $
  */
 public class Cached implements CacheAttribute {
 
@@ -109,7 +109,10 @@ public class Cached implements CacheAttribute {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    return (this.cacheProfileId != null ? this.cacheProfileId.hashCode() : 0);
+    int hash = 7;
+    hash = 31 * hash
+        + (this.cacheProfileId != null ? this.cacheProfileId.hashCode() : 0);
+    return hash;
   }
 
   /**
