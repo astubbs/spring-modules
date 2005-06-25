@@ -18,9 +18,6 @@
 
 package org.springmodules.cache.provider.ehcache;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springmodules.cache.provider.CacheProfile;
 
 /**
@@ -35,7 +32,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:19 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:16 $
  */
 public class EhCacheProfile implements CacheProfile {
 
@@ -69,20 +66,21 @@ public class EhCacheProfile implements CacheProfile {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof EhCacheProfile)) {
-      equals = false;
-    } else if (this != obj) {
-      EhCacheProfile profile = (EhCacheProfile) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getCacheName(), profile.getCacheName());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof EhCacheProfile)) {
+      return false;
     }
 
-    return equals;
+    final EhCacheProfile ehCacheProfile = (EhCacheProfile) obj;
+
+    if (this.cacheName != null ? !this.cacheName
+        .equals(ehCacheProfile.cacheName) : ehCacheProfile.cacheName != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -104,11 +102,7 @@ public class EhCacheProfile implements CacheProfile {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(5, 7);
-    hashCodeBuilder.append(this.getCacheName());
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    return (this.cacheName != null ? this.cacheName.hashCode() : 0);
   }
 
   /**
@@ -131,10 +125,6 @@ public class EhCacheProfile implements CacheProfile {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("cacheName", this.getCacheName());
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "EhCacheProfile: cacheName='" + this.cacheName + "'";
   }
 }

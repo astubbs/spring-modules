@@ -19,6 +19,7 @@
 package org.springmodules.cache.provider;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -26,10 +27,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.EntryRetrievalException;
 
 /**
@@ -39,7 +39,7 @@ import org.springmodules.cache.EntryRetrievalException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:01 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/25 06:53:19 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -146,7 +146,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     if (logger.isDebugEnabled()) {
       logger
           .debug("Method 'flushCache(String[])'. Argument 'cacheProfileIds': "
-              + ArrayUtils.toString(cacheProfileIds));
+              + Arrays.toString(cacheProfileIds));
     }
 
     if (cacheProfileIds != null) {
@@ -189,7 +189,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     }
     CacheProfile cacheProfile = null;
 
-    if (StringUtils.isNotEmpty(cacheProfileId) && this.cacheProfiles != null) {
+    if (StringUtils.hasText(cacheProfileId) && this.cacheProfiles != null) {
       cacheProfile = (CacheProfile) this.cacheProfiles.get(cacheProfileId);
     }
 

@@ -18,9 +18,6 @@
 
 package org.springmodules.cache.interceptor.caching;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springmodules.cache.CacheAttribute;
 
 /**
@@ -31,7 +28,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:07 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/25 06:53:17 $
  */
 public class Cached implements CacheAttribute {
 
@@ -76,21 +73,21 @@ public class Cached implements CacheAttribute {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof Cached)) {
-      equals = false;
-    } else if (this != obj) {
-      Cached cached = (Cached) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder
-          .append(this.getCacheProfileId(), cached.getCacheProfileId());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof Cached)) {
+      return false;
     }
 
-    return equals;
+    final Cached cached = (Cached) obj;
+
+    if (this.cacheProfileId != null ? !this.cacheProfileId
+        .equals(cached.cacheProfileId) : cached.cacheProfileId != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -112,11 +109,7 @@ public class Cached implements CacheAttribute {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(7, 17);
-    hashCodeBuilder.append(this.getCacheProfileId());
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    return (this.cacheProfileId != null ? this.cacheProfileId.hashCode() : 0);
   }
 
   /**
@@ -140,11 +133,7 @@ public class Cached implements CacheAttribute {
    * 
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("cacheProfileId", this.getCacheProfileId());
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "Cached: cacheProfileId='" + this.cacheProfileId + "'";
   }
 
 }

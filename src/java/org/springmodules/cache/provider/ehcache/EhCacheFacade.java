@@ -24,9 +24,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheWrapperException;
 import org.springmodules.cache.EntryRetrievalException;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:15 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:16 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -84,7 +84,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    if (StringUtils.isNotEmpty(cacheName)) {
+    if (StringUtils.hasText(cacheName)) {
       Cache cache = this.cacheManager.getCache(cacheName);
       if (cache == null) {
         if (logger.isInfoEnabled()) {
@@ -121,7 +121,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
     String cacheName = profile.getCacheName();
 
-    if (StringUtils.isNotEmpty(cacheName)) {
+    if (StringUtils.hasText(cacheName)) {
       if (!this.cacheManager.cacheExists(cacheName)) {
         String logMessage = "Method 'onGetFromCache(CacheKey, CacheProfile)'. Could not find EHCache cache: "
             + cacheName;
@@ -167,7 +167,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
 
     String cacheName = profile.getCacheName();
-    if (StringUtils.isNotEmpty(cacheName)) {
+    if (StringUtils.hasText(cacheName)) {
       Cache cache = this.cacheManager.getCache(cacheName);
 
       if (cache == null) {
@@ -195,7 +195,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
 
     String cacheName = profile.getCacheName();
-    if (StringUtils.isNotEmpty(cacheName)) {
+    if (StringUtils.hasText(cacheName)) {
       Cache cache = this.cacheManager.getCache(cacheName);
 
       if (cache == null) {

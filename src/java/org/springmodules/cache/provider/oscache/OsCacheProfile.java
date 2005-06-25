@@ -18,9 +18,8 @@
 
 package org.springmodules.cache.provider.oscache;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import java.util.Arrays;
+
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.CacheProfile;
 
@@ -36,7 +35,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:02 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:20 $
  */
 public class OsCacheProfile implements CacheProfile {
 
@@ -83,23 +82,30 @@ public class OsCacheProfile implements CacheProfile {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof OsCacheProfile)) {
-      equals = false;
-    } else if (this != obj) {
-      OsCacheProfile profile = (OsCacheProfile) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getCronExpression(), profile
-          .getCronExpression());
-      equalsBuilder.append(this.getGroups(), profile.getGroups());
-      equalsBuilder.append(this.getRefreshPeriod(), profile.getRefreshPeriod());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof OsCacheProfile)) {
+      return false;
     }
 
-    return equals;
+    final OsCacheProfile osCacheProfile = (OsCacheProfile) obj;
+
+    if (this.cronExpression != null ? !this.cronExpression
+        .equals(osCacheProfile.cronExpression)
+        : osCacheProfile.cronExpression != null) {
+      return false;
+    }
+    if (!Arrays.equals(this.groups, osCacheProfile.groups)) {
+      return false;
+    }
+    if (this.refreshPeriod != null ? !this.refreshPeriod
+        .equals(osCacheProfile.refreshPeriod)
+        : osCacheProfile.refreshPeriod != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -139,13 +145,11 @@ public class OsCacheProfile implements CacheProfile {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(3, 11);
-    hashCodeBuilder.append(this.getCronExpression());
-    hashCodeBuilder.append(this.getGroups());
-    hashCodeBuilder.append(this.getRefreshPeriod());
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    int result = (this.cronExpression != null ? this.cronExpression.hashCode()
+        : 0);
+    result = 29 * result
+        + (this.refreshPeriod != null ? this.refreshPeriod.hashCode() : 0);
+    return result;
   }
 
   /**
@@ -167,7 +171,7 @@ public class OsCacheProfile implements CacheProfile {
   public final void setGroups(String csvGroups) {
 
     String[] newGroups = null;
-    if (org.apache.commons.lang.StringUtils.isNotEmpty(csvGroups)) {
+    if (StringUtils.hasText(csvGroups)) {
       newGroups = StringUtils.commaDelimitedListToStringArray(csvGroups);
     }
     this.setGroups(newGroups);
@@ -213,12 +217,8 @@ public class OsCacheProfile implements CacheProfile {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("refreshPeriod", this.getRefreshPeriod());
-    toStringBuilder.append("groups", this.getGroups());
-    toStringBuilder.append("cronExpression", this.getCronExpression());
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "OsCacheProfile: refreshPeriod=" + this.refreshPeriod + ", groups="
+        + Arrays.toString(this.groups) + ", cronExpression='"
+        + this.cronExpression + "'";
   }
 }

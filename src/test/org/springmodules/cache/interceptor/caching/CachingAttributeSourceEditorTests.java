@@ -25,7 +25,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.lang.SystemUtils;
 import org.springmodules.cache.interceptor.SimulatedService;
 
 /**
@@ -35,9 +34,15 @@ import org.springmodules.cache.interceptor.SimulatedService;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:12 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:17 $
  */
 public class CachingAttributeSourceEditorTests extends TestCase {
+
+  /**
+   * The <code>line.separator</code> System Property.
+   */
+  public static final String LINE_SEPARATOR = System
+      .getProperty("line.separator");
 
   /**
    * Primary object that is under test.
@@ -95,7 +100,7 @@ public class CachingAttributeSourceEditorTests extends TestCase {
       buffer.append(entry.getKey());
       buffer.append("=");
       buffer.append(entry.getValue());
-      buffer.append(SystemUtils.LINE_SEPARATOR);
+      buffer.append(LINE_SEPARATOR);
     }
     String text = buffer.toString();
 

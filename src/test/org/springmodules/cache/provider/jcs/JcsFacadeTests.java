@@ -40,7 +40,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/29 02:01:50 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/25 06:53:19 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -211,7 +211,7 @@ public final class JcsFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#getKey(org.springmodules.cache.key.CacheKey, JcsProfile)}</code>
+   * <code>{@link JcsFacade#getKey(Serializable, JcsProfile)}</code>
    * creates a key containing the group specified in the given cache profile.
    */
   public void testGetKeyWithGroupName() {
@@ -230,7 +230,7 @@ public final class JcsFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#getKey(org.springmodules.cache.key.CacheKey, JcsProfile)}</code>
+   * <code>{@link JcsFacade#getKey(Serializable, JcsProfile)}</code>
    * creates a key that does not contain the group if the given cache profile
    * does not specify any group.
    */

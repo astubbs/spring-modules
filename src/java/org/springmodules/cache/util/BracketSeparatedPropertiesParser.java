@@ -20,7 +20,7 @@ package org.springmodules.cache.util;
 
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.regex.Match;
 import org.springmodules.cache.regex.Perl5Regex;
 import org.springmodules.cache.regex.Regex;
@@ -34,7 +34,7 @@ import org.springmodules.cache.regex.Regex;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:42:12 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/25 06:53:16 $
  */
 public final class BracketSeparatedPropertiesParser {
 
@@ -111,7 +111,7 @@ public final class BracketSeparatedPropertiesParser {
    */
   public static Properties parseProperties(String propertiesAsText) {
 
-    if (StringUtils.isEmpty(propertiesAsText)) {
+    if (!StringUtils.hasText(propertiesAsText)) {
       throw new IllegalArgumentException(
           "The String to parse should not be empty");
     }

@@ -18,8 +18,6 @@
 
 package org.springmodules.cache.provider.ehcache;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
@@ -29,7 +27,7 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:39 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:20 $
  */
 public final class EhCacheProfileTests extends AbstractJavaBeanTests {
 
@@ -62,22 +60,15 @@ public final class EhCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedHashCode()
    */
   protected int getExpectedHashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(5, 7);
-    hashCodeBuilder.append(this.cacheProfile.getCacheName());
-
-    int expectedHashCode = hashCodeBuilder.toHashCode();
-    return expectedHashCode;
+    return this.cacheProfile.getCacheName().hashCode();
   }
 
   /**
    * @see AbstractJavaBeanTests#getExpectedToString()
    */
   protected String getExpectedToString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this.cacheProfile);
-    toStringBuilder.append("cacheName", this.cacheProfile.getCacheName());
-
-    String expectedToString = toStringBuilder.toString();
-    return expectedToString;
+    return "EhCacheProfile: cacheName='" + this.cacheProfile.getCacheName()
+        + "'";
   }
 
   /**

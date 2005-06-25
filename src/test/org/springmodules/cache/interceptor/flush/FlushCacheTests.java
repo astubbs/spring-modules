@@ -18,8 +18,8 @@
 
 package org.springmodules.cache.interceptor.flush;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import java.util.Arrays;
+
 import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
@@ -29,7 +29,7 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:04 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:16 $
  */
 public final class FlushCacheTests extends AbstractJavaBeanTests {
 
@@ -62,26 +62,16 @@ public final class FlushCacheTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedHashCode()
    */
   protected int getExpectedHashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(5, 7);
-    hashCodeBuilder.append(this.flushCache.getCacheProfileIds());
-    hashCodeBuilder.append(this.flushCache.isFlushBeforeExecution());
-
-    int expectedHashCode = hashCodeBuilder.toHashCode();
-    return expectedHashCode;
+    return 1;
   }
 
   /**
    * @see AbstractJavaBeanTests#getExpectedToString()
    */
   protected String getExpectedToString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this.flushCache);
-    toStringBuilder.append("cacheProfileIds", this.flushCache
-        .getCacheProfileIds());
-    toStringBuilder.append("flushedBeforeExecution", this.flushCache
-        .isFlushBeforeExecution());
-
-    String expectedToString = toStringBuilder.toString();
-    return expectedToString;
+    return "FlushCache: cacheProfileIds="
+        + Arrays.toString(this.flushCache.getCacheProfileIds())
+        + ", flushBeforeExecution=" + this.flushCache.isFlushBeforeExecution();
   }
 
   /**

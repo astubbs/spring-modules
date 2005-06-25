@@ -18,8 +18,8 @@
 
 package org.springmodules.cache.provider.oscache;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import java.util.Arrays;
+
 import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
@@ -29,14 +29,14 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:26 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:18 $
  */
 public final class OsCacheProfileTests extends AbstractJavaBeanTests {
 
   /**
    * Primary object (instance of the class to test).
    */
-  private OsCacheProfile profile;
+  private OsCacheProfile cacheProfile;
 
   /**
    * Constructor.
@@ -66,26 +66,19 @@ public final class OsCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedHashCode()
    */
   protected int getExpectedHashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(3, 11);
-    hashCodeBuilder.append(this.profile.getCronExpression());
-    hashCodeBuilder.append(this.profile.getGroups());
-    hashCodeBuilder.append(this.profile.getRefreshPeriod());
-
-    int expectedHashCode = hashCodeBuilder.toHashCode();
-    return expectedHashCode;
+    int result = (this.cacheProfile.getCronExpression().hashCode());
+    result = 29 * result + (this.cacheProfile.getRefreshPeriod().hashCode());
+    return result;
   }
 
   /**
    * @see AbstractJavaBeanTests#getExpectedToString()
    */
   protected String getExpectedToString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this.profile);
-    toStringBuilder.append("refreshPeriod", this.profile.getRefreshPeriod());
-    toStringBuilder.append("groups", this.profile.getGroups());
-    toStringBuilder.append("cronExpression", this.profile.getCronExpression());
-
-    String expectedToString = toStringBuilder.toString();
-    return expectedToString;
+    return "OsCacheProfile: refreshPeriod="
+        + this.cacheProfile.getRefreshPeriod() + ", groups="
+        + Arrays.toString(this.cacheProfile.getGroups()) + ", cronExpression='"
+        + this.cacheProfile.getCronExpression() + "'";
   }
 
   /**
@@ -104,7 +97,7 @@ public final class OsCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getPrimaryObject()
    */
   protected Object getPrimaryObject() {
-    return this.profile;
+    return this.cacheProfile;
   }
 
   /**
@@ -113,26 +106,26 @@ public final class OsCacheProfileTests extends AbstractJavaBeanTests {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.profile = new OsCacheProfile();
-    this.profile.setCronExpression("* * 0 0 0");
-    this.profile.setGroups("Test,Valid");
-    this.profile.setRefreshPeriod(43);
+    this.cacheProfile = new OsCacheProfile();
+    this.cacheProfile.setCronExpression("* * 0 0 0");
+    this.cacheProfile.setGroups("Test,Valid");
+    this.cacheProfile.setRefreshPeriod(43);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link OsCacheProfile#setGroups(String)}</code> sets the array
-   * of groups equal to <code>null</code> if an empty String is passed as
+   * <code>{@link OsCacheProfile#setGroups(String)}</code> sets the array of
+   * groups equal to <code>null</code> if an empty String is passed as
    * argument.
    */
   public void testSetGroupsWithEmptyString() {
 
     assertTrue("The profile should have groups",
-        this.profile.getGroups().length > 0);
+        this.cacheProfile.getGroups().length > 0);
 
-    this.profile.setGroups("");
+    this.cacheProfile.setGroups("");
 
-    assertNull("The profile should not have any group", this.profile
+    assertNull("The profile should not have any group", this.cacheProfile
         .getGroups());
   }
 }

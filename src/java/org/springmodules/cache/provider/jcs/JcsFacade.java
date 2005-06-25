@@ -20,7 +20,6 @@ package org.springmodules.cache.provider.jcs;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jcs.engine.CacheElement;
@@ -30,6 +29,7 @@ import org.apache.jcs.engine.control.CompositeCache;
 import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheWrapperException;
 import org.springmodules.cache.EntryRetrievalException;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
@@ -46,7 +46,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/05/29 02:00:54 $
+ * @version $Revision: 1.7 $ $Date: 2005/06/25 06:53:20 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -96,7 +96,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     Serializable key = null;
 
     String group = profile.getGroup();
-    if (StringUtils.isEmpty(group)) {
+    if (!StringUtils.hasText(group)) {
       key = cacheKey;
     } else {
       GroupId groupId = new GroupId(profile.getCacheName(), group);
@@ -114,7 +114,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
 
     String cacheName = profile.getCacheName();
-    if (StringUtils.isNotEmpty(cacheName)) {
+    if (StringUtils.hasText(cacheName)) {
       CompositeCache cache = this.cacheManager.getCache(cacheName);
       if (cache == null) {
         if (logger.isInfoEnabled()) {
@@ -131,7 +131,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
                   + cacheGroup);
         }
 
-        if (StringUtils.isEmpty(cacheGroup)) {
+        if (!StringUtils.hasText(cacheGroup)) {
           try {
             cache.removeAll();
           } catch (Exception exception) {
@@ -164,7 +164,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
     
-    if (StringUtils.isNotEmpty(cacheName)) {
+    if (StringUtils.hasText(cacheName)) {
       CompositeCache cache = this.cacheManager.getCache(cacheName);
 
       if (cache == null) {
@@ -196,7 +196,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
     String cacheName = profile.getCacheName();
 
-    if (StringUtils.isNotEmpty(cacheName)) {
+    if (StringUtils.hasText(cacheName)) {
       CompositeCache cache = this.cacheManager.getCache(cacheName);
 
       if (cache == null) {
@@ -240,7 +240,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
       String cacheName = profile.getCacheName();
 
-      if (StringUtils.isNotEmpty(cacheName)) {
+      if (StringUtils.hasText(cacheName)) {
         CompositeCache cache = this.cacheManager.getCache(cacheName);
 
         if (cache == null) {

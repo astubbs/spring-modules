@@ -21,8 +21,8 @@ import java.beans.PropertyEditorSupport;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.propertyeditors.PropertiesEditor;
+import org.springframework.util.StringUtils;
 
 /**
  * <p>
@@ -52,7 +52,7 @@ import org.springframework.beans.propertyeditors.PropertiesEditor;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:38:07 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:18 $
  */
 public class CacheFlushAttributeSourceEditor extends PropertyEditorSupport {
 
@@ -65,7 +65,7 @@ public class CacheFlushAttributeSourceEditor extends PropertyEditorSupport {
    *          the <code>String</code> to be parsed.
    */
   public void setAsText(String text) {
-    if (StringUtils.isNotEmpty(text)) {
+    if (StringUtils.hasText(text)) {
       MethodMapCacheFlushAttributeSource cacheFlushAttributeSource = new MethodMapCacheFlushAttributeSource();
 
       PropertiesEditor propertiesEditor = new PropertiesEditor();

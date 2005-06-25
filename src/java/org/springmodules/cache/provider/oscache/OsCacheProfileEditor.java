@@ -20,7 +20,7 @@ package org.springmodules.cache.provider.oscache;
 
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfile;
 
@@ -35,7 +35,7 @@ import com.opensymphony.oscache.base.CacheEntry;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:06 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:21 $
  */
 public final class OsCacheProfileEditor extends AbstractCacheProfileEditor {
 
@@ -75,7 +75,7 @@ public final class OsCacheProfileEditor extends AbstractCacheProfileEditor {
 
       Integer refreshPeriod = null;
 
-      if (StringUtils.isNotEmpty(refreshPeriodString)) {
+      if (StringUtils.hasText(refreshPeriodString)) {
         if (refreshPeriodString.equalsIgnoreCase("INDEFINITE_EXPIRY")) {
           refreshPeriod = new Integer(CacheEntry.INDEFINITE_EXPIRY);
         } else {

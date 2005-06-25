@@ -21,8 +21,8 @@ import java.beans.PropertyEditorSupport;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.propertyeditors.PropertiesEditor;
+import org.springframework.util.StringUtils;
 
 /**
  * <p>
@@ -53,7 +53,7 @@ import org.springframework.beans.propertyeditors.PropertiesEditor;
  * @author Xavier Dury
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:08 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/25 06:53:17 $
  */
 public class CachingAttributeSourceEditor extends PropertyEditorSupport {
 
@@ -66,7 +66,7 @@ public class CachingAttributeSourceEditor extends PropertyEditorSupport {
    *          the <code>String</code> to be parsed.
    */
   public void setAsText(String text) {
-    if (StringUtils.isNotEmpty(text)) {
+    if (StringUtils.hasText(text)) {
       MethodMapCachingAttributeSource cachingAttributeSource = new MethodMapCachingAttributeSource();
 
       PropertiesEditor propertiesEditor = new PropertiesEditor();

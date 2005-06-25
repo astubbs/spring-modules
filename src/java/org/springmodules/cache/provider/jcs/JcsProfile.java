@@ -18,9 +18,6 @@
 
 package org.springmodules.cache.provider.jcs;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springmodules.cache.provider.CacheProfile;
 
 /**
@@ -35,7 +32,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:22 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:20 $
  */
 public class JcsProfile implements CacheProfile {
 
@@ -74,21 +71,25 @@ public class JcsProfile implements CacheProfile {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof JcsProfile)) {
-      equals = false;
-    } else if (this != obj) {
-      JcsProfile profile = (JcsProfile) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getCacheName(), profile.getCacheName());
-      equalsBuilder.append(this.getGroup(), profile.getGroup());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof JcsProfile)) {
+      return false;
     }
 
-    return equals;
+    final JcsProfile jcsProfile = (JcsProfile) obj;
+
+    if (this.cacheName != null ? !this.cacheName.equals(jcsProfile.cacheName)
+        : jcsProfile.cacheName != null) {
+      return false;
+    }
+    if (this.group != null ? !this.group.equals(jcsProfile.group)
+        : jcsProfile.group != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -119,12 +120,9 @@ public class JcsProfile implements CacheProfile {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(3, 7);
-    hashCodeBuilder.append(this.getCacheName());
-    hashCodeBuilder.append(this.getGroup());
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    int result = (this.cacheName != null ? this.cacheName.hashCode() : 0);
+    result = 29 * result + (this.group != null ? this.group.hashCode() : 0);
+    return result;
   }
 
   /**
@@ -157,11 +155,7 @@ public class JcsProfile implements CacheProfile {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("cacheName", this.getCacheName());
-    toStringBuilder.append("group", this.getGroup());
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "JcsProfile: cacheName='" + this.cacheName + "', group='"
+        + this.group + "'";
   }
 }

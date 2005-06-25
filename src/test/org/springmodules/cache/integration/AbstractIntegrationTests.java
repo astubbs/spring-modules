@@ -21,8 +21,8 @@ package org.springmodules.cache.integration;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.interceptor.caching.CachingAspectSupport;
 import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
 
@@ -34,7 +34,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/20 00:10:15 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/25 06:53:19 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
@@ -154,8 +154,8 @@ public abstract class AbstractIntegrationTests extends
     int nameIndex = 0;
 
     String cachedObject = this.target.getName(nameIndex);
-    assertFalse("The retrieved name should not be empty", StringUtils
-        .isEmpty(cachedObject));
+    assertTrue("The retrieved name should not be empty", StringUtils
+        .hasText(cachedObject));
 
     // verify the return value of the called method was cached.
     this.assertObjectWasCached(cachedObject, nameIndex);

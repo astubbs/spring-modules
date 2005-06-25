@@ -18,7 +18,7 @@
 
 package org.springmodules.cache.provider.jcs;
 
-import org.apache.commons.lang.StringUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.CacheProfileValidator;
 
 /**
@@ -28,7 +28,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:21 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:20 $
  */
 public class JcsProfileValidator implements CacheProfileValidator {
 
@@ -49,7 +49,7 @@ public class JcsProfileValidator implements CacheProfileValidator {
    *           if the cache name is empty or <code>null</code>.
    */
   protected final void validateCacheName(String cacheName) {
-    if (StringUtils.isEmpty(cacheName)) {
+    if (!StringUtils.hasText(cacheName)) {
       throw new IllegalArgumentException("Cache name should not be empty");
     }
   }

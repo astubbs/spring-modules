@@ -20,8 +20,6 @@
 
 package org.springmodules.cache.provider.jcs;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
@@ -31,14 +29,14 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:11 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:19 $
  */
 public final class JcsProfileTests extends AbstractJavaBeanTests {
 
   /**
    * Primary object (instance of the class to test).
    */
-  private JcsProfile profile;
+  private JcsProfile cacheProfile;
 
   /**
    * Constructor.
@@ -65,24 +63,17 @@ public final class JcsProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedHashCode()
    */
   protected int getExpectedHashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(3, 7);
-    hashCodeBuilder.append(this.profile.getCacheName());
-    hashCodeBuilder.append(this.profile.getGroup());
-
-    int expectedHashCode = hashCodeBuilder.toHashCode();
-    return expectedHashCode;
+    int result = (this.cacheProfile.getCacheName().hashCode());
+    result = 29 * result + (this.cacheProfile.getGroup().hashCode());
+    return result;
   }
 
   /**
    * @see AbstractJavaBeanTests#getExpectedToString()
    */
   protected String getExpectedToString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this.profile);
-    toStringBuilder.append("cacheName", this.profile.getCacheName());
-    toStringBuilder.append("group", this.profile.getGroup());
-
-    String expectedToString = toStringBuilder.toString();
-    return expectedToString;
+    return "JcsProfile: cacheName='" + this.cacheProfile.getCacheName()
+        + "', group='" + this.cacheProfile.getGroup() + "'";
   }
 
   /**
@@ -100,7 +91,7 @@ public final class JcsProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getPrimaryObject()
    */
   protected Object getPrimaryObject() {
-    return this.profile;
+    return this.cacheProfile;
   }
 
   /**
@@ -109,8 +100,8 @@ public final class JcsProfileTests extends AbstractJavaBeanTests {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.profile = new JcsProfile();
-    this.profile.setCacheName("main");
-    this.profile.setGroup("test");
+    this.cacheProfile = new JcsProfile();
+    this.cacheProfile.setCacheName("main");
+    this.cacheProfile.setGroup("test");
   }
 }

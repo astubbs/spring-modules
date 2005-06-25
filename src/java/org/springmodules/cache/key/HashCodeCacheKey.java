@@ -20,8 +20,6 @@ package org.springmodules.cache.key;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 /**
  * <p>
  * Cache key which value is based on a pre-calculated hash code.
@@ -29,7 +27,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:31 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/25 06:53:18 $
  */
 public final class HashCodeCacheKey implements Serializable {
 
@@ -84,21 +82,23 @@ public final class HashCodeCacheKey implements Serializable {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof HashCodeCacheKey)) {
-      equals = false;
-    } else if (this != obj) {
-      HashCodeCacheKey cacheKey = (HashCodeCacheKey) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getCheckSum(), cacheKey.getCheckSum());
-      equalsBuilder.append(this.getHashCode(), cacheKey.getHashCode());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof HashCodeCacheKey)) {
+      return false;
     }
 
-    return equals;
+    final HashCodeCacheKey hashCodeCacheKey = (HashCodeCacheKey) obj;
+
+    if (this.checkSum != hashCodeCacheKey.checkSum) {
+      return false;
+    }
+    if (this.hashCode != hashCodeCacheKey.hashCode) {
+      return false;
+    }
+
+    return true;
   }
 
   /**

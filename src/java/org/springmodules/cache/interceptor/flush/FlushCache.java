@@ -18,9 +18,8 @@
 
 package org.springmodules.cache.interceptor.flush;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import java.util.Arrays;
+
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheAttribute;
 
@@ -32,7 +31,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:19 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/25 06:53:18 $
  */
 public class FlushCache implements CacheAttribute {
 
@@ -124,23 +123,23 @@ public class FlushCache implements CacheAttribute {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof FlushCache)) {
-      equals = false;
-    } else if (this != obj) {
-      FlushCache flushCache = (FlushCache) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getCacheProfileIds(), flushCache
-          .getCacheProfileIds());
-      equalsBuilder.append(this.isFlushBeforeExecution(), flushCache
-          .isFlushBeforeExecution());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof FlushCache)) {
+      return false;
     }
 
-    return equals;
+    final FlushCache flushCache = (FlushCache) obj;
+
+    if (this.flushBeforeExecution != flushCache.flushBeforeExecution) {
+      return false;
+    }
+    if (!Arrays.equals(this.cacheProfileIds, flushCache.cacheProfileIds)) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -162,12 +161,7 @@ public class FlushCache implements CacheAttribute {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(5, 7);
-    hashCodeBuilder.append(this.getCacheProfileIds());
-    hashCodeBuilder.append(this.isFlushBeforeExecution());
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    return (this.flushBeforeExecution ? 1 : 0);
   }
 
   /**
@@ -222,13 +216,9 @@ public class FlushCache implements CacheAttribute {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("cacheProfileIds", this.getCacheProfileIds());
-    toStringBuilder.append("flushedBeforeExecution", this
-        .isFlushBeforeExecution());
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "FlushCache: cacheProfileIds="
+        + Arrays.toString(this.cacheProfileIds) + ", flushBeforeExecution="
+        + this.flushBeforeExecution;
   }
 
 }
