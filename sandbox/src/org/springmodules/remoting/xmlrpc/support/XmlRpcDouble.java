@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/06/25 21:01:32 $
+ * @version $Revision: 1.10 $ $Date: 2005/06/25 21:24:36 $
  */
 public final class XmlRpcDouble implements XmlRpcScalar {
 
@@ -146,7 +146,9 @@ public final class XmlRpcDouble implements XmlRpcScalar {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    return (this.value != null ? this.value.hashCode() : 0);
+    int hash = 7;
+    hash = 31 * hash + (this.value != null ? this.value.hashCode() : 0);
+    return hash;
   }
 
   /**

@@ -32,7 +32,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/25 21:01:32 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/25 21:24:36 $
  */
 public final class XmlRpcStruct implements XmlRpcElement {
 
@@ -106,9 +106,10 @@ public final class XmlRpcStruct implements XmlRpcElement {
      * @see Object#hashCode()
      */
     public int hashCode() {
-      int result = (this.name != null ? this.name.hashCode() : 0);
-      result = 29 * result + (this.value != null ? this.value.hashCode() : 0);
-      return result;
+      int hash = 7;
+      hash = 31 * hash + (this.name != null ? this.name.hashCode() : 0);
+      hash = 31 * hash + (this.value != null ? this.value.hashCode() : 0);
+      return hash;
     }
 
     /**

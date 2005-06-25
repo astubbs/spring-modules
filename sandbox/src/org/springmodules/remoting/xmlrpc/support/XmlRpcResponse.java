@@ -26,7 +26,7 @@ import java.util.Arrays;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/25 21:01:33 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/25 21:24:36 $
  */
 public final class XmlRpcResponse {
 
@@ -132,9 +132,12 @@ public final class XmlRpcResponse {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    int result = (this.fault != null ? this.fault.hashCode() : 0);
-    result = 29 * result + (this.faultThrown ? 1 : 0);
-    return result;
+    int hash = 7;
+    hash = 31 * hash + (this.fault != null ? this.fault.hashCode() : 0);
+    hash = 31 * hash + (this.faultThrown ? 1 : 0);
+    hash = 31 * hash
+        + (this.parameters != null ? this.parameters.hashCode() : 0);
+    return hash;
   }
 
   /**
