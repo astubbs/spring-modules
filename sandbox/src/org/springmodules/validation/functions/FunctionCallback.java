@@ -16,23 +16,19 @@
 package org.springmodules.validation.functions;
 
 /**
- * <p>NOT operation on boolean values.
+ * <p>The FunctionCallback interface should be implemented by functions
+ * that want to delegate exception reporting to a helper class.
  * 
  * @author Steven Devijver
- * @since Apr 23, 2005
+ * @since Jun 25, 2005
  */
-public class NotFunction extends AbstractFunction {
+public interface FunctionCallback {
 
-	public NotFunction(Function function, int line, int column) {
-		super(function, line, column);
-	}
-
-	public Object getResult(Object target) {
-		return getTemplate().execute(target, new FunctionCallback() {
-			public Object execute(Object target) throws Exception {
-				return !(((Boolean)getFunction().getResult(target)).booleanValue()) ? Boolean.TRUE : Boolean.FALSE;
-			}
-		});
-	}
-
+	/**
+	 * <p>Callback method execute by helper classes.
+	 * 
+	 * @param target the target object
+	 * @return the result of the execution
+	 */
+	public Object execute(Object target) throws Exception;
 }

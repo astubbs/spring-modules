@@ -23,12 +23,16 @@ package org.springmodules.validation.functions;
  */
 public class LowerCaseFunction extends AbstractFunction {
 	
-	public LowerCaseFunction(Function function) {
-		super(function);
+	public LowerCaseFunction(Function function, int line, int column) {
+		super(function, line, column);
 	}
 
 	public Object getResult(Object target) {
-		return getFunction().getResult(target).toString().toLowerCase();
+		return getTemplate().execute(target, new FunctionCallback() {
+			public Object execute(Object target) throws Exception {
+				return getFunction().getResult(target).toString().toLowerCase();
+			}
+		});
 	}
 
 }

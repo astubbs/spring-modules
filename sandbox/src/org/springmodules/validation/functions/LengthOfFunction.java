@@ -24,12 +24,16 @@ package org.springmodules.validation.functions;
  */
 public class LengthOfFunction extends AbstractFunction {
 
-	public LengthOfFunction(Function function) {
-		super(function);
+	public LengthOfFunction(Function function, int line, int column) {
+		super(function, line, column);
 	}
 	
 	public Object getResult(Object target) {
-		return new Integer(getFunction().getResult(target).toString().length());
+		return getTemplate().execute(target, new FunctionCallback() {
+			public Object execute(Object target) throws Exception {
+				return new Integer(getFunction().getResult(target).toString().length());
+			}
+		});
 	}
 
 }

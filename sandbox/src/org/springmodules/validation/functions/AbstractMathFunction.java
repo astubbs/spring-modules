@@ -7,12 +7,14 @@ public abstract class AbstractMathFunction implements Function {
 
 	private Function leftFunction = null;
 	private Function rightFunction = null;
+	private FunctionTemplate template = null;
 	
-	public AbstractMathFunction(Function leftFunction, Function rightFunction) {
+	public AbstractMathFunction(Function leftFunction, Function rightFunction, int line, int column) {
 		super();
 		
 		setLeftFunction(leftFunction);
 		setRightFunction(rightFunction);
+		setTemplate(new FunctionTemplate(line, column));
 	}
 
 	private void setLeftFunction(Function leftFunction) {
@@ -37,6 +39,14 @@ public abstract class AbstractMathFunction implements Function {
 	
 	protected final Function getRightFunction() {
 		return this.rightFunction;
+	}
+	
+	private void setTemplate(FunctionTemplate template) {
+		this.template = template;
+	}
+	
+	protected FunctionTemplate getTemplate() {
+		return this.template;
 	}
 	
 	protected final static double transform(Object o) {

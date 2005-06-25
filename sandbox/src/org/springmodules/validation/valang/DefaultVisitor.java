@@ -49,26 +49,26 @@ public class DefaultVisitor implements ValangVisitor {
 		super();
 	}
 
-	public Function getFunction(String name, Function function) {
+	public Function getFunction(String name, Function function, int line, int column) {
 		if (getVisitor() != null) {
-			Function tmpFunction = getVisitor().getFunction(name, function);
+			Function tmpFunction = getVisitor().getFunction(name, function, line, column);
 			if (tmpFunction != null) {
 				return tmpFunction;
 			}
 		}
 		
 		if ("len".equals(name)) {
-			return new LengthOfFunction(function);
+			return new LengthOfFunction(function, line, column);
 		} else if ("length".equals(name)) {
-			return new LengthOfFunction(function);
+			return new LengthOfFunction(function, line, column);
 		} else if ("size".equals(name)) {
-			return new LengthOfFunction(function);
+			return new LengthOfFunction(function, line, column);
 		} else if ("upper".equals(name)) {
-			return new UpperCaseFunction(function);
+			return new UpperCaseFunction(function, line, column);
 		} else if ("lower".equals(name)) {
-			return new LowerCaseFunction(function);
+			return new LowerCaseFunction(function, line, column);
 		} else if ("!".equals(name)) {
-			return new NotFunction(function);
+			return new NotFunction(function, line, column);
 		}
 
 		throw new IllegalArgumentException("Could not find function [" + name + "]!");

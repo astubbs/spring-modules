@@ -16,23 +16,27 @@
 package org.springmodules.validation.functions;
 
 /**
- * <p>NOT operation on boolean values.
+ * 
  * 
  * @author Steven Devijver
- * @since Apr 23, 2005
+ * @since Jun 25, 2005
  */
-public class NotFunction extends AbstractFunction {
+public class FunctionTemplate {
 
-	public NotFunction(Function function, int line, int column) {
-		super(function, line, column);
+	private int line = 0;
+	private int column = 0;
+	
+	public FunctionTemplate(int line, int column) {
+		super();
+		this.line = line;
+		this.column = column;
 	}
 
-	public Object getResult(Object target) {
-		return getTemplate().execute(target, new FunctionCallback() {
-			public Object execute(Object target) throws Exception {
-				return !(((Boolean)getFunction().getResult(target)).booleanValue()) ? Boolean.TRUE : Boolean.FALSE;
-			}
-		});
+	public Object execute(Object target, FunctionCallback functionCallback) {
+		try {
+			return functionCallback.execute(target);
+		} catch (Exception e) {
+			throw new RuntimeException("Exception occured in script at line " + this.line + ", column " + this.column + " [" + e.getClass().getName() + ": " + e.getMessage() + "]", e);
+		}
 	}
-
 }

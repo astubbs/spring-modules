@@ -24,10 +24,12 @@ package org.springmodules.validation.functions;
 public abstract class AbstractFunction implements Function {
 
 	private Function function = null;
+	private FunctionTemplate template = null;
 	
-	public AbstractFunction(Function function) {
+	public AbstractFunction(Function function, int line, int column) {
 		super();
 		setFunction(function);
+		setTemplate(new FunctionTemplate(line, column));
 	}
 
 	protected Function getFunction() {
@@ -41,6 +43,14 @@ public abstract class AbstractFunction implements Function {
 		this.function = function;
 	}
 
+	private void setTemplate(FunctionTemplate template) {
+		this.template = template;
+	}
+	
+	protected FunctionTemplate getTemplate() {
+		return this.template;
+	}
+	
 	public abstract Object getResult(Object target);
 
 }

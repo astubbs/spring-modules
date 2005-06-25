@@ -311,14 +311,16 @@ Function function(Function fieldFunction) :
     String function = null;
     Function leftFunction = null;
     Function rightFunction = null;
+    int line = 0;
+    int column = 0;
 }
 {
     (
         LOOKAHEAD(2)
         ( "!" | <PATH> ) 
-        { function = token.image; } 
+        { function = token.image; line = token.beginLine; column = token.beginColumn; } 
         "(" leftFunction = function(fieldFunction) ")" 
-        { leftFunction = getVisitor().getFunction(function, leftFunction); }
+        { leftFunction = getVisitor().getFunction(function, leftFunction, line, column); }
     |   leftFunction = beanPropertyOrLiteral(fieldFunction)
     |	"?" { leftFunction = fieldFunction; }
     |	"(" leftFunction = additiveExpr(fieldFunction) ")"
@@ -332,11 +334,13 @@ Function additiveExpr(Function fieldFunction) :
 {
 	Function leftFunction = null;
 	Function rightFunction = null;
+	int line = 0;
+	int column = 0;
 }
 {
 	leftFunction = subtractiveExpr(fieldFunction)
 	( 
-		<ADD> rightFunction = subtractiveExpr(fieldFunction) { leftFunction = new AddFunction(leftFunction, rightFunction); }
+		<ADD> { line = token.beginLine; column = token.beginColumn; } rightFunction = subtractiveExpr(fieldFunction) { leftFunction = new AddFunction(leftFunction, rightFunction, line, column); }
 	)*
 	{
 		return leftFunction;
@@ -347,11 +351,13 @@ Function subtractiveExpr(Function fieldFunction) :
 {
 	Function leftFunction = null;
 	Function rightFunction = null;
+	int line = 0;
+	int column = 0;
 }
 {
 	leftFunction = multiplicativeExpr(fieldFunction)
 	( 
-		<SUBTRACT> rightFunction = multiplicativeExpr(fieldFunction) { leftFunction = new SubtractFunction(leftFunction, rightFunction); }
+		<SUBTRACT> { line = token.beginLine; column = token.beginColumn; } rightFunction = multiplicativeExpr(fieldFunction) { leftFunction = new SubtractFunction(leftFunction, rightFunction, line, column); }
 	)*
 	{
 		return leftFunction;
@@ -362,13 +368,15 @@ Function multiplicativeExpr(Function fieldFunction) :
 {
 	Function leftFunction = null;
 	Function rightFunction = null;
+	int line = 0;
+	int column = 0;
 }
 {
 	leftFunction = function(fieldFunction)
 	(
-		<MULTIPLY>	rightFunction = function(fieldFunction) { leftFunction = new MultiplyFunction(leftFunction, rightFunction); }
-	|	<DIVIDE>	rightFunction = function(fieldFunction) { leftFunction = new DivideFunction(leftFunction, rightFunction); }
-	|	<MOD>		rightFunction = function(fieldFunction) { leftFunction = new ModuloFunction(leftFunction, rightFunction); }
+		<MULTIPLY> { line = token.beginLine; column = token.beginColumn; } rightFunction = function(fieldFunction) { leftFunction = new MultiplyFunction(leftFunction, rightFunction, line, column); }
+	|	<DIVIDE> { line = token.beginLine; column = token.beginColumn; } rightFunction = function(fieldFunction) { leftFunction = new DivideFunction(leftFunction, rightFunction, line, column); }
+	|	<MOD> { line = token.beginLine; column = token.beginColumn; } rightFunction = function(fieldFunction) { leftFunction = new ModuloFunction(leftFunction, rightFunction, line, column); }
 	)*
 	{
 		return leftFunction;
