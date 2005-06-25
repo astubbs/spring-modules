@@ -31,7 +31,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/25 21:39:59 $
+ * @version $Revision: 1.6 $ $Date: 2005/06/25 22:54:29 $
  */
 public class FlushCache implements CacheAttribute {
 
@@ -163,6 +163,18 @@ public class FlushCache implements CacheAttribute {
   public int hashCode() {
     int hash = 7;
     hash = 31 * hash + (this.flushBeforeExecution ? 1 : 0);
+
+    if (this.cacheProfileIds == null) {
+      hash = 31 * hash;
+    } else {
+      int cacheProfileIdCount = this.cacheProfileIds.length;
+      for (int i = 0; i < cacheProfileIdCount; i++) {
+        String cacheProfileId = this.cacheProfileIds[i];
+        hash = 31 * hash
+            + (cacheProfileId != null ? cacheProfileId.hashCode() : 0);
+      }
+    }
+
     return hash;
   }
 

@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/25 21:39:58 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/25 22:54:29 $
  */
 public class OsCacheProfile implements CacheProfile {
 
@@ -148,6 +148,17 @@ public class OsCacheProfile implements CacheProfile {
     int hash = 7;
     hash = 31 * hash
         + (this.cronExpression != null ? this.cronExpression.hashCode() : 0);
+
+    if (this.groups == null) {
+      hash = 31 * hash;
+    } else {
+      int groupCount = this.groups.length;
+      for (int i = 0; i < groupCount; i++) {
+        String group = this.groups[i];
+        hash = 31 * hash + (group != null ? group.hashCode() : 0);
+      }
+    }
+
     hash = 31 * hash
         + (this.refreshPeriod != null ? this.refreshPeriod.hashCode() : 0);
     return hash;

@@ -29,7 +29,7 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/25 21:40:00 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/25 22:54:30 $
  */
 public final class FlushCacheTests extends AbstractJavaBeanTests {
 
@@ -64,6 +64,15 @@ public final class FlushCacheTests extends AbstractJavaBeanTests {
   protected int getExpectedHashCode() {
     int hash = 7;
     hash = 31 * hash + 1;
+
+    String[] cacheProfileIds = this.flushCache.getCacheProfileIds();
+    int cacheProfileIdCount = cacheProfileIds.length;
+    for (int i = 0; i < cacheProfileIdCount; i++) {
+      String cacheProfileId = cacheProfileIds[i];
+      hash = 31 * hash
+          + (cacheProfileId != null ? cacheProfileId.hashCode() : 0);
+    }
+    
     return hash;
   }
 
