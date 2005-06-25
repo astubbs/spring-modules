@@ -22,10 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /**
  * <p>
  * Represents a XML-RPC array.
@@ -33,7 +29,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/23 01:47:00 $
+ * @version $Revision: 1.6 $ $Date: 2005/06/25 21:01:33 $
  */
 public final class XmlRpcArray implements XmlRpcElement {
 
@@ -71,20 +67,31 @@ public final class XmlRpcArray implements XmlRpcElement {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof XmlRpcArray)) {
-      equals = false;
-    } else if (this != obj) {
-      XmlRpcArray xmlRpcArray = (XmlRpcArray) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getElements(), xmlRpcArray.getElements());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof XmlRpcArray)) {
+      return false;
     }
 
-    return equals;
+    final XmlRpcArray xmlRpcArray = (XmlRpcArray) obj;
+
+    if (this.elements != null ? !this.elements.equals(xmlRpcArray.elements)
+        : xmlRpcArray.elements != null) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Returns the elements of this array.
+   * 
+   * @return the elements of this array.
+   */
+  public XmlRpcElement[] getElements() {
+    return (XmlRpcElement[]) this.elements
+        .toArray(new XmlRpcElement[this.elements.size()]);
   }
 
   /**
@@ -96,7 +103,7 @@ public final class XmlRpcArray implements XmlRpcElement {
    *          the target type.
    * @return an array of objects of the specified type.
    */
-  private Object getArrayMatchingValue(Class targetType) {
+  private Object getMatchingArrayValue(Class targetType) {
     Object matchingValue = null;
 
     Class componentType = targetType.getComponentType();
@@ -131,7 +138,7 @@ public final class XmlRpcArray implements XmlRpcElement {
    * 
    * @return an collection of scalar values.
    */
-  private Object getCollectionMatchingValue() {
+  private Object getMatchingCollectionValue() {
     Object matchingValue = null;
 
     boolean matching = true;
@@ -159,16 +166,6 @@ public final class XmlRpcArray implements XmlRpcElement {
   }
 
   /**
-   * Returns the elements of this array.
-   * 
-   * @return the elements of this array.
-   */
-  public XmlRpcElement[] getElements() {
-    return (XmlRpcElement[]) this.elements
-        .toArray(new XmlRpcElement[this.elements.size()]);
-  }
-
-  /**
    * Returns:
    * <ul>
    * <li>An array. If the specified type is an array and all the elements of
@@ -182,19 +179,19 @@ public final class XmlRpcArray implements XmlRpcElement {
    *          the target type.
    * @return an array or collection depending on the given target typeF.
    * 
-   * @see #getArrayMatchingValue(Class)
-   * @see #getCollectionMatchingValue()
+   * @see #getMatchingArrayValue(Class)
+   * @see #getMatchingCollectionValue()
    * @see XmlRpcElement#getMatchingValue(Class)
    */
   public Object getMatchingValue(Class targetType) {
     Object matchingValue = NOT_MATCHING;
 
     if (targetType.isArray()) {
-      matchingValue = this.getArrayMatchingValue(targetType);
+      matchingValue = this.getMatchingArrayValue(targetType);
 
     } else if (Collection.class.equals(targetType)
         || List.class.equals(targetType) || ArrayList.class.equals(targetType)) {
-      matchingValue = this.getCollectionMatchingValue();
+      matchingValue = this.getMatchingCollectionValue();
     }
 
     return matchingValue;
@@ -210,11 +207,7 @@ public final class XmlRpcArray implements XmlRpcElement {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1429, 1433);
-    hashCodeBuilder.append(this.elements);
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    return (this.elements != null ? this.elements.hashCode() : 0);
   }
 
   /**
@@ -227,10 +220,6 @@ public final class XmlRpcArray implements XmlRpcElement {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("elements", this.elements);
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "XmlRpcArray: elements=" + this.elements;
   }
 }

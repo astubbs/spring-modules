@@ -22,9 +22,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 
 /**
@@ -34,7 +31,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/06/23 01:47:02 $
+ * @version $Revision: 1.8 $ $Date: 2005/06/25 21:01:33 $
  */
 public final class XmlRpcDateTime implements XmlRpcScalar {
 
@@ -95,20 +92,21 @@ public final class XmlRpcDateTime implements XmlRpcScalar {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof XmlRpcDateTime)) {
-      equals = false;
-    } else if (this != obj) {
-      XmlRpcDateTime xmlRpcDateTime = (XmlRpcDateTime) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getValue(), xmlRpcDateTime.getValue());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof XmlRpcDateTime)) {
+      return false;
     }
 
-    return equals;
+    final XmlRpcDateTime xmlRpcDateTime = (XmlRpcDateTime) obj;
+
+    if (this.value != null ? !this.value.equals(xmlRpcDateTime.value)
+        : xmlRpcDateTime.value != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -136,7 +134,7 @@ public final class XmlRpcDateTime implements XmlRpcScalar {
   public String getValueAsString() {
     return this.dateFormat.format(this.value);
   }
-  
+
   /**
    * Returns a hash code value for the object. This method is supported for the
    * benefit of hashtables such as those provided by
@@ -147,11 +145,7 @@ public final class XmlRpcDateTime implements XmlRpcScalar {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1579, 1583);
-    hashCodeBuilder.append(this.value);
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    return (this.value != null ? this.value.hashCode() : 0);
   }
 
   /**
@@ -164,10 +158,6 @@ public final class XmlRpcDateTime implements XmlRpcScalar {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("value", this.value);
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "XmlRpcDateTime: value=" + this.value;
   }
 }

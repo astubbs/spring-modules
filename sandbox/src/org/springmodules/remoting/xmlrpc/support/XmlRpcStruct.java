@@ -22,9 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
@@ -35,7 +32,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/23 01:46:59 $
+ * @version $Revision: 1.4 $ $Date: 2005/06/25 21:01:32 $
  */
 public final class XmlRpcStruct implements XmlRpcElement {
 
@@ -78,21 +75,25 @@ public final class XmlRpcStruct implements XmlRpcElement {
      * @see Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-      boolean equals = true;
-
-      if (null == obj || !(obj instanceof XmlRpcMember)) {
-        equals = false;
-      } else if (this != obj) {
-        XmlRpcMember xmlRpcMember = (XmlRpcMember) obj;
-
-        EqualsBuilder equalsBuilder = new EqualsBuilder();
-        equalsBuilder.append(this.name, xmlRpcMember.name);
-        equalsBuilder.append(this.value, xmlRpcMember.value);
-
-        equals = equalsBuilder.isEquals();
+      if (this == obj) {
+        return true;
+      }
+      if (!(obj instanceof XmlRpcMember)) {
+        return false;
       }
 
-      return equals;
+      final XmlRpcMember xmlRpcMember = (XmlRpcMember) obj;
+
+      if (this.name != null ? !this.name.equals(xmlRpcMember.name)
+          : xmlRpcMember.name != null) {
+        return false;
+      }
+      if (this.value != null ? !this.value.equals(xmlRpcMember.value)
+          : xmlRpcMember.value != null) {
+        return false;
+      }
+
+      return true;
     }
 
     /**
@@ -105,12 +106,9 @@ public final class XmlRpcStruct implements XmlRpcElement {
      * @see Object#hashCode()
      */
     public int hashCode() {
-      HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1787, 1789);
-      hashCodeBuilder.append(this.name);
-      hashCodeBuilder.append(this.value);
-
-      int hashCode = hashCodeBuilder.toHashCode();
-      return hashCode;
+      int result = (this.name != null ? this.name.hashCode() : 0);
+      result = 29 * result + (this.value != null ? this.value.hashCode() : 0);
+      return result;
     }
 
     /**
@@ -123,12 +121,8 @@ public final class XmlRpcStruct implements XmlRpcElement {
      * @see Object#toString()
      */
     public String toString() {
-      ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-      toStringBuilder.append("name", this.name);
-      toStringBuilder.append("value", this.value);
-
-      String toString = toStringBuilder.toString();
-      return toString;
+      return "XmlRpcMember: name='" + this.name + ", value='" + this.value
+          + "'";
     }
   }
 
@@ -179,20 +173,21 @@ public final class XmlRpcStruct implements XmlRpcElement {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof XmlRpcStruct)) {
-      equals = false;
-    } else if (this != obj) {
-      XmlRpcStruct xmlRpcStruct = (XmlRpcStruct) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getMembers(), xmlRpcStruct.getMembers());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof XmlRpcStruct)) {
+      return false;
     }
 
-    return equals;
+    final XmlRpcStruct xmlRpcStruct = (XmlRpcStruct) obj;
+
+    if (this.members != null ? !this.members.equals(xmlRpcStruct.members)
+        : xmlRpcStruct.members != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -332,11 +327,7 @@ public final class XmlRpcStruct implements XmlRpcElement {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(2011, 2017);
-    hashCodeBuilder.append(this.members);
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    return (this.members != null ? this.members.hashCode() : 0);
   }
 
   /**
@@ -349,10 +340,6 @@ public final class XmlRpcStruct implements XmlRpcElement {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("members", this.members);
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "XmlRpcStruct: members=" + this.members;
   }
 }

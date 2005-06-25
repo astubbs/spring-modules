@@ -17,10 +17,9 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
+import java.util.Arrays;
+
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * <p>
@@ -29,7 +28,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/23 01:47:01 $
+ * @version $Revision: 1.6 $ $Date: 2005/06/25 21:01:33 $
  */
 public final class XmlRpcBase64 implements XmlRpcScalar {
 
@@ -70,20 +69,20 @@ public final class XmlRpcBase64 implements XmlRpcScalar {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof XmlRpcBase64)) {
-      equals = false;
-    } else if (this != obj) {
-      XmlRpcBase64 xmlRpcBase64 = (XmlRpcBase64) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getValue(), xmlRpcBase64.getValue());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof XmlRpcBase64)) {
+      return false;
     }
 
-    return equals;
+    final XmlRpcBase64 xmlRpcBase64 = (XmlRpcBase64) obj;
+
+    if (!Arrays.equals(this.value, xmlRpcBase64.value)) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -123,11 +122,7 @@ public final class XmlRpcBase64 implements XmlRpcScalar {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1321, 1327);
-    hashCodeBuilder.append(this.value);
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    return 0;
   }
 
   /**
@@ -140,10 +135,6 @@ public final class XmlRpcBase64 implements XmlRpcScalar {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("value", this.value);
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "XmlRpcBase64: value=" + Arrays.toString(this.value);
   }
 }

@@ -17,9 +17,7 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import java.util.Arrays;
 
 /**
  * <p>
@@ -28,7 +26,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/23 01:47:02 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/25 21:01:33 $
  */
 public final class XmlRpcRequest {
 
@@ -83,23 +81,28 @@ public final class XmlRpcRequest {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof XmlRpcRequest)) {
-      equals = false;
-    } else if (this != obj) {
-      XmlRpcRequest xmlRpcRequest = (XmlRpcRequest) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getMethodName(), xmlRpcRequest.getMethodName());
-      equalsBuilder.append(this.getParameters(), xmlRpcRequest.getParameters());
-      equalsBuilder.append(this.getServiceName(), xmlRpcRequest
-          .getServiceName());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof XmlRpcRequest)) {
+      return false;
     }
 
-    return equals;
+    final XmlRpcRequest xmlRpcRequest = (XmlRpcRequest) obj;
+
+    if (this.methodName != null ? !this.methodName
+        .equals(xmlRpcRequest.methodName) : xmlRpcRequest.methodName != null) {
+      return false;
+    }
+    if (!Arrays.equals(this.parameters, xmlRpcRequest.parameters)) {
+      return false;
+    }
+    if (this.serviceName != null ? !this.serviceName
+        .equals(xmlRpcRequest.serviceName) : xmlRpcRequest.serviceName != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -139,13 +142,10 @@ public final class XmlRpcRequest {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(2281, 2287);
-    hashCodeBuilder.append(this.methodName);
-    hashCodeBuilder.append(this.parameters);
-    hashCodeBuilder.append(this.serviceName);
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    int result = (this.methodName != null ? this.methodName.hashCode() : 0);
+    result = 29 * result
+        + (this.serviceName != null ? this.serviceName.hashCode() : 0);
+    return result;
   }
 
   /**
@@ -213,12 +213,8 @@ public final class XmlRpcRequest {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("serviceName", this.serviceName);
-    toStringBuilder.append("methodName", this.methodName);
-    toStringBuilder.append("parameters", this.parameters);
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "XmlRpcRequest: serviceName='" + this.serviceName
+        + "', methodName='" + this.methodName + "', parameters="
+        + Arrays.toString(this.parameters);
   }
 }

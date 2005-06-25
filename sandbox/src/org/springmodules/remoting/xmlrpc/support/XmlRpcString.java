@@ -17,10 +17,6 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /**
  * <p>
  * Represents a string or a string representation of a 64-bit signed integer.
@@ -33,7 +29,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/06/23 01:47:00 $
+ * @version $Revision: 1.7 $ $Date: 2005/06/25 21:01:32 $
  */
 public final class XmlRpcString implements XmlRpcScalar {
 
@@ -74,20 +70,21 @@ public final class XmlRpcString implements XmlRpcScalar {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof XmlRpcString)) {
-      equals = false;
-    } else if (this != obj) {
-      XmlRpcString xmlRpcString = (XmlRpcString) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getValue(), xmlRpcString.getValue());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof XmlRpcString)) {
+      return false;
     }
 
-    return equals;
+    final XmlRpcString xmlRpcString = (XmlRpcString) obj;
+
+    if (this.value != null ? !this.value.equals(xmlRpcString.value)
+        : xmlRpcString.value != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -147,11 +144,7 @@ public final class XmlRpcString implements XmlRpcScalar {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(1217, 1223);
-    hashCodeBuilder.append(this.value);
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    return (this.value != null ? this.value.hashCode() : 0);
   }
 
   /**
@@ -164,10 +157,6 @@ public final class XmlRpcString implements XmlRpcScalar {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("value", this.value);
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "XmlRpcString: value=" + this.value;
   }
 }

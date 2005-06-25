@@ -17,9 +17,6 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 
 /**
@@ -29,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/06/23 01:47:00 $
+ * @version $Revision: 1.9 $ $Date: 2005/06/25 21:01:32 $
  */
 public final class XmlRpcDouble implements XmlRpcScalar {
 
@@ -88,20 +85,21 @@ public final class XmlRpcDouble implements XmlRpcScalar {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof XmlRpcDouble)) {
-      equals = false;
-    } else if (this != obj) {
-      XmlRpcDouble xmlRpcDouble = (XmlRpcDouble) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getValue(), xmlRpcDouble.getValue());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof XmlRpcDouble)) {
+      return false;
     }
 
-    return equals;
+    final XmlRpcDouble xmlRpcDouble = (XmlRpcDouble) obj;
+
+    if (this.value != null ? !this.value.equals(xmlRpcDouble.value)
+        : xmlRpcDouble.value != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -137,7 +135,7 @@ public final class XmlRpcDouble implements XmlRpcScalar {
   public String getValueAsString() {
     return this.value.toString();
   }
-    
+
   /**
    * Returns a hash code value for the object. This method is supported for the
    * benefit of hashtables such as those provided by
@@ -148,11 +146,7 @@ public final class XmlRpcDouble implements XmlRpcScalar {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(937, 941);
-    hashCodeBuilder.append(this.value);
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    return (this.value != null ? this.value.hashCode() : 0);
   }
 
   /**
@@ -165,10 +159,6 @@ public final class XmlRpcDouble implements XmlRpcScalar {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("value", this.value);
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "XmlRpcDouble: value=" + this.value;
   }
 }

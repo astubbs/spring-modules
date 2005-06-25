@@ -19,10 +19,6 @@ package org.springmodules.remoting.xmlrpc.support;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /**
  * <p>
  * Abstraction of a person.
@@ -30,7 +26,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/20 22:51:43 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/25 21:01:51 $
  */
 public class Person implements Serializable {
 
@@ -69,21 +65,24 @@ public class Person implements Serializable {
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
-    boolean equals = true;
-
-    if (null == obj || !(obj instanceof Person)) {
-      equals = false;
-    } else if (this != obj) {
-      Person person = (Person) obj;
-
-      EqualsBuilder equalsBuilder = new EqualsBuilder();
-      equalsBuilder.append(this.getId(), person.getId());
-      equalsBuilder.append(this.getName(), person.getName());
-
-      equals = equalsBuilder.isEquals();
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof Person)) {
+      return false;
     }
 
-    return equals;
+    final Person person = (Person) obj;
+
+    if (this.id != null ? !this.id.equals(person.id) : person.id != null) {
+      return false;
+    }
+    if (this.name != null ? !this.name.equals(person.name)
+        : person.name != null) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -114,12 +113,9 @@ public class Person implements Serializable {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    HashCodeBuilder hashCodeBuilder = new HashCodeBuilder(239, 241);
-    hashCodeBuilder.append(this.id);
-    hashCodeBuilder.append(this.name);
-
-    int hashCode = hashCodeBuilder.toHashCode();
-    return hashCode;
+    int result = (this.id != null ? this.id.hashCode() : 0);
+    result = 29 * result + (this.name != null ? this.name.hashCode() : 0);
+    return result;
   }
 
   /**
@@ -152,11 +148,6 @@ public class Person implements Serializable {
    * @see Object#toString()
    */
   public String toString() {
-    ToStringBuilder toStringBuilder = new ToStringBuilder(this);
-    toStringBuilder.append("id", this.id);
-    toStringBuilder.append("name", this.name);
-
-    String toString = toStringBuilder.toString();
-    return toString;
+    return "Person: id=" + this.id + ", name='" + this.name + "'";
   }
 }
