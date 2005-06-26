@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+
+<project name="setupDB" basedir="." default="all">
+
+  <target name="dropHSQLTables">
+		<echo message="DROP TABLES USING: ${db.driver} ${db.url}"/>
+
+    <sql driver="${db.driver}"
+         url="${db.url}"
+         userid="${db.user}"
+         password="${db.pw}"
+         onerror="continue">  
+
+			<classpath>
+				<fileset dir="../../../lib">
+					<include name="hsqldb/hsqldb.jar"/>
+				</fileset>
+			</classpath>
+
+			DROP TABLE visits;
+			DROP TABLE pets;
+			DROP TABLE owners;
+			DROP TABLE types;
+			DROP TABLE vet_specialties;
+			DROP TABLE specialties;
+			DROP TABLE vets;
+
+    </sql> 
+  </target>
+
+
+  <target name="createHSQLTables">
+		<echo message="CREATE TABLES USING: ${db.driver} ${db.url}"/>
+
+    <sql driver="${db.driver}"
+         url="${db.url}"
+         userid="${db.user}"
+         password="${db.pw}"
+         onerror="continue">  
+
+			<classpath>
+				<fileset dir="../../../lib">
+					<include name="hsqldb/hsqldb.jar"/>
+				</fileset>
+			</classpath>
+
+			CREATE TABLE vets (
+				id INTEGER NOT NULL IDENTITY PRIMARY KEY,
+				first_name VARCHAR(30),
+				last_name VARCHAR(30)
+			);
+			CREATE INDEX vets_last_name ON vets(last_name);
+
+			CREATE TABLE specialties (
+				id INTEGER NOT NULL IDENTITY PRIMARY KEY,
+				name VARCHAR(80)
+			);
+			CREATE INDEX specialties_name ON specialties(name);
+
+			CREATE TABLE vet_specialties (
+				vet_id INTEGER NOT NULL,
+				specialty_id INTEGER NOT NULL
+			);
+			alter table vet_specialties add constraint fk_vet_specialties_vets foreign key (vet_id) references vets(id);
+			alter table vet_specialties add constraint fk_vet_specialties_specialties foreign key (specialty_id) references specialties(id);
+
+			CREATE TABLE types (
+				id INTEGER NOT NULL IDENTITY PRIMARY KEY,
+				name VARCHAR(80)
+			);
+			CREATE INDEX types_name ON types(name);
+
+			CREATE TABLE owners (
+				id INTEGER NOT NULL IDENTITY PRIMARY KEY,
+				first_name VARCHAR(30),
+				last_name VARCHAR(30),
+				address VARCHAR(255),
+				city VARCHAR(80),
+				telephone VARCHAR(20)
+			);
+			CREATE INDEX owners_last_name ON owners(last_name);
+
+			CREATE TABLE pets (
+				id INTEGER NOT NULL IDENTITY PRIMARY KEY,
+				name VARCHAR(30),
+				birth_date DATE,
+				type_id INTEGER NOT NULL,
+				owner_id INTEGER NOT NULL
+			);
+			alter table pets add constraint fk_pets_owners foreign key (owner_id) references owners(id);
+			alter table pets add constraint fk_pets_types foreign key (type_id) references types(id);
+			CREATE INDEX pets_name ON pets(name);
+
+			CREATE TABLE visits (
+				id INTEGER NOT NULL IDENTITY PRIMARY KEY,
+				pet_id INTEGER NOT NULL,
+				visit_date DATE,
+				description VARCHAR(255)
+			);
+			alter table visits add constraint fk_visits_pets foreign key (pet_id) references pets(id);
+			CREATE INDEX visits_pet_id ON visits(pet_id);
+
+    </sql> 
+  </target>
+
+
+  <target name="emptyTables">
+		<echo message="USING: ${db.driver} ${db.url}"/>
+
+    <sql driver="${db.driver}"
+         url="${db.url}"
+         userid="${db.user}"
+         password="${db.pw}">  
+
+			<classpath>
+				<fileset dir="../../../lib">
+					<include name="hsqldb/hsqldb.jar"/>
+				</fileset>
+			</classpath>
+
+			DELETE FROM vets;
+			DELETE FROM specialties;
+			DELETE FROM vet_specialties;
+			DELETE FROM types;
+			DELETE FROM owners;
+			DELETE FROM pets;
+			DELETE FROM visits;
+
+    </sql> 
+  </target>
+
+
+  <target name="populateTables">
+		<echo message="USING: ${db.driver} ${db.url}"/>
+
+    <sql driver="${db.driver}"
+         url="${db.url}"
+         userid="${db.user}"
+         password="${db.pw}"  >
+
+			<classpath>
+				<fileset dir="../../../lib">
+					<include name="hsqldb/hsqldb.jar"/>
+				</fileset>
+			</classpath>
+
+			INSERT INTO vets VALUES (1, 'James', 'Carter');
+			INSERT INTO vets VALUES (2, 'Helen', 'Leary');
+			INSERT INTO vets VALUES (3, 'Linda', 'Douglas');
+			INSERT INTO vets VALUES (4, 'Rafael', 'Ortega');
+			INSERT INTO vets VALUES (5, 'Henry', 'Stevens');
+			INSERT INTO vets VALUES (6, 'Sharon', 'Jenkins');
+
+			INSERT INTO specialties VALUES (1, 'radiology');
+			INSERT INTO specialties VALUES (2, 'surgery');
+			INSERT INTO specialties VALUES (3, 'dentistry');
+
+			INSERT INTO vet_specialties VALUES (2, 1);
+			INSERT INTO vet_specialties VALUES (3, 2);
+			INSERT INTO vet_specialties VALUES (3, 3);
+			INSERT INTO vet_specialties VALUES (4, 2);
+			INSERT INTO vet_specialties VALUES (5, 1);
+
+			INSERT INTO types VALUES (1, 'cat');
+			INSERT INTO types VALUES (2, 'dog');
+			INSERT INTO types VALUES (3, 'lizard');
+			INSERT INTO types VALUES (4, 'snake');
+			INSERT INTO types VALUES (5, 'bird');
+			INSERT INTO types VALUES (6, 'hamster');
+
+			INSERT INTO owners VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Madison', '6085551023');
+			INSERT INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sun Prairie', '6085551749');
+			INSERT INTO owners VALUES (3, 'Eduardo', 'Rodriquez', '2693 Commerce St.', 'McFarland', '6085558763');
+			INSERT INTO owners VALUES (4, 'Harold', 'Davis', '563 Friendly St.', 'Windsor', '6085553198');
+			INSERT INTO owners VALUES (5, 'Peter', 'McTavish', '2387 S. Fair Way', 'Madison', '6085552765');
+			INSERT INTO owners VALUES (6, 'Jean', 'Coleman', '105 N. Lake St.', 'Monona', '6085552654');
+			INSERT INTO owners VALUES (7, 'Jeff', 'Black', '1450 Oak Blvd.', 'Monona', '6085555387');
+			INSERT INTO owners VALUES (8, 'Maria', 'Escobito', '345 Maple St.', 'Madison', '6085557683');
+			INSERT INTO owners VALUES (9, 'David', 'Schroeder', '2749 Blackhawk Trail', 'Madison', '6085559435');
+			INSERT INTO owners VALUES (10, 'Carlos', 'Estaban', '2335 Independence La.', 'Waunakee', '6085555487');
+
+			INSERT INTO pets VALUES (1, 'Leo', '2000-09-07', 1, 1);
+			INSERT INTO pets VALUES (2, 'Basil', '2002-08-06', 6, 2);
+			INSERT INTO pets VALUES (3, 'Rosy', '2001-04-17', 2, 3);
+			INSERT INTO pets VALUES (4, 'Jewel', '2000-03-07', 2, 3);
+			INSERT INTO pets VALUES (5, 'Iggy', '2000-11-30', 3, 4);
+			INSERT INTO pets VALUES (6, 'George', '2000-01-20', 4, 5);
+			INSERT INTO pets VALUES (7, 'Samantha', '1995-09-04', 1, 6);
+			INSERT INTO pets VALUES (8, 'Max', '1995-09-04', 1, 6);
+			INSERT INTO pets VALUES (9, 'Lucky', '1999-08-06', 5, 7);
+			INSERT INTO pets VALUES (10, 'Mulligan', '1997-02-24', 2, 8);
+			INSERT INTO pets VALUES (11, 'Freddy', '2000-03-09', 5, 9);
+			INSERT INTO pets VALUES (12, 'Lucky', '2000-06-24', 2, 10);
+			INSERT INTO pets VALUES (13, 'Sly', '2002-06-08', 1, 10);
+
+			INSERT INTO visits VALUES (1, 7, '1996-03-04', 'rabies shot');
+			INSERT INTO visits VALUES (2, 8, '1996-03-04', 'rabies shot');
+			INSERT INTO visits VALUES (3, 8, '1996-06-04', 'neutered');
+			INSERT INTO visits VALUES (4, 7, '1996-09-04', 'spayed');
+
+    </sql> 
+  </target>
+    
+  <target name="all" depends="dropHSQLTables,createHSQLTables,emptyTables,populateTables"/>
+    
+</project>

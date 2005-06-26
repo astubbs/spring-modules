@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition for PetClinic on O/R Broker.
+	-->
+<beans>
+
+	<!-- ========================= RESOURCE DEFINITIONS ========================= -->
+
+	<!-- Configurer that replaces ${...} placeholders with values from a properties file -->
+	<!-- (in this case, JDBC-related settings for the dataSource definition below) -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location"><value>/WEB-INF/jdbc.properties</value></property>
+	</bean>
+
+	<!--
+		Simple local DataSource that works in any environment.
+		This uses the JDBC DriverManager to obtain connections, and does NOT perform connection
+		pooling. Connection pooling is essential to all real-world applications.
+		This definition is good for getting started, as it introduces no dependencies beyond
+		the JDK, but DriverManagerDataSource is not intended for production usage.
+	 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"><value>${jdbc.driverClassName}</value></property>
+		<property name="url"><value>${jdbc.url}</value></property>
+		<property name="username"><value>${jdbc.username}</value></property>
+		<property name="password"><value>${jdbc.password}</value></property>
+	</bean>
+
+	<!--
+		Alternative local DataSource that works in any environment, and offers much better performance.
+		Uses Apache Commons DBCP for connection pooling. See Commons DBCP documentation
+		for the required JAR files. See the PetStore sample application also shipped with
+		Spring, for an example of Commons DBCP usage and the necessary build script.
+		Alternatively you can use another connection pool such as C3P0, similarly configured
+		using Spring.
+		A standalone connection pool such as Commons DBCP is a good choice for use outside an
+		application server environment, including web applications running in a web container without
+		JTA, or integration testing using the org.springframework.test package.
+	 -->
+	<!--
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName"><value>${jdbc.driverClassName}</value></property>
+		<property name="url"><value>${jdbc.url}</value></property>
+		<property name="username"><value>${jdbc.username}</value></property>
+		<property name="password"><value>${jdbc.password}</value></property>
+	</bean>
+	-->
+
+	<!-- JNDI DataSource for J2EE environments -->
+	<!--
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName"><value>java:comp/env/jdbc/petclinic</value></property>
+	</bean>
+	-->
+
+  <!-- BrokerFactoryBean -->
+  <bean id="clinicBroker" class="org.springmodules.orm.orbroker.BrokerFactoryBean">
+    <property name="dataSource" ref="dataSource"/>
+    <property name="configLocation" value="classpath:petclinic-broker.xml"/>
+  </bean>
+
+	<!-- Transaction manager for a single JDBC DataSource (alternative to JTA) -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource"><ref local="dataSource"/></property>
+	</bean>
+
+	<!-- Transaction manager that delegates to JTA (for a transactional JNDI DataSource) -->
+	<!--
+	<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"/>
+	-->
+
+
+	<!-- ========================= BUSINESS OBJECT DEFINITIONS ========================= -->
+
+	<!-- PetClinic's central data access object: HSQL ORBroker implementation -->
+	<!-- (only initialized when referenced by the "clinic" proxy) -->
+  <bean id="hsqlClinic" class="org.springframework.samples.petclinic.orbroker.HsqlBrokerClinic">
+    <property name="broker" ref="clinicBroker"/>
+	</bean>
+
+	<!-- PetClinic's central data access object: MySQL ORBroker implementation -->
+	<!-- (only initialized when referenced by the "clinic" proxy) -->
+  <bean id="mysqlClinic" class="org.springframework.samples.petclinic.orbroker.MySQLBrokerClinic">
+    <property name="broker" ref="clinicBroker"/>
+	</bean>
+
+	<!-- PetClinic's central data access object: PostgreSQL ORBroker implementation -->
+	<!-- (only initialized when referenced by the "clinic" proxy) -->
+  <bean id="postgresqlClinic" class="org.springframework.samples.petclinic.orbroker.PosgreSQLBrokerClinic">
+    <property name="broker" ref="clinicBroker"/>
+	</bean>
+
+	<!--
+		- Transactional proxy for PetClinic's central data access facade.
+		-
+		- Note that in a real-life app with multiple transaction proxies,
+		- you will probably want to use parent and child bean definitions
+		- as described in the manual, to reduce duplication.
+    -->
+	<bean id="clinic" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager"><ref local="transactionManager"/></property>
+		<property name="target"><ref bean="${petclinic.jdbcImplBeanName}"/></property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>

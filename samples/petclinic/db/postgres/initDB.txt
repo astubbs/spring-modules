@@ -1,0 +1,87 @@
+CREATE USER petclinic PASSWORD 'manager'
+  CREATEDB
+   VALID UNTIL 'infinity';
+
+CREATE DATABASE petclinic
+  WITH ENCODING='UNICODE'
+       OWNER=petclinic;
+
+CREATE SEQUENCE seq_owners;
+
+CREATE SEQUENCE seq_pets;
+
+CREATE SEQUENCE seq_visits;
+
+CREATE TABLE vets
+(
+   id int4,
+   fist_name varchar(30),
+   last_name varchar(30),
+   CONSTRAINT pk_vets PRIMARY KEY (id)
+) WITHOUT OIDS;
+
+CREATE INDEX idx_vets_last_name
+   ON vets (last_name);
+
+CREATE TABLE specialties
+(
+   id int4,
+   name varchar(80),
+   CONSTRAINT pk_specialities PRIMARY KEY (id)
+) WITHOUT OIDS;
+
+CREATE INDEX idx_specialties_name
+   ON specialties (name);
+
+CREATE TABLE vet_specialties
+(
+   vet_id int4,
+   specialty_id int4,
+   CONSTRAINT fk_vet_specialities_vets FOREIGN KEY (vet_id) REFERENCES vets (id)    ON UPDATE RESTRICT ON DELETE RESTRICT,
+   CONSTRAINT fk_vet_specialities_specialities FOREIGN KEY (specialty_id) REFERENCES specialties (id)    ON UPDATE RESTRICT ON DELETE RESTRICT
+) WITHOUT OIDS;
+
+CREATE INDEX idx_types_name
+   ON types (name);
+
+CREATE TABLE owners
+(
+   id int4,
+   first_name varchar(30),
+   last_name varchar(30),
+   address varchar(255),
+   city varchar(80),
+   telephone varchar(20),
+   CONSTRAINT pk_owners PRIMARY KEY (id)
+) WITHOUT OIDS;
+
+CREATE INDEX idx_owners_last_name
+   ON owners (last_name);
+
+CREATE TABLE pets
+(
+   id int4,
+   name varchar(30),
+   birth_date date,
+   type_id int4,
+   owner_id int4,
+   CONSTRAINT pk_pets PRIMARY KEY (id),
+   CONSTRAINT fk_pets_types FOREIGN KEY (type_id) REFERENCES types (id)    ON UPDATE RESTRICT ON DELETE RESTRICT,
+   CONSTRAINT fk_pets_owners FOREIGN KEY (owner_id) REFERENCES owners (id)    ON UPDATE RESTRICT ON DELETE RESTRICT
+) WITHOUT OIDS;
+
+CREATE INDEX idx_pets_name
+   ON pets (name);
+
+CREATE TABLE visits
+(
+   id int4,
+   pet_id int4,
+   visit_date date,
+   description varchar(255),
+   CONSTRAINT pk_visits PRIMARY KEY (id),
+   CONSTRAINT fk_visits_pets FOREIGN KEY (pet_id) REFERENCES pets (id)    ON UPDATE RESTRICT ON DELETE RESTRICT
+) WITHOUT OIDS;
+
+CREATE INDEX idx_visits_pet_id
+   ON visits (pet_id);

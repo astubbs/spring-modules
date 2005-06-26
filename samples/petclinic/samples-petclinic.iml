@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4" relativePaths="true" type="J2EE_WEB_MODULE" j2ee-integration="Tomcat Server">
+  <component name="ModuleRootManager" />
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/.classes" />
+    <exclude-output />
+    <exclude-exploded />
+    <output-test url="file://$MODULE_DIR$/.testclasses" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/junit-reports" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="spring-framework-1.2" level="project" />
+    <orderEntry type="library" name="jakarta-commons" level="project" />
+    <orderEntry type="library" name="junit-3.8" level="project" />
+    <orderEntry type="library" name="log4j-1.2.9" level="project" />
+    <orderEntry type="library" name="orbroker-2.0.1" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../dist/springmodules-sandbox.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="Tomcat 5.5.9" level="application_server_libraries" />
+    <orderEntry type="library" name="hsqldb-1.7" level="project" />
+    <orderEntryProperties />
+  </component>
+  <component name="WebModuleBuildComponent">
+    <setting name="EXPLODED_URL" value="file://" />
+    <setting name="EXPLODED_ENABLED" value="false" />
+    <setting name="JAR_URL" value="file://$MODULE_DIR$/dist/petclinic.war" />
+    <setting name="JAR_ENABLED" value="true" />
+    <setting name="SYNC_EXPLODED_DIR" value="true" />
+    <setting name="BUILD_ON_FRAME_DEACTIVATION" value="false" />
+    <setting name="RUN_JASPER_VALIDATION" value="true" />
+  </component>
+  <component name="WebModuleProperties">
+    <containerElement type="library" level="module">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib/springmodules-sandbox.jar" />
+      <url>jar://$MODULE_DIR$/../../dist/springmodules-sandbox.jar!/</url>
+    </containerElement>
+    <containerElement type="library" level="project" name="hsqldb-1.7">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib" />
+    </containerElement>
+    <containerElement type="library" level="project" name="log4j-1.2.9">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib" />
+    </containerElement>
+    <containerElement type="library" level="project" name="orbroker-2.0.1">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib" />
+    </containerElement>
+    <containerElement type="library" level="project" name="spring-framework-1.2">
+      <attribute name="method" value="1" />
+      <attribute name="URI" value="/WEB-INF/lib" />
+    </containerElement>
+    <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/war/WEB-INF/web.xml" version="2.3" />
+    <webroots>
+      <root url="file://$MODULE_DIR$/war" relative="/" />
+    </webroots>
+  </component>
+</module>
+

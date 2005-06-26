@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+  <!-- use HSqlDb -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+		<property name="url" value="jdbc:hsqldb:hsql://localhost:9001"/>
+		<property name="username" value="sa"/>
+		<property name="password" value=""/>
+	</bean>
+
+  <!-- use PostgresSQL -->
+  <!--
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.postgresql.Driver"/>
+		<property name="url" value="jdbc:postgresql://localhost:5432/petclinic"/>
+		<property name="username" value="petclinic"/>
+		<property name="password" value="manager"/>
+	</bean>
+  -->
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+
+	<!--
+		Note the use of an inner bean for the "target" property.
+		This ensures that there is only one instance of this bean in the
+		factory, allowing us to use autowire by type if necessary.
+	-->
+	<bean id="clinic" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="target">
+      <!-- HsqlBrokerClinic -->
+			<bean class="org.springframework.samples.petclinic.orbroker.HsqlBrokerClinic">
+        <property name="broker">
+          <!-- BrokerFactoryBean -->
+          <bean class="org.springmodules.orm.orbroker.BrokerFactoryBean">
+            <property name="dataSource" ref="dataSource"/>
+            <property name="configLocation" value="classpath:petclinic-broker.xml"/>
+          </bean>
+        </property>
+			</bean>
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>

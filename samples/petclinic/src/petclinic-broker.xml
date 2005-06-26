@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<broker name="Petclinic" version="2.0">
+
+  <result-object id="Vet" class="org.springframework.samples.petclinic.Vet" key-columns="id">
+    <property name="id"> <column name="id"/> </property>
+    <property name="firstName"> <column name="first_name"/> </property>
+    <property name="lastName"> <column name="last_name"/> </property>
+  </result-object>
+
+  <result-object id="Specialty" class="org.springframework.samples.petclinic.Specialty" key-columns="specialty_id">
+    <property name="id"> <column name="specialty_id"/> </property>
+    <property name="name"> <column name="specialty_name"/> </property>
+  </result-object>
+
+  <result-object id="Owner" class="org.springframework.samples.petclinic.Owner" key-columns="id">
+    <property name="id"> <column name="id"/> </property>
+    <property name="firstName"> <column name="first_name"/> </property>
+    <property name="lastName"> <column name="last_name"/> </property>
+    <property name="address"> <column name="address"/> </property>
+    <property name="city"> <column name="city"/> </property>
+    <property name="telephone"> <column name="telephone"/> </property>
+  </result-object>
+
+  <result-object id="Pet" class="org.springframework.samples.petclinic.orbroker.BrokerPet" key-columns="id">
+    <property name="id"> <column name="id"/> </property>
+    <property name="name"> <column name="name"/> </property>
+    <property name="birthDate"> <column name="birth_date"/> </property>
+    <!-- type -->
+    <method name="setType">
+      <argument>
+        <map-with result-object="PetType"/>
+      </argument>
+    </method>
+  </result-object>
+
+  <result-object id="PetType" class="org.springframework.samples.petclinic.PetType" key-columns="type_id">
+    <property name="id"> <column name="type_id"/> </property>
+    <property name="name"> <column name="type_name"/> </property>
+  </result-object>
+
+  <result-object id="Visit" class="org.springframework.samples.petclinic.orbroker.BrokerVisit" key-columns="id">
+    <property name="id"> <column name="id"/> </property>
+    <property name="date"> <column name="visit_date"/> </property>
+    <property name="description"> <column name="description"/> </property>
+  </result-object>
+
+
+  <sql-statement id="getVets" result-object="Vet"><![CDATA[
+    SELECT id, first_name, last_name
+      FROM vets
+  ORDER BY last_name, first_name
+  ]]></sql-statement>
+
+  <sql-statement id="getSpecialties" result-object="Specialty"><![CDATA[
+    SELECT id AS specialty_id, name as specialty_name
+      FROM specialties
+  ]]></sql-statement>
+
+  <sql-statement id="getSpecialtiesByVet"><![CDATA[
+    SELECT specialty_id
+      FROM vet_specialties
+     WHERE vet_id = :id
+  ]]></sql-statement>
+
+  <sql-statement id="getPetTypes" result-object="PetType"><![CDATA[
+    SELECT id AS type_id, name as type_name
+      FROM types
+  ORDER BY name
+  ]]></sql-statement>
+
+  <sql-statement id="findOwnersByLastName" result-object="Owner"><![CDATA[
+    SELECT id, first_name, last_name, address, city, telephone
+      FROM owners
+     WHERE last_name like :lastName
+  ]]></sql-statement>
+
+  <sql-statement id="loadOwner" result-object="Owner">
+    SELECT id, first_name, last_name, address, city, telephone
+      FROM owners
+    <append-statement id-suffix="ById">
+     WHERE id = :id
+    </append-statement>
+    <append-statement id-suffix="ByPet">
+     WHERE id = (SELECT owner_id
+                   FROM pets
+                  WHERE id = :id)
+    </append-statement>
+  </sql-statement>
+
+  <sql-statement id="loadPet" result-object="Pet">
+    SELECT p.id, p.name, p.birth_date, p.type_id, p.owner_id,
+           t.id as type_id, t.name as type_name
+      FROM pets p JOIN types t ON p.type_id = t.id
+    <append-statement id-suffix="ById">
+     WHERE p.id = :id
+    </append-statement>
+    <append-statement id-suffix="sByOwner">
+     WHERE p.owner_id = :id
+    </append-statement>
+    <append-statement id-suffix="ByVisit">
+     WHERE id = (SELECT pet_id
+                   FROM visits
+                  WHERE id = :id)
+    </append-statement>
+  </sql-statement>
+
+  <sql-statement id="getVisitsByPet" result-object="Visit"><![CDATA[
+    SELECT id, visit_date, description
+      FROM visits
+     WHERE pet_id = :id
+  ]]></sql-statement>
+
+  <sql-statement id="insertOwner"><![CDATA[
+    INSERT INTO owners (id, first_name, last_name, address, city, telephone)
+    VALUES (:owner.id, :owner.firstName, :owner.lastName, :owner.address, :owner.city, :owner.telephone)
+  ]]></sql-statement>
+
+  <sql-statement id="updateOwner"><![CDATA[
+    UPDATE owners
+       SET first_name = :owner.firstName,
+           last_name = :owner.lastName,
+           address = :owner.address,
+           city = :owner.city,
+           telephone = :owner.telephone
+     WHERE id = :owner.id
+  ]]></sql-statement>
+
+  <sql-statement id="insertPet"><![CDATA[
+    INSERT INTO pets (id, name, birth_date, type_id, owner_id)
+    VALUES (:pet.id, :pet.name, :pet.sqlBirthDate, :pet.type.id, :pet.owner.id)
+  ]]></sql-statement>
+
+  <sql-statement id="updatePet"><![CDATA[
+    UPDATE pets
+       SET name = :pet.name,
+           birth_date = :pet.sqlBirthDate,
+           type_id = :pet.type.id,
+           owner_id = :pet.owner.id
+     WHERE id = :pet.id
+  ]]></sql-statement>
+
+  <sql-statement id="insertVisit"><![CDATA[
+    INSERT INTO visits (id, pet_id, visit_date, description)
+    VALUES (:visit.id, :visit.pet.id, :visit.sqlDate, :visit.description)
+  ]]></sql-statement>
+
+
+  <sql-statement id="getHsqlIdentity"><![CDATA[
+    call identity()
+  ]]></sql-statement>
+
+  <sql-statement id="getMySqlIdentity"><![CDATA[
+    select last_insert_id()
+  ]]></sql-statement>
+
+  <sql-statement id="getPostgreSQLSequenceNextValue"><![CDATA[
+    select nextVal('{{sequenceName}}') as ID
+  ]]></sql-statement>
+
+</broker>
