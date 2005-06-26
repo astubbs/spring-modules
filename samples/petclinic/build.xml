@@ -29,7 +29,7 @@
 			<include name="springmodules-sandbox.jar"/>
 		</fileset>
 		<fileset dir="${springmodules.root}/lib/orbroker">
-			<include name="orbroker-2.0.1-debug.jar"/>
+			<include name="orbroker-2.0.2-debug.jar"/>
 		</fileset>
 		<fileset dir="${springmodules.root}/lib/jakarta-commons">
 			<include name="commons-logging.jar"/>

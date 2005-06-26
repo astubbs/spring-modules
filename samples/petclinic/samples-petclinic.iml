@@ -18,7 +18,7 @@
     <orderEntry type="library" name="jakarta-commons" level="project" />
     <orderEntry type="library" name="junit-3.8" level="project" />
     <orderEntry type="library" name="log4j-1.2.9" level="project" />
-    <orderEntry type="library" name="orbroker-2.0.1" level="project" />
+    <orderEntry type="library" name="orbroker-2.0.2" level="project" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -28,8 +28,8 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="Tomcat 5.5.9" level="application_server_libraries" />
     <orderEntry type="library" name="hsqldb-1.7" level="project" />
+    <orderEntry type="library" name="Tomcat 5.5.9" level="application_server_libraries" />
     <orderEntryProperties />
   </component>
   <component name="WebModuleBuildComponent">
@@ -55,7 +55,7 @@
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib" />
     </containerElement>
-    <containerElement type="library" level="project" name="orbroker-2.0.1">
+    <containerElement type="library" level="project" name="orbroker-2.0.2">
       <attribute name="method" value="1" />
       <attribute name="URI" value="/WEB-INF/lib" />
     </containerElement>
