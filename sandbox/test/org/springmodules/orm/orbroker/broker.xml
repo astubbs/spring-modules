@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<broker name="Test" version="2.0">
+
+  <sql-statement id="test"><![CDATA[
+    select 1 as ID
+  ]]></sql-statement>
+
+</broker>
