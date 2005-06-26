@@ -50,7 +50,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/23 01:48:09 $
+ * @version $Revision: 1.2 $ $Date: 2005/06/26 17:11:06 $
  */
 public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
 
@@ -158,11 +158,13 @@ public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
     builder.append("</data></array></value></param></params></methodCall>");
 
     String request = builder.toString();
-    this.logger.info("XML-RPC request: " + request);
 
     InputStream inputStream = new ByteArrayInputStream(request.getBytes());
     XmlRpcRequest actual = this.parser.parseRequest(inputStream);
 
+    this.logger.info("XML-RPC request: " + request);
+    this.logger.info(actual);
+    
     assertEquals("<XML-RPC request>", expected, actual);
   }
 
@@ -190,11 +192,13 @@ public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
     builder.append("</base64></value></param></params></methodCall>");
 
     String request = builder.toString();
-    this.logger.info("XML-RPC request: " + request);
 
     InputStream inputStream = new ByteArrayInputStream(request.getBytes());
     XmlRpcRequest actual = this.parser.parseRequest(inputStream);
 
+    this.logger.info("XML-RPC request: " + request);
+    this.logger.info(actual);
+    
     assertEquals("<XML-RPC request>", expected, actual);
   }
 
@@ -229,11 +233,13 @@ public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
     builder.append("</params></methodCall>");
 
     String request = builder.toString();
-    this.logger.info("XML-RPC request: " + request);
 
     InputStream inputStream = new ByteArrayInputStream(request.getBytes());
     XmlRpcRequest actual = this.parser.parseRequest(inputStream);
 
+    this.logger.info("XML-RPC request: " + request);
+    this.logger.info(actual);
+    
     assertEquals("<XML-RPC request>", expected, actual);
   }
 
@@ -264,11 +270,13 @@ public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
     builder.append("</dateTime.iso8601></value></param></params></methodCall>");
 
     String request = builder.toString();
-    this.logger.info("XML-RPC request: " + request);
 
     InputStream inputStream = new ByteArrayInputStream(request.getBytes());
     XmlRpcRequest actual = this.parser.parseRequest(inputStream);
 
+    this.logger.info("XML-RPC request: " + request);
+    this.logger.info(actual);
+    
     assertEquals("<XML-RPC request>", expected, actual);
   }
 
@@ -296,11 +304,13 @@ public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
     builder.append("</double></value></param></params></methodCall>");
 
     String request = builder.toString();
-    this.logger.info("XML-RPC request: " + request);
 
     InputStream inputStream = new ByteArrayInputStream(request.getBytes());
     XmlRpcRequest actual = this.parser.parseRequest(inputStream);
 
+    this.logger.info("XML-RPC request: " + request);
+    this.logger.info(actual);
+    
     assertEquals("<XML-RPC request>", expected, actual);
   }
 
@@ -343,11 +353,13 @@ public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
     builder.append("</params></methodCall>");
 
     String request = builder.toString();
-    this.logger.info("XML-RPC request: " + request);
 
     InputStream inputStream = new ByteArrayInputStream(request.getBytes());
     XmlRpcRequest actual = this.parser.parseRequest(inputStream);
 
+    this.logger.info("XML-RPC request: " + request);
+    this.logger.info(actual);
+    
     assertEquals("<XML-RPC request>", expected, actual);
   }
 
@@ -391,11 +403,13 @@ public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
     builder.append("</params></methodCall>");
 
     String request = builder.toString();
-    this.logger.info("XML-RPC request: " + request);
 
     InputStream inputStream = new ByteArrayInputStream(request.getBytes());
     XmlRpcRequest actual = this.parser.parseRequest(inputStream);
 
+    this.logger.info("XML-RPC request: " + request);
+    this.logger.info(actual);
+    
     assertEquals("<XML-RPC request>", expected, actual);
   }
 
@@ -436,11 +450,13 @@ public abstract class AbstractXmlRpcRequestParserTests extends TestCase {
     builder.append("</struct></value></param></params></methodCall>");
 
     String request = builder.toString();
-    this.logger.info("XML-RPC request: " + request);
 
     InputStream inputStream = new ByteArrayInputStream(request.getBytes());
     XmlRpcRequest actual = this.parser.parseRequest(inputStream);
 
+    this.logger.info("XML-RPC request: " + request);
+    this.logger.info(actual);
+    
     assertEquals("<XML-RPC request>", expected, actual);
   }
 }
