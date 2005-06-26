@@ -32,7 +32,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/25 21:24:36 $
+ * @version $Revision: 1.6 $ $Date: 2005/06/26 16:51:33 $
  */
 public final class XmlRpcStruct implements XmlRpcElement {
 
@@ -122,8 +122,7 @@ public final class XmlRpcStruct implements XmlRpcElement {
      * @see Object#toString()
      */
     public String toString() {
-      return "XmlRpcMember: name='" + this.name + ", value='" + this.value
-          + "'";
+      return "XmlRpcMember: name='" + this.name + "', value=" + this.value;
     }
   }
 
