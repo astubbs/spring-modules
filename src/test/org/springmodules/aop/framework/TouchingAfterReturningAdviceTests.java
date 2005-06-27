@@ -9,7 +9,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.aop.support.NameMatchMethodPointcutAdvisor;
 
 public class TouchingAfterReturningAdviceTests extends TestCase {
 
@@ -72,8 +71,8 @@ public class TouchingAfterReturningAdviceTests extends TestCase {
 	private Object getProxy(Object target, Object[] properties, String[] ognl, String[] mappedNames) {
 		TouchingNameMatchMethodAdvisor advisor = new TouchingNameMatchMethodAdvisor();
 		advisor.setMappedNames(mappedNames);
-		advisor.getAdvice().setProperties(properties);
-		advisor.getAdvice().setOgnl(ognl);
+		advisor.getTouchingAdvice().setProperties(properties);
+		advisor.getTouchingAdvice().setOgnl(ognl);
 		ProxyFactory pf = new ProxyFactory(target);
 		pf.addAdvisor(advisor);
 		return pf.getProxy();

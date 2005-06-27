@@ -28,12 +28,12 @@ public class TouchingNameMatchMethodAdvisor extends
 	 * configured with this advisor.
 	 * 
 	 * <p>To access the [properties] and [ognl] properties of
-	 * TouchingAfterReturningAdvice use <code>advice.properties</code>
-	 * and <code>advice.ognl</code>.
+	 * TouchingAfterReturningAdvice use <code>touchingAdvice.properties</code>
+	 * and <code>touchingAdvice.ognl</code>.
 	 * 
 	 * @return the TouchingAfterReturningAdvice instance
 	 */
-	public TouchingAfterReturningAdvice getAdvice() {
+	public TouchingAfterReturningAdvice getTouchingAdvice() {
 		return this.advice;
 	}
 }
