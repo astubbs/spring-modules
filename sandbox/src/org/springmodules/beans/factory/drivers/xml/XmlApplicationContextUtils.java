@@ -1,16 +1,20 @@
 package org.springmodules.beans.factory.drivers.xml;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.BeansException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.beans.factory.drivers.Alias;
 import org.springmodules.beans.factory.drivers.Bean;
@@ -25,12 +29,170 @@ import org.w3c.dom.Element;
 
 public class XmlApplicationContextUtils {
 
+	private static final String XERCES_XML_SERIALIZER = "org.apache.xml.serialize.XMLSerializer";
+	private static final String JAVA_15_XML_SERIALIZER = "com.sun.org.apache.xml.internal.serialize.XMLSerializer";
+	private static final String XERCES_DOCUMENT_IMPL = "org.apache.xerces.dom.DocumentImpl";
+	private static final String JAVA_15_DOCUMENT_IMPL = "com.sun.org.apache.xerces.internal.dom.DocumentImpl";
+	private static final String XERCES_OUTPUT_FORMAT = "org.apache.xml.serialize.OutputFormat";
+	private static final String JAVA_15_OUTPUT_FORMAT = "com.sun.org.apache.xml.internal.serialize.OutputFormat";
+	
 	private XmlApplicationContextUtils() {
 		super();
 	}
 
-	public static Resource convert2xml(Collection beanReferences) {
-		Document doc = new DocumentImpl();
+	private interface CallBack {
+		public Object execute() throws Exception;
+	}
+	
+	private static Object execute(CallBack callBack) throws BeansException {
+		try {
+			return callBack.execute();
+		} catch (Exception e) {
+			Throwable targetException = null;
+			if (e instanceof InvocationTargetException) {
+				targetException = ((InvocationTargetException)e).getTargetException();
+			} else {
+				targetException = e;
+			}
+			throw new BeansException("Error occured", targetException) {};
+		}
+	}
+	
+	private static Document getNewDocument() throws BeansException {
+		Class documentImplClass = null;
+		try {
+			if (documentImplClass == null) {
+				documentImplClass = ClassUtils.forName(JAVA_15_DOCUMENT_IMPL);
+			}
+		} catch (ClassNotFoundException e) {
+			// ignore.
+		}
+		try {
+			if (documentImplClass == null) {
+				documentImplClass = ClassUtils.forName(XERCES_DOCUMENT_IMPL);
+			}
+		} catch (ClassNotFoundException e) {
+			// ignore.
+		}
+		if (documentImplClass != null) {
+			final Class clazz = documentImplClass;
+			return (Document)execute(new CallBack() {
+				public Object execute() throws Exception {
+					return clazz.newInstance();
+				};
+			});
+		} else {
+			throw new BeansException("Could not load [" + JAVA_15_DOCUMENT_IMPL + "] or [" + XERCES_DOCUMENT_IMPL + "]!") {};
+		}
+	}
+	
+	private static Object getNewOutputFormat() throws BeansException {
+		Class outputFormatClass = null;
+		try {
+			if (outputFormatClass == null) {
+				outputFormatClass = ClassUtils.forName(JAVA_15_OUTPUT_FORMAT);
+			}
+		} catch (ClassNotFoundException e) {
+			// ignore.
+		}
+		try {
+			if (outputFormatClass == null) {
+				outputFormatClass = ClassUtils.forName(XERCES_OUTPUT_FORMAT);
+			}
+		} catch (ClassNotFoundException e) {
+			// ignore.
+		}
+		
+		if (outputFormatClass != null) {
+			final Class clazz = outputFormatClass;
+			return execute(new CallBack() {
+				public Object execute() throws Exception {
+					return clazz.newInstance();
+				}
+			});
+		} else {
+			throw new BeansException("Could not load [" + JAVA_15_OUTPUT_FORMAT + "] or [" + XERCES_OUTPUT_FORMAT + "]!") {};
+		}
+	}
+	
+	private static Class getXMLSerializerClass() {
+		Class xmlSerializerClass = null;
+		try {
+			if (xmlSerializerClass == null) {
+				xmlSerializerClass = ClassUtils.forName(JAVA_15_XML_SERIALIZER);
+			}
+		} catch (ClassNotFoundException e) {
+			// ignore.
+		}
+		try {
+			if (xmlSerializerClass == null) {
+				xmlSerializerClass = ClassUtils.forName(XERCES_XML_SERIALIZER);
+			} 
+		} catch (ClassNotFoundException e) {
+			// ignore.
+		}
+		
+		if (xmlSerializerClass != null) {
+			return xmlSerializerClass;
+		} else {
+			throw new BeansException("Could not load [" + JAVA_15_XML_SERIALIZER + "] or [" + XERCES_XML_SERIALIZER + "]!") {};
+		}
+	}
+	
+	private static void serialize(Element beans, Writer writer) throws BeansException {
+		final Object outputFormat = getNewOutputFormat();
+		BeanWrapper outputFormatBeanWrapper = new BeanWrapperImpl(outputFormat);
+		outputFormatBeanWrapper.setPropertyValue("method", "XML");
+		outputFormatBeanWrapper.setPropertyValue("encoding", "UTF-8");
+		outputFormatBeanWrapper.setPropertyValue("indent", "1");
+		outputFormatBeanWrapper.setPropertyValue("indenting", "true");
+		Method setDocTypeMethod = (Method)execute(new CallBack() {
+			public Object execute() throws Exception {
+				return outputFormat.getClass().getMethod("setDoctype", new Class[] { String.class, String.class});
+			}
+		});
+		invokeMethod(setDocTypeMethod, outputFormat, new Object[] { "-//SPRING//DTD BEAN//EN", "http://www.springframework.org/dtd/spring-beans.dtd"});
+		final Class xmlSerializerClass = getXMLSerializerClass();
+		Object xmlSerializer = getNewXMLSerializer(xmlSerializerClass, outputFormat, writer);
+		Method asDOMSerializerMethod = (Method)execute(new CallBack() {
+			public Object execute() throws Exception {
+				return xmlSerializerClass.getMethod("asDOMSerializer", new Class[] {});
+			}
+		});
+		invokeMethod(asDOMSerializerMethod, xmlSerializer, new Object[] {});
+		Method serializeMethod = serializeMethod = (Method)execute(new CallBack() {
+				public Object execute() throws Exception {
+					return xmlSerializerClass.getMethod("serialize", new Class[] { Element.class });
+				}
+			}); 
+		invokeMethod(serializeMethod, xmlSerializer, new Object[] { beans });
+	}
+	
+	private static Object invokeMethod(Method method, Object target, Object[] values) throws BeansException {
+		try {
+			return method.invoke(target, values);
+		} catch (Exception e) {
+			Throwable targetException = null;
+			if (e instanceof InvocationTargetException) {
+				targetException = ((InvocationTargetException)e).getTargetException();
+			} else {
+				targetException = e;
+			}
+			throw new BeansException("Error invoking method [" + method + "] on target [" + target + "] with values [" + values + "]!", targetException) {};
+		}
+	}
+	
+	private static Object getNewXMLSerializer(final Class clazz, final Object outputformat, final Writer writer) {
+		return execute(new CallBack() {
+			public Object execute() throws Exception {
+				Constructor constructor = clazz.getConstructor(new Class[] { Writer.class, outputformat.getClass()});
+				return constructor.newInstance(new Object[] { writer, outputformat });				
+			};
+		});
+	}
+	
+	public static Resource convert2xml(Collection beanReferences) throws BeansException {
+		Document doc = getNewDocument();
 		Element beans = doc.createElement("beans");
 		doc.appendChild(beans);
 		
@@ -50,19 +212,9 @@ public class XmlApplicationContextUtils {
 			}
 		}
 			
-		OutputFormat of = new OutputFormat("XML", "UTF-8", true);
-		of.setIndent(1);
-		of.setIndenting(true);
-		of.setDoctype("-//SPRING//DTD BEAN//EN", "http://www.springframework.org/dtd/spring-beans.dtd");
 			
 		StringWriter sw = new StringWriter();
-		try {
-			XMLSerializer serializer = new XMLSerializer(sw, of);
-			serializer.asDOMSerializer();
-			serializer.serialize(beans);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		serialize(beans, sw);
 		
 		return new InputStreamResource(new ByteArrayInputStream(sw.getBuffer().toString().getBytes()));
 	}
