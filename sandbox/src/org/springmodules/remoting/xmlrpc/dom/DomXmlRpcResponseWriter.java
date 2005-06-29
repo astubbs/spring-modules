@@ -46,7 +46,7 @@ import org.w3c.dom.Element;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/23 02:13:48 $
+ * @version $Revision: 1.5 $ $Date: 2005/06/29 17:24:13 $
  */
 public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
     implements XmlRpcResponseWriter {
@@ -77,6 +77,15 @@ public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
     return faultElement;
   }
 
+  /**
+   * Creates the XML representation of the given XML-RPC method response.
+   * 
+   * @param response
+   *          the XML-RPC method response.
+   * @param document
+   *          the XML document used to create new XML elements.
+   * @return the created XML element.
+   */
   protected Element createMethodResponseElement(XmlRpcResponse response,
       Document document) {
 
