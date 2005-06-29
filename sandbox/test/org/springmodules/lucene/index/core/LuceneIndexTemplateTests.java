@@ -33,13 +33,18 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.RAMDirectory;
 import org.easymock.MockControl;
 import org.springmodules.lucene.index.FileExtensionNotSupportedException;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 import org.springmodules.lucene.index.support.file.DocumentHandler;
 import org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManager;
+import org.springmodules.lucene.search.core.HitExtractor;
+import org.springmodules.lucene.search.core.LuceneSearchTemplate;
 import org.springmodules.lucene.search.core.MockSimpleSearcherFactory;
+import org.springmodules.lucene.search.factory.SearcherFactory;
+import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
 
 import junit.framework.TestCase;
 
@@ -60,18 +65,21 @@ public class LuceneIndexTemplateTests extends TestCase {
 		IndexWriter writer=new IndexWriter(directory,new SimpleAnalyzer(),true);
 		//Adding a document
 		Document document1=new Document();
+		document1.add(Field.Keyword("id", "1"));
 		document1.add(Field.Text("field", "a sample"));
 		document1.add(Field.Text("filter", "a sample filter"));
 		document1.add(Field.Keyword("sort", "2"));
 		writer.addDocument(document1);
 		//Adding a document
 		Document document2=new Document();
+		document2.add(Field.Keyword("id", "2"));
 		document2.add(Field.Text("field", "a Lucene support sample"));
 		document2.add(Field.Text("filter", "another sample filter"));
 		document2.add(Field.Keyword("sort", "3"));
 		writer.addDocument(document2);
 		//Adding a document
 		Document document3=new Document();
+		document3.add(Field.Keyword("id", "3"));
 		document3.add(Field.Text("field", "a different sample"));
 		document3.add(Field.Text("filter", "another sample filter"));
 		document3.add(Field.Keyword("sort", "1"));
@@ -425,6 +433,68 @@ public class LuceneIndexTemplateTests extends TestCase {
 		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),2);
 		//Check if the writer of the template is closed
 		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+	}
+
+	final public void testUpdateDocument() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+
+		//Lucene template
+		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		final boolean[] called = {false,false};
+		template.updateDocument(new DocumentModifier() {
+			public Document updateDocument(Document document) throws IOException {
+				called[0]=true;
+				String id=document.get("id");
+				String field=document.get("field");
+				String filter=document.get("filter");
+				String sort=document.get("sort");
+				
+				Document updatedDocument=new Document();
+				updatedDocument.add(Field.Keyword("id", id));
+				updatedDocument.add(Field.Text("field", "test"));
+				updatedDocument.add(Field.Text("filter", filter));
+				updatedDocument.add(Field.Keyword("sort", sort));
+				return updatedDocument;
+			}
+		},new DocumentIdentifier() {
+			public Term getIdentifier() {
+				called[1]=true;
+				return new Term("id","2");
+			}
+		});
+
+		//Check if a writer has been opened
+		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
+		//Check if a writer has been opened
+		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),2);
+
+		//Check if the writer calls the updateDocument method
+		assertTrue(called[0]);
+		//Check if the writer calls the getIdentifier method
+		assertTrue(called[1]);
+
+		//Check if the writer calls the addDocument method
+		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
+		//Check if the reader calls the delete method
+		assertEquals(indexFactory.getReaderListener().getIndexReaderDeletedId(),1);
+
+		//Check if the writer of the template is closed
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+		//Check if the writer of the template is closed
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),2);
+
+		SearcherFactory searcherFactory=new SimpleSearcherFactory(indexFactory);
+		LuceneSearchTemplate searchTemplate=new LuceneSearchTemplate(searcherFactory,analyzer);
+		List fields=searchTemplate.search(new TermQuery(new Term("id","2")),new HitExtractor() {
+			public Object mapHit(int id, Document document, float score) {
+				return document.get("field");
+			}
+		});
+		assertEquals(fields.size(),1);
+		assertEquals((String)fields.get(0),"test");
 	}
 
 	final public void testOptimize() throws Exception {
