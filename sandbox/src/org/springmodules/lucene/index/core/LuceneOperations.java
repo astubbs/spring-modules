@@ -81,17 +81,6 @@ public interface LuceneOperations {
 	boolean hasDeletions();
 
 	/**
-	 * Flush every updates in the index. For example, documents marked as
-	 * deleted will really be removed and documents really added. As Lucene
-	 * deletes really these documents at the IndexReader close and adds really,
-	 * these at the IndexWriter close, this method is useful only if you
-	 * don't share resources across several calls. In the contrary, the call
-	 * of this method has no effect on the index.
-	 * Note: At this time, the method is not implemented.
-	 */
-	void flush();
-
-	/**
 	 * Get the next document number which will be used to internally
 	 * identify a document. Be aware that, if you share resources
 	 * across several calls, this number is modified at every document
@@ -240,6 +229,34 @@ public interface LuceneOperations {
 	 * @param analyzer the Lucene analyzer to use to index
 	 */
 	void addDocuments(DocumentsCreator creator,Analyzer analyzer);
+
+	/**
+	 * Update a document thanks to a callback method defined in the
+	 * DocumentModifier interface using the callback method defined
+	 * in the DocumentIdentifier interface to identify it.
+	 * In fact, with Lucene, you can't update a document of the index.
+	 * So you need to remove the document and insert a new one with
+	 * the modified fields.
+	 * This method does the remove and the add operations for you.
+	 * @param documentModifier the implementation of DocumentModifier to get the modified documen
+	 * @param identifierthe implementation of DocumentIdentifier to identify the document to modify
+	 */
+	void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier);
+
+	/**
+	 * Update a document thanks to a callback method defined in the
+	 * DocumentModifier interface using the callback method defined
+	 * in the DocumentIdentifier interface to identify it.
+	 * In fact, with Lucene, you can't update a document of the index.
+	 * So you need to remove the document and insert a new one with
+	 * the modified fields.
+	 * This method does the remove and the add operations for you with
+	 * a specified analyzer.
+	 * @param documentModifier the implementation of DocumentModifier to get the modified documen
+	 * @param identifierthe implementation of DocumentIdentifier to identify the document to modify
+	 * @param analyzer the Lucene analyzer to use to index
+	 */
+	void updateDocument(DocumentModifier documentUpdater,DocumentIdentifier identifier,Analyzer analyzer);
 
 	/**
 	 * Add an index created outside the template to the index. In this case,

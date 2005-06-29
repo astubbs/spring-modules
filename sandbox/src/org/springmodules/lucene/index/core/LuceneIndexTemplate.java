@@ -26,11 +26,15 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
+import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
 import org.springmodules.lucene.util.IOUtils;
 
 /**
@@ -314,6 +318,44 @@ public class LuceneIndexTemplate implements LuceneOperations {
 			throw new LuceneIndexAccessException("The document created is null.");
 		}
 	}
+
+	//-------------------------------------------------------------------------
+	// Methods dealing with document updates
+	//-------------------------------------------------------------------------
+
+	private void checkHitsForUpdate(Hits hits) {
+		if( hits.length()==0 ) {
+			throw new LuceneIndexAccessException("The identifier returns no document.");
+		}
+		if( hits.length()>1 ) {
+			throw new LuceneIndexAccessException("The identifier returns more than one document.");
+		}
+	}
+
+	public void updateDocument(DocumentModifier documentUpdater,DocumentIdentifier identifier) {
+		updateDocument(documentUpdater,identifier,null);
+	}
+
+	public void updateDocument(DocumentModifier documentUpdater,DocumentIdentifier identifier,Analyzer analyzer) {
+		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		IndexSearcher searcher=new IndexSearcher(reader);
+		Term identifierTerm=identifier.getIdentifier();
+		Document updatedDocument=null;
+		try {
+			Hits hits=searcher.search(new TermQuery(identifierTerm));
+			checkHitsForUpdate(hits);
+			updatedDocument=documentUpdater.updateDocument(hits.doc(0));
+		} catch(IOException ex) {
+			throw new LuceneIndexAccessException("Error during updating a document.",ex);
+		} finally {
+			SearcherFactoryUtils.releaseSearcher(searcher);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
+		}
+
+		deleteDocuments(identifierTerm);
+		addDocument(updatedDocument,analyzer);
+	}
+
 
 	//-------------------------------------------------------------------------
 	// Methods dealing with index insertions
