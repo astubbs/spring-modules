@@ -238,7 +238,7 @@ public interface LuceneOperations {
 	 * So you need to remove the document and insert a new one with
 	 * the modified fields.
 	 * This method does the remove and the add operations for you.
-	 * @param documentModifier the implementation of DocumentModifier to get the modified documen
+	 * @param documentModifier the implementation of DocumentModifier to get the modified document
 	 * @param identifierthe implementation of DocumentIdentifier to identify the document to modify
 	 */
 	void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier);
@@ -252,11 +252,40 @@ public interface LuceneOperations {
 	 * the modified fields.
 	 * This method does the remove and the add operations for you with
 	 * a specified analyzer.
-	 * @param documentModifier the implementation of DocumentModifier to get the modified documen
+	 * @param documentModifier the implementation of DocumentModifier to get the modified document
 	 * @param identifierthe implementation of DocumentIdentifier to identify the document to modify
 	 * @param analyzer the Lucene analyzer to use to index
 	 */
 	void updateDocument(DocumentModifier documentUpdater,DocumentIdentifier identifier,Analyzer analyzer);
+
+	/**
+	 * Update documents thanks to a callback method defined in the
+	 * DocumentsModifier interface using the callback method defined
+	 * in the DocumentsIdentifier interface to identify them.
+	 * In fact, with Lucene, you can't update documents of the index.
+	 * So you need to remove the documents and insert new ones with
+	 * the modified fields.
+	 * This method does the remove and the add operations for you with
+	 * a specified analyzer.
+	 * @param documentModifier the implementation of DocumentsModifier to get the modified documents
+	 * @param identifierthe implementation of DocumentIdentifier to identify the documents to modify
+	 */
+	void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier);
+
+	/**
+	 * Update documents thanks to a callback method defined in the
+	 * DocumentsModifier interface using the callback method defined
+	 * in the DocumentsIdentifier interface to identify them.
+	 * In fact, with Lucene, you can't update documents of the index.
+	 * So you need to remove the documents and insert new ones with
+	 * the modified fields.
+	 * This method does the remove and the add operations for you with
+	 * a specified analyzer.
+	 * @param documentModifier the implementation of DocumentsModifier to get the modified documents
+	 * @param identifierthe implementation of DocumentIdentifier to identify the documents to modify
+	 * @param analyzer the Lucene analyzer to use to index
+	 */
+	void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier,Analyzer analyzer);
 
 	/**
 	 * Add an index created outside the template to the index. In this case,

@@ -332,11 +332,11 @@ public class LuceneIndexTemplate implements LuceneOperations {
 		}
 	}
 
-	public void updateDocument(DocumentModifier documentUpdater,DocumentIdentifier identifier) {
-		updateDocument(documentUpdater,identifier,null);
+	public void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier) {
+		updateDocument(documentModifier,identifier,null);
 	}
 
-	public void updateDocument(DocumentModifier documentUpdater,DocumentIdentifier identifier,Analyzer analyzer) {
+	public void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier,Analyzer analyzer) {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		IndexSearcher searcher=new IndexSearcher(reader);
 		Term identifierTerm=identifier.getIdentifier();
@@ -344,7 +344,7 @@ public class LuceneIndexTemplate implements LuceneOperations {
 		try {
 			Hits hits=searcher.search(new TermQuery(identifierTerm));
 			checkHitsForUpdate(hits);
-			updatedDocument=documentUpdater.updateDocument(hits.doc(0));
+			updatedDocument=documentModifier.updateDocument(hits.doc(0));
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during updating a document.",ex);
 		} finally {
@@ -354,6 +354,29 @@ public class LuceneIndexTemplate implements LuceneOperations {
 
 		deleteDocuments(identifierTerm);
 		addDocument(updatedDocument,analyzer);
+	}
+
+	public void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier) {
+		updateDocuments(documentsModifier,identifier,null);
+	}
+
+	public void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier,Analyzer analyzer) {
+		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		IndexSearcher searcher=new IndexSearcher(reader);
+		Term identifierTerm=identifier.getIdentifier();
+		List updatedDocuments=null;
+		try {
+			Hits hits=searcher.search(new TermQuery(identifierTerm));
+			updatedDocuments=documentsModifier.updateDocuments(hits);
+		} catch(IOException ex) {
+			throw new LuceneIndexAccessException("Error during updating a document.",ex);
+		} finally {
+			SearcherFactoryUtils.releaseSearcher(searcher);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
+		}
+
+		deleteDocuments(identifierTerm);
+		addDocuments(updatedDocuments,analyzer);
 	}
 
 

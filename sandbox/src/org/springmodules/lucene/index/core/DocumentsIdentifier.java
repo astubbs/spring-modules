@@ -16,23 +16,16 @@
 
 package org.springmodules.lucene.index.core;
 
-import org.apache.lucene.index.Term;
-
 /**
- * Callback interface for identify the document to update.
+ * Callback interface for identify the documents to update.
  *
  * <p>Used for input Document in the updateDocument methods in
  * LuceneIndexTemplate.
  *
  * @author Thierry Templier
- * @see LuceneIndexTemplate#updateDocument(DocumentModifier, DocumentIdentifier)
- * @see LuceneIndexTemplate#updateDocument(DocumentModifier, DocumentIdentifier, Analyzer)
+ * @see LuceneIndexTemplate#updateDocuments(DocumentsModifier, DocumentsIdentifier)
+ * @see LuceneIndexTemplate#updateDocuments(DocumentsModifier, DocumentsIdentifier, Analyzer)
  */
-public interface DocumentIdentifier {
-	
-	/**
-	 * Create a Lucene term which identifies the document to update.
-	 * @return the term which identifies the document to update
-	 */
-	Term getIdentifier();
+public interface DocumentsIdentifier extends DocumentIdentifier {
+
 }

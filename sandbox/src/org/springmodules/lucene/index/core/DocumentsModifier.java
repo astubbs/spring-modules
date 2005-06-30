@@ -17,33 +17,34 @@
 package org.springmodules.lucene.index.core;
 
 import java.io.IOException;
+import java.util.List;
 
-import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Hits;
 
 /**
- * Callback interface for update a Lucene document instance. In fact,
- * with Lucene, you can't update a document of the index. So you need
- * to remove it and insert a new one with the modified fields.
- * This callback helps you to do that by providing the old document
- * in order to create a new one which will be inserted in the index.
+ * Callback interface for update Lucene document instances. In fact,
+ * with Lucene, you can't update documents of the index. So you need
+ * to remove them and insert new ones with the modified fields.
+ * This callback helps you to do that by providing the old documents
+ * in order to create new ones which will be inserted in the index.
  *
- * <p>Used for input Document in the updateDocument methods in
+ * <p>Used for input Document in the updateDocuments methods in
  * LuceneIndexTemplate.
  *
  * @author Thierry Templier
- * @see LuceneIndexTemplate#updateDocument(DocumentModifier, DocumentIdentifier)
- * @see LuceneIndexTemplate#updateDocument(DocumentModifier, DocumentIdentifier, Analyzer)
+ * @see LuceneIndexTemplate#updateDocuments(DocumentsModifier, DocumentsIdentifier)
+ * @see LuceneIndexTemplate#updateDocuments(DocumentsModifier, DocumentsIdentifier, Analyzer)
  */
-public interface DocumentModifier {
+public interface DocumentsModifier {
 
 	/**
-	 * Create a Lucene document instance basing an existing one. This
+	 * Create Lucene document instances basing existing ones. These
 	 * latter will be delete from the index in order to be replaced by
-	 * the created one.
+	 * the created ones.
 	 * @param document the Lucene Document to update 
 	 * @return the new Lucene Document instance based on the old
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneManipulateIndexException
 	 */
-	Document updateDocument(Document document) throws IOException;
+	List updateDocuments(Hits hits) throws IOException;
 }
