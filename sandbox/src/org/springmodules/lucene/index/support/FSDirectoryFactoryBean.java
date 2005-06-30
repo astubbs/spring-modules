@@ -6,6 +6,7 @@ package org.springmodules.lucene.index.support;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.BeanInitializationException;
+import org.springframework.core.io.Resource;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -24,7 +25,7 @@ import java.io.File;
  */
 public class FSDirectoryFactoryBean implements FactoryBean, InitializingBean {
 
-    private File location;
+    private Resource location;
     private FSDirectory directory;
     private boolean create = false;
 
@@ -48,17 +49,19 @@ public class FSDirectoryFactoryBean implements FactoryBean, InitializingBean {
     public void afterPropertiesSet() throws Exception {
         if( location==null ) {
         	throw new BeanInitializationException("Must specify a location property");
-        } 
-        if( !location.isDirectory() ) {
+        }
+
+		File locationFile=location.getFile();
+        if( !locationFile.isDirectory() ) {
         	throw new BeanInitializationException("location must be a directory");
         } 
-        this.directory=FSDirectory.getDirectory(location,create);
+        this.directory=FSDirectory.getDirectory(locationFile,create);
     }
 
     /**
      * Specify the path on the filesystem to use for this directory storage
      */
-    public void setLocation(File location) {
+    public void setLocation(Resource location) {
         this.location = location;
     }
 
