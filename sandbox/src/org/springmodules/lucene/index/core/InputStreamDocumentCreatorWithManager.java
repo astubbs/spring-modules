@@ -77,6 +77,9 @@ public abstract class InputStreamDocumentCreatorWithManager implements InputStre
 	 */
 	protected abstract Map getResourceDescription();
 
+	protected void addFields(Document document) {
+	}
+
 	/**
 	 * This method implementes the mechanism to index a resource basing
 	 * a DocumentHandlerManager instance.
@@ -105,7 +108,9 @@ public abstract class InputStreamDocumentCreatorWithManager implements InputStre
 	                          InputStream inputStream) throws IOException {
 		DocumentHandler documentHandler=documentHandlerManager.getDocumentHandler(getResourceName());
 		if( documentHandler!=null ) {
-			return documentHandler.getDocument(getResourceDescription(),inputStream);
+			Document document=documentHandler.getDocument(getResourceDescription(),inputStream);
+			addFields(document);
+			return document;
 		} else {
 			throw new FileExtensionNotSupportedException("No handler for this resource name");
 		}
