@@ -120,4 +120,21 @@ public abstract class SearcherFactoryUtils {
 		}
 	}
 
+	/**
+	 * Close the given Searcher.
+	 * @param searcher Searcher to close if necessary
+	 * (if this is null, the call will be ignored)
+	 */
+	public static void releaseSearcher(Searcher searcher) {
+		try {
+			if( searcher==null ) {
+				return;
+			}
+
+			searcher.close();
+		} catch(IOException ex) {
+			throw new LuceneIndexAccessException("Unable to close index searcher",ex);
+		}
+	}
+
 }
