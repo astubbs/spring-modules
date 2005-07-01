@@ -52,6 +52,9 @@ public class FSDirectoryFactoryBean implements FactoryBean, InitializingBean {
         }
 
 		File locationFile=location.getFile();
+		if( !locationFile.exists() ) {
+			throw new BeanInitializationException("location does not exist");
+		} 
         if( !locationFile.isDirectory() ) {
         	throw new BeanInitializationException("location must be a directory");
         } 
