@@ -51,14 +51,14 @@ public interface DirectoryIndexer {
 	 * 
 	 * @param listener the listener to add
 	 */
-	public abstract void addListener(DocumentIndexingListener listener);
+	public abstract void addListener(FileDocumentIndexingListener listener);
 
 	/**
 	 * This method is used to remove a specifed listener.
 	 * 
 	 * @param listener the listener to remove
 	 */
-	public abstract void removeListener(DocumentIndexingListener listener);
+	public abstract void removeListener(FileDocumentIndexingListener listener);
 
 	/**
 	 * This method is the entry point to index a directory recursively. It uses

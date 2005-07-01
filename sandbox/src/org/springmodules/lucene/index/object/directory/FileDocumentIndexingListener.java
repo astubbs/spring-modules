@@ -21,7 +21,7 @@ import java.io.File;
 /**
  * @author Thierry Templier
  */
-public interface DocumentIndexingListener {
+public interface FileDocumentIndexingListener {
 	public void beforeIndexingDirectory(File file);
 	public void afterIndexingDirectory(File file);
 

@@ -115,7 +115,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * 
 	 * @param listener the listener to add
 	 */
-	public void addListener(DocumentIndexingListener listener) {
+	public void addListener(FileDocumentIndexingListener listener) {
 		if( listener!=null ) {
 			listeners.add(listener);
 		}
@@ -126,7 +126,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * 
 	 * @param listener the listener to remove
 	 */
-	public void removeListener(DocumentIndexingListener listener) {
+	public void removeListener(FileDocumentIndexingListener listener) {
 		if( listener!=null ) {
 			listeners.remove(listener);
 		}
@@ -152,7 +152,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 */
 	protected void fireListenersOnBeforeDirectory(File file) {
 		for(Iterator i=listeners.iterator();i.hasNext();) {
-			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
 			listener.beforeIndexingDirectory(file);
 		}
 	}
@@ -168,7 +168,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 */
 	protected void fireListenersOnAfterDirectory(File file) {
 		for(Iterator i=listeners.iterator();i.hasNext();) {
-			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
 			listener.afterIndexingDirectory(file);
 		}
 	}
@@ -184,7 +184,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 */
 	protected void fireListenersOnBeforeFile(File file) {
 		for(Iterator i=listeners.iterator();i.hasNext();) {
-			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
 			listener.beforeIndexingFile(file);
 		}
 	}
@@ -200,7 +200,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 */
 	protected void fireListenersOnAfterFile(File file) {
 		for(Iterator i=listeners.iterator();i.hasNext();) {
-			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
 			listener.afterIndexingFile(file);
 		}
 	}
@@ -215,7 +215,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 */
 	protected void fireListenersOnErrorFile(File file,Exception ex) {
 		for(Iterator i=listeners.iterator();i.hasNext();) {
-			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
 			listener.onErrorIndexingFile(file,ex);
 		}
 	}
@@ -231,7 +231,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 */
 	protected void fireListenersOnNoHandlerAvailable(File file) {
 		for(Iterator i=listeners.iterator();i.hasNext();) {
-			DocumentIndexingListener listener=(DocumentIndexingListener)i.next();
+			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
 			listener.onNotAvailableHandler(file);
 		}
 	}

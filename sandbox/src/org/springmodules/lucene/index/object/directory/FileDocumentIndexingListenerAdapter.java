@@ -21,7 +21,7 @@ import java.io.File;
 /**
  * @author Thierry Templier
  */
-public class DocumentIndexingListenerAdapter implements DocumentIndexingListener {
+public class FileDocumentIndexingListenerAdapter implements FileDocumentIndexingListener {
 
 	/**
 	 * @see org.springmodules.lucene.index.object.file.DocumentIndexingListener#beforeIndexingDirectory(java.io.File)
