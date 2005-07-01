@@ -22,5 +22,6 @@ import java.util.List;
  * @author Thierry Templier
  */
 public interface SearchService {
-	public List search(String textToSearch);
+	public List search(String fieldName,String textToSearch);
+	public List getDocumentFields(String fieldIdentifier,String fieldValue);
 }
