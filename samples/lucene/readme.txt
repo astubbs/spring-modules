@@ -48,5 +48,5 @@ To use the web application, you can use the following uri:
 - http://<server>:<port>/<context>/lucene/index. This shows
   some statistics on the index and allow you to index text
   directly and an uploaded file.
-- http://<server>:<port>/<context>/lucene/index. This allows
+- http://<server>:<port>/<context>/lucene/search. This allows
   you to make a search on the index.

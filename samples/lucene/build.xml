@@ -18,6 +18,7 @@
 
 	<property name="main.directory.indexing.class" value="org.springmodules.samples.lucene.index.console.SimpleDirectoryIndexingImpl"/>
 	<property name="main.database.indexing.class" value="org.springmodules.samples.lucene.index.console.SimpleDatabaseIndexingImpl"/>
+	<property name="main.url.indexing.class" value="org.springmodules.samples.lucene.index.console.SimpleUrlIndexingImpl"/>
 
 	<property name="server.hsqldb.class" value="org.hsqldb.Server"/>
 	<property name="admin.hsqldb.class" value="org.hsqldb.util.DatabaseManager"/>
@@ -139,9 +140,11 @@
 			<fileset dir="${springmodules.root}/lib/j2ee">
 				<include name="jstl.jar"/>
 			</fileset>
-			<!--fileset dir="${springmodules.root}/lib/jakarta-commons">
-				<include name="**/*.jar"/>
-			</fileset-->
+			<fileset dir="${springmodules.root}/lib/jakarta-commons">
+				<include name="commons-logging.jar"/>
+				<include name="commons-digester.jar"/>
+				<include name="commons-beanutils.jar"/>
+			</fileset>
 			<fileset dir="${springmodules.root}/lib/jakarta-taglibs">
 				<include name="standard.jar"/>
 			</fileset>
@@ -187,6 +190,12 @@
 			<classpath refid="lib-classpath"/>
 			<classpath refid="dist-classpath"/>
 		</java>
+
+		<!--echo message="Indexing the url..."/>
+		<java classname="${main.url.indexing.class}" fork="yes" failonerror="true">
+			<classpath refid="lib-classpath"/>
+			<classpath refid="dist-classpath"/>
+		</java-->
 
 	</target>
 
