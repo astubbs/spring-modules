@@ -20,12 +20,17 @@ package org.springmodules.samples.lucene.searching.domain;
  * @author Thiery Templier
  */
 public class SearchResult {
+	private String id;
 	private String source;
+	private String category;
 	private float score;
 
-	public SearchResult(String source,float score) {
+	public SearchResult(String id,String source,
+						float score,String category) {
+		this.id=id;
 		this.source=source;
 		this.score=score;
+		this.category=category;
 	}
 
 	public float getScore() {
@@ -42,6 +47,22 @@ public class SearchResult {
 
 	public void setSource(String string) {
 		source = string;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setCategory(String string) {
+		category = string;
+	}
+
+	public void setId(String string) {
+		id = string;
 	}
 
 }
