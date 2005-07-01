@@ -16,29 +16,27 @@
 
 package org.springmodules.samples.lucene.index.web;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.web.servlet.mvc.Controller;
+import org.springmodules.samples.lucene.index.domain.IndexInformations;
 import org.springmodules.samples.lucene.index.service.IndexAccessor;
-import org.springmodules.samples.lucene.searching.web.WebQuery;
 
 /**
  * @author Thierry Templier
  */
-public class AddDocumentController extends SimpleFormController {
+public class PurgeIndexController implements Controller {
 
 	private IndexAccessor indexAccessor;
 
-	public ModelAndView onSubmit(Object command) throws Exception {
-		if( command instanceof TextDocumentHolder ) {
-			TextDocumentHolder holder=(TextDocumentHolder)command;
-			indexAccessor.addDocument(holder.getId(),holder.getTitle(),
-									holder.getText(),holder.getCategory());
-		}
-		return new ModelAndView("indexing/documentAdded");
+	/**
+	 * @see org.springframework.web.servlet.mvc.Controller#handleRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		indexAccessor.purgeIndex();
+		return new ModelAndView("purgeIndex");
 	}
 
 	public IndexAccessor getIndexAccessor() {

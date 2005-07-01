@@ -44,9 +44,9 @@ public class AddDocumentUploadController extends SimpleFormController {
 		try {
 			indexAccessor.addDocument(holder);
 		} catch(FileExtensionNotSupportedException ex) {
-			return new ModelAndView("documentNotAdded","filename",holder.getFilename());
+			return new ModelAndView("indexing/documentNotAdded","filename",holder.getFilename());
 		}
-		return new ModelAndView("documentAdded","filename",holder.getFilename());
+		return new ModelAndView("indexing/documentAdded","filename",holder.getFilename());
 	}
 
 	public IndexAccessor getIndexAccessor() {

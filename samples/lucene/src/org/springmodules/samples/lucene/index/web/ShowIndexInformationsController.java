@@ -34,9 +34,9 @@ public class ShowIndexInformationsController implements Controller {
 	/**
 	 * @see org.springframework.web.servlet.mvc.Controller#handleRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
-	public ModelAndView handleRequest(HttpServletRequest arg0, HttpServletResponse arg1) throws Exception {
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		IndexInformations infos=indexAccessor.getIndexInformations();
-		return new ModelAndView("indexInfos","infos",infos);
+		return new ModelAndView("indexing/indexInfos","infos",infos);
 	}
 
 	public IndexAccessor getIndexAccessor() {

@@ -16,48 +16,25 @@
 
 package org.springmodules.samples.lucene.index.web;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
+import org.springmodules.samples.lucene.index.domain.IndexInformations;
+import org.springmodules.samples.lucene.index.service.IndexAccessor;
+
 /**
  * @author Thierry Templier
  */
-public class FileDocumentHolder {
-	private String id;
-	private String filename;
-	private byte[] file;
-	private String category;
+public class WelcomeController implements Controller {
 
-	public FileDocumentHolder() {
-	}
-
-	public byte[] getFile() {
-		return file;
-	}
-
-	public void setFile(byte[] bs) {
-		file = bs;
-	}
-
-	public String getFilename() {
-		return filename;
-	}
-
-	public void setFilename(String string) {
-		filename = string;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setCategory(String string) {
-		category = string;
-	}
-
-	public void setId(String string) {
-		id = string;
+	/**
+	 * @see org.springframework.web.servlet.mvc.Controller#handleRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	public ModelAndView handleRequest(HttpServletRequest request,
+						HttpServletResponse response) throws Exception {
+		return new ModelAndView("welcome");
 	}
 
 }

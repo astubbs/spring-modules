@@ -22,6 +22,7 @@ package org.springmodules.samples.lucene.searching.web;
 public class WebQuery {
 
 	private String string;
+	private String fieldName;
 
 	public WebQuery() {
 	}
@@ -32,6 +33,14 @@ public class WebQuery {
 
 	public void setString(String string) {
 		this.string = string;
+	}
+
+	public String getFieldName() {
+		return fieldName;
+	}
+
+	public void setFieldName(String string) {
+		fieldName = string;
 	}
 
 }

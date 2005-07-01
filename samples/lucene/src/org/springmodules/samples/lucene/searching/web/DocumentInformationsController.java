@@ -16,34 +16,34 @@
 
 package org.springmodules.samples.lucene.searching.web;
 
-import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.web.servlet.mvc.Controller;
 import org.springmodules.samples.lucene.searching.service.SearchService;
 
 /**
  * @author Thierry Templier
  */
-public class SearchController extends SimpleFormController {
+public class DocumentInformationsController implements Controller {
 
 	private SearchService searchService;
 
-	public ModelAndView onSubmit(Object command) throws Exception {
-		List results=null;
-		if( command instanceof WebQuery ) {
-			WebQuery query=(WebQuery)command;
-			results=searchService.search(query.getFieldName(),query.getString());
-		} else {
-			results=new ArrayList();
-		}
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		String identifierName=request.getParameter("identifierName");
+		String identifierValue=request.getParameter("identifierValue");
+		List fields=searchService.getDocumentFields(identifierName,identifierValue);
 		Map model=new HashMap();
-		model.put("results",results);
-		model.put("query",command);
-		return new ModelAndView("search/results",model);
+		model.put("identifierName",identifierName);
+		model.put("identifierValue",identifierValue);
+		model.put("fields",fields);
+		return new ModelAndView("search/documentInformations",model);
 	}
 
 	public SearchService getSearchService() {
