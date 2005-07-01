@@ -3,6 +3,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
+
 	<!--
 	     DATASOURCES
 	-->
@@ -28,7 +29,7 @@
 
     <bean id="fsDirectory" class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean">
     	<property name="location">
-    		<value>C:/temp/lucene</value>
+    		<value>file://\C:/temp/lucene</value>
     	</property>
     </bean>
 
@@ -36,6 +37,9 @@
         <property name="directory"><ref local="fsDirectory" /></property>
         <property name="analyzer">
             <bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
+        </property>
+        <property name="resolveLock">
+        	<value>true</value>
         </property>
 	</bean>
 
@@ -53,16 +57,6 @@
 			</map>
 		</property>
 	</bean>
-
-    <bean id="indexingDirectory" class="org.springmodules.samples.lucene.index.console.SimpleDirectoryIndexingImpl">
-    	<property name="indexFactory"><ref local="indexFactory"/></property>
-    	<property name="documentHandlerManager"><ref local="documentHandlerManager"/></property>
-    </bean>
-
-    <bean id="indexingDatabase" class="org.springmodules.samples.lucene.index.console.SimpleDatabaseIndexingImpl">
-    	<property name="indexFactory"><ref local="indexFactory"/></property>
-    	<property name="dataSource"><ref local="dataSource"/></property>
-    </bean>
 
 	<bean id="indexAccessor" class="org.springmodules.samples.lucene.index.service.IndexAccessorImpl">
     	<property name="indexFactory"><ref local="indexFactory"/></property>
@@ -94,7 +88,4 @@
         </property>
 	</bean>
 
-    <bean id="searcher" class="org.springmodules.samples.lucene.searching.console.SimpleSearcherImpl">
-        <property name="searchService"><ref local="searchService" /></property>
-    </bean>
 </beans>

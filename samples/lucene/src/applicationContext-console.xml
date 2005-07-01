@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<!--
+	     INDEXING
+	-->
+
+    <bean id="indexingDirectory" class="org.springmodules.samples.lucene.index.console.SimpleDirectoryIndexingImpl">
+    	<property name="indexFactory"><ref bean="indexFactory"/></property>
+    	<property name="documentHandlerManager"><ref bean="documentHandlerManager"/></property>
+    </bean>
+
+    <bean id="indexingDatabase" class="org.springmodules.samples.lucene.index.console.SimpleDatabaseIndexingImpl">
+    	<property name="indexFactory"><ref bean="indexFactory"/></property>
+    	<property name="dataSource"><ref bean="dataSource"/></property>
+    </bean>
+
+	<bean id="urlMatcher" class="org.springmodules.lucene.index.object.url.OnlySiteUrlMatcher">
+		<property name="baseUrlSite"><value>http://localhost:8080/</value></property>		
+	</bean>
+
+    <bean id="indexingUrl" class="org.springmodules.samples.lucene.index.console.SimpleUrlIndexingImpl">
+    	<property name="indexFactory"><ref bean="indexFactory"/></property>
+    	<property name="documentHandlerManager"><ref bean="documentHandlerManager"/></property>
+    	<property name="urlMatcher"><ref bean="urlMatcher"/></property>
+    </bean>
+
+	<!--
+	     SEARCHING
+	-->
+
+    <bean id="searcher" class="org.springmodules.samples.lucene.searching.console.SimpleSearcherImpl">
+        <property name="searchService"><ref bean="searchService" /></property>
+    </bean>
+
+</beans>
