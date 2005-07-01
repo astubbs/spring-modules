@@ -105,37 +105,26 @@ public class SimpleDatabaseIndexingImpl implements DatabaseIndexing,Initializing
 	}
 
 	public static void main(String[] args) {
-		ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext("/applicationContext.xml");
+		ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext(
+						new String[] {"/applicationContext.xml","/applicationContext-console.xml"});
 		DatabaseIndexing indexing=(DatabaseIndexing)ctx.getBean("indexingDatabase");
 		indexing.prepareDatabaseHandlers();
 		indexing.prepareListeners();
 		indexing.indexDatabase();
 	}
 
-	/**
-	 * @return
-	 */
 	public IndexFactory getIndexFactory() {
 		return indexFactory;
 	}
 
-	/**
-	 * @param factory
-	 */
 	public void setIndexFactory(IndexFactory factory) {
 		indexFactory = factory;
 	}
 
-	/**
-	 * @return
-	 */
 	public DataSource getDataSource() {
 		return dataSource;
 	}
 
-	/**
-	 * @param source
-	 */
 	public void setDataSource(DataSource source) {
 		dataSource = source;
 	}

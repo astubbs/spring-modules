@@ -90,7 +90,8 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 	}
 
 	public static void main(String[] args) {
-		ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext("/applicationContext.xml");
+		ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext(
+						new String[] {"/applicationContext.xml","/applicationContext-console.xml"});
 		DirectoryIndexing indexing=(DirectoryIndexing)ctx.getBean("indexingDirectory");
 		indexing.prepareListeners();
 		String directory="c:/temp/lucene-documents";

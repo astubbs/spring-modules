@@ -45,7 +45,7 @@ public class SimpleSearcherImpl implements Searcher {
 
 	public void search() {
 		final String textToSearch="references";
-		List results=searchService.search(textToSearch);
+		List results=searchService.search("contents",textToSearch);
 		displayResults(textToSearch,results);
 	}
 
