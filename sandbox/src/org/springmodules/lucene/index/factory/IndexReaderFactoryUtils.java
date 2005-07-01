@@ -112,7 +112,11 @@ public abstract class IndexReaderFactoryUtils {
 			return;
 		}
 
-		indexReader.close();
+		if (!(indexFactory instanceof SmartIndexFactory)
+				|| ((SmartIndexFactory) indexFactory).shouldCloseIndexReader(indexReader)) {
+			logger.debug("Closing Lucene Index Reader");
+			indexReader.close();
+		}
 	}
 
 }
