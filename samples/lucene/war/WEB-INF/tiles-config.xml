@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+          "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+
+	<!--
+	     base layout definition
+	-->
+
+	<definition name="baseLayout" path="/jsp/layout/baseLayout.jsp">
+		<put name="title" value="/jsp/layout/title.jsp" />
+		<put name="menu" value="/jsp/layout/menu.jsp" />
+	</definition>
+
+	<!--
+	     page definitions
+	-->
+
+	<!-- index definition -->
+	<definition name="welcome" extends="baseLayout">
+		<put name="body" value="/jsp/welcome.jsp" />
+	</definition>
+
+	<!-- exception -->
+	<definition name="exception" extends="baseLayout">
+		<put name="body" value="/jsp/layout/exception.jsp" />
+	</definition>
+
+	<!-- indexing -->
+
+	<definition name="indexing/documentAdded" extends="baseLayout">
+		<put name="body" value="/jsp/indexing/documentAdded.jsp" />
+	</definition>
+
+	<definition name="indexing/documentNotAdded" extends="baseLayout">
+		<put name="body" value="/jsp/indexing/documentNotAdded.jsp" />
+	</definition>
+
+	<definition name="indexing/documentAdded" extends="baseLayout">
+		<put name="body" value="/jsp/indexing/documentAdded.jsp" />
+	</definition>
+
+	<definition name="indexing/indexInfos" extends="baseLayout">
+		<put name="body" value="/jsp/indexing/indexInfos.jsp" />
+	</definition>
+
+	<!-- search -->
+
+	<definition name="search/documentInformations" extends="baseLayout">
+		<put name="body" value="/jsp/search/documentInformations.jsp" />
+	</definition>
+
+	<definition name="search/searchForm" extends="baseLayout">
+		<put name="body" value="/jsp/search/searchForm.jsp" />
+	</definition>
+
+	<definition name="search/results" extends="baseLayout">
+		<put name="body" value="/jsp/search/results.jsp" />
+	</definition>
+
+</tiles-definitions>

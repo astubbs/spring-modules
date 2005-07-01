@@ -11,17 +11,17 @@
         <param-value>/WEB-INF/applicationContext.xml</param-value> 
     </context-param> 
 
-    <!--listener> 
+    <listener> 
         <listener-class>
             org.springframework.web.context.ContextLoaderListener
         </listener-class> 
-    </listener-->
+    </listener>
 
-	<servlet>
+	<!--servlet>
 		<servlet-name>context</servlet-name>
 		<servlet-class>org.springframework.web.context.ContextLoaderServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
-	</servlet>
+	</servlet-->
 
     <servlet>
         <servlet-name>lucene</servlet-name>
@@ -31,7 +31,7 @@
 
     <servlet-mapping>
         <servlet-name>lucene</servlet-name>
-        <url-pattern>/lucene/*</url-pattern>
+        <url-pattern>*.html</url-pattern>
     </servlet-mapping>
 
 	<taglib>

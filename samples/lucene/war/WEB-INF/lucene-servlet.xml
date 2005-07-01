@@ -4,6 +4,8 @@
 
 <beans>
 
+    <bean id="welcomeController" class="org.springmodules.samples.lucene.index.web.WelcomeController"/>
+
     <bean id="infosIndexController" class="org.springmodules.samples.lucene.index.web.ShowIndexInformationsController">
         <property name="indexAccessor"><ref bean="indexAccessor"/></property>
     </bean>
@@ -40,18 +42,24 @@
         <property name="commandClass">
             <value>org.springmodules.samples.lucene.searching.web.WebQuery</value>
         </property>
-        <property name="formView"><value>searchForm</value></property>
+        <property name="formView"><value>search/searchForm</value></property>
         <!--property name="successView"><value>viewResult</value></property-->
+    </bean>
+
+    <bean id="documentInformationsController" class="org.springmodules.samples.lucene.searching.web.DocumentInformationsController">
+        <property name="searchService"><ref bean="searchService"/></property>
     </bean>
 
     <!-- Mapping & resolveview -->
     <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
             <props>
-                <prop key="/search">searchController</prop>
-                <prop key="/index">infosIndexController</prop>
-                <prop key="/addDocument">addDocumentController</prop>
-                <prop key="/addUploadedDocument">addDocumentUploadController</prop>
+                <prop key="/welcome.html">welcomeController</prop>
+                <prop key="/search.html">searchController</prop>
+                <prop key="/documentInfos.html">documentInformationsController</prop>
+                <prop key="/index.html">infosIndexController</prop>
+                <prop key="/addDocument.html">addDocumentController</prop>
+                <prop key="/addUploadedDocument.html">addDocumentUploadController</prop>
             </props>
         </property>
     </bean>
@@ -62,12 +70,40 @@
 
     <bean id="searchEngineFriendlyHandlerAdapter" class="org.springmodules.web.servlet.mvc.SearchEngineFriendlyHandlerAdapter"/>
 
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+    <!--bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
         <property name="viewClass">
             <value>org.springframework.web.servlet.view.JstlView</value>
         </property>
         <property name="prefix"><value>/jsp/</value></property>
         <property name="suffix"><value>.jsp</value></property>
-    </bean>
+    </bean-->
+
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles.TilesConfigurer">
+		<property name="factoryClass">
+			<value>org.apache.struts.tiles.xmlDefinition.I18nFactorySet</value>
+		</property>
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/tiles-config.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="requestContextAttribute">
+			<value>rc</value>
+		</property>
+		<property name="viewClass">
+			<value>org.springframework.web.servlet.view.tiles.TilesJstlView</value>
+		</property>
+	</bean>
+
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>messages</value>
+			</list>
+		</property>
+	</bean>
 
 </beans>
