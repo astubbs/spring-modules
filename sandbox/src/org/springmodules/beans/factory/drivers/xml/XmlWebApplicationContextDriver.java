@@ -2,6 +2,8 @@ package org.springmodules.beans.factory.drivers.xml;
 
 import java.util.Collection;
 
+import javax.servlet.ServletContext;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.WebApplicationContext;
@@ -17,8 +19,10 @@ public class XmlWebApplicationContextDriver extends XmlApplicationContextDriver
 
 	public WebApplicationContext getWebApplicationContext(
 			Collection beanReferences, ApplicationContext parent) {
-		return (WebApplicationContext) getApplicationContext(beanReferences,
+		XmlWebApplicationContext wac = (XmlWebApplicationContext) getApplicationContext(beanReferences,
 				parent);
+		wac.refresh();
+		return wac;
 	}
 
 	protected ApplicationContext createApplicationContext(
@@ -26,7 +30,6 @@ public class XmlWebApplicationContextDriver extends XmlApplicationContextDriver
 		return new XmlWebApplicationContext() {
 			{
 				setParent(parent);
-				refresh();
 			}
 
 			protected void loadBeanDefinitions(
@@ -36,6 +39,20 @@ public class XmlWebApplicationContextDriver extends XmlApplicationContextDriver
 				reader.loadBeanDefinitions(resource);
 			}
 		};
+	}
+	
+	public WebApplicationContext getWebApplicationContext(
+			final Collection beanReferences, final ApplicationContext parent,
+			final ServletContext servletContext, final String namespace,
+			final String[] configLocations) {
+		XmlWebApplicationContext wac = (XmlWebApplicationContext)getApplicationContext(beanReferences, parent);
+		wac.setServletContext(servletContext);
+		wac.setNamespace(namespace);
+		if (configLocations != null) {
+			wac.setConfigLocations(configLocations);
+		}
+		wac.refresh();
+		return wac;
 	}
 
 }
