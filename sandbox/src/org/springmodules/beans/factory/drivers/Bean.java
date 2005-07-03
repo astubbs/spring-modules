@@ -40,4 +40,12 @@ public interface Bean extends Instance {
 	public String getAutowire();
 	
 	public void setAutowire(String autowire);
+	
+	public BeanReference getFactoryBean();
+	
+	public void setFactoryBean(BeanReference factoryBean);
+	
+	public String getFactoryMethod();
+	
+	public void setFactoryMethod(String factoryMethod);
 }

@@ -259,6 +259,12 @@ public class XmlApplicationContextUtils {
 		if (StringUtils.hasLength(bean.getDestroyMethod())) {
 			beanElement.setAttribute("destroy-method", bean.getDestroyMethod());
 		}
+		if (bean.getFactoryBean() != null && StringUtils.hasLength(bean.getFactoryMethod())) {
+			beanElement.setAttribute("factory-bean", bean.getFactoryBean().getBeanName());
+		}
+		if (StringUtils.hasLength(bean.getFactoryMethod())) {
+			beanElement.setAttribute("factory-method", bean.getFactoryMethod());
+		}
 		if (bean.getDependsOn() != null && bean.getDependsOn().size() > 0) {
 			String s = "";
 			for (Iterator iter = bean.getDependsOn().iterator(); iter.hasNext();) {
@@ -282,15 +288,17 @@ public class XmlApplicationContextUtils {
 		}
 		
 		int counter = 0;
-		for (Iterator iter = bean.getConstructorArguments().iterator(); iter.hasNext();) {
-			Instance value = (Instance)iter.next();
-			Element constructorArgumentElement = doc.createElement("constructor-arg");
-			constructorArgumentElement.setAttribute("index", Integer.toString(counter));
-			constructorArgumentElement.appendChild(createValue(value, doc));
-			beanElement.appendChild(constructorArgumentElement);
-			counter++;
+		if (bean.getConstructorArguments() != null) {
+			for (Iterator iter = bean.getConstructorArguments().iterator(); iter.hasNext();) {
+				Instance value = (Instance)iter.next();
+				Element constructorArgumentElement = doc.createElement("constructor-arg");
+				constructorArgumentElement.setAttribute("index", Integer.toString(counter));
+				constructorArgumentElement.appendChild(createValue(value, doc));
+				beanElement.appendChild(constructorArgumentElement);
+				counter++;
+			}
 		}
-		
+			
 		for (Iterator iter = bean.getProperties().keySet().iterator(); iter.hasNext();) {
 			String propertyName = (String)iter.next();
 			Instance value = (Instance)bean.getProperties().get(propertyName);
