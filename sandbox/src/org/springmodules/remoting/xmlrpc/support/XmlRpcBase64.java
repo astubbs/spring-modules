@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/06/25 21:24:37 $
+ * @version $Revision: 1.8 $ $Date: 2005/07/03 14:11:39 $
  */
 public final class XmlRpcBase64 implements XmlRpcScalar {
 
@@ -122,8 +122,9 @@ public final class XmlRpcBase64 implements XmlRpcScalar {
    * @see Object#hashCode()
    */
   public int hashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash + (this.value != null ? this.value.hashCode() : 0);
+    hash = multiplier * hash + (this.value != null ? this.value.hashCode() : 0);
     return hash;
   }
 
@@ -137,6 +138,11 @@ public final class XmlRpcBase64 implements XmlRpcScalar {
    * @see Object#toString()
    */
   public String toString() {
-    return "XmlRpcBase64: value=" + Arrays.toString(this.value);
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("value=" + this.value + "; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 }

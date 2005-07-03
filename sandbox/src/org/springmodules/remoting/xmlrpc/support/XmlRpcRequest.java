@@ -26,7 +26,7 @@ import java.util.Arrays;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/06/25 22:54:43 $
+ * @version $Revision: 1.8 $ $Date: 2005/07/03 14:11:39 $
  */
 public final class XmlRpcRequest {
 
@@ -142,21 +142,23 @@ public final class XmlRpcRequest {
    * @see Object#hashCode()
    */
   public int hashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash
+    hash = multiplier * hash
         + (this.methodName != null ? this.methodName.hashCode() : 0);
-    
+
     if (this.parameters == null) {
-      hash = 31 * hash;
+      hash = multiplier * hash;
     } else {
       int parameterCount = this.parameters.length;
       for (int i = 0; i < parameterCount; i++) {
         XmlRpcElement parameter = this.parameters[i];
-        hash = 31 * hash + (parameter != null ? parameter.hashCode() : 0);
+        hash = multiplier * hash
+            + (parameter != null ? parameter.hashCode() : 0);
       }
     }
-    
-    hash = 31 * hash
+
+    hash = multiplier * hash
         + (this.serviceName != null ? this.serviceName.hashCode() : 0);
     return hash;
   }
@@ -226,8 +228,13 @@ public final class XmlRpcRequest {
    * @see Object#toString()
    */
   public String toString() {
-    return "XmlRpcRequest: serviceName='" + this.serviceName
-        + "', methodName='" + this.methodName + "', parameters="
-        + Arrays.toString(this.parameters);
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("serviceName='" + this.serviceName + "'; ");
+    buffer.append("methodName='" + this.methodName + "'; ");
+    buffer.append("parameters=" + Arrays.toString(this.parameters) + "; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 }

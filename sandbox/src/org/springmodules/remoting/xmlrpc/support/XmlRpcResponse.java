@@ -26,7 +26,7 @@ import java.util.Arrays;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/25 22:54:43 $
+ * @version $Revision: 1.6 $ $Date: 2005/07/03 14:11:39 $
  */
 public final class XmlRpcResponse {
 
@@ -132,20 +132,22 @@ public final class XmlRpcResponse {
    * @see Object#hashCode()
    */
   public int hashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash + (this.fault != null ? this.fault.hashCode() : 0);
-    hash = 31 * hash + (this.faultThrown ? 1 : 0);
-    
+    hash = multiplier * hash + (this.fault != null ? this.fault.hashCode() : 0);
+    hash = multiplier * hash + (this.faultThrown ? 1 : 0);
+
     if (this.parameters == null) {
-      hash = 31 * hash;
+      hash = multiplier * hash;
     } else {
       int parameterCount = this.parameters.length;
       for (int i = 0; i < parameterCount; i++) {
         XmlRpcElement parameter = this.parameters[i];
-        hash = 31 * hash + (parameter != null ? parameter.hashCode() : 0);
+        hash = multiplier * hash
+            + (parameter != null ? parameter.hashCode() : 0);
       }
     }
-    
+
     return hash;
   }
 
@@ -168,7 +170,13 @@ public final class XmlRpcResponse {
    * @see Object#toString()
    */
   public String toString() {
-    return "XmlRpcResponse: faultThrown=" + this.faultThrown + ", fault="
-        + this.fault + ", parameters=" + Arrays.toString(this.parameters);
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("faultThrown=" + this.faultThrown + "; ");
+    buffer.append("fault=" + this.fault + "; ");
+    buffer.append("parameters=" + Arrays.toString(this.parameters) + "; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 }

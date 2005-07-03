@@ -31,7 +31,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/06/25 21:24:37 $
+ * @version $Revision: 1.10 $ $Date: 2005/07/03 14:11:39 $
  */
 public final class XmlRpcDateTime implements XmlRpcScalar {
 
@@ -145,8 +145,9 @@ public final class XmlRpcDateTime implements XmlRpcScalar {
    * @see Object#hashCode()
    */
   public int hashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash + (this.value != null ? this.value.hashCode() : 0);
+    hash = multiplier * hash + (this.value != null ? this.value.hashCode() : 0);
     return hash;
   }
 
@@ -160,6 +161,11 @@ public final class XmlRpcDateTime implements XmlRpcScalar {
    * @see Object#toString()
    */
   public String toString() {
-    return "XmlRpcDateTime: value=" + this.value;
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("value=" + this.value + "; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 }

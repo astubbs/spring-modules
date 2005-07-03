@@ -26,7 +26,7 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/25 21:25:31 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/03 14:13:10 $
  */
 public class Person implements Serializable {
 
@@ -113,9 +113,10 @@ public class Person implements Serializable {
    * @see Object#hashCode()
    */
   public int hashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash + (this.id != null ? this.id.hashCode() : 0);
-    hash = 31 * hash + (this.name != null ? this.name.hashCode() : 0);
+    hash = multiplier * hash + (this.id != null ? this.id.hashCode() : 0);
+    hash = multiplier * hash + (this.name != null ? this.name.hashCode() : 0);
     return hash;
   }
 
@@ -149,6 +150,12 @@ public class Person implements Serializable {
    * @see Object#toString()
    */
   public String toString() {
-    return "Person: id=" + this.id + ", name='" + this.name + "'";
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("id=" + this.id + "; ");
+    buffer.append("name='" + this.name + "'; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 }

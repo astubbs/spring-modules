@@ -32,7 +32,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/06/26 16:51:33 $
+ * @version $Revision: 1.7 $ $Date: 2005/07/03 14:11:38 $
  */
 public final class XmlRpcStruct implements XmlRpcElement {
 
@@ -327,7 +327,11 @@ public final class XmlRpcStruct implements XmlRpcElement {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    return (this.members != null ? this.members.hashCode() : 0);
+    int multiplier = 31;
+    int hash = 7;
+    hash = multiplier * hash
+        + (this.members != null ? this.members.hashCode() : 0);
+    return hash;
   }
 
   /**
@@ -340,6 +344,11 @@ public final class XmlRpcStruct implements XmlRpcElement {
    * @see Object#toString()
    */
   public String toString() {
-    return "XmlRpcStruct: members=" + this.members;
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("members='" + this.members + "'; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 }

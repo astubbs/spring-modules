@@ -29,7 +29,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/06/26 16:51:34 $
+ * @version $Revision: 1.10 $ $Date: 2005/07/03 14:11:38 $
  */
 public final class XmlRpcString implements XmlRpcScalar {
 
@@ -144,8 +144,9 @@ public final class XmlRpcString implements XmlRpcScalar {
    * @see Object#hashCode()
    */
   public int hashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash + (this.value != null ? this.value.hashCode() : 0);
+    hash = multiplier * hash + (this.value != null ? this.value.hashCode() : 0);
     return hash;
   }
 
@@ -159,6 +160,11 @@ public final class XmlRpcString implements XmlRpcScalar {
    * @see Object#toString()
    */
   public String toString() {
-    return "XmlRpcString: value='" + this.value + "'";
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("value='" + this.value + "'; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 }
