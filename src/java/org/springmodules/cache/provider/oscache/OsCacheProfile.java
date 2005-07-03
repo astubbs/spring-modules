@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/25 22:54:29 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/03 04:33:12 $
  */
 public class OsCacheProfile implements CacheProfile {
 
@@ -145,21 +145,22 @@ public class OsCacheProfile implements CacheProfile {
    * @see Object#hashCode()
    */
   public int hashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash
+    hash = multiplier * hash
         + (this.cronExpression != null ? this.cronExpression.hashCode() : 0);
 
     if (this.groups == null) {
-      hash = 31 * hash;
+      hash = multiplier * hash;
     } else {
       int groupCount = this.groups.length;
       for (int i = 0; i < groupCount; i++) {
         String group = this.groups[i];
-        hash = 31 * hash + (group != null ? group.hashCode() : 0);
+        hash = multiplier * hash + (group != null ? group.hashCode() : 0);
       }
     }
 
-    hash = 31 * hash
+    hash = multiplier * hash
         + (this.refreshPeriod != null ? this.refreshPeriod.hashCode() : 0);
     return hash;
   }
@@ -229,8 +230,38 @@ public class OsCacheProfile implements CacheProfile {
    * @see Object#toString()
    */
   public String toString() {
-    return "OsCacheProfile: refreshPeriod=" + this.refreshPeriod + ", groups="
-        + Arrays.toString(this.groups) + ", cronExpression='"
-        + this.cronExpression + "'";
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("refreshPeriod=" + this.refreshPeriod + "; ");
+
+    buffer.append("groups=");
+
+    if (this.groups == null) {
+      buffer.append("null; ");
+
+    } else {
+      int groupCount = this.groups.length;
+
+      if (groupCount == 0) {
+        buffer.append("[]; ");
+
+      } else {
+        for (int i = 0; i < groupCount; i++) {
+          if (i == 0) {
+            buffer.append('[');
+          } else {
+            buffer.append(", ");
+          }
+
+          buffer.append("'" + this.groups[i] + "'");
+        }
+        buffer.append("]; ");
+      }
+    }
+
+    buffer.append("cronExpression='" + this.cronExpression + "'; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 }

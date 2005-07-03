@@ -18,8 +18,8 @@
 
 package org.springmodules.cache.interceptor.flush;
 
-import java.util.Arrays;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
@@ -29,9 +29,14 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/25 22:54:30 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/03 04:33:13 $
  */
 public final class FlushCacheTests extends AbstractJavaBeanTests {
+
+  /**
+   * Message logger.
+   */
+  private static Log logger = LogFactory.getLog(FlushCacheTests.class);
 
   /**
    * Primary object (instance of the class to test).
@@ -62,17 +67,18 @@ public final class FlushCacheTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedHashCode()
    */
   protected int getExpectedHashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash + 1;
+    hash = multiplier * hash + 1;
 
     String[] cacheProfileIds = this.flushCache.getCacheProfileIds();
     int cacheProfileIdCount = cacheProfileIds.length;
     for (int i = 0; i < cacheProfileIdCount; i++) {
       String cacheProfileId = cacheProfileIds[i];
-      hash = 31 * hash
+      hash = multiplier * hash
           + (cacheProfileId != null ? cacheProfileId.hashCode() : 0);
     }
-    
+
     return hash;
   }
 
@@ -80,9 +86,31 @@ public final class FlushCacheTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedToString()
    */
   protected String getExpectedToString() {
-    return "FlushCache: cacheProfileIds="
-        + Arrays.toString(this.flushCache.getCacheProfileIds())
-        + ", flushBeforeExecution=" + this.flushCache.isFlushBeforeExecution();
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.flushCache.getClass().getName() + ": ");
+    buffer.append("cacheProfileIds=");
+
+    String[] cacheProfileIds = this.flushCache.getCacheProfileIds();
+    int cacheProfileIdCount = cacheProfileIds.length;
+    for (int i = 0; i < cacheProfileIdCount; i++) {
+      if (i == 0) {
+        buffer.append('[');
+      } else {
+        buffer.append(", ");
+      }
+
+      buffer.append("'" + cacheProfileIds[i] + "'");
+    }
+    buffer.append("]; ");
+
+    buffer.append("flushBeforeExecution="
+        + this.flushCache.isFlushBeforeExecution() + "; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this.flushCache));
+
+    String expectedToString = buffer.toString();
+    logger.debug("expectedToString: " + expectedToString);
+
+    return expectedToString;
   }
 
   /**
@@ -112,4 +140,51 @@ public final class FlushCacheTests extends AbstractJavaBeanTests {
     this.flushCache.setFlushBeforeExecution(true);
   }
 
+  /**
+   * Verifies that the method <code>{@link FlushCache#toString()}</code>
+   * creates a correct String representation of a
+   * <code>{@link FlushCache}</code> if the array of cache profile ids is
+   * <code>null</code>.
+   */
+  public void testToStringWithCacheProfileIdsEqualToNull() {
+    this.flushCache.setCacheProfileIds((String[]) null);
+
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.flushCache.getClass().getName() + ": ");
+    buffer.append("cacheProfileIds=null; ");
+    buffer.append("flushBeforeExecution="
+        + this.flushCache.isFlushBeforeExecution() + "; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this.flushCache));
+
+    String expectedToString = buffer.toString();
+    logger.debug("expectedToString: " + expectedToString);
+
+    String actualToString = this.flushCache.toString();
+
+    assertEquals("<toString>", expectedToString, actualToString);
+  }
+
+  /**
+   * Verifies that the method <code>{@link FlushCache#toString()}</code>
+   * creates a correct String representation of a
+   * <code>{@link FlushCache}</code> if the array of cache profile ids is
+   * empty.
+   */
+  public void testToStringWithEmptyCacheProfileIds() {
+    this.flushCache.setCacheProfileIds(new String[0]);
+
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.flushCache.getClass().getName() + ": ");
+    buffer.append("cacheProfileIds=[]; ");
+    buffer.append("flushBeforeExecution="
+        + this.flushCache.isFlushBeforeExecution() + "; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this.flushCache));
+
+    String expectedToString = buffer.toString();
+    logger.debug("expectedToString: " + expectedToString);
+
+    String actualToString = this.flushCache.toString();
+
+    assertEquals("<toString>", expectedToString, actualToString);
+  }
 }

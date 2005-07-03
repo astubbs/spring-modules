@@ -18,6 +18,8 @@
 
 package org.springmodules.cache.provider.ehcache;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
@@ -27,9 +29,14 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/25 21:39:57 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/03 04:33:12 $
  */
 public final class EhCacheProfileTests extends AbstractJavaBeanTests {
+
+  /**
+   * Message logger.
+   */
+  private static Log logger = LogFactory.getLog(EhCacheProfileTests.class);
 
   /**
    * Primary object (instance of the class to test).
@@ -60,8 +67,9 @@ public final class EhCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedHashCode()
    */
   protected int getExpectedHashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash + this.cacheProfile.getCacheName().hashCode();
+    hash = multiplier * hash + this.cacheProfile.getCacheName().hashCode();
     return hash;
   }
 
@@ -69,8 +77,16 @@ public final class EhCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedToString()
    */
   protected String getExpectedToString() {
-    return "EhCacheProfile: cacheName='" + this.cacheProfile.getCacheName()
-        + "'";
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.cacheProfile.getClass().getName() + ": ");
+    buffer.append("cacheName='" + this.cacheProfile.getCacheName() + "'; ");
+    buffer.append("systemHashCode="
+        + System.identityHashCode(this.cacheProfile));
+
+    String expectedToString = buffer.toString();
+    logger.debug("expectedToString: " + expectedToString);
+
+    return expectedToString;
   }
 
   /**

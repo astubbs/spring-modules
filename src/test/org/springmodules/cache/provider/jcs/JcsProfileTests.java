@@ -20,6 +20,8 @@
 
 package org.springmodules.cache.provider.jcs;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
@@ -29,9 +31,14 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/25 21:39:57 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/03 04:33:11 $
  */
 public final class JcsProfileTests extends AbstractJavaBeanTests {
+
+  /**
+   * Message logger.
+   */
+  private static Log logger = LogFactory.getLog(JcsProfileTests.class);
 
   /**
    * Primary object (instance of the class to test).
@@ -73,8 +80,17 @@ public final class JcsProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedToString()
    */
   protected String getExpectedToString() {
-    return "JcsProfile: cacheName='" + this.cacheProfile.getCacheName()
-        + "', group='" + this.cacheProfile.getGroup() + "'";
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.cacheProfile.getClass().getName() + ": ");
+    buffer.append("cacheName='" + this.cacheProfile.getCacheName() + "'; ");
+    buffer.append("group='" + this.cacheProfile.getGroup() + "'; ");
+    buffer.append("systemHashCode="
+        + System.identityHashCode(this.cacheProfile));
+
+    String expectedToString = buffer.toString();
+    logger.debug("expectedToString: " + expectedToString);
+
+    return expectedToString;
   }
 
   /**

@@ -32,7 +32,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/25 21:39:56 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/03 04:33:11 $
  */
 public class EhCacheProfile implements CacheProfile {
 
@@ -102,8 +102,10 @@ public class EhCacheProfile implements CacheProfile {
    * @see Object#hashCode()
    */
   public int hashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash + (this.cacheName != null ? this.cacheName.hashCode() : 0);
+    hash = multiplier * hash
+        + (this.cacheName != null ? this.cacheName.hashCode() : 0);
     return hash;
   }
 
@@ -127,6 +129,11 @@ public class EhCacheProfile implements CacheProfile {
    * @see Object#toString()
    */
   public String toString() {
-    return "EhCacheProfile: cacheName='" + this.cacheName + "'";
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("cacheName='" + this.cacheName + "'; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 }

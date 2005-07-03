@@ -18,8 +18,8 @@
 
 package org.springmodules.cache.provider.oscache;
 
-import java.util.Arrays;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springmodules.cache.AbstractJavaBeanTests;
 
 /**
@@ -29,9 +29,14 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/25 22:54:30 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/03 04:33:13 $
  */
 public final class OsCacheProfileTests extends AbstractJavaBeanTests {
+
+  /**
+   * Message logger.
+   */
+  private static Log logger = LogFactory.getLog(OsCacheProfileTests.class);
 
   /**
    * Primary object (instance of the class to test).
@@ -84,10 +89,35 @@ public final class OsCacheProfileTests extends AbstractJavaBeanTests {
    * @see AbstractJavaBeanTests#getExpectedToString()
    */
   protected String getExpectedToString() {
-    return "OsCacheProfile: refreshPeriod="
-        + this.cacheProfile.getRefreshPeriod() + ", groups="
-        + Arrays.toString(this.cacheProfile.getGroups()) + ", cronExpression='"
-        + this.cacheProfile.getCronExpression() + "'";
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.cacheProfile.getClass().getName() + ": ");
+    buffer.append("refreshPeriod=" + this.cacheProfile.getRefreshPeriod()
+        + "; ");
+
+    buffer.append("groups=");
+
+    String[] groups = this.cacheProfile.getGroups();
+    int groupCount = groups.length;
+    for (int i = 0; i < groupCount; i++) {
+      if (i == 0) {
+        buffer.append('[');
+      } else {
+        buffer.append(", ");
+      }
+
+      buffer.append("'" + groups[i] + "'");
+    }
+    buffer.append("]; ");
+
+    buffer.append("cronExpression='" + this.cacheProfile.getCronExpression()
+        + "'; ");
+    buffer.append("systemHashCode="
+        + System.identityHashCode(this.cacheProfile));
+
+    String expectedToString = buffer.toString();
+    logger.debug("expectedToString: " + expectedToString);
+
+    return expectedToString;
   }
 
   /**
@@ -136,5 +166,59 @@ public final class OsCacheProfileTests extends AbstractJavaBeanTests {
 
     assertNull("The profile should not have any group", this.cacheProfile
         .getGroups());
+  }
+
+  /**
+   * Verifies that the method <code>{@link OsCacheProfile#toString()}</code>
+   * creates a correct String representation of a
+   * <code>{@link OsCacheProfile}</code> if the array of groups is
+   * empty.
+   */
+  public void testToStringWithEmptyGroups() {
+    this.cacheProfile.setGroups(new String[0]);
+
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.cacheProfile.getClass().getName() + ": ");
+    buffer.append("refreshPeriod=" + this.cacheProfile.getRefreshPeriod()
+        + "; ");
+    buffer.append("groups=[]; ");
+    buffer.append("cronExpression='" + this.cacheProfile.getCronExpression()
+        + "'; ");
+    buffer.append("systemHashCode="
+        + System.identityHashCode(this.cacheProfile));
+
+    String expectedToString = buffer.toString();
+    logger.debug("expectedToString: " + expectedToString);
+
+    String actualToString = this.cacheProfile.toString();
+
+    assertEquals("<toString>", expectedToString, actualToString);
+  }
+
+  /**
+   * Verifies that the method <code>{@link OsCacheProfile#toString()}</code>
+   * creates a correct String representation of a
+   * <code>{@link OsCacheProfile}</code> if the array of groups is
+   * <code>null</code>.
+   */
+  public void testToStringWithGroupsEqualToNull() {
+    this.cacheProfile.setGroups((String[]) null);
+
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.cacheProfile.getClass().getName() + ": ");
+    buffer.append("refreshPeriod=" + this.cacheProfile.getRefreshPeriod()
+        + "; ");
+    buffer.append("groups=null; ");
+    buffer.append("cronExpression='" + this.cacheProfile.getCronExpression()
+        + "'; ");
+    buffer.append("systemHashCode="
+        + System.identityHashCode(this.cacheProfile));
+
+    String expectedToString = buffer.toString();
+    logger.debug("expectedToString: " + expectedToString);
+
+    String actualToString = this.cacheProfile.toString();
+
+    assertEquals("<toString>", expectedToString, actualToString);
   }
 }

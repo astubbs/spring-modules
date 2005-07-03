@@ -31,7 +31,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/06/25 22:54:29 $
+ * @version $Revision: 1.7 $ $Date: 2005/07/03 04:33:13 $
  */
 public class FlushCache implements CacheAttribute {
 
@@ -161,16 +161,17 @@ public class FlushCache implements CacheAttribute {
    * @see Object#hashCode()
    */
   public int hashCode() {
+    int multiplier = 31;
     int hash = 7;
-    hash = 31 * hash + (this.flushBeforeExecution ? 1 : 0);
+    hash = multiplier * hash + (this.flushBeforeExecution ? 1 : 0);
 
     if (this.cacheProfileIds == null) {
-      hash = 31 * hash;
+      hash = multiplier * hash;
     } else {
       int cacheProfileIdCount = this.cacheProfileIds.length;
       for (int i = 0; i < cacheProfileIdCount; i++) {
         String cacheProfileId = this.cacheProfileIds[i];
-        hash = 31 * hash
+        hash = multiplier * hash
             + (cacheProfileId != null ? cacheProfileId.hashCode() : 0);
       }
     }
@@ -230,9 +231,37 @@ public class FlushCache implements CacheAttribute {
    * @see Object#toString()
    */
   public String toString() {
-    return "FlushCache: cacheProfileIds="
-        + Arrays.toString(this.cacheProfileIds) + ", flushBeforeExecution="
-        + this.flushBeforeExecution;
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName() + ": ");
+    buffer.append("cacheProfileIds=");
+
+    if (this.cacheProfileIds == null) {
+      buffer.append("null; ");
+      
+    } else {
+      int cacheProfileIdCount = this.cacheProfileIds.length;
+      
+      if (cacheProfileIdCount == 0) {
+        buffer.append("[]; ");
+      
+      } else {
+        for (int i = 0; i < cacheProfileIdCount; i++) {
+          if (i == 0) {
+            buffer.append('[');
+          } else {
+            buffer.append(", ");
+          }
+          
+          buffer.append("'" + this.cacheProfileIds[i] + "'");
+        }
+        buffer.append("]; ");
+      }
+    }
+
+    buffer.append("flushBeforeExecution=" + this.flushBeforeExecution + "; ");
+    buffer.append("systemHashCode=" + System.identityHashCode(this));
+
+    return buffer.toString();
   }
 
 }
