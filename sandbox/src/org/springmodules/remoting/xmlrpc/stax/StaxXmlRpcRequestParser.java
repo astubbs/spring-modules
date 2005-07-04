@@ -24,7 +24,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcInternalException;
 import org.springmodules.remoting.xmlrpc.XmlRpcRequestParser;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElementNames;
@@ -38,7 +38,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/23 02:13:46 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/04 18:42:03 $
  */
 public final class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser
     implements XmlRpcRequestParser {
@@ -53,8 +53,7 @@ public final class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser
   /**
    * @see XmlRpcRequestParser#parseRequest(InputStream)
    */
-  public XmlRpcRequest parseRequest(InputStream inputStream)
-      throws XmlRpcParsingException {
+  public XmlRpcRequest parseRequest(InputStream inputStream) {
     XmlRpcRequest request = new XmlRpcRequest();
 
     try {
@@ -79,8 +78,8 @@ public final class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser
       }
       reader.close();
     } catch (XMLStreamException exception) {
-      throw new XmlRpcParsingException(
-          "XmlRpcParsingException parsing XML-RPC request", exception);
+      throw new XmlRpcInternalException(
+          "Exception while parsing XML-RPC request", exception);
 
     } finally {
       if (inputStream != null) {

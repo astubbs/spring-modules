@@ -27,7 +27,7 @@ import org.springframework.core.NestedRuntimeException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/14 00:47:19 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/04 18:42:06 $
  */
 public abstract class XmlRpcException extends NestedRuntimeException {
 
@@ -53,4 +53,10 @@ public abstract class XmlRpcException extends NestedRuntimeException {
     super(msg, nestedException);
   }
 
+  /**
+   * Returns the code of this exception.
+   * 
+   * @return the code of this exception.
+   */
+  public abstract int getCode();
 }

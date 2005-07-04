@@ -25,16 +25,9 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/23 01:43:42 $
+ * @version $Revision$ $Date$
  */
-public class XmlRpcWritingException extends XmlRpcException {
-
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
-  private static final long serialVersionUID = 3761406417336546864L;
+public abstract class XmlRpcServerException extends XmlRpcException {
 
   /**
    * Constructor.
@@ -42,7 +35,7 @@ public class XmlRpcWritingException extends XmlRpcException {
    * @param msg
    *          the detail message.
    */
-  public XmlRpcWritingException(String msg) {
+  public XmlRpcServerException(String msg) {
     super(msg);
   }
 
@@ -54,7 +47,7 @@ public class XmlRpcWritingException extends XmlRpcException {
    * @param nestedException
    *          the nested exception.
    */
-  public XmlRpcWritingException(String msg, Throwable nestedException) {
+  public XmlRpcServerException(String msg, Throwable nestedException) {
     super(msg, nestedException);
   }
 

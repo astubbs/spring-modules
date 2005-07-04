@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
+import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcArray;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcBase64;
@@ -49,7 +50,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/23 02:13:46 $
+ * @version $Revision: 1.6 $ $Date: 2005/07/04 18:42:03 $
  */
 public abstract class AbstractStaxXmlRpcParser {
 
@@ -92,7 +93,7 @@ public abstract class AbstractStaxXmlRpcParser {
    * @param reader
    *          the <code>StreamReader</code>.
    * @return the new array of <code>java.util.List</code>s.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the element contains an unknown child. Only one "data" element
    *           is allowed inside an "array" element.
    * @see #parseDataElement(XMLStreamReader)
@@ -110,8 +111,8 @@ public abstract class AbstractStaxXmlRpcParser {
           if (XmlRpcElementNames.DATA.equals(localName)) {
             return this.parseDataElement(reader);
           }
-          throw new XmlRpcParsingException("Unexpected element '" + localName
-              + "'");
+          throw new XmlRpcInvalidPayloadException("Unexpected element '"
+              + localName + "'");
       }
     }
 
@@ -167,7 +168,7 @@ public abstract class AbstractStaxXmlRpcParser {
    * @param reader
    *          the <code>StreamReader</code>.
    * @return the created Object.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the element contains an unknown child.
    * @see #parseValueElement(XMLStreamReader)
    */
@@ -183,8 +184,8 @@ public abstract class AbstractStaxXmlRpcParser {
           if (XmlRpcElementNames.VALUE.equals(localName)) {
             return this.parseValueElement(reader);
           }
-          throw new XmlRpcParsingException("Unexpected element '" + localName
-              + "'");
+          throw new XmlRpcInvalidPayloadException("Unexpected element '"
+              + localName + "'");
       }
     }
 
@@ -217,8 +218,8 @@ public abstract class AbstractStaxXmlRpcParser {
             parameters.add(parameter);
 
           } else {
-            throw new XmlRpcParsingException("Unknown entity '" + localName
-                + "'");
+            throw new XmlRpcInvalidPayloadException("Unexpected element '"
+                + localName + "'");
           }
           break;
 
@@ -283,7 +284,7 @@ public abstract class AbstractStaxXmlRpcParser {
    * @param reader
    *          the <code>StreamReader</code>.
    * @return the new <code>StructMember</code>.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the element contains an unknown child. Only one "name" element
    *           and one "value" element are allowed inside an "member" element.
    * @see #parseValueElement(XMLStreamReader)
@@ -308,8 +309,8 @@ public abstract class AbstractStaxXmlRpcParser {
             value = this.parseValueElement(reader);
 
           } else {
-            throw new XmlRpcParsingException("Unknown entity '" + localName
-                + "'");
+            throw new XmlRpcInvalidPayloadException("Unexpected element '"
+                + localName + "'");
           }
           break;
 
@@ -318,7 +319,7 @@ public abstract class AbstractStaxXmlRpcParser {
 
           if (XmlRpcElementNames.MEMBER.equals(localName)) {
             if (!StringUtils.hasText(name)) {
-              throw new XmlRpcParsingException(
+              throw new XmlRpcInvalidPayloadException(
                   "The struct member should have a name");
             }
 
@@ -338,7 +339,7 @@ public abstract class AbstractStaxXmlRpcParser {
    * @param reader
    *          the <code>StreamReader</code>.
    * @return the created Object.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the element contains an unknown child.
    * @see #parseArrayElement(XMLStreamReader)
    * @see #parseStructElement(XMLStreamReader)
@@ -387,8 +388,8 @@ public abstract class AbstractStaxXmlRpcParser {
             return this.parseStructElement(reader);
 
           } else {
-            throw new XmlRpcParsingException("Unexpected element '" + localName
-                + "'");
+            throw new XmlRpcInvalidPayloadException("Unexpected element '"
+                + localName + "'");
           }
 
         case XMLStreamConstants.CHARACTERS:

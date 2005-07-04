@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 15, 2005
+ * Created on Jul 4, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,27 +19,26 @@ package org.springmodules.remoting.xmlrpc;
 
 /**
  * <p>
- * Exception thrown when a XML-RPC request specifies a method that does not
- * exist.
+ * Exception thrown when the given XML-RPC is not well formed.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/07/04 18:42:06 $
+ * @version $Revision$ $Date$
  */
-public class XmlRpcMethodNotFoundException extends XmlRpcException {
+public class XmlRpcNotWellFormedException extends XmlRpcParsingException {
 
   /**
    * Fault code of this exception.
    */
-  public static final int FAULT_CODE = -32601;
+  public static final int FAULT_CODE = -32700;
 
   /**
    * Version number of this class.
    * 
    * @see java.io.Serializable
    */
-  private static final long serialVersionUID = 3257005449604510518L;
+  private static final long serialVersionUID = 8272029685122672801L;
 
   /**
    * Constructor.
@@ -47,7 +46,7 @@ public class XmlRpcMethodNotFoundException extends XmlRpcException {
    * @param msg
    *          the detail message.
    */
-  public XmlRpcMethodNotFoundException(String msg) {
+  public XmlRpcNotWellFormedException(String msg) {
     super(msg);
   }
 
@@ -59,7 +58,7 @@ public class XmlRpcMethodNotFoundException extends XmlRpcException {
    * @param nestedException
    *          the nested exception.
    */
-  public XmlRpcMethodNotFoundException(String msg, Throwable nestedException) {
+  public XmlRpcNotWellFormedException(String msg, Throwable nestedException) {
     super(msg, nestedException);
   }
 
@@ -69,5 +68,4 @@ public class XmlRpcMethodNotFoundException extends XmlRpcException {
   public int getCode() {
     return FAULT_CODE;
   }
-  
 }

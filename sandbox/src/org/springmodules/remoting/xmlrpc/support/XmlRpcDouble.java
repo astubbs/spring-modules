@@ -17,7 +17,7 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
-import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/07/03 14:11:39 $
+ * @version $Revision: 1.12 $ $Date: 2005/07/04 18:42:05 $
  */
 public final class XmlRpcDouble implements XmlRpcScalar {
 
@@ -58,7 +58,7 @@ public final class XmlRpcDouble implements XmlRpcScalar {
    * 
    * @param value
    *          the new value of this scalar.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the given value is not a parsable number.
    */
   public XmlRpcDouble(String value) {
@@ -68,7 +68,7 @@ public final class XmlRpcDouble implements XmlRpcScalar {
       this.value = new Double(value);
 
     } catch (NumberFormatException exception) {
-      throw new XmlRpcParsingException("'" + value
+      throw new XmlRpcInvalidPayloadException("'" + value
           + "' is not a double-precision signed floating point number",
           exception);
     }

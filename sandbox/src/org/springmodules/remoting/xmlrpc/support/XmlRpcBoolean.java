@@ -17,7 +17,7 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
-import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/07/03 14:11:38 $
+ * @version $Revision: 1.10 $ $Date: 2005/07/04 18:42:05 $
  */
 public final class XmlRpcBoolean implements XmlRpcScalar {
 
@@ -68,7 +68,7 @@ public final class XmlRpcBoolean implements XmlRpcScalar {
    * 
    * @param value
    *          the new value of this scalar.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the given value is not equal to "1" or "0" (<code>true</code>
    *           or <code>false</code> in XML-RPC).
    */
@@ -81,7 +81,8 @@ public final class XmlRpcBoolean implements XmlRpcScalar {
       this.value = Boolean.FALSE;
 
     } else {
-      throw new XmlRpcParsingException("'" + value + "' is not a boolean value");
+      throw new XmlRpcInvalidPayloadException("'" + value
+          + "' is not a boolean value");
     }
   }
 

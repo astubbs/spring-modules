@@ -30,7 +30,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.springmodules.remoting.xmlrpc.XmlRpcResponseWriter;
-import org.springmodules.remoting.xmlrpc.XmlRpcWritingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcWriterException;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcFault;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcResponse;
@@ -46,7 +46,7 @@ import org.w3c.dom.Element;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/29 17:24:13 $
+ * @version $Revision: 1.6 $ $Date: 2005/07/04 18:42:09 $
  */
 public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
     implements XmlRpcResponseWriter {
@@ -126,11 +126,11 @@ public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
       serialized = outputStream.toByteArray();
 
     } catch (TransformerConfigurationException exception) {
-      throw new XmlRpcWritingException("Transformer configuration exception",
+      throw new XmlRpcWriterException("Transformer configuration exception",
           exception);
 
     } catch (TransformerException exception) {
-      throw new XmlRpcWritingException("Transformer exception", exception);
+      throw new XmlRpcWriterException("Transformer exception", exception);
 
     } finally {
       if (outputStream != null) {

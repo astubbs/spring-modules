@@ -17,7 +17,7 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
-import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/07/03 14:11:38 $
+ * @version $Revision: 1.12 $ $Date: 2005/07/04 18:42:04 $
  */
 public final class XmlRpcInteger implements XmlRpcScalar {
 
@@ -58,7 +58,7 @@ public final class XmlRpcInteger implements XmlRpcScalar {
    * 
    * @param value
    *          the new value of this scalar.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the given value is not a parsable number.
    */
   public XmlRpcInteger(String value) {
@@ -67,7 +67,7 @@ public final class XmlRpcInteger implements XmlRpcScalar {
       this.value = new Integer(value);
 
     } catch (NumberFormatException exception) {
-      throw new XmlRpcParsingException("'" + value
+      throw new XmlRpcInvalidPayloadException("'" + value
           + "' is not a 32-bit signed integer", exception);
     }
   }

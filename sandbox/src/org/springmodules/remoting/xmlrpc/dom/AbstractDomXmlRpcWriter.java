@@ -24,7 +24,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
-import org.springmodules.remoting.xmlrpc.XmlRpcWritingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcWriterException;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcArray;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcBase64;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcBoolean;
@@ -49,7 +49,7 @@ import org.xml.sax.ErrorHandler;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/25 07:14:52 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/04 18:42:09 $
  */
 public abstract class AbstractDomXmlRpcWriter {
 
@@ -125,7 +125,7 @@ public abstract class AbstractDomXmlRpcWriter {
       return docBuilder.newDocument();
 
     } catch (ParserConfigurationException exception) {
-      throw new XmlRpcWritingException("Parser configuration exception",
+      throw new XmlRpcWriterException("Parser configuration exception",
           exception);
     }
   }

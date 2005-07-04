@@ -25,9 +25,14 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/22 08:49:44 $
+ * @version $Revision: 1.3 $ $Date: 2005/07/04 18:42:08 $
  */
 public class XmlRpcServiceNotFoundException extends XmlRpcException {
+
+  /**
+   * Fault code of this exception.
+   */
+  public static final int FAULT_CODE = -32601;
 
   /**
    * Version number of this class.
@@ -58,4 +63,10 @@ public class XmlRpcServiceNotFoundException extends XmlRpcException {
     super(msg, nestedException);
   }
 
+  /**
+   * @see XmlRpcException#getCode()
+   */
+  public int getCode() {
+    return FAULT_CODE;
+  }
 }

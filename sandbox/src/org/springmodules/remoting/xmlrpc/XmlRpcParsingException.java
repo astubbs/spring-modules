@@ -25,16 +25,9 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/06 02:13:57 $
+ * @version $Revision: 1.2 $ $Date: 2005/07/04 18:42:07 $
  */
-public class XmlRpcParsingException extends XmlRpcException {
-
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
-  private static final long serialVersionUID = 3761406417336546864L;
+public abstract class XmlRpcParsingException extends XmlRpcException {
 
   /**
    * Constructor.

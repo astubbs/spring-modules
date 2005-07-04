@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
 
 /**
  * <p>
@@ -31,7 +31,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/07/03 14:11:39 $
+ * @version $Revision: 1.11 $ $Date: 2005/07/04 18:42:05 $
  */
 public final class XmlRpcDateTime implements XmlRpcScalar {
 
@@ -66,7 +66,7 @@ public final class XmlRpcDateTime implements XmlRpcScalar {
    * 
    * @param value
    *          the new value of this scalar.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the given value is not a parsable date.
    */
   public XmlRpcDateTime(String value) {
@@ -76,7 +76,7 @@ public final class XmlRpcDateTime implements XmlRpcScalar {
       this.value = this.dateFormat.parse(value);
 
     } catch (ParseException exception) {
-      throw new XmlRpcParsingException("'" + value
+      throw new XmlRpcInvalidPayloadException("'" + value
           + "' is not a date in ISO 8601 format", exception);
     }
   }

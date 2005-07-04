@@ -31,7 +31,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.springframework.util.xml.SimpleSaxErrorHandler;
+import org.springmodules.remoting.xmlrpc.XmlRpcInternalException;
+import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
+import org.springmodules.remoting.xmlrpc.XmlRpcNotWellFormedException;
 import org.springmodules.remoting.xmlrpc.XmlRpcParsingException;
+import org.springmodules.remoting.xmlrpc.XmlRpcServerException;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcArray;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcBase64;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcBoolean;
@@ -60,7 +64,7 @@ import org.xml.sax.SAXParseException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/06/23 02:13:48 $
+ * @version $Revision: 1.7 $ $Date: 2005/07/04 18:42:09 $
  */
 public abstract class AbstractDomXmlRpcParser {
 
@@ -111,6 +115,8 @@ public abstract class AbstractDomXmlRpcParser {
    * @param inputStream
    *          the InputStream to parse.
    * @return the created XML document.
+   * @throws XmlRpcServerException
+   *           if there are any internal errors.
    * @throws XmlRpcParsingException
    *           if there are any errors during the parsing.
    */
@@ -131,18 +137,20 @@ public abstract class AbstractDomXmlRpcParser {
       return docBuilder.parse(inputStream);
 
     } catch (ParserConfigurationException exception) {
-      throw new XmlRpcParsingException("Parser configuration exception",
+      throw new XmlRpcInternalException("Parser configuration exception",
           exception);
 
     } catch (SAXParseException exception) {
-      throw new XmlRpcParsingException("Line " + exception.getLineNumber()
-          + " in XML-RPC request is invalid", exception);
+      throw new XmlRpcNotWellFormedException("Line "
+          + exception.getLineNumber() + " in XML-RPC payload is invalid",
+          exception);
 
     } catch (SAXException exception) {
-      throw new XmlRpcParsingException("XML-RPC payload is invalid", exception);
+      throw new XmlRpcNotWellFormedException("XML-RPC payload is invalid",
+          exception);
 
     } catch (IOException exception) {
-      throw new XmlRpcParsingException(
+      throw new XmlRpcInternalException(
           "IOException when parsing XML-RPC payload", exception);
 
     } finally {
@@ -162,7 +170,7 @@ public abstract class AbstractDomXmlRpcParser {
    * @param arrayElement
    *          the XML element to parse.
    * @return the created XML-RPC array.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the element contains an unknown child. Only one "data" element
    *           is allowed inside an "array" element.
    * @see #parseDataElement(Element)
@@ -181,8 +189,8 @@ public abstract class AbstractDomXmlRpcParser {
           Element dataElement = (Element) child;
           return this.parseDataElement(dataElement);
         }
-        throw new XmlRpcParsingException("Unexpected element '" + childName
-            + "'");
+        throw new XmlRpcInvalidPayloadException("Unexpected element '"
+            + childName + "'");
       }
     }
 
@@ -227,11 +235,11 @@ public abstract class AbstractDomXmlRpcParser {
    * @param memberElement
    *          the XML element to parse.
    * @return the created member of a XML-RPC complex structure.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the element contains a child with an unknown name. Only one
    *           element with name "name" and one element with name "value" are
    *           allowed inside an "member" element.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the name of the parsed struct member is empty.
    * @see #parseValueElement(Element)
    */
@@ -257,14 +265,15 @@ public abstract class AbstractDomXmlRpcParser {
           value = this.parseValueElement(valueElement);
 
         } else {
-          throw new XmlRpcParsingException("Unexpected element '" + childName
-              + "'");
+          throw new XmlRpcInvalidPayloadException("Unexpected element '"
+              + childName + "'");
         }
       }
     }
 
     if (!StringUtils.hasText(name)) {
-      throw new XmlRpcParsingException("The struct member should have a name");
+      throw new XmlRpcInvalidPayloadException(
+          "The struct member should have a name");
     }
 
     return new XmlRpcMember(name, value);
@@ -277,7 +286,7 @@ public abstract class AbstractDomXmlRpcParser {
    * @param parameterElement
    *          the XML element to parse.
    * @return the created parameter.
-   * @throws XmlRpcParsingException
+   * @throws XmlRpcInvalidPayloadException
    *           if the element contains a child with name other than a "value".
    * @see #parseValueElement(Element)
    */
@@ -294,8 +303,8 @@ public abstract class AbstractDomXmlRpcParser {
           Element valueElement = (Element) child;
           return this.parseValueElement(valueElement);
         }
-        throw new XmlRpcParsingException("Unexpected element '" + nodeName
-            + "'");
+        throw new XmlRpcInvalidPayloadException("Unexpected element '"
+            + nodeName + "'");
       }
     }
 
@@ -310,6 +319,8 @@ public abstract class AbstractDomXmlRpcParser {
    * @param parametersElement
    *          the XML element to parse.
    * @return the created parameters.
+   * @throws XmlRpcInvalidPayloadException
+   *           if there are elements other than "param".
    * @see #parseParameterElement(Element)
    */
   protected final XmlRpcElement[] parseParametersElement(
@@ -331,8 +342,8 @@ public abstract class AbstractDomXmlRpcParser {
           parameters.add(parameter);
 
         } else {
-          throw new XmlRpcParsingException("Unexpected element '" + childName
-              + "'");
+          throw new XmlRpcInvalidPayloadException("Unexpected element '"
+              + childName + "'");
         }
       }
     }
@@ -379,6 +390,8 @@ public abstract class AbstractDomXmlRpcParser {
    * @param valueElement
    *          the XML element to parse.
    * @return the created value.
+   * @throws XmlRpcInvalidPayloadException
+   *           if there are invalid XML elements.
    * @see #parseArrayElement(Element)
    * @see #parseStructElement(Element)
    */
@@ -425,8 +438,8 @@ public abstract class AbstractDomXmlRpcParser {
           return this.parseStructElement(xmlElement);
 
         } else {
-          throw new XmlRpcParsingException("Unexpected element '" + childName
-              + "'");
+          throw new XmlRpcInvalidPayloadException("Unexpected element '"
+              + childName + "'");
         }
 
       } else if (child instanceof Text) {
