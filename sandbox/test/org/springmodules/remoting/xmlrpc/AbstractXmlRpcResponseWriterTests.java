@@ -34,6 +34,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcBoolean;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcDateTime;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcDouble;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcFault;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcInteger;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcResponse;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
@@ -48,7 +49,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/06/29 17:24:44 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/04 00:45:31 $
  */
 public abstract class AbstractXmlRpcResponseWriterTests extends TestCase {
 
@@ -102,6 +103,42 @@ public abstract class AbstractXmlRpcResponseWriterTests extends TestCase {
 
     this.onSetUp();
     this.writer = this.getXmlRpcResponseWriterImplementation();
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcResponseWriter#writeResponse(XmlRpcResponse)}</code>
+   * creates the XML-RPC response correctly if the response contains a fault.
+   */
+  public final void testWriteResponseWithFault() {
+    int faultCode = 8453;
+    String faultMessage = "A fault";
+
+    XmlRpcFault xmlRpcFault = new XmlRpcFault(faultCode, faultMessage);
+
+    XmlRpcResponse response = new XmlRpcResponse(xmlRpcFault);
+
+    StringBuffer builder = new StringBuffer(256);
+    builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    builder
+        .append("<methodResponse><fault><struct><member><name>faultCode</name><value><i4>");
+    builder.append(faultCode);
+    builder
+        .append("</i4></value></member><member><name>faultString</name><value><string>");
+    builder.append(faultMessage);
+    builder
+        .append("</string></value></member></struct></fault></methodResponse>");
+
+    String expected = builder.toString();
+
+    byte[] actualResponse = this.writer.writeResponse(response);
+    String actual = new String(actualResponse, 0, actualResponse.length);
+
+    this.logger.debug(response);
+    this.logger.debug("XML-RPC response: " + actual);
+
+    assertEquals("<XML-RPC response>", expected, actual);
+
   }
 
   /**
