@@ -28,6 +28,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.target.SingletonTargetSource;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.ClassUtils;
 import org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor;
 import org.springmodules.cache.interceptor.caching.CachingInterceptor;
 import org.springmodules.cache.interceptor.caching.EntryStoredListener;
@@ -42,7 +43,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:42:20 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/04 00:45:00 $
  */
 public final class CacheProxyFactoryBean extends ProxyConfig implements
     FactoryBean, InitializingBean {
@@ -129,7 +130,7 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
       }
 
       // rely on AOP infrastructure to tell us what interfaces to proxy
-      proxyFactory.setInterfaces(AopUtils.getAllInterfaces(this.target));
+      proxyFactory.setInterfaces(ClassUtils.getAllInterfaces(this.target));
     }
 
     this.proxy = proxyFactory.getProxy();
