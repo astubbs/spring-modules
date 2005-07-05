@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationBasedExporter;
-import org.springframework.remoting.support.RemoteInvocationResult;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 
@@ -33,7 +32,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/23 01:43:23 $
+ * @version $Revision: 1.3 $ $Date: 2005/07/05 09:50:32 $
  */
 public final class XmlRpcServiceExporterImpl extends
     RemoteInvocationBasedExporter implements XmlRpcServiceExporter,
@@ -124,9 +123,17 @@ public final class XmlRpcServiceExporterImpl extends
 
   /**
    * @see XmlRpcServiceExporter#invoke(XmlRpcRequest)
+   * @see #findMatchingMethod(XmlRpcRequest)
    */
-  public RemoteInvocationResult invoke(XmlRpcRequest xmlRpcRequest) {
+  public Object invoke(XmlRpcRequest xmlRpcRequest) {
     RemoteInvocation invocation = this.findMatchingMethod(xmlRpcRequest);
-    return this.invokeAndCreateResult(invocation, this.service);
+
+    Object result = null;
+    try {
+      result = this.invoke(invocation, this.service);
+    } catch (Exception exception) {
+      throw new XmlRpcInternalException("Internal error", exception);
+    }
+    return result;
   }
 }
