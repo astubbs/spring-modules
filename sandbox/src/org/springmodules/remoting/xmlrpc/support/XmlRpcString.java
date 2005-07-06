@@ -29,7 +29,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/07/03 14:11:38 $
+ * @version $Revision: 1.11 $ $Date: 2005/07/06 13:06:26 $
  */
 public final class XmlRpcString implements XmlRpcScalar {
 
@@ -37,6 +37,16 @@ public final class XmlRpcString implements XmlRpcScalar {
    * The value of this scalar.
    */
   private String value;
+
+  /**
+   * Constructor.
+   * 
+   * @param value
+   *          the new value of this scalar.
+   */
+  public XmlRpcString(Character value) {
+    this(value.toString());
+  }
 
   /**
    * Constructor.

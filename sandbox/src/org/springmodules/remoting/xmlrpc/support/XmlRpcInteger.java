@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/07/04 18:42:04 $
+ * @version $Revision: 1.13 $ $Date: 2005/07/06 13:06:26 $
  */
 public final class XmlRpcInteger implements XmlRpcScalar {
 
@@ -51,6 +51,16 @@ public final class XmlRpcInteger implements XmlRpcScalar {
   public XmlRpcInteger(Integer value) {
     this();
     this.value = value;
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param value
+   *          the new value of this scalar.
+   */
+  public XmlRpcInteger(Short value) {
+    this(new Integer(value.intValue()));
   }
 
   /**
