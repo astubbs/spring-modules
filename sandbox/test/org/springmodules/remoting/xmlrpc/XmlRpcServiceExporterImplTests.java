@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.springframework.remoting.support.RemoteInvocation;
-import org.springframework.remoting.support.RemoteInvocationResult;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
@@ -35,7 +34,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/23 01:48:37 $
+ * @version $Revision: 1.3 $ $Date: 2005/07/06 13:06:41 $
  */
 public class XmlRpcServiceExporterImplTests extends TestCase {
 
@@ -214,9 +213,9 @@ public class XmlRpcServiceExporterImplTests extends TestCase {
     this.myServiceControl.replay();
 
     // execute the method to test.
-    RemoteInvocationResult result = this.serviceExporter.invoke(request);
+    Object result = this.serviceExporter.invoke(request);
 
-    assertEquals("<Result>", customerName, result.getValue());
+    assertEquals("<Result>", customerName, result);
 
     // verify the expectations of the mock objects were met.
     this.myServiceControl.verify();
