@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/05 09:50:32 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/06 13:05:51 $
  */
 public interface XmlRpcServiceExporter {
 
@@ -38,8 +38,8 @@ public interface XmlRpcServiceExporter {
    *          the XML-RPC request specifying the method to execute and its
    *          arguments.
    * @return the result of the invocation.
-   * @throws XmlRpcException
-   *           if there is any internal error.
+   * @throws Exception
+   *           if there is any internal error while invoking the method.
    */
-  Object invoke(XmlRpcRequest xmlRpcRequest) throws XmlRpcException;
+  Object invoke(XmlRpcRequest xmlRpcRequest) throws Exception;
 }
