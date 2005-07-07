@@ -26,7 +26,7 @@ import java.util.Arrays;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/03 14:11:39 $
+ * @version $Revision: 1.7 $ $Date: 2005/07/07 12:39:43 $
  */
 public final class XmlRpcResponse {
 
@@ -45,6 +45,18 @@ public final class XmlRpcResponse {
    * The parameters of this response.
    */
   private XmlRpcElement[] parameters;
+
+  /**
+   * Constructor.
+   * 
+   * @param parameter
+   *          the new parameter of this response.
+   */
+  public XmlRpcResponse(XmlRpcElement parameter) {
+    super();
+    XmlRpcElement[] newParameters = { parameter };
+    this.parameters = newParameters;
+  }
 
   /**
    * Constructor.
