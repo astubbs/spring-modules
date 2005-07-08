@@ -8,21 +8,21 @@
 	     INDEXING
 	-->
 
-    <bean id="indexingDirectory" class="org.springmodules.samples.lucene.index.console.SimpleDirectoryIndexingImpl">
+    <bean id="indexingDirectory" class="org.springmodules.samples.lucene.console.indexing.SimpleDirectoryIndexingImpl">
     	<property name="indexFactory"><ref bean="indexFactory"/></property>
     	<property name="documentHandlerManager"><ref bean="documentHandlerManager"/></property>
     </bean>
 
-    <bean id="indexingDatabase" class="org.springmodules.samples.lucene.index.console.SimpleDatabaseIndexingImpl">
+    <bean id="indexingDatabase" class="org.springmodules.samples.lucene.console.indexing.SimpleDatabaseIndexingImpl">
     	<property name="indexFactory"><ref bean="indexFactory"/></property>
     	<property name="dataSource"><ref bean="dataSource"/></property>
     </bean>
 
-	<bean id="urlMatcher" class="org.springmodules.lucene.index.object.url.OnlySiteUrlMatcher">
+	<!--bean id="urlMatcher" class="org.springmodules.lucene.index.object.url.OnlySiteUrlMatcher">
 		<property name="baseUrlSite"><value>http://localhost:8080/</value></property>		
-	</bean>
+	</bean-->
 
-    <bean id="indexingUrl" class="org.springmodules.samples.lucene.index.console.SimpleUrlIndexingImpl">
+    <bean id="indexingUrl" class="org.springmodules.samples.lucene.console.indexing.SimpleUrlIndexingImpl">
     	<property name="indexFactory"><ref bean="indexFactory"/></property>
     	<property name="documentHandlerManager"><ref bean="documentHandlerManager"/></property>
     	<property name="urlMatcher"><ref bean="urlMatcher"/></property>
@@ -32,7 +32,7 @@
 	     SEARCHING
 	-->
 
-    <bean id="searcher" class="org.springmodules.samples.lucene.searching.console.SimpleSearcherImpl">
+    <bean id="searcher" class="org.springmodules.samples.lucene.console.search.SimpleSearcherImpl">
         <property name="searchService"><ref bean="searchService" /></property>
     </bean>
 

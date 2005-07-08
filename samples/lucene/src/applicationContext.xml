@@ -58,9 +58,18 @@
 		</property>
 	</bean>
 
-	<bean id="indexAccessor" class="org.springmodules.samples.lucene.index.service.IndexAccessorImpl">
+	<bean id="indexAccessorDao" class="org.springmodules.samples.lucene.dao.indexing.IndexAccessorDaoImpl">
     	<property name="indexFactory"><ref local="indexFactory"/></property>
     	<property name="documentHandlerManager"><ref local="documentHandlerManager"/></property>
+	</bean>
+
+	<bean id="documentIdDao" class="org.springmodules.samples.lucene.dao.indexing.DocumentIdDaoImpl">
+    	<property name="dataSource"><ref local="dataSource"/></property>
+	</bean>
+
+	<bean id="indexAccessorService" class="org.springmodules.samples.lucene.service.indexing.IndexAccessorServiceImpl">
+    	<property name="documentIdDao"><ref local="documentIdDao"/></property>
+    	<property name="indexAccessorDao"><ref local="indexAccessorDao"/></property>
 	</bean>
 
 	<!--
@@ -80,7 +89,7 @@
     	</property>
     </bean-->
 
-	<bean id="searchService" class="org.springmodules.samples.lucene.searching.service.SearchServiceImpl">
+	<bean id="searchService" class="org.springmodules.samples.lucene.service.search.SearchServiceImpl">
         <!--property name="searcherFactory"><ref bean="multiSearcherFactory" /></property-->
         <property name="searcherFactory"><ref bean="searcherFactory" /></property>
         <property name="analyzer">
