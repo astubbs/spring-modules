@@ -19,6 +19,7 @@ package org.springmodules.lucene.index.support;
 import org.apache.lucene.analysis.Analyzer;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.lucene.index.core.DefaultLuceneIndexTemplate;
 import org.springmodules.lucene.index.core.LuceneIndexTemplate;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
@@ -34,10 +35,19 @@ import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
  * but can also be used when working with IndexWriterFactoryUtils and
  * IndexReaderFactoryUtils directly or with indexer classes.
  *
+ * <p>By default, a DefaultLuceneIndexTemplate instance is created. If
+ * you need another implementation of the LuceneIndexTemplate interface,
+ * you can directly inject it the <code>template</code> property. For
+ * example, you can inject the ConcurrentLuceneIndexTemplate to manage
+ * concurrent calls on the template. 
+ *
  * <p>The DocumentHandlerManager to use can be too specify to
  * allow different indexing types.
  *
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.core.DefaultLuceneIndexTemplate
+ * @see org.springmodules.lucene.index.core.concurrent.ConcurrentLuceneIndexTemplate
+ * @see org.springmodules.lucene.index.core.concurrent.ConcurrentLuceneIndexTemplateListener
  */
 public abstract class LuceneIndexSupport implements InitializingBean {
 	private LuceneIndexTemplate template;
@@ -112,7 +122,7 @@ public abstract class LuceneIndexSupport implements InitializingBean {
 		}
 
 		if( this.template==null ) {
-			this.template=new LuceneIndexTemplate(indexFactory,analyzer);
+			this.template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		}
 	}
 
