@@ -16,428 +16,319 @@
 
 package org.springmodules.lucene.index.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
-import org.springmodules.lucene.index.LuceneIndexAccessException;
-import org.springmodules.lucene.index.factory.IndexFactory;
-import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
-import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
-import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
-import org.springmodules.lucene.util.IOUtils;
 
 /**
- * <b>This is the central class in the lucene indexing core package.</b>
- * It simplifies the use of lucene to index documents or datas using
- * index reader and writer. It helps to avoid common errors and to
- * manage these resource in a flexible manner.
- * It executes core Lucene workflow, leaving application code to focus on
- * the way to create Lucene documents and make some operations on the
- * index.
- *
- * <p>This class is based on the IndexFactory abstraction which is a
- * factory to create IndexReader and IndexWriter for the configured
- * Directory. So the template doesn't need to always hold resources and
- * this avoids some locking problems on the index. You can too apply
- * different strategies for managing index resources.
- *
- * <p>Can be used within a service implementation via direct instantiation
- * with a IndexFactory reference, or get prepared in an application context
- * and given to services as bean reference. Note: The IndexFactory should
- * always be configured as a bean in the application context, in the first case
- * given to the service directly, in the second case to the prepared template.
- * 
- * <p>You must be aware that the use of some methods (like undeleteDocuments,
- * isDeleted, hasDeletions, flush) have sense only if you share the Lucene
- * underlying resources across several template method calls. As a matter of
- * fact, when IndexReader and IndexWriter are closed every changes deferred
- * until the closing of these resources. Moreover some Lucene operations are
- * incompatible if you share resources across several calls. 
- * 
- * @author Brian McCallister
  * @author Thierry Templier
- * @see DocumentCreator
- * @see DocumentsCreator
- * @see org.springmodules.lucene.index.factory
  */
-public class LuceneIndexTemplate implements LuceneOperations {
-
-	private IndexFactory indexFactory;
-	private Analyzer analyzer;
+public interface LuceneIndexTemplate {
 
 	/**
-	 * Construct a new LuceneIndexTemplate for bean usage.
-	 * Note: The IndexFactory has to be set before using the instance.
-	 * This constructor can be used to prepare a LuceneIndexTemplate via a BeanFactory,
-	 * typically setting the IndexFactory via setIndexFactory.
-	 * @see #setIndexFactory
+	 * Delete the document corresponding to its internal document
+	 * identifier.
+	 * Note: Lucene deletes really this document at the IndexReader
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really delete from the index before the
+	 * method returns. 
+	 * @param internalDocumentId the internal document identifier
 	 */
-	public LuceneIndexTemplate() {
-	}
+	void deleteDocument(int internalDocumentId);
 
 	/**
-	 * Construct a new LuceneIndexTemplate, given an IndexFactory to obtain both
-	 * IndexReader and IndexWriter, and an Analyzer to be used unless an other
-	 * one is specified as method parameter.
-	 * @param indexFactory IndexFactory to obtain both IndexReader and IndexWriter
-	 * @param analyzer Lucene analyzer to extract tokens out of the text to index
+	 * Delete one or more documents corresponding to a specified value
+	 * for a field.
+	 * Note: Lucene deletes really these documents at the IndexReader
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really delete from the index before the
+	 * method returns. 
+	 * @param term the term to specify a value for a field
 	 */
-	public LuceneIndexTemplate(IndexFactory indexFactory,Analyzer analyzer) {
-		setIndexFactory(indexFactory);
-		setAnalyzer(analyzer);
-		afterPropertiesSet();
-	}
+	void deleteDocuments(Term term);
 
 	/**
-	 * Check if the indexFactory is set. The analyzer could be not set.
+	 * Undelete every documents that have been marked as deleted. As
+	 * Lucene deletes really these documents at the IndexReader
+	 * close, this method is useful only if you don't share resources
+	 * across several calls. In the contrary, the call of this method
+	 * has no effect on the index.
 	 */
-	public void afterPropertiesSet() {
-		if (getIndexFactory() == null) {
-			throw new IllegalArgumentException("indexFactory is required");
-		}
-	}
+	void undeleteDocuments();
 
 	/**
-	 * Set the IndexFactory to obtain both IndexReader and IndexWriter.
+	 * Check if a document corresponding to an internal document identifier
+	 * has been marked as deleted. As Lucene deletes really these documents
+	 * at the IndexReader close, this method is useful only if you don't
+	 * share resources across several calls. In the contrary, the call of
+	 * this method will always return false.
+	 * @param internalDocumentId the internal document identifier
 	 */
-	public void setIndexFactory(IndexFactory factory) {
-		indexFactory = factory;
-	}
+	boolean isDeleted(int internalDocumentId);
 
 	/**
-	 * Return the IndexFactory used by this template.
+	 * Check if an index has documents marked as deleted. As Lucene deletes
+	 * really these documents at the IndexReader close, this method is useful
+	 * only if you don't share resources across several calls. In the contrary,
+	 * the call of this method will always return false.
 	 */
-	public IndexFactory getIndexFactory() {
-		return indexFactory;
-	}
+	boolean hasDeletions();
 
 	/**
-	 * Set the default Lucene Analyzer used to extract tokens out of the
-	 * text to index.
+	 * Get the next document number which will be used to internally
+	 * identify a document. Be aware that, if you share resources
+	 * across several calls, this number is modified at every document
+	 * add or document marked as deleted. 
+	 * @return the next document number in the index
 	 */
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
-	}
+	int getMaxDoc();
 
 	/**
-	 * Return the Lucene Analyzer used by this template.
+	 * Get the number of documents in the index. Be aware that, if you
+	 * share resources across several calls, this number represents the
+	 * number of documents in the index plus the number of documents which
+	 * will be added at the IndexWriter close minus the number of documents
+	 * which are marked as deleted.
+	 * @return the number of documents in the index
 	 */
-	public Analyzer getAnalyzer() {
-		return analyzer;
-	}
+	int getNumDocs();
 
-	//-------------------------------------------------------------------------
-	// Methods dealing with document deletions
-	//-------------------------------------------------------------------------
+	/**
+	 * Add a document created outside the template to the index. In this case,
+	 * the application needs to manage exceptions.
+	 * Note: Lucene adds really this document at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really added to the index before the
+	 * method returns. 
+	 * @param document the document to add
+	 */
+	void addDocument(Document document);
 
-	public void deleteDocument(int internalDocumentId) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		try {
-			reader.delete(internalDocumentId);
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during deleting a document.",ex);
-		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-	}
+	/**
+	 * Add a document created outside the template to the index, basing
+	 * the analyzer parameter. In this case, the application needs to
+	 * manage exceptions.
+	 * Note: Lucene adds really this document at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really added to the index before the
+	 * method returns. 
+	 * @param document the document to add
+	 * @param analyzer the Lucene analyzer to use to index
+	 */
+	void addDocument(Document document, Analyzer analyzer);
 
-	public void deleteDocuments(Term term) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		try {
-			reader.delete(term);
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during deleting a document.",ex);
-		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-	}
+	/**
+	 * Add a document thanks to a callback method defined in the DocumentCreator
+	 * interface. In this case, the exceptions during the document creation are
+	 * managed by the template.
+	 * Note: Lucene adds really this document at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really added to the index before the
+	 * method returns.
+	 * @param creator the implementation of DocumentCreator that creates the document to add
+	 * @see DocumentCreator
+	 */
+	void addDocument(DocumentCreator creator);
 
-	public void undeleteDocuments() {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		try {
-			reader.undeleteAll();
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during undeleting all documents.",ex);
-		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-	}
+	/**
+	 * Add a document thanks to a callback method defined in the DocumentCreator
+	 * interface, basing the analyzer parameter. In this case, the exceptions
+	 * during the document creation are managed by the template.
+	 * Note: Lucene adds really this document at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really added to the index before the
+	 * method returns. 
+	 * @param creator the implementation of DocumentCreator that creates the document to add
+	 * @param analyzer the Lucene analyzer to use to index
+	 * @see DocumentCreator
+	 */
+	void addDocument(DocumentCreator documentCreator,Analyzer analyzer);
 
-	public boolean isDeleted(int internalDocumentId) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		try {
-			return reader.isDeleted(internalDocumentId);
-		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-	}
+	/**
+	 * Add a document thanks to a callback method defined in the
+	 * InputStreamDocumentCreator interface, basing the analyzer parameter.
+	 * In this case, the exceptions during the document creation and the
+	 * InputStream are managed by the template. As a matter of the InputStream
+	 * must be still opened when the document is added to the index.
+	 * Note: Lucene adds really this document at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really added to the index before the
+	 * method returns. 
+	 * @param creator the implementation of DocumentCreator that creates the document to add
+	 * @see InputStreamDocumentCreator
+	 */
+	void addDocument(InputStreamDocumentCreator creator);
 
-	public boolean hasDeletions() {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		try {
-			return reader.hasDeletions();
-		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-	}
+	/**
+	 * Add a document thanks to a callback method defined in the
+	 * InputStreamDocumentCreator interface, basing the analyzer parameter.
+	 * In this case, the exceptions during the document creation and the
+	 * InputStream are managed by the template. As a matter of the InputStream
+	 * must be still opened when the document is added to the index.
+	 * Note: Lucene adds really this document at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the document is really added to the index before the
+	 * method returns. 
+	 * @param creator the implementation of DocumentCreator that creates the document to add
+	 * @param analyzer the Lucene analyzer to use to index
+	 * @see InputStreamDocumentCreator
+	 */
+	void addDocument(InputStreamDocumentCreator documentCreator,Analyzer analyzer);
 
-	//-------------------------------------------------------------------------
-	// Methods dealing with index informations
-	//-------------------------------------------------------------------------
+	/**
+	 * Add a list of documents created outside the template to the index. In this case,
+	 * the application needs to manage exceptions.
+	 * Note: Lucene adds really these documents at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the documents are really added to the index before the
+	 * method returns. 
+	 * @param documents the list of documents to add
+	 */
+	void addDocuments(List documents);
 
-	public int getMaxDoc() {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		try {
-			return reader.maxDoc();
-		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-	}
+	/**
+	 * Add a list of documents created outside the template to the index, basing
+	 * the analyzer parameter. In this case, the application needs to
+	 * manage exceptions.
+	 * Note: Lucene adds really these documents at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the documents are really added to the index before the
+	 * method returns. 
+	 * @param documents the list of documents to add
+	 * @param analyzer the Lucene analyzer to use to index
+	 */
+	void addDocuments(List documents, Analyzer analyzer);
 
-	public int getNumDocs() {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		try {
-			return reader.numDocs();
-		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-	}
+	/**
+	 * Add a list of documents thanks to a callback method defined in the
+	 * DocumentsCreator interface. In this case, the exceptions during the
+	 * document creations are managed by the template.
+	 * Note: Lucene adds really these documents at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the documents are really added to the index before the
+	 * method returns. 
+	 * @param creator the implementation of DocumentCreator that creates the document to add
+	 */
+	void addDocuments(DocumentsCreator creator);
 
-	//-------------------------------------------------------------------------
-	// Methods dealing with document creations
-	//-------------------------------------------------------------------------
+	/**
+	 * Add a list of documents thanks to a callback method defined in the
+	 * DocumentsCreator interface, basing the analyzer parameter. In this
+	 * case, the exceptions during the document creation are managed by the template.
+	 * Note: Lucene adds really these documents at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the documents are really added to the index before the
+	 * method returns. 
+	 * @param creator the implementation of DocumentCreator that creates the document to add
+	 * @param analyzer the Lucene analyzer to use to index
+	 */
+	void addDocuments(DocumentsCreator creator,Analyzer analyzer);
 
-	protected Document createDocument(DocumentCreator documentCreator) {
-		try {
-			return documentCreator.createDocument();
-		} catch (IOException ex) {
-			throw new LuceneIndexAccessException("Construction of the desired Document failed", ex);
-		}
-	}
+	/**
+	 * Update a document thanks to a callback method defined in the
+	 * DocumentModifier interface using the callback method defined
+	 * in the DocumentIdentifier interface to identify it.
+	 * In fact, with Lucene, you can't update a document of the index.
+	 * So you need to remove the document and insert a new one with
+	 * the modified fields.
+	 * This method does the remove and the add operations for you.
+	 * @param documentModifier the implementation of DocumentModifier to get the modified document
+	 * @param identifierthe implementation of DocumentIdentifier to identify the document to modify
+	 */
+	void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier);
 
-	protected List createDocuments(DocumentsCreator documentsCreator) {
-		try {
-			return documentsCreator.createDocuments();
-		} catch (IOException ex) {
-			throw new LuceneIndexAccessException("Construction of the desired Document failed", ex);
-		}
-	}
+	/**
+	 * Update a document thanks to a callback method defined in the
+	 * DocumentModifier interface using the callback method defined
+	 * in the DocumentIdentifier interface to identify it.
+	 * In fact, with Lucene, you can't update a document of the index.
+	 * So you need to remove the document and insert a new one with
+	 * the modified fields.
+	 * This method does the remove and the add operations for you with
+	 * a specified analyzer.
+	 * @param documentModifier the implementation of DocumentModifier to get the modified document
+	 * @param identifierthe implementation of DocumentIdentifier to identify the document to modify
+	 * @param analyzer the Lucene analyzer to use to index
+	 */
+	void updateDocument(DocumentModifier documentUpdater,DocumentIdentifier identifier,Analyzer analyzer);
 
-	public void addDocument(Document document) {
-		addDocument(document,null);
-	}
+	/**
+	 * Update documents thanks to a callback method defined in the
+	 * DocumentsModifier interface using the callback method defined
+	 * in the DocumentsIdentifier interface to identify them.
+	 * In fact, with Lucene, you can't update documents of the index.
+	 * So you need to remove the documents and insert new ones with
+	 * the modified fields.
+	 * This method does the remove and the add operations for you with
+	 * a specified analyzer.
+	 * @param documentModifier the implementation of DocumentsModifier to get the modified documents
+	 * @param identifierthe implementation of DocumentIdentifier to identify the documents to modify
+	 */
+	void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier);
 
-	public void addDocument(Document document,Analyzer analyzer) {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
-		try {
-			doAddDocument(writer,document,null);
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during adding a document.",ex);
-		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
-		}
-	}
+	/**
+	 * Update documents thanks to a callback method defined in the
+	 * DocumentsModifier interface using the callback method defined
+	 * in the DocumentsIdentifier interface to identify them.
+	 * In fact, with Lucene, you can't update documents of the index.
+	 * So you need to remove the documents and insert new ones with
+	 * the modified fields.
+	 * This method does the remove and the add operations for you with
+	 * a specified analyzer.
+	 * @param documentModifier the implementation of DocumentsModifier to get the modified documents
+	 * @param identifierthe implementation of DocumentIdentifier to identify the documents to modify
+	 * @param analyzer the Lucene analyzer to use to index
+	 */
+	void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier,Analyzer analyzer);
 
-	public void addDocument(DocumentCreator creator) {
-		addDocument(createDocument(creator),null);
-	}
+	/**
+	 * Add an index created outside the template to the index. In this case,
+	 * the application needs to manage exceptions.
+	 * Note: Lucene adds really this index at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the index are really added to the index before the
+	 * method returns. 
+	 * @param documents the list of documents to add
+	 */
+	void addIndex(Directory directory);
 
-	public void addDocument(DocumentCreator documentCreator,Analyzer analyzer) {
-		addDocument(createDocument(documentCreator),analyzer);
-	}
+	/**
+	 * Add a list of indexes created outside the template to the index.
+	 * In this case, the application needs to manage exceptions.
+	 * Note: Lucene adds really these indexes at the IndexWriter
+	 * close. By default (if you don't share resources across several
+	 * calls) the indexes are really added to the index before the
+	 * method returns. 
+	 * @param directories the list of indexes to add
+	 */
+	void addIndexes(Directory[] directories);
 
-	public void addDocument(InputStreamDocumentCreator creator) {
-		addDocument(creator,null);
-	}
+	/**
+	 * Index optimize method. We recommend to use this method as the end
+	 * of an indexing.
+	 */
+	void optimize();
 
-	public void addDocument(InputStreamDocumentCreator documentCreator,Analyzer analyzer) {
-		InputStream inputStream=null;
-		try {
-			inputStream=documentCreator.createInputStream();
-			addDocument(documentCreator.createDocumentFromInputStream(inputStream),analyzer);
-		} catch(IOException ex) {
-			//throw new LuceneInputStreamException("Error during adding a document.",ex);
-			throw new RuntimeException("Error during adding a document.",ex);
-		} finally {
-			IOUtils.closeInputStream(inputStream);
-		}
-	}
+	/**
+	 * Execute the action specified by the given action object within a
+	 * Lucene IndexReader.
+	 * Note: if you share resources across several calls, the IndexReader
+	 * provides to the callback is the shared instance. A new one is not
+	 * created.
+	 * @param callback the callback object that exposes the IndexReader
+	 */
+	Object read(ReaderCallback callback);
 
-	public void addDocuments(List documents) {
-		addDocuments(documents,null);
-	}
-
-	public void addDocuments(List documents,Analyzer analyzer) {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
-		try {
-			for(Iterator i=documents.iterator();i.hasNext();) {
-				Document document=(Document)i.next();
-				doAddDocument(writer,document,analyzer);
-			}
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during adding a document.",ex);
-		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
-		}
-	}
-
-	public void addDocuments(DocumentsCreator creator) {
-		addDocuments(creator,null);
-	}
-
-	public void addDocuments(DocumentsCreator creator,Analyzer analyzer) {
-		addDocuments(createDocuments(creator),analyzer);
-	}
-
-	private void doAddDocument(IndexWriter writer,Document document,
-								Analyzer analyzer) throws IOException {
-		if( document!=null ) {
-			if( analyzer==null ) {
-				writer.addDocument(document);
-			} else if( getAnalyzer()==null ) {
-				writer.addDocument(document);
-			} else if( analyzer!=null ) {
-				writer.addDocument(document,analyzer);
-			} else if( getAnalyzer()!=null ) {
-				writer.addDocument(document,getAnalyzer());
-			} else {
-				writer.addDocument(document);
-			}
-		} else {
-			throw new LuceneIndexAccessException("The document created is null.");
-		}
-	}
-
-	//-------------------------------------------------------------------------
-	// Methods dealing with document updates
-	//-------------------------------------------------------------------------
-
-	private void checkHitsForUpdate(Hits hits) {
-		if( hits.length()==0 ) {
-			throw new LuceneIndexAccessException("The identifier returns no document.");
-		}
-		if( hits.length()>1 ) {
-			throw new LuceneIndexAccessException("The identifier returns more than one document.");
-		}
-	}
-
-	public void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier) {
-		updateDocument(documentModifier,identifier,null);
-	}
-
-	public void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier,Analyzer analyzer) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		IndexSearcher searcher=new IndexSearcher(reader);
-		Term identifierTerm=identifier.getIdentifier();
-		Document updatedDocument=null;
-		try {
-			Hits hits=searcher.search(new TermQuery(identifierTerm));
-			checkHitsForUpdate(hits);
-			updatedDocument=documentModifier.updateDocument(hits.doc(0));
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during updating a document.",ex);
-		} finally {
-			SearcherFactoryUtils.releaseSearcher(searcher);
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-
-		deleteDocuments(identifierTerm);
-		addDocument(updatedDocument,analyzer);
-	}
-
-	public void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier) {
-		updateDocuments(documentsModifier,identifier,null);
-	}
-
-	public void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier,Analyzer analyzer) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		IndexSearcher searcher=new IndexSearcher(reader);
-		Term identifierTerm=identifier.getIdentifier();
-		List updatedDocuments=null;
-		try {
-			Hits hits=searcher.search(new TermQuery(identifierTerm));
-			updatedDocuments=documentsModifier.updateDocuments(hits);
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during updating a document.",ex);
-		} finally {
-			SearcherFactoryUtils.releaseSearcher(searcher);
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-
-		deleteDocuments(identifierTerm);
-		addDocuments(updatedDocuments,analyzer);
-	}
-
-
-	//-------------------------------------------------------------------------
-	// Methods dealing with index insertions
-	//-------------------------------------------------------------------------
-
-	public void addIndex(Directory directory) {
-		addIndexes(new Directory[] { directory });
-	}
-
-	public void addIndexes(Directory[] directories) {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
-		try {
-			writer.addIndexes(directories);
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during adding indexes.",ex);
-		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
-		}
-	}
-
-	//-------------------------------------------------------------------------
-	// Methods dealing with index optmization
-	//-------------------------------------------------------------------------
-
-	public void optimize() {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
-		try {
-			writer.optimize();
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during optimize the index.",ex);
-		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
-		}
-	}
-
-	//-------------------------------------------------------------------------
-	// Methods dealing with index reader and writer directly
-	//-------------------------------------------------------------------------
-
-	public Object read(ReaderCallback callback) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		try {
-			return callback.doWithReader(reader);
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during using the IndexReader.",ex);
-		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
-		}
-	}
-
-	public Object write(WriterCallback callback) {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
-		try {
-			return callback.doWithWriter(writer);
-		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during using the IndexWriter.",ex);
-		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
-		}
-	}
-
+	/**
+	 * Execute the action specified by the given action object within a
+	 * Lucene IndexWrier.
+	 * Note: if you share resources across several calls, the IndexWriter
+	 * provides to the callback is the shared instance. A new one is not
+	 * created.
+	 * @param callback the callback object that exposes the IndexWriter
+	 */
+	Object write(WriterCallback callback);
 }
