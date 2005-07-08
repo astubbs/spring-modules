@@ -16,13 +16,6 @@
 
 package org.springmodules.lucene.index.object;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.springmodules.lucene.index.object.directory.FileDocumentIndexingListener;
-import org.springmodules.lucene.index.object.url.UrlMatcher;
 import org.springmodules.lucene.index.support.file.DocumentHandler;
 import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 import org.springmodules.lucene.index.support.file.DocumentMatching;
