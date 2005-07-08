@@ -1,9 +1,10 @@
 <%@ page session="false"%>
 
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ include file="/jsp/layout/taglibs.jsp"%>
+
+<c:set var="ctx" value="${rc.contextPath}"/>
 
 <b>Welcome to Spring Lucene sample application.</b><br/><br/>
-- To do make a search on the index, click <a href="search.html">here</a>.<br/>
-- To index documents or text, click <a href="index.html">here</a>.<br/>
-- To manage the categories, click <a href="categories.html">here</a>.
+- To do make a search on the index, click <a href="<c:out value="${ctx}"/>/search.html">here</a>.<br/>
+- To index documents or text, click <a href="<c:out value="${ctx}"/>/index.html">here</a>.<br/>
+- To manage the categories, click <a href="<c:out value="${ctx}"/>/categories.html">here</a>.
