@@ -26,7 +26,6 @@ import org.apache.commons.validator.GenericTypeValidator;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.ValidatorAction;
 import org.apache.commons.validator.util.ValidatorUtils;
-
 import org.springframework.validation.Errors;
 
 /**
@@ -96,8 +95,8 @@ public class FieldChecks implements Serializable {
 	 * @return true if meets stated requirements, false otherwise.
 	 */
 	public static boolean validateRequiredIf(Object bean, ValidatorAction va,
-																											Field field, Errors errors,
-																											org.apache.commons.validator.Validator validator) {
+											Field field, Errors errors,
+							org.apache.commons.validator.Validator validator) {
 
 		Object form = validator.getParameterValue(org.apache.commons.validator.Validator.BEAN_PARAM);
 
@@ -197,7 +196,7 @@ public class FieldChecks implements Serializable {
 	 * @return true if field matches mask, false otherwise.
 	 */
 	public static boolean validateMask(Object bean, ValidatorAction va,
-																								Field field, Errors errors) {
+												Field field, Errors errors) {
 		String mask = field.getVarValue("mask");
 		String value = extractValue(bean, field);
 		try {
@@ -231,7 +230,7 @@ public class FieldChecks implements Serializable {
 	 * @return A Byte if valid, null otherwise.
 	 */
 	public static Byte validateByte(Object bean, ValidatorAction va,
-																						 Field field, Errors errors) {
+												Field field, Errors errors) {
 
 		Byte result = null;
 		String value = extractValue(bean, field);
@@ -260,7 +259,7 @@ public class FieldChecks implements Serializable {
 	 * @return A Short if valid, otherwise null.
 	 */
 	public static Short validateShort(Object bean, ValidatorAction va,
-																							 Field field, Errors errors) {
+												Field field, Errors errors) {
 		Short result = null;
 
 		String value = extractValue(bean, field);
@@ -289,7 +288,7 @@ public class FieldChecks implements Serializable {
 	 * @return An Integer if valid, a null otherwise.
 	 */
 	public static Integer validateInteger(Object bean, ValidatorAction va,
-																									 Field field, Errors errors) {
+												Field field, Errors errors) {
 		Integer result = null;
 
 		String value = extractValue(bean, field);
@@ -320,7 +319,7 @@ public class FieldChecks implements Serializable {
 	 * @return A Long if valid, a null otherwise.
 	 */
 	public static Long validateLong(Object bean, ValidatorAction va,
-																						 Field field, Errors errors) {
+												Field field, Errors errors) {
 		Long result = null;
 
 		String value = extractValue(bean, field);
@@ -350,7 +349,7 @@ public class FieldChecks implements Serializable {
 	 * @return A Float if valid, a null otherwise.
 	 */
 	public static Float validateFloat(Object bean, ValidatorAction va,
-																							 Field field, Errors errors) {
+											Field field, Errors errors) {
 		Float result = null;
 		String value = extractValue(bean, field);
 
@@ -380,7 +379,7 @@ public class FieldChecks implements Serializable {
 	 * @return A Double if valid, a null otherwise.
 	 */
 	public static Double validateDouble(Object bean, ValidatorAction va,
-																								 Field field, Errors errors) {
+												Field field, Errors errors) {
 		Double result = null;
 		String value = extractValue(bean, field);
 
@@ -419,7 +418,7 @@ public class FieldChecks implements Serializable {
 	 * @return A Date if valid, a null if blank or invalid.
 	 */
 	public static Date validateDate(Object bean, ValidatorAction va,
-																						 Field field, Errors errors) {
+												Field field, Errors errors) {
 
 		Date result = null;
 		String value = extractValue(bean, field);
@@ -472,7 +471,7 @@ public class FieldChecks implements Serializable {
 		 *             javax.servlet.http.HttpServletRequest)}
 		 */
 	public static boolean validateRange(Object bean, ValidatorAction va,
-																								 Field field, Errors errors) {
+												Field field, Errors errors) {
 		return validateIntRange(bean, va, field, errors);
 	}
 
@@ -491,7 +490,7 @@ public class FieldChecks implements Serializable {
 	 * @return <code>true</code> if in range, <code>false</code> otherwise.
 	 */
 	public static boolean validateIntRange(Object bean, ValidatorAction va,
-																										Field field, Errors errors) {
+												Field field, Errors errors) {
 		String value = extractValue(bean, field);
 
 		if (!GenericValidator.isBlankOrNull(value)) {
@@ -530,7 +529,7 @@ public class FieldChecks implements Serializable {
 	 * @return True if in range, false otherwise.
 	 */
 	public static boolean validateDoubleRange(Object bean, ValidatorAction va,
-																											 Field field, Errors errors) {
+												Field field, Errors errors) {
 
 		String value = extractValue(bean, field);
 
@@ -570,7 +569,7 @@ public class FieldChecks implements Serializable {
 	 * @return True if in range, false otherwise.
 	 */
 	public static boolean validateFloatRange(Object bean, ValidatorAction va,
-																											Field field, Errors errors) {
+												Field field, Errors errors) {
 
 		String value = extractValue(bean, field);
 
@@ -608,7 +607,7 @@ public class FieldChecks implements Serializable {
 	 * @return The credit card as a Long, a null if invalid, blank, or null.
 	 */
 	public static Long validateCreditCard(Object bean, ValidatorAction va,
-																									 Field field, Errors errors) {
+												Field field, Errors errors) {
 
 		Long result = null;
 		String value = extractValue(bean, field);
@@ -639,7 +638,7 @@ public class FieldChecks implements Serializable {
 	 * @return True if valid, false otherwise.
 	 */
 	public static boolean validateEmail(Object bean, ValidatorAction va,
-																								 Field field, Errors errors) {
+												Field field, Errors errors) {
 
 		String value = extractValue(bean, field);
 
@@ -669,7 +668,7 @@ public class FieldChecks implements Serializable {
 	 * @return True if stated conditions met.
 	 */
 	public static boolean validateMaxLength(Object bean, ValidatorAction va,
-																										 Field field, Errors errors) {
+												Field field, Errors errors) {
 
 		String value = extractValue(bean, field);
 
@@ -708,7 +707,7 @@ public class FieldChecks implements Serializable {
 	 * @return True if stated conditions met.
 	 */
 	public static boolean validateMinLength(Object bean, ValidatorAction va,
-																										 Field field, Errors errors) {
+												Field field, Errors errors) {
 
 		String value = extractValue(bean, field);
 
@@ -754,8 +753,15 @@ public class FieldChecks implements Serializable {
 		return value;
 	}
 
-	protected static void rejectValue(Errors errors, Field field,
-																								 ValidatorAction va) {
+	/**
+	 * Convinience method to perform the work of rejecting a field's value.
+	 * 
+	 * @param errors the errors
+	 * @param field the field that was rejected
+	 * @param va the validator action
+	 */
+	public static void rejectValue(Errors errors, Field field,
+										ValidatorAction va) {
 		String fieldCode = field.getKey();
 		String errorCode = MessageUtils.getMessageKey(va, field);
 		Object[] args = MessageUtils.getArgs(va, field);
