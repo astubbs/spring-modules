@@ -2,6 +2,12 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
+Changes in version 0.3 (TBD)
+---------------------------
+
+Package org.springmodules.commons.validator
+* Made rejectValue method on FieldChecks public for better integration with legacy code
+
 Changes in version 0.2 (21.05.2005)
 -----------------------------------
 
