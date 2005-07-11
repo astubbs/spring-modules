@@ -25,8 +25,8 @@
 	</definition>
 
 	<!-- exception -->
-	<definition name="exception" extends="baseLayout">
-		<put name="body" value="/jsp/layout/exception.jsp" />
+	<definition name="error" extends="baseLayout">
+		<put name="body" value="/jsp/error.jsp" />
 	</definition>
 
 	<!-- indexing -->
@@ -59,6 +59,16 @@
 
 	<definition name="search/results" extends="baseLayout">
 		<put name="body" value="/jsp/search/results.jsp" />
+	</definition>
+
+	<!-- categories -->
+
+	<definition name="category/categories" extends="baseLayout">
+		<put name="body" value="/jsp/category/categories.jsp" />
+	</definition>
+
+	<definition name="category/category" extends="baseLayout">
+		<put name="body" value="/jsp/category/category.jsp" />
 	</definition>
 
 </tiles-definitions>

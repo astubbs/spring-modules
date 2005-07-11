@@ -8,6 +8,7 @@
 
     <bean id="infosIndexController" class="org.springmodules.samples.lucene.ui.web.indexing.ShowIndexInformationsController">
         <property name="indexAccessorService"><ref bean="indexAccessorService"/></property>
+		<property name="categoryService"><ref bean="categoryService"/></property>
     </bean>
 
     <bean id="addDocumentController" class="org.springmodules.samples.lucene.ui.web.indexing.AddDocumentController">
@@ -49,6 +50,18 @@
         <property name="searchService"><ref bean="searchService"/></property>
     </bean>
 
+	<bean id="actionResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+		<property name="paramName"><value>method</value></property>
+		<property name="defaultMethodName"><value>list</value></property>
+	</bean>
+
+	<bean id="categoriesController" class="org.springmodules.samples.lucene.ui.web.category.CategoryController">
+		<property name="categoryService"><ref bean="categoryService"/></property>
+		<property name="methodNameResolver">
+			<ref local="actionResolver"/>
+		</property>
+	</bean>
+
     <!-- Mapping & resolveview -->
     <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
         <property name="mappings">
@@ -59,6 +72,7 @@
                 <prop key="/index.html">infosIndexController</prop>
                 <prop key="/addDocument.html">addDocumentController</prop>
                 <prop key="/addUploadedDocument.html">addDocumentUploadController</prop>
+                <prop key="/category.html">categoriesController</prop>
             </props>
         </property>
     </bean>
