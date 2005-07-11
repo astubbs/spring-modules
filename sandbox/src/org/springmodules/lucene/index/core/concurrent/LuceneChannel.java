@@ -95,7 +95,7 @@ public class LuceneChannel {
 	 * @return the response of the call of the corresponding method
 	 * @throws InterruptedException if an error occurs on the underlying channel
 	 */
-	public LuceneChannelResponse execute(LuceneChannelRequest request) throws InterruptedException {
+	public synchronized LuceneChannelResponse execute(LuceneChannelRequest request) throws InterruptedException {
 		putRequest(request);
 		return getResponse();
 	}
