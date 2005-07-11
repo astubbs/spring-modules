@@ -24,8 +24,8 @@ import org.springmodules.samples.lucene.ui.web.indexing.FileDocumentHolder;
  */
 public interface IndexAccessorService {
 	public IndexInformations getIndexInformations();
-	public void addDocument(final String id,final String title,
-							final String text,final String category);
+	public void addDocument(String title,
+							String text,String category);
 	public void addDocument(FileDocumentHolder holder);
 	public void purgeIndex();
 }

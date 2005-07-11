@@ -17,6 +17,7 @@
 package org.springmodules.samples.lucene.dao.indexing;
 
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.jdbc.object.SqlFunction;
 
 /**
  * @author Thierry Templier
@@ -24,10 +25,18 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 public class DocumentIdDaoImpl extends JdbcDaoSupport implements DocumentIdDao {
 
 	public long getNextDocumentId() {
-		return 0;
+		SqlFunction sqlFunction=new SqlFunction(getDataSource(),
+									"select next_document_id from document_id");
+		sqlFunction.compile();
+		return sqlFunction.run();
 	}
 
 	public void incrementDocumentId() {
-		//getJdbcTemplate().e
+		SqlFunction sqlFunction=new SqlFunction(getDataSource(),
+									"select next_document_id from document_id");
+		sqlFunction.compile();
+		int nextDocumentId=sqlFunction.run();
+		getJdbcTemplate().update("update document_id set next_document_id=?",
+									new Object[] { new Integer(nextDocumentId+1)});
 	}
 }
