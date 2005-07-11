@@ -20,7 +20,6 @@ package org.springmodules.samples.lucene.ui.web.indexing;
  * @author Thierry Templier
  */
 public class TextDocumentHolder {
-	private String id;
 	private String title;
 	private String text;
 	private String category;
@@ -48,16 +47,8 @@ public class TextDocumentHolder {
 		return category;
 	}
 
-	public String getId() {
-		return id;
-	}
-
 	public void setCategory(String string) {
 		category = string;
-	}
-
-	public void setId(String string) {
-		id = string;
 	}
 
 }

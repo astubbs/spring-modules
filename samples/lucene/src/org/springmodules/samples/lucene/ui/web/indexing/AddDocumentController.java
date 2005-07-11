@@ -30,7 +30,7 @@ public class AddDocumentController extends SimpleFormController {
 	public ModelAndView onSubmit(Object command) throws Exception {
 		if( command instanceof TextDocumentHolder ) {
 			TextDocumentHolder holder=(TextDocumentHolder)command;
-			indexAccessorService.addDocument(holder.getId(),holder.getTitle(),
+			indexAccessorService.addDocument(holder.getTitle(),
 									holder.getText(),holder.getCategory());
 		}
 		return new ModelAndView("indexing/documentAdded");

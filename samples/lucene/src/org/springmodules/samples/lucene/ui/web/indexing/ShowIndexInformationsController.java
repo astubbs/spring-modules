@@ -16,12 +16,17 @@
 
 package org.springmodules.samples.lucene.ui.web.indexing;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 import org.springmodules.samples.lucene.bean.indexing.IndexInformations;
+import org.springmodules.samples.lucene.service.category.CategoryService;
 import org.springmodules.samples.lucene.service.indexing.IndexAccessorService;
 
 /**
@@ -30,10 +35,15 @@ import org.springmodules.samples.lucene.service.indexing.IndexAccessorService;
 public class ShowIndexInformationsController implements Controller {
 
 	private IndexAccessorService indexAccessorService;
+	private CategoryService categoryService;
 
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		IndexInformations infos=indexAccessorService.getIndexInformations();
-		return new ModelAndView("indexing/indexInfos","infos",infos);
+		List categories=categoryService.getCategories();
+		Map model=new HashMap();
+		model.put("infos",infos);
+		model.put("categories",categories);
+		return new ModelAndView("indexing/indexInfos",model);
 	}
 
 	public IndexAccessorService getIndexAccessorService() {
@@ -44,4 +54,11 @@ public class ShowIndexInformationsController implements Controller {
 		indexAccessorService = service;
 	}
 
+	public CategoryService getCategoryService() {
+		return categoryService;
+	}
+
+	public void setCategoryService(CategoryService service) {
+		categoryService = service;
+	}
 }
