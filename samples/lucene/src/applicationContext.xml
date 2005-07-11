@@ -67,9 +67,27 @@
     	<property name="dataSource"><ref local="dataSource"/></property>
 	</bean>
 
-	<bean id="indexAccessorService" class="org.springmodules.samples.lucene.service.indexing.IndexAccessorServiceImpl">
+	<bean id="indexAccessorServiceTarget" class="org.springmodules.samples.lucene.service.indexing.IndexAccessorServiceImpl">
     	<property name="documentIdDao"><ref local="documentIdDao"/></property>
     	<property name="indexAccessorDao"><ref local="indexAccessorDao"/></property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource"><ref local="dataSource"/></property>
+	</bean>
+
+	<bean id="indexAccessorService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+    	<property name="transactionManager">
+        	<ref bean="transactionManager"/>
+	    </property>
+	    <property name="target">
+	        <ref bean="indexAccessorServiceTarget"/>
+	    </property>
+	    <property name="transactionAttributes">
+	        <props>
+	            <prop key="addDocument*">PROPAGATION_REQUIRED</prop>
+	        </props>
+	    </property>
 	</bean>
 
 	<!--
@@ -95,6 +113,18 @@
         <property name="analyzer">
             <bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
         </property>
+	</bean>
+
+	<!--
+	     CATEGORIES
+	-->
+
+	<bean id="categoryDao" class="org.springmodules.samples.lucene.dao.category.CategoryDaoImpl">
+		<property name="dataSource"><ref local="dataSource"/></property>
+	</bean>
+
+	<bean id="categoryService" class="org.springmodules.samples.lucene.service.category.CategoryServiceImpl">
+		<property name="categoryDao"><ref local="categoryDao"/></property>
 	</bean>
 
 </beans>
