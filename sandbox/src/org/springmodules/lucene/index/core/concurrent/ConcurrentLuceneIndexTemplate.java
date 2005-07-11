@@ -84,7 +84,8 @@ public class ConcurrentLuceneIndexTemplate implements FactoryBean {
 				channel.executeWithoutReturn(element);
 				return null;
 			} else {
-				return channel.execute(element);
+				LuceneChannelResponse response=channel.execute(element);
+				return response.getMethodReturn();
 			}
 		}
 
