@@ -33,7 +33,6 @@
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-collections.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-digester.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang-2.0.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-validator.jar"/>
 	<classpathentry kind="lib" path="lib/janino/janino-2.1.0.jar"/>
@@ -60,5 +59,6 @@
 	<classpathentry kind="lib" path="lib/j2ee/jta.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j/dom4j.jar"/>
 	<classpathentry kind="lib" path="lib/ognl/ognl.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang-2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

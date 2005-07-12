@@ -5,6 +5,9 @@ http://springmodules.dev.java.net
 Changes in version 0.3 (TBD)
 ---------------------------
 
+Package org.springmodules.commons.lang
+* Introduced commons-lang enums property editor
+
 Package org.springmodules.commons.validator
 * Made rejectValue method on FieldChecks public for better integration with legacy code
 
