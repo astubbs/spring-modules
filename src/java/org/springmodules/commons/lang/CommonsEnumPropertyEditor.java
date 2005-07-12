@@ -25,6 +25,8 @@ import org.springframework.util.StringUtils;
 
 /**
  * Converts to and from a commons-lang Enum.
+ * 
+ * @author Seth Ladd
  */
 public class CommonsEnumPropertyEditor extends PropertyEditorSupport {
     
