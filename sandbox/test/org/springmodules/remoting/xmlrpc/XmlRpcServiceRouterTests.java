@@ -30,6 +30,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElementFactory;
+import org.springmodules.remoting.xmlrpc.support.XmlRpcFault;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcResponse;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
@@ -51,6 +52,11 @@ public class XmlRpcServiceRouterTests extends TestCase {
    * Mock implementation of the HttpServletRequest interface.
    */
   private class CustomMockHttpServletRequest extends MockHttpServletRequest {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3924538574072022396L;
 
     ServletInputStream inputStream;
 
@@ -132,6 +138,39 @@ public class XmlRpcServiceRouterTests extends TestCase {
   }
 
   /**
+   * Asserts that the XML-RPC response is sent back to the client (as the
+   * content of the HTTP response).
+   * 
+   * @param serializedXmlRpcResponse
+   *          the XML-RPC response serialized as an array of <code>byte</code>s.
+   */
+  private void assertXmlRpcResponseIsReturnedToClient(
+      byte[] serializedXmlRpcResponse) {
+
+    assertEquals("<HTTP response content type>", "text/xml", this.response
+        .getContentType());
+    assertEquals("<HTTP response content length>",
+        serializedXmlRpcResponse.length, this.response.getContentLength());
+
+    // verify the HTTP response contains the XML-RPC response.
+    byte[] responseContent = this.response.getContentAsByteArray();
+    assertTrue("<HTTP response content>. Expected: "
+        + Arrays.toString(serializedXmlRpcResponse) + " but was: "
+        + Arrays.toString(responseContent), Arrays.equals(
+        serializedXmlRpcResponse, responseContent));
+  }
+
+  /**
+   * Sets the state of the mock controls to "replay".
+   */
+  private void setMockControlStateToReplay() {
+    this.xmlRpcElementFactoryControl.replay();
+    this.xmlRpcRequestParserControl.replay();
+    this.xmlRpcResponseWriterControl.replay();
+    this.xmlRpcServiceExporterControl.replay();
+  }
+
+  /**
    * Sets up the test fixture.
    */
   protected void setUp() throws Exception {
@@ -144,6 +183,11 @@ public class XmlRpcServiceRouterTests extends TestCase {
    */
   private void setUpMockObjects() {
     this.request = new CustomMockHttpServletRequest();
+    byte[] content = { 4, 6, 7 };
+    ServletInputStream inputStream = new DelegatingServletInputStream(
+        new ByteArrayInputStream(content));
+    this.request.inputStream = inputStream;
+
     this.response = new MockHttpServletResponse();
 
     this.xmlRpcElementFactoryControl = MockControl
@@ -184,65 +228,93 @@ public class XmlRpcServiceRouterTests extends TestCase {
 
   }
 
-  /*
-   * Test method for
-   * 'org.springmodules.remoting.xmlrpc.XmlRpcServiceRouter.handleRequest(HttpServletRequest,
-   * HttpServletResponse)'
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcServiceRouter#handleRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}</code>
+   * returns a XML-RPC response containing the result of the execution of the
+   * service specified in the XML-RPC request.
    */
   public void testHandleRequest() throws Exception {
     this.setUpMockObjects();
-    
-    byte[] content = { 4, 6, 7 };
-    ServletInputStream inputStream = new DelegatingServletInputStream(
-        new ByteArrayInputStream(content));
-    this.request.inputStream = inputStream;
 
     XmlRpcRequest xmlRpcRequest = new XmlRpcRequest();
     xmlRpcRequest.setServiceName(this.serviceName);
 
     // expectation: parse the XML-RPC request.
-    this.xmlRpcRequestParser.parseRequest(inputStream);
+    this.xmlRpcRequestParser.parseRequest(this.request.getInputStream());
     this.xmlRpcRequestParserControl.setReturnValue(xmlRpcRequest);
 
-    String result = "Luke";
     // expectation: service exporter executes remote method.
+    String result = "Luke";
     this.xmlRpcServiceExporter.invoke(xmlRpcRequest);
     this.xmlRpcServiceExporterControl.setReturnValue(result);
 
-    XmlRpcString parameter = new XmlRpcString(result);
     // expectation: create a XML-RPC element from the result.
+    XmlRpcString parameter = new XmlRpcString(result);
     this.xmlRpcElementFactory.createXmlRpcElement(result);
     this.xmlRpcElementFactoryControl.setReturnValue(parameter);
 
-    byte[] serializedResponse = { 5, 7, 3 };
     // expectation: serialize the XML-RPC response.
+    byte[] serializedXmlRpcResponse = { 5, 7, 3 };
     this.xmlRpcResponseWriter.writeResponse(new XmlRpcResponse(parameter));
-    this.xmlRpcResponseWriterControl.setReturnValue(serializedResponse);
+    this.xmlRpcResponseWriterControl.setReturnValue(serializedXmlRpcResponse);
 
-    // set the state of the mock controls to "replay".
-    this.xmlRpcElementFactoryControl.replay();
-    this.xmlRpcRequestParserControl.replay();
-    this.xmlRpcResponseWriterControl.replay();
-    this.xmlRpcServiceExporterControl.replay();
+    this.setMockControlStateToReplay();
 
     // execute the method to test.
     ModelAndView modelAndView = this.XmlRpcServiceRouter.handleRequest(
         this.request, this.response);
 
     assertNull("<ModelAndView should be null>", modelAndView);
-    assertEquals("<HTTP response content type>", "text/xml", this.response
-        .getContentType());
-    assertEquals("<HTTP response content length>", serializedResponse.length,
-        this.response.getContentLength());
 
-    // verify the HTTP response contains the XML-RPC response.
-    byte[] responseContent = this.response.getContentAsByteArray();
-    assertTrue("<HTTP response content>. Expected: "
-        + Arrays.toString(serializedResponse) + " but was: "
-        + Arrays.toString(responseContent), Arrays.equals(serializedResponse,
-        responseContent));
+    this.assertXmlRpcResponseIsReturnedToClient(serializedXmlRpcResponse);
+    this.verifyMockControlExpectations();
+  }
 
-    // verify that the expectations were met.
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcServiceRouter#handleRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}</code>
+   * returns a XML-RPC response with a fault if the service specified in the
+   * XML-RPC request does not exist.
+   */
+  public void testHandleRequestWhenServiceIsNotFound() {
+    this.setUpMockObjects();
+
+    String notExistingServiceName = "anotherService";
+
+    XmlRpcRequest xmlRpcRequest = new XmlRpcRequest();
+    xmlRpcRequest.setServiceName(notExistingServiceName);
+
+    // expectation: parse the XML-RPC request.
+    this.xmlRpcRequestParser.parseRequest(this.request.getInputStream());
+    this.xmlRpcRequestParserControl.setReturnValue(xmlRpcRequest);
+
+    // expectation: serialize the XML-RPC response.
+    byte[] serializedXmlRpcResponse = { 5, 7, 3 };
+    XmlRpcException xmlRpcException = new XmlRpcServiceNotFoundException(
+        "The service '" + notExistingServiceName + "' was not found");
+    XmlRpcFault xmlRpcFault = new XmlRpcFault(xmlRpcException.getCode(),
+        xmlRpcException.getMessage());
+    XmlRpcResponse xmlRpcResponse = new XmlRpcResponse(xmlRpcFault);
+    this.xmlRpcResponseWriter.writeResponse(xmlRpcResponse);
+    this.xmlRpcResponseWriterControl.setReturnValue(serializedXmlRpcResponse);
+
+    this.setMockControlStateToReplay();
+
+    // execute the method to test.
+    ModelAndView modelAndView = this.XmlRpcServiceRouter.handleRequest(
+        this.request, this.response);
+
+    assertNull("<ModelAndView should be null>", modelAndView);
+
+    this.assertXmlRpcResponseIsReturnedToClient(serializedXmlRpcResponse);
+    this.verifyMockControlExpectations();
+  }
+
+  /**
+   * Verifies that the expectations of the mock controls were met.
+   */
+  private void verifyMockControlExpectations() {
     this.xmlRpcElementFactoryControl.verify();
     this.xmlRpcRequestParserControl.verify();
     this.xmlRpcResponseWriterControl.verify();
