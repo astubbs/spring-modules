@@ -54,7 +54,9 @@ public class XmlRpcServiceRouterTests extends TestCase {
   private class CustomMockHttpServletRequest extends MockHttpServletRequest {
 
     /**
+     * Version number of this class.
      * 
+     * @see java.io.Serializable
      */
     private static final long serialVersionUID = 3924538574072022396L;
 
@@ -220,12 +222,61 @@ public class XmlRpcServiceRouterTests extends TestCase {
     this.XmlRpcServiceRouter.setExportedServices(exportedServices);
   }
 
-  /*
-   * Test method for
-   * 'org.springmodules.remoting.xmlrpc.XmlRpcServiceRouter.afterPropertiesSet()'
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcServiceRouter#afterPropertiesSet()}</code> throws a
+   * <code>IllegalArgumentException</code> if the map of exported services is
+   * not empty but contains objects that are not instances of
+   * <code>{@link XmlRpcServiceExporter}</code>.
    */
-  public void testAfterPropertiesSet() {
+  public void testAfterPropertiesSetWhenServiceMapIsNotEmptyAndDoesNotContainServiceExported() {
+    Map serviceMap = new HashMap();
+    serviceMap.put("Luke", "Jedi Knight");
+    this.XmlRpcServiceRouter.setExportedServices(serviceMap);
 
+    try {
+      this.XmlRpcServiceRouter.afterPropertiesSet();
+      fail("An 'IllegalArgumentException' should have been thrown");
+
+    } catch (IllegalArgumentException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcServiceRouter#afterPropertiesSet()}</code> throws a
+   * <code>IllegalArgumentException</code> if the map of exported services is
+   * empty.
+   */
+  public void testAfterPropertiesSetWithEmptyServiceMap() {
+    this.XmlRpcServiceRouter.setExportedServices(new HashMap());
+
+    try {
+      this.XmlRpcServiceRouter.afterPropertiesSet();
+      fail("An 'IllegalArgumentException' should have been thrown");
+
+    } catch (IllegalArgumentException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcServiceRouter#afterPropertiesSet()}</code> throws a
+   * <code>IllegalArgumentException</code> if the map of exported services is
+   * equal to <code>null</code>.
+   */
+  public void testAfterPropertiesSetWithServiceMapEqualToNull() {
+    this.XmlRpcServiceRouter.setExportedServices(null);
+
+    try {
+      this.XmlRpcServiceRouter.afterPropertiesSet();
+      fail("An 'IllegalArgumentException' should have been thrown");
+
+    } catch (IllegalArgumentException exception) {
+      // we are expecting this exception.
+    }
   }
 
   /**
@@ -257,6 +308,51 @@ public class XmlRpcServiceRouterTests extends TestCase {
     // expectation: serialize the XML-RPC response.
     byte[] serializedXmlRpcResponse = { 5, 7, 3 };
     this.xmlRpcResponseWriter.writeResponse(new XmlRpcResponse(parameter));
+    this.xmlRpcResponseWriterControl.setReturnValue(serializedXmlRpcResponse);
+
+    this.setMockControlStateToReplay();
+
+    // execute the method to test.
+    ModelAndView modelAndView = this.XmlRpcServiceRouter.handleRequest(
+        this.request, this.response);
+
+    assertNull("<ModelAndView should be null>", modelAndView);
+
+    this.assertXmlRpcResponseIsReturnedToClient(serializedXmlRpcResponse);
+    this.verifyMockControlExpectations();
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link XmlRpcServiceRouter#handleRequest(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}</code>
+   * returns a XML-RPC response with a fault if the service invocation throws an
+   * exception.
+   */
+  public void testHandleRequestWhenServiceInvocationThrowsException()
+      throws Exception {
+    this.setUpMockObjects();
+
+    XmlRpcRequest xmlRpcRequest = new XmlRpcRequest();
+    xmlRpcRequest.setServiceName(this.serviceName);
+
+    // expectation: parse the XML-RPC request.
+    this.xmlRpcRequestParser.parseRequest(this.request.getInputStream());
+    this.xmlRpcRequestParserControl.setReturnValue(xmlRpcRequest);
+
+    // expectation: service exporter executes remote method and throws an
+    // exception.
+    Exception expectedException = new Exception();
+    this.xmlRpcServiceExporter.invoke(xmlRpcRequest);
+    this.xmlRpcServiceExporterControl.setThrowable(expectedException);
+
+    // expectation: serialize the XML-RPC response.
+    byte[] serializedXmlRpcResponse = { 5, 7, 3 };
+    XmlRpcException xmlRpcException = new XmlRpcInternalException(
+        "Server error. Internal xml-rpc error");
+    XmlRpcFault xmlRpcFault = new XmlRpcFault(xmlRpcException.getCode(),
+        xmlRpcException.getMessage());
+    XmlRpcResponse xmlRpcResponse = new XmlRpcResponse(xmlRpcFault);
+    this.xmlRpcResponseWriter.writeResponse(xmlRpcResponse);
     this.xmlRpcResponseWriterControl.setReturnValue(serializedXmlRpcResponse);
 
     this.setMockControlStateToReplay();
