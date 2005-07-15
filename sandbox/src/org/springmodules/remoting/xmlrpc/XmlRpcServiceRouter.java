@@ -48,7 +48,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcResponse;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/15 12:36:16 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/15 18:55:39 $
  */
 public class XmlRpcServiceRouter implements InitializingBean, Controller {
 
@@ -64,18 +64,36 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
   protected final Log logger = LogFactory.getLog(this.getClass());
 
   /**
+   * <p>
    * Parses the XML-RPC request.
+   * </p>
+   * <p>
+   * If not set, a default <code>{@link DomXmlRpcRequestParser}</code> will be
+   * created.
+   * </p>
    */
   private XmlRpcRequestParser requestParser;
 
   /**
+   * <p>
    * Writes the XML-RPC response.
+   * </p>
+   * <p>
+   * If not set, a default <code>{@link DomXmlRpcResponseWriter}</code> will
+   * be created.
+   * </p>
    */
   private XmlRpcResponseWriter responseWriter;
 
   /**
+   * <p>
    * Creates implementations of <code>{@link XmlRpcElement}</code> from Java
    * objects.
+   * </p>
+   * <p>
+   * If not set, a default <code>{@link XmlRpcElementFactoryImpl}</code> will
+   * be created.
+   * </p>
    */
   private XmlRpcElementFactory xmlRpcElementFactory;
 
