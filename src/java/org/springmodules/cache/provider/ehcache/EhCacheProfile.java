@@ -32,7 +32,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/03 04:33:11 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/15 18:01:30 $
  */
 public class EhCacheProfile implements CacheProfile {
 
@@ -44,7 +44,7 @@ public class EhCacheProfile implements CacheProfile {
   private static final long serialVersionUID = 3762529035888112945L;
 
   /**
-   * Name of the cache.
+   * Name of the EHCache cache.
    */
   private String cacheName;
 
@@ -53,6 +53,17 @@ public class EhCacheProfile implements CacheProfile {
    */
   public EhCacheProfile() {
     super();
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param cacheName
+   *          the name of the EHCache cache.
+   */
+  public EhCacheProfile(String cacheName) {
+    this();
+    this.setCacheName(cacheName);
   }
 
   /**
@@ -130,9 +141,15 @@ public class EhCacheProfile implements CacheProfile {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
-    buffer.append("cacheName='" + this.cacheName + "'; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+
+    buffer.append("cacheName=");
+    String formattedCacheName = null;
+    if (this.cacheName != null) {
+      formattedCacheName = "'" + this.cacheName + "'";
+    }
+    buffer.append(formattedCacheName + "]");
 
     return buffer.toString();
   }

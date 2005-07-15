@@ -28,7 +28,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/03 04:33:11 $
+ * @version $Revision: 1.7 $ $Date: 2005/07/15 18:01:30 $
  */
 public class Cached implements CacheAttribute {
 
@@ -138,11 +138,16 @@ public class Cached implements CacheAttribute {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
-    buffer.append("cacheProfileId='" + this.cacheProfileId + "'; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+    buffer.append("cacheProfileId=");
     
+    String formattedCacheProfileId = null;
+    if (this.cacheProfileId != null) {
+      formattedCacheProfileId = "'" + this.cacheProfileId + "'";
+    }
+    buffer.append(formattedCacheProfileId + "]");
+
     return buffer.toString();
   }
-
 }

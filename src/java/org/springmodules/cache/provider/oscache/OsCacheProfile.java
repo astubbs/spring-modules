@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/03 04:33:12 $
+ * @version $Revision: 1.6 $ $Date: 2005/07/15 18:01:30 $
  */
 public class OsCacheProfile implements CacheProfile {
 
@@ -54,7 +54,7 @@ public class OsCacheProfile implements CacheProfile {
   private String cronExpression;
 
   /**
-   * The groups that the object to cache belongs to.
+   * The group(s) that the object to cache belongs to.
    */
   private String[] groups;
 
@@ -67,8 +67,39 @@ public class OsCacheProfile implements CacheProfile {
    * Constructor.
    */
   public OsCacheProfile() {
-
     super();
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param csvGroups
+   *          the group(s) the object to cache belongs to.
+   * @param refreshPeriod
+   *          how long the object can stay in cache in seconds.
+   */
+  public OsCacheProfile(String csvGroups, int refreshPeriod) {
+    this();
+    this.setGroups(csvGroups);
+    this.setRefreshPeriod(refreshPeriod);
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param csvGroups
+   *          the group(s) the object to cache belongs to.
+   * @param refreshPeriod
+   *          how long the object can stay in cache in seconds.
+   * @param cronExpression
+   *          the new cron expression.
+   */
+  public OsCacheProfile(String csvGroups, int refreshPeriod,
+      String cronExpression) {
+    this();
+    this.setCronExpression(cronExpression);
+    this.setGroups(csvGroups);
+    this.setRefreshPeriod(refreshPeriod);
   }
 
   /**
@@ -182,7 +213,6 @@ public class OsCacheProfile implements CacheProfile {
    *          the comma-delimited list of values containing the cache groups.
    */
   public final void setGroups(String csvGroups) {
-
     String[] newGroups = null;
     if (StringUtils.hasText(csvGroups)) {
       newGroups = StringUtils.commaDelimitedListToStringArray(csvGroups);
@@ -231,36 +261,46 @@ public class OsCacheProfile implements CacheProfile {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
-    buffer.append("refreshPeriod=" + this.refreshPeriod + "; ");
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+    buffer.append("refreshPeriod=" + this.refreshPeriod + ", ");
 
     buffer.append("groups=");
 
     if (this.groups == null) {
-      buffer.append("null; ");
+      buffer.append("null, ");
 
     } else {
       int groupCount = this.groups.length;
 
       if (groupCount == 0) {
-        buffer.append("[]; ");
+        buffer.append("{}, ");
 
       } else {
         for (int i = 0; i < groupCount; i++) {
           if (i == 0) {
-            buffer.append('[');
+            buffer.append('{');
           } else {
             buffer.append(", ");
           }
 
-          buffer.append("'" + this.groups[i] + "'");
+          String group = this.groups[i];
+          String formattedGroup = null;
+          if (group != null) {
+            formattedGroup = "'" + group + "'";
+          }
+          buffer.append(formattedGroup);
         }
-        buffer.append("]; ");
+        buffer.append("}, ");
       }
     }
 
-    buffer.append("cronExpression='" + this.cronExpression + "'; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
+    buffer.append("cronExpression=");
+    String formattedCronExpression = null;
+    if (this.cronExpression != null) {
+      formattedCronExpression = "'" + this.cronExpression + "'";
+    }
+    buffer.append(formattedCronExpression + "]");
 
     return buffer.toString();
   }

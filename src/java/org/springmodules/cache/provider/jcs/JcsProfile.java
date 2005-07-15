@@ -32,7 +32,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/03 04:33:12 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/15 18:01:31 $
  */
 public class JcsProfile implements CacheProfile {
 
@@ -44,7 +44,7 @@ public class JcsProfile implements CacheProfile {
   private static final long serialVersionUID = 3257282547976057398L;
 
   /**
-   * Name of the JCS Cache.
+   * Name of the JCS cache.
    */
   private String cacheName;
 
@@ -58,6 +58,20 @@ public class JcsProfile implements CacheProfile {
    */
   public JcsProfile() {
     super();
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param cacheName
+   *          the name of the JCS cache.
+   * @param group
+   *          the group the object to cache belongs to.
+   */
+  public JcsProfile(String cacheName, String group) {
+    this();
+    this.setCacheName(cacheName);
+    this.setGroup(group);
   }
 
   /**
@@ -159,11 +173,23 @@ public class JcsProfile implements CacheProfile {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
-    buffer.append("cacheName='" + this.cacheName + "'; ");
-    buffer.append("group='" + this.group + "'; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
-    
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+
+    buffer.append("cacheName=");
+    String formattedCacheName = null;
+    if (this.cacheName != null) {
+      formattedCacheName = "'" + this.cacheName + "'";
+    }
+    buffer.append(formattedCacheName + ", ");
+
+    buffer.append("group=");
+    String formattedGroup = null;
+    if (this.group != null) {
+      formattedGroup = "'" + this.group + "'";
+    }
+    buffer.append(formattedGroup + "]");
+
     return buffer.toString();
   }
 }

@@ -31,7 +31,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/07/03 04:33:13 $
+ * @version $Revision: 1.8 $ $Date: 2005/07/15 18:01:31 $
  */
 public class FlushCache implements CacheAttribute {
 
@@ -196,8 +196,11 @@ public class FlushCache implements CacheAttribute {
    *          the String containing comma-separated values.
    */
   public final void setCacheProfileIds(String cacheProfileIdsCsv) {
-    String[] newProfileIds = StringUtils
-        .commaDelimitedListToStringArray(cacheProfileIdsCsv);
+    String[] newProfileIds = null;
+    if (StringUtils.hasText(cacheProfileIdsCsv)) {
+      newProfileIds = StringUtils
+          .commaDelimitedListToStringArray(cacheProfileIdsCsv);
+    }
     this.setCacheProfileIds(newProfileIds);
   }
 
@@ -232,34 +235,39 @@ public class FlushCache implements CacheAttribute {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
     buffer.append("cacheProfileIds=");
 
     if (this.cacheProfileIds == null) {
-      buffer.append("null; ");
-      
+      buffer.append("null, ");
+
     } else {
       int cacheProfileIdCount = this.cacheProfileIds.length;
-      
+
       if (cacheProfileIdCount == 0) {
-        buffer.append("[]; ");
-      
+        buffer.append("{}, ");
+
       } else {
         for (int i = 0; i < cacheProfileIdCount; i++) {
           if (i == 0) {
-            buffer.append('[');
+            buffer.append("{");
           } else {
             buffer.append(", ");
           }
-          
-          buffer.append("'" + this.cacheProfileIds[i] + "'");
+
+          String cacheProfileId = this.cacheProfileIds[i];
+          String formattedCacheProfileId = null;
+          if (cacheProfileId != null) {
+            formattedCacheProfileId = "'" + cacheProfileId + "'";
+          }
+          buffer.append(formattedCacheProfileId);
         }
-        buffer.append("]; ");
+        buffer.append("}, ");
       }
     }
 
-    buffer.append("flushBeforeExecution=" + this.flushBeforeExecution + "; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
+    buffer.append("flushBeforeExecution=" + this.flushBeforeExecution + "]");
 
     return buffer.toString();
   }
