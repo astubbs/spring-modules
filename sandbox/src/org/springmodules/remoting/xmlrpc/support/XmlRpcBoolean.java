@@ -26,7 +26,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/07/04 18:42:05 $
+ * @version $Revision: 1.11 $ $Date: 2005/07/15 18:55:58 $
  */
 public final class XmlRpcBoolean implements XmlRpcScalar {
 
@@ -167,9 +167,9 @@ public final class XmlRpcBoolean implements XmlRpcScalar {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
-    buffer.append("value=" + this.value + "; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+    buffer.append("value=" + this.value + "]");
 
     return buffer.toString();
   }

@@ -26,7 +26,7 @@ import java.util.Arrays;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/07/07 12:39:43 $
+ * @version $Revision: 1.8 $ $Date: 2005/07/15 18:55:58 $
  */
 public final class XmlRpcResponse {
 
@@ -183,11 +183,32 @@ public final class XmlRpcResponse {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
-    buffer.append("faultThrown=" + this.faultThrown + "; ");
-    buffer.append("fault=" + this.fault + "; ");
-    buffer.append("parameters=" + Arrays.toString(this.parameters) + "; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+    buffer.append("faultThrown=" + this.faultThrown + ", ");
+    buffer.append("fault=" + this.fault + ", ");
+
+    buffer.append("parameters=");
+    if (this.parameters == null) {
+      buffer.append("null]");
+    } else {
+      int parameterCount = this.parameters.length;
+
+      if (parameterCount == 0) {
+        buffer.append("{}]");
+      } else {
+        for (int i = 0; i < parameterCount; i++) {
+          if (i == 0) {
+            buffer.append("{");
+          } else {
+            buffer.append(", ");
+          }
+
+          buffer.append(this.parameters[i]);
+        }
+        buffer.append("}]");
+      }
+    }
 
     return buffer.toString();
   }

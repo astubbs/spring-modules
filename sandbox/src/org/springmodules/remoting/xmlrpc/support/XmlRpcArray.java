@@ -29,7 +29,7 @@ import java.util.List;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/07/03 14:11:39 $
+ * @version $Revision: 1.9 $ $Date: 2005/07/15 18:55:58 $
  */
 public final class XmlRpcArray implements XmlRpcElement {
 
@@ -225,9 +225,9 @@ public final class XmlRpcArray implements XmlRpcElement {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
-    buffer.append("elements=" + this.elements + "; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+    buffer.append("elements=" + this.elements + "]");
 
     return buffer.toString();
   }

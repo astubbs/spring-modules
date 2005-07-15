@@ -25,7 +25,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/03 14:11:39 $
+ * @version $Revision: 1.7 $ $Date: 2005/07/15 18:55:58 $
  */
 public final class XmlRpcFault {
 
@@ -118,9 +118,9 @@ public final class XmlRpcFault {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
-    buffer.append("faultStruct=" + this.faultStruct + "; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+    buffer.append("faultStruct=" + this.faultStruct + "]");
 
     return buffer.toString();
   }

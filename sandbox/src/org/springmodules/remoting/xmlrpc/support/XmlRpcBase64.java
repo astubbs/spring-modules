@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/07/03 14:11:39 $
+ * @version $Revision: 1.9 $ $Date: 2005/07/15 18:55:58 $
  */
 public final class XmlRpcBase64 implements XmlRpcScalar {
 
@@ -139,9 +139,25 @@ public final class XmlRpcBase64 implements XmlRpcScalar {
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName() + ": ");
-    buffer.append("value=" + this.value + "; ");
-    buffer.append("systemHashCode=" + System.identityHashCode(this));
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+    buffer.append("value=");
+
+    if (this.value == null) {
+      buffer.append("null]");
+    } else {
+      int elementCount = this.value.length;
+      for (int i = 0; i < elementCount; i++) {
+        if (i == 0) {
+          buffer.append("[");
+        } else {
+          buffer.append(", ");
+        }
+
+        buffer.append(this.value[i]);
+      }
+      buffer.append("]");
+    }
 
     return buffer.toString();
   }

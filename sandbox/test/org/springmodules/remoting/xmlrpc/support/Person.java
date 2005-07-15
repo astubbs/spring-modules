@@ -26,7 +26,7 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/03 14:11:39 $
+ * @version $Revision: 1.6 $ $Date: 2005/07/15 18:55:57 $
  */
 public class Person implements Serializable {
 
@@ -150,6 +150,18 @@ public class Person implements Serializable {
    * @see Object#toString()
    */
   public String toString() {
-    return "Person: id=" + this.id + ", name='" + this.name + "'";
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+    buffer.append("id=" + this.id + ", ");
+    buffer.append("name=");
+    String formattedName = null;
+    if (this.name != null) {
+      formattedName = "'" + this.name + "'";
+    }
+    buffer.append(formattedName);
+    buffer.append("]");
+
+    return buffer.toString();
   }
 }
