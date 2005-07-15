@@ -48,7 +48,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcResponse;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/07/07 12:39:24 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/15 12:36:16 $
  */
 public class XmlRpcServiceRouter implements InitializingBean, Controller {
 
@@ -89,7 +89,7 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
   /**
    * @see InitializingBean#afterPropertiesSet()
    */
-  public void afterPropertiesSet() throws Exception {
+  public void afterPropertiesSet() {
     // validate the services to export.
     if (this.exportedServices == null || this.exportedServices.isEmpty()) {
       throw new IllegalArgumentException(
@@ -118,6 +118,33 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
     if (this.xmlRpcElementFactory == null) {
       this.xmlRpcElementFactory = new XmlRpcElementFactoryImpl();
     }
+  }
+
+  /**
+   * Getter for field <code>{@link #requestParser}</code>.
+   * 
+   * @return the field <code>requestParser</code>.
+   */
+  protected final XmlRpcRequestParser getRequestParser() {
+    return this.requestParser;
+  }
+
+  /**
+   * Getter for field <code>{@link #responseWriter}</code>.
+   * 
+   * @return the field <code>responseWriter</code>.
+   */
+  protected final XmlRpcResponseWriter getResponseWriter() {
+    return this.responseWriter;
+  }
+
+  /**
+   * Getter for field <code>{@link #xmlRpcElementFactory}</code>.
+   * 
+   * @return the field <code>xmlRpcElementFactory</code>.
+   */
+  protected final XmlRpcElementFactory getXmlRpcElementFactory() {
+    return this.xmlRpcElementFactory;
   }
 
   /**
@@ -241,4 +268,5 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
       XmlRpcElementFactory xmlRpcElementFactory) {
     this.xmlRpcElementFactory = xmlRpcElementFactory;
   }
+
 }
