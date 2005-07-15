@@ -24,18 +24,20 @@ import java.util.Map;
 
 import javax.servlet.ServletInputStream;
 
+import junit.framework.TestCase;
+
 import org.easymock.MockControl;
 import org.springframework.mock.web.DelegatingServletInputStream;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
+import org.springmodules.remoting.xmlrpc.dom.DomXmlRpcRequestParser;
+import org.springmodules.remoting.xmlrpc.dom.DomXmlRpcResponseWriter;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElementFactory;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcFault;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcResponse;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -192,24 +194,65 @@ public class XmlRpcServiceRouterTests extends TestCase {
 
     this.response = new MockHttpServletResponse();
 
+    this.setUpXmlRpcElementFactory();
+    this.setUpXmlRpcRequestParser();
+    this.setUpXmlRpcResponseWriter();
+    this.setUpXmlRpcServiceExporterMap();
+  }
+
+  /**
+   * Sets up:
+   * <ul>
+   * <li>{@link #xmlRpcElementFactory}</li>
+   * <li>{@link #xmlRpcElementFactoryControl}</li>
+   * </ul>
+   */
+  private void setUpXmlRpcElementFactory() {
     this.xmlRpcElementFactoryControl = MockControl
         .createControl(XmlRpcElementFactory.class);
     this.xmlRpcElementFactory = (XmlRpcElementFactory) this.xmlRpcElementFactoryControl
         .getMock();
     this.XmlRpcServiceRouter.setXmlRpcElementFactory(this.xmlRpcElementFactory);
+  }
 
+  /**
+   * Sets up:
+   * <ul>
+   * <li>{@link #xmlRpcRequestParser}</li>
+   * <li>{@link #xmlRpcRequestParserControl}</li>
+   * </ul>
+   */
+  private void setUpXmlRpcRequestParser() {
     this.xmlRpcRequestParserControl = MockControl
         .createControl(XmlRpcRequestParser.class);
     this.xmlRpcRequestParser = (XmlRpcRequestParser) this.xmlRpcRequestParserControl
         .getMock();
     this.XmlRpcServiceRouter.setRequestParser(this.xmlRpcRequestParser);
+  }
 
+  /**
+   * Sets up:
+   * <ul>
+   * <li>{@link #xmlRpcResponseWriter}</li>
+   * <li>{@link #xmlRpcResponseWriterControl}</li>
+   * </ul>
+   */
+  private void setUpXmlRpcResponseWriter() {
     this.xmlRpcResponseWriterControl = MockControl
         .createControl(XmlRpcResponseWriter.class);
     this.xmlRpcResponseWriter = (XmlRpcResponseWriter) this.xmlRpcResponseWriterControl
         .getMock();
     this.XmlRpcServiceRouter.setResponseWriter(this.xmlRpcResponseWriter);
+  }
 
+  /**
+   * Sets up:
+   * <ul>
+   * <li>{@link #xmlRpcServiceExporter}</li>
+   * <li>{@link #xmlRpcServiceExporterControl}</li>
+   * </ul>
+   */
+  private void setUpXmlRpcServiceExporterMap() {
     this.xmlRpcServiceExporterControl = MockControl
         .createControl(XmlRpcServiceExporter.class);
     this.xmlRpcServiceExporter = (XmlRpcServiceExporter) this.xmlRpcServiceExporterControl
@@ -241,6 +284,56 @@ public class XmlRpcServiceRouterTests extends TestCase {
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }
+  }
+
+  /**
+   * Asserts that the method
+   * <code>{@link XmlRpcServiceRouter#afterPropertiesSet()}</code> creates a
+   * new instance of <code>{@link DomXmlRpcRequestParser}</code> if the
+   * XML-RPC request parser is <code>null</code>.
+   */
+  public void testAfterPropertiesSetWithXmlRpcRequestParserEqualToNull() {
+    this.setUpXmlRpcElementFactory();
+    this.setUpXmlRpcResponseWriter();
+    this.setUpXmlRpcServiceExporterMap();
+
+    assertNull("The XML-RPC request parser should be null",
+        this.XmlRpcServiceRouter.getRequestParser());
+
+    this.XmlRpcServiceRouter.afterPropertiesSet();
+
+    XmlRpcRequestParser requestParser = this.XmlRpcServiceRouter
+        .getRequestParser();
+    assertNotNull("The XML-RPC request parser should not be null",
+        requestParser);
+
+    assertEquals("<XML-RPC request parser>", DomXmlRpcRequestParser.class,
+        requestParser.getClass());
+  }
+
+  /**
+   * Asserts that the method
+   * <code>{@link XmlRpcServiceRouter#afterPropertiesSet()}</code> creates a
+   * new instance of <code>{@link DomXmlRpcResponseWriter}</code> if the
+   * XML-RPC response Writer is <code>null</code>.
+   */
+  public void testAfterPropertiesSetWithXmlRpcResponseWriterEqualToNull() {
+    this.setUpXmlRpcElementFactory();
+    this.setUpXmlRpcRequestParser();
+    this.setUpXmlRpcServiceExporterMap();
+
+    assertNull("The XML-RPC response writer should be null",
+        this.XmlRpcServiceRouter.getResponseWriter());
+
+    this.XmlRpcServiceRouter.afterPropertiesSet();
+
+    XmlRpcResponseWriter responseWriter = this.XmlRpcServiceRouter
+        .getResponseWriter();
+    assertNotNull("The XML-RPC response writer should not be null",
+        responseWriter);
+    Arrays.toString(new Object[0]);
+    assertEquals("<XML-RPC response writer>", DomXmlRpcResponseWriter.class,
+        responseWriter.getClass());
   }
 
   /**
