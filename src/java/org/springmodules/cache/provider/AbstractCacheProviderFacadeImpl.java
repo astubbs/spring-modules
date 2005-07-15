@@ -19,7 +19,6 @@
 package org.springmodules.cache.provider;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -39,7 +38,7 @@ import org.springmodules.cache.EntryRetrievalException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/25 06:53:19 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/15 18:02:14 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -144,9 +143,38 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    */
   public final void flushCache(String[] cacheProfileIds) {
     if (logger.isDebugEnabled()) {
+      String formattedCacheProfileIds = null;
+      if (cacheProfileIds != null) {
+        int cacheProfileIdCount = cacheProfileIds.length;
+
+        if (cacheProfileIdCount == 0) {
+          formattedCacheProfileIds = "{}";
+        } else {
+          StringBuffer buffer = new StringBuffer();
+
+          for (int i = 0; i < cacheProfileIdCount; i++) {
+            if (i == 0) {
+              buffer.append("{");
+            } else {
+              buffer.append(", ");
+            }
+
+            String cacheProfileId = cacheProfileIds[i];
+            String formattedCacheProfileId = null;
+            if (cacheProfileId != null) {
+              formattedCacheProfileId = "'" + cacheProfileId + "'";
+            }
+            buffer.append(formattedCacheProfileId);
+          }
+
+          buffer.append("}");
+          formattedCacheProfileIds = buffer.toString();
+        }
+      }
+
       logger
           .debug("Method 'flushCache(String[])'. Argument 'cacheProfileIds': "
-              + Arrays.toString(cacheProfileIds));
+              + formattedCacheProfileIds);
     }
 
     if (cacheProfileIds != null) {
