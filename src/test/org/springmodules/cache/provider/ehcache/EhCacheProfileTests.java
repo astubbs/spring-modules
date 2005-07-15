@@ -18,9 +18,11 @@
 
 package org.springmodules.cache.provider.ehcache;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.cache.AbstractJavaBeanTests;
+import org.springmodules.EqualsHashCodeTestCase;
 
 /**
  * <p>
@@ -29,9 +31,10 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/03 04:33:12 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/15 18:03:57 $
  */
-public final class EhCacheProfileTests extends AbstractJavaBeanTests {
+public final class EhCacheProfileTests extends TestCase implements
+    EqualsHashCodeTestCase {
 
   /**
    * Message logger.
@@ -54,65 +57,132 @@ public final class EhCacheProfileTests extends AbstractJavaBeanTests {
   }
 
   /**
-   * @see AbstractJavaBeanTests#getEqualObjects()
-   */
-  protected Object[] getEqualObjects() {
-    EhCacheProfile equalProfile = new EhCacheProfile();
-    equalProfile.setCacheName("main");
-
-    return new Object[] { equalProfile };
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getExpectedHashCode()
-   */
-  protected int getExpectedHashCode() {
-    int multiplier = 31;
-    int hash = 7;
-    hash = multiplier * hash + this.cacheProfile.getCacheName().hashCode();
-    return hash;
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getExpectedToString()
-   */
-  protected String getExpectedToString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cacheProfile.getClass().getName() + ": ");
-    buffer.append("cacheName='" + this.cacheProfile.getCacheName() + "'; ");
-    buffer.append("systemHashCode="
-        + System.identityHashCode(this.cacheProfile));
-
-    String expectedToString = buffer.toString();
-    logger.debug("expectedToString: " + expectedToString);
-
-    return expectedToString;
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getNotEqualObjects()
-   */
-  protected Object[] getNotEqualObjects() {
-    EhCacheProfile notEqualProfile = new EhCacheProfile();
-    notEqualProfile.setCacheName("temp");
-
-    return new Object[] { notEqualProfile };
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getPrimaryObject()
-   */
-  protected Object getPrimaryObject() {
-    return this.cacheProfile;
-  }
-
-  /**
    * Sets up the test fixture.
    */
   protected final void setUp() throws Exception {
     super.setUp();
 
     this.cacheProfile = new EhCacheProfile();
-    this.cacheProfile.setCacheName("main");
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   */
+  public void testEqualsHashCodeRelationship() {
+    String cacheName = "main";
+
+    this.cacheProfile.setCacheName(cacheName);
+
+    EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
+
+    assertEquals(this.cacheProfile, anotherProfile);
+    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   */
+  public void testEqualsIsConsistent() {
+    String cacheName = "test";
+
+    this.cacheProfile.setCacheName(cacheName);
+
+    EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
+
+    assertEquals(this.cacheProfile, anotherProfile);
+
+    anotherProfile.setCacheName("main");
+    assertFalse(this.cacheProfile.equals(anotherProfile));
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   */
+  public void testEqualsIsReflexive() {
+    assertEquals(this.cacheProfile, this.cacheProfile);
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   */
+  public void testEqualsIsSymmetric() {
+    String cacheName = "test";
+
+    this.cacheProfile.setCacheName(cacheName);
+
+    EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
+
+    assertTrue(this.cacheProfile.equals(anotherProfile));
+    assertTrue(anotherProfile.equals(this.cacheProfile));
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   */
+  public void testEqualsIsTransitive() {
+    String cacheName = "test";
+
+    this.cacheProfile.setCacheName(cacheName);
+
+    EhCacheProfile secondProfile = new EhCacheProfile(cacheName);
+    EhCacheProfile thirdProfile = new EhCacheProfile(cacheName);
+
+    assertTrue(this.cacheProfile.equals(secondProfile));
+    assertTrue(secondProfile.equals(thirdProfile));
+    assertTrue(this.cacheProfile.equals(thirdProfile));
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   */
+  public void testEqualsNullComparison() {
+    assertFalse(this.cacheProfile.equals(null));
+  }
+
+  /**
+   * Verifies that the method <code>{@link EhCacheProfile#toString()}</code>
+   * returns a String representation of a <code>{@link EhCacheProfile}</code>
+   * when the property <code>cacheProfileId</code> is equal to
+   * <code>null</code>.
+   */
+  public void testToStringWithCacheNameEqualToNull() {
+    this.cacheProfile.setCacheName(null);
+
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.cacheProfile.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
+    buffer.append("cacheName=null]");
+
+    String expected = buffer.toString();
+    String actual = this.cacheProfile.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
+    assertEquals("<ToString>", expected, actual);
+  }
+
+  /**
+   * Verifies that the method <code>{@link EhCacheProfile#toString()}</code>
+   * returns a String representation of a <code>{@link EhCacheProfile}</code>
+   * when the property <code>cacheName</code> is not equal to
+   * <code>null</code>.
+   */
+  public void testToStringWithCacheNameNotEqualToNull() {
+    String cacheName = "main";
+    this.cacheProfile.setCacheName(cacheName);
+
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.cacheProfile.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
+    buffer.append("cacheName='" + cacheName + "']");
+
+    String expected = buffer.toString();
+    String actual = this.cacheProfile.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
+    assertEquals("<ToString>", expected, actual);
   }
 }

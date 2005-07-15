@@ -20,9 +20,11 @@
 
 package org.springmodules.cache.provider.jcs;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.cache.AbstractJavaBeanTests;
+import org.springmodules.EqualsHashCodeTestCase;
 
 /**
  * <p>
@@ -31,9 +33,10 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/03 04:33:11 $
+ * @version $Revision: 1.5 $ $Date: 2005/07/15 18:03:57 $
  */
-public final class JcsProfileTests extends AbstractJavaBeanTests {
+public final class JcsProfileTests extends TestCase implements
+    EqualsHashCodeTestCase {
 
   /**
    * Message logger.
@@ -56,69 +59,147 @@ public final class JcsProfileTests extends AbstractJavaBeanTests {
   }
 
   /**
-   * @see AbstractJavaBeanTests#getEqualObjects()
-   */
-  protected Object[] getEqualObjects() {
-    JcsProfile equalProfile = new JcsProfile();
-    equalProfile.setCacheName("main");
-    equalProfile.setGroup("test");
-
-    return new Object[] { equalProfile };
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getExpectedHashCode()
-   */
-  protected int getExpectedHashCode() {
-    int hash = 7;
-    hash = 31 * hash + this.cacheProfile.getCacheName().hashCode();
-    hash = 31 * hash + this.cacheProfile.getGroup().hashCode();
-    return hash;
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getExpectedToString()
-   */
-  protected String getExpectedToString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cacheProfile.getClass().getName() + ": ");
-    buffer.append("cacheName='" + this.cacheProfile.getCacheName() + "'; ");
-    buffer.append("group='" + this.cacheProfile.getGroup() + "'; ");
-    buffer.append("systemHashCode="
-        + System.identityHashCode(this.cacheProfile));
-
-    String expectedToString = buffer.toString();
-    logger.debug("expectedToString: " + expectedToString);
-
-    return expectedToString;
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getNotEqualObjects()
-   */
-  protected Object[] getNotEqualObjects() {
-    JcsProfile notEqualProfile = new JcsProfile();
-    notEqualProfile.setCacheName("temp");
-    notEqualProfile.setGroup("dev");
-
-    return new Object[] { notEqualProfile };
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getPrimaryObject()
-   */
-  protected Object getPrimaryObject() {
-    return this.cacheProfile;
-  }
-
-  /**
    * Sets up the test fixture.
    */
   protected void setUp() throws Exception {
     super.setUp();
 
     this.cacheProfile = new JcsProfile();
-    this.cacheProfile.setCacheName("main");
-    this.cacheProfile.setGroup("test");
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   */
+  public void testEqualsHashCodeRelationship() {
+    String cacheName = "main";
+    String group = "test";
+
+    this.cacheProfile.setCacheName(cacheName);
+    this.cacheProfile.setGroup(group);
+
+    JcsProfile anotherProfile = new JcsProfile(cacheName, group);
+
+    assertEquals(this.cacheProfile, anotherProfile);
+    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   */
+  public void testEqualsIsConsistent() {
+    String cacheName = "ch01";
+    String group = "grp87";
+
+    this.cacheProfile.setCacheName(cacheName);
+    this.cacheProfile.setGroup(group);
+
+    JcsProfile anotherProfile = new JcsProfile(cacheName, group);
+
+    assertEquals(this.cacheProfile, anotherProfile);
+
+    anotherProfile.setCacheName("main");
+    anotherProfile.setGroup("test");
+
+    assertFalse(this.cacheProfile.equals(anotherProfile));
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   */
+  public void testEqualsIsReflexive() {
+    assertEquals(this.cacheProfile, this.cacheProfile);
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   */
+  public void testEqualsIsSymmetric() {
+    String cacheName = "mainCache";
+    String group = "testGroup";
+
+    this.cacheProfile.setCacheName(cacheName);
+    this.cacheProfile.setGroup(group);
+
+    JcsProfile anotherProfile = new JcsProfile(cacheName, group);
+
+    assertTrue(this.cacheProfile.equals(anotherProfile));
+    assertTrue(anotherProfile.equals(this.cacheProfile));
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   */
+  public void testEqualsIsTransitive() {
+    String cacheName = "pojos";
+    String group = "model";
+
+    this.cacheProfile.setCacheName(cacheName);
+    this.cacheProfile.setGroup(group);
+
+    JcsProfile secondProfile = new JcsProfile(cacheName, group);
+    JcsProfile thirdProfile = new JcsProfile(cacheName, group);
+
+    assertTrue(this.cacheProfile.equals(secondProfile));
+    assertTrue(secondProfile.equals(thirdProfile));
+    assertTrue(this.cacheProfile.equals(thirdProfile));
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   */
+  public void testEqualsNullComparison() {
+    assertFalse(this.cacheProfile.equals(null));
+  }
+
+  /**
+   * Verifies that the method <code>{@link JcsProfile#toString()}</code>
+   * returns a String representation of a <code>{@link JcsProfile}</code> when
+   * the properties <code>cacheProfileId</code> and <code>group</code> are
+   * equal to <code>null</code>.
+   */
+  public void testToStringWithCacheNameAndGroupEqualToNull() {
+    this.cacheProfile.setCacheName(null);
+    this.cacheProfile.setGroup(null);
+
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.cacheProfile.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
+    buffer.append("cacheName=null, ");
+    buffer.append("group=null]");
+
+    String expected = buffer.toString();
+    String actual = this.cacheProfile.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
+    assertEquals("<ToString>", expected, actual);
+  }
+
+  /**
+   * Verifies that the method <code>{@link JcsProfile#toString()}</code>
+   * returns a String representation of a <code>{@link JcsProfile}</code> when
+   * the properties <code>cacheProfileId</code> and <code>group</code> are
+   * not equal to <code>null</code>.
+   */
+  public void testToStringWithCacheNameAndGroupNotEqualToNull() {
+    String cacheName = "main";
+    String group = "services";
+    this.cacheProfile.setCacheName(cacheName);
+    this.cacheProfile.setGroup(group);
+
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.cacheProfile.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
+    buffer.append("cacheName='" + cacheName + "', ");
+    buffer.append("group='" + group + "']");
+
+    String expected = buffer.toString();
+    String actual = this.cacheProfile.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
+    assertEquals("<ToString>", expected, actual);
   }
 }

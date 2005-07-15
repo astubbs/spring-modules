@@ -18,7 +18,11 @@
 
 package org.springmodules.cache.key;
 
-import org.springmodules.cache.AbstractJavaBeanTests;
+import junit.framework.TestCase;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springmodules.EqualsHashCodeTestCase;
 
 /**
  * <p>
@@ -27,14 +31,20 @@ import org.springmodules.cache.AbstractJavaBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:11 $
+ * @version $Revision: 1.2 $ $Date: 2005/07/15 18:03:57 $
  */
-public final class HashCodeCacheKeyTests extends AbstractJavaBeanTests {
+public final class HashCodeCacheKeyTests extends TestCase implements
+    EqualsHashCodeTestCase {
+
+  /**
+   * Message logger.
+   */
+  private static Log logger = LogFactory.getLog(HashCodeCacheKeyTests.class);
 
   /**
    * Primary object (instance of the class to test).
    */
-  private HashCodeCacheKey hashCodeCacheKey;
+  private HashCodeCacheKey key;
 
   /**
    * Constructor.
@@ -47,54 +57,90 @@ public final class HashCodeCacheKeyTests extends AbstractJavaBeanTests {
   }
 
   /**
-   * @see AbstractJavaBeanTests#getEqualObjects()
-   */
-  protected Object[] getEqualObjects() {
-    HashCodeCacheKey equalHashCodeCacheKey = new HashCodeCacheKey();
-    equalHashCodeCacheKey.setCheckSum(44322);
-    equalHashCodeCacheKey.setHashCode(544);
-
-    return new Object[] { equalHashCodeCacheKey };
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getExpectedHashCode()
-   */
-  protected int getExpectedHashCode() {
-    return this.hashCodeCacheKey.getHashCode();
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getExpectedToString()
-   */
-  protected String getExpectedToString() {
-    String expectedToString = this.hashCodeCacheKey.getHashCode() + "|"
-        + this.hashCodeCacheKey.getCheckSum();
-
-    return expectedToString;
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getNotEqualObjects()
-   */
-  protected Object[] getNotEqualObjects() {
-    HashCodeCacheKey nonEqualHashCodeCacheKey = new HashCodeCacheKey(4, 67);
-
-    return new Object[] { nonEqualHashCodeCacheKey };
-  }
-
-  /**
-   * @see AbstractJavaBeanTests#getPrimaryObject()
-   */
-  protected Object getPrimaryObject() {
-    return this.hashCodeCacheKey;
-  }
-
-  /**
    * Sets up the test fixture.
    */
   protected void setUp() throws Exception {
     super.setUp();
-    this.hashCodeCacheKey = new HashCodeCacheKey(44322, 544);
+    this.key = new HashCodeCacheKey(44322, 544);
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   */
+  public void testEqualsHashCodeRelationship() {
+    HashCodeCacheKey anotherKey = new HashCodeCacheKey(this.key.getCheckSum(),
+        this.key.getHashCode());
+
+    assertEquals(this.key, anotherKey);
+    assertEquals(this.key.hashCode(), anotherKey.hashCode());
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   */
+  public void testEqualsIsConsistent() {
+    HashCodeCacheKey anotherKey = new HashCodeCacheKey(this.key.getCheckSum(),
+        this.key.getHashCode());
+
+    assertEquals(this.key, anotherKey);
+
+    anotherKey.setCheckSum(589l);
+    anotherKey.setHashCode(33);
+
+    assertFalse(this.key.equals(anotherKey));
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   */
+  public void testEqualsIsReflexive() {
+    assertEquals(this.key, this.key);
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   */
+  public void testEqualsIsSymmetric() {
+    HashCodeCacheKey anotherKey = new HashCodeCacheKey(this.key.getCheckSum(),
+        this.key.getHashCode());
+
+    assertTrue(this.key.equals(anotherKey));
+    assertTrue(anotherKey.equals(this.key));
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   */
+  public void testEqualsIsTransitive() {
+    long checkSum = this.key.getCheckSum();
+    int hashCode = this.key.getHashCode();
+
+    HashCodeCacheKey secondKey = new HashCodeCacheKey(checkSum, hashCode);
+    HashCodeCacheKey thirdKey = new HashCodeCacheKey(checkSum, hashCode);
+
+    assertTrue(this.key.equals(secondKey));
+    assertTrue(secondKey.equals(thirdKey));
+    assertTrue(this.key.equals(thirdKey));
+  }
+
+  /**
+   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   */
+  public void testEqualsNullComparison() {
+    assertFalse(this.key.equals(null));
+  }
+
+  /**
+   * Verifies that the method <code>{@link HashCodeCacheKey#toString()}</code>
+   * returns a String representation of <code>{@link HashCodeCacheKey}</code>.
+   */
+  public void testHashCode() {
+    String expected = this.key.getHashCode() + "|" + this.key.getCheckSum();
+    String actual = this.key.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
+    assertEquals("<ToString>", expected, actual);
   }
 }
