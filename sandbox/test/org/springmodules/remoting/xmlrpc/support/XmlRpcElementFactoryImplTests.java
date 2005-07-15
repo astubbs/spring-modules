@@ -147,8 +147,8 @@ public class XmlRpcElementFactoryImplTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link XmlRpcElementFactoryImpl#createXmlRpcElement(Object)}</code>
-   * creates a new <code>{@link XmlRpcDate}</code> if the specified argument
-   * is a <code>java.util.Date</code>.
+   * creates a new <code>{@link XmlRpcDateTime}</code> if the specified
+   * argument is a <code>java.util.Date</code>.
    */
   public void testCreateXmlRpcElementWithDateArgument() {
     Date source = new Date();
