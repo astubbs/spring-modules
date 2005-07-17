@@ -24,7 +24,7 @@ package org.springmodules.cache.util;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:42:12 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/17 02:08:48 $
  */
 public class TextMatcher {
 
@@ -51,12 +51,4 @@ public class TextMatcher {
 
     return match;
   }
-
-  /**
-   * Constructor.
-   */
-  private TextMatcher() {
-    super();
-  }
-
 }
