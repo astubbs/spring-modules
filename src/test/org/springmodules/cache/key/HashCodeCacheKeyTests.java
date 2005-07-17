@@ -31,7 +31,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/07/15 18:03:57 $
+ * @version $Revision: 1.3 $ $Date: 2005/07/17 02:09:24 $
  */
 public final class HashCodeCacheKeyTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -79,14 +79,18 @@ public final class HashCodeCacheKeyTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    HashCodeCacheKey anotherKey = new HashCodeCacheKey(this.key.getCheckSum(),
-        this.key.getHashCode());
+    long checkSum = this.key.getCheckSum();
+    int hashCode = this.key.getHashCode();
+    
+    HashCodeCacheKey anotherKey = new HashCodeCacheKey(checkSum, hashCode);
 
     assertEquals(this.key, anotherKey);
 
     anotherKey.setCheckSum(589l);
-    anotherKey.setHashCode(33);
+    assertFalse(this.key.equals(anotherKey));
 
+    anotherKey.setCheckSum(checkSum);
+    anotherKey.setHashCode(33);
     assertFalse(this.key.equals(anotherKey));
   }
 

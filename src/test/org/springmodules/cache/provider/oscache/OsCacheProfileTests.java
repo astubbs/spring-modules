@@ -31,7 +31,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/15 18:03:58 $
+ * @version $Revision: 1.7 $ $Date: 2005/07/17 02:09:24 $
  */
 public final class OsCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -100,9 +100,14 @@ public final class OsCacheProfileTests extends TestCase implements
     assertEquals(this.cacheProfile, anotherProfile);
 
     anotherProfile.setCronExpression("* * * * *");
-    anotherProfile.setGroups("Pojos");
-    anotherProfile.setRefreshPeriod(99);
+    assertFalse(this.cacheProfile.equals(anotherProfile));
 
+    anotherProfile.setCronExpression(null);
+    anotherProfile.setGroups("Pojos");
+    assertFalse(this.cacheProfile.equals(anotherProfile));
+    
+    anotherProfile.setGroups(groups);
+    anotherProfile.setRefreshPeriod(99);
     assertFalse(this.cacheProfile.equals(anotherProfile));
   }
 

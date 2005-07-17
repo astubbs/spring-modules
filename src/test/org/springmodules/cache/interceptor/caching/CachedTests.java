@@ -31,7 +31,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/15 18:03:58 $
+ * @version $Revision: 1.6 $ $Date: 2005/07/17 02:09:23 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -73,6 +73,12 @@ public final class CachedTests extends TestCase implements
     this.cached.setCacheProfileId(cacheProfileId);
 
     Cached anotherCached = new Cached(cacheProfileId);
+
+    assertEquals(this.cached, anotherCached);
+    assertEquals(this.cached.hashCode(), anotherCached.hashCode());
+
+    this.cached.setCacheProfileId(null);
+    anotherCached.setCacheProfileId(null);
 
     assertEquals(this.cached, anotherCached);
     assertEquals(this.cached.hashCode(), anotherCached.hashCode());
@@ -141,7 +147,7 @@ public final class CachedTests extends TestCase implements
    */
   public void testToStringWithCacheProfileIdEqualToNull() {
     this.cached.setCacheProfileId(null);
-    
+
     StringBuffer buffer = new StringBuffer();
     buffer.append(this.cached.getClass().getName());
     buffer.append("@" + System.identityHashCode(this.cached) + "[");
@@ -164,7 +170,7 @@ public final class CachedTests extends TestCase implements
   public void testToStringWithCacheProfileIdNotEqualToNull() {
     String cacheProfileId = "main";
     this.cached.setCacheProfileId(cacheProfileId);
-    
+
     StringBuffer buffer = new StringBuffer();
     buffer.append(this.cached.getClass().getName());
     buffer.append("@" + System.identityHashCode(this.cached) + "[");

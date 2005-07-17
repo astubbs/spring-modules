@@ -20,6 +20,7 @@ package org.springmodules.cache.interceptor.caching;
 
 import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Properties;
 
 import junit.framework.TestCase;
@@ -31,7 +32,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:13 $
+ * @version $Revision: 1.2 $ $Date: 2005/07/17 02:09:23 $
  */
 public class NameMatchCachingAttributeSourceTests extends TestCase {
 
@@ -70,6 +71,26 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
   private void setUpMethod() throws Exception {
     this.method = String.class.getDeclaredMethod("charAt",
         new Class[] { int.class });
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link NameMatchCachingAttributeSource#addCachingAttribute(String, Cached)}</code>
+   * adds the specified caching attribute to the map of attributes using the
+   * specified method name as the key.
+   */
+  public void testAddCachingAttribute() {
+    String methodName = "addUser";
+    Cached cachingAttribute = new Cached();
+
+    this.attributeSource.addCachingAttribute(methodName, cachingAttribute);
+
+    Map cachingAttributeMap = this.attributeSource.getCachingAttributeMap();
+    assertTrue("There should be an entry with key '" + methodName + "'",
+        cachingAttributeMap.containsKey(methodName));
+
+    assertSame("<Added caching attribute>", cachingAttribute,
+        cachingAttributeMap.get(methodName));
   }
 
   /**

@@ -33,7 +33,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/15 18:03:57 $
+ * @version $Revision: 1.6 $ $Date: 2005/07/17 02:09:24 $
  */
 public final class JcsProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -98,8 +98,10 @@ public final class JcsProfileTests extends TestCase implements
     assertEquals(this.cacheProfile, anotherProfile);
 
     anotherProfile.setCacheName("main");
-    anotherProfile.setGroup("test");
+    assertFalse(this.cacheProfile.equals(anotherProfile));
 
+    anotherProfile.setCacheName(cacheName);
+    anotherProfile.setGroup("test");
     assertFalse(this.cacheProfile.equals(anotherProfile));
   }
 

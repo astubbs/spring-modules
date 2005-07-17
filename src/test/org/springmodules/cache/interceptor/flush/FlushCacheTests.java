@@ -31,7 +31,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/15 18:03:59 $
+ * @version $Revision: 1.7 $ $Date: 2005/07/17 02:09:25 $
  */
 public final class FlushCacheTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -82,6 +82,19 @@ public final class FlushCacheTests extends TestCase implements
 
     assertEquals(this.flushCache, anotherFlushCache);
     assertEquals(this.flushCache.hashCode(), anotherFlushCache.hashCode());
+
+    this.flushCache.setCacheProfileIds((String[]) null);
+    anotherFlushCache.setCacheProfileIds((String[]) null);
+
+    assertEquals(this.flushCache, anotherFlushCache);
+    assertEquals(this.flushCache.hashCode(), anotherFlushCache.hashCode());
+
+    String[] newCacheProfileIds = { null, "main" };
+    this.flushCache.setCacheProfileIds(newCacheProfileIds);
+    anotherFlushCache.setCacheProfileIds(newCacheProfileIds);
+
+    assertEquals(this.flushCache, anotherFlushCache);
+    assertEquals(this.flushCache.hashCode(), anotherFlushCache.hashCode());
   }
 
   /**
@@ -100,8 +113,10 @@ public final class FlushCacheTests extends TestCase implements
     assertEquals(this.flushCache, anotherFlushCache);
 
     anotherFlushCache.setCacheProfileIds("main");
-    anotherFlushCache.setFlushBeforeExecution(false);
+    assertFalse(this.flushCache.equals(anotherFlushCache));
 
+    anotherFlushCache.setCacheProfileIds(cacheProfileIds);
+    anotherFlushCache.setFlushBeforeExecution(false);
     assertFalse(this.flushCache.equals(anotherFlushCache));
   }
 
@@ -154,6 +169,35 @@ public final class FlushCacheTests extends TestCase implements
    */
   public void testEqualsNullComparison() {
     assertFalse(this.flushCache.equals(null));
+  }
+
+  /**
+   * Verifies that the method <code>{@link FlushCache#toString()}</code>
+   * returns a String representation of a <code>{@link FlushCache}</code> when
+   * one of the elements of the property <code>cacheProfileIds</code> is equal
+   * to <code>null</code>.
+   */
+  public void testToStringWithCacheProfileIdEqualToNull() {
+    String cacheProfileId = "main";
+    String[] cacheProfileIds = { cacheProfileId, null };
+    boolean flushBeforeExecution = true;
+
+    this.flushCache.setCacheProfileIds(cacheProfileIds);
+    this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
+
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(this.flushCache.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this.flushCache) + "[");
+    buffer.append("cacheProfileIds={'" + cacheProfileId + "', null}, ");
+    buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
+
+    String expected = buffer.toString();
+    String actual = this.flushCache.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
+    assertEquals("<ToString>", expected, actual);
   }
 
   /**
