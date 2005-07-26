@@ -99,6 +99,8 @@ public class BeanFactoryLanguageParser implements BeanFactoryLanguageParserConst
                         private String destroyMethod = null;
                         private Collection dependsOn = null;
                         private String autowire = null;
+                        private BeanReference factoryBean = null;
+                        private String factoryMethod = null;
 
                         public Class getClazz() {
                                 return clazz;
@@ -170,6 +172,22 @@ public class BeanFactoryLanguageParser implements BeanFactoryLanguageParserConst
 
                         public void setAutowire(String autowire) {
                                 this.autowire = autowire;
+                        }
+
+                        public BeanReference getFactoryBean() {
+                                return this.factoryBean;
+                        }
+
+                        public void setFactoryBean(BeanReference factoryBean) {
+                                this.factoryBean = factoryBean;
+                        }
+
+                        public String getFactoryMethod() {
+                                return this.factoryMethod;
+                        }
+
+                        public void setFactoryMethod(String factoryMethod) {
+                                this.factoryMethod = factoryMethod;
                         }
                 };
         }
@@ -1155,21 +1173,6 @@ public class BeanFactoryLanguageParser implements BeanFactoryLanguageParserConst
     finally { jj_save(0, xla); }
   }
 
-  final private boolean jj_3R_11() {
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_12() {
-    if (jj_3R_14()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_14() {
     Token xsp;
     xsp = jj_scanpos;
@@ -1197,6 +1200,21 @@ public class BeanFactoryLanguageParser implements BeanFactoryLanguageParserConst
     }
     xsp = jj_scanpos;
     if (jj_scan_token(42)) jj_scanpos = xsp;
+    return false;
+  }
+
+  final private boolean jj_3R_11() {
+    if (jj_3R_14()) return true;
+    return false;
+  }
+
+  final private boolean jj_3_1() {
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_12() {
+    if (jj_3R_14()) return true;
     return false;
   }
 

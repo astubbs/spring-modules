@@ -215,7 +215,7 @@ public class XmlApplicationContextUtils {
 			
 		StringWriter sw = new StringWriter();
 		serialize(beans, sw);
-		
+		System.out.println(sw.getBuffer().toString());
 		return new InputStreamResource(new ByteArrayInputStream(sw.getBuffer().toString().getBytes()));
 	}
 	
