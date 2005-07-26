@@ -31,7 +31,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/07/17 02:09:24 $
+ * @version $Revision: 1.8 $ $Date: 2005/07/26 03:02:01 $
  */
 public final class OsCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -72,7 +72,7 @@ public final class OsCacheProfileTests extends TestCase implements
   public void testEqualsHashCodeRelationship() {
     String cronExpression = "* * 0 0 0";
     String groups = "Test,Valid";
-    int refreshPeriod = 43;
+    Integer refreshPeriod = new Integer(43);
 
     this.cacheProfile.setCronExpression(cronExpression);
     this.cacheProfile.setGroups(groups);
@@ -80,6 +80,34 @@ public final class OsCacheProfileTests extends TestCase implements
 
     OsCacheProfile anotherProfile = new OsCacheProfile(groups, refreshPeriod,
         cronExpression);
+
+    assertEquals(this.cacheProfile, anotherProfile);
+    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+
+    cronExpression = null;
+    this.cacheProfile.setCronExpression(cronExpression);
+    anotherProfile.setCronExpression(cronExpression);
+
+    assertEquals(this.cacheProfile, anotherProfile);
+    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+
+    groups = null;
+    this.cacheProfile.setGroups(groups);
+    anotherProfile.setGroups(groups);
+
+    assertEquals(this.cacheProfile, anotherProfile);
+    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+
+    String[] groupArray = { null, "Pojos" };
+    this.cacheProfile.setGroups(groupArray);
+    anotherProfile.setGroups(groupArray);
+
+    assertEquals(this.cacheProfile, anotherProfile);
+    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+
+    refreshPeriod = null;
+    this.cacheProfile.setRefreshPeriod(refreshPeriod);
+    anotherProfile.setRefreshPeriod(refreshPeriod);
 
     assertEquals(this.cacheProfile, anotherProfile);
     assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
@@ -105,7 +133,7 @@ public final class OsCacheProfileTests extends TestCase implements
     anotherProfile.setCronExpression(null);
     anotherProfile.setGroups("Pojos");
     assertFalse(this.cacheProfile.equals(anotherProfile));
-    
+
     anotherProfile.setGroups(groups);
     anotherProfile.setRefreshPeriod(99);
     assertFalse(this.cacheProfile.equals(anotherProfile));
@@ -122,13 +150,16 @@ public final class OsCacheProfileTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
+    String cronExpression = "* * * * *";
     String groups = "Services,Pojos";
     int refreshPeriod = 43;
 
+    this.cacheProfile.setCronExpression(cronExpression);
     this.cacheProfile.setGroups(groups);
     this.cacheProfile.setRefreshPeriod(refreshPeriod);
 
-    OsCacheProfile anotherProfile = new OsCacheProfile(groups, refreshPeriod);
+    OsCacheProfile anotherProfile = new OsCacheProfile(groups, refreshPeriod,
+        cronExpression);
 
     assertTrue(this.cacheProfile.equals(anotherProfile));
     assertTrue(anotherProfile.equals(this.cacheProfile));
@@ -225,7 +256,7 @@ public final class OsCacheProfileTests extends TestCase implements
    * and is not an empty array.
    */
   public void testToStringWithNotEmptyGroups() {
-    String[] groups = { "main", "test" };
+    String[] groups = { "main", null };
     int refreshPeriod = 543;
     String cronExpression = "* * 0 0 0";
 
@@ -245,7 +276,14 @@ public final class OsCacheProfileTests extends TestCase implements
       } else {
         buffer.append(", ");
       }
-      buffer.append("'" + groups[i] + "'");
+
+      String group = groups[i];
+      String formattedGroup = null;
+
+      if (group != null) {
+        formattedGroup = "'" + groups[i] + "'";
+      }
+      buffer.append(formattedGroup);
     }
     buffer.append("}, ");
     buffer.append("cronExpression='" + cronExpression + "']");
