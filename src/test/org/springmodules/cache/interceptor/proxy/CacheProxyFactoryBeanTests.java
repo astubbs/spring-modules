@@ -23,8 +23,10 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.springframework.aop.TargetSource;
+import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopConfigException;
 import org.springframework.aop.target.EmptyTargetSource;
+import org.springframework.util.ClassUtils;
 import org.springmodules.cache.integration.Cacheable;
 import org.springmodules.cache.integration.CacheableImpl;
 
@@ -35,7 +37,7 @@ import org.springmodules.cache.integration.CacheableImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:42:10 $
+ * @version $Revision: 1.2 $ $Date: 2005/07/26 03:01:01 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 
@@ -122,6 +124,47 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     } catch (AopConfigException exception) {
       // we are expecting this exception.
     }
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link CacheProxyFactoryBean#afterPropertiesSet()}</code> creates a
+   * new proxy from on the given target object if the target object and the
+   * specified proxy interfaces are not equal to <code>null</code>.
+   */
+  public void testAfterPropertiesSetWithProxyInterfacesNotEqualToNull()
+      throws Exception {
+    String[] proxyInterfaces = { Person.class.getName() };
+    this.cacheProxyFactoryBean.setProxyInterfaces(proxyInterfaces);
+
+    Person targetObject = new PersonImpl("Darth", "Vader");
+    this.cacheProxyFactoryBean.setTarget(targetObject);
+
+    this.cacheProxyFactoryBean.afterPropertiesSet();
+
+    Object proxy = this.cacheProxyFactoryBean.getProxy();
+    assertNotNull("The proxy should not be null", proxy);
+
+    Class[] targetObjectInterfaces = ClassUtils.getAllInterfaces(targetObject);
+    int interfacesCount = targetObjectInterfaces.length;
+    Class proxyClass = proxy.getClass();
+    for (int i = 0; i < interfacesCount; i++) {
+      Class targetObjectInterface = targetObjectInterfaces[i];
+      assertTrue("The proxy should implement the interface '"
+          + targetObjectInterface.getName(), targetObjectInterface
+          .isAssignableFrom(proxyClass));
+    }
+
+    assertTrue("The proxy should implement the interface '"
+        + Advised.class.getName() + "'", proxy instanceof Advised);
+  }
+
+  public void testAfterPropertiesSetWithProxyInterfacesEqualToNullAndProxyTargetClassEqualToTrue() {
+    Person targetObject = new PersonImpl("Darth", "Vader");
+    this.cacheProxyFactoryBean.setTarget(targetObject);
+    this.cacheProxyFactoryBean.setProxyTargetClass(true);
+
+    this.cacheProxyFactoryBean.afterPropertiesSet();
   }
 
   /**
