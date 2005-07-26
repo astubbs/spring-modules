@@ -17,11 +17,13 @@
  */
 package org.springmodules.cache.provider.oscache;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.easymock.classextension.MockClassControl;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
 
@@ -38,7 +40,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/29 05:10:19 $
+ * @version $Revision: 1.2 $ $Date: 2005/07/26 03:02:41 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
@@ -46,6 +48,12 @@ public class OsCacheFacadeTests extends TestCase {
    * OSCache cache administrator.
    */
   private GeneralCacheAdministrator cacheAdministrator;
+
+  /**
+   * Controls the behavior of <code>{@link #cacheAdministrator}</code> if
+   * initialized as a mock object.
+   */
+  private MockClassControl cacheAdministratorControl;
 
   /**
    * Listens to cache entry events.
@@ -63,6 +71,12 @@ public class OsCacheFacadeTests extends TestCase {
   private OsCacheProfile cacheProfile;
 
   /**
+   * Id used by <code>{@link #osCacheFacade}</code> to get
+   * <code>{@link #cacheProfile}</code>.
+   */
+  private String cacheProfileId;
+
+  /**
    * Name of the groups in <code>{@link #cacheAdministrator}</code> to use.
    */
   private String[] groups;
@@ -73,12 +87,6 @@ public class OsCacheFacadeTests extends TestCase {
   private OsCacheFacade osCacheFacade;
 
   /**
-   * Id used by <code>{@link #osCacheFacade}</code> to get
-   * <code>{@link #cacheProfile}</code>.
-   */
-  private String cacheProfileId;
-
-  /**
    * Constructor.
    * 
    * @param name
@@ -86,6 +94,26 @@ public class OsCacheFacadeTests extends TestCase {
    */
   public OsCacheFacadeTests(String name) {
     super(name);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link OsCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * removes the entry stored under the given key.
+   */
+  public void removeFromCache() {
+    Object objectToStore = "An Object";
+    this.cacheAdministrator.putInCache(this.cacheKey, objectToStore);
+
+    // execute the method to test.
+    this.osCacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
+
+    try {
+      this.cacheAdministrator.getFromCache(this.cacheKey);
+      fail("A 'NeedsRefreshException' should have been thrown");
+    } catch (NeedsRefreshException exception) {
+      // we are expecting this exception
+    }
   }
 
   /**
@@ -114,6 +142,23 @@ public class OsCacheFacadeTests extends TestCase {
     this.osCacheFacade = new OsCacheFacade();
     this.osCacheFacade.setCacheManager(this.cacheAdministrator);
     this.osCacheFacade.setCacheProfiles(cacheProfiles);
+  }
+
+  /**
+   * Sets up <code>{@link #cacheAdministrator}</code> as a mock object.
+   * 
+   * @param methodsToMock
+   *          the methods to mock.
+   */
+  private void setUpCacheAdministratorAsMockObject(Method[] methodsToMock) {
+    Class targetClass = GeneralCacheAdministrator.class;
+
+    this.cacheAdministratorControl = MockClassControl.createControl(
+        targetClass, null, null, methodsToMock);
+    this.cacheAdministrator = (GeneralCacheAdministrator) this.cacheAdministratorControl
+        .getMock();
+
+    this.osCacheFacade.setCacheManager(this.cacheAdministrator);
   }
 
   /**
@@ -163,6 +208,33 @@ public class OsCacheFacadeTests extends TestCase {
 
     assertEquals("<Class of the cache profile validator>", expectedClass,
         actualClass);
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link OsCacheFacade#onCancelCacheUpdate(java.io.Serializable)}</code>
+   * cancels the update of the entry under the given key.
+   */
+  public void testOnCancelCacheUpdate() throws Exception {
+    Method cancelUpdateMethod = GeneralCacheAdministrator.class.getMethod(
+        "cancelUpdate", new Class[] { String.class });
+
+    this
+        .setUpCacheAdministratorAsMockObject(new Method[] { cancelUpdateMethod });
+
+    String key = "Jedi";
+
+    // expectation: cancel the update of the entry.
+    this.cacheAdministrator.cancelUpdate(key);
+
+    // set the state of the mock control to "replay".
+    this.cacheAdministratorControl.replay();
+
+    // execute the method to test.
+    this.osCacheFacade.cancelCacheUpdate(key);
+
+    // verify that the expectations of the mock control were met.
+    this.cacheAdministratorControl.verify();
   }
 
   /**
@@ -220,7 +292,7 @@ public class OsCacheFacadeTests extends TestCase {
 
     assertSame("<Cached object>", objectToStore, cachedObject);
   }
-
+  
   /**
    * Verifies that the method
    * <code>{@link OsCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
@@ -299,21 +371,27 @@ public class OsCacheFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link OsCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
-   * removes the entry stored under the given key.
+   * removes from the cache the entry stored under the given key.
    */
-  public void removeFromCache() {
-    Object objectToStore = "An Object";
-    this.cacheAdministrator.putInCache(this.cacheKey, objectToStore);
+  public void testRemoveFromCache() throws Exception {
+    Method flushEntryMethod = GeneralCacheAdministrator.class
+        .getDeclaredMethod("flushEntry", new Class[] { String.class });
+
+    this.setUpCacheAdministratorAsMockObject(new Method[] { flushEntryMethod });
+
+    String key = "Luke";
+
+    // expectation flush the entry stored under the given key.
+    this.cacheAdministrator.flushEntry(key);
+
+    // set the state of the mock control to "replay".
+    this.cacheAdministratorControl.replay();
 
     // execute the method to test.
-    this.osCacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
+    this.osCacheFacade.removeFromCache(key, null);
 
-    try {
-      this.cacheAdministrator.getFromCache(this.cacheKey);
-      fail("A 'NeedsRefreshException' should have been thrown");
-    } catch (NeedsRefreshException exception) {
-      // we are expecting this exception
-    }
+    // verify that the expectations of the mock control were met.
+    this.cacheAdministratorControl.verify();
   }
 
   /**
