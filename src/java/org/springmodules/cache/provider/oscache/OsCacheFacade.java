@@ -39,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/29 05:09:52 $
+ * @version $Revision: 1.3 $ $Date: 2005/07/26 03:00:07 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -174,7 +174,8 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
    *      String)
    */
   public void removeFromCache(Serializable cacheKey, String cacheProfileId) {
-    this.cacheManager.flushEntry(this.getEntryKey(cacheKey));
+    String key = this.getEntryKey(cacheKey);
+    this.cacheManager.flushEntry(key);
   }
 
   /**

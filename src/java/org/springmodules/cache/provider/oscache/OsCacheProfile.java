@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/15 18:01:30 $
+ * @version $Revision: 1.7 $ $Date: 2005/07/26 03:00:37 $
  */
 public class OsCacheProfile implements CacheProfile {
 
@@ -95,6 +95,21 @@ public class OsCacheProfile implements CacheProfile {
    *          the new cron expression.
    */
   public OsCacheProfile(String csvGroups, int refreshPeriod,
+      String cronExpression) {
+    this(csvGroups, new Integer(refreshPeriod), cronExpression);
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param csvGroups
+   *          the group(s) the object to cache belongs to.
+   * @param refreshPeriod
+   *          how long the object can stay in cache in seconds.
+   * @param cronExpression
+   *          the new cron expression.
+   */
+  public OsCacheProfile(String csvGroups, Integer refreshPeriod,
       String cronExpression) {
     this();
     this.setCronExpression(cronExpression);
