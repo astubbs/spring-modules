@@ -32,7 +32,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/15 18:01:31 $
+ * @version $Revision: 1.6 $ $Date: 2005/07/28 03:40:45 $
  */
 public class JcsProfile implements CacheProfile {
 
@@ -65,12 +65,22 @@ public class JcsProfile implements CacheProfile {
    * 
    * @param cacheName
    *          the name of the JCS cache.
+   */
+  public JcsProfile(String cacheName) {
+    this();
+    this.setCacheName(cacheName);
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param cacheName
+   *          the name of the JCS cache.
    * @param group
    *          the group the object to cache belongs to.
    */
   public JcsProfile(String cacheName, String group) {
-    this();
-    this.setCacheName(cacheName);
+    this(cacheName);
     this.setGroup(group);
   }
 
