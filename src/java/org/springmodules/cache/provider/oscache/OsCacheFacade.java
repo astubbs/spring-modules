@@ -39,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/07/26 03:00:07 $
+ * @version $Revision: 1.4 $ $Date: 2005/07/28 03:43:10 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -104,8 +104,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
     if (groups == null || groups.length == 0) {
       this.cacheManager.flushAll();
-    }
-    else {
+    } else {
       int groupCount = groups.length;
 
       for (int i = 0; i < groupCount; i++) {
@@ -142,8 +141,17 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
     } catch (NeedsRefreshException needsRefreshException) {
       // the cache does not have that entry.
       if (logger.isDebugEnabled()) {
-        logger
-            .debug("Method 'getFromCache(..)'. Object not found in the OSCache cache");
+        StringBuffer messageBuffer = new StringBuffer();
+        messageBuffer.append("Method 'getFromCache(..)'. ");
+        messageBuffer.append("Object not found in OSCache under key ");
+        
+        if (cacheKey instanceof String) {
+          messageBuffer.append("'" + cacheKey + "'");
+        } else {
+          messageBuffer.append(cacheKey);
+        }
+
+        logger.debug(messageBuffer.toString());
       }
     }
 
