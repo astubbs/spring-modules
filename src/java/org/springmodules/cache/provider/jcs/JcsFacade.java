@@ -46,7 +46,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/06/25 06:53:20 $
+ * @version $Revision: 1.8 $ $Date: 2005/07/28 03:41:10 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -131,22 +131,24 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
                   + cacheGroup);
         }
 
-        if (!StringUtils.hasText(cacheGroup)) {
-          try {
-            cache.removeAll();
-          } catch (Exception exception) {
-            StringBuffer messageBuffer = new StringBuffer(64);
-            messageBuffer
-                .append("Exception thrown when flushing cache. Variable 'cacheProfile': ");
-            messageBuffer.append(cacheProfile);
-            String errorMessage = messageBuffer.toString();
-
-            logger.error(errorMessage, exception);
-            throw new CacheWrapperException(errorMessage, exception);
+        try {
+          if (StringUtils.hasText(cacheGroup)) {
+            GroupId groupId = new GroupId(cacheName, cacheGroup);
+            cache.remove(groupId);
           }
-        } else {
-          GroupId groupId = new GroupId(cacheName, cacheGroup);
-          cache.remove(groupId);
+          else {
+            cache.removeAll();
+          }
+          
+        } catch (Exception exception) {
+          StringBuffer messageBuffer = new StringBuffer(64);
+          messageBuffer
+              .append("Exception thrown when flushing cache. Variable 'cacheProfile': ");
+          messageBuffer.append(cacheProfile);
+          String errorMessage = messageBuffer.toString();
+
+          logger.error(errorMessage, exception);
+          throw new CacheWrapperException(errorMessage, exception);
         }
       }
     }
