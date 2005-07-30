@@ -75,7 +75,13 @@ import org.apache.commons.collections.Predicate;
  */
 public class DefaultDateParser implements DateParser {
 
+	private static DefaultDateParser instance = new DefaultDateParser();
+	
 	private Map registrations = new HashMap();
+	
+	public static DefaultDateParser getInstance() {
+		return instance;
+	}
 	
 	public DefaultDateParser() {
 		super();
@@ -391,6 +397,7 @@ public class DefaultDateParser implements DateParser {
 					return ((DateParser)dateParser).parse(str);
 				} else if (dateParser instanceof DateModifier) {
 					Calendar calendar = new GregorianCalendar();
+					calendar.setFirstDayOfWeek(Calendar.MONDAY);
 					if (t == null) {
 						calendar.setTime(new Date());
 					} else {
