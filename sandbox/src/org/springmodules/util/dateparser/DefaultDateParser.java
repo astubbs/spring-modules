@@ -112,7 +112,7 @@ public class DefaultDateParser implements DateParser {
 		register("^T>s$", new DateModifier() {
 			public void modify(Calendar calendar, String value) {
 				calendar.add(Calendar.SECOND, 1);
-				calendar.add(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND) * -1);
+				calendar.add(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND) + 1 * -1);
 			}
 		});
 		
@@ -138,7 +138,7 @@ public class DefaultDateParser implements DateParser {
 			public void modify(Calendar calendar, String value) {
 				calendar.add(Calendar.MINUTE, 1);
 				calendar.add(Calendar.SECOND, calendar.get(Calendar.SECOND) * -1);
-				calendar.add(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND) * -1);
+				calendar.add(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND) + 1 * -1);
 			}
 		});
 		
@@ -166,7 +166,7 @@ public class DefaultDateParser implements DateParser {
 				calendar.add(Calendar.HOUR_OF_DAY, 1);
 				calendar.add(Calendar.MINUTE, calendar.get(Calendar.MINUTE) * -1);
 				calendar.add(Calendar.SECOND, calendar.get(Calendar.SECOND) * -1);
-				calendar.add(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND) * -1);
+				calendar.add(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND) + 1 * -1);
 			}
 		});
 
@@ -196,7 +196,7 @@ public class DefaultDateParser implements DateParser {
 				calendar.add(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) * -1);
 				calendar.add(Calendar.MINUTE, calendar.get(Calendar.MINUTE) * -1);
 				calendar.add(Calendar.SECOND, calendar.get(Calendar.SECOND) * -1);
-				calendar.add(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND) * -1);
+				calendar.add(Calendar.MILLISECOND, calendar.get(Calendar.MILLISECOND) + 1 * -1);
 			}
 		});
 		
@@ -232,6 +232,8 @@ public class DefaultDateParser implements DateParser {
 				while (thisWeek == calendar.get(Calendar.WEEK_OF_YEAR)) {
 					calendar.add(Calendar.DAY_OF_YEAR, 1);
 				}
+				
+				calendar.add(Calendar.MILLISECOND, -1);
 			}
 		});
 		
@@ -246,7 +248,7 @@ public class DefaultDateParser implements DateParser {
 				while (thisWeek == calendar.get(Calendar.WEEK_OF_YEAR)) {
 					calendar.add(Calendar.DAY_OF_YEAR, -1);
 				}
-				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				calendar.add(Calendar.DAY_OF_YEAR, 1);				
 			}
 		});
 		
@@ -273,6 +275,8 @@ public class DefaultDateParser implements DateParser {
 				while (thisMonth == calendar.get(Calendar.MONTH)) {
 					calendar.add(Calendar.DAY_OF_YEAR, 1);
 				}
+				
+				calendar.add(Calendar.MILLISECOND, -1);
 			}
 		});
 		
@@ -287,7 +291,7 @@ public class DefaultDateParser implements DateParser {
 				while (thisMonth == calendar.get(Calendar.MONTH)) {
 					calendar.add(Calendar.DAY_OF_YEAR, -1);
 				}
-				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				calendar.add(Calendar.DAY_OF_YEAR, 1);				
 			}
 		});
 		
@@ -314,6 +318,8 @@ public class DefaultDateParser implements DateParser {
 				while (thisYear == calendar.get(Calendar.YEAR)) {
 					calendar.add(Calendar.DAY_OF_YEAR, 1);
 				}
+				
+				calendar.add(Calendar.MILLISECOND, -1);
 			}
 		});
 

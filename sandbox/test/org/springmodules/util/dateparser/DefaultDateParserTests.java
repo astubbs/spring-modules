@@ -77,7 +77,7 @@ public class DefaultDateParserTests extends TestCase {
 	public void testModifier_shiftUpSecond() throws DateParseException {
 		Date t = new DefaultDateParser().parse("20050409 233000>s");
 		assertNotNull(t);
-		assertEquals("2005-04-09 23:30:01.000", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
+		assertEquals("2005-04-09 23:30:00.999", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
 	}
 
 	public void testModifier_shiftDownSecond() throws DateParseException {
@@ -101,7 +101,7 @@ public class DefaultDateParserTests extends TestCase {
 	public void testModifier_shiftUpMinute() throws DateParseException {
 		Date t = new DefaultDateParser().parse("20050409 233000>m");
 		assertNotNull(t);
-		assertEquals("2005-04-09 23:31:00.000", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
+		assertEquals("2005-04-09 23:30:59.999", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
 	}
 	
 	public void testModifier_shiftDownMinute() throws DateParseException {
@@ -125,7 +125,7 @@ public class DefaultDateParserTests extends TestCase {
 	public void testModifier_shiftUpHour() throws DateParseException {
 		Date t = new DefaultDateParser().parse("20050409 233000>H");
 		assertNotNull(t);
-		assertEquals("2005-04-10 00:00:00.000", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
+		assertEquals("2005-04-09 23:59:59.999", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
 	}
 
 	public void testModifier_shiftDownHour() throws DateParseException {
@@ -149,7 +149,7 @@ public class DefaultDateParserTests extends TestCase {
 	public void testModifier_shiftUpDay() throws DateParseException {
 		Date t = new DefaultDateParser().parse("20050409 233000>d");
 		assertNotNull(t);
-		assertEquals("2005-04-10 00:00:00.000", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
+		assertEquals("2005-04-09 23:59:59.999", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
 	}
 
 	public void testModifier_shiftDownDay() throws DateParseException {
@@ -173,7 +173,7 @@ public class DefaultDateParserTests extends TestCase {
 	public void testModifier_shiftUpWeek() throws DateParseException {
 		Date t = new DefaultDateParser().parse("20050409 233000>w");
 		assertNotNull(t);
-		assertEquals("2005-04-11 00:00:00.000", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
+		assertEquals("2005-04-10 23:59:59.999", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
 	}
 	
 	public void testModifier_shiftDownWeek() throws DateParseException {
@@ -197,7 +197,7 @@ public class DefaultDateParserTests extends TestCase {
 	public void testModifier_shiftUpMonth() throws DateParseException {
 		Date t = new DefaultDateParser().parse("20050409 233000>M");
 		assertNotNull(t);
-		assertEquals("2005-05-01 00:00:00.000", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
+		assertEquals("2005-04-30 23:59:59.999", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
 	}
 
 	public void testModifier_shiftDownMonth() throws DateParseException {
@@ -221,7 +221,7 @@ public class DefaultDateParserTests extends TestCase {
 	public void testModifier_shiftUpYear() throws DateParseException {
 		Date t = new DefaultDateParser().parse("20050409 233000>y");
 		assertNotNull(t);
-		assertEquals("2006-01-01 00:00:00.000", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
+		assertEquals("2005-12-31 23:59:59.999", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
 	}
 	
 	public void testModifier_shiftDownYear() throws DateParseException {
@@ -245,7 +245,7 @@ public class DefaultDateParserTests extends TestCase {
 	public void testComplexModifier1() throws DateParseException {
 		Date t = new DefaultDateParser().parse("2005-04-09 23:30:00>M+10d+8H");
 		assertNotNull(t);
-		assertEquals("2005-05-11 08:00:00.000", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
+		assertEquals("2005-05-11 07:59:59.999", formatDate(t, "yyyy-MM-dd HH:mm:ss.SSS"));
 	}
 	
 	public void testT() throws DateParseException {
