@@ -38,7 +38,7 @@ import org.springmodules.cache.mock.MockCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/30 13:30:38 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/02 11:30:33 $
  */
 public final class AbstractCacheProviderFacadeImplTests extends TestCase {
 
@@ -496,7 +496,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    */
   public void testCancelCacheUpdate() {
 
-    // expectation: call 'onCancelCacheUpdate(CacheKey)'.
+    // expectation: call 'onCancelCacheUpdate(Serializable)'.
     this.cacheProviderFacade.onCancelCacheUpdate(this.cacheKey);
 
     // set the controls to "replay" state.
@@ -522,8 +522,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
 
     this.cacheProviderFacade.setFailQuietlyEnabled(true);
 
-    // expectation: call 'onCancelCacheUpdate(CacheKey)'. Access to the cache
-    // should throw an exception.
+    // expectation: call 'onCancelCacheUpdate(Serializable)'. Access to the
+    // cache should throw an exception.
     this.cacheProviderFacade.onCancelCacheUpdate(this.cacheKey);
     this.cacheProviderFacadeControl.setThrowable(new RuntimeException());
 
@@ -551,8 +551,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
 
     this.cacheProviderFacade.setFailQuietlyEnabled(false);
 
-    // expectation: call 'onCancelCacheUpdate(CacheKey)'. Access to the cache
-    // should throw an exception.
+    // expectation: call 'onCancelCacheUpdate(Serializable)'. Access to the
+    // cache should throw an exception.
     this.cacheProviderFacade.onCancelCacheUpdate(this.cacheKey);
     RuntimeException exception = new RuntimeException();
     this.cacheProviderFacadeControl.setThrowable(exception);
@@ -866,7 +866,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>true</code>.
    */
-  public void testGetFromCacheCacheKeyWhenAccessToCacheThrowsExceptionAndFailQuietlyIsEnabled()
+  public void testGetFromCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsEnabled()
       throws Exception {
 
     this.cacheProviderFacade.setFailQuietlyEnabled(true);
@@ -875,9 +875,9 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
     this.mockCacheProfileMap.get(CACHE_PROFILE_ID);
     this.mockCacheProfileMapControl.setReturnValue(this.cacheProfile);
 
-    // expectation: call 'onGetFromCache(CacheKey, CacheProfile)' sending the
-    // retrieved cache profile as argument. Access to the cache should throw an
-    // exception.
+    // expectation: call 'onGetFromCache(Serializable, CacheProfile)' sending
+    // the retrieved cache profile as argument. Access to the cache should throw
+    // an exception.
     this.cacheProviderFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
     this.cacheProviderFacadeControl.setThrowable(new RuntimeException());
 
@@ -905,7 +905,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>false</code>.
    */
-  public void testGetFromCacheCacheKeyWhenAccessToCacheThrowsExceptionAndFailQuietlyIsNotEnabled()
+  public void testGetFromCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsNotEnabled()
       throws Exception {
 
     this.cacheProviderFacade.setFailQuietlyEnabled(false);
@@ -914,9 +914,9 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
     this.mockCacheProfileMap.get(CACHE_PROFILE_ID);
     this.mockCacheProfileMapControl.setReturnValue(this.cacheProfile);
 
-    // expectation: call 'onGetFromCache(CacheKey, CacheProfile)' sending the
-    // retrieved cache profile as argument. Access to the cache should throw an
-    // exception.
+    // expectation: call 'onGetFromCache(Serializable, CacheProfile)' sending
+    // the retrieved cache profile as argument. Access to the cache should throw
+    // an exception.
     this.cacheProviderFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
     RuntimeException exception = new RuntimeException();
     this.cacheProviderFacadeControl.setThrowable(exception);
@@ -949,7 +949,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * is executed when the cache provider contains a profile with the specified
    * id.
    */
-  public void testGetFromCacheCacheKeyWithExistingProfileId() throws Exception {
+  public void testGetFromCacheWithExistingProfileId() throws Exception {
 
     String cachedString = "Cached String";
 
@@ -981,7 +981,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * is not executed when the cache provider does not contain a profile with the
    * specified id.
    */
-  public void testGetFromCacheCacheKeyWithNotExistingProfileId()
+  public void testGetFromCacheWithNotExistingProfileId()
       throws Exception {
 
     // set the expectations of the mock objects.
