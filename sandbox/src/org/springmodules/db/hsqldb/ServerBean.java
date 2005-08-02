@@ -18,9 +18,9 @@ package org.springmodules.db.hsqldb;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hsqldb.HsqlProperties;
 import org.hsqldb.ServerConfiguration;
 import org.hsqldb.ServerConstants;
+import org.hsqldb.persist.HsqlProperties;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -93,6 +93,7 @@ public class ServerBean implements InitializingBean, DisposableBean {
     }
 
     public void afterPropertiesSet() throws Exception {
+
 
         HsqlProperties configProps = new HsqlProperties(serverProperties);
         if (configProps == null) {
