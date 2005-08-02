@@ -26,7 +26,6 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheWrapperException;
 import org.springmodules.cache.EntryRetrievalException;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
@@ -41,7 +40,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:16 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/02 10:02:12 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -84,28 +83,26 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    if (StringUtils.hasText(cacheName)) {
-      Cache cache = this.cacheManager.getCache(cacheName);
-      if (cache == null) {
-        if (logger.isInfoEnabled()) {
-          String logMessage = "Method 'onFlushCache(CacheProfile)'. Could not find EHCache cache: "
-              + cacheName;
-          logger.info(logMessage);
-        }
-      } else {
-        try {
-          cache.removeAll();
-        } catch (Exception exception) {
-          StringBuffer messageBuffer = new StringBuffer(64);
-          messageBuffer
-              .append("Exception thrown when flushing cache. Variable 'cacheProfile': ");
-          messageBuffer.append(cacheProfile);
-          String errorMessage = messageBuffer.toString();
+    if (!this.cacheManager.cacheExists(cacheName)) {
+      if (logger.isInfoEnabled()) {
+        String logMessage = "onFlushCache: Could not find EHCache cache: "
+            + cacheName;
+        logger.info(logMessage);
+      }
 
-          logger.error(errorMessage, exception);
-          throw new CacheWrapperException(errorMessage, exception);
-        } // end 'catch'
-      } // end 'if (cache != null)'
+    } else {
+      Cache cache = this.cacheManager.getCache(cacheName);
+
+      try {
+        cache.removeAll();
+
+      } catch (Exception exception) {
+        String errorMessage = "Unable to flush cache. Cache profile: "
+            + cacheProfile;
+
+        logger.error(errorMessage, exception);
+        throw new CacheWrapperException(errorMessage, exception);
+      }
     }
   }
 
@@ -116,43 +113,35 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   protected Object onGetFromCache(Serializable cacheKey,
       CacheProfile cacheProfile) throws EntryRetrievalException {
 
-    Object cachedObject = null;
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
-
     String cacheName = profile.getCacheName();
 
-    if (StringUtils.hasText(cacheName)) {
-      if (!this.cacheManager.cacheExists(cacheName)) {
-        String logMessage = "Method 'onGetFromCache(CacheKey, CacheProfile)'. Could not find EHCache cache: "
-            + cacheName;
+    if (!this.cacheManager.cacheExists(cacheName)) {
+      String exceptionMessage = "Could not find EHCache cache: " + cacheName;
+      String logMessage = "onGetFromCache: " + exceptionMessage;
 
-        logger.info(logMessage);
-        throw new EntryRetrievalException("Could not find EHCache cache: "
-            + cacheName);
-      }
+      logger.info(logMessage);
+      throw new EntryRetrievalException("Could not find EHCache cache: "
+          + cacheName);
+    }
 
-      Cache cache = this.cacheManager.getCache(cacheName);
+    Cache cache = this.cacheManager.getCache(cacheName);
+    Element cacheElement = null;
 
-      Element cacheElement = null;
-      try {
-        cacheElement = cache.get(cacheKey);
-      } catch (Exception exception) {
-        StringBuffer messageBuffer = new StringBuffer(64);
-        messageBuffer
-            .append("Exception thrown when retrieving an entry from the cache. ");
-        messageBuffer.append("Variable 'cacheKey': ");
-        messageBuffer.append(cacheKey);
-        messageBuffer.append(". Variable 'cacheProfile': ");
-        messageBuffer.append(cacheProfile);
-        String errorMessage = messageBuffer.toString();
+    try {
+      cacheElement = cache.get(cacheKey);
 
-        logger.error(errorMessage, exception);
-        throw new CacheWrapperException(errorMessage, exception);
-      } // end 'catch'
+    } catch (Exception exception) {
+      String errorMessage = "Unable to retrieve an entry from the cache. Key: "
+          + cacheKey + ". Cache Profile: " + cacheProfile;
 
-      if (null != cacheElement) {
-        cachedObject = cacheElement.getValue();
-      }
+      logger.error(errorMessage, exception);
+      throw new CacheWrapperException(errorMessage, exception);
+    }
+
+    Object cachedObject = null;
+    if (null != cacheElement) {
+      cachedObject = cacheElement.getValue();
     }
     return cachedObject;
   }
@@ -165,23 +154,21 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
       Object objectToCache) {
 
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
-
     String cacheName = profile.getCacheName();
-    if (StringUtils.hasText(cacheName)) {
-      Cache cache = this.cacheManager.getCache(cacheName);
 
-      if (cache == null) {
-        if (logger.isInfoEnabled()) {
-          String logMessage = "Method 'onPutInCache(CacheKey, CacheProfile, Object)'. Could not find EHCache cache: "
-              + cacheName;
-          logger.info(logMessage);
-        }
-      } else {
-        Element newCacheElement = new Element(cacheKey,
-            (Serializable) objectToCache);
-
-        cache.put(newCacheElement);
+    if (!this.cacheManager.cacheExists(cacheName)) {
+      if (logger.isInfoEnabled()) {
+        String logMessage = "onPutInCache: Could not find EHCache cache: "
+            + cacheName;
+        logger.info(logMessage);
       }
+
+    } else {
+      Cache cache = this.cacheManager.getCache(cacheName);
+      Element newCacheElement = new Element(cacheKey,
+          (Serializable) objectToCache);
+
+      cache.put(newCacheElement);
     }
   }
 
@@ -191,22 +178,18 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    */
   public void removeFromCache(Serializable cacheKey, String cacheProfileId) {
     CacheProfile cacheProfile = super.getCacheProfile(cacheProfileId);
-
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
-
     String cacheName = profile.getCacheName();
-    if (StringUtils.hasText(cacheName)) {
-      Cache cache = this.cacheManager.getCache(cacheName);
 
-      if (cache == null) {
-        if (logger.isInfoEnabled()) {
-          String logMessage = "Method 'removeFromCache(CacheKey, String)'. Could not find EHCache cache: "
-              + cacheName;
-          logger.info(logMessage);
-        }
-      } else {
-        cache.remove(cacheKey);
+    if (!this.cacheManager.cacheExists(cacheName)) {
+      if (logger.isInfoEnabled()) {
+        String logMessage = "removeFromCache: Could not find EHCache cache: "
+            + cacheName;
+        logger.info(logMessage);
       }
+    } else {
+      Cache cache = this.cacheManager.getCache(cacheName);
+      cache.remove(cacheKey);
     }
   }
 
@@ -243,10 +226,11 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
     if (!super.isFailQuietlyEnabled()) {
       int cacheManagerStatus = this.cacheManager.getStatus();
+
       if (cacheManagerStatus != CacheManager.STATUS_ALIVE) {
         throw new IllegalStateException("Cache Manager is not alive");
-      } // end 'if (cacheManagerStatus != CacheManager.STATUS_ALIVE)'
-    } // end 'if (!super.isFailQuietlyEnabled())'
+      }
+    }
   }
 
 }
