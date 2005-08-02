@@ -36,7 +36,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/29 02:01:31 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/02 11:29:39 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -246,22 +246,6 @@ public class EhCacheFacadeTests extends TestCase {
     } catch (EntryRetrievalException exception) {
       // we are expecting this exception.
     }
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
-   * returns <code>null</code> if the name of the cache, specified in the
-   * given cache profile, is empty.
-   */
-  public void testOnGetFromCacheWhenCacheNameIsEmpty() throws Exception {
-    this.cacheProfile.setCacheName("");
-
-    // execute the method to test.
-    Object cachedObject = this.ehcacheFacade.onGetFromCache(this.cacheKey,
-        this.cacheProfile);
-
-    assertNull("The retrieved object should be null", cachedObject);
   }
 
   /**
