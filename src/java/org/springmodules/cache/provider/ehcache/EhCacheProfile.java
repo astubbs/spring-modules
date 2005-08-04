@@ -22,17 +22,11 @@ import org.springmodules.cache.provider.CacheProfile;
 
 /**
  * <p>
- * Set of configuration options needed for:
- * <ul>
- * <li>Retrieving an entry from a EHCache cache</li>
- * <li>Storing an object in a EHCache cache</li>
- * <li>Flushing one EHCache cache</li>
- * </ul>
- * </p>
+ * Configuration options needed to access EHCache.
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/04 04:43:25 $
+ * @version $Revision: 1.7 $ $Date: 2005/08/04 04:46:30 $
  */
 public class EhCacheProfile implements CacheProfile {
 
