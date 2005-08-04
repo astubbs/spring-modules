@@ -57,7 +57,7 @@ public abstract class ArrayUtils {
       else
         buffer.append(", ");
 
-      buffer.append(String.valueOf(array[i]));
+      buffer.append("'" + String.valueOf(array[i]) + "'");
     }
 
     buffer.append("}");
