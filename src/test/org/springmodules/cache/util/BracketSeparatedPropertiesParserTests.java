@@ -24,177 +24,123 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link BracketSeparatedPropertiesParser}</code>.
+ * Unit Tests for <code>{@link BracketSeparatedPropertiesParser}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:42:21 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/04 06:04:44 $
  */
 public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
+  private Properties properties;
+
+  private String property;
+
+  private String propertyKey;
+
+  private String propertyValue;
+
   public BracketSeparatedPropertiesParserTests(String name) {
     super(name);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link BracketSeparatedPropertiesParser#addProperty(String, Properties)}</code>
-   * throws an <code>IllegalArgumentException</code> if we are trying to add
-   * an existing property to the set of properties.
-   */
+  private void assertAddPropertyThrowsException() {
+    Class expectedException = IllegalArgumentException.class;
+
+    try {
+      BracketSeparatedPropertiesParser.addProperty(this.property,
+          this.properties);
+      fail("Expecting <" + expectedException.getName() + ">");
+    } catch (IllegalArgumentException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  private void assertEqualProperties(Properties expected, Properties actual) {
+    assertEquals("<Properties>", expected, actual);
+  }
+
+  private void assertParsePropertiesThrowsException() {
+    Class expectedException = IllegalArgumentException.class;
+
+    try {
+      BracketSeparatedPropertiesParser.parseProperties(this.property);
+      fail("Expecting <" + expectedException.getName() + ">");
+    } catch (IllegalArgumentException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  protected void setUp() throws Exception {
+    super.setUp();
+
+    this.properties = new Properties();
+
+    this.propertyKey = "name";
+    this.propertyValue = "Luke Skywalker";
+    this.property = this.propertyKey + "=" + this.propertyValue;
+  }
+
   public void testAddPropertyWithDuplicatedProperties() {
-    Properties properties = new Properties();
-    properties.setProperty("firstName", "James Gosling");
-
-    String property = "firstName=James Gosling";
-
-    try {
-      BracketSeparatedPropertiesParser.addProperty(property, properties);
-      fail("A 'IllegalArgumentException' should have been thrown");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.properties.setProperty(this.propertyKey, this.propertyValue);
+    this.assertAddPropertyThrowsException();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link BracketSeparatedPropertiesParser#addProperty(String, Properties)}</code>
-   * throws an <code>IllegalArgumentException</code> if the specified String
-   * does not match the pattern 'name=value'.
-   */
   public void testAddPropertyWithInvalidPropertyString() {
-    Properties actualProperties = new Properties();
-    String property = "Smile :)";
-
-    try {
-      BracketSeparatedPropertiesParser.addProperty(property, actualProperties);
-      fail("A 'IllegalArgumentException' should have been thrown");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.property = "XWing";
+    this.assertAddPropertyThrowsException();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link BracketSeparatedPropertiesParser#addProperty(String, Properties)}</code>
-   * adds a new property to the <code>java.util.Properties</code> if the
-   * specified String matches the pattern 'name=value'.
-   */
   public void testAddPropertyWithValidPropertyString() {
-
-    Properties expectedProperties = new Properties();
-    expectedProperties.setProperty("firstName", "James Gosling");
-
+    this.properties.setProperty(this.propertyKey, this.propertyValue);
     Properties actualProperties = new Properties();
-    String property = "firstName=James Gosling";
 
-    BracketSeparatedPropertiesParser.addProperty(property, actualProperties);
-
-    assertEquals("<Properties>", expectedProperties, actualProperties);
+    BracketSeparatedPropertiesParser.addProperty(this.property,
+        actualProperties);
+    this.assertEqualProperties(this.properties, actualProperties);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link BracketSeparatedPropertiesParser#parseProperties(String)}</code>
-   * throws an <code>IllegalArgumentException</code> if the specified String
-   * is empty.
-   */
   public void testParsePropertiesWithEmptyString() {
-    try {
-      BracketSeparatedPropertiesParser.parseProperties("");
-      fail("A 'IllegalArgumentException' should have been thrown");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.property = "";
+    this.assertParsePropertiesThrowsException();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link BracketSeparatedPropertiesParser#parseProperties(String)}</code>
-   * throws an <code>IllegalArgumentException</code> if the specified String
-   * is <code>null</code>.
-   */
   public void testParsePropertiesWithStringEqualToNull() {
-    try {
-      BracketSeparatedPropertiesParser.parseProperties(null);
-      fail("A 'IllegalArgumentException' should have been thrown");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.property = null;
+    this.assertParsePropertiesThrowsException();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link BracketSeparatedPropertiesParser#parseProperties(String)}</code>
-   * throws an <code>IllegalArgumentException</code> if the specified String
-   * does not end with a bracket.
-   */
   public void testParsePropertiesWithStringNotEndingWithBrackets() {
-    try {
-      BracketSeparatedPropertiesParser.parseProperties("[A String!");
-      fail("A 'IllegalArgumentException' should have been thrown");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.property = "[Anakin";
+    this.assertParsePropertiesThrowsException();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link BracketSeparatedPropertiesParser#parseProperties(String)}</code>
-   * throws an <code>IllegalArgumentException</code> if the specified String
-   * does not start and end with a pair of brackets.
-   */
   public void testParsePropertiesWithStringNotStartingAndNotEndingWithBrackets() {
-    try {
-      BracketSeparatedPropertiesParser.parseProperties("A String!");
-      fail("A 'IllegalArgumentException' should have been thrown");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.property = "Anakin";
+    this.assertParsePropertiesThrowsException();
   }
 
-  /**
-   * Tests
-   * <code>{@link BracketSeparatedPropertiesParser#parseProperties(String)}</code>.
-   * Verifies that an <code>IllegalArgumentException</code> is thrown if the
-   * specified String does not start with a bracket.
-   */
   public void testParsePropertiesWithStringNotStartingWithBracket() {
-
-    IllegalArgumentException catched = null;
-
-    try {
-      BracketSeparatedPropertiesParser.parseProperties("A String!]");
-    } catch (IllegalArgumentException exception) {
-      catched = exception;
-    }
-
-    assertNotNull("An IllegalArgumentException should have been catched",
-        catched);
+    this.property = "Anakin]";
+    this.assertParsePropertiesThrowsException();
   }
 
-  /**
-   * Tests
-   * <code>{@link BracketSeparatedPropertiesParser#parseProperties(String)}</code>.
-   */
   public void testParsePropertiesWithValidPropertiesString() {
+    String secondPropertyKey = "role";
+    String secondPropertyValue = "Jedi Knight";
+    String secondProperty = secondPropertyKey + "=" + secondPropertyValue;
 
     Properties expectedProperties = new Properties();
-    expectedProperties.setProperty("cacheName", "myCache");
-    expectedProperties.setProperty("cacheGroup", "main");
+    expectedProperties.setProperty(this.propertyKey, this.propertyValue);
+    expectedProperties.setProperty(secondPropertyKey, secondPropertyValue);
 
-    String cacheProfileProperties = "[cacheName=myCache][cacheGroup=main]";
+    String cacheProfileProperties = "[" + this.property + "][" + secondProperty
+        + "]";
 
     Properties actualProperties = BracketSeparatedPropertiesParser
         .parseProperties(cacheProfileProperties);
 
-    assertEquals("<Properties>", expectedProperties, actualProperties);
+    this.assertEqualProperties(expectedProperties, actualProperties);
   }
 }
