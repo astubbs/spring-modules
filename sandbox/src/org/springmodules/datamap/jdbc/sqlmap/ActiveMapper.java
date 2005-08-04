@@ -20,21 +20,18 @@ import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.jdbc.support.DatabaseMetaDataCallback;
-import org.springframework.jdbc.support.JdbcUtils;
-import org.springframework.jdbc.support.MetaDataAccessException;
-import org.springframework.jdbc.support.incrementer.HsqlMaxValueIncrementer;
-import org.springframework.jdbc.support.incrementer.PostgreSQLSequenceMaxValueIncrementer;
 import org.springmodules.datamap.dao.DataMapper;
 import org.springmodules.datamap.dao.Operators;
+import org.springmodules.datamap.jdbc.sqlmap.support.ActiveMapperUtils;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.sql.*;
-import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.*;
 
 /**
@@ -49,11 +46,10 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
 
     private Class mappedClass;
     private PersistentObject persistentObject;
-//    private String plainTableName;
     private String tableNameToUse;
     private boolean overrideTableName = false;
-    private Constructor defaultConstruct;
     private Map pluralExceptions;
+    private ActiveRowMapper rowMapper;
 
     public ActiveMapper() {
     }
@@ -64,23 +60,23 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
 
     public void setMappedClass(Class clazz) throws DataAccessResourceFailureException {
         this.mappedClass = clazz;
-        try {
-            defaultConstruct = clazz.getConstructor(null);
-        } catch (NoSuchMethodException e) {
-            throw new DataAccessResourceFailureException(new StringBuffer().append("Failed to access default constructor of ").append(clazz.getName()).toString(), e);
-        }
     }
 
     public void setPluralExceptions(Map pluralExceptions) {
         this.pluralExceptions = pluralExceptions;
     }
 
+    public Map getPluralExceptions() {
+        return pluralExceptions;
+    }
+
     protected void initDao() throws Exception {
         pluralExceptions = new HashMap(2);
         pluralExceptions.put("address", "addresses");
         pluralExceptions.put("country", "countries");
-        persistentObject = getPersistenceMetaData(mappedClass);
+        persistentObject = ActiveMapperUtils.getPersistenceMetaData(mappedClass, getDataSource(), getPluralExceptions());
         tableNameToUse = persistentObject.getTableName();
+        rowMapper = new ActiveRowMapper(mappedClass, persistentObject);
     }
 
     public void setTableNameToUse(String tableNameToUse) {
@@ -102,7 +98,7 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         if (persistentObject == null)
             throw new InvalidDataAccessApiUsageException("Persistent class not specified");
         String sql = "select * from " + tableNameToUse + " where id = ?";
-        List l = getJdbcTemplate().query(sql, new Object[] {id}, new ActiveRowMapper(mappedClass, persistentObject));
+        List l = getJdbcTemplate().query(sql, new Object[] {id}, rowMapper);
         if (l.size() > 0)
             return l.get(0);
         else
@@ -113,14 +109,14 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         if (persistentObject == null)
             throw new InvalidDataAccessApiUsageException("Persistent class not specified");
         String sql = "select * from " + tableNameToUse;
-        return getJdbcTemplate().query(sql, new ActiveRowMapper(mappedClass, persistentObject));
+        return getJdbcTemplate().query(sql, rowMapper);
     }
 
     protected List findByWhereClause(String whereClause, Object[] arguments) {
         if (persistentObject == null)
             throw new InvalidDataAccessApiUsageException("Persistent class not specified");
         String sql = "select * from " + tableNameToUse + " where " + whereClause;
-        return getJdbcTemplate().query(sql, arguments, new ActiveRowMapper(mappedClass, persistentObject));
+        return getJdbcTemplate().query(sql, arguments, rowMapper);
     }
 
     public List findBy(String field, int operator, Object argument) {
@@ -130,40 +126,40 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         StringBuffer endClause = new StringBuffer();
         switch (operator) {
             case Operators.EQUALS:
-                whereClause.append(underscoreName(field)).append(" = ");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" = ");
                 break;
             case Operators.LESS_THAN:
-                whereClause.append(underscoreName(field)).append(" < ");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" < ");
                 break;
             case Operators.GREATER_THAN:
-                whereClause.append(underscoreName(field)).append(" > ");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" > ");
                 break;
             case Operators.LESS_THAN_OR_EQUAL:
-                whereClause.append(underscoreName(field)).append(" <= ");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" <= ");
                 break;
             case Operators.GREATER_THAN_OR_EQUAL:
-                whereClause.append(underscoreName(field)).append(" >= ");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" >= ");
                 break;
             case Operators.BETWEEN:
-                whereClause.append(underscoreName(field)).append(" between ");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" between ");
                 break;
             case Operators.IN:
-                whereClause.append(underscoreName(field)).append(" in (");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" in (");
                 break;
             case Operators.STARTS_WITH:
-                whereClause.append(underscoreName(field)).append(" LIKE ");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" LIKE ");
                 if (argument instanceof String) {
                     argument = argument + "%";
                 }
                 break;
             case Operators.ENDS_WITH:
-                whereClause.append(underscoreName(field)).append(" LIKE ");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" LIKE ");
                 if (argument instanceof String) {
                     argument = "%" + argument;
                 }
                 break;
             case Operators.CONTAINS:
-                whereClause.append(underscoreName(field)).append(" LIKE ");
+                whereClause.append(ActiveMapperUtils.underscoreName(field)).append(" LIKE ");
                 if (argument instanceof String) {
                     argument = "%" + argument + "%";
                 }
@@ -187,6 +183,10 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         return findByWhereClause(whereClause.toString(), arguments);
     }
 
+    protected Object completeMappingOnFind(Object result, ResultSet rs, int rowNumber, Map mappedColumns, Map unmappedColumns) throws SQLException {
+        return result;
+    }
+
     public void save(Object o) {
         Map mappedFields = new HashMap(10);
         Map unmappedFields = new HashMap(10);
@@ -201,7 +201,7 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
             if (pf.getSqlType() > 0) {
                 mappedFields.put(pf.getFieldName(), e);
                 try {
-                    Method m = o.getClass().getMethod(getterName(pf.getFieldName()), new Class[] {});
+                    Method m = o.getClass().getMethod(ActiveMapperUtils.getterName(pf.getFieldName()), new Class[] {});
                     Object r = m.invoke(o, new Object[] {});
                     if ("id".equals(pf.getFieldName())) {
                         if (r != null) {
@@ -277,12 +277,16 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         getJdbcTemplate().update(sql.toString(), values);
     }
 
+    protected Object[] completeMappingOnSave(Object input, List columns, Map mappedFields, Map unmappedFields) {
+        return new Object[] {};
+    }
+
     public void delete(Object o) {
         String sql = "delete from " + tableNameToUse + " where id = ?";
         PersistentField pf = (PersistentField)persistentObject.getPersistentFields().get("id");
         Object[] idValue = new Object[1];
         try {
-            Method m = o.getClass().getMethod(getterName(pf.getFieldName()), new Class[] {});
+            Method m = o.getClass().getMethod(ActiveMapperUtils.getterName(pf.getFieldName()), new Class[] {});
             idValue[0] = m.invoke(o, new Object[] {});
         } catch (NoSuchMethodException e1) {
             throw new DataAccessResourceFailureException(new StringBuffer().append("Failed to map field ").append(pf.getFieldName()).append(".").toString(), e1);
@@ -292,14 +296,6 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
             throw new DataAccessResourceFailureException(new StringBuffer().append("Failed to map field ").append(pf.getFieldName()).append(".").toString(), e1);
         }
         getJdbcTemplate().update(sql, idValue);
-    }
-
-    protected Object completeMappingOnFind(Object result, ResultSet rs, int rowNumber, Map mappedColumns, Map unmappedColumns) throws SQLException {
-        return result;
-    }
-
-    protected Object[] completeMappingOnSave(Object input, List columns, Map mappedFields, Map unmappedFields) {
-        return new Object[] {};
     }
 
     protected Object assignNewId(Object o) {
@@ -312,7 +308,7 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
             newId = new Integer(persistentObject.getIncrementer().nextIntValue());
         }
         try {
-            Method m = o.getClass().getMethod(setterName(pf.getFieldName()), new Class[] {newId.getClass()});
+            Method m = o.getClass().getMethod(ActiveMapperUtils.setterName(pf.getFieldName()), new Class[] {newId.getClass()});
             m.invoke(o, new Object[] {newId});
         } catch (NoSuchMethodException e1) {
             e1.printStackTrace();
@@ -324,93 +320,20 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         return newId;
     }
 
-    private PersistentObject getPersistenceMetaData(Class clazz) {
-        final PersistentObject newPo = new PersistentObject();
-        String baseName = clazz.getName().toLowerCase();
-        baseName = baseName.substring(baseName.lastIndexOf(".") + 1);
-        String tableName;
-        if (pluralExceptions.containsKey(baseName)) {
-            tableName = (String) pluralExceptions.get(baseName);
-        }
-        else {
-            tableName = baseName + "s";
-        }
-        newPo.setBaseName(baseName);
-        newPo.setTableName(tableName);
-        final String sqlTableName = tableName;
-        final Map newMetaData = new HashMap(10);
-        Field[] f = clazz.getDeclaredFields();
-        for (int i = 0; i < f.length; i++) {
-            PersistentField pf = new PersistentField();
-            pf.setFieldName(f[i].getName());
-            pf.setColumnName(underscoreName(f[i].getName()));
-            pf.setJavaType(f[i].getType());
-            newMetaData.put(pf.getColumnName(), pf);
-        }
-
-        try {
-            JdbcUtils.extractDatabaseMetaData(getDataSource(), new DatabaseMetaDataCallback() {
-                public Object processMetaData(DatabaseMetaData databaseMetaData) throws SQLException {
-                    newPo.setUsingLowerCaseIdentifiers(databaseMetaData.storesLowerCaseIdentifiers());
-                    newPo.setDatabaseProductName(databaseMetaData.getDatabaseProductName());
-                    if ("PostgreSQL".equals(newPo.getDatabaseProductName())) {
-                        newPo.setUsingGeneratedKeysStrategy(false);
-                        newPo.setIncrementer(new PostgreSQLSequenceMaxValueIncrementer(getDataSource(), newPo.getBaseName() + "_seq"));
-                    }
-                    else if ("HSQL Database Engine".equals(newPo.getDatabaseProductName())) {
-                        newPo.setUsingGeneratedKeysStrategy(false);
-                        newPo.setIncrementer(new HsqlMaxValueIncrementer(getDataSource(), newPo.getBaseName() + "_seq", "nextval"));
-                    }
-                    else {
-                        newPo.setUsingGeneratedKeysStrategy(true);
-                    }
-                    String metaDataTableName;
-                    if (newPo.isUsingLowerCaseIdentifiers())
-                        metaDataTableName = sqlTableName.toLowerCase();
-                    else
-                        metaDataTableName = sqlTableName.toUpperCase();
-                        ResultSet crs = databaseMetaData.getColumns(null, null, metaDataTableName, null);
-                    while (crs.next()) {
-                        PersistentField pf = (PersistentField)newMetaData.get(crs.getString(4).toLowerCase());
-                        if (pf != null)
-                            pf.setSqlType(crs.getInt(5));
-                    }
-                    return null;
-                }
-            });
-        } catch (MetaDataAccessException e) {
-            throw new DataAccessResourceFailureException("Error retreiving metadata", e);
-        }
-        newPo.setPersistentFields(newMetaData);
-        return newPo;
-    }
-
-    private String underscoreName(String name) {
-        return name.substring(0,1).toLowerCase() + name.substring(1).replaceAll("([A-Z])", "_$1").toLowerCase();
-    }
-
-    private String getterName(String fieldName) {
-        return "get" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1);
-    }
-
-    private String setterName(String columnName) {
-        StringTokenizer tokenizer = new StringTokenizer(columnName, "_");
-        StringBuffer propertyName = new StringBuffer();
-        while (tokenizer.hasMoreTokens()) {
-            String token = tokenizer.nextToken();
-            propertyName.append(token.substring(0, 1).toUpperCase());
-            propertyName.append(token.substring(1));
-        }
-        return "set" + propertyName.toString();
-    }
 
     private class ActiveRowMapper implements RowMapper {
-        private final Class clazz;
-        private final PersistentObject persistentObject;
+        private Class mappedClass = null;
+        private PersistentObject persistentObject = null;
+        private Constructor defaultConstruct;
 
         public ActiveRowMapper(Class clazz, PersistentObject persistentObject) {
-            this.clazz = clazz;
+            this.mappedClass = clazz;
             this.persistentObject = persistentObject;
+            try {
+                defaultConstruct = mappedClass.getConstructor(null);
+            } catch (NoSuchMethodException e) {
+                throw new DataAccessResourceFailureException(new StringBuffer().append("Failed to access default constructor of ").append(mappedClass.getName()).toString(), e);
+            }
         }
 
         public Object mapRow(ResultSet rs, int rowNumber) throws SQLException {
@@ -418,11 +341,11 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
             try {
                 result = defaultConstruct.newInstance(null);
             } catch (IllegalAccessException e) {
-                throw new DataAccessResourceFailureException("Failed to load class " + clazz.getName(), e);
+                throw new DataAccessResourceFailureException("Failed to load class " + mappedClass.getName(), e);
             } catch (InvocationTargetException e) {
-                throw new DataAccessResourceFailureException("Failed to load class " + clazz.getName(), e);
+                throw new DataAccessResourceFailureException("Failed to load class " + mappedClass.getName(), e);
             } catch (InstantiationException e) {
-                throw new DataAccessResourceFailureException("Failed to load class " + clazz.getName(), e);
+                throw new DataAccessResourceFailureException("Failed to load class " + mappedClass.getName(), e);
             }
             ResultSetMetaData meta = rs.getMetaData();
             int columns = meta.getColumnCount();
@@ -436,19 +359,19 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
                     Method m = null;
                     try {
                         if (fieldMeta.getJavaType().equals(String.class)) {
-                            m = result.getClass().getMethod(setterName(fieldMeta.getColumnName()), new Class[] {String.class});
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {String.class});
                             value = rs.getString(x);
                         }
                         else if (fieldMeta.getJavaType().equals(Long.class)) {
-                            m = result.getClass().getMethod(setterName(fieldMeta.getColumnName()), new Class[] {Long.class});
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Long.class});
                             value = new Long(rs.getLong(x));
                         }
                         else if (fieldMeta.getJavaType().equals(BigDecimal.class)) {
-                            m = result.getClass().getMethod(setterName(fieldMeta.getColumnName()), new Class[] {BigDecimal.class});
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {BigDecimal.class});
                             value = rs.getBigDecimal(x);
                         }
                         else if (fieldMeta.getJavaType().equals(Date.class)) {
-                            m = result.getClass().getMethod(setterName(fieldMeta.getColumnName()), new Class[] {Date.class});
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Date.class});
                             if (fieldMeta.getSqlType() == Types.DATE) {
                                 value = rs.getDate(x);
                             }
@@ -477,5 +400,7 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
             }
             return completeMappingOnFind(result, rs, rowNumber, mappedColumns, unmappedColumns);
         }
+
     }
+
 }
