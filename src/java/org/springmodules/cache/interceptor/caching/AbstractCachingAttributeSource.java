@@ -32,15 +32,12 @@ import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeS
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:08 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:26:15 $
  */
 public abstract class AbstractCachingAttributeSource extends
     AbstractSingleMetadataCacheAttributeSource implements
     CachingAttributeSource {
 
-  /**
-   * Constructor.
-   */
   public AbstractCachingAttributeSource() {
     super();
   }

@@ -32,7 +32,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:19 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:37:55 $
  */
 public final class CacheFlushInterceptor extends CacheFlushAspectSupport
     implements MethodInterceptor {
@@ -42,9 +42,6 @@ public final class CacheFlushInterceptor extends CacheFlushAspectSupport
    */
   private CacheProviderFacade cacheProviderFacade;
 
-  /**
-   * Constructor.
-   */
   public CacheFlushInterceptor() {
     super();
   }
@@ -117,12 +114,6 @@ public final class CacheFlushInterceptor extends CacheFlushAspectSupport
     super.setCacheFlushAttributeSource(attributeSource);
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheProviderFacade}</code>.
-   * 
-   * @param cacheProviderFacade
-   *          the new value to set
-   */
   public final void setCacheProviderFacade(
       CacheProviderFacade cacheProviderFacade) {
     this.cacheProviderFacade = cacheProviderFacade;

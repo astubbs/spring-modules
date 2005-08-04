@@ -32,15 +32,10 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/15 18:01:30 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/04 04:43:25 $
  */
 public class EhCacheProfile implements CacheProfile {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3762529035888112945L;
 
   /**
@@ -48,33 +43,17 @@ public class EhCacheProfile implements CacheProfile {
    */
   private String cacheName;
 
-  /**
-   * Constructor.
-   */
   public EhCacheProfile() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param cacheName
-   *          the name of the EHCache cache.
-   */
   public EhCacheProfile(String cacheName) {
     this();
     this.setCacheName(cacheName);
   }
 
   /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare.
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
+   * @see Object#equals(Object)
    */
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -94,22 +73,11 @@ public class EhCacheProfile implements CacheProfile {
     return true;
   }
 
-  /**
-   * Getter for field <code>{@link #cacheName}</code>.
-   * 
-   * @return the field <code>cacheName</code>.
-   */
   public final String getCacheName() {
     return this.cacheName;
   }
 
   /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>{@link java.util.Hashtable}</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
    * @see Object#hashCode()
    */
   public int hashCode() {
@@ -120,23 +88,11 @@ public class EhCacheProfile implements CacheProfile {
     return hash;
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheName}</code>.
-   * 
-   * @param cacheName
-   *          the new value to set.
-   */
   public final void setCacheName(String cacheName) {
     this.cacheName = cacheName;
   }
 
   /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
    * @see Object#toString()
    */
   public String toString() {

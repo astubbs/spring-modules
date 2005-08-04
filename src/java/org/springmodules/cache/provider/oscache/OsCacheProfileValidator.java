@@ -27,13 +27,10 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:02 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/04 04:49:08 $
  */
 public class OsCacheProfileValidator implements CacheProfileValidator {
 
-  /**
-   * Constructor.
-   */
   public OsCacheProfileValidator() {
     super();
   }

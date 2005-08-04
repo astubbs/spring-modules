@@ -24,7 +24,7 @@ package org.springmodules.cache.regex;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:25 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:50:11 $
  */
 public final class Match {
 
@@ -40,14 +40,6 @@ public final class Match {
    */
   private boolean successful;
 
-  /**
-   * Constructor.
-   * 
-   * @param successful
-   *          the flag indicating whether the match is successful.
-   * @param groups
-   *          the groups matched by the regular expression.
-   */
   public Match(boolean successful, String[] groups) {
     super();
 
@@ -55,20 +47,10 @@ public final class Match {
     this.groups = groups;
   }
 
-  /**
-   * Getter for field <code>{@link #groups}</code>.
-   * 
-   * @return the field <code>groups</code>.
-   */
   public String[] getGroups() {
     return this.groups;
   }
 
-  /**
-   * Getter for field <code>{@link #successful}</code>.
-   * 
-   * @return the field <code>successful</code>.
-   */
   public boolean isSuccessful() {
     return this.successful;
   }

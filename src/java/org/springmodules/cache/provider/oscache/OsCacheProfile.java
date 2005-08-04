@@ -22,28 +22,18 @@ import java.util.Arrays;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.util.ArrayUtils;
 
 /**
  * <p>
- * Set of configuration options needed for:
- * <ul>
- * <li>Retrieving an entry from a OSCache cache</li>
- * <li>Storing an object in a OSCache cache</li>
- * <li>Flushing one or more cache groups</li>
- * </ul>
- * </p>
+ * Configuration options needed to access OSCache.
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/07/26 03:00:37 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/04 04:49:09 $
  */
 public class OsCacheProfile implements CacheProfile {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3904681574367770928L;
 
   /**
@@ -63,52 +53,21 @@ public class OsCacheProfile implements CacheProfile {
    */
   private Integer refreshPeriod;
 
-  /**
-   * Constructor.
-   */
   public OsCacheProfile() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param csvGroups
-   *          the group(s) the object to cache belongs to.
-   * @param refreshPeriod
-   *          how long the object can stay in cache in seconds.
-   */
   public OsCacheProfile(String csvGroups, int refreshPeriod) {
     this();
     this.setGroups(csvGroups);
     this.setRefreshPeriod(refreshPeriod);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param csvGroups
-   *          the group(s) the object to cache belongs to.
-   * @param refreshPeriod
-   *          how long the object can stay in cache in seconds.
-   * @param cronExpression
-   *          the new cron expression.
-   */
   public OsCacheProfile(String csvGroups, int refreshPeriod,
       String cronExpression) {
     this(csvGroups, new Integer(refreshPeriod), cronExpression);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param csvGroups
-   *          the group(s) the object to cache belongs to.
-   * @param refreshPeriod
-   *          how long the object can stay in cache in seconds.
-   * @param cronExpression
-   *          the new cron expression.
-   */
   public OsCacheProfile(String csvGroups, Integer refreshPeriod,
       String cronExpression) {
     this();
@@ -118,14 +77,7 @@ public class OsCacheProfile implements CacheProfile {
   }
 
   /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare.
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
+   * @see Object#equals(Object)
    */
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -154,40 +106,19 @@ public class OsCacheProfile implements CacheProfile {
     return true;
   }
 
-  /**
-   * Getter for field <code>{@link #cronExpression}</code>.
-   * 
-   * @return the field <code>cronExpression</code>.
-   */
   public final String getCronExpression() {
     return this.cronExpression;
   }
 
-  /**
-   * Getter for field <code>{@link #groups}</code>.
-   * 
-   * @return the field <code>groups</code>.
-   */
   public final String[] getGroups() {
     return this.groups;
   }
 
-  /**
-   * Getter for field <code>{@link #refreshPeriod}</code>.
-   * 
-   * @return the field <code>refreshPeriod</code>.
-   */
   public final Integer getRefreshPeriod() {
     return this.refreshPeriod;
   }
 
   /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
    * @see Object#hashCode()
    */
   public int hashCode() {
@@ -211,12 +142,6 @@ public class OsCacheProfile implements CacheProfile {
     return hash;
   }
 
-  /**
-   * Setter for the field <code>{@link #cronExpression}</code>.
-   * 
-   * @param cronExpression
-   *          the new value to set.
-   */
   public final void setCronExpression(String cronExpression) {
     this.cronExpression = cronExpression;
   }
@@ -235,43 +160,19 @@ public class OsCacheProfile implements CacheProfile {
     this.setGroups(newGroups);
   }
 
-  /**
-   * Setter for the field <code>{@link #groups}</code>.
-   * 
-   * @param groups
-   *          the new value to set.
-   */
   public final void setGroups(String[] groups) {
     this.groups = groups;
   }
 
-  /**
-   * Setter for the field <code>{@link #refreshPeriod}</code>.
-   * 
-   * @param refreshPeriod
-   *          the new value to set.
-   */
   public final void setRefreshPeriod(int refreshPeriod) {
     this.setRefreshPeriod(new Integer(refreshPeriod));
   }
 
-  /**
-   * Setter for the field <code>{@link #refreshPeriod}</code>.
-   * 
-   * @param refreshPeriod
-   *          the new value to set.
-   */
   public final void setRefreshPeriod(Integer refreshPeriod) {
     this.refreshPeriod = refreshPeriod;
   }
 
   /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
    * @see Object#toString()
    */
   public String toString() {
@@ -279,37 +180,7 @@ public class OsCacheProfile implements CacheProfile {
     buffer.append(this.getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
     buffer.append("refreshPeriod=" + this.refreshPeriod + ", ");
-
-    buffer.append("groups=");
-
-    if (this.groups == null) {
-      buffer.append("null, ");
-
-    } else {
-      int groupCount = this.groups.length;
-
-      if (groupCount == 0) {
-        buffer.append("{}, ");
-
-      } else {
-        for (int i = 0; i < groupCount; i++) {
-          if (i == 0) {
-            buffer.append('{');
-          } else {
-            buffer.append(", ");
-          }
-
-          String group = this.groups[i];
-          String formattedGroup = null;
-          if (group != null) {
-            formattedGroup = "'" + group + "'";
-          }
-          buffer.append(formattedGroup);
-        }
-        buffer.append("}, ");
-      }
-    }
-
+    buffer.append("groups=" + ArrayUtils.toString(this.groups) + ", ");
     buffer.append("cronExpression=");
     String formattedCronExpression = null;
     if (this.cronExpression != null) {

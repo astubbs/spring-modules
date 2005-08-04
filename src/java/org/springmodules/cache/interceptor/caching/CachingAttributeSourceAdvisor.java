@@ -32,16 +32,11 @@ import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:09 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:29:32 $
  */
 public class CachingAttributeSourceAdvisor extends
     StaticMethodMatcherPointcutAdvisor {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3832897771492356663L;
 
   /**
@@ -51,8 +46,6 @@ public class CachingAttributeSourceAdvisor extends
   private CachingAttributeSource cachingAttributeSource;
 
   /**
-   * Constructor.
-   * 
    * @param cacheInterceptor
    *          Advice that caches the returned value of intercepted methods.
    * @throws AopConfigException

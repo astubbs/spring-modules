@@ -22,25 +22,14 @@ import org.springmodules.cache.provider.CacheProfile;
 
 /**
  * <p>
- * Set of configuration options needed for:
- * <ul>
- * <li>Retrieving an entry from a JCS cache</li>
- * <li>Storing an object in a JCS cache</li>
- * <li>Flushing one or more caches</li>
- * </ul>
- * </p>
+ * Configuration options needed to access JCS.
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/28 03:40:45 $
+ * @version $Revision: 1.7 $ $Date: 2005/08/04 04:46:30 $
  */
 public class JcsProfile implements CacheProfile {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3257282547976057398L;
 
   /**
@@ -53,45 +42,21 @@ public class JcsProfile implements CacheProfile {
    */
   private String group;
 
-  /**
-   * Constructor.
-   */
   public JcsProfile() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param cacheName
-   *          the name of the JCS cache.
-   */
   public JcsProfile(String cacheName) {
     this();
     this.setCacheName(cacheName);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param cacheName
-   *          the name of the JCS cache.
-   * @param group
-   *          the group the object to cache belongs to.
-   */
   public JcsProfile(String cacheName, String group) {
     this(cacheName);
     this.setGroup(group);
   }
 
   /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare.
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
    * @see Object#equals(java.lang.Object)
    */
   public boolean equals(Object obj) {
@@ -116,31 +81,15 @@ public class JcsProfile implements CacheProfile {
     return true;
   }
 
-  /**
-   * Getter for field <code>{@link #cacheName}</code>.
-   * 
-   * @return the field <code>cacheName</code>.
-   */
   public final String getCacheName() {
     return this.cacheName;
   }
 
-  /**
-   * Getter for field <code>{@link #group}</code>.
-   * 
-   * @return the field <code>group</code>.
-   */
   public final String getGroup() {
     return this.group;
   }
 
   /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
    * @see Object#hashCode()
    */
   public int hashCode() {
@@ -152,33 +101,15 @@ public class JcsProfile implements CacheProfile {
     return hash;
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheName}</code>.
-   * 
-   * @param cacheName
-   *          the new value to set.
-   */
   public final void setCacheName(String cacheName) {
     this.cacheName = cacheName;
   }
 
-  /**
-   * Setter for the field <code>{@link #group}</code>.
-   * 
-   * @param group
-   *          the new value to set.
-   */
   public final void setGroup(String group) {
     this.group = group;
   }
 
   /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
    * @see Object#toString()
    */
   public String toString() {

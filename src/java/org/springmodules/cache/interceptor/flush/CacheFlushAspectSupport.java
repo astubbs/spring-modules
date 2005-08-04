@@ -25,7 +25,7 @@ package org.springmodules.cache.interceptor.flush;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:18 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:34:41 $
  */
 public class CacheFlushAspectSupport {
 
@@ -34,28 +34,14 @@ public class CacheFlushAspectSupport {
    */
   private CacheFlushAttributeSource cacheFlushAttributeSource;
 
-  /**
-   * Constructor.
-   */
   public CacheFlushAspectSupport() {
     super();
   }
 
-  /**
-   * Getter for field <code>{@link #cacheFlushAttributeSource}</code>.
-   * 
-   * @return the field <code>cacheFlushAttributeSource</code>.
-   */
   public final CacheFlushAttributeSource getCacheFlushAttributeSource() {
     return this.cacheFlushAttributeSource;
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheFlushAttributeSource}</code>.
-   * 
-   * @param cacheFlushAttributeSource
-   *          the new value to set
-   */
   public final void setCacheFlushAttributeSource(
       CacheFlushAttributeSource cacheFlushAttributeSource) {
     this.cacheFlushAttributeSource = cacheFlushAttributeSource;

@@ -43,16 +43,11 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/04 00:45:00 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/04 04:39:12 $
  */
 public final class CacheProxyFactoryBean extends ProxyConfig implements
     FactoryBean, InitializingBean {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3688501099833603120L;
 
   /**
@@ -82,9 +77,6 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    */
   private Object target;
 
-  /**
-   * Constructor.
-   */
   public CacheProxyFactoryBean() {
     super();
     this.cacheFlushInterceptor = new CacheFlushInterceptor();
@@ -191,28 +183,16 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     return objectType;
   }
 
-  /**
-   * Getter for <code>{@link #proxy}</code>.
-   * 
-   * @return the value of the member variable <code>proxy</code>.
-   */
   protected Object getProxy() {
     return this.proxy;
   }
 
-  /**
-   * Getter for <code>{@link #proxyInterfaces}</code>.
-   * 
-   * @return the value of the member variable <code>proxyInterfaces</code>.
-   */
   protected Class[] getProxyInterfaces() {
     return this.proxyInterfaces;
   }
 
   /**
-   * This managed bean is a singleton.
-   * 
-   * @return <code>true</code>.
+   * @see FactoryBean#isSingleton()
    */
   public boolean isSingleton() {
     return true;
@@ -297,12 +277,6 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     this.proxyInterfaces = AopUtils.toInterfaceArray(interfaceNames);
   }
 
-  /**
-   * Setter for the field <code>{@link #target}</code>.
-   * 
-   * @param target
-   *          the new value to set
-   */
   public final void setTarget(Object target) {
     this.target = target;
   }

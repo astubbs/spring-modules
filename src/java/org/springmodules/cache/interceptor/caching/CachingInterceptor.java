@@ -27,7 +27,6 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springmodules.cache.EntryRetrievalException;
 import org.springmodules.cache.key.CacheKeyGenerator;
 import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
 import org.springmodules.cache.provider.CacheProviderFacade;
@@ -39,34 +38,24 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/05/30 13:30:34 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/04 04:32:00 $
  */
 public class CachingInterceptor extends CachingAspectSupport implements
     MethodInterceptor, InitializingBean {
 
-  /**
-   * Message logger.
-   */
   private static Log logger = LogFactory.getLog(CachingInterceptor.class);
 
   /**
-   * Cache provider facade.
+   * Facade for a cache provider.
    */
   private CacheProviderFacade cacheProviderFacade;
 
-  /**
-   * Constructor.
-   */
   public CachingInterceptor() {
-
     super();
   }
 
   /**
-   * Event raised by the Spring container indicating that all the properties of
-   * this class has been set. If the key generator is <code>null</code>, this
-   * method will create a new instance of
-   * <code>{@link HashCodeCacheKeyGenerator}</code>.
+   * @see InitializingBean#afterPropertiesSet()
    */
   public void afterPropertiesSet() {
     CacheKeyGenerator cacheKeyGenerator = super.getCacheKeyGenerator();
@@ -109,8 +98,6 @@ public class CachingInterceptor extends CachingAspectSupport implements
   public final Object invoke(MethodInvocation methodInvocation)
       throws Throwable {
 
-    Object cachedObject = null;
-
     Cached cachingAttribute = this.getCachingAttribute(methodInvocation);
 
     if (cachingAttribute == null) {
@@ -123,35 +110,24 @@ public class CachingInterceptor extends CachingAspectSupport implements
     CacheKeyGenerator cacheKeyGenerator = super.getCacheKeyGenerator();
     Serializable cacheKey = cacheKeyGenerator.generateKey(methodInvocation);
 
-    try {
-      cachedObject = this.cacheProviderFacade.getFromCache(cacheKey,
-          cacheProfileId);
-    } catch (EntryRetrievalException entryRetrievalException) {
-      if (logger.isErrorEnabled()) {
-        String message = "Exception thrown when retrieving an entry from the cache";
-        logger.error(message, entryRetrievalException);
-      }
-
-      // we couldn't get the entry from the cache.
-      return methodInvocation.proceed();
-    }
+    Object cachedObject = this.cacheProviderFacade.getFromCache(cacheKey,
+        cacheProfileId);
 
     if (null == cachedObject) {
-      logger.debug("Method 'invoke(..)'. Object not found in the cache");
-
-      Throwable exceptionThrowByProceed = null;
+      Throwable exceptionThrownByProceed = null;
 
       try {
         cachedObject = methodInvocation.proceed();
+
       } catch (Throwable throwable) {
         if (logger.isErrorEnabled()) {
-          String message = "Exception thrown when executing 'MethodInvocation.proceed()'";
+          String message = "Unable to proceed to the next interceptor in the chain";
           logger.error(message, throwable);
         }
-        exceptionThrowByProceed = throwable;
+        exceptionThrownByProceed = throwable;
       }
 
-      if (null == exceptionThrowByProceed) {
+      if (null == exceptionThrownByProceed) {
         if (null == cachedObject) {
           this.cacheProviderFacade.putInCache(cacheKey, cacheProfileId,
               CachingAspectSupport.NULL_ENTRY);
@@ -167,8 +143,9 @@ public class CachingInterceptor extends CachingAspectSupport implements
         }
       } else {
         this.cacheProviderFacade.cancelCacheUpdate(cacheKey);
-        throw exceptionThrowByProceed;
+        throw exceptionThrownByProceed;
       }
+      
     } else if (CachingAspectSupport.NULL_ENTRY == cachedObject) {
       cachedObject = null;
     }
@@ -176,12 +153,6 @@ public class CachingInterceptor extends CachingAspectSupport implements
     return cachedObject;
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheProviderFacade}</code>.
-   * 
-   * @param cacheProviderFacade
-   *          the new value to set
-   */
   public final void setCacheProviderFacade(
       CacheProviderFacade cacheProviderFacade) {
     this.cacheProviderFacade = cacheProviderFacade;

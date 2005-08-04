@@ -52,9 +52,13 @@ import org.springframework.util.StringUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:18 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/04 04:37:56 $
  */
 public class CacheFlushAttributeSourceEditor extends PropertyEditorSupport {
+
+  public CacheFlushAttributeSourceEditor() {
+    super();
+  }
 
   /**
    * Creates a new instance of

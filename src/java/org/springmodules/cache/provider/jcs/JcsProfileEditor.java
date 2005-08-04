@@ -31,7 +31,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:23 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/04 04:46:30 $
  */
 public final class JcsProfileEditor extends AbstractCacheProfileEditor {
 
@@ -41,9 +41,6 @@ public final class JcsProfileEditor extends AbstractCacheProfileEditor {
    */
   private JcsProfileValidator cacheProfileValidator;
 
-  /**
-   * Constructor.
-   */
   public JcsProfileEditor() {
     super();
     this.cacheProfileValidator = new JcsProfileValidator();

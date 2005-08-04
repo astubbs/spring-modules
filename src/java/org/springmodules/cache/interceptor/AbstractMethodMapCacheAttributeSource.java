@@ -37,14 +37,11 @@ import org.springmodules.cache.util.TextMatcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:38:08 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/04 04:25:49 $
  */
 public abstract class AbstractMethodMapCacheAttributeSource {
 
-  /**
-   * Message logger.
-   */
-  protected Log logger = LogFactory.getLog(this.getClass());
+  protected final Log logger = LogFactory.getLog(this.getClass());
 
   /**
    * Map containing instances of <code>{@link CacheAttribute}</code>. The key
@@ -60,9 +57,6 @@ public abstract class AbstractMethodMapCacheAttributeSource {
    */
   private Map registeredMethodMap;
 
-  /**
-   * Constructor.
-   */
   public AbstractMethodMapCacheAttributeSource() {
     super();
 

@@ -31,13 +31,10 @@ import org.springmodules.cache.util.BracketSeparatedPropertiesParser;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:09 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:28:55 $
  */
 public class CachingAttributeEditor extends PropertyEditorSupport {
 
-  /**
-   * Constructor.
-   */
   public CachingAttributeEditor() {
     super();
   }

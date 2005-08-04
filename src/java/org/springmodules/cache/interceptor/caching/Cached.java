@@ -28,15 +28,10 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/07/15 18:01:30 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/04 04:27:34 $
  */
 public class Cached implements CacheAttribute {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3256728394032297785L;
 
   /**
@@ -44,33 +39,17 @@ public class Cached implements CacheAttribute {
    */
   private String cacheProfileId;
 
-  /**
-   * Constructor.
-   */
   public Cached() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param cacheProfileId
-   *          the id of the cache profile to use.
-   */
   public Cached(String cacheProfileId) {
     this();
     this.setCacheProfileId(cacheProfileId);
   }
 
   /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare.
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
+   * @see Object#equals(Object)
    */
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -90,22 +69,11 @@ public class Cached implements CacheAttribute {
     return true;
   }
 
-  /**
-   * Getter for field <code>{@link #cacheProfileId}</code>.
-   * 
-   * @return the field <code>cacheProfileId</code>.
-   */
   public final String getCacheProfileId() {
     return this.cacheProfileId;
   }
 
   /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>{@link java.util.Hashtable}</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
    * @see Object#hashCode()
    */
   public int hashCode() {
@@ -116,32 +84,19 @@ public class Cached implements CacheAttribute {
     return hash;
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheProfileId}</code>.
-   * 
-   * @param cacheProfileId
-   *          the new value to set
-   */
   public final void setCacheProfileId(String cacheProfileId) {
     this.cacheProfileId = cacheProfileId;
   }
 
   /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
    * @see Object#toString()
-   * 
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
     buffer.append(this.getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
     buffer.append("cacheProfileId=");
-    
+
     String formattedCacheProfileId = null;
     if (this.cacheProfileId != null) {
       formattedCacheProfileId = "'" + this.cacheProfileId + "'";

@@ -26,7 +26,7 @@ package org.springmodules.cache.key;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:24 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:40:59 $
  */
 public final class HashCodeCalculator {
 
@@ -52,12 +52,8 @@ public final class HashCodeCalculator {
    */
   private int hashCode;
 
-  /**
-   * Constructor.
-   */
   public HashCodeCalculator() {
     super();
-
     this.hashCode = 17;
   }
 
@@ -81,20 +77,10 @@ public final class HashCodeCalculator {
     this.checkSum += valueToAppend;
   }
 
-  /**
-   * Getter for field <code>{@link #checkSum}</code>.
-   * 
-   * @return the field <code>checkSum</code>.
-   */
   public final long getCheckSum() {
     return this.checkSum;
   }
 
-  /**
-   * Getter for field <code>{@link #hashCode}</code>.
-   * 
-   * @return the field <code>hashCode</code>.
-   */
   public final int getHashCode() {
     return this.hashCode;
   }

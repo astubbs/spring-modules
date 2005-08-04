@@ -30,14 +30,11 @@ import org.springmodules.cache.interceptor.caching.CachingAttributeSource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:38:07 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/04 04:37:56 $
  */
 public class MethodMapCacheFlushAttributeSource extends
     AbstractMethodMapCacheAttributeSource implements CacheFlushAttributeSource {
 
-  /**
-   * Constructor.
-   */
   public MethodMapCacheFlushAttributeSource() {
     super();
   }

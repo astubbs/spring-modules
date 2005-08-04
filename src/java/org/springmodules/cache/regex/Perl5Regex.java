@@ -31,7 +31,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:25 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:50:11 $
  */
 public class Perl5Regex implements Regex {
 
@@ -41,8 +41,6 @@ public class Perl5Regex implements Regex {
   private final Pattern pattern;
 
   /**
-   * Constructor.
-   * 
    * @param regex
    *          the regular expression pattern to compile.
    * @throws PatternInvalidSyntaxException

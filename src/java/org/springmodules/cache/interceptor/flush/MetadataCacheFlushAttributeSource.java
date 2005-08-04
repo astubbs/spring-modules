@@ -31,7 +31,7 @@ import org.springframework.metadata.Attributes;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:19 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:37:56 $
  */
 public final class MetadataCacheFlushAttributeSource extends
     AbstractCacheFlushAttributeSource {
@@ -41,9 +41,6 @@ public final class MetadataCacheFlushAttributeSource extends
    */
   private Attributes attributes;
 
-  /**
-   * Constructor.
-   */
   public MetadataCacheFlushAttributeSource() {
     super();
   }
@@ -57,12 +54,6 @@ public final class MetadataCacheFlushAttributeSource extends
     return allAttributes;
   }
 
-  /**
-   * Setter for the field <code>{@link #attributes}</code>.
-   * 
-   * @param attributes
-   *          the new value to set
-   */
   public final void setAttributes(Attributes attributes) {
     this.attributes = attributes;
   }

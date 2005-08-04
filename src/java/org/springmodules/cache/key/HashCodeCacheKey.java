@@ -27,15 +27,10 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/25 06:53:18 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/04 04:40:59 $
  */
 public final class HashCodeCacheKey implements Serializable {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3904677167731454262L;
 
   /**
@@ -48,23 +43,10 @@ public final class HashCodeCacheKey implements Serializable {
    */
   private int hashCode;
 
-  /**
-   * Constructor.
-   */
   public HashCodeCacheKey() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param checkSum
-   *          the new value to assign to the member variable
-   *          <code>checkSum</code>.
-   * @param hashCode
-   *          the new value to assign to the member variable
-   *          <code>hashCode</code>.
-   */
   public HashCodeCacheKey(long checkSum, int hashCode) {
     this();
     this.checkSum = checkSum;
@@ -72,14 +54,7 @@ public final class HashCodeCacheKey implements Serializable {
   }
 
   /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare.
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
+   * @see Object#equals(Object)
    */
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -101,64 +76,30 @@ public final class HashCodeCacheKey implements Serializable {
     return true;
   }
 
-  /**
-   * Getter for field <code>{@link #checkSum}</code>.
-   * 
-   * @return the field <code>checkSum</code>.
-   */
   public long getCheckSum() {
     return this.checkSum;
   }
 
-  /**
-   * Getter for field <code>{@link #hashCode}</code>.
-   * 
-   * @return the field <code>hashCode</code>.
-   */
   public int getHashCode() {
     return this.hashCode;
   }
 
   /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
    * @see Object#hashCode()
    */
   public int hashCode() {
     return this.getHashCode();
   }
 
-  /**
-   * Setter for the field <code>{@link #checkSum}</code>.
-   * 
-   * @param checkSum
-   *          the new value to set
-   */
   public void setCheckSum(long checkSum) {
     this.checkSum = checkSum;
   }
 
-  /**
-   * Setter for the field <code>{@link #hashCode}</code>.
-   * 
-   * @param hashCode
-   *          the new value to set
-   */
   public void setHashCode(int hashCode) {
     this.hashCode = hashCode;
   }
 
   /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
    * @see Object#toString()
    */
   public String toString() {

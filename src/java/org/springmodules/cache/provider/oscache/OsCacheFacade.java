@@ -20,42 +20,31 @@ package org.springmodules.cache.provider.oscache;
 
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.InvalidConfigurationException;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
 /**
  * <p>
- * Implementation of
- * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
- * that uses OSCache as the cache provider.
+ * Facade for OSCache.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/28 03:43:10 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/04 04:49:09 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
-
-  /**
-   * Message logger.
-   */
-  private static Log logger = LogFactory.getLog(OsCacheFacade.class);
 
   /**
    * OSCache cache manager.
    */
   private GeneralCacheAdministrator cacheManager;
 
-  /**
-   * Constructor.
-   */
   public OsCacheFacade() {
     super();
   }
@@ -104,6 +93,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
     if (groups == null || groups.length == 0) {
       this.cacheManager.flushAll();
+
     } else {
       int groupCount = groups.length;
 
@@ -131,28 +121,17 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
     try {
       if (null == refreshPeriod) {
         cachedObject = this.cacheManager.getFromCache(key);
+
       } else if (null == cronExpression) {
         cachedObject = this.cacheManager.getFromCache(key, refreshPeriod
             .intValue());
+
       } else {
         cachedObject = this.cacheManager.getFromCache(key, refreshPeriod
             .intValue(), cronExpression);
       }
     } catch (NeedsRefreshException needsRefreshException) {
       // the cache does not have that entry.
-      if (logger.isDebugEnabled()) {
-        StringBuffer messageBuffer = new StringBuffer();
-        messageBuffer.append("Method 'getFromCache(..)'. ");
-        messageBuffer.append("Object not found in OSCache under key ");
-        
-        if (cacheKey instanceof String) {
-          messageBuffer.append("'" + cacheKey + "'");
-        } else {
-          messageBuffer.append(cacheKey);
-        }
-
-        logger.debug(messageBuffer.toString());
-      }
     }
 
     return cachedObject;
@@ -172,26 +151,24 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
     if (groups == null || groups.length == 0) {
       this.cacheManager.putInCache(key, objectToCache);
+
     } else {
       this.cacheManager.putInCache(key, objectToCache, groups);
     }
   }
 
   /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#removeFromCache(Serializable,
-   *      String)
+   * 
+   * @see AbstractCacheProviderFacadeImpl#onRemoveFromCache(Serializable,
+   *      CacheProfile)
    */
-  public void removeFromCache(Serializable cacheKey, String cacheProfileId) {
+  protected void onRemoveFromCache(Serializable cacheKey,
+      CacheProfile cacheProfile) {
+
     String key = this.getEntryKey(cacheKey);
     this.cacheManager.flushEntry(key);
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheManager}</code>.
-   * 
-   * @param cacheManager
-   *          the new value to set
-   */
   public void setCacheManager(GeneralCacheAdministrator cacheManager) {
     this.cacheManager = cacheManager;
   }
@@ -199,12 +176,13 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
    * 
-   * @throws IllegalStateException
+   * @throws InvalidConfigurationException
    *           if the cache manager is <code>null</code>.
    */
-  protected void validateCacheManager() {
+  protected void validateCacheManager() throws InvalidConfigurationException {
     if (null == this.cacheManager) {
-      throw new IllegalStateException("The Cache Manager should not be null");
+      throw new InvalidConfigurationException(
+          "The Cache Manager should not be null");
     }
   }
 }

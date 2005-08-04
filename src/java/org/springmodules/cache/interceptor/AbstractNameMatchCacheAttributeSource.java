@@ -38,15 +38,11 @@ import org.springmodules.cache.util.TextMatcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:21 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 04:25:49 $
  */
 public abstract class AbstractNameMatchCacheAttributeSource {
 
-  /**
-   * Message Logger.
-   */
-  private static Log logger = LogFactory
-      .getLog(AbstractNameMatchCacheAttributeSource.class);
+  protected final Log logger = LogFactory.getLog(this.getClass());
 
   /**
    * Map containing instances of <code>{@link CacheAttribute}</code>. The key
@@ -54,9 +50,6 @@ public abstract class AbstractNameMatchCacheAttributeSource {
    */
   private Map attributeMap;
 
-  /**
-   * Constructor.
-   */
   public AbstractNameMatchCacheAttributeSource() {
     super();
     this.attributeMap = new HashMap();
@@ -73,8 +66,8 @@ public abstract class AbstractNameMatchCacheAttributeSource {
    */
   protected final void addAttribute(String methodName,
       CacheAttribute cacheAttribute) {
-    if (logger.isDebugEnabled()) {
-      logger
+    if (this.logger.isDebugEnabled()) {
+      this.logger
           .debug("Method 'addMethod(String, CacheAttribute)'. Adding method ["
               + methodName + "] with attribute [" + cacheAttribute + "]");
     }

@@ -35,13 +35,10 @@ import com.opensymphony.oscache.base.CacheEntry;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:21 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/04 04:49:10 $
  */
 public final class OsCacheProfileEditor extends AbstractCacheProfileEditor {
 
-  /**
-   * Constructor.
-   */
   public OsCacheProfileEditor() {
     super();
   }

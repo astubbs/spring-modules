@@ -33,7 +33,7 @@ import org.aopalliance.intercept.MethodInvocation;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:31 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/04 04:40:59 $
  */
 public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
 
@@ -44,19 +44,10 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
    */
   private boolean generateArgumentHashCode;
 
-  /**
-   * Constructor.
-   */
   public HashCodeCacheKeyGenerator() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param generateArgumentHashCode
-   *          the new value for <code>generateArgumentHashCode</code>.
-   */
   public HashCodeCacheKeyGenerator(boolean generateArgumentHashCode) {
     this();
     this.setGenerateArgumentHashCode(generateArgumentHashCode);
@@ -112,12 +103,6 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
     return methodArgumentHashCode;
   }
 
-  /**
-   * Setter for the field <code>{@link #generateArgumentHashCode}</code>.
-   * 
-   * @param generateArgumentHashCode
-   *          the new value to set
-   */
   public final void setGenerateArgumentHashCode(boolean generateArgumentHashCode) {
     this.generateArgumentHashCode = generateArgumentHashCode;
   }

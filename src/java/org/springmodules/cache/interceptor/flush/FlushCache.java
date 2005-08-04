@@ -31,15 +31,10 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/07/15 18:01:31 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/04 04:37:56 $
  */
 public class FlushCache implements CacheAttribute {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3689909557149513778L;
 
   /**
@@ -53,16 +48,11 @@ public class FlushCache implements CacheAttribute {
    */
   private boolean flushBeforeExecution;
 
-  /**
-   * Constructor.
-   */
   public FlushCache() {
     super();
   }
 
   /**
-   * Constructor.
-   * 
    * @param cacheProfileIdsCsv
    *          ids of the cache profiles to be used to flush the cache, separated
    *          by commas.
@@ -73,54 +63,28 @@ public class FlushCache implements CacheAttribute {
   }
 
   /**
-   * Constructor.
-   * 
    * @param cacheProfileIdsCsv
    *          ids of the cache profiles to be used to flush the cache, separated
    *          by commas.
    * @param flushedBeforeExecution
-   *          flag that indicates if the cache should be flushed before or after
-   *          the execution of the intercepted method.
    */
   public FlushCache(String cacheProfileIdsCsv, boolean flushedBeforeExecution) {
     this(cacheProfileIdsCsv);
     this.setFlushBeforeExecution(flushedBeforeExecution);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param cacheProfileIds
-   *          ids of the cache profiles to be used to flush the cache
-   */
   public FlushCache(String[] cacheProfileIds) {
     this();
     this.setCacheProfileIds(cacheProfileIds);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param cacheProfileIds
-   *          ids of the cache profiles to be used to flush the cache
-   * @param flushedBeforeExecution
-   *          flag that indicates if the cache should be flushed before or after
-   *          the execution of the intercepted method.
-   */
   public FlushCache(String[] cacheProfileIds, boolean flushedBeforeExecution) {
     this(cacheProfileIds);
     this.setFlushBeforeExecution(flushedBeforeExecution);
   }
 
   /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare.
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
+   * @see Object#equals(Object)
    */
   public boolean equals(Object obj) {
     if (this == obj) {
@@ -142,22 +106,11 @@ public class FlushCache implements CacheAttribute {
     return true;
   }
 
-  /**
-   * Getter for field <code>{@link #cacheProfileIds}</code>.
-   * 
-   * @return the field <code>cacheProfileIds</code>.
-   */
   public final String[] getCacheProfileIds() {
     return this.cacheProfileIds;
   }
 
   /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
    * @see Object#hashCode()
    */
   public int hashCode() {
@@ -179,11 +132,6 @@ public class FlushCache implements CacheAttribute {
     return hash;
   }
 
-  /**
-   * Getter for field <code>{@link #flushBeforeExecution}</code>.
-   * 
-   * @return the field <code>flushBeforeExecution</code>.
-   */
   public final boolean isFlushBeforeExecution() {
     return this.flushBeforeExecution;
   }
@@ -204,33 +152,15 @@ public class FlushCache implements CacheAttribute {
     this.setCacheProfileIds(newProfileIds);
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheProfileIds}</code>.
-   * 
-   * @param cacheProfileIds
-   *          the new value to set
-   */
   public final void setCacheProfileIds(String[] cacheProfileIds) {
     this.cacheProfileIds = cacheProfileIds;
   }
 
-  /**
-   * Setter for the field <code>{@link #flushBeforeExecution}</code>.
-   * 
-   * @param flushBeforeExecution
-   *          the new value to set
-   */
   public final void setFlushBeforeExecution(boolean flushBeforeExecution) {
     this.flushBeforeExecution = flushBeforeExecution;
   }
 
   /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
    * @see Object#toString()
    */
   public String toString() {

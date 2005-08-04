@@ -31,7 +31,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:14 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/04 04:43:52 $
  */
 public final class EhCacheProfileEditor extends AbstractCacheProfileEditor {
 
@@ -41,9 +41,6 @@ public final class EhCacheProfileEditor extends AbstractCacheProfileEditor {
    */
   private EhCacheProfileValidator cacheProfileValidator;
 
-  /**
-   * Constructor.
-   */
   public EhCacheProfileEditor() {
     super();
     this.cacheProfileValidator = new EhCacheProfileValidator();
