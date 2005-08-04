@@ -53,9 +53,13 @@ import org.springframework.util.StringUtils;
  * @author Xavier Dury
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/25 06:53:17 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/04 04:30:30 $
  */
 public class CachingAttributeSourceEditor extends PropertyEditorSupport {
+
+  public CachingAttributeSourceEditor() {
+    super();
+  }
 
   /**
    * Creates a new instance of
