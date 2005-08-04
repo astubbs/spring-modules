@@ -27,7 +27,7 @@ import org.springframework.core.io.Resource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:00 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 05:12:26 $
  */
 public abstract class AbstractConfigurationResourceCacheManagerFactoryBean
     extends AbstractSingletonCacheManagerFactoryBean {
@@ -37,28 +37,14 @@ public abstract class AbstractConfigurationResourceCacheManagerFactoryBean
    */
   private Resource configLocation;
 
-  /**
-   * Constructor.
-   */
   public AbstractConfigurationResourceCacheManagerFactoryBean() {
     super();
   }
 
-  /**
-   * Getter for field <code>{@link #configLocation}</code>.
-   * 
-   * @return the field <code>configLocation</code>.
-   */
   public final Resource getConfigLocation() {
     return this.configLocation;
   }
 
-  /**
-   * Setter for the field <code>{@link #configLocation}</code>.
-   * 
-   * @param configLocation
-   *          the new value to set.
-   */
   public final void setConfigLocation(Resource configLocation) {
     this.configLocation = configLocation;
   }

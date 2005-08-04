@@ -26,20 +26,12 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:42:11 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/04 05:15:10 $
  */
 public class MockCacheProfile implements CacheProfile {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3258134639355769395L;
 
-  /**
-   * Constructor.
-   */
   public MockCacheProfile() {
     super();
   }

@@ -29,14 +29,11 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:00 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/04 05:13:17 $
  */
 public abstract class AbstractSingletonCacheManagerFactoryBean implements
     FactoryBean, InitializingBean, DisposableBean {
 
-  /**
-   * Constructor.
-   */
   public AbstractSingletonCacheManagerFactoryBean() {
     super();
   }
@@ -45,6 +42,8 @@ public abstract class AbstractSingletonCacheManagerFactoryBean implements
    * Notifies the Spring IoC container that this factory is a singleton bean.
    * 
    * @return <code>true</code>.
+   * 
+   * @see org.springframework.beans.factory.FactoryBean#isSingleton()
    */
   public final boolean isSingleton() {
     return true;
