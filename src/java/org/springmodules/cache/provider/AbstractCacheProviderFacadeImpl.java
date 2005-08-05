@@ -38,7 +38,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/05 02:18:46 $
+ * @version $Revision: 1.7 $ $Date: 2005/08/05 04:36:33 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -314,6 +314,8 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * 
    * @param cacheProfile
    *          the cache profile that specifies what and how to flush.
+   * @throws CacheException
+   *           if an unexpected error takes place when flushing the cache.
    */
   protected abstract void onFlushCache(CacheProfile cacheProfile)
       throws CacheException;
