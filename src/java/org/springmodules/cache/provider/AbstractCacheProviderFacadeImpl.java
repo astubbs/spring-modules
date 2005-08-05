@@ -29,7 +29,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.EntryRetrievalException;
+import org.springmodules.cache.util.ArrayUtils;
 
 /**
  * <p>
@@ -38,16 +38,10 @@ import org.springmodules.cache.EntryRetrievalException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/15 18:02:14 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/05 02:18:46 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
-
-  /**
-   * Message logger.
-   */
-  private static Log logger = LogFactory
-      .getLog(AbstractCacheProviderFacadeImpl.class);
 
   /**
    * Flag that indicates if the cache profiles in
@@ -66,9 +60,8 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    */
   private boolean failQuietlyEnabled;
 
-  /**
-   * Constructor.
-   */
+  protected final Log logger = LogFactory.getLog(this.getClass());
+
   public AbstractCacheProviderFacadeImpl() {
     super();
   }
@@ -76,24 +69,24 @@ public abstract class AbstractCacheProviderFacadeImpl implements
   /**
    * Validates the properties of this class after being set by the BeanFactory.
    * 
-   * @throws IllegalStateException
+   * @throws InvalidConfigurationException
    *           if the cache manager is <code>null</code> or one or more of its
    *           properties contain invalid values.
-   * @throws IllegalStateException
+   * @throws InvalidConfigurationException
    *           if the map of cache profiles is <code>null</code> or empty.
-   * @throws IllegalStateException
+   * @throws InvalidConfigurationException
    *           if one or more cache profiles contain invalid values in any of
    *           their properties.
    */
-  public final void afterPropertiesSet() {
+  public final void afterPropertiesSet() throws InvalidConfigurationException {
 
     // validate the cache manager.
     this.validateCacheManager();
 
     // validate the cache profiles.
     if (this.cacheProfiles == null || this.cacheProfiles.isEmpty()) {
-      throw new IllegalStateException(
-          "The Map of cache profiles should not be empty");
+      throw new InvalidConfigurationException(
+          "The map of cache profiles should not be empty");
     }
 
     if (!this.isCacheProfileMapValidated()) {
@@ -110,71 +103,52 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
         try {
           cacheProfileValidator.validateCacheProfile(cacheProfile);
-        } catch (Exception exception) {
-          String message = "Exception thrown while validating cache profile '"
-              + cacheProfileId + "': " + exception.getMessage();
 
-          throw new IllegalStateException(message);
-        } // end 'catch (Exception exception)'
-      } // end 'while (keySetIterator.hasNext())'
-    } // end 'if (!this.isCacheProfileMapValidated())'
+        } catch (InvalidCacheProfileException exception) {
+          String errorMessage = "Invalid cache profile: " + cacheProfile;
+
+          if (this.logger.isErrorEnabled()) {
+            this.logger.error(errorMessage, exception);
+          }
+
+          throw new InvalidConfigurationException(errorMessage, exception);
+        }
+      }
+    }
   }
 
   /**
    * @see CacheProviderFacade#cancelCacheUpdate(Serializable)
    */
-  public final void cancelCacheUpdate(Serializable cacheKey) {
-    if (logger.isDebugEnabled()) {
-      logger
-          .debug("Method 'cancelCacheUpdates(CacheKey)'.  Argument 'cacheKey': "
-              + cacheKey);
+  public final void cancelCacheUpdate(Serializable cacheKey)
+      throws CacheException {
+
+    if (this.logger.isDebugEnabled()) {
+      String logMessage = "Attempt to cancel a cache update using the key <"
+          + cacheKey + ">";
+
+      this.logger.debug(logMessage);
     }
 
     try {
       this.onCancelCacheUpdate(cacheKey);
-    } catch (RuntimeException exception) {
-      this.handleCacheAccessException("Method 'cancelCacheUpdates(CacheKey)'.",
-          exception);
+
+    } catch (CacheException exception) {
+      this.handleCacheException(exception);
     }
   }
 
   /**
    * @see CacheProviderFacade#flushCache(String[])
    */
-  public final void flushCache(String[] cacheProfileIds) {
-    if (logger.isDebugEnabled()) {
-      String formattedCacheProfileIds = null;
-      if (cacheProfileIds != null) {
-        int cacheProfileIdCount = cacheProfileIds.length;
+  public final void flushCache(String[] cacheProfileIds) throws CacheException {
 
-        if (cacheProfileIdCount == 0) {
-          formattedCacheProfileIds = "{}";
-        } else {
-          StringBuffer buffer = new StringBuffer();
+    if (this.logger.isDebugEnabled()) {
+      String formattedCacheProfileIds = ArrayUtils.toString(cacheProfileIds);
+      String logMessage = "Attempt to flush the cache using the cache profile ids <"
+          + formattedCacheProfileIds + ">";
 
-          for (int i = 0; i < cacheProfileIdCount; i++) {
-            if (i == 0) {
-              buffer.append("{");
-            } else {
-              buffer.append(", ");
-            }
-
-            String cacheProfileId = cacheProfileIds[i];
-            String formattedCacheProfileId = null;
-            if (cacheProfileId != null) {
-              formattedCacheProfileId = "'" + cacheProfileId + "'";
-            }
-            buffer.append(formattedCacheProfileId);
-          }
-
-          buffer.append("}");
-          formattedCacheProfileIds = buffer.toString();
-        }
-      }
-
-      logger
-          .debug("Method 'flushCache(String[])'. Argument 'cacheProfileIds': "
-              + formattedCacheProfileIds);
+      this.logger.debug(logMessage);
     }
 
     if (cacheProfileIds != null) {
@@ -186,18 +160,23 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
           CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
           if (cacheProfile != null) {
-            this.onFlushCache(cacheProfile);
-          } // end 'if (cacheProfile != null)'
-        } // end 'for (int i = 0; i < cacheProfileIdCount; i++)'
-      } // end 'try'
-      catch (RuntimeException exception) {
-        this.handleCacheAccessException("Method 'flushCache(String[])'.",
-            exception);
-      } // end 'catch (RuntimeException exception)'
-    } // end 'if (cacheProfileIds != null)'
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("Method 'flushCache(String[])'. Cache flushed.");
+            if (this.logger.isDebugEnabled()) {
+              String logMessage = "Cache profile <" + cacheProfile + ">";
+              this.logger.debug(logMessage);
+            }
+
+            this.onFlushCache(cacheProfile);
+          }
+        }
+
+      } catch (CacheException exception) {
+        this.handleCacheException(exception);
+      }
+    }
+
+    if (this.logger.isDebugEnabled()) {
+      this.logger.debug("Cache has been flushed.");
     }
   }
 
@@ -210,22 +189,17 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * @return a cache profile.
    */
   protected final CacheProfile getCacheProfile(String cacheProfileId) {
-    if (logger.isDebugEnabled()) {
-      logger
-          .debug("Method 'getCacheProfile(String)'. Argument 'cacheProfileId': "
-              + cacheProfileId);
-    }
     CacheProfile cacheProfile = null;
 
     if (StringUtils.hasText(cacheProfileId) && this.cacheProfiles != null) {
       cacheProfile = (CacheProfile) this.cacheProfiles.get(cacheProfileId);
     }
 
-    if (logger.isDebugEnabled()) {
-      logger
-          .debug("Method 'getCacheProfile(String)'. Variable 'cacheProfile': "
-              + cacheProfile);
+    if (this.logger.isDebugEnabled()) {
+      String logMessage = "Cache profile <" + cacheProfile + ">";
+      this.logger.debug(logMessage);
     }
+
     return cacheProfile;
   }
 
@@ -257,29 +231,31 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * @see CacheProviderFacade#getFromCache(Serializable, String)
    */
   public final Object getFromCache(Serializable cacheKey, String cacheProfileId)
-      throws EntryRetrievalException {
-    if (logger.isDebugEnabled()) {
-      String message = "Method 'getFromCache(CacheKey, String)'. Argument 'cacheKey': "
-          + cacheKey;
-      logger.debug(message);
+      throws CacheException {
+
+    if (this.logger.isDebugEnabled()) {
+      String logMessage = "Attempt to retrieve a cache entry using key <"
+          + cacheKey + "> and cache profile id '" + cacheProfileId + "'";
+
+      this.logger.debug(logMessage);
     }
 
     Object cachedObject = null;
 
     try {
       CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
+
       if (cacheProfile != null) {
         cachedObject = this.onGetFromCache(cacheKey, cacheProfile);
       }
 
-      if (logger.isDebugEnabled()) {
-        String message = "Method 'getFromCache(CacheKey, String)'. Variable 'cachedObject': "
-            + cachedObject;
-        logger.debug(message);
+      if (this.logger.isDebugEnabled()) {
+        String logMessage = "Retrieved cache entry <" + cachedObject + ">";
+        this.logger.debug(logMessage);
       }
-    } catch (RuntimeException exception) {
-      String message = "Method 'getFromCache(Cachekey, String)'.";
-      this.handleCacheAccessException(message, exception);
+
+    } catch (CacheException exception) {
+      this.handleCacheException(exception);
     }
     return cachedObject;
   }
@@ -293,15 +269,15 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * is <code>false</code>.</li>
    * </ul>
    * 
-   * @param loggerMessage
-   *          the detail message to be used to log the exception.
    * @param exception
-   *          the exception thrown while accessing the cache.
+   *          the exception thrown when trying to access the cache.
    */
-  protected final void handleCacheAccessException(String loggerMessage,
-      RuntimeException exception) {
+  protected final void handleCacheException(CacheException exception)
+      throws CacheException {
 
-    logger.error(loggerMessage, exception);
+    if (this.logger.isErrorEnabled()) {
+      this.logger.error(exception.getMessage(), exception);
+    }
 
     if (!this.isFailQuietlyEnabled()) {
       // if the this provider should not "fail quietly", throw the catched
@@ -310,11 +286,6 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     }
   }
 
-  /**
-   * Getter for field <code>{@link #cacheProfileMapValidated}</code>.
-   * 
-   * @return the field <code>cacheProfileMapValidated</code>.
-   */
   public final boolean isCacheProfileMapValidated() {
     return this.cacheProfileMapValidated;
   }
@@ -331,15 +302,12 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * 
    * @param cacheKey
    *          the key being used in the cache update.
+   * @throws CacheException
+   *           if an unexpected error takes place when attempting to cancel the
+   *           update.
    */
-  protected void onCancelCacheUpdate(Serializable cacheKey) {
-    if (logger.isDebugEnabled()) {
-      logger
-          .debug("Method 'onCancelCacheUpdate(CacheKey)'.  Argument 'cacheKey': "
-              + cacheKey);
-    }
-    // not all subclasses will implement this method.
-  }
+  protected abstract void onCancelCacheUpdate(Serializable cacheKey)
+      throws CacheException;
 
   /**
    * Flushes the caches specified in the given profile.
@@ -347,7 +315,8 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * @param cacheProfile
    *          the cache profile that specifies what and how to flush.
    */
-  protected abstract void onFlushCache(CacheProfile cacheProfile);
+  protected abstract void onFlushCache(CacheProfile cacheProfile)
+      throws CacheException;
 
   /**
    * Retrieves an entry from the cache.
@@ -357,12 +326,12 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * @param cacheProfile
    *          the the cache profile that specifies how to retrieve an entry.
    * @return the cached entry.
-   * @throws EntryRetrievalException
+   * @throws CacheException
    *           if an unexpected error takes place when retrieving the entry from
    *           the cache.
    */
   protected abstract Object onGetFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) throws EntryRetrievalException;
+      CacheProfile cacheProfile) throws CacheException;
 
   /**
    * Stores an object in the cache.
@@ -374,47 +343,85 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    *          cache.
    * @param objectToCache
    *          the object to store in the cache.
+   * @throws CacheException
+   *           if an unexpected error takes place when storing an object in the
+   *           cache.
    */
   protected abstract void onPutInCache(Serializable cacheKey,
-      CacheProfile cacheProfile, Object objectToCache);
+      CacheProfile cacheProfile, Object objectToCache) throws CacheException;
+
+  /**
+   * Removes an entry from the cache.
+   * 
+   * @param cacheKey
+   *          the key the entry to remove is stored under.
+   * @param cacheProfile
+   *          the cache profile that specifies how to remove the entry from the
+   *          cache.
+   * @throws CacheException
+   *           if an unexpected error takes place when removing an entry from
+   *           the cache.
+   */
+  protected abstract void onRemoveFromCache(Serializable cacheKey,
+      CacheProfile cacheProfile) throws CacheException;
 
   /**
    * @see CacheProviderFacade#putInCache(Serializable, String, Object)
    */
-  public void putInCache(Serializable cacheKey, String cacheProfileId,
-      Object objectToCache) {
+  public final void putInCache(Serializable cacheKey, String cacheProfileId,
+      Object objectToCache) throws CacheException {
 
-    if (logger.isDebugEnabled()) {
-      logger
-          .debug("Method 'putInCache(CacheKey, String)'. Argument 'cacheKey': "
-              + cacheKey);
-      logger
-          .debug("Method 'putInCache(CacheKey, String)'. Argument 'objectToCache': "
-              + objectToCache);
+    if (this.logger.isDebugEnabled()) {
+      String logMessage = "Attempt to store the object <" + objectToCache
+          + "> in the cache using key <" + cacheKey
+          + "> and cache profile id '" + cacheProfileId + "'";
+
+      this.logger.debug(logMessage);
     }
 
     CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
     if (cacheProfile != null) {
       try {
         this.onPutInCache(cacheKey, cacheProfile, objectToCache);
-      } catch (RuntimeException exception) {
-        String message = "Method 'putInCache(CacheKey, String, Object)'.";
-        this.handleCacheAccessException(message, exception);
+
+      } catch (CacheException exception) {
+        this.handleCacheException(exception);
       }
     }
 
-    if (logger.isDebugEnabled()) {
-      logger
-          .debug("Method 'putInCache(CacheKey, String)'. Object stored in the cache");
+    if (this.logger.isDebugEnabled()) {
+      this.logger.debug("Object stored in the cache");
     }
   }
 
   /**
-   * Setter for the field <code>{@link #cacheProfiles}</code>.
-   * 
-   * @param cacheProfiles
-   *          the new value to set.
+   * @see CacheProviderFacade#removeFromCache(Serializable, String)
    */
+  public final void removeFromCache(Serializable cacheKey, String cacheProfileId)
+      throws CacheException {
+
+    if (this.logger.isDebugEnabled()) {
+      String logMessage = "Attempt to remove an entry from the cache using key <"
+          + cacheKey + "> and cache profile id '" + cacheProfileId + "'";
+
+      this.logger.debug(logMessage);
+    }
+
+    CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
+    if (cacheProfile != null) {
+      try {
+        this.onRemoveFromCache(cacheKey, cacheProfile);
+
+      } catch (CacheException exception) {
+        this.handleCacheException(exception);
+      }
+    }
+
+    if (this.logger.isDebugEnabled()) {
+      this.logger.debug("Object removed from the cache");
+    }
+  }
+
   public final void setCacheProfiles(Map cacheProfiles) {
     if (cacheProfiles instanceof Properties) {
       this.setCacheProfiles((Properties) cacheProfiles);
@@ -475,12 +482,6 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     this.cacheProfileMapValidated = true;
   }
 
-  /**
-   * Setter for the field <code>{@link #failQuietlyEnabled}</code>.
-   * 
-   * @param failQuietlyEnabled
-   *          the new value to set.
-   */
   public final void setFailQuietlyEnabled(boolean failQuietlyEnabled) {
     this.failQuietlyEnabled = failQuietlyEnabled;
   }
@@ -488,9 +489,10 @@ public abstract class AbstractCacheProviderFacadeImpl implements
   /**
    * Validates the cache manager used by this facade.
    * 
-   * @throws IllegalStateException
+   * @throws InvalidConfigurationException
    *           if the cache manager is <code>null</code> or one or more of its
    *           properties contain invalid values.
    */
-  protected abstract void validateCacheManager();
+  protected abstract void validateCacheManager()
+      throws InvalidConfigurationException;
 }

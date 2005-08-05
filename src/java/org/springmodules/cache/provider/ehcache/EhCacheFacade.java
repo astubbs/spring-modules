@@ -24,39 +24,32 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springmodules.cache.CacheWrapperException;
-import org.springmodules.cache.EntryRetrievalException;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
+import org.springmodules.cache.provider.CacheAccessException;
+import org.springmodules.cache.provider.CacheException;
+import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.InvalidConfigurationException;
+import org.springmodules.cache.provider.InvalidObjectToCache;
 
 /**
  * <p>
- * Delegates the caching functionality to EHCache.
+ * Facade for EHCache.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/02 10:02:12 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:54 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
-
-  /**
-   * Message logger.
-   */
-  private static Log logger = LogFactory.getLog(EhCacheFacade.class);
 
   /**
    * EHCache cache manager.
    */
   private CacheManager cacheManager;
 
-  /**
-   * Constructor.
-   */
   public EhCacheFacade() {
     super();
   }
@@ -77,128 +70,147 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
+   * EHCache does not support cancellation of updates.
+   * 
+   * @see AbstractCacheProviderFacadeImpl#onCancelCacheUpdate(Serializable)
    */
-  protected void onFlushCache(CacheProfile cacheProfile) {
+  protected void onCancelCacheUpdate(Serializable cacheKey) {
+    // Not supported
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
+   * 
+   * @throws CacheNotFoundException
+   *           if the cache specified in the given profile cannot be found.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
+   */
+  protected void onFlushCache(CacheProfile cacheProfile) throws CacheException {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
     if (!this.cacheManager.cacheExists(cacheName)) {
-      if (logger.isInfoEnabled()) {
-        String logMessage = "onFlushCache: Could not find EHCache cache: "
-            + cacheName;
-        logger.info(logMessage);
-      }
+      throw new CacheNotFoundException(cacheName);
+    }
 
-    } else {
-      Cache cache = this.cacheManager.getCache(cacheName);
+    Cache cache = this.cacheManager.getCache(cacheName);
 
-      try {
-        cache.removeAll();
+    try {
+      cache.removeAll();
 
-      } catch (Exception exception) {
-        String errorMessage = "Unable to flush cache. Cache profile: "
-            + cacheProfile;
-
-        logger.error(errorMessage, exception);
-        throw new CacheWrapperException(errorMessage, exception);
-      }
+    } catch (Exception exception) {
+      String errorMessage = "Unable to flush cache";
+      throw new CacheAccessException(errorMessage, exception);
     }
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#onGetFromCache(Serializable,
    *      CacheProfile)
+   * 
+   * @throws CacheNotFoundException
+   *           if the cache specified in the given profile cannot be found.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
    */
   protected Object onGetFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) throws EntryRetrievalException {
+      CacheProfile cacheProfile) throws CacheException {
 
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
     if (!this.cacheManager.cacheExists(cacheName)) {
-      String exceptionMessage = "Could not find EHCache cache: " + cacheName;
-      String logMessage = "onGetFromCache: " + exceptionMessage;
-
-      logger.info(logMessage);
-      throw new EntryRetrievalException("Could not find EHCache cache: "
-          + cacheName);
+      throw new CacheNotFoundException(cacheName);
     }
 
     Cache cache = this.cacheManager.getCache(cacheName);
-    Element cacheElement = null;
+    Object cachedObject = null;
 
     try {
-      cacheElement = cache.get(cacheKey);
+      Element cacheElement = cache.get(cacheKey);
+      if (cacheElement != null) {
+        cachedObject = cacheElement.getValue();
+      }
 
     } catch (Exception exception) {
-      String errorMessage = "Unable to retrieve an entry from the cache. Key: "
-          + cacheKey + ". Cache Profile: " + cacheProfile;
-
-      logger.error(errorMessage, exception);
-      throw new CacheWrapperException(errorMessage, exception);
+      String errorMessage = "Unable to retrieve an entry from the cache";
+      throw new CacheAccessException(errorMessage, exception);
     }
 
-    Object cachedObject = null;
-    if (null != cacheElement) {
-      cachedObject = cacheElement.getValue();
-    }
     return cachedObject;
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
    *      CacheProfile, Object)
+   * 
+   * @throws InvalidObjectToCache
+   *           if the object to store is not an implementation of
+   *           <code>java.io.Serializable</code>.
+   * @throws CacheNotFoundException
+   *           if the cache specified in the given profile cannot be found.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
    */
   protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
-      Object objectToCache) {
+      Object objectToCache) throws CacheException {
+
+    if (!(objectToCache instanceof Serializable)) {
+      throw new InvalidObjectToCache(
+          "Only implementations of java.io.Serializable can be stored in the cache");
+    }
 
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
     if (!this.cacheManager.cacheExists(cacheName)) {
-      if (logger.isInfoEnabled()) {
-        String logMessage = "onPutInCache: Could not find EHCache cache: "
-            + cacheName;
-        logger.info(logMessage);
-      }
+      throw new CacheNotFoundException(cacheName);
+    }
 
-    } else {
-      Cache cache = this.cacheManager.getCache(cacheName);
-      Element newCacheElement = new Element(cacheKey,
-          (Serializable) objectToCache);
+    Cache cache = this.cacheManager.getCache(cacheName);
+    Element newCacheElement = new Element(cacheKey,
+        (Serializable) objectToCache);
 
+    try {
       cache.put(newCacheElement);
+
+    } catch (RuntimeException exception) {
+      String errorMessage = "Unable to store an object in the cache";
+      throw new CacheAccessException(errorMessage, exception);
     }
   }
 
   /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#removeFromCache(Serializable,
-   *      String)
+   * @see AbstractCacheProviderFacadeImpl#onRemoveFromCache(Serializable,
+   *      CacheProfile)
+   * 
+   * @throws CacheNotFoundException
+   *           if the cache specified in the given profile cannot be found.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
    */
-  public void removeFromCache(Serializable cacheKey, String cacheProfileId) {
-    CacheProfile cacheProfile = super.getCacheProfile(cacheProfileId);
+  protected void onRemoveFromCache(Serializable cacheKey,
+      CacheProfile cacheProfile) throws CacheException {
+
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
     if (!this.cacheManager.cacheExists(cacheName)) {
-      if (logger.isInfoEnabled()) {
-        String logMessage = "removeFromCache: Could not find EHCache cache: "
-            + cacheName;
-        logger.info(logMessage);
-      }
-    } else {
-      Cache cache = this.cacheManager.getCache(cacheName);
+      throw new CacheNotFoundException(cacheName);
+    }
+
+    Cache cache = this.cacheManager.getCache(cacheName);
+
+    try {
       cache.remove(cacheKey);
+
+    } catch (Exception exception) {
+      String errorMessage = "Unable to remove the entry from the cache";
+      throw new CacheAccessException(errorMessage, exception);
     }
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheManager}</code>.
-   * 
-   * @param cacheManager
-   *          the new value to set
-   */
   public void setCacheManager(CacheManager cacheManager) {
     this.cacheManager = cacheManager;
   }
@@ -212,23 +224,24 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    * an error when accessing the cache.)</li>
    * </ul>
    * 
-   * @throws IllegalArgumentException
+   * @throws InvalidConfigurationException
    *           if the Cache Manager is <code>null</code>.
-   * @throws IllegalArgumentException
+   * @throws InvalidConfigurationException
    *           if the status of the Cache Manager is not "Alive".
    * @see AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
    */
-  protected void validateCacheManager() {
+  protected void validateCacheManager() throws InvalidConfigurationException {
     if (null == this.cacheManager) {
-      throw new IllegalStateException("The Cache Manager should not be null");
+      throw new InvalidConfigurationException(
+          "The Cache Manager should not be null");
     }
 
     if (!super.isFailQuietlyEnabled()) {
       int cacheManagerStatus = this.cacheManager.getStatus();
 
       if (cacheManagerStatus != CacheManager.STATUS_ALIVE) {
-        throw new IllegalStateException("Cache Manager is not alive");
+        throw new InvalidConfigurationException("Cache Manager is not alive");
       }
     }
   }

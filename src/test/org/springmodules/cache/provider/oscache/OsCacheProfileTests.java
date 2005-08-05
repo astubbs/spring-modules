@@ -26,40 +26,32 @@ import org.springmodules.EqualsHashCodeTestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link OsCacheProfile}</code>.
+ * Unit Tests for <code>{@link OsCacheProfile}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/07/26 03:02:01 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/05 02:18:56 $
  */
 public final class OsCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
 
-  /**
-   * Message logger.
-   */
   private static Log logger = LogFactory.getLog(OsCacheProfileTests.class);
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private OsCacheProfile cacheProfile;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public OsCacheProfileTests(String name) {
 
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertEqualToString(String expected, String actual) {
+    assertEquals("<ToString>", expected, actual);
+  }
+  
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -190,12 +182,6 @@ public final class OsCacheProfileTests extends TestCase implements
     assertFalse(this.cacheProfile.equals(null));
   }
 
-  /**
-   * Verifies that the method <code>{@link OsCacheProfile#toString()}</code>
-   * returns a String representation of a <code>{@link OsCacheProfile}</code>
-   * when the properties <code>groups</code> and <code>cronExpression</code>
-   * are equal to <code>null</code>.
-   */
   public void testToStringWithGroupsAndCronExpressionEqualToNull() {
     String groups = null;
     int refreshPeriod = 34;
@@ -217,14 +203,9 @@ public final class OsCacheProfileTests extends TestCase implements
     logger.debug("Expected toString: " + expected);
     logger.debug("Actual toString:   " + actual);
 
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected, actual);
   }
 
-  /**
-   * Verifies that the method <code>{@link OsCacheProfile#toString()}</code>
-   * returns a String representation of a <code>{@link OsCacheProfile}</code>
-   * when the property <code>groups</code> is an empty array.
-   */
   public void testToStringWithEmptyGroups() {
     int refreshPeriod = 978;
     String cronExpression = "* * 0 0 0";
@@ -246,15 +227,9 @@ public final class OsCacheProfileTests extends TestCase implements
     logger.debug("Expected toString: " + expected);
     logger.debug("Actual toString:   " + actual);
 
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected, actual);
   }
 
-  /**
-   * Verifies that the method <code>{@link OsCacheProfile#toString()}</code>
-   * returns a String representation of a <code>{@link OsCacheProfile}</code>
-   * when the property <code>groups</code> is not equal to <code>null</code>
-   * and is not an empty array.
-   */
   public void testToStringWithNotEmptyGroups() {
     String[] groups = { "main", null };
     int refreshPeriod = 543;
@@ -281,7 +256,7 @@ public final class OsCacheProfileTests extends TestCase implements
       String formattedGroup = null;
 
       if (group != null) {
-        formattedGroup = "'" + groups[i] + "'";
+        formattedGroup = "'" + group + "'";
       }
       buffer.append(formattedGroup);
     }
@@ -294,6 +269,6 @@ public final class OsCacheProfileTests extends TestCase implements
     logger.debug("Expected toString: " + expected);
     logger.debug("Actual toString:   " + actual);
 
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected, actual);
   }
 }

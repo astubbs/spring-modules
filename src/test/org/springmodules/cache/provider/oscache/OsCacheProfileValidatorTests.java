@@ -22,33 +22,24 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link OsCacheProfileValidator}</code>.
+ * Unit Tests for <code>{@link OsCacheProfileValidator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:28 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:56 $
  */
 public final class OsCacheProfileValidatorTests extends TestCase {
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private OsCacheProfileValidator cacheProfileValidator;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public OsCacheProfileValidatorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() {
     this.cacheProfileValidator = new OsCacheProfileValidator();
   }
@@ -60,7 +51,6 @@ public final class OsCacheProfileValidatorTests extends TestCase {
    * <code>{@link OsCacheProfile}</code>.
    */
   public void testValidateCacheProfileWithInstanceOfOscacheCacheProfile() {
-
     OsCacheProfile cacheProfile = new OsCacheProfile();
     Object object = cacheProfile;
 

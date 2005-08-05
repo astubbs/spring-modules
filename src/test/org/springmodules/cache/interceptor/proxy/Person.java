@@ -28,18 +28,8 @@ package org.springmodules.cache.interceptor.proxy;
  */
 public interface Person {
 
-  /**
-   * Returns the first name of this person.
-   * 
-   * @return the first name of this person.
-   */
   String getFirstName();
 
-  /**
-   * Returns the last name of this person.
-   * 
-   * @return the last name of this person.
-   */
   String getLastName();
 
 }

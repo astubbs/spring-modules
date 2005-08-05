@@ -26,12 +26,12 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link MethodMapCachingAttributeSource}</code>.
+ * Unit Tests for <code>{@link MethodMapCachingAttributeSource}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:13 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:50 $
  */
 public final class MethodMapCachingAttributeSourceTests extends TestCase {
 
@@ -59,18 +59,26 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
   private Method getPersonsMethod;
 
   /**
-   * Representation of <code>{@link SimulatedService}</code>.
+   * Reference to the class <code>{@link SimulatedService}</code>.
    */
   private Class targetClass;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case to construct.
-   */
   public MethodMapCachingAttributeSourceTests(String name) {
     super(name);
+  }
+
+  private void assertAddCachingAttributeThrowsException(
+      String fullyQualifiedMethodName) {
+    Class expectedException = IllegalArgumentException.class;
+
+    try {
+      this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
+          this.cachingAttribute);
+      fail("Expecting a <" + expectedException.getName() + ">");
+
+    } catch (IllegalArgumentException exception) {
+      // we are expecting this exception.
+    }
   }
 
   /**
@@ -86,16 +94,13 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
       Cached expectedCachingAttribute) {
     Map actualAttributeMap = this.cachingAttributeSource.getAttributeMap();
 
-    assertTrue("The map should have the key '" + method + "'",
-        actualAttributeMap.containsKey(method));
+    assertTrue("The map of metadata attributes should contain the key '"
+        + method + "'", actualAttributeMap.containsKey(method));
 
     assertSame("<Caching Attribute>", expectedCachingAttribute,
         actualAttributeMap.get(method));
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -154,14 +159,8 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    * specified in the given fully qualified method name does not exist.
    */
   public void testAddCachingAttributeWithNotExistingClass() {
-    try {
-      this.cachingAttributeSource.addCachingAttribute("MyFakeClass.get*",
-          this.cachingAttribute);
-      fail("An 'IllegalArgumentException' should have been thrown");
-
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    String fullyQualifiedMethodName = "MyFakeClass.get*";
+    this.assertAddCachingAttributeThrowsException(fullyQualifiedMethodName);
   }
 
   /**
@@ -172,16 +171,7 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    */
   public void testAddCachingAttributeWithNotMatchingMethod() {
     String fullyQualifiedMethodName = this.targetClass.getName() + ".addNew*";
-
-    try {
-      this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
-          this.cachingAttribute);
-
-      fail("An 'IllegalArgumentException' should have been thrown");
-
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.assertAddCachingAttributeThrowsException(fullyQualifiedMethodName);
   }
 
   /**
@@ -191,14 +181,8 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    * method name is not a fully qualified name.
    */
   public void testAddCachingAttributeWithoutFullyQualifiedMethodName() {
-    try {
-      this.cachingAttributeSource.addCachingAttribute("get*",
-          this.cachingAttribute);
-      fail("An 'IllegalArgumentException' should have been thrown");
-
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    String notFullyQualifiedMethodName = "get*";
+    this.assertAddCachingAttributeThrowsException(notFullyQualifiedMethodName);
   }
 
   /**

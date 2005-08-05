@@ -26,23 +26,11 @@ import java.util.List;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:20 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:54 $
  */
 public interface SimulatedService {
 
-  /**
-   * Returns the name of a person given the id.
-   * 
-   * @param id
-   *          the id of the person.
-   * @return the name of a person given the id.
-   */
   String getPersonName(long id);
 
-  /**
-   * Returns all the persons in the database.
-   * 
-   * @return all the persons in the database.
-   */
   List getPersons();
 }

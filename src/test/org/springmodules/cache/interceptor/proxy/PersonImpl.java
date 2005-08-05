@@ -78,22 +78,10 @@ public class PersonImpl implements Person {
     return this.lastName;
   }
 
-  /**
-   * Setter for the field <code>{@link #firstName}</code>.
-   * 
-   * @param firstName
-   *          the new value to set.
-   */
   public final void setFirstName(String firstName) {
     this.firstName = firstName;
   }
 
-  /**
-   * Setter for the field <code>{@link #lastName}</code>.
-   * 
-   * @param lastName
-   *          the new value to set.
-   */
   public final void setLastName(String lastName) {
     this.lastName = lastName;
   }

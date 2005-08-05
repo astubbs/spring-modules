@@ -20,8 +20,6 @@ package org.springmodules.cache.provider.jcs;
 
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jcs.engine.CacheElement;
 import org.apache.jcs.engine.behavior.ICacheElement;
 import org.apache.jcs.engine.behavior.IElementAttributes;
@@ -30,30 +28,25 @@ import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.CacheWrapperException;
-import org.springmodules.cache.EntryRetrievalException;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
+import org.springmodules.cache.provider.CacheAccessException;
+import org.springmodules.cache.provider.CacheException;
+import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.InvalidConfigurationException;
 
 /**
  * <p>
- * Implementation of
- * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
- * that uses JCS as the cache provider.
+ * Facade for JCS.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/07/28 03:41:10 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/05 02:18:55 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
-
-  /**
-   * Message logger.
-   */
-  private static Log logger = LogFactory.getLog(JcsFacade.class);
 
   /**
    * JCS cache manager.
@@ -108,173 +101,168 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
+   * JCS does not support cancellation of updates.
+   * 
+   * @see AbstractCacheProviderFacadeImpl#onCancelCacheUpdate(Serializable)
    */
-  protected void onFlushCache(CacheProfile cacheProfile) {
+  protected void onCancelCacheUpdate(Serializable cacheKey) {
+    // Not supported
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
+   * 
+   * @throws CacheNotFoundException
+   *           if the cache specified in the given profile cannot be found.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
+   */
+  protected void onFlushCache(CacheProfile cacheProfile) throws CacheException {
     JcsProfile profile = (JcsProfile) cacheProfile;
-
     String cacheName = profile.getCacheName();
-    if (StringUtils.hasText(cacheName)) {
-      CompositeCache cache = this.cacheManager.getCache(cacheName);
-      if (cache == null) {
-        if (logger.isInfoEnabled()) {
-          String logMessage = "Method 'onFlushCache(CacheProfile)'. Could not find JCS cache: "
-              + cacheName;
-          logger.info(logMessage);
-        }
+
+    CompositeCache cache = this.cacheManager.getCache(cacheName);
+    if (cache == null) {
+      throw new CacheNotFoundException(cacheName);
+    }
+
+    String cacheGroup = profile.getGroup();
+
+    try {
+      if (StringUtils.hasText(cacheGroup)) {
+        GroupId groupId = new GroupId(cacheName, cacheGroup);
+        cache.remove(groupId);
+
       } else {
-        String cacheGroup = profile.getGroup();
-
-        if (logger.isDebugEnabled()) {
-          logger
-              .debug("Method 'onFlushCache(CacheProfile)'. Variable 'cacheGroup': "
-                  + cacheGroup);
-        }
-
-        try {
-          if (StringUtils.hasText(cacheGroup)) {
-            GroupId groupId = new GroupId(cacheName, cacheGroup);
-            cache.remove(groupId);
-          }
-          else {
-            cache.removeAll();
-          }
-          
-        } catch (Exception exception) {
-          StringBuffer messageBuffer = new StringBuffer(64);
-          messageBuffer
-              .append("Exception thrown when flushing cache. Variable 'cacheProfile': ");
-          messageBuffer.append(cacheProfile);
-          String errorMessage = messageBuffer.toString();
-
-          logger.error(errorMessage, exception);
-          throw new CacheWrapperException(errorMessage, exception);
-        }
+        cache.removeAll();
       }
+
+    } catch (Exception exception) {
+      String errorMessage = "Unable to flush cache";
+      throw new CacheAccessException(errorMessage, exception);
     }
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#onGetFromCache(Serializable,
    *      CacheProfile)
+   * 
+   * @throws CacheNotFoundException
+   *           if the cache specified in the given profile cannot be found.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
    */
   protected Object onGetFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) throws EntryRetrievalException {
-
-    Object cachedObject = null;
+      CacheProfile cacheProfile) throws CacheException {
 
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
-    
-    if (StringUtils.hasText(cacheName)) {
-      CompositeCache cache = this.cacheManager.getCache(cacheName);
 
-      if (cache == null) {
-        String logMessage = "Method 'onGetFromCache(CacheKey, CacheProfile)'. Could not find JCS cache: "
-            + cacheName;
+    CompositeCache cache = this.cacheManager.getCache(cacheName);
+    if (cache == null) {
+      throw new CacheNotFoundException(cacheName);
+    }
 
-        logger.info(logMessage);
-        throw new EntryRetrievalException("Could not find JCS cache: "
-            + cacheName);
-      }
+    Serializable key = this.getKey(cacheKey, profile);
+    Object cachedObject = null;
 
-      Serializable key = this.getKey(cacheKey, profile);
+    try {
       ICacheElement cacheElement = cache.get(key);
-
       if (cacheElement != null) {
         cachedObject = cacheElement.getVal();
       }
+
+    } catch (Exception exception) {
+      String errorMessage = "Unable to retrieve an entry from the cache";
+      throw new CacheAccessException(errorMessage, exception);
     }
+
     return cachedObject;
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
    *      CacheProfile, Object)
+   * 
+   * @throws CacheNotFoundException
+   *           if the cache specified in the given profile cannot be found.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
    */
   protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
-      Object objectToCache) {
-    JcsProfile profile = (JcsProfile) cacheProfile;
+      Object objectToCache) throws CacheException {
 
+    JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    if (StringUtils.hasText(cacheName)) {
-      CompositeCache cache = this.cacheManager.getCache(cacheName);
+    CompositeCache cache = this.cacheManager.getCache(cacheName);
 
-      if (cache == null) {
-        if (logger.isInfoEnabled()) {
-          String logMessage = "Method 'onPutInCache(CacheKey, CacheProfile, Object)'. Could not find JCS cache: "
-              + cacheName;
-          logger.info(logMessage);
-        }
-      } else {
-        Serializable key = this.getKey(cacheKey, profile);
+    if (cache == null) {
+      throw new CacheNotFoundException(cacheName);
+    }
 
-        ICacheElement newCacheElement = new CacheElement(cache
-            .getCacheName(), key, objectToCache);
+    Serializable key = this.getKey(cacheKey, profile);
+    ICacheElement newCacheElement = new CacheElement(cache.getCacheName(), key,
+        objectToCache);
 
-        IElementAttributes elementAttributes = cache.getElementAttributes()
-            .copy();
+    IElementAttributes elementAttributes = cache.getElementAttributes().copy();
+    newCacheElement.setElementAttributes(elementAttributes);
 
-        newCacheElement.setElementAttributes(elementAttributes);
-        try {
-          cache.update(newCacheElement);
-        } catch (Exception exception) {
-          String errorMessage = "Exception thrown when storing an object in the cache. Variable 'cacheProfile': "
-              + cacheProfile;
+    try {
+      cache.update(newCacheElement);
 
-          logger.error(errorMessage, exception);
-          throw new CacheWrapperException(errorMessage, exception);
-        } // end 'catch'
-      } // end 'if (cache != null)'
-    } // end 'if (StringUtils.isNotEmpty(cacheName))'
-  }
-
-  /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#removeFromCache(Serializable,
-   *      String)
-   */
-  public void removeFromCache(Serializable cacheKey, String cacheProfileId) {
-    CacheProfile cacheProfile = super.getCacheProfile(cacheProfileId);
-
-    if (cacheProfile != null) {
-      JcsProfile profile = (JcsProfile) cacheProfile;
-
-      String cacheName = profile.getCacheName();
-
-      if (StringUtils.hasText(cacheName)) {
-        CompositeCache cache = this.cacheManager.getCache(cacheName);
-
-        if (cache == null) {
-          if (logger.isInfoEnabled()) {
-            String logMessage = "Method 'removeFromCache(CacheKey, String)'. Could not find JCS cache: "
-                + cacheName;
-            logger.info(logMessage);
-          }
-        } else {
-          Serializable key = this.getKey(cacheKey, profile);
-          cache.remove(key);
-        } // end 'else'
-      } // end 'if (StringUtils.isNotEmpty(cacheName))'
+    } catch (Exception exception) {
+      String errorMessage = "Unable to store an object in the cache";
+      throw new CacheAccessException(errorMessage, exception);
     }
   }
 
   /**
-   * Setter for the field <code>{@link #cacheManager}</code>.
+   * @see AbstractCacheProviderFacadeImpl#onRemoveFromCache(Serializable,
+   *      CacheProfile)
    * 
-   * @param cacheManager
-   *          the new value to set
+   * @throws CacheNotFoundException
+   *           if the cache specified in the given profile cannot be found.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
    */
+  protected void onRemoveFromCache(Serializable cacheKey,
+      CacheProfile cacheProfile) throws CacheException {
+
+    JcsProfile profile = (JcsProfile) cacheProfile;
+    String cacheName = profile.getCacheName();
+
+    CompositeCache cache = this.cacheManager.getCache(cacheName);
+
+    if (cache == null) {
+      throw new CacheNotFoundException(cacheName);
+    }
+
+    Serializable key = this.getKey(cacheKey, profile);
+
+    try {
+      cache.remove(key);
+
+    } catch (Exception exception) {
+      String errorMessage = "Unable to remove the entry from the cache";
+      throw new CacheAccessException(errorMessage, exception);
+    }
+  }
+
   public void setCacheManager(CompositeCacheManager cacheManager) {
     this.cacheManager = cacheManager;
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
+   * 
+   * @throws InvalidConfigurationException
+   *           if the Cache Manager is <code>null</code>.
    */
-  protected void validateCacheManager() {
+  protected void validateCacheManager() throws InvalidConfigurationException {
     if (null == this.cacheManager) {
-      throw new IllegalStateException("The Cache Manager should not be null");
+      throw new InvalidConfigurationException(
+          "The Cache Manager should not be null");
     }
   }
 }

@@ -29,18 +29,15 @@ import org.springmodules.cache.interceptor.SimulatedService;
 
 /**
  * <p>
- * Unit Test for <code>{@link CacheFlushAttributeSourceEditor}</code>.
+ * Unit Tests for <code>{@link CacheFlushAttributeSourceEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:16 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:18:46 $
  */
 public class CacheFlushAttributeSourceEditorTests extends TestCase {
 
-  /**
-   * The <code>line.separator</code> System Property.
-   */
   public static final String LINE_SEPARATOR = System
       .getProperty("line.separator");
 
@@ -50,23 +47,14 @@ public class CacheFlushAttributeSourceEditorTests extends TestCase {
   private CacheFlushAttributeSourceEditor editor;
 
   /**
-   * Representation of <code>{@link SimulatedService}</code>.
+   * Reference to class <code>{@link SimulatedService}</code>.
    */
   private Class targetClass;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case to construct.
-   */
   public CacheFlushAttributeSourceEditorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 

@@ -22,33 +22,24 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link CachingAttributeEditor}</code>.
+ * Unit Tests for <code>{@link CachingAttributeEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:13 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:49 $
  */
 public final class CachingAttributeEditorTests extends TestCase {
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object under test.
    */
   private CachingAttributeEditor editor;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public CachingAttributeEditorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -70,6 +61,6 @@ public final class CachingAttributeEditorTests extends TestCase {
     this.editor.setAsText(cacheProfileId);
     Object actualCached = this.editor.getValue();
 
-    assertEquals("<Cached>", expectedCached, actualCached);
+    assertEquals("<Caching attribute>", expectedCached, actualCached);
   }
 }

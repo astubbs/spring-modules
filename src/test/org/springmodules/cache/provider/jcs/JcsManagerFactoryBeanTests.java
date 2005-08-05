@@ -30,23 +30,20 @@ import org.springmodules.cache.provider.AbstractCacheManagerFactoryBeanTests;
 
 /**
  * <p>
- * Unit Test for <code>{@link JcsManagerFactoryBean}</code>.
+ * Unit Tests for <code>{@link JcsManagerFactoryBean}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:11 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:40 $
  */
 public final class JcsManagerFactoryBeanTests extends
     AbstractCacheManagerFactoryBeanTests {
 
-  /**
-   * Path of an alternative configuration file for JCS.
-   */
   private String alternativeCacheConfigurationFilePath;
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private JcsManagerFactoryBean cacheManagerFactoryBean;
 
@@ -61,42 +58,28 @@ public final class JcsManagerFactoryBeanTests extends
    */
   private Properties configProperties;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public JcsManagerFactoryBeanTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertEqualObjectTypes(Class expected, Class actual) {
+    assertEquals("<Object type>", expected, actual);
+  }
+
+  private void assertEqualsPropertyMaxObjects(int expected, int actual) {
+    assertEquals("<Property 'maxObjects'>", expected, actual);
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
     this.alternativeCacheConfigurationFilePath = super.getPackageNameAsPath()
         + "/jcs-config.ccf";
   }
 
-  /**
-   * Sets up <code>{@link #cacheManagerFactoryBean}</code>.
-   */
   private void setUpCacheManagerFactoryBean() {
     this.cacheManagerFactoryBean = new JcsManagerFactoryBean();
   }
 
-  /**
-   * Sets up:
-   * <ul>
-   * <li><code>{@link #configLocation}</code></li>
-   * <li><code>{@link #configProperties}</code></li>
-   * </ul>
-   * 
-   * @param configurationFileName
-   *          the name of the configuration file to use.
-   */
   private void setUpConfigurationProperties(String configurationFileName)
       throws Exception {
 
@@ -108,24 +91,20 @@ public final class JcsManagerFactoryBeanTests extends
     this.configProperties.load(inputStream);
   }
 
-  /**
-   * Cleans up resources.
-   */
   protected void tearDown() {
     if (this.cacheManagerFactoryBean != null) {
       try {
         this.cacheManagerFactoryBean.destroy();
       } catch (Exception exception) {
         // ignore the exception.
-      } // end 'catch'
-    } // end 'if'
+      }
+    }
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsManagerFactoryBean#afterPropertiesSet()}</code>
-   * creates a new cache manager which properties are loaded from a
-   * configuration file.
+   * <code>{@link JcsManagerFactoryBean#afterPropertiesSet()}</code> creates a
+   * new cache manager which properties are loaded from a configuration file.
    */
   public void testAfterPropertiesSet() throws Exception {
     this.setUpCacheManagerFactoryBean();
@@ -139,7 +118,7 @@ public final class JcsManagerFactoryBeanTests extends
     CompositeCacheManager cacheManager = (CompositeCacheManager) this.cacheManagerFactoryBean
         .getObject();
 
-    assertNotNull("The cache manager should not be null", cacheManager);
+    assertNotNull(cacheManager);
 
     // verify that the properties of the configuration file are the same as the
     // ones of the cache manager.
@@ -151,15 +130,14 @@ public final class JcsManagerFactoryBeanTests extends
     ICompositeCacheAttributes cacheAttributes = cache.getCacheAttributes();
     int actualMaxObjects = cacheAttributes.getMaxObjects();
 
-    assertEquals("<Property 'maxObjects'>", expectedMaxObjects,
-        actualMaxObjects);
+    this.assertEqualsPropertyMaxObjects(expectedMaxObjects, actualMaxObjects);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsManagerFactoryBean#afterPropertiesSet()}</code>
-   * creates a new cache manager using the default configuration file,
-   * "cache.ccf", if there is not any configuration file specified.
+   * <code>{@link JcsManagerFactoryBean#afterPropertiesSet()}</code> creates a
+   * new cache manager using the default configuration file, "cache.ccf", if
+   * there is not any configuration file specified.
    */
   public void testAfterPropertiesSetWithConfigLocationEqualToNull()
       throws Exception {
@@ -175,7 +153,7 @@ public final class JcsManagerFactoryBeanTests extends
     CompositeCacheManager cacheManager = (CompositeCacheManager) this.cacheManagerFactoryBean
         .getObject();
 
-    assertNotNull("The cache manager should not be null", cacheManager);
+    assertNotNull(cacheManager);
 
     // verify that the properties of the configuration file are the same as the
     // ones of the cache manager.
@@ -187,14 +165,13 @@ public final class JcsManagerFactoryBeanTests extends
     ICompositeCacheAttributes cacheAttributes = cache.getCacheAttributes();
     int actualMaxObjects = cacheAttributes.getMaxObjects();
 
-    assertEquals("<Property 'maxObjects'>", expectedMaxObjects,
-        actualMaxObjects);
+    this.assertEqualsPropertyMaxObjects(expectedMaxObjects, actualMaxObjects);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsManagerFactoryBean#destroy()}</code> frees the
-   * caches of the cache manager.
+   * <code>{@link JcsManagerFactoryBean#destroy()}</code> frees the caches of
+   * the cache manager.
    */
   public void testDestroy() throws Exception {
     this.setUpCacheManagerFactoryBean();
@@ -221,15 +198,14 @@ public final class JcsManagerFactoryBeanTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link JcsManagerFactoryBean#destroy()}</code> does not throw
-   * any exception if the cache manager is <code>null</code>.
+   * <code>{@link JcsManagerFactoryBean#destroy()}</code> does not throw any
+   * exception if the cache manager is <code>null</code>.
    */
   public void testDestroyWithCacheManagerEqualToNull() throws Exception {
     this.setUpCacheManagerFactoryBean();
 
     // verify that the cache manager is null before calling 'destroy()'
-    assertNull("The cache manager should be null", this.cacheManagerFactoryBean
-        .getObject());
+    assertNull(this.cacheManagerFactoryBean.getObject());
 
     try {
       this.cacheManagerFactoryBean.destroy();
@@ -238,14 +214,13 @@ public final class JcsManagerFactoryBeanTests extends
     }
 
     // verify that the cache manager is null after calling 'destroy()'
-    assertNull("The cache manager should be null", this.cacheManagerFactoryBean
-        .getObject());
+    assertNull(this.cacheManagerFactoryBean.getObject());
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsManagerFactoryBean#getObjectType()}</code> returns
-   * the class of the created cache manager.
+   * <code>{@link JcsManagerFactoryBean#getObjectType()}</code> returns the
+   * class of the created cache manager.
    */
   public void testGetObjectType() throws Exception {
     this.setUpCacheManagerFactoryBean();
@@ -256,15 +231,15 @@ public final class JcsManagerFactoryBeanTests extends
     this.cacheManagerFactoryBean.afterPropertiesSet();
 
     Class actualObjectType = this.cacheManagerFactoryBean.getObjectType();
-    assertEquals("<Object type>", expectedObjectType, actualObjectType);
+    this.assertEqualObjectTypes(expectedObjectType, actualObjectType);
 
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsManagerFactoryBean#getObjectType()}</code> returns
-   * the class 'org.apache.jcs.engine.control.CompositeCacheManager' if the
-   * cache manager has not been created yet.
+   * <code>{@link JcsManagerFactoryBean#getObjectType()}</code> returns the
+   * class 'org.apache.jcs.engine.control.CompositeCacheManager' if the cache
+   * manager has not been created yet.
    */
   public void testGetObjectTypeWhenCacheManagerIsNull() {
     this.setUpCacheManagerFactoryBean();
@@ -274,12 +249,12 @@ public final class JcsManagerFactoryBeanTests extends
     // test when the cache manager has not been created yet.
     Class actualObjectType = this.cacheManagerFactoryBean.getObjectType();
 
-    assertEquals("<Object type>", expectedObjectType, actualObjectType);
+    this.assertEqualObjectTypes(expectedObjectType, actualObjectType);
   }
 
   /**
-   * Verifies that <code>{@link JcsManagerFactoryBean}</code> notifies
-   * the Spring IoC container that is a singleton.
+   * Verifies that <code>{@link JcsManagerFactoryBean}</code> notifies the
+   * Spring IoC container that is a singleton.
    */
   public void testIsSingleton() {
     this.setUpCacheManagerFactoryBean();

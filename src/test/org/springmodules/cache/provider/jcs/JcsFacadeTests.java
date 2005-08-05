@@ -24,8 +24,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jcs.engine.CacheElement;
 import org.apache.jcs.engine.CompositeCacheAttributes;
 import org.apache.jcs.engine.ElementAttributes;
@@ -37,30 +35,26 @@ import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.CacheWrapperException;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
+import org.springmodules.cache.provider.CacheAccessException;
+import org.springmodules.cache.provider.CacheException;
+import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.InvalidConfigurationException;
 
 /**
  * <p>
- * Unit Test for <code>{@link JcsFacade}</code>.
+ * Unit Tests for <code>{@link JcsFacade}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/28 03:43:29 $
+ * @version $Revision: 1.7 $ $Date: 2005/08/05 02:18:40 $
  */
 public final class JcsFacadeTests extends TestCase {
 
-  /**
-   * A JCS Cache.
-   */
   private CompositeCache cache;
 
-  /**
-   * Controls the behavior of <code>{@link #cache}</code> if initialized as a
-   * mock object.
-   */
   private MockClassControl cacheControl;
 
   /**
@@ -68,20 +62,10 @@ public final class JcsFacadeTests extends TestCase {
    */
   private String[] cacheKeys;
 
-  /**
-   * JCS Cache Manager.
-   */
   private CompositeCacheManager cacheManager;
 
-  /**
-   * Controls the behavior of <code>{@link #cacheManager}</code> if
-   * initialized as a mock object.
-   */
   private MockClassControl cacheManagerControl;
 
-  /**
-   * Name of the JCS to use.
-   */
   private String cacheName;
 
   /**
@@ -90,9 +74,6 @@ public final class JcsFacadeTests extends TestCase {
    */
   private String[] cacheProfileIds;
 
-  /**
-   * Configuration options for the caching services.
-   */
   private JcsProfile[] cacheProfiles;
 
   /**
@@ -105,25 +86,15 @@ public final class JcsFacadeTests extends TestCase {
    */
   private JcsFacade jcsFacade;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case to construct.
-   */
   public JcsFacadeTests(String name) {
     super(name);
   }
 
-  /**
-   * Creates a new element that can be added to <code>{@link #cache}</code>.
-   * 
-   * @param key
-   *          the key of the cache entry.
-   * @param objectToCache
-   *          the object to store in the cache.
-   * @return a new element that can be stored in the cache.
-   */
+  private void assertEqualGeneratedKeys(Serializable expected,
+      Serializable actual) {
+    assertEquals("<Generated key>", expected, actual);
+  }
+
   protected ICacheElement createNewCacheElement(Serializable key,
       Object objectToCache) {
     ICacheElement newCacheElement = new CacheElement(this.cache.getCacheName(),
@@ -136,9 +107,13 @@ public final class JcsFacadeTests extends TestCase {
     return newCacheElement;
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void setStateOfMockControlsToReplay() {
+    if (this.cacheControl != null) {
+      this.cacheControl.replay();
+    }
+    this.cacheManagerControl.replay();
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -180,22 +155,10 @@ public final class JcsFacadeTests extends TestCase {
         cacheProfileMap.size());
   }
 
-  /**
-   * Sets up <code>{@link #cacheManager}</code> as a mock object.
-   * 
-   * @param methodToMock
-   *          the method to mock.
-   */
   private void setUpCacheAdministratorAsMockObject(Method methodToMock) {
     this.setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
   }
 
-  /**
-   * Sets up <code>{@link #cacheManager}</code> as a mock object.
-   * 
-   * @param methodsToMock
-   *          the methods to mock.
-   */
   private void setUpCacheAdministratorAsMockObject(Method[] methodsToMock) {
     Class targetClass = CompositeCacheManager.class;
 
@@ -207,22 +170,10 @@ public final class JcsFacadeTests extends TestCase {
     this.jcsFacade.setCacheManager(this.cacheManager);
   }
 
-  /**
-   * Sets up <code>{@link #cache}</code> as a mock object
-   * 
-   * @param methodToMock
-   *          the methods to mock.
-   */
   private void setUpCacheAsMockObject(Method methodToMock) throws Exception {
     this.setUpCacheAsMockObject(new Method[] { methodToMock });
   }
 
-  /**
-   * Sets up <code>{@link #cache}</code> as a mock object
-   * 
-   * @param methodsToMock
-   *          the methods to mock.
-   */
   private void setUpCacheAsMockObject(Method[] methodsToMock) throws Exception {
     // Create the proxy for the class 'CompositeManager'.
     Class[] constructorTypes = new Class[] { String.class,
@@ -245,9 +196,6 @@ public final class JcsFacadeTests extends TestCase {
     this.cache = (CompositeCache) this.cacheControl.getMock();
   }
 
-  /**
-   * Tears down the test fixture.
-   */
   protected void tearDown() throws Exception {
     super.tearDown();
 
@@ -312,7 +260,7 @@ public final class JcsFacadeTests extends TestCase {
 
     Serializable actualKey = this.jcsFacade.getKey(this.cacheKeys[i], profile);
 
-    assertEquals("<Generated key>", expectedKey, actualKey);
+    this.assertEqualGeneratedKeys(expectedKey, actualKey);
   }
 
   /**
@@ -328,18 +276,16 @@ public final class JcsFacadeTests extends TestCase {
     int i = 0;
     Serializable actualKey = this.jcsFacade.getKey(this.cacheKeys[i], profile);
 
-    assertEquals("<Generated key>", this.cacheKeys[i], actualKey);
+    this.assertEqualGeneratedKeys(this.cacheKeys[i], actualKey);
   }
 
   /**
    * Verifies that the method
    * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * does not remove any entries if the cache manager cannot find a cache under
-   * the given name.
+   * throws a <code>{@link CacheNotFoundException}</code> if the specified
+   * cache does not exist.
    */
-  public void testOnFlushCacheWhenCacheManagerReturnsCacheEqualToNull()
-      throws Exception {
-
+  public void testOnFlushCacheWhenCacheIsNotFound() throws Exception {
     Method getCacheMethod = CompositeCacheManager.class.getDeclaredMethod(
         "getCache", new Class[] { String.class });
 
@@ -349,20 +295,26 @@ public final class JcsFacadeTests extends TestCase {
     this.cacheManager.getCache(this.cacheName);
     this.cacheManagerControl.setReturnValue(null);
 
-    // set the state of the mock control to "replay".
-    this.cacheManagerControl.replay();
+    this.setStateOfMockControlsToReplay();
 
+    Class expectedException = CacheNotFoundException.class;
     // execute the method to test.
-    this.jcsFacade.onFlushCache(this.cacheProfiles[0]);
+    try {
+      this.jcsFacade.onFlushCache(this.cacheProfiles[0]);
+      fail("Expected exception <" + expectedException.getName() + ">");
 
-    // verify that the expectations of the mock control were met.
-    this.cacheManagerControl.verify();
+    } catch (CacheException exception) {
+      assertEquals("<CacheException class>", expectedException, exception
+          .getClass());
+    }
+
+    this.verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
    * Verifies that the method
    * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * throws a <code>{@link CacheWrapperException}</code> wraps the exception
+   * throws a <code>{@link CacheAccessException}</code> wraps the exception
    * thrown by JCS when flushing the cache.
    */
   public void testOnFlushCacheWhenCacheManagerThrowsExceptionWhenRemovingGroup()
@@ -385,48 +337,20 @@ public final class JcsFacadeTests extends TestCase {
     this.cache.removeAll();
     this.cacheControl.setThrowable(thrownException);
 
-    // set the state of the mock control to "replay".
-    this.cacheManagerControl.replay();
-    this.cacheControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     // execute the method to test.
     try {
       JcsProfile profile = new JcsProfile(this.cacheName);
       this.jcsFacade.onFlushCache(profile);
-      fail("A 'CacheWrapperException' should have been thrown");
-    } catch (CacheWrapperException exception) {
+      fail("Expecting exception <" + CacheAccessException.class.getName() + ">");
+
+    } catch (CacheAccessException exception) {
       Throwable rootException = exception.getCause();
-
-      logger.debug("Root exception: ", rootException);
-
       assertSame("<Nested exception>", thrownException, rootException);
     }
 
-    // verify that the expectations of the mock control were met.
-    this.cacheManagerControl.verify();
-    this.cacheControl.verify();
-  }
-
-  /**
-   * Message logger.
-   */
-  private static Log logger = LogFactory.getLog(JcsFacadeTests.class);
-
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * does not flush any cache or group if the name of thec cache specified in
-   * the given cache profile is empty.
-   */
-  public void testOnFlushCacheWhenCacheNameIsEmpty() throws Exception {
-    this.updateCache(new Object[] { "firstObject", "secondObject" });
-
-    // execute the method to test.
-    int i = 0;
-    this.cacheProfiles[i].setCacheName("");
-    this.jcsFacade.onFlushCache(this.cacheProfiles[i]);
-
-    assertEquals("<Cache size>", this.cacheKeys.length, this.cache.getSize());
+    this.verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -504,7 +428,7 @@ public final class JcsFacadeTests extends TestCase {
    * returns <code>null</code> if the name of the cache, specified in the
    * given cache profile, is empty.
    */
-  public void testOnGetFromCacheWhenCacheNameIsEmpty() throws Exception {
+  public void testOnGetFromCacheWhenCacheIsNotFound() throws Exception {
     int i = 0;
     String cacheKey = this.cacheKeys[i];
     JcsProfile profile = this.cacheProfiles[i];
@@ -513,7 +437,7 @@ public final class JcsFacadeTests extends TestCase {
     // execute the method to test.
     Object cachedObject = this.jcsFacade.onGetFromCache(cacheKey, profile);
 
-    assertNull("The retrieved object should be null", cachedObject);
+    assertNull(cachedObject);
   }
 
   /**
@@ -530,7 +454,7 @@ public final class JcsFacadeTests extends TestCase {
     // execute the method to test.
     Object cachedObject = this.jcsFacade.onGetFromCache(cacheKey, profile);
 
-    assertNull("The retrieved object should be null", cachedObject);
+    assertNull(cachedObject);
   }
 
   /**
@@ -570,7 +494,7 @@ public final class JcsFacadeTests extends TestCase {
 
     Serializable entryKey = this.jcsFacade.getKey(cacheKey, cacheProfile);
     ICacheElement cacheElement = this.cache.get(entryKey);
-    assertNull("The retrieved object should be null", cacheElement);
+    assertNull(cacheElement);
   }
 
   /**
@@ -622,14 +546,15 @@ public final class JcsFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link JcsFacade#validateCacheManager()}</code> throws an
-   * <code>IllegalStateException</code> the cache manager is <code>null</code>.
+   * <code>{@link InvalidConfigurationException}</code> the cache manager is
+   * <code>null</code>.
    */
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
     this.jcsFacade.setCacheManager(null);
     try {
       this.jcsFacade.validateCacheManager();
-      fail("An 'IllegalStateException' should have been thrown");
-    } catch (IllegalStateException exception) {
+      fail("An 'InvalidConfigurationException' should have been thrown");
+    } catch (InvalidConfigurationException exception) {
       // we are expecting this exception.
     }
   }
@@ -676,5 +601,12 @@ public final class JcsFacadeTests extends TestCase {
     }
 
     return entryKeys;
+  }
+
+  private void verifyExpectationsOfMockControlsWereMet() {
+    if (this.cacheControl != null) {
+      this.cacheControl.verify();
+    }
+    this.cacheManagerControl.verify();
   }
 }

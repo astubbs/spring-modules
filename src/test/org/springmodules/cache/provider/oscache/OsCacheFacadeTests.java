@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.easymock.classextension.MockClassControl;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.InvalidConfigurationException;
 
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -42,29 +43,16 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/07/26 03:45:02 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:56 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
-  /**
-   * Message logger.
-   */
   private static Log logger = LogFactory.getLog(OsCacheFacadeTests.class);
 
-  /**
-   * OSCache cache administrator.
-   */
   private GeneralCacheAdministrator cacheAdministrator;
 
-  /**
-   * Controls the behavior of <code>{@link #cacheAdministrator}</code> if
-   * initialized as a mock object.
-   */
   private MockClassControl cacheAdministratorControl;
 
-  /**
-   * Listens to cache entry events.
-   */
   private CacheEntryEventListenerImpl cacheEntryEventListener;
 
   /**
@@ -72,9 +60,6 @@ public class OsCacheFacadeTests extends TestCase {
    */
   private String cacheKey;
 
-  /**
-   * Configuration options for the caching services.
-   */
   private OsCacheProfile cacheProfile;
 
   /**
@@ -93,12 +78,6 @@ public class OsCacheFacadeTests extends TestCase {
    */
   private OsCacheFacade osCacheFacade;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case to construct.
-   */
   public OsCacheFacadeTests(String name) {
     super(name);
   }
@@ -108,7 +87,7 @@ public class OsCacheFacadeTests extends TestCase {
    * <code>{@link OsCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
    * removes the entry stored under the given key.
    */
-  public void removeFromCache() {
+  public void removeFromCache() throws Exception {
     Object objectToStore = "An Object";
     this.cacheAdministrator.putInCache(this.cacheKey, objectToStore);
 
@@ -117,7 +96,8 @@ public class OsCacheFacadeTests extends TestCase {
 
     try {
       this.cacheAdministrator.getFromCache(this.cacheKey);
-      fail("A 'NeedsRefreshException' should have been thrown");
+      fail("Expecting exception <" + NeedsRefreshException.class.getName()
+          + ">");
     } catch (NeedsRefreshException exception) {
       // we are expecting this exception
     }
@@ -151,22 +131,10 @@ public class OsCacheFacadeTests extends TestCase {
     this.osCacheFacade.setCacheProfiles(cacheProfiles);
   }
 
-  /**
-   * Sets up <code>{@link #cacheAdministrator}</code> as a mock object.
-   * 
-   * @param methodToMock
-   *          the method to mock.
-   */
   private void setUpCacheAdministratorAsMockObject(Method methodToMock) {
     this.setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
   }
 
-  /**
-   * Sets up <code>{@link #cacheAdministrator}</code> as a mock object.
-   * 
-   * @param methodsToMock
-   *          the methods to mock.
-   */
   private void setUpCacheAdministratorAsMockObject(Method[] methodsToMock) {
     Class targetClass = GeneralCacheAdministrator.class;
 
@@ -178,9 +146,6 @@ public class OsCacheFacadeTests extends TestCase {
     this.osCacheFacade.setCacheManager(this.cacheAdministrator);
   }
 
-  /**
-   * Tears down the test fixture.
-   */
   protected void tearDown() throws Exception {
     super.tearDown();
 
@@ -323,7 +288,7 @@ public class OsCacheFacadeTests extends TestCase {
     Object cachedObject = this.osCacheFacade.onGetFromCache("NonExistingKey",
         this.cacheProfile);
 
-    assertNull("The retrieved object should be null", cachedObject);
+    assertNull(cachedObject);
   }
 
   /**
@@ -460,7 +425,8 @@ public class OsCacheFacadeTests extends TestCase {
 
     try {
       this.cacheAdministrator.getFromCache(this.cacheKey);
-      fail("A 'NeedsRefreshException' should have been thrown");
+      fail("Expecting exception <" + NeedsRefreshException.class.getName()
+          + ">");
     } catch (NeedsRefreshException exception) {
       // we are expecting this exception
     }
@@ -498,10 +464,10 @@ public class OsCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OsCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
+   * <code>{@link OsCacheFacade#onRemoveFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
    * removes from the cache the entry stored under the given key.
    */
-  public void testRemoveFromCache() throws Exception {
+  public void testOnRemoveFromCache() throws Exception {
     Method flushEntryMethod = GeneralCacheAdministrator.class
         .getDeclaredMethod("flushEntry", new Class[] { String.class });
 
@@ -516,7 +482,7 @@ public class OsCacheFacadeTests extends TestCase {
     this.cacheAdministratorControl.replay();
 
     // execute the method to test.
-    this.osCacheFacade.removeFromCache(key, null);
+    this.osCacheFacade.onRemoveFromCache(key, null);
 
     // verify that the expectations of the mock control were met.
     this.cacheAdministratorControl.verify();
@@ -532,8 +498,9 @@ public class OsCacheFacadeTests extends TestCase {
     this.osCacheFacade.setCacheManager(null);
     try {
       this.osCacheFacade.validateCacheManager();
-      fail("An 'IllegalStateException' should have been thrown");
-    } catch (IllegalStateException exception) {
+      fail("Expecting exception <"
+          + InvalidConfigurationException.class.getName() + ">");
+    } catch (InvalidConfigurationException exception) {
       // we are expecting this exception.
     }
   }
@@ -543,7 +510,8 @@ public class OsCacheFacadeTests extends TestCase {
    * <code>{@link OsCacheFacade#validateCacheManager()}</code> does not throw
    * any exception if the cache manager is not <code>null</code>.
    */
-  public void testValidateCacheManagerWithCacheManagerNotEqualToNull() {
+  public void testValidateCacheManagerWithCacheManagerNotEqualToNull()
+      throws Exception {
     this.osCacheFacade.validateCacheManager();
   }
 }

@@ -29,7 +29,7 @@ import org.springmodules.cache.key.CacheKeyGenerator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/15 00:38:04 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/05 02:18:51 $
  */
 public class CachingAspectSupport {
 
@@ -38,24 +38,14 @@ public class CachingAspectSupport {
    * method to apply caching to is <code>null</code>.
    */
   public static final Serializable NULL_ENTRY = new Serializable() {
-    /**
-     * Version number of this class.
-     * 
-     * @see java.io.Serializable
-     */
+
     private static final long serialVersionUID = 3257007674280522803L;
 
     /**
-     * Returns a string representation of the object. In general, the
-     * <code>toString</code> method returns a string that "textually
-     * represents" this object.
-     * 
-     * @return a string representation of the object.
-     * 
      * @see Object#toString()
      */
     public String toString() {
-      return "NULL_ENTRY";
+      return "<NULL_ENTRY>";
     }
   };
 
@@ -74,68 +64,31 @@ public class CachingAspectSupport {
    */
   private EntryStoredListener entryStoredListener;
 
-  /**
-   * Constructor.
-   */
   public CachingAspectSupport() {
-
     super();
   }
 
-  /**
-   * Getter for field <code>{@link #cacheKeyGenerator}</code>.
-   * 
-   * @return the field <code>cacheKeyGenerator</code>.
-   */
   protected final CacheKeyGenerator getCacheKeyGenerator() {
     return this.cacheKeyGenerator;
   }
 
-  /**
-   * Getter for field <code>{@link #cachingAttributeSource}</code>.
-   * 
-   * @return the field <code>cachingAttributeSource</code>.
-   */
   public final CachingAttributeSource getCachingAttributeSource() {
     return this.cachingAttributeSource;
   }
 
-  /**
-   * Getter for field <code>{@link #entryStoredListener}</code>.
-   * 
-   * @return the field <code>entryStoredListener</code>.
-   */
   public final EntryStoredListener getEntryStoredListener() {
     return this.entryStoredListener;
   }
 
-  /**
-   * Setter for the field <code>{@link #cacheKeyGenerator}</code>.
-   * 
-   * @param cacheKeyGenerator
-   *          the new value to set
-   */
   public final void setCacheKeyGenerator(CacheKeyGenerator cacheKeyGenerator) {
     this.cacheKeyGenerator = cacheKeyGenerator;
   }
 
-  /**
-   * Setter for the field <code>{@link #cachingAttributeSource}</code>.
-   * 
-   * @param cachingAttributeSource
-   *          the new value to set
-   */
   public final void setCachingAttributeSource(
       CachingAttributeSource cachingAttributeSource) {
     this.cachingAttributeSource = cachingAttributeSource;
   }
 
-  /**
-   * Setter for the field <code>{@link #entryStoredListener}</code>.
-   * 
-   * @param entryStoredListener
-   *          the new value to set
-   */
   public final void setEntryStoredListener(
       EntryStoredListener entryStoredListener) {
     this.entryStoredListener = entryStoredListener;

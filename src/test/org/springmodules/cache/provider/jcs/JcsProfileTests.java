@@ -28,42 +28,33 @@ import org.springmodules.EqualsHashCodeTestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link JcsProfile}</code>.
+ * Unit Tests for <code>{@link JcsProfile}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/07/28 03:43:45 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/05 02:18:40 $
  */
 public final class JcsProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
 
-  /**
-   * Message logger.
-   */
   private static Log logger = LogFactory.getLog(JcsProfileTests.class);
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private JcsProfile cacheProfile;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public JcsProfileTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertEqualToString(String expected, String actual) {
+    assertEquals("<ToString>", expected, actual);
+  }
+  
   protected void setUp() throws Exception {
     super.setUp();
-
     this.cacheProfile = new JcsProfile();
   }
 
@@ -167,12 +158,6 @@ public final class JcsProfileTests extends TestCase implements
     assertFalse(this.cacheProfile.equals(null));
   }
 
-  /**
-   * Verifies that the method <code>{@link JcsProfile#toString()}</code>
-   * returns a String representation of a <code>{@link JcsProfile}</code> when
-   * the properties <code>cacheProfileId</code> and <code>group</code> are
-   * equal to <code>null</code>.
-   */
   public void testToStringWithCacheNameAndGroupEqualToNull() {
     this.cacheProfile.setCacheName(null);
     this.cacheProfile.setGroup(null);
@@ -189,15 +174,9 @@ public final class JcsProfileTests extends TestCase implements
     logger.debug("Expected toString: " + expected);
     logger.debug("Actual toString:   " + actual);
 
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected, actual);
   }
 
-  /**
-   * Verifies that the method <code>{@link JcsProfile#toString()}</code>
-   * returns a String representation of a <code>{@link JcsProfile}</code> when
-   * the properties <code>cacheProfileId</code> and <code>group</code> are
-   * not equal to <code>null</code>.
-   */
   public void testToStringWithCacheNameAndGroupNotEqualToNull() {
     String cacheName = "main";
     String group = "services";
@@ -216,6 +195,6 @@ public final class JcsProfileTests extends TestCase implements
     logger.debug("Expected toString: " + expected);
     logger.debug("Actual toString:   " + actual);
 
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected, actual);
   }
 }

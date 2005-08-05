@@ -28,53 +28,33 @@ import org.springmodules.cache.mock.MockCacheProfile;
 
 /**
  * <p>
- * Unit Test for <code>{@link AbstractCacheProfileEditor}</code>.
+ * Unit Tests for <code>{@link AbstractCacheProfileEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:42 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:58 $
  */
 public final class AbstractCacheProfileEditorTests extends TestCase {
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private AbstractCacheProfileEditor cacheProfileEditor;
 
-  /**
-   * Controls the behavior of and mocks the abstract methods of
-   * <code>{@link #cacheProfileEditor}</code>.
-   */
   private MockClassControl cacheProfileEditorControl;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public AbstractCacheProfileEditorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.setUpCacheProfileEditor();
+    this.setUpCacheProfileEditorAsMockObject();
   }
 
-  /**
-   * Sets up:
-   * <ul>
-   * <li><code>{@link #cacheProfileEditor}</code></li>
-   * <li><code>{@link #cacheProfileEditorControl}</code></li>
-   * </ul>
-   */
-  private void setUpCacheProfileEditor() throws Exception {
+  private void setUpCacheProfileEditorAsMockObject() throws Exception {
     // set up the class to mock.
     Class classToMock = AbstractCacheProfileEditor.class;
 

@@ -27,95 +27,67 @@ import org.springframework.aop.framework.AopConfigException;
 
 /**
  * <p>
- * Unit Test for <code>{@link CachingAttributeSourceAdvisor}</code>.
+ * Unit Tests for <code>{@link CachingAttributeSourceAdvisor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:12 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:49 $
  */
 public final class CachingAttributeSourceAdvisorTests extends TestCase {
 
+  private CachingAttributeSource cachingAttributeSource;
+
   /**
-   * Primary object (instance of the class to test).
+   * Primary object under test.
    */
   private CachingAttributeSourceAdvisor cachingAttributeSourceAdvisor;
 
+  private MockControl cachingAttributeSourceControl;
+
   /**
    * Caching interceptor used only to obtain
-   * <code>{@link #mockCachingAttributeSource}</code>.
+   * <code>{@link #cachingAttributeSource}</code>.
    */
   private CachingInterceptor cachingInterceptor;
 
   /**
-   * Method definition containing caching-attributes.
+   * Method definition containing caching metadata attributes.
    */
   private Method method;
-
-  /**
-   * Mock object that simulates a search of caching-attributes for a given class
-   * and method.
-   */
-  private CachingAttributeSource mockCachingAttributeSource;
-
-  /**
-   * Controls the behavior of <code>{@link #mockCachingAttributeSource}</code>.
-   */
-  private MockControl mockCachingAttributeSourceControl;
 
   /**
    * Class declaring <code>{@link #method}</code>.
    */
   private Class targetClass;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public CachingAttributeSourceAdvisorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void setStateOfMockControlsToReplay() {
+    this.cachingAttributeSourceControl.replay();
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
     this.cachingInterceptor = new CachingInterceptor();
   }
 
-  /**
-   * Sets up:
-   * <ul>
-   * <li><code>{@link #cachingAttributeSourceAdvisor}</code></li>
-   * <li><code>{@link #mockCachingAttributeSource}</code></li>
-   * <li><code>{@link #mockCachingAttributeSourceControl}</code></li>
-   * </ul>
-   */
-  private void setUpCachingAttributeSourceAdvisor() {
-
-    this.mockCachingAttributeSourceControl = MockControl
+  private void setUpCachingAttributeSourceAsMockObject() {
+    this.cachingAttributeSourceControl = MockControl
         .createControl(CachingAttributeSource.class);
-    this.mockCachingAttributeSource = (CachingAttributeSource) this.mockCachingAttributeSourceControl
+    this.cachingAttributeSource = (CachingAttributeSource) this.cachingAttributeSourceControl
         .getMock();
 
     this.cachingInterceptor
-        .setCachingAttributeSource(this.mockCachingAttributeSource);
+        .setCachingAttributeSource(this.cachingAttributeSource);
 
     this.cachingAttributeSourceAdvisor = new CachingAttributeSourceAdvisor(
         this.cachingInterceptor);
   }
 
-  /**
-   * Sets up:
-   * <ul>
-   * <li>{@link #targetClass}</li>
-   * <li>{@link #method}</li>
-   * </ul>
-   */
   private void setUpTargetClassAndMethod() throws Exception {
     this.targetClass = String.class;
     this.method = this.targetClass.getMethod("charAt",
@@ -125,41 +97,41 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
   /**
    * Verifies that the constructor
    * <code>{@link CachingAttributeSourceAdvisor#CachingAttributeSourceAdvisor(CachingInterceptor)}</code>
-   * throws a <code>AopConfigException</code> when the specified
+   * throws a <code>{@link AopConfigException}</code> when the specified
    * <code>{@link CachingInterceptor}</code> does not contain a
    * <code>{@link CachingAttributeSource}</code>.
    */
   public void testConstructorWithMethodInterceptorNotHavingCachingAttributeSource() {
+    Class expectedExceptionClass = AopConfigException.class;
     this.cachingInterceptor.setCachingAttributeSource(null);
 
     try {
       this.cachingAttributeSourceAdvisor = new CachingAttributeSourceAdvisor(
           this.cachingInterceptor);
-      fail("An 'AopConfigException' should have been thrown.");
+      fail("Expecting a <" + expectedExceptionClass.getName() + ">");
+
     } catch (AopConfigException exception) {
-      // we are expecting to catch an 'AopConfigException'.
+      // we are expecting this exception.
     }
   }
 
   /**
-   * Tests
-   * <code>{@link CachingAttributeSourceAdvisor#matches(Method, Class)}</code>.
-   * Verifies that <code>false</code> is returned if no instance of
-   * <code>{@link Cached}</code> is returned by
-   * <code>{@link #mockCachingAttributeSource}</code>.
+   * Verifies that the method
+   * <code>{@link CachingAttributeSourceAdvisor#matches(Method, Class)}</code>
+   * return <code>false</code> if <code>{@link #cachingAttributeSource}</code>
+   * does not contain a metadata attribute for a given method.
    */
   public void testMatchesWhenAttributeIsNotFound() throws Exception {
-    this.setUpCachingAttributeSourceAdvisor();
+    this.setUpCachingAttributeSourceAsMockObject();
     this.setUpTargetClassAndMethod();
 
     // expectation: a caching-attribute should not be found for the specified
     // method and class.
-    this.mockCachingAttributeSource.getCachingAttribute(this.method,
+    this.cachingAttributeSource.getCachingAttribute(this.method,
         this.targetClass);
-    this.mockCachingAttributeSourceControl.setReturnValue(null);
+    this.cachingAttributeSourceControl.setReturnValue(null);
 
-    // set the state of the mock control to 'replay'.
-    this.mockCachingAttributeSourceControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     // execute the method to test.
     boolean matches = this.cachingAttributeSourceAdvisor.matches(this.method,
@@ -168,8 +140,7 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     assertFalse("<CachingAttributeSourceAdvisor.matches(Method, Class)>",
         matches);
 
-    // verify that the expectations of the mock control were met.
-    this.mockCachingAttributeSourceControl.verify();
+    this.verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -177,20 +148,19 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
    * <code>{@link CachingAttributeSourceAdvisor#matches(Method, Class)}</code>.
    * Verifies that <code>true</code> is returned if there is an instance of
    * <code>{@link Cached}</code> returned by
-   * <code>{@link #mockCachingAttributeSource}</code>.
+   * <code>{@link #cachingAttributeSource}</code>.
    */
   public void testMatchesWhenNotNullAttributeIsFound() throws Exception {
-    this.setUpCachingAttributeSourceAdvisor();
+    this.setUpCachingAttributeSourceAsMockObject();
     this.setUpTargetClassAndMethod();
 
     // expectation: a caching-attribute should be found for the specified method
     // and class.
-    this.mockCachingAttributeSource.getCachingAttribute(this.method,
+    this.cachingAttributeSource.getCachingAttribute(this.method,
         this.targetClass);
-    this.mockCachingAttributeSourceControl.setReturnValue(new Cached());
+    this.cachingAttributeSourceControl.setReturnValue(new Cached());
 
-    // set the state of the mock control to 'replay'.
-    this.mockCachingAttributeSourceControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     // execute the method to test.
     boolean matches = this.cachingAttributeSourceAdvisor.matches(this.method,
@@ -199,7 +169,11 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     assertTrue("<CachingAttributeSourceAdvisor.matches(Method, Class)>",
         matches);
 
-    // verify that the expectations of the mock control were met.
-    this.mockCachingAttributeSourceControl.verify();
+    this.verifyExpectationsOfMockControlsWereMet();
   }
+
+  private void verifyExpectationsOfMockControlsWereMet() {
+    this.cachingAttributeSourceControl.verify();
+  }
+
 }

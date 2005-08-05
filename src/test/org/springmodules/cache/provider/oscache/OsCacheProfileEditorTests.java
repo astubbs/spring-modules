@@ -28,33 +28,24 @@ import com.opensymphony.oscache.base.CacheEntry;
 
 /**
  * <p>
- * Unit Test for <code>{@link OsCacheProfileEditor}</code>.
+ * Unit Tests for <code>{@link OsCacheProfileEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:28 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:57 $
  */
 public final class OsCacheProfileEditorTests extends TestCase {
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under tests.
    */
   private OsCacheProfileEditor editor;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public OsCacheProfileEditorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
     this.editor = new OsCacheProfileEditor();
@@ -63,25 +54,30 @@ public final class OsCacheProfileEditorTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link OsCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link OsCacheProfile}</code> from
-   * an empty <code>java.util.Properties</code>.
+   * creates a new instance of <code>{@link OsCacheProfile}</code> from an
+   * empty <code>java.util.Properties</code>.
    */
   public void testCreateCacheProfileWithEmptySetOfProperties() {
     Properties properties = new Properties();
 
     OsCacheProfile expectedProfile = new OsCacheProfile();
     CacheProfile actualProfile = this.editor.createCacheProfile(properties);
-    assertEquals("<Cache profile>", expectedProfile, actualProfile);
+    assertEqualCacheProfiles(expectedProfile, actualProfile);
+  }
+
+  private void assertEqualCacheProfiles(CacheProfile expected,
+      CacheProfile actual) {
+    assertEquals("<Cache profile>", expected, actual);
   }
 
   /**
    * Verifies that the method
    * <code>{@link OsCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link OsCacheProfile}</code>
-   * populated with the values of the properties "cronExpression", "groups" set
-   * in a <code>java.util.Properties</code>. Also verifies that when the
-   * property "refreshPeriod" (in the <code>java.util.Properties</code>) is
-   * equal to "INDEFINITE_EXPIRY", the new instance of
+   * creates a new instance of <code>{@link OsCacheProfile}</code> populated
+   * with the values of the properties "cronExpression", "groups" set in a
+   * <code>java.util.Properties</code>. Also verifies that when the property
+   * "refreshPeriod" (in the <code>java.util.Properties</code>) is equal to
+   * "INDEFINITE_EXPIRY", the new instance of
    * <code>{@link OsCacheProfile}</code> must be set with the value of
    * <code>com.opensymphony.oscache.base.CacheEntry.INDEFINITE_EXPIRY</code>.
    */
@@ -100,14 +96,14 @@ public final class OsCacheProfileEditorTests extends TestCase {
     expectedProfile.setRefreshPeriod(CacheEntry.INDEFINITE_EXPIRY);
 
     CacheProfile actualProfile = this.editor.createCacheProfile(properties);
-    assertEquals("<Cache profile>", expectedProfile, actualProfile);
+    assertEqualCacheProfiles(expectedProfile, actualProfile);
   }
 
   /**
    * Verifies that the method
    * <code>{@link OsCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link OsCacheProfile}</code>
-   * populated with the values of the properties "cronExpression", "groups" and
+   * creates a new instance of <code>{@link OsCacheProfile}</code> populated
+   * with the values of the properties "cronExpression", "groups" and
    * "refreshPeriod" set in a <code>java.util.Properties</code>.
    */
   public void testCreateCacheProfileWithNotEmptySetOfProperties() {
@@ -126,15 +122,15 @@ public final class OsCacheProfileEditorTests extends TestCase {
     expectedProfile.setRefreshPeriod(refreshPeriod);
 
     CacheProfile actualProfile = this.editor.createCacheProfile(properties);
-    assertEquals("<Cache profile>", expectedProfile, actualProfile);
+    assertEqualCacheProfiles(expectedProfile, actualProfile);
   }
 
   /**
    * Verifies that the method
    * <code>{@link OsCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link OsCacheProfile}</code>
-   * populated with the values of the properties "cronExpression" and "groups"
-   * set in a <code>java.util.Properties</code>.
+   * creates a new instance of <code>{@link OsCacheProfile}</code> populated
+   * with the values of the properties "cronExpression" and "groups" set in a
+   * <code>java.util.Properties</code>.
    */
   public void testCreateCacheProfileWithoutRefreshPeriod() {
     String cronExpression = "* * * * *";
@@ -149,7 +145,7 @@ public final class OsCacheProfileEditorTests extends TestCase {
     expectedProfile.setGroups(groups);
 
     CacheProfile actualProfile = this.editor.createCacheProfile(properties);
-    assertEquals("<Cache profile>", expectedProfile, actualProfile);
+    assertEqualCacheProfiles(expectedProfile, actualProfile);
   }
 
   /**
@@ -167,7 +163,8 @@ public final class OsCacheProfileEditorTests extends TestCase {
 
     try {
       this.editor.createCacheProfile(properties);
-      fail("An 'IllegalArgumentException' should have been thrown");
+      fail("Expected exception <" + IllegalArgumentException.class.getName()
+          + ">");
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }

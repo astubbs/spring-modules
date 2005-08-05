@@ -22,36 +22,31 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link CacheFlushAttributeEditor}</code>.
+ * Unit Tests for <code>{@link CacheFlushAttributeEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:04 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:47 $
  */
 public final class CacheFlushAttributeEditorTests extends TestCase {
 
   /**
-   * Instance of the class to test.
+   * Primary object that is under test.
    */
   private CacheFlushAttributeEditor editor;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public CacheFlushAttributeEditorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertEqualsCacheFlushAttribute(FlushCache expected,
+      FlushCache actual) {
+    assertEquals("<Cache-flush attribute>", expected, actual);
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
-
     this.editor = new CacheFlushAttributeEditor();
   }
 
@@ -62,15 +57,14 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
    * specified in the given String.
    */
   public void testSetAsTextWithFlushBeforeExecutionEqualToTrue() {
-
     FlushCache expectedCacheFlushAttribute = new FlushCache("main,test", true);
     String properties = "[cacheProfileIds=main,test][flushBeforeExecution=true]";
 
     // execute the method to test.
     this.editor.setAsText(properties);
 
-    Object actualCacheFlushAttribute = this.editor.getValue();
-    assertEquals("<Cache-flush-attribute>", expectedCacheFlushAttribute,
+    FlushCache actualCacheFlushAttribute = (FlushCache) this.editor.getValue();
+    this.assertEqualsCacheFlushAttribute(expectedCacheFlushAttribute,
         actualCacheFlushAttribute);
   }
 
@@ -81,15 +75,14 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
    * specified in the given String.
    */
   public void testSetAsTextWithFlushBeforeExecutionEqualToYes() {
-
     FlushCache expectedCacheFlushAttribute = new FlushCache("main,test", true);
     String properties = "[cacheProfileIds=main,test][flushBeforeExecution=yes]";
 
     // execute the method to test.
     this.editor.setAsText(properties);
 
-    Object actualCacheFlushAttribute = this.editor.getValue();
-    assertEquals("<Cache-flush-attribute>", expectedCacheFlushAttribute,
+    FlushCache actualCacheFlushAttribute = (FlushCache) this.editor.getValue();
+    this.assertEqualsCacheFlushAttribute(expectedCacheFlushAttribute,
         actualCacheFlushAttribute);
   }
 
@@ -107,8 +100,8 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
     // execute the method to test.
     this.editor.setAsText(properties);
 
-    Object actualCacheFlushAttribute = this.editor.getValue();
-    assertEquals("<Cache-flush-attribute>", expectedCacheFlushAttribute,
+    FlushCache actualCacheFlushAttribute = (FlushCache) this.editor.getValue();
+    this.assertEqualsCacheFlushAttribute(expectedCacheFlushAttribute,
         actualCacheFlushAttribute);
   }
 }

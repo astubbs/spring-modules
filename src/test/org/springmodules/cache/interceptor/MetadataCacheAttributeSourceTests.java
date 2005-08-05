@@ -25,40 +25,28 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link AbstractMetadataCacheAttributeSource}</code>.
+ * Unit Tests for <code>{@link AbstractMetadataCacheAttributeSource}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:20 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:53 $
  */
 public class MetadataCacheAttributeSourceTests extends TestCase {
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object under test.
    */
   private AbstractMetadataCacheAttributeSource attributeSource;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public MetadataCacheAttributeSourceTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
-    // create a new instance of the primary object and implement its abstract
-    // methods.
     this.attributeSource = new AbstractMetadataCacheAttributeSource() {
-
       protected Collection findAllAttributes(Method argMethod) {
         return null;
       }
@@ -72,14 +60,13 @@ public class MetadataCacheAttributeSourceTests extends TestCase {
    * code of the given method.
    */
   public void testGetAttributeEntryKey() throws Exception {
-
     Class targetClass = String.class;
     Method method = targetClass.getMethod("charAt", new Class[] { int.class });
 
-    StringBuffer stringBuffer = new StringBuffer();
-    stringBuffer.append(targetClass);
-    stringBuffer.append(System.identityHashCode(method));
-    String expectedKey = stringBuffer.toString();
+    StringBuffer buffer = new StringBuffer();
+    buffer.append(targetClass);
+    buffer.append(System.identityHashCode(method));
+    String expectedKey = buffer.toString();
 
     Object actualKey = this.attributeSource.getAttributeEntryKey(method,
         targetClass);

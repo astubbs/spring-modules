@@ -29,18 +29,15 @@ import org.springmodules.cache.interceptor.SimulatedService;
 
 /**
  * <p>
- * Unit Test for <code>{@link CachingAttributeSourceEditor}</code>.
+ * Unit Tests for <code>{@link CachingAttributeSourceEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:17 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:18:50 $
  */
 public class CachingAttributeSourceEditorTests extends TestCase {
 
-  /**
-   * The <code>line.separator</code> System Property.
-   */
   public static final String LINE_SEPARATOR = System
       .getProperty("line.separator");
 
@@ -50,23 +47,19 @@ public class CachingAttributeSourceEditorTests extends TestCase {
   private CachingAttributeSourceEditor editor;
 
   /**
-   * Representation of <code>{@link SimulatedService}</code>.
+   * Reference to the class <code>{@link SimulatedService}</code>.
    */
   private Class targetClass;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case to construct.
-   */
   public CachingAttributeSourceEditorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertCachingAttributeSourceEditorDidNotCreateAnyObject() {
+    assertNull("The PropertyEditor should not create any object", this.editor
+        .getValue());
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -131,12 +124,22 @@ public class CachingAttributeSourceEditorTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link CachingAttributeSourceEditor#setAsText(String)}</code> does
-   * not create any object if the given text is empty.
+   * not create any <code>{@link MethodMapCachingAttributeSource}</code> if
+   * the given text is <code>null</code>.
    */
   public void testSetAsTextWithEmptyText() {
-    this.editor.setAsText(null);
+    this.editor.setAsText("");
+    this.assertCachingAttributeSourceEditorDidNotCreateAnyObject();
+  }
 
-    assertNull("The PropertyEditor should not create any object", this.editor
-        .getValue());
+  /**
+   * Verifies that the method
+   * <code>{@link CachingAttributeSourceEditor#setAsText(String)}</code> does
+   * not create any <code>{@link MethodMapCachingAttributeSource}</code> if
+   * the given text is <code>null</code>.
+   */
+  public void testSetAsTextWithTextEqualToNull() {
+    this.editor.setAsText(null);
+    this.assertCachingAttributeSourceEditorDidNotCreateAnyObject();
   }
 }

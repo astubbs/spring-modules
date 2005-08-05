@@ -26,52 +26,54 @@ import org.easymock.classextension.MockClassControl;
 
 /**
  * <p>
- * Unit Test for <code>{@link JcsProfileValidator}</code>.
+ * Unit Tests for <code>{@link JcsProfileValidator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:08 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:39 $
  */
 public final class JcsProfileValidatorTests extends TestCase {
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under tests.
    */
   private JcsProfileValidator cacheProfileValidator;
 
-  /**
-   * Controls the behavior of <code>{@link #cacheProfileValidator}</code>.
-   */
   private MockClassControl cacheProfileValidatorControl;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public JcsProfileValidatorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertValidateCacheNameThrowsIllegalArgumentException(
+      String cacheName) {
+    Class expectedException = IllegalArgumentException.class;
+
+    try {
+      this.cacheProfileValidator.validateCacheName(cacheName);
+      fail("Expecting exception <" + expectedException + ">");
+    } catch (IllegalArgumentException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  private void assertValidateCacheProfileThrowsIllegalArgumentException(
+      Object cacheProfile) {
+    Class expectedException = IllegalArgumentException.class;
+
+    try {
+      this.cacheProfileValidator.validateCacheProfile(cacheProfile);
+      fail("Expecting exception <" + expectedException + ">");
+    } catch (IllegalArgumentException exception) {
+      // we are expecting this exception.
+    }
+  }
+
   private void setUpCacheProfileValidator() {
     this.cacheProfileValidator = new JcsProfileValidator();
   }
 
-  /**
-   * Sets up
-   * <ul>
-   * <li><code>{@link #cacheProfileValidator}</code></li>
-   * <li><code>{@link #cacheProfileValidatorControl}</code></li>
-   * </ul>
-   * 
-   * @param methodsToMock
-   *          the methods of <code>cacheProfileValidator</code> to mock.
-   */
   private void setUpCacheProfileValidatorAsMockObject(Method[] methodsToMock) {
     Class classToMock = JcsProfileValidator.class;
 
@@ -88,13 +90,7 @@ public final class JcsProfileValidatorTests extends TestCase {
    */
   public void testValidateCacheNameWithEmptyString() {
     this.setUpCacheProfileValidator();
-
-    try {
-      this.cacheProfileValidator.validateCacheName("");
-      fail("An IllegalArgumentException should have been thrown");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.assertValidateCacheNameThrowsIllegalArgumentException("");
   }
 
   /**
@@ -115,13 +111,7 @@ public final class JcsProfileValidatorTests extends TestCase {
    */
   public void testValidateCacheNameWithStringEqualToNull() {
     this.setUpCacheProfileValidator();
-
-    try {
-      this.cacheProfileValidator.validateCacheName(null);
-      fail("An IllegalArgumentException should have been thrown");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.assertValidateCacheNameThrowsIllegalArgumentException(null);
   }
 
   /**
@@ -166,13 +156,7 @@ public final class JcsProfileValidatorTests extends TestCase {
    */
   public void testValidateCacheProfileObjectWithObjectNotInstanceOfJcsCacheProfile() {
     this.setUpCacheProfileValidator();
-
-    try {
-      this.cacheProfileValidator.validateCacheProfile(new Object());
-      fail("An IllegalArgumentException should have been thrown");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    this.assertValidateCacheProfileThrowsIllegalArgumentException(new Object());
   }
 
 }

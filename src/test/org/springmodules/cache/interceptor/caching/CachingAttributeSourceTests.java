@@ -29,17 +29,17 @@ import org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource;
 
 /**
  * <p>
- * Unit Test for <code>{@link AbstractCachingAttributeSource}</code>.
+ * Unit Tests for <code>{@link AbstractCachingAttributeSource}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:14 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:50 $
  */
 public final class CachingAttributeSourceTests extends TestCase {
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private AbstractCachingAttributeSource cachingAttributeSource;
 
@@ -53,36 +53,28 @@ public final class CachingAttributeSourceTests extends TestCase {
    */
   private Class targetClass;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public CachingAttributeSourceTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertCacheAttributeCouldNotBeFound(CacheAttribute cacheAttribute) {
+    assertNull("The given metadata attribute should not have been found",
+        cacheAttribute);
+  }
+
+  private void assertMethodIsCacheable(boolean expected, boolean actual) {
+    assertEquals("<Method is cacheable>", expected, actual);
+
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
     this.setUpCachingAttributeSource();
   }
 
-  /**
-   * Sets up {@link #cachingAttributeSource}</code>.
-   */
   private void setUpCachingAttributeSource() {
-
-    // we subclass instead of using EasyMock because the implemented abstract
-    // method cannot be accessed since it is protected and this test does not
-    // subclass 'AbstractMetadataCacheAttributeSource' nor is in the same
-    // package.
     this.cachingAttributeSource = new AbstractCachingAttributeSource() {
-
       /**
        * Returns a collection containing only one instance of
        * <code>{@link Cached}</code>. We only need one element in the
@@ -102,23 +94,17 @@ public final class CachingAttributeSourceTests extends TestCase {
   }
 
   /**
-   * Sets up:
-   * <li><code>{@link #targetClass}</code></li>
-   * <li><code>{@link #method}</code></li>
-   * </ul>
-   * 
-   * @param cacheableMethod
-   *          if <code>true</code>, the return type of
-   *          <code>methodDefinition</code> is not <code>void</code>. If
-   *          <code>false</code>, the return type of
-   *          <code>methodDefinition</code> is <code>void</code>.
+   * @param useCacheableMethod
+   *          if <code>true</code>, a method with return type other than
+   *          <code>void</code> will be used. If <code>false</code>, a
+   *          method with return type <code>void</code> will be used.
    */
-  private void setUpTargetClassAndMethod(boolean cacheableMethod)
+  private void setUpTargetClassAndMethod(boolean useCacheableMethod)
       throws Exception {
 
     this.targetClass = String.class;
 
-    if (cacheableMethod) {
+    if (useCacheableMethod) {
       this.method = this.targetClass.getMethod("charAt",
           new Class[] { int.class });
     } else {
@@ -129,8 +115,7 @@ public final class CachingAttributeSourceTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link AbstractCachingAttributeSource#findAttribute(Collection)}</code>
-   * returns the first instance of <code>{@link CacheAttribute}</code> that
-   * finds in the given collection of metadata attributes.
+   * returns the first element of the given collection of metadata attributes.
    */
   public void testFindAttributeWithCollectionContainingAnInstanceOfCached() {
     Cached expectedCachingAttribute = new Cached();
@@ -156,9 +141,7 @@ public final class CachingAttributeSourceTests extends TestCase {
     // execute the method to test.
     CacheAttribute foundCacheAttribute = this.cachingAttributeSource
         .findAttribute(null);
-
-    assertNull("The returned caching-attribute should be null",
-        foundCacheAttribute);
+    this.assertCacheAttributeCouldNotBeFound(foundCacheAttribute);
   }
 
   /**
@@ -174,8 +157,7 @@ public final class CachingAttributeSourceTests extends TestCase {
     CacheAttribute foundCacheAttribute = this.cachingAttributeSource
         .findAttribute(allAttributes);
 
-    assertNull("The returned caching-attribute should be null",
-        foundCacheAttribute);
+    this.assertCacheAttributeCouldNotBeFound(foundCacheAttribute);
   }
 
   /**
@@ -194,8 +176,7 @@ public final class CachingAttributeSourceTests extends TestCase {
     CacheAttribute foundCacheAttribute = this.cachingAttributeSource
         .findAttribute(allAttributes);
 
-    assertNull("The returned caching-attribute should be null",
-        foundCacheAttribute);
+    this.assertCacheAttributeCouldNotBeFound(foundCacheAttribute);
   }
 
   /**
@@ -211,7 +192,7 @@ public final class CachingAttributeSourceTests extends TestCase {
     Cached cached = this.cachingAttributeSource.getCachingAttribute(
         this.method, this.targetClass);
 
-    assertNotNull("The returned caching-attribute should not be null", cached);
+    assertNotNull("The caching attribute should not be null", cached);
   }
 
   /**
@@ -227,15 +208,9 @@ public final class CachingAttributeSourceTests extends TestCase {
     Cached cached = this.cachingAttributeSource.getCachingAttribute(
         this.method, this.targetClass);
 
-    assertNull("The returned caching-attribute should be null", cached);
+    assertNull("The caching attribute should be null", cached);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCachingAttributeSource#isCacheable(Method)}</code>
-   * returns <code>true</code> if the return type of the specified method
-   * definition is not <code>void</code>.
-   */
   public void testIsCacheableWithCacheableMethod() throws Exception {
     boolean expectedIsCacheable = true;
     this.setUpTargetClassAndMethod(expectedIsCacheable);
@@ -243,15 +218,9 @@ public final class CachingAttributeSourceTests extends TestCase {
     boolean actualIsCacheable = this.cachingAttributeSource
         .isCacheable(this.method);
 
-    assertEquals("<isCacheable()>", expectedIsCacheable, actualIsCacheable);
+    this.assertMethodIsCacheable(expectedIsCacheable, actualIsCacheable);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCachingAttributeSource#isCacheable(Method)}</code>
-   * returns <code>false</code> if the return type of the specified method
-   * definition is <code>void</code>.
-   */
   public void testIsCacheableWithNotCacheableMethod() throws Exception {
     boolean expectedIsCacheable = false;
     this.setUpTargetClassAndMethod(expectedIsCacheable);
@@ -259,6 +228,6 @@ public final class CachingAttributeSourceTests extends TestCase {
     boolean actualIsCacheable = this.cachingAttributeSource
         .isCacheable(this.method);
 
-    assertEquals("<isCacheable()>", expectedIsCacheable, actualIsCacheable);
+    this.assertMethodIsCacheable(expectedIsCacheable, actualIsCacheable);
   }
 }

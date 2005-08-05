@@ -26,39 +26,31 @@ import org.springmodules.EqualsHashCodeTestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link EhCacheProfile}</code>.
+ * Unit Tests for <code>{@link EhCacheProfile}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/15 18:03:57 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/05 02:18:53 $
  */
 public final class EhCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
 
-  /**
-   * Message logger.
-   */
   private static Log logger = LogFactory.getLog(EhCacheProfileTests.class);
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private EhCacheProfile cacheProfile;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public EhCacheProfileTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertEqualToString(String expected, String actual) {
+    assertEquals("<ToString>", expected, actual);
+  }
+
   protected final void setUp() throws Exception {
     super.setUp();
 
@@ -139,12 +131,6 @@ public final class EhCacheProfileTests extends TestCase implements
     assertFalse(this.cacheProfile.equals(null));
   }
 
-  /**
-   * Verifies that the method <code>{@link EhCacheProfile#toString()}</code>
-   * returns a String representation of a <code>{@link EhCacheProfile}</code>
-   * when the property <code>cacheProfileId</code> is equal to
-   * <code>null</code>.
-   */
   public void testToStringWithCacheNameEqualToNull() {
     this.cacheProfile.setCacheName(null);
 
@@ -159,15 +145,9 @@ public final class EhCacheProfileTests extends TestCase implements
     logger.debug("Expected toString: " + expected);
     logger.debug("Actual toString:   " + actual);
 
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected, actual);
   }
 
-  /**
-   * Verifies that the method <code>{@link EhCacheProfile#toString()}</code>
-   * returns a String representation of a <code>{@link EhCacheProfile}</code>
-   * when the property <code>cacheName</code> is not equal to
-   * <code>null</code>.
-   */
   public void testToStringWithCacheNameNotEqualToNull() {
     String cacheName = "main";
     this.cacheProfile.setCacheName(cacheName);
@@ -183,6 +163,6 @@ public final class EhCacheProfileTests extends TestCase implements
     logger.debug("Expected toString: " + expected);
     logger.debug("Actual toString:   " + actual);
 
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected, actual);
   }
 }

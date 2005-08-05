@@ -31,12 +31,12 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
 /**
  * <p>
- * Unit Test for <code>{@link OsCacheManagerFactoryBean}</code>.
+ * Unit Tests for <code>{@link OsCacheManagerFactoryBean}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/15 02:14:26 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:56 $
  */
 public final class OsCacheManagerFactoryBeanTests extends
     AbstractCacheManagerFactoryBeanTests {
@@ -47,14 +47,11 @@ public final class OsCacheManagerFactoryBeanTests extends
    */
   private static final String CACHE_CAPACITY_PROPERTY_NAME = "cache.capacity";
 
-  /**
-   * Message logger.
-   */
   private static Log logger = LogFactory
       .getLog(OsCacheManagerFactoryBeanTests.class);
 
   /**
-   * Primary object *instance of the class to test).
+   * Primary object that is under test.
    */
   private OsCacheManagerFactoryBean cacheManagerFactoryBean;
 
@@ -69,20 +66,18 @@ public final class OsCacheManagerFactoryBeanTests extends
    */
   private Properties configProperties;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public OsCacheManagerFactoryBeanTests(String name) {
-
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertEqualCacheCapacity(String expected, String actual) {
+    assertEquals("<Cache capacity>", expected, actual);
+  }
+
+  private void assertEqualObjectTypes(Class expected, Object actual) {
+    assertEquals("<Object type>", expected, actual);
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -95,9 +90,6 @@ public final class OsCacheManagerFactoryBeanTests extends
     this.setUpConfigProperties();
   }
 
-  /**
-   * Sets up <code>{@link #configProperties}</code>.
-   */
   protected void setUpConfigProperties() throws Exception {
 
     InputStream inputStream = this.configLocation.getInputStream();
@@ -105,9 +97,6 @@ public final class OsCacheManagerFactoryBeanTests extends
     this.configProperties.load(inputStream);
   }
 
-  /**
-   * Cleans up resources.
-   */
   protected void tearDown() {
     if (this.cacheManagerFactoryBean != null) {
       try {
@@ -130,7 +119,7 @@ public final class OsCacheManagerFactoryBeanTests extends
     GeneralCacheAdministrator cacheAdministrator = (GeneralCacheAdministrator) this.cacheManagerFactoryBean
         .getObject();
 
-    assertNotNull("The cache manager should not be null", cacheAdministrator);
+    assertNotNull(cacheAdministrator);
 
     // if this property was set from the properties file, we can safely assume
     // the rest of properties were set too.
@@ -140,7 +129,7 @@ public final class OsCacheManagerFactoryBeanTests extends
     String actualCacheCapacity = cacheAdministrator
         .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
 
-    assertEquals("<Cache capacity>", expectedCacheCapacity, actualCacheCapacity);
+    this.assertEqualCacheCapacity(expectedCacheCapacity, actualCacheCapacity);
   }
 
   /**
@@ -160,7 +149,7 @@ public final class OsCacheManagerFactoryBeanTests extends
     GeneralCacheAdministrator cacheAdministrator = (GeneralCacheAdministrator) this.cacheManagerFactoryBean
         .getObject();
 
-    assertNotNull("The cache manager should not be null", cacheAdministrator);
+    assertNotNull(cacheAdministrator);
 
     // if this property was set from the properties file, we can safely assume
     // the rest of properties were set too.
@@ -171,7 +160,7 @@ public final class OsCacheManagerFactoryBeanTests extends
         .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
     logger.debug("actualCacheCapacity: " + actualCacheCapacity);
 
-    assertEquals("<Cache capacity>", expectedCacheCapacity, actualCacheCapacity);
+    this.assertEqualCacheCapacity(expectedCacheCapacity, actualCacheCapacity);
   }
 
   /**
@@ -218,8 +207,7 @@ public final class OsCacheManagerFactoryBeanTests extends
     }
 
     // verify that the cache manager is null after calling 'destroy()'
-    assertNull("The cache manager should be null", this.cacheManagerFactoryBean
-        .getObject());
+    assertNull(this.cacheManagerFactoryBean.getObject());
   }
 
   /**
@@ -234,7 +222,7 @@ public final class OsCacheManagerFactoryBeanTests extends
     this.cacheManagerFactoryBean.afterPropertiesSet();
 
     Class actualObjectType = this.cacheManagerFactoryBean.getObjectType();
-    assertEquals("<Object type>", expectedObjectType, actualObjectType);
+    this.assertEqualObjectTypes(expectedObjectType, actualObjectType);
 
   }
 
@@ -251,7 +239,7 @@ public final class OsCacheManagerFactoryBeanTests extends
     // test when the cache manager has not been created yet.
     Class actualObjectType = this.cacheManagerFactoryBean.getObjectType();
 
-    assertEquals("<object type>", expectedObjectType, actualObjectType);
+    this.assertEqualObjectTypes(expectedObjectType, actualObjectType);
   }
 
   /**

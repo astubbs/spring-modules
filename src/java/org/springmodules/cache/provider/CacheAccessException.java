@@ -1,5 +1,5 @@
 /* 
- * Created on Nov 4, 2004
+ * Created on Aug 2, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,38 +13,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2004 the original author or authors.
+ * Copyright @2005 the original author or authors.
  */
-
-package org.springmodules.cache;
+package org.springmodules.cache.provider;
 
 /**
  * <p>
- * Exception thrown when an unexpected error takes place when retrieving an
- * entry from the cache.
+ * Exception thrown when the cache provider cannot be accessed.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:47 $
+ * @version $Revision$ $Date$
  */
-public class EntryRetrievalException extends Exception {
+public class CacheAccessException extends CacheException {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
-  private static final long serialVersionUID = 3617577093811287864L;
+  private static final long serialVersionUID = -5016099756340093513L;
 
-  /**
-   * Constructor.
-   * 
-   * @param detailMessage
-   *          the detail message.
-   */
-  public EntryRetrievalException(String detailMessage) {
+  public CacheAccessException(String detailMessage) {
     super(detailMessage);
+  }
+
+  public CacheAccessException(String detailMessage, Throwable nestedException) {
+    super(detailMessage, nestedException);
   }
 
 }

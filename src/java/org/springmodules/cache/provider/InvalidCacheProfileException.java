@@ -1,5 +1,5 @@
 /* 
- * Created on Jan 21, 2005
+ * Created on Nov 4, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,30 +13,34 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2005 the original author or authors.
+ * Copyright @2004 the original author or authors.
  */
 
 package org.springmodules.cache.provider;
 
+import org.springframework.core.NestedCheckedException;
+
 /**
  * <p>
- * Validates the properties of cache profiles.
+ * Exception thrown when one or more properties of a
+ * <code>{@link CacheProfile}</code> contain invalid values.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:44 $
+ * @version $Revision$ $Date$
  */
-public interface CacheProfileValidator {
+public class InvalidCacheProfileException extends NestedCheckedException {
 
-  /**
-   * Validates the properties of the specified cache profile.
-   * 
-   * @param cacheProfile
-   *          the cache profile to validate.
-   * @throws InvalidCacheProfileException
-   *           if there is the given cache profile is not valid.
-   */
-  void validateCacheProfile(Object cacheProfile)
-      throws InvalidCacheProfileException;
+  private static final long serialVersionUID = 7043423030105935558L;
+
+  public InvalidCacheProfileException(String detailMessage) {
+    super(detailMessage);
+  }
+
+  public InvalidCacheProfileException(String detailMessage,
+      Throwable nestedException) {
+    super(detailMessage, nestedException);
+  }
+
 }

@@ -38,7 +38,7 @@ import org.springmodules.cache.mock.MockCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/02 11:30:33 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:57 $
  */
 public final class AbstractCacheProviderFacadeImplTests extends TestCase {
 
@@ -280,7 +280,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * validated by the method
    * <code>{@link AbstractCacheProviderFacadeImpl#setCacheProfiles(Properties)}</code>.
    */
-  public void testAfterPropertiesSetWhenCacheProfilesHaveBeenValidated() {
+  public void testAfterPropertiesSetWhenCacheProfilesHaveBeenValidated()
+      throws Exception {
 
     Properties unparsedProperties = new Properties();
     unparsedProperties.setProperty("key", "[firstName=Yvonne]");
@@ -328,7 +329,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>.
    * validates both the cache manager and the cache profiles.
    */
-  public void testAfterPropertiesSetWhenCacheProfilesHaveNotBeenValidated() {
+  public void testAfterPropertiesSetWhenCacheProfilesHaveNotBeenValidated()
+      throws Exception {
 
     this.setUpMockCacheProfileValidator();
     this.setUpMockCacheProfileMapKeys();
@@ -397,15 +399,15 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>.
-   * throws a <code>IllegalStateException</code> if the map of cache profiles
-   * is <code>null</code> or empty.
+   * throws a <code>{@link InvalidConfigurationException}</code> if the map of
+   * cache profiles is <code>null</code> or empty.
    */
   public void testAfterPropertiesSetWhenMapOfCacheProfilesIsEmpty() {
     this.cacheProviderFacade.setCacheProfiles((Map) null);
     try {
       this.cacheProviderFacade.afterPropertiesSet();
-      fail("An IllegalStateException should have been thrown");
-    } catch (IllegalStateException exception) {
+      fail("An 'InvalidConfigurationException' should have been thrown");
+    } catch (InvalidConfigurationException exception) {
       // we are expecting this exception to be thrown.
     }
   }
@@ -417,7 +419,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * by the method
    * <code>{@link CacheProfileValidator#validateCacheProfile(Object)}</code>.
    */
-  public void testAfterPropertiesSetWhenValidationOfCacheProfilesThrowsException() {
+  public void testAfterPropertiesSetWhenValidationOfCacheProfilesThrowsException()
+      throws Exception {
     this.setUpMockCacheProfileValidator();
     this.setUpMockCacheProfileMapKeys();
 
@@ -494,7 +497,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#onCancelCacheUpdate(Serializable)}</code>
    * when the update of the cache is cancelled.
    */
-  public void testCancelCacheUpdate() {
+  public void testCancelCacheUpdate() throws Exception {
 
     // expectation: call 'onCancelCacheUpdate(Serializable)'.
     this.cacheProviderFacade.onCancelCacheUpdate(this.cacheKey);
@@ -518,7 +521,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>true</code>.
    */
-  public void testCancelCacheUpdateWhenCacheAccessThrowsExceptionAndFailQuietlyIsEnabled() {
+  public void testCancelCacheUpdateWhenCacheAccessThrowsExceptionAndFailQuietlyIsEnabled()
+      throws Exception {
 
     this.cacheProviderFacade.setFailQuietlyEnabled(true);
 
@@ -547,7 +551,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>false</code>.
    */
-  public void testCancelCacheUpdateWhenCacheAccessThrowsExceptionAndFailQuietlyIsNotEnabled() {
+  public void testCancelCacheUpdateWhenCacheAccessThrowsExceptionAndFailQuietlyIsNotEnabled()
+      throws Exception {
 
     this.cacheProviderFacade.setFailQuietlyEnabled(false);
 
@@ -586,7 +591,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>true</code>.
    */
-  public void testFlushCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsEnabled() {
+  public void testFlushCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsEnabled()
+      throws Exception {
 
     String[] cacheProfileIds = new String[] { CACHE_PROFILE_ID };
     this.cacheProviderFacade.setFailQuietlyEnabled(true);
@@ -623,7 +629,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>false</code>.
    */
-  public void testFlushCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsNotEnabled() {
+  public void testFlushCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsNotEnabled()
+      throws Exception {
 
     String[] cacheProfileIds = new String[] { CACHE_PROFILE_ID };
     this.cacheProviderFacade.setFailQuietlyEnabled(false);
@@ -668,7 +675,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * 
    * @see #testFlushCacheWithEmptyArrayOfProfileIds()
    */
-  public void testFlushCacheWithArrayOfProfileIdsEqualToNull() {
+  public void testFlushCacheWithArrayOfProfileIdsEqualToNull() throws Exception {
 
     // expectation: the map of cache profiles should not be accessed.
     this.mockCacheProfileMapControl.replay();
@@ -689,7 +696,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * 
    * @see #testFlushCacheWithArrayOfProfileIdsEqualToNull()
    */
-  public void testFlushCacheWithEmptyArrayOfProfileIds() {
+  public void testFlushCacheWithEmptyArrayOfProfileIds() throws Exception {
 
     // expectation: the map of cache profiles should not be accessed.
     this.mockCacheProfileMapControl.replay();
@@ -709,7 +716,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * is executed when the cache provider contains a profile with the specified
    * id.
    */
-  public void testFlushCacheWithNotEmptyArrayOfProfileIdsAndExistingProfileId() {
+  public void testFlushCacheWithNotEmptyArrayOfProfileIdsAndExistingProfileId()
+      throws Exception {
 
     String[] cacheProfileIds = new String[] { CACHE_PROFILE_ID };
 
@@ -742,7 +750,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * is not executed when the cache provider does not contain a profile with the
    * specified id.
    */
-  public void testFlushCacheWithNotEmptyArrayOfProfileIdsAndNotExistingProfileId() {
+  public void testFlushCacheWithNotEmptyArrayOfProfileIdsAndNotExistingProfileId()
+      throws Exception {
 
     String[] cacheProfileIds = new String[] { CACHE_PROFILE_ID };
 
@@ -981,8 +990,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * is not executed when the cache provider does not contain a profile with the
    * specified id.
    */
-  public void testGetFromCacheWithNotExistingProfileId()
-      throws Exception {
+  public void testGetFromCacheWithNotExistingProfileId() throws Exception {
 
     // set the expectations of the mock objects.
     this.mockCacheProfileMap.get(CACHE_PROFILE_ID);
@@ -1004,22 +1012,21 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
 
   /**
    * Tests
-   * <code>{@link AbstractCacheProviderFacadeImpl#handleCacheAccessException(String, RuntimeException)}</code>.
+   * <code>{@link AbstractCacheProviderFacadeImpl#handleCacheException(CacheException)}</code>.
    * Verifies that the exception sent as argument is not thrown when
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>true</code>.
    */
   public void testHandleCacheAccessExceptionWhenFailedQuietlyIsEnableAndExceptionIsNotNull() {
-    RuntimeException expectedException = new RuntimeException("An Exception :)");
-    String message = "A String :)";
+    CacheException expectedException = new CacheNotFoundException(
+        "An Exception :)");
 
-    RuntimeException catched = null;
+    CacheException catched = null;
 
     this.cacheProviderFacade.setFailQuietlyEnabled(true);
     try {
-      this.cacheProviderFacade.handleCacheAccessException(message,
-          expectedException);
-    } catch (RuntimeException runtimeException) {
+      this.cacheProviderFacade.handleCacheException(expectedException);
+    } catch (CacheException runtimeException) {
       catched = runtimeException;
     }
 
@@ -1028,21 +1035,20 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
 
   /**
    * Tests
-   * <code>{@link AbstractCacheProviderFacadeImpl#handleCacheAccessException(String, RuntimeException)}</code>.
+   * <code>{@link AbstractCacheProviderFacadeImpl#handleCacheException(CacheException)}</code>.
    * Verifies that the exception sent as argument is thrown when
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>false</code>.
    */
   public void testHandleCacheAccessExceptionWhenFailedQuietlyIsNotEnableAndExceptionIsNotNull() {
-    RuntimeException expectedException = new RuntimeException("An Exception :)");
-    String message = "A String :)";
+    CacheException expectedException = new CacheNotFoundException(
+        "An Exception :)");
 
-    RuntimeException catched = null;
+    CacheException catched = null;
 
     try {
-      this.cacheProviderFacade.handleCacheAccessException(message,
-          expectedException);
-    } catch (RuntimeException runtimeException) {
+      this.cacheProviderFacade.handleCacheException(expectedException);
+    } catch (CacheException runtimeException) {
       catched = runtimeException;
     }
 
@@ -1058,7 +1064,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>true</code>.
    */
-  public void testPutInCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsEnabled() {
+  public void testPutInCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsEnabled()
+      throws Exception {
 
     String objectToCache = "A String";
     this.cacheProviderFacade.setFailQuietlyEnabled(true);
@@ -1093,7 +1100,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * <code>{@link AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()}</code>
    * is <code>false</code>.
    */
-  public void testPutInCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsNotEnabled() {
+  public void testPutInCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsNotEnabled()
+      throws Exception {
 
     String objectToCache = "A String";
     this.cacheProviderFacade.setFailQuietlyEnabled(false);
@@ -1136,7 +1144,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * is executed when the cache provider contains a profile with the specified
    * id.
    */
-  public void testPutInCacheWithExistingProfileId() {
+  public void testPutInCacheWithExistingProfileId() throws Exception {
 
     String objectToCache = "A String";
 
@@ -1166,7 +1174,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
    * is not executed when the cache provider does not contain a profile with the
    * specified id.
    */
-  public void testPutInCacheWithNotExistingProfileId() {
+  public void testPutInCacheWithNotExistingProfileId() throws Exception {
 
     String objectToCache = "A String";
 

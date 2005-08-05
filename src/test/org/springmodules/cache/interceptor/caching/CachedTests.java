@@ -31,34 +31,22 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/17 02:09:23 $
+ * @version $Revision: 1.7 $ $Date: 2005/08/05 02:18:49 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {
 
-  /**
-   * Message logger.
-   */
   private static Log logger = LogFactory.getLog(CachedTests.class);
 
   /**
-   * Instance of the class to test.
+   * Primary object under test.
    */
   private Cached cached;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public CachedTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -140,11 +128,6 @@ public final class CachedTests extends TestCase implements
     assertFalse(this.cached.equals(null));
   }
 
-  /**
-   * Verifies that the method <code>{@link Cached#toString()}</code> returns a
-   * String representation of a <code>{@link Cached}</code> when the property
-   * <code>cacheProfileId</code> is equal to <code>null</code>.
-   */
   public void testToStringWithCacheProfileIdEqualToNull() {
     this.cached.setCacheProfileId(null);
 
@@ -162,11 +145,6 @@ public final class CachedTests extends TestCase implements
     assertEquals("<ToString>", expected, actual);
   }
 
-  /**
-   * Verifies that the method <code>{@link Cached#toString()}</code> returns a
-   * String representation of a <code>{@link Cached}</code> when the property
-   * <code>cacheProfileId</code> is not equal to <code>null</code>.
-   */
   public void testToStringWithCacheProfileIdNotEqualToNull() {
     String cacheProfileId = "main";
     this.cached.setCacheProfileId(cacheProfileId);

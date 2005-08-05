@@ -1,5 +1,5 @@
 /* 
- * Created on Jan 21, 2005
+ * Created on Aug 2, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,28 +15,28 @@
  *
  * Copyright @2005 the original author or authors.
  */
-
 package org.springmodules.cache.provider;
 
 /**
  * <p>
- * Validates the properties of cache profiles.
+ * Exception thrown when an invalid object is going to be stored in a cache.
+ * Each cache provider determines which objects should be considered invalid.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:44 $
+ * @version $Revision$ $Date$
  */
-public interface CacheProfileValidator {
+public class InvalidObjectToCache extends CacheException {
 
-  /**
-   * Validates the properties of the specified cache profile.
-   * 
-   * @param cacheProfile
-   *          the cache profile to validate.
-   * @throws InvalidCacheProfileException
-   *           if there is the given cache profile is not valid.
-   */
-  void validateCacheProfile(Object cacheProfile)
-      throws InvalidCacheProfileException;
+  private static final long serialVersionUID = -9124262814399202014L;
+
+  public InvalidObjectToCache(String detailMessage) {
+    super(detailMessage);
+  }
+
+  public InvalidObjectToCache(String detailMessage, Throwable nestedException) {
+    super(detailMessage, nestedException);
+  }
+
 }

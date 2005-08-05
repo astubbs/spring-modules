@@ -25,18 +25,20 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.springmodules.cache.EntryRetrievalException;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
+import org.springmodules.cache.provider.CacheException;
+import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.InvalidConfigurationException;
 
 /**
  * <p>
- * Unit Test for <code>{@link EhCacheFacade}</code>.
+ * Unit Tests for <code>{@link EhCacheFacade}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/02 11:29:39 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:52 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -66,7 +68,7 @@ public class EhCacheFacadeTests extends TestCase {
   private EhCacheProfile cacheProfile;
 
   /**
-   * Id used by <code>{@link #ehcacheFacade}</code> to get
+   * Id used by <code>{@link #ehcacheFacade}</code> to obtain a reference to
    * <code>{@link #cacheProfile}</code>.
    */
   private String cacheProfileId;
@@ -76,14 +78,24 @@ public class EhCacheFacadeTests extends TestCase {
    */
   private EhCacheFacade ehcacheFacade;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case to construct.
-   */
   public EhCacheFacadeTests(String name) {
     super(name);
+  }
+
+  private void assertCacheExceptionIsCacheNotFoundException(
+      CacheException exception) {
+    assertEquals("<CacheException class>", CacheNotFoundException.class,
+        exception.getClass());
+  }
+
+  private void failIfCacheNotFoundExceptionIsNotThrown() {
+    Class expectedException = CacheNotFoundException.class;
+    fail("Expecting exception <" + expectedException.getName() + ">");
+  }
+
+  private void failIfInvalidConfigurationExceptionIsNotThrown() {
+    Class expectedException = InvalidConfigurationException.class;
+    fail("Expecting exception <" + expectedException.getName() + ">");
   }
 
   /**
@@ -112,9 +124,6 @@ public class EhCacheFacadeTests extends TestCase {
     this.ehcacheFacade.setCacheProfiles(cacheProfiles);
   }
 
-  /**
-   * Tears down the test fixture.
-   */
   protected void tearDown() throws Exception {
     super.tearDown();
 
@@ -144,8 +153,8 @@ public class EhCacheFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link EhCacheFacade#getCacheProfileValidator()}</code> returns an
-   * an instance of <code>{@link EhCacheProfileValidator}</code> not
-   * equal to <code>null</code>.
+   * an instance of <code>{@link EhCacheProfileValidator}</code> not equal to
+   * <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
     CacheProfileValidator cacheProfileValidator = this.ehcacheFacade
@@ -180,37 +189,21 @@ public class EhCacheFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link EhCacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * does not flush any cache if the cache specified in the given cache profile
-   * does not exist.
+   * throws a <code>{@link CacheNotFoundException}</code> if the cache
+   * specified in the given cache profile does not exist.
    */
-  public void testOnFlushCacheWhenCacheIsNotFound() throws Exception {
+  public void testOnFlushCacheWhenCacheIsNotFound() {
     this.cache.put(new Element(this.cacheKey, "A Value"));
-
-    // execute the method to test.
     this.cacheProfile.setCacheName("NonExistingCache");
-    this.ehcacheFacade.onFlushCache(this.cacheProfile);
 
-    Object cachedValue = this.cache.get(this.cacheKey);
-    assertNotNull("The cache '" + this.cacheName + "' should not be empty",
-        cachedValue);
-  }
+    try {
+      this.ehcacheFacade.onFlushCache(this.cacheProfile);
+      fail("A 'CacheNotFoundException' should have been thrown");
 
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * does not flush any cache if the name of thec cache specified in the given
-   * cache profile is empty.
-   */
-  public void testOnFlushCacheWhenCacheNameIsEmpty() throws Exception {
-    this.cache.put(new Element(this.cacheKey, "A Value"));
-
-    // execute the method to test.
-    this.cacheProfile.setCacheName("");
-    this.ehcacheFacade.onFlushCache(this.cacheProfile);
-
-    Object cachedValue = this.cache.get(this.cacheKey);
-    assertNotNull("The cache '" + this.cacheName + "' should not be empty",
-        cachedValue);
+    } catch (CacheException exception) {
+      assertEquals("<CacheException class>", CacheNotFoundException.class,
+          exception.getClass());
+    }
   }
 
   /**
@@ -232,19 +225,19 @@ public class EhCacheFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
-   * throws a <code>{@link EntryRetrievalException}</code> if the specified
+   * throws a <code>{@link CacheNotFoundException}</code> if the specified
    * cache does not exist.
    */
   public void testOnGetFromCacheWhenCacheIsNotFound() {
     this.cacheProfile.setCacheName("NonExistingCache");
 
     try {
-      // execute the method to test.
       this.ehcacheFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
-      fail("We are expecting a 'EntryRetrievalException'");
+      fail("A 'CacheNotFoundException' should have been thrown");
 
-    } catch (EntryRetrievalException exception) {
-      // we are expecting this exception.
+    } catch (CacheException exception) {
+      assertEquals("<CacheException class>", CacheNotFoundException.class,
+          exception.getClass());
     }
   }
 
@@ -255,7 +248,6 @@ public class EhCacheFacadeTests extends TestCase {
    * cache.
    */
   public void testOnGetFromCacheWhenKeyIsNotFound() throws Exception {
-    // execute the method to test.
     Object cachedObject = this.ehcacheFacade.onGetFromCache("NonExistingKey",
         this.cacheProfile);
 
@@ -285,38 +277,26 @@ public class EhCacheFacadeTests extends TestCase {
    */
   public void testOnPutInCacheWhenCacheIsNotFound() throws Exception {
     this.cacheProfile.setCacheName("NonExistingCache");
-    this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-        "An Object");
+    try {
+      this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
+          "An Object");
+      this.failIfCacheNotFoundExceptionIsNotThrown();
 
-    Element cacheElement = this.cache.get(this.cacheKey);
-    assertNull("The retrieved object should be null", cacheElement);
+    } catch (CacheException exception) {
+      this.assertCacheExceptionIsCacheNotFoundException(exception);
+    }
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
-   * does not store any entry in any cache if the name of the cache, specified
-   * in the given cache profile, is empty. given key.
+   * <code>{@link EhCacheFacade#onRemoveFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * throws a <code>{@link CacheNotFoundException}</code> if the specified
+   * cache does not exist.
    */
-  public void testOnPutInCacheWhenCacheNameIsEmpty() throws Exception {
-    this.cacheProfile.setCacheName("");
-    this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-        "An Object");
-
-    Element cacheElement = this.cache.get(this.cacheKey);
-    assertNull("The retrieved object should be null", cacheElement);
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
-   * removes the entry stored under the given key from the cache specified in
-   * the given cache profile.
-   */
-  public void testRemoveFromCache() throws Exception {
+  public void testOnRemoveFromCache() throws Exception {
     this.cache.put(new Element(this.cacheKey, "An Object"));
 
-    this.ehcacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
+    this.ehcacheFacade.onRemoveFromCache(this.cacheKey, this.cacheProfile);
 
     Element cacheElement = this.cache.get(this.cacheKey);
     assertNull("The element with key '" + this.cacheKey
@@ -325,36 +305,21 @@ public class EhCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
-   * does not remove any entry if the cache, specified in the given cache
-   * profile, cannot be found.
+   * <code>{@link EhCacheFacade#onRemoveFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * throws a <code>{@link CacheNotFoundException}</code> if the specified
+   * cache does not exist.
    */
-  public void testRemoveFromCacheWhenCacheIsNotFound() throws Exception {
+  public void testOnRemoveFromCacheWhenCacheIsNotFound() throws Exception {
     this.cache.put(new Element(this.cacheKey, "An Object"));
     this.cacheProfile.setCacheName("NonExistingCache");
 
-    this.ehcacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
+    try {
+      this.ehcacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
+      this.failIfCacheNotFoundExceptionIsNotThrown();
 
-    Element cacheElement = this.cache.get(this.cacheKey);
-    assertNotNull("The element with key '" + this.cacheKey
-        + "' should not have been removed from the cache", cacheElement);
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
-   * does not remove any entry if the name of the cache, specified in the given
-   * cache profile, is empty.
-   */
-  public void testRemoveFromCacheWhenCacheNameIsEmpty() throws Exception {
-    this.cache.put(new Element(this.cacheKey, "An Object"));
-    this.cacheProfile.setCacheName("");
-
-    this.ehcacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
-
-    Element cacheElement = this.cache.get(this.cacheKey);
-    assertNotNull("The element with key '" + this.cacheKey
-        + "' should not have been removed from the cache", cacheElement);
+    } catch (CacheException exception) {
+      this.assertCacheExceptionIsCacheNotFoundException(exception);
+    }
   }
 
   /**
@@ -370,15 +335,16 @@ public class EhCacheFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link EhCacheFacade#validateCacheManager()}</code> throws an
-   * <code>IllegalStateException</code> if the cache manager is
-   * <code>null</code>.
+   * <code>{@link InvalidConfigurationException}</code> if the cache manager
+   * is <code>null</code>.
    */
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
     this.ehcacheFacade.setCacheManager(null);
     try {
       this.ehcacheFacade.validateCacheManager();
-      fail("An IllegalStateException should have been thrown");
-    } catch (IllegalStateException exception) {
+      this.failIfInvalidConfigurationExceptionIsNotThrown();
+
+    } catch (InvalidConfigurationException exception) {
       // we are expecting this exception.
     }
   }
@@ -404,8 +370,8 @@ public class EhCacheFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link EhCacheFacade#validateCacheManager()}</code> throws an
-   * <code>IllegalStateException</code> if the cache manager is not "alive"
-   * and the flag 'failQuietlyEnabled' is <code>false</code>.
+   * <code>{@link InvalidConfigurationException}</code> if the cache manager
+   * is not "alive" and the flag 'failQuietlyEnabled' is <code>false</code>.
    */
   public void testValidateCacheManagerWithCacheManagerNotAliveAndFailQuietlyNotEnabled()
       throws Exception {
@@ -415,8 +381,9 @@ public class EhCacheFacadeTests extends TestCase {
 
     try {
       this.ehcacheFacade.validateCacheManager();
-      fail("An 'IllegalStateException' should have been thrown");
-    } catch (IllegalStateException exception) {
+      this.failIfInvalidConfigurationExceptionIsNotThrown();
+
+    } catch (InvalidConfigurationException exception) {
       // we are expecting this exception.
     }
   }

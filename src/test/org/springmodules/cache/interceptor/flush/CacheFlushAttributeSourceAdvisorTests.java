@@ -27,96 +27,70 @@ import org.springframework.aop.framework.AopConfigException;
 
 /**
  * <p>
- * Unit Test for <code>{@link CacheFlushAttributeSourceAdvisor}</code>.
+ * Unit Tests for <code>{@link CacheFlushAttributeSourceAdvisor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:05 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:47 $
  */
 public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
 
+  private CacheFlushAttributeSource cacheFlushAttributeSource;
+
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private CacheFlushAttributeSourceAdvisor cacheFlushAttributeSourceAdvisor;
 
+  private MockControl cacheFlushAttributeSourceAdvisorControl;
+
   /**
    * Caching interceptor used only to obtain
-   * <code>{@link #mockCacheFlushAttributeSource}</code>.
+   * <code>{@link #cacheFlushAttributeSource}</code>.
    */
   private CacheFlushInterceptor cacheFlushInterceptor;
 
   /**
-   * Method definition containing cache-flush-attributes.
+   * Method definition containing cache-flush attributes.
    */
   private Method method;
-
-  /**
-   * Mock object that simulates a search of cache-flush-attributes for a given
-   * class and method.
-   */
-  private CacheFlushAttributeSource mockCacheFlushAttributeSource;
-
-  /**
-   * Controls the behavior of
-   * <code>{@link #mockCacheFlushAttributeSource}</code>.
-   */
-  private MockControl mockCacheFlushAttributeSourceControl;
 
   /**
    * Class declaring <code>{@link #method}</code>.
    */
   private Class targetClass;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public CacheFlushAttributeSourceAdvisorTests(String name) {
     super(name);
   }
 
   /**
-   * Sets up the test fixture.
+   * 
    */
+  private void setStateOfMockControlsToReplay() {
+    this.cacheFlushAttributeSourceAdvisorControl.replay();
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
-
     this.cacheFlushInterceptor = new CacheFlushInterceptor();
   }
 
-  /**
-   * Sets up:
-   * <ul>
-   * <li><code>{@link #cacheFlushAttributeSourceAdvisor}</code></li>
-   * <li><code>{@link #mockCacheFlushAttributeSource}</code></li>
-   * <li><code>{@link #mockCacheFlushAttributeSourceControl}</code></li>
-   * </ul>
-   */
-  private void setUpCachingAttributeSourceAdvisor() {
+  private void setUpCachingAttributeSourceAdvisorAsMockObject() {
 
-    this.mockCacheFlushAttributeSourceControl = MockControl
+    this.cacheFlushAttributeSourceAdvisorControl = MockControl
         .createControl(CacheFlushAttributeSource.class);
-    this.mockCacheFlushAttributeSource = (CacheFlushAttributeSource) this.mockCacheFlushAttributeSourceControl
+    this.cacheFlushAttributeSource = (CacheFlushAttributeSource) this.cacheFlushAttributeSourceAdvisorControl
         .getMock();
 
     this.cacheFlushInterceptor
-        .setCacheFlushAttributeSource(this.mockCacheFlushAttributeSource);
+        .setCacheFlushAttributeSource(this.cacheFlushAttributeSource);
 
     this.cacheFlushAttributeSourceAdvisor = new CacheFlushAttributeSourceAdvisor(
         this.cacheFlushInterceptor);
   }
 
-  /**
-   * Sets up:
-   * <ul>
-   * <li>{@link #targetClass}</li>
-   * <li>{@link #method}</li>
-   * </ul>
-   */
   private void setUpTargetClassAndMethod() throws Exception {
     this.targetClass = String.class;
     this.method = this.targetClass.getMethod("charAt",
@@ -126,19 +100,20 @@ public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
   /**
    * Verifies that the constructor
    * <code>{@link CacheFlushAttributeSourceAdvisor#CacheFlushAttributeSourceAdvisor(CacheFlushInterceptor)}</code>.
-   * throws a <code>AopConfigException</code> when the specified
+   * throws a <code>{@link AopConfigException}</code> when the specified
    * <code>{@link CacheFlushInterceptor}</code> does not contain a
    * <code>{@link CacheFlushAttributeSource}</code>.
    */
   public void testConstructorWithMethodInterceptorNotHavingCacheFlushAttributeSource() {
+    Class expectedException = AopConfigException.class;
     this.cacheFlushInterceptor.setCacheFlushAttributeSource(null);
 
     try {
       this.cacheFlushAttributeSourceAdvisor = new CacheFlushAttributeSourceAdvisor(
           this.cacheFlushInterceptor);
-      fail("An 'AopConfigException' should have been thrown.");
+      fail("Expecting a <" + expectedException.getName() + ">");
     } catch (AopConfigException exception) {
-      // we are expecting to catch an 'AopConfigException'.
+      // we are expecting this exception.
     }
   }
 
@@ -147,31 +122,27 @@ public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
    * <code>{@link CacheFlushAttributeSourceAdvisor#matches(Method, Class)}</code>.
    * Verifies that <code>false</code> is returned if no instance of
    * <code>{@link FlushCache}</code> is returned by
-   * <code>{@link #mockCacheFlushAttributeSource}</code>.
+   * <code>{@link #cacheFlushAttributeSource}</code>.
    */
   public void testMatchesWhenAttributeIsNotFound() throws Exception {
-    this.setUpCachingAttributeSourceAdvisor();
+    this.setUpCachingAttributeSourceAdvisorAsMockObject();
     this.setUpTargetClassAndMethod();
 
-    // expectation: a cache-flush-attribute should not be found for the
+    // expectation: a cache-flush attribute should not be found for the
     // specified method and class.
-    this.mockCacheFlushAttributeSource.getCacheFlushAttribute(this.method,
+    this.cacheFlushAttributeSource.getCacheFlushAttribute(this.method,
         this.targetClass);
-    this.mockCacheFlushAttributeSourceControl.setReturnValue(null);
+    this.cacheFlushAttributeSourceAdvisorControl.setReturnValue(null);
 
-    // set the state of the mock control to 'replay'.
-    this.mockCacheFlushAttributeSourceControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     boolean matches = this.cacheFlushAttributeSourceAdvisor.matches(
         this.method, this.targetClass);
 
-    // execute the method to test.
-    this.mockCacheFlushAttributeSourceControl.verify();
     assertFalse("<CacheFlushAttributeSourceAdvisor.matches(Method, Class)>",
         matches);
 
-    // verify that the expectations of the mock control were met.
-    this.mockCacheFlushAttributeSourceControl.verify();
+    this.verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -179,30 +150,31 @@ public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
    * <code>{@link CacheFlushAttributeSourceAdvisor#matches(Method, Class)}</code>.
    * Verifies that <code>true</code> is returned if there is an instance of
    * <code>{@link FlushCache}</code> returned by
-   * <code>{@link #mockCacheFlushAttributeSource}</code>.
+   * <code>{@link #cacheFlushAttributeSource}</code>.
    */
   public void testMatchesWhenNotNullAttributeIsFound() throws Exception {
-    this.setUpCachingAttributeSourceAdvisor();
+    this.setUpCachingAttributeSourceAdvisorAsMockObject();
     this.setUpTargetClassAndMethod();
 
-    // expectation: a cache-flush-attribute should be found for the specified
+    // expectation: a cache-flush attribute should be found for the specified
     // method and class.
-    this.mockCacheFlushAttributeSource.getCacheFlushAttribute(this.method,
+    this.cacheFlushAttributeSource.getCacheFlushAttribute(this.method,
         this.targetClass);
-    this.mockCacheFlushAttributeSourceControl.setReturnValue(new FlushCache());
+    this.cacheFlushAttributeSourceAdvisorControl
+        .setReturnValue(new FlushCache());
 
-    // set the state of the mock control to 'replay'.
-    this.mockCacheFlushAttributeSourceControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     boolean matches = this.cacheFlushAttributeSourceAdvisor.matches(
         this.method, this.targetClass);
 
-    // execute the method to test.
-    this.mockCacheFlushAttributeSourceControl.verify();
     assertTrue("<CacheFlushAttributeSourceAdvisor.matches(Method, Class)>",
         matches);
 
-    // verify that the expectations of the mock control were met.
-    this.mockCacheFlushAttributeSourceControl.verify();
+    this.verifyExpectationsOfMockControlsWereMet();
+  }
+
+  private void verifyExpectationsOfMockControlsWereMet() {
+    this.cacheFlushAttributeSourceAdvisorControl.verify();
   }
 }

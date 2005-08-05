@@ -27,47 +27,36 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link NameMatchCachingAttributeSource}</code>.
+ * Unit Tests for <code>{@link NameMatchCachingAttributeSource}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/07/17 02:09:23 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:18:48 $
  */
 public class NameMatchCachingAttributeSourceTests extends TestCase {
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private NameMatchCachingAttributeSource attributeSource;
 
-  /**
-   * Method to obtain caching-attributes for.
-   */
   private Method method;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public NameMatchCachingAttributeSourceTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertEqualCachingAttributes(Cached expected, Cached actual) {
+    assertEquals("<Caching attribute>", expected, actual);
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
     this.attributeSource = new NameMatchCachingAttributeSource();
   }
 
-  /**
-   * Sets up <code>{@link #method}</code>.
-   */
   private void setUpMethod() throws Exception {
     this.method = String.class.getDeclaredMethod("charAt",
         new Class[] { int.class });
@@ -99,25 +88,27 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
    * returns a new instance of <code>{@link CachingAttributeEditor}</code>.
    */
   public void testGetCacheAttributeEditor() {
-    PropertyEditor cachingAttributeEditor = this.attributeSource
+    PropertyEditor cacheAttributeEditor = this.attributeSource
         .getCacheAttributeEditor();
 
-    assertNotNull("The editor of caching-attributes should not be null",
-        cachingAttributeEditor);
-    assertTrue("The editor should be an instance of 'CachingAttributeEditor'",
-        cachingAttributeEditor instanceof CachingAttributeEditor);
+    assertNotNull("The editor of caching attributes should not be null",
+        cacheAttributeEditor);
+
+    Class expectedEditorClass = CachingAttributeEditor.class;
+    assertEquals("<Property editor class>", expectedEditorClass,
+        cacheAttributeEditor.getClass());
   }
 
   /**
    * Verifies that the method
    * <code>{@link NameMatchCachingAttributeSource#getCachingAttribute(Method, Class)}</code>
-   * returns a caching-attribute when the name of the given method matches a
+   * returns a caching attribute when the name of the given method matches a
    * mapped name that does not contain wild cards.
    */
   public void testGetCachingAttributeWithMethodNameMatchingMappedNameWithoutWildCards()
       throws Exception {
 
-    // set the properties to be used to create caching-attributes.
+    // set the properties to be used to create caching attributes.
     Properties properties = new Properties();
     properties.setProperty("charAt", "[cacheProfileId=main]");
     this.attributeSource.setProperties(properties);
@@ -129,20 +120,20 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     Cached actualCachingAttribute = this.attributeSource.getCachingAttribute(
         this.method, this.method.getDeclaringClass());
 
-    assertEquals("<Caching-attribute>", expectedCachingAttribute,
+    this.assertEqualCachingAttributes(expectedCachingAttribute,
         actualCachingAttribute);
   }
 
   /**
    * Verifies that the method
    * <code>{@link NameMatchCachingAttributeSource#getCachingAttribute(Method, Class)}</code>
-   * returns a caching-attribute when the name of the given method matches a
+   * returns a caching attribute when the name of the given method matches a
    * mapped name containing wild cards.
    */
   public void testGetCachingAttributeWithMethodNameMatchingMappedNameWithWildCards()
       throws Exception {
 
-    // set the properties to be used to create caching-attributes.
+    // set the properties to be used to create caching attributes.
     Properties properties = new Properties();
 
     // both property keys match the name of the method, but the second one is
@@ -158,14 +149,14 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     Cached actualCachingAttribute = this.attributeSource.getCachingAttribute(
         this.method, this.method.getDeclaringClass());
 
-    assertEquals("<Caching-attribute>", expectedCachingAttribute,
+    this.assertEqualCachingAttributes(expectedCachingAttribute,
         actualCachingAttribute);
   }
 
   /**
    * Verifies that the method
    * <code>{@link NameMatchCachingAttributeSource#getCachingAttribute(Method, Class)}</code>
-   * does not return any caching-attribute if the name of the given method does
+   * does not return any caching attribute if the name of the given method does
    * not match any of the mapped methods.
    */
   public void testGetCachingAttributeWithNotMatchingMethodName()
@@ -182,6 +173,6 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     Cached actualCachingAttribute = this.attributeSource.getCachingAttribute(
         this.method, this.method.getDeclaringClass());
 
-    assertNull("The caching-attribute should be null", actualCachingAttribute);
+    assertNull("The caching attribute should be null", actualCachingAttribute);
   }
 }

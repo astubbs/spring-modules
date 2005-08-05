@@ -22,34 +22,31 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Test Case for factories of Cache Managers.
+ * Test Cases for factories of Cache Managers.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:42 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:58 $
  */
 public abstract class AbstractCacheManagerFactoryBeanTests extends TestCase {
 
-  /**
-   * Constructor.
-   */
   public AbstractCacheManagerFactoryBeanTests() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public AbstractCacheManagerFactoryBeanTests(String name) {
     super(name);
   }
 
   /**
+   * <p>
    * Returns the name of the package of this class as a file path.
+   * </p>
+   * <p>
+   * For example, the name of the package <code>org.springmodules.cache</code>
+   * will be converted to org/springmoudles/cache.
+   * </p>
    * 
    * @return the name of the package of this class as a file path.
    */
@@ -60,27 +57,26 @@ public abstract class AbstractCacheManagerFactoryBeanTests extends TestCase {
   }
 
   /**
-   * Tests the implementation of the method <code>afterPropertiesSet()</code>
-   * of the interface
-   * <code>org.springframework.beans.factory.InitializingBean</code>.
+   * Test case for the implementation of
+   * <code>{@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()}</code>
    */
   public abstract void testAfterPropertiesSet() throws Exception;
 
   /**
-   * Tests the implementation of the method <code>destroy()</code> of the
-   * interface <code>org.springframework.beans.factory.FactoryBean</code>.
+   * Test case for the implementation of
+   * <code>{@link org.springframework.beans.factory.DisposableBean#destroy()}</code>.
    */
   public abstract void testDestroy() throws Exception;
 
   /**
-   * Tests the implementation of the method <code>getObjectType()</code> of
-   * the interface <code>org.springframework.beans.factory.FactoryBean</code>.
+   * Test case for the implementation of
+   * <code>{@link org.springframework.beans.factory.FactoryBean#getObjectType()}</code>.
    */
   public abstract void testGetObjectType() throws Exception;
 
   /**
-   * Tests the implementation of the method <code>isSingleton()</code> of the
-   * inteface <code>org.springframework.beans.factory.FactoryBean</code>.
+   * Test case for the implementation of
+   * <code>{@link org.springframework.beans.factory.FactoryBean#isSingleton()}</code>.
    */
   public abstract void testIsSingleton();
 

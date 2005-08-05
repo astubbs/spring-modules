@@ -21,7 +21,6 @@ package org.springmodules.cache.provider;
 import java.io.Serializable;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springmodules.cache.EntryRetrievalException;
 
 /**
  * <p>
@@ -30,7 +29,7 @@ import org.springmodules.cache.EntryRetrievalException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/15 18:01:03 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/05 02:18:44 $
  */
 public interface CacheProviderFacade extends InitializingBean {
 
@@ -39,8 +38,11 @@ public interface CacheProviderFacade extends InitializingBean {
    * 
    * @param cacheKey
    *          the key being used in the cache update.
+   * @throws CacheException
+   *           if an unexpected error takes place when attempting to cancel the
+   *           update.
    */
-  void cancelCacheUpdate(Serializable cacheKey);
+  void cancelCacheUpdate(Serializable cacheKey) throws CacheException;
 
   /**
    * Flushes the cache.
@@ -48,8 +50,10 @@ public interface CacheProviderFacade extends InitializingBean {
    * @param cacheProfileIds
    *          the id(s) of the cache profile(s) that specif(y/ies) what and how
    *          to flush.
+   * @throws CacheException
+   *           if an unexpected error takes place when flushing the cache.
    */
-  void flushCache(String[] cacheProfileIds);
+  void flushCache(String[] cacheProfileIds) throws CacheException;
 
   /**
    * Retrieves an entry from the cache.
@@ -60,12 +64,12 @@ public interface CacheProviderFacade extends InitializingBean {
    *          the id of the cache profile that specifies how to retrieve an
    *          entry.
    * @return the cached entry.
-   * @throws EntryRetrievalException
+   * @throws CacheException
    *           if an unexpected error takes place when retrieving the entry from
    *           the cache.
    */
   Object getFromCache(Serializable cacheKey, String cacheProfileId)
-      throws EntryRetrievalException;
+      throws CacheException;
 
   /**
    * Returns the value of the flag that indicates if an exception should be
@@ -85,9 +89,12 @@ public interface CacheProviderFacade extends InitializingBean {
    *          the id of the cache profile that specifies how to store an object.
    * @param objectToCache
    *          the object to store in the cache.
+   * @throws CacheException
+   *           if an unexpected error takes place when storing an object in the
+   *           cache.
    */
   void putInCache(Serializable cacheKey, String cacheProfileId,
-      Object objectToCache);
+      Object objectToCache) throws CacheException;
 
   /**
    * Removes an object from the cache.
@@ -97,5 +104,6 @@ public interface CacheProviderFacade extends InitializingBean {
    * @param cacheProfileId
    *          the id of the cache profile that specifies how to store an object.
    */
-  void removeFromCache(Serializable cacheKey, String cacheProfileId);
+  void removeFromCache(Serializable cacheKey, String cacheProfileId)
+      throws CacheException;
 }

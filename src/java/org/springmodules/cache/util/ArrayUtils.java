@@ -57,7 +57,12 @@ public abstract class ArrayUtils {
       else
         buffer.append(", ");
 
-      buffer.append("'" + String.valueOf(array[i]) + "'");
+      String element = array[i];
+      String formattedElement = null;
+      if (element != null) {
+        formattedElement = "'" + String.valueOf(array[i]) + "'";
+      }
+      buffer.append(formattedElement);
     }
 
     buffer.append("}");
