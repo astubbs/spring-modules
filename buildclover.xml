@@ -13,10 +13,12 @@
 			<files>
 				<exclude name="**/*Exception.java"/>
 				<exclude name="**/*Tests.java"/>
+				<exclude name="**/*TestCases.java"/>
 				<exclude name="**/Mock*.java"/>
 				<exclude name="**/Foo*.java"/>
+				<exclude name="**/Person*.java"/>
+				<exclude name="**/Cacheable*.java"/>
 			</files>
-
 		</clover-setup>
 	</target>
 
