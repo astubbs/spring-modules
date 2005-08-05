@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:56 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:17 $
  */
 public final class OsCacheProfileValidatorTests extends TestCase {
 
@@ -66,7 +66,8 @@ public final class OsCacheProfileValidatorTests extends TestCase {
   public void testValidateCacheProfileObjectWithObjectNotInstanceOfOscacheCacheProfile() {
     try {
       this.cacheProfileValidator.validateCacheProfile(new Object());
-      fail("An 'IllegalArgumentException' should have been thrown");
+      fail("Expected exception <" + IllegalArgumentException.class.getName()
+          + ">");
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }

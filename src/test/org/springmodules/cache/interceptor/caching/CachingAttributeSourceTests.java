@@ -34,7 +34,7 @@ import org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:50 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:15 $
  */
 public final class CachingAttributeSourceTests extends TestCase {
 
@@ -44,7 +44,7 @@ public final class CachingAttributeSourceTests extends TestCase {
   private AbstractCachingAttributeSource cachingAttributeSource;
 
   /**
-   * Method to get the caching-attributes for.
+   * Method to get the caching attributes for.
    */
   private Method method;
 
@@ -126,8 +126,8 @@ public final class CachingAttributeSourceTests extends TestCase {
     CacheAttribute actualCachingAttribute = this.cachingAttributeSource
         .findAttribute(allAttributes);
 
-    // verify that we are getting the caching-attribute we expect.
-    assertSame("<Caching-attribute>", expectedCachingAttribute,
+    // verify that we are getting the caching attribute we expect.
+    assertSame("<Caching attribute>", expectedCachingAttribute,
         actualCachingAttribute);
   }
 

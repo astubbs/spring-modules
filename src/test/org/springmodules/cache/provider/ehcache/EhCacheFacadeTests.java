@@ -38,7 +38,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:52 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/05 02:45:18 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -89,13 +89,12 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   private void failIfCacheNotFoundExceptionIsNotThrown() {
-    Class expectedException = CacheNotFoundException.class;
-    fail("Expecting exception <" + expectedException.getName() + ">");
+    fail("Expecting exception <" + CacheNotFoundException.class.getName() + ">");
   }
 
   private void failIfInvalidConfigurationExceptionIsNotThrown() {
-    Class expectedException = InvalidConfigurationException.class;
-    fail("Expecting exception <" + expectedException.getName() + ">");
+    fail("Expecting exception <"
+        + InvalidConfigurationException.class.getName() + ">");
   }
 
   /**
@@ -140,8 +139,7 @@ public class EhCacheFacadeTests extends TestCase {
     AbstractCacheProfileEditor cacheProfileEditor = this.ehcacheFacade
         .getCacheProfileEditor();
 
-    assertNotNull("The cache profile editor should not be null",
-        cacheProfileEditor);
+    assertNotNull(cacheProfileEditor);
 
     Class expectedClass = EhCacheProfileEditor.class;
     Class actualClass = cacheProfileEditor.getClass();
@@ -160,8 +158,7 @@ public class EhCacheFacadeTests extends TestCase {
     CacheProfileValidator cacheProfileValidator = this.ehcacheFacade
         .getCacheProfileValidator();
 
-    assertNotNull("The cache profile validator should not be null",
-        cacheProfileValidator);
+    assertNotNull(cacheProfileValidator);
 
     Class expectedClass = EhCacheProfileValidator.class;
     Class actualClass = cacheProfileValidator.getClass();
@@ -233,7 +230,8 @@ public class EhCacheFacadeTests extends TestCase {
 
     try {
       this.ehcacheFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
-      fail("A 'CacheNotFoundException' should have been thrown");
+      fail("Expecting exception <" + CacheNotFoundException.class.getName()
+          + ">");
 
     } catch (CacheException exception) {
       assertEquals("<CacheException class>", CacheNotFoundException.class,
@@ -251,7 +249,7 @@ public class EhCacheFacadeTests extends TestCase {
     Object cachedObject = this.ehcacheFacade.onGetFromCache("NonExistingKey",
         this.cacheProfile);
 
-    assertNull("The retrieved object should be null", cachedObject);
+    assertNull(cachedObject);
   }
 
   /**

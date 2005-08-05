@@ -31,7 +31,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:40 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:14 $
  */
 public final class JcsProfileEditorTests extends TestCase {
 
@@ -50,7 +50,7 @@ public final class JcsProfileEditorTests extends TestCase {
     try {
       this.factory.createCacheProfile(cacheProfileProperties);
       fail("Expecting exception <" + IllegalArgumentException.class.getName()
-          + ">s");
+          + ">");
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }

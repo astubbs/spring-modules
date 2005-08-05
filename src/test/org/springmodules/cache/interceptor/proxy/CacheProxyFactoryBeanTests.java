@@ -37,7 +37,7 @@ import org.springmodules.cache.integration.CacheableImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/07/26 03:01:01 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:19 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 
@@ -99,7 +99,8 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   public void testAfterPropertiesSetWithNullTarget() {
     try {
       this.cacheProxyFactoryBean.afterPropertiesSet();
-      fail("An 'IllegalStateException' should have been thrown");
+      fail("Expecting exception <" + IllegalStateException.class.getName()
+          + ">");
     } catch (IllegalStateException exception) {
       // we are expecting this exception.
     }
@@ -120,7 +121,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
 
     try {
       this.cacheProxyFactoryBean.afterPropertiesSet();
-      fail("An 'AopConfigException' should have been thrown");
+      fail("Expecting exception <" + AopConfigException.class.getName() + ">");
     } catch (AopConfigException exception) {
       // we are expecting this exception.
     }

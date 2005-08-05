@@ -33,7 +33,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:04 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:45:17 $
  */
 public final class CacheFlushInterceptorTests extends TestCase {
 
@@ -53,7 +53,7 @@ public final class CacheFlushInterceptorTests extends TestCase {
   private Method interceptedMethod;
 
   /**
-   * Mock object that simulates a search of cache-flush-attributes for a given
+   * Mock object that simulates a search of cache-flush attributes for a given
    * method.
    */
   private CacheFlushAttributeSource mockCacheFlushAttributeSource;
@@ -154,7 +154,7 @@ public final class CacheFlushInterceptorTests extends TestCase {
     this.mockMethodInvocation.getThis();
     this.mockMethodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the cache-flush-attribute of the intercepted method.
+    // expectation: get the cache-flush attribute of the intercepted method.
     this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, targetClass);
     this.mockCacheFlushAttributeSourceControl
@@ -168,8 +168,8 @@ public final class CacheFlushInterceptorTests extends TestCase {
     FlushCache returnedCacheFlushAttribute = this.cacheFlushInterceptor
         .getCacheFlushAttribute(this.mockMethodInvocation);
 
-    // verify that the cache-flush-attribute is the same we are expecting.
-    assertSame("<Cache-flush-attribute>", this.cacheFlushAttribute,
+    // verify that the cache-flush attribute is the same we are expecting.
+    assertSame("<Cache-flush attribute>", this.cacheFlushAttribute,
         returnedCacheFlushAttribute);
 
     // verify that the expectations of the mock controls were met.
@@ -194,7 +194,7 @@ public final class CacheFlushInterceptorTests extends TestCase {
     this.mockMethodInvocation.getThis();
     this.mockMethodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the cache-flush-attribute of the intercepted method.
+    // expectation: get the cache-flush attribute of the intercepted method.
     this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, targetClass);
     this.mockCacheFlushAttributeSourceControl
@@ -208,8 +208,8 @@ public final class CacheFlushInterceptorTests extends TestCase {
     FlushCache returnedCacheFlushAttribute = this.cacheFlushInterceptor
         .getCacheFlushAttribute(this.mockMethodInvocation);
 
-    // verify that the cache-flush-attribute is the same we are expecting.
-    assertSame("<Cache-flush-attribute>", this.cacheFlushAttribute,
+    // verify that the cache-flush attribute is the same we are expecting.
+    assertSame("<Cache-flush attribute>", this.cacheFlushAttribute,
         returnedCacheFlushAttribute);
 
     // verify that the expectations of the mock controls were met.
@@ -236,7 +236,7 @@ public final class CacheFlushInterceptorTests extends TestCase {
     this.mockMethodInvocation.getThis();
     this.mockMethodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the cache-flush-attribute for the intercepted method.
+    // expectation: get the cache-flush attribute for the intercepted method.
     this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, thisObject.getClass());
     this.mockCacheFlushAttributeSourceControl
@@ -286,7 +286,7 @@ public final class CacheFlushInterceptorTests extends TestCase {
     this.mockMethodInvocation.getThis();
     this.mockMethodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the cache-flush-attribute for the intercepted method.
+    // expectation: get the cache-flush attribute for the intercepted method.
     this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, thisObject.getClass());
     this.mockCacheFlushAttributeSourceControl
@@ -320,7 +320,7 @@ public final class CacheFlushInterceptorTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link CacheFlushInterceptor#invoke(MethodInvocation)}</code> does
-   * not flush the cache if there are not any cache-flush-attribute for the
+   * not flush the cache if there are not any cache-flush attribute for the
    * intercepted method.
    */
   public void testInvokeWithoutCacheFlushAttribute() throws Throwable {
@@ -334,8 +334,8 @@ public final class CacheFlushInterceptorTests extends TestCase {
     this.mockMethodInvocation.getThis();
     this.mockMethodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the cache-flush-attribute for the intercepted method.
-    // The returned cache-flush-attribute should be null.
+    // expectation: get the cache-flush attribute for the intercepted method.
+    // The returned cache-flush attribute should be null.
     this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, thisObject.getClass());
     this.mockCacheFlushAttributeSourceControl.setReturnValue(null);

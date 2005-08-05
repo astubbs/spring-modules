@@ -32,7 +32,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:18:48 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/05 02:45:15 $
  */
 public class NameMatchCachingAttributeSourceTests extends TestCase {
 
@@ -173,6 +173,6 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     Cached actualCachingAttribute = this.attributeSource.getCachingAttribute(
         this.method, this.method.getDeclaringClass());
 
-    assertNull("The caching attribute should be null", actualCachingAttribute);
+    assertNull(actualCachingAttribute);
   }
 }

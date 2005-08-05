@@ -34,7 +34,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/06/25 06:53:19 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/05 02:45:19 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
@@ -191,6 +191,6 @@ public abstract class AbstractIntegrationTests extends
     cachedObject = this.target.getName(nameIndex);
     this.assertObjectWasCached(CachingAspectSupport.NULL_ENTRY, nameIndex);
 
-    assertNull("The returned value should be null", cachedObject);
+    assertNull(cachedObject);
   }
 }

@@ -32,7 +32,7 @@ import org.springframework.aop.framework.AopConfigException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:47 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:16 $
  */
 public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
 
@@ -105,13 +105,12 @@ public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
    * <code>{@link CacheFlushAttributeSource}</code>.
    */
   public void testConstructorWithMethodInterceptorNotHavingCacheFlushAttributeSource() {
-    Class expectedException = AopConfigException.class;
     this.cacheFlushInterceptor.setCacheFlushAttributeSource(null);
 
     try {
       this.cacheFlushAttributeSourceAdvisor = new CacheFlushAttributeSourceAdvisor(
           this.cacheFlushInterceptor);
-      fail("Expecting a <" + expectedException.getName() + ">");
+      fail("Expecting a <" + AopConfigException.class.getName() + ">");
     } catch (AopConfigException exception) {
       // we are expecting this exception.
     }

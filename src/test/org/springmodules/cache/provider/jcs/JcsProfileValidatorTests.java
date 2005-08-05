@@ -31,7 +31,7 @@ import org.easymock.classextension.MockClassControl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:39 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:14 $
  */
 public final class JcsProfileValidatorTests extends TestCase {
 
@@ -48,11 +48,10 @@ public final class JcsProfileValidatorTests extends TestCase {
 
   private void assertValidateCacheNameThrowsIllegalArgumentException(
       String cacheName) {
-    Class expectedException = IllegalArgumentException.class;
-
     try {
       this.cacheProfileValidator.validateCacheName(cacheName);
-      fail("Expecting exception <" + expectedException + ">");
+      fail("Expecting exception <" + IllegalArgumentException.class.getName()
+          + ">");
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }
@@ -60,11 +59,10 @@ public final class JcsProfileValidatorTests extends TestCase {
 
   private void assertValidateCacheProfileThrowsIllegalArgumentException(
       Object cacheProfile) {
-    Class expectedException = IllegalArgumentException.class;
-
     try {
       this.cacheProfileValidator.validateCacheProfile(cacheProfile);
-      fail("Expecting exception <" + expectedException + ">");
+      fail("Expecting exception <" + IllegalArgumentException.class.getName()
+          + ">");
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }

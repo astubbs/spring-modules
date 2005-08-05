@@ -39,7 +39,7 @@ import org.springmodules.cache.mock.MockCacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:53 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:19 $
  */
 public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
@@ -171,7 +171,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
         this.method, this.targetClass);
 
     // we are expecting not to find the cache attribute.
-    assertNull("The returned CacheAttribute should be null", returnedAttribute);
+    assertNull(returnedAttribute);
 
     // verify that the object represing a null cache attribute was cached.
     Object expectedCachedAttribute = AbstractMetadataCacheAttributeSource.NULL_ATTRIBUTE;

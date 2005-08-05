@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:50 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:16 $
  */
 public final class MethodMapCachingAttributeSourceTests extends TestCase {
 
@@ -69,12 +69,10 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
 
   private void assertAddCachingAttributeThrowsException(
       String fullyQualifiedMethodName) {
-    Class expectedException = IllegalArgumentException.class;
-
     try {
       this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
           this.cachingAttribute);
-      fail("Expecting a <" + expectedException.getName() + ">");
+      fail("Expecting a <" + IllegalArgumentException.class.getName() + ">");
 
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.

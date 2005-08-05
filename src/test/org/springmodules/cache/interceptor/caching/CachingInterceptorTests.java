@@ -36,7 +36,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:18:49 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/05 02:45:15 $
  */
 public final class CachingInterceptorTests extends TestCase {
 
@@ -229,7 +229,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.methodInvocation.getThis();
     this.methodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the caching-attribute of the intercepted method.
+    // expectation: get the caching attribute of the intercepted method.
     this.cachingAttributeSource.getCachingAttribute(this.interceptedMethod,
         targetClass);
     this.cachingAttributeSourceControl.setReturnValue(this.cachingAttribute);
@@ -263,7 +263,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.methodInvocation.getThis();
     this.methodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the caching-attribute of the intercepted method.
+    // expectation: get the caching attribute of the intercepted method.
     this.cachingAttributeSource.getCachingAttribute(this.interceptedMethod,
         targetClass);
     this.cachingAttributeSourceControl.setReturnValue(this.cachingAttribute);
@@ -284,7 +284,7 @@ public final class CachingInterceptorTests extends TestCase {
    * Verifies that the method
    * <code>{@link CachingInterceptor#invoke(MethodInvocation)}</code> does not
    * store in the cache the return value of the intercepted method if the
-   * intercepted method does not contain any caching-attributes.
+   * intercepted method does not contain any caching attributes.
    */
   public void testInvokeHavingCachingAttributeEqualToNull() throws Throwable {
     Object thisObject = "A String!";
@@ -298,14 +298,14 @@ public final class CachingInterceptorTests extends TestCase {
     this.methodInvocation.getThis();
     this.methodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the caching-attribute for the intercepted method. The
-    // returned caching-attribute should be null.
+    // expectation: get the caching attribute for the intercepted method. The
+    // returned caching attribute should be null.
     this.cachingAttributeSource.getCachingAttribute(this.interceptedMethod,
         targetClass);
     this.cachingAttributeSourceControl.setReturnValue(null);
 
     // expectation: execute the intercepted method. The return value should not
-    // be cached since there is not any caching-attribute.
+    // be cached since there is not any caching attribute.
     this.methodInvocation.proceed();
     this.methodInvocationControl.setReturnValue(expectedReturnValue);
 
@@ -338,7 +338,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.methodInvocation.getThis();
     this.methodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the caching-attribute for the intercepted method.
+    // expectation: get the caching attribute for the intercepted method.
     this.cachingAttributeSource.getCachingAttribute(this.interceptedMethod,
         targetClass);
     this.cachingAttributeSourceControl.setReturnValue(this.cachingAttribute);
@@ -349,7 +349,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.cacheKeyGeneratorControl.setReturnValue(this.cacheKey);
 
     // expectation: get the object stored in the cache under the id retrieved
-    // from the caching-attribute.
+    // from the caching attribute.
     String cacheProfileId = this.cachingAttribute.getCacheProfileId();
     this.cacheProviderFacade.getFromCache(this.cacheKey, cacheProfileId);
     this.cacheProviderFacadeControl.setReturnValue(cachedObject);
@@ -360,7 +360,7 @@ public final class CachingInterceptorTests extends TestCase {
     Object actualCachedObject = this.cachingInterceptor
         .invoke(this.methodInvocation);
 
-    assertNull("The cached object should be null", actualCachedObject);
+    assertNull(actualCachedObject);
 
     this.verifyExpectationsOfMockControlsWereMet();
   }
@@ -382,7 +382,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.methodInvocation.getThis();
     this.methodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the caching-attribute for the intercepted method.
+    // expectation: get the caching attribute for the intercepted method.
     this.cachingAttributeSource.getCachingAttribute(this.interceptedMethod,
         targetClass);
     this.cachingAttributeSourceControl.setReturnValue(this.cachingAttribute);
@@ -393,7 +393,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.cacheKeyGeneratorControl.setReturnValue(this.cacheKey);
 
     // expectation: get the object stored in the cache under the id retrieved
-    // from the caching-attribute.
+    // from the caching attribute.
     String cacheProfileId = this.cachingAttribute.getCacheProfileId();
     this.cacheProviderFacade.getFromCache(this.cacheKey, cacheProfileId);
     this.cacheProviderFacadeControl.setReturnValue(expectedCachedObject);
@@ -433,7 +433,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.methodInvocation.getThis();
     this.methodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the caching-attribute for the intercepted method.
+    // expectation: get the caching attribute for the intercepted method.
     this.cachingAttributeSource.getCachingAttribute(this.interceptedMethod,
         targetClass);
     this.cachingAttributeSourceControl.setReturnValue(this.cachingAttribute);
@@ -444,7 +444,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.cacheKeyGeneratorControl.setReturnValue(this.cacheKey);
 
     // expectation: get the object stored in the cache under the id retrieved
-    // from the caching-attribute. There should not be any cached object.
+    // from the caching attribute. There should not be any cached object.
     String cacheProfileId = this.cachingAttribute.getCacheProfileId();
     this.cacheProviderFacade.getFromCache(this.cacheKey, cacheProfileId);
     this.cacheProviderFacadeControl.setReturnValue(null);
@@ -492,7 +492,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.methodInvocation.getThis();
     this.methodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the caching-attribute for the intercepted method.
+    // expectation: get the caching attribute for the intercepted method.
     this.cachingAttributeSource.getCachingAttribute(this.interceptedMethod,
         targetClass);
     this.cachingAttributeSourceControl.setReturnValue(this.cachingAttribute);
@@ -503,7 +503,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.cacheKeyGeneratorControl.setReturnValue(this.cacheKey);
 
     // expectation: get the object stored in the cache under the id retrieved
-    // from the caching-attribute. There should not be any cached object.
+    // from the caching attribute. There should not be any cached object.
     String cacheProfileId = this.cachingAttribute.getCacheProfileId();
     this.cacheProviderFacade.getFromCache(this.cacheKey, cacheProfileId);
     this.cacheProviderFacadeControl.setReturnValue(null);
@@ -549,7 +549,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.methodInvocation.getThis();
     this.methodInvocationControl.setReturnValue(thisObject);
 
-    // expectation: get the caching-attribute for the intercepted method.
+    // expectation: get the caching attribute for the intercepted method.
     this.cachingAttributeSource.getCachingAttribute(this.interceptedMethod,
         targetClass);
     this.cachingAttributeSourceControl.setReturnValue(this.cachingAttribute);
@@ -560,7 +560,7 @@ public final class CachingInterceptorTests extends TestCase {
     this.cacheKeyGeneratorControl.setReturnValue(this.cacheKey);
 
     // expectation: get the object stored in the cache under the id retrieved
-    // from the caching-attribute. There should not be any cached object.
+    // from the caching attribute. There should not be any cached object.
     String cacheProfileId = this.cachingAttribute.getCacheProfileId();
     this.cacheProviderFacade.getFromCache(this.cacheKey, cacheProfileId);
     this.cacheProviderFacadeControl.setReturnValue(null);
@@ -578,7 +578,7 @@ public final class CachingInterceptorTests extends TestCase {
     // execute the method to test.
     try {
       this.cachingInterceptor.invoke(this.methodInvocation);
-      fail("A Throwable should have been thrown");
+      fail("Expecting exception <" + Throwable.class.getName() + ">");
     } catch (Throwable throwable) {
       // we expect to catch this throwable.
     }

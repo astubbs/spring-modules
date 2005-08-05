@@ -35,7 +35,7 @@ import org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:04 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:45:17 $
  */
 public final class CacheFlushAttributeSourceTests extends TestCase {
 
@@ -51,7 +51,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
   private MockClassControl cacheFlushAttributeSourceControl;
 
   /**
-   * Method to get the cache-flush-attributes for.
+   * Method to get the cache-flush attributes for.
    */
   private Method method;
 
@@ -140,7 +140,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
     CacheAttribute foundAttribute = this.cacheFlushAttributeSource
         .findAttribute(allAttributes);
 
-    // verify that we are getting the cache-flush-attribute we expect.
+    // verify that we are getting the cache-flush attribute we expect.
     assertSame("<Cache-flushing attribute>", flushCache, foundAttribute);
   }
 
@@ -155,8 +155,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
     CacheAttribute foundAttribute = this.cacheFlushAttributeSource
         .findAttribute(null);
 
-    assertNull("The returned cache-flush-attribute should be null",
-        foundAttribute);
+    assertNull(foundAttribute);
   }
 
   /**
@@ -172,7 +171,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
     CacheAttribute foundCacheAttribute = this.cacheFlushAttributeSource
         .findAttribute(allAttributes);
 
-    assertNull("The returned cache-flush-attribute should be null",
+    assertNull("The returned cache-flush attribute should be null",
         foundCacheAttribute);
   }
 
@@ -192,7 +191,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
     CacheAttribute foundCacheAttribute = this.cacheFlushAttributeSource
         .findAttribute(allAttributes);
 
-    assertNull("The returned cache-flush-attribute should be null",
+    assertNull("The returned cache-flush attribute should be null",
         foundCacheAttribute);
   }
 
@@ -207,7 +206,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
     FlushCache flushCache = this.cacheFlushAttributeSource
         .getCacheFlushAttribute(this.method, this.targetClass);
 
-    assertNotNull("The returned cache-flush-attribute should not be null",
+    assertNotNull("The returned cache-flush attribute should not be null",
         flushCache);
   }
 

@@ -31,7 +31,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:52 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:18 $
  */
 public final class EhCacheProfileEditorTests extends TestCase {
 
@@ -46,11 +46,10 @@ public final class EhCacheProfileEditorTests extends TestCase {
 
   private void assertCreateCacheProfileThrowsIllegalArgumentException(
       Properties cacheProfileProperties) {
-    Class expectedException = IllegalArgumentException.class;
-
     try {
       this.factory.createCacheProfile(cacheProfileProperties);
-      fail("Expecting exception <" + expectedException + ">");
+      fail("Expecting exception <" + IllegalArgumentException.class.getName()
+          + ">");
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }

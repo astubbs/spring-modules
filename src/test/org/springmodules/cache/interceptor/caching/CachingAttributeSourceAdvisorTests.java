@@ -32,7 +32,7 @@ import org.springframework.aop.framework.AopConfigException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:49 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:15 $
  */
 public final class CachingAttributeSourceAdvisorTests extends TestCase {
 
@@ -102,13 +102,12 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
    * <code>{@link CachingAttributeSource}</code>.
    */
   public void testConstructorWithMethodInterceptorNotHavingCachingAttributeSource() {
-    Class expectedExceptionClass = AopConfigException.class;
     this.cachingInterceptor.setCachingAttributeSource(null);
 
     try {
       this.cachingAttributeSourceAdvisor = new CachingAttributeSourceAdvisor(
           this.cachingInterceptor);
-      fail("Expecting a <" + expectedExceptionClass.getName() + ">");
+      fail("Expecting a <" + AopConfigException.class.getName() + ">");
 
     } catch (AopConfigException exception) {
       // we are expecting this exception.
@@ -125,7 +124,7 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     this.setUpCachingAttributeSourceAsMockObject();
     this.setUpTargetClassAndMethod();
 
-    // expectation: a caching-attribute should not be found for the specified
+    // expectation: a caching attribute should not be found for the specified
     // method and class.
     this.cachingAttributeSource.getCachingAttribute(this.method,
         this.targetClass);
@@ -154,7 +153,7 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     this.setUpCachingAttributeSourceAsMockObject();
     this.setUpTargetClassAndMethod();
 
-    // expectation: a caching-attribute should be found for the specified method
+    // expectation: a caching attribute should be found for the specified method
     // and class.
     this.cachingAttributeSource.getCachingAttribute(this.method,
         this.targetClass);

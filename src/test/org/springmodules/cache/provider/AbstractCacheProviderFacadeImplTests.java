@@ -38,7 +38,7 @@ import org.springmodules.cache.mock.MockCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:57 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/05 02:45:20 $
  */
 public final class AbstractCacheProviderFacadeImplTests extends TestCase {
 
@@ -406,7 +406,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
     this.cacheProviderFacade.setCacheProfiles((Map) null);
     try {
       this.cacheProviderFacade.afterPropertiesSet();
-      fail("An 'InvalidConfigurationException' should have been thrown");
+      fail("Expecting exception <"
+          + InvalidConfigurationException.class.getName() + ">");
     } catch (InvalidConfigurationException exception) {
       // we are expecting this exception to be thrown.
     }
@@ -477,7 +478,8 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
     // execute the method to test.
     try {
       this.cacheProviderFacade.afterPropertiesSet();
-      fail("An IllegalStateException should have been thrown");
+      fail("Expecting exception <" + IllegalStateException.class.getName()
+          + ">");
     } catch (IllegalStateException exception) {
       // we are expecting this exception to be thrown.
     }
@@ -809,7 +811,7 @@ public final class AbstractCacheProviderFacadeImplTests extends TestCase {
     CacheProfile actualCacheProfile = this.cacheProviderFacade
         .getCacheProfile("");
 
-    assertNull("The returned cache profile should be null", actualCacheProfile);
+    assertNull(actualCacheProfile);
 
     // verify the expectations were met.
     this.mockCacheProfileMapControl.verify();

@@ -36,7 +36,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:56 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:17 $
  */
 public final class OsCacheManagerFactoryBeanTests extends
     AbstractCacheManagerFactoryBeanTests {
@@ -197,8 +197,7 @@ public final class OsCacheManagerFactoryBeanTests extends
    */
   public void testDestroyWithCacheManagerEqualToNull() throws Exception {
     // verify that the cache manager is null before calling 'destroy()'
-    assertNull("The cache manager should be null", this.cacheManagerFactoryBean
-        .getObject());
+    assertNull(this.cacheManagerFactoryBean.getObject());
 
     try {
       this.cacheManagerFactoryBean.destroy();

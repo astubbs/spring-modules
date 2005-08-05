@@ -49,7 +49,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/08/05 02:18:40 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/05 02:45:14 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -553,7 +553,8 @@ public final class JcsFacadeTests extends TestCase {
     this.jcsFacade.setCacheManager(null);
     try {
       this.jcsFacade.validateCacheManager();
-      fail("An 'InvalidConfigurationException' should have been thrown");
+      fail("Expecting exception <"
+          + InvalidConfigurationException.class.getName() + ">");
     } catch (InvalidConfigurationException exception) {
       // we are expecting this exception.
     }

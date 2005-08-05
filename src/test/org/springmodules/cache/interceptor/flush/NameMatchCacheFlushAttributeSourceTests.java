@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:04 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/05 02:45:16 $
  */
 public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
 
@@ -41,7 +41,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
   private NameMatchCacheFlushAttributeSource attributeSource;
 
   /**
-   * Method to obtain cache-flush-attributes for.
+   * Method to obtain cache-flush attributes for.
    */
   private Method method;
 
@@ -81,7 +81,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
     PropertyEditor cacheFlushAttributeEditor = this.attributeSource
         .getCacheAttributeEditor();
 
-    assertNotNull("The editor of caching-attributes should not be null",
+    assertNotNull("The editor of caching attributes should not be null",
         cacheFlushAttributeEditor);
     assertTrue(
         "The editor should be an instance of 'CacheFlushAttributeEditor'",
@@ -91,7 +91,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link NameMatchCacheFlushAttributeSource#getCacheFlushAttribute(Method, Class)}</code>
-   * returns a cache-flush-attribute when the name of the given method matches a
+   * returns a cache-flush attribute when the name of the given method matches a
    * mapped name that does not contain wild cards.
    */
   public void testGetCacheFlushAttributeWithMethodNameMatchingMappedNameWithoutWildCards()
@@ -116,14 +116,14 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
     FlushCache actualCacheFlushAttribute = this.attributeSource
         .getCacheFlushAttribute(this.method, this.method.getDeclaringClass());
 
-    assertEquals("<cache-flush-attribute>", expectedCacheFlushAttribute,
+    assertEquals("<cache-flush attribute>", expectedCacheFlushAttribute,
         actualCacheFlushAttribute);
   }
 
   /**
    * Verifies that the method
    * <code>{@link NameMatchCacheFlushAttributeSource#getCacheFlushAttribute(Method, Class)}</code>
-   * returns a cache-flush-attribute when the name of the given method matches a
+   * returns a cache-flush attribute when the name of the given method matches a
    * mapped name containing wild cards.
    */
   public void testGetCacheFlushAttributeWithMethodNameMatchingMappedNameWithWildCards()
@@ -141,14 +141,14 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
     FlushCache actualCacheFlushAttribute = this.attributeSource
         .getCacheFlushAttribute(this.method, this.method.getDeclaringClass());
 
-    assertEquals("<cache-flush-attribute>", expectedCacheFlushAttribute,
+    assertEquals("<cache-flush attribute>", expectedCacheFlushAttribute,
         actualCacheFlushAttribute);
   }
 
   /**
    * Verifies that the method
    * <code>{@link NameMatchCacheFlushAttributeSource#getCacheFlushAttribute(Method, Class)}</code>
-   * does not return any cache-flush-attribute if the name of the given method
+   * does not return any cache-flush attribute if the name of the given method
    * does not match any of the mapped methods.
    */
   public void testGetCacheFlushAttributeWithNotMatchingMethodName()
@@ -166,8 +166,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
     FlushCache actualCacheFlushAttribute = this.attributeSource
         .getCacheFlushAttribute(this.method, this.method.getDeclaringClass());
 
-    assertNull("The cache-flush-attribute should be null",
-        actualCacheFlushAttribute);
+    assertNull(actualCacheFlushAttribute);
   }
 
 }

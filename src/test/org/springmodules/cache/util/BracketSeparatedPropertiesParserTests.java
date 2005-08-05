@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/04 06:04:44 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:20 $
  */
 public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
@@ -46,12 +46,10 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
   }
 
   private void assertAddPropertyThrowsException() {
-    Class expectedException = IllegalArgumentException.class;
-
     try {
       BracketSeparatedPropertiesParser.addProperty(this.property,
           this.properties);
-      fail("Expecting <" + expectedException.getName() + ">");
+      fail("Expecting <" + IllegalArgumentException.class.getName() + ">");
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }
