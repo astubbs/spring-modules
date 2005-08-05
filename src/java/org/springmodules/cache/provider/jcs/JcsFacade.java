@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/08/05 02:18:55 $
+ * @version $Revision: 1.10 $ $Date: 2005/08/05 04:36:56 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -106,7 +106,10 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#onCancelCacheUpdate(Serializable)
    */
   protected void onCancelCacheUpdate(Serializable cacheKey) {
-    // Not supported
+    if (this.logger.isDebugEnabled()) {
+      this.logger
+          .debug("JCS does not support cancelation of updates to the cache");
+    }
   }
 
   /**
@@ -138,8 +141,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
       }
 
     } catch (Exception exception) {
-      String errorMessage = "Unable to flush cache";
-      throw new CacheAccessException(errorMessage, exception);
+      throw new CacheAccessException(exception);
     }
   }
 
@@ -173,8 +175,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
       }
 
     } catch (Exception exception) {
-      String errorMessage = "Unable to retrieve an entry from the cache";
-      throw new CacheAccessException(errorMessage, exception);
+      throw new CacheAccessException(exception);
     }
 
     return cachedObject;
@@ -212,8 +213,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
       cache.update(newCacheElement);
 
     } catch (Exception exception) {
-      String errorMessage = "Unable to store an object in the cache";
-      throw new CacheAccessException(errorMessage, exception);
+      throw new CacheAccessException(exception);
     }
   }
 
@@ -244,8 +244,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
       cache.remove(key);
 
     } catch (Exception exception) {
-      String errorMessage = "Unable to remove the entry from the cache";
-      throw new CacheAccessException(errorMessage, exception);
+      throw new CacheAccessException(exception);
     }
   }
 

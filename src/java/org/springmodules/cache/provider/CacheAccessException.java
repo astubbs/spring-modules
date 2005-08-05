@@ -30,12 +30,9 @@ public class CacheAccessException extends CacheException {
 
   private static final long serialVersionUID = -5016099756340093513L;
 
-  public CacheAccessException(String detailMessage) {
-    super(detailMessage);
-  }
-
-  public CacheAccessException(String detailMessage, Throwable nestedException) {
-    super(detailMessage, nestedException);
+  public CacheAccessException(Throwable nestedException) {
+    super("An unexpected error occurred when accessing the cache",
+        nestedException);
   }
 
 }

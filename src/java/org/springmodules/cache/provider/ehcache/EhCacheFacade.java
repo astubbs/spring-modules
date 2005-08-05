@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.InvalidObjectToCache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:54 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/05 04:36:55 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -75,7 +75,10 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#onCancelCacheUpdate(Serializable)
    */
   protected void onCancelCacheUpdate(Serializable cacheKey) {
-    // Not supported
+    if (this.logger.isDebugEnabled()) {
+      this.logger
+          .debug("EHCache does not support cancelation of updates to the cache");
+    }
   }
 
   /**
@@ -100,8 +103,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
       cache.removeAll();
 
     } catch (Exception exception) {
-      String errorMessage = "Unable to flush cache";
-      throw new CacheAccessException(errorMessage, exception);
+      throw new CacheAccessException(exception);
     }
   }
 
@@ -134,8 +136,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
       }
 
     } catch (Exception exception) {
-      String errorMessage = "Unable to retrieve an entry from the cache";
-      throw new CacheAccessException(errorMessage, exception);
+      throw new CacheAccessException(exception);
     }
 
     return cachedObject;
@@ -176,8 +177,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
       cache.put(newCacheElement);
 
     } catch (RuntimeException exception) {
-      String errorMessage = "Unable to store an object in the cache";
-      throw new CacheAccessException(errorMessage, exception);
+      throw new CacheAccessException(exception);
     }
   }
 
@@ -206,8 +206,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
       cache.remove(cacheKey);
 
     } catch (Exception exception) {
-      String errorMessage = "Unable to remove the entry from the cache";
-      throw new CacheAccessException(errorMessage, exception);
+      throw new CacheAccessException(exception);
     }
   }
 
