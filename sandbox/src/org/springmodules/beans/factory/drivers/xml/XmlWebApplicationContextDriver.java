@@ -51,7 +51,6 @@ public class XmlWebApplicationContextDriver extends XmlApplicationContextDriver
 		if (configLocations != null) {
 			wac.setConfigLocations(configLocations);
 		}
-		wac.refresh();
 		return wac;
 	}
 
