@@ -28,13 +28,13 @@ import java.util.Map;
  */
 public class PersistentObject {
 
-    String tableName;
-    String baseName;
-    String databaseProductName;
-    boolean usingGeneratedKeysStrategy;
-    DataFieldMaxValueIncrementer incrementer;
-    boolean usingLowerCaseIdentifiers;
-    Map persistentFields;
+    private String tableName;
+    private String baseName;
+    private String databaseProductName;
+    private boolean usingGeneratedKeysStrategy;
+    private DataFieldMaxValueIncrementer incrementer;
+    private boolean usingLowerCaseIdentifiers;
+    private Map persistentFields;
 
     public String getTableName() {
         return tableName;

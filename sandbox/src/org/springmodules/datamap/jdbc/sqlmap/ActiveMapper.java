@@ -18,8 +18,12 @@ package org.springmodules.datamap.jdbc.sqlmap;
 
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.StatementCreatorUtils;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springmodules.datamap.dao.DataMapper;
 import org.springmodules.datamap.dao.Operators;
 import org.springmodules.datamap.jdbc.sqlmap.support.ActiveMapperUtils;
@@ -28,11 +32,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 /**
  * Implementation of DataMapper supporting metadata based default mappings to/from
@@ -190,28 +192,26 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
     public void save(Object o) {
         Map mappedFields = new HashMap(10);
         Map unmappedFields = new HashMap(10);
-        List mappedColumns = new LinkedList();
-        List mappedValues = new LinkedList();
-        List idValue = new LinkedList();
+        List columnValues = new LinkedList();
+        List idValues = new LinkedList();
         Set fieldSet = persistentObject.getPersistentFields().entrySet();
-        boolean hasId = false;
+        boolean isNewRow = false;
         for (Iterator i = fieldSet.iterator(); i.hasNext();) {
             Map.Entry e = (Map.Entry)i.next();
             PersistentField pf = (PersistentField)e.getValue();
             if (pf.getSqlType() > 0) {
-                mappedFields.put(pf.getFieldName(), e);
+                mappedFields.put(pf.getFieldName(), pf);
                 try {
                     Method m = o.getClass().getMethod(ActiveMapperUtils.getterName(pf.getFieldName()), new Class[] {});
                     Object r = m.invoke(o, new Object[] {});
-                    if ("id".equals(pf.getFieldName())) {
-                        if (r != null) {
-                            idValue.add(r);
-                            hasId = true;
+                    if (pf.isIdField()) {
+                        idValues.add(new PersistentValue(pf.getColumnName(), pf.getSqlType(), r));
+                        if (r == null) {
+                            isNewRow = true;
                         }
                     }
                     else {
-                        mappedColumns.add(pf.getFieldName());
-                        mappedValues.add(r);
+                        columnValues.add(new PersistentValue(pf.getColumnName(), pf.getSqlType(), r));
                     }
                 } catch (NoSuchMethodException e1) {
                     throw new DataAccessResourceFailureException(new StringBuffer().append("Failed to map field ").append(pf.getFieldName()).append(".").toString(), e1);
@@ -220,65 +220,95 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
                 } catch (InvocationTargetException e1) {
                     throw new DataAccessResourceFailureException(new StringBuffer().append("Failed to map field ").append(pf.getFieldName()).append(".").toString(), e1);
                 }
-
             }
             else {
-                unmappedFields.put(pf.getFieldName(), e);
+                unmappedFields.put(pf.getFieldName(), pf);
             }
         }
-        List additionalColumns = new LinkedList();
-        Object[] additionalValues = completeMappingOnSave(o, additionalColumns, mappedFields, unmappedFields);
+        List additionalColumnValues = completeMappingOnSave(o, mappedFields, unmappedFields);
+        for (Iterator iter = additionalColumnValues.iterator(); iter.hasNext(); ) {
+            Object colVal = iter.next();
+            if (colVal instanceof PersistentValue) {
+                columnValues.add(colVal);
+            }
+            else {
+                throw new InvalidDataAccessApiUsageException("Invalid type returned for additional columns.  Must be of type PersistentValue.");
+            }
+        }
         StringBuffer sql = new StringBuffer();
-        if (hasId) {
+        final List parameterValues = new LinkedList();
+        if (!isNewRow) {
             sql.append("update ").append(tableNameToUse).append(" set ");
-            for (int i = 0; i < mappedColumns.size(); i++) {
+            for (int i = 0; i < columnValues.size(); i++) {
                 if (i > 0)
                     sql.append(", ");
-                sql.append(mappedColumns.get(i));
+                sql.append(((PersistentValue)columnValues.get(i)).getColumnName());
                 sql.append(" = ?");
+                parameterValues.add(columnValues.get(i));
             }
-            sql.append(" where id = ?");
+            sql.append(" where ").append(((PersistentValue) idValues.get(0)).getColumnName()).append(" = ?");
+            parameterValues.add(idValues.get(0));
         }
         else {
-            idValue.add(assignNewId(o));
             StringBuffer placeholders = new StringBuffer();
             sql.append("insert into ");
             sql.append(tableNameToUse);
             sql.append(" (");
-            sql.append("id");
-            placeholders.append("?");
-            for (int i = 0; i < mappedColumns.size(); i++) {
-                sql.append(", ");
-                sql.append(mappedColumns.get(i));
-                placeholders.append(", ?");
+            if (!persistentObject.isUsingGeneratedKeysStrategy()) {
+                sql.append(((PersistentValue)idValues.get(0)).getColumnName());
+                ((PersistentValue)idValues.get(0)).setValue(assignNewId(o));
+                placeholders.append("?");
+                parameterValues.add(idValues.get(0));
+            }
+            for (int i = 0; i < columnValues.size(); i++) {
+                if (i > 0 || !persistentObject.isUsingGeneratedKeysStrategy()) {
+                    sql.append(", ");
+                    placeholders.append(", ");
+                }
+                sql.append(((PersistentValue)columnValues.get(i)).getColumnName());
+                placeholders.append("?");
+                parameterValues.add(columnValues.get(i));
             }
             sql.append(") values(");
             sql.append(placeholders);
             sql.append(")");
         }
-        Object[] values = new Object[mappedValues.size() + idValue.size() + additionalValues.length];
-        int vix = 0;
-        if (!hasId) {
-            for (int i = 0; i < idValue.size(); i++) {
-                values[vix++] = idValue.get(i);
-            }
+        if (isNewRow && persistentObject.isUsingGeneratedKeysStrategy()) {
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            final String prepSql = sql.toString();
+            getJdbcTemplate().update(new PreparedStatementCreator() {
+                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                    PreparedStatement ps = con.prepareStatement(prepSql, Statement.RETURN_GENERATED_KEYS);
+                    int cnt = 0;
+                    for (Iterator iter = parameterValues.iterator(); iter.hasNext(); ) {
+                        PersistentValue pv = (PersistentValue)iter.next();
+                        StatementCreatorUtils.setParameterValue(ps, cnt+1, pv.getSqlType(), null, pv.getValue());
+                        cnt++;
+                    }
+                    return ps;
+                }
+            }, keyHolder);
+            assignGeneratedKey(o, keyHolder);
         }
-        for (int i = 0; i < mappedValues.size(); i++) {
-            values[vix++] = mappedValues.get(i);
+        else {
+            final String prepSql = sql.toString();
+            getJdbcTemplate().update(new PreparedStatementCreator() {
+                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                    PreparedStatement ps = con.prepareStatement(prepSql);
+                    int cnt = 0;
+                    for (Iterator iter = parameterValues.iterator(); iter.hasNext(); ) {
+                        PersistentValue pv = (PersistentValue)iter.next();
+                        StatementCreatorUtils.setParameterValue(ps, cnt+1, pv.getSqlType(), null, pv.getValue());
+                        cnt++;
+                    }
+                    return ps;
+                }
+            });
         }
-        for (int i = 0; i < additionalValues.length; i++) {
-            values[vix++] = additionalValues[i];
-        }
-        if (hasId) {
-            for (int i = 0; i < idValue.size(); i++) {
-                values[vix++] = idValue.get(i);
-            }
-        }
-        getJdbcTemplate().update(sql.toString(), values);
     }
 
-    protected Object[] completeMappingOnSave(Object input, List columns, Map mappedFields, Map unmappedFields) {
-        return new Object[] {};
+    protected List completeMappingOnSave(Object input, Map mappedFields, Map unmappedFields) {
+        return new ArrayList(0);
     }
 
     public void delete(Object o) {
@@ -320,6 +350,21 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         return newId;
     }
 
+    protected Object assignGeneratedKey(Object o, KeyHolder kh) {
+        PersistentField pf = (PersistentField)persistentObject.getPersistentFields().get("id");
+        Object newId = kh.getKey();
+        try {
+            Method m = o.getClass().getMethod(ActiveMapperUtils.setterName(pf.getFieldName()), new Class[] {newId.getClass()});
+            m.invoke(o, new Object[] {newId});
+        } catch (NoSuchMethodException e1) {
+            e1.printStackTrace();
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        }
+        return newId;
+    }
 
     private class ActiveRowMapper implements RowMapper {
         private Class mappedClass = null;

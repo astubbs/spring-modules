@@ -22,6 +22,7 @@ import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.jdbc.support.MetaDataAccessException;
 import org.springframework.jdbc.support.incrementer.HsqlMaxValueIncrementer;
 import org.springframework.jdbc.support.incrementer.PostgreSQLSequenceMaxValueIncrementer;
+import org.springframework.jdbc.support.incrementer.OracleSequenceMaxValueIncrementer;
 import org.springmodules.datamap.jdbc.sqlmap.PersistentField;
 import org.springmodules.datamap.jdbc.sqlmap.PersistentObject;
 
@@ -82,6 +83,9 @@ public class ActiveMapperUtils {
             pf.setFieldName(f[i].getName());
             pf.setColumnName(ActiveMapperUtils.underscoreName(f[i].getName()));
             pf.setJavaType(f[i].getType());
+            if ("id".equals(f[i].getName())) {
+                pf.setIdField(true);
+            }
             newMetaData.put(pf.getColumnName(), pf);
         }
 
@@ -97,6 +101,10 @@ public class ActiveMapperUtils {
                     else if ("HSQL Database Engine".equals(newPo.getDatabaseProductName())) {
                         newPo.setUsingGeneratedKeysStrategy(false);
                         newPo.setIncrementer(new HsqlMaxValueIncrementer(dataSource, newPo.getBaseName() + "_seq", "value"));
+                    }
+                    else if ("Oracle".equals(newPo.getDatabaseProductName())) {
+                        newPo.setUsingGeneratedKeysStrategy(false);
+                        newPo.setIncrementer(new OracleSequenceMaxValueIncrementer(dataSource, newPo.getBaseName() + "_seq"));
                     }
                     else {
                         newPo.setUsingGeneratedKeysStrategy(true);

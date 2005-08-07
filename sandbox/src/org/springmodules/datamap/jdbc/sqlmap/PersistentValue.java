@@ -17,25 +17,24 @@
 package org.springmodules.datamap.jdbc.sqlmap;
 
 /**
- * Class to hold information we need for any persistent fields
+ * Class to hold information we need for any values to persist
  *
  * @author Thomas Risberg
  * @since 0.3
  */
-public class PersistentField {
+public class PersistentValue {
 
-    private String fieldName;
     private String columnName;
-    private Class javaType;
     private int sqlType;
-    private boolean idField = false;
+    private Object value;
 
-    public String getFieldName() {
-        return fieldName;
+    public PersistentValue() {
     }
 
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
+    public PersistentValue(String columnName, int sqlType, Object value) {
+        this.columnName = columnName;
+        this.sqlType = sqlType;
+        this.value = value;
     }
 
     public String getColumnName() {
@@ -46,14 +45,6 @@ public class PersistentField {
         this.columnName = columnName;
     }
 
-    public Class getJavaType() {
-        return javaType;
-    }
-
-    public void setJavaType(Class javaType) {
-        this.javaType = javaType;
-    }
-
     public int getSqlType() {
         return sqlType;
     }
@@ -62,15 +53,15 @@ public class PersistentField {
         this.sqlType = sqlType;
     }
 
-    public boolean isIdField() {
-        return idField;
+    public Object getValue() {
+        return value;
     }
 
-    public void setIdField(boolean idField) {
-        this.idField = idField;
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     public String toString() {
-        return this.fieldName + " " + this.columnName + ": " + this.sqlType;
+        return this.columnName + " [" + this.sqlType + "] = " + value;
     }
 }
