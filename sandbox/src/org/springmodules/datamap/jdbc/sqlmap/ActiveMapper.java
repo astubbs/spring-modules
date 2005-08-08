@@ -32,9 +32,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.sql.*;
 
 /**
  * Implementation of DataMapper supporting metadata based default mappings to/from
@@ -407,18 +407,45 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
                             m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {String.class});
                             value = rs.getString(x);
                         }
+                        else if (fieldMeta.getJavaType().equals(Byte.class)) {
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Byte.class});
+                            value = new Byte(rs.getByte(x));
+                        }
+                        else if (fieldMeta.getJavaType().equals(Short.class)) {
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Short.class});
+                            value = new Short(rs.getShort(x));
+                        }
+                        else if (fieldMeta.getJavaType().equals(Integer.class)) {
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Integer.class});
+                            value = new Integer(rs.getInt(x));
+                        }
                         else if (fieldMeta.getJavaType().equals(Long.class)) {
                             m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Long.class});
                             value = new Long(rs.getLong(x));
+                        }
+                        else if (fieldMeta.getJavaType().equals(Float.class)) {
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Float.class});
+                            value = new Float(rs.getFloat(x));
+                        }
+                        else if (fieldMeta.getJavaType().equals(Double.class)) {
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Double.class});
+                            value = new Double(rs.getDouble(x));
                         }
                         else if (fieldMeta.getJavaType().equals(BigDecimal.class)) {
                             m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {BigDecimal.class});
                             value = rs.getBigDecimal(x);
                         }
+                        else if (fieldMeta.getJavaType().equals(Boolean.class)) {
+                            m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Boolean.class});
+                            value = (rs.getBoolean(x)) ? Boolean.TRUE : Boolean.FALSE;
+                        }
                         else if (fieldMeta.getJavaType().equals(Date.class)) {
                             m = result.getClass().getMethod(ActiveMapperUtils.setterName(fieldMeta.getColumnName()), new Class[] {Date.class});
                             if (fieldMeta.getSqlType() == Types.DATE) {
                                 value = rs.getDate(x);
+                            }
+                            else if (fieldMeta.getSqlType() == Types.TIME) {
+                                value = rs.getTime(x);
                             }
                             else {
                                 value = rs.getTimestamp(x);
