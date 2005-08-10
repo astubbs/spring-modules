@@ -16,6 +16,7 @@
 package org.springmodules.validation.valang;
 
 import org.apache.commons.collections.Predicate;
+import org.springframework.core.JdkVersion;
 import org.springmodules.util.dateparser.DefaultDateParser;
 import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LengthOfFunction;
@@ -43,10 +44,13 @@ import org.springmodules.validation.predicates.Operator;
 public class DefaultVisitor implements ValangVisitor {
 
 	private ValangVisitor visitor = null;
-	private DefaultDateParser dateParser = new DefaultDateParser();
+	private DefaultDateParser dateParser = null;
 	
 	public DefaultVisitor() {
 		super();
+		if (JdkVersion.getMajorJavaVersion() != JdkVersion.JAVA_13) {
+			this.dateParser = new DefaultDateParser();
+		}
 	}
 
 	public Function getFunction(String name, Function function, int line, int column) {
@@ -94,6 +98,9 @@ public class DefaultVisitor implements ValangVisitor {
 	}
 	
 	public DefaultDateParser getDateParser() {
+		if (this.dateParser == null) {
+			throw new IllegalStateException("Date parser not supported in Java 1.3 or older.");
+		}
 		return this.dateParser;
 	}
 }
