@@ -19,7 +19,8 @@
 package org.springmodules.cache.provider.jcs;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.AbstractCacheProfileValidator;
+import org.springmodules.cache.provider.InvalidCacheProfileException;
 
 /**
  * <p>
@@ -28,45 +29,31 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/04 04:46:30 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/11 04:28:37 $
  */
-public class JcsProfileValidator implements CacheProfileValidator {
+public class JcsProfileValidator extends AbstractCacheProfileValidator {
 
   public JcsProfileValidator() {
     super();
   }
 
   /**
-   * Validates the specified cache name.
-   * 
-   * @param cacheName
-   *          the cache name to validate.
-   * 
-   * @throws IllegalArgumentException
-   *           if the cache name is empty or <code>null</code>.
+   * @see AbstractCacheProfileValidator#getTargetClass()
    */
-  protected final void validateCacheName(String cacheName) {
-    if (!StringUtils.hasText(cacheName)) {
-      throw new IllegalArgumentException("Cache name should not be empty");
-    }
+  protected Class getTargetClass() {
+    return JcsProfile.class;
   }
 
   /**
-   * @see CacheProfileValidator#validateCacheProfile(Object)
-   * @see #validateCacheName(String)
-   * 
-   * @throws IllegalArgumentException
-   *           if the cache profile is not an instance of
-   *           <code>JcsProfile</code>.
+   * @see AbstractCacheProfileValidator#validateCacheProfileProperties(java.lang.Object)
    */
-  public final void validateCacheProfile(Object cacheProfile) {
-    if (cacheProfile instanceof JcsProfile) {
-      JcsProfile jcsCacheProfile = (JcsProfile) cacheProfile;
-      String cacheName = jcsCacheProfile.getCacheName();
-      this.validateCacheName(cacheName);
-    } else {
-      throw new IllegalArgumentException(
-          "The cache profile should be an instance of 'JcsProfile'");
+  protected void validateCacheProfileProperties(Object cacheProfile)
+      throws InvalidCacheProfileException {
+    JcsProfile jcsProfile = (JcsProfile) cacheProfile;
+
+    if (!StringUtils.hasText(jcsProfile.getCacheName())) {
+      throw new InvalidCacheProfileException(
+          "Cache name should not be empty");
     }
   }
 }

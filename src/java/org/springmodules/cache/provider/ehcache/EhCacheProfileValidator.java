@@ -19,7 +19,8 @@
 package org.springmodules.cache.provider.ehcache;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.AbstractCacheProfileValidator;
+import org.springmodules.cache.provider.InvalidCacheProfileException;
 
 /**
  * <p>
@@ -28,43 +29,31 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/06/25 06:53:16 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:27:32 $
  */
-public class EhCacheProfileValidator implements CacheProfileValidator {
+public class EhCacheProfileValidator extends AbstractCacheProfileValidator {
 
-  /**
-   * Constructor.
-   */
   public EhCacheProfileValidator() {
     super();
   }
 
   /**
-   * Validates the specified cache name.
-   * 
-   * @param cacheName
-   *          the cache name to validate.
-   * 
-   * @throws IllegalArgumentException
-   *           if the cache name is empty or <code>null</code>.
+   * @see AbstractCacheProfileValidator#getTargetClass()
    */
-  protected final void validateCacheName(String cacheName) {
-    if (!StringUtils.hasText(cacheName)) {
-      throw new IllegalArgumentException("Cache name should not be empty");
-    }
+  protected Class getTargetClass() {
+    return EhCacheProfile.class;
   }
 
   /**
-   * @see CacheProfileValidator#validateCacheProfile(Object)
+   * @see AbstractCacheProfileValidator#validateCacheProfileProperties(java.lang.Object)
    */
-  public final void validateCacheProfile(Object cacheProfile) {
-    if (cacheProfile instanceof EhCacheProfile) {
-      EhCacheProfile ehcacheCacheProfile = (EhCacheProfile) cacheProfile;
-      String cacheName = ehcacheCacheProfile.getCacheName();
-      this.validateCacheName(cacheName);
-    } else {
-      throw new IllegalArgumentException(
-          "The cache profile should be an instance of 'EhCacheProfile'");
+  protected void validateCacheProfileProperties(Object cacheProfile)
+      throws InvalidCacheProfileException {
+    EhCacheProfile ehCacheProfile = (EhCacheProfile) cacheProfile;
+
+    if (!StringUtils.hasText(ehCacheProfile.getCacheName())) {
+      throw new InvalidCacheProfileException("Cache name should not be empty");
     }
   }
+
 }
