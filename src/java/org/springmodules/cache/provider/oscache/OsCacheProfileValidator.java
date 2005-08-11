@@ -19,6 +19,7 @@
 package org.springmodules.cache.provider.oscache;
 
 import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.InvalidCacheProfileException;
 
 /**
  * <p>
@@ -27,7 +28,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/04 04:49:08 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:29:46 $
  */
 public class OsCacheProfileValidator implements CacheProfileValidator {
 
@@ -38,14 +39,14 @@ public class OsCacheProfileValidator implements CacheProfileValidator {
   /**
    * @see CacheProfileValidator#validateCacheProfile(Object)
    * 
-   * @throws IllegalArgumentException
-   *           if the cache profile is not an instance of
-   *           <code>OsCacheProfile</code>.
+   * @throws InvalidCacheProfileException
+   *           if the cache profile is not an instance of OSCache profile.
    */
   public final void validateCacheProfile(Object cacheProfile) {
     if (!(cacheProfile instanceof OsCacheProfile)) {
-      throw new IllegalArgumentException(
-          "The cache profile should be an instance of 'OsCacheProfile'");
+      throw new InvalidCacheProfileException(
+          "The cache profile should be an instance of <"
+              + OsCacheProfile.class.getName() + ">");
     }
   }
 
