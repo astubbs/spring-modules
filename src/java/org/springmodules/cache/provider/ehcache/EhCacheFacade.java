@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.InvalidObjectToCache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/05 04:36:55 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/11 11:27:12 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -67,18 +67,6 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    */
   protected CacheProfileValidator getCacheProfileValidator() {
     return new EhCacheProfileValidator();
-  }
-
-  /**
-   * EHCache does not support cancellation of updates.
-   * 
-   * @see AbstractCacheProviderFacadeImpl#onCancelCacheUpdate(Serializable)
-   */
-  protected void onCancelCacheUpdate(Serializable cacheKey) {
-    if (this.logger.isDebugEnabled()) {
-      this.logger
-          .debug("EHCache does not support cancelation of updates to the cache");
-    }
   }
 
   /**

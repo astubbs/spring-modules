@@ -37,7 +37,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/11 04:26:24 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/11 11:27:13 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -317,8 +317,10 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    *           if an unexpected error takes place when attempting to cancel the
    *           update.
    */
-  protected abstract void onCancelCacheUpdate(Serializable cacheKey)
-      throws CacheException;
+  protected void onCancelCacheUpdate(Serializable cacheKey)
+      throws CacheException {
+    this.logger.info("Cache provider does not support cancelation of updates");
+  }
 
   /**
    * Flushes the caches specified in the given profile.

@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/08/05 04:36:56 $
+ * @version $Revision: 1.11 $ $Date: 2005/08/11 11:27:13 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -98,18 +98,6 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     }
 
     return key;
-  }
-
-  /**
-   * JCS does not support cancellation of updates.
-   * 
-   * @see AbstractCacheProviderFacadeImpl#onCancelCacheUpdate(Serializable)
-   */
-  protected void onCancelCacheUpdate(Serializable cacheKey) {
-    if (this.logger.isDebugEnabled()) {
-      this.logger
-          .debug("JCS does not support cancelation of updates to the cache");
-    }
   }
 
   /**
