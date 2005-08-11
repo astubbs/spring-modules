@@ -17,7 +17,7 @@
  */
 package org.springmodules.cache.provider;
 
-import org.springframework.core.NestedCheckedException;
+import org.springframework.core.NestedRuntimeException;
 
 /**
  * <p>
@@ -29,7 +29,7 @@ import org.springframework.core.NestedCheckedException;
  * 
  * @version $Revision$ $Date$
  */
-public abstract class CacheException extends NestedCheckedException {
+public abstract class CacheException extends NestedRuntimeException {
 
   public CacheException(String detailMessage) {
     super(detailMessage);
