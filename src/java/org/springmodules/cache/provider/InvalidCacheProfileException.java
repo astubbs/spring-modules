@@ -18,7 +18,7 @@
 
 package org.springmodules.cache.provider;
 
-import org.springframework.core.NestedCheckedException;
+import org.springframework.core.NestedRuntimeException;
 
 /**
  * <p>
@@ -30,7 +30,7 @@ import org.springframework.core.NestedCheckedException;
  * 
  * @version $Revision$ $Date$
  */
-public class InvalidCacheProfileException extends NestedCheckedException {
+public class InvalidCacheProfileException extends NestedRuntimeException {
 
   private static final long serialVersionUID = 7043423030105935558L;
 
