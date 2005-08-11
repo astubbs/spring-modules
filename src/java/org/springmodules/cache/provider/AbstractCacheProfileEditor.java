@@ -32,7 +32,7 @@ import org.springmodules.cache.util.BracketSeparatedPropertiesParser;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:43 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/11 04:25:46 $
  */
 public abstract class AbstractCacheProfileEditor extends PropertyEditorSupport {
 
@@ -42,26 +42,32 @@ public abstract class AbstractCacheProfileEditor extends PropertyEditorSupport {
 
   /**
    * Creates a new instance of <code>{@link CacheProfile}</code> from the
+   * specified properties.
+   * 
+   * @param properties
+   *          the specified properties.
+   * @return a new cache profile.
+   * @throws InvalidCacheProfileException
+   *           if one or more properties have invalid values.
+   */
+  protected abstract CacheProfile createCacheProfile(Properties properties)
+      throws InvalidCacheProfileException;
+
+  /**
+   * Creates a new instance of <code>{@link CacheProfile}</code> from the
    * specified String.
    * 
    * @param text
    *          The String to be parsed.
+   * @throws InvalidCacheProfileException
+   *           if one or more properties have invalid values.
+   * @see CacheProfileValidator#validateCacheProfile(Object)
    */
-  public final void setAsText(String text) throws IllegalArgumentException {
+  public final void setAsText(String text) {
     Properties properties = BracketSeparatedPropertiesParser
         .parseProperties(text);
 
     CacheProfile cacheProfile = this.createCacheProfile(properties);
     this.setValue(cacheProfile);
   }
-
-  /**
-   * Creates a new instance of <code>{@link CacheProfile}</code> from the
-   * specified properties.
-   * 
-   * @param properties
-   *          the specified properties.
-   * @return a new cache profile.
-   */
-  protected abstract CacheProfile createCacheProfile(Properties properties);
 }
