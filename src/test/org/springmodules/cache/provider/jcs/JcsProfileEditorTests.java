@@ -22,7 +22,9 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.easymock.MockControl;
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheProfileValidator;
 
 /**
  * <p>
@@ -31,81 +33,95 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:14 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/11 04:34:33 $
  */
 public final class JcsProfileEditorTests extends TestCase {
 
   /**
    * Primary object that is under test.
    */
-  private JcsProfileEditor factory;
+  private JcsProfileEditor cacheProfileEditor;
+
+  private CacheProfileValidator cacheProfileValidator;
+
+  private MockControl cacheProfileValidatorControl;
+
+  private Properties properties;
 
   public JcsProfileEditorTests(String name) {
     super(name);
   }
 
-  private void assertCreateCacheProfileThrowsIllegalArgumentException(
-      Properties cacheProfileProperties) {
+  /**
+   * Asserts that <code>{@link JcsProfileEditor}</code> validates the created
+   * cache profile.
+   * 
+   * @param expected
+   *          the expected cache profile to be created.
+   */
+  private void assertCreateCacheProfileValidatesCreatedCacheProfile(
+      JcsProfile expected) {
+    this.setUpCacheProfileValidatorAsMockObject();
 
-    try {
-      this.factory.createCacheProfile(cacheProfileProperties);
-      fail("Expecting exception <" + IllegalArgumentException.class.getName()
-          + ">");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+    // expectation: validate the new cache profile.
+    this.cacheProfileValidator.validateCacheProfile(expected);
+
+    this.setStatusOfMockControlsToReplay();
+
+    // execute the method to test.
+    CacheProfile actual = this.cacheProfileEditor
+        .createCacheProfile(this.properties);
+    assertEquals("<Cache profile>", expected, actual);
+
+    this.verifyExpectationsOfMockControlsWereMet();
+  }
+
+  private void setStatusOfMockControlsToReplay() {
+    this.cacheProfileValidatorControl.replay();
   }
 
   protected void setUp() throws Exception {
     super.setUp();
-    this.factory = new JcsProfileEditor();
+    this.cacheProfileEditor = new JcsProfileEditor();
+    this.properties = new Properties();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link JcsProfile}</code> and populates
-   * it with the values of the properties "cacheName" and "group" set in a
-   * <code>java.util.Properties</code>.
-   */
-  public void testCreateCacheProfile() {
-    String cacheName = "main";
-    String group = "test";
+  private void setUpCacheProfileValidatorAsMockObject() {
+    this.cacheProfileValidatorControl = MockControl
+        .createControl(CacheProfileValidator.class);
+    this.cacheProfileValidator = (CacheProfileValidator) this.cacheProfileValidatorControl
+        .getMock();
 
-    Properties properties = new Properties();
-    properties.setProperty("cacheName", cacheName);
-    properties.setProperty("group", group);
-
-    JcsProfile expectedProfile = new JcsProfile();
-    expectedProfile.setCacheName(cacheName);
-    expectedProfile.setGroup(group);
-
-    CacheProfile actualProfile = this.factory.createCacheProfile(properties);
-
-    assertEquals("<Cache profile>", expectedProfile, actualProfile);
+    this.cacheProfileEditor
+        .setCacheProfileValidator(this.cacheProfileValidator);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsProfileEditor#createCacheProfile(Properties)}</code>
-   * throws an <code>IllegalArgumentException</code> if the property
-   * "cacheName" set in a <code>java.util.Properties</code> is empty.
-   */
-  public void testCreateCacheProfileWithEmptyCacheName() {
-    Properties properties = new Properties();
-    properties.setProperty("cacheName", "");
-    this.assertCreateCacheProfileThrowsIllegalArgumentException(properties);
+  public void testCreateCacheProfileWithEmptyProperties() {
+    JcsProfile expected = new JcsProfile();
+    this.assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsProfileEditor#createCacheProfile(Properties)}</code>
-   * throws an <code>IllegalArgumentException</code> if an empty
-   * <code>java.util.Properties</code> is specified.
-   */
-  public void testCreateCacheProfileWithEmptySetOfProperties() {
-    Properties properties = new Properties();
-    this.assertCreateCacheProfileThrowsIllegalArgumentException(properties);
+  public void testCreateCacheProfileWithPropertiesHavingCacheName() {
+    String cacheName = "pojos";
+    String group = "services";
+    this.properties.setProperty("cacheName", cacheName);
+    this.properties.setProperty("group", group);
+
+    JcsProfile expected = new JcsProfile(cacheName, group);
+    this.assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
+  }
+
+  public void testDefaultConstructorCreatesJcsProfileValidator() {
+    CacheProfileValidator ehCacheProfileValidator = this.cacheProfileEditor
+        .getCacheProfileValidator();
+
+    assertTrue("CacheProfileValidator should be an instance of <"
+        + JcsProfileValidator.class.getName() + ">",
+        ehCacheProfileValidator instanceof JcsProfileValidator);
+  }
+
+  private void verifyExpectationsOfMockControlsWereMet() {
+    this.cacheProfileValidatorControl.verify();
   }
 
 }

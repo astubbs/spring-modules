@@ -31,7 +31,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/05 02:18:53 $
+ * @version $Revision: 1.7 $ $Date: 2005/08/11 04:34:34 $
  */
 public final class EhCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -66,6 +66,13 @@ public final class EhCacheProfileTests extends TestCase implements
     this.cacheProfile.setCacheName(cacheName);
 
     EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
+
+    assertEquals(this.cacheProfile, anotherProfile);
+    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+    
+    cacheName = null;
+    this.cacheProfile.setCacheName(cacheName);
+    anotherProfile.setCacheName(cacheName);
 
     assertEquals(this.cacheProfile, anotherProfile);
     assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());

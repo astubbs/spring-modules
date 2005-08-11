@@ -18,6 +18,8 @@
 
 package org.springmodules.cache.provider.oscache;
 
+import org.springmodules.cache.provider.InvalidCacheProfileException;
+
 import junit.framework.TestCase;
 
 /**
@@ -27,7 +29,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:17 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/11 04:34:34 $
  */
 public final class OsCacheProfileValidatorTests extends TestCase {
 
@@ -60,15 +62,16 @@ public final class OsCacheProfileValidatorTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link OsCacheProfileValidator#validateCacheProfile(Object)}</code>
-   * throws an <code>IllegalArgumentException</code> if the specified argument
-   * is not an instance of <code>{@link OsCacheProfile}</code>.
+   * throws an <code>{@link InvalidCacheProfileException}</code> if the
+   * specified argument is not an instance of
+   * <code>{@link OsCacheProfile}</code>.
    */
   public void testValidateCacheProfileObjectWithObjectNotInstanceOfOscacheCacheProfile() {
     try {
       this.cacheProfileValidator.validateCacheProfile(new Object());
-      fail("Expected exception <" + IllegalArgumentException.class.getName()
-          + ">");
-    } catch (IllegalArgumentException exception) {
+      fail("Expected exception <"
+          + InvalidCacheProfileException.class.getName() + ">");
+    } catch (InvalidCacheProfileException exception) {
       // we are expecting this exception.
     }
   }

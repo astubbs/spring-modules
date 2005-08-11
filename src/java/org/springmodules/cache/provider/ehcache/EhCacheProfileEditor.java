@@ -22,24 +22,22 @@ import java.util.Properties;
 
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.InvalidCacheProfileException;
 
 /**
  * <p>
- * Creates a new instance of <code>{@link EhCacheProfile}</code> by
- * parsing a String of the form <code>[cacheName=value]</code>.
+ * Creates a new instance of <code>{@link EhCacheProfile}</code> by parsing a
+ * String of the form <code>[cacheName=value]</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/04 04:43:52 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:27:47 $
  */
 public final class EhCacheProfileEditor extends AbstractCacheProfileEditor {
 
-  /**
-   * Validates the properties of the <code>{@link EhCacheProfile}</code>
-   * to create.
-   */
-  private EhCacheProfileValidator cacheProfileValidator;
+  private CacheProfileValidator cacheProfileValidator;
 
   public EhCacheProfileEditor() {
     super();
@@ -47,27 +45,39 @@ public final class EhCacheProfileEditor extends AbstractCacheProfileEditor {
   }
 
   /**
-   * Creates a new instance of <code>{@link EhCacheProfile}</code> from
-   * the specified set of properties.
+   * Creates a new instance of <code>{@link EhCacheProfile}</code> from the
+   * specified set of properties.
    * 
    * @param properties
    *          the specified set of properties.
    * @return a new instance of <code>EhCacheProfile</code>.
    * 
-   * @see EhCacheProfileValidator#validateCacheName(String)
+   * @see CacheProfileValidator#validateCacheProfile(Object)
+   * @see EhCacheProfileValidator
    */
-  protected CacheProfile createCacheProfile(Properties properties) {
-
+  protected CacheProfile createCacheProfile(Properties properties)
+      throws InvalidCacheProfileException {
     String cacheName = null;
 
     if (!properties.isEmpty()) {
       cacheName = properties.getProperty("cacheName");
     }
-    this.cacheProfileValidator.validateCacheName(cacheName);
+    EhCacheProfile cacheProfile = new EhCacheProfile();
+    cacheProfile.setCacheName(cacheName);
 
-    EhCacheProfile profile = new EhCacheProfile();
-    profile.setCacheName(cacheName);
-    return profile;
+    this.cacheProfileValidator.validateCacheProfile(cacheProfile);
+
+    return cacheProfile;
   }
 
+  protected CacheProfileValidator getCacheProfileValidator() {
+    return this.cacheProfileValidator;
+  }
+
+  protected void setCacheProfileValidator(
+      CacheProfileValidator cacheProfileValidator) {
+    this.cacheProfileValidator = cacheProfileValidator;
+  }
+  
+  
 }

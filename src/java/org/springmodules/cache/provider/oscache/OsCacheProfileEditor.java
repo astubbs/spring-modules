@@ -28,24 +28,26 @@ import com.opensymphony.oscache.base.CacheEntry;
 
 /**
  * <p>
- * Creates a new instance of <code>{@link OsCacheProfile}</code> by
- * parsing a String of the form
+ * Creates a new instance of <code>{@link OsCacheProfile}</code> by parsing a
+ * String of the form
  * <code>[cronExpression=value][groups=value][refreshPeriod=value]</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/04 04:49:10 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/11 04:29:07 $
  */
 public final class OsCacheProfileEditor extends AbstractCacheProfileEditor {
+
+  private static final String INDEFINITE_EXPIRY = "INDEFINITE_EXPIRY";
 
   public OsCacheProfileEditor() {
     super();
   }
 
   /**
-   * Creates a new instance of <code>{@link OsCacheProfile}</code> from
-   * the specified set of properties.
+   * Creates a new instance of <code>{@link OsCacheProfile}</code> from the
+   * specified set of properties.
    * 
    * @param properties
    *          the specified set of properties.
@@ -60,36 +62,30 @@ public final class OsCacheProfileEditor extends AbstractCacheProfileEditor {
 
     if (properties.isEmpty()) {
       cacheProfile = new OsCacheProfile();
+
     } else {
-      // set the cron expression.
       String cronExpression = properties.getProperty("cronExpression");
 
-      // set the groups.
       String groups = properties.getProperty("groups");
 
-      // set the refresh period.
-      String refreshPeriodString = properties.getProperty("refreshPeriod");
-
+      String refreshPeriodAsText = properties.getProperty("refreshPeriod");
       Integer refreshPeriod = null;
 
-      if (StringUtils.hasText(refreshPeriodString)) {
-        if (refreshPeriodString.equalsIgnoreCase("INDEFINITE_EXPIRY")) {
-          refreshPeriod = new Integer(CacheEntry.INDEFINITE_EXPIRY);
-        } else {
-          try {
-            refreshPeriod = new Integer(refreshPeriodString);
-          } catch (NumberFormatException numberFormatException) {
-            throw new IllegalArgumentException(
-                "Refresh period should be an integer or the String 'INDEFINITE_EXPIRY'");
-          } // end 'catch(..)'
-        } // end 'else'
-      } // end 'if (StringUtils.isNotEmpty(refreshPeriodString))'
+      if (INDEFINITE_EXPIRY.equalsIgnoreCase(refreshPeriodAsText)) {
+        refreshPeriod = new Integer(CacheEntry.INDEFINITE_EXPIRY);
 
-      // create a new cache profile after validating the given properties.
-      cacheProfile = new OsCacheProfile();
-      cacheProfile.setCronExpression(cronExpression);
-      cacheProfile.setGroups(groups);
-      cacheProfile.setRefreshPeriod(refreshPeriod);
+      } else if (StringUtils.hasText(refreshPeriodAsText)) {
+        try {
+          refreshPeriod = new Integer(refreshPeriodAsText);
+
+        } catch (NumberFormatException numberFormatException) {
+          throw new IllegalArgumentException(
+              "Refresh period should be an integer or the String '"
+                  + INDEFINITE_EXPIRY + "'");
+        }
+      }
+
+      cacheProfile = new OsCacheProfile(groups, refreshPeriod, cronExpression);
     }
 
     return cacheProfile;

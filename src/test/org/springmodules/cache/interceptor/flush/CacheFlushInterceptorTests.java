@@ -28,12 +28,12 @@ import org.springmodules.cache.provider.CacheProviderFacade;
 
 /**
  * <p>
- * Unit Test for <code>{@link CacheFlushInterceptor}</code>.
+ * Unit Tests for <code>{@link CacheFlushInterceptor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:45:17 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:04 $
  */
 public final class CacheFlushInterceptorTests extends TestCase {
 
@@ -42,62 +42,46 @@ public final class CacheFlushInterceptorTests extends TestCase {
    */
   private FlushCache cacheFlushAttribute;
 
+  private CacheFlushAttributeSource cacheFlushAttributeSource;
+
+  private MockControl cacheFlushAttributeSourceControl;
+
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private CacheFlushInterceptor cacheFlushInterceptor;
+
+  private CacheProviderFacade cacheProviderFacade;
+
+  private MockControl cacheProviderFacadeControl;
 
   /**
    * Method to be intercepted by <code>{@link #cacheFlushInterceptor}</code>.
    */
   private Method interceptedMethod;
 
-  /**
-   * Mock object that simulates a search of cache-flush attributes for a given
-   * method.
-   */
-  private CacheFlushAttributeSource mockCacheFlushAttributeSource;
+  private MethodInvocation methodInvocation;
 
-  /**
-   * Controls the behavior of
-   * <code>{@link #mockCacheFlushAttributeSource}</code>.
-   */
-  private MockControl mockCacheFlushAttributeSourceControl;
+  private MockControl methodInvocationControl;
 
-  /**
-   * Mock object that simulates a facade to a cache provider.
-   */
-  private CacheProviderFacade mockCacheProviderFacade;
-
-  /**
-   * Controls the behavior of <code>{@link #mockCacheProviderFacade}</code>.
-   */
-  private MockControl mockCacheProviderFacadeControl;
-
-  /**
-   * Simulates the definition of the method being intercepted by
-   * <code>{@link #cacheFlushInterceptor}</code>.
-   */
-  private MethodInvocation mockMethodInvocation;
-
-  /**
-   * Controls the behavior of <code>{@link #mockMethodInvocation}</code>.
-   */
-  private MockControl mockMethodInvocationControl;
-
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public CacheFlushInterceptorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
+  private void assertSameFlushCache(FlushCache actual) {
+    assertSame("<FlushCache>", this.cacheFlushAttribute, actual);
+  }
+
+  private void assertSameProceedReturnValue(Object expected, Object actual) {
+    assertEquals("<Proceed return value>", expected, actual);
+  }
+
+  private void setStateOfMockControlsToReplay() {
+    this.cacheFlushAttributeSourceControl.replay();
+    this.cacheProviderFacadeControl.replay();
+    this.methodInvocationControl.replay();
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -107,9 +91,9 @@ public final class CacheFlushInterceptorTests extends TestCase {
         new Class[] { String.class });
 
     // Create the proxy for the interface 'CacheProviderFacadeControl'.
-    this.mockCacheProviderFacadeControl = MockControl
+    this.cacheProviderFacadeControl = MockControl
         .createControl(CacheProviderFacade.class);
-    this.mockCacheProviderFacade = (CacheProviderFacade) this.mockCacheProviderFacadeControl
+    this.cacheProviderFacade = (CacheProviderFacade) this.cacheProviderFacadeControl
         .getMock();
 
     // Create the metadata attribute for the intercepted method.
@@ -117,71 +101,63 @@ public final class CacheFlushInterceptorTests extends TestCase {
     this.cacheFlushAttribute.setCacheProfileIds("CACHE_PROFILE");
 
     // Create the proxy for the interface 'CacheFlushAttributeSource'.
-    this.mockCacheFlushAttributeSourceControl = MockControl
+    this.cacheFlushAttributeSourceControl = MockControl
         .createControl(CacheFlushAttributeSource.class);
-    this.mockCacheFlushAttributeSource = (CacheFlushAttributeSource) this.mockCacheFlushAttributeSourceControl
+    this.cacheFlushAttributeSource = (CacheFlushAttributeSource) this.cacheFlushAttributeSourceControl
         .getMock();
 
     // Create the proxy for the interface 'MethodInvocation'.
-    this.mockMethodInvocationControl = MockControl
+    this.methodInvocationControl = MockControl
         .createControl(MethodInvocation.class);
-    this.mockMethodInvocation = (MethodInvocation) this.mockMethodInvocationControl
+    this.methodInvocation = (MethodInvocation) this.methodInvocationControl
         .getMock();
 
     // Create the instance of the class to test.
     this.cacheFlushInterceptor = new CacheFlushInterceptor();
+    this.cacheFlushInterceptor.setCacheProviderFacade(this.cacheProviderFacade);
     this.cacheFlushInterceptor
-        .setCacheProviderFacade(this.mockCacheProviderFacade);
-    this.cacheFlushInterceptor
-        .setCacheFlushAttributeSource(this.mockCacheFlushAttributeSource);
+        .setCacheFlushAttributeSource(this.cacheFlushAttributeSource);
 
     // This expectation is required for all the Test Cases.
-    this.mockMethodInvocation.getMethod();
-    this.mockMethodInvocationControl.setReturnValue(this.interceptedMethod);
+    this.methodInvocation.getMethod();
+    this.methodInvocationControl.setReturnValue(this.interceptedMethod);
   }
 
   /**
    * Verifies that the method
    * <code>{@link CacheFlushInterceptor#getCacheFlushAttribute(MethodInvocation)}</code>
    * returns the instance of <code>{@link FlushCache}</code> retrieved from
-   * <code>{@link #mockCacheFlushAttributeSource}</code>.
+   * <code>{@link #cacheFlushAttributeSource}</code>.
    */
   public void testGetCacheFlushAttribute() throws Exception {
     Object thisObject = "A String!";
     Class targetClass = thisObject.getClass();
 
     // expectation: get the target object for an invocation.
-    this.mockMethodInvocation.getThis();
-    this.mockMethodInvocationControl.setReturnValue(thisObject);
+    this.methodInvocation.getThis();
+    this.methodInvocationControl.setReturnValue(thisObject);
 
     // expectation: get the cache-flush attribute of the intercepted method.
-    this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
+    this.cacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, targetClass);
-    this.mockCacheFlushAttributeSourceControl
+    this.cacheFlushAttributeSourceControl
         .setReturnValue(this.cacheFlushAttribute);
 
-    // set the state of the mock controls to 'replay'.
-    this.mockCacheFlushAttributeSourceControl.replay();
-    this.mockMethodInvocationControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     // execute the method to test.
     FlushCache returnedCacheFlushAttribute = this.cacheFlushInterceptor
-        .getCacheFlushAttribute(this.mockMethodInvocation);
+        .getCacheFlushAttribute(this.methodInvocation);
+    this.assertSameFlushCache(returnedCacheFlushAttribute);
 
-    // verify that the cache-flush attribute is the same we are expecting.
-    assertSame("<Cache-flush attribute>", this.cacheFlushAttribute,
-        returnedCacheFlushAttribute);
-
-    // verify that the expectations of the mock controls were met.
-    this.mockCacheFlushAttributeSourceControl.verify();
-    this.mockMethodInvocationControl.verify();
+    this.verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
    * Verifies that the method
    * <code>{@link CacheFlushInterceptor#getCacheFlushAttribute(MethodInvocation)}</code>
    * returns the instance of <code>{@link FlushCache}</code> retrieved from
-   * <code>{@link #mockCacheFlushAttributeSource}</code> when
+   * <code>{@link #cacheFlushAttributeSource}</code> when
    * <code>MethodInvocation.getThis()</code> returns <code>null</code>.
    */
   public void testGetCacheFlushAttributeWithMethodInvocationHavingThisObjectEqualToNull()
@@ -191,30 +167,23 @@ public final class CacheFlushInterceptorTests extends TestCase {
     Class targetClass = null;
 
     // expectation: get the target object for an invocation.
-    this.mockMethodInvocation.getThis();
-    this.mockMethodInvocationControl.setReturnValue(thisObject);
+    this.methodInvocation.getThis();
+    this.methodInvocationControl.setReturnValue(thisObject);
 
     // expectation: get the cache-flush attribute of the intercepted method.
-    this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
+    this.cacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, targetClass);
-    this.mockCacheFlushAttributeSourceControl
+    this.cacheFlushAttributeSourceControl
         .setReturnValue(this.cacheFlushAttribute);
 
-    // set the state of the mock controls to 'replay'.
-    this.mockCacheFlushAttributeSourceControl.replay();
-    this.mockMethodInvocationControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     // execute the method to test.
     FlushCache returnedCacheFlushAttribute = this.cacheFlushInterceptor
-        .getCacheFlushAttribute(this.mockMethodInvocation);
+        .getCacheFlushAttribute(this.methodInvocation);
+    this.assertSameFlushCache(returnedCacheFlushAttribute);
 
-    // verify that the cache-flush attribute is the same we are expecting.
-    assertSame("<Cache-flush attribute>", this.cacheFlushAttribute,
-        returnedCacheFlushAttribute);
-
-    // verify that the expectations of the mock controls were met.
-    this.mockCacheFlushAttributeSourceControl.verify();
-    this.mockMethodInvocationControl.verify();
+    this.verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -233,38 +202,31 @@ public final class CacheFlushInterceptorTests extends TestCase {
     Object expectedReturnValue = new Integer(10);
 
     // expectation: get the target object for an invocation.
-    this.mockMethodInvocation.getThis();
-    this.mockMethodInvocationControl.setReturnValue(thisObject);
+    this.methodInvocation.getThis();
+    this.methodInvocationControl.setReturnValue(thisObject);
 
     // expectation: get the cache-flush attribute for the intercepted method.
-    this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
+    this.cacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, thisObject.getClass());
-    this.mockCacheFlushAttributeSourceControl
+    this.cacheFlushAttributeSourceControl
         .setReturnValue(this.cacheFlushAttribute);
 
     // expectation: execute the intercepted method.
-    this.mockMethodInvocation.proceed();
-    this.mockMethodInvocationControl.setReturnValue(expectedReturnValue);
+    this.methodInvocation.proceed();
+    this.methodInvocationControl.setReturnValue(expectedReturnValue);
 
     // expectation: flush the cache.
-    this.mockCacheProviderFacade.flushCache(this.cacheFlushAttribute
+    this.cacheProviderFacade.flushCache(this.cacheFlushAttribute
         .getCacheProfileIds());
 
-    // set the state of the mock controls to 'replay'.
-    this.mockCacheFlushAttributeSourceControl.replay();
-    this.mockCacheProviderFacadeControl.replay();
-    this.mockMethodInvocationControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     // execute the method to test.
     Object actualReturnValue = this.cacheFlushInterceptor
-        .invoke(this.mockMethodInvocation);
+        .invoke(this.methodInvocation);
+    this.assertSameProceedReturnValue(expectedReturnValue, actualReturnValue);
 
-    assertSame("<Returned object>", expectedReturnValue, actualReturnValue);
-
-    // verify that the expectations of the mock controls were met.
-    this.mockCacheFlushAttributeSourceControl.verify();
-    this.mockCacheProviderFacadeControl.verify();
-    this.mockMethodInvocationControl.verify();
+    this.verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -283,38 +245,31 @@ public final class CacheFlushInterceptorTests extends TestCase {
     Object expectedReturnValue = new Integer(10);
 
     // expectation: get the target object for an invocation.
-    this.mockMethodInvocation.getThis();
-    this.mockMethodInvocationControl.setReturnValue(thisObject);
+    this.methodInvocation.getThis();
+    this.methodInvocationControl.setReturnValue(thisObject);
 
     // expectation: get the cache-flush attribute for the intercepted method.
-    this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
+    this.cacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, thisObject.getClass());
-    this.mockCacheFlushAttributeSourceControl
+    this.cacheFlushAttributeSourceControl
         .setReturnValue(this.cacheFlushAttribute);
 
     // expectation: flush the cache.
-    this.mockCacheProviderFacade.flushCache(this.cacheFlushAttribute
+    this.cacheProviderFacade.flushCache(this.cacheFlushAttribute
         .getCacheProfileIds());
 
     // expectation: execute the intercepted method.
-    this.mockMethodInvocation.proceed();
-    this.mockMethodInvocationControl.setReturnValue(expectedReturnValue);
+    this.methodInvocation.proceed();
+    this.methodInvocationControl.setReturnValue(expectedReturnValue);
 
-    // set the state of the mock controls to 'replay'.
-    this.mockCacheFlushAttributeSourceControl.replay();
-    this.mockCacheProviderFacadeControl.replay();
-    this.mockMethodInvocationControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     // execute the method to test.
     Object actualReturnValue = this.cacheFlushInterceptor
-        .invoke(this.mockMethodInvocation);
+        .invoke(this.methodInvocation);
+    this.assertSameProceedReturnValue(expectedReturnValue, actualReturnValue);
 
-    assertSame("<Returned object>", expectedReturnValue, actualReturnValue);
-
-    // verify that the expectations of the mock controls were met.
-    this.mockCacheFlushAttributeSourceControl.verify();
-    this.mockCacheProviderFacadeControl.verify();
-    this.mockMethodInvocationControl.verify();
+    this.verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -331,34 +286,33 @@ public final class CacheFlushInterceptorTests extends TestCase {
     Object expectedReturnValue = new Integer(10);
 
     // set the expectations of the mock objects.
-    this.mockMethodInvocation.getThis();
-    this.mockMethodInvocationControl.setReturnValue(thisObject);
+    this.methodInvocation.getThis();
+    this.methodInvocationControl.setReturnValue(thisObject);
 
     // expectation: get the cache-flush attribute for the intercepted method.
     // The returned cache-flush attribute should be null.
-    this.mockCacheFlushAttributeSource.getCacheFlushAttribute(
+    this.cacheFlushAttributeSource.getCacheFlushAttribute(
         this.interceptedMethod, thisObject.getClass());
-    this.mockCacheFlushAttributeSourceControl.setReturnValue(null);
+    this.cacheFlushAttributeSourceControl.setReturnValue(null);
 
     // expectation: no cache flushing is executed. execute the intercepted
     // method.
-    this.mockMethodInvocation.proceed();
-    this.mockMethodInvocationControl.setReturnValue(expectedReturnValue);
+    this.methodInvocation.proceed();
+    this.methodInvocationControl.setReturnValue(expectedReturnValue);
 
-    // set the state of the mock controls to 'replay'.
-    this.mockCacheFlushAttributeSourceControl.replay();
-    this.mockCacheProviderFacadeControl.replay();
-    this.mockMethodInvocationControl.replay();
+    this.setStateOfMockControlsToReplay();
 
     // execute the method to test.
     Object actualReturnValue = this.cacheFlushInterceptor
-        .invoke(this.mockMethodInvocation);
+        .invoke(this.methodInvocation);
+    this.assertSameProceedReturnValue(expectedReturnValue, actualReturnValue);
 
-    assertSame("<Returned object>", expectedReturnValue, actualReturnValue);
+    this.verifyExpectationsOfMockControlsWereMet();
+  }
 
-    // verify that the execution was successful.
-    this.mockCacheFlushAttributeSourceControl.verify();
-    this.mockCacheProviderFacadeControl.verify();
-    this.mockMethodInvocationControl.verify();
+  private void verifyExpectationsOfMockControlsWereMet() {
+    this.cacheFlushAttributeSourceControl.verify();
+    this.cacheProviderFacadeControl.verify();
+    this.methodInvocationControl.verify();
   }
 }

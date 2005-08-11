@@ -23,61 +23,33 @@ import java.lang.reflect.Method;
 
 /**
  * <p>
- * Unit Test for <code>{@link HashCodeCacheKeyGenerator}</code>.
+ * Unit Tests for <code>{@link HashCodeCacheKeyGenerator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/30 13:30:37 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:46 $
  */
 public final class HashCodeCacheKeyGeneratorTests extends
     AbstractCacheKeyGeneratorTests {
 
   /**
-   * <p>
-   * Class used to test the method
-   * <code>{@link HashCodeCacheKeyGenerator#getMethodArgumentHashCode(Object)}</code>.
-   * </p>
-   * 
-   * @author Alex Ruiz
-   * 
    * @see HashCodeCacheKeyGeneratorTests#argument
    * @see HashCodeCacheKeyGeneratorTests#testGetMethodArgumentHashCodeGeneratingHashCode()
    * @see HashCodeCacheKeyGeneratorTests#testGetMethodArgumentHashCodeNotGeneratingHashCode()
    */
   private class Argument {
 
-    /**
-     * Name of the argument.
-     */
     private String name;
 
-    /**
-     * Getter for <code>{@link #name}</code>.
-     * 
-     * @return the value of the member variable <code>name</code>.
-     */
     public String getName() {
       return this.name;
     }
 
-    /**
-     * Returns a hash code value for the object. This method is supported for
-     * the benefit of hashtables such as those provided by
-     * <code>java.util.Hashtable</code>.
-     * 
-     * @return a hash code value for this object.
-     */
     public int hashCode() {
       return 10;
     }
 
-    /**
-     * Setter for <code>{@link #name}</code>.
-     * 
-     * @param name
-     *          the new value to assign to the member variable <code>name</code>.
-     */
     public void setName(String name) {
       this.name = name;
     }
@@ -90,25 +62,20 @@ public final class HashCodeCacheKeyGeneratorTests extends
   private Argument argument;
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private HashCodeCacheKeyGenerator keyGenerator;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public HashCodeCacheKeyGeneratorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void afterSetUp() throws Exception {
     this.keyGenerator = new HashCodeCacheKeyGenerator();
+  }
+
+  private void assertEqualHashCodes(int expected, int actual) {
+    assertEquals("<HashCode>", expected, actual);
   }
 
   /**
@@ -118,9 +85,6 @@ public final class HashCodeCacheKeyGeneratorTests extends
     return this.keyGenerator;
   }
 
-  /**
-   * Sets up <code>{@link #argument}</code>.
-   */
   private void setUpArgument() {
     this.argument = new Argument();
   }
@@ -166,9 +130,9 @@ public final class HashCodeCacheKeyGeneratorTests extends
         .getMethodArgumentHashCode(this.argument);
     int argumentHashCode = this.argument.hashCode();
 
-    assertFalse("The generated hash code '" + generatedHashCode
+    assertTrue("The generated hash code '" + generatedHashCode
         + "' should not be equal to the argument's hash code '"
-        + argumentHashCode + "'", argumentHashCode == generatedHashCode);
+        + argumentHashCode + "'", argumentHashCode != generatedHashCode);
   }
 
   /**
@@ -185,7 +149,7 @@ public final class HashCodeCacheKeyGeneratorTests extends
         .getMethodArgumentHashCode(this.argument);
     int argumentHashCode = this.argument.hashCode();
 
-    assertEquals("<Argument hash code>", argumentHashCode, generatedHashCode);
+    this.assertEqualHashCodes(argumentHashCode, generatedHashCode);
   }
 
   /**
@@ -197,6 +161,6 @@ public final class HashCodeCacheKeyGeneratorTests extends
     int actualArgumentHashCode = this.keyGenerator
         .getMethodArgumentHashCode(null);
 
-    assertEquals("<Argument hash code>", 0, actualArgumentHashCode);
+    this.assertEqualHashCodes(0, actualArgumentHashCode);
   }
 }

@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheProfileValidator;
 
 /**
  * <p>
@@ -31,15 +32,11 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/04 04:46:30 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:28:16 $
  */
 public final class JcsProfileEditor extends AbstractCacheProfileEditor {
 
-  /**
-   * Validates the properties of the <code>{@link JcsProfile}</code> to
-   * create.
-   */
-  private JcsProfileValidator cacheProfileValidator;
+  private CacheProfileValidator cacheProfileValidator;
 
   public JcsProfileEditor() {
     super();
@@ -54,7 +51,9 @@ public final class JcsProfileEditor extends AbstractCacheProfileEditor {
    *          the specified set of properties.
    * @return a new instance of <code>JcsProfile</code>.
    * 
-   * @see JcsProfileValidator#validateCacheName(String)
+   * 
+   * @see CacheProfileValidator#validateCacheProfile(Object)
+   * @see JcsProfileValidator
    */
   protected CacheProfile createCacheProfile(Properties properties) {
     String cacheName = null;
@@ -64,12 +63,22 @@ public final class JcsProfileEditor extends AbstractCacheProfileEditor {
       cacheName = properties.getProperty("cacheName");
       group = properties.getProperty("group");
     }
-    this.cacheProfileValidator.validateCacheName(cacheName);
+    JcsProfile cacheProfile = new JcsProfile();
+    cacheProfile.setCacheName(cacheName);
+    cacheProfile.setGroup(group);
 
-    JcsProfile profile = new JcsProfile();
-    profile.setCacheName(cacheName);
-    profile.setGroup(group);
-    return profile;
+    this.cacheProfileValidator.validateCacheProfile(cacheProfile);
+
+    return cacheProfile;
+  }
+
+  protected CacheProfileValidator getCacheProfileValidator() {
+    return this.cacheProfileValidator;
+  }
+
+  protected void setCacheProfileValidator(
+      CacheProfileValidator cacheProfileValidator) {
+    this.cacheProfileValidator = cacheProfileValidator;
   }
 
 }

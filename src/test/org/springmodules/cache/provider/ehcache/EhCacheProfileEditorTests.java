@@ -22,7 +22,9 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.easymock.MockControl;
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheProfileValidator;
 
 /**
  * <p>
@@ -31,78 +33,92 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:18 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/11 04:34:33 $
  */
 public final class EhCacheProfileEditorTests extends TestCase {
 
   /**
    * Primary object that is under test.
    */
-  private EhCacheProfileEditor factory;
+  private EhCacheProfileEditor cacheProfileEditor;
+
+  private CacheProfileValidator cacheProfileValidator;
+
+  private MockControl cacheProfileValidatorControl;
+
+  private Properties properties;
 
   public EhCacheProfileEditorTests(String name) {
     super(name);
   }
 
-  private void assertCreateCacheProfileThrowsIllegalArgumentException(
-      Properties cacheProfileProperties) {
-    try {
-      this.factory.createCacheProfile(cacheProfileProperties);
-      fail("Expecting exception <" + IllegalArgumentException.class.getName()
-          + ">");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
+  /**
+   * Asserts that <code>{@link EhCacheProfileEditor}</code> validates the
+   * created cache profile.
+   * 
+   * @param expected
+   *          the expected cache profile to be created.
+   */
+  private void assertCreateCacheProfileValidatesCreatedCacheProfile(
+      EhCacheProfile expected) {
+    this.setUpCacheProfileValidatorAsMockObject();
+
+    // expectation: validate the new cache profile.
+    this.cacheProfileValidator.validateCacheProfile(expected);
+
+    this.setStatusOfMockControlsToReplay();
+
+    // execute the method to test.
+    CacheProfile actual = this.cacheProfileEditor
+        .createCacheProfile(this.properties);
+    assertEquals("<Cache profile>", expected, actual);
+
+    this.verifyExpectationsOfMockControlsWereMet();
+  }
+
+  private void setStatusOfMockControlsToReplay() {
+    this.cacheProfileValidatorControl.replay();
   }
 
   protected void setUp() throws Exception {
     super.setUp();
-    this.factory = new EhCacheProfileEditor();
+    this.cacheProfileEditor = new EhCacheProfileEditor();
+    this.properties = new Properties();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * throws an <code>IllegalArgumentException</code> when an empty
-   * <code>java.util.Properties</code> is specified.
-   */
-  public void testCreateCacheProfileWithEmptySetOfProperties() {
-    Properties properties = new Properties();
-    this.assertCreateCacheProfileThrowsIllegalArgumentException(properties);
+  private void setUpCacheProfileValidatorAsMockObject() {
+    this.cacheProfileValidatorControl = MockControl
+        .createControl(CacheProfileValidator.class);
+    this.cacheProfileValidator = (CacheProfileValidator) this.cacheProfileValidatorControl
+        .getMock();
+
+    this.cacheProfileEditor
+        .setCacheProfileValidator(this.cacheProfileValidator);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * throws an <code>IllegalArgumentException</code> when the value of the
-   * property "cacheName" set in a <code>java.util.Properties</code> is empty.
-   */
-  public void testCreateCacheProfileWithEmptyCacheName() {
-    Properties properties = new Properties();
-    properties.setProperty("cacheName", "");
-
-    this.assertCreateCacheProfileThrowsIllegalArgumentException(properties);
+  public void testCreateCacheProfileWithEmptyProperties() {
+    EhCacheProfile expected = new EhCacheProfile();
+    this.assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheProfileEditor#createCacheProfile(Properties)}</code>
-   * creates a new instance of <code>{@link EhCacheProfile}</code> populated
-   * with the values of the properties "cacheName" and "group" set in a
-   * <code>java.util.Properties</code>.
-   */
-  public void testCreateCacheProfileWithNotEmptyGroup() {
-    String cacheName = "main";
+  public void testCreateCacheProfileWithPropertiesHavingCacheName() {
+    String cacheName = "pojos";
+    this.properties.setProperty("cacheName", cacheName);
 
-    Properties properties = new Properties();
-    properties.setProperty("cacheName", cacheName);
-
-    EhCacheProfile expectedProfile = new EhCacheProfile();
-    expectedProfile.setCacheName(cacheName);
-
-    CacheProfile actualProfile = this.factory.createCacheProfile(properties);
-
-    assertEquals("<CacheProfile>", expectedProfile, actualProfile);
+    EhCacheProfile expected = new EhCacheProfile(cacheName);
+    this.assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
   }
 
+  public void testDefaultConstructorCreatesEhCacheProfileValidator() {
+    CacheProfileValidator ehCacheProfileValidator = this.cacheProfileEditor
+        .getCacheProfileValidator();
+
+    assertTrue("CacheProfileValidator should be an instance of <"
+        + EhCacheProfileValidator.class.getName() + ">",
+        ehCacheProfileValidator instanceof EhCacheProfileValidator);
+  }
+
+  private void verifyExpectationsOfMockControlsWereMet() {
+    this.cacheProfileValidatorControl.verify();
+  }
 }

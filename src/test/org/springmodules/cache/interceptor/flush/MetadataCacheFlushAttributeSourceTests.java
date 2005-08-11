@@ -30,73 +30,57 @@ import org.springframework.metadata.Attributes;
 
 /**
  * <p>
- * Unit Test for <code>{@link MetadataCacheFlushAttributeSource}</code>.
+ * Unit Tests for <code>{@link MetadataCacheFlushAttributeSource}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:05 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/11 04:32:03 $
  */
 public final class MetadataCacheFlushAttributeSourceTests extends TestCase {
 
-  /**
-   * Mock object that simulates the access of attributes at runtime.
-   */
-  private Attributes mockAttributes;
+  private Attributes attributes;
+
+  private MockControl attributesControl;
 
   /**
-   * Controls the behavior of <code>{@link #mockAttributes}</code>.
-   */
-  private MockControl mockAttributesControl;
-
-  /**
-   * Primary object (Instance of the class to test).
+   * Primary object that is under test.
    */
   private MetadataCacheFlushAttributeSource source;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public MetadataCacheFlushAttributeSourceTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.mockAttributesControl = MockControl.createControl(Attributes.class);
-    this.mockAttributes = (Attributes) this.mockAttributesControl.getMock();
+    this.attributesControl = MockControl.createControl(Attributes.class);
+    this.attributes = (Attributes) this.attributesControl.getMock();
 
     this.source = new MetadataCacheFlushAttributeSource();
-    this.source.setAttributes(this.mockAttributes);
+    this.source.setAttributes(this.attributes);
   }
 
   /**
    * Verifies that the method
    * <code>{@link MetadataCacheFlushAttributeSource#findAllAttributes(Method)}</code>.
    * retrieves the attributes for the specified method using
-   * <code>{@link #mockAttributes}</code>.
+   * <code>{@link #attributes}</code>.
    */
   public void testFindAllAttributesMethod() throws Exception {
-
     Class clazz = String.class;
     Method method = clazz.getMethod("charAt", new Class[] { int.class });
 
     List attributeList = new ArrayList();
-    this.mockAttributes.getAttributes(method);
-    this.mockAttributesControl.setReturnValue(attributeList);
-    this.mockAttributesControl.replay();
+    this.attributes.getAttributes(method);
+    this.attributesControl.setReturnValue(attributeList);
+    this.attributesControl.replay();
 
     Collection returnedAttributes = this.source.findAllAttributes(method);
 
-    this.mockAttributesControl.verify();
-    assertSame("<returned Attributes>", attributeList, returnedAttributes);
+    this.attributesControl.verify();
+    assertSame("<Returned attributes>", attributeList, returnedAttributes);
   }
 
 }

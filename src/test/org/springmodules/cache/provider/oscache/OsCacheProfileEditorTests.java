@@ -33,7 +33,7 @@ import com.opensymphony.oscache.base.CacheEntry;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:57 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:34:34 $
  */
 public final class OsCacheProfileEditorTests extends TestCase {
 
@@ -44,6 +44,11 @@ public final class OsCacheProfileEditorTests extends TestCase {
 
   public OsCacheProfileEditorTests(String name) {
     super(name);
+  }
+
+  private void assertEqualCacheProfiles(CacheProfile expected,
+      CacheProfile actual) {
+    assertEquals("<Cache profile>", expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -63,11 +68,6 @@ public final class OsCacheProfileEditorTests extends TestCase {
     OsCacheProfile expectedProfile = new OsCacheProfile();
     CacheProfile actualProfile = this.editor.createCacheProfile(properties);
     assertEqualCacheProfiles(expectedProfile, actualProfile);
-  }
-
-  private void assertEqualCacheProfiles(CacheProfile expected,
-      CacheProfile actual) {
-    assertEquals("<Cache profile>", expected, actual);
   }
 
   /**
@@ -90,10 +90,8 @@ public final class OsCacheProfileEditorTests extends TestCase {
     properties.setProperty("groups", groups);
     properties.setProperty("refreshPeriod", "INDEFINITE_EXPIRY");
 
-    OsCacheProfile expectedProfile = new OsCacheProfile();
-    expectedProfile.setCronExpression(cronExpression);
-    expectedProfile.setGroups(groups);
-    expectedProfile.setRefreshPeriod(CacheEntry.INDEFINITE_EXPIRY);
+    OsCacheProfile expectedProfile = new OsCacheProfile(groups,
+        CacheEntry.INDEFINITE_EXPIRY, cronExpression);
 
     CacheProfile actualProfile = this.editor.createCacheProfile(properties);
     assertEqualCacheProfiles(expectedProfile, actualProfile);
@@ -116,10 +114,8 @@ public final class OsCacheProfileEditorTests extends TestCase {
     properties.setProperty("groups", groups);
     properties.setProperty("refreshPeriod", Integer.toString(refreshPeriod));
 
-    OsCacheProfile expectedProfile = new OsCacheProfile();
-    expectedProfile.setCronExpression(cronExpression);
-    expectedProfile.setGroups(groups);
-    expectedProfile.setRefreshPeriod(refreshPeriod);
+    OsCacheProfile expectedProfile = new OsCacheProfile(groups, refreshPeriod,
+        cronExpression);
 
     CacheProfile actualProfile = this.editor.createCacheProfile(properties);
     assertEqualCacheProfiles(expectedProfile, actualProfile);

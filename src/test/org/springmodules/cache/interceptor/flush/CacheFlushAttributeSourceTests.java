@@ -24,34 +24,27 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 
-import org.easymock.classextension.MockClassControl;
 import org.springmodules.cache.CacheAttribute;
 import org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource;
 
 /**
  * <p>
- * Unit Test for <code>{@link AbstractCacheFlushAttributeSource}</code>.
+ * Unit Tests for <code>{@link AbstractCacheFlushAttributeSource}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:45:17 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:04 $
  */
 public final class CacheFlushAttributeSourceTests extends TestCase {
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private AbstractCacheFlushAttributeSource cacheFlushAttributeSource;
 
   /**
-   * Controls the behavior and mocks the abstracts methods of
-   * <code>{@link #cacheFlushAttributeSource}</code>.
-   */
-  private MockClassControl cacheFlushAttributeSourceControl;
-
-  /**
-   * Method to get the cache-flush attributes for.
+   * Method to get the cache flushing attributes for.
    */
   private Method method;
 
@@ -60,33 +53,17 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
    */
   private Class targetClass;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public CacheFlushAttributeSourceTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.setUpCacheFlushAttributeSource();
+    this.setUpCacheFlushAttributeSourceAsMockObject();
   }
 
-  /**
-   * Sets up:
-   * <ul>
-   * <li>{@link #cacheFlushAttributeSource}</li>
-   * <li>{@link #cacheFlushAttributeSourceControl}</li>
-   * </ul>
-   */
-  private void setUpCacheFlushAttributeSource() throws Exception {
+  private void setUpCacheFlushAttributeSourceAsMockObject() throws Exception {
 
     // we subclass instead of using EasyMock because the implemented abstract
     // method cannot be accessed since it is protected and this test does not
@@ -111,13 +88,6 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
     };
   }
 
-  /**
-   * Sets up:
-   * <ul>
-   * <li><code>{@link #targetClass}</code></li>
-   * <li><code>{@link #method}</code></li>
-   * </ul>
-   */
   private void setUpTargetClassAndMethod() throws Exception {
     this.targetClass = String.class;
 
@@ -128,7 +98,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link AbstractCacheFlushAttributeSource#findAttribute(Collection)}</code>.
-   * returns the first instance of <code>{@link FlushCache}</code> that finds
+   * returns the first instance of <code>{@link FlushCache}</code> contained
    * in the given collection of metadata attributes.
    */
   public void testFindAttributeWithCollectionContainingAnInstanceOfFlushCache() {
@@ -140,8 +110,8 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
     CacheAttribute foundAttribute = this.cacheFlushAttributeSource
         .findAttribute(allAttributes);
 
-    // verify that we are getting the cache-flush attribute we expect.
-    assertSame("<Cache-flushing attribute>", flushCache, foundAttribute);
+    // verify that we are getting the cache flushing attribute we expect.
+    assertSame("<Cache flushing attribute>", flushCache, foundAttribute);
   }
 
   /**
@@ -171,8 +141,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
     CacheAttribute foundCacheAttribute = this.cacheFlushAttributeSource
         .findAttribute(allAttributes);
 
-    assertNull("The returned cache-flush attribute should be null",
-        foundCacheAttribute);
+    assertNull(foundCacheAttribute);
   }
 
   /**
@@ -191,8 +160,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
     CacheAttribute foundCacheAttribute = this.cacheFlushAttributeSource
         .findAttribute(allAttributes);
 
-    assertNull("The returned cache-flush attribute should be null",
-        foundCacheAttribute);
+    assertNull(foundCacheAttribute);
   }
 
   /**
@@ -200,14 +168,13 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
    * <code>{@link AbstractCacheFlushAttributeSource#getCacheFlushAttribute(Method, Class)}</code>
    * returns an instance of <code>{@link FlushCache}</code>.
    */
-  public void testGetCachingAttributeWithCacheableMethod() throws Exception {
+  public void testGetCacheFlushAttribute() throws Exception {
     this.setUpTargetClassAndMethod();
 
     FlushCache flushCache = this.cacheFlushAttributeSource
         .getCacheFlushAttribute(this.method, this.targetClass);
 
-    assertNotNull("The returned cache-flush attribute should not be null",
-        flushCache);
+    assertNotNull(flushCache);
   }
 
 }

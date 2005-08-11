@@ -26,12 +26,12 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link MethodMapCacheFlushAttributeSource}</code>.
+ * Unit Tests for <code>{@link MethodMapCacheFlushAttributeSource}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:45:16 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:03 $
  */
 public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
 
@@ -63,12 +63,6 @@ public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
    */
   private Class targetClass;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case to construct.
-   */
   public MethodMapCacheFlushAttributeSourceTests(String name) {
     super(name);
   }
@@ -93,9 +87,6 @@ public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
         actualAttributeMap.get(method));
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 

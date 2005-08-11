@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:47 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:03 $
  */
 public final class CacheFlushAttributeEditorTests extends TestCase {
 
@@ -42,7 +42,7 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
 
   private void assertEqualsCacheFlushAttribute(FlushCache expected,
       FlushCache actual) {
-    assertEquals("<Cache-flush attribute>", expected, actual);
+    assertEquals("<FlushCache>", expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -50,12 +50,6 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
     this.editor = new CacheFlushAttributeEditor();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheFlushAttributeEditor#setAsText(String)}</code> creates
-   * a new instance of <code>{@link FlushCache}</code> using the properties
-   * specified in the given String.
-   */
   public void testSetAsTextWithFlushBeforeExecutionEqualToTrue() {
     FlushCache expectedCacheFlushAttribute = new FlushCache("main,test", true);
     String properties = "[cacheProfileIds=main,test][flushBeforeExecution=true]";
@@ -68,12 +62,6 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
         actualCacheFlushAttribute);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheFlushAttributeEditor#setAsText(String)}</code> creates
-   * a new instance of <code>{@link FlushCache}</code> using the properties
-   * specified in the given String.
-   */
   public void testSetAsTextWithFlushBeforeExecutionEqualToYes() {
     FlushCache expectedCacheFlushAttribute = new FlushCache("main,test", true);
     String properties = "[cacheProfileIds=main,test][flushBeforeExecution=yes]";
@@ -86,14 +74,7 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
         actualCacheFlushAttribute);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheFlushAttributeEditor#setAsText(String)}</code> creates
-   * a new instance of <code>{@link FlushCache}</code> using the properties
-   * specified in the given String.
-   */
   public void testSetAsTextWithoutFlushBeforeExecution() {
-
     FlushCache expectedCacheFlushAttribute = new FlushCache("main,test");
     String properties = "[cacheProfileIds=main,test]";
 

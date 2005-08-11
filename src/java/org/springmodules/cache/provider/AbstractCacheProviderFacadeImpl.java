@@ -20,11 +20,10 @@ package org.springmodules.cache.provider;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +37,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/08/05 04:36:33 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/11 04:26:24 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -89,31 +88,43 @@ public abstract class AbstractCacheProviderFacadeImpl implements
           "The map of cache profiles should not be empty");
     }
 
-    if (!this.isCacheProfileMapValidated()) {
-      // validate each of the cache profiles.
-      CacheProfileValidator cacheProfileValidator = this
-          .getCacheProfileValidator();
+    if (this.isCacheProfileMapValidated())
+      return;
 
-      Set keySet = this.cacheProfiles.keySet();
-      Iterator keySetIterator = keySet.iterator();
+    // validate each of the cache profiles.
+    CacheProfileValidator cacheProfileValidator = this
+        .getCacheProfileValidator();
 
-      while (keySetIterator.hasNext()) {
-        String cacheProfileId = (String) keySetIterator.next();
-        Object cacheProfile = this.cacheProfiles.get(cacheProfileId);
+    Iterator keySetIterator = this.cacheProfiles.keySet().iterator();
 
-        try {
-          cacheProfileValidator.validateCacheProfile(cacheProfile);
+    Object invalidCacheProfile = null;
+    InvalidCacheProfileException invalidCacheProfileException = null;
 
-        } catch (InvalidCacheProfileException exception) {
-          String errorMessage = "Invalid cache profile: " + cacheProfile;
+    while (keySetIterator.hasNext()) {
+      String cacheProfileId = (String) keySetIterator.next();
+      Object cacheProfile = this.cacheProfiles.get(cacheProfileId);
 
-          if (this.logger.isErrorEnabled()) {
-            this.logger.error(errorMessage, exception);
-          }
+      try {
+        cacheProfileValidator.validateCacheProfile(cacheProfile);
 
-          throw new InvalidConfigurationException(errorMessage, exception);
-        }
+      } catch (InvalidCacheProfileException exception) {
+        invalidCacheProfileException = exception;
+        invalidCacheProfile = cacheProfile;
       }
+
+      if (invalidCacheProfileException != null)
+        break;
+    }
+
+    if (invalidCacheProfileException != null) {
+      String errorMessage = "Invalid cache profile: " + invalidCacheProfile;
+
+      if (this.logger.isErrorEnabled()) {
+        this.logger.error(errorMessage, invalidCacheProfileException);
+      }
+
+      throw new InvalidConfigurationException(errorMessage,
+          invalidCacheProfileException);
     }
   }
 
@@ -424,6 +435,11 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     }
   }
 
+  protected final void setCacheProfileMapValidated(
+      boolean cacheProfileMapValidated) {
+    this.cacheProfileMapValidated = cacheProfileMapValidated;
+  }
+
   public final void setCacheProfiles(Map cacheProfiles) {
     if (cacheProfiles instanceof Properties) {
       this.setCacheProfiles((Properties) cacheProfiles);
@@ -435,7 +451,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
   /**
    * Sets up <code>{@link #cacheProfiles}</code> by parsing the specified
-   * properties.
+   * properties (which are validated by the property editor).
    * 
    * @param cacheProfiles
    *          the properties of the cache profiles to create.
@@ -443,45 +459,32 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * @throws IllegalArgumentException
    *           if the specified set of properties is <code>null</code> or
    *           empty.
-   * @throws IllegalArgumentException
-   *           if any exception is thrown when creating the cache profiles.
+   * @throws InvalidCacheProfileException
+   *           if the properties contain invalid values.
    */
   public final void setCacheProfiles(Properties cacheProfiles) {
-
     if (cacheProfiles == null || cacheProfiles.isEmpty()) {
       throw new IllegalArgumentException(
           "The properties of the cache profiles should not be empty");
     }
 
-    Map newCacheProfiles = null;
+    Map newCacheProfiles = new HashMap();
     Iterator keySetIterator = cacheProfiles.keySet().iterator();
 
     AbstractCacheProfileEditor cacheProfileEditor = this
         .getCacheProfileEditor();
 
-    newCacheProfiles = new LinkedHashMap();
     while (keySetIterator.hasNext()) {
-
       String cacheProfileId = (String) keySetIterator.next();
       String cacheProfileProperties = cacheProfiles.getProperty(cacheProfileId);
 
-      CacheProfile cacheProfile = null;
-      try {
-        cacheProfileEditor.setAsText(cacheProfileProperties);
-        cacheProfile = (CacheProfile) cacheProfileEditor.getValue();
-      } catch (Exception exception) {
-        String message = "Exception thrown while creating the cache profile with id '"
-            + cacheProfileId + "': " + exception.getMessage();
-
-        throw new IllegalArgumentException(message);
-      }
-
+      cacheProfileEditor.setAsText(cacheProfileProperties);
+      CacheProfile cacheProfile = (CacheProfile) cacheProfileEditor.getValue();
       newCacheProfiles.put(cacheProfileId, cacheProfile);
-
-    } // end 'while (keyIterator.hasNext())'
+    }
 
     this.cacheProfiles = newCacheProfiles;
-    this.cacheProfileMapValidated = true;
+    this.setCacheProfileMapValidated(true);
   }
 
   public final void setFailQuietlyEnabled(boolean failQuietlyEnabled) {

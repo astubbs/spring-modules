@@ -18,11 +18,9 @@
 
 package org.springmodules.cache.provider.ehcache;
 
-import java.lang.reflect.Method;
-
 import junit.framework.TestCase;
 
-import org.easymock.classextension.MockClassControl;
+import org.springmodules.cache.provider.InvalidCacheProfileException;
 
 /**
  * <p>
@@ -31,130 +29,64 @@ import org.easymock.classextension.MockClassControl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:18 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/11 04:34:34 $
  */
 public final class EhCacheProfileValidatorTests extends TestCase {
+
+  private EhCacheProfile cacheProfile;
 
   /**
    * Primary object that is under test.
    */
   private EhCacheProfileValidator cacheProfileValidator;
 
-  private MockClassControl cacheProfileValidatorControl;
-
   public EhCacheProfileValidatorTests(String name) {
     super(name);
   }
 
-  private void assertValidateCacheNameThrowsIllegalArgumentException(
-      String cacheName) {
+  private void assertValidateCacheProfilePropertiesThrowsException() {
     try {
-      this.cacheProfileValidator.validateCacheName(cacheName);
-      fail("Expecting exception <" + IllegalArgumentException.class.getName()
-          + ">");
-    } catch (IllegalArgumentException exception) {
+      this.cacheProfileValidator
+          .validateCacheProfileProperties(this.cacheProfile);
+      fail("Expecting exception <"
+          + InvalidCacheProfileException.class.getName() + ">");
+    } catch (InvalidCacheProfileException exception) {
       // we are expecting this exception.
     }
   }
 
-  private void assertValidateCacheProfileThrowsIllegalArgumentException(
-      Object cacheProfile) {
-    try {
-      this.cacheProfileValidator.validateCacheProfile(cacheProfile);
-      fail("Expecting exception <" + IllegalArgumentException.class.getName()
-          + ">");
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
-  }
-
-  private void setUpCacheProfileValidator() {
+  protected void setUp() throws Exception {
+    super.setUp();
+    this.cacheProfile = new EhCacheProfile();
     this.cacheProfileValidator = new EhCacheProfileValidator();
   }
 
-  private void setUpCacheProfileValidatorAsMockObject(Method[] methodsToMock) {
-    Class classToMock = EhCacheProfileValidator.class;
+  public void testGetTargetClass() {
+    Class expected = EhCacheProfile.class;
+    Class actual = this.cacheProfileValidator.getTargetClass();
 
-    this.cacheProfileValidatorControl = MockClassControl.createControl(
-        classToMock, null, null, methodsToMock);
-    this.cacheProfileValidator = (EhCacheProfileValidator) this.cacheProfileValidatorControl
-        .getMock();
+    assertEquals("<Target class>", expected, actual);
+  }
+
+  public void testValidateCacheProfilePropertiesWithCacheNameEqualToNull() {
+    this.cacheProfile.setCacheName(null);
+    this.assertValidateCacheProfilePropertiesThrowsException();
+  }
+
+  public void testValidateCacheProfilePropertiesWithEmptyCacheName() {
+    this.cacheProfile.setCacheName("");
+    this.assertValidateCacheProfilePropertiesThrowsException();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhCacheProfileValidator#validateCacheName(String)}</code>
-   * considers an empty String as an invalid cache name.
+   * <code>{@link EhCacheProfileValidator#validateCacheProfileProperties(Object)}</code>
+   * does not throw a <code>{@link InvalidCacheProfileException}</code>
+   * if the the cache name of the cache profile is not empty.
    */
-  public void testValidateCacheNameWithEmptyString() {
-    this.setUpCacheProfileValidator();
-    this.assertValidateCacheNameThrowsIllegalArgumentException("");
+  public void testValidateCacheProfilePropertiesWithNotEmptyCacheName() {
+    this.cacheProfile.setCacheName("mapping");
+    this.cacheProfileValidator
+        .validateCacheProfileProperties(this.cacheProfile);
   }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheProfileValidator#validateCacheName(String)}</code>
-   * considers a String that is not empty as a valid cache name.
-   */
-  public void testValidateCacheNameWithNotEmptyString() {
-    this.setUpCacheProfileValidator();
-
-    String cacheName = "CacheName";
-    this.cacheProfileValidator.validateCacheName(cacheName);
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheProfileValidator#validateCacheName(String)}</code>
-   * considers a String equal to <code>null</code> as an invalid cache name.
-   */
-  public void testValidateCacheNameWithStringEqualToNull() {
-    this.setUpCacheProfileValidator();
-    this.assertValidateCacheNameThrowsIllegalArgumentException(null);
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheProfileValidator#validateCacheProfile(EhCacheProfile)}</code>.
-   * validates the name of the cache set in the specified cache profile.
-   */
-  public void testValidateCacheProfile() throws Exception {
-    // set up the methods to mock.
-    Class classToMock = EhCacheProfileValidator.class;
-    Method validateCacheNameMethod = classToMock.getDeclaredMethod(
-        "validateCacheName", new Class[] { String.class });
-    Method[] methodsToMock = new Method[] { validateCacheNameMethod };
-
-    // create the validator as a mock object. We need to mock
-    // 'validateCacheName' to make sure we are executing it.
-    this.setUpCacheProfileValidatorAsMockObject(methodsToMock);
-
-    String cacheName = "CacheName";
-    EhCacheProfile cacheProfile = new EhCacheProfile();
-    cacheProfile.setCacheName(cacheName);
-
-    // expectation: validate the cache name.
-    this.cacheProfileValidator.validateCacheName(cacheName);
-
-    // set the state of the mock control to 'replay'.
-    this.cacheProfileValidatorControl.replay();
-
-    // execute the method to test.
-    this.cacheProfileValidator.validateCacheProfile(cacheProfile);
-
-    // verify that the expectations of the mock control were met.
-    this.cacheProfileValidatorControl.verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheProfileValidator#validateCacheProfile(Object)}</code>
-   * throws an <code>IllegalArgumentException</code> if the specified argument
-   * is not an instance of <code>{@link EhCacheProfile}</code>.
-   */
-  public void testValidateCacheProfileObjectWithObjectNotInstanceOfEhcacheCacheProfile() {
-    this.setUpCacheProfileValidator();
-    this.assertValidateCacheProfileThrowsIllegalArgumentException(new Object());
-  }
-
 }

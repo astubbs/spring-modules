@@ -22,54 +22,30 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link HashCodeCalculator}</code>.
+ * Unit Tests for <code>{@link HashCodeCalculator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/04/27 01:41:10 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/11 04:32:45 $
  */
 public final class HashCodeCalculatorTests extends TestCase {
 
   /**
-   * Instance of the class to test.
+   * Primary object that is under test.
    */
   private HashCodeCalculator hashCodeCalculator;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public HashCodeCalculatorTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
-
     this.hashCodeCalculator = new HashCodeCalculator();
   }
 
-  /**
-   * Cleans up the test fixture.
-   */
-  protected void tearDown() throws Exception {
-    super.tearDown();
-
-    this.hashCodeCalculator = null;
-  }
-
-  /**
-   * Tests <code>{@link HashCodeCalculator#append(int)}</code>. Verifies that
-   * the calculated checksum and hash code are correct.
-   */
   public void testAppend() {
-
     int count = 0;
     long expectedCheckSum = 0;
     int expectedHashCode = 17;

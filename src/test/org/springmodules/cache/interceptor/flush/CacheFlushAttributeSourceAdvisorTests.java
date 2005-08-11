@@ -32,7 +32,7 @@ import org.springframework.aop.framework.AopConfigException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:16 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/11 04:32:03 $
  */
 public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
 
@@ -127,7 +127,7 @@ public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
     this.setUpCachingAttributeSourceAdvisorAsMockObject();
     this.setUpTargetClassAndMethod();
 
-    // expectation: a cache-flush attribute should not be found for the
+    // expectation: a cache flushing attribute should not be found for the
     // specified method and class.
     this.cacheFlushAttributeSource.getCacheFlushAttribute(this.method,
         this.targetClass);
@@ -138,8 +138,7 @@ public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
     boolean matches = this.cacheFlushAttributeSourceAdvisor.matches(
         this.method, this.targetClass);
 
-    assertFalse("<CacheFlushAttributeSourceAdvisor.matches(Method, Class)>",
-        matches);
+    assertFalse(matches);
 
     this.verifyExpectationsOfMockControlsWereMet();
   }
@@ -155,7 +154,7 @@ public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
     this.setUpCachingAttributeSourceAdvisorAsMockObject();
     this.setUpTargetClassAndMethod();
 
-    // expectation: a cache-flush attribute should be found for the specified
+    // expectation: a cache-flu flushingribute should be found for the specified
     // method and class.
     this.cacheFlushAttributeSource.getCacheFlushAttribute(this.method,
         this.targetClass);
@@ -167,8 +166,7 @@ public class CacheFlushAttributeSourceAdvisorTests extends TestCase {
     boolean matches = this.cacheFlushAttributeSourceAdvisor.matches(
         this.method, this.targetClass);
 
-    assertTrue("<CacheFlushAttributeSourceAdvisor.matches(Method, Class)>",
-        matches);
+    assertTrue(matches);
 
     this.verifyExpectationsOfMockControlsWereMet();
   }
