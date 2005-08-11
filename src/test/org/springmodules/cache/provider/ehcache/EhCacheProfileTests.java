@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springmodules.AssertEqualsHashCode;
 import org.springmodules.EqualsHashCodeTestCase;
 
 /**
@@ -31,7 +32,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/08/11 04:34:34 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/11 04:48:05 $
  */
 public final class EhCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -47,7 +48,12 @@ public final class EhCacheProfileTests extends TestCase implements
     super(name);
   }
 
-  private void assertEqualToString(String expected, String actual) {
+  private void assertEqualToString(String expected) {
+    String actual = this.cacheProfile.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
     assertEquals("<ToString>", expected, actual);
   }
 
@@ -67,15 +73,15 @@ public final class EhCacheProfileTests extends TestCase implements
 
     EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
 
-    assertEquals(this.cacheProfile, anotherProfile);
-    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
-    
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+        this.cacheProfile, anotherProfile);
+
     cacheName = null;
     this.cacheProfile.setCacheName(cacheName);
     anotherProfile.setCacheName(cacheName);
 
-    assertEquals(this.cacheProfile, anotherProfile);
-    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+        this.cacheProfile, anotherProfile);
   }
 
   /**
@@ -98,7 +104,7 @@ public final class EhCacheProfileTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    assertEquals(this.cacheProfile, this.cacheProfile);
+    AssertEqualsHashCode.assertEqualsIsReflexive(this.cacheProfile);
   }
 
   /**
@@ -111,8 +117,8 @@ public final class EhCacheProfileTests extends TestCase implements
 
     EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
 
-    assertTrue(this.cacheProfile.equals(anotherProfile));
-    assertTrue(anotherProfile.equals(this.cacheProfile));
+    AssertEqualsHashCode.assertEqualsIsSymmetric(this.cacheProfile,
+        anotherProfile);
   }
 
   /**
@@ -126,16 +132,16 @@ public final class EhCacheProfileTests extends TestCase implements
     EhCacheProfile secondProfile = new EhCacheProfile(cacheName);
     EhCacheProfile thirdProfile = new EhCacheProfile(cacheName);
 
-    assertTrue(this.cacheProfile.equals(secondProfile));
-    assertTrue(secondProfile.equals(thirdProfile));
-    assertTrue(this.cacheProfile.equals(thirdProfile));
+    AssertEqualsHashCode.assertEqualsIsTransitive(this.cacheProfile,
+        secondProfile, thirdProfile);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    assertFalse(this.cacheProfile.equals(null));
+    AssertEqualsHashCode
+        .assertEqualsNullComparisonReturnsFalse(this.cacheProfile);
   }
 
   public void testToStringWithCacheNameEqualToNull() {
@@ -147,12 +153,7 @@ public final class EhCacheProfileTests extends TestCase implements
     buffer.append("cacheName=null]");
 
     String expected = buffer.toString();
-    String actual = this.cacheProfile.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    this.assertEqualToString(expected, actual);
+    this.assertEqualToString(expected);
   }
 
   public void testToStringWithCacheNameNotEqualToNull() {
@@ -165,11 +166,6 @@ public final class EhCacheProfileTests extends TestCase implements
     buffer.append("cacheName='" + cacheName + "']");
 
     String expected = buffer.toString();
-    String actual = this.cacheProfile.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    this.assertEqualToString(expected, actual);
+    this.assertEqualToString(expected);
   }
 }

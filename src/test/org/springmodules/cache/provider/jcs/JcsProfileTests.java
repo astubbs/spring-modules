@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springmodules.AssertEqualsHashCode;
 import org.springmodules.EqualsHashCodeTestCase;
 
 /**
@@ -33,7 +34,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/05 02:18:40 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/11 04:48:05 $
  */
 public final class JcsProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -49,10 +50,15 @@ public final class JcsProfileTests extends TestCase implements
     super(name);
   }
 
-  private void assertEqualToString(String expected, String actual) {
+  private void assertEqualToString(String expected) {
+    String actual = this.cacheProfile.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
     assertEquals("<ToString>", expected, actual);
   }
-  
+
   protected void setUp() throws Exception {
     super.setUp();
     this.cacheProfile = new JcsProfile();
@@ -70,22 +76,22 @@ public final class JcsProfileTests extends TestCase implements
 
     JcsProfile anotherProfile = new JcsProfile(cacheName, group);
 
-    assertEquals(this.cacheProfile, anotherProfile);
-    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
-    
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+        this.cacheProfile, anotherProfile);
+
     cacheName = null;
     this.cacheProfile.setCacheName(cacheName);
     anotherProfile.setCacheName(cacheName);
 
-    assertEquals(this.cacheProfile, anotherProfile);
-    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+        this.cacheProfile, anotherProfile);
 
     group = null;
     this.cacheProfile.setGroup(group);
     anotherProfile.setGroup(group);
 
-    assertEquals(this.cacheProfile, anotherProfile);
-    assertEquals(this.cacheProfile.hashCode(), anotherProfile.hashCode());
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+        this.cacheProfile, anotherProfile);
   }
 
   /**
@@ -114,7 +120,7 @@ public final class JcsProfileTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    assertEquals(this.cacheProfile, this.cacheProfile);
+    AssertEqualsHashCode.assertEqualsIsReflexive(this.cacheProfile);
   }
 
   /**
@@ -129,8 +135,8 @@ public final class JcsProfileTests extends TestCase implements
 
     JcsProfile anotherProfile = new JcsProfile(cacheName, group);
 
-    assertTrue(this.cacheProfile.equals(anotherProfile));
-    assertTrue(anotherProfile.equals(this.cacheProfile));
+    AssertEqualsHashCode.assertEqualsIsSymmetric(this.cacheProfile,
+        anotherProfile);
   }
 
   /**
@@ -146,16 +152,16 @@ public final class JcsProfileTests extends TestCase implements
     JcsProfile secondProfile = new JcsProfile(cacheName, group);
     JcsProfile thirdProfile = new JcsProfile(cacheName, group);
 
-    assertTrue(this.cacheProfile.equals(secondProfile));
-    assertTrue(secondProfile.equals(thirdProfile));
-    assertTrue(this.cacheProfile.equals(thirdProfile));
+    AssertEqualsHashCode.assertEqualsIsTransitive(this.cacheProfile,
+        secondProfile, thirdProfile);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    assertFalse(this.cacheProfile.equals(null));
+    AssertEqualsHashCode
+        .assertEqualsNullComparisonReturnsFalse(this.cacheProfile);
   }
 
   public void testToStringWithCacheNameAndGroupEqualToNull() {
@@ -169,12 +175,7 @@ public final class JcsProfileTests extends TestCase implements
     buffer.append("group=null]");
 
     String expected = buffer.toString();
-    String actual = this.cacheProfile.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    this.assertEqualToString(expected, actual);
+    this.assertEqualToString(expected);
   }
 
   public void testToStringWithCacheNameAndGroupNotEqualToNull() {
@@ -190,11 +191,6 @@ public final class JcsProfileTests extends TestCase implements
     buffer.append("group='" + group + "']");
 
     String expected = buffer.toString();
-    String actual = this.cacheProfile.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    this.assertEqualToString(expected, actual);
+    this.assertEqualToString(expected);
   }
 }

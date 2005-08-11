@@ -32,7 +32,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/11 04:32:23 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/11 04:48:06 $
  */
 public final class HashCodeCacheKeyTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -127,14 +127,14 @@ public final class HashCodeCacheKeyTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    assertFalse(this.key.equals(null));
+    AssertEqualsHashCode.assertEqualsNullComparisonReturnsFalse(this.key);
   }
 
   /**
    * Verifies that the method <code>{@link HashCodeCacheKey#toString()}</code>
    * returns a String representation of <code>{@link HashCodeCacheKey}</code>.
    */
-  public void testHashCode() {
+  public void testToString() {
     String expected = this.key.getHashCode() + "|" + this.key.getCheckSum();
     String actual = this.key.toString();
 
