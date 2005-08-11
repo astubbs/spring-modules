@@ -22,43 +22,32 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springmodules.AssertEqualsHashCode;
 import org.springmodules.EqualsHashCodeTestCase;
 
 /**
  * <p>
- * Unit Test for <code>{@link FlushCache}</code>.
+ * Unit Tests for <code>{@link FlushCache}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/07/17 02:09:25 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/11 04:31:41 $
  */
 public final class FlushCacheTests extends TestCase implements
     EqualsHashCodeTestCase {
 
-  /**
-   * Message logger.
-   */
   private static Log logger = LogFactory.getLog(FlushCacheTests.class);
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private FlushCache flushCache;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case to construct.
-   */
   public FlushCacheTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -80,21 +69,21 @@ public final class FlushCacheTests extends TestCase implements
     FlushCache anotherFlushCache = new FlushCache(cacheProfileIds,
         flushBeforeExecution);
 
-    assertEquals(this.flushCache, anotherFlushCache);
-    assertEquals(this.flushCache.hashCode(), anotherFlushCache.hashCode());
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+        this.flushCache, anotherFlushCache);
 
     this.flushCache.setCacheProfileIds((String[]) null);
     anotherFlushCache.setCacheProfileIds((String[]) null);
 
-    assertEquals(this.flushCache, anotherFlushCache);
-    assertEquals(this.flushCache.hashCode(), anotherFlushCache.hashCode());
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+        this.flushCache, anotherFlushCache);
 
     String[] newCacheProfileIds = { null, "main" };
     this.flushCache.setCacheProfileIds(newCacheProfileIds);
     anotherFlushCache.setCacheProfileIds(newCacheProfileIds);
 
-    assertEquals(this.flushCache, anotherFlushCache);
-    assertEquals(this.flushCache.hashCode(), anotherFlushCache.hashCode());
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+        this.flushCache, anotherFlushCache);
   }
 
   /**
@@ -124,7 +113,7 @@ public final class FlushCacheTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    assertEquals(this.flushCache, this.flushCache);
+    AssertEqualsHashCode.assertEqualsIsReflexive(this.flushCache);
   }
 
   /**
@@ -140,8 +129,8 @@ public final class FlushCacheTests extends TestCase implements
     FlushCache anotherFlushCache = new FlushCache(cacheProfileIds,
         flushBeforeExecution);
 
-    assertTrue(this.flushCache.equals(anotherFlushCache));
-    assertTrue(anotherFlushCache.equals(this.flushCache));
+    AssertEqualsHashCode.assertEqualsIsSymmetric(this.flushCache,
+        anotherFlushCache);
   }
 
   /**
@@ -159,24 +148,27 @@ public final class FlushCacheTests extends TestCase implements
     FlushCache thirdFlushCache = new FlushCache(cacheProfileIds,
         flushBeforeExecution);
 
-    assertTrue(this.flushCache.equals(secondFlushCache));
-    assertTrue(secondFlushCache.equals(thirdFlushCache));
-    assertTrue(this.flushCache.equals(thirdFlushCache));
+    AssertEqualsHashCode.assertEqualsIsTransitive(this.flushCache,
+        secondFlushCache, thirdFlushCache);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    assertFalse(this.flushCache.equals(null));
+    AssertEqualsHashCode
+        .assertEqualsNullComparisonReturnsFalse(this.flushCache);
   }
 
-  /**
-   * Verifies that the method <code>{@link FlushCache#toString()}</code>
-   * returns a String representation of a <code>{@link FlushCache}</code> when
-   * one of the elements of the property <code>cacheProfileIds</code> is equal
-   * to <code>null</code>.
-   */
+  private void assertEqualToString(String expected) {
+    String actual = this.flushCache.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
+    assertEquals("<ToString>", expected, actual);
+  }
+
   public void testToStringWithCacheProfileIdEqualToNull() {
     String cacheProfileId = "main";
     String[] cacheProfileIds = { cacheProfileId, null };
@@ -192,19 +184,9 @@ public final class FlushCacheTests extends TestCase implements
     buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     String expected = buffer.toString();
-    String actual = this.flushCache.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected);
   }
 
-  /**
-   * Verifies that the method <code>{@link FlushCache#toString()}</code>
-   * returns a String representation of a <code>{@link FlushCache}</code> when
-   * the property <code>cacheProfileIds</code> is equal to <code>null</code>.
-   */
   public void testToStringWithCacheProfileIdsEqualToNull() {
     String cacheProfileIds = null;
     boolean flushBeforeExecution = true;
@@ -219,19 +201,9 @@ public final class FlushCacheTests extends TestCase implements
     buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     String expected = buffer.toString();
-    String actual = this.flushCache.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected);
   }
 
-  /**
-   * Verifies that the method <code>{@link FlushCache#toString()}</code>
-   * returns a String representation of a <code>{@link FlushCache}</code> when
-   * the property <code>cacheProfileIds</code> is an empty array.
-   */
   public void testToStringWithEmptyCacheProfileIds() {
     boolean flushBeforeExecution = true;
 
@@ -245,20 +217,9 @@ public final class FlushCacheTests extends TestCase implements
     buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     String expected = buffer.toString();
-    String actual = this.flushCache.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected);
   }
 
-  /**
-   * Verifies that the method <code>{@link FlushCache#toString()}</code>
-   * returns a String representation of a <code>{@link FlushCache}</code> when
-   * the property <code>cacheProfileIds</code> is not equal to
-   * <code>null</code> and is not an empty array.
-   */
   public void testToStringWithNotEmptyCacheProfileIds() {
     String[] cacheProfileIds = { "main", "test" };
     boolean flushBeforeExecution = true;
@@ -283,11 +244,6 @@ public final class FlushCacheTests extends TestCase implements
     buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     String expected = buffer.toString();
-    String actual = this.flushCache.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected);
   }
 }

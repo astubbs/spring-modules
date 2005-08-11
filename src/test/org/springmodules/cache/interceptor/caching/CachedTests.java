@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springmodules.AssertEqualsHashCode;
 import org.springmodules.EqualsHashCodeTestCase;
 
 /**
@@ -31,7 +32,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/08/05 02:18:49 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/11 04:31:14 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -45,6 +46,15 @@ public final class CachedTests extends TestCase implements
 
   public CachedTests(String name) {
     super(name);
+  }
+
+  private void assertEqualToString(String expected) {
+    String actual = this.cached.toString();
+
+    logger.debug("Expected toString: " + expected);
+    logger.debug("Actual toString:   " + actual);
+
+    assertEquals("<ToString>", expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -62,14 +72,14 @@ public final class CachedTests extends TestCase implements
 
     Cached anotherCached = new Cached(cacheProfileId);
 
-    assertEquals(this.cached, anotherCached);
-    assertEquals(this.cached.hashCode(), anotherCached.hashCode());
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(this.cached,
+        anotherCached);
 
     this.cached.setCacheProfileId(null);
     anotherCached.setCacheProfileId(null);
 
-    assertEquals(this.cached, anotherCached);
-    assertEquals(this.cached.hashCode(), anotherCached.hashCode());
+    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(this.cached,
+        anotherCached);
   }
 
   /**
@@ -90,7 +100,7 @@ public final class CachedTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    assertEquals(this.cached, this.cached);
+    AssertEqualsHashCode.assertEqualsIsReflexive(this.cached);
   }
 
   /**
@@ -102,8 +112,7 @@ public final class CachedTests extends TestCase implements
 
     Cached anotherCached = new Cached(cacheProfileId);
 
-    assertTrue(this.cached.equals(anotherCached));
-    assertTrue(anotherCached.equals(this.cached));
+    AssertEqualsHashCode.assertEqualsIsSymmetric(this.cached, anotherCached);
   }
 
   /**
@@ -116,16 +125,15 @@ public final class CachedTests extends TestCase implements
     Cached secondCached = new Cached(cacheProfileId);
     Cached thirdCached = new Cached(cacheProfileId);
 
-    assertTrue(this.cached.equals(secondCached));
-    assertTrue(secondCached.equals(thirdCached));
-    assertTrue(this.cached.equals(thirdCached));
+    AssertEqualsHashCode.assertEqualsIsTransitive(this.cached, secondCached,
+        thirdCached);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    assertFalse(this.cached.equals(null));
+    AssertEqualsHashCode.assertEqualsNullComparisonReturnsFalse(this.cached);
   }
 
   public void testToStringWithCacheProfileIdEqualToNull() {
@@ -137,12 +145,7 @@ public final class CachedTests extends TestCase implements
     buffer.append("cacheProfileId=null]");
 
     String expected = buffer.toString();
-    String actual = this.cached.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected);
   }
 
   public void testToStringWithCacheProfileIdNotEqualToNull() {
@@ -157,11 +160,6 @@ public final class CachedTests extends TestCase implements
     buffer.append("']");
 
     String expected = buffer.toString();
-    String actual = this.cached.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    assertEquals("<ToString>", expected, actual);
+    this.assertEqualToString(expected);
   }
 }
