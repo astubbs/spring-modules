@@ -20,7 +20,8 @@ package org.springmodules.cache.provider;
 /**
  * <p>
  * Exception thrown when an invalid object is going to be stored in a cache.
- * Each cache provider determines which objects should be considered invalid.
+ * Each cache provider should determine which objects should be considered
+ * invalid.
  * </p>
  * 
  * @author Alex Ruiz
