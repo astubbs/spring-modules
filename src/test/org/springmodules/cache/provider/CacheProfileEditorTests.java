@@ -33,9 +33,9 @@ import org.springmodules.cache.mock.MockCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:58 $
+ * @version $Revision$ $Date$
  */
-public final class AbstractCacheProfileEditorTests extends TestCase {
+public final class CacheProfileEditorTests extends TestCase {
 
   /**
    * Primary object that is under test.
@@ -44,7 +44,7 @@ public final class AbstractCacheProfileEditorTests extends TestCase {
 
   private MockClassControl cacheProfileEditorControl;
 
-  public AbstractCacheProfileEditorTests(String name) {
+  public CacheProfileEditorTests(String name) {
     super(name);
   }
 
