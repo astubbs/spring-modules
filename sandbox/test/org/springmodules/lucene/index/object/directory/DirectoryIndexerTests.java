@@ -123,10 +123,10 @@ public class DirectoryIndexerTests extends TestCase {
 		//Register a document handler
 		assertEquals(indexer.getListeners().size(),0);
 
-		DocumentIndexingListener listener=new DocumentIndexingListenerAdapter();
+		FileDocumentIndexingListener listener=new FileDocumentIndexingListenerAdapter();
 		indexer.addListener(listener);
 		assertEquals(indexer.getListeners().size(),1);
-		DocumentIndexingListener tmpListener=(DocumentIndexingListener)indexer.getListeners().get(0);
+		FileDocumentIndexingListener tmpListener=(FileDocumentIndexingListener)indexer.getListeners().get(0);
 		assertEquals(listener,tmpListener);
 	}
 
@@ -140,10 +140,10 @@ public class DirectoryIndexerTests extends TestCase {
 		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 
 		//Register a document handler
-		DocumentIndexingListener listener=new DocumentIndexingListenerAdapter();
+		FileDocumentIndexingListener listener=new FileDocumentIndexingListenerAdapter();
 		indexer.addListener(listener);
 		assertEquals(indexer.getListeners().size(),1);
-		DocumentIndexingListener tmpListener=(DocumentIndexingListener)indexer.getListeners().get(0);
+		FileDocumentIndexingListener tmpListener=(FileDocumentIndexingListener)indexer.getListeners().get(0);
 		assertEquals(listener,tmpListener);
 
 		//Unregister a document handler
@@ -181,8 +181,8 @@ public class DirectoryIndexerTests extends TestCase {
 		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
-		MockControl listenerControl=MockControl.createControl(DocumentIndexingListener.class);
-		DocumentIndexingListener listener=(DocumentIndexingListener)listenerControl.getMock();
+		MockControl listenerControl=MockControl.createControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener=(FileDocumentIndexingListener)listenerControl.getMock();
 
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
@@ -225,8 +225,8 @@ public class DirectoryIndexerTests extends TestCase {
 		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
-		MockControl listenerControl=MockControl.createControl(DocumentIndexingListener.class);
-		DocumentIndexingListener listener=(DocumentIndexingListener)listenerControl.getMock();
+		MockControl listenerControl=MockControl.createControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener=(FileDocumentIndexingListener)listenerControl.getMock();
 
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
@@ -269,8 +269,8 @@ public class DirectoryIndexerTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Listener 1
-		MockControl listener1Control=MockControl.createControl(DocumentIndexingListener.class);
-		DocumentIndexingListener listener1=(DocumentIndexingListener)listener1Control.getMock();
+		MockControl listener1Control=MockControl.createControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener1=(FileDocumentIndexingListener)listener1Control.getMock();
 
 		listener1.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listener1Control.setVoidCallable(1);
@@ -291,8 +291,8 @@ public class DirectoryIndexerTests extends TestCase {
 		listener1Control.setVoidCallable(1);
 
 		//Listener 2
-		MockControl listener2Control=MockControl.createControl(DocumentIndexingListener.class);
-		DocumentIndexingListener listener2=(DocumentIndexingListener)listener2Control.getMock();
+		MockControl listener2Control=MockControl.createControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener2=(FileDocumentIndexingListener)listener2Control.getMock();
 
 		listener2.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listener2Control.setVoidCallable(1);
@@ -336,8 +336,8 @@ public class DirectoryIndexerTests extends TestCase {
 		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
-		MockControl listenerControl=MockControl.createControl(DocumentIndexingListener.class);
-		DocumentIndexingListener listener=(DocumentIndexingListener)listenerControl.getMock();
+		MockControl listenerControl=MockControl.createControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener=(FileDocumentIndexingListener)listenerControl.getMock();
 
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
