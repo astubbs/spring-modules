@@ -27,32 +27,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.RAMDirectory;
-import org.easymock.MockControl;
 import org.springmodules.lucene.index.FileExtensionNotSupportedException;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 import org.springmodules.lucene.index.support.file.DocumentHandler;
 import org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManager;
 import org.springmodules.lucene.search.core.HitExtractor;
 import org.springmodules.lucene.search.core.LuceneSearchTemplate;
-import org.springmodules.lucene.search.core.MockSimpleSearcherFactory;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
-
-import junit.framework.TestCase;
 
 /**
  * @author Brian McCallister
  * @author Thierry Templier
  */
-public class LuceneIndexTemplateTests extends TestCase {
+public class DefaultLuceneIndexTemplateTests extends TestCase {
 
 	private RAMDirectory directory;
 
@@ -105,7 +104,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		template.deleteDocument(0);
 
 		//Check if a reader has been opened
@@ -126,7 +125,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		template.deleteDocuments(new Term("field","lucene"));
 
 		//Check if a reader has been opened
@@ -144,7 +143,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		template.undeleteDocuments();
 
 		//Check if a reader has been opened
@@ -162,7 +161,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		template.isDeleted(0);
 
 		//Check if a reader has been opened
@@ -180,7 +179,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		template.hasDeletions();
 
 		//Check if a reader has been opened
@@ -198,7 +197,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		assertEquals(template.getMaxDoc(),3);
 
 		//Check if a reader has been opened
@@ -216,7 +215,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		assertEquals(template.getNumDocs(),3);
 
 		//Check if a reader has been opened
@@ -234,7 +233,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		final boolean[] called = {false};
 		template.addDocument(new DocumentCreator() {
 			public Document createDocument() throws IOException {
@@ -277,7 +276,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		final File file=getFileFromClasspath("test.txt");
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		final boolean[] called = {false,false};
 		template.addDocument(new InputStreamDocumentCreator() {
 			public InputStream createInputStream() throws IOException {
@@ -315,7 +314,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		final File file=getFileFromClasspath("test.txt");
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		final boolean[] called = {false,false,false};
 		template.addDocument(new InputStreamDocumentCreatorWithManager(manager) {
 			protected String getResourceName() {
@@ -360,7 +359,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		final File file=getFileFromClasspath("test.properties");
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		final boolean[] called = {false,false,false};
 		try {
 			template.addDocument(new InputStreamDocumentCreatorWithManager(manager) {
@@ -405,7 +404,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		final boolean[] called = {false};
 		template.addDocuments(new DocumentsCreator() {
 			public List createDocuments() throws IOException {
@@ -442,7 +441,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		final boolean[] called = {false,false};
 		template.updateDocument(new DocumentModifier() {
 			public Document updateDocument(Document document) throws IOException {
@@ -497,6 +496,74 @@ public class LuceneIndexTemplateTests extends TestCase {
 		assertEquals((String)fields.get(0),"test");
 	}
 
+	final public void testUpdateDocuments() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+
+		//Lucene template
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+		final boolean[] called = {false,false};
+		template.updateDocuments(new DocumentsModifier() {
+			public List updateDocuments(Hits hits) throws IOException {
+				called[0]=true;
+
+				List updatedDocuments=new ArrayList();
+				for(int cpt=0;cpt<hits.length();cpt++) {
+					Document document=hits.doc(cpt);
+					String id=document.get("id");
+					String field=document.get("field");
+					String filter=document.get("filter");
+					String sort=document.get("sort");
+				
+					Document updatedDocument=new Document();
+					updatedDocument.add(Field.Keyword("id", id));
+					updatedDocument.add(Field.Text("field", "test"));
+					updatedDocument.add(Field.Text("filter", filter));
+					updatedDocument.add(Field.Keyword("sort", sort));
+					updatedDocuments.add(updatedDocument);
+				}
+				return updatedDocuments;
+			}
+		},new DocumentsIdentifier() {
+			public Term getIdentifier() {
+				called[1]=true;
+				return new Term("id","2");
+			}
+		});
+
+		//Check if a writer has been opened
+		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
+		//Check if a writer has been opened
+		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),2);
+
+		//Check if the writer calls the updateDocument method
+		assertTrue(called[0]);
+		//Check if the writer calls the getIdentifier method
+		assertTrue(called[1]);
+
+		//Check if the writer calls the addDocument method
+		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
+		//Check if the reader calls the delete method
+		assertEquals(indexFactory.getReaderListener().getIndexReaderDeletedId(),1);
+
+		//Check if the writer of the template is closed
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+		//Check if the writer of the template is closed
+		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),2);
+
+		SearcherFactory searcherFactory=new SimpleSearcherFactory(indexFactory);
+		LuceneSearchTemplate searchTemplate=new LuceneSearchTemplate(searcherFactory,analyzer);
+		List fields=searchTemplate.search(new TermQuery(new Term("id","2")),new HitExtractor() {
+			public Object mapHit(int id, Document document, float score) {
+				return document.get("field");
+			}
+		});
+		assertEquals(fields.size(),1);
+		assertEquals((String)fields.get(0),"test");
+	}
+
 	final public void testOptimize() throws Exception {
 		//Initialization of the index
 		SimpleAnalyzer analyzer=new SimpleAnalyzer();
@@ -504,7 +571,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		template.optimize();
 
 		//Check if a writer has been opened
@@ -522,7 +589,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		final boolean[] called = {false};
 		template.read(new ReaderCallback() {
 			public Object doWithReader(IndexReader reader) throws IOException {
@@ -547,7 +614,7 @@ public class LuceneIndexTemplateTests extends TestCase {
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		final boolean[] called = {false};
 		template.write(new WriterCallback() {
 			public Object doWithWriter(IndexWriter writer) throws IOException {

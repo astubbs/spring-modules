@@ -92,7 +92,7 @@ public class LuceneResourceManagementTests extends TestCase {
 				assertTrue("Has thread indexFactory", ResourceBindingManager.hasResource(indexFactory));
 
 				//Lucene template
-				LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+				LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 				template.deleteDocument(0);
 				template.hasDeletions();
 				template.undeleteDocuments();
@@ -123,7 +123,7 @@ public class LuceneResourceManagementTests extends TestCase {
 		assertFalse("Has no thread indexFactory", ResourceBindingManager.hasResource(indexFactory));
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		assertFalse("Has no thread indexFactory", ResourceBindingManager.hasResource(indexFactory));
 		template.deleteDocument(0);
 		assertFalse("Has no thread indexFactory", ResourceBindingManager.hasResource(indexFactory));
@@ -159,7 +159,7 @@ public class LuceneResourceManagementTests extends TestCase {
 				assertTrue("Has thread indexFactory", ResourceBindingManager.hasResource(indexFactory));
 
 				//Lucene template
-				LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+				LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 				template.addDocument(new DocumentCreator() {
 					public Document createDocument() throws IOException {
 						Document document=new Document();
@@ -199,7 +199,7 @@ public class LuceneResourceManagementTests extends TestCase {
 		final MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
 
 		//Lucene template
-		LuceneIndexTemplate template=new LuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
 		template.addDocument(new DocumentCreator() {
 			public Document createDocument() throws IOException {
 				Document document=new Document();
