@@ -43,7 +43,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/04 04:39:12 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/15 22:39:22 $
  */
 public final class CacheProxyFactoryBean extends ProxyConfig implements
     FactoryBean, InitializingBean {
@@ -158,19 +158,6 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     return this.proxy;
   }
 
-  /**
-   * <ul>
-   * <li>If the <code>{@link #proxy}</code> is not <code>null</code>, it
-   * returns the class the class of the <code>{@link #proxy}</code>.</li>
-   * <li>If the <code>{@link #proxy}</code> is <code>null</code> and the
-   * <code>{@link #target}</code> is not <code>null</code> and is an
-   * instance of <code>TargetSource</code>, it will return the class of the
-   * <code>{@link #target}</code>.</li>
-   * <li>If both the <code>{@link #proxy}</code> and the
-   * <code>{@link #target}</code> are <code>null</code>, it will return
-   * <code>null</code>.</li>
-   * </ul>
-   */
   public Class getObjectType() {
     Class objectType = null;
 
@@ -277,7 +264,7 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     this.proxyInterfaces = AopUtils.toInterfaceArray(interfaceNames);
   }
 
-  public final void setTarget(Object target) {
+  public void setTarget(Object target) {
     this.target = target;
   }
 
