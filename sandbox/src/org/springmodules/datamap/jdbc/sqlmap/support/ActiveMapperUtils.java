@@ -31,9 +31,7 @@ import java.lang.reflect.Field;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Suppport functionality used by ActiveMapper.
@@ -64,14 +62,14 @@ public class ActiveMapperUtils {
 
     public static PersistentObject getPersistenceMetaData(Class clazz, final DataSource dataSource, Map pluralExceptions) {
         final PersistentObject newPo = new PersistentObject();
-        String baseName = clazz.getName().toLowerCase();
+        String baseName = clazz.getName();
         baseName = baseName.substring(baseName.lastIndexOf(".") + 1);
         String tableName;
         if (pluralExceptions.containsKey(baseName)) {
-            tableName = (String) pluralExceptions.get(baseName);
+            tableName = underscoreName((String)pluralExceptions.get(baseName));
         }
         else {
-            tableName = baseName + "s";
+            tableName = underscoreName(baseName + "s");
         }
         newPo.setBaseName(baseName);
         newPo.setTableName(tableName);
@@ -84,7 +82,8 @@ public class ActiveMapperUtils {
             pf.setColumnName(ActiveMapperUtils.underscoreName(f[i].getName()));
             pf.setJavaType(f[i].getType());
             if ("id".equals(f[i].getName())) {
-                pf.setIdField(true);
+                if (!pf.isIdField())
+                    pf.setIdField(true);
             }
             newMetaData.put(pf.getColumnName(), pf);
         }
@@ -114,11 +113,28 @@ public class ActiveMapperUtils {
                         metaDataTableName = sqlTableName.toLowerCase();
                     else
                         metaDataTableName = sqlTableName.toUpperCase();
-                        ResultSet crs = databaseMetaData.getColumns(null, null, metaDataTableName, null);
+                    ResultSet pkrs = databaseMetaData.getPrimaryKeys(null, null, metaDataTableName);
+                    Set primaryKeys = new HashSet();
+                    while (pkrs.next()) {
+                        primaryKeys.add(pkrs.getString(4));
+                    }
+                    pkrs.close();
+                    newPo.setPrimaryKeyColumns(primaryKeys);
+                    int unmappedKey = primaryKeys.size();
+                    ResultSet crs = databaseMetaData.getColumns(null, null, metaDataTableName, null);
                     while (crs.next()) {
                         PersistentField pf = (PersistentField)newMetaData.get(crs.getString(4).toLowerCase());
-                        if (pf != null)
+                        if (pf != null) {
                             pf.setSqlType(crs.getInt(5));
+                            if (primaryKeys.contains(pf.getColumnName())) {
+                                pf.setIdField(true);
+                                unmappedKey--;
+                            }
+                        }
+                    }
+                    crs.close();
+                    if (primaryKeys.size() > 1 || unmappedKey > 0) {
+                        newPo.setDependentObject(true);
                     }
                     return null;
                 }

@@ -72,15 +72,6 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         return pluralExceptions;
     }
 
-    protected void initDao() throws Exception {
-        pluralExceptions = new HashMap(2);
-        pluralExceptions.put("address", "addresses");
-        pluralExceptions.put("country", "countries");
-        persistentObject = ActiveMapperUtils.getPersistenceMetaData(mappedClass, getDataSource(), getPluralExceptions());
-        tableNameToUse = persistentObject.getTableName();
-        rowMapper = new ActiveRowMapper(mappedClass, persistentObject);
-    }
-
     public void setTableNameToUse(String tableNameToUse) {
         if (overrideTableName)
             throw new InvalidDataAccessApiUsageException("Table name can only be overriden once");
@@ -94,6 +85,20 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
 
     protected PersistentObject getPersistentObject() {
         return persistentObject;
+    }
+
+    protected void initDao() throws Exception {
+        if (pluralExceptions == null) {
+            pluralExceptions = new HashMap(2);
+            pluralExceptions.put("Address", "Addresses");
+            pluralExceptions.put("Country", "Countries");
+            pluralExceptions.put("Person", "People");
+        }
+        persistentObject = ActiveMapperUtils.getPersistenceMetaData(mappedClass, getDataSource(), getPluralExceptions());
+        if (!overrideTableName) {
+            tableNameToUse = persistentObject.getTableName();
+        }
+        rowMapper = new ActiveRowMapper(mappedClass, persistentObject);
     }
 
     public Object find(Object id) {
@@ -229,10 +234,32 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         for (Iterator iter = additionalColumnValues.iterator(); iter.hasNext(); ) {
             Object colVal = iter.next();
             if (colVal instanceof PersistentValue) {
-                columnValues.add(colVal);
+                if (((PersistentValue)colVal).isIdValue())
+                    idValues.add(colVal);
+                else
+                    columnValues.add(colVal);
             }
             else {
                 throw new InvalidDataAccessApiUsageException("Invalid type returned for additional columns.  Must be of type PersistentValue.");
+            }
+        }
+        if (persistentObject.isDependentObject()) {
+            StringBuffer cntSql = new StringBuffer();
+            cntSql.append("select count(*) from ").append(tableNameToUse);
+            cntSql.append(" where ");
+            for (int i = 0; i < idValues.size(); i++) {
+                if (i > 0)
+                    cntSql.append(" and ");
+                cntSql.append(((PersistentValue) idValues.get(i)).getColumnName()).append(" = ?");
+            }
+            Object[] keyValues = new Object[idValues.size()];
+            for (int i = 0; i < idValues.size(); i++) {
+                keyValues[i] = ((PersistentValue)idValues.get(i)).getValue();
+
+            }
+            int rowCount = getJdbcTemplate().queryForInt(cntSql.toString(), keyValues);
+            if (rowCount == 0) {
+                isNewRow = true;
             }
         }
         StringBuffer sql = new StringBuffer();
@@ -246,22 +273,40 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
                 sql.append(" = ?");
                 parameterValues.add(columnValues.get(i));
             }
-            sql.append(" where ").append(((PersistentValue) idValues.get(0)).getColumnName()).append(" = ?");
-            parameterValues.add(idValues.get(0));
+            sql.append(" where ");
+            for (int i = 0; i < idValues.size(); i++) {
+                if (i > 0)
+                    sql.append(" and ");
+                sql.append(((PersistentValue) idValues.get(i)).getColumnName()).append(" = ?");
+                parameterValues.add(idValues.get(i));
+            }
         }
         else {
             StringBuffer placeholders = new StringBuffer();
             sql.append("insert into ");
             sql.append(tableNameToUse);
             sql.append(" (");
-            if (!persistentObject.isUsingGeneratedKeysStrategy()) {
-                sql.append(((PersistentValue)idValues.get(0)).getColumnName());
-                ((PersistentValue)idValues.get(0)).setValue(assignNewId(o));
-                placeholders.append("?");
-                parameterValues.add(idValues.get(0));
+            if (persistentObject.isDependentObject() || !persistentObject.isUsingGeneratedKeysStrategy()) {
+                if (persistentObject.isDependentObject()) {
+                    for (int i = 0; i < idValues.size(); i++) {
+                        if (i > 0)
+                            sql.append(", ");
+                        sql.append(((PersistentValue)idValues.get(i)).getColumnName());
+                        if (i > 0)
+                            placeholders.append(", ");
+                        placeholders.append("?");
+                        parameterValues.add(idValues.get(i));
+                    }
+                }
+                else {
+                    sql.append(((PersistentValue)idValues.get(0)).getColumnName());
+                    ((PersistentValue)idValues.get(0)).setValue(assignNewId(o));
+                    placeholders.append("?");
+                    parameterValues.add(idValues.get(0));
+                }
             }
             for (int i = 0; i < columnValues.size(); i++) {
-                if (i > 0 || !persistentObject.isUsingGeneratedKeysStrategy()) {
+                if (i > 0 || (!persistentObject.isUsingGeneratedKeysStrategy())) {
                     sql.append(", ");
                     placeholders.append(", ");
                 }
@@ -273,6 +318,7 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
             sql.append(placeholders);
             sql.append(")");
         }
+        logger.debug("SQL for Save: " + sql);
         if (isNewRow && persistentObject.isUsingGeneratedKeysStrategy()) {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             final String prepSql = sql.toString();

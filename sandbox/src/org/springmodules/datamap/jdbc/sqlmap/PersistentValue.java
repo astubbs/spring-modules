@@ -27,6 +27,7 @@ public class PersistentValue {
     private String columnName;
     private int sqlType;
     private Object value;
+    private boolean idValue = false;
 
     public PersistentValue() {
     }
@@ -61,7 +62,15 @@ public class PersistentValue {
         this.value = value;
     }
 
+    public boolean isIdValue() {
+        return idValue;
+    }
+
+    public void setIdValue(boolean idValue) {
+        this.idValue = idValue;
+    }
+
     public String toString() {
-        return this.columnName + " [" + this.sqlType + "] = " + value;
+        return this.columnName + " [" + this.sqlType + "] = " + value + (isIdValue() ? " (ID)" : "");
     }
 }

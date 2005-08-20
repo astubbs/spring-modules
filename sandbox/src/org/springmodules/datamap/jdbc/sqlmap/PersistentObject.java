@@ -19,6 +19,7 @@ package org.springmodules.datamap.jdbc.sqlmap;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class to hold information we need for any persistent classes
@@ -35,6 +36,8 @@ public class PersistentObject {
     private DataFieldMaxValueIncrementer incrementer;
     private boolean usingLowerCaseIdentifiers;
     private Map persistentFields;
+    private Set primaryKeyColumns;
+    private boolean dependentObject;
 
     public String getTableName() {
         return tableName;
@@ -91,5 +94,20 @@ public class PersistentObject {
     public void setPersistentFields(Map persistentFields) {
         this.persistentFields = persistentFields;
     }
-    
+
+    public Set getPrimaryKeyColumns() {
+        return primaryKeyColumns;
+    }
+
+    public void setPrimaryKeyColumns(Set primaryKeyColumns) {
+        this.primaryKeyColumns = primaryKeyColumns;
+    }
+
+    public boolean isDependentObject() {
+        return dependentObject;
+    }
+
+    public void setDependentObject(boolean dependentObject) {
+        this.dependentObject = dependentObject;
+    }
 }
