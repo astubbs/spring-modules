@@ -43,7 +43,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/05 02:18:56 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/22 03:32:54 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
@@ -190,6 +190,10 @@ public class OsCacheFacadeTests extends TestCase {
 
     assertEquals("<Class of the cache profile validator>", expectedClass,
         actualClass);
+  }
+
+  public void testIsSerializableCacheElementRequired() {
+    assertFalse(this.osCacheFacade.isSerializableCacheElementRequired());
   }
 
   /**

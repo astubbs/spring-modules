@@ -20,6 +20,7 @@ package org.springmodules.cache.provider;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -29,6 +30,7 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
 import org.springmodules.cache.mock.MockCacheProfile;
+import org.springmodules.cache.serializable.SerializableFactory;
 
 /**
  * <p>
@@ -87,9 +89,14 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     }
   }
 
-  private void expectGetCacheProfileValidator() {
-    this.cacheProviderFacade.getCacheProfileValidator();
-    this.cacheProviderFacadeControl.setReturnValue(this.cacheProfileValidator);
+  private void assertIsNotSerializable(Object obj) {
+    assertFalse(obj.getClass().getName() + " should not be serializable",
+        obj instanceof Serializable);
+  }
+
+  private void expectCacheRequiresSerializableElements(boolean requires) {
+    this.cacheProviderFacade.isSerializableCacheElementRequired();
+    this.cacheProviderFacadeControl.setReturnValue(requires);
   }
 
   private void expectGetCacheProfileEditor() {
@@ -97,8 +104,18 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     this.cacheProviderFacadeControl.setReturnValue(this.cacheProfileEditor);
   }
 
+  private void expectGetCacheProfileValidator() {
+    this.cacheProviderFacade.getCacheProfileValidator();
+    this.cacheProviderFacadeControl.setReturnValue(this.cacheProfileValidator);
+  }
+
   private CacheException getNewCacheException() {
     return new CacheNotFoundException("someCache");
+  }
+
+  private InvalidCacheProfileException getNewInvalidCacheProfileException() {
+    return new InvalidCacheProfileException(
+        "This exception should not make the test fail");
   }
 
   private void setStateOfMockControlsToReplay() {
@@ -154,6 +171,9 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     Method getCacheProfileValidatorMethod = classToMock.getDeclaredMethod(
         "getCacheProfileValidator", null);
 
+    Method isSerializableCacheElementRequiredMethod = classToMock
+        .getDeclaredMethod("isSerializableCacheElementRequired", null);
+
     Method onCancelCacheUpdateMethod = classToMock.getDeclaredMethod(
         "onCancelCacheUpdate", new Class[] { Serializable.class });
 
@@ -171,7 +191,8 @@ public final class CacheProviderFacadeImplTests extends TestCase {
         "validateCacheManager", null);
 
     Method[] methodsToMock = new Method[] { getCacheProfileEditorMethod,
-        getCacheProfileValidatorMethod, onCancelCacheUpdateMethod,
+        getCacheProfileValidatorMethod,
+        isSerializableCacheElementRequiredMethod, onCancelCacheUpdateMethod,
         onFlushCacheMethod, onGetFromCacheMethod, onPutInCacheMethod,
         validateCacheManagerMethod };
 
@@ -248,11 +269,6 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   public void testAfterPropertiesSetWhenMapOfCacheProfilesIsEqualToNull() {
     this.cacheProviderFacade.setCacheProfiles((Map) null);
     this.assertAfterPropertiesSetThrowsException();
-  }
-
-  private InvalidCacheProfileException getNewInvalidCacheProfileException() {
-    return new InvalidCacheProfileException(
-        "This exception should not make the test fail");
   }
 
   /**
@@ -587,8 +603,75 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     }
   }
 
+  public void testMakeSerializableIfNecessaryWithCacheNotRequiringSerializableElementsAndNotSerializableObjectToCache() {
+    this.expectCacheRequiresSerializableElements(false);
+
+    Object objectToCache = new Socket();
+    assertIsNotSerializable(objectToCache);
+
+    this.setStateOfMockControlsToReplay();
+
+    assertSame(objectToCache, this.cacheProviderFacade
+        .makeSerializableIfNecessary(objectToCache));
+
+    this.verifyExpectationsOfMockControlsWereMet();
+  }
+
+  public void testMakeSerializableIfNecessaryWithCacheRequiringSerializableElementAndSerializableFactoryIsNullAndCacheElementIsNotSerializable() {
+    this.expectCacheRequiresSerializableElements(true);
+    this.setStateOfMockControlsToReplay();
+
+    Object objectToCache = new Socket();
+    assertIsNotSerializable(objectToCache);
+
+    try {
+      this.cacheProviderFacade.makeSerializableIfNecessary(objectToCache);
+      fail("Expecting exception <"
+          + InvalidObjectToCacheException.class.getName() + ">");
+
+    } catch (InvalidObjectToCacheException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  public void testMakeSerializableIfNecessaryWithCacheRequiringSerializableElementAndSerializableFactoryIsNullAndCacheElementIsSerializable() {
+    this.expectCacheRequiresSerializableElements(true);
+    this.setStateOfMockControlsToReplay();
+
+    Object objectToCache = "R2-D2";
+    assertSame(objectToCache, this.cacheProviderFacade
+        .makeSerializableIfNecessary(objectToCache));
+
+    this.verifyExpectationsOfMockControlsWereMet();
+  }
+
+  public void testMakeSerializableIfNecessaryWithCacheRequiringSerializableElementsAndSerializableFactoryIsNotNull() {
+    MockControl serializableFactoryControl = MockControl
+        .createControl(SerializableFactory.class);
+    SerializableFactory serializableFactory = (SerializableFactory) serializableFactoryControl
+        .getMock();
+    this.cacheProviderFacade.setSerializableFactory(serializableFactory);
+
+    this.expectCacheRequiresSerializableElements(true);
+
+    Object objectToCache = "Luke Skywalker";
+    serializableFactory.makeSerializableIfNecessary(objectToCache);
+    serializableFactoryControl.setReturnValue(objectToCache);
+
+    this.setStateOfMockControlsToReplay();
+    serializableFactoryControl.replay();
+
+    assertSame(objectToCache, this.cacheProviderFacade
+        .makeSerializableIfNecessary(objectToCache));
+
+    this.verifyExpectationsOfMockControlsWereMet();
+    serializableFactoryControl.verify();
+  }
+
   public void testPutInCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsFalse()
       throws Exception {
+    this.expectCacheRequiresSerializableElements(false);
+
     Object objectToCache = new Object();
     this.cacheProviderFacade.setFailQuietlyEnabled(false);
 
@@ -615,6 +698,8 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   public void testPutInCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsTrue()
       throws Exception {
+    this.expectCacheRequiresSerializableElements(false);
+
     Object objectToCache = new Object();
     this.cacheProviderFacade.setFailQuietlyEnabled(true);
 
@@ -633,7 +718,47 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     this.verifyExpectationsOfMockControlsWereMet();
   }
 
+  public void testPutInCacheWhenMakeSerializableThrowsExceptionAndFailQuietlyIsFalse() {
+    this.expectCacheRequiresSerializableElements(true);
+    this.cacheProviderFacade.setFailQuietlyEnabled(false);
+
+    Object objectToCache = new Object();
+    assertIsNotSerializable(objectToCache);
+
+    this.setStateOfMockControlsToReplay();
+
+    try {
+      // execute the method to test.
+      this.cacheProviderFacade.putInCache(this.cacheKey, CACHE_PROFILE_ID,
+          objectToCache);
+      fail("Expecting exception <"
+          + InvalidObjectToCacheException.class.getName() + ">");
+
+    } catch (InvalidObjectToCacheException exception) {
+      // expecting exception.
+    }
+
+    this.verifyExpectationsOfMockControlsWereMet();
+  }
+
+  public void testPutInCacheWhenMakeSerializableThrowsExceptionAndFailQuietlyIsTrue() {
+    this.expectCacheRequiresSerializableElements(true);
+    this.cacheProviderFacade.setFailQuietlyEnabled(true);
+
+    Object objectToCache = new Object();
+    assertIsNotSerializable(objectToCache);
+
+    this.setStateOfMockControlsToReplay();
+
+    this.cacheProviderFacade.putInCache(this.cacheKey, CACHE_PROFILE_ID,
+        objectToCache);
+
+    this.verifyExpectationsOfMockControlsWereMet();
+  }
+
   public void testPutInCacheWithExistingProfileId() throws Exception {
+    this.expectCacheRequiresSerializableElements(false);
+
     Object objectToCache = new Object();
 
     this.cacheProviderFacade.onPutInCache(this.cacheKey, this.cacheProfile,
@@ -655,6 +780,8 @@ public final class CacheProviderFacadeImplTests extends TestCase {
    * profile stored under the given id.
    */
   public void testPutInCacheWithNotExistingProfileId() throws Exception {
+    this.expectCacheRequiresSerializableElements(false);
+
     Object objectToCache = new Object();
 
     this.setStateOfMockControlsToReplay();

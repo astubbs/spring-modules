@@ -38,7 +38,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/05 02:45:18 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/22 03:32:53 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -167,6 +167,10 @@ public class EhCacheFacadeTests extends TestCase {
         actualClass);
   }
 
+  public void testIsSerializableCacheElementRequired() {
+    assertTrue(this.ehcacheFacade.isSerializableCacheElementRequired());
+  }
+
   /**
    * Verifies that the method
    * <code>{@link EhCacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
@@ -202,7 +206,7 @@ public class EhCacheFacadeTests extends TestCase {
           exception.getClass());
     }
   }
-
+  
   /**
    * Verifies that the method
    * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>

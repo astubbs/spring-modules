@@ -49,7 +49,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/05 02:45:14 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/22 03:32:56 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -277,6 +277,10 @@ public final class JcsFacadeTests extends TestCase {
     Serializable actualKey = this.jcsFacade.getKey(this.cacheKeys[i], profile);
 
     this.assertEqualGeneratedKeys(this.cacheKeys[i], actualKey);
+  }
+
+  public void testIsSerializableCacheElementRequired() {
+    assertTrue(this.jcsFacade.isSerializableCacheElementRequired());
   }
 
   /**

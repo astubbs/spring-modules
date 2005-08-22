@@ -36,7 +36,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/04 04:49:09 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/22 03:32:52 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -73,6 +73,13 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
    */
   protected String getEntryKey(Serializable cacheKey) {
     return cacheKey.toString();
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#isSerializableCacheElementRequired()
+   */
+  protected boolean isSerializableCacheElementRequired() {
+    return false;
   }
 
   /**
@@ -185,4 +192,5 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
           "The Cache Manager should not be null");
     }
   }
+
 }

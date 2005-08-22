@@ -32,7 +32,7 @@ import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileValidator;
 import org.springmodules.cache.provider.InvalidConfigurationException;
-import org.springmodules.cache.provider.InvalidObjectToCache;
+import org.springmodules.cache.provider.InvalidObjectToCacheException;
 
 /**
  * <p>
@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.InvalidObjectToCache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/11 11:27:12 $
+ * @version $Revision: 1.7 $ $Date: 2005/08/22 03:32:55 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -67,6 +67,13 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    */
   protected CacheProfileValidator getCacheProfileValidator() {
     return new EhCacheProfileValidator();
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#isSerializableCacheElementRequired()
+   */
+  protected boolean isSerializableCacheElementRequired() {
+    return true;
   }
 
   /**
@@ -134,7 +141,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
    *      CacheProfile, Object)
    * 
-   * @throws InvalidObjectToCache
+   * @throws InvalidObjectToCacheException
    *           if the object to store is not an implementation of
    *           <code>java.io.Serializable</code>.
    * @throws CacheNotFoundException
@@ -144,11 +151,6 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    */
   protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
       Object objectToCache) throws CacheException {
-
-    if (!(objectToCache instanceof Serializable)) {
-      throw new InvalidObjectToCache(
-          "Only implementations of java.io.Serializable can be stored in the cache");
-    }
 
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();

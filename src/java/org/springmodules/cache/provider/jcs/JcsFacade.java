@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/08/11 11:27:13 $
+ * @version $Revision: 1.12 $ $Date: 2005/08/22 03:32:56 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -98,6 +98,13 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     }
 
     return key;
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#isSerializableCacheElementRequired()
+   */
+  protected boolean isSerializableCacheElementRequired() {
+    return true;
   }
 
   /**

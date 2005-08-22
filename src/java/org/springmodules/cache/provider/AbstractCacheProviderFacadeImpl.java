@@ -28,6 +28,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
+import org.springmodules.cache.serializable.SerializableFactory;
 import org.springmodules.cache.util.ArrayUtils;
 
 /**
@@ -37,7 +38,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/08/11 11:27:13 $
+ * @version $Revision: 1.10 $ $Date: 2005/08/22 03:32:53 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -60,6 +61,8 @@ public abstract class AbstractCacheProviderFacadeImpl implements
   private boolean failQuietlyEnabled;
 
   protected final Log logger = LogFactory.getLog(this.getClass());
+
+  private SerializableFactory serializableFactory;
 
   public AbstractCacheProviderFacadeImpl() {
     super();
@@ -180,14 +183,13 @@ public abstract class AbstractCacheProviderFacadeImpl implements
             this.onFlushCache(cacheProfile);
           }
         }
+        if (this.logger.isDebugEnabled()) {
+          this.logger.debug("Cache has been flushed.");
+        }
 
       } catch (CacheException exception) {
         this.handleCacheException(exception);
       }
-    }
-
-    if (this.logger.isDebugEnabled()) {
-      this.logger.debug("Cache has been flushed.");
     }
   }
 
@@ -309,6 +311,45 @@ public abstract class AbstractCacheProviderFacadeImpl implements
   }
 
   /**
+   * @return <code>true</code> if the cache used by this facade can only store
+   *         serializable objects.
+   */
+  protected abstract boolean isSerializableCacheElementRequired();
+
+  /**
+   * Makes the given object serializable if:
+   * <ul>
+   * <li>The cache can only store serializable objects</li>
+   * <li>The given object does not implement <code>java.io.Serializable</code>
+   * </li>
+   * </ul>
+   * Otherwise, will return the same object passed as argument.
+   * 
+   * @param obj
+   *          the object to check.
+   * @return the given object as a serializable object if necessary.
+   * @throws InvalidObjectToCacheException
+   *           if the cache requires serializable elements, the given object
+   *           does not implement <code>java.io.Serializable</code> and the
+   *           factory of serializable objects is <code>null</code>.
+   * 
+   * @see #setSerializableFactory(SerializableFactory)
+   */
+  protected final Object makeSerializableIfNecessary(Object obj) {
+    if (!this.isSerializableCacheElementRequired()) {
+      return obj;
+    }
+    if (this.serializableFactory != null) {
+      return this.serializableFactory.makeSerializableIfNecessary(obj);
+    }
+    if (obj instanceof Serializable) {
+      return obj;
+    }
+    throw new InvalidObjectToCacheException(
+        "The cache can only store implementations of java.io.Serializable");
+  }
+
+  /**
    * Cancels the update being made to the cache.
    * 
    * @param cacheKey
@@ -382,30 +423,32 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
   /**
    * @see CacheProviderFacade#putInCache(Serializable, String, Object)
+   * @see #makeSerializableIfNecessary(Object)
    */
   public final void putInCache(Serializable cacheKey, String cacheProfileId,
       Object objectToCache) throws CacheException {
 
     if (this.logger.isDebugEnabled()) {
-      String logMessage = "Attempt to store the object <" + objectToCache
-          + "> in the cache using key <" + cacheKey
+      String logMessage = "Attempt to store in the cache the object <"
+          + objectToCache + ">  using key <" + cacheKey
           + "> and cache profile id '" + cacheProfileId + "'";
 
       this.logger.debug(logMessage);
     }
 
-    CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
-    if (cacheProfile != null) {
-      try {
-        this.onPutInCache(cacheKey, cacheProfile, objectToCache);
+    try {
+      Object newCacheElement = this.makeSerializableIfNecessary(objectToCache);
 
-      } catch (CacheException exception) {
-        this.handleCacheException(exception);
+      CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
+      if (cacheProfile != null) {
+        this.onPutInCache(cacheKey, cacheProfile, newCacheElement);
+
+        if (this.logger.isDebugEnabled()) {
+          this.logger.debug("Object was successfully stored in the cache");
+        }
       }
-    }
-
-    if (this.logger.isDebugEnabled()) {
-      this.logger.debug("Object stored in the cache");
+    } catch (CacheException exception) {
+      this.handleCacheException(exception);
     }
   }
 
@@ -427,13 +470,13 @@ public abstract class AbstractCacheProviderFacadeImpl implements
       try {
         this.onRemoveFromCache(cacheKey, cacheProfile);
 
+        if (this.logger.isDebugEnabled()) {
+          this.logger.debug("Object removed from the cache");
+        }
+
       } catch (CacheException exception) {
         this.handleCacheException(exception);
       }
-    }
-
-    if (this.logger.isDebugEnabled()) {
-      this.logger.debug("Object removed from the cache");
     }
   }
 
@@ -491,6 +534,15 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
   public final void setFailQuietlyEnabled(boolean failQuietlyEnabled) {
     this.failQuietlyEnabled = failQuietlyEnabled;
+  }
+
+  /**
+   * Sets the factory that makes serializable the objects to be stored in the
+   * cache (if the cache requires serializable elements).
+   */
+  public final void setSerializableFactory(
+      SerializableFactory serializableFactory) {
+    this.serializableFactory = serializableFactory;
   }
 
   /**
