@@ -32,28 +32,22 @@ import org.springmodules.cache.integration.CacheableImpl;
 
 /**
  * <p>
- * Unit Test for <code>{@link CacheProxyFactoryBean}</code>.
+ * Unit Tests for <code>{@link CacheProxyFactoryBean}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:19 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/22 03:28:58 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 
-  /**
-   * Attributes for flushing the cache.
-   */
   private Properties cacheFlushAttributes;
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private CacheProxyFactoryBean cacheProxyFactoryBean;
 
-  /**
-   * Attributes for caching.
-   */
   private Properties cachingAttributes;
 
   /**
@@ -61,19 +55,10 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   private CacheableImpl target;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public CacheProxyFactoryBeanTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
@@ -94,7 +79,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link CacheProxyFactoryBean#afterPropertiesSet()}</code> throws an
-   * 'IllegalStateException' if the target is not set.
+   * <code>IllegalStateException</code> if the target is not set.
    */
   public void testAfterPropertiesSetWithNullTarget() {
     try {
@@ -109,9 +94,9 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link CacheProxyFactoryBean#afterPropertiesSet()}</code> throws an
-   * 'AopConfigException' if the proxy interfaces are <code>null</code>, the
-   * flag 'proxyTargetClass' is <code>false</code> and the target is an
-   * instance of <code>org.springframework.aop.TargetSource</code>.
+   * <code>AopConfigException<code> if the proxy interfaces are 
+   * <code>null</code>, the flag 'proxyTargetClass' is <code>false</code> and 
+   * the target is an instance of <code>org.springframework.aop.TargetSource</code>.
    */
   public void testAfterPropertiesSetWithProxyInterfacesEqualToNullAndProxyTargetFlagEqualToFalseAndTargetInstanceOfTargetSource()
       throws Exception {
@@ -245,8 +230,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     this.cacheProxyFactoryBean.setTarget(instanceOfTargetSource);
 
     // verify that the proxy is null before running the method to test.
-    assertNull("The proxy should be null", this.cacheProxyFactoryBean
-        .getProxy());
+    assertNull(this.cacheProxyFactoryBean.getProxy());
 
     Class expectedObjectType = instanceOfTargetSource.getClass();
     Class actualObjectType = this.cacheProxyFactoryBean.getObjectType();
@@ -268,8 +252,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     this.cacheProxyFactoryBean.setTarget(this.target);
 
     // verify that the proxy is null before running the method to test.
-    assertNull("The proxy should be null", this.cacheProxyFactoryBean
-        .getProxy());
+    assertNull(this.cacheProxyFactoryBean.getProxy());
 
     Class actualObjectType = this.cacheProxyFactoryBean.getObjectType();
 
@@ -283,12 +266,11 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   public void testGetObjectTypeWhenProxyIsNullAndTargetIsNull() {
     // verify that the proxy is null before running the method to test.
-    assertNull("The proxy should be null", this.cacheProxyFactoryBean
-        .getProxy());
+    assertNull(this.cacheProxyFactoryBean.getProxy());
 
     Class actualObjectType = this.cacheProxyFactoryBean.getObjectType();
 
-    assertNull("The object type should be null", actualObjectType);
+    assertNull(actualObjectType);
   }
 
   /**
