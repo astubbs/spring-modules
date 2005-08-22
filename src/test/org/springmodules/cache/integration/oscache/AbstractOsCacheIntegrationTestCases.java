@@ -21,11 +21,9 @@
 package org.springmodules.cache.integration.oscache;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.integration.KeyCollectionListener;
 import org.springmodules.cache.provider.oscache.OsCacheProfile;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -33,28 +31,67 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
 /**
  * <p>
- * Template for integration tests that verify that the caching and
- * cache-flushing work correctly with OSCache using a Spring bean context.
+ * Template for test cases that verify that the caching module works correctly
+ * inside a Spring bean context when using OSCache as the cache provider.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:32 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/22 03:27:56 $
  */
 public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractIntegrationTests {
 
   /**
-   * OSCache cache administrator managed by the Spring context. Caching and
-   * cache-flushing are executed using this cache.
+   * OSCache cache administrator.
    */
   private GeneralCacheAdministrator cacheAdministrator;
 
-  /**
-   * Constructor.
-   */
   public AbstractOsCacheIntegrationTestCases() {
     super();
+  }
+
+  /**
+   * @see AbstractIntegrationTests#assertCacheWasFlushed()
+   */
+  protected void assertCacheWasFlushed() {
+    Serializable cacheKey = super.getGeneratedKey(0);
+    String key = cacheKey.toString();
+
+    try {
+      this.cacheAdministrator.getFromCache(key);
+      fail("There should not be any object cached under the key '" + cacheKey
+          + "'");
+    } catch (NeedsRefreshException needsRefreshException) {
+      // expecting this exception.
+    }
+  }
+
+  /**
+   * @see AbstractIntegrationTests#assertCorrectCacheProfileConfiguration(Map)
+   */
+  protected void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
+    OsCacheProfile expected = new OsCacheProfile();
+    expected.setGroups("testGroup");
+    expected.setRefreshPeriod(1);
+
+    String cacheProfileId = "test";
+    Object actual = cacheProfiles.get(cacheProfileId);
+
+    super.assertEqualCacheProfiles(expected, actual, cacheProfileId);
+  }
+
+  /**
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
+   */
+  protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
+      throws Exception {
+    Serializable cacheKey = super.getGeneratedKey(keyIndex);
+    String key = cacheKey.toString();
+
+    Object actualCachedObject = this.cacheAdministrator.getFromCache(key);
+
+    super.assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
   }
 
   /**
@@ -66,75 +103,5 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
     // get the cache administrator from the Spring bean context.
     this.cacheAdministrator = (GeneralCacheAdministrator) super.applicationContext
         .getBean("cacheManager");
-  }
-
-  /**
-   * @see AbstractIntegrationTests#assertCacheWasFlushed()
-   */
-  protected void assertCacheWasFlushed() {
-
-    KeyCollectionListener entryStoredListener = super.getEntryStoredListener();
-    List generatedKeys = entryStoredListener.getGeneratedKeys();
-
-    // get the key that supposedly must have been used to store the entry in the
-    // cache.
-    Serializable cacheKey = (Serializable) generatedKeys.get(0);
-
-    if (super.logger.isDebugEnabled()) {
-      super.logger.debug("Key of the cache element that should not exist: "
-          + cacheKey);
-    }
-
-    String key = cacheKey.toString();
-
-    try {
-      this.cacheAdministrator.getFromCache(key);
-      fail("There should not be any object cached under the key '" + cacheKey
-          + "'");
-    } catch (NeedsRefreshException needsRefreshException) {
-      // NeedsRefreshException should be thrown if the cache does not have the
-      // object we are looking for.
-    }
-  }
-
-  /**
-   * @see AbstractIntegrationTests#assertCorrectCacheProfileConfiguration(Map)
-   */
-  protected void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
-
-    // cache profile expected to be in the map of cache profiles.
-    OsCacheProfile expectedTestProfile = new OsCacheProfile();
-    expectedTestProfile.setGroups("testGroup");
-    expectedTestProfile.setRefreshPeriod(1);
-
-    // verify that the expected cache profile exists in the map.
-    String cacheProfileId = "test";
-    Object actualTestProfile = cacheProfiles.get(cacheProfileId);
-    assertEquals("<Cache profile with id '" + cacheProfileId + "'>",
-        expectedTestProfile, actualTestProfile);
-  }
-
-  /**
-   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
-   */
-  protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
-      throws Exception {
-
-    KeyCollectionListener entryStoredListener = super.getEntryStoredListener();
-    List generatedKeys = entryStoredListener.getGeneratedKeys();
-
-    // get the key that supposedly must have been used to store the entry in the
-    // cache.
-    Serializable cacheKey = (Serializable) generatedKeys.get(keyIndex);
-    String key = cacheKey.toString();
-
-    if (super.logger.isDebugEnabled()) {
-      super.logger.debug("Key to use: " + cacheKey);
-    }
-
-    // get the cache entry stored under the key we got.
-    Object actualCachedObject = this.cacheAdministrator.getFromCache(key);
-
-    assertEquals("<Cached object>", expectedCachedObject, actualCachedObject);
   }
 }

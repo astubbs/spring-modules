@@ -31,7 +31,7 @@ import org.springmodules.cache.interceptor.caching.EntryStoredListener;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/20 00:10:15 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:54 $
  */
 public class KeyCollectionListener implements EntryStoredListener {
 
@@ -40,19 +40,11 @@ public class KeyCollectionListener implements EntryStoredListener {
    */
   private List generatedKeys;
 
-  /**
-   * Constructor.
-   */
   public KeyCollectionListener() {
     super();
     this.generatedKeys = new LinkedList();
   }
 
-  /**
-   * Getter for field <code>{@link #generatedKeys}</code>.
-   * 
-   * @return the field <code>generatedKeys</code>.
-   */
   public final List getGeneratedKeys() {
     return this.generatedKeys;
   }

@@ -20,19 +20,14 @@ package org.springmodules.cache.integration.ehcache;
 
 /**
  * <p>
- * Integration test that verifies that caching and flushing work correctly.
- * </p>
- * <p>
- * Test settings:
- * <ul>
- * <li>EHCache as cache provider</li>
- * <li>Source-level metadata identify the target(s) of the caching services</li>
- * </ul>
+ * Verifies that the caching module works correctly when using EHCache as the
+ * cache provider and the caching services use metadata attributes to identify
+ * their target(s).
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/21 21:18:52 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:55 $
  */
 public final class EhCacheMetadataIntegrationTests extends
     AbstractEhCacheIntegrationTests {

@@ -20,26 +20,18 @@ package org.springmodules.cache.integration.jcs;
 
 /**
  * <p>
- * Integration test that verifies that caching and flushing work correctly.
- * </p>
- * <p>
- * Test settings:
- * <ul>
- * <li>JCS as cache provider</li>
- * <li>Source-level metadata identify the target(s) of the caching services</li>
- * </ul>
+ * Verifies that the caching module works correctly when using JCS as the cache
+ * provider and the caching services use metadata attributes to identify their
+ * target(s).
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/21 21:18:51 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:53 $
  */
 public final class JcsMetadataIntegerationTests extends
     AbstractJcsIntegrationTests {
 
-  /**
-   * Constructor.
-   */
   public JcsMetadataIntegerationTests() {
     super();
   }
@@ -48,10 +40,9 @@ public final class JcsMetadataIntegerationTests extends
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    String[] configFileNames = new String[] {
-        "**/jcsApplicationContext.xml",
+    String[] configFileNames = new String[] { "**/jcsApplicationContext.xml",
         "**/metadataApplicationContext.xml" };
-    
+
     return configFileNames;
   }
 }

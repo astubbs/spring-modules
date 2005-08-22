@@ -43,21 +43,10 @@ public class PersonImpl implements Person {
    */
   private String lastName;
 
-  /**
-   * Constructor.
-   */
   public PersonImpl() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param firstName
-   *          the first name of this person.
-   * @param lastName
-   *          the last name of this person.
-   */
   public PersonImpl(String firstName, String lastName) {
     super();
     this.firstName = firstName;
@@ -87,7 +76,7 @@ public class PersonImpl implements Person {
   }
 
   /**
-   * @see java.lang.Object#toString()
+   * @see Object#toString()
    */
   public String toString() {
     StringBuffer buffer = new StringBuffer();

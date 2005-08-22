@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.AssertEqualsHashCode;
+import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
 
 /**
@@ -32,7 +32,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/11 04:48:06 $
+ * @version $Revision: 1.6 $ $Date: 2005/08/22 03:29:54 $
  */
 public final class HashCodeCacheKeyTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -40,23 +40,14 @@ public final class HashCodeCacheKeyTests extends TestCase implements
   private static Log logger = LogFactory.getLog(HashCodeCacheKeyTests.class);
 
   /**
-   * Primary object (instance of the class to test).
+   * Primary object that is under test.
    */
   private HashCodeCacheKey key;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public HashCodeCacheKeyTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
     this.key = new HashCodeCacheKey(44322, 544);
@@ -69,7 +60,7 @@ public final class HashCodeCacheKeyTests extends TestCase implements
     HashCodeCacheKey anotherKey = new HashCodeCacheKey(this.key.getCheckSum(),
         this.key.getHashCode());
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(this.key,
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(this.key,
         anotherKey);
   }
 
@@ -96,7 +87,7 @@ public final class HashCodeCacheKeyTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    AssertEqualsHashCode.assertEqualsIsReflexive(this.key);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(this.key);
   }
 
   /**
@@ -106,7 +97,7 @@ public final class HashCodeCacheKeyTests extends TestCase implements
     HashCodeCacheKey anotherKey = new HashCodeCacheKey(this.key.getCheckSum(),
         this.key.getHashCode());
 
-    AssertEqualsHashCode.assertEqualsIsSymmetric(this.key, anotherKey);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.key, anotherKey);
   }
 
   /**
@@ -119,7 +110,7 @@ public final class HashCodeCacheKeyTests extends TestCase implements
     HashCodeCacheKey secondKey = new HashCodeCacheKey(checkSum, hashCode);
     HashCodeCacheKey thirdKey = new HashCodeCacheKey(checkSum, hashCode);
 
-    AssertEqualsHashCode
+    EqualsHashCodeAssert
         .assertEqualsIsTransitive(this.key, secondKey, thirdKey);
   }
 
@@ -127,7 +118,7 @@ public final class HashCodeCacheKeyTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    AssertEqualsHashCode.assertEqualsNullComparisonReturnsFalse(this.key);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(this.key);
   }
 
   /**

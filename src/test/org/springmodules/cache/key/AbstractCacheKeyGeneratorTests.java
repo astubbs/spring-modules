@@ -34,33 +34,18 @@ import org.easymock.MockControl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/30 13:30:36 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/22 03:29:36 $
  */
 public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
 
-  /**
-   * Mock object that simulates the description of an invocation of a method.
-   */
-  private MethodInvocation mockMethodInvocation;
+  private MethodInvocation methodInvocation;
 
-  /**
-   * Controls the behavior of <code>{@link #mockMethodInvocation}</code>.
-   */
-  private MockControl mockMethodInvocationControl;
+  private MockControl methodInvocationControl;
 
-  /**
-   * Constructor.
-   */
   public AbstractCacheKeyGeneratorTests() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the Test Case.
-   */
   public AbstractCacheKeyGeneratorTests(String name) {
     super(name);
   }
@@ -72,88 +57,56 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
     // no implementation.
   }
 
-  /**
-   * Executes the method
-   * <code>{@link HashCodeCacheKeyGenerator#generateKey(MethodInvocation)}</code>
-   * 
-   * @param method
-   *          the invocated method.
-   * @param methodArguments
-   *          the arguments of the invocated method.
-   * @return the key generated for the specified declaration of the invocated
-   *         method.
-   */
   protected final Serializable executeGenerateArgumentHashCode(Method method,
       Object[] methodArguments) {
 
     CacheKeyGenerator cacheKeyGenerator = this.getCacheKeyGenerator();
 
     // expectation: get the method from the description of the invocation.
-    this.mockMethodInvocation.getMethod();
-    this.mockMethodInvocationControl.setReturnValue(method);
+    this.methodInvocation.getMethod();
+    this.methodInvocationControl.setReturnValue(method);
 
     // expectation: get the arguments of the invocated method.
-    this.mockMethodInvocation.getArguments();
-    this.mockMethodInvocationControl.setReturnValue(methodArguments);
+    this.methodInvocation.getArguments();
+    this.methodInvocationControl.setReturnValue(methodArguments);
 
     // set the state of the mock control to 'replay'.
-    this.mockMethodInvocationControl.replay();
+    this.methodInvocationControl.replay();
 
     // get the key for the method.
     Serializable cacheKey = cacheKeyGenerator
-        .generateKey(this.mockMethodInvocation);
+        .generateKey(this.methodInvocation);
 
     // verify that the expectations of the mock control were met.
-    this.mockMethodInvocationControl.verify();
+    this.methodInvocationControl.verify();
 
     return cacheKey;
   }
 
   /**
-   * Returns the instance of the class to test.
-   * 
    * @return the instance of the class to test.
    */
   protected abstract CacheKeyGenerator getCacheKeyGenerator();
 
-  /**
-   * Getter for <code>{@link #mockMethodInvocation}</code>.
-   * 
-   * @return the value of the member variable <code>mockMethodInvocation</code>.
-   */
-  protected final MethodInvocation getMockMethodInvocation() {
-    return this.mockMethodInvocation;
+  protected final MethodInvocation getMethodInvocation() {
+    return this.methodInvocation;
   }
 
-  /**
-   * Getter for <code>{@link #mockMethodInvocationControl}</code>.
-   * 
-   * @return the value of the member variable
-   *         <code>mockMethodInvocationControl</code>.
-   */
-  protected final MockControl getMockMethodInvocationControl() {
-    return this.mockMethodInvocationControl;
+  protected final MockControl getMethodInvocationControl() {
+    return this.methodInvocationControl;
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   protected final void setUp() throws Exception {
     super.setUp();
 
-    this.mockMethodInvocationControl = MockControl
+    this.methodInvocationControl = MockControl
         .createControl(MethodInvocation.class);
-    this.mockMethodInvocation = (MethodInvocation) this.mockMethodInvocationControl
+    this.methodInvocation = (MethodInvocation) this.methodInvocationControl
         .getMock();
 
     this.afterSetUp();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheKeyGenerator#generateKey(MethodInvocation)}</code>
-   * returns different keys for different methods having equal set of arguments.
-   */
   public void testGenerateKeyGeneratesDifferentKeysForNotEqualMethodsWithEqualArguments()
       throws Exception {
 
@@ -174,7 +127,7 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
         indexOfMethod, indexOfMethodArguments);
 
     // get the key for the second method.
-    this.mockMethodInvocationControl.reset();
+    this.methodInvocationControl.reset();
     Serializable secondCacheKey = this.executeGenerateArgumentHashCode(
         lastIndexOfMethod, lastIndexOfMethodArguments);
 
@@ -182,12 +135,6 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
         .equals(secondCacheKey));
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheKeyGenerator#generateKey(MethodInvocation)}</code>
-   * returns different keys for different methods having different set of
-   * arguments.
-   */
   public void testGenerateKeyGeneratesDifferentKeysForNotEqualMethodsWithNotEqualArguments()
       throws Exception {
 
@@ -208,7 +155,7 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
         indexOfMethod, indexOfMethodArguments);
 
     // get the key for the second method.
-    this.mockMethodInvocationControl.reset();
+    this.methodInvocationControl.reset();
     Serializable secondCacheKey = this.executeGenerateArgumentHashCode(
         lastIndexOfMethod, lastIndexOfMethodArguments);
 
@@ -216,12 +163,6 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
         .equals(secondCacheKey));
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheKeyGenerator#generateKey(MethodInvocation)}</code>
-   * returns different keys for the given method and different sets of
-   * arguments.
-   */
   public void testGenerateKeyGeneratesDifferentKeysForSameMethodWithNotEqualArguments()
       throws Exception {
 
@@ -238,7 +179,7 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
         methodArguments);
 
     // get the key for the second method.
-    this.mockMethodInvocationControl.reset();
+    this.methodInvocationControl.reset();
     Serializable secondCacheKey = this.executeGenerateArgumentHashCode(method,
         differentMethodArguments);
 
@@ -246,12 +187,6 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
         .equals(secondCacheKey));
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheKeyGenerator#generateKey(MethodInvocation)}</code>
-   * always returns the same key for the given method and the same set of
-   * arguments.
-   */
   public void testGenerateKeyGeneratesSameKeyForSameMethodAndEqualArguments()
       throws Exception {
 
@@ -262,11 +197,11 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
     Object[] methodArguments = new Object[] { new Integer(4), new Integer(0) };
 
     // get the key for the method.
-    Serializable expectedCacheKey = this.executeGenerateArgumentHashCode(method,
-        methodArguments);
+    Serializable expectedCacheKey = this.executeGenerateArgumentHashCode(
+        method, methodArguments);
 
     // get the key for the same method.
-    this.mockMethodInvocationControl.reset();
+    this.methodInvocationControl.reset();
     Serializable actualCacheKey = this.executeGenerateArgumentHashCode(method,
         methodArguments);
 

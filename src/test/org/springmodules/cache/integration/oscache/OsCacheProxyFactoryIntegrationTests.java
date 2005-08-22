@@ -20,27 +20,18 @@ package org.springmodules.cache.integration.oscache;
 
 /**
  * <p>
- * Integration test that verifies that caching and flushing work correctly.
- * </p>
- * <p>
- * Test settings:
- * <ul>
- * <li>OSCache as cache provider</li>
- * <li>The targets of the caching services are configured using a
- * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code></li>
- * </ul>
+ * Verifies that the caching module works correctly when using OSCache as the
+ * cache provider and the caching services are declared using a
+ * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/21 21:18:53 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:56 $
  */
 public final class OsCacheProxyFactoryIntegrationTests extends
     AbstractOsCacheIntegrationTestCases {
 
-  /**
-   * Constructor.
-   */
   public OsCacheProxyFactoryIntegrationTests() {
     super();
   }
@@ -52,7 +43,7 @@ public final class OsCacheProxyFactoryIntegrationTests extends
     String[] configFileNames = new String[] {
         "**/oscacheApplicationContext.xml",
         "**/proxyFactoryApplicationContext.xml" };
-    
+
     return configFileNames;
   }
 }

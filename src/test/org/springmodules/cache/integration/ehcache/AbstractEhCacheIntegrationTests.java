@@ -19,7 +19,6 @@
 package org.springmodules.cache.integration.ehcache;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import net.sf.ehcache.Cache;
@@ -27,31 +26,26 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.integration.KeyCollectionListener;
 import org.springmodules.cache.provider.ehcache.EhCacheProfile;
 
 /**
  * <p>
- * Template for integration tests that verify that the caching and
- * cache-flushing work correctly with EHCache using a Spring bean context.
+ * Template for test cases that verify that the caching module works correctly
+ * inside a Spring bean context when using EHCache as the cache provider.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:34 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/22 03:27:55 $
  */
 public abstract class AbstractEhCacheIntegrationTests extends
     AbstractIntegrationTests {
 
   /**
-   * EHCache cache managed by the Spring context. Caching and cache-flushing are
-   * executed using this cache.
+   * EHCache cache.
    */
   private Cache cache;
 
-  /**
-   * Constructor.
-   */
   public AbstractEhCacheIntegrationTests() {
     super();
   }
@@ -60,35 +54,24 @@ public abstract class AbstractEhCacheIntegrationTests extends
    * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected final void assertCacheWasFlushed() throws Exception {
+    Serializable key = super.getGeneratedKey(0);
 
-    KeyCollectionListener entryStoredListener = super.getEntryStoredListener();
-    List generatedKeys = entryStoredListener.getGeneratedKeys();
+    Element cacheEntry = this.cache.get(key);
 
-    // get the key that supposedly must have been used to store the entry in the
-    // cache.
-    Serializable cacheKey = (Serializable) generatedKeys.get(0);
-
-    // get the cache entry stored under the key we got.
-    Element cachedElement = this.cache.get(cacheKey);
-
-    assertNull("There should not be any object cached under the key '"
-        + cacheKey + "'", cachedElement);
+    super.assertCacheEntryFromCacheIsNull(cacheEntry, key);
   }
 
   /**
    * @see AbstractIntegrationTests#assertCorrectCacheProfileConfiguration(Map)
    */
   protected final void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
+    EhCacheProfile expected = new EhCacheProfile();
+    expected.setCacheName("testCache");
 
-    // cache profile expected to be in the map of cache profiles.
-    EhCacheProfile expectedTestProfile = new EhCacheProfile();
-    expectedTestProfile.setCacheName("testCache");
-
-    // verify that the expected cache profile exists in the map.
     String cacheProfileId = "test";
-    Object actualTestProfile = cacheProfiles.get(cacheProfileId);
-    assertEquals("<Cache profile with id '" + cacheProfileId + "'>",
-        expectedTestProfile, actualTestProfile);
+    Object actual = cacheProfiles.get(cacheProfileId);
+
+    super.assertEqualCacheProfiles(expected, actual, cacheProfileId);
   }
 
   /**
@@ -96,19 +79,13 @@ public abstract class AbstractEhCacheIntegrationTests extends
    */
   protected final void assertObjectWasCached(Object expectedCachedObject,
       int keyIndex) throws Exception {
-
-    KeyCollectionListener entryStoredListener = super.getEntryStoredListener();
-    List generatedKeys = entryStoredListener.getGeneratedKeys();
-
-    // get the key that supposedly must have been used to store the entry in the
-    // cache.
-    Serializable cacheKey = (Serializable) generatedKeys.get(keyIndex);
+    Serializable key = super.getGeneratedKey(keyIndex);
 
     // get the cache entry stored under the key we got.
-    Element cachedElement = this.cache.get(cacheKey);
+    Element cachedElement = this.cache.get(key);
     Object actualCachedObject = cachedElement.getValue();
 
-    assertEquals("<Cached object>", expectedCachedObject, actualCachedObject);
+    super.assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
   }
 
   /**
@@ -117,11 +94,9 @@ public abstract class AbstractEhCacheIntegrationTests extends
   protected final void onSetUp() throws Exception {
     super.onSetUp();
 
-    // get the cache manager from the Spring bean context.
     CacheManager cacheManager = (CacheManager) super.applicationContext
         .getBean("cacheManager");
 
-    // get the cache from the cache manager.
     this.cache = cacheManager.getCache("testCache");
   }
 }

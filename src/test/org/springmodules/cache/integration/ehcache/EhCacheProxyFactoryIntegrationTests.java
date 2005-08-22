@@ -18,30 +18,20 @@
 
 package org.springmodules.cache.integration.ehcache;
 
-
 /**
  * <p>
- * Integration test that verifies that caching and flushing work correctly.
- * </p>
- * <p>
- * Test settings:
- * <ul>
- * <li>EHCache as cache provider</li>
- * <li>The targets of the caching services are configured using a
- * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code></li>
- * </ul>
+ * Verifies that the caching module works correctly when using EHCache as the
+ * cache provider and the caching services are declared using a
+ * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/21 21:18:52 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:55 $
  */
 public final class EhCacheProxyFactoryIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  /**
-   * Constructor.
-   */
   public EhCacheProxyFactoryIntegrationTests() {
     super();
   }
@@ -53,7 +43,7 @@ public final class EhCacheProxyFactoryIntegrationTests extends
     String[] configFileNames = new String[] {
         "**/ehcacheApplicationContext.xml",
         "**/proxyFactoryApplicationContext.xml" };
-    
+
     return configFileNames;
   }
 }

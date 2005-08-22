@@ -18,7 +18,9 @@
 
 package org.springmodules.cache.integration;
 
+import java.io.Serializable;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
@@ -28,13 +30,13 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
 
 /**
  * <p>
- * Template for integration test cases that test that caching and cache-flushing
- * work correctly using a Spring bean context.
+ * Template for test cases that verify that caching module works correctly
+ * inside a Spring bean context.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/05 02:45:19 $
+ * @version $Revision: 1.7 $ $Date: 2005/08/22 03:27:54 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
@@ -51,18 +53,16 @@ public abstract class AbstractIntegrationTests extends
    */
   private Cacheable target;
 
-  /**
-   * Constructor.
-   */
   public AbstractIntegrationTests() {
     super();
   }
 
-  /**
-   * Asserts that the cache (or part(s) of the cache, depending on the cache
-   * provider) was flushed. This method depends on the implementation of the
-   * cache provider used in the Spring bean context.
-   */
+  protected final void assertCacheEntryFromCacheIsNull(Object cacheEntry,
+      Serializable key) {
+    assertNull("There should not be any object cached under the key <" + key
+        + ">", cacheEntry);
+  }
+
   protected abstract void assertCacheWasFlushed() throws Exception;
 
   /**
@@ -70,15 +70,24 @@ public abstract class AbstractIntegrationTests extends
    * bean context.
    * 
    * @param cacheProfiles
-   *          the cache profiles to verify. It is an unmodifiable map.
+   *          the cache profiles to verify. It is an unmodifiable
+   *          <code>Map</code>.
    */
   protected abstract void assertCorrectCacheProfileConfiguration(
       Map cacheProfiles);
 
+  protected final void assertEqualCachedObjects(Object expected, Object actual) {
+    assertEquals("<Cached object>", expected, actual);
+  }
+
+  protected final void assertEqualCacheProfiles(Object expected, Object actual,
+      String cacheProfileId) {
+    assertEquals("<Cache profile with id '" + cacheProfileId + "'>", expected,
+        actual);
+  }
+
   /**
-   * Asserts that the object expected to be cached is actually cached. This
-   * method depends on the implementation of the cache provider used in the
-   * Spring bean context.
+   * Asserts that the given object was cached.
    * 
    * @param expectedCachedObject
    *          the object that should have been cached.
@@ -88,26 +97,22 @@ public abstract class AbstractIntegrationTests extends
   protected abstract void assertObjectWasCached(Object expectedCachedObject,
       int keyIndex) throws Exception;
 
-  /**
-   * Getter for <code>{@link #entryStoredListener}</code>.
-   * 
-   * @return the value of the member variable <code>listener</code>.
-   */
   protected final KeyCollectionListener getEntryStoredListener() {
     return this.entryStoredListener;
   }
 
-  /**
-   * Sets up <code>{@link #entryStoredListener}</code>.
-   */
+  protected final Serializable getGeneratedKey(int index) {
+    List generatedKeys = this.entryStoredListener.getGeneratedKeys();
+
+    Serializable key = (Serializable) generatedKeys.get(index);
+    return key;
+  }
+
   private void setUpEntryStoredListener() {
     this.entryStoredListener = (KeyCollectionListener) super.applicationContext
         .getBean("listener");
   }
 
-  /**
-   * Sets up <code>{@link #target}</code>.
-   */
   private void setUpTarget() {
     this.target = (Cacheable) super.applicationContext.getBean("cacheable");
   }
@@ -123,16 +128,13 @@ public abstract class AbstractIntegrationTests extends
     Map cacheProfiles = cacheProviderFacade.getCacheProfiles();
 
     // there should be cache profiles.
-    assertNotNull("The map of cache profiles should not be null", cacheProfiles);
+    assertNotNull(cacheProfiles);
     assertFalse("The map of cache profiles should not be empty", cacheProfiles
         .isEmpty());
 
-    // send an unmodifiable map as argument, to prevent its possible
-    // modification by subclasses of this class.
     Map unmodifiableCacheProfileMap = Collections
         .unmodifiableMap(cacheProfiles);
 
-    // verify that the cache profiles were configured correctly.
     this.assertCorrectCacheProfileConfiguration(unmodifiableCacheProfileMap);
   }
 
@@ -140,13 +142,9 @@ public abstract class AbstractIntegrationTests extends
    * Verifies that the caching and the cache-flushing are working correctly.
    */
   public final void testCachingAndCacheFlushing() throws Exception {
-    // get the "target" object from the Spring bean context.
     this.setUpTarget();
-
-    // get the listener to verify that the caching is working correctly.
     this.setUpEntryStoredListener();
 
-    // call the method 'getName(int)' which return value should be cached.
     if (super.logger.isDebugEnabled()) {
       super.logger.debug("Storing in the cache...");
     }
@@ -157,7 +155,6 @@ public abstract class AbstractIntegrationTests extends
     assertTrue("The retrieved name should not be empty", StringUtils
         .hasText(cachedObject));
 
-    // verify the return value of the called method was cached.
     this.assertObjectWasCached(cachedObject, nameIndex);
 
     // call the same method again. This time the return value should be read
@@ -176,14 +173,12 @@ public abstract class AbstractIntegrationTests extends
         expectedTimesObjectWasCached, actualTimesObjectWasCached);
 
     // call the method 'updateName(int, String)'. When executed, the cache
-    // (or part(s) of the cache, depending on the cache provider) should be
-    // flushed.
+    // should be flushed.
     if (super.logger.isDebugEnabled()) {
       super.logger.debug("Flushing the cache ...");
     }
     this.target.updateName(nameIndex, "Rod Johnson");
 
-    // verify that the cache was flushed.
     this.assertCacheWasFlushed();
 
     // NULL_ENTRY should be cached, and null should be returned.

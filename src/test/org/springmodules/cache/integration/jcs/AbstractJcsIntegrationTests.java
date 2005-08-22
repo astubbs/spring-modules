@@ -21,7 +21,6 @@
 package org.springmodules.cache.integration.jcs;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.jcs.engine.behavior.ICacheElement;
@@ -30,33 +29,79 @@ import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.integration.KeyCollectionListener;
 import org.springmodules.cache.provider.jcs.JcsProfile;
 
 /**
  * <p>
- * Template for integration tests that verify that the caching and
- * cache-flushing work correctly with JCS using a Spring bean context.
+ * Template for test cases that verify that the caching module works correctly
+ * inside a Spring bean context when using JCS as the cache provider.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/05/30 13:30:35 $
+ * @version $Revision: 1.7 $ $Date: 2005/08/22 03:27:53 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractIntegrationTests {
 
+  private static final String CACHE_GROUP = "testGroup";
+
+  private static final String CACHE_NAME = "testCache";
+
   /**
-   * JCS cache manager managed by the Spring context. Caching and cache-flushing
-   * are executed using this cache.
+   * JCS cache manager.
    */
   private CompositeCacheManager cacheManager;
 
-  /**
-   * Constructor.
-   */
   public AbstractJcsIntegrationTests() {
     super();
+  }
+
+  /**
+   * @see AbstractIntegrationTests#assertCacheWasFlushed()
+   */
+  protected void assertCacheWasFlushed() throws Exception {
+    Serializable key = super.getGeneratedKey(0);
+    ICacheElement cacheEntry = this.getCacheElement(key);
+
+    super.assertCacheEntryFromCacheIsNull(cacheEntry, key);
+  }
+
+  /**
+   * @see AbstractIntegrationTests#assertCorrectCacheProfileConfiguration(Map)
+   */
+  protected void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
+    JcsProfile expected = new JcsProfile();
+    expected.setGroup(CACHE_GROUP);
+    expected.setCacheName(CACHE_NAME);
+
+    String cacheProfileId = "test";
+    Object actual = cacheProfiles.get(cacheProfileId);
+
+    super.assertEqualCacheProfiles(expected, actual, cacheProfileId);
+  }
+
+  /**
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
+   */
+  protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
+      throws Exception {
+    Serializable key = super.getGeneratedKey(keyIndex);
+    ICacheElement cacheElement = this.getCacheElement(key);
+
+    Object actualCachedObject = cacheElement.getVal();
+
+    super.assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
+  }
+
+  private ICacheElement getCacheElement(Serializable key) {
+    CompositeCache cache = this.cacheManager.getCache(CACHE_NAME);
+    String group = CACHE_GROUP;
+    GroupId groupId = new GroupId(CACHE_NAME, group);
+    GroupAttrName groupAttrName = new GroupAttrName(groupId, key);
+
+    ICacheElement cacheElement = cache.get(groupAttrName);
+    return cacheElement;
   }
 
   /**
@@ -65,78 +110,8 @@ public abstract class AbstractJcsIntegrationTests extends
   protected final void onSetUp() throws Exception {
     super.onSetUp();
 
-    // get the cache manager from the Spring bean context.
     this.cacheManager = (CompositeCacheManager) super.applicationContext
         .getBean("cacheManager");
-  }
-
-  /**
-   * @see AbstractIntegrationTests#assertCacheWasFlushed()
-   */
-  protected void assertCacheWasFlushed() throws Exception {
-
-    KeyCollectionListener entryStoredListener = super.getEntryStoredListener();
-    List generatedKeys = entryStoredListener.getGeneratedKeys();
-
-    // get the key that supposedly must have been used to store the entry in the
-    // cache.
-    Serializable cacheKey = (Serializable) generatedKeys.get(0);
-
-    // get the cache entry stored under the key we got.
-    String cacheName = "testCache";
-    String group = "testGroup";
-    GroupId groupId = new GroupId(cacheName, group);
-    GroupAttrName groupAttrName = new GroupAttrName(groupId, cacheKey);
-
-    CompositeCache cache = this.cacheManager.getCache(cacheName);
-    ICacheElement cachedElement = cache.get(groupAttrName);
-
-    assertNull("There should not be any object cached under the key '"
-        + cacheKey + "'", cachedElement);
-  }
-
-  /**
-   * @see AbstractIntegrationTests#assertCorrectCacheProfileConfiguration(Map)
-   */
-  protected void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
-
-    // cache profile expected to be in the map of cache profiles.
-    JcsProfile expectedTestProfile = new JcsProfile();
-    expectedTestProfile.setGroup("testGroup");
-    expectedTestProfile.setCacheName("testCache");
-
-    // verify that the expected cache profile exists in the map.
-    String cacheProfileId = "test";
-    Object actualTestProfile = cacheProfiles.get(cacheProfileId);
-    assertEquals("<Cache profile with id '" + cacheProfileId + "'>",
-        expectedTestProfile, actualTestProfile);
-  }
-
-  /**
-   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
-   */
-  protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
-      throws Exception {
-
-    KeyCollectionListener entryStoredListener = super.getEntryStoredListener();
-    List generatedKeys = entryStoredListener.getGeneratedKeys();
-
-    // get the key that supposedly must have been used to store the entry in the
-    // cache.
-    Serializable cacheKey = (Serializable) generatedKeys.get(keyIndex);
-
-    // get the cache entry stored under the key we got.
-    String cacheName = "testCache";
-    String group = "testGroup";
-    GroupId groupId = new GroupId(cacheName, group);
-    GroupAttrName groupAttrName = new GroupAttrName(groupId, cacheKey);
-
-    // verify that an entry exists in the cache with the key we got.
-    CompositeCache cache = this.cacheManager.getCache(cacheName);
-    ICacheElement cachedElement = cache.get(groupAttrName);
-    Object actualCachedObject = cachedElement.getVal();
-
-    assertEquals("<Cached object>", expectedCachedObject, actualCachedObject);
   }
 
 }

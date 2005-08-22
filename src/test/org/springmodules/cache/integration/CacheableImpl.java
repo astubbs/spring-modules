@@ -22,30 +22,15 @@ import java.util.List;
 
 /**
  * <p>
- * Implementation of <code>{@link Cacheable}</code> used for integration
- * testing. Instances of this class should be:
- * <ul>
- * <li>Managed by a Spring bean context.</li>
- * <li>Advised by
- * <code>{@link org.springmodules.cache.interceptor.caching.CachingInterceptor}</code>.
- * </li>
- * <li>Advised by
- * <code>{@link org.springmodules.cache.interceptor.flush.CacheFlushInterceptor}</code>.
- * </li>
- * </ul>
+ * Default implementation of <code>{@link Cacheable}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/20 00:10:15 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:54 $
  */
 public class CacheableImpl implements Cacheable {
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3761693368530647088L;
 
   /**
@@ -53,9 +38,6 @@ public class CacheableImpl implements Cacheable {
    */
   private List names;
 
-  /**
-   * Constructor.
-   */
   public CacheableImpl() {
     super();
   }
@@ -68,12 +50,6 @@ public class CacheableImpl implements Cacheable {
     return (String) this.names.get(index);
   }
 
-  /**
-   * Setter for the field <code>{@link #names}</code>.
-   * 
-   * @param names
-   *          the new value to set
-   */
   public final void setNames(List names) {
     this.names = names;
   }

@@ -18,29 +18,20 @@
 
 package org.springmodules.cache.integration.jcs;
 
-
 /**
  * <p>
- * Integration test that verifies that caching and flushing work correctly.
- * </p>
- * <p>
- * Test settings:
- * <ul>
- * <li>JCS as cache provider</li>
- * <li>The targets of the caching services are configured using a
- * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code></li>
- * </ul>
+ * Verifies that the caching module works correctly when using JCS as the cache
+ * provider and the caching services are declared using a
+ * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/21 21:18:51 $
+ * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:53 $
  */
-public final class JcsProxyFactoryIntegerationTests extends AbstractJcsIntegrationTests {
+public final class JcsProxyFactoryIntegerationTests extends
+    AbstractJcsIntegrationTests {
 
-  /**
-   * Constructor.
-   */
   public JcsProxyFactoryIntegerationTests() {
     super();
   }
@@ -49,10 +40,9 @@ public final class JcsProxyFactoryIntegerationTests extends AbstractJcsIntegrati
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    String[] configFileNames = new String[] {
-        "**/jcsApplicationContext.xml",
+    String[] configFileNames = new String[] { "**/jcsApplicationContext.xml",
         "**/proxyFactoryApplicationContext.xml" };
-    
+
     return configFileNames;
   }
 }
