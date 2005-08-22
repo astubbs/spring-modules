@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.AssertEqualsHashCode;
+import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
 
 /**
@@ -32,7 +32,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/08/11 04:48:07 $
+ * @version $Revision: 1.11 $ $Date: 2005/08/22 03:30:20 $
  */
 public final class OsCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -79,35 +79,35 @@ public final class OsCacheProfileTests extends TestCase implements
     OsCacheProfile anotherProfile = new OsCacheProfile(groups, refreshPeriod,
         cronExpression);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.cacheProfile, anotherProfile);
 
     cronExpression = null;
     this.cacheProfile.setCronExpression(cronExpression);
     anotherProfile.setCronExpression(cronExpression);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.cacheProfile, anotherProfile);
 
     groups = null;
     this.cacheProfile.setGroups(groups);
     anotherProfile.setGroups(groups);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.cacheProfile, anotherProfile);
 
     String[] groupArray = { null, "Pojos" };
     this.cacheProfile.setGroups(groupArray);
     anotherProfile.setGroups(groupArray);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.cacheProfile, anotherProfile);
 
     refreshPeriod = null;
     this.cacheProfile.setRefreshPeriod(refreshPeriod);
     anotherProfile.setRefreshPeriod(refreshPeriod);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.cacheProfile, anotherProfile);
   }
 
@@ -141,7 +141,7 @@ public final class OsCacheProfileTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    AssertEqualsHashCode.assertEqualsIsReflexive(this.cacheProfile);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(this.cacheProfile);
   }
 
   /**
@@ -159,7 +159,7 @@ public final class OsCacheProfileTests extends TestCase implements
     OsCacheProfile anotherProfile = new OsCacheProfile(groups, refreshPeriod,
         cronExpression);
 
-    AssertEqualsHashCode.assertEqualsIsSymmetric(this.cacheProfile,
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.cacheProfile,
         anotherProfile);
   }
 
@@ -176,7 +176,7 @@ public final class OsCacheProfileTests extends TestCase implements
     OsCacheProfile secondProfile = new OsCacheProfile(groups, refreshPeriod);
     OsCacheProfile thirdProfile = new OsCacheProfile(groups, refreshPeriod);
 
-    AssertEqualsHashCode.assertEqualsIsTransitive(this.cacheProfile,
+    EqualsHashCodeAssert.assertEqualsIsTransitive(this.cacheProfile,
         secondProfile, thirdProfile);
   }
 
@@ -184,7 +184,7 @@ public final class OsCacheProfileTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    AssertEqualsHashCode
+    EqualsHashCodeAssert
         .assertEqualsNullComparisonReturnsFalse(this.cacheProfile);
   }
 

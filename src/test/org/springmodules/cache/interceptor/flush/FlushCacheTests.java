@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.AssertEqualsHashCode;
+import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
 
 /**
@@ -32,7 +32,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/11 04:31:41 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/22 03:28:32 $
  */
 public final class FlushCacheTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -69,20 +69,20 @@ public final class FlushCacheTests extends TestCase implements
     FlushCache anotherFlushCache = new FlushCache(cacheProfileIds,
         flushBeforeExecution);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.flushCache, anotherFlushCache);
 
     this.flushCache.setCacheProfileIds((String[]) null);
     anotherFlushCache.setCacheProfileIds((String[]) null);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.flushCache, anotherFlushCache);
 
     String[] newCacheProfileIds = { null, "main" };
     this.flushCache.setCacheProfileIds(newCacheProfileIds);
     anotherFlushCache.setCacheProfileIds(newCacheProfileIds);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.flushCache, anotherFlushCache);
   }
 
@@ -113,7 +113,7 @@ public final class FlushCacheTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    AssertEqualsHashCode.assertEqualsIsReflexive(this.flushCache);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(this.flushCache);
   }
 
   /**
@@ -129,7 +129,7 @@ public final class FlushCacheTests extends TestCase implements
     FlushCache anotherFlushCache = new FlushCache(cacheProfileIds,
         flushBeforeExecution);
 
-    AssertEqualsHashCode.assertEqualsIsSymmetric(this.flushCache,
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.flushCache,
         anotherFlushCache);
   }
 
@@ -148,7 +148,7 @@ public final class FlushCacheTests extends TestCase implements
     FlushCache thirdFlushCache = new FlushCache(cacheProfileIds,
         flushBeforeExecution);
 
-    AssertEqualsHashCode.assertEqualsIsTransitive(this.flushCache,
+    EqualsHashCodeAssert.assertEqualsIsTransitive(this.flushCache,
         secondFlushCache, thirdFlushCache);
   }
 
@@ -156,7 +156,7 @@ public final class FlushCacheTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    AssertEqualsHashCode
+    EqualsHashCodeAssert
         .assertEqualsNullComparisonReturnsFalse(this.flushCache);
   }
 

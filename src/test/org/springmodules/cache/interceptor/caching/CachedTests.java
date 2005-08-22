@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.AssertEqualsHashCode;
+import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
 
 /**
@@ -32,7 +32,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/11 04:31:14 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/22 03:28:31 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -72,13 +72,13 @@ public final class CachedTests extends TestCase implements
 
     Cached anotherCached = new Cached(cacheProfileId);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(this.cached,
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(this.cached,
         anotherCached);
 
     this.cached.setCacheProfileId(null);
     anotherCached.setCacheProfileId(null);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(this.cached,
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(this.cached,
         anotherCached);
   }
 
@@ -100,7 +100,7 @@ public final class CachedTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    AssertEqualsHashCode.assertEqualsIsReflexive(this.cached);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(this.cached);
   }
 
   /**
@@ -112,7 +112,7 @@ public final class CachedTests extends TestCase implements
 
     Cached anotherCached = new Cached(cacheProfileId);
 
-    AssertEqualsHashCode.assertEqualsIsSymmetric(this.cached, anotherCached);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.cached, anotherCached);
   }
 
   /**
@@ -125,7 +125,7 @@ public final class CachedTests extends TestCase implements
     Cached secondCached = new Cached(cacheProfileId);
     Cached thirdCached = new Cached(cacheProfileId);
 
-    AssertEqualsHashCode.assertEqualsIsTransitive(this.cached, secondCached,
+    EqualsHashCodeAssert.assertEqualsIsTransitive(this.cached, secondCached,
         thirdCached);
   }
 
@@ -133,7 +133,7 @@ public final class CachedTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    AssertEqualsHashCode.assertEqualsNullComparisonReturnsFalse(this.cached);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(this.cached);
   }
 
   public void testToStringWithCacheProfileIdEqualToNull() {

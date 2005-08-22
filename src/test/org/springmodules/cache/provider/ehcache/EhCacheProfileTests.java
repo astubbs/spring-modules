@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.AssertEqualsHashCode;
+import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
 
 /**
@@ -32,7 +32,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/11 04:48:05 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/22 03:30:19 $
  */
 public final class EhCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -73,14 +73,14 @@ public final class EhCacheProfileTests extends TestCase implements
 
     EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.cacheProfile, anotherProfile);
 
     cacheName = null;
     this.cacheProfile.setCacheName(cacheName);
     anotherProfile.setCacheName(cacheName);
 
-    AssertEqualsHashCode.assertEqualsHashCodeRelationshipIsCorrect(
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.cacheProfile, anotherProfile);
   }
 
@@ -104,7 +104,7 @@ public final class EhCacheProfileTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    AssertEqualsHashCode.assertEqualsIsReflexive(this.cacheProfile);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(this.cacheProfile);
   }
 
   /**
@@ -117,7 +117,7 @@ public final class EhCacheProfileTests extends TestCase implements
 
     EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
 
-    AssertEqualsHashCode.assertEqualsIsSymmetric(this.cacheProfile,
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.cacheProfile,
         anotherProfile);
   }
 
@@ -132,7 +132,7 @@ public final class EhCacheProfileTests extends TestCase implements
     EhCacheProfile secondProfile = new EhCacheProfile(cacheName);
     EhCacheProfile thirdProfile = new EhCacheProfile(cacheName);
 
-    AssertEqualsHashCode.assertEqualsIsTransitive(this.cacheProfile,
+    EqualsHashCodeAssert.assertEqualsIsTransitive(this.cacheProfile,
         secondProfile, thirdProfile);
   }
 
@@ -140,7 +140,7 @@ public final class EhCacheProfileTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    AssertEqualsHashCode
+    EqualsHashCodeAssert
         .assertEqualsNullComparisonReturnsFalse(this.cacheProfile);
   }
 
