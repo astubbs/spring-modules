@@ -28,15 +28,15 @@ package org.springmodules.cache.provider;
  * 
  * @version $Revision$ $Date$
  */
-public class InvalidObjectToCache extends CacheException {
+public class InvalidObjectToCacheException extends CacheException {
 
   private static final long serialVersionUID = -9124262814399202014L;
 
-  public InvalidObjectToCache(String detailMessage) {
+  public InvalidObjectToCacheException(String detailMessage) {
     super(detailMessage);
   }
 
-  public InvalidObjectToCache(String detailMessage, Throwable nestedException) {
+  public InvalidObjectToCacheException(String detailMessage, Throwable nestedException) {
     super(detailMessage, nestedException);
   }
 
