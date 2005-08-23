@@ -500,7 +500,7 @@
 		cvs update target for the automatic build
 	-->
 	<target name="cvs-update">
-		<cvs command="update"/>
+		<cvs command="update -d -P"/>
 	</target>
 
 	<macrodef name="makejar">
