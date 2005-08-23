@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/08/22 03:32:56 $
+ * @version $Revision: 1.13 $ $Date: 2005/08/23 01:13:52 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -58,6 +58,15 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
    */
   public JcsFacade() {
     super();
+  }
+
+  protected CompositeCache getCache(String cacheName) {
+    CompositeCache cache = this.cacheManager.getCache(cacheName);
+    if (cache == null) {
+      throw new CacheNotFoundException(cacheName);
+    }
+
+    return cache;
   }
 
   /**
@@ -119,10 +128,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    CompositeCache cache = this.cacheManager.getCache(cacheName);
-    if (cache == null) {
-      throw new CacheNotFoundException(cacheName);
-    }
+    CompositeCache cache = this.getCache(cacheName);
 
     String cacheGroup = profile.getGroup();
 
@@ -155,10 +161,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    CompositeCache cache = this.cacheManager.getCache(cacheName);
-    if (cache == null) {
-      throw new CacheNotFoundException(cacheName);
-    }
+    CompositeCache cache = this.getCache(cacheName);
 
     Serializable key = this.getKey(cacheKey, profile);
     Object cachedObject = null;
@@ -191,11 +194,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    CompositeCache cache = this.cacheManager.getCache(cacheName);
-
-    if (cache == null) {
-      throw new CacheNotFoundException(cacheName);
-    }
+    CompositeCache cache = this.getCache(cacheName);
 
     Serializable key = this.getKey(cacheKey, profile);
     ICacheElement newCacheElement = new CacheElement(cache.getCacheName(), key,
@@ -227,11 +226,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    CompositeCache cache = this.cacheManager.getCache(cacheName);
-
-    if (cache == null) {
-      throw new CacheNotFoundException(cacheName);
-    }
+    CompositeCache cache = this.getCache(cacheName);
 
     Serializable key = this.getKey(cacheKey, profile);
 
