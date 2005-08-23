@@ -15,9 +15,11 @@
 				<exclude name="**/*Tests.java"/>
 				<exclude name="**/*TestCases.java"/>
 				<exclude name="**/Cacheable*.java"/>
+				<exclude name="**/EqualsHashCodeAssert.java"/>
 				<exclude name="**/Foo*.java"/>
+				<exclude name="**/KeyCollectionListener.java"/>
 				<exclude name="**/Mock*.java"/>
-				<exclude name="**/Person.java"/>
+				<exclude name="**/Person*.java"/>
 				<exclude name="**/Puppy.java"/>
 			</files>
 		</clover-setup>
