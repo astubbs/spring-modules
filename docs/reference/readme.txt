@@ -14,7 +14,7 @@ for Ant. Targets included are:
 To generate documentation, you need to include a lot
 of libraries, which haven't been added to CVS because
 they're simply too big. The libraries can be found at:
-http://www.jteam.nl/spring/reference-libraries.zip.
+http://static.springframework.org/spring/files/docbook-reference-libs.zip.
 Download them, create a lib directory in the
 docs/reference directory and unzip the zip there.
 Then, the targets should work.
