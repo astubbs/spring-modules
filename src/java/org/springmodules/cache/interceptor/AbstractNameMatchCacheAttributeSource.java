@@ -38,7 +38,7 @@ import org.springmodules.cache.util.TextMatcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:25:49 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/23 03:04:46 $
  */
 public abstract class AbstractNameMatchCacheAttributeSource {
 
@@ -158,9 +158,9 @@ public abstract class AbstractNameMatchCacheAttributeSource {
           cacheAttribute = (CacheAttribute) this.attributeMap
               .get(mappedMethodName);
           bestNameMatch = mappedMethodName;
-        } // end 'if (this.isMatch(methodName, mappedMethodName)'
-      } // end 'while (keySetIterator.hasNext())'
-    } // end 'if (cacheAttribute == null)'
+        } 
+      } 
+    } 
 
     return cacheAttribute;
   }
