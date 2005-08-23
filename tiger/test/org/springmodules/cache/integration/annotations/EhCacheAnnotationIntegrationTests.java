@@ -22,19 +22,14 @@ import org.springmodules.cache.integration.ehcache.AbstractEhCacheIntegrationTes
 
 /**
  * <p>
- * Integration test that verifies that caching and flushing work correctly.
- * </p>
- * <p>
- * Test settings:
- * <ul>
- * <li>EHCache as cache provider</li>
- * <li>Source-level metadata identify the target(s) of the caching services</li>
- * </ul>
+ * Verifies that the caching module works correctly when using EHCache as the
+ * cache provider and the caching services use JDK 1.5+ annotations to identify
+ * their target(s).
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/21 21:26:43 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/23 01:18:12 $
  */
 public final class EhCacheAnnotationIntegrationTests extends
     AbstractEhCacheIntegrationTests {
@@ -52,7 +47,8 @@ public final class EhCacheAnnotationIntegrationTests extends
   @Override
   protected String[] getConfigLocations() {
     String[] configFileNames = new String[] {
-        "**/ehcacheApplicationContext.xml", "**/annotationApplicationContext.xml" };
+        "**/ehcacheApplicationContext.xml",
+        "**/annotationApplicationContext.xml" };
 
     return configFileNames;
   }
