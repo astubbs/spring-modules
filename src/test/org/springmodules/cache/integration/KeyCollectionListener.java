@@ -31,12 +31,12 @@ import org.springmodules.cache.interceptor.caching.EntryStoredListener;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:54 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/23 03:02:42 $
  */
 public class KeyCollectionListener implements EntryStoredListener {
 
   /**
-   * Keys generated to add entries to the cache.
+   * Keys generated when entries were added to the cache.
    */
   private List generatedKeys;
 
@@ -50,13 +50,6 @@ public class KeyCollectionListener implements EntryStoredListener {
   }
 
   /**
-   * Adds the specified key to the list of keys.
-   * 
-   * @param key
-   *          the key used to store the entry.
-   * @param obj
-   *          the object stored in the cache. Not used in this implementation.
-   * 
    * @see EntryStoredListener#onEntryAdd(Object, Object)
    */
   public final void onEntryAdd(Object key, Object obj) {
