@@ -18,6 +18,7 @@
 package org.springmodules.cache.annotations;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -32,7 +33,7 @@ import org.springmodules.cache.interceptor.flush.FlushCache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/21 21:25:31 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/23 01:17:45 $
  */
 public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
 
@@ -46,19 +47,10 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
    */
   private AnnotationCacheFlushAttributeSource cacheFlushAttributeSource;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case to construct.
-   */
   public AnnotationCacheFlushAttributeSourceTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -70,11 +62,6 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
         new Class[] { int.class, String.class });
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AnnotationCacheFlushAttributeSource#findAllAttributes(Method)}</code>
-   * returns all the JDK 1.5+ Annotations for a given method.
-   */
   public void testFindAllAttributes() throws Exception {
     Collection expectedAnnotations = Arrays.asList(this.annotatedMethod
         .getAnnotations());
@@ -85,13 +72,6 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
     assertEquals("<Annotations>", expectedAnnotations, actualAnnotations);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AnnotationCacheFlushAttributeSource#findAttribute(Collection)}</code>
-   * returns an instance of <code>{@link FlushCache}</code> created from the
-   * JDK 1.5+ Annotation <code>{@link CacheFlush}</code> contained in the
-   * given collection of attributes.
-   */
   public void testFindAttribute() {
     Collection attributes = Arrays
         .asList(this.annotatedMethod.getAnnotations());
@@ -103,9 +83,18 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
 
     assertTrue("<Cache profile Id>", Arrays.equals(expected.cacheProfileIds(),
         actual.getCacheProfileIds()));
-
-    assertEquals("<'flushBeforeExecution'>", expected.flushBeforeExecution(),
-        actual.isFlushBeforeExecution());
+    assertEquals("<Flag 'flushBeforeExecution'>", expected
+        .flushBeforeExecution(), actual.isFlushBeforeExecution());
   }
 
+  public void testFindAttributeWithCollectionOfAttributesEqualToNull() {
+    assertNull(this.cacheFlushAttributeSource.findAttribute(null));
+  }
+  
+  public void testFindAttributeWithCollectionOfAttributesWithoutCachingAttributes() {
+    Collection<Object> attributes = new ArrayList<Object>();
+    attributes.add("Anakin Skywalker");
+
+    assertNull(this.cacheFlushAttributeSource.findAttribute(attributes));
+  }
 }

@@ -37,7 +37,6 @@ import org.apache.jcs.engine.control.group.GroupId;
 import org.easymock.classextension.MockClassControl;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.CacheException;
 import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfileValidator;
 import org.springmodules.cache.provider.InvalidConfigurationException;
@@ -49,7 +48,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/08/22 03:32:56 $
+ * @version $Revision: 1.10 $ $Date: 2005/08/23 01:17:27 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -105,6 +104,19 @@ public final class JcsFacadeTests extends TestCase {
 
     newCacheElement.setElementAttributes(elementAttributes);
     return newCacheElement;
+  }
+
+  private void expectCacheManagerDoesNotHaveCache() {
+    this.cacheManager.getCache(this.cacheName);
+    this.cacheManagerControl.setReturnValue(null);
+  }
+
+  private void failIfCacheAccessExceptionIsNotThrown() {
+    fail("Expecting exception <" + CacheAccessException.class.getName() + ">");
+  }
+
+  private void failIfCacheNotFoundExceptionIsNotThrown() {
+    fail("Expecting exception <" + CacheNotFoundException.class.getName() + ">");
   }
 
   private void setStateOfMockControlsToReplay() {
@@ -278,50 +290,12 @@ public final class JcsFacadeTests extends TestCase {
 
     this.assertEqualGeneratedKeys(this.cacheKeys[i], actualKey);
   }
-
+  
   public void testIsSerializableCacheElementRequired() {
     assertTrue(this.jcsFacade.isSerializableCacheElementRequired());
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * throws a <code>{@link CacheNotFoundException}</code> if the specified
-   * cache does not exist.
-   */
-  public void testOnFlushCacheWhenCacheIsNotFound() throws Exception {
-    Method getCacheMethod = CompositeCacheManager.class.getDeclaredMethod(
-        "getCache", new Class[] { String.class });
-
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
-
-    // expectation: cache manager returns a cache equal to null.
-    this.cacheManager.getCache(this.cacheName);
-    this.cacheManagerControl.setReturnValue(null);
-
-    this.setStateOfMockControlsToReplay();
-
-    Class expectedException = CacheNotFoundException.class;
-    // execute the method to test.
-    try {
-      this.jcsFacade.onFlushCache(this.cacheProfiles[0]);
-      fail("Expected exception <" + expectedException.getName() + ">");
-
-    } catch (CacheException exception) {
-      assertEquals("<CacheException class>", expectedException, exception
-          .getClass());
-    }
-
-    this.verifyExpectationsOfMockControlsWereMet();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * throws a <code>{@link CacheAccessException}</code> wraps the exception
-   * thrown by JCS when flushing the cache.
-   */
-  public void testOnFlushCacheWhenCacheManagerThrowsExceptionWhenRemovingGroup()
+  public void testOnFlushCacheWhenCacheAccessThrowsException()
       throws Exception {
     Class targetClass = CompositeCacheManager.class;
     Method getCacheMethod = targetClass.getDeclaredMethod("getCache",
@@ -343,15 +317,35 @@ public final class JcsFacadeTests extends TestCase {
 
     this.setStateOfMockControlsToReplay();
 
-    // execute the method to test.
     try {
       JcsProfile profile = new JcsProfile(this.cacheName);
       this.jcsFacade.onFlushCache(profile);
-      fail("Expecting exception <" + CacheAccessException.class.getName() + ">");
+      this.failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException exception) {
       Throwable rootException = exception.getCause();
       assertSame("<Nested exception>", thrownException, rootException);
+    }
+
+    this.verifyExpectationsOfMockControlsWereMet();
+  }
+
+  public void testOnFlushCacheWhenCacheIsNotFound() throws Exception {
+    Method getCacheMethod = CompositeCacheManager.class.getDeclaredMethod(
+        "getCache", new Class[] { String.class });
+
+    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+
+    this.expectCacheManagerDoesNotHaveCache();
+
+    this.setStateOfMockControlsToReplay();
+
+    try {
+      this.jcsFacade.onFlushCache(this.cacheProfiles[0]);
+      this.failIfCacheNotFoundExceptionIsNotThrown();
+      
+    } catch (CacheNotFoundException exception) {
+      // expecting this exception
     }
 
     this.verifyExpectationsOfMockControlsWereMet();
@@ -406,12 +400,6 @@ public final class JcsFacadeTests extends TestCase {
     assertEquals("<Cache size>", 0, this.cache.getSize());
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
-   * retrieves, from the cache specified in the given cache profile, the entry
-   * stored under the given key.
-   */
   public void testOnGetFromCache() throws Exception {
     String objectToStore = "An Object";
     this.updateCache(new Object[] { objectToStore });
@@ -426,13 +414,7 @@ public final class JcsFacadeTests extends TestCase {
     assertSame("<Cached object>", objectToStore, cachedObject);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
-   * returns <code>null</code> if the name of the cache, specified in the
-   * given cache profile, is empty.
-   */
-  public void testOnGetFromCacheWhenCacheIsNotFound() throws Exception {
+  public void testOnGetFromCacheWhenCacheProfileDoesNotHaveCacheName() {
     int i = 0;
     String cacheKey = this.cacheKeys[i];
     JcsProfile profile = this.cacheProfiles[i];
@@ -461,12 +443,6 @@ public final class JcsFacadeTests extends TestCase {
     assertNull(cachedObject);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
-   * stores an entry in the cache specified in the given cache profile using the
-   * given key.
-   */
   public void testOnPutInCache() throws Exception {
     int i = 0;
     String cacheKey = this.cacheKeys[i];
@@ -481,12 +457,6 @@ public final class JcsFacadeTests extends TestCase {
     assertSame("<Cached object>", objectToStore, cachedObject);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
-   * does not store any entry in any cache if the name of the cache, specified
-   * in the given cache profile, is empty. given key.
-   */
   public void testOnPutInCacheWhenCacheNameIsEmpty() throws Exception {
     int i = 0;
     String cacheKey = this.cacheKeys[i];
@@ -501,12 +471,6 @@ public final class JcsFacadeTests extends TestCase {
     assertNull(cacheElement);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#removeFromCache(java.io.Serializable, String)}</code>
-   * removes the entry stored under the given key from the cache specified in
-   * the given cache profile.
-   */
   public void testRemoveFromCache() throws Exception {
     Serializable[] entryKeys = this.updateCache(new Object[] { "An Object" });
 
@@ -523,12 +487,6 @@ public final class JcsFacadeTests extends TestCase {
         + "' should have been removed from the cache", cacheElement);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#removeFromCache(java.io.Serializable, String)}</code>
-   * does not remove any entry if the name of the cache, specified in the given
-   * cache profile, is empty.
-   */
   public void testRemoveFromCacheWhenCacheNameIsEmpty() throws Exception {
     Serializable[] entryKeys = this.updateCache(new Object[] { "An Object" });
 

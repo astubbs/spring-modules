@@ -18,6 +18,7 @@
 package org.springmodules.cache.annotations;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -32,7 +33,7 @@ import org.springmodules.cache.interceptor.caching.Cached;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/21 21:25:30 $
+ * @version $Revision: 1.2 $ $Date: 2005/08/23 01:17:45 $
  */
 public class AnnotationCachingAttributeSourceTests extends TestCase {
 
@@ -46,19 +47,10 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
    */
   private AnnotationCachingAttributeSource cachingAttributeSource;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case to construct.
-   */
   public AnnotationCachingAttributeSourceTests(String name) {
     super(name);
   }
 
-  /**
-   * Sets up the test fixture.
-   */
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -70,11 +62,6 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
         new Class[] { int.class });
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AnnotationCachingAttributeSource#findAllAttributes(Method)}</code>
-   * returns all the JDK 1.5+ Annotations for a given method.
-   */
   public void testFindAllAttributes() throws Exception {
     Collection expectedAnnotations = Arrays.asList(this.annotatedMethod
         .getAnnotations());
@@ -85,13 +72,6 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
     assertEquals("<Annotations>", expectedAnnotations, actualAnnotations);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AnnotationCachingAttributeSource#findAttribute(Collection)}</code>
-   * returns an instance of <code>{@link Cached}</code> created from the JDK
-   * 1.5+ Annotation <code>{@link Cacheable}</code> contained in the given
-   * collection of attributes.
-   */
   public void testFindAttribute() {
     Collection attributes = Arrays
         .asList(this.annotatedMethod.getAnnotations());
@@ -105,4 +85,14 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
         .getCacheProfileId());
   }
 
+  public void testFindAttributeWithCollectionOfAttributesEqualToNull() {
+    assertNull(this.cachingAttributeSource.findAttribute(null));
+  }
+  
+  public void testFindAttributeWithCollectionOfAttributesWithoutCachingAttributes() {
+    Collection<Object> attributes = new ArrayList<Object>();
+    attributes.add("Luke Skywalker");
+
+    assertNull(this.cachingAttributeSource.findAttribute(attributes));
+  }
 }
