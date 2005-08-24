@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.InvalidObjectToCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/23 01:13:26 $
+ * @version $Revision: 1.9 $ $Date: 2005/08/24 00:08:58 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -52,6 +52,34 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
   public EhCacheFacade() {
     super();
+  }
+
+  /**
+   * @param cacheName
+   *          the name of the cache.
+   * @return the cache retrieved from the cache manager.
+   * @throws CacheNotFoundException
+   *           if the cache does not exist.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
+   */
+  protected Cache getCache(String cacheName) {
+    Cache cache = null;
+
+    try {
+      if (this.cacheManager.cacheExists(cacheName)) {
+        cache = this.cacheManager.getCache(cacheName);
+      }
+
+    } catch (Exception exception) {
+      throw new CacheAccessException(exception);
+    }
+
+    if (cache == null) {
+      throw new CacheNotFoundException(cacheName);
+    }
+
+    return cache;
   }
 
   /**
@@ -88,9 +116,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    verifyCacheExists(cacheName);
-
-    Cache cache = this.cacheManager.getCache(cacheName);
+    Cache cache = this.getCache(cacheName);
 
     try {
       cache.removeAll();
@@ -115,9 +141,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    verifyCacheExists(cacheName);
-
-    Cache cache = this.cacheManager.getCache(cacheName);
+    Cache cache = this.getCache(cacheName);
     Object cachedObject = null;
 
     try {
@@ -151,9 +175,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    verifyCacheExists(cacheName);
-
-    Cache cache = this.cacheManager.getCache(cacheName);
+    Cache cache = this.getCache(cacheName);
     Element newCacheElement = new Element(cacheKey,
         (Serializable) objectToCache);
 
@@ -180,9 +202,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    verifyCacheExists(cacheName);
-
-    Cache cache = this.cacheManager.getCache(cacheName);
+    Cache cache = this.getCache(cacheName);
 
     try {
       cache.remove(cacheKey);
@@ -224,28 +244,6 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
       if (cacheManagerStatus != CacheManager.STATUS_ALIVE) {
         throw new InvalidConfigurationException("Cache Manager is not alive");
       }
-    }
-  }
-
-  /**
-   * Verifies that a cache with the given name exists.
-   * 
-   * @param cacheName
-   *          the name of the cache.
-   * @throws CacheNotFoundException
-   *           if the cache does not exist.
-   * @throws CacheAccessException
-   *           wrapping any unexpected exception thrown by the cache.
-   */
-  protected void verifyCacheExists(String cacheName)
-      throws CacheNotFoundException, CacheAccessException {
-    try {
-      if (!this.cacheManager.cacheExists(cacheName)) {
-        throw new CacheNotFoundException(cacheName);
-      }
-
-    } catch (IllegalStateException exception) {
-      throw new CacheAccessException(exception);
     }
   }
 
