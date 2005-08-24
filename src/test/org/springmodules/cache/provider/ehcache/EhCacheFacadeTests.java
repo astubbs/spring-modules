@@ -27,6 +27,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.easymock.AbstractMatcher;
 import org.easymock.classextension.MockClassControl;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheAccessException;
@@ -42,9 +43,46 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/08/23 01:17:02 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/24 00:09:13 $
  */
 public class EhCacheFacadeTests extends TestCase {
+
+  private class ElementMatcher extends AbstractMatcher {
+    /**
+     * @see AbstractMatcher#argumentMatches(Object, Object)
+     */
+    protected boolean argumentMatches(Object expected, Object actual) {
+      if (!(expected instanceof Element)) {
+        throw new IllegalArgumentException(
+            "Element matcher only evaluates instances of <"
+                + Element.class.getName() + ">");
+      }
+      if (!(actual instanceof Element)) {
+        return false;
+      }
+      Element expectedElement = (Element) expected;
+      Element actualElement = (Element) actual;
+
+      Serializable expectedKey = expectedElement.getKey();
+      Object expectedValue = expectedElement.getValue();
+
+      Serializable actualKey = actualElement.getKey();
+      Object actualValue = actualElement.getValue();
+
+      if (expectedKey != null ? !expectedKey.equals(actualKey)
+          : actualKey != null) {
+        return false;
+      }
+
+      if (expectedValue != null ? !expectedValue.equals(actualValue)
+          : actualValue != null) {
+        return false;
+      }
+
+      return true;
+    }
+
+  }
 
   private Cache cache;
 
@@ -209,6 +247,38 @@ public class EhCacheFacadeTests extends TestCase {
         actualClass);
   }
 
+  public void testGetCacheWhenCacheAccessThrowsException() {
+    // we can mock the cache manager since it doesn't have a public constructor.
+    // force a NullPointerException.
+    this.ehcacheFacade.setCacheManager(null);
+
+    try {
+      this.ehcacheFacade.getCache(this.cacheName);
+      this.failIfCacheAccessExceptionIsNotThrown();
+
+    } catch (CacheAccessException exception) {
+      Throwable cause = exception.getCause();
+      assertNotNull(cause);
+      assertTrue(cause instanceof NullPointerException);
+    }
+  }
+
+  public void testGetCacheWithExistingCache() {
+    Cache expected = this.cacheManager.getCache(this.cacheName);
+    Cache actual = this.ehcacheFacade.getCache(this.cacheName);
+    assertSame(expected, actual);
+  }
+
+  public void testGetCacheWithNotExistingCache() {
+    try {
+      this.ehcacheFacade.getCache("AnotherCache");
+      this.failIfCacheNotFoundExceptionIsNotThrown();
+
+    } catch (CacheNotFoundException exception) {
+      // we are expecting this exception.
+    }
+  }
+
   public void testIsSerializableCacheElementRequired() {
     assertTrue(this.ehcacheFacade.isSerializableCacheElementRequired());
   }
@@ -258,8 +328,7 @@ public class EhCacheFacadeTests extends TestCase {
 
     try {
       this.ehcacheFacade.onFlushCache(this.cacheProfile);
-      fail("Expecting exception <" + CacheNotFoundException.class.getName()
-          + ">");
+      this.failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception.
@@ -332,6 +401,35 @@ public class EhCacheFacadeTests extends TestCase {
 
     Object cachedObject = this.cache.get(this.cacheKey).getValue();
     assertSame("<Cached object>", objectToCache, cachedObject);
+  }
+
+  public void testOnPutInCacheWhenCacheAccessThrowsIllegalStateException()
+      throws Exception {
+    Method putMethod = Cache.class.getMethod("put",
+        new Class[] { Element.class });
+    this.setUpCacheAsMockObject(putMethod);
+
+    IllegalStateException expectedCatchedException = new IllegalStateException();
+
+    String objectToCache = "Luke";
+    Element expectedElement = new Element(this.cacheKey, objectToCache);
+
+    this.cache.put(expectedElement);
+    this.cacheControl.setMatcher(new ElementMatcher());
+    this.cacheControl.setThrowable(expectedCatchedException);
+
+    this.cacheControl.replay();
+
+    try {
+      this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
+          objectToCache);
+      this.failIfCacheAccessExceptionIsNotThrown();
+
+    } catch (CacheAccessException cacheAccessException) {
+      assertSame(expectedCatchedException, cacheAccessException.getCause());
+    }
+
+    this.cacheControl.verify();
   }
 
   /**
@@ -452,7 +550,6 @@ public class EhCacheFacadeTests extends TestCase {
    */
   public void testValidateCacheManagerWithCacheManagerNotAliveAndFailQuietlyNotEnabled()
       throws Exception {
-
     this.ehcacheFacade.setFailQuietlyEnabled(false);
     this.cacheManager.shutdown();
 
@@ -461,25 +558,6 @@ public class EhCacheFacadeTests extends TestCase {
       this.failIfInvalidConfigurationExceptionIsNotThrown();
 
     } catch (InvalidConfigurationException exception) {
-      // we are expecting this exception.
-    }
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheFacade#verifyCacheExists(String)}</code> does not
-   * throw any exception if there is a cache stored under the given name.
-   */
-  public void testVerifyCacheExistsWithExistingCache() {
-    this.ehcacheFacade.verifyCacheExists(this.cacheName);
-  }
-
-  public void testVerifyCacheExistsWithNotExistingCache() {
-    try {
-      this.ehcacheFacade.verifyCacheExists("AnotherCache");
-      this.failIfCacheNotFoundExceptionIsNotThrown();
-
-    } catch (CacheNotFoundException exception) {
       // we are expecting this exception.
     }
   }
