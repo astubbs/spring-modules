@@ -39,13 +39,12 @@ import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManage
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/04 04:46:30 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/24 01:18:13 $
  */
 public final class JcsManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
 
-  private static Log logger = LogFactory
-      .getLog(JcsManagerFactoryBean.class);
+  private static Log logger = LogFactory.getLog(JcsManagerFactoryBean.class);
 
   /**
    * The cache manager managed by this factory.
@@ -61,9 +60,8 @@ public final class JcsManagerFactoryBean extends
    * set by the BeanFactory.
    */
   public void afterPropertiesSet() throws Exception {
-    if (logger.isInfoEnabled()) {
-      logger.info("Creating JCS cache manager.");
-    }
+    logger.info("Creating JCS cache manager.");
+
     Resource configLocation = super.getConfigLocation();
 
     if (null == configLocation) {
@@ -84,14 +82,11 @@ public final class JcsManagerFactoryBean extends
    */
   public void destroy() throws Exception {
     if (this.cacheManager == null) {
-      if (logger.isInfoEnabled()) {
-        logger
-            .info("Method 'destroy'. The JCS cache manager was not built. No need to shut it down.");
-      }
+      logger
+          .info("The JCS cache manager was not built. No need to shut it down.");
+
     } else {
-      if (logger.isInfoEnabled()) {
-        logger.info("Method 'destroy'. Shutting down the JCS cache manager.");
-      }
+      logger.info("Shutting down the JCS cache manager.");
       this.cacheManager.shutDown();
     }
   }

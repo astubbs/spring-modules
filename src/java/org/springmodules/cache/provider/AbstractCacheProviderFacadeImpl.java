@@ -38,7 +38,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/08/23 01:12:54 $
+ * @version $Revision: 1.12 $ $Date: 2005/08/24 01:17:34 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -293,8 +293,6 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     }
 
     if (!this.isFailQuietlyEnabled()) {
-      // if the this provider should not "fail quietly", throw the catched
-      // exception.
       throw exception;
     }
   }

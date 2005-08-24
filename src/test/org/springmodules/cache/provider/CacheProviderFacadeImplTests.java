@@ -836,18 +836,15 @@ public final class CacheProviderFacadeImplTests extends TestCase {
    * empty set of properties is passed as argument.
    */
   public void testSetCacheProfilesWithEmptySetOfProperties() {
-
-    IllegalArgumentException catched = null;
-
     try {
       Properties properties = new Properties();
       this.cacheProviderFacade.setCacheProfiles(properties);
-    } catch (IllegalArgumentException exception) {
-      catched = exception;
-    }
+      fail("Expecting exception <" + IllegalArgumentException.class.getName()
+          + ">");
 
-    assertNotNull("An IllegalArgumentException should have been catched",
-        catched);
+    } catch (IllegalArgumentException exception) {
+      // we are expecting this exception.
+    }
   }
 
   public void testSetCacheProfilesWithProperties() {
