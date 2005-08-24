@@ -38,7 +38,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/08/24 01:17:34 $
+ * @version $Revision: 1.13 $ $Date: 2005/08/24 01:29:05 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -121,11 +121,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
     if (invalidCacheProfileException != null) {
       String errorMessage = "Invalid cache profile: " + invalidCacheProfile;
-
-      if (this.logger.isErrorEnabled()) {
-        this.logger.error(errorMessage, invalidCacheProfileException);
-      }
-
+      this.logger.error(errorMessage, invalidCacheProfileException);
       throw new InvalidConfigurationException(errorMessage,
           invalidCacheProfileException);
     }
@@ -288,9 +284,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
   protected final void handleCacheException(CacheException exception)
       throws CacheException {
 
-    if (this.logger.isErrorEnabled()) {
-      this.logger.error(exception.getMessage(), exception);
-    }
+    this.logger.error(exception.getMessage(), exception);
 
     if (!this.isFailQuietlyEnabled()) {
       throw exception;
