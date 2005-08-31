@@ -27,8 +27,8 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopConfigException;
 import org.springframework.aop.target.EmptyTargetSource;
 import org.springframework.util.ClassUtils;
-import org.springmodules.cache.integration.Cacheable;
-import org.springmodules.cache.integration.CacheableImpl;
+import org.springmodules.cache.integration.CacheableService;
+import org.springmodules.cache.integration.CacheableServiceImpl;
 
 /**
  * <p>
@@ -37,7 +37,7 @@ import org.springmodules.cache.integration.CacheableImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/22 03:28:58 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/31 01:22:36 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 
@@ -53,7 +53,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   /**
    * Target of the proxy factory.
    */
-  private CacheableImpl target;
+  private CacheableServiceImpl target;
 
   public CacheProxyFactoryBeanTests(String name) {
     super(name);
@@ -73,7 +73,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     this.cachingAttributes.setProperty("get*", "[cacheProfileId=main]");
     this.cacheProxyFactoryBean.setCachingAttributes(this.cachingAttributes);
 
-    this.target = new CacheableImpl();
+    this.target = new CacheableServiceImpl();
   }
 
   /**
@@ -288,11 +288,11 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    * gets the classes of the given names of interfaces.
    */
   public void testSetProxyInterfaces() throws Exception {
-    String[] interfaceNames = new String[] { "org.springmodules.cache.integration.Cacheable" };
+    String[] interfaceNames = new String[] { CacheableService.class.getName() };
 
     this.cacheProxyFactoryBean.setProxyInterfaces(interfaceNames);
 
-    Class[] expectedProxyInterfaces = new Class[] { Cacheable.class };
+    Class[] expectedProxyInterfaces = new Class[] { CacheableService.class };
     Class[] actualProxyInterfaces = this.cacheProxyFactoryBean
         .getProxyInterfaces();
 

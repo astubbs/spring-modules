@@ -18,8 +18,6 @@
 
 package org.springmodules.cache.integration;
 
-import java.io.Serializable;
-
 /**
  * <p>
  * Interface that simulates a business object. This interface and its
@@ -28,9 +26,9 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/05/20 00:10:15 $
+ * @version $Revision$ $Date$
  */
-public interface Cacheable extends Serializable {
+public interface CacheableService {
 
   /**
    * Returns a name from the list of names.

@@ -22,28 +22,23 @@ import java.util.List;
 
 /**
  * <p>
- * Default implementation of <code>{@link Cacheable}</code>.
+ * Default implementation of <code>{@link CacheableService}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:54 $
+ * @version $Revision$ $Date$
  */
-public class CacheableImpl implements Cacheable {
+public class CacheableServiceImpl implements CacheableService {
 
-  private static final long serialVersionUID = 3761693368530647088L;
-
-  /**
-   * List of names.
-   */
   private List names;
 
-  public CacheableImpl() {
+  public CacheableServiceImpl() {
     super();
   }
 
   /**
-   * @see Cacheable#getName(int)
+   * @see CacheableService#getName(int)
    * @@org.springmodules.cache.interceptor.caching.Cached(cacheProfileId="test")
    */
   public final String getName(int index) {
@@ -55,7 +50,7 @@ public class CacheableImpl implements Cacheable {
   }
 
   /**
-   * @see Cacheable#updateName(int, String)
+   * @see CacheableService#updateName(int, String)
    * @@org.springmodules.cache.interceptor.flush.FlushCache(cacheProfileIds="test")
    */
   public final void updateName(int index, String name) {

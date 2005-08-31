@@ -33,7 +33,7 @@ import org.springmodules.cache.interceptor.caching.Cached;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/23 01:17:45 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/31 01:22:35 $
  */
 public class AnnotationCachingAttributeSourceTests extends TestCase {
 
@@ -57,7 +57,7 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
 
     this.cachingAttributeSource = new AnnotationCachingAttributeSource();
 
-    Class targetClass = CacheableBean.class;
+    Class targetClass = TigerCacheableService.class;
     this.annotatedMethod = targetClass.getDeclaredMethod("getName",
         new Class[] { int.class });
   }

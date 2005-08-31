@@ -36,7 +36,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/08/22 03:27:54 $
+ * @version $Revision: 1.8 $ $Date: 2005/08/31 01:22:34 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
@@ -51,7 +51,7 @@ public abstract class AbstractIntegrationTests extends
    * Bean managed by the Spring bean context. Should be advised by the
    * interceptors that perform caching and flush the cache.
    */
-  private Cacheable target;
+  private CacheableService target;
 
   public AbstractIntegrationTests() {
     super();
@@ -114,7 +114,8 @@ public abstract class AbstractIntegrationTests extends
   }
 
   private void setUpTarget() {
-    this.target = (Cacheable) super.applicationContext.getBean("cacheable");
+    this.target = (CacheableService) super.applicationContext
+        .getBean("cacheableService");
   }
 
   /**

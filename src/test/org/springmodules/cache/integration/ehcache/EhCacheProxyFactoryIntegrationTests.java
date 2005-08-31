@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.integration.ehcache;
 
+
 /**
  * <p>
  * Verifies that the caching module works correctly when using EHCache as the
@@ -27,7 +28,7 @@ package org.springmodules.cache.integration.ehcache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:55 $
+ * @version $Revision: 1.5 $ $Date: 2005/08/31 01:22:36 $
  */
 public final class EhCacheProxyFactoryIntegrationTests extends
     AbstractEhCacheIntegrationTests {

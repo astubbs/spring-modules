@@ -47,8 +47,8 @@
     </bean>
 
     <!-- Set up the objects to apply caching to -->
-    <bean id="cacheable"
-        class="org.springmodules.cache.annotations.CacheableBean">
+    <bean id="cacheableService"
+        class="org.springmodules.cache.annotations.TigerCacheableService">
         <property name="names">
             <list>
                 <value>James Gosling</value>

@@ -19,24 +19,22 @@ package org.springmodules.cache.annotations;
 
 import java.util.List;
 
+import org.springmodules.cache.integration.CacheableService;
+
 /**
  * <p>
- * Implementation of
- * <code>{@link org.springmodules.cache.integration.Cacheable}</code> that
- * uses JDK 1.5+ annotations for setting up caching services.
+ * Implementation of <code>{@link CacheableService}</code> that uses JDK 1.5+
+ * annotations for setting up caching services.
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/23 01:18:11 $
+ * @version $Revision$ $Date$
  */
-public class CacheableBean implements
-    org.springmodules.cache.integration.Cacheable {
-
-  private static final long serialVersionUID = 3258129141781181752L;
+public class TigerCacheableService implements CacheableService {
 
   private List<String> names;
 
-  public CacheableBean() {
+  public TigerCacheableService() {
     super();
   }
 

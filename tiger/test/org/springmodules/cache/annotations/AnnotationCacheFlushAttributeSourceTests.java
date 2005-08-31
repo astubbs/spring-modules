@@ -33,7 +33,7 @@ import org.springmodules.cache.interceptor.flush.FlushCache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/23 01:17:45 $
+ * @version $Revision: 1.3 $ $Date: 2005/08/31 01:22:35 $
  */
 public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
 
@@ -57,7 +57,7 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
 
     this.cacheFlushAttributeSource = new AnnotationCacheFlushAttributeSource();
 
-    Class targetClass = CacheableBean.class;
+    Class targetClass = TigerCacheableService.class;
     this.annotatedMethod = targetClass.getDeclaredMethod("updateName",
         new Class[] { int.class, String.class });
   }
