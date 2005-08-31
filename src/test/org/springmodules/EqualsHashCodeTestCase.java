@@ -19,7 +19,7 @@ package org.springmodules;
 
 /**
  * <p>
- * Test Case for testing the equals/hashcode contract.
+ * Test Cases for verifying the equals/hashcode contract.
  * </p>
  * 
  * @author Alex Ruiz
