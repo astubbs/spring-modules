@@ -38,7 +38,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.13 $ $Date: 2005/08/24 01:29:05 $
+ * @version $Revision: 1.14 $ $Date: 2005/09/01 03:59:28 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -170,12 +170,6 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
           CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
           if (cacheProfile != null) {
-
-            if (this.logger.isDebugEnabled()) {
-              String logMessage = "Cache profile <" + cacheProfile + ">";
-              this.logger.debug(logMessage);
-            }
-
             this.onFlushCache(cacheProfile);
           }
         }
