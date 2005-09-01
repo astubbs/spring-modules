@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManage
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/24 01:18:13 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/01 03:59:45 $
  */
 public final class JcsManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
@@ -106,14 +106,7 @@ public final class JcsManagerFactoryBean extends
    * @return the type of the cache manager managed by this factory.
    */
   public Class getObjectType() {
-    Class objectType = null;
-
-    if (null == this.cacheManager) {
-      objectType = CompositeCacheManager.class;
-    } else {
-      objectType = this.cacheManager.getClass();
-    }
-
-    return objectType;
+    return this.cacheManager != null ? this.cacheManager.getClass()
+        : CompositeCacheManager.class;
   }
 }
