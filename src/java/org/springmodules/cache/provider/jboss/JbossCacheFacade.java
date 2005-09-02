@@ -1,0 +1,143 @@
+/* 
+ * Created on Sep 1, 2005
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *
+ * Copyright @2005 the original author or authors.
+ */
+package org.springmodules.cache.provider.jboss;
+
+import java.io.Serializable;
+
+import org.jboss.cache.TreeCache;
+import org.springmodules.cache.provider.AbstractCacheProfileEditor;
+import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
+import org.springmodules.cache.provider.CacheAccessException;
+import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.InvalidConfigurationException;
+
+/**
+ * <p>
+ * Facade for JBossCache.
+ * </p>
+ * 
+ * @author Alex Ruiz
+ * 
+ * @version $Revision$ $Date$
+ */
+public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
+
+  private TreeCache treeCache;
+
+  public final void setTreeCache(TreeCache treeCache) {
+    this.treeCache = treeCache;
+  }
+
+  public JbossCacheFacade() {
+    super();
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
+   */
+  protected AbstractCacheProfileEditor getCacheProfileEditor() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#getCacheProfileValidator()
+   */
+  protected CacheProfileValidator getCacheProfileValidator() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#isSerializableCacheElementRequired()
+   */
+  protected boolean isSerializableCacheElementRequired() {
+    return false;
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
+   */
+  protected void onFlushCache(CacheProfile cacheProfile) {
+    JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
+
+    try {
+      this.treeCache.remove(profile.getNodeFqn());
+    } catch (Exception exception) {
+      throw new CacheAccessException(exception);
+    }
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#onGetFromCache(Serializable,
+   *      CacheProfile)
+   */
+  protected Object onGetFromCache(Serializable cacheKey,
+      CacheProfile cacheProfile) {
+    JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
+
+    Object cachedObject = null;
+
+    try {
+      cachedObject = this.treeCache.get(profile.getNodeFqn(), cacheKey);
+    } catch (Exception exception) {
+      throw new CacheAccessException(exception);
+    }
+    return cachedObject;
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
+   *      CacheProfile, Object)
+   */
+  protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
+      Object objectToCache) {
+    JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
+
+    try {
+      this.treeCache.put(profile.getNodeFqn(), cacheKey, objectToCache);
+    } catch (Exception exception) {
+      throw new CacheAccessException(exception);
+    }
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#onRemoveFromCache(Serializable,
+   *      CacheProfile)
+   */
+  protected void onRemoveFromCache(Serializable cacheKey,
+      CacheProfile cacheProfile) {
+    JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
+
+    try {
+      this.treeCache.remove(profile.getNodeFqn(), cacheKey);
+    } catch (Exception exception) {
+      throw new CacheAccessException(exception);
+    }
+  }
+
+  /**
+   * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
+   */
+  protected void validateCacheManager() throws InvalidConfigurationException {
+    // TODO Auto-generated method stub
+
+  }
+
+}
