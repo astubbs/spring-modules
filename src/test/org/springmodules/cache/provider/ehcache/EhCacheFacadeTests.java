@@ -43,7 +43,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/24 00:09:13 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/02 01:35:05 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -84,29 +84,19 @@ public class EhCacheFacadeTests extends TestCase {
 
   }
 
+  private static final String CACHE_KEY = "key";
+
+  private static final String CACHE_NAME = "testCache";
+
+  private static final String CACHE_PROFILE_ID = "cacheProfile";
+
   private Cache cache;
 
   private MockClassControl cacheControl;
 
-  /**
-   * Key used to store/retrieve an entry of the cache.
-   */
-  private String cacheKey;
-
   private CacheManager cacheManager;
 
-  /**
-   * Name of the EHCache to use.
-   */
-  private String cacheName;
-
   private EhCacheProfile cacheProfile;
-
-  /**
-   * Id used by <code>{@link #ehcacheFacade}</code> to obtain a reference to
-   * <code>{@link #cacheProfile}</code>.
-   */
-  private String cacheProfileId;
 
   /**
    * Primary object that is under test.
@@ -127,16 +117,16 @@ public class EhCacheFacadeTests extends TestCase {
       Exception expectedCatchedException) throws Exception {
     Method getMethod = Cache.class.getDeclaredMethod("get",
         new Class[] { Serializable.class });
-    this.setUpCacheAsMockObject(getMethod);
+    setUpCacheAsMockObject(getMethod);
 
-    this.cache.get(this.cacheKey);
+    this.cache.get(CACHE_KEY);
     this.cacheControl.setThrowable(expectedCatchedException);
 
     this.cacheControl.replay();
 
     try {
-      this.ehcacheFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
-      this.failIfCacheAccessExceptionIsNotThrown();
+      this.ehcacheFacade.onGetFromCache(CACHE_KEY, this.cacheProfile);
+      failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException cacheAccessException) {
       assertSame(expectedCatchedException, cacheAccessException.getCause());
@@ -161,35 +151,32 @@ public class EhCacheFacadeTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.cacheKey = "key";
-
     this.cacheManager = CacheManager.create();
-    this.cacheName = "testCache";
-
-    this.cache = this.cacheManager.getCache(this.cacheName);
 
     this.cacheProfile = new EhCacheProfile();
-    this.cacheProfile.setCacheName(this.cacheName);
-
-    this.cacheProfileId = "cacheProfile";
+    this.cacheProfile.setCacheName(CACHE_NAME);
 
     Map cacheProfiles = new HashMap();
-    cacheProfiles.put(this.cacheProfileId, this.cacheProfile);
+    cacheProfiles.put(CACHE_PROFILE_ID, this.cacheProfile);
 
     this.ehcacheFacade = new EhCacheFacade();
-    this.ehcacheFacade.setCacheManager(this.cacheManager);
     this.ehcacheFacade.setCacheProfiles(cacheProfiles);
   }
 
+  private void setUpCache() {
+    this.cache = this.cacheManager.getCache(CACHE_NAME);
+    this.ehcacheFacade.setCacheManager(this.cacheManager);
+  }
+
   private void setUpCacheAsMockObject(Method methodToMock) throws Exception {
-    this.setUpCacheAsMockObject(new Method[] { methodToMock });
+    setUpCacheAsMockObject(new Method[] { methodToMock });
   }
 
   private void setUpCacheAsMockObject(Method[] methodsToMock) throws Exception {
     Class[] constructorTypes = new Class[] { String.class, int.class,
         boolean.class, boolean.class, long.class, long.class };
 
-    Object[] constructorArgs = new Object[] { this.cacheName, new Integer(10),
+    Object[] constructorArgs = new Object[] { CACHE_NAME, new Integer(10),
         new Boolean(false), new Boolean(false), new Long(300), new Long(600) };
 
     Class classToMock = Cache.class;
@@ -198,8 +185,9 @@ public class EhCacheFacadeTests extends TestCase {
         constructorTypes, constructorArgs, methodsToMock);
 
     this.cache = (Cache) this.cacheControl.getMock();
+    this.ehcacheFacade.setCacheManager(this.cacheManager);
 
-    this.cacheManager.removeCache(this.cacheName);
+    this.cacheManager.removeCache(CACHE_NAME);
     this.cacheManager.addCache(this.cache);
   }
 
@@ -248,13 +236,15 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   public void testGetCacheWhenCacheAccessThrowsException() {
+    setUpCache();
+
     // we can mock the cache manager since it doesn't have a public constructor.
     // force a NullPointerException.
     this.ehcacheFacade.setCacheManager(null);
 
     try {
-      this.ehcacheFacade.getCache(this.cacheName);
-      this.failIfCacheAccessExceptionIsNotThrown();
+      this.ehcacheFacade.getCache(CACHE_NAME);
+      failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException exception) {
       Throwable cause = exception.getCause();
@@ -264,15 +254,19 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   public void testGetCacheWithExistingCache() {
-    Cache expected = this.cacheManager.getCache(this.cacheName);
-    Cache actual = this.ehcacheFacade.getCache(this.cacheName);
+    setUpCache();
+
+    Cache expected = this.cacheManager.getCache(CACHE_NAME);
+    Cache actual = this.ehcacheFacade.getCache(CACHE_NAME);
     assertSame(expected, actual);
   }
 
   public void testGetCacheWithNotExistingCache() {
+    setUpCache();
+
     try {
       this.ehcacheFacade.getCache("AnotherCache");
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheNotFoundException exception) {
       // we are expecting this exception.
@@ -289,20 +283,21 @@ public class EhCacheFacadeTests extends TestCase {
    * flushes the cache specified in the given cache profile.
    */
   public void testOnFlushCache() throws Exception {
-    this.cache.put(new Element(this.cacheKey, "A Value"));
+    setUpCache();
+
+    this.cache.put(new Element(CACHE_KEY, "A Value"));
 
     // execute the method to test.
     this.ehcacheFacade.onFlushCache(this.cacheProfile);
 
-    Object cachedValue = this.cache.get(this.cacheKey);
-    assertNull("The cache '" + this.cacheName + "' should be empty",
-        cachedValue);
+    Object cachedValue = this.cache.get(CACHE_KEY);
+    assertNull("The cache '" + CACHE_NAME + "' should be empty", cachedValue);
   }
 
   public void testOnFlushCacheWhenCacheAccessThrowsIllegalStateException()
       throws Exception {
     Method removeAllMethod = Cache.class.getMethod("removeAll", null);
-    this.setUpCacheAsMockObject(removeAllMethod);
+    setUpCacheAsMockObject(removeAllMethod);
 
     IllegalStateException expectedCatchedException = new IllegalStateException();
 
@@ -313,7 +308,7 @@ public class EhCacheFacadeTests extends TestCase {
 
     try {
       this.ehcacheFacade.onFlushCache(this.cacheProfile);
-      this.failIfCacheAccessExceptionIsNotThrown();
+      failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException cacheAccessException) {
       assertSame(expectedCatchedException, cacheAccessException.getCause());
@@ -323,12 +318,14 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   public void testOnFlushCacheWhenCacheIsNotFound() {
-    this.cache.put(new Element(this.cacheKey, "A Value"));
+    setUpCache();
+
+    this.cache.put(new Element(CACHE_KEY, "A Value"));
     this.cacheProfile.setCacheName("NonExistingCache");
 
     try {
       this.ehcacheFacade.onFlushCache(this.cacheProfile);
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception.
@@ -342,10 +339,12 @@ public class EhCacheFacadeTests extends TestCase {
    * stored under the given key.
    */
   public void testOnGetFromCache() throws Exception {
-    String objectToStore = "An Object";
-    this.cache.put(new Element(this.cacheKey, objectToStore));
+    setUpCache();
 
-    Object cachedObject = this.ehcacheFacade.onGetFromCache(this.cacheKey,
+    String objectToStore = "An Object";
+    this.cache.put(new Element(CACHE_KEY, objectToStore));
+
+    Object cachedObject = this.ehcacheFacade.onGetFromCache(CACHE_KEY,
         this.cacheProfile);
 
     assertEquals("<Cached object>", objectToStore, cachedObject);
@@ -354,21 +353,23 @@ public class EhCacheFacadeTests extends TestCase {
   public void testOnGetFromCacheWhenCacheAccessThrowsCacheException()
       throws Exception {
     Exception expectedCatchedException = new net.sf.ehcache.CacheException();
-    this.assertOnGetFromCacheWrapsCatchedException(expectedCatchedException);
+    assertOnGetFromCacheWrapsCatchedException(expectedCatchedException);
   }
 
   public void testOnGetFromCacheWhenCacheAccessThrowsIllegalStateException()
       throws Exception {
     Exception expectedCatchedException = new IllegalStateException();
-    this.assertOnGetFromCacheWrapsCatchedException(expectedCatchedException);
+    assertOnGetFromCacheWrapsCatchedException(expectedCatchedException);
   }
 
   public void testOnGetFromCacheWhenCacheIsNotFound() {
+    setUpCache();
+
     this.cacheProfile.setCacheName("NonExistingCache");
 
     try {
-      this.ehcacheFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      this.ehcacheFacade.onGetFromCache(CACHE_KEY, this.cacheProfile);
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheNotFoundException exception) {
       // we are expecting this exception.
@@ -382,6 +383,8 @@ public class EhCacheFacadeTests extends TestCase {
    * cache.
    */
   public void testOnGetFromCacheWhenKeyIsNotFound() throws Exception {
+    setUpCache();
+
     Object cachedObject = this.ehcacheFacade.onGetFromCache("NonExistingKey",
         this.cacheProfile);
 
@@ -395,11 +398,13 @@ public class EhCacheFacadeTests extends TestCase {
    * given key.
    */
   public void testOnPutInCache() throws Exception {
-    String objectToCache = "An Object";
-    this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-        objectToCache);
+    setUpCache();
 
-    Object cachedObject = this.cache.get(this.cacheKey).getValue();
+    String objectToCache = "An Object";
+    this.ehcacheFacade
+        .onPutInCache(CACHE_KEY, this.cacheProfile, objectToCache);
+
+    Object cachedObject = this.cache.get(CACHE_KEY).getValue();
     assertSame("<Cached object>", objectToCache, cachedObject);
   }
 
@@ -407,12 +412,12 @@ public class EhCacheFacadeTests extends TestCase {
       throws Exception {
     Method putMethod = Cache.class.getMethod("put",
         new Class[] { Element.class });
-    this.setUpCacheAsMockObject(putMethod);
+    setUpCacheAsMockObject(putMethod);
 
     IllegalStateException expectedCatchedException = new IllegalStateException();
 
     String objectToCache = "Luke";
-    Element expectedElement = new Element(this.cacheKey, objectToCache);
+    Element expectedElement = new Element(CACHE_KEY, objectToCache);
 
     this.cache.put(expectedElement);
     this.cacheControl.setMatcher(new ElementMatcher());
@@ -421,9 +426,9 @@ public class EhCacheFacadeTests extends TestCase {
     this.cacheControl.replay();
 
     try {
-      this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
+      this.ehcacheFacade.onPutInCache(CACHE_KEY, this.cacheProfile,
           objectToCache);
-      this.failIfCacheAccessExceptionIsNotThrown();
+      failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException cacheAccessException) {
       assertSame(expectedCatchedException, cacheAccessException.getCause());
@@ -439,24 +444,28 @@ public class EhCacheFacadeTests extends TestCase {
    * cache profile does not exist.
    */
   public void testOnPutInCacheWhenCacheIsNotFound() throws Exception {
+    setUpCache();
+
     this.cacheProfile.setCacheName("NonExistingCache");
     try {
-      this.ehcacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-          "An Object");
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      this.ehcacheFacade
+          .onPutInCache(CACHE_KEY, this.cacheProfile, "An Object");
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheException exception) {
-      this.assertCacheExceptionIsCacheNotFoundException(exception);
+      assertCacheExceptionIsCacheNotFoundException(exception);
     }
   }
 
   public void testOnRemoveFromCache() throws Exception {
-    this.cache.put(new Element(this.cacheKey, "An Object"));
+    setUpCache();
 
-    this.ehcacheFacade.onRemoveFromCache(this.cacheKey, this.cacheProfile);
+    this.cache.put(new Element(CACHE_KEY, "An Object"));
 
-    Element cacheElement = this.cache.get(this.cacheKey);
-    assertNull("The element with key '" + this.cacheKey
+    this.ehcacheFacade.onRemoveFromCache(CACHE_KEY, this.cacheProfile);
+
+    Element cacheElement = this.cache.get(CACHE_KEY);
+    assertNull("The element with key '" + CACHE_KEY
         + "' should have been removed from the cache", cacheElement);
   }
 
@@ -464,18 +473,18 @@ public class EhCacheFacadeTests extends TestCase {
       throws Exception {
     Method removeMethod = Cache.class.getDeclaredMethod("remove",
         new Class[] { Serializable.class });
-    this.setUpCacheAsMockObject(removeMethod);
+    setUpCacheAsMockObject(removeMethod);
 
     IllegalStateException expectedCatchedException = new IllegalStateException();
 
-    this.cache.remove(this.cacheKey);
+    this.cache.remove(CACHE_KEY);
     this.cacheControl.setThrowable(expectedCatchedException);
 
     this.cacheControl.replay();
 
     try {
-      this.ehcacheFacade.onRemoveFromCache(this.cacheKey, this.cacheProfile);
-      this.failIfCacheAccessExceptionIsNotThrown();
+      this.ehcacheFacade.onRemoveFromCache(CACHE_KEY, this.cacheProfile);
+      failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException cacheAccessException) {
       assertSame(expectedCatchedException, cacheAccessException.getCause());
@@ -485,15 +494,17 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   public void testOnRemoveFromCacheWhenCacheIsNotFound() throws Exception {
-    this.cache.put(new Element(this.cacheKey, "An Object"));
+    setUpCache();
+
+    this.cache.put(new Element(CACHE_KEY, "An Object"));
     this.cacheProfile.setCacheName("NonExistingCache");
 
     try {
-      this.ehcacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      this.ehcacheFacade.removeFromCache(CACHE_KEY, CACHE_PROFILE_ID);
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheException exception) {
-      this.assertCacheExceptionIsCacheNotFoundException(exception);
+      assertCacheExceptionIsCacheNotFoundException(exception);
     }
   }
 
@@ -504,6 +515,8 @@ public class EhCacheFacadeTests extends TestCase {
    */
   public void testValidateCacheManagerWithCacheManagerEqualToActive()
       throws Exception {
+    setUpCache();
+
     this.ehcacheFacade.validateCacheManager();
   }
 
@@ -517,7 +530,7 @@ public class EhCacheFacadeTests extends TestCase {
     this.ehcacheFacade.setCacheManager(null);
     try {
       this.ehcacheFacade.validateCacheManager();
-      this.failIfInvalidConfigurationExceptionIsNotThrown();
+      failIfInvalidConfigurationExceptionIsNotThrown();
 
     } catch (InvalidConfigurationException exception) {
       // we are expecting this exception.
@@ -532,6 +545,8 @@ public class EhCacheFacadeTests extends TestCase {
    */
   public void testValidateCacheManagerWithCacheManagerNotAliveAndFailQuietlyIsEnabled()
       throws Exception {
+    setUpCache();
+
     this.ehcacheFacade.setFailQuietlyEnabled(true);
     this.cacheManager.shutdown();
 
@@ -555,7 +570,7 @@ public class EhCacheFacadeTests extends TestCase {
 
     try {
       this.ehcacheFacade.validateCacheManager();
-      this.failIfInvalidConfigurationExceptionIsNotThrown();
+      failIfInvalidConfigurationExceptionIsNotThrown();
 
     } catch (InvalidConfigurationException exception) {
       // we are expecting this exception.
