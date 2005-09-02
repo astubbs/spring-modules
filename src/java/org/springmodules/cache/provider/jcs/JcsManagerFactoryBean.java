@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManage
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/01 03:59:45 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/02 00:06:43 $
  */
 public final class JcsManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
@@ -96,7 +96,7 @@ public final class JcsManagerFactoryBean extends
    * 
    * @return the cache manager managed by this factory.
    */
-  public Object getObject() throws Exception {
+  public Object getObject() {
     return this.cacheManager;
   }
 

@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:58 $
+ * @version $Revision: 1.3 $ $Date: 2005/09/02 00:06:43 $
  */
 public abstract class AbstractCacheManagerFactoryBeanTests extends TestCase {
 
@@ -56,28 +56,12 @@ public abstract class AbstractCacheManagerFactoryBeanTests extends TestCase {
     return path;
   }
 
-  /**
-   * Test case for the implementation of
-   * <code>{@link org.springframework.beans.factory.InitializingBean#afterPropertiesSet()}</code>
-   */
   public abstract void testAfterPropertiesSet() throws Exception;
 
-  /**
-   * Test case for the implementation of
-   * <code>{@link org.springframework.beans.factory.DisposableBean#destroy()}</code>.
-   */
   public abstract void testDestroy() throws Exception;
 
-  /**
-   * Test case for the implementation of
-   * <code>{@link org.springframework.beans.factory.FactoryBean#getObjectType()}</code>.
-   */
   public abstract void testGetObjectType() throws Exception;
 
-  /**
-   * Test case for the implementation of
-   * <code>{@link org.springframework.beans.factory.FactoryBean#isSingleton()}</code>.
-   */
   public abstract void testIsSingleton();
 
 }

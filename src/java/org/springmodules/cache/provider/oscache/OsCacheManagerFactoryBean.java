@@ -39,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * @version $Revision: 1.3 $ $Date: 2005/09/01 03:59:45 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/02 00:06:42 $
  */
 public final class OsCacheManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
@@ -95,7 +95,7 @@ public final class OsCacheManagerFactoryBean extends
    * 
    * @return the cache manager managed by this factory.
    */
-  public Object getObject() throws Exception {
+  public Object getObject() {
     return this.cacheManager;
   }
 

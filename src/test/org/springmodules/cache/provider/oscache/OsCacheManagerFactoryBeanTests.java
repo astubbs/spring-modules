@@ -21,8 +21,6 @@ package org.springmodules.cache.provider.oscache;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springmodules.cache.provider.AbstractCacheManagerFactoryBeanTests;
 
@@ -36,23 +34,13 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:17 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/02 00:06:44 $
  */
 public final class OsCacheManagerFactoryBeanTests extends
     AbstractCacheManagerFactoryBeanTests {
 
-  /**
-   * Property of the cache configuration file that returns the capacity of the
-   * cache.
-   */
   private static final String CACHE_CAPACITY_PROPERTY_NAME = "cache.capacity";
 
-  private static Log logger = LogFactory
-      .getLog(OsCacheManagerFactoryBeanTests.class);
-
-  /**
-   * Primary object that is under test.
-   */
   private OsCacheManagerFactoryBean cacheManagerFactoryBean;
 
   /**
@@ -70,12 +58,26 @@ public final class OsCacheManagerFactoryBeanTests extends
     super(name);
   }
 
-  private void assertEqualCacheCapacity(String expected, String actual) {
+  private void assertCacheManagerWasConfigured() {
+    GeneralCacheAdministrator cacheAdministrator = getCacheManager();
+
+    assertNotNull(cacheAdministrator);
+    String expected = this.configProperties
+        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
+
+    String actual = cacheAdministrator
+        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
+
     assertEquals("<Cache capacity>", expected, actual);
   }
 
-  private void assertEqualObjectTypes(Class expected, Object actual) {
-    assertEquals("<Object type>", expected, actual);
+  private void assertObjectTypeIsCorrect() {
+    Class actualObjectType = this.cacheManagerFactoryBean.getObjectType();
+    assertEquals(GeneralCacheAdministrator.class, actualObjectType);
+  }
+
+  private GeneralCacheAdministrator getCacheManager() {
+    return (GeneralCacheAdministrator) this.cacheManagerFactoryBean.getObject();
   }
 
   protected void setUp() throws Exception {
@@ -91,7 +93,6 @@ public final class OsCacheManagerFactoryBeanTests extends
   }
 
   protected void setUpConfigProperties() throws Exception {
-
     InputStream inputStream = this.configLocation.getInputStream();
     this.configProperties = new Properties();
     this.configProperties.load(inputStream);
@@ -103,8 +104,8 @@ public final class OsCacheManagerFactoryBeanTests extends
         this.cacheManagerFactoryBean.destroy();
       } catch (Exception exception) {
         // ignore the exception.
-      } // end 'catch'
-    } // end 'if'
+      }
+    }
   }
 
   /**
@@ -115,21 +116,7 @@ public final class OsCacheManagerFactoryBeanTests extends
    */
   public void testAfterPropertiesSet() throws Exception {
     this.cacheManagerFactoryBean.afterPropertiesSet();
-
-    GeneralCacheAdministrator cacheAdministrator = (GeneralCacheAdministrator) this.cacheManagerFactoryBean
-        .getObject();
-
-    assertNotNull(cacheAdministrator);
-
-    // if this property was set from the properties file, we can safely assume
-    // the rest of properties were set too.
-    String expectedCacheCapacity = this.configProperties
-        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
-
-    String actualCacheCapacity = cacheAdministrator
-        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
-
-    this.assertEqualCacheCapacity(expectedCacheCapacity, actualCacheCapacity);
+    assertCacheManagerWasConfigured();
   }
 
   /**
@@ -146,33 +133,14 @@ public final class OsCacheManagerFactoryBeanTests extends
 
     this.cacheManagerFactoryBean.setConfigLocation(null);
     this.cacheManagerFactoryBean.afterPropertiesSet();
-    GeneralCacheAdministrator cacheAdministrator = (GeneralCacheAdministrator) this.cacheManagerFactoryBean
-        .getObject();
 
-    assertNotNull(cacheAdministrator);
-
-    // if this property was set from the properties file, we can safely assume
-    // the rest of properties were set too.
-    String expectedCacheCapacity = this.configProperties
-        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
-
-    String actualCacheCapacity = cacheAdministrator
-        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
-    logger.debug("actualCacheCapacity: " + actualCacheCapacity);
-
-    this.assertEqualCacheCapacity(expectedCacheCapacity, actualCacheCapacity);
+    assertCacheManagerWasConfigured();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheManagerFactoryBean#destroy()}</code> flushes the
-   * cache.
-   */
   public void testDestroy() throws Exception {
     this.cacheManagerFactoryBean.afterPropertiesSet();
 
-    GeneralCacheAdministrator cacheManager = (GeneralCacheAdministrator) this.cacheManagerFactoryBean
-        .getObject();
+    GeneralCacheAdministrator cacheManager = getCacheManager();
 
     String key = "javaGuy";
     String entry = "James Gosling";
@@ -184,70 +152,34 @@ public final class OsCacheManagerFactoryBeanTests extends
 
     try {
       cacheManager.getFromCache(key);
-      fail("There should not be any cached objects");
+      fail("There should not be any cache elements");
     } catch (NeedsRefreshException needsRefreshException) {
       // we are expecting this exception.
     }
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheManagerFactoryBean#destroy()}</code> does not throw
-   * any exception if the cache manager is <code>null</code>.
-   */
   public void testDestroyWithCacheManagerEqualToNull() throws Exception {
     // verify that the cache manager is null before calling 'destroy()'
     assertNull(this.cacheManagerFactoryBean.getObject());
 
-    try {
-      this.cacheManagerFactoryBean.destroy();
-    } catch (Throwable throwable) {
-      fail("No exception should have been thrown");
-    }
+    this.cacheManagerFactoryBean.destroy();
 
     // verify that the cache manager is null after calling 'destroy()'
     assertNull(this.cacheManagerFactoryBean.getObject());
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheManagerFactoryBean#getObjectType()}</code> returns
-   * the class of the created cache manager.
-   */
   public void testGetObjectType() throws Exception {
-    Class expectedObjectType = GeneralCacheAdministrator.class;
-
     // test when the cache manager has been created.
     this.cacheManagerFactoryBean.afterPropertiesSet();
-
-    Class actualObjectType = this.cacheManagerFactoryBean.getObjectType();
-    this.assertEqualObjectTypes(expectedObjectType, actualObjectType);
-
+    assertObjectTypeIsCorrect();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheManagerFactoryBean#getObjectType()}</code> returns
-   * the class 'com.opensymphony.oscache.general.GeneralCacheAdministrator' if
-   * the cache manager has not been created yet.
-   */
-  public void testGetObjectTypeWhenCacheAdministratorIsNull() throws Exception {
-
-    Class expectedObjectType = GeneralCacheAdministrator.class;
-
+  public void testGetObjectTypeWhenCacheAdministratorIsNull() {
     // test when the cache manager has not been created yet.
-    Class actualObjectType = this.cacheManagerFactoryBean.getObjectType();
-
-    this.assertEqualObjectTypes(expectedObjectType, actualObjectType);
+    assertObjectTypeIsCorrect();
   }
 
-  /**
-   * Verifies that <code>{@link OsCacheManagerFactoryBean}</code> notifies the
-   * Spring IoC container that is a singleton.
-   */
   public void testIsSingleton() {
-
-    assertTrue("The CacheAdministrator should be a singleton",
-        this.cacheManagerFactoryBean.isSingleton());
+    assertTrue(this.cacheManagerFactoryBean.isSingleton());
   }
 }
