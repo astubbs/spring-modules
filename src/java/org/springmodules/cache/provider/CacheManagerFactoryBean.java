@@ -1,5 +1,5 @@
 /* 
- * Created on Nov 16, 2004
+ * Created on Sep 1, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,36 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2004 the original author or authors.
+ * Copyright @2005 the original author or authors.
  */
-
 package org.springmodules.cache.provider;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * <p>
- * Template for singleton factories of cache managers.
+ * Marker interface for factories of cache managers.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/02 00:04:43 $
+ * @version $Revision$ $Date$
  */
-public abstract class AbstractSingletonCacheManagerFactoryBean implements
-    CacheManagerFactoryBean {
-
-  public AbstractSingletonCacheManagerFactoryBean() {
-    super();
-  }
-
-  /**
-   * Notifies the Spring IoC container that this factory is a singleton bean.
-   * 
-   * @return <code>true</code>.
-   * 
-   * @see org.springframework.beans.factory.FactoryBean#isSingleton()
-   */
-  public final boolean isSingleton() {
-    return true;
-  }
-
+public interface CacheManagerFactoryBean extends FactoryBean, InitializingBean,
+    DisposableBean {
+  // Marker interface.
 }
