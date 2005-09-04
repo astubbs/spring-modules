@@ -23,8 +23,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.easymock.classextension.MockClassControl;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
@@ -43,11 +41,13 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/22 03:32:54 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/04 01:33:53 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
-  private static Log logger = LogFactory.getLog(OsCacheFacadeTests.class);
+  private static final String CACHE_KEY = "key";
+
+  private static final String CACHE_PROFILE_ID = "cacheProfile";
 
   private GeneralCacheAdministrator cacheAdministrator;
 
@@ -55,18 +55,7 @@ public class OsCacheFacadeTests extends TestCase {
 
   private CacheEntryEventListenerImpl cacheEntryEventListener;
 
-  /**
-   * Key used to store/retrieve an entry of the cache.
-   */
-  private String cacheKey;
-
   private OsCacheProfile cacheProfile;
-
-  /**
-   * Id used by <code>{@link #osCacheFacade}</code> to get
-   * <code>{@link #cacheProfile}</code>.
-   */
-  private String cacheProfileId;
 
   /**
    * Name of the groups in <code>{@link #cacheAdministrator}</code> to use.
@@ -82,57 +71,33 @@ public class OsCacheFacadeTests extends TestCase {
     super(name);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#removeFromCache(java.io.Serializable, String)}</code>
-   * removes the entry stored under the given key.
-   */
-  public void removeFromCache() throws Exception {
-    Object objectToStore = "An Object";
-    this.cacheAdministrator.putInCache(this.cacheKey, objectToStore);
-
-    // execute the method to test.
-    this.osCacheFacade.removeFromCache(this.cacheKey, this.cacheProfileId);
-
-    try {
-      this.cacheAdministrator.getFromCache(this.cacheKey);
-      fail("Expecting exception <" + NeedsRefreshException.class.getName()
-          + ">");
-    } catch (NeedsRefreshException exception) {
-      // we are expecting this exception
-    }
-  }
-
-  /**
-   * Sets up the test fixture.
-   */
   protected void setUp() throws Exception {
     super.setUp();
 
+    this.cacheProfile = new OsCacheProfile();
+
+    this.groups = new String[] { "Empire", "Rebels" };
+
+    Map cacheProfiles = new HashMap();
+    cacheProfiles.put(CACHE_PROFILE_ID, this.cacheProfile);
+
+    this.osCacheFacade = new OsCacheFacade();
+    this.osCacheFacade.setCacheProfiles(cacheProfiles);
+  }
+
+  private void setUpCacheAdministrator() {
     this.cacheAdministrator = new GeneralCacheAdministrator();
+    this.osCacheFacade.setCacheManager(this.cacheAdministrator);
 
     Cache cache = this.cacheAdministrator.getCache();
 
     this.cacheEntryEventListener = new CacheEntryEventListenerImpl();
     cache.addCacheEventListener(this.cacheEntryEventListener,
         CacheEntryEventListener.class);
-
-    this.cacheKey = "KEY";
-    this.cacheProfile = new OsCacheProfile();
-    this.cacheProfileId = "CacheProfile";
-
-    this.groups = new String[] { "main", "test" };
-
-    Map cacheProfiles = new HashMap();
-    cacheProfiles.put(this.cacheProfileId, this.cacheProfile);
-
-    this.osCacheFacade = new OsCacheFacade();
-    this.osCacheFacade.setCacheManager(this.cacheAdministrator);
-    this.osCacheFacade.setCacheProfiles(cacheProfiles);
   }
 
   private void setUpCacheAdministratorAsMockObject(Method methodToMock) {
-    this.setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
+    setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
   }
 
   private void setUpCacheAdministratorAsMockObject(Method[] methodsToMock) {
@@ -159,17 +124,13 @@ public class OsCacheFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheProfileEditor() {
+    setUpCacheAdministrator();
+
     AbstractCacheProfileEditor cacheProfileEditor = this.osCacheFacade
         .getCacheProfileEditor();
 
-    assertNotNull("The cache profile editor should not be null",
-        cacheProfileEditor);
-
-    Class expectedClass = OsCacheProfileEditor.class;
-    Class actualClass = cacheProfileEditor.getClass();
-
-    assertEquals("<Class of the cache profile editor>", expectedClass,
-        actualClass);
+    assertNotNull(cacheProfileEditor);
+    assertEquals(OsCacheProfileEditor.class, cacheProfileEditor.getClass());
   }
 
   /**
@@ -179,20 +140,20 @@ public class OsCacheFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
+    setUpCacheAdministrator();
+
     CacheProfileValidator cacheProfileValidator = this.osCacheFacade
         .getCacheProfileValidator();
 
-    assertNotNull("The cache profile validator should not be null",
-        cacheProfileValidator);
+    assertNotNull(cacheProfileValidator);
 
-    Class expectedClass = OsCacheProfileValidator.class;
-    Class actualClass = cacheProfileValidator.getClass();
-
-    assertEquals("<Class of the cache profile validator>", expectedClass,
-        actualClass);
+    assertEquals(OsCacheProfileValidator.class, cacheProfileValidator
+        .getClass());
   }
 
   public void testIsSerializableCacheElementRequired() {
+    setUpCacheAdministrator();
+
     assertFalse(this.osCacheFacade.isSerializableCacheElementRequired());
   }
 
@@ -205,32 +166,24 @@ public class OsCacheFacadeTests extends TestCase {
     Method cancelUpdateMethod = GeneralCacheAdministrator.class.getMethod(
         "cancelUpdate", new Class[] { String.class });
 
-    this.setUpCacheAdministratorAsMockObject(cancelUpdateMethod);
+    setUpCacheAdministratorAsMockObject(cancelUpdateMethod);
 
     String key = "Jedi";
 
-    // expectation: cancel the update of the entry.
     this.cacheAdministrator.cancelUpdate(key);
-
-    // set the state of the mock control to "replay".
     this.cacheAdministratorControl.replay();
 
     // execute the method to test.
     this.osCacheFacade.cancelCacheUpdate(key);
 
-    // verify that the expectations of the mock control were met.
     this.cacheAdministratorControl.verify();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * flushes the group(s) specified in the given cache profile.
-   */
   public void testOnFlushCache() {
+    setUpCacheAdministrator();
+
     Object objectToStore = "An Object";
-    this.cacheAdministrator.putInCache(this.cacheKey, objectToStore,
-        this.groups);
+    this.cacheAdministrator.putInCache(CACHE_KEY, objectToStore, this.groups);
 
     String groupToFlush = this.groups[0];
     this.cacheProfile.setGroups(new String[] { groupToFlush });
@@ -242,66 +195,43 @@ public class OsCacheFacadeTests extends TestCase {
         .getGroupFlushedCount());
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
-   * flushes all the groups if none is specified in the given cache profile.
-   */
   public void testOnFlushCacheWithoutGroups() {
+    setUpCacheAdministrator();
+
     Object objectToStore = "An Object";
-    this.cacheAdministrator.putInCache(this.cacheKey, objectToStore,
-        this.groups);
+    this.cacheAdministrator.putInCache(CACHE_KEY, objectToStore, this.groups);
 
     this.cacheProfile.setGroups((String[]) null);
 
     // execute the method to test.
     this.osCacheFacade.onFlushCache(this.cacheProfile);
 
-    String cachedObject = this.cacheAdministrator.getProperty(this.cacheKey);
-    assertNull("The entire cache should be empty", cachedObject);
+    String cachedObject = this.cacheAdministrator.getProperty(CACHE_KEY);
+    assertNull(cachedObject);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
-   * retrieves, from the cache specified in the given cache profile, the entry
-   * stored under the given key.
-   */
   public void testOnGetFromCache() {
-    Object objectToStore = "An Object";
-    this.cacheAdministrator.putInCache(this.cacheKey, objectToStore);
+    setUpCacheAdministrator();
 
-    logger.debug("Retrieving object from OSCache with key '" + this.cacheKey
-        + "', and cache profile " + this.cacheProfile);
+    Object expected = "An Object";
+    this.cacheAdministrator.putInCache(CACHE_KEY, expected);
 
     // execute the method to test.
-    Object cachedObject = this.osCacheFacade.onGetFromCache(this.cacheKey,
+    Object actual = this.osCacheFacade.onGetFromCache(CACHE_KEY,
         this.cacheProfile);
 
-    assertSame("<Cached object>", objectToStore, cachedObject);
+    assertSame(expected, actual);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
-   * returns <code>null</code> if the specified key does not exist in the
-   * cache.
-   */
   public void testOnGetFromCacheWhenKeyIsNotFound() {
-    // execute the method to test.
+    setUpCacheAdministrator();
+
     Object cachedObject = this.osCacheFacade.onGetFromCache("NonExistingKey",
         this.cacheProfile);
 
     assertNull(cachedObject);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
-   * retrieves an entry from the cache using the specified key, refresh period
-   * and cron expression if the refresh period and cron expression are not equal
-   * to <code>null</code>.
-   */
   public void testOnGetFromCacheWhenRefreshPeriodIsNotNullAndCronExpressionIsNotNull()
       throws Exception {
     Method getFromCacheMethod = GeneralCacheAdministrator.class
@@ -314,113 +244,86 @@ public class OsCacheFacadeTests extends TestCase {
 
     this.cacheProfile.setCronExpression(cronExpression);
     this.cacheProfile.setRefreshPeriod(refreshPeriod);
-    Object cachedObject = "Anakin";
+    Object expected = "Anakin";
 
-    // expectation: retrieve an entry using the provided key, refresh period and
-    // cron expression.
-    this.cacheAdministrator.getFromCache(this.cacheKey, refreshPeriod,
+    this.cacheAdministrator.getFromCache(CACHE_KEY, refreshPeriod,
         cronExpression);
-    this.cacheAdministratorControl.setReturnValue(cachedObject);
+    this.cacheAdministratorControl.setReturnValue(expected);
 
-    // set the state of the mock control to "replay".
     this.cacheAdministratorControl.replay();
 
     // execute the method to test.
-    Object retrievedObject = this.osCacheFacade.onGetFromCache(this.cacheKey,
+    Object actual = this.osCacheFacade.onGetFromCache(CACHE_KEY,
         this.cacheProfile);
 
-    assertSame("<Retrieved object>", cachedObject, retrievedObject);
+    assertSame(expected, actual);
 
-    // verify that the expectations of the mock control were met.
     this.cacheAdministratorControl.verify();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
-   * retrieves an entry from the cache using the specified key and refresh
-   * period if the refresh period is not equal to <code>null</code> and the
-   * cron expression is not equal to <code>null</code>.
-   */
   public void testOnGetFromCacheWhenRefreshPeriodIsNotNullAndCronExpressionIsNull()
       throws Exception {
     Method getFromCacheMethod = GeneralCacheAdministrator.class
         .getDeclaredMethod("getFromCache", new Class[] { String.class,
             int.class });
 
-    this.setUpCacheAdministratorAsMockObject(getFromCacheMethod);
+    setUpCacheAdministratorAsMockObject(getFromCacheMethod);
     int refreshPeriod = 556;
 
     this.cacheProfile.setRefreshPeriod(refreshPeriod);
-    Object cachedObject = "Anakin";
+    Object expected = "Anakin";
 
-    // expectation: retrieve an entry using only the provided key and refresh
-    // period.
-    this.cacheAdministrator.getFromCache(this.cacheKey, refreshPeriod);
-    this.cacheAdministratorControl.setReturnValue(cachedObject);
+    this.cacheAdministrator.getFromCache(CACHE_KEY, refreshPeriod);
+    this.cacheAdministratorControl.setReturnValue(expected);
 
-    // set the state of the mock control to "replay".
     this.cacheAdministratorControl.replay();
 
     // execute the method to test.
-    Object retrievedObject = this.osCacheFacade.onGetFromCache(this.cacheKey,
+    Object actual = this.osCacheFacade.onGetFromCache(CACHE_KEY,
         this.cacheProfile);
 
-    assertSame("<Retrieved object>", cachedObject, retrievedObject);
+    assertSame(expected, actual);
 
-    // verify that the expectations of the mock control were met.
     this.cacheAdministratorControl.verify();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
-   * retrieves an entry from the cache using the specified key if the refresh
-   * period and cron expression are equal to <code>null</code>.
-   */
   public void testOnGetFromCacheWhenRefreshPeriodIsNull() throws Exception {
     Method getFromCacheMethod = GeneralCacheAdministrator.class
         .getDeclaredMethod("getFromCache", new Class[] { String.class });
 
-    this.setUpCacheAdministratorAsMockObject(getFromCacheMethod);
+    setUpCacheAdministratorAsMockObject(getFromCacheMethod);
 
     this.cacheProfile.setRefreshPeriod(null);
-    Object cachedObject = "Anakin";
+    Object expected = "Anakin";
 
     // expectation: retrieve an entry using only the provided key.
-    this.cacheAdministrator.getFromCache(this.cacheKey);
-    this.cacheAdministratorControl.setReturnValue(cachedObject);
+    this.cacheAdministrator.getFromCache(CACHE_KEY);
+    this.cacheAdministratorControl.setReturnValue(expected);
 
-    // set the state of the mock control to "replay".
     this.cacheAdministratorControl.replay();
 
     // execute the method to test.
-    Object retrievedObject = this.osCacheFacade.onGetFromCache(this.cacheKey,
+    Object actual = this.osCacheFacade.onGetFromCache(CACHE_KEY,
         this.cacheProfile);
 
-    assertSame("<Retrieved object>", cachedObject, retrievedObject);
+    assertSame(expected, actual);
 
-    // verify that the expectations of the mock control were met.
     this.cacheAdministratorControl.verify();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
-   * stores an entry in the group(s) specified in the given cache profile using
-   * the given key.
-   */
   public void testOnPutInCacheWithGroups() throws Exception {
+    setUpCacheAdministrator();
+
     Object objectToStore = "An Object";
 
     String group = this.groups[0];
     this.cacheProfile.setGroups(new String[] { group });
 
     // execute the method to test.
-    this.osCacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-        objectToStore);
+    this.osCacheFacade
+        .onPutInCache(CACHE_KEY, this.cacheProfile, objectToStore);
 
-    Object cachedObject = this.cacheAdministrator.getFromCache(this.cacheKey);
+    Object cachedObject = this.cacheAdministrator.getFromCache(CACHE_KEY);
     assertSame("<Cached object>", objectToStore, cachedObject);
 
     // if we flush the group used, we should not be able to get the cached
@@ -428,7 +331,7 @@ public class OsCacheFacadeTests extends TestCase {
     this.cacheAdministrator.flushGroup(group);
 
     try {
-      this.cacheAdministrator.getFromCache(this.cacheKey);
+      this.cacheAdministrator.getFromCache(CACHE_KEY);
       fail("Expecting exception <" + NeedsRefreshException.class.getName()
           + ">");
     } catch (NeedsRefreshException exception) {
@@ -443,27 +346,28 @@ public class OsCacheFacadeTests extends TestCase {
    * with any group.
    */
   public void testOnPutInCacheWithoutGroups() throws Exception {
+    setUpCacheAdministrator();
+
     Object objectToStore = "An Object";
 
     this.cacheProfile.setGroups((String[]) null);
 
     // execute the method to test.
-    this.osCacheFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-        objectToStore);
+    this.osCacheFacade
+        .onPutInCache(CACHE_KEY, this.cacheProfile, objectToStore);
 
-    Object cachedObject = this.cacheAdministrator.getFromCache(this.cacheKey);
+    Object cachedObject = this.cacheAdministrator.getFromCache(CACHE_KEY);
     assertSame("<Cached object>", objectToStore, cachedObject);
 
-    // if we flush all the groups, we still should be able to get the cached
-    // object.
+    // if we flush all the groups, we should be able to get the cached object.
     int groupCount = this.groups.length;
     for (int i = 0; i < groupCount; i++) {
       String group = this.groups[i];
       this.cacheAdministrator.flushGroup(group);
     }
 
-    cachedObject = this.cacheAdministrator.getFromCache(this.cacheKey);
-    assertSame("<Cached object>", objectToStore, cachedObject);
+    cachedObject = this.cacheAdministrator.getFromCache(CACHE_KEY);
+    assertSame(objectToStore, cachedObject);
   }
 
   /**
@@ -475,30 +379,22 @@ public class OsCacheFacadeTests extends TestCase {
     Method flushEntryMethod = GeneralCacheAdministrator.class
         .getDeclaredMethod("flushEntry", new Class[] { String.class });
 
-    this.setUpCacheAdministratorAsMockObject(flushEntryMethod);
+    setUpCacheAdministratorAsMockObject(flushEntryMethod);
 
     String key = "Luke";
 
-    // expectation flush the entry stored under the given key.
     this.cacheAdministrator.flushEntry(key);
-
-    // set the state of the mock control to "replay".
     this.cacheAdministratorControl.replay();
 
     // execute the method to test.
     this.osCacheFacade.onRemoveFromCache(key, null);
 
-    // verify that the expectations of the mock control were met.
     this.cacheAdministratorControl.verify();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#validateCacheManager()}</code> throws an
-   * <code>IllegalStateException</code> if the cache manager is
-   * <code>null</code>.
-   */
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
+    setUpCacheAdministrator();
+
     this.osCacheFacade.setCacheManager(null);
     try {
       this.osCacheFacade.validateCacheManager();
@@ -516,6 +412,8 @@ public class OsCacheFacadeTests extends TestCase {
    */
   public void testValidateCacheManagerWithCacheManagerNotEqualToNull()
       throws Exception {
+    setUpCacheAdministrator();
+
     this.osCacheFacade.validateCacheManager();
   }
 }

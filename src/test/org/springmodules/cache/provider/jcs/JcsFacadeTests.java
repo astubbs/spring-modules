@@ -36,6 +36,7 @@ import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.easymock.AbstractMatcher;
 import org.easymock.classextension.MockClassControl;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheNotFoundException;
@@ -49,7 +50,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/08/24 01:18:49 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/04 01:33:53 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -90,33 +91,40 @@ public final class JcsFacadeTests extends TestCase {
 
   }
 
+  private static class JcsCacheElementStruct {
+
+    final Serializable key;
+
+    final JcsProfile profile;
+
+    final String profileId;
+
+    final Object value;
+
+    public JcsCacheElementStruct(JcsProfile profile, String profileId,
+        Serializable key, Object value) {
+      super();
+      this.key = key;
+      this.profile = profile;
+      this.profileId = profileId;
+      this.value = value;
+    }
+
+  }
+
+  private static final String CACHE_NAME = "testCache";
+
   private CompositeCache cache;
 
   private MockClassControl cacheControl;
 
-  /**
-   * Keys used to store/retrieve entries of the cache.
-   */
-  private String[] cacheKeys;
+  private JcsCacheElementStruct cacheElementStruct;
+
+  private JcsCacheElementStruct[] cacheElementStructs;
 
   private CompositeCacheManager cacheManager;
 
   private MockClassControl cacheManagerControl;
-
-  private String cacheName;
-
-  /**
-   * Ids used by <code>{@link #jcsFacade}</code> to obtain any of the cache
-   * profiles in <code>{@link #cacheProfiles}</code>.
-   */
-  private String[] cacheProfileIds;
-
-  private JcsProfile[] cacheProfiles;
-
-  /**
-   * Name of the groups in <code>{@link #cache}</code> to use.
-   */
-  private String[] groups;
 
   /**
    * Primary object that is under test.
@@ -127,31 +135,14 @@ public final class JcsFacadeTests extends TestCase {
     super(name);
   }
 
-  private void assertEqualGeneratedKeys(Serializable expected,
-      Serializable actual) {
-    assertEquals("<Generated key>", expected, actual);
-  }
-
   private void assertSameNestedException(Exception rootException,
       Exception expectedNestedException) {
     assertSame("<Nested exception>", expectedNestedException, rootException
         .getCause());
   }
 
-  protected ICacheElement createNewCacheElement(Serializable key,
-      Object objectToCache) {
-    ICacheElement newCacheElement = new CacheElement(this.cache.getCacheName(),
-        key, objectToCache);
-
-    IElementAttributes elementAttributes = this.cache.getElementAttributes()
-        .copy();
-
-    newCacheElement.setElementAttributes(elementAttributes);
-    return newCacheElement;
-  }
-
   private void expectCacheManagerDoesNotHaveCache() {
-    this.cacheManager.getCache(this.cacheName);
+    this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(null);
   }
 
@@ -161,14 +152,6 @@ public final class JcsFacadeTests extends TestCase {
 
   private void failIfCacheNotFoundExceptionIsNotThrown() {
     fail("Expecting exception <" + CacheNotFoundException.class.getName() + ">");
-  }
-
-  private String getFirstCacheKey() {
-    return this.cacheKeys[0];
-  }
-
-  private JcsProfile getFirstCacheProfile() {
-    return this.cacheProfiles[0];
   }
 
   private Method getGetCacheMethodFromCompositeCacheManagerClass()
@@ -187,46 +170,35 @@ public final class JcsFacadeTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.cacheKeys = new String[] { "firstKey", "secondKey" };
+    this.cacheElementStruct = new JcsCacheElementStruct(new JcsProfile(
+        CACHE_NAME, "Empire"), "empire", "sith", "Darth Vader");
 
-    this.cacheManager = CompositeCacheManager.getInstance();
-    this.cacheName = "testCache";
-
-    this.cache = this.cacheManager.getCache(this.cacheName);
-
-    this.cacheProfiles = new JcsProfile[] { new JcsProfile(), new JcsProfile() };
-    this.cacheProfileIds = new String[] { "firstProfile", "secondProfile" };
-    this.groups = new String[] { "firstGroup", "secondGroup" };
+    this.cacheElementStructs = new JcsCacheElementStruct[] {
+        this.cacheElementStruct,
+        new JcsCacheElementStruct(new JcsProfile(CACHE_NAME, "Rebels"),
+            "rebels", "general", "Han Solo") };
 
     Map cacheProfileMap = new HashMap();
 
-    // initialize the cache profiles.
-    int cacheProfileCount = this.cacheProfiles.length;
+    int cacheProfileCount = this.cacheElementStructs.length;
     for (int i = 0; i < cacheProfileCount; i++) {
-      JcsProfile cacheProfile = this.cacheProfiles[i];
-      cacheProfile.setCacheName(this.cacheName);
-      cacheProfile.setGroup(this.groups[i]);
-
-      cacheProfileMap.put(this.cacheProfileIds[i], cacheProfile);
+      JcsCacheElementStruct cacheElement = this.cacheElementStructs[i];
+      cacheProfileMap.put(cacheElement.profileId, cacheElement.profile);
     }
 
     this.jcsFacade = new JcsFacade();
-    this.jcsFacade.setCacheManager(this.cacheManager);
     this.jcsFacade.setCacheProfiles(cacheProfileMap);
+  }
 
-    int expectedElementCount = 2;
-    assertEquals("<Key count>", expectedElementCount, this.cacheKeys.length);
-    assertEquals("<Cache profile count>", expectedElementCount,
-        this.cacheProfiles.length);
-    assertEquals("<Cache profile id count>", expectedElementCount,
-        this.cacheProfileIds.length);
-    assertEquals("<Group count>", expectedElementCount, this.groups.length);
-    assertEquals("<Stored cache profile count>", expectedElementCount,
-        cacheProfileMap.size());
+  private void setUpCacheAdministratorAndCache() {
+    this.cacheManager = CompositeCacheManager.getInstance();
+    this.cache = this.cacheManager.getCache(CACHE_NAME);
+
+    this.jcsFacade.setCacheManager(this.cacheManager);
   }
 
   private void setUpCacheAdministratorAsMockObject(Method methodToMock) {
-    this.setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
+    setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
   }
 
   private void setUpCacheAdministratorAsMockObject(Method[] methodsToMock) {
@@ -241,7 +213,7 @@ public final class JcsFacadeTests extends TestCase {
   }
 
   private void setUpCacheAsMockObject(Method methodToMock) throws Exception {
-    this.setUpCacheAsMockObject(new Method[] { methodToMock });
+    setUpCacheAsMockObject(new Method[] { methodToMock });
   }
 
   private void setUpCacheAsMockObject(Method[] methodsToMock) throws Exception {
@@ -250,12 +222,12 @@ public final class JcsFacadeTests extends TestCase {
         ICompositeCacheAttributes.class, IElementAttributes.class };
 
     ICompositeCacheAttributes cacheAttributes = new CompositeCacheAttributes();
-    cacheAttributes.setCacheName(this.cacheName);
+    cacheAttributes.setCacheName(CACHE_NAME);
     cacheAttributes.setMaxObjects(10);
     cacheAttributes
         .setMemoryCacheName("org.apache.jcs.engine.memory.lru.LRUMemoryCache");
     ElementAttributes elementAttributes = new ElementAttributes();
-    Object[] constructorArgs = new Object[] { this.cacheName, cacheAttributes,
+    Object[] constructorArgs = new Object[] { CACHE_NAME, cacheAttributes,
         elementAttributes };
 
     // set up the methods to mock.
@@ -281,6 +253,8 @@ public final class JcsFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheProfileEditor() {
+    setUpCacheAdministratorAndCache();
+
     AbstractCacheProfileEditor cacheProfileEditor = this.jcsFacade
         .getCacheProfileEditor();
 
@@ -301,6 +275,8 @@ public final class JcsFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
+    setUpCacheAdministratorAndCache();
+
     CacheProfileValidator cacheProfileValidator = this.jcsFacade
         .getCacheProfileValidator();
 
@@ -315,47 +291,43 @@ public final class JcsFacadeTests extends TestCase {
   }
 
   public void testGetCacheWithExistingCache() {
-    CompositeCache expected = this.cacheManager.getCache(this.cacheName);
-    CompositeCache actual = this.jcsFacade.getCache(this.cacheName);
+    setUpCacheAdministratorAndCache();
+
+    CompositeCache expected = this.cacheManager.getCache(CACHE_NAME);
+    CompositeCache actual = this.jcsFacade.getCache(CACHE_NAME);
     assertSame(expected, actual);
   }
 
   public void testGetCacheWithNotExistingCache() throws Exception {
     Method getCacheMethod = this
         .getGetCacheMethodFromCompositeCacheManagerClass();
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+    setUpCacheAdministratorAsMockObject(getCacheMethod);
 
-    this.expectCacheManagerDoesNotHaveCache();
-    this.setStateOfMockControlsToReplay();
+    expectCacheManagerDoesNotHaveCache();
+    setStateOfMockControlsToReplay();
 
     try {
-      this.jcsFacade.getCache(this.cacheName);
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      this.jcsFacade.getCache(CACHE_NAME);
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception
     }
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#getKey(Serializable, JcsProfile)}</code> creates a
-   * key containing the group specified in the given cache profile.
-   */
   public void testGetKeyWithGroupName() {
-    JcsProfile profile = new JcsProfile();
-    profile.setCacheName("main");
-    profile.setGroup("dev");
+    setUpCacheAdministratorAndCache();
 
-    Serializable cacheKey = this.getFirstCacheKey();
+    JcsProfile profile = this.cacheElementStruct.profile;
+    Serializable key = this.cacheElementStruct.key;
+
     GroupId groupId = new GroupId(profile.getCacheName(), profile.getGroup());
-    GroupAttrName expectedKey = new GroupAttrName(groupId, cacheKey);
+    GroupAttrName expected = new GroupAttrName(groupId, key);
 
-    Serializable actualKey = this.jcsFacade.getKey(cacheKey, profile);
-
-    this.assertEqualGeneratedKeys(expectedKey, actualKey);
+    Serializable actual = this.jcsFacade.getKey(key, profile);
+    assertEquals(expected, actual);
   }
 
   /**
@@ -365,29 +337,32 @@ public final class JcsFacadeTests extends TestCase {
    * specify any group.
    */
   public void testGetKeyWithoutGroupName() {
-    JcsProfile profile = new JcsProfile();
-    profile.setCacheName("main");
+    setUpCacheAdministratorAndCache();
 
-    Serializable cacheKey = this.getFirstCacheKey();
-    Serializable actualKey = this.jcsFacade.getKey(cacheKey, profile);
+    JcsProfile profile = this.cacheElementStruct.profile;
+    profile.setGroup(null);
+    Serializable expected = this.cacheElementStruct.key;
 
-    this.assertEqualGeneratedKeys(cacheKey, actualKey);
+    Serializable actual = this.jcsFacade.getKey(expected, profile);
+    assertEquals(expected, actual);
   }
 
   public void testIsSerializableCacheElementRequired() {
+    setUpCacheAdministratorAndCache();
+
     assertTrue(this.jcsFacade.isSerializableCacheElementRequired());
   }
 
   public void testOnFlushCacheWhenCacheAccessThrowsException() throws Exception {
     Method getCacheMethod = this
         .getGetCacheMethodFromCompositeCacheManagerClass();
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+    setUpCacheAdministratorAsMockObject(getCacheMethod);
 
     Method removeAllMethod = CompositeCache.class.getMethod("removeAll", null);
-    this.setUpCacheAsMockObject(removeAllMethod);
+    setUpCacheAsMockObject(removeAllMethod);
 
     // expectation: cache manager finds the cache we are looking for.
-    this.cacheManager.getCache(this.cacheName);
+    this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(this.cache);
 
     // expectation: cache manager throws exception when flushing the cache.
@@ -395,37 +370,37 @@ public final class JcsFacadeTests extends TestCase {
     this.cache.removeAll();
     this.cacheControl.setThrowable(thrownException);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     try {
-      JcsProfile profile = new JcsProfile(this.cacheName);
+      JcsProfile profile = new JcsProfile(CACHE_NAME);
       this.jcsFacade.onFlushCache(profile);
-      this.failIfCacheAccessExceptionIsNotThrown();
+      failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException exception) {
-      this.assertSameNestedException(exception, thrownException);
+      assertSameNestedException(exception, thrownException);
     }
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testOnFlushCacheWhenCacheIsNotFound() throws Exception {
     Method getCacheMethod = this
         .getGetCacheMethodFromCompositeCacheManagerClass();
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+    setUpCacheAdministratorAsMockObject(getCacheMethod);
 
-    this.expectCacheManagerDoesNotHaveCache();
-    this.setStateOfMockControlsToReplay();
+    expectCacheManagerDoesNotHaveCache();
+    setStateOfMockControlsToReplay();
 
     try {
-      this.jcsFacade.onFlushCache(this.getFirstCacheProfile());
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      this.jcsFacade.onFlushCache(this.cacheElementStruct.profile);
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception
     }
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -434,27 +409,27 @@ public final class JcsFacadeTests extends TestCase {
    * flushes only the specified groups of the specified cache.
    */
   public void testOnFlushCacheWithGroups() throws Exception {
-    Serializable[] entryKeys = this.updateCache(new Object[] { "firstObject",
-        "secondObject" });
+    setUpCacheAdministratorAndCache();
 
-    int i = 0;
-    JcsProfile cacheProfile = this.getFirstCacheProfile();
-    Serializable entryKey = entryKeys[i];
-    String group = this.groups[i];
+    Serializable[] keys = updateCache(this.cacheElementStructs);
+
+    int elementToRemoveIndex = 0;
 
     // execute the method to test.
-    this.jcsFacade.onFlushCache(cacheProfile);
+    this.jcsFacade
+        .onFlushCache(this.cacheElementStructs[elementToRemoveIndex].profile);
 
-    // only one group should have been flushed.
-    ICacheElement cachedElement = this.cache.get(entryKey);
-    assertNull("The group '" + group + "' should be flushed", cachedElement);
+    int cacheElementCount = keys.length;
+    for (int i = 0; i < cacheElementCount; i++) {
+      if (i == elementToRemoveIndex) {
+        // the group of this element should have been removed.
+        assertNull(this.cache.get(keys[i]));
 
-    entryKey = entryKeys[++i];
-    group = this.groups[i];
-
-    cachedElement = this.cache.get(entryKey);
-    assertNotNull("The group '" + group + "' should not be flushed",
-        cachedElement);
+      } else {
+        // the group of this element should exist.
+        assertNotNull(this.cache.get(keys[i]));
+      }
+    }
   }
 
   /**
@@ -463,97 +438,102 @@ public final class JcsFacadeTests extends TestCase {
    * flushes the whole cache if there are not any specified groups.
    */
   public void testOnFlushCacheWithoutGroups() throws Exception {
-    this.updateCache(new Object[] { "firstObject", "secondObject" });
+    setUpCacheAdministratorAndCache();
+
+    int cacheElementCount = this.cacheElementStructs.length;
+    for (int i = 0; i < cacheElementCount; i++) {
+      this.cacheElementStructs[i].profile.setGroup(null);
+    }
+
+    this.updateCache(this.cacheElementStructs);
     assertTrue("The size of the cache should be greater than zero", this.cache
         .getSize() > 0);
 
-    JcsProfile cacheProfile = this.getFirstCacheProfile();
-    cacheProfile.setGroup(null);
-
     // execute the method to test.
-    this.jcsFacade.onFlushCache(cacheProfile);
+    this.jcsFacade.onFlushCache(this.cacheElementStruct.profile);
 
     // the whole cache should be flushed.
     assertEquals("<Cache size>", 0, this.cache.getSize());
   }
 
   public void testOnGetFromCache() throws Exception {
-    String objectToStore = "An Object";
-    this.updateCache(new Object[] { objectToStore });
+    setUpCacheAdministratorAndCache();
 
-    String cacheKey = this.getFirstCacheKey();
-    JcsProfile cacheProfile = this.getFirstCacheProfile();
+    updateCache(this.cacheElementStruct);
 
     // execute the method to test.
-    Object cachedObject = this.jcsFacade.onGetFromCache(cacheKey, cacheProfile);
+    Object actual = this.jcsFacade.onGetFromCache(this.cacheElementStruct.key,
+        this.cacheElementStruct.profile);
 
-    assertSame("<Cached object>", objectToStore, cachedObject);
+    assertSame(this.cacheElementStruct.value, actual);
   }
 
   public void testOnGetFromCacheWhenCacheAccessThrowsException()
       throws Exception {
     Method getCacheMethod = this
         .getGetCacheMethodFromCompositeCacheManagerClass();
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+    setUpCacheAdministratorAsMockObject(getCacheMethod);
 
     Method getMethod = CompositeCache.class.getMethod("get",
         new Class[] { Serializable.class });
-    this.setUpCacheAsMockObject(getMethod);
+    setUpCacheAsMockObject(getMethod);
 
     // expectation: cache manager finds the cache we are looking for.
-    this.cacheManager.getCache(this.cacheName);
+    this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(this.cache);
 
     // expectation: cache manager throws exception.
-    Serializable cacheKey = this.getFirstCacheKey();
+    Serializable cacheKey = this.cacheElementStruct.key;
     RuntimeException thrownException = new RuntimeException();
     this.cache.get(cacheKey);
     this.cacheControl.setThrowable(thrownException);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
-    JcsProfile profile = this.getFirstCacheProfile();
+    JcsProfile profile = this.cacheElementStruct.profile;
     profile.setGroup(null);
 
     try {
       this.jcsFacade.onGetFromCache(cacheKey, profile);
-      this.failIfCacheAccessExceptionIsNotThrown();
+      failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException exception) {
-      this.assertSameNestedException(exception, thrownException);
+      assertSameNestedException(exception, thrownException);
     }
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
 
   }
 
   public void testOnGetFromCacheWhenCacheIsNotFound() throws Exception {
     Method getCacheMethod = this
         .getGetCacheMethodFromCompositeCacheManagerClass();
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+    setUpCacheAdministratorAsMockObject(getCacheMethod);
 
-    this.expectCacheManagerDoesNotHaveCache();
-    this.setStateOfMockControlsToReplay();
+    expectCacheManagerDoesNotHaveCache();
+    setStateOfMockControlsToReplay();
 
     try {
-      this.jcsFacade.onGetFromCache(this.getFirstCacheKey(), this
-          .getFirstCacheProfile());
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      this.jcsFacade.onGetFromCache(this.cacheElementStruct.key,
+          this.cacheElementStruct.profile);
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception
     }
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testOnGetFromCacheWhenCacheProfileDoesNotHaveCacheName() {
-    String cacheKey = this.getFirstCacheKey();
-    JcsProfile profile = this.getFirstCacheProfile();
+    setUpCacheAdministratorAndCache();
+
+    JcsProfile profile = this.cacheElementStruct.profile;
     profile.setCacheName("");
 
     // execute the method to test.
-    Object cachedObject = this.jcsFacade.onGetFromCache(cacheKey, profile);
+    Object cachedObject = this.jcsFacade.onGetFromCache(
+        this.cacheElementStruct.key, profile);
 
     assertNull(cachedObject);
   }
@@ -565,46 +545,46 @@ public final class JcsFacadeTests extends TestCase {
    * cache.
    */
   public void testOnGetFromCacheWhenKeyIsNotFound() throws Exception {
-    String cacheKey = "NonExistingKey";
-    JcsProfile profile = this.getFirstCacheProfile();
+    setUpCacheAdministratorAndCache();
 
-    // execute the method to test.
-    Object cachedObject = this.jcsFacade.onGetFromCache(cacheKey, profile);
-
+    Object cachedObject = this.jcsFacade.onGetFromCache(
+        this.cacheElementStruct.key, this.cacheElementStruct.profile);
     assertNull(cachedObject);
   }
 
   public void testOnPutInCache() throws Exception {
-    String cacheKey = this.getFirstCacheKey();
-    JcsProfile cacheProfile = this.getFirstCacheProfile();
-    String objectToStore = "An Object";
+    setUpCacheAdministratorAndCache();
+
+    Serializable cacheKey = this.cacheElementStruct.key;
+    JcsProfile cacheProfile = this.cacheElementStruct.profile;
+    Object expected = this.cacheElementStruct.value;
 
     // execute the method to test.
-    this.jcsFacade.onPutInCache(cacheKey, cacheProfile, objectToStore);
+    this.jcsFacade.onPutInCache(cacheKey, cacheProfile, expected);
 
     Serializable entryKey = this.jcsFacade.getKey(cacheKey, cacheProfile);
-    Object cachedObject = this.cache.get(entryKey).getVal();
-    assertSame("<Cached object>", objectToStore, cachedObject);
+    Object actual = this.cache.get(entryKey).getVal();
+    assertSame(expected, actual);
   }
 
   public void testOnPutInCacheWhenCacheAccessThrowsException() throws Exception {
     Method getCacheMethod = this
         .getGetCacheMethodFromCompositeCacheManagerClass();
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+    setUpCacheAdministratorAsMockObject(getCacheMethod);
 
     Method updateMethod = CompositeCache.class.getMethod("update",
         new Class[] { ICacheElement.class });
-    this.setUpCacheAsMockObject(updateMethod);
+    setUpCacheAsMockObject(updateMethod);
 
     // expectation: cache manager finds the cache we are looking for.
-    this.cacheManager.getCache(this.cacheName);
+    this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(this.cache);
 
     // expectation: cache manager throws exception.
-    String cacheKey = this.getFirstCacheKey();
-    JcsProfile cacheProfile = this.getFirstCacheProfile();
+    Serializable cacheKey = this.cacheElementStruct.key;
+    JcsProfile cacheProfile = this.cacheElementStruct.profile;
     cacheProfile.setGroup(null);
-    String objToCache = "Obi-Wan";
+    Object objToCache = this.cacheElementStruct.value;
 
     CacheElement cacheElement = new CacheElement(cacheProfile.getCacheName(),
         cacheKey, objToCache);
@@ -614,140 +594,133 @@ public final class JcsFacadeTests extends TestCase {
     RuntimeException thrownException = new RuntimeException();
     this.cacheControl.setThrowable(thrownException);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     try {
       this.jcsFacade.onPutInCache(cacheKey, cacheProfile, objToCache);
-      this.failIfCacheAccessExceptionIsNotThrown();
+      failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException exception) {
-      this.assertSameNestedException(exception, thrownException);
+      assertSameNestedException(exception, thrownException);
     }
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testOnPutInCacheWhenCacheIsNotFound() throws Exception {
     Method getCacheMethod = this
         .getGetCacheMethodFromCompositeCacheManagerClass();
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+    setUpCacheAdministratorAsMockObject(getCacheMethod);
 
-    this.expectCacheManagerDoesNotHaveCache();
-    this.setStateOfMockControlsToReplay();
+    expectCacheManagerDoesNotHaveCache();
+    setStateOfMockControlsToReplay();
 
     try {
-      this.jcsFacade.onPutInCache(this.getFirstCacheKey(), this
-          .getFirstCacheProfile(), "Obi-Wan");
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      this.jcsFacade.onPutInCache(this.cacheElementStruct.key,
+          this.cacheElementStruct.profile, this.cacheElementStruct.value);
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception
     }
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testOnPutInCacheWhenCacheNameIsEmpty() throws Exception {
-    String cacheKey = this.getFirstCacheKey();
-    JcsProfile cacheProfile = this.getFirstCacheProfile();
+    setUpCacheAdministratorAndCache();
+
+    Serializable cacheKey = this.cacheElementStruct.key;
+    JcsProfile cacheProfile = this.cacheElementStruct.profile;
     cacheProfile.setCacheName("");
 
     // execute the method to test.
-    this.jcsFacade.onPutInCache(cacheKey, cacheProfile, "An Object");
+    this.jcsFacade.onPutInCache(cacheKey, cacheProfile,
+        this.cacheElementStruct.value);
 
     Serializable entryKey = this.jcsFacade.getKey(cacheKey, cacheProfile);
-    ICacheElement cacheElement = this.cache.get(entryKey);
-    assertNull(cacheElement);
+    assertNull(this.cache.get(entryKey));
   }
 
   public void testOnRemoveFromCache() throws Exception {
-    Serializable[] entryKeys = this.updateCache(new Object[] { "An Object" });
+    setUpCacheAdministratorAndCache();
 
-    int i = 0;
-    Serializable entryKey = entryKeys[i];
-    String cacheKey = this.getFirstCacheKey();
-    JcsProfile cacheProfile = this.getFirstCacheProfile();
+    Serializable key = updateCache(this.cacheElementStruct);
 
     // execute the method to test.
-    this.jcsFacade.onRemoveFromCache(cacheKey, cacheProfile);
+    this.jcsFacade.onRemoveFromCache(this.cacheElementStruct.key,
+        this.cacheElementStruct.profile);
 
-    ICacheElement cacheElement = this.cache.get(entryKey);
-    assertNull("The element with key '" + cacheKey
-        + "' should have been removed from the cache", cacheElement);
+    ICacheElement cacheElement = this.cache.get(key);
+    assertNull(cacheElement);
   }
 
   public void testOnRemoveFromCacheWhenCacheAccessThrowsException()
       throws Exception {
     Method getCacheMethod = this
         .getGetCacheMethodFromCompositeCacheManagerClass();
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+    setUpCacheAdministratorAsMockObject(getCacheMethod);
 
     Method removeMethod = CompositeCache.class.getMethod("remove",
         new Class[] { Serializable.class });
-    this.setUpCacheAsMockObject(removeMethod);
+    setUpCacheAsMockObject(removeMethod);
 
     // expectation: cache manager finds the cache we are looking for.
-    this.cacheManager.getCache(this.cacheName);
+    this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(this.cache);
 
     // expectation: cache manager throws exception.
-    Serializable cacheKey = this.getFirstCacheKey();
+    Serializable cacheKey = this.cacheElementStruct.key;
     RuntimeException thrownException = new RuntimeException();
     this.cache.remove(cacheKey);
     this.cacheControl.setThrowable(thrownException);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
-    JcsProfile profile = this.getFirstCacheProfile();
+    JcsProfile profile = this.cacheElementStruct.profile;
     profile.setGroup(null);
 
     try {
       this.jcsFacade.onRemoveFromCache(cacheKey, profile);
-      this.failIfCacheAccessExceptionIsNotThrown();
+      failIfCacheAccessExceptionIsNotThrown();
 
     } catch (CacheAccessException exception) {
-      this.assertSameNestedException(exception, thrownException);
+      assertSameNestedException(exception, thrownException);
     }
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
 
   }
 
   public void testOnRemoveFromCacheWhenCacheIsNotFound() throws Exception {
     Method getCacheMethod = this
         .getGetCacheMethodFromCompositeCacheManagerClass();
-    this.setUpCacheAdministratorAsMockObject(getCacheMethod);
+    setUpCacheAdministratorAsMockObject(getCacheMethod);
 
-    this.expectCacheManagerDoesNotHaveCache();
-    this.setStateOfMockControlsToReplay();
+    expectCacheManagerDoesNotHaveCache();
+    setStateOfMockControlsToReplay();
 
     try {
-      this.jcsFacade.onRemoveFromCache(this.getFirstCacheKey(), this
-          .getFirstCacheProfile());
-      this.failIfCacheNotFoundExceptionIsNotThrown();
+      this.jcsFacade.onRemoveFromCache(this.cacheElementStruct.key,
+          this.cacheElementStruct.profile);
+      failIfCacheNotFoundExceptionIsNotThrown();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception
     }
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testOnRemoveFromCacheWhenCacheNameIsEmpty() throws Exception {
-    Serializable[] entryKeys = this.updateCache(new Object[] { "An Object" });
+    setUpCacheAdministratorAndCache();
 
-    int i = 0;
-    Serializable entryKey = entryKeys[i];
-    String cacheKey = this.getFirstCacheKey();
-    JcsProfile cacheProfile = this.getFirstCacheProfile();
-    cacheProfile.setCacheName("");
+    Serializable key = updateCache(this.cacheElementStruct);
 
     // execute the method to test.
-    this.jcsFacade.onRemoveFromCache(cacheKey, cacheProfile);
+    this.jcsFacade.onRemoveFromCache(key, this.cacheElementStruct.profile);
 
-    ICacheElement cacheElement = this.cache.get(entryKey);
-    assertNotNull("The element with key '" + cacheKey
-        + "' should not have been removed from the cache", cacheElement);
+    assertNotNull(this.cache.get(key));
   }
 
   /**
@@ -757,6 +730,8 @@ public final class JcsFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
+    setUpCacheAdministratorAndCache();
+
     this.jcsFacade.setCacheManager(null);
     try {
       this.jcsFacade.validateCacheManager();
@@ -774,41 +749,43 @@ public final class JcsFacadeTests extends TestCase {
    */
   public void testValidateCacheManagerWithCacheManagerNotEqualToNull()
       throws Exception {
+    setUpCacheAdministratorAndCache();
+
     this.jcsFacade.validateCacheManager();
   }
 
-  /**
-   * Stores in the cache each element of the given array.
-   * 
-   * @param objectsToStore
-   *          the array containing the objects to store in the cache.
-   * @return the keys used to store the objects in the cache.
-   */
-  protected Serializable[] updateCache(Object[] objectsToStore)
+  protected Serializable updateCache(JcsCacheElementStruct cacheElement)
       throws Exception {
-    int objectsToStoreCount = objectsToStore.length;
-    int cacheKeyCount = this.cacheKeys.length;
+    Serializable key = cacheElement.key;
+    JcsProfile profile = cacheElement.profile;
+    String group = profile.getGroup();
 
-    assertTrue("There should be an object to store in the cache",
-        objectsToStoreCount > 0);
-    assertTrue("There should be no more than " + cacheKeyCount
-        + "objects to store in the cache", objectsToStoreCount <= cacheKeyCount);
-
-    Serializable[] entryKeys = new Serializable[objectsToStoreCount];
-
-    for (int i = 0; i < objectsToStoreCount; i++) {
-      String cacheKey = this.cacheKeys[i];
-      JcsProfile cacheProfile = this.cacheProfiles[i];
-      Serializable entryKey = this.jcsFacade.getKey(cacheKey, cacheProfile);
-      Object objectToStore = objectsToStore[i];
-
-      ICacheElement cacheElement = this.createNewCacheElement(entryKey,
-          objectToStore);
-      this.cache.update(cacheElement);
-      entryKeys[i] = entryKey;
+    if (StringUtils.hasText(group)) {
+      GroupId groupId = new GroupId(profile.getCacheName(), group);
+      GroupAttrName groupAttrName = new GroupAttrName(groupId, key);
+      key = groupAttrName;
     }
 
-    return entryKeys;
+    ICacheElement newCacheElement = new CacheElement(CACHE_NAME, key,
+        cacheElement.value);
+    IElementAttributes elementAttributes = this.cache.getElementAttributes()
+        .copy();
+    newCacheElement.setElementAttributes(elementAttributes);
+
+    this.cache.update(newCacheElement);
+    return key;
+  }
+
+  protected Serializable[] updateCache(JcsCacheElementStruct[] cacheElements)
+      throws Exception {
+    int elementCount = cacheElements.length;
+    Serializable[] keys = new Serializable[elementCount];
+
+    for (int i = 0; i < elementCount; i++) {
+      keys[i] = updateCache(cacheElements[i]);
+    }
+
+    return keys;
   }
 
   private void verifyExpectationsOfMockControlsWereMet() {
