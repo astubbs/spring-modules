@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/08/24 01:17:56 $
+ * @version $Revision: 1.15 $ $Date: 2005/09/04 01:32:32 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -99,12 +99,10 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
    * @return the key of a cache entry.
    */
   protected Serializable getKey(Serializable cacheKey, JcsProfile profile) {
-    Serializable key = null;
+    Serializable key = cacheKey;
 
     String group = profile.getGroup();
-    if (!StringUtils.hasText(group)) {
-      key = cacheKey;
-    } else {
+    if (StringUtils.hasText(group)) {
       GroupId groupId = new GroupId(profile.getCacheName(), group);
       GroupAttrName groupAttrName = new GroupAttrName(groupId, cacheKey);
       key = groupAttrName;
