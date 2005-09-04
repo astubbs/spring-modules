@@ -17,10 +17,14 @@
  */
 package org.springmodules.cache.provider.jboss;
 
-import org.jboss.cache.Node;
-import org.jboss.cache.TreeCache;
+import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
+
+import org.easymock.classextension.MockClassControl;
+import org.jboss.cache.Node;
+import org.jboss.cache.TreeCache;
+import org.springmodules.cache.provider.CacheAccessException;
 
 /**
  * <p>
@@ -43,8 +47,20 @@ public class JbossCacheFacadeTests extends TestCase {
 
   private TreeCache treeCache;
 
+  private MockClassControl treeCacheControl;
+
   public JbossCacheFacadeTests(String name) {
     super(name);
+  }
+
+  private void assertSameNestedException(Exception expected,
+      CacheAccessException root) {
+    assertSame(expected, root.getCause());
+
+  }
+
+  private void failIfCacheAccessExceptionIsNotThrown() {
+    fail("Expecting exception <" + CacheAccessException.class.getName() + ">");
   }
 
   private Object getFromTreeCache(Object key) throws Exception {
@@ -58,59 +74,113 @@ public class JbossCacheFacadeTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
+    this.jbossCacheFacade = new JbossCacheFacade();
+
+    this.cacheProfile = new JbossCacheProfile(CACHE_NODE_NAME);
+  }
+
+  private void setUpTreeCache() throws Exception {
     this.treeCache = new TreeCache();
+    startTreeCache();
+
+    this.jbossCacheFacade.setTreeCache(this.treeCache);
+  }
+
+  private void setUpTreeCacheAsMockObject(Method methodToMock) throws Exception {
+    this.setUpTreeCacheAsMockObject(new Method[] { methodToMock });
+  }
+
+  private void setUpTreeCacheAsMockObject(Method[] methodsToMock)
+      throws Exception {
+    Class targetClass = TreeCache.class;
+
+    this.treeCacheControl = MockClassControl.createControl(targetClass, null,
+        null, methodsToMock);
+    this.treeCache = (TreeCache) this.treeCacheControl.getMock();
+    startTreeCache();
+
+    this.jbossCacheFacade.setTreeCache(this.treeCache);
+  }
+
+  private void startTreeCache() throws Exception {
     this.treeCache.createService();
     this.treeCache.startService();
 
-    this.jbossCacheFacade = new JbossCacheFacade();
-    this.jbossCacheFacade.setTreeCache(this.treeCache);
-
-    this.cacheProfile = new JbossCacheProfile(CACHE_NODE_NAME);
   }
 
   protected void tearDown() throws Exception {
     super.tearDown();
 
-    this.treeCache.stopService();
-    this.treeCache.destroyService();
+    if (this.treeCache != null) {
+      this.treeCache.stopService();
+      this.treeCache.destroyService();
+    }
   }
 
   public void testOnFlushCache() throws Exception {
+    setUpTreeCache();
+
     this.jbossCacheFacade.onFlushCache(this.cacheProfile);
 
     Node cacheNode = this.treeCache.get(this.cacheProfile.getNodeFqn());
     assertNull(cacheNode);
   }
 
-  public void testOnGetFromCache() throws Exception {
-    String objectToCache = "R2-D2";
-    String key = CACHE_KEY;
-    putInTreeCache(key, objectToCache);
+  public void testOnFlushCacheWhenCacheAccessThrowsException() throws Exception {
+    Method removeMethod = TreeCache.class.getDeclaredMethod("remove",
+        new Class[] { String.class });
+    setUpTreeCacheAsMockObject(removeMethod);
 
-    Object cachedObject = this.jbossCacheFacade.onGetFromCache(key,
+    RuntimeException expected = new RuntimeException();
+
+    this.treeCache.remove(CACHE_NODE_NAME);
+    this.treeCacheControl.setThrowable(expected);
+
+    this.treeCacheControl.replay();
+
+    try {
+      this.jbossCacheFacade.onFlushCache(this.cacheProfile);
+      failIfCacheAccessExceptionIsNotThrown();
+
+    } catch (CacheAccessException exception) {
+      assertSameNestedException(expected, exception);
+    }
+
+    this.treeCacheControl.verify();
+  }
+
+  public void testOnGetFromCache() throws Exception {
+    setUpTreeCache();
+
+    String objectToCache = "R2-D2";
+    putInTreeCache(CACHE_KEY, objectToCache);
+
+    Object cachedObject = this.jbossCacheFacade.onGetFromCache(CACHE_KEY,
         this.cacheProfile);
 
     assertEquals(objectToCache, cachedObject);
   }
 
   public void testOnPutInCache() throws Exception {
+    setUpTreeCache();
+
     String objectToCache = "Luke Skywalker";
-    String key = CACHE_KEY;
+    this.jbossCacheFacade.onPutInCache(CACHE_KEY, this.cacheProfile,
+        objectToCache);
 
-    this.jbossCacheFacade.onPutInCache(key, this.cacheProfile, objectToCache);
-
-    Object cachedObject = getFromTreeCache(key);
+    Object cachedObject = getFromTreeCache(CACHE_KEY);
     assertEquals(objectToCache, cachedObject);
   }
 
   public void testOnRemoveFromCache() throws Exception {
+    setUpTreeCache();
+
     String objectToCache = "Falcon Millenium";
-    String key = CACHE_KEY;
-    putInTreeCache(key, objectToCache);
+    putInTreeCache(CACHE_KEY, objectToCache);
 
-    this.jbossCacheFacade.onRemoveFromCache(key, this.cacheProfile);
+    this.jbossCacheFacade.onRemoveFromCache(CACHE_KEY, this.cacheProfile);
 
-    Object cachedObject = getFromTreeCache(key);
+    Object cachedObject = getFromTreeCache(CACHE_KEY);
     assertNull(cachedObject);
   }
 }
