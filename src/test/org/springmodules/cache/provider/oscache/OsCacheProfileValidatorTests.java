@@ -29,13 +29,10 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/11 04:34:34 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:46 $
  */
 public final class OsCacheProfileValidatorTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private OsCacheProfileValidator cacheProfileValidator;
 
   public OsCacheProfileValidatorTests(String name) {

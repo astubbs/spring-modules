@@ -50,7 +50,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/04 01:33:53 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/06 01:41:24 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -126,9 +126,6 @@ public final class JcsFacadeTests extends TestCase {
 
   private MockClassControl cacheManagerControl;
 
-  /**
-   * Primary object that is under test.
-   */
   private JcsFacade jcsFacade;
 
   public JcsFacadeTests(String name) {
@@ -144,14 +141,6 @@ public final class JcsFacadeTests extends TestCase {
   private void expectCacheManagerDoesNotHaveCache() {
     this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(null);
-  }
-
-  private void failIfCacheAccessExceptionIsNotThrown() {
-    fail("Expecting exception <" + CacheAccessException.class.getName() + ">");
-  }
-
-  private void failIfCacheNotFoundExceptionIsNotThrown() {
-    fail("Expecting exception <" + CacheNotFoundException.class.getName() + ">");
   }
 
   private Method getGetCacheMethodFromCompositeCacheManagerClass()
@@ -308,7 +297,7 @@ public final class JcsFacadeTests extends TestCase {
 
     try {
       this.jcsFacade.getCache(CACHE_NAME);
-      failIfCacheNotFoundExceptionIsNotThrown();
+      fail();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception
@@ -361,11 +350,11 @@ public final class JcsFacadeTests extends TestCase {
     Method removeAllMethod = CompositeCache.class.getMethod("removeAll", null);
     setUpCacheAsMockObject(removeAllMethod);
 
-    // expectation: cache manager finds the cache we are looking for.
+    // cache manager finds the cache we are looking for.
     this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(this.cache);
 
-    // expectation: cache manager throws exception when flushing the cache.
+    // cache manager throws exception when flushing the cache.
     RuntimeException thrownException = new RuntimeException();
     this.cache.removeAll();
     this.cacheControl.setThrowable(thrownException);
@@ -375,7 +364,7 @@ public final class JcsFacadeTests extends TestCase {
     try {
       JcsProfile profile = new JcsProfile(CACHE_NAME);
       this.jcsFacade.onFlushCache(profile);
-      failIfCacheAccessExceptionIsNotThrown();
+      fail();
 
     } catch (CacheAccessException exception) {
       assertSameNestedException(exception, thrownException);
@@ -394,7 +383,7 @@ public final class JcsFacadeTests extends TestCase {
 
     try {
       this.jcsFacade.onFlushCache(this.cacheElementStruct.profile);
-      failIfCacheNotFoundExceptionIsNotThrown();
+      fail();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception
@@ -445,7 +434,7 @@ public final class JcsFacadeTests extends TestCase {
       this.cacheElementStructs[i].profile.setGroup(null);
     }
 
-    this.updateCache(this.cacheElementStructs);
+    updateCache(this.cacheElementStructs);
     assertTrue("The size of the cache should be greater than zero", this.cache
         .getSize() > 0);
 
@@ -478,11 +467,11 @@ public final class JcsFacadeTests extends TestCase {
         new Class[] { Serializable.class });
     setUpCacheAsMockObject(getMethod);
 
-    // expectation: cache manager finds the cache we are looking for.
+    // cache manager finds the cache we are looking for.
     this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(this.cache);
 
-    // expectation: cache manager throws exception.
+    // cache manager throws exception.
     Serializable cacheKey = this.cacheElementStruct.key;
     RuntimeException thrownException = new RuntimeException();
     this.cache.get(cacheKey);
@@ -495,7 +484,7 @@ public final class JcsFacadeTests extends TestCase {
 
     try {
       this.jcsFacade.onGetFromCache(cacheKey, profile);
-      failIfCacheAccessExceptionIsNotThrown();
+      fail();
 
     } catch (CacheAccessException exception) {
       assertSameNestedException(exception, thrownException);
@@ -516,7 +505,7 @@ public final class JcsFacadeTests extends TestCase {
     try {
       this.jcsFacade.onGetFromCache(this.cacheElementStruct.key,
           this.cacheElementStruct.profile);
-      failIfCacheNotFoundExceptionIsNotThrown();
+      fail();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception
@@ -576,11 +565,11 @@ public final class JcsFacadeTests extends TestCase {
         new Class[] { ICacheElement.class });
     setUpCacheAsMockObject(updateMethod);
 
-    // expectation: cache manager finds the cache we are looking for.
+    // cache manager finds the cache we are looking for.
     this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(this.cache);
 
-    // expectation: cache manager throws exception.
+    // cache manager throws exception.
     Serializable cacheKey = this.cacheElementStruct.key;
     JcsProfile cacheProfile = this.cacheElementStruct.profile;
     cacheProfile.setGroup(null);
@@ -598,7 +587,7 @@ public final class JcsFacadeTests extends TestCase {
 
     try {
       this.jcsFacade.onPutInCache(cacheKey, cacheProfile, objToCache);
-      failIfCacheAccessExceptionIsNotThrown();
+      fail();
 
     } catch (CacheAccessException exception) {
       assertSameNestedException(exception, thrownException);
@@ -618,7 +607,7 @@ public final class JcsFacadeTests extends TestCase {
     try {
       this.jcsFacade.onPutInCache(this.cacheElementStruct.key,
           this.cacheElementStruct.profile, this.cacheElementStruct.value);
-      failIfCacheNotFoundExceptionIsNotThrown();
+      fail();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception
@@ -665,11 +654,11 @@ public final class JcsFacadeTests extends TestCase {
         new Class[] { Serializable.class });
     setUpCacheAsMockObject(removeMethod);
 
-    // expectation: cache manager finds the cache we are looking for.
+    // cache manager finds the cache we are looking for.
     this.cacheManager.getCache(CACHE_NAME);
     this.cacheManagerControl.setReturnValue(this.cache);
 
-    // expectation: cache manager throws exception.
+    // cache manager throws exception.
     Serializable cacheKey = this.cacheElementStruct.key;
     RuntimeException thrownException = new RuntimeException();
     this.cache.remove(cacheKey);
@@ -682,7 +671,7 @@ public final class JcsFacadeTests extends TestCase {
 
     try {
       this.jcsFacade.onRemoveFromCache(cacheKey, profile);
-      failIfCacheAccessExceptionIsNotThrown();
+      fail();
 
     } catch (CacheAccessException exception) {
       assertSameNestedException(exception, thrownException);
@@ -703,7 +692,7 @@ public final class JcsFacadeTests extends TestCase {
     try {
       this.jcsFacade.onRemoveFromCache(this.cacheElementStruct.key,
           this.cacheElementStruct.profile);
-      failIfCacheNotFoundExceptionIsNotThrown();
+      fail();
 
     } catch (CacheNotFoundException exception) {
       // expecting this exception

@@ -39,7 +39,7 @@ import org.springmodules.cache.mock.MockCacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:19 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:38 $
  */
 public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
@@ -51,9 +51,6 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    */
   private Collection allAttributes;
 
-  /**
-   * Primary object under test.
-   */
   private AbstractSingleMetadataCacheAttributeSource attributeSource;
 
   private MockClassControl attributeSourceControl;
@@ -112,7 +109,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.setUpSingleAttributeSourceAsMockObject();
+    setUpSingleAttributeSourceAsMockObject();
 
     this.targetClass = String.class;
     this.method = this.targetClass.getMethod("charAt",
@@ -150,21 +147,21 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * as an metadata attribute if the map of attributes returns <code>null</code>.
    */
   public void testGetAttributeWhenCacheAttributeFoundIsEqualToNull() {
-    // expectation: retrieve the metadata attributes for the given method two
-    // times: the first time for the most specific method and second time for
-    // the original method.
+    // retrieve the metadata attributes for the given method two times: the
+    // first time for the most specific method and second time for the original
+    // method.
     for (int i = 0; i < 2; i++) {
-      // expectation: get all the metadata attributes.
+      // get all the metadata attributes.
       this.attributeSource.findAllAttributes(this.method);
       this.attributeSourceControl.setReturnValue(this.allAttributes);
 
-      // expectation: should not be able to find a CacheAttribute from the
-      // collection containing all the metadata attributes.
+      // should not be able to find a CacheAttribute from the collection
+      // containing all the metadata attributes.
       this.attributeSource.findAttribute(this.allAttributes);
       this.attributeSourceControl.setReturnValue(null);
     }
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     // execute the method to test.
     CacheAttribute returnedAttribute = this.attributeSource.getAttribute(
@@ -175,9 +172,9 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
     // verify that the object represing a null cache attribute was cached.
     Object expectedCachedAttribute = AbstractMetadataCacheAttributeSource.NULL_ATTRIBUTE;
-    this.assertCacheAttributeIsCached(expectedCachedAttribute);
+    assertCacheAttributeIsCached(expectedCachedAttribute);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -187,17 +184,16 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * and method.
    */
   public void testGetAttributeWhenCacheAttributeFoundIsNotEqualToNull() {
-    // expectation: get all the metadata attributes for the most specific
-    // method.
+    // get all the metadata attributes for the most specific method.
     this.attributeSource.findAllAttributes(this.method);
     this.attributeSourceControl.setReturnValue(this.allAttributes);
 
-    // expectation: find a CacheAttribute from the collection containing all
-    // the metadata attributes.
+    // find a CacheAttribute from the collection containing all the metadata
+    // attributes.
     this.attributeSource.findAttribute(this.allAttributes);
     this.attributeSourceControl.setReturnValue(this.cacheAttribute);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     // execute the method to test.
     CacheAttribute returnedCacheAttribute = this.attributeSource.getAttribute(
@@ -208,9 +204,9 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
         returnedCacheAttribute);
 
     // verify that the returned attribute is cached.
-    this.assertCacheAttributeIsCached(this.cacheAttribute);
+    assertCacheAttributeIsCached(this.cacheAttribute);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -230,7 +226,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     attributeMap.put(keyBuffer.toString(),
         AbstractMetadataCacheAttributeSource.NULL_ATTRIBUTE);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     // execute the method to test.
     CacheAttribute returnedCacheAttribute = this.attributeSource.getAttribute(
@@ -240,7 +236,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     assertNull("The returned CacheAttribute should be null",
         returnedCacheAttribute);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -250,17 +246,16 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * the most specific method.
    */
   public void testRetrieveAttributeFromMostSpecificMethod() {
-    // expectation: get all the metadata attributes for the most specific
-    // method.
+    // get all the metadata attributes for the most specific method.
     this.attributeSource.findAllAttributes(this.method);
     this.attributeSourceControl.setReturnValue(this.allAttributes);
 
-    // expectation: find a CacheAttribute from the collection containing all
-    // the metadata attributes.
+    // find a CacheAttribute from the collection containing all the metadata
+    // attributes.
     this.attributeSource.findAttribute(this.allAttributes);
     this.attributeSourceControl.setReturnValue(this.cacheAttribute);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     // execute the method to test.
     CacheAttribute returnedCacheAttribute = this.attributeSource
@@ -270,7 +265,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     assertSame("<Returned CacheAttribute>", this.cacheAttribute,
         returnedCacheAttribute);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -281,21 +276,20 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * original method are the same.
    */
   public void testRetrieveAttributeFromMostSpecificMethodWhenMostSpecificMethodAndOriginalMethodAreTheSame() {
-    // expectation: get all the metadata attributes for the most specific
-    // method.
+    // get all the metadata attributes for the most specific method.
     this.attributeSource.findAllAttributes(this.method);
     this.attributeSourceControl.setReturnValue(this.allAttributes);
 
-    // expectation: find a CacheAttribute from the collection containing all
-    // the metadata attributes.
+    // find a CacheAttribute from the collection containing all the metadata
+    // attributes.
     this.attributeSource.findAttribute(this.allAttributes);
     this.attributeSourceControl.setReturnValue(null);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
-    // we are not using the target class we set up for this test case. We
-    // send 'int.class' to trick 'AopUtils.getMostSpecificMethod(..)', making
-    // the most specific method and the original method the same.
+    // we are not using the target class we set up for this test case. We send
+    // 'int.class' to trick 'AopUtils.getMostSpecificMethod(..)', making the
+    // most specific method and the original method the same.
     CacheAttribute returnedCacheAttribute = this.attributeSource
         .retrieveAttribute(this.method, int.class);
 
@@ -303,7 +297,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     assertNull("The returned CacheAttribute should be null",
         returnedCacheAttribute);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -316,27 +310,26 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * </ul>
    */
   public void testRetrieveAttributeFromOriginalMethod() {
-    // expectation: get all the metadata attributes for the most specific
-    // method.
+    // get all the metadata attributes for the most specific method.
     this.attributeSource.findAllAttributes(this.method);
     this.attributeSourceControl.setReturnValue(this.allAttributes);
 
-    // expectation: should not be able to find a CacheAttribute from the
-    // collection containing all the metadata attributes.
+    // should not be able to find a CacheAttribute from the collection
+    // containing all the metadata attributes.
     this.attributeSource.findAttribute(this.allAttributes);
     this.attributeSourceControl.setReturnValue(null);
 
-    // expectation: get all the metadata attributes for the original
+    // get all the metadata attributes for the original
     // method.
     this.attributeSource.findAllAttributes(this.method);
     this.attributeSourceControl.setReturnValue(this.allAttributes);
 
-    // expectation: should not be able to find a CacheAttribute from the
-    // collection containing all the metadata attributes.
+    // should not be able to find a CacheAttribute from the collection
+    // containing all the metadata attributes.
     this.attributeSource.findAttribute(this.allAttributes);
     this.attributeSourceControl.setReturnValue(this.cacheAttribute);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     // execute the method to test.
     CacheAttribute returnedCacheAttribute = this.attributeSource
@@ -346,7 +339,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     assertSame("<Returned CacheAttribute>", this.cacheAttribute,
         returnedCacheAttribute);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -358,21 +351,21 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * method.
    */
   public void testRetrieveAttributeReturningNull() {
-    // expectation: retrieve the metadata attributes for the given method two
-    // times: the first time for the most specific method and second time for
-    // the original method.
+    // retrieve the metadata attributes for the given method two times: the
+    // first time for the most specific method and second time for the original
+    // method.
     for (int i = 0; i < 2; i++) {
-      // expectation: get all the metadata attributes.
+      // get all the metadata attributes.
       this.attributeSource.findAllAttributes(this.method);
       this.attributeSourceControl.setReturnValue(this.allAttributes);
 
-      // expectation: should not be able to find a CacheAttribute from the
-      // collection containing all the metadata attributes.
+      // should not be able to find a CacheAttribute from the collection
+      // containing all the metadata attributes.
       this.attributeSource.findAttribute(this.allAttributes);
       this.attributeSourceControl.setReturnValue(null);
     }
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     // execute the method to test.
     CacheAttribute returnedCacheAttribute = this.attributeSource
@@ -381,7 +374,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     assertNull("The returned CacheAttribute should be null",
         returnedCacheAttribute);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   private void verifyExpectationsOfMockControlsWereMet() {

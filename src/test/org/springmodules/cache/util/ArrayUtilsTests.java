@@ -34,10 +34,6 @@ public class ArrayUtilsTests extends TestCase {
     super(arg0);
   }
 
-  private void assertEqualsToString(String expected, String actual) {
-    assertEquals("<ToString>", expected, actual);
-  }
-  
   public void testToStringWithNotEmptyStringArray() {
     String[] array = { "Luke", "Han", "Leia" };
     StringBuffer buffer = new StringBuffer();
@@ -56,14 +52,14 @@ public class ArrayUtilsTests extends TestCase {
     String expected = buffer.toString();
     String actual = ArrayUtils.toString(array);
     
-    this.assertEqualsToString(expected, actual);
+    assertEquals(expected, actual);
   }
 
   public void testToStringWithEmptyStringArray() {
     String expected = "{}";
     String actual = ArrayUtils.toString(new String[0]);
     
-    this.assertEqualsToString(expected, actual);
+    assertEquals(expected, actual);
   }
 
   public void testToStringWithStringArrayEqualToNull() {

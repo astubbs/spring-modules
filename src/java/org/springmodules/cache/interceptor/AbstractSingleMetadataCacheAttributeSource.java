@@ -33,7 +33,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:25:48 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:36 $
  */
 public abstract class AbstractSingleMetadataCacheAttributeSource extends
     AbstractMetadataCacheAttributeSource {
@@ -65,10 +65,10 @@ public abstract class AbstractSingleMetadataCacheAttributeSource extends
    * @return a <code>CachingAttribute</code> for the specified method.
    */
   protected final CacheAttribute getAttribute(Method method, Class targetClass) {
-    Map attributeMap = super.getAttributeMap();
+    Map attributeMap = getAttributeMap();
 
     // First, see if we have a cached value
-    Object attributeEntryKey = super.getAttributeEntryKey(method, targetClass);
+    Object attributeEntryKey = getAttributeEntryKey(method, targetClass);
     Object cachedAttribute = attributeMap.get(attributeEntryKey);
 
     if (cachedAttribute != null) {
@@ -81,7 +81,7 @@ public abstract class AbstractSingleMetadataCacheAttributeSource extends
       return (CacheAttribute) cachedAttribute;
     }
 
-    CacheAttribute attribute = this.retrieveAttribute(method, targetClass);
+    CacheAttribute attribute = retrieveAttribute(method, targetClass);
 
     // Put it in the cache
     if (attribute == null) {
@@ -117,13 +117,13 @@ public abstract class AbstractSingleMetadataCacheAttributeSource extends
     Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
 
     // First try is the method in the target class
-    Collection allAttributes = this.findAllAttributes(specificMethod);
-    attribute = this.findAttribute(allAttributes);
+    Collection allAttributes = findAllAttributes(specificMethod);
+    attribute = findAttribute(allAttributes);
 
     if (null == attribute && specificMethod != method) {
       // Fallback is to look at the original method
-      allAttributes = this.findAllAttributes(method);
-      attribute = this.findAttribute(allAttributes);
+      allAttributes = findAllAttributes(method);
+      attribute = findAttribute(allAttributes);
     }
 
     return attribute;

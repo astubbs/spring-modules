@@ -48,7 +48,7 @@ public class XStreamSerializableFactory implements SerializableFactory {
 
     public ObjectWrapper(Serializable value) {
       this();
-      this.setValue(value);
+      setValue(value);
     }
 
     public boolean equals(Object obj) {
@@ -87,9 +87,7 @@ public class XStreamSerializableFactory implements SerializableFactory {
     }
 
     public String toString() {
-      StringBuffer buffer = new StringBuffer();
-
-      buffer.append(this.getClass().getName());
+      StringBuffer buffer = new StringBuffer(getClass().getName());
       buffer.append("@" + System.identityHashCode(this) + "[");
       buffer.append("value=");
 

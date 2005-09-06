@@ -34,16 +34,13 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/08/22 03:30:18 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/06 01:41:23 $
  */
 public final class JcsProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(JcsProfileTests.class);
 
-  /**
-   * Primary object that is under test.
-   */
   private JcsProfile cacheProfile;
 
   public JcsProfileTests(String name) {
@@ -175,7 +172,7 @@ public final class JcsProfileTests extends TestCase implements
     buffer.append("group=null]");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 
   public void testToStringWithCacheNameAndGroupNotEqualToNull() {
@@ -191,6 +188,6 @@ public final class JcsProfileTests extends TestCase implements
     buffer.append("group='" + group + "']");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 }

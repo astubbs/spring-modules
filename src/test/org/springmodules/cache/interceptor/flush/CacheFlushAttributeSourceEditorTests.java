@@ -34,16 +34,13 @@ import org.springmodules.cache.interceptor.SimulatedService;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:18:46 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:24 $
  */
 public class CacheFlushAttributeSourceEditorTests extends TestCase {
 
   public static final String LINE_SEPARATOR = System
       .getProperty("line.separator");
 
-  /**
-   * Primary object that is under test.
-   */
   private CacheFlushAttributeSourceEditor editor;
 
   /**

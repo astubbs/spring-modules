@@ -30,7 +30,7 @@ import org.springmodules.cache.interceptor.AbstractMethodMapCacheAttributeSource
  * @author Xavier Dury
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:33:18 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:29 $
  */
 public class MethodMapCachingAttributeSource extends
     AbstractMethodMapCacheAttributeSource implements CachingAttributeSource {
@@ -64,13 +64,13 @@ public class MethodMapCachingAttributeSource extends
    */
   public final void addCachingAttribute(String fullyQualifiedMethodName,
       Cached cachingAttribute) {
-    super.addCacheAttribute(fullyQualifiedMethodName, cachingAttribute);
+    addCacheAttribute(fullyQualifiedMethodName, cachingAttribute);
   }
 
   /**
    * @see CachingAttributeSource#getCachingAttribute(Method, Class)
    */
   public final Cached getCachingAttribute(Method method, Class targetClass) {
-    return (Cached) super.getAttributeMap().get(method);
+    return (Cached) getAttributeMap().get(method);
   }
 }

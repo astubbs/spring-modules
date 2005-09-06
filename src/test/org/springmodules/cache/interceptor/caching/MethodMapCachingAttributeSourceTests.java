@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:16 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:33 $
  */
 public final class MethodMapCachingAttributeSourceTests extends TestCase {
 
@@ -41,9 +41,6 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    */
   private Cached cachingAttribute;
 
-  /**
-   * Primary object that is under test.
-   */
   private MethodMapCachingAttributeSource cachingAttributeSource;
 
   /**
@@ -72,7 +69,7 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
     try {
       this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
           this.cachingAttribute);
-      fail("Expecting a <" + IllegalArgumentException.class.getName() + ">");
+      fail();
 
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
@@ -128,10 +125,10 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
         this.cachingAttribute);
 
     // verify the caching attributes were added
-    this.assertCachingAttributeWasAdded(this.getPersonNameMethod,
+    assertCachingAttributeWasAdded(this.getPersonNameMethod,
         this.cachingAttribute);
 
-    this.assertCachingAttributeWasAdded(this.getPersonsMethod,
+    assertCachingAttributeWasAdded(this.getPersonsMethod,
         this.cachingAttribute);
 
     // use a more specific method name
@@ -143,10 +140,10 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
         otherCachingAttribute);
 
     // verify the caching attributes were added
-    this.assertCachingAttributeWasAdded(this.getPersonNameMethod,
+    assertCachingAttributeWasAdded(this.getPersonNameMethod,
         this.cachingAttribute);
 
-    this.assertCachingAttributeWasAdded(this.getPersonsMethod,
+    assertCachingAttributeWasAdded(this.getPersonsMethod,
         otherCachingAttribute);
   }
 
@@ -158,7 +155,7 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    */
   public void testAddCachingAttributeWithNotExistingClass() {
     String fullyQualifiedMethodName = "MyFakeClass.get*";
-    this.assertAddCachingAttributeThrowsException(fullyQualifiedMethodName);
+    assertAddCachingAttributeThrowsException(fullyQualifiedMethodName);
   }
 
   /**
@@ -169,7 +166,7 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    */
   public void testAddCachingAttributeWithNotMatchingMethod() {
     String fullyQualifiedMethodName = this.targetClass.getName() + ".addNew*";
-    this.assertAddCachingAttributeThrowsException(fullyQualifiedMethodName);
+    assertAddCachingAttributeThrowsException(fullyQualifiedMethodName);
   }
 
   /**
@@ -180,7 +177,7 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    */
   public void testAddCachingAttributeWithoutFullyQualifiedMethodName() {
     String notFullyQualifiedMethodName = "get*";
-    this.assertAddCachingAttributeThrowsException(notFullyQualifiedMethodName);
+    assertAddCachingAttributeThrowsException(notFullyQualifiedMethodName);
   }
 
   /**
@@ -199,7 +196,7 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
         otherCachingAttribute);
 
     // verify the caching attributes were added
-    this.assertCachingAttributeWasAdded(this.getPersonsMethod,
+    assertCachingAttributeWasAdded(this.getPersonsMethod,
         otherCachingAttribute);
 
     // use wildcards.
@@ -209,10 +206,10 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
         this.cachingAttribute);
 
     // verify the caching attributes were added
-    this.assertCachingAttributeWasAdded(this.getPersonNameMethod,
+    assertCachingAttributeWasAdded(this.getPersonNameMethod,
         this.cachingAttribute);
 
-    this.assertCachingAttributeWasAdded(this.getPersonsMethod,
+    assertCachingAttributeWasAdded(this.getPersonsMethod,
         otherCachingAttribute);
   }
 

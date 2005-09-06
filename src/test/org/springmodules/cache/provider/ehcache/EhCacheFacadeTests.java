@@ -43,7 +43,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/02 01:35:05 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/06 01:41:37 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -98,9 +98,6 @@ public class EhCacheFacadeTests extends TestCase {
 
   private EhCacheProfile cacheProfile;
 
-  /**
-   * Primary object that is under test.
-   */
   private EhCacheFacade ehcacheFacade;
 
   public EhCacheFacadeTests(String name) {
@@ -109,8 +106,7 @@ public class EhCacheFacadeTests extends TestCase {
 
   private void assertCacheExceptionIsCacheNotFoundException(
       CacheException exception) {
-    assertEquals("<CacheException class>", CacheNotFoundException.class,
-        exception.getClass());
+    assertEquals(CacheNotFoundException.class, exception.getClass());
   }
 
   private void assertOnGetFromCacheWrapsCatchedException(

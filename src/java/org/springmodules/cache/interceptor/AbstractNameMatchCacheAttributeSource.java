@@ -38,17 +38,17 @@ import org.springmodules.cache.util.TextMatcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/23 03:04:46 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:37 $
  */
 public abstract class AbstractNameMatchCacheAttributeSource {
-
-  protected final Log logger = LogFactory.getLog(this.getClass());
 
   /**
    * Map containing instances of <code>{@link CacheAttribute}</code>. The key
    * of each entry is the name of the method to attach the attribute to.
    */
   private Map attributeMap;
+
+  protected final Log logger = LogFactory.getLog(getClass());
 
   public AbstractNameMatchCacheAttributeSource() {
     super();
@@ -85,12 +85,47 @@ public abstract class AbstractNameMatchCacheAttributeSource {
   }
 
   /**
+   * Returns an instance of <code>{@link CacheAttribute}</code> for the
+   * intercepted method.
+   * 
+   * @param method
+   *          the definition of the intercepted method.
+   * @return a metadata attribute from the intercepted method.
+   */
+  protected final CacheAttribute getCacheAttribute(Method method) {
+    String methodName = method.getName();
+    CacheAttribute cacheAttribute = getCacheAttributeFromMap(methodName);
+
+    if (cacheAttribute == null) {
+      // look up most specific name match
+      String bestNameMatch = null;
+
+      for (Iterator i = this.attributeMap.keySet().iterator(); i.hasNext();) {
+        String mappedMethodName = (String) i.next();
+
+        if (isMatch(methodName, mappedMethodName)
+            && (bestNameMatch == null || bestNameMatch.length() <= mappedMethodName
+                .length())) {
+          cacheAttribute = getCacheAttributeFromMap(mappedMethodName);
+          bestNameMatch = mappedMethodName;
+        }
+      }
+    }
+
+    return cacheAttribute;
+  }
+
+  /**
    * Returns a property editor that creates instances of
    * <code>{@link CacheAttribute}</code>.
    * 
    * @return a property editor for cache attributes.
    */
   protected abstract PropertyEditor getCacheAttributeEditor();
+
+  private CacheAttribute getCacheAttributeFromMap(String methodName) {
+    return (CacheAttribute) this.attributeMap.get(methodName);
+  }
 
   /**
    * Returns <code>true</code> if the given method name matches the mapped
@@ -115,7 +150,7 @@ public abstract class AbstractNameMatchCacheAttributeSource {
    *          the given properties.
    */
   public final void setProperties(Properties cacheAttributes) {
-    PropertyEditor propertyEditor = this.getCacheAttributeEditor();
+    PropertyEditor propertyEditor = getCacheAttributeEditor();
 
     Iterator keySetIterator = cacheAttributes.keySet().iterator();
     while (keySetIterator.hasNext()) {
@@ -126,43 +161,8 @@ public abstract class AbstractNameMatchCacheAttributeSource {
       CacheAttribute cacheAttribute = (CacheAttribute) propertyEditor
           .getValue();
       if (cacheAttribute != null) {
-        this.addAttribute(methodName, cacheAttribute);
+        addAttribute(methodName, cacheAttribute);
       }
     }
   }
-
-  /**
-   * Returns an instance of <code>{@link CacheAttribute}</code> for the
-   * intercepted method.
-   * 
-   * @param method
-   *          the definition of the intercepted method.
-   * @return a metadata attribute from the intercepted method.
-   */
-  protected final CacheAttribute getCacheAttribute(Method method) {
-    String methodName = method.getName();
-    CacheAttribute cacheAttribute = (CacheAttribute) this.attributeMap
-        .get(methodName);
-
-    if (cacheAttribute == null) {
-      // look up most specific name match
-      String bestNameMatch = null;
-
-      Iterator keySetIterator = this.attributeMap.keySet().iterator();
-      while (keySetIterator.hasNext()) {
-        String mappedMethodName = (String) keySetIterator.next();
-
-        if (this.isMatch(methodName, mappedMethodName)
-            && (bestNameMatch == null || bestNameMatch.length() <= mappedMethodName
-                .length())) {
-          cacheAttribute = (CacheAttribute) this.attributeMap
-              .get(mappedMethodName);
-          bestNameMatch = mappedMethodName;
-        } 
-      } 
-    } 
-
-    return cacheAttribute;
-  }
-
 }

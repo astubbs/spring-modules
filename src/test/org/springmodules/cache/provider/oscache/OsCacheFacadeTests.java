@@ -41,7 +41,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/04 01:33:53 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:46 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
@@ -62,9 +62,6 @@ public class OsCacheFacadeTests extends TestCase {
    */
   private String[] groups;
 
-  /**
-   * Primary object that is under test.
-   */
   private OsCacheFacade osCacheFacade;
 
   public OsCacheFacadeTests(String name) {
@@ -238,7 +235,7 @@ public class OsCacheFacadeTests extends TestCase {
         .getDeclaredMethod("getFromCache", new Class[] { String.class,
             int.class, String.class });
 
-    this.setUpCacheAdministratorAsMockObject(getFromCacheMethod);
+    setUpCacheAdministratorAsMockObject(getFromCacheMethod);
     String cronExpression = "* * * 0 0";
     int refreshPeriod = 45;
 
@@ -296,7 +293,7 @@ public class OsCacheFacadeTests extends TestCase {
     this.cacheProfile.setRefreshPeriod(null);
     Object expected = "Anakin";
 
-    // expectation: retrieve an entry using only the provided key.
+    // retrieve an entry using only the provided key.
     this.cacheAdministrator.getFromCache(CACHE_KEY);
     this.cacheAdministratorControl.setReturnValue(expected);
 

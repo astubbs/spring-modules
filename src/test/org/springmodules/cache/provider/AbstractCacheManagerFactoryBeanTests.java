@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/09/02 00:06:43 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:39 $
  */
 public abstract class AbstractCacheManagerFactoryBeanTests extends TestCase {
 
@@ -51,7 +51,7 @@ public abstract class AbstractCacheManagerFactoryBeanTests extends TestCase {
    * @return the name of the package of this class as a file path.
    */
   protected final String getPackageNameAsPath() {
-    String packageName = this.getClass().getPackage().getName();
+    String packageName = getClass().getPackage().getName();
     String path = packageName.replace('.', '/');
     return path;
   }

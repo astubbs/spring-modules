@@ -27,22 +27,14 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:03 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:26 $
  */
 public final class CacheFlushAttributeEditorTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private CacheFlushAttributeEditor editor;
 
   public CacheFlushAttributeEditorTests(String name) {
     super(name);
-  }
-
-  private void assertEqualsCacheFlushAttribute(FlushCache expected,
-      FlushCache actual) {
-    assertEquals("<FlushCache>", expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -58,8 +50,7 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
     this.editor.setAsText(properties);
 
     FlushCache actualCacheFlushAttribute = (FlushCache) this.editor.getValue();
-    this.assertEqualsCacheFlushAttribute(expectedCacheFlushAttribute,
-        actualCacheFlushAttribute);
+    assertEquals(expectedCacheFlushAttribute, actualCacheFlushAttribute);
   }
 
   public void testSetAsTextWithFlushBeforeExecutionEqualToYes() {
@@ -70,8 +61,7 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
     this.editor.setAsText(properties);
 
     FlushCache actualCacheFlushAttribute = (FlushCache) this.editor.getValue();
-    this.assertEqualsCacheFlushAttribute(expectedCacheFlushAttribute,
-        actualCacheFlushAttribute);
+    assertEquals(expectedCacheFlushAttribute, actualCacheFlushAttribute);
   }
 
   public void testSetAsTextWithoutFlushBeforeExecution() {
@@ -82,7 +72,6 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
     this.editor.setAsText(properties);
 
     FlushCache actualCacheFlushAttribute = (FlushCache) this.editor.getValue();
-    this.assertEqualsCacheFlushAttribute(expectedCacheFlushAttribute,
-        actualCacheFlushAttribute);
+    assertEquals(expectedCacheFlushAttribute, actualCacheFlushAttribute);
   }
 }

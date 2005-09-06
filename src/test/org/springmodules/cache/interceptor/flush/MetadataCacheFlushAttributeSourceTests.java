@@ -35,7 +35,7 @@ import org.springframework.metadata.Attributes;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/11 04:32:03 $
+ * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:26 $
  */
 public final class MetadataCacheFlushAttributeSourceTests extends TestCase {
 
@@ -43,9 +43,6 @@ public final class MetadataCacheFlushAttributeSourceTests extends TestCase {
 
   private MockControl attributesControl;
 
-  /**
-   * Primary object that is under test.
-   */
   private MetadataCacheFlushAttributeSource source;
 
   public MetadataCacheFlushAttributeSourceTests(String name) {

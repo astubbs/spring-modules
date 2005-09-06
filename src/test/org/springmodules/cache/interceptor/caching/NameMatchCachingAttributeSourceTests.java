@@ -32,23 +32,16 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/05 02:45:15 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:31 $
  */
 public class NameMatchCachingAttributeSourceTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private NameMatchCachingAttributeSource attributeSource;
 
   private Method method;
 
   public NameMatchCachingAttributeSourceTests(String name) {
     super(name);
-  }
-
-  private void assertEqualCachingAttributes(Cached expected, Cached actual) {
-    assertEquals("<Caching attribute>", expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -113,15 +106,14 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     properties.setProperty("charAt", "[cacheProfileId=main]");
     this.attributeSource.setProperties(properties);
 
-    this.setUpMethod();
+    setUpMethod();
     Cached expectedCachingAttribute = new Cached("main");
 
     // execute the method to test.
     Cached actualCachingAttribute = this.attributeSource.getCachingAttribute(
         this.method, this.method.getDeclaringClass());
 
-    this.assertEqualCachingAttributes(expectedCachingAttribute,
-        actualCachingAttribute);
+    assertEquals(expectedCachingAttribute, actualCachingAttribute);
   }
 
   /**
@@ -142,15 +134,14 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     properties.setProperty("char*", "[cacheProfileId=main]");
     this.attributeSource.setProperties(properties);
 
-    this.setUpMethod();
+    setUpMethod();
     Cached expectedCachingAttribute = new Cached("main");
 
     // execute the method to test.
     Cached actualCachingAttribute = this.attributeSource.getCachingAttribute(
         this.method, this.method.getDeclaringClass());
 
-    this.assertEqualCachingAttributes(expectedCachingAttribute,
-        actualCachingAttribute);
+    assertEquals(expectedCachingAttribute, actualCachingAttribute);
   }
 
   /**
@@ -162,7 +153,7 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
   public void testGetCachingAttributeWithNotMatchingMethodName()
       throws Exception {
 
-    this.setUpMethod();
+    setUpMethod();
 
     Properties properties = new Properties();
     properties.setProperty("aMethodThatDoesNotExist", "[cacheProfileId=main]");

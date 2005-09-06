@@ -32,16 +32,13 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/08/22 03:30:20 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/06 01:41:46 $
  */
 public final class OsCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(OsCacheProfileTests.class);
 
-  /**
-   * Primary object that is under test.
-   */
   private OsCacheProfile cacheProfile;
 
   public OsCacheProfileTests(String name) {
@@ -204,7 +201,7 @@ public final class OsCacheProfileTests extends TestCase implements
     buffer.append("cronExpression=null]");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 
   public void testToStringWithEmptyGroups() {
@@ -223,7 +220,7 @@ public final class OsCacheProfileTests extends TestCase implements
     buffer.append("cronExpression='" + cronExpression + "']");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 
   public void testToStringWithNotEmptyGroups() {
@@ -260,6 +257,6 @@ public final class OsCacheProfileTests extends TestCase implements
     buffer.append("cronExpression='" + cronExpression + "']");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 }

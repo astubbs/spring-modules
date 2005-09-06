@@ -37,9 +37,6 @@ import org.springmodules.cache.mock.MockCacheProfile;
  */
 public final class CacheProfileEditorTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private AbstractCacheProfileEditor cacheProfileEditor;
 
   private MockClassControl cacheProfileEditorControl;
@@ -51,7 +48,7 @@ public final class CacheProfileEditorTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.setUpCacheProfileEditorAsMockObject();
+    setUpCacheProfileEditorAsMockObject();
   }
 
   private void setUpCacheProfileEditorAsMockObject() throws Exception {
@@ -89,7 +86,7 @@ public final class CacheProfileEditorTests extends TestCase {
 
     CacheProfile cacheProfile = new MockCacheProfile();
 
-    // expectation: create a cache profile from the parsed properties.
+    // create a cache profile from the parsed properties.
     this.cacheProfileEditor.createCacheProfile(parsedProperties);
     this.cacheProfileEditorControl.setReturnValue(cacheProfile);
 

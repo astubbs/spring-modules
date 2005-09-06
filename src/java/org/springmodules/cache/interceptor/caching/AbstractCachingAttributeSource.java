@@ -32,7 +32,7 @@ import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeS
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:26:15 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:28 $
  */
 public abstract class AbstractCachingAttributeSource extends
     AbstractSingleMetadataCacheAttributeSource implements
@@ -70,9 +70,9 @@ public abstract class AbstractCachingAttributeSource extends
   public final Cached getCachingAttribute(Method method, Class targetClass) {
     Cached attribute = null;
 
-    boolean cacheable = this.isCacheable(method);
+    boolean cacheable = isCacheable(method);
     if (cacheable) {
-      attribute = (Cached) super.getAttribute(method, targetClass);
+      attribute = (Cached) getAttribute(method, targetClass);
     }
 
     return attribute;

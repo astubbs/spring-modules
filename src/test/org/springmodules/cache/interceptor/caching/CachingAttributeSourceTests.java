@@ -34,13 +34,10 @@ import org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:15 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:32 $
  */
 public final class CachingAttributeSourceTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private AbstractCachingAttributeSource cachingAttributeSource;
 
   /**
@@ -70,7 +67,7 @@ public final class CachingAttributeSourceTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.setUpCachingAttributeSource();
+    setUpCachingAttributeSource();
   }
 
   private void setUpCachingAttributeSource() {
@@ -141,7 +138,7 @@ public final class CachingAttributeSourceTests extends TestCase {
     // execute the method to test.
     CacheAttribute foundCacheAttribute = this.cachingAttributeSource
         .findAttribute(null);
-    this.assertCacheAttributeCouldNotBeFound(foundCacheAttribute);
+    assertCacheAttributeCouldNotBeFound(foundCacheAttribute);
   }
 
   /**
@@ -157,7 +154,7 @@ public final class CachingAttributeSourceTests extends TestCase {
     CacheAttribute foundCacheAttribute = this.cachingAttributeSource
         .findAttribute(allAttributes);
 
-    this.assertCacheAttributeCouldNotBeFound(foundCacheAttribute);
+    assertCacheAttributeCouldNotBeFound(foundCacheAttribute);
   }
 
   /**
@@ -176,7 +173,7 @@ public final class CachingAttributeSourceTests extends TestCase {
     CacheAttribute foundCacheAttribute = this.cachingAttributeSource
         .findAttribute(allAttributes);
 
-    this.assertCacheAttributeCouldNotBeFound(foundCacheAttribute);
+    assertCacheAttributeCouldNotBeFound(foundCacheAttribute);
   }
 
   /**
@@ -187,7 +184,7 @@ public final class CachingAttributeSourceTests extends TestCase {
    */
   public void testGetCachingAttributeWithCacheableMethod() throws Exception {
     boolean methodIsCacheable = true;
-    this.setUpTargetClassAndMethod(methodIsCacheable);
+    setUpTargetClassAndMethod(methodIsCacheable);
 
     Cached cached = this.cachingAttributeSource.getCachingAttribute(
         this.method, this.targetClass);
@@ -203,7 +200,7 @@ public final class CachingAttributeSourceTests extends TestCase {
    */
   public void testGetCachingAttributeWithNotCacheableMethod() throws Exception {
     boolean methodIsCacheable = false;
-    this.setUpTargetClassAndMethod(methodIsCacheable);
+    setUpTargetClassAndMethod(methodIsCacheable);
 
     Cached cached = this.cachingAttributeSource.getCachingAttribute(
         this.method, this.targetClass);
@@ -213,21 +210,21 @@ public final class CachingAttributeSourceTests extends TestCase {
 
   public void testIsCacheableWithCacheableMethod() throws Exception {
     boolean expectedIsCacheable = true;
-    this.setUpTargetClassAndMethod(expectedIsCacheable);
+    setUpTargetClassAndMethod(expectedIsCacheable);
 
     boolean actualIsCacheable = this.cachingAttributeSource
         .isCacheable(this.method);
 
-    this.assertMethodIsCacheable(expectedIsCacheable, actualIsCacheable);
+    assertMethodIsCacheable(expectedIsCacheable, actualIsCacheable);
   }
 
   public void testIsCacheableWithNotCacheableMethod() throws Exception {
     boolean expectedIsCacheable = false;
-    this.setUpTargetClassAndMethod(expectedIsCacheable);
+    setUpTargetClassAndMethod(expectedIsCacheable);
 
     boolean actualIsCacheable = this.cachingAttributeSource
         .isCacheable(this.method);
 
-    this.assertMethodIsCacheable(expectedIsCacheable, actualIsCacheable);
+    assertMethodIsCacheable(expectedIsCacheable, actualIsCacheable);
   }
 }

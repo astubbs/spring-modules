@@ -55,9 +55,6 @@ public final class CacheProfileValidatorTests extends TestCase {
     }
   }
 
-  /**
-   * Primary object that is under test.
-   */
   private MockCacheProfileValidator validator;
 
   public CacheProfileValidatorTests(String name) {
@@ -110,7 +107,7 @@ public final class CacheProfileValidatorTests extends TestCase {
    * cache profile is equal to <code>null</code>.
    */
   public void testValidateCacheProfileWithCacheProfileEqualToNull() {
-    this.assertValidateCacheProfileThrowsInvalidCacheProfileException(null);
+    assertValidateCacheProfileThrowsInvalidCacheProfileException(null);
   }
 
   /**
@@ -122,7 +119,6 @@ public final class CacheProfileValidatorTests extends TestCase {
   public void testValidateCacheProfileWithCacheProfileHavingClassNotEqualToTargetClass() {
     Object cacheProfile = "Another fake cache profile";
     this.validator.targetClass = Integer.class;
-    this
-        .assertValidateCacheProfileThrowsInvalidCacheProfileException(cacheProfile);
+    assertValidateCacheProfileThrowsInvalidCacheProfileException(cacheProfile);
   }
 }

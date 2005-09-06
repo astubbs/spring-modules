@@ -34,7 +34,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/02 00:06:44 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:46 $
  */
 public final class OsCacheManagerFactoryBeanTests extends
     AbstractCacheManagerFactoryBeanTests {
@@ -89,7 +89,7 @@ public final class OsCacheManagerFactoryBeanTests extends
     this.cacheManagerFactoryBean = new OsCacheManagerFactoryBean();
     this.cacheManagerFactoryBean.setConfigLocation(this.configLocation);
 
-    this.setUpConfigProperties();
+    setUpConfigProperties();
   }
 
   protected void setUpConfigProperties() throws Exception {
@@ -129,7 +129,7 @@ public final class OsCacheManagerFactoryBeanTests extends
       throws Exception {
 
     this.configLocation = new ClassPathResource("oscache.properties");
-    this.setUpConfigProperties();
+    setUpConfigProperties();
 
     this.cacheManagerFactoryBean.setConfigLocation(null);
     this.cacheManagerFactoryBean.afterPropertiesSet();

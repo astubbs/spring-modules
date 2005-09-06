@@ -29,15 +29,12 @@ import org.springmodules.cache.provider.InvalidCacheProfileException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/11 04:34:33 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:23 $
  */
 public final class JcsProfileValidatorTests extends TestCase {
 
   private JcsProfile cacheProfile;
 
-  /**
-   * Primary object that is under test.
-   */
   private JcsProfileValidator cacheProfileValidator;
 
   public JcsProfileValidatorTests(String name) {
@@ -70,12 +67,12 @@ public final class JcsProfileValidatorTests extends TestCase {
 
   public void testValidateCacheProfilePropertiesWithCacheNameEqualToNull() {
     this.cacheProfile.setCacheName(null);
-    this.assertValidateCacheProfilePropertiesThrowsException();
+    assertValidateCacheProfilePropertiesThrowsException();
   }
 
   public void testValidateCacheProfilePropertiesWithEmptyCacheName() {
     this.cacheProfile.setCacheName("");
-    this.assertValidateCacheProfilePropertiesThrowsException();
+    assertValidateCacheProfilePropertiesThrowsException();
   }
 
   /**

@@ -32,7 +32,7 @@ import org.springmodules.cache.util.BracketSeparatedPropertiesParser;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/11 04:25:46 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:48 $
  */
 public abstract class AbstractCacheProfileEditor extends PropertyEditorSupport {
 
@@ -67,7 +67,7 @@ public abstract class AbstractCacheProfileEditor extends PropertyEditorSupport {
     Properties properties = BracketSeparatedPropertiesParser
         .parseProperties(text);
 
-    CacheProfile cacheProfile = this.createCacheProfile(properties);
-    this.setValue(cacheProfile);
+    CacheProfile cacheProfile = createCacheProfile(properties);
+    setValue(cacheProfile);
   }
 }

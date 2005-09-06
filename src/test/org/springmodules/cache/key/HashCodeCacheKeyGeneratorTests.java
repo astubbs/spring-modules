@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:46 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:30 $
  */
 public final class HashCodeCacheKeyGeneratorTests extends
     AbstractCacheKeyGeneratorTests {
@@ -61,9 +61,6 @@ public final class HashCodeCacheKeyGeneratorTests extends
    */
   private Argument argument;
 
-  /**
-   * Primary object that is under test.
-   */
   private HashCodeCacheKeyGenerator keyGenerator;
 
   public HashCodeCacheKeyGeneratorTests(String name) {
@@ -72,10 +69,6 @@ public final class HashCodeCacheKeyGeneratorTests extends
 
   protected void afterSetUp() throws Exception {
     this.keyGenerator = new HashCodeCacheKeyGenerator();
-  }
-
-  private void assertEqualHashCodes(int expected, int actual) {
-    assertEquals("<HashCode>", expected, actual);
   }
 
   /**
@@ -110,7 +103,7 @@ public final class HashCodeCacheKeyGeneratorTests extends
     Serializable expectedCacheKey = new HashCodeCacheKey(checkSum, hashCode);
 
     // get the actual key.
-    Serializable actualCacheKey = super.executeGenerateArgumentHashCode(
+    Serializable actualCacheKey = executeGenerateArgumentHashCode(
         toStringMethod, null);
 
     assertEquals("<Cache key>", expectedCacheKey, actualCacheKey);
@@ -123,7 +116,7 @@ public final class HashCodeCacheKeyGeneratorTests extends
    * 'generateArgumentHashCode' is set to <code>true</code>.
    */
   public void testGetMethodArgumentHashCodeGeneratingHashCode() {
-    this.setUpArgument();
+    setUpArgument();
     this.keyGenerator.setGenerateArgumentHashCode(true);
 
     int generatedHashCode = this.keyGenerator
@@ -142,14 +135,14 @@ public final class HashCodeCacheKeyGeneratorTests extends
    * 'generateArgumentHashCode' is set to <code>false</code>.
    */
   public void testGetMethodArgumentHashCodeNotGeneratingHashCode() {
-    this.setUpArgument();
+    setUpArgument();
     this.keyGenerator.setGenerateArgumentHashCode(false);
 
     int generatedHashCode = this.keyGenerator
         .getMethodArgumentHashCode(this.argument);
     int argumentHashCode = this.argument.hashCode();
 
-    this.assertEqualHashCodes(argumentHashCode, generatedHashCode);
+    assertEquals(argumentHashCode, generatedHashCode);
   }
 
   /**
@@ -161,6 +154,6 @@ public final class HashCodeCacheKeyGeneratorTests extends
     int actualArgumentHashCode = this.keyGenerator
         .getMethodArgumentHashCode(null);
 
-    this.assertEqualHashCodes(0, actualArgumentHashCode);
+    assertEquals(0, actualArgumentHashCode);
   }
 }

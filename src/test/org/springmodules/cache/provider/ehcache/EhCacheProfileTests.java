@@ -32,16 +32,13 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/08/22 03:30:19 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/06 01:41:37 $
  */
 public final class EhCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(EhCacheProfileTests.class);
 
-  /**
-   * Primary object that is under test.
-   */
   private EhCacheProfile cacheProfile;
 
   public EhCacheProfileTests(String name) {
@@ -147,25 +144,25 @@ public final class EhCacheProfileTests extends TestCase implements
   public void testToStringWithCacheNameEqualToNull() {
     this.cacheProfile.setCacheName(null);
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cacheProfile.getClass().getName());
+    StringBuffer buffer = new StringBuffer(this.cacheProfile.getClass()
+        .getName());
     buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
     buffer.append("cacheName=null]");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 
   public void testToStringWithCacheNameNotEqualToNull() {
     String cacheName = "main";
     this.cacheProfile.setCacheName(cacheName);
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cacheProfile.getClass().getName());
+    StringBuffer buffer = new StringBuffer(this.cacheProfile.getClass()
+        .getName());
     buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
     buffer.append("cacheName='" + cacheName + "']");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 }

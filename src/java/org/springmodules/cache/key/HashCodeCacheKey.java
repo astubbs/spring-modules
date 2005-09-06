@@ -27,7 +27,7 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/04 04:40:59 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:44 $
  */
 public final class HashCodeCacheKey implements Serializable {
 
@@ -88,7 +88,7 @@ public final class HashCodeCacheKey implements Serializable {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    return this.getHashCode();
+    return getHashCode();
   }
 
   public void setCheckSum(long checkSum) {
@@ -103,6 +103,6 @@ public final class HashCodeCacheKey implements Serializable {
    * @see Object#toString()
    */
   public String toString() {
-    return this.getHashCode() + "|" + this.getCheckSum();
+    return getHashCode() + "|" + getCheckSum();
   }
 }

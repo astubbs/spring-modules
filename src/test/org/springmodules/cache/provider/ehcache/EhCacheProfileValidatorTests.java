@@ -29,15 +29,12 @@ import org.springmodules.cache.provider.InvalidCacheProfileException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/11 04:34:34 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:37 $
  */
 public final class EhCacheProfileValidatorTests extends TestCase {
 
   private EhCacheProfile cacheProfile;
 
-  /**
-   * Primary object that is under test.
-   */
   private EhCacheProfileValidator cacheProfileValidator;
 
   public EhCacheProfileValidatorTests(String name) {
@@ -70,19 +67,19 @@ public final class EhCacheProfileValidatorTests extends TestCase {
 
   public void testValidateCacheProfilePropertiesWithCacheNameEqualToNull() {
     this.cacheProfile.setCacheName(null);
-    this.assertValidateCacheProfilePropertiesThrowsException();
+    assertValidateCacheProfilePropertiesThrowsException();
   }
 
   public void testValidateCacheProfilePropertiesWithEmptyCacheName() {
     this.cacheProfile.setCacheName("");
-    this.assertValidateCacheProfilePropertiesThrowsException();
+    assertValidateCacheProfilePropertiesThrowsException();
   }
 
   /**
    * Verifies that the method
    * <code>{@link EhCacheProfileValidator#validateCacheProfileProperties(Object)}</code>
-   * does not throw a <code>{@link InvalidCacheProfileException}</code>
-   * if the the cache name of the cache profile is not empty.
+   * does not throw a <code>{@link InvalidCacheProfileException}</code> if the
+   * the cache name of the cache profile is not empty.
    */
   public void testValidateCacheProfilePropertiesWithNotEmptyCacheName() {
     this.cacheProfile.setCacheName("mapping");

@@ -37,7 +37,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/22 03:27:56 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:43 $
  */
 public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractIntegrationTests {
@@ -55,7 +55,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
    * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected void assertCacheWasFlushed() {
-    Serializable cacheKey = super.getGeneratedKey(0);
+    Serializable cacheKey = getGeneratedKey(0);
     String key = cacheKey.toString();
 
     try {
@@ -78,7 +78,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
     String cacheProfileId = "test";
     Object actual = cacheProfiles.get(cacheProfileId);
 
-    super.assertEqualCacheProfiles(expected, actual, cacheProfileId);
+    assertEqualCacheProfiles(expected, actual, cacheProfileId);
   }
 
   /**
@@ -86,22 +86,20 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
    */
   protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
       throws Exception {
-    Serializable cacheKey = super.getGeneratedKey(keyIndex);
+    Serializable cacheKey = getGeneratedKey(keyIndex);
     String key = cacheKey.toString();
 
     Object actualCachedObject = this.cacheAdministrator.getFromCache(key);
 
-    super.assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
+    assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
   }
 
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
    */
   protected final void onSetUp() throws Exception {
-    super.onSetUp();
-
     // get the cache administrator from the Spring bean context.
-    this.cacheAdministrator = (GeneralCacheAdministrator) super.applicationContext
+    this.cacheAdministrator = (GeneralCacheAdministrator) this.applicationContext
         .getBean("cacheManager");
   }
 }

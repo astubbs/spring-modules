@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.jcs.JcsProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/08/22 03:27:53 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/06 01:41:52 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractIntegrationTests {
@@ -61,10 +61,10 @@ public abstract class AbstractJcsIntegrationTests extends
    * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected void assertCacheWasFlushed() throws Exception {
-    Serializable key = super.getGeneratedKey(0);
-    ICacheElement cacheEntry = this.getCacheElement(key);
+    Serializable key = getGeneratedKey(0);
+    ICacheElement cacheEntry = getCacheElement(key);
 
-    super.assertCacheEntryFromCacheIsNull(cacheEntry, key);
+    assertCacheEntryFromCacheIsNull(cacheEntry, key);
   }
 
   /**
@@ -78,7 +78,7 @@ public abstract class AbstractJcsIntegrationTests extends
     String cacheProfileId = "test";
     Object actual = cacheProfiles.get(cacheProfileId);
 
-    super.assertEqualCacheProfiles(expected, actual, cacheProfileId);
+    assertEqualCacheProfiles(expected, actual, cacheProfileId);
   }
 
   /**
@@ -86,12 +86,12 @@ public abstract class AbstractJcsIntegrationTests extends
    */
   protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
       throws Exception {
-    Serializable key = super.getGeneratedKey(keyIndex);
+    Serializable key = getGeneratedKey(keyIndex);
     ICacheElement cacheElement = this.getCacheElement(key);
 
     Object actualCachedObject = cacheElement.getVal();
 
-    super.assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
+    assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
   }
 
   private ICacheElement getCacheElement(Serializable key) {
@@ -108,9 +108,7 @@ public abstract class AbstractJcsIntegrationTests extends
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
    */
   protected final void onSetUp() throws Exception {
-    super.onSetUp();
-
-    this.cacheManager = (CompositeCacheManager) super.applicationContext
+    this.cacheManager = (CompositeCacheManager) this.applicationContext
         .getBean("cacheManager");
   }
 

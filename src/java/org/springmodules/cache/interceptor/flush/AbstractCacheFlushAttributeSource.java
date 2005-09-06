@@ -33,7 +33,7 @@ import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeS
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:34:15 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:35 $
  */
 public abstract class AbstractCacheFlushAttributeSource extends
     AbstractSingleMetadataCacheAttributeSource implements
@@ -67,7 +67,7 @@ public abstract class AbstractCacheFlushAttributeSource extends
    * @see CacheFlushAttributeSource#getCacheFlushAttribute(Method, Class)
    */
   public FlushCache getCacheFlushAttribute(Method method, Class targetClass) {
-    FlushCache attribute = (FlushCache) super.getAttribute(method, targetClass);
+    FlushCache attribute = (FlushCache) getAttribute(method, targetClass);
     return attribute;
   }
 

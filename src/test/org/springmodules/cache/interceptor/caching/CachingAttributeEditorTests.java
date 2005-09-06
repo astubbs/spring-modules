@@ -27,13 +27,10 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:49 $
+ * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:31 $
  */
 public final class CachingAttributeEditorTests extends TestCase {
 
-  /**
-   * Primary object under test.
-   */
   private CachingAttributeEditor editor;
 
   public CachingAttributeEditorTests(String name) {

@@ -38,7 +38,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/04 04:32:00 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:27 $
  */
 public class CachingInterceptor extends CachingAspectSupport implements
     MethodInterceptor, InitializingBean {
@@ -98,7 +98,7 @@ public class CachingInterceptor extends CachingAspectSupport implements
   public final Object invoke(MethodInvocation methodInvocation)
       throws Throwable {
 
-    Cached cachingAttribute = this.getCachingAttribute(methodInvocation);
+    Cached cachingAttribute = getCachingAttribute(methodInvocation);
 
     if (cachingAttribute == null) {
       // no caching performed, we don't have any information about the cache

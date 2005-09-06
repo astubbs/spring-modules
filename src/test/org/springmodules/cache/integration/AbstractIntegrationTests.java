@@ -36,7 +36,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/31 01:22:34 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/06 01:41:38 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
@@ -136,15 +136,15 @@ public abstract class AbstractIntegrationTests extends
     Map unmodifiableCacheProfileMap = Collections
         .unmodifiableMap(cacheProfiles);
 
-    this.assertCorrectCacheProfileConfiguration(unmodifiableCacheProfileMap);
+    assertCorrectCacheProfileConfiguration(unmodifiableCacheProfileMap);
   }
 
   /**
    * Verifies that the caching and the cache-flushing are working correctly.
    */
   public final void testCachingAndCacheFlushing() throws Exception {
-    this.setUpTarget();
-    this.setUpEntryStoredListener();
+    setUpTarget();
+    setUpEntryStoredListener();
 
     if (super.logger.isDebugEnabled()) {
       super.logger.debug("Storing in the cache...");
@@ -152,11 +152,11 @@ public abstract class AbstractIntegrationTests extends
 
     int nameIndex = 0;
 
-    String cachedObject = this.target.getName(nameIndex);
+    String cachedObject = target.getName(nameIndex);
     assertTrue("The retrieved name should not be empty", StringUtils
         .hasText(cachedObject));
 
-    this.assertObjectWasCached(cachedObject, nameIndex);
+    assertObjectWasCached(cachedObject, nameIndex);
 
     // call the same method again. This time the return value should be read
     // from the cache.
@@ -180,12 +180,12 @@ public abstract class AbstractIntegrationTests extends
     }
     this.target.updateName(nameIndex, "Rod Johnson");
 
-    this.assertCacheWasFlushed();
+    assertCacheWasFlushed();
 
     // NULL_ENTRY should be cached, and null should be returned.
     this.target.updateName(++nameIndex, null);
     cachedObject = this.target.getName(nameIndex);
-    this.assertObjectWasCached(CachingAspectSupport.NULL_ENTRY, nameIndex);
+    assertObjectWasCached(CachingAspectSupport.NULL_ENTRY, nameIndex);
 
     assertNull(cachedObject);
   }

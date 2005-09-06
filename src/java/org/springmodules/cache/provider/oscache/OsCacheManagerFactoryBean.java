@@ -39,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * @version $Revision: 1.4 $ $Date: 2005/09/02 00:06:42 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:22 $
  */
 public final class OsCacheManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
@@ -63,7 +63,7 @@ public final class OsCacheManagerFactoryBean extends
   public void afterPropertiesSet() throws Exception {
     logger.info("Creating OSCache cache manager");
 
-    Resource configLocation = super.getConfigLocation();
+    Resource configLocation = getConfigLocation();
     if (null == configLocation) {
       this.cacheManager = new GeneralCacheAdministrator();
     } else {

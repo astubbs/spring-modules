@@ -34,13 +34,10 @@ import org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:04 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:25 $
  */
 public final class CacheFlushAttributeSourceTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private AbstractCacheFlushAttributeSource cacheFlushAttributeSource;
 
   /**
@@ -60,15 +57,13 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.setUpCacheFlushAttributeSourceAsMockObject();
+    setUpCacheFlushAttributeSourceAsMockObject();
   }
 
   private void setUpCacheFlushAttributeSourceAsMockObject() throws Exception {
 
     // we subclass instead of using EasyMock because the implemented abstract
-    // method cannot be accessed since it is protected and this test does not
-    // subclass 'AbstractMetadataCacheAttributeSource' nor is in the same
-    // package.
+    // method cannot be accessed since its scope is 'protected'.
     this.cacheFlushAttributeSource = new AbstractCacheFlushAttributeSource() {
 
       /**
@@ -169,7 +164,7 @@ public final class CacheFlushAttributeSourceTests extends TestCase {
    * returns an instance of <code>{@link FlushCache}</code>.
    */
   public void testGetCacheFlushAttribute() throws Exception {
-    this.setUpTargetClassAndMethod();
+    setUpTargetClassAndMethod();
 
     FlushCache flushCache = this.cacheFlushAttributeSource
         .getCacheFlushAttribute(this.method, this.targetClass);

@@ -32,7 +32,7 @@ import org.springmodules.cache.util.BracketSeparatedPropertiesParser;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:37:55 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:34 $
  */
 public class CacheFlushAttributeEditor extends PropertyEditorSupport {
 
@@ -61,6 +61,6 @@ public class CacheFlushAttributeEditor extends PropertyEditorSupport {
         || "true".equalsIgnoreCase(flushBeforeExecutionAsString);
 
     FlushCache cached = new FlushCache(cacheProfileIds, flushBeforeExecution);
-    super.setValue(cached);
+    setValue(cached);
   }
 }

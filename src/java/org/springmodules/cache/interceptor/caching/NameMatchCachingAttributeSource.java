@@ -32,7 +32,7 @@ import org.springmodules.cache.interceptor.AbstractNameMatchCacheAttributeSource
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:33:41 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:27 $
  */
 public final class NameMatchCachingAttributeSource extends
     AbstractNameMatchCacheAttributeSource implements CachingAttributeSource {
@@ -52,7 +52,7 @@ public final class NameMatchCachingAttributeSource extends
    */
   protected final void addCachingAttribute(String methodName,
       Cached cachingAttribute) {
-    super.addAttribute(methodName, cachingAttribute);
+    addAttribute(methodName, cachingAttribute);
   }
 
   /**
@@ -66,7 +66,7 @@ public final class NameMatchCachingAttributeSource extends
    * @see CachingAttributeSource#getCachingAttribute(Method, Class)
    */
   public final Cached getCachingAttribute(Method method, Class targetClass) {
-    Cached cachingAttribute = (Cached) super.getCacheAttribute(method);
+    Cached cachingAttribute = (Cached) getCacheAttribute(method);
     return cachingAttribute;
   }
 
@@ -76,6 +76,6 @@ public final class NameMatchCachingAttributeSource extends
    * @return an unmodifiable view of the map of caching attributes.
    */
   protected final Map getCachingAttributeMap() {
-    return super.getAttributeMap();
+    return getAttributeMap();
   }
 }

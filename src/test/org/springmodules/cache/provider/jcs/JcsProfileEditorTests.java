@@ -33,13 +33,10 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/11 04:34:33 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:23 $
  */
 public final class JcsProfileEditorTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private JcsProfileEditor cacheProfileEditor;
 
   private CacheProfileValidator cacheProfileValidator;
@@ -61,19 +58,19 @@ public final class JcsProfileEditorTests extends TestCase {
    */
   private void assertCreateCacheProfileValidatesCreatedCacheProfile(
       JcsProfile expected) {
-    this.setUpCacheProfileValidatorAsMockObject();
+    setUpCacheProfileValidatorAsMockObject();
 
-    // expectation: validate the new cache profile.
+    // validate the new cache profile.
     this.cacheProfileValidator.validateCacheProfile(expected);
 
-    this.setStatusOfMockControlsToReplay();
+    setStatusOfMockControlsToReplay();
 
     // execute the method to test.
     CacheProfile actual = this.cacheProfileEditor
         .createCacheProfile(this.properties);
     assertEquals("<Cache profile>", expected, actual);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   private void setStatusOfMockControlsToReplay() {
@@ -98,7 +95,7 @@ public final class JcsProfileEditorTests extends TestCase {
 
   public void testCreateCacheProfileWithEmptyProperties() {
     JcsProfile expected = new JcsProfile();
-    this.assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
+    assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
   }
 
   public void testCreateCacheProfileWithPropertiesHavingCacheName() {
@@ -108,7 +105,7 @@ public final class JcsProfileEditorTests extends TestCase {
     this.properties.setProperty("group", group);
 
     JcsProfile expected = new JcsProfile(cacheName, group);
-    this.assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
+    assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
   }
 
   public void testDefaultConstructorCreatesJcsProfileValidator() {

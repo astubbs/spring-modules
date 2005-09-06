@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManage
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/02 00:06:43 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:41 $
  */
 public final class JcsManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
@@ -62,7 +62,7 @@ public final class JcsManagerFactoryBean extends
   public void afterPropertiesSet() throws Exception {
     logger.info("Creating JCS cache manager.");
 
-    Resource configLocation = super.getConfigLocation();
+    Resource configLocation = getConfigLocation();
 
     if (null == configLocation) {
       this.cacheManager = CompositeCacheManager.getInstance();

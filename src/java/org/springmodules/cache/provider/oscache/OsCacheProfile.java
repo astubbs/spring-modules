@@ -30,7 +30,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/08/04 04:49:09 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/06 01:41:22 $
  */
 public class OsCacheProfile implements CacheProfile {
 
@@ -59,8 +59,8 @@ public class OsCacheProfile implements CacheProfile {
 
   public OsCacheProfile(String csvGroups, int refreshPeriod) {
     this();
-    this.setGroups(csvGroups);
-    this.setRefreshPeriod(refreshPeriod);
+    setGroups(csvGroups);
+    setRefreshPeriod(refreshPeriod);
   }
 
   public OsCacheProfile(String csvGroups, int refreshPeriod,
@@ -71,9 +71,9 @@ public class OsCacheProfile implements CacheProfile {
   public OsCacheProfile(String csvGroups, Integer refreshPeriod,
       String cronExpression) {
     this();
-    this.setCronExpression(cronExpression);
-    this.setGroups(csvGroups);
-    this.setRefreshPeriod(refreshPeriod);
+    setCronExpression(cronExpression);
+    setGroups(csvGroups);
+    setRefreshPeriod(refreshPeriod);
   }
 
   /**
@@ -157,7 +157,7 @@ public class OsCacheProfile implements CacheProfile {
     if (StringUtils.hasText(csvGroups)) {
       newGroups = StringUtils.commaDelimitedListToStringArray(csvGroups);
     }
-    this.setGroups(newGroups);
+    setGroups(newGroups);
   }
 
   public final void setGroups(String[] groups) {
@@ -176,8 +176,7 @@ public class OsCacheProfile implements CacheProfile {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
     buffer.append("refreshPeriod=" + this.refreshPeriod + ", ");
     buffer.append("groups=" + ArrayUtils.toString(this.groups) + ", ");

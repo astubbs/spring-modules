@@ -87,7 +87,7 @@ public class JbossCacheFacadeTests extends TestCase {
   }
 
   private void setUpTreeCacheAsMockObject(Method methodToMock) throws Exception {
-    this.setUpTreeCacheAsMockObject(new Method[] { methodToMock });
+    setUpTreeCacheAsMockObject(new Method[] { methodToMock });
   }
 
   private void setUpTreeCacheAsMockObject(Method[] methodsToMock)

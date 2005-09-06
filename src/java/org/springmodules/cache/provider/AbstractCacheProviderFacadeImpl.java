@@ -38,7 +38,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/09/01 03:59:28 $
+ * @version $Revision: 1.15 $ $Date: 2005/09/06 01:41:48 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -60,7 +60,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    */
   private boolean failQuietlyEnabled;
 
-  protected final Log logger = LogFactory.getLog(this.getClass());
+  protected final Log logger = LogFactory.getLog(getClass());
 
   private SerializableFactory serializableFactory;
 
@@ -83,7 +83,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
   public final void afterPropertiesSet() throws InvalidConfigurationException {
 
     // validate the cache manager.
-    this.validateCacheManager();
+    validateCacheManager();
 
     // validate the cache profiles.
     if (this.cacheProfiles == null || this.cacheProfiles.isEmpty()) {
@@ -91,7 +91,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
           "The map of cache profiles should not be empty");
     }
 
-    if (this.isCacheProfileMapValidated())
+    if (isCacheProfileMapValidated())
       return;
 
     // validate each of the cache profiles.
@@ -141,10 +141,10 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     }
 
     try {
-      this.onCancelCacheUpdate(cacheKey);
+      onCancelCacheUpdate(cacheKey);
 
     } catch (CacheException exception) {
-      this.handleCacheException(exception);
+      handleCacheException(exception);
     }
   }
 
@@ -168,9 +168,9 @@ public abstract class AbstractCacheProviderFacadeImpl implements
         for (int i = 0; i < cacheProfileIdCount; i++) {
           String cacheProfileId = cacheProfileIds[i];
 
-          CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
+          CacheProfile cacheProfile = getCacheProfile(cacheProfileId);
           if (cacheProfile != null) {
-            this.onFlushCache(cacheProfile);
+            onFlushCache(cacheProfile);
           }
         }
         if (this.logger.isDebugEnabled()) {
@@ -178,7 +178,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
         }
 
       } catch (CacheException exception) {
-        this.handleCacheException(exception);
+        handleCacheException(exception);
       }
     }
   }
@@ -246,10 +246,10 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     Object cachedObject = null;
 
     try {
-      CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
+      CacheProfile cacheProfile = getCacheProfile(cacheProfileId);
 
       if (cacheProfile != null) {
-        cachedObject = this.onGetFromCache(cacheKey, cacheProfile);
+        cachedObject = onGetFromCache(cacheKey, cacheProfile);
       }
 
       if (this.logger.isDebugEnabled()) {
@@ -258,7 +258,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
       }
 
     } catch (CacheException exception) {
-      this.handleCacheException(exception);
+      handleCacheException(exception);
     }
     return cachedObject;
   }
@@ -322,7 +322,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * @see #setSerializableFactory(SerializableFactory)
    */
   protected final Object makeSerializableIfNecessary(Object obj) {
-    if (!this.isSerializableCacheElementRequired()) {
+    if (!isSerializableCacheElementRequired()) {
       return obj;
     }
     if (this.serializableFactory != null) {
@@ -423,18 +423,18 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     }
 
     try {
-      Object newCacheElement = this.makeSerializableIfNecessary(objectToCache);
+      Object newCacheElement = makeSerializableIfNecessary(objectToCache);
 
-      CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
+      CacheProfile cacheProfile = getCacheProfile(cacheProfileId);
       if (cacheProfile != null) {
-        this.onPutInCache(cacheKey, cacheProfile, newCacheElement);
+        onPutInCache(cacheKey, cacheProfile, newCacheElement);
 
         if (this.logger.isDebugEnabled()) {
           this.logger.debug("Object was successfully stored in the cache");
         }
       }
     } catch (CacheException exception) {
-      this.handleCacheException(exception);
+      handleCacheException(exception);
     }
   }
 
@@ -451,17 +451,17 @@ public abstract class AbstractCacheProviderFacadeImpl implements
       this.logger.debug(logMessage);
     }
 
-    CacheProfile cacheProfile = this.getCacheProfile(cacheProfileId);
+    CacheProfile cacheProfile = getCacheProfile(cacheProfileId);
     if (cacheProfile != null) {
       try {
-        this.onRemoveFromCache(cacheKey, cacheProfile);
+        onRemoveFromCache(cacheKey, cacheProfile);
 
         if (this.logger.isDebugEnabled()) {
           this.logger.debug("Object removed from the cache");
         }
 
       } catch (CacheException exception) {
-        this.handleCacheException(exception);
+        handleCacheException(exception);
       }
     }
   }
@@ -473,7 +473,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
   public final void setCacheProfiles(Map cacheProfiles) {
     if (cacheProfiles instanceof Properties) {
-      this.setCacheProfiles((Properties) cacheProfiles);
+      setCacheProfiles((Properties) cacheProfiles);
     } else {
       this.cacheProfiles = cacheProfiles;
       this.cacheProfileMapValidated = false;
@@ -515,7 +515,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     }
 
     this.cacheProfiles = newCacheProfiles;
-    this.setCacheProfileMapValidated(true);
+    setCacheProfileMapValidated(true);
   }
 
   public final void setFailQuietlyEnabled(boolean failQuietlyEnabled) {

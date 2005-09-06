@@ -57,14 +57,14 @@ public abstract class AbstractCacheProfileValidator implements
           "The cache profile should not be null");
     }
 
-    Class targetClass = this.getTargetClass();
+    Class targetClass = getTargetClass();
     if (!targetClass.equals(cacheProfile.getClass())) {
       throw new InvalidCacheProfileException(
           "The cache profile should be an instance of <"
               + targetClass.getName() + ">");
     }
 
-    this.validateCacheProfileProperties(cacheProfile);
+    validateCacheProfileProperties(cacheProfile);
   }
 
   protected abstract void validateCacheProfileProperties(Object cacheProfile)

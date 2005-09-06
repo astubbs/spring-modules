@@ -32,15 +32,12 @@ import org.springframework.aop.framework.AopConfigException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:15 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:31 $
  */
 public final class CachingAttributeSourceAdvisorTests extends TestCase {
 
   private CachingAttributeSource cachingAttributeSource;
 
-  /**
-   * Primary object under test.
-   */
   private CachingAttributeSourceAdvisor cachingAttributeSourceAdvisor;
 
   private MockControl cachingAttributeSourceControl;
@@ -107,7 +104,7 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     try {
       this.cachingAttributeSourceAdvisor = new CachingAttributeSourceAdvisor(
           this.cachingInterceptor);
-      fail("Expecting a <" + AopConfigException.class.getName() + ">");
+      fail();
 
     } catch (AopConfigException exception) {
       // we are expecting this exception.
@@ -121,16 +118,15 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
    * does not contain a metadata attribute for a given method.
    */
   public void testMatchesWhenAttributeIsNotFound() throws Exception {
-    this.setUpCachingAttributeSourceAsMockObject();
-    this.setUpTargetClassAndMethod();
+    setUpCachingAttributeSourceAsMockObject();
+    setUpTargetClassAndMethod();
 
-    // expectation: a caching attribute should not be found for the specified
-    // method and class.
+    // a caching attribute should not be found for the specified method and class.
     this.cachingAttributeSource.getCachingAttribute(this.method,
         this.targetClass);
     this.cachingAttributeSourceControl.setReturnValue(null);
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     // execute the method to test.
     boolean matches = this.cachingAttributeSourceAdvisor.matches(this.method,
@@ -139,7 +135,7 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     assertFalse("<CachingAttributeSourceAdvisor.matches(Method, Class)>",
         matches);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -150,16 +146,15 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
    * <code>{@link #cachingAttributeSource}</code>.
    */
   public void testMatchesWhenNotNullAttributeIsFound() throws Exception {
-    this.setUpCachingAttributeSourceAsMockObject();
-    this.setUpTargetClassAndMethod();
+    setUpCachingAttributeSourceAsMockObject();
+    setUpTargetClassAndMethod();
 
-    // expectation: a caching attribute should be found for the specified method
-    // and class.
+    // a caching attribute should be found for the specified method and class.
     this.cachingAttributeSource.getCachingAttribute(this.method,
         this.targetClass);
     this.cachingAttributeSourceControl.setReturnValue(new Cached());
 
-    this.setStateOfMockControlsToReplay();
+    setStateOfMockControlsToReplay();
 
     // execute the method to test.
     boolean matches = this.cachingAttributeSourceAdvisor.matches(this.method,
@@ -168,7 +163,7 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     assertTrue("<CachingAttributeSourceAdvisor.matches(Method, Class)>",
         matches);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   private void verifyExpectationsOfMockControlsWereMet() {

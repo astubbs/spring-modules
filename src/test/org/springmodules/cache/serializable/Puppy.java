@@ -36,7 +36,7 @@ public class Puppy {
 
   public Puppy(String name) {
     super();
-    this.setName(name);
+    setName(name);
   }
 
   /**
@@ -83,9 +83,7 @@ public class Puppy {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
 
     buffer.append("name=");

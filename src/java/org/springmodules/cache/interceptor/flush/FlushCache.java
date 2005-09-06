@@ -31,7 +31,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/08/04 04:37:56 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/06 01:41:33 $
  */
 public class FlushCache implements CacheAttribute {
 
@@ -59,7 +59,7 @@ public class FlushCache implements CacheAttribute {
    */
   public FlushCache(String cacheProfileIdsCsv) {
     this();
-    this.setCacheProfileIds(cacheProfileIdsCsv);
+    setCacheProfileIds(cacheProfileIdsCsv);
   }
 
   /**
@@ -70,17 +70,17 @@ public class FlushCache implements CacheAttribute {
    */
   public FlushCache(String cacheProfileIdsCsv, boolean flushedBeforeExecution) {
     this(cacheProfileIdsCsv);
-    this.setFlushBeforeExecution(flushedBeforeExecution);
+    setFlushBeforeExecution(flushedBeforeExecution);
   }
 
   public FlushCache(String[] cacheProfileIds) {
     this();
-    this.setCacheProfileIds(cacheProfileIds);
+    setCacheProfileIds(cacheProfileIds);
   }
 
   public FlushCache(String[] cacheProfileIds, boolean flushedBeforeExecution) {
     this(cacheProfileIds);
-    this.setFlushBeforeExecution(flushedBeforeExecution);
+    setFlushBeforeExecution(flushedBeforeExecution);
   }
 
   /**
@@ -149,7 +149,7 @@ public class FlushCache implements CacheAttribute {
       newProfileIds = StringUtils
           .commaDelimitedListToStringArray(cacheProfileIdsCsv);
     }
-    this.setCacheProfileIds(newProfileIds);
+    setCacheProfileIds(newProfileIds);
   }
 
   public final void setCacheProfileIds(String[] cacheProfileIds) {
@@ -164,8 +164,7 @@ public class FlushCache implements CacheAttribute {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
     buffer.append("cacheProfileIds=");
 

@@ -36,7 +36,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/22 03:32:52 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:22 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -87,7 +87,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#onCancelCacheUpdate(Serializable)
    */
   protected void onCancelCacheUpdate(Serializable cacheKey) {
-    String key = this.getEntryKey(cacheKey);
+    String key = getEntryKey(cacheKey);
     this.cacheManager.cancelUpdate(key);
   }
 
@@ -122,7 +122,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
     Integer refreshPeriod = profile.getRefreshPeriod();
     String cronExpression = profile.getCronExpression();
 
-    String key = this.getEntryKey(cacheKey);
+    String key = getEntryKey(cacheKey);
     Object cachedObject = null;
 
     try {
@@ -153,7 +153,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
     OsCacheProfile profile = (OsCacheProfile) cacheProfile;
 
-    String key = this.getEntryKey(cacheKey);
+    String key = getEntryKey(cacheKey);
     String[] groups = profile.getGroups();
 
     if (groups == null || groups.length == 0) {

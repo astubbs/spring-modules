@@ -33,13 +33,10 @@ import com.opensymphony.oscache.base.CacheEntry;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/11 04:34:34 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:46 $
  */
 public final class OsCacheProfileEditorTests extends TestCase {
 
-  /**
-   * Primary object that is under tests.
-   */
   private OsCacheProfileEditor editor;
 
   public OsCacheProfileEditorTests(String name) {

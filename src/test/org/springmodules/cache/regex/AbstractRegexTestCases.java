@@ -52,9 +52,9 @@ public abstract class AbstractRegexTestCases extends TestCase {
     String regularExpression = "[kkk";
 
     try {
-      this.getRegexToTest(regularExpression);
-      fail("Expecting exception <"
-          + PatternInvalidSyntaxException.class.getName() + ">");
+      getRegexToTest(regularExpression);
+      fail();
+
     } catch (PatternInvalidSyntaxException exception) {
       // we are expecting this exception
     }
@@ -78,15 +78,15 @@ public abstract class AbstractRegexTestCases extends TestCase {
 
   public final void testMatchWithMatchingInputAndGrouping() {
     String pattern = "(ab)c.*";
-    Regex regex = this.getRegexToTest(pattern);
+    Regex regex = getRegexToTest(pattern);
 
     String input = "abc";
     Match match = regex.match(input);
 
-    this.assertInputMatchesPattern(input, pattern, match);
+    assertInputMatchesPattern(input, pattern, match);
 
     String[] expectedGroups = { input, "ab" };
-    this.assertEqualGroups(expectedGroups, match.getGroups());
+    assertEqualGroups(expectedGroups, match.getGroups());
   }
 
   /**
@@ -95,15 +95,15 @@ public abstract class AbstractRegexTestCases extends TestCase {
    */
   public final void testMatchWithMatchingInputAndWithoutGrouping() {
     String pattern = "abc.*";
-    Regex regex = this.getRegexToTest(pattern);
+    Regex regex = getRegexToTest(pattern);
 
     String input = "abc";
     Match match = regex.match(input);
 
-    this.assertInputMatchesPattern(input, pattern, match);
+    assertInputMatchesPattern(input, pattern, match);
 
     String[] expectedGroups = { input };
-    this.assertEqualGroups(expectedGroups, match.getGroups());
+    assertEqualGroups(expectedGroups, match.getGroups());
   }
 
   /**
@@ -112,7 +112,7 @@ public abstract class AbstractRegexTestCases extends TestCase {
    */
   public final void testMatchWithNotMatchingInput() {
     String regularExpression = "(ab)cz.*";
-    Regex regex = this.getRegexToTest(regularExpression);
+    Regex regex = getRegexToTest(regularExpression);
 
     String input = "xyz";
     Match match = regex.match(input);

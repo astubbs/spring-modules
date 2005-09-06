@@ -29,30 +29,30 @@ import junit.framework.Assert;
  * 
  * @version $Revision$ $Date$
  */
-public class EqualsHashCodeAssert {
+public class EqualsHashCodeAssert extends Assert {
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public static void assertEqualsHashCodeRelationshipIsCorrect(Object first,
       Object second) {
-    Assert.assertEquals(first, second);
-    Assert.assertEquals(first.hashCode(), second.hashCode());
+    assertEquals(first, second);
+    assertEquals(first.hashCode(), second.hashCode());
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public static void assertEqualsIsReflexive(Object obj) {
-    Assert.assertEquals(obj, obj);
+    assertEquals(obj, obj);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public static void assertEqualsIsSymmetric(Object first, Object second) {
-    Assert.assertEquals(first, second);
-    Assert.assertEquals(second, first);
+    assertEquals(first, second);
+    assertEquals(second, first);
   }
 
   /**
@@ -60,15 +60,15 @@ public class EqualsHashCodeAssert {
    */
   public static void assertEqualsIsTransitive(Object first, Object second,
       Object third) {
-    Assert.assertEquals(first, second);
-    Assert.assertEquals(second, third);
-    Assert.assertEquals(first, third);
+    assertEquals(first, second);
+    assertEquals(second, third);
+    assertEquals(first, third);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public static void assertEqualsNullComparisonReturnsFalse(Object obj) {
-    Assert.assertFalse(obj.equals(null));
+    assertFalse(obj.equals(null));
   }
 }

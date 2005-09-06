@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.15 $ $Date: 2005/09/04 01:32:32 $
+ * @version $Revision: 1.16 $ $Date: 2005/09/06 01:41:41 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -130,7 +130,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    CompositeCache cache = this.getCache(cacheName);
+    CompositeCache cache = getCache(cacheName);
 
     String cacheGroup = profile.getGroup();
 
@@ -163,9 +163,9 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    CompositeCache cache = this.getCache(cacheName);
+    CompositeCache cache = getCache(cacheName);
 
-    Serializable key = this.getKey(cacheKey, profile);
+    Serializable key = getKey(cacheKey, profile);
     Object cachedObject = null;
 
     try {
@@ -196,9 +196,9 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    CompositeCache cache = this.getCache(cacheName);
+    CompositeCache cache = getCache(cacheName);
 
-    Serializable key = this.getKey(cacheKey, profile);
+    Serializable key = getKey(cacheKey, profile);
     ICacheElement newCacheElement = new CacheElement(cache.getCacheName(), key,
         objectToCache);
 
@@ -228,9 +228,9 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     JcsProfile profile = (JcsProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    CompositeCache cache = this.getCache(cacheName);
+    CompositeCache cache = getCache(cacheName);
 
-    Serializable key = this.getKey(cacheKey, profile);
+    Serializable key = getKey(cacheKey, profile);
 
     try {
       cache.remove(key);

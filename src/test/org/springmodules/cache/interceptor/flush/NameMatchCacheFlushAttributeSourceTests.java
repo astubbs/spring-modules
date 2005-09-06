@@ -31,13 +31,10 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:03 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:24 $
  */
 public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private NameMatchCacheFlushAttributeSource attributeSource;
 
   /**
@@ -47,10 +44,6 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
 
   public NameMatchCacheFlushAttributeSourceTests(String name) {
     super(name);
-  }
-
-  private void assertEqualFlushCache(FlushCache expected, FlushCache actual) {
-    assertEquals("<FlushCache>", expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -89,14 +82,13 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
   public void testGetCacheFlushAttributeWithMethodNameMatchingMappedNameWithoutWildCards()
       throws Exception {
 
-    this.setUpMethod();
+    setUpMethod();
     FlushCache expected = new FlushCache("main");
 
     Properties properties = new Properties();
 
-    // the first property key should match, but the second one is used because
-    // the key of the second property also matches and it's longer than the
-    // first one.
+    // the first property key matches, but the second one is the one used
+    // because it also matches but has longer length.
     properties.setProperty(this.method.getName().substring(0, 2) + "*",
         "[cacheProfileIds=test]");
     properties.setProperty(this.method.getName().substring(0, 3) + "*",
@@ -108,7 +100,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
     FlushCache actual = this.attributeSource.getCacheFlushAttribute(
         this.method, this.method.getDeclaringClass());
 
-    this.assertEqualFlushCache(expected, actual);
+    assertEquals(expected, actual);
   }
 
   /**
@@ -119,8 +111,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
    */
   public void testGetCacheFlushAttributeWithMethodNameMatchingMappedNameWithWildCards()
       throws Exception {
-
-    this.setUpMethod();
+    setUpMethod();
     FlushCache expected = new FlushCache("main");
 
     Properties properties = new Properties();
@@ -132,7 +123,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
     FlushCache actual = this.attributeSource.getCacheFlushAttribute(
         this.method, this.method.getDeclaringClass());
 
-    this.assertEqualFlushCache(expected, actual);
+    assertEquals(expected, actual);
   }
 
   /**
@@ -143,8 +134,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
    */
   public void testGetCacheFlushAttributeWithNotMatchingMethodName()
       throws Exception {
-
-    this.setUpMethod();
+    setUpMethod();
 
     Properties properties = new Properties();
     properties.setProperty("aMethodThatDoesNotExist",

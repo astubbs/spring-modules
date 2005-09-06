@@ -37,11 +37,11 @@ import org.springmodules.cache.util.TextMatcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/04 04:25:49 $
+ * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:36 $
  */
 public abstract class AbstractMethodMapCacheAttributeSource {
 
-  protected final Log logger = LogFactory.getLog(this.getClass());
+  protected final Log logger = LogFactory.getLog(getClass());
 
   /**
    * Map containing instances of <code>{@link CacheAttribute}</code>. The key
@@ -115,8 +115,7 @@ public abstract class AbstractMethodMapCacheAttributeSource {
     Iterator matchingMethodsIterator = matchingMethods.iterator();
     while (matchingMethodsIterator.hasNext()) {
       Method method = (Method) matchingMethodsIterator.next();
-      String registeredMethodName = (String) this.registeredMethodMap
-          .get(method);
+      String registeredMethodName = getRegisteredMethodName(method);
 
       if (registeredMethodName == null
           || (!registeredMethodName.equals(fullyQualifiedTargetMethodName) && registeredMethodName
@@ -124,7 +123,7 @@ public abstract class AbstractMethodMapCacheAttributeSource {
         // method name was not registered or we have a more specific method
         // name.
         this.registeredMethodMap.put(method, fullyQualifiedTargetMethodName);
-        this.addCacheAttribute(method, cacheAttribute);
+        addCacheAttribute(method, cacheAttribute);
 
       } else {
         if (this.logger.isDebugEnabled() && registeredMethodName != null) {
@@ -134,6 +133,10 @@ public abstract class AbstractMethodMapCacheAttributeSource {
         }
       }
     }
+  }
+
+  private String getRegisteredMethodName(Method key) {
+    return (String) this.registeredMethodMap.get(key);
   }
 
   /**
@@ -193,7 +196,7 @@ public abstract class AbstractMethodMapCacheAttributeSource {
     try {
       Class targetClass = Class.forName(className, true, Thread.currentThread()
           .getContextClassLoader());
-      this.addCacheAttribute(targetClass, methodName, cacheAttribute);
+      addCacheAttribute(targetClass, methodName, cacheAttribute);
 
     } catch (ClassNotFoundException exception) {
       throw new IllegalArgumentException("Class '" + className + "' not found");

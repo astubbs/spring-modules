@@ -40,9 +40,6 @@ public class ObjectWrapperTests extends TestCase implements
 
   private static Log logger = LogFactory.getLog(ObjectWrapperTests.class);
 
-  /**
-   * Primary object that is under test.
-   */
   private ObjectWrapper wrapper;
 
   public ObjectWrapperTests(String name) {
@@ -143,7 +140,7 @@ public class ObjectWrapperTests extends TestCase implements
     buffer.append("@" + System.identityHashCode(this.wrapper) + "[");
     buffer.append("value='" + obj + "']");
 
-    this.assertEqualToString(buffer.toString());
+    assertEqualToString(buffer.toString());
   }
 
   public void testToStringWithObjNotBeingString() {
@@ -157,6 +154,6 @@ public class ObjectWrapperTests extends TestCase implements
     buffer.append("@" + System.identityHashCode(this.wrapper) + "[");
     buffer.append("value=" + obj + "]");
 
-    this.assertEqualToString(buffer.toString());
+    assertEqualToString(buffer.toString());
   }
 }

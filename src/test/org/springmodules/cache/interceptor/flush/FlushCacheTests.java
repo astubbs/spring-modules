@@ -32,16 +32,13 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/08/22 03:28:32 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/06 01:41:26 $
  */
 public final class FlushCacheTests extends TestCase implements
     EqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(FlushCacheTests.class);
 
-  /**
-   * Primary object that is under test.
-   */
   private FlushCache flushCache;
 
   public FlushCacheTests(String name) {
@@ -184,7 +181,7 @@ public final class FlushCacheTests extends TestCase implements
     buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 
   public void testToStringWithCacheProfileIdsEqualToNull() {
@@ -201,7 +198,7 @@ public final class FlushCacheTests extends TestCase implements
     buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 
   public void testToStringWithEmptyCacheProfileIds() {
@@ -217,7 +214,7 @@ public final class FlushCacheTests extends TestCase implements
     buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 
   public void testToStringWithNotEmptyCacheProfileIds() {
@@ -227,8 +224,7 @@ public final class FlushCacheTests extends TestCase implements
     this.flushCache.setCacheProfileIds(cacheProfileIds);
     this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.flushCache.getClass().getName());
+    StringBuffer buffer = new StringBuffer(this.flushCache.getClass().getName());
     buffer.append("@" + System.identityHashCode(this.flushCache) + "[");
     buffer.append("cacheProfileIds=");
     int cacheProfileIdCount = cacheProfileIds.length;
@@ -244,6 +240,6 @@ public final class FlushCacheTests extends TestCase implements
     buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 }

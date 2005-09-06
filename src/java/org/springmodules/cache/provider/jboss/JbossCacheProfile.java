@@ -43,7 +43,7 @@ public class JbossCacheProfile implements CacheProfile {
 
   public JbossCacheProfile(String fqn) {
     this();
-    this.setNodeFqn(fqn);
+    setNodeFqn(fqn);
   }
 
   public final String getNodeFqn() {

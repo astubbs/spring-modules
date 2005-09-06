@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.AbstractCacheManagerFactoryBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/09/02 00:06:43 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:24 $
  */
 public final class JcsManagerFactoryBeanTests extends
     AbstractCacheManagerFactoryBeanTests {
@@ -76,7 +76,7 @@ public final class JcsManagerFactoryBeanTests extends
     ICompositeCacheAttributes cacheAttributes = cache.getCacheAttributes();
     int actualMaxObjects = cacheAttributes.getMaxObjects();
 
-    this.assertEqualsPropertyMaxObjects(expectedMaxObjects, actualMaxObjects);
+    assertEqualsPropertyMaxObjects(expectedMaxObjects, actualMaxObjects);
   }
 
   private void assertEqualsPropertyMaxObjects(int expected, int actual) {
@@ -131,7 +131,7 @@ public final class JcsManagerFactoryBeanTests extends
    * new cache manager which properties are loaded from a configuration file.
    */
   public void testAfterPropertiesSet() throws Exception {
-    this.setUpConfigurationProperties();
+    setUpConfigurationProperties();
     this.cacheManagerFactoryBean.afterPropertiesSet();
     assertCacheManagerWasConfigured("altTestCache");
   }
@@ -144,7 +144,7 @@ public final class JcsManagerFactoryBeanTests extends
    */
   public void testAfterPropertiesSetWithConfigLocationEqualToNull()
       throws Exception {
-    this.setUpConfigurationProperties("cache.ccf");
+    setUpConfigurationProperties("cache.ccf");
     this.cacheManagerFactoryBean.setConfigLocation(null);
 
     this.cacheManagerFactoryBean.afterPropertiesSet();
@@ -153,7 +153,7 @@ public final class JcsManagerFactoryBeanTests extends
   }
 
   public void testDestroy() throws Exception {
-    this.setUpConfigurationProperties();
+    setUpConfigurationProperties();
 
     this.cacheManagerFactoryBean.afterPropertiesSet();
 

@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.InvalidObjectToCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/08/24 00:08:58 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/06 01:41:40 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -116,7 +116,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    Cache cache = this.getCache(cacheName);
+    Cache cache = getCache(cacheName);
 
     try {
       cache.removeAll();
@@ -141,7 +141,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    Cache cache = this.getCache(cacheName);
+    Cache cache = getCache(cacheName);
     Object cachedObject = null;
 
     try {
@@ -175,7 +175,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    Cache cache = this.getCache(cacheName);
+    Cache cache = getCache(cacheName);
     Element newCacheElement = new Element(cacheKey,
         (Serializable) objectToCache);
 
@@ -202,7 +202,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     EhCacheProfile profile = (EhCacheProfile) cacheProfile;
     String cacheName = profile.getCacheName();
 
-    Cache cache = this.getCache(cacheName);
+    Cache cache = getCache(cacheName);
 
     try {
       cache.remove(cacheKey);
@@ -238,7 +238,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
           "The Cache Manager should not be null");
     }
 
-    if (!super.isFailQuietlyEnabled()) {
+    if (!isFailQuietlyEnabled()) {
       int cacheManagerStatus = this.cacheManager.getStatus();
 
       if (cacheManagerStatus != CacheManager.STATUS_ALIVE) {

@@ -35,7 +35,7 @@ import org.springframework.metadata.Attributes;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:48 $
+ * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:31 $
  */
 public final class MetadataCachingAttributeSourceTests extends TestCase {
 
@@ -43,9 +43,6 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
 
   private MockControl attributesControl;
 
-  /**
-   * Primary object that is under test.
-   */
   private MetadataCachingAttributeSource source;
 
   public MetadataCachingAttributeSourceTests(String name) {

@@ -49,8 +49,8 @@ public class PersonImpl implements Person {
 
   public PersonImpl(String firstName, String lastName) {
     super();
-    this.firstName = firstName;
-    this.lastName = lastName;
+    setFirstName(firstName);
+    setLastName(lastName);
   }
 
   /**
@@ -79,8 +79,7 @@ public class PersonImpl implements Person {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
     buffer.append("firstName='" + this.firstName + "', ");
     buffer.append("lastName='" + this.lastName + "']");

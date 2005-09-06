@@ -37,15 +37,12 @@ import org.springmodules.cache.integration.CacheableServiceImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/31 01:22:36 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:36 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 
   private Properties cacheFlushAttributes;
 
-  /**
-   * Primary object that is under test.
-   */
   private CacheProxyFactoryBean cacheProxyFactoryBean;
 
   private Properties cachingAttributes;
@@ -84,8 +81,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   public void testAfterPropertiesSetWithNullTarget() {
     try {
       this.cacheProxyFactoryBean.afterPropertiesSet();
-      fail("Expecting exception <" + IllegalStateException.class.getName()
-          + ">");
+      fail();
     } catch (IllegalStateException exception) {
       // we are expecting this exception.
     }

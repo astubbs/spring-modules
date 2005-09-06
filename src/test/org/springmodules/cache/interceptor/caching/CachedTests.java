@@ -32,16 +32,13 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/08/22 03:28:31 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/06 01:41:32 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(CachedTests.class);
 
-  /**
-   * Primary object under test.
-   */
   private Cached cached;
 
   public CachedTests(String name) {
@@ -139,27 +136,25 @@ public final class CachedTests extends TestCase implements
   public void testToStringWithCacheProfileIdEqualToNull() {
     this.cached.setCacheProfileId(null);
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cached.getClass().getName());
+    StringBuffer buffer = new StringBuffer(this.cached.getClass().getName());
     buffer.append("@" + System.identityHashCode(this.cached) + "[");
     buffer.append("cacheProfileId=null]");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 
   public void testToStringWithCacheProfileIdNotEqualToNull() {
     String cacheProfileId = "main";
     this.cached.setCacheProfileId(cacheProfileId);
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cached.getClass().getName());
+    StringBuffer buffer = new StringBuffer(this.cached.getClass().getName());
     buffer.append("@" + System.identityHashCode(this.cached) + "[");
     buffer.append("cacheProfileId='");
     buffer.append(cacheProfileId);
     buffer.append("']");
 
     String expected = buffer.toString();
-    this.assertEqualToString(expected);
+    assertEqualToString(expected);
   }
 }

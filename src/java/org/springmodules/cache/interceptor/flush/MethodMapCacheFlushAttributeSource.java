@@ -30,7 +30,7 @@ import org.springmodules.cache.interceptor.caching.CachingAttributeSource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/04 04:37:56 $
+ * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:34 $
  */
 public class MethodMapCacheFlushAttributeSource extends
     AbstractMethodMapCacheAttributeSource implements CacheFlushAttributeSource {
@@ -64,13 +64,13 @@ public class MethodMapCacheFlushAttributeSource extends
    */
   public final void addCacheFlushAttribute(String fullyQualifiedMethodName,
       FlushCache cacheFlushAttribute) {
-    super.addCacheAttribute(fullyQualifiedMethodName, cacheFlushAttribute);
+    addCacheAttribute(fullyQualifiedMethodName, cacheFlushAttribute);
   }
 
   /**
    * @see CacheFlushAttributeSource#getCacheFlushAttribute(Method, Class)
    */
   public FlushCache getCacheFlushAttribute(Method method, Class targetClass) {
-    return (FlushCache) super.getAttributeMap().get(method);
+    return (FlushCache) getAttributeMap().get(method);
   }
 }

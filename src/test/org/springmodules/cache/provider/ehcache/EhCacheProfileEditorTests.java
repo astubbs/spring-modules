@@ -33,13 +33,10 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/11 04:34:33 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:37 $
  */
 public final class EhCacheProfileEditorTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private EhCacheProfileEditor cacheProfileEditor;
 
   private CacheProfileValidator cacheProfileValidator;
@@ -61,19 +58,18 @@ public final class EhCacheProfileEditorTests extends TestCase {
    */
   private void assertCreateCacheProfileValidatesCreatedCacheProfile(
       EhCacheProfile expected) {
-    this.setUpCacheProfileValidatorAsMockObject();
+    setUpCacheProfileValidatorAsMockObject();
 
-    // expectation: validate the new cache profile.
     this.cacheProfileValidator.validateCacheProfile(expected);
 
-    this.setStatusOfMockControlsToReplay();
+    setStatusOfMockControlsToReplay();
 
     // execute the method to test.
     CacheProfile actual = this.cacheProfileEditor
         .createCacheProfile(this.properties);
     assertEquals("<Cache profile>", expected, actual);
 
-    this.verifyExpectationsOfMockControlsWereMet();
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   private void setStatusOfMockControlsToReplay() {
@@ -98,7 +94,7 @@ public final class EhCacheProfileEditorTests extends TestCase {
 
   public void testCreateCacheProfileWithEmptyProperties() {
     EhCacheProfile expected = new EhCacheProfile();
-    this.assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
+    assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
   }
 
   public void testCreateCacheProfileWithPropertiesHavingCacheName() {
@@ -106,7 +102,7 @@ public final class EhCacheProfileEditorTests extends TestCase {
     this.properties.setProperty("cacheName", cacheName);
 
     EhCacheProfile expected = new EhCacheProfile(cacheName);
-    this.assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
+    assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
   }
 
   public void testDefaultConstructorCreatesEhCacheProfileValidator() {

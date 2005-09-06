@@ -27,13 +27,10 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/11 04:32:45 $
+ * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:29 $
  */
 public final class HashCodeCalculatorTests extends TestCase {
 
-  /**
-   * Primary object that is under test.
-   */
   private HashCodeCalculator hashCodeCalculator;
 
   public HashCodeCalculatorTests(String name) {

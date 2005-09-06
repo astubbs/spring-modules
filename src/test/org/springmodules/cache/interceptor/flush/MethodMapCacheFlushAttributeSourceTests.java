@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/11 04:32:03 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:25 $
  */
 public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
 
@@ -41,9 +41,6 @@ public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
    */
   private FlushCache cachingAttribute;
 
-  /**
-   * Primary object that is under test.
-   */
   private MethodMapCacheFlushAttributeSource cachingAttributeSource;
 
   /**
@@ -83,8 +80,7 @@ public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
     assertTrue("The map should have the key '" + method + "'",
         actualAttributeMap.containsKey(method));
 
-    assertSame("<Cache-flush Attribute>", expectedCacheFlushAttribute,
-        actualAttributeMap.get(method));
+    assertSame(expectedCacheFlushAttribute, actualAttributeMap.get(method));
   }
 
   protected void setUp() throws Exception {
@@ -116,10 +112,10 @@ public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
         fullyQualifiedMethodName, this.cachingAttribute);
 
     // verify the caching attributes were added
-    this.assertCacheFlushAttributeWasAdded(this.getPersonNameMethod,
+    assertCacheFlushAttributeWasAdded(this.getPersonNameMethod,
         this.cachingAttribute);
 
-    this.assertCacheFlushAttributeWasAdded(this.getPersonsMethod,
+    assertCacheFlushAttributeWasAdded(this.getPersonsMethod,
         this.cachingAttribute);
 
     // use a more specific method name
@@ -131,10 +127,10 @@ public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
         fullyQualifiedMethodName, otherCacheFlushAttribute);
 
     // verify the caching attributes were added
-    this.assertCacheFlushAttributeWasAdded(this.getPersonNameMethod,
+    assertCacheFlushAttributeWasAdded(this.getPersonNameMethod,
         this.cachingAttribute);
 
-    this.assertCacheFlushAttributeWasAdded(this.getPersonsMethod,
+    assertCacheFlushAttributeWasAdded(this.getPersonsMethod,
         otherCacheFlushAttribute);
   }
 
@@ -143,8 +139,7 @@ public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
     try {
       this.cachingAttributeSource.addCacheFlushAttribute(
           fullyQualifiedMethodName, this.cachingAttribute);
-      fail("Expecting exception <" + IllegalArgumentException.class.getName()
-          + ">");
+      fail();
 
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
@@ -199,7 +194,7 @@ public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
         fullyQualifiedMethodName, otherCacheFlushAttribute);
 
     // verify the caching attributes were added
-    this.assertCacheFlushAttributeWasAdded(this.getPersonsMethod,
+    assertCacheFlushAttributeWasAdded(this.getPersonsMethod,
         otherCacheFlushAttribute);
 
     // use wildcards.
@@ -209,10 +204,10 @@ public final class MethodMapCacheFlushAttributeSourceTests extends TestCase {
         fullyQualifiedMethodName, this.cachingAttribute);
 
     // verify the caching attributes were added
-    this.assertCacheFlushAttributeWasAdded(this.getPersonNameMethod,
+    assertCacheFlushAttributeWasAdded(this.getPersonNameMethod,
         this.cachingAttribute);
 
-    this.assertCacheFlushAttributeWasAdded(this.getPersonsMethod,
+    assertCacheFlushAttributeWasAdded(this.getPersonsMethod,
         otherCacheFlushAttribute);
   }
 

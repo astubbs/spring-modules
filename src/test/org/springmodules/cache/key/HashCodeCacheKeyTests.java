@@ -32,16 +32,13 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/22 03:29:54 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:30 $
  */
 public final class HashCodeCacheKeyTests extends TestCase implements
     EqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(HashCodeCacheKeyTests.class);
 
-  /**
-   * Primary object that is under test.
-   */
   private HashCodeCacheKey key;
 
   public HashCodeCacheKeyTests(String name) {

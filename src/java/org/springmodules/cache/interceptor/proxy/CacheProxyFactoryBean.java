@@ -43,7 +43,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/15 22:39:22 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:51 $
  */
 public final class CacheProxyFactoryBean extends ProxyConfig implements
     FactoryBean, InitializingBean {
@@ -109,12 +109,12 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
 
     proxyFactory.copyFrom(this);
 
-    TargetSource targetSource = this.createTargetSource(this.target);
+    TargetSource targetSource = createTargetSource(this.target);
     proxyFactory.setTargetSource(targetSource);
 
     if (this.proxyInterfaces != null) {
       proxyFactory.setInterfaces(this.proxyInterfaces);
-    } else if (!super.isProxyTargetClass()) {
+    } else if (!isProxyTargetClass()) {
       if (this.target instanceof TargetSource) {
         throw new AopConfigException(
             "Either 'proxyInterfaces' or 'proxyTargetClass' is required "

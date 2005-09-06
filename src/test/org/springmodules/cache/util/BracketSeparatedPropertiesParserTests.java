@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:45:20 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:47 $
  */
 public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
@@ -49,7 +49,8 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
     try {
       BracketSeparatedPropertiesParser.addProperty(this.property,
           this.properties);
-      fail("Expecting <" + IllegalArgumentException.class.getName() + ">");
+      fail();
+      
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }
@@ -82,12 +83,12 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
   public void testAddPropertyWithDuplicatedProperties() {
     this.properties.setProperty(this.propertyKey, this.propertyValue);
-    this.assertAddPropertyThrowsException();
+    assertAddPropertyThrowsException();
   }
 
   public void testAddPropertyWithInvalidPropertyString() {
     this.property = "XWing";
-    this.assertAddPropertyThrowsException();
+    assertAddPropertyThrowsException();
   }
 
   public void testAddPropertyWithValidPropertyString() {
@@ -96,32 +97,32 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
     BracketSeparatedPropertiesParser.addProperty(this.property,
         actualProperties);
-    this.assertEqualProperties(this.properties, actualProperties);
+    assertEqualProperties(this.properties, actualProperties);
   }
 
   public void testParsePropertiesWithEmptyString() {
     this.property = "";
-    this.assertParsePropertiesThrowsException();
+    assertParsePropertiesThrowsException();
   }
 
   public void testParsePropertiesWithStringEqualToNull() {
     this.property = null;
-    this.assertParsePropertiesThrowsException();
+    assertParsePropertiesThrowsException();
   }
 
   public void testParsePropertiesWithStringNotEndingWithBrackets() {
     this.property = "[Anakin";
-    this.assertParsePropertiesThrowsException();
+    assertParsePropertiesThrowsException();
   }
 
   public void testParsePropertiesWithStringNotStartingAndNotEndingWithBrackets() {
     this.property = "Anakin";
-    this.assertParsePropertiesThrowsException();
+    assertParsePropertiesThrowsException();
   }
 
   public void testParsePropertiesWithStringNotStartingWithBracket() {
     this.property = "Anakin]";
-    this.assertParsePropertiesThrowsException();
+    assertParsePropertiesThrowsException();
   }
 
   public void testParsePropertiesWithValidPropertiesString() {
@@ -139,6 +140,6 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
     Properties actualProperties = BracketSeparatedPropertiesParser
         .parseProperties(cacheProfileProperties);
 
-    this.assertEqualProperties(expectedProperties, actualProperties);
+    assertEqualProperties(expectedProperties, actualProperties);
   }
 }

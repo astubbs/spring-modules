@@ -1,6 +1,5 @@
 package org.springmodules.cache.integration.ehcache;
 
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/08/31 01:22:36 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:48 $
  */
 public abstract class AbstractEhCacheIntegrationTests extends
     AbstractIntegrationTests {
@@ -37,11 +36,11 @@ public abstract class AbstractEhCacheIntegrationTests extends
    * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected final void assertCacheWasFlushed() throws Exception {
-    Serializable key = super.getGeneratedKey(0);
+    Serializable key = getGeneratedKey(0);
 
     Element cacheEntry = this.cache.get(key);
 
-    super.assertCacheEntryFromCacheIsNull(cacheEntry, key);
+    assertCacheEntryFromCacheIsNull(cacheEntry, key);
   }
 
   /**
@@ -54,7 +53,7 @@ public abstract class AbstractEhCacheIntegrationTests extends
     String cacheProfileId = "test";
     Object actual = cacheProfiles.get(cacheProfileId);
 
-    super.assertEqualCacheProfiles(expected, actual, cacheProfileId);
+    assertEqualCacheProfiles(expected, actual, cacheProfileId);
   }
 
   /**
@@ -62,22 +61,20 @@ public abstract class AbstractEhCacheIntegrationTests extends
    */
   protected final void assertObjectWasCached(Object expectedCachedObject,
       int keyIndex) throws Exception {
-    Serializable key = super.getGeneratedKey(keyIndex);
+    Serializable key = getGeneratedKey(keyIndex);
 
     // get the cache entry stored under the key we got.
     Element cachedElement = this.cache.get(key);
     Object actualCachedObject = cachedElement.getValue();
 
-    super.assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
+    assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
   }
 
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
    */
   protected final void onSetUp() throws Exception {
-    super.onSetUp();
-
-    CacheManager cacheManager = (CacheManager) super.applicationContext
+    CacheManager cacheManager = (CacheManager) this.applicationContext
         .getBean("cacheManager");
 
     this.cache = cacheManager.getCache("testCache");

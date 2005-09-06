@@ -33,7 +33,7 @@ import org.springmodules.cache.interceptor.caching.Cached;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/31 01:22:35 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:42 $
  */
 public class AnnotationCachingAttributeSourceTests extends TestCase {
 
@@ -42,9 +42,6 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
    */
   private Method annotatedMethod;
 
-  /**
-   * Primary object that is under test.
-   */
   private AnnotationCachingAttributeSource cachingAttributeSource;
 
   public AnnotationCachingAttributeSourceTests(String name) {

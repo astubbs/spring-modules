@@ -53,7 +53,7 @@ import org.springframework.util.StringUtils;
  * @author Xavier Dury
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/04 04:30:30 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:29 $
  */
 public class CachingAttributeSourceEditor extends PropertyEditorSupport {
 
@@ -93,7 +93,7 @@ public class CachingAttributeSourceEditor extends PropertyEditorSupport {
         cachingAttributeSource.addCachingAttribute(key, cachingAttribute);
       }
 
-      super.setValue(cachingAttributeSource);
+      setValue(cachingAttributeSource);
     }
   }
 }

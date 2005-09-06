@@ -34,16 +34,13 @@ import org.springmodules.cache.interceptor.SimulatedService;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/05 02:18:50 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:32 $
  */
 public class CachingAttributeSourceEditorTests extends TestCase {
 
   public static final String LINE_SEPARATOR = System
       .getProperty("line.separator");
 
-  /**
-   * Primary object that is under test.
-   */
   private CachingAttributeSourceEditor editor;
 
   /**
@@ -129,7 +126,7 @@ public class CachingAttributeSourceEditorTests extends TestCase {
    */
   public void testSetAsTextWithEmptyText() {
     this.editor.setAsText("");
-    this.assertCachingAttributeSourceEditorDidNotCreateAnyObject();
+    assertCachingAttributeSourceEditorDidNotCreateAnyObject();
   }
 
   /**
@@ -140,6 +137,6 @@ public class CachingAttributeSourceEditorTests extends TestCase {
    */
   public void testSetAsTextWithTextEqualToNull() {
     this.editor.setAsText(null);
-    this.assertCachingAttributeSourceEditorDidNotCreateAnyObject();
+    assertCachingAttributeSourceEditorDidNotCreateAnyObject();
   }
 }

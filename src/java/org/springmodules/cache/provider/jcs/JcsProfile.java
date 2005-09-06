@@ -26,7 +26,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/08/04 04:46:30 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/06 01:41:41 $
  */
 public class JcsProfile implements CacheProfile {
 
@@ -48,12 +48,12 @@ public class JcsProfile implements CacheProfile {
 
   public JcsProfile(String cacheName) {
     this();
-    this.setCacheName(cacheName);
+    setCacheName(cacheName);
   }
 
   public JcsProfile(String cacheName, String group) {
     this(cacheName);
-    this.setGroup(group);
+    setGroup(group);
   }
 
   /**
@@ -113,8 +113,7 @@ public class JcsProfile implements CacheProfile {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
 
     buffer.append("cacheName=");
