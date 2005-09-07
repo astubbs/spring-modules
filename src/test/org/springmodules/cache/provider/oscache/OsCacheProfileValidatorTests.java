@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:46 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/07 02:32:11 $
  */
 public final class OsCacheProfileValidatorTests extends TestCase {
 
@@ -43,12 +43,6 @@ public final class OsCacheProfileValidatorTests extends TestCase {
     this.cacheProfileValidator = new OsCacheProfileValidator();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheProfileValidator#validateCacheProfile(Object)}</code>
-   * does not throw any exception if the profile to validate is an instance of
-   * <code>{@link OsCacheProfile}</code>.
-   */
   public void testValidateCacheProfileWithInstanceOfOscacheCacheProfile() {
     OsCacheProfile cacheProfile = new OsCacheProfile();
     Object object = cacheProfile;
@@ -56,18 +50,10 @@ public final class OsCacheProfileValidatorTests extends TestCase {
     this.cacheProfileValidator.validateCacheProfile(object);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheProfileValidator#validateCacheProfile(Object)}</code>
-   * throws an <code>{@link InvalidCacheProfileException}</code> if the
-   * specified argument is not an instance of
-   * <code>{@link OsCacheProfile}</code>.
-   */
   public void testValidateCacheProfileObjectWithObjectNotInstanceOfOscacheCacheProfile() {
     try {
       this.cacheProfileValidator.validateCacheProfile(new Object());
-      fail("Expected exception <"
-          + InvalidCacheProfileException.class.getName() + ">");
+      fail();
     } catch (InvalidCacheProfileException exception) {
       // we are expecting this exception.
     }

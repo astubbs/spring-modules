@@ -29,7 +29,7 @@ import junit.framework.Assert;
  * 
  * @version $Revision$ $Date$
  */
-public class EqualsHashCodeAssert extends Assert {
+public abstract class EqualsHashCodeAssert extends Assert {
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()

@@ -29,7 +29,7 @@ import org.springmodules.cache.provider.InvalidCacheProfileException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:23 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/07 02:32:09 $
  */
 public final class JcsProfileValidatorTests extends TestCase {
 
@@ -45,8 +45,7 @@ public final class JcsProfileValidatorTests extends TestCase {
     try {
       this.cacheProfileValidator
           .validateCacheProfileProperties(this.cacheProfile);
-      fail("Expecting exception <"
-          + InvalidCacheProfileException.class.getName() + ">");
+      fail();
     } catch (InvalidCacheProfileException exception) {
       // we are expecting this exception.
     }
@@ -59,10 +58,7 @@ public final class JcsProfileValidatorTests extends TestCase {
   }
 
   public void testGetTargetClass() {
-    Class expected = JcsProfile.class;
-    Class actual = this.cacheProfileValidator.getTargetClass();
-
-    assertEquals("<Target class>", expected, actual);
+    assertEquals(JcsProfile.class, this.cacheProfileValidator.getTargetClass());
   }
 
   public void testValidateCacheProfilePropertiesWithCacheNameEqualToNull() {
@@ -75,12 +71,6 @@ public final class JcsProfileValidatorTests extends TestCase {
     assertValidateCacheProfilePropertiesThrowsException();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsProfileValidator#validateCacheProfileProperties(Object)}</code>
-   * does not throw a <code>{@link InvalidCacheProfileException}</code>
-   * if the the cache name of the cache profile is not empty.
-   */
   public void testValidateCacheProfilePropertiesWithNotEmptyCacheName() {
     this.cacheProfile.setCacheName("mapping");
     this.cacheProfileValidator
