@@ -19,6 +19,8 @@ package org.springmodules.cache.serializable;
 
 import java.io.Serializable;
 
+import org.springmodules.cache.util.Strings;
+
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -89,15 +91,8 @@ public class XStreamSerializableFactory implements SerializableFactory {
     public String toString() {
       StringBuffer buffer = new StringBuffer(getClass().getName());
       buffer.append("@" + System.identityHashCode(this) + "[");
-      buffer.append("value=");
+      buffer.append("value=" + Strings.quoteIfString(this.value) + "]");
 
-      if (this.value instanceof String) {
-        buffer.append("'" + this.value + "'");
-      } else {
-        buffer.append(this.value);
-      }
-
-      buffer.append("]");
       return buffer.toString();
     }
   }

@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheAttribute;
+import org.springmodules.cache.util.Strings;
 
 /**
  * <p>
@@ -31,7 +32,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/06 01:41:33 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/07 01:58:25 $
  */
 public class FlushCache implements CacheAttribute {
 
@@ -185,12 +186,7 @@ public class FlushCache implements CacheAttribute {
             buffer.append(", ");
           }
 
-          String cacheProfileId = this.cacheProfileIds[i];
-          String formattedCacheProfileId = null;
-          if (cacheProfileId != null) {
-            formattedCacheProfileId = "'" + cacheProfileId + "'";
-          }
-          buffer.append(formattedCacheProfileId);
+          buffer.append(Strings.quote(this.cacheProfileIds[i]));
         }
         buffer.append("}, ");
       }

@@ -57,13 +57,7 @@ public abstract class ArrayUtils {
       else
         buffer.append(", ");
 
-      String element = array[i];
-      String formattedElement = null;
-      if (element != null) {
-        // TODO add test case when element is null.
-        formattedElement = "'" + String.valueOf(array[i]) + "'";
-      }
-      buffer.append(formattedElement);
+      buffer.append(Strings.quote(array[i]));
     }
 
     buffer.append("}");

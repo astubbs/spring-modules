@@ -19,6 +19,7 @@
 package org.springmodules.cache.interceptor.caching;
 
 import org.springmodules.cache.CacheAttribute;
+import org.springmodules.cache.util.Strings;
 
 /**
  * <p>
@@ -28,7 +29,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/06 01:41:27 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/07 01:58:10 $
  */
 public class Cached implements CacheAttribute {
 
@@ -94,13 +95,7 @@ public class Cached implements CacheAttribute {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheProfileId=");
-
-    String formattedCacheProfileId = null;
-    if (this.cacheProfileId != null) {
-      formattedCacheProfileId = "'" + this.cacheProfileId + "'";
-    }
-    buffer.append(formattedCacheProfileId + "]");
+    buffer.append("cacheProfileId=" + Strings.quote(this.cacheProfileId) + "]");
 
     return buffer.toString();
   }

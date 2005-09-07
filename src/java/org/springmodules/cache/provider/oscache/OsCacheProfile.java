@@ -23,6 +23,7 @@ import java.util.Arrays;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.util.ArrayUtils;
+import org.springmodules.cache.util.Strings;
 
 /**
  * <p>
@@ -30,7 +31,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/06 01:41:22 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/07 02:00:10 $
  */
 public class OsCacheProfile implements CacheProfile {
 
@@ -180,12 +181,7 @@ public class OsCacheProfile implements CacheProfile {
     buffer.append("@" + System.identityHashCode(this) + "[");
     buffer.append("refreshPeriod=" + this.refreshPeriod + ", ");
     buffer.append("groups=" + ArrayUtils.toString(this.groups) + ", ");
-    buffer.append("cronExpression=");
-    String formattedCronExpression = null;
-    if (this.cronExpression != null) {
-      formattedCronExpression = "'" + this.cronExpression + "'";
-    }
-    buffer.append(formattedCronExpression + "]");
+    buffer.append("cronExpression=" + Strings.quote(this.cronExpression) + "]");
 
     return buffer.toString();
   }

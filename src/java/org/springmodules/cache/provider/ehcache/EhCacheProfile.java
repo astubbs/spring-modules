@@ -19,6 +19,7 @@
 package org.springmodules.cache.provider.ehcache;
 
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.util.Strings;
 
 /**
  * <p>
@@ -26,7 +27,7 @@ import org.springmodules.cache.provider.CacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/06 01:41:41 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/07 01:59:02 $
  */
 public class EhCacheProfile implements CacheProfile {
 
@@ -92,14 +93,7 @@ public class EhCacheProfile implements CacheProfile {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-
-    buffer.append("cacheName=");
-    String formattedCacheName = null;
-    if (this.cacheName != null) {
-      formattedCacheName = "'" + this.cacheName + "'";
-    }
-    buffer.append(formattedCacheName + "]");
-
+    buffer.append("cacheName=" + Strings.quote(this.cacheName) + "]");
     return buffer.toString();
   }
 }

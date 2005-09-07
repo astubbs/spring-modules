@@ -17,6 +17,8 @@
  */
 package org.springmodules.cache.serializable;
 
+import org.springmodules.cache.util.Strings;
+
 /**
  * <p>
  * Abstraction of a pet.
@@ -85,14 +87,7 @@ public class Puppy {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-
-    buffer.append("name=");
-    String formattedName = null;
-    if (this.name != null) {
-      formattedName = "'" + this.name + "'";
-    }
-    buffer.append(formattedName + "]");
-
+    buffer.append("name=" + Strings.quote(this.name) + "]");
     return buffer.toString();
   }
 

@@ -19,14 +19,15 @@
 package org.springmodules.cache.provider.jcs;
 
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.util.Strings;
 
 /**
  * <p>
- * Configuration options needed to access JCS.
+ * Configuration options for accessing JCS.
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/06 01:41:41 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/07 02:00:11 $
  */
 public class JcsProfile implements CacheProfile {
 
@@ -115,20 +116,8 @@ public class JcsProfile implements CacheProfile {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-
-    buffer.append("cacheName=");
-    String formattedCacheName = null;
-    if (this.cacheName != null) {
-      formattedCacheName = "'" + this.cacheName + "'";
-    }
-    buffer.append(formattedCacheName + ", ");
-
-    buffer.append("group=");
-    String formattedGroup = null;
-    if (this.group != null) {
-      formattedGroup = "'" + this.group + "'";
-    }
-    buffer.append(formattedGroup + "]");
+    buffer.append("cacheName=" + Strings.quote(this.cacheName) + ", ");
+    buffer.append("group=" + Strings.quote(this.group) + "]");
 
     return buffer.toString();
   }
