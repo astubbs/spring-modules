@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
+import org.springmodules.cache.util.Strings;
 
 /**
  * <p>
@@ -34,7 +35,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/06 01:41:23 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/07 02:01:39 $
  */
 public final class JcsProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -45,15 +46,6 @@ public final class JcsProfileTests extends TestCase implements
 
   public JcsProfileTests(String name) {
     super(name);
-  }
-
-  private void assertEqualToString(String expected) {
-    String actual = this.cacheProfile.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    assertEquals("<ToString>", expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -161,33 +153,34 @@ public final class JcsProfileTests extends TestCase implements
         .assertEqualsNullComparisonReturnsFalse(this.cacheProfile);
   }
 
+  private void assertToStringIsCorrect() {
+    StringBuffer buffer = new StringBuffer(this.cacheProfile.getClass()
+        .getName());
+    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
+    buffer.append("cacheName="
+        + Strings.quote(this.cacheProfile.getCacheName()) + ", ");
+    buffer.append("group=" + Strings.quote(this.cacheProfile.getGroup()) + "]");
+
+    String expected = buffer.toString();
+    String actual = this.cacheProfile.toString();
+
+    logger.debug("Expected 'toString': " + expected);
+    logger.debug("Actual 'toString':   " + actual);
+
+    assertEquals(expected, actual);
+  }
+
   public void testToStringWithCacheNameAndGroupEqualToNull() {
     this.cacheProfile.setCacheName(null);
     this.cacheProfile.setGroup(null);
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cacheProfile.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
-    buffer.append("cacheName=null, ");
-    buffer.append("group=null]");
-
-    String expected = buffer.toString();
-    assertEqualToString(expected);
+    assertToStringIsCorrect();
   }
 
   public void testToStringWithCacheNameAndGroupNotEqualToNull() {
-    String cacheName = "main";
-    String group = "services";
-    this.cacheProfile.setCacheName(cacheName);
-    this.cacheProfile.setGroup(group);
+    this.cacheProfile.setCacheName("main");
+    this.cacheProfile.setGroup("services");
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cacheProfile.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
-    buffer.append("cacheName='" + cacheName + "', ");
-    buffer.append("group='" + group + "']");
-
-    String expected = buffer.toString();
-    assertEqualToString(expected);
+    assertToStringIsCorrect();
   }
 }

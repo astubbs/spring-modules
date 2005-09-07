@@ -45,7 +45,7 @@ public class ArrayUtilsTests extends TestCase {
       else
         buffer.append(", ");
 
-      buffer.append("'" + array[i] + "'");
+      buffer.append(Strings.quote(array[i]));
     }
 
     buffer.append("}");

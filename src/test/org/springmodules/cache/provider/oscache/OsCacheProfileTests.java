@@ -24,6 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
+import org.springmodules.cache.util.ArrayUtils;
+import org.springmodules.cache.util.Strings;
 
 /**
  * <p>
@@ -32,7 +34,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/06 01:41:46 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/07 02:01:42 $
  */
 public final class OsCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -42,17 +44,27 @@ public final class OsCacheProfileTests extends TestCase implements
   private OsCacheProfile cacheProfile;
 
   public OsCacheProfileTests(String name) {
-
     super(name);
   }
 
-  private void assertEqualToString(String expected) {
+  private void assertToStringIsCorrect() {
+    StringBuffer buffer = new StringBuffer(this.cacheProfile.getClass()
+        .getName());
+    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
+    buffer.append("refreshPeriod=" + this.cacheProfile.getRefreshPeriod()
+        + ", ");
+    buffer.append("groups="
+        + ArrayUtils.toString(this.cacheProfile.getGroups()) + ", ");
+    buffer.append("cronExpression="
+        + Strings.quote(this.cacheProfile.getCronExpression()) + "]");
+
+    String expected = buffer.toString();
     String actual = this.cacheProfile.toString();
 
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
+    logger.debug("Expected 'toString': " + expected);
+    logger.debug("Actual 'toString':   " + actual);
 
-    assertEquals("<ToString>", expected, actual);
+    assertEquals(expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -185,78 +197,27 @@ public final class OsCacheProfileTests extends TestCase implements
         .assertEqualsNullComparisonReturnsFalse(this.cacheProfile);
   }
 
-  public void testToStringWithGroupsAndCronExpressionEqualToNull() {
-    String groups = null;
-    int refreshPeriod = 34;
+  public void testToStringWithEmptyGroups() {
+    this.cacheProfile.setGroups(new String[0]);
+    this.cacheProfile.setRefreshPeriod(98);
+    this.cacheProfile.setCronExpression("* * 0 0 0");
 
-    this.cacheProfile.setGroups(groups);
-    this.cacheProfile.setRefreshPeriod(refreshPeriod);
-    this.cacheProfile.setCronExpression(null);
-
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cacheProfile.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
-    buffer.append("refreshPeriod=" + refreshPeriod + ", ");
-    buffer.append("groups=null, ");
-    buffer.append("cronExpression=null]");
-
-    String expected = buffer.toString();
-    assertEqualToString(expected);
+    assertToStringIsCorrect();
   }
 
-  public void testToStringWithEmptyGroups() {
-    int refreshPeriod = 978;
-    String cronExpression = "* * 0 0 0";
+  public void testToStringWithGroupsAndCronExpressionEqualToNull() {
+    this.cacheProfile.setGroups((String[]) null);
+    this.cacheProfile.setRefreshPeriod(34);
+    this.cacheProfile.setCronExpression(null);
 
-    this.cacheProfile.setGroups(new String[0]);
-    this.cacheProfile.setRefreshPeriod(refreshPeriod);
-    this.cacheProfile.setCronExpression(cronExpression);
-
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cacheProfile.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
-    buffer.append("refreshPeriod=" + refreshPeriod + ", ");
-    buffer.append("groups={}, ");
-    buffer.append("cronExpression='" + cronExpression + "']");
-
-    String expected = buffer.toString();
-    assertEqualToString(expected);
+    assertToStringIsCorrect();
   }
 
   public void testToStringWithNotEmptyGroups() {
-    String[] groups = { "main", null };
-    int refreshPeriod = 543;
-    String cronExpression = "* * 0 0 0";
+    this.cacheProfile.setGroups(new String[] { "main", null });
+    this.cacheProfile.setRefreshPeriod(9);
+    this.cacheProfile.setCronExpression("* * * * *");
 
-    this.cacheProfile.setGroups(groups);
-    this.cacheProfile.setRefreshPeriod(refreshPeriod);
-    this.cacheProfile.setCronExpression(cronExpression);
-
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.cacheProfile.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
-    buffer.append("refreshPeriod=" + refreshPeriod + ", ");
-    buffer.append("groups=");
-    int groupCount = groups.length;
-    for (int i = 0; i < groupCount; i++) {
-      if (i == 0) {
-        buffer.append("{");
-      } else {
-        buffer.append(", ");
-      }
-
-      String group = groups[i];
-      String formattedGroup = null;
-
-      if (group != null) {
-        formattedGroup = "'" + group + "'";
-      }
-      buffer.append(formattedGroup);
-    }
-    buffer.append("}, ");
-    buffer.append("cronExpression='" + cronExpression + "']");
-
-    String expected = buffer.toString();
-    assertEqualToString(expected);
+    assertToStringIsCorrect();
   }
 }

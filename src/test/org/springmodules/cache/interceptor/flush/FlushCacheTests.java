@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
+import org.springmodules.cache.util.ArrayUtils;
 
 /**
  * <p>
@@ -32,7 +33,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/06 01:41:26 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/07 02:01:43 $
  */
 public final class FlushCacheTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -43,6 +44,23 @@ public final class FlushCacheTests extends TestCase implements
 
   public FlushCacheTests(String name) {
     super(name);
+  }
+
+  private void assertToStringIsCorrect() {
+    StringBuffer buffer = new StringBuffer(this.flushCache.getClass().getName());
+    buffer.append("@" + System.identityHashCode(this.flushCache) + "[");
+    buffer.append("cacheProfileIds="
+        + ArrayUtils.toString(this.flushCache.getCacheProfileIds()) + ", ");
+    buffer.append("flushBeforeExecution="
+        + this.flushCache.isFlushBeforeExecution() + "]");
+
+    String expected = buffer.toString();
+    String actual = this.flushCache.toString();
+
+    logger.debug("Expected 'toString': " + expected);
+    logger.debug("Actual 'toString':   " + actual);
+
+    assertEquals(expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -157,89 +175,28 @@ public final class FlushCacheTests extends TestCase implements
         .assertEqualsNullComparisonReturnsFalse(this.flushCache);
   }
 
-  private void assertEqualToString(String expected) {
-    String actual = this.flushCache.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    assertEquals("<ToString>", expected, actual);
-  }
-
   public void testToStringWithCacheProfileIdEqualToNull() {
-    String cacheProfileId = "main";
-    String[] cacheProfileIds = { cacheProfileId, null };
-    boolean flushBeforeExecution = true;
+    this.flushCache.setCacheProfileIds(new String[] { "empire", null });
+    this.flushCache.setFlushBeforeExecution(true);
 
-    this.flushCache.setCacheProfileIds(cacheProfileIds);
-    this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
-
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.flushCache.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.flushCache) + "[");
-    buffer.append("cacheProfileIds={'" + cacheProfileId + "', null}, ");
-    buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
-
-    String expected = buffer.toString();
-    assertEqualToString(expected);
+    assertToStringIsCorrect();
   }
 
   public void testToStringWithCacheProfileIdsEqualToNull() {
-    String cacheProfileIds = null;
-    boolean flushBeforeExecution = true;
+    this.flushCache.setCacheProfileIds((String[]) null);
+    this.flushCache.setFlushBeforeExecution(false);
 
-    this.flushCache.setCacheProfileIds(cacheProfileIds);
-    this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
-
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.flushCache.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.flushCache) + "[");
-    buffer.append("cacheProfileIds=null, ");
-    buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
-
-    String expected = buffer.toString();
-    assertEqualToString(expected);
+    assertToStringIsCorrect();
   }
 
   public void testToStringWithEmptyCacheProfileIds() {
-    boolean flushBeforeExecution = true;
-
     this.flushCache.setCacheProfileIds(new String[0]);
-    this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.flushCache.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.flushCache) + "[");
-    buffer.append("cacheProfileIds={}, ");
-    buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
-
-    String expected = buffer.toString();
-    assertEqualToString(expected);
+    assertToStringIsCorrect();
   }
 
   public void testToStringWithNotEmptyCacheProfileIds() {
-    String[] cacheProfileIds = { "main", "test" };
-    boolean flushBeforeExecution = true;
-
-    this.flushCache.setCacheProfileIds(cacheProfileIds);
-    this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
-
-    StringBuffer buffer = new StringBuffer(this.flushCache.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.flushCache) + "[");
-    buffer.append("cacheProfileIds=");
-    int cacheProfileIdCount = cacheProfileIds.length;
-    for (int i = 0; i < cacheProfileIdCount; i++) {
-      if (i == 0) {
-        buffer.append("{");
-      } else {
-        buffer.append(", ");
-      }
-      buffer.append("'" + cacheProfileIds[i] + "'");
-    }
-    buffer.append("}, ");
-    buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
-
-    String expected = buffer.toString();
-    assertEqualToString(expected);
+    this.flushCache.setCacheProfileIds(new String[] { "empire", "rebels" });
+    assertToStringIsCorrect();
   }
 }

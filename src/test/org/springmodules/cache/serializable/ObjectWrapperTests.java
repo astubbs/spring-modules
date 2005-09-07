@@ -25,6 +25,7 @@ import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
 import org.springmodules.cache.serializable.XStreamSerializableFactory;
 import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWrapper;
+import org.springmodules.cache.util.Strings;
 
 /**
  * <p>
@@ -44,15 +45,6 @@ public class ObjectWrapperTests extends TestCase implements
 
   public ObjectWrapperTests(String name) {
     super(name);
-  }
-
-  private void assertEqualToString(String expected) {
-    String actual = this.wrapper.toString();
-
-    logger.debug("Expected toString: " + expected);
-    logger.debug("Actual toString:   " + actual);
-
-    assertEquals("<ToString>", expected, actual);
   }
 
   protected void setUp() throws Exception {
@@ -129,31 +121,30 @@ public class ObjectWrapperTests extends TestCase implements
     EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(this.wrapper);
   }
 
-  public void testToStringWithObjBeingString() {
-    String obj = "C-3PO";
-    
-    this.wrapper.setValue(obj);
-    
-    StringBuffer buffer = new StringBuffer();
-
-    buffer.append(this.wrapper.getClass().getName());
+  private void assertToStringIsCorrect() {
+    StringBuffer buffer = new StringBuffer(this.wrapper.getClass().getName());
     buffer.append("@" + System.identityHashCode(this.wrapper) + "[");
-    buffer.append("value='" + obj + "']");
+    buffer.append("value="
+        + Strings.quoteIfString(this.wrapper.getValue()) + "]");
 
-    assertEqualToString(buffer.toString());
+    String expected = buffer.toString();
+    String actual = this.wrapper.toString();
+    
+    logger.debug("Expected 'toString': " + expected);
+    logger.debug("Actual 'toString':   " + actual);
+    
+    assertEquals(expected, actual);
+  }
+  
+  public void testToStringWithValueBeingString() {
+    this.wrapper.setValue("C-3PO");
+
+    assertToStringIsCorrect();
   }
 
-  public void testToStringWithObjNotBeingString() {
-    Long obj = new Long(5);
+  public void testToStringWithValueNotBeingString() {
+    this.wrapper.setValue(new Integer(10));
     
-    this.wrapper.setValue(obj);
-    
-    StringBuffer buffer = new StringBuffer();
-
-    buffer.append(this.wrapper.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.wrapper) + "[");
-    buffer.append("value=" + obj + "]");
-
-    assertEqualToString(buffer.toString());
+    assertToStringIsCorrect();
   }
 }
