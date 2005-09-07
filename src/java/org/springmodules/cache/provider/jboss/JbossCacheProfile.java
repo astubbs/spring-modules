@@ -18,10 +18,11 @@
 package org.springmodules.cache.provider.jboss;
 
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.util.Strings;
 
 /**
  * <p>
- * TODO Document class.
+ * Configuration options for accessing JBossCache.
  * </p>
  * 
  * @author Alex Ruiz
@@ -46,12 +47,47 @@ public class JbossCacheProfile implements CacheProfile {
     setNodeFqn(fqn);
   }
 
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof JbossCacheProfile)) {
+      return false;
+    }
+
+    final JbossCacheProfile profile = (JbossCacheProfile) obj;
+
+    if (this.nodeFqn != null ? !this.nodeFqn.equals(profile.nodeFqn)
+        : profile.nodeFqn != null) {
+      return false;
+    }
+
+    return true;
+  }
+
   public final String getNodeFqn() {
     return this.nodeFqn;
+  }
+
+  public int hashCode() {
+    int multiplier = 31;
+    int hash = 17;
+
+    hash = multiplier * hash
+        + (this.nodeFqn != null ? this.nodeFqn.hashCode() : 0);
+    
+    return hash;
   }
 
   public final void setNodeFqn(String nodeFqn) {
     this.nodeFqn = nodeFqn;
   }
 
+  public String toString() {
+    StringBuffer buffer = new StringBuffer(getClass().getName());
+    buffer.append("@" + System.identityHashCode(this) + "[");
+    buffer.append("nodeFqn=" + Strings.quote(this.nodeFqn) + "]");
+    
+    return buffer.toString();
+  }
 }
