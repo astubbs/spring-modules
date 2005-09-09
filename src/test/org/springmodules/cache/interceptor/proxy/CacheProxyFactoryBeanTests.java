@@ -37,7 +37,7 @@ import org.springmodules.cache.integration.CacheableServiceImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:36 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:25 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 
@@ -102,7 +102,8 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
 
     try {
       this.cacheProxyFactoryBean.afterPropertiesSet();
-      fail("Expecting exception <" + AopConfigException.class.getName() + ">");
+      fail();
+
     } catch (AopConfigException exception) {
       // we are expecting this exception.
     }

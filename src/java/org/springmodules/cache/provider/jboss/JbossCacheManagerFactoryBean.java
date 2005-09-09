@@ -35,7 +35,8 @@ import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManage
 public class JbossCacheManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
 
-  private static Log logger = LogFactory.getLog(JbossCacheManagerFactoryBean.class);
+  private static Log logger = LogFactory
+      .getLog(JbossCacheManagerFactoryBean.class);
 
   private TreeCache treeCache;
 
@@ -47,23 +48,23 @@ public class JbossCacheManagerFactoryBean extends
    * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
    */
   public void afterPropertiesSet() throws Exception {
-    this.treeCache = new TreeCache();
-    this.treeCache.createService();
-    this.treeCache.startService();
+    treeCache = new TreeCache();
+    treeCache.createService();
+    treeCache.startService();
   }
 
   /**
    * @see org.springframework.beans.factory.DisposableBean#destroy()
    */
   public void destroy() throws Exception {
-    if (this.treeCache == null) {
+    if (treeCache == null) {
       logger
           .info("The JBossCache tree cache was not built. No need to shut it down.");
 
     } else {
       logger.info("Shutting down the JBossCache tree cache.");
-      this.treeCache.stopService();
-      this.treeCache.destroyService();
+      treeCache.stopService();
+      treeCache.destroyService();
     }
   }
 
@@ -71,15 +72,14 @@ public class JbossCacheManagerFactoryBean extends
    * @see org.springframework.beans.factory.FactoryBean#getObject()
    */
   public Object getObject() throws Exception {
-    return this.treeCache;
+    return treeCache;
   }
 
   /**
    * @see org.springframework.beans.factory.FactoryBean#getObjectType()
    */
   public Class getObjectType() {
-    return (this.treeCache != null) ? this.treeCache.getClass()
-        : TreeCache.class;
+    return (treeCache != null) ? treeCache.getClass() : TreeCache.class;
   }
 
 }

@@ -23,7 +23,6 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileValidator;
 
 /**
@@ -33,7 +32,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:37 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/09 02:19:11 $
  */
 public final class EhCacheProfileEditorTests extends TestCase {
 
@@ -60,36 +59,32 @@ public final class EhCacheProfileEditorTests extends TestCase {
       EhCacheProfile expected) {
     setUpCacheProfileValidatorAsMockObject();
 
-    this.cacheProfileValidator.validateCacheProfile(expected);
+    cacheProfileValidator.validateCacheProfile(expected);
 
     setStatusOfMockControlsToReplay();
 
-    // execute the method to test.
-    CacheProfile actual = this.cacheProfileEditor
-        .createCacheProfile(this.properties);
-    assertEquals("<Cache profile>", expected, actual);
+    assertEquals(expected, cacheProfileEditor.createCacheProfile(properties));
 
     verifyExpectationsOfMockControlsWereMet();
   }
 
   private void setStatusOfMockControlsToReplay() {
-    this.cacheProfileValidatorControl.replay();
+    cacheProfileValidatorControl.replay();
   }
 
   protected void setUp() throws Exception {
     super.setUp();
-    this.cacheProfileEditor = new EhCacheProfileEditor();
-    this.properties = new Properties();
+    cacheProfileEditor = new EhCacheProfileEditor();
+    properties = new Properties();
   }
 
   private void setUpCacheProfileValidatorAsMockObject() {
-    this.cacheProfileValidatorControl = MockControl
+    cacheProfileValidatorControl = MockControl
         .createControl(CacheProfileValidator.class);
-    this.cacheProfileValidator = (CacheProfileValidator) this.cacheProfileValidatorControl
+    cacheProfileValidator = (CacheProfileValidator) cacheProfileValidatorControl
         .getMock();
 
-    this.cacheProfileEditor
-        .setCacheProfileValidator(this.cacheProfileValidator);
+    cacheProfileEditor.setCacheProfileValidator(cacheProfileValidator);
   }
 
   public void testCreateCacheProfileWithEmptyProperties() {
@@ -99,22 +94,20 @@ public final class EhCacheProfileEditorTests extends TestCase {
 
   public void testCreateCacheProfileWithPropertiesHavingCacheName() {
     String cacheName = "pojos";
-    this.properties.setProperty("cacheName", cacheName);
+    properties.setProperty("cacheName", cacheName);
 
     EhCacheProfile expected = new EhCacheProfile(cacheName);
     assertCreateCacheProfileValidatesCreatedCacheProfile(expected);
   }
 
   public void testDefaultConstructorCreatesEhCacheProfileValidator() {
-    CacheProfileValidator ehCacheProfileValidator = this.cacheProfileEditor
+    CacheProfileValidator validator = cacheProfileEditor
         .getCacheProfileValidator();
 
-    assertTrue("CacheProfileValidator should be an instance of <"
-        + EhCacheProfileValidator.class.getName() + ">",
-        ehCacheProfileValidator instanceof EhCacheProfileValidator);
+    assertEquals(EhCacheProfileValidator.class, validator.getClass());
   }
 
   private void verifyExpectationsOfMockControlsWereMet() {
-    this.cacheProfileValidatorControl.verify();
+    cacheProfileValidatorControl.verify();
   }
 }

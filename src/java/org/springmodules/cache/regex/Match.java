@@ -24,7 +24,7 @@ package org.springmodules.cache.regex;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:50:11 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:53 $
  */
 public final class Match {
 
@@ -40,19 +40,19 @@ public final class Match {
    */
   private boolean successful;
 
-  public Match(boolean successful, String[] groups) {
+  public Match(boolean newSuccessful, String[] newGroups) {
     super();
 
-    this.successful = successful;
-    this.groups = groups;
+    successful = newSuccessful;
+    groups = newGroups;
   }
 
   public String[] getGroups() {
-    return this.groups;
+    return groups;
   }
 
   public boolean isSuccessful() {
-    return this.successful;
+    return successful;
   }
 
 }

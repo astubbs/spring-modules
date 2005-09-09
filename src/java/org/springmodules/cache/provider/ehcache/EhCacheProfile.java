@@ -27,7 +27,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/07 01:59:02 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/09 02:19:06 $
  */
 public class EhCacheProfile implements CacheProfile {
 
@@ -60,8 +60,8 @@ public class EhCacheProfile implements CacheProfile {
 
     final EhCacheProfile ehCacheProfile = (EhCacheProfile) obj;
 
-    if (this.cacheName != null ? !this.cacheName
-        .equals(ehCacheProfile.cacheName) : ehCacheProfile.cacheName != null) {
+    if (cacheName != null ? !cacheName.equals(ehCacheProfile.cacheName)
+        : ehCacheProfile.cacheName != null) {
       return false;
     }
 
@@ -69,7 +69,7 @@ public class EhCacheProfile implements CacheProfile {
   }
 
   public final String getCacheName() {
-    return this.cacheName;
+    return cacheName;
   }
 
   /**
@@ -78,13 +78,12 @@ public class EhCacheProfile implements CacheProfile {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash
-        + (this.cacheName != null ? this.cacheName.hashCode() : 0);
+    hash = multiplier * hash + (cacheName != null ? cacheName.hashCode() : 0);
     return hash;
   }
 
-  public final void setCacheName(String cacheName) {
-    this.cacheName = cacheName;
+  public final void setCacheName(String newCacheName) {
+    cacheName = newCacheName;
   }
 
   /**
@@ -93,7 +92,7 @@ public class EhCacheProfile implements CacheProfile {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheName=" + Strings.quote(this.cacheName) + "]");
+    buffer.append("cacheName=" + Strings.quote(cacheName) + "]");
     return buffer.toString();
   }
 }

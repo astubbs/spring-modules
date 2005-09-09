@@ -31,7 +31,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:50:11 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:53 $
  */
 public class Perl5Regex implements Regex {
 
@@ -52,7 +52,7 @@ public class Perl5Regex implements Regex {
     Perl5Compiler perl5Compiler = new Perl5Compiler();
 
     try {
-      this.pattern = perl5Compiler.compile(regex);
+      pattern = perl5Compiler.compile(regex);
     } catch (MalformedPatternException malformedPatternException) {
       throw new PatternInvalidSyntaxException(malformedPatternException
           .getMessage());
@@ -64,7 +64,7 @@ public class Perl5Regex implements Regex {
    */
   public Match match(String input) {
     Perl5Matcher matcher = new Perl5Matcher();
-    boolean matches = matcher.matches(input, this.pattern);
+    boolean matches = matcher.matches(input, pattern);
 
     String[] groups = null;
     if (matches) {

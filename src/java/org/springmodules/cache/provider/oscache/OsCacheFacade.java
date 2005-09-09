@@ -36,7 +36,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:22 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/09 02:18:52 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -88,7 +88,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
    */
   protected void onCancelCacheUpdate(Serializable cacheKey) {
     String key = getEntryKey(cacheKey);
-    this.cacheManager.cancelUpdate(key);
+    cacheManager.cancelUpdate(key);
   }
 
   /**
@@ -99,14 +99,14 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
     String[] groups = profile.getGroups();
 
     if (groups == null || groups.length == 0) {
-      this.cacheManager.flushAll();
+      cacheManager.flushAll();
 
     } else {
       int groupCount = groups.length;
 
       for (int i = 0; i < groupCount; i++) {
         String group = groups[i];
-        this.cacheManager.flushGroup(group);
+        cacheManager.flushGroup(group);
       }
     }
   }
@@ -127,15 +127,14 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
     try {
       if (null == refreshPeriod) {
-        cachedObject = this.cacheManager.getFromCache(key);
+        cachedObject = cacheManager.getFromCache(key);
 
       } else if (null == cronExpression) {
-        cachedObject = this.cacheManager.getFromCache(key, refreshPeriod
-            .intValue());
+        cachedObject = cacheManager.getFromCache(key, refreshPeriod.intValue());
 
       } else {
-        cachedObject = this.cacheManager.getFromCache(key, refreshPeriod
-            .intValue(), cronExpression);
+        cachedObject = cacheManager.getFromCache(key, refreshPeriod.intValue(),
+            cronExpression);
       }
     } catch (NeedsRefreshException needsRefreshException) {
       // the cache does not have that entry.
@@ -157,10 +156,10 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
     String[] groups = profile.getGroups();
 
     if (groups == null || groups.length == 0) {
-      this.cacheManager.putInCache(key, objectToCache);
+      cacheManager.putInCache(key, objectToCache);
 
     } else {
-      this.cacheManager.putInCache(key, objectToCache, groups);
+      cacheManager.putInCache(key, objectToCache, groups);
     }
   }
 
@@ -172,12 +171,12 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   protected void onRemoveFromCache(Serializable cacheKey,
       CacheProfile cacheProfile) {
 
-    String key = this.getEntryKey(cacheKey);
-    this.cacheManager.flushEntry(key);
+    String key = getEntryKey(cacheKey);
+    cacheManager.flushEntry(key);
   }
 
-  public void setCacheManager(GeneralCacheAdministrator cacheManager) {
-    this.cacheManager = cacheManager;
+  public void setCacheManager(GeneralCacheAdministrator newCacheManager) {
+    cacheManager = newCacheManager;
   }
 
   /**
@@ -187,7 +186,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
    *           if the cache manager is <code>null</code>.
    */
   protected void validateCacheManager() throws InvalidConfigurationException {
-    if (null == this.cacheManager) {
+    if (null == cacheManager) {
       throw new InvalidConfigurationException(
           "The Cache Manager should not be null");
     }

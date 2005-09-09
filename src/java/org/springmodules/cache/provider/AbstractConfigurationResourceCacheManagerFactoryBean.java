@@ -27,7 +27,7 @@ import org.springframework.core.io.Resource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 05:12:26 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:26 $
  */
 public abstract class AbstractConfigurationResourceCacheManagerFactoryBean
     extends AbstractSingletonCacheManagerFactoryBean {
@@ -42,11 +42,11 @@ public abstract class AbstractConfigurationResourceCacheManagerFactoryBean
   }
 
   public final Resource getConfigLocation() {
-    return this.configLocation;
+    return configLocation;
   }
 
-  public final void setConfigLocation(Resource configLocation) {
-    this.configLocation = configLocation;
+  public final void setConfigLocation(Resource newConfigLocation) {
+    configLocation = newConfigLocation;
   }
 
 }

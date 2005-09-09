@@ -32,7 +32,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:31 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/09 02:18:58 $
  */
 public class NameMatchCachingAttributeSourceTests extends TestCase {
 
@@ -47,12 +47,12 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.attributeSource = new NameMatchCachingAttributeSource();
+    attributeSource = new NameMatchCachingAttributeSource();
   }
 
   private void setUpMethod() throws Exception {
-    this.method = String.class.getDeclaredMethod("charAt",
-        new Class[] { int.class });
+    method = String.class
+        .getDeclaredMethod("charAt", new Class[] { int.class });
   }
 
   /**
@@ -65,14 +65,13 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     String methodName = "addUser";
     Cached cachingAttribute = new Cached();
 
-    this.attributeSource.addCachingAttribute(methodName, cachingAttribute);
+    attributeSource.addCachingAttribute(methodName, cachingAttribute);
 
-    Map cachingAttributeMap = this.attributeSource.getCachingAttributeMap();
+    Map cachingAttributeMap = attributeSource.getCachingAttributeMap();
     assertTrue("There should be an entry with key '" + methodName + "'",
         cachingAttributeMap.containsKey(methodName));
 
-    assertSame("<Added caching attribute>", cachingAttribute,
-        cachingAttributeMap.get(methodName));
+    assertSame(cachingAttribute, cachingAttributeMap.get(methodName));
   }
 
   /**
@@ -81,15 +80,13 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
    * returns a new instance of <code>{@link CachingAttributeEditor}</code>.
    */
   public void testGetCacheAttributeEditor() {
-    PropertyEditor cacheAttributeEditor = this.attributeSource
+    PropertyEditor cacheAttributeEditor = attributeSource
         .getCacheAttributeEditor();
 
-    assertNotNull("The editor of caching attributes should not be null",
-        cacheAttributeEditor);
+    assertNotNull(cacheAttributeEditor);
 
     Class expectedEditorClass = CachingAttributeEditor.class;
-    assertEquals("<Property editor class>", expectedEditorClass,
-        cacheAttributeEditor.getClass());
+    assertEquals(expectedEditorClass, cacheAttributeEditor.getClass());
   }
 
   /**
@@ -104,14 +101,14 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     // set the properties to be used to create caching attributes.
     Properties properties = new Properties();
     properties.setProperty("charAt", "[cacheProfileId=main]");
-    this.attributeSource.setProperties(properties);
+    attributeSource.setProperties(properties);
 
     setUpMethod();
     Cached expectedCachingAttribute = new Cached("main");
 
     // execute the method to test.
-    Cached actualCachingAttribute = this.attributeSource.getCachingAttribute(
-        this.method, this.method.getDeclaringClass());
+    Cached actualCachingAttribute = attributeSource.getCachingAttribute(method,
+        method.getDeclaringClass());
 
     assertEquals(expectedCachingAttribute, actualCachingAttribute);
   }
@@ -132,14 +129,14 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     // used since has a longer length.
     properties.setProperty("ch*", "[cacheProfileId=test]");
     properties.setProperty("char*", "[cacheProfileId=main]");
-    this.attributeSource.setProperties(properties);
+    attributeSource.setProperties(properties);
 
     setUpMethod();
     Cached expectedCachingAttribute = new Cached("main");
 
     // execute the method to test.
-    Cached actualCachingAttribute = this.attributeSource.getCachingAttribute(
-        this.method, this.method.getDeclaringClass());
+    Cached actualCachingAttribute = attributeSource.getCachingAttribute(method,
+        method.getDeclaringClass());
 
     assertEquals(expectedCachingAttribute, actualCachingAttribute);
   }
@@ -152,17 +149,16 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
    */
   public void testGetCachingAttributeWithNotMatchingMethodName()
       throws Exception {
-
     setUpMethod();
 
     Properties properties = new Properties();
     properties.setProperty("aMethodThatDoesNotExist", "[cacheProfileId=main]");
 
-    this.attributeSource.setProperties(properties);
+    attributeSource.setProperties(properties);
 
     // execute the method to test.
-    Cached actualCachingAttribute = this.attributeSource.getCachingAttribute(
-        this.method, this.method.getDeclaringClass());
+    Cached actualCachingAttribute = attributeSource.getCachingAttribute(method,
+        method.getDeclaringClass());
 
     assertNull(actualCachingAttribute);
   }

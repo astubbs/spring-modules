@@ -35,7 +35,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/07 02:01:39 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/09 02:18:54 $
  */
 public final class JcsProfileTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -48,9 +48,26 @@ public final class JcsProfileTests extends TestCase implements
     super(name);
   }
 
+  private void assertToStringIsCorrect() {
+    StringBuffer buffer = new StringBuffer(cacheProfile.getClass()
+        .getName());
+    buffer.append("@" + System.identityHashCode(cacheProfile) + "[");
+    buffer.append("cacheName="
+        + Strings.quote(cacheProfile.getCacheName()) + ", ");
+    buffer.append("group=" + Strings.quote(cacheProfile.getGroup()) + "]");
+
+    String expected = buffer.toString();
+    String actual = cacheProfile.toString();
+
+    logger.debug("Expected 'toString': " + expected);
+    logger.debug("Actual 'toString':   " + actual);
+
+    assertEquals(expected, actual);
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
-    this.cacheProfile = new JcsProfile();
+    cacheProfile = new JcsProfile();
   }
 
   /**
@@ -60,27 +77,27 @@ public final class JcsProfileTests extends TestCase implements
     String cacheName = "main";
     String group = "test";
 
-    this.cacheProfile.setCacheName(cacheName);
-    this.cacheProfile.setGroup(group);
+    cacheProfile.setCacheName(cacheName);
+    cacheProfile.setGroup(group);
 
     JcsProfile anotherProfile = new JcsProfile(cacheName, group);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        this.cacheProfile, anotherProfile);
+        cacheProfile, anotherProfile);
 
     cacheName = null;
-    this.cacheProfile.setCacheName(cacheName);
+    cacheProfile.setCacheName(cacheName);
     anotherProfile.setCacheName(cacheName);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        this.cacheProfile, anotherProfile);
+        cacheProfile, anotherProfile);
 
     group = null;
-    this.cacheProfile.setGroup(group);
+    cacheProfile.setGroup(group);
     anotherProfile.setGroup(group);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        this.cacheProfile, anotherProfile);
+        cacheProfile, anotherProfile);
   }
 
   /**
@@ -90,26 +107,26 @@ public final class JcsProfileTests extends TestCase implements
     String cacheName = "ch01";
     String group = "grp87";
 
-    this.cacheProfile.setCacheName(cacheName);
-    this.cacheProfile.setGroup(group);
+    cacheProfile.setCacheName(cacheName);
+    cacheProfile.setGroup(group);
 
     JcsProfile anotherProfile = new JcsProfile(cacheName, group);
 
-    assertEquals(this.cacheProfile, anotherProfile);
+    assertEquals(cacheProfile, anotherProfile);
 
     anotherProfile.setCacheName("main");
-    assertFalse(this.cacheProfile.equals(anotherProfile));
+    assertFalse(cacheProfile.equals(anotherProfile));
 
     anotherProfile.setCacheName(cacheName);
     anotherProfile.setGroup("test");
-    assertFalse(this.cacheProfile.equals(anotherProfile));
+    assertFalse(cacheProfile.equals(anotherProfile));
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(this.cacheProfile);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheProfile);
   }
 
   /**
@@ -119,12 +136,12 @@ public final class JcsProfileTests extends TestCase implements
     String cacheName = "mainCache";
     String group = "testGroup";
 
-    this.cacheProfile.setCacheName(cacheName);
-    this.cacheProfile.setGroup(group);
+    cacheProfile.setCacheName(cacheName);
+    cacheProfile.setGroup(group);
 
     JcsProfile anotherProfile = new JcsProfile(cacheName, group);
 
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.cacheProfile,
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheProfile,
         anotherProfile);
   }
 
@@ -135,13 +152,13 @@ public final class JcsProfileTests extends TestCase implements
     String cacheName = "pojos";
     String group = "model";
 
-    this.cacheProfile.setCacheName(cacheName);
-    this.cacheProfile.setGroup(group);
+    cacheProfile.setCacheName(cacheName);
+    cacheProfile.setGroup(group);
 
     JcsProfile secondProfile = new JcsProfile(cacheName, group);
     JcsProfile thirdProfile = new JcsProfile(cacheName, group);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(this.cacheProfile,
+    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheProfile,
         secondProfile, thirdProfile);
   }
 
@@ -150,36 +167,19 @@ public final class JcsProfileTests extends TestCase implements
    */
   public void testEqualsNullComparison() {
     EqualsHashCodeAssert
-        .assertEqualsNullComparisonReturnsFalse(this.cacheProfile);
-  }
-
-  private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(this.cacheProfile.getClass()
-        .getName());
-    buffer.append("@" + System.identityHashCode(this.cacheProfile) + "[");
-    buffer.append("cacheName="
-        + Strings.quote(this.cacheProfile.getCacheName()) + ", ");
-    buffer.append("group=" + Strings.quote(this.cacheProfile.getGroup()) + "]");
-
-    String expected = buffer.toString();
-    String actual = this.cacheProfile.toString();
-
-    logger.debug("Expected 'toString': " + expected);
-    logger.debug("Actual 'toString':   " + actual);
-
-    assertEquals(expected, actual);
+        .assertEqualsNullComparisonReturnsFalse(cacheProfile);
   }
 
   public void testToStringWithCacheNameAndGroupEqualToNull() {
-    this.cacheProfile.setCacheName(null);
-    this.cacheProfile.setGroup(null);
+    cacheProfile.setCacheName(null);
+    cacheProfile.setGroup(null);
 
     assertToStringIsCorrect();
   }
 
   public void testToStringWithCacheNameAndGroupNotEqualToNull() {
-    this.cacheProfile.setCacheName("main");
-    this.cacheProfile.setGroup("services");
+    cacheProfile.setCacheName("main");
+    cacheProfile.setGroup("services");
 
     assertToStringIsCorrect();
   }

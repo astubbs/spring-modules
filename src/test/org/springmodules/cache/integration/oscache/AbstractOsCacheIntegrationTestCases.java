@@ -37,7 +37,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:43 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:19 $
  */
 public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractIntegrationTests {
@@ -59,7 +59,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
     String key = cacheKey.toString();
 
     try {
-      this.cacheAdministrator.getFromCache(key);
+      cacheAdministrator.getFromCache(key);
       fail("There should not be any object cached under the key '" + cacheKey
           + "'");
     } catch (NeedsRefreshException needsRefreshException) {
@@ -89,7 +89,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
     Serializable cacheKey = getGeneratedKey(keyIndex);
     String key = cacheKey.toString();
 
-    Object actualCachedObject = this.cacheAdministrator.getFromCache(key);
+    Object actualCachedObject = cacheAdministrator.getFromCache(key);
 
     assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
   }
@@ -99,7 +99,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
    */
   protected final void onSetUp() throws Exception {
     // get the cache administrator from the Spring bean context.
-    this.cacheAdministrator = (GeneralCacheAdministrator) this.applicationContext
+    cacheAdministrator = (GeneralCacheAdministrator) applicationContext
         .getBean("cacheManager");
   }
 }

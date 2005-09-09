@@ -77,9 +77,8 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   private void assertAfterPropertiesSetThrowsException() {
     try {
-      this.cacheProviderFacade.afterPropertiesSet();
-      fail("Expecting exception <"
-          + InvalidConfigurationException.class.getName() + ">");
+      cacheProviderFacade.afterPropertiesSet();
+      fail();
 
     } catch (InvalidConfigurationException exception) {
       // we are expecting this exception to be thrown.
@@ -92,18 +91,18 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   }
 
   private void expectCacheRequiresSerializableElements(boolean requires) {
-    this.cacheProviderFacade.isSerializableCacheElementRequired();
-    this.cacheProviderFacadeControl.setReturnValue(requires);
+    cacheProviderFacade.isSerializableCacheElementRequired();
+    cacheProviderFacadeControl.setReturnValue(requires);
   }
 
   private void expectGetCacheProfileEditor() {
-    this.cacheProviderFacade.getCacheProfileEditor();
-    this.cacheProviderFacadeControl.setReturnValue(this.cacheProfileEditor);
+    cacheProviderFacade.getCacheProfileEditor();
+    cacheProviderFacadeControl.setReturnValue(cacheProfileEditor);
   }
 
   private void expectGetCacheProfileValidator() {
-    this.cacheProviderFacade.getCacheProfileValidator();
-    this.cacheProviderFacadeControl.setReturnValue(this.cacheProfileValidator);
+    cacheProviderFacade.getCacheProfileValidator();
+    cacheProviderFacadeControl.setReturnValue(cacheProfileValidator);
   }
 
   private CacheException getNewCacheException() {
@@ -116,11 +115,11 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   }
 
   private void setStateOfMockControlsToReplay() {
-    this.cacheProfileEditorControl.replay();
-    if (this.cacheProfileValidatorControl != null) {
-      this.cacheProfileValidatorControl.replay();
+    cacheProfileEditorControl.replay();
+    if (cacheProfileValidatorControl != null) {
+      cacheProfileValidatorControl.replay();
     }
-    this.cacheProviderFacadeControl.replay();
+    cacheProviderFacadeControl.replay();
   }
 
   protected void setUp() throws Exception {
@@ -129,11 +128,11 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setUpCacheProviderFacadeAsMockObject();
     setUpCacheProfileEditorAsMockObject();
 
-    this.cacheKey = "Key";
-    this.cacheProfile = new MockCacheProfile();
-    this.cacheProfileMap = new HashMap();
-    this.cacheProfileMap.put(CACHE_PROFILE_ID, this.cacheProfile);
-    this.cacheProviderFacade.setCacheProfiles(this.cacheProfileMap);
+    cacheKey = "Key";
+    cacheProfile = new MockCacheProfile();
+    cacheProfileMap = new HashMap();
+    cacheProfileMap.put(CACHE_PROFILE_ID, cacheProfile);
+    cacheProviderFacade.setCacheProfiles(cacheProfileMap);
   }
 
   private void setUpCacheProfileEditorAsMockObject() throws Exception {
@@ -144,18 +143,18 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
     Method[] methodsToMock = new Method[] { createCacheProfileMethod };
 
-    this.cacheProfileEditorControl = MockClassControl.createControl(
-        classToMock, null, null, methodsToMock);
+    cacheProfileEditorControl = MockClassControl.createControl(classToMock,
+        null, null, methodsToMock);
 
-    this.cacheProfileEditor = (AbstractCacheProfileEditor) this.cacheProfileEditorControl
+    cacheProfileEditor = (AbstractCacheProfileEditor) cacheProfileEditorControl
         .getMock();
   }
 
   private void setUpCacheProfileValidatorAsMockObject() {
-    this.cacheProfileValidatorControl = MockControl
+    cacheProfileValidatorControl = MockControl
         .createControl(CacheProfileValidator.class);
 
-    this.cacheProfileValidator = (CacheProfileValidator) this.cacheProfileValidatorControl
+    cacheProfileValidator = (CacheProfileValidator) cacheProfileValidatorControl
         .getMock();
   }
 
@@ -193,10 +192,10 @@ public final class CacheProviderFacadeImplTests extends TestCase {
         onFlushCacheMethod, onGetFromCacheMethod, onPutInCacheMethod,
         validateCacheManagerMethod };
 
-    this.cacheProviderFacadeControl = MockClassControl.createControl(
-        classToMock, null, null, methodsToMock);
+    cacheProviderFacadeControl = MockClassControl.createControl(classToMock,
+        null, null, methodsToMock);
 
-    this.cacheProviderFacade = (AbstractCacheProviderFacadeImpl) this.cacheProviderFacadeControl
+    cacheProviderFacade = (AbstractCacheProviderFacadeImpl) cacheProviderFacadeControl
         .getMock();
   }
 
@@ -209,15 +208,15 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   public void testAfterPropertiesSetWhenCacheProfilesHaveBeenValidated()
       throws Exception {
     // simulate the cache profiles have been validated.
-    this.cacheProviderFacade.setCacheProfileMapValidated(true);
+    cacheProviderFacade.setCacheProfileMapValidated(true);
 
     // validate the cache manager ONLY.
-    this.cacheProviderFacade.validateCacheManager();
+    cacheProviderFacade.validateCacheManager();
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.afterPropertiesSet();
+    cacheProviderFacade.afterPropertiesSet();
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -232,16 +231,16 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setUpCacheProfileValidatorAsMockObject();
 
     // validate cache manager.
-    this.cacheProviderFacade.validateCacheManager();
+    cacheProviderFacade.validateCacheManager();
 
     // validate the cache profile(s).
     expectGetCacheProfileValidator();
-    this.cacheProfileValidator.validateCacheProfile(this.cacheProfile);
+    cacheProfileValidator.validateCacheProfile(cacheProfile);
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.afterPropertiesSet();
+    cacheProviderFacade.afterPropertiesSet();
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -253,7 +252,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
    * cache profiles is empty.
    */
   public void testAfterPropertiesSetWhenMapOfCacheProfilesIsEmpty() {
-    this.cacheProfileMap.clear();
+    cacheProfileMap.clear();
     assertAfterPropertiesSetThrowsException();
   }
 
@@ -264,7 +263,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
    * cache profiles is equal to <code>null</code>.
    */
   public void testAfterPropertiesSetWhenMapOfCacheProfilesIsEqualToNull() {
-    this.cacheProviderFacade.setCacheProfiles((Map) null);
+    cacheProviderFacade.setCacheProfiles((Map) null);
     assertAfterPropertiesSetThrowsException();
   }
 
@@ -279,21 +278,20 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setUpCacheProfileValidatorAsMockObject();
 
     // validate cache manager.
-    this.cacheProviderFacade.validateCacheManager();
+    cacheProviderFacade.validateCacheManager();
 
     // the cache profile is invalid.
     InvalidCacheProfileException expectedNestedException = this
         .getNewInvalidCacheProfileException();
     expectGetCacheProfileValidator();
-    this.cacheProfileValidator.validateCacheProfile(this.cacheProfile);
-    this.cacheProfileValidatorControl.setThrowable(expectedNestedException);
+    cacheProfileValidator.validateCacheProfile(cacheProfile);
+    cacheProfileValidatorControl.setThrowable(expectedNestedException);
 
     setStateOfMockControlsToReplay();
 
     try {
-      this.cacheProviderFacade.afterPropertiesSet();
-      fail("Expecting exception <"
-          + InvalidConfigurationException.class.getName() + ">");
+      cacheProviderFacade.afterPropertiesSet();
+      fail();
 
     } catch (InvalidConfigurationException exception) {
       assertSame("<Nested exception>", expectedNestedException, exception
@@ -305,33 +303,33 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   public void testCancelCacheUpdate() throws Exception {
     // cancel cache update.
-    this.cacheProviderFacade.onCancelCacheUpdate(this.cacheKey);
+    cacheProviderFacade.onCancelCacheUpdate(cacheKey);
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.cancelCacheUpdate(this.cacheKey);
+    cacheProviderFacade.cancelCacheUpdate(cacheKey);
 
     verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testCancelCacheUpdateWhenCacheAccessThrowsExceptionAndFailQuietlyIsFalse()
       throws Exception {
-    this.cacheProviderFacade.setFailQuietlyEnabled(false);
+    cacheProviderFacade.setFailQuietlyEnabled(false);
 
     CacheException expectedException = getNewCacheException();
-    this.cacheProviderFacade.onCancelCacheUpdate(this.cacheKey);
-    this.cacheProviderFacadeControl.setThrowable(expectedException);
+    cacheProviderFacade.onCancelCacheUpdate(cacheKey);
+    cacheProviderFacadeControl.setThrowable(expectedException);
 
     setStateOfMockControlsToReplay();
 
     try {
       // execute the method to test.
-      this.cacheProviderFacade.cancelCacheUpdate(this.cacheKey);
-      fail("Expecting exception <" + CacheException.class.getName() + ">");
+      cacheProviderFacade.cancelCacheUpdate(cacheKey);
+      fail();
 
     } catch (CacheException exception) {
-      assertSame("<Catched exception>", expectedException, exception);
+      assertSame(expectedException, exception);
     }
 
     verifyExpectationsOfMockControlsWereMet();
@@ -339,17 +337,17 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   public void testCancelCacheUpdateWhenCacheAccessThrowsExceptionAndFailQuietlyIsTrue()
       throws Exception {
-    this.cacheProviderFacade.setFailQuietlyEnabled(true);
+    cacheProviderFacade.setFailQuietlyEnabled(true);
 
     // facade is unable to cancel cache update.
-    this.cacheProviderFacade.onCancelCacheUpdate(this.cacheKey);
-    this.cacheProviderFacadeControl.setThrowable(new CacheNotFoundException(
+    cacheProviderFacade.onCancelCacheUpdate(cacheKey);
+    cacheProviderFacadeControl.setThrowable(new CacheNotFoundException(
         "myCache"));
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.cancelCacheUpdate(this.cacheKey);
+    cacheProviderFacade.cancelCacheUpdate(cacheKey);
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -357,22 +355,22 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   public void testFlushCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsFalse()
       throws Exception {
     String[] cacheProfileIds = new String[] { CACHE_PROFILE_ID };
-    this.cacheProviderFacade.setFailQuietlyEnabled(false);
+    cacheProviderFacade.setFailQuietlyEnabled(false);
 
     // facade is unable to flush the cache.
     CacheException expectedException = getNewCacheException();
-    this.cacheProviderFacade.onFlushCache(this.cacheProfile);
-    this.cacheProviderFacadeControl.setThrowable(expectedException);
+    cacheProviderFacade.onFlushCache(cacheProfile);
+    cacheProviderFacadeControl.setThrowable(expectedException);
 
     setStateOfMockControlsToReplay();
 
     try {
       // execute the method to test.
-      this.cacheProviderFacade.flushCache(cacheProfileIds);
-      fail("Expecting exception <" + CacheException.class.getName() + ">");
+      cacheProviderFacade.flushCache(cacheProfileIds);
+      fail();
 
     } catch (CacheException exception) {
-      assertSame("<Catched exception>", expectedException, exception);
+      assertSame(expectedException, exception);
     }
 
     verifyExpectationsOfMockControlsWereMet();
@@ -381,17 +379,17 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   public void testFlushCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsTrue()
       throws Exception {
     String[] cacheProfileIds = { CACHE_PROFILE_ID };
-    this.cacheProviderFacade.setFailQuietlyEnabled(true);
+    cacheProviderFacade.setFailQuietlyEnabled(true);
 
     // facade is unable to flush the cache.
     CacheException cacheException = getNewCacheException();
-    this.cacheProviderFacade.onFlushCache(this.cacheProfile);
-    this.cacheProviderFacadeControl.setThrowable(cacheException);
+    cacheProviderFacade.onFlushCache(cacheProfile);
+    cacheProviderFacadeControl.setThrowable(cacheException);
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.flushCache(cacheProfileIds);
+    cacheProviderFacade.flushCache(cacheProfileIds);
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -409,7 +407,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.flushCache(cacheProfileIds);
+    cacheProviderFacade.flushCache(cacheProfileIds);
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -425,7 +423,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.flushCache(cacheProfileIds);
+    cacheProviderFacade.flushCache(cacheProfileIds);
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -435,12 +433,12 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     String[] cacheProfileIds = new String[] { CACHE_PROFILE_ID };
 
     // flush the cache.
-    this.cacheProviderFacade.onFlushCache(this.cacheProfile);
+    cacheProviderFacade.onFlushCache(cacheProfile);
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.flushCache(cacheProfileIds);
+    cacheProviderFacade.flushCache(cacheProfileIds);
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -457,18 +455,17 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.flushCache(cacheProfileIds);
+    cacheProviderFacade.flushCache(cacheProfileIds);
 
     verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testGetCacheProfilesReturnsAnUnmodifiableMap() {
-    Map unmodifiableMap = this.cacheProviderFacade.getCacheProfiles();
+    Map unmodifiableMap = cacheProviderFacade.getCacheProfiles();
 
     try {
       unmodifiableMap.clear();
-      fail("Expecting exception <"
-          + UnsupportedOperationException.class.getName() + ">");
+      fail();
 
     } catch (UnsupportedOperationException exception) {
       // we are expecting this exception.
@@ -476,44 +473,42 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   }
 
   public void testGetCacheProfileWhenProfileIdIsNotEmpty() {
-    CacheProfile actualCacheProfile = this.cacheProviderFacade
+    CacheProfile actualCacheProfile = cacheProviderFacade
         .getCacheProfile(CACHE_PROFILE_ID);
 
-    assertSame("<Cache Profile>", this.cacheProfile, actualCacheProfile);
+    assertSame("<Cache Profile>", cacheProfile, actualCacheProfile);
   }
 
   public void testGetCacheProfileWhenProfileIdIsNull() {
-    CacheProfile actualCacheProfile = this.cacheProviderFacade
-        .getCacheProfile(null);
+    CacheProfile actualCacheProfile = cacheProviderFacade.getCacheProfile(null);
 
     assertNull(actualCacheProfile);
   }
 
   public void testGetCacheProfileWithProfileIdIsEmpty() {
-    CacheProfile actualCacheProfile = this.cacheProviderFacade
-        .getCacheProfile("");
+    CacheProfile actualCacheProfile = cacheProviderFacade.getCacheProfile("");
 
     assertNull(actualCacheProfile);
   }
 
   public void testGetFromCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsFalse()
       throws Exception {
-    this.cacheProviderFacade.setFailQuietlyEnabled(false);
+    cacheProviderFacade.setFailQuietlyEnabled(false);
 
     // facade is unable to get an entry from the cache.
     CacheException expectedException = getNewCacheException();
-    this.cacheProviderFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
-    this.cacheProviderFacadeControl.setThrowable(expectedException);
+    cacheProviderFacade.onGetFromCache(cacheKey, cacheProfile);
+    cacheProviderFacadeControl.setThrowable(expectedException);
 
     setStateOfMockControlsToReplay();
 
     try {
       // execute the method to test.
-      this.cacheProviderFacade.getFromCache(this.cacheKey, CACHE_PROFILE_ID);
-      fail("Expecting exception <" + CacheException.class.getName() + ">");
+      cacheProviderFacade.getFromCache(cacheKey, CACHE_PROFILE_ID);
+      fail();
 
     } catch (CacheException exception) {
-      assertSame("<Catched exception>", expectedException, exception);
+      assertSame(expectedException, exception);
     }
 
     verifyExpectationsOfMockControlsWereMet();
@@ -521,17 +516,17 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   public void testGetFromCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsTrue()
       throws Exception {
-    this.cacheProviderFacade.setFailQuietlyEnabled(true);
+    cacheProviderFacade.setFailQuietlyEnabled(true);
 
     // facade is unable to get an entry from the cache.
-    this.cacheProviderFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
-    this.cacheProviderFacadeControl.setThrowable(new CacheNotFoundException(
+    cacheProviderFacade.onGetFromCache(cacheKey, cacheProfile);
+    cacheProviderFacadeControl.setThrowable(new CacheNotFoundException(
         "testCache"));
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    Object cachedObject = this.cacheProviderFacade.getFromCache(this.cacheKey,
+    Object cachedObject = cacheProviderFacade.getFromCache(cacheKey,
         CACHE_PROFILE_ID);
 
     assertNull(cachedObject);
@@ -543,13 +538,13 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     String cachedString = "Cached String";
 
     // get an entry from the cache.
-    this.cacheProviderFacade.onGetFromCache(this.cacheKey, this.cacheProfile);
-    this.cacheProviderFacadeControl.setReturnValue(cachedString);
+    cacheProviderFacade.onGetFromCache(cacheKey, cacheProfile);
+    cacheProviderFacadeControl.setReturnValue(cachedString);
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    Object cachedObject = this.cacheProviderFacade.getFromCache(this.cacheKey,
+    Object cachedObject = cacheProviderFacade.getFromCache(cacheKey,
         CACHE_PROFILE_ID);
 
     assertSame("<Cached object>", cachedString, cachedObject);
@@ -567,7 +562,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    Object cachedObject = this.cacheProviderFacade.getFromCache(this.cacheKey,
+    Object cachedObject = cacheProviderFacade.getFromCache(cacheKey,
         "anotherCacheProfileId");
 
     assertNull(cachedObject);
@@ -576,12 +571,12 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   }
 
   public void testHandleCacheAccessExceptionWhenFailedQuietlyIsFalse() {
-    this.cacheProviderFacade.setFailQuietlyEnabled(false);
+    cacheProviderFacade.setFailQuietlyEnabled(false);
     CacheException expectedException = getNewCacheException();
 
     try {
-      this.cacheProviderFacade.handleCacheException(expectedException);
-      fail("Expecting exception <" + CacheException.class.getName() + ">");
+      cacheProviderFacade.handleCacheException(expectedException);
+      fail();
 
     } catch (CacheException exception) {
       assertSame(expectedException, exception);
@@ -589,14 +584,13 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   }
 
   public void testHandleCacheAccessExceptionWhenFailedQuietlyIsTrue() {
-    this.cacheProviderFacade.setFailQuietlyEnabled(true);
+    cacheProviderFacade.setFailQuietlyEnabled(true);
     CacheException cacheException = getNewCacheException();
 
     try {
-      this.cacheProviderFacade.handleCacheException(cacheException);
-
+      cacheProviderFacade.handleCacheException(cacheException);
     } catch (CacheException exception) {
-      fail("Exception should not be rethrown");
+      fail();
     }
   }
 
@@ -608,7 +602,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
     setStateOfMockControlsToReplay();
 
-    assertSame(objectToCache, this.cacheProviderFacade
+    assertSame(objectToCache, cacheProviderFacade
         .makeSerializableIfNecessary(objectToCache));
 
     verifyExpectationsOfMockControlsWereMet();
@@ -622,9 +616,8 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     assertIsNotSerializable(objectToCache);
 
     try {
-      this.cacheProviderFacade.makeSerializableIfNecessary(objectToCache);
-      fail("Expecting exception <"
-          + InvalidObjectToCacheException.class.getName() + ">");
+      cacheProviderFacade.makeSerializableIfNecessary(objectToCache);
+      fail();
 
     } catch (InvalidObjectToCacheException exception) {
       // we are expecting this exception.
@@ -636,7 +629,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setStateOfMockControlsToReplay();
 
     Object objectToCache = "R2-D2";
-    assertSame(objectToCache, this.cacheProviderFacade
+    assertSame(objectToCache, cacheProviderFacade
         .makeSerializableIfNecessary(objectToCache));
 
     verifyExpectationsOfMockControlsWereMet();
@@ -647,7 +640,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
         .createControl(SerializableFactory.class);
     SerializableFactory serializableFactory = (SerializableFactory) serializableFactoryControl
         .getMock();
-    this.cacheProviderFacade.setSerializableFactory(serializableFactory);
+    cacheProviderFacade.setSerializableFactory(serializableFactory);
 
     expectCacheRequiresSerializableElements(true);
 
@@ -658,7 +651,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setStateOfMockControlsToReplay();
     serializableFactoryControl.replay();
 
-    assertSame(objectToCache, this.cacheProviderFacade
+    assertSame(objectToCache, cacheProviderFacade
         .makeSerializableIfNecessary(objectToCache));
 
     verifyExpectationsOfMockControlsWereMet();
@@ -670,21 +663,19 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     expectCacheRequiresSerializableElements(false);
 
     Object objectToCache = new Object();
-    this.cacheProviderFacade.setFailQuietlyEnabled(false);
+    cacheProviderFacade.setFailQuietlyEnabled(false);
 
     // facade is unable to store an entry in the cache.
     CacheException expectedException = getNewCacheException();
-    this.cacheProviderFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-        objectToCache);
-    this.cacheProviderFacadeControl.setThrowable(expectedException);
+    cacheProviderFacade.onPutInCache(cacheKey, cacheProfile, objectToCache);
+    cacheProviderFacadeControl.setThrowable(expectedException);
 
     setStateOfMockControlsToReplay();
 
     try {
       // execute the method to test.
-      this.cacheProviderFacade.putInCache(this.cacheKey, CACHE_PROFILE_ID,
-          objectToCache);
-      fail("Expecting exception <" + CacheException.class.getName() + ">");
+      cacheProviderFacade.putInCache(cacheKey, CACHE_PROFILE_ID, objectToCache);
+      fail();
 
     } catch (CacheException exception) {
       assertSame("<Catched exception>", expectedException, exception);
@@ -698,26 +689,24 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     expectCacheRequiresSerializableElements(false);
 
     Object objectToCache = new Object();
-    this.cacheProviderFacade.setFailQuietlyEnabled(true);
+    cacheProviderFacade.setFailQuietlyEnabled(true);
 
     // facade is unable to store an entry in the cache.
-    this.cacheProviderFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-        objectToCache);
-    this.cacheProviderFacadeControl.setThrowable(new CacheNotFoundException(
+    cacheProviderFacade.onPutInCache(cacheKey, cacheProfile, objectToCache);
+    cacheProviderFacadeControl.setThrowable(new CacheNotFoundException(
         "testCache"));
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.putInCache(this.cacheKey, CACHE_PROFILE_ID,
-        objectToCache);
+    cacheProviderFacade.putInCache(cacheKey, CACHE_PROFILE_ID, objectToCache);
 
     verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testPutInCacheWhenMakeSerializableThrowsExceptionAndFailQuietlyIsFalse() {
     expectCacheRequiresSerializableElements(true);
-    this.cacheProviderFacade.setFailQuietlyEnabled(false);
+    cacheProviderFacade.setFailQuietlyEnabled(false);
 
     Object objectToCache = new Object();
     assertIsNotSerializable(objectToCache);
@@ -726,10 +715,8 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
     try {
       // execute the method to test.
-      this.cacheProviderFacade.putInCache(this.cacheKey, CACHE_PROFILE_ID,
-          objectToCache);
-      fail("Expecting exception <"
-          + InvalidObjectToCacheException.class.getName() + ">");
+      cacheProviderFacade.putInCache(cacheKey, CACHE_PROFILE_ID, objectToCache);
+      fail();
 
     } catch (InvalidObjectToCacheException exception) {
       // expecting exception.
@@ -740,15 +727,14 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   public void testPutInCacheWhenMakeSerializableThrowsExceptionAndFailQuietlyIsTrue() {
     expectCacheRequiresSerializableElements(true);
-    this.cacheProviderFacade.setFailQuietlyEnabled(true);
+    cacheProviderFacade.setFailQuietlyEnabled(true);
 
     Object objectToCache = new Object();
     assertIsNotSerializable(objectToCache);
 
     setStateOfMockControlsToReplay();
 
-    this.cacheProviderFacade.putInCache(this.cacheKey, CACHE_PROFILE_ID,
-        objectToCache);
+    cacheProviderFacade.putInCache(cacheKey, CACHE_PROFILE_ID, objectToCache);
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -758,14 +744,12 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
     Object objectToCache = new Object();
 
-    this.cacheProviderFacade.onPutInCache(this.cacheKey, this.cacheProfile,
-        objectToCache);
+    cacheProviderFacade.onPutInCache(cacheKey, cacheProfile, objectToCache);
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.putInCache(this.cacheKey, CACHE_PROFILE_ID,
-        objectToCache);
+    cacheProviderFacade.putInCache(cacheKey, CACHE_PROFILE_ID, objectToCache);
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -784,7 +768,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.putInCache(this.cacheKey, "someCacheProfileId",
+    cacheProviderFacade.putInCache(cacheKey, "someCacheProfileId",
         objectToCache);
 
     verifyExpectationsOfMockControlsWereMet();
@@ -808,16 +792,15 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     // use the cache profile editor to create a new cache profile.
     InvalidCacheProfileException expectedException = this
         .getNewInvalidCacheProfileException();
-    this.cacheProfileEditor.createCacheProfile(parsedProperties);
-    this.cacheProfileEditorControl.setThrowable(expectedException);
+    cacheProfileEditor.createCacheProfile(parsedProperties);
+    cacheProfileEditorControl.setThrowable(expectedException);
 
     setStateOfMockControlsToReplay();
 
     try {
       // execute the method to test.
-      this.cacheProviderFacade.setCacheProfiles(unparsedProperties);
-      fail("Expecting exception <"
-          + InvalidCacheProfileException.class.getName() + ">");
+      cacheProviderFacade.setCacheProfiles(unparsedProperties);
+      fail();
 
     } catch (InvalidCacheProfileException exception) {
       assertSame(expectedException, exception);
@@ -835,9 +818,8 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   public void testSetCacheProfilesWithEmptySetOfProperties() {
     try {
       Properties properties = new Properties();
-      this.cacheProviderFacade.setCacheProfiles(properties);
-      fail("Expecting exception <" + IllegalArgumentException.class.getName()
-          + ">");
+      cacheProviderFacade.setCacheProfiles(properties);
+      fail();
 
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
@@ -859,21 +841,19 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
     expectGetCacheProfileEditor();
 
-    // expecation: create a cache profile from the first property.
-    this.cacheProfileEditor.createCacheProfile(firstParsedProperties);
-    this.cacheProfileEditorControl.setReturnValue(this.cacheProfile);
+    cacheProfileEditor.createCacheProfile(firstParsedProperties);
+    cacheProfileEditorControl.setReturnValue(cacheProfile);
 
-    // expecation: create a cache profile from the second property.
-    this.cacheProfileEditor.createCacheProfile(secondParsedProperties);
-    this.cacheProfileEditorControl.setReturnValue(this.cacheProfile);
+    cacheProfileEditor.createCacheProfile(secondParsedProperties);
+    cacheProfileEditorControl.setReturnValue(cacheProfile);
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheProviderFacade.setCacheProfiles(map);
+    cacheProviderFacade.setCacheProfiles(map);
 
-    Map actualCacheProfiles = this.cacheProviderFacade.getCacheProfiles();
-    assertEquals("Number of cache profiles", 2, actualCacheProfiles.size());
+    Map actualCacheProfiles = cacheProviderFacade.getCacheProfiles();
+    assertEquals(2, actualCacheProfiles.size());
 
     verifyExpectationsOfMockControlsWereMet();
   }
@@ -881,9 +861,8 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   public void testSetCacheProfilesWithSetOfPropertiesEqualToNull() {
     try {
       Properties properties = null;
-      this.cacheProviderFacade.setCacheProfiles(properties);
-      fail("Expecting exception <" + IllegalArgumentException.class.getName()
-          + ">");
+      cacheProviderFacade.setCacheProfiles(properties);
+      fail();
 
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
@@ -891,10 +870,10 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   }
 
   private void verifyExpectationsOfMockControlsWereMet() {
-    this.cacheProfileEditorControl.verify();
-    if (this.cacheProfileValidatorControl != null) {
-      this.cacheProfileValidatorControl.verify();
+    cacheProfileEditorControl.verify();
+    if (cacheProfileValidatorControl != null) {
+      cacheProfileValidatorControl.verify();
     }
-    this.cacheProviderFacadeControl.verify();
+    cacheProviderFacadeControl.verify();
   }
 }

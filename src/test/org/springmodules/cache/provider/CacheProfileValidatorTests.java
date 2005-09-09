@@ -40,7 +40,7 @@ public final class CacheProfileValidatorTests extends TestCase {
      * @see AbstractCacheProfileValidator#getTargetClass()
      */
     protected Class getTargetClass() {
-      return this.targetClass;
+      return targetClass;
     }
 
     /**
@@ -48,9 +48,9 @@ public final class CacheProfileValidatorTests extends TestCase {
      */
     protected void validateCacheProfileProperties(Object cacheProfile)
         throws InvalidCacheProfileException {
-      if (this.exceptionToThrow != null) {
+      if (exceptionToThrow != null) {
         // this exception is used to verify that this method was called.
-        throw this.exceptionToThrow;
+        throw exceptionToThrow;
       }
     }
   }
@@ -64,9 +64,9 @@ public final class CacheProfileValidatorTests extends TestCase {
   private void assertValidateCacheProfileThrowsInvalidCacheProfileException(
       Object cacheProfile) {
     try {
-      this.validator.validateCacheProfile(cacheProfile);
-      fail("Expecting exception <"
-          + InvalidCacheProfileException.class.getName() + ">");
+      validator.validateCacheProfile(cacheProfile);
+      fail();
+
     } catch (InvalidCacheProfileException exception) {
       // we are expecting this exception.
     }
@@ -75,7 +75,7 @@ public final class CacheProfileValidatorTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.validator = new MockCacheProfileValidator();
+    validator = new MockCacheProfileValidator();
   }
 
   /**
@@ -88,11 +88,11 @@ public final class CacheProfileValidatorTests extends TestCase {
     InvalidCacheProfileException expectedException = new InvalidCacheProfileException(
         "A fake exception");
 
-    this.validator.targetClass = cacheProfile.getClass();
-    this.validator.exceptionToThrow = expectedException;
+    validator.targetClass = cacheProfile.getClass();
+    validator.exceptionToThrow = expectedException;
 
     try {
-      this.validator.validateCacheProfile(cacheProfile);
+      validator.validateCacheProfile(cacheProfile);
 
     } catch (InvalidCacheProfileException exception) {
       assertSame("The properties of the cahe profile were not validated",
@@ -118,7 +118,7 @@ public final class CacheProfileValidatorTests extends TestCase {
    */
   public void testValidateCacheProfileWithCacheProfileHavingClassNotEqualToTargetClass() {
     Object cacheProfile = "Another fake cache profile";
-    this.validator.targetClass = Integer.class;
+    validator.targetClass = Integer.class;
     assertValidateCacheProfileThrowsInvalidCacheProfileException(cacheProfile);
   }
 }

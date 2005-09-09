@@ -31,7 +31,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/07 02:00:10 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/09 02:18:52 $
  */
 public class OsCacheProfile implements CacheProfile {
 
@@ -88,19 +88,17 @@ public class OsCacheProfile implements CacheProfile {
       return false;
     }
 
-    final OsCacheProfile osCacheProfile = (OsCacheProfile) obj;
+    final OsCacheProfile profile = (OsCacheProfile) obj;
 
-    if (this.cronExpression != null ? !this.cronExpression
-        .equals(osCacheProfile.cronExpression)
-        : osCacheProfile.cronExpression != null) {
+    if (cronExpression != null ? !cronExpression.equals(profile.cronExpression)
+        : profile.cronExpression != null) {
       return false;
     }
-    if (!Arrays.equals(this.groups, osCacheProfile.groups)) {
+    if (!Arrays.equals(groups, profile.groups)) {
       return false;
     }
-    if (this.refreshPeriod != null ? !this.refreshPeriod
-        .equals(osCacheProfile.refreshPeriod)
-        : osCacheProfile.refreshPeriod != null) {
+    if (refreshPeriod != null ? !refreshPeriod.equals(profile.refreshPeriod)
+        : profile.refreshPeriod != null) {
       return false;
     }
 
@@ -108,15 +106,15 @@ public class OsCacheProfile implements CacheProfile {
   }
 
   public final String getCronExpression() {
-    return this.cronExpression;
+    return cronExpression;
   }
 
   public final String[] getGroups() {
-    return this.groups;
+    return groups;
   }
 
   public final Integer getRefreshPeriod() {
-    return this.refreshPeriod;
+    return refreshPeriod;
   }
 
   /**
@@ -126,25 +124,25 @@ public class OsCacheProfile implements CacheProfile {
     int multiplier = 31;
     int hash = 7;
     hash = multiplier * hash
-        + (this.cronExpression != null ? this.cronExpression.hashCode() : 0);
+        + (cronExpression != null ? cronExpression.hashCode() : 0);
 
-    if (this.groups == null) {
+    if (groups == null) {
       hash = multiplier * hash;
     } else {
-      int groupCount = this.groups.length;
+      int groupCount = groups.length;
       for (int i = 0; i < groupCount; i++) {
-        String group = this.groups[i];
+        String group = groups[i];
         hash = multiplier * hash + (group != null ? group.hashCode() : 0);
       }
     }
 
     hash = multiplier * hash
-        + (this.refreshPeriod != null ? this.refreshPeriod.hashCode() : 0);
+        + (refreshPeriod != null ? refreshPeriod.hashCode() : 0);
     return hash;
   }
 
-  public final void setCronExpression(String cronExpression) {
-    this.cronExpression = cronExpression;
+  public final void setCronExpression(String newCronExpression) {
+    cronExpression = newCronExpression;
   }
 
   /**
@@ -161,16 +159,16 @@ public class OsCacheProfile implements CacheProfile {
     setGroups(newGroups);
   }
 
-  public final void setGroups(String[] groups) {
-    this.groups = groups;
+  public final void setGroups(String[] newGroups) {
+    groups = newGroups;
   }
 
-  public final void setRefreshPeriod(int refreshPeriod) {
-    this.setRefreshPeriod(new Integer(refreshPeriod));
+  public final void setRefreshPeriod(int newRefreshPeriod) {
+    setRefreshPeriod(new Integer(newRefreshPeriod));
   }
 
-  public final void setRefreshPeriod(Integer refreshPeriod) {
-    this.refreshPeriod = refreshPeriod;
+  public final void setRefreshPeriod(Integer newRefreshPeriod) {
+    refreshPeriod = newRefreshPeriod;
   }
 
   /**
@@ -179,9 +177,9 @@ public class OsCacheProfile implements CacheProfile {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("refreshPeriod=" + this.refreshPeriod + ", ");
-    buffer.append("groups=" + ArrayUtils.toString(this.groups) + ", ");
-    buffer.append("cronExpression=" + Strings.quote(this.cronExpression) + "]");
+    buffer.append("refreshPeriod=" + refreshPeriod + ", ");
+    buffer.append("groups=" + ArrayUtils.toString(groups) + ", ");
+    buffer.append("cronExpression=" + Strings.quote(cronExpression) + "]");
 
     return buffer.toString();
   }

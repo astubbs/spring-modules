@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/07 02:32:11 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:23 $
  */
 public final class OsCacheProfileValidatorTests extends TestCase {
 
@@ -40,19 +40,19 @@ public final class OsCacheProfileValidatorTests extends TestCase {
   }
 
   protected void setUp() {
-    this.cacheProfileValidator = new OsCacheProfileValidator();
+    cacheProfileValidator = new OsCacheProfileValidator();
   }
 
   public void testValidateCacheProfileWithInstanceOfOscacheCacheProfile() {
     OsCacheProfile cacheProfile = new OsCacheProfile();
     Object object = cacheProfile;
 
-    this.cacheProfileValidator.validateCacheProfile(object);
+    cacheProfileValidator.validateCacheProfile(object);
   }
 
   public void testValidateCacheProfileObjectWithObjectNotInstanceOfOscacheCacheProfile() {
     try {
-      this.cacheProfileValidator.validateCacheProfile(new Object());
+      cacheProfileValidator.validateCacheProfile(new Object());
       fail();
     } catch (InvalidCacheProfileException exception) {
       // we are expecting this exception.

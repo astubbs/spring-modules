@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:31 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/09 02:18:59 $
  */
 public final class CachingAttributeEditorTests extends TestCase {
 
@@ -40,7 +40,7 @@ public final class CachingAttributeEditorTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.editor = new CachingAttributeEditor();
+    editor = new CachingAttributeEditor();
   }
 
   /**
@@ -55,8 +55,8 @@ public final class CachingAttributeEditorTests extends TestCase {
     Cached expectedCached = new Cached();
     expectedCached.setCacheProfileId("main");
 
-    this.editor.setAsText(cacheProfileId);
-    Object actualCached = this.editor.getValue();
+    editor.setAsText(cacheProfileId);
+    Object actualCached = editor.getValue();
 
     assertEquals("<Caching attribute>", expectedCached, actualCached);
   }

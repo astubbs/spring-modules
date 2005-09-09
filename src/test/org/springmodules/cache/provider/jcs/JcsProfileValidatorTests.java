@@ -29,7 +29,7 @@ import org.springmodules.cache.provider.InvalidCacheProfileException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/07 02:32:09 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/09 02:18:54 $
  */
 public final class JcsProfileValidatorTests extends TestCase {
 
@@ -43,8 +43,7 @@ public final class JcsProfileValidatorTests extends TestCase {
 
   private void assertValidateCacheProfilePropertiesThrowsException() {
     try {
-      this.cacheProfileValidator
-          .validateCacheProfileProperties(this.cacheProfile);
+      cacheProfileValidator.validateCacheProfileProperties(cacheProfile);
       fail();
     } catch (InvalidCacheProfileException exception) {
       // we are expecting this exception.
@@ -53,28 +52,27 @@ public final class JcsProfileValidatorTests extends TestCase {
 
   protected void setUp() throws Exception {
     super.setUp();
-    this.cacheProfile = new JcsProfile();
-    this.cacheProfileValidator = new JcsProfileValidator();
+    cacheProfile = new JcsProfile();
+    cacheProfileValidator = new JcsProfileValidator();
   }
 
   public void testGetTargetClass() {
-    assertEquals(JcsProfile.class, this.cacheProfileValidator.getTargetClass());
+    assertEquals(JcsProfile.class, cacheProfileValidator.getTargetClass());
   }
 
   public void testValidateCacheProfilePropertiesWithCacheNameEqualToNull() {
-    this.cacheProfile.setCacheName(null);
+    cacheProfile.setCacheName(null);
     assertValidateCacheProfilePropertiesThrowsException();
   }
 
   public void testValidateCacheProfilePropertiesWithEmptyCacheName() {
-    this.cacheProfile.setCacheName("");
+    cacheProfile.setCacheName("");
     assertValidateCacheProfilePropertiesThrowsException();
   }
 
   public void testValidateCacheProfilePropertiesWithNotEmptyCacheName() {
-    this.cacheProfile.setCacheName("mapping");
-    this.cacheProfileValidator
-        .validateCacheProfileProperties(this.cacheProfile);
+    cacheProfile.setCacheName("mapping");
+    cacheProfileValidator.validateCacheProfileProperties(cacheProfile);
   }
 
 }

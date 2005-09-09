@@ -37,7 +37,7 @@ import org.springmodules.cache.mock.MockCacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:38 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/09 02:19:13 $
  */
 public final class NameMatchCacheAttributeSourceTests extends TestCase {
 
@@ -70,7 +70,7 @@ public final class NameMatchCacheAttributeSourceTests extends TestCase {
    */
   private void assertMethodNameDoesNotMatchMappedName(String methodName,
       String mappedName) {
-    boolean matches = this.cacheAttributeSource.isMatch(methodName, mappedName);
+    boolean matches = cacheAttributeSource.isMatch(methodName, mappedName);
     assertFalse("The method name '" + methodName
         + "' should not match the mapped name '" + mappedName + "'", matches);
   }
@@ -87,14 +87,14 @@ public final class NameMatchCacheAttributeSourceTests extends TestCase {
    */
   private void assertMethodNameMatchesMappedName(String methodName,
       String mappedName) {
-    boolean matches = this.cacheAttributeSource.isMatch(methodName, mappedName);
+    boolean matches = cacheAttributeSource.isMatch(methodName, mappedName);
     assertTrue("The method name '" + methodName
         + "' should match the mapped name '" + mappedName + "'", matches);
   }
 
   private void setStateOfMockControlsToReplay() {
-    this.cacheAttributeEditorControl.replay();
-    this.cacheAttributeSourceControl.replay();
+    cacheAttributeEditorControl.replay();
+    cacheAttributeSourceControl.replay();
   }
 
   protected void setUp() throws Exception {
@@ -104,10 +104,10 @@ public final class NameMatchCacheAttributeSourceTests extends TestCase {
   }
 
   private void setUpCacheAttributeEditorAsMockObject() {
-    this.cacheAttributeEditorControl = MockControl
+    cacheAttributeEditorControl = MockControl
         .createControl(PropertyEditor.class);
 
-    this.cacheAttributeEditor = (PropertyEditor) this.cacheAttributeEditorControl
+    cacheAttributeEditor = (PropertyEditor) cacheAttributeEditorControl
         .getMock();
   }
 
@@ -121,29 +121,24 @@ public final class NameMatchCacheAttributeSourceTests extends TestCase {
         "getCacheAttributeEditor", null);
     Method[] methodsToMock = new Method[] { getCacheAttributeEditorMethod };
 
-    this.cacheAttributeSourceControl = MockClassControl.createControl(
-        classToMock, null, null, methodsToMock);
+    cacheAttributeSourceControl = MockClassControl.createControl(classToMock,
+        null, null, methodsToMock);
 
-    this.cacheAttributeSource = (AbstractNameMatchCacheAttributeSource) this.cacheAttributeSourceControl
+    cacheAttributeSource = (AbstractNameMatchCacheAttributeSource) cacheAttributeSourceControl
         .getMock();
   }
 
   public void testIsMatchWithMatchingMethodNameAndMappedNameEndingWithWildcard() {
-    String methodName = "getNewCustomer";
-    String mappedName = "getNew*";
-    assertMethodNameMatchesMappedName(methodName, mappedName);
+    assertMethodNameMatchesMappedName("getNewCustomer", "getNew*");
   }
 
   public void testIsMatchWithMatchingMethodNameAndMappedNameStartingWithWildcard() {
-    String methodName = "getNewCustomer";
-    String mappedName = "*Customer";
-    assertMethodNameMatchesMappedName(methodName, mappedName);
+    assertMethodNameMatchesMappedName("getNewCustomer", "*Customer");
   }
 
   public void testIsMatchWithNotMatchingMethodName() {
-    String methodName = "getNewCustomer";
-    String mappedName = "getCurrentCustomer";
-    assertMethodNameDoesNotMatchMappedName(methodName, mappedName);
+    assertMethodNameDoesNotMatchMappedName("getNewCustomer",
+        "getCurrentCustomer");
   }
 
   /**
@@ -156,29 +151,28 @@ public final class NameMatchCacheAttributeSourceTests extends TestCase {
   public void testSetPropertiesWhenPropertyEditorReturnsCacheAttributeEqualToNull() {
     setUpCacheAttributeEditorAsMockObject();
 
-    String mappedName = "getNew*";
     String cacheAttributeProperties = "[cacheProfileId=test]";
     Properties cacheAttributes = new Properties();
-    cacheAttributes.setProperty(mappedName, cacheAttributeProperties);
+    cacheAttributes.setProperty("getNew*", cacheAttributeProperties);
 
     // get the the editor of cache attributes.
-    this.cacheAttributeSource.getCacheAttributeEditor();
-    this.cacheAttributeSourceControl.setReturnValue(this.cacheAttributeEditor);
+    cacheAttributeSource.getCacheAttributeEditor();
+    cacheAttributeSourceControl.setReturnValue(cacheAttributeEditor);
 
     // set the properties of the cache attributes to the editor.
-    this.cacheAttributeEditor.setAsText(cacheAttributeProperties);
+    cacheAttributeEditor.setAsText(cacheAttributeProperties);
 
     // the cache attribute created by the editor should be null.
-    this.cacheAttributeEditor.getValue();
-    this.cacheAttributeEditorControl.setReturnValue(null);
+    cacheAttributeEditor.getValue();
+    cacheAttributeEditorControl.setReturnValue(null);
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheAttributeSource.setProperties(cacheAttributes);
+    cacheAttributeSource.setProperties(cacheAttributes);
 
     // verify that the map of cache attributes is empty.
-    Map actualCacheAttributes = this.cacheAttributeSource.getAttributeMap();
+    Map actualCacheAttributes = cacheAttributeSource.getAttributeMap();
     assertTrue("The map of attributes should be empty", actualCacheAttributes
         .isEmpty());
 
@@ -202,32 +196,32 @@ public final class NameMatchCacheAttributeSourceTests extends TestCase {
     cacheAttributes.setProperty(mappedName, cacheAttributeProperties);
 
     // get the the editor of cache attributes.
-    this.cacheAttributeSource.getCacheAttributeEditor();
-    this.cacheAttributeSourceControl.setReturnValue(this.cacheAttributeEditor);
+    cacheAttributeSource.getCacheAttributeEditor();
+    cacheAttributeSourceControl.setReturnValue(cacheAttributeEditor);
 
     // set the properties of the cache attributes to the editor.
-    this.cacheAttributeEditor.setAsText(cacheAttributeProperties);
+    cacheAttributeEditor.setAsText(cacheAttributeProperties);
 
     // the cache attribute created by the editor should not null.
-    this.cacheAttributeEditor.getValue();
+    cacheAttributeEditor.getValue();
     CacheAttribute cacheAttribute = new MockCacheAttribute();
-    this.cacheAttributeEditorControl.setReturnValue(cacheAttribute);
+    cacheAttributeEditorControl.setReturnValue(cacheAttribute);
 
     setStateOfMockControlsToReplay();
 
     // execute the method to test.
-    this.cacheAttributeSource.setProperties(cacheAttributes);
+    cacheAttributeSource.setProperties(cacheAttributes);
 
     // verify the cache attribute was added to the map.
-    Map actualCacheAttributes = this.cacheAttributeSource.getAttributeMap();
+    Map actualCacheAttributes = cacheAttributeSource.getAttributeMap();
     Object actualCacheAttribute = actualCacheAttributes.get(mappedName);
-    assertSame("<Cache attribute>", cacheAttribute, actualCacheAttribute);
+    assertSame(cacheAttribute, actualCacheAttribute);
 
     verifyExpectationsOfMockControlsWereMet();
   }
 
   private void verifyExpectationsOfMockControlsWereMet() {
-    this.cacheAttributeEditorControl.verify();
-    this.cacheAttributeSourceControl.verify();
+    cacheAttributeEditorControl.verify();
+    cacheAttributeSourceControl.verify();
   }
 }

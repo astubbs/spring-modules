@@ -34,9 +34,9 @@ import org.springmodules.cache.regex.Regex;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/25 06:53:16 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:30 $
  */
-public final class BracketSeparatedPropertiesParser {
+public abstract class BracketSeparatedPropertiesParser {
 
   /**
    * Regular expression pattern used to parse a String of form "key=value".

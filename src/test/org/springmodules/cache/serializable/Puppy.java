@@ -54,7 +54,7 @@ public class Puppy {
     }
 
     Puppy puppy = (Puppy) obj;
-    if (this.name != null ? !this.name.equals(puppy.name) : puppy.name != null) {
+    if (name != null ? !name.equals(puppy.name) : puppy.name != null) {
       return false;
     }
 
@@ -62,7 +62,7 @@ public class Puppy {
   }
 
   public final String getName() {
-    return this.name;
+    return name;
   }
 
   /**
@@ -72,13 +72,13 @@ public class Puppy {
     int multiplier = 31;
     int hash = 17;
 
-    hash = multiplier * hash + (this.name != null ? this.name.hashCode() : 0);
+    hash = multiplier * hash + (name != null ? name.hashCode() : 0);
 
     return hash;
   }
 
-  public final void setName(String name) {
-    this.name = name;
+  public final void setName(String newName) {
+    name = newName;
   }
 
   /**
@@ -87,7 +87,7 @@ public class Puppy {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("name=" + Strings.quote(this.name) + "]");
+    buffer.append("name=" + Strings.quote(name) + "]");
     return buffer.toString();
   }
 

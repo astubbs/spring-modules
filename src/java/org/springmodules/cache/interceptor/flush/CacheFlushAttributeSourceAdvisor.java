@@ -32,7 +32,7 @@ import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:37:55 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:03 $
  */
 public class CacheFlushAttributeSourceAdvisor extends
     StaticMethodMatcherPointcutAdvisor {
@@ -65,7 +65,7 @@ public class CacheFlushAttributeSourceAdvisor extends
               + "CacheFlushInterceptor that has no CacheFlushAttributeSource configured");
     }
 
-    this.cacheFlushAttributeSource = tempAttributeSource;
+    cacheFlushAttributeSource = tempAttributeSource;
   }
 
   /**
@@ -80,8 +80,8 @@ public class CacheFlushAttributeSourceAdvisor extends
    */
   public final boolean matches(Method method, Class targetClass) {
 
-    FlushCache attribute = this.cacheFlushAttributeSource
-        .getCacheFlushAttribute(method, targetClass);
+    FlushCache attribute = cacheFlushAttributeSource.getCacheFlushAttribute(
+        method, targetClass);
 
     boolean matches = (attribute != null);
     return matches;

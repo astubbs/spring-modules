@@ -29,7 +29,7 @@ import org.springmodules.cache.key.CacheKeyGenerator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/05 02:18:51 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/09 02:18:56 $
  */
 public class CachingAspectSupport {
 
@@ -69,29 +69,29 @@ public class CachingAspectSupport {
   }
 
   protected final CacheKeyGenerator getCacheKeyGenerator() {
-    return this.cacheKeyGenerator;
+    return cacheKeyGenerator;
   }
 
   public final CachingAttributeSource getCachingAttributeSource() {
-    return this.cachingAttributeSource;
+    return cachingAttributeSource;
   }
 
   public final EntryStoredListener getEntryStoredListener() {
-    return this.entryStoredListener;
+    return entryStoredListener;
   }
 
-  public final void setCacheKeyGenerator(CacheKeyGenerator cacheKeyGenerator) {
-    this.cacheKeyGenerator = cacheKeyGenerator;
+  public final void setCacheKeyGenerator(CacheKeyGenerator newCacheKeyGenerator) {
+    cacheKeyGenerator = newCacheKeyGenerator;
   }
 
   public final void setCachingAttributeSource(
-      CachingAttributeSource cachingAttributeSource) {
-    this.cachingAttributeSource = cachingAttributeSource;
+      CachingAttributeSource newCachingAttributeSource) {
+    cachingAttributeSource = newCachingAttributeSource;
   }
 
   public final void setEntryStoredListener(
-      EntryStoredListener entryStoredListener) {
-    this.entryStoredListener = entryStoredListener;
+      EntryStoredListener newEntryStoredListener) {
+    entryStoredListener = newEntryStoredListener;
   }
 
 }

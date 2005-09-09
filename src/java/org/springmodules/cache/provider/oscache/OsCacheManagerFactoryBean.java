@@ -39,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:22 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/09 02:18:52 $
  */
 public final class OsCacheManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
@@ -65,13 +65,13 @@ public final class OsCacheManagerFactoryBean extends
 
     Resource configLocation = getConfigLocation();
     if (null == configLocation) {
-      this.cacheManager = new GeneralCacheAdministrator();
+      cacheManager = new GeneralCacheAdministrator();
     } else {
       InputStream inputStream = configLocation.getInputStream();
       Properties properties = new Properties();
       properties.load(inputStream);
 
-      this.cacheManager = new GeneralCacheAdministrator(properties);
+      cacheManager = new GeneralCacheAdministrator(properties);
     }
   }
 
@@ -80,13 +80,13 @@ public final class OsCacheManagerFactoryBean extends
    * BeanFactory.
    */
   public void destroy() throws Exception {
-    if (this.cacheManager == null) {
+    if (cacheManager == null) {
       logger
           .info("The OSCache cache manager was not built. No need to shut it down.");
     } else {
       logger.info("Shutting down the OSCache cache manager.");
-      this.cacheManager.flushAll();
-      this.cacheManager.destroy();
+      cacheManager.flushAll();
+      cacheManager.destroy();
     }
   }
 
@@ -96,7 +96,7 @@ public final class OsCacheManagerFactoryBean extends
    * @return the cache manager managed by this factory.
    */
   public Object getObject() {
-    return this.cacheManager;
+    return cacheManager;
   }
 
   /**
@@ -105,7 +105,7 @@ public final class OsCacheManagerFactoryBean extends
    * @return the type of the cache manager managed by this factory.
    */
   public Class getObjectType() {
-    return this.cacheManager != null ? this.cacheManager.getClass()
+    return cacheManager != null ? cacheManager.getClass()
         : GeneralCacheAdministrator.class;
   }
 }

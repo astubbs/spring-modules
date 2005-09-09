@@ -41,7 +41,7 @@ import org.springmodules.cache.provider.InvalidObjectToCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/06 01:41:40 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/09 02:19:06 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -67,8 +67,8 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     Cache cache = null;
 
     try {
-      if (this.cacheManager.cacheExists(cacheName)) {
-        cache = this.cacheManager.getCache(cacheName);
+      if (cacheManager.cacheExists(cacheName)) {
+        cache = cacheManager.getCache(cacheName);
       }
 
     } catch (Exception exception) {
@@ -212,8 +212,8 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
     }
   }
 
-  public void setCacheManager(CacheManager cacheManager) {
-    this.cacheManager = cacheManager;
+  public void setCacheManager(CacheManager newCacheManager) {
+    cacheManager = newCacheManager;
   }
 
   /**
@@ -233,13 +233,13 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
    */
   protected void validateCacheManager() throws InvalidConfigurationException {
-    if (null == this.cacheManager) {
+    if (null == cacheManager) {
       throw new InvalidConfigurationException(
           "The Cache Manager should not be null");
     }
 
     if (!isFailQuietlyEnabled()) {
-      int cacheManagerStatus = this.cacheManager.getStatus();
+      int cacheManagerStatus = cacheManager.getStatus();
 
       if (cacheManagerStatus != CacheManager.STATUS_ALIVE) {
         throw new InvalidConfigurationException("Cache Manager is not alive");

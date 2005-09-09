@@ -35,7 +35,7 @@ import org.springframework.metadata.Attributes;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:31 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/09 02:18:58 $
  */
 public final class MetadataCachingAttributeSourceTests extends TestCase {
 
@@ -52,11 +52,11 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.attributesControl = MockControl.createControl(Attributes.class);
-    this.attributes = (Attributes) this.attributesControl.getMock();
+    attributesControl = MockControl.createControl(Attributes.class);
+    attributes = (Attributes) attributesControl.getMock();
 
-    this.source = new MetadataCachingAttributeSource();
-    this.source.setAttributes(this.attributes);
+    source = new MetadataCachingAttributeSource();
+    source.setAttributes(attributes);
   }
 
   /**
@@ -70,15 +70,15 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
     Method method = clazz.getMethod("charAt", new Class[] { int.class });
 
     List attributeList = new ArrayList();
-    this.attributes.getAttributes(method);
-    this.attributesControl.setReturnValue(attributeList);
-    this.attributesControl.replay();
+    attributes.getAttributes(method);
+    attributesControl.setReturnValue(attributeList);
+    attributesControl.replay();
 
-    Collection returnedAttributes = this.source.findAllAttributes(method);
+    Collection returnedAttributes = source.findAllAttributes(method);
 
-    assertSame("<returned Attributes>", attributeList, returnedAttributes);
-    
-    this.attributesControl.verify();
+    assertSame(attributeList, returnedAttributes);
+
+    attributesControl.verify();
   }
 
 }

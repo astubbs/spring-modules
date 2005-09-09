@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:47 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:26 $
  */
 public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
@@ -47,8 +47,8 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
   private void assertAddPropertyThrowsException() {
     try {
-      BracketSeparatedPropertiesParser.addProperty(this.property,
-          this.properties);
+      BracketSeparatedPropertiesParser.addProperty(property,
+          properties);
       fail();
       
     } catch (IllegalArgumentException exception) {
@@ -56,16 +56,11 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
     }
   }
 
-  private void assertEqualProperties(Properties expected, Properties actual) {
-    assertEquals("<Properties>", expected, actual);
-  }
-
   private void assertParsePropertiesThrowsException() {
-    Class expectedException = IllegalArgumentException.class;
-
     try {
-      BracketSeparatedPropertiesParser.parseProperties(this.property);
-      fail("Expecting <" + expectedException.getName() + ">");
+      BracketSeparatedPropertiesParser.parseProperties(property);
+      fail();
+      
     } catch (IllegalArgumentException exception) {
       // we are expecting this exception.
     }
@@ -74,54 +69,54 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.properties = new Properties();
+    properties = new Properties();
 
-    this.propertyKey = "name";
-    this.propertyValue = "Luke Skywalker";
-    this.property = this.propertyKey + "=" + this.propertyValue;
+    propertyKey = "name";
+    propertyValue = "Luke Skywalker";
+    property = propertyKey + "=" + propertyValue;
   }
 
   public void testAddPropertyWithDuplicatedProperties() {
-    this.properties.setProperty(this.propertyKey, this.propertyValue);
+    properties.setProperty(propertyKey, propertyValue);
     assertAddPropertyThrowsException();
   }
 
   public void testAddPropertyWithInvalidPropertyString() {
-    this.property = "XWing";
+    property = "XWing";
     assertAddPropertyThrowsException();
   }
 
   public void testAddPropertyWithValidPropertyString() {
-    this.properties.setProperty(this.propertyKey, this.propertyValue);
+    properties.setProperty(propertyKey, propertyValue);
     Properties actualProperties = new Properties();
 
-    BracketSeparatedPropertiesParser.addProperty(this.property,
+    BracketSeparatedPropertiesParser.addProperty(property,
         actualProperties);
-    assertEqualProperties(this.properties, actualProperties);
+    assertEquals(properties, actualProperties);
   }
 
   public void testParsePropertiesWithEmptyString() {
-    this.property = "";
+    property = "";
     assertParsePropertiesThrowsException();
   }
 
   public void testParsePropertiesWithStringEqualToNull() {
-    this.property = null;
+    property = null;
     assertParsePropertiesThrowsException();
   }
 
   public void testParsePropertiesWithStringNotEndingWithBrackets() {
-    this.property = "[Anakin";
+    property = "[Anakin";
     assertParsePropertiesThrowsException();
   }
 
   public void testParsePropertiesWithStringNotStartingAndNotEndingWithBrackets() {
-    this.property = "Anakin";
+    property = "Anakin";
     assertParsePropertiesThrowsException();
   }
 
   public void testParsePropertiesWithStringNotStartingWithBracket() {
-    this.property = "Anakin]";
+    property = "Anakin]";
     assertParsePropertiesThrowsException();
   }
 
@@ -131,15 +126,15 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
     String secondProperty = secondPropertyKey + "=" + secondPropertyValue;
 
     Properties expectedProperties = new Properties();
-    expectedProperties.setProperty(this.propertyKey, this.propertyValue);
+    expectedProperties.setProperty(propertyKey, propertyValue);
     expectedProperties.setProperty(secondPropertyKey, secondPropertyValue);
 
-    String cacheProfileProperties = "[" + this.property + "][" + secondProperty
+    String cacheProfileProperties = "[" + property + "][" + secondProperty
         + "]";
 
     Properties actualProperties = BracketSeparatedPropertiesParser
         .parseProperties(cacheProfileProperties);
 
-    assertEqualProperties(expectedProperties, actualProperties);
+    assertEquals(expectedProperties, actualProperties);
   }
 }

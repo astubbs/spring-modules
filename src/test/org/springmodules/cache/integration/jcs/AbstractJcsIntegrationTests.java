@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.jcs.JcsProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/06 01:41:52 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/09 02:19:31 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractIntegrationTests {
@@ -87,7 +87,7 @@ public abstract class AbstractJcsIntegrationTests extends
   protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
       throws Exception {
     Serializable key = getGeneratedKey(keyIndex);
-    ICacheElement cacheElement = this.getCacheElement(key);
+    ICacheElement cacheElement = getCacheElement(key);
 
     Object actualCachedObject = cacheElement.getVal();
 
@@ -95,7 +95,7 @@ public abstract class AbstractJcsIntegrationTests extends
   }
 
   private ICacheElement getCacheElement(Serializable key) {
-    CompositeCache cache = this.cacheManager.getCache(CACHE_NAME);
+    CompositeCache cache = cacheManager.getCache(CACHE_NAME);
     String group = CACHE_GROUP;
     GroupId groupId = new GroupId(CACHE_NAME, group);
     GroupAttrName groupAttrName = new GroupAttrName(groupId, key);
@@ -108,7 +108,7 @@ public abstract class AbstractJcsIntegrationTests extends
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
    */
   protected final void onSetUp() throws Exception {
-    this.cacheManager = (CompositeCacheManager) this.applicationContext
+    cacheManager = (CompositeCacheManager) applicationContext
         .getBean("cacheManager");
   }
 

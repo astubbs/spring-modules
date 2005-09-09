@@ -32,7 +32,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:34 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/09 02:19:04 $
  */
 public final class CacheFlushInterceptor extends CacheFlushAspectSupport
     implements MethodInterceptor {
@@ -86,11 +86,11 @@ public final class CacheFlushInterceptor extends CacheFlushAspectSupport
 
     boolean flushedBeforeExecution = attribute.isFlushBeforeExecution();
     if (flushedBeforeExecution) {
-      this.cacheProviderFacade.flushCache(cacheProfileIds);
+      cacheProviderFacade.flushCache(cacheProfileIds);
       proceedReturnValue = methodInvocation.proceed();
     } else {
       proceedReturnValue = methodInvocation.proceed();
-      this.cacheProviderFacade.flushCache(cacheProfileIds);
+      cacheProviderFacade.flushCache(cacheProfileIds);
     }
 
     return proceedReturnValue;
@@ -115,8 +115,8 @@ public final class CacheFlushInterceptor extends CacheFlushAspectSupport
   }
 
   public final void setCacheProviderFacade(
-      CacheProviderFacade cacheProviderFacade) {
-    this.cacheProviderFacade = cacheProviderFacade;
+      CacheProviderFacade newCacheProviderFacade) {
+    cacheProviderFacade = newCacheProviderFacade;
   }
 
 }

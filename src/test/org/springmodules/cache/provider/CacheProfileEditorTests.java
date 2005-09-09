@@ -48,11 +48,6 @@ public final class CacheProfileEditorTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    setUpCacheProfileEditorAsMockObject();
-  }
-
-  private void setUpCacheProfileEditorAsMockObject() throws Exception {
-    // set up the class to mock.
     Class classToMock = AbstractCacheProfileEditor.class;
 
     // set up the methods to mock.
@@ -62,11 +57,11 @@ public final class CacheProfileEditorTests extends TestCase {
     Method[] methodsToMock = new Method[] { createCacheProfileMethod };
 
     // create the mock control.
-    this.cacheProfileEditorControl = MockClassControl.createControl(
-        classToMock, null, null, methodsToMock);
+    cacheProfileEditorControl = MockClassControl.createControl(classToMock,
+        null, null, methodsToMock);
 
     // create the mock object.
-    this.cacheProfileEditor = (AbstractCacheProfileEditor) this.cacheProfileEditorControl
+    cacheProfileEditor = (AbstractCacheProfileEditor) cacheProfileEditorControl
         .getMock();
   }
 
@@ -87,20 +82,18 @@ public final class CacheProfileEditorTests extends TestCase {
     CacheProfile cacheProfile = new MockCacheProfile();
 
     // create a cache profile from the parsed properties.
-    this.cacheProfileEditor.createCacheProfile(parsedProperties);
-    this.cacheProfileEditorControl.setReturnValue(cacheProfile);
+    cacheProfileEditor.createCacheProfile(parsedProperties);
+    cacheProfileEditorControl.setReturnValue(cacheProfile);
 
-    // set the state of the mock control to 'replay'.
-    this.cacheProfileEditorControl.replay();
+    cacheProfileEditorControl.replay();
 
     // execute the method to test.
-    this.cacheProfileEditor.setAsText(unparsedProperties);
+    cacheProfileEditor.setAsText(unparsedProperties);
 
-    Object actualCacheProfile = this.cacheProfileEditor.getValue();
+    Object actualCacheProfile = cacheProfileEditor.getValue();
     assertSame("<cache profile>", cacheProfile, actualCacheProfile);
 
-    // verify that the expectations of the mock control were met.
-    this.cacheProfileEditorControl.verify();
+    cacheProfileEditorControl.verify();
   }
 
 }

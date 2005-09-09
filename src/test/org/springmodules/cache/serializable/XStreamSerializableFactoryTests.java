@@ -19,14 +19,11 @@ package org.springmodules.cache.serializable;
 
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springmodules.cache.serializable.XStreamSerializableFactory;
+import junit.framework.TestCase;
+
 import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWrapper;
 
 import com.thoughtworks.xstream.XStream;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -38,9 +35,6 @@ import junit.framework.TestCase;
  * @version $Revision$ $Date$
  */
 public class XStreamSerializableFactoryTests extends TestCase {
-
-  private static Log logger = LogFactory
-      .getLog(XStreamSerializableFactoryTests.class);
 
   /**
    * Non-serializable object.
@@ -56,39 +50,35 @@ public class XStreamSerializableFactoryTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.serializableFactory = new XStreamSerializableFactory();
-    this.puppy = new Puppy("Scooby");
+    serializableFactory = new XStreamSerializableFactory();
+    puppy = new Puppy("Scooby");
   }
 
   public void testGetOriginalValueWithArgumentBeingObjectWrapper() {
     Serializable expected = "Darth Vader";
     ObjectWrapper wrapper = new ObjectWrapper(expected);
-    assertSame(expected, this.serializableFactory.getOriginalValue(wrapper));
+    assertSame(expected, serializableFactory.getOriginalValue(wrapper));
   }
 
   public void testGetOriginalValueWithArgumentEqualToNull() {
-    assertNull(this.serializableFactory.getOriginalValue(null));
+    assertNull(serializableFactory.getOriginalValue(null));
   }
 
   public void testGetOriginalValueWithArgumentNotBeingObjectWrapper() {
     Object obj = "R2-D2";
-    assertSame(obj, this.serializableFactory.getOriginalValue(obj));
+    assertSame(obj, serializableFactory.getOriginalValue(obj));
   }
 
   public void testMakeSerializableIfNecessaryWithArgumentEqualToNull() {
-    assertNull(this.serializableFactory.makeSerializableIfNecessary(null));
+    assertNull(serializableFactory.makeSerializableIfNecessary(null));
   }
 
   public void testMakeSerializableIfNecessaryWithNotSerializableArgument()
       throws Exception {
     XStream xstream = new XStream();
-    ObjectWrapper expected = new ObjectWrapper(xstream.toXML(this.puppy));
+    ObjectWrapper expected = new ObjectWrapper(xstream.toXML(puppy));
 
-    Object actual = this.serializableFactory
-        .makeSerializableIfNecessary(this.puppy);
-
-    logger.debug("Expected: " + expected);
-    logger.debug("Actual:   " + actual);
+    Object actual = serializableFactory.makeSerializableIfNecessary(puppy);
 
     assertEquals(expected, actual);
     SerializationAssert.assertObjectIsSerializable(actual);
@@ -96,7 +86,7 @@ public class XStreamSerializableFactoryTests extends TestCase {
 
   public void testMakeSerializableIfNecessaryWithSerializableArgument() {
     Object obj = "Luke Skywalker";
-    Object actual = this.serializableFactory.makeSerializableIfNecessary(obj);
+    Object actual = serializableFactory.makeSerializableIfNecessary(obj);
     assertSame(obj, actual);
   }
 }

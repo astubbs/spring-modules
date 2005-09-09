@@ -43,7 +43,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:51 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/09 02:19:31 $
  */
 public final class CacheProxyFactoryBean extends ProxyConfig implements
     FactoryBean, InitializingBean {
@@ -79,8 +79,8 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
 
   public CacheProxyFactoryBean() {
     super();
-    this.cacheFlushInterceptor = new CacheFlushInterceptor();
-    this.cachingInterceptor = new CachingInterceptor();
+    cacheFlushInterceptor = new CacheFlushInterceptor();
+    cachingInterceptor = new CachingInterceptor();
   }
 
   /**
@@ -95,37 +95,37 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    *           instance of <code>org.springframework.aop.TargetSource</code>.
    */
   public void afterPropertiesSet() {
-    this.cachingInterceptor.afterPropertiesSet();
+    cachingInterceptor.afterPropertiesSet();
 
-    if (this.target == null) {
+    if (target == null) {
       throw new IllegalStateException("Property 'target' is required");
     }
 
     ProxyFactory proxyFactory = new ProxyFactory();
     proxyFactory.addAdvisor(new CachingAttributeSourceAdvisor(
-        this.cachingInterceptor));
+        cachingInterceptor));
     proxyFactory.addAdvisor(new CacheFlushAttributeSourceAdvisor(
-        this.cacheFlushInterceptor));
+        cacheFlushInterceptor));
 
     proxyFactory.copyFrom(this);
 
-    TargetSource targetSource = createTargetSource(this.target);
+    TargetSource targetSource = createTargetSource(target);
     proxyFactory.setTargetSource(targetSource);
 
-    if (this.proxyInterfaces != null) {
-      proxyFactory.setInterfaces(this.proxyInterfaces);
+    if (proxyInterfaces != null) {
+      proxyFactory.setInterfaces(proxyInterfaces);
     } else if (!isProxyTargetClass()) {
-      if (this.target instanceof TargetSource) {
+      if (target instanceof TargetSource) {
         throw new AopConfigException(
             "Either 'proxyInterfaces' or 'proxyTargetClass' is required "
                 + "when using a TargetSource as 'target'");
       }
 
       // rely on AOP infrastructure to tell us what interfaces to proxy
-      proxyFactory.setInterfaces(ClassUtils.getAllInterfaces(this.target));
+      proxyFactory.setInterfaces(ClassUtils.getAllInterfaces(target));
     }
 
-    this.proxy = proxyFactory.getProxy();
+    proxy = proxyFactory.getProxy();
   }
 
   /**
@@ -155,27 +155,27 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * @return the proxy.
    */
   public Object getObject() {
-    return this.proxy;
+    return proxy;
   }
 
   public Class getObjectType() {
     Class objectType = null;
 
-    if (this.proxy != null) {
-      objectType = this.proxy.getClass();
-    } else if (this.target != null && this.target instanceof TargetSource) {
-      objectType = this.target.getClass();
+    if (proxy != null) {
+      objectType = proxy.getClass();
+    } else if (target != null && target instanceof TargetSource) {
+      objectType = target.getClass();
     }
 
     return objectType;
   }
 
   protected Object getProxy() {
-    return this.proxy;
+    return proxy;
   }
 
   protected Class[] getProxyInterfaces() {
-    return this.proxyInterfaces;
+    return proxyInterfaces;
   }
 
   /**
@@ -201,7 +201,7 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * @see org.springmodules.cache.interceptor.flush.NameMatchCacheFlushAttributeSource
    */
   public void setCacheFlushAttributes(Properties cacheFlushAttributes) {
-    this.cacheFlushInterceptor.setCacheFlushAttributes(cacheFlushAttributes);
+    cacheFlushInterceptor.setCacheFlushAttributes(cacheFlushAttributes);
   }
 
   /**
@@ -213,8 +213,8 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    *          the cache provider facade.
    */
   public void setCacheProviderFacade(CacheProviderFacade cacheProviderFacade) {
-    this.cacheFlushInterceptor.setCacheProviderFacade(cacheProviderFacade);
-    this.cachingInterceptor.setCacheProviderFacade(cacheProviderFacade);
+    cacheFlushInterceptor.setCacheProviderFacade(cacheProviderFacade);
+    cachingInterceptor.setCacheProviderFacade(cacheProviderFacade);
   }
 
   /**
@@ -233,7 +233,7 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * @see org.springmodules.cache.interceptor.caching.NameMatchCachingAttributeSource
    */
   public void setCachingAttributes(Properties cachingAttributes) {
-    this.cachingInterceptor.setCachingAttributes(cachingAttributes);
+    cachingInterceptor.setCachingAttributes(cachingAttributes);
   }
 
   /**
@@ -243,7 +243,7 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    *          the listener.
    */
   public void setEntryStoredListener(EntryStoredListener entryStoredListener) {
-    this.cachingInterceptor.setEntryStoredListener(entryStoredListener);
+    cachingInterceptor.setEntryStoredListener(entryStoredListener);
   }
 
   /**
@@ -261,11 +261,11 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    */
   public void setProxyInterfaces(String[] interfaceNames)
       throws ClassNotFoundException {
-    this.proxyInterfaces = AopUtils.toInterfaceArray(interfaceNames);
+    proxyInterfaces = AopUtils.toInterfaceArray(interfaceNames);
   }
 
-  public void setTarget(Object target) {
-    this.target = target;
+  public void setTarget(Object newTarget) {
+    target = newTarget;
   }
 
 }

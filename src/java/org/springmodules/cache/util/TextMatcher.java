@@ -24,9 +24,9 @@ package org.springmodules.cache.util;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/17 02:08:48 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:30 $
  */
-public class TextMatcher {
+public abstract class TextMatcher {
 
   /**
    * <p>

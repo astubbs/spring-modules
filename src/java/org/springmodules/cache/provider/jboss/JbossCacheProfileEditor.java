@@ -41,7 +41,7 @@ public final class JbossCacheProfileEditor extends AbstractCacheProfileEditor {
 
   public JbossCacheProfileEditor() {
     super();
-    this.cacheProfileValidator = new JbossCacheProfileValidator();
+    cacheProfileValidator = new JbossCacheProfileValidator();
   }
 
   /**
@@ -65,18 +65,18 @@ public final class JbossCacheProfileEditor extends AbstractCacheProfileEditor {
     JbossCacheProfile cacheProfile = new JbossCacheProfile();
     cacheProfile.setNodeFqn(nodeFqn);
 
-    this.cacheProfileValidator.validateCacheProfile(cacheProfile);
+    cacheProfileValidator.validateCacheProfile(cacheProfile);
 
     return cacheProfile;
   }
 
   protected CacheProfileValidator getCacheProfileValidator() {
-    return this.cacheProfileValidator;
+    return cacheProfileValidator;
   }
 
   protected void setCacheProfileValidator(
-      CacheProfileValidator cacheProfileValidator) {
-    this.cacheProfileValidator = cacheProfileValidator;
+      CacheProfileValidator newCacheProfileValidator) {
+    cacheProfileValidator = newCacheProfileValidator;
   }
 
 }

@@ -38,7 +38,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:27 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/09 02:18:56 $
  */
 public class CachingInterceptor extends CachingAspectSupport implements
     MethodInterceptor, InitializingBean {
@@ -110,7 +110,7 @@ public class CachingInterceptor extends CachingAspectSupport implements
     CacheKeyGenerator cacheKeyGenerator = super.getCacheKeyGenerator();
     Serializable cacheKey = cacheKeyGenerator.generateKey(methodInvocation);
 
-    Object cachedObject = this.cacheProviderFacade.getFromCache(cacheKey,
+    Object cachedObject = cacheProviderFacade.getFromCache(cacheKey,
         cacheProfileId);
 
     if (null == cachedObject) {
@@ -129,11 +129,11 @@ public class CachingInterceptor extends CachingAspectSupport implements
 
       if (null == exceptionThrownByProceed) {
         if (null == cachedObject) {
-          this.cacheProviderFacade.putInCache(cacheKey, cacheProfileId,
+          cacheProviderFacade.putInCache(cacheKey, cacheProfileId,
               CachingAspectSupport.NULL_ENTRY);
         } else {
-          this.cacheProviderFacade.putInCache(cacheKey, cacheProfileId,
-              cachedObject);
+          cacheProviderFacade
+              .putInCache(cacheKey, cacheProfileId, cachedObject);
         }
 
         // notify the listener a new entry was stored in the cache.
@@ -142,10 +142,10 @@ public class CachingInterceptor extends CachingAspectSupport implements
           listener.onEntryAdd(cacheKey, cachedObject);
         }
       } else {
-        this.cacheProviderFacade.cancelCacheUpdate(cacheKey);
+        cacheProviderFacade.cancelCacheUpdate(cacheKey);
         throw exceptionThrownByProceed;
       }
-      
+
     } else if (CachingAspectSupport.NULL_ENTRY == cachedObject) {
       cachedObject = null;
     }
@@ -154,8 +154,8 @@ public class CachingInterceptor extends CachingAspectSupport implements
   }
 
   public final void setCacheProviderFacade(
-      CacheProviderFacade cacheProviderFacade) {
-    this.cacheProviderFacade = cacheProviderFacade;
+      CacheProviderFacade newCacheProviderFacade) {
+    cacheProviderFacade = newCacheProviderFacade;
   }
 
   /**

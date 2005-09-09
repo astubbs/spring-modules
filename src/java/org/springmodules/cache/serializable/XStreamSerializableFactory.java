@@ -62,8 +62,7 @@ public class XStreamSerializableFactory implements SerializableFactory {
       }
 
       ObjectWrapper wrapper = (ObjectWrapper) obj;
-      if (this.value != null ? !this.value.equals(wrapper.value)
-          : wrapper.value != null) {
+      if (value != null ? !value.equals(wrapper.value) : wrapper.value != null) {
         return false;
       }
 
@@ -71,27 +70,26 @@ public class XStreamSerializableFactory implements SerializableFactory {
     }
 
     public Serializable getValue() {
-      return this.value;
+      return value;
     }
 
     public int hashCode() {
       int multiplier = 31;
       int hash = 17;
 
-      hash = multiplier * hash
-          + (this.value != null ? this.value.hashCode() : 0);
+      hash = multiplier * hash + (value != null ? value.hashCode() : 0);
 
       return hash;
     }
 
-    public void setValue(Serializable value) {
-      this.value = value;
+    public void setValue(Serializable newValue) {
+      value = newValue;
     }
 
     public String toString() {
       StringBuffer buffer = new StringBuffer(getClass().getName());
       buffer.append("@" + System.identityHashCode(this) + "[");
-      buffer.append("value=" + Strings.quoteIfString(this.value) + "]");
+      buffer.append("value=" + Strings.quoteIfString(value) + "]");
 
       return buffer.toString();
     }
@@ -101,7 +99,7 @@ public class XStreamSerializableFactory implements SerializableFactory {
 
   public XStreamSerializableFactory() {
     super();
-    this.xstream = new XStream();
+    xstream = new XStream();
   }
 
   /**
@@ -124,7 +122,7 @@ public class XStreamSerializableFactory implements SerializableFactory {
       return (Serializable) obj;
     }
 
-    String serializable = this.xstream.toXML(obj);
+    String serializable = xstream.toXML(obj);
     return new ObjectWrapper(serializable);
   }
 

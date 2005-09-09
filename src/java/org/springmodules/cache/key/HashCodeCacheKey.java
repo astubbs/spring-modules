@@ -27,7 +27,7 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:44 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/09 02:19:20 $
  */
 public final class HashCodeCacheKey implements Serializable {
 
@@ -47,10 +47,10 @@ public final class HashCodeCacheKey implements Serializable {
     super();
   }
 
-  public HashCodeCacheKey(long checkSum, int hashCode) {
+  public HashCodeCacheKey(long newCheckSum, int newHashCode) {
     this();
-    this.checkSum = checkSum;
-    this.hashCode = hashCode;
+    setCheckSum(newCheckSum);
+    setHashCode(newHashCode);
   }
 
   /**
@@ -66,10 +66,10 @@ public final class HashCodeCacheKey implements Serializable {
 
     final HashCodeCacheKey hashCodeCacheKey = (HashCodeCacheKey) obj;
 
-    if (this.checkSum != hashCodeCacheKey.checkSum) {
+    if (checkSum != hashCodeCacheKey.checkSum) {
       return false;
     }
-    if (this.hashCode != hashCodeCacheKey.hashCode) {
+    if (hashCode != hashCodeCacheKey.hashCode) {
       return false;
     }
 
@@ -77,11 +77,11 @@ public final class HashCodeCacheKey implements Serializable {
   }
 
   public long getCheckSum() {
-    return this.checkSum;
+    return checkSum;
   }
 
   public int getHashCode() {
-    return this.hashCode;
+    return hashCode;
   }
 
   /**
@@ -91,12 +91,12 @@ public final class HashCodeCacheKey implements Serializable {
     return getHashCode();
   }
 
-  public void setCheckSum(long checkSum) {
-    this.checkSum = checkSum;
+  public void setCheckSum(long newCheckSum) {
+    checkSum = newCheckSum;
   }
 
-  public void setHashCode(int hashCode) {
-    this.hashCode = hashCode;
+  public void setHashCode(int newHashCode) {
+    hashCode = newHashCode;
   }
 
   /**

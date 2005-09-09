@@ -47,10 +47,25 @@ public class ObjectWrapperTests extends TestCase implements
     super(name);
   }
 
+  private void assertToStringIsCorrect() {
+    StringBuffer buffer = new StringBuffer(wrapper.getClass().getName());
+    buffer.append("@" + System.identityHashCode(wrapper) + "[");
+    buffer.append("value="
+        + Strings.quoteIfString(wrapper.getValue()) + "]");
+
+    String expected = buffer.toString();
+    String actual = wrapper.toString();
+    
+    logger.debug("Expected 'toString': " + expected);
+    logger.debug("Actual 'toString':   " + actual);
+    
+    assertEquals(expected, actual);
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.wrapper = new ObjectWrapper();
+    wrapper = new ObjectWrapper();
   }
 
   /**
@@ -59,19 +74,19 @@ public class ObjectWrapperTests extends TestCase implements
   public void testEqualsHashCodeRelationship() {
     String obj = "Leia";
 
-    this.wrapper.setValue(obj);
+    wrapper.setValue(obj);
     ObjectWrapper anotherWrapper = new ObjectWrapper(obj);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        this.wrapper, anotherWrapper);
+        wrapper, anotherWrapper);
 
     obj = null;
 
-    this.wrapper.setValue(obj);
+    wrapper.setValue(obj);
     anotherWrapper.setValue(obj);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        this.wrapper, anotherWrapper);
+        wrapper, anotherWrapper);
   }
 
   /**
@@ -79,17 +94,17 @@ public class ObjectWrapperTests extends TestCase implements
    */
   public void testEqualsIsConsistent() {
     ObjectWrapper anotherWrapper = new ObjectWrapper();
-    assertEquals(this.wrapper, anotherWrapper);
+    assertEquals(wrapper, anotherWrapper);
 
     anotherWrapper.setValue("Luke");
-    assertFalse(this.wrapper.equals(anotherWrapper));
+    assertFalse(wrapper.equals(anotherWrapper));
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(this.wrapper);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(wrapper);
   }
 
   /**
@@ -97,7 +112,7 @@ public class ObjectWrapperTests extends TestCase implements
    */
   public void testEqualsIsSymmetric() {
     ObjectWrapper anotherWrapper = new ObjectWrapper();
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.wrapper, anotherWrapper);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(wrapper, anotherWrapper);
   }
 
   /**
@@ -106,11 +121,11 @@ public class ObjectWrapperTests extends TestCase implements
   public void testEqualsIsTransitive() {
     String obj = "Han";
 
-    this.wrapper.setValue(obj);
+    wrapper.setValue(obj);
     ObjectWrapper secondWrapper = new ObjectWrapper(obj);
     ObjectWrapper thirdWrapper = new ObjectWrapper(obj);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(this.wrapper, secondWrapper,
+    EqualsHashCodeAssert.assertEqualsIsTransitive(wrapper, secondWrapper,
         thirdWrapper);
   }
 
@@ -118,32 +133,17 @@ public class ObjectWrapperTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(this.wrapper);
-  }
-
-  private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(this.wrapper.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.wrapper) + "[");
-    buffer.append("value="
-        + Strings.quoteIfString(this.wrapper.getValue()) + "]");
-
-    String expected = buffer.toString();
-    String actual = this.wrapper.toString();
-    
-    logger.debug("Expected 'toString': " + expected);
-    logger.debug("Actual 'toString':   " + actual);
-    
-    assertEquals(expected, actual);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(wrapper);
   }
   
   public void testToStringWithValueBeingString() {
-    this.wrapper.setValue("C-3PO");
+    wrapper.setValue("C-3PO");
 
     assertToStringIsCorrect();
   }
 
   public void testToStringWithValueNotBeingString() {
-    this.wrapper.setValue(new Integer(10));
+    wrapper.setValue(new Integer(10));
     
     assertToStringIsCorrect();
   }

@@ -32,7 +32,7 @@ import org.springmodules.cache.provider.CacheProfileValidator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/11 04:28:16 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/09 02:19:18 $
  */
 public final class JcsProfileEditor extends AbstractCacheProfileEditor {
 
@@ -40,7 +40,7 @@ public final class JcsProfileEditor extends AbstractCacheProfileEditor {
 
   public JcsProfileEditor() {
     super();
-    this.cacheProfileValidator = new JcsProfileValidator();
+    cacheProfileValidator = new JcsProfileValidator();
   }
 
   /**
@@ -67,18 +67,18 @@ public final class JcsProfileEditor extends AbstractCacheProfileEditor {
     cacheProfile.setCacheName(cacheName);
     cacheProfile.setGroup(group);
 
-    this.cacheProfileValidator.validateCacheProfile(cacheProfile);
+    cacheProfileValidator.validateCacheProfile(cacheProfile);
 
     return cacheProfile;
   }
 
   protected CacheProfileValidator getCacheProfileValidator() {
-    return this.cacheProfileValidator;
+    return cacheProfileValidator;
   }
 
   protected void setCacheProfileValidator(
-      CacheProfileValidator cacheProfileValidator) {
-    this.cacheProfileValidator = cacheProfileValidator;
+      CacheProfileValidator newCacheProfileValidator) {
+    cacheProfileValidator = newCacheProfileValidator;
   }
 
 }

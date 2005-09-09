@@ -37,7 +37,7 @@ import org.springmodules.cache.util.TextMatcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:36 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/09 02:19:07 $
  */
 public abstract class AbstractMethodMapCacheAttributeSource {
 
@@ -60,8 +60,8 @@ public abstract class AbstractMethodMapCacheAttributeSource {
   public AbstractMethodMapCacheAttributeSource() {
     super();
 
-    this.attributeMap = new HashMap();
-    this.registeredMethodMap = new HashMap();
+    attributeMap = new HashMap();
+    registeredMethodMap = new HashMap();
   }
 
   /**
@@ -122,12 +122,12 @@ public abstract class AbstractMethodMapCacheAttributeSource {
               .length() <= fullyQualifiedTargetMethodName.length())) {
         // method name was not registered or we have a more specific method
         // name.
-        this.registeredMethodMap.put(method, fullyQualifiedTargetMethodName);
+        registeredMethodMap.put(method, fullyQualifiedTargetMethodName);
         addCacheAttribute(method, cacheAttribute);
 
       } else {
-        if (this.logger.isDebugEnabled() && registeredMethodName != null) {
-          this.logger.debug("Keeping attribute for cached method [" + method
+        if (logger.isDebugEnabled() && registeredMethodName != null) {
+          logger.debug("Keeping attribute for cached method [" + method
               + "]: current name '" + fullyQualifiedTargetMethodName
               + "' is not more specific than '" + registeredMethodName + "'");
         }
@@ -136,7 +136,7 @@ public abstract class AbstractMethodMapCacheAttributeSource {
   }
 
   private String getRegisteredMethodName(Method key) {
-    return (String) this.registeredMethodMap.get(key);
+    return (String) registeredMethodMap.get(key);
   }
 
   /**
@@ -149,9 +149,9 @@ public abstract class AbstractMethodMapCacheAttributeSource {
    *          the cache attribute used as value of the new entry.
    */
   private void addCacheAttribute(Method method, CacheAttribute cacheAttribute) {
-    this.logger.info("Adding method [" + method + "] with cache attribute ["
+    logger.info("Adding method [" + method + "] with cache attribute ["
         + cacheAttribute + "]");
-    this.attributeMap.put(method, cacheAttribute);
+    attributeMap.put(method, cacheAttribute);
   }
 
   /**
@@ -210,7 +210,7 @@ public abstract class AbstractMethodMapCacheAttributeSource {
    *         <code>attributeMap</code>.
    */
   public final Map getAttributeMap() {
-    return Collections.unmodifiableMap(this.attributeMap);
+    return Collections.unmodifiableMap(attributeMap);
   }
 
   /**

@@ -57,7 +57,7 @@ public class JbossCacheProfile implements CacheProfile {
 
     final JbossCacheProfile profile = (JbossCacheProfile) obj;
 
-    if (this.nodeFqn != null ? !this.nodeFqn.equals(profile.nodeFqn)
+    if (nodeFqn != null ? !nodeFqn.equals(profile.nodeFqn)
         : profile.nodeFqn != null) {
       return false;
     }
@@ -66,28 +66,27 @@ public class JbossCacheProfile implements CacheProfile {
   }
 
   public final String getNodeFqn() {
-    return this.nodeFqn;
+    return nodeFqn;
   }
 
   public int hashCode() {
     int multiplier = 31;
     int hash = 17;
 
-    hash = multiplier * hash
-        + (this.nodeFqn != null ? this.nodeFqn.hashCode() : 0);
-    
+    hash = multiplier * hash + (nodeFqn != null ? nodeFqn.hashCode() : 0);
+
     return hash;
   }
 
-  public final void setNodeFqn(String nodeFqn) {
-    this.nodeFqn = nodeFqn;
+  public final void setNodeFqn(String newNodeFqn) {
+    nodeFqn = newNodeFqn;
   }
 
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("nodeFqn=" + Strings.quote(this.nodeFqn) + "]");
-    
+    buffer.append("nodeFqn=" + Strings.quote(nodeFqn) + "]");
+
     return buffer.toString();
   }
 }

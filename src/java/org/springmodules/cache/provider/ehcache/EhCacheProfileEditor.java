@@ -33,7 +33,7 @@ import org.springmodules.cache.provider.InvalidCacheProfileException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/11 04:27:47 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/09 02:19:05 $
  */
 public final class EhCacheProfileEditor extends AbstractCacheProfileEditor {
 
@@ -41,7 +41,7 @@ public final class EhCacheProfileEditor extends AbstractCacheProfileEditor {
 
   public EhCacheProfileEditor() {
     super();
-    this.cacheProfileValidator = new EhCacheProfileValidator();
+    cacheProfileValidator = new EhCacheProfileValidator();
   }
 
   /**
@@ -65,19 +65,18 @@ public final class EhCacheProfileEditor extends AbstractCacheProfileEditor {
     EhCacheProfile cacheProfile = new EhCacheProfile();
     cacheProfile.setCacheName(cacheName);
 
-    this.cacheProfileValidator.validateCacheProfile(cacheProfile);
+    cacheProfileValidator.validateCacheProfile(cacheProfile);
 
     return cacheProfile;
   }
 
   protected CacheProfileValidator getCacheProfileValidator() {
-    return this.cacheProfileValidator;
+    return cacheProfileValidator;
   }
 
   protected void setCacheProfileValidator(
-      CacheProfileValidator cacheProfileValidator) {
-    this.cacheProfileValidator = cacheProfileValidator;
+      CacheProfileValidator newCacheProfileValidator) {
+    cacheProfileValidator = newCacheProfileValidator;
   }
-  
-  
+
 }

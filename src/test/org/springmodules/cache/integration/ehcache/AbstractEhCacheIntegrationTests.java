@@ -18,7 +18,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:48 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/09 02:19:24 $
  */
 public abstract class AbstractEhCacheIntegrationTests extends
     AbstractIntegrationTests {
@@ -38,7 +38,7 @@ public abstract class AbstractEhCacheIntegrationTests extends
   protected final void assertCacheWasFlushed() throws Exception {
     Serializable key = getGeneratedKey(0);
 
-    Element cacheEntry = this.cache.get(key);
+    Element cacheEntry = cache.get(key);
 
     assertCacheEntryFromCacheIsNull(cacheEntry, key);
   }
@@ -64,7 +64,7 @@ public abstract class AbstractEhCacheIntegrationTests extends
     Serializable key = getGeneratedKey(keyIndex);
 
     // get the cache entry stored under the key we got.
-    Element cachedElement = this.cache.get(key);
+    Element cachedElement = cache.get(key);
     Object actualCachedObject = cachedElement.getValue();
 
     assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
@@ -74,9 +74,9 @@ public abstract class AbstractEhCacheIntegrationTests extends
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
    */
   protected final void onSetUp() throws Exception {
-    CacheManager cacheManager = (CacheManager) this.applicationContext
+    CacheManager cacheManager = (CacheManager) applicationContext
         .getBean("cacheManager");
 
-    this.cache = cacheManager.getCache("testCache");
+    cache = cacheManager.getCache("testCache");
   }
 }

@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManage
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:41 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:17 $
  */
 public final class JcsManagerFactoryBean extends
     AbstractConfigurationResourceCacheManagerFactoryBean {
@@ -65,14 +65,14 @@ public final class JcsManagerFactoryBean extends
     Resource configLocation = getConfigLocation();
 
     if (null == configLocation) {
-      this.cacheManager = CompositeCacheManager.getInstance();
+      cacheManager = CompositeCacheManager.getInstance();
     } else {
       InputStream inputStream = configLocation.getInputStream();
       Properties properties = new Properties();
       properties.load(inputStream);
 
-      this.cacheManager = CompositeCacheManager.getUnconfiguredInstance();
-      this.cacheManager.configure(properties);
+      cacheManager = CompositeCacheManager.getUnconfiguredInstance();
+      cacheManager.configure(properties);
     }
   }
 
@@ -81,13 +81,13 @@ public final class JcsManagerFactoryBean extends
    * BeanFactory.
    */
   public void destroy() throws Exception {
-    if (this.cacheManager == null) {
+    if (cacheManager == null) {
       logger
           .info("The JCS cache manager was not built. No need to shut it down.");
 
     } else {
       logger.info("Shutting down the JCS cache manager.");
-      this.cacheManager.shutDown();
+      cacheManager.shutDown();
     }
   }
 
@@ -97,7 +97,7 @@ public final class JcsManagerFactoryBean extends
    * @return the cache manager managed by this factory.
    */
   public Object getObject() {
-    return this.cacheManager;
+    return cacheManager;
   }
 
   /**
@@ -106,7 +106,7 @@ public final class JcsManagerFactoryBean extends
    * @return the type of the cache manager managed by this factory.
    */
   public Class getObjectType() {
-    return this.cacheManager != null ? this.cacheManager.getClass()
+    return cacheManager != null ? cacheManager.getClass()
         : CompositeCacheManager.class;
   }
 }

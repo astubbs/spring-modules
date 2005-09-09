@@ -33,7 +33,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/07 02:01:41 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/09 02:18:59 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -47,13 +47,13 @@ public final class CachedTests extends TestCase implements
   }
 
   private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(this.cached.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.cached) + "[");
+    StringBuffer buffer = new StringBuffer(cached.getClass().getName());
+    buffer.append("@" + System.identityHashCode(cached) + "[");
     buffer.append("cacheProfileId="
-        + Strings.quote(this.cached.getCacheProfileId()) + "]");
+        + Strings.quote(cached.getCacheProfileId()) + "]");
 
     String expected = buffer.toString();
-    String actual = this.cached.toString();
+    String actual = cached.toString();
     
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
@@ -64,7 +64,7 @@ public final class CachedTests extends TestCase implements
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.cached = new Cached();
+    cached = new Cached();
   }
 
   /**
@@ -72,17 +72,17 @@ public final class CachedTests extends TestCase implements
    */
   public void testEqualsHashCodeRelationship() {
     String cacheProfileId = "main";
-    this.cached.setCacheProfileId(cacheProfileId);
+    cached.setCacheProfileId(cacheProfileId);
 
     Cached anotherCached = new Cached(cacheProfileId);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(this.cached,
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cached,
         anotherCached);
 
-    this.cached.setCacheProfileId(null);
+    cached.setCacheProfileId(null);
     anotherCached.setCacheProfileId(null);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(this.cached,
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cached,
         anotherCached);
   }
 
@@ -91,20 +91,20 @@ public final class CachedTests extends TestCase implements
    */
   public void testEqualsIsConsistent() {
     String cacheProfileId = "test";
-    this.cached.setCacheProfileId(cacheProfileId);
+    cached.setCacheProfileId(cacheProfileId);
 
     Cached anotherCached = new Cached(cacheProfileId);
-    assertEquals(this.cached, anotherCached);
+    assertEquals(cached, anotherCached);
 
     anotherCached.setCacheProfileId("main");
-    assertFalse(this.cached.equals(anotherCached));
+    assertFalse(cached.equals(anotherCached));
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(this.cached);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(cached);
   }
 
   /**
@@ -112,11 +112,11 @@ public final class CachedTests extends TestCase implements
    */
   public void testEqualsIsSymmetric() {
     String cacheProfileId = "test";
-    this.cached.setCacheProfileId(cacheProfileId);
+    cached.setCacheProfileId(cacheProfileId);
 
     Cached anotherCached = new Cached(cacheProfileId);
 
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.cached, anotherCached);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(cached, anotherCached);
   }
 
   /**
@@ -124,12 +124,12 @@ public final class CachedTests extends TestCase implements
    */
   public void testEqualsIsTransitive() {
     String cacheProfileId = "test";
-    this.cached.setCacheProfileId(cacheProfileId);
+    cached.setCacheProfileId(cacheProfileId);
 
     Cached secondCached = new Cached(cacheProfileId);
     Cached thirdCached = new Cached(cacheProfileId);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(this.cached, secondCached,
+    EqualsHashCodeAssert.assertEqualsIsTransitive(cached, secondCached,
         thirdCached);
   }
 
@@ -137,16 +137,16 @@ public final class CachedTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(this.cached);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cached);
   }
 
   public void testToString() {
-    this.cached.setCacheProfileId("main");
+    cached.setCacheProfileId("main");
     assertToStringIsCorrect();
   }
 
   public void testToStringWithCacheProfileIdEqualToNull() {
-    this.cached.setCacheProfileId(null);
+    cached.setCacheProfileId(null);
     assertToStringIsCorrect();
   }
 }

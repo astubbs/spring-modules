@@ -32,7 +32,7 @@ import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:29:32 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:57 $
  */
 public class CachingAttributeSourceAdvisor extends
     StaticMethodMatcherPointcutAdvisor {
@@ -65,7 +65,7 @@ public class CachingAttributeSourceAdvisor extends
       throw new AopConfigException(message);
     }
 
-    this.cachingAttributeSource = tempAttributeSource;
+    cachingAttributeSource = tempAttributeSource;
   }
 
   /**
@@ -78,7 +78,7 @@ public class CachingAttributeSourceAdvisor extends
    * @return <code>true</code> if the specified method should be cached.
    */
   public final boolean matches(Method method, Class targetClass) {
-    Cached attribute = this.cachingAttributeSource.getCachingAttribute(method,
+    Cached attribute = cachingAttributeSource.getCachingAttribute(method,
         targetClass);
 
     boolean matches = (attribute != null);

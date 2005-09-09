@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.AbstractCacheManagerFactoryBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:24 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:55 $
  */
 public final class JcsManagerFactoryBeanTests extends
     AbstractCacheManagerFactoryBeanTests {
@@ -68,8 +68,8 @@ public final class JcsManagerFactoryBeanTests extends
 
     // verify that the properties of the configuration file are the same as the
     // ones of the cache manager.
-    String maxObjects = this.configProperties.getProperty("jcs.region."
-        + cacheName + ".cacheattributes.MaxObjects");
+    String maxObjects = configProperties.getProperty("jcs.region." + cacheName
+        + ".cacheattributes.MaxObjects");
     int expectedMaxObjects = Integer.parseInt(maxObjects);
 
     CompositeCache cache = cacheManager.getCache(cacheName);
@@ -84,41 +84,40 @@ public final class JcsManagerFactoryBeanTests extends
   }
 
   private void assertObjectTypeIsCorrect() {
-    Class actualObjectType = this.cacheManagerFactoryBean.getObjectType();
+    Class actualObjectType = cacheManagerFactoryBean.getObjectType();
     assertEquals(CompositeCacheManager.class, actualObjectType);
   }
 
   private CompositeCacheManager getCacheManager() {
-    return (CompositeCacheManager) this.cacheManagerFactoryBean.getObject();
+    return (CompositeCacheManager) cacheManagerFactoryBean.getObject();
   }
 
   protected void setUp() throws Exception {
     super.setUp();
-    this.alternativeCacheConfigurationFilePath = super.getPackageNameAsPath()
+    alternativeCacheConfigurationFilePath = getPackageNameAsPath()
         + "/jcs-config.ccf";
-    this.cacheManagerFactoryBean = new JcsManagerFactoryBean();
+    cacheManagerFactoryBean = new JcsManagerFactoryBean();
   }
 
   private void setUpConfigurationProperties() throws Exception {
-    this
-        .setUpConfigurationProperties(this.alternativeCacheConfigurationFilePath);
+    this.setUpConfigurationProperties(alternativeCacheConfigurationFilePath);
   }
 
   private void setUpConfigurationProperties(String configurationFileName)
       throws Exception {
 
-    this.configLocation = new ClassPathResource(configurationFileName);
-    this.cacheManagerFactoryBean.setConfigLocation(this.configLocation);
+    configLocation = new ClassPathResource(configurationFileName);
+    cacheManagerFactoryBean.setConfigLocation(configLocation);
 
-    InputStream inputStream = this.configLocation.getInputStream();
-    this.configProperties = new Properties();
-    this.configProperties.load(inputStream);
+    InputStream inputStream = configLocation.getInputStream();
+    configProperties = new Properties();
+    configProperties.load(inputStream);
   }
 
   protected void tearDown() {
-    if (this.cacheManagerFactoryBean != null) {
+    if (cacheManagerFactoryBean != null) {
       try {
-        this.cacheManagerFactoryBean.destroy();
+        cacheManagerFactoryBean.destroy();
       } catch (Exception exception) {
         // ignore the exception.
       }
@@ -132,7 +131,7 @@ public final class JcsManagerFactoryBeanTests extends
    */
   public void testAfterPropertiesSet() throws Exception {
     setUpConfigurationProperties();
-    this.cacheManagerFactoryBean.afterPropertiesSet();
+    cacheManagerFactoryBean.afterPropertiesSet();
     assertCacheManagerWasConfigured("altTestCache");
   }
 
@@ -145,9 +144,9 @@ public final class JcsManagerFactoryBeanTests extends
   public void testAfterPropertiesSetWithConfigLocationEqualToNull()
       throws Exception {
     setUpConfigurationProperties("cache.ccf");
-    this.cacheManagerFactoryBean.setConfigLocation(null);
+    cacheManagerFactoryBean.setConfigLocation(null);
 
-    this.cacheManagerFactoryBean.afterPropertiesSet();
+    cacheManagerFactoryBean.afterPropertiesSet();
 
     assertCacheManagerWasConfigured("testCache");
   }
@@ -155,34 +154,34 @@ public final class JcsManagerFactoryBeanTests extends
   public void testDestroy() throws Exception {
     setUpConfigurationProperties();
 
-    this.cacheManagerFactoryBean.afterPropertiesSet();
+    cacheManagerFactoryBean.afterPropertiesSet();
 
     CompositeCacheManager cacheManager = getCacheManager();
 
     assertTrue("There should be at least one cache in the cache manager",
         cacheManager.getCacheNames().length > 0);
 
-    this.cacheManagerFactoryBean.destroy();
+    cacheManagerFactoryBean.destroy();
 
     assertTrue("There should not be any cache in the cache manager",
         cacheManager.getCacheNames().length == 0);
   }
 
   public void testDestroyWithCacheManagerEqualToNull() throws Exception {
-    assertNull(this.cacheManagerFactoryBean.getObject());
+    assertNull(cacheManagerFactoryBean.getObject());
 
     try {
-      this.cacheManagerFactoryBean.destroy();
+      cacheManagerFactoryBean.destroy();
     } catch (Throwable throwable) {
-      fail("No exception should have been thrown");
+      fail();
     }
 
-    assertNull(this.cacheManagerFactoryBean.getObject());
+    assertNull(cacheManagerFactoryBean.getObject());
   }
 
   public void testGetObjectType() throws Exception {
     // test when the cache manager has been created.
-    this.cacheManagerFactoryBean.afterPropertiesSet();
+    cacheManagerFactoryBean.afterPropertiesSet();
 
     assertObjectTypeIsCorrect();
   }
@@ -193,7 +192,7 @@ public final class JcsManagerFactoryBeanTests extends
   }
 
   public void testIsSingleton() {
-    assertTrue(this.cacheManagerFactoryBean.isSingleton());
+    assertTrue(cacheManagerFactoryBean.isSingleton());
   }
 
 }

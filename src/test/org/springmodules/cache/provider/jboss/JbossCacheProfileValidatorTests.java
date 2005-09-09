@@ -43,8 +43,7 @@ public final class JbossCacheProfileValidatorTests extends TestCase {
 
   private void assertValidateCacheProfilePropertiesThrowsException() {
     try {
-      this.cacheProfileValidator
-          .validateCacheProfileProperties(this.cacheProfile);
+      cacheProfileValidator.validateCacheProfileProperties(cacheProfile);
       fail();
     } catch (InvalidCacheProfileException exception) {
       // we are expecting this exception.
@@ -53,28 +52,27 @@ public final class JbossCacheProfileValidatorTests extends TestCase {
 
   protected void setUp() throws Exception {
     super.setUp();
-    this.cacheProfile = new JbossCacheProfile();
-    this.cacheProfileValidator = new JbossCacheProfileValidator();
+    cacheProfile = new JbossCacheProfile();
+    cacheProfileValidator = new JbossCacheProfileValidator();
   }
 
   public void testGetTargetClass() {
-    assertEquals(JbossCacheProfile.class, this.cacheProfileValidator
+    assertEquals(JbossCacheProfile.class, cacheProfileValidator
         .getTargetClass());
   }
 
   public void testValidateCacheProfilePropertiesWithNodeFqnEqualToNull() {
-    this.cacheProfile.setNodeFqn(null);
+    cacheProfile.setNodeFqn(null);
     assertValidateCacheProfilePropertiesThrowsException();
   }
 
   public void testValidateCacheProfilePropertiesWithEmptyNodeFqn() {
-    this.cacheProfile.setNodeFqn("");
+    cacheProfile.setNodeFqn("");
     assertValidateCacheProfilePropertiesThrowsException();
   }
 
   public void testValidateCacheProfilePropertiesWithNotEmptyNodeFqn() {
-    this.cacheProfile.setNodeFqn("a/b/c");
-    this.cacheProfileValidator
-        .validateCacheProfileProperties(this.cacheProfile);
+    cacheProfile.setNodeFqn("a/b/c");
+    cacheProfileValidator.validateCacheProfileProperties(cacheProfile);
   }
 }

@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheAttribute;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.cache.util.ArrayUtils;
 
 /**
  * <p>
@@ -32,7 +32,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/07 01:58:25 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/09 02:19:02 $
  */
 public class FlushCache implements CacheAttribute {
 
@@ -97,10 +97,10 @@ public class FlushCache implements CacheAttribute {
 
     final FlushCache flushCache = (FlushCache) obj;
 
-    if (this.flushBeforeExecution != flushCache.flushBeforeExecution) {
+    if (flushBeforeExecution != flushCache.flushBeforeExecution) {
       return false;
     }
-    if (!Arrays.equals(this.cacheProfileIds, flushCache.cacheProfileIds)) {
+    if (!Arrays.equals(cacheProfileIds, flushCache.cacheProfileIds)) {
       return false;
     }
 
@@ -108,7 +108,7 @@ public class FlushCache implements CacheAttribute {
   }
 
   public final String[] getCacheProfileIds() {
-    return this.cacheProfileIds;
+    return cacheProfileIds;
   }
 
   /**
@@ -117,14 +117,14 @@ public class FlushCache implements CacheAttribute {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (this.flushBeforeExecution ? 1 : 0);
+    hash = multiplier * hash + (flushBeforeExecution ? 1 : 0);
 
-    if (this.cacheProfileIds == null) {
+    if (cacheProfileIds == null) {
       hash = multiplier * hash;
     } else {
-      int cacheProfileIdCount = this.cacheProfileIds.length;
+      int cacheProfileIdCount = cacheProfileIds.length;
       for (int i = 0; i < cacheProfileIdCount; i++) {
-        String cacheProfileId = this.cacheProfileIds[i];
+        String cacheProfileId = cacheProfileIds[i];
         hash = multiplier * hash
             + (cacheProfileId != null ? cacheProfileId.hashCode() : 0);
       }
@@ -134,7 +134,7 @@ public class FlushCache implements CacheAttribute {
   }
 
   public final boolean isFlushBeforeExecution() {
-    return this.flushBeforeExecution;
+    return flushBeforeExecution;
   }
 
   /**
@@ -153,12 +153,12 @@ public class FlushCache implements CacheAttribute {
     setCacheProfileIds(newProfileIds);
   }
 
-  public final void setCacheProfileIds(String[] cacheProfileIds) {
-    this.cacheProfileIds = cacheProfileIds;
+  public final void setCacheProfileIds(String[] newCacheProfileIds) {
+    cacheProfileIds = newCacheProfileIds;
   }
 
-  public final void setFlushBeforeExecution(boolean flushBeforeExecution) {
-    this.flushBeforeExecution = flushBeforeExecution;
+  public final void setFlushBeforeExecution(boolean newFlushBeforeExecution) {
+    flushBeforeExecution = newFlushBeforeExecution;
   }
 
   /**
@@ -167,32 +167,9 @@ public class FlushCache implements CacheAttribute {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheProfileIds=");
-
-    if (this.cacheProfileIds == null) {
-      buffer.append("null, ");
-
-    } else {
-      int cacheProfileIdCount = this.cacheProfileIds.length;
-
-      if (cacheProfileIdCount == 0) {
-        buffer.append("{}, ");
-
-      } else {
-        for (int i = 0; i < cacheProfileIdCount; i++) {
-          if (i == 0) {
-            buffer.append("{");
-          } else {
-            buffer.append(", ");
-          }
-
-          buffer.append(Strings.quote(this.cacheProfileIds[i]));
-        }
-        buffer.append("}, ");
-      }
-    }
-
-    buffer.append("flushBeforeExecution=" + this.flushBeforeExecution + "]");
+    buffer.append("cacheProfileIds=" + ArrayUtils.toString(cacheProfileIds)
+        + ", ");
+    buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     return buffer.toString();
   }

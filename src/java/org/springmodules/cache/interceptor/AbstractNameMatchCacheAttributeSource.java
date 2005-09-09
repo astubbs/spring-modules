@@ -38,7 +38,7 @@ import org.springmodules.cache.util.TextMatcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:37 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:09 $
  */
 public abstract class AbstractNameMatchCacheAttributeSource {
 
@@ -52,7 +52,7 @@ public abstract class AbstractNameMatchCacheAttributeSource {
 
   public AbstractNameMatchCacheAttributeSource() {
     super();
-    this.attributeMap = new HashMap();
+    attributeMap = new HashMap();
   }
 
   /**
@@ -66,12 +66,12 @@ public abstract class AbstractNameMatchCacheAttributeSource {
    */
   protected final void addAttribute(String methodName,
       CacheAttribute cacheAttribute) {
-    if (this.logger.isDebugEnabled()) {
-      this.logger
+    if (logger.isDebugEnabled()) {
+      logger
           .debug("Method 'addMethod(String, CacheAttribute)'. Adding method ["
               + methodName + "] with attribute [" + cacheAttribute + "]");
     }
-    this.attributeMap.put(methodName, cacheAttribute);
+    attributeMap.put(methodName, cacheAttribute);
   }
 
   /**
@@ -81,7 +81,7 @@ public abstract class AbstractNameMatchCacheAttributeSource {
    *         <code>attributeMap</code>.
    */
   protected final Map getAttributeMap() {
-    return Collections.unmodifiableMap(this.attributeMap);
+    return Collections.unmodifiableMap(attributeMap);
   }
 
   /**
@@ -100,7 +100,7 @@ public abstract class AbstractNameMatchCacheAttributeSource {
       // look up most specific name match
       String bestNameMatch = null;
 
-      for (Iterator i = this.attributeMap.keySet().iterator(); i.hasNext();) {
+      for (Iterator i = attributeMap.keySet().iterator(); i.hasNext();) {
         String mappedMethodName = (String) i.next();
 
         if (isMatch(methodName, mappedMethodName)
@@ -124,7 +124,7 @@ public abstract class AbstractNameMatchCacheAttributeSource {
   protected abstract PropertyEditor getCacheAttributeEditor();
 
   private CacheAttribute getCacheAttributeFromMap(String methodName) {
-    return (CacheAttribute) this.attributeMap.get(methodName);
+    return (CacheAttribute) attributeMap.get(methodName);
   }
 
   /**

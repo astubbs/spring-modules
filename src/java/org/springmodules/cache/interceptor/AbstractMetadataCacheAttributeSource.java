@@ -31,7 +31,7 @@ import java.util.Map;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:25:48 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:08 $
  */
 public abstract class AbstractMetadataCacheAttributeSource {
 
@@ -49,7 +49,7 @@ public abstract class AbstractMetadataCacheAttributeSource {
 
   public AbstractMetadataCacheAttributeSource() {
     super();
-    this.attributeMap = new HashMap();
+    attributeMap = new HashMap();
   }
 
   /**
@@ -79,7 +79,7 @@ public abstract class AbstractMetadataCacheAttributeSource {
   }
 
   protected final Map getAttributeMap() {
-    return this.attributeMap;
+    return attributeMap;
   }
 
 }

@@ -31,9 +31,15 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:33 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:01 $
  */
 public final class MethodMapCachingAttributeSourceTests extends TestCase {
+
+  private static final String GET_PERSON_NAME_METHOD = "getPersonName";
+
+  private static final String GET_PERSONS_METHOD = "getPersons";
+
+  private static final String METHOD_NAME_WILDCARD = "get*";
 
   /**
    * A caching attribute to register with the methods declared in
@@ -67,8 +73,8 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
   private void assertAddCachingAttributeThrowsException(
       String fullyQualifiedMethodName) {
     try {
-      this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
-          this.cachingAttribute);
+      cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
+          cachingAttribute);
       fail();
 
     } catch (IllegalArgumentException exception) {
@@ -87,29 +93,40 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    */
   private void assertCachingAttributeWasAdded(Method method,
       Cached expectedCachingAttribute) {
-    Map actualAttributeMap = this.cachingAttributeSource.getAttributeMap();
+    Map actualAttributeMap = cachingAttributeSource.getAttributeMap();
 
     assertTrue("The map of metadata attributes should contain the key '"
         + method + "'", actualAttributeMap.containsKey(method));
 
-    assertSame("<Caching Attribute>", expectedCachingAttribute,
-        actualAttributeMap.get(method));
+    assertSame(expectedCachingAttribute, actualAttributeMap.get(method));
+  }
+
+  private String createMethodFqn(String methodName) {
+    return targetClass.getName() + "." + methodName;
+  }
+
+  private Method getTargetClassMethod(String methodName) throws Exception {
+    return getTargetClassMethod(methodName, null);
+  }
+
+  private Method getTargetClassMethod(String methodName, Class[] parameters)
+      throws Exception {
+    return targetClass.getDeclaredMethod(methodName, parameters);
   }
 
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.cachingAttribute = new Cached("myCache");
+    cachingAttribute = new Cached("myCache");
 
-    this.cachingAttributeSource = new MethodMapCachingAttributeSource();
+    cachingAttributeSource = new MethodMapCachingAttributeSource();
 
-    this.targetClass = SimulatedService.class;
+    targetClass = SimulatedService.class;
 
-    this.getPersonNameMethod = this.targetClass.getDeclaredMethod(
-        "getPersonName", new Class[] { long.class });
+    getPersonNameMethod = getTargetClassMethod(GET_PERSON_NAME_METHOD,
+        new Class[] { long.class });
 
-    this.getPersonsMethod = this.targetClass.getDeclaredMethod("getPersons",
-        null);
+    getPersonsMethod = getTargetClassMethod(GET_PERSONS_METHOD);
   }
 
   /**
@@ -119,32 +136,23 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    */
   public void testAddCachingAttributeUsingWildcardsBeforeSpecificMethodName() {
     // use wildcards.
-    String fullyQualifiedMethodName = this.targetClass.getName() + ".get*";
-
-    this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
-        this.cachingAttribute);
+    cachingAttributeSource.addCachingAttribute(
+        createMethodFqn(METHOD_NAME_WILDCARD), cachingAttribute);
 
     // verify the caching attributes were added
-    assertCachingAttributeWasAdded(this.getPersonNameMethod,
-        this.cachingAttribute);
+    assertCachingAttributeWasAdded(getPersonNameMethod, cachingAttribute);
 
-    assertCachingAttributeWasAdded(this.getPersonsMethod,
-        this.cachingAttribute);
+    assertCachingAttributeWasAdded(getPersonsMethod, cachingAttribute);
 
     // use a more specific method name
-    fullyQualifiedMethodName = this.targetClass.getName() + ".getPersons";
-
     Cached otherCachingAttribute = new Cached("myOtherCache");
 
-    this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
-        otherCachingAttribute);
+    cachingAttributeSource.addCachingAttribute(
+        createMethodFqn(GET_PERSONS_METHOD), otherCachingAttribute);
 
     // verify the caching attributes were added
-    assertCachingAttributeWasAdded(this.getPersonNameMethod,
-        this.cachingAttribute);
-
-    assertCachingAttributeWasAdded(this.getPersonsMethod,
-        otherCachingAttribute);
+    assertCachingAttributeWasAdded(getPersonNameMethod, cachingAttribute);
+    assertCachingAttributeWasAdded(getPersonsMethod, otherCachingAttribute);
   }
 
   /**
@@ -165,8 +173,7 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    * any method matching the given fully qualified method name.
    */
   public void testAddCachingAttributeWithNotMatchingMethod() {
-    String fullyQualifiedMethodName = this.targetClass.getName() + ".addNew*";
-    assertAddCachingAttributeThrowsException(fullyQualifiedMethodName);
+    assertAddCachingAttributeThrowsException(createMethodFqn("addNew*"));
   }
 
   /**
@@ -176,8 +183,7 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    * method name is not a fully qualified name.
    */
   public void testAddCachingAttributeWithoutFullyQualifiedMethodName() {
-    String notFullyQualifiedMethodName = "get*";
-    assertAddCachingAttributeThrowsException(notFullyQualifiedMethodName);
+    assertAddCachingAttributeThrowsException(METHOD_NAME_WILDCARD);
   }
 
   /**
@@ -187,30 +193,21 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    */
   public void testAddCachingAttributeWithSpecificMethodNameBeforeUsingWildcards() {
     // use a more specific method name
-    String fullyQualifiedMethodName = this.targetClass.getName()
-        + ".getPersons";
-
     Cached otherCachingAttribute = new Cached("myOtherCache");
 
-    this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
-        otherCachingAttribute);
+    cachingAttributeSource.addCachingAttribute(
+        createMethodFqn(GET_PERSONS_METHOD), otherCachingAttribute);
 
     // verify the caching attributes were added
-    assertCachingAttributeWasAdded(this.getPersonsMethod,
-        otherCachingAttribute);
+    assertCachingAttributeWasAdded(getPersonsMethod, otherCachingAttribute);
 
     // use wildcards.
-    fullyQualifiedMethodName = this.targetClass.getName() + ".get*";
-
-    this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
-        this.cachingAttribute);
+    cachingAttributeSource.addCachingAttribute(
+        createMethodFqn(METHOD_NAME_WILDCARD), cachingAttribute);
 
     // verify the caching attributes were added
-    assertCachingAttributeWasAdded(this.getPersonNameMethod,
-        this.cachingAttribute);
-
-    assertCachingAttributeWasAdded(this.getPersonsMethod,
-        otherCachingAttribute);
+    assertCachingAttributeWasAdded(getPersonNameMethod, cachingAttribute);
+    assertCachingAttributeWasAdded(getPersonsMethod, otherCachingAttribute);
   }
 
   /**
@@ -220,15 +217,11 @@ public final class MethodMapCachingAttributeSourceTests extends TestCase {
    */
   public void testGetCachingAttribute() {
     // use a more specific method name
-    String fullyQualifiedMethodName = this.targetClass.getName()
-        + ".getPersons";
+    cachingAttributeSource.addCachingAttribute(
+        createMethodFqn(GET_PERSONS_METHOD), cachingAttribute);
 
-    this.cachingAttributeSource.addCachingAttribute(fullyQualifiedMethodName,
-        this.cachingAttribute);
-
-    assertSame("<Caching Attribute>", this.cachingAttribute,
-        this.cachingAttributeSource.getCachingAttribute(this.getPersonsMethod,
-            this.targetClass));
+    assertSame(cachingAttribute, cachingAttributeSource.getCachingAttribute(
+        getPersonsMethod, targetClass));
   }
 
 }

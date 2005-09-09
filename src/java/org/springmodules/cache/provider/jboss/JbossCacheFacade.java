@@ -40,10 +40,6 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
 
   private TreeCache treeCache;
 
-  public final void setTreeCache(TreeCache treeCache) {
-    this.treeCache = treeCache;
-  }
-
   public JbossCacheFacade() {
     super();
   }
@@ -78,7 +74,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
     JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
 
     try {
-      this.treeCache.remove(profile.getNodeFqn());
+      treeCache.remove(profile.getNodeFqn());
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -95,7 +91,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
     Object cachedObject = null;
 
     try {
-      cachedObject = this.treeCache.get(profile.getNodeFqn(), cacheKey);
+      cachedObject = treeCache.get(profile.getNodeFqn(), cacheKey);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -111,7 +107,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
     JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
 
     try {
-      this.treeCache.put(profile.getNodeFqn(), cacheKey, objectToCache);
+      treeCache.put(profile.getNodeFqn(), cacheKey, objectToCache);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -126,10 +122,14 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
     JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
 
     try {
-      this.treeCache.remove(profile.getNodeFqn(), cacheKey);
+      treeCache.remove(profile.getNodeFqn(), cacheKey);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
+  }
+
+  public final void setTreeCache(TreeCache newTreeCache) {
+    treeCache = newTreeCache;
   }
 
   /**

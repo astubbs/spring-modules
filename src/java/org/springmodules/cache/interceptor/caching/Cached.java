@@ -29,7 +29,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/07 01:58:10 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/09 02:18:56 $
  */
 public class Cached implements CacheAttribute {
 
@@ -62,8 +62,8 @@ public class Cached implements CacheAttribute {
 
     final Cached cached = (Cached) obj;
 
-    if (this.cacheProfileId != null ? !this.cacheProfileId
-        .equals(cached.cacheProfileId) : cached.cacheProfileId != null) {
+    if (cacheProfileId != null ? !cacheProfileId.equals(cached.cacheProfileId)
+        : cached.cacheProfileId != null) {
       return false;
     }
 
@@ -71,7 +71,7 @@ public class Cached implements CacheAttribute {
   }
 
   public final String getCacheProfileId() {
-    return this.cacheProfileId;
+    return cacheProfileId;
   }
 
   /**
@@ -81,12 +81,12 @@ public class Cached implements CacheAttribute {
     int multiplier = 31;
     int hash = 7;
     hash = multiplier * hash
-        + (this.cacheProfileId != null ? this.cacheProfileId.hashCode() : 0);
+        + (cacheProfileId != null ? cacheProfileId.hashCode() : 0);
     return hash;
   }
 
-  public final void setCacheProfileId(String cacheProfileId) {
-    this.cacheProfileId = cacheProfileId;
+  public final void setCacheProfileId(String newCacheProfileId) {
+    cacheProfileId = newCacheProfileId;
   }
 
   /**
@@ -95,7 +95,7 @@ public class Cached implements CacheAttribute {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheProfileId=" + Strings.quote(this.cacheProfileId) + "]");
+    buffer.append("cacheProfileId=" + Strings.quote(cacheProfileId) + "]");
 
     return buffer.toString();
   }

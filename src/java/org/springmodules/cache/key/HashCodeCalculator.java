@@ -26,7 +26,7 @@ package org.springmodules.cache.key;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:40:59 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:20 $
  */
 public final class HashCodeCalculator {
 
@@ -54,7 +54,7 @@ public final class HashCodeCalculator {
 
   public HashCodeCalculator() {
     super();
-    this.hashCode = 17;
+    hashCode = 17;
   }
 
   /**
@@ -68,21 +68,20 @@ public final class HashCodeCalculator {
 
     int valueToAppend = value;
 
-    this.count++;
-    valueToAppend *= this.count;
+    count++;
+    valueToAppend *= count;
 
-    this.hashCode = MULTIPLIER * this.hashCode
-        + (valueToAppend ^ (valueToAppend >>> 32));
+    hashCode = MULTIPLIER * hashCode + (valueToAppend ^ (valueToAppend >>> 32));
 
-    this.checkSum += valueToAppend;
+    checkSum += valueToAppend;
   }
 
   public final long getCheckSum() {
-    return this.checkSum;
+    return checkSum;
   }
 
   public final int getHashCode() {
-    return this.hashCode;
+    return hashCode;
   }
 
 }

@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.16 $ $Date: 2005/09/06 01:41:41 $
+ * @version $Revision: 1.17 $ $Date: 2005/09/09 02:19:17 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -65,7 +65,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
    *           if the cache does not exist.
    */
   protected CompositeCache getCache(String cacheName) {
-    CompositeCache cache = this.cacheManager.getCache(cacheName);
+    CompositeCache cache = cacheManager.getCache(cacheName);
     if (cache == null) {
       throw new CacheNotFoundException(cacheName);
     }
@@ -240,8 +240,8 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
     }
   }
 
-  public void setCacheManager(CompositeCacheManager cacheManager) {
-    this.cacheManager = cacheManager;
+  public void setCacheManager(CompositeCacheManager newCacheManager) {
+    cacheManager = newCacheManager;
   }
 
   /**
@@ -251,7 +251,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
    *           if the Cache Manager is <code>null</code>.
    */
   protected void validateCacheManager() throws InvalidConfigurationException {
-    if (null == this.cacheManager) {
+    if (null == cacheManager) {
       throw new InvalidConfigurationException(
           "The Cache Manager should not be null");
     }

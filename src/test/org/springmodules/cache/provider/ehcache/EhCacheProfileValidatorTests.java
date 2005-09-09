@@ -29,7 +29,7 @@ import org.springmodules.cache.provider.InvalidCacheProfileException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/07 02:32:12 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:11 $
  */
 public final class EhCacheProfileValidatorTests extends TestCase {
 
@@ -43,8 +43,7 @@ public final class EhCacheProfileValidatorTests extends TestCase {
 
   private void assertValidateCacheProfilePropertiesThrowsException() {
     try {
-      this.cacheProfileValidator
-          .validateCacheProfileProperties(this.cacheProfile);
+      cacheProfileValidator.validateCacheProfileProperties(cacheProfile);
       fail();
     } catch (InvalidCacheProfileException exception) {
       // we are expecting this exception.
@@ -53,28 +52,26 @@ public final class EhCacheProfileValidatorTests extends TestCase {
 
   protected void setUp() throws Exception {
     super.setUp();
-    this.cacheProfile = new EhCacheProfile();
-    this.cacheProfileValidator = new EhCacheProfileValidator();
+    cacheProfile = new EhCacheProfile();
+    cacheProfileValidator = new EhCacheProfileValidator();
   }
 
   public void testGetTargetClass() {
-    assertEquals(EhCacheProfile.class, this.cacheProfileValidator
-        .getTargetClass());
+    assertEquals(EhCacheProfile.class, cacheProfileValidator.getTargetClass());
   }
 
   public void testValidateCacheProfilePropertiesWithCacheNameEqualToNull() {
-    this.cacheProfile.setCacheName(null);
+    cacheProfile.setCacheName(null);
     assertValidateCacheProfilePropertiesThrowsException();
   }
 
   public void testValidateCacheProfilePropertiesWithEmptyCacheName() {
-    this.cacheProfile.setCacheName("");
+    cacheProfile.setCacheName("");
     assertValidateCacheProfilePropertiesThrowsException();
   }
 
   public void testValidateCacheProfilePropertiesWithNotEmptyCacheName() {
-    this.cacheProfile.setCacheName("mapping");
-    this.cacheProfileValidator
-        .validateCacheProfileProperties(this.cacheProfile);
+    cacheProfile.setCacheName("mapping");
+    cacheProfileValidator.validateCacheProfileProperties(cacheProfile);
   }
 }

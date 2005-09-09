@@ -27,7 +27,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/07 02:00:11 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/09 02:19:18 $
  */
 public class JcsProfile implements CacheProfile {
 
@@ -70,11 +70,11 @@ public class JcsProfile implements CacheProfile {
 
     final JcsProfile jcsProfile = (JcsProfile) obj;
 
-    if (this.cacheName != null ? !this.cacheName.equals(jcsProfile.cacheName)
+    if (cacheName != null ? !cacheName.equals(jcsProfile.cacheName)
         : jcsProfile.cacheName != null) {
       return false;
     }
-    if (this.group != null ? !this.group.equals(jcsProfile.group)
+    if (group != null ? !group.equals(jcsProfile.group)
         : jcsProfile.group != null) {
       return false;
     }
@@ -83,11 +83,11 @@ public class JcsProfile implements CacheProfile {
   }
 
   public final String getCacheName() {
-    return this.cacheName;
+    return cacheName;
   }
 
   public final String getGroup() {
-    return this.group;
+    return group;
   }
 
   /**
@@ -96,18 +96,17 @@ public class JcsProfile implements CacheProfile {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash
-        + (this.cacheName != null ? this.cacheName.hashCode() : 0);
-    hash = multiplier * hash + (this.group != null ? this.group.hashCode() : 0);
+    hash = multiplier * hash + (cacheName != null ? cacheName.hashCode() : 0);
+    hash = multiplier * hash + (group != null ? group.hashCode() : 0);
     return hash;
   }
 
-  public final void setCacheName(String cacheName) {
-    this.cacheName = cacheName;
+  public final void setCacheName(String newCacheName) {
+    cacheName = newCacheName;
   }
 
-  public final void setGroup(String group) {
-    this.group = group;
+  public final void setGroup(String newGroup) {
+    group = newGroup;
   }
 
   /**
@@ -116,8 +115,8 @@ public class JcsProfile implements CacheProfile {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheName=" + Strings.quote(this.cacheName) + ", ");
-    buffer.append("group=" + Strings.quote(this.group) + "]");
+    buffer.append("cacheName=" + Strings.quote(cacheName) + ", ");
+    buffer.append("group=" + Strings.quote(group) + "]");
 
     return buffer.toString();
   }

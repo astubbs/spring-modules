@@ -31,7 +31,7 @@ import org.springframework.metadata.Attributes;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:32:33 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:57 $
  */
 public final class MetadataCachingAttributeSource extends
     AbstractCachingAttributeSource {
@@ -49,12 +49,12 @@ public final class MetadataCachingAttributeSource extends
    * @see org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource#findAllAttributes(Method)
    */
   protected Collection findAllAttributes(Method method) {
-    Collection allAttributes = this.attributes.getAttributes(method);
+    Collection allAttributes = attributes.getAttributes(method);
     return allAttributes;
   }
 
-  public final void setAttributes(Attributes attributes) {
-    this.attributes = attributes;
+  public final void setAttributes(Attributes newAttributes) {
+    attributes = newAttributes;
   }
 
 }
