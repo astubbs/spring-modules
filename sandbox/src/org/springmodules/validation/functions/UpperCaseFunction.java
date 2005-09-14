@@ -15,7 +15,6 @@
  */ 
 package org.springmodules.validation.functions;
 
-import org.springframework.util.Assert;
 
 /**
  * <p>Converts a string to upper case. 
@@ -27,11 +26,10 @@ public class UpperCaseFunction extends AbstractFunction {
 
 	public UpperCaseFunction(Function[] arguments, int line, int column) {
 		super(arguments, line, column);
+		definedExactNumberOfArguments(1);
 	}
 
 	protected Object doGetResult(Object target) {
-		Assert.notEmpty(getArguments(), "Uppercase function requires one argument " + getTemplate().getAtLineString() + "!");
-		Assert.isTrue(getArguments().length == 1, "Uppercase function does not accept more that one argument " + getTemplate().getAtLineString() + "!");
 		return getArguments()[0].getResult(target).toString().toUpperCase();
 	}
 

@@ -15,7 +15,6 @@
  */ 
 package org.springmodules.validation.functions;
 
-import org.springframework.util.Assert;
 
 
 /**
@@ -28,11 +27,10 @@ public class LengthOfFunction extends AbstractFunction {
 
 	public LengthOfFunction(Function[] arguments, int line, int column) {
 		super(arguments, line, column);
+		definedExactNumberOfArguments(1);
 	}
 	
 	protected Object doGetResult(Object target) {
-		Assert.notEmpty(getArguments(), "Length function requires one argument " + getTemplate().getAtLineString() + "!");
-		Assert.isTrue(getArguments().length == 1, "Length function does not accept more that one argument " + getTemplate().getAtLineString() + "!");
 		return new Integer(getArguments()[0].getResult(target).toString().length());
 	}
 

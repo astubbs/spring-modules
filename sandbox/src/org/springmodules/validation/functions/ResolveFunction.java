@@ -22,11 +22,10 @@ public class ResolveFunction extends AbstractFunction {
 
 	public ResolveFunction(Function[] arguments, int line, int column) {
 		super(arguments, line, column);
+		definedExactNumberOfArguments(1);
 	}
 
 	protected Object doGetResult(Object target) throws Exception {
-		Assert.notEmpty(getArguments(), "Resolve function requires one argument " + getTemplate().getAtLineString() + "!");
-		Assert.isTrue(getArguments().length == 1, "Resolve function does not accept more than one argument " + getTemplate().getAtLineString() + "!");
 		Object value = getArguments()[0].getResult(target);
 		Assert.isInstanceOf(String.class, value, "Argument of resolve method must be a string value or return a string value " + getTemplate().getAtLineString() + "!");
 		return new DefaultMessageSourceResolvable((String)value);

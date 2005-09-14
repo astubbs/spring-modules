@@ -15,6 +15,11 @@
  */ 
 package org.springmodules.validation.functions;
 
+import javassist.bytecode.Mnemonic;
+
+import org.springframework.util.Assert;
+import org.springmodules.validation.ValangException;
+
 /**
  * <p>Base class for functions. Function classes should extend this class.
  * 
@@ -58,6 +63,33 @@ public abstract class AbstractFunction implements Function {
 
 	protected Function[] getArguments() {
 		return arguments;
+	}
+	
+	/**
+	 * Call this method in the constructor of custom functions to define the minimum number of arguments.
+	 */
+	protected void definedMinNumberOfArguments(int minNumberOfArguments) {
+		if (getArguments().length < minNumberOfArguments) {
+			throw new ValangException("Function requires at least " + minNumberOfArguments + " argument(s)", getTemplate().getLine(), getTemplate().getColumn());
+		}
+	}
+	
+	/**
+	 * Call this method in the constructor of custom functions to define the maximum number of arguments.
+	 */
+	protected void definedMaxNumberOfArguments(int maxNumberOfArguments) {
+		if (getArguments().length > maxNumberOfArguments) {
+			throw new ValangException("Function cannot have more than " + maxNumberOfArguments + " arguments(s)", getTemplate().getLine(), getTemplate().getColumn());
+		}
+	}
+	
+	/**
+	 * Call this method in the constructor of custom functions to define the exact number of arguments.
+	 */
+	protected void definedExactNumberOfArguments(int exactNumberOfArguments) {
+		if (getArguments().length != exactNumberOfArguments) {
+			throw new ValangException("Function must have exactly " + exactNumberOfArguments + " arguments", getTemplate().getLine(), getTemplate().getColumn());
+		}
 	}
 	
 	private void setArguments(Function[] arguments) {
