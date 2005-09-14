@@ -16,7 +16,28 @@
 package org.springmodules.validation.functions;
 
 /**
- * <p>Base class for functions. Function classes should extend this class. 
+ * <p>Base class for functions. Function classes should extend this class.
+ * 
+ * <p>The lifecyle of a function that extends this class is:
+ * 
+ * <ul>
+ * 	<li>Function instance is created through {@link AbstractFunction#AbstractFunction(Function[], int, int)}
+ * 	<li>Spring callback interfaces are called (in this order):
+ * 		<ul>
+ * 			<li>{@link org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)}
+ * 			<li>{@link org.springframework.context.ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)}
+ * 			<li>{@link org.springframework.context.ResourceLoaderAware#setResourceLoader(org.springframework.core.io.ResourceLoader)}
+ * 			<li>{@link org.springframework.context.MessageSourceAware#setMessageSource(org.springframework.context.MessageSource)}
+ * 			<li>{@link org.springframework.context.ApplicationEventPublisherAware#setApplicationEventPublisher(org.springframework.context.ApplicationEventPublisher)}
+ * 			<li>{@link org.springframework.web.context.ServletContextAware#setServletContext(javax.servlet.ServletContext)}
+ * 		</ul>
+ * 	<li>Function properties are autowired by name if {@link AbstractFunction#isAutowireByName()} returns true
+ * <li>Function properties are autowired by type if {@link AbstractFunction#isAutowireByType()} returns true
+ * 	<li>{@link AbstractFunction#init()} is called
+ * 	<li>Function is ready for use by validator
+ * </ul>
+ * 
+ * <p>Function implementations can implement any of the Spring callback interfaces listed above to get access to the specific objects.
  * 
  * @author Steven Devijver
  * @since Apr 23, 2005
@@ -63,4 +84,26 @@ public abstract class AbstractFunction implements Function {
 	}
 
 	protected abstract Object doGetResult(Object target) throws Exception;
+
+	/**
+	 * If true properties of function will be autowired by type by the Spring bean factory.
+	 */
+	public boolean isAutowireByType() {
+		return false;
+	}
+
+	/**
+	 * If true properties of function will be autowired by name by the Spring bean factory.
+	 */
+	public boolean isAutowireByName() {
+		return false;
+	}
+	
+	/**
+	 * This method is called when all properties have been set through autowiring. This method
+	 * can be implemented to initialize resources or verify if mandatory properties have been set.
+	 */
+	public void init() throws Exception {
+		
+	}
 }
