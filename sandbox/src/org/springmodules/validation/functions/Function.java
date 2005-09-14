@@ -17,7 +17,7 @@ package org.springmodules.validation.functions;
 
 /**
  * <p>A function is an implementation that returns a value based on one of more arguments.
- *  A function instance is created for each occurence in the validation language.
+ *  A function instance is created for each occurrence of the function in the validation language.
  * 
  * @author Steven Devijver
  * @since Apr 23, 2005
