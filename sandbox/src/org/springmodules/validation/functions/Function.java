@@ -16,8 +16,8 @@
 package org.springmodules.validation.functions;
 
 /**
- * <p>A function can be any implementation where a value is retrieved from
- * a bean property. Functions can alter this value as they see fit. 
+ * <p>A function is an implementation that returns a value based on one of more arguments.
+ *  A function instance is created for each occurence in the validation language.
  * 
  * @author Steven Devijver
  * @since Apr 23, 2005
@@ -25,10 +25,11 @@ package org.springmodules.validation.functions;
 public interface Function {
 
 	/**
-	 * <p>Gets the result of the function from a bean property.
+	 * <p>Gets the result of the function.
 	 * 
 	 * @param target the target bean
 	 * @return the result of the function
 	 */
 	public Object getResult(Object target);
+	
 }
