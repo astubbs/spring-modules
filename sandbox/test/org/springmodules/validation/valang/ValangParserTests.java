@@ -1,6 +1,20 @@
 package org.springmodules.validation.valang;
 
-import java.io.StringReader;import java.util.Collection;import java.util.Date;import java.util.HashMap;import java.util.Iterator;import java.util.Map;import junit.framework.TestCase;import org.springframework.beans.BeanWrapperImpl;import org.springframework.validation.BindException;import org.springframework.validation.Errors;import org.springmodules.util.dateparser.DateParseException;import org.springmodules.util.dateparser.DefaultDateParser;import org.springmodules.validation.predicates.ValidationRule;
+import java.io.StringReader;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import junit.framework.TestCase;
+
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.validation.BindException;
+import org.springframework.validation.Errors;
+import org.springmodules.util.dateparser.DateParseException;
+import org.springmodules.util.dateparser.DefaultDateParser;
+import org.springmodules.validation.predicates.ValidationRule;
 
 /**
  * @author Steven Devijver
@@ -20,7 +34,10 @@ public class ValangParserTests extends TestCase {
 		private int age = 0;
 		private String firstName = null;
 		private String size = null;
-		private Date dateOfBirth = null;		private int minAge = 18;		
+		private Date dateOfBirth = null;
+
+		private int minAge = 18;
+		
 		public Person(int age, String firstName) { super(); setAge(age); setFirstName(firstName); }
 		public Person(String size) { super(); setSize(size); }
 		public Person(Date dateOfBirth) { super(); setDateOfBirth(dateOfBirth); }
@@ -29,7 +46,17 @@ public class ValangParserTests extends TestCase {
 		public String getFirstName() { return this.firstName; }
 		public void setFirstName(String firstName) { this.firstName = firstName; }
 		public String getSize() { return this.size; }
-		public void setSize(String size) { this.size = size; }				public Date getDateOfBirth() { return this.dateOfBirth; }		public void setDateOfBirth(Date dateOfBirth) { this.dateOfBirth = dateOfBirth; }				public int getMinAge() { return this.minAge; }				public Object[] getSizes() { return new Object[] { "S", "M", "L", "XL" }; }				public Map getMap() { Map map = new HashMap(); map.put("firstName", "Steven"); map.put("sizes", getSizes()); return map; }
+		public void setSize(String size) { this.size = size; }
+		
+		public Date getDateOfBirth() { return this.dateOfBirth; }
+
+		public void setDateOfBirth(Date dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+		
+		public int getMinAge() { return this.minAge; }
+		
+		public Object[] getSizes() { return new Object[] { "S", "M", "L", "XL" }; }
+		
+		public Map getMap() { Map map = new HashMap(); map.put("firstName", "Steven"); map.put("sizes", getSizes()); return map; }
 	}
 	
 	private ValangParser getParser(String text) {
@@ -47,8 +74,14 @@ public class ValangParserTests extends TestCase {
 	
 	private boolean validate(Object target, String text) {
 		Collection rules = parseRules(text);
-		Errors errors = new BindException(target, "person");		Object tmpTarget = null;		if (!(target instanceof Map)) {
-			tmpTarget = new BeanWrapperImpl(target);		} else {			tmpTarget = target;		}
+		Errors errors = new BindException(target, "person");
+
+		Object tmpTarget = null;
+		if (!(target instanceof Map)) {
+			tmpTarget = new BeanWrapperImpl(target);
+		} else {
+			tmpTarget = target;
+		}
 		for (Iterator iter = rules.iterator(); iter.hasNext();) {
 			ValidationRule rule = (ValidationRule)iter.next();
 			rule.validate(tmpTarget, errors);
@@ -200,4 +233,144 @@ public class ValangParserTests extends TestCase {
 		;
 		assertTrue(validate(new Person(7, "Benjamin"), text));
 		assertFalse(validate(new Person(30, "Steven"), text));
-	}		public void testParser19Dates1() throws DateParseException {		String text = 			"{ dateOfBirth : dateOfBirth >= [1970-01-01] : 'You must be born after 1 january 1970.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("1974-11-24")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("1950-07-14")), text));	}		public void testParser20Dates2() throws DateParseException {		String text =			"{ dateOfBirth : ? is null or (dateOfBirth >= [T<d] and [T>d] > dateOfBirth) : 'You must be born today.' }"		;		assertTrue(validate(new Person(new DefaultDateParser().parse("T")), text));		assertFalse(validate(new Person(new DefaultDateParser().parse("T-1d")), text));	}		public void testParser21ErrorKey() {		String text =			"{ age : age >= 18 : 'Customers must be 18 years or older.' : '18_years_or_older' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(7, "Benjamin"), text));	}		public void testParser22ErrorArgs() {		String text =			"{ age : ? >= minAge : 'Customers must be older than {0}.' : 'not_old_enough' : minAge }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(7, "Benjamin"), text));	}		public void testParser23InCollection() {		String text =			"{ size : ? in @sizes and ? in @$map('sizes') : 'Size is not correct.' }";		;		assertTrue(validate(new Person("M"), text));		assertFalse(validate(new Person("XXL"), text));	}		public void testParser23MapKey() {		String text = 			"{ firstName : ? = $map('firstName') : 'First name is not correct.' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(30, "Marie-Claire"), text));	}		public void testParser25MapTarget() {		Map customer = new HashMap();		customer.put("name", "Steven");		Map order = new HashMap();		order.put("customer", customer);				String text =			"{ customer.name : ? = 'Steven' : 'Customer name is incorrect.' }"		;		assertTrue(validate(order, text));	}		public void testParser26IsBlank() {		String text =			"{ firstName : ? is blank : 'First name is not blank.' }"		;		assertTrue(validate(new Person(30, ""), text));		assertFalse(validate(new Person(30, "Steven"), text));	}		public void testParser27IsNotBlank() {		String text =			"{ firstName : ? is not blank : 'First name is blank.' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(30, ""), text));	}		public void testParser28IsWord() {		String text =			"{ firstName : ? is word : 'First name must be one word.' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(30, "Steven Devijver"), text));	}		public void testParser29IsNotWord() {		String text =			"{ firstName : ? is not word : 'First name must not be one word.' }"		;		assertTrue(validate(new Person(30, "Steven Devijver"), text));		assertFalse(validate(new Person(30, "Steven"), text));	}		public void testParser30IsUpperCase() {		String text =			"{ firstName : ? is uppercase : 'First name must be upper case.' }"		;		assertTrue(validate(new Person(30, "STEVEN"), text));		assertFalse(validate(new Person(30, "Steven"), text));	}		public void testParser31IsNotUpperCase() {		String text =			"{ firstName : ? is not uppercase : 'First name must not be upper case.' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(30, "STEVEN"), text));	}		public void testParser32IsLowerCase() {		String text =			"{ firstName : ? is lowercase : 'First name must be lower case.' }"		;		assertTrue(validate(new Person(30, "steven"), text));		assertFalse(validate(new Person(30, "Steven"), text));	}		public void testParser33IsNotLowerCase() {		String text =			"{ firstName : ? is not lowercase : 'First name must not be lower case.' }"		;		assertTrue(validate(new Person(30, "Steven"), text));		assertFalse(validate(new Person(30, "steven"), text));	}		public void testParser34SimpleMath() {		String text =			"{ firstName : (2 + 3 = 5 and 3 - 1 = 2) and (3 * 3 = 9 and 9 / 3 = 3) and 10 % 3 = 1 and 21 div 7 = 3 and 7 mod 3 = 1 : '' }"		;		assertTrue(validate(new Person(30, "Steven"), text));	}		public void testParser35ComplexMath() {		String text =			"{ firstName : 2 - 3 + 5 = 4 and (2 + 3) - 4 = 1 and ((2 - 3) + 4) - 1 = 2 and (length(?) - 2) + 1 = 5 and 2 = ((age / 2) / (1/2)) % 7 : '' }"		;		assertTrue(validate(new Person(30, "Steven"), text));	}}
+	}
+
+	
+	public void testParser19Dates1() throws DateParseException {
+		String text = 
+			"{ dateOfBirth : dateOfBirth >= [1970-01-01] : 'You must be born after 1 january 1970.' }"
+		;
+		assertTrue(validate(new Person(new DefaultDateParser().parse("1974-11-24")), text));
+		assertFalse(validate(new Person(new DefaultDateParser().parse("1950-07-14")), text));
+	}
+	
+	public void testParser20Dates2() throws DateParseException {
+		String text =
+			"{ dateOfBirth : ? is null or (dateOfBirth >= [T<d] and [T>d] > dateOfBirth) : 'You must be born today.' }"
+		;
+		assertTrue(validate(new Person(new DefaultDateParser().parse("T")), text));
+		assertFalse(validate(new Person(new DefaultDateParser().parse("T-1d")), text));
+	}
+	
+	public void testParser21ErrorKey() {
+		String text =
+			"{ age : age >= 18 : 'Customers must be 18 years or older.' : '18_years_or_older' }"
+		;
+		assertTrue(validate(new Person(30, "Steven"), text));
+		assertFalse(validate(new Person(7, "Benjamin"), text));
+	}
+	
+	public void testParser22ErrorArgs() {
+		String text =
+			"{ age : ? >= minAge : 'Customers must be older than {0}.' : 'not_old_enough' : minAge }"
+		;
+		assertTrue(validate(new Person(30, "Steven"), text));
+		assertFalse(validate(new Person(7, "Benjamin"), text));
+	}
+	
+	public void testParser23InCollection() {
+		String text =
+			"{ size : ? in @sizes and ? in @map[sizes] : 'Size is not correct.' }";
+		;
+		assertTrue(validate(new Person("M"), text));
+		assertFalse(validate(new Person("XXL"), text));
+	}
+	
+	public void testParser23MapKey() {
+		String text = 
+			"{ firstName : ? = map[firstName] : 'First name is not correct.' }"
+		;
+		assertTrue(validate(new Person(30, "Steven"), text));
+		assertFalse(validate(new Person(30, "Marie-Claire"), text));
+	}
+	
+	public void testParser25MapTarget() {
+		Map customer = new HashMap();
+		customer.put("name", "Steven");
+		Map order = new HashMap();
+		order.put("customer", customer);
+		
+		String text =
+			"{ customer.name : ? = 'Steven' : 'Customer name is incorrect.' }"
+		;
+		assertTrue(validate(order, text));
+	}
+	
+	public void testParser26IsBlank() {
+		String text =
+			"{ firstName : ? is blank : 'First name is not blank.' }"
+		;
+		assertTrue(validate(new Person(30, ""), text));
+		assertFalse(validate(new Person(30, "Steven"), text));
+	}
+	
+	public void testParser27IsNotBlank() {
+		String text =
+			"{ firstName : ? is not blank : 'First name is blank.' }"
+		;
+		assertTrue(validate(new Person(30, "Steven"), text));
+		assertFalse(validate(new Person(30, ""), text));
+	}
+	
+	public void testParser28IsWord() {
+		String text =
+			"{ firstName : ? is word : 'First name must be one word.' }"
+		;
+		assertTrue(validate(new Person(30, "Steven"), text));
+		assertFalse(validate(new Person(30, "Steven Devijver"), text));
+	}
+	
+	public void testParser29IsNotWord() {
+		String text =
+			"{ firstName : ? is not word : 'First name must not be one word.' }"
+		;
+		assertTrue(validate(new Person(30, "Steven Devijver"), text));
+		assertFalse(validate(new Person(30, "Steven"), text));
+	}
+	
+	public void testParser30IsUpperCase() {
+		String text =
+			"{ firstName : ? is uppercase : 'First name must be upper case.' }"
+		;
+		assertTrue(validate(new Person(30, "STEVEN"), text));
+		assertFalse(validate(new Person(30, "Steven"), text));
+	}
+	
+	public void testParser31IsNotUpperCase() {
+		String text =
+			"{ firstName : ? is not uppercase : 'First name must not be upper case.' }"
+		;
+		assertTrue(validate(new Person(30, "Steven"), text));
+		assertFalse(validate(new Person(30, "STEVEN"), text));
+	}
+	
+	public void testParser32IsLowerCase() {
+		String text =
+			"{ firstName : ? is lowercase : 'First name must be lower case.' }"
+		;
+		assertTrue(validate(new Person(30, "steven"), text));
+		assertFalse(validate(new Person(30, "Steven"), text));
+	}
+	
+	public void testParser33IsNotLowerCase() {
+		String text =
+			"{ firstName : ? is not lowercase : 'First name must not be lower case.' }"
+		;
+		assertTrue(validate(new Person(30, "Steven"), text));
+		assertFalse(validate(new Person(30, "steven"), text));
+	}
+	
+	public void testParser34SimpleMath() {
+		String text =
+			"{ firstName : (2 + 3 = 5 and 3 - 1 = 2) and (3 * 3 = 9 and 9 / 3 = 3) and 10 % 3 = 1 and 21 div 7 = 3 and 7 mod 3 = 1 : '' }"
+		;
+		assertTrue(validate(new Person(30, "Steven"), text));
+	}
+	
+	public void testParser35ComplexMath() {
+		String text =
+			"{ firstName : 2 - 3 + 5 = 4 and (2 + 3) - 4 = 1 and ((2 - 3) + 4) - 1 = 2 and (length(?) - 2) + 1 = 5 and 2 = ((age / 2) / (1/2)) % 7 : '' }"
+		;
+		assertTrue(validate(new Person(30, "Steven"), text));
+	}
+}

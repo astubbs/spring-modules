@@ -22,6 +22,7 @@ import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LengthOfFunction;
 import org.springmodules.validation.functions.LowerCaseFunction;
 import org.springmodules.validation.functions.NotFunction;
+import org.springmodules.validation.functions.ResolveFunction;
 import org.springmodules.validation.functions.UpperCaseFunction;
 import org.springmodules.validation.predicates.GenericTestPredicate;
 import org.springmodules.validation.predicates.Operator;
@@ -53,26 +54,28 @@ public class DefaultVisitor implements ValangVisitor {
 		}
 	}
 
-	public Function getFunction(String name, Function function, int line, int column) {
+	public Function getFunction(String name, Function[] arguments, int line, int column) {
 		if (getVisitor() != null) {
-			Function tmpFunction = getVisitor().getFunction(name, function, line, column);
+			Function tmpFunction = getVisitor().getFunction(name, arguments, line, column);
 			if (tmpFunction != null) {
 				return tmpFunction;
 			}
 		}
 		
 		if ("len".equals(name)) {
-			return new LengthOfFunction(function, line, column);
+			return new LengthOfFunction(arguments, line, column);
 		} else if ("length".equals(name)) {
-			return new LengthOfFunction(function, line, column);
+			return new LengthOfFunction(arguments, line, column);
 		} else if ("size".equals(name)) {
-			return new LengthOfFunction(function, line, column);
+			return new LengthOfFunction(arguments, line, column);
 		} else if ("upper".equals(name)) {
-			return new UpperCaseFunction(function, line, column);
+			return new UpperCaseFunction(arguments, line, column);
 		} else if ("lower".equals(name)) {
-			return new LowerCaseFunction(function, line, column);
+			return new LowerCaseFunction(arguments, line, column);
 		} else if ("!".equals(name)) {
-			return new NotFunction(function, line, column);
+			return new NotFunction(arguments, line, column);
+		} else if ("resolve".equals(name)) {
+			return new ResolveFunction(arguments, line, column);
 		}
 
 		throw new IllegalArgumentException("Could not find function [" + name + "]!");
@@ -93,8 +96,8 @@ public class DefaultVisitor implements ValangVisitor {
 		return this.visitor;
 	}
 	
-	public Predicate getPredicate(Function leftFunction, Operator operator, Function rightFunction) {
-		return new GenericTestPredicate(leftFunction, operator, rightFunction);
+	public Predicate getPredicate(Function leftFunction, Operator operator, Function rightFunction, int line, int column) {
+		return new GenericTestPredicate(leftFunction, operator, rightFunction, line, column);
 	}
 	
 	public DefaultDateParser getDateParser() {

@@ -15,6 +15,8 @@
  */ 
 package org.springmodules.validation.functions;
 
+import org.springmodules.validation.ValangException;
+
 /**
  * 
  * 
@@ -31,12 +33,24 @@ public class FunctionTemplate {
 		this.line = line;
 		this.column = column;
 	}
+	
+	public int getColumn() {
+		return column;
+	}
 
+	public int getLine() {
+		return line;
+	}
+
+	public String getAtLineString() {
+		return " at line " + getLine() + ", column " + getColumn();
+	}
+	
 	public Object execute(Object target, FunctionCallback functionCallback) {
 		try {
 			return functionCallback.execute(target);
 		} catch (Exception e) {
-			throw new RuntimeException("Exception occured in script at line " + this.line + ", column " + this.column + " [" + e.getClass().getName() + ": " + e.getMessage() + "]", e);
+			throw new  ValangException(e, line, column);
 		}
 	}
 }

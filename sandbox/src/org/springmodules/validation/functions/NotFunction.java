@@ -15,6 +15,8 @@
  */ 
 package org.springmodules.validation.functions;
 
+import org.springframework.util.Assert;
+
 /**
  * <p>NOT operation on boolean values.
  * 
@@ -23,16 +25,14 @@ package org.springmodules.validation.functions;
  */
 public class NotFunction extends AbstractFunction {
 
-	public NotFunction(Function function, int line, int column) {
-		super(function, line, column);
+	public NotFunction(Function[] arguments, int line, int column) {
+		super(arguments, line, column);
 	}
 
-	public Object getResult(Object target) {
-		return getTemplate().execute(target, new FunctionCallback() {
-			public Object execute(Object target) throws Exception {
-				return !(((Boolean)getFunction().getResult(target)).booleanValue()) ? Boolean.TRUE : Boolean.FALSE;
-			}
-		});
+	protected Object doGetResult(Object target) {
+		Assert.notEmpty(getArguments(), "! function requires one argument " + getTemplate().getAtLineString() + "!");
+		Assert.isTrue(getArguments().length == 1, "! function does not accept more that one argument " + getTemplate().getAtLineString() + "!");
+		return !(((Boolean)getArguments()[0].getResult(target)).booleanValue()) ? Boolean.TRUE : Boolean.FALSE;
 	}
 
 }

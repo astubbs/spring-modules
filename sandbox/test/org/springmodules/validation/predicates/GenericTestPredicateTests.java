@@ -277,7 +277,7 @@ public class GenericTestPredicateTests extends TestCase {
 	}
 	
 	private boolean runTest(Object leftValue, Operator operator, Object rightValue) {
-		return new GenericTestPredicate(new BeanPropertyFunction("value"), operator, new LiteralFunction(rightValue)).evaluate(new GenericContainer(leftValue));
+		return new GenericTestPredicate(new BeanPropertyFunction("value"), operator, new LiteralFunction(rightValue), 0, 0).evaluate(new GenericContainer(leftValue));
 	}
 	
 	private void assertTrue(Object leftValue, Operator operator, Object rightValue) {

@@ -20,12 +20,16 @@ public abstract class AbstractPropertyPredicate implements Predicate {
 	private Function leftFunction = null;
 	private Operator operator = null;
 	private Function rightFunction = null;
+	private int line = 0;
+	private int column = 0;
 	
-	public AbstractPropertyPredicate(Function leftFunction, Operator operator, Function rightFunction) {
+	public AbstractPropertyPredicate(Function leftFunction, Operator operator, Function rightFunction, int line, int column) {
 		super();
 		setLeftFunction(leftFunction);
 		setOperator(operator);
 		setRightFunction(rightFunction);
+		setLine(line);
+		setColumn(column);
 	}
 	
 	private void setLeftFunction(Function leftFunction) {
@@ -58,6 +62,22 @@ public abstract class AbstractPropertyPredicate implements Predicate {
 		return this.rightFunction;
 	}
 	
+	public int getLine() {
+		return line;
+	}
+	
+	public void setLine(int line) {
+		this.line = line;
+	}
+	
+	public int getColumn() {
+		return column;
+	}
+	
+	public void setColumn(int column) {
+		this.column = column;
+	}
+	
 	protected final Iterator getIterator(Object literal) {
 		if (literal instanceof Collection) {
 			return ((Collection)literal).iterator();
@@ -88,5 +108,5 @@ public abstract class AbstractPropertyPredicate implements Predicate {
 	
 	public abstract boolean evaluate(Object target);
 	
-	protected abstract Predicate getPredicate(Function leftFunction, Operator operator, Function rightFunction);
+	protected abstract Predicate getPredicate(Function leftFunction, Operator operator, Function rightFunction, int line, int column);
 }

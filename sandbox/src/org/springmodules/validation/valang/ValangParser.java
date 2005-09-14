@@ -18,7 +18,6 @@ import org.springmodules.validation.functions.DateLiteralFunction;
 import org.springmodules.validation.functions.DivideFunction;
 import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LiteralFunction;
-import org.springmodules.validation.functions.MapEntryFunction;
 import org.springmodules.validation.functions.ModuloFunction;
 import org.springmodules.validation.functions.MultiplyFunction;
 import org.springmodules.validation.functions.SubtractFunction;
@@ -63,27 +62,38 @@ public class ValangParser implements ValangParserConstants {
         Function fieldFunction = null;
     label_1:
     while (true) {
-      jj_consume_token(48);
-      jj_consume_token(PATH);
+      jj_consume_token(51);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case FUNCTION_NAME:
+        jj_consume_token(FUNCTION_NAME);
+        break;
+      case PATH:
+        jj_consume_token(PATH);
+        break;
+      default:
+        jj_la1[0] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
                                 field = token.image;
                                 fieldFunction = new BeanPropertyFunction(field);
                                 /* MOD-26: re-initiliaze error key and arguments to null for every rule.
 				   kudos to Cèsar Ordiñana for reporting this bug. */
                                 errorKey = null;
                                 errorArgs = new ArrayList();
-      jj_consume_token(49);
+      jj_consume_token(52);
       predicate = predicates(fieldFunction);
-      jj_consume_token(49);
+      jj_consume_token(52);
       jj_consume_token(STRING);
                                    message = token.image.substring(1, token.image.length() - 1);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 49:
-        jj_consume_token(49);
+      case 52:
+        jj_consume_token(52);
         jj_consume_token(STRING);
                                            errorKey = token.image.substring(1, token.image.length() - 1);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 49:
-          jj_consume_token(49);
+        case 52:
+          jj_consume_token(52);
           label_2:
           while (true) {
             if (jj_2_1(2)) {
@@ -93,29 +103,29 @@ public class ValangParser implements ValangParserConstants {
             }
             function = function(fieldFunction);
                                                                                      errorArgs.add(function);
-            jj_consume_token(50);
+            jj_consume_token(53);
           }
           function = function(fieldFunction);
                                                                              errorArgs.add(function);
           break;
         default:
-          jj_la1[0] = jj_gen;
+          jj_la1[1] = jj_gen;
           ;
         }
         break;
       default:
-        jj_la1[1] = jj_gen;
+        jj_la1[2] = jj_gen;
         ;
       }
-      jj_consume_token(51);
+      jj_consume_token(54);
                         /* JIRA-MOD-20: take into account error key and error args for localization, kudos to Cèsar Ordiñana. */
                         rules.add(new BasicValidationRule(field, predicate, errorKey, message, errorArgs));
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 48:
+      case 51:
         ;
         break;
       default:
-        jj_la1[2] = jj_gen;
+        jj_la1[3] = jj_gen;
         break label_1;
       }
     }
@@ -146,7 +156,7 @@ public class ValangParser implements ValangParserConstants {
         ;
         break;
       default:
-        jj_la1[3] = jj_gen;
+        jj_la1[4] = jj_gen;
         break label_3;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -159,7 +169,7 @@ public class ValangParser implements ValangParserConstants {
                                           orTest = true;
         break;
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[5] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -179,9 +189,9 @@ public class ValangParser implements ValangParserConstants {
   final public Predicate expression(Function fieldFunction) throws ParseException {
         Predicate predicate = null;
     if (jj_2_2(2147483647)) {
-      jj_consume_token(52);
+      jj_consume_token(55);
       predicate = predicates(fieldFunction);
-      jj_consume_token(53);
+      jj_consume_token(56);
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case NOT:
@@ -192,15 +202,15 @@ public class ValangParser implements ValangParserConstants {
       case NUM:
       case STRING:
       case DATE:
+      case FUNCTION_NAME:
       case PATH:
-      case 52:
       case 55:
-      case 56:
-      case 57:
+      case 58:
+      case 59:
         predicate = predicate(fieldFunction);
         break;
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[6] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -268,11 +278,11 @@ public class ValangParser implements ValangParserConstants {
         operator = unaryOperator();
         break;
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[7] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
-                        {if (true) return getVisitor().getPredicate(leftFunction, operator, rightFunction1);}
+                        {if (true) return getVisitor().getPredicate(leftFunction, operator, rightFunction1, 0, 0);}
       break;
     case BETWEEN:
     case NOT_BETWEEN:
@@ -285,7 +295,7 @@ public class ValangParser implements ValangParserConstants {
                                                               notBetween = true;
         break;
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[8] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -293,9 +303,9 @@ public class ValangParser implements ValangParserConstants {
       jj_consume_token(AND);
       rightFunction2 = additiveExpr(fieldFunction);
                                         if (notBetween) {
-                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));}
+                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }), 0, 0);}
                                         } else {
-                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));}
+                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }), 0, 0);}
                                         }
       break;
     case IN:
@@ -309,7 +319,7 @@ public class ValangParser implements ValangParserConstants {
                                                     notIn = true;
         break;
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[9] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -319,11 +329,11 @@ public class ValangParser implements ValangParserConstants {
       case NUM:
       case STRING:
       case DATE:
+      case FUNCTION_NAME:
       case PATH:
-      case 52:
       case 55:
-      case 56:
-      case 57:
+      case 58:
+      case 59:
         label_4:
         while (true) {
           if (jj_2_3(2)) {
@@ -333,18 +343,18 @@ public class ValangParser implements ValangParserConstants {
           }
           tmpFunction = additiveExpr(fieldFunction);
                                                                                             functions.add(tmpFunction);
-          jj_consume_token(50);
+          jj_consume_token(53);
         }
         tmpFunction = additiveExpr(fieldFunction);
                                                                                     functions.add(tmpFunction);
         break;
-      case 54:
-        jj_consume_token(54);
+      case 57:
+        jj_consume_token(57);
         tmpFunction = beanProperty(fieldFunction);
                                                                                         collectionProperty = true;
         break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[10] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -352,13 +362,13 @@ public class ValangParser implements ValangParserConstants {
                                                 tmpFunction = new LiteralFunction(functions);
                                         }
                                         if (notIn) {
-                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, tmpFunction);}
+                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, tmpFunction, 0, 0);}
                                         } else {
-                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, tmpFunction);}
+                                                {if (true) return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, tmpFunction, 0, 0);}
                                         }
       break;
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[11] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -371,24 +381,40 @@ public class ValangParser implements ValangParserConstants {
     Function rightFunction = null;
     int line = 0;
     int column = 0;
+    Collection functionArguments = new ArrayList();
     if (jj_2_4(2)) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 55:
-        jj_consume_token(55);
+      case 58:
+        jj_consume_token(58);
         break;
-      case PATH:
-        jj_consume_token(PATH);
+      case FUNCTION_NAME:
+        jj_consume_token(FUNCTION_NAME);
         break;
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[12] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
           function = token.image; line = token.beginLine; column = token.beginColumn;
-      jj_consume_token(52);
+      jj_consume_token(55);
       leftFunction = function(fieldFunction);
-      jj_consume_token(53);
-          leftFunction = getVisitor().getFunction(function, leftFunction, line, column);
+                                                         functionArguments.add(leftFunction);
+      label_5:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 53:
+          ;
+          break;
+        default:
+          jj_la1[13] = jj_gen;
+          break label_5;
+        }
+        jj_consume_token(53);
+        leftFunction = function(fieldFunction);
+                                                                 functionArguments.add(leftFunction);
+      }
+      jj_consume_token(56);
+          leftFunction = getVisitor().getFunction(function, (Function[])functionArguments.toArray(new Function[functionArguments.size()]), line, column);
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TRUE:
@@ -396,21 +422,21 @@ public class ValangParser implements ValangParserConstants {
       case NUM:
       case STRING:
       case DATE:
+      case FUNCTION_NAME:
       case PATH:
-      case 57:
         leftFunction = beanPropertyOrLiteral(fieldFunction);
         break;
-      case 56:
-        jj_consume_token(56);
+      case 59:
+        jj_consume_token(59);
               leftFunction = fieldFunction;
         break;
-      case 52:
-        jj_consume_token(52);
+      case 55:
+        jj_consume_token(55);
         leftFunction = additiveExpr(fieldFunction);
-        jj_consume_token(53);
+        jj_consume_token(56);
         break;
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[14] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -425,15 +451,15 @@ public class ValangParser implements ValangParserConstants {
         int line = 0;
         int column = 0;
     leftFunction = subtractiveExpr(fieldFunction);
-    label_5:
+    label_6:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case ADD:
         ;
         break;
       default:
-        jj_la1[13] = jj_gen;
-        break label_5;
+        jj_la1[15] = jj_gen;
+        break label_6;
       }
       jj_consume_token(ADD);
                         line = token.beginLine; column = token.beginColumn;
@@ -450,15 +476,15 @@ public class ValangParser implements ValangParserConstants {
         int line = 0;
         int column = 0;
     leftFunction = multiplicativeExpr(fieldFunction);
-    label_6:
+    label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case SUBTRACT:
         ;
         break;
       default:
-        jj_la1[14] = jj_gen;
-        break label_6;
+        jj_la1[16] = jj_gen;
+        break label_7;
       }
       jj_consume_token(SUBTRACT);
                              line = token.beginLine; column = token.beginColumn;
@@ -475,7 +501,7 @@ public class ValangParser implements ValangParserConstants {
         int line = 0;
         int column = 0;
     leftFunction = function(fieldFunction);
-    label_7:
+    label_8:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case MULTIPLY:
@@ -484,8 +510,8 @@ public class ValangParser implements ValangParserConstants {
         ;
         break;
       default:
-        jj_la1[15] = jj_gen;
-        break label_7;
+        jj_la1[17] = jj_gen;
+        break label_8;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case MULTIPLY:
@@ -507,7 +533,7 @@ public class ValangParser implements ValangParserConstants {
                                                                                                                         leftFunction = new ModuloFunction(leftFunction, rightFunction, line, column);
         break;
       default:
-        jj_la1[16] = jj_gen;
+        jj_la1[18] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -527,13 +553,13 @@ public class ValangParser implements ValangParserConstants {
       function = literal();
                                        {if (true) return function;}
       break;
+    case FUNCTION_NAME:
     case PATH:
-    case 57:
       function = beanProperty(fieldFunction);
                                                  {if (true) return function;}
       break;
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[19] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -568,7 +594,7 @@ public class ValangParser implements ValangParserConstants {
                                         {if (true) return new DateLiteralFunction(token.image.substring(1, token.image.length() - 1), getVisitor().getDateParser(), token.beginLine, token.beginColumn);}
       break;
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[20] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -577,42 +603,28 @@ public class ValangParser implements ValangParserConstants {
 
   final public Function beanProperty(Function fieldFunction) throws ParseException {
         Function function = null;
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case PATH:
-      function = path();
-                                    {if (true) return function;}
-      break;
-    case 57:
-      function = mapEntry(fieldFunction);
-                                                     {if (true) return function;}
-      break;
-    default:
-      jj_la1[19] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
+    function = path();
+                            {if (true) return function;}
     throw new Error("Missing return statement in function");
   }
 
   final public Function path() throws ParseException {
-    jj_consume_token(PATH);
-                          {if (true) return new BeanPropertyFunction(token.image);}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Function mapEntry(Function fieldFunction) throws ParseException {
-        Function pathFunction = null;
-        Function function = null;
-        int beginLine = 0;
-        int beginColumn = 0;
-    jj_consume_token(57);
-                beginLine = token.beginLine;
-                beginColumn = token.beginColumn;
-    pathFunction = path();
-    jj_consume_token(52);
-    function = function(fieldFunction);
-    jj_consume_token(53);
-                {if (true) return new MapEntryFunction(pathFunction, function, beginLine, beginColumn);}
+        String path = null;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case PATH:
+      jj_consume_token(PATH);
+                                                                          path = token.image;
+      break;
+    case FUNCTION_NAME:
+      jj_consume_token(FUNCTION_NAME);
+                                          path = token.image;
+      break;
+    default:
+      jj_la1[21] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+                {if (true) return new BeanPropertyFunction(path);}
     throw new Error("Missing return statement in function");
   }
 
@@ -644,7 +656,7 @@ public class ValangParser implements ValangParserConstants {
                                           operator = OperatorConstants.EQUALS_OPERATOR;
       break;
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[22] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -712,7 +724,7 @@ public class ValangParser implements ValangParserConstants {
                                                   operator = OperatorConstants.IS_NOT_LOWER_CASE_OPERATOR;
       break;
     default:
-      jj_la1[21] = jj_gen;
+      jj_la1[23] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -748,77 +760,81 @@ public class ValangParser implements ValangParserConstants {
     finally { jj_save(3, xla); }
   }
 
-  final private boolean jj_3R_25() {
-    if (jj_scan_token(SUBTRACT)) return true;
-    if (jj_3R_24()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_16() {
-    if (jj_3R_24()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_25()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
   final private boolean jj_3R_17() {
-    if (jj_scan_token(ADD)) return true;
-    if (jj_3R_16()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_10() {
-    if (jj_3R_16()) return true;
+    if (jj_3R_25()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
-      if (jj_3R_17()) { jj_scanpos = xsp; break; }
+      if (jj_3R_26()) { jj_scanpos = xsp; break; }
     }
     return false;
   }
 
-  final private boolean jj_3R_13() {
-    if (jj_scan_token(52)) return true;
-    if (jj_3R_10()) return true;
-    if (jj_scan_token(53)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_12() {
-    if (jj_scan_token(56)) return true;
+  final private boolean jj_3R_18() {
+    if (jj_scan_token(ADD)) return true;
+    if (jj_3R_17()) return true;
     return false;
   }
 
   final private boolean jj_3R_11() {
-    if (jj_3R_18()) return true;
+    if (jj_3R_17()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_18()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  final private boolean jj_3R_76() {
+    if (jj_scan_token(53)) return true;
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_14() {
+    if (jj_scan_token(55)) return true;
+    if (jj_3R_11()) return true;
+    if (jj_scan_token(56)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_13() {
+    if (jj_scan_token(59)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_12() {
+    if (jj_3R_19()) return true;
     return false;
   }
 
   final private boolean jj_3R_51() {
-    if (jj_scan_token(54)) return true;
-    if (jj_3R_32()) return true;
+    if (jj_scan_token(57)) return true;
+    if (jj_3R_33()) return true;
     return false;
   }
 
   final private boolean jj_3_3() {
-    if (jj_3R_10()) return true;
-    if (jj_scan_token(50)) return true;
+    if (jj_3R_11()) return true;
+    if (jj_scan_token(53)) return true;
     return false;
   }
 
   final private boolean jj_3_4() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(55)) {
+    if (jj_scan_token(58)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(47)) return true;
+    if (jj_scan_token(49)) return true;
     }
-    if (jj_scan_token(52)) return true;
-    if (jj_3R_8()) return true;
-    if (jj_scan_token(53)) return true;
+    if (jj_scan_token(55)) return true;
+    if (jj_3R_9()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_76()) { jj_scanpos = xsp; break; }
+    }
+    if (jj_scan_token(56)) return true;
     return false;
   }
 
@@ -828,7 +844,7 @@ public class ValangParser implements ValangParserConstants {
       xsp = jj_scanpos;
       if (jj_3_3()) { jj_scanpos = xsp; break; }
     }
-    if (jj_3R_10()) return true;
+    if (jj_3R_11()) return true;
     return false;
   }
 
@@ -837,29 +853,29 @@ public class ValangParser implements ValangParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_8() {
+  final private boolean jj_3R_9() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_4()) {
     jj_scanpos = xsp;
-    if (jj_3R_11()) {
-    jj_scanpos = xsp;
     if (jj_3R_12()) {
     jj_scanpos = xsp;
-    if (jj_3R_13()) return true;
+    if (jj_3R_13()) {
+    jj_scanpos = xsp;
+    if (jj_3R_14()) return true;
     }
     }
     }
-    return false;
-  }
-
-  final private boolean jj_3R_75() {
-    if (jj_scan_token(IS_NOT_LOWER_CASE)) return true;
     return false;
   }
 
   final private boolean jj_3R_48() {
     if (jj_scan_token(NOT_BETWEEN)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_75() {
+    if (jj_scan_token(IS_NOT_LOWER_CASE)) return true;
     return false;
   }
 
@@ -898,6 +914,21 @@ public class ValangParser implements ValangParserConstants {
     return false;
   }
 
+  final private boolean jj_3R_36() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(10)) {
+    jj_scanpos = xsp;
+    if (jj_3R_49()) return true;
+    }
+    xsp = jj_scanpos;
+    if (jj_3R_50()) {
+    jj_scanpos = xsp;
+    if (jj_3R_51()) return true;
+    }
+    return false;
+  }
+
   final private boolean jj_3R_67() {
     if (jj_scan_token(HAS_NO_LENGTH)) return true;
     return false;
@@ -918,6 +949,11 @@ public class ValangParser implements ValangParserConstants {
     return false;
   }
 
+  final private boolean jj_3R_47() {
+    if (jj_3R_55()) return true;
+    return false;
+  }
+
   final private boolean jj_3R_63() {
     if (jj_scan_token(IS_NOT_NULL)) return true;
     return false;
@@ -928,23 +964,19 @@ public class ValangParser implements ValangParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_35() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(10)) {
-    jj_scanpos = xsp;
-    if (jj_3R_49()) return true;
-    }
-    xsp = jj_scanpos;
-    if (jj_3R_50()) {
-    jj_scanpos = xsp;
-    if (jj_3R_51()) return true;
-    }
+  final private boolean jj_3R_46() {
+    if (jj_3R_54()) return true;
+    if (jj_3R_11()) return true;
     return false;
   }
 
-  final private boolean jj_3R_47() {
-    if (jj_3R_55()) return true;
+  final private boolean jj_3R_34() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_46()) {
+    jj_scanpos = xsp;
+    if (jj_3R_47()) return true;
+    }
     return false;
   }
 
@@ -994,6 +1026,19 @@ public class ValangParser implements ValangParserConstants {
     return false;
   }
 
+  final private boolean jj_3R_35() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_scan_token(8)) {
+    jj_scanpos = xsp;
+    if (jj_3R_48()) return true;
+    }
+    if (jj_3R_11()) return true;
+    if (jj_scan_token(AND)) return true;
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
   final private boolean jj_3R_61() {
     if (jj_scan_token(EQUALS)) return true;
     return false;
@@ -1014,42 +1059,13 @@ public class ValangParser implements ValangParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_46() {
-    if (jj_3R_54()) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
   final private boolean jj_3R_57() {
     if (jj_scan_token(MORE_THAN_OR_EQUAL)) return true;
     return false;
   }
 
-  final private boolean jj_3R_33() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_46()) {
-    jj_scanpos = xsp;
-    if (jj_3R_47()) return true;
-    }
-    return false;
-  }
-
   final private boolean jj_3R_56() {
     if (jj_scan_token(NOT_EQUAL)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_34() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_scan_token(8)) {
-    jj_scanpos = xsp;
-    if (jj_3R_48()) return true;
-    }
-    if (jj_3R_10()) return true;
-    if (jj_scan_token(AND)) return true;
-    if (jj_3R_10()) return true;
     return false;
   }
 
@@ -1075,33 +1091,49 @@ public class ValangParser implements ValangParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_29() {
-    if (jj_3R_10()) return true;
+  final private boolean jj_3R_30() {
+    if (jj_3R_11()) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_33()) {
-    jj_scanpos = xsp;
     if (jj_3R_34()) {
     jj_scanpos = xsp;
-    if (jj_3R_35()) return true;
+    if (jj_3R_35()) {
+    jj_scanpos = xsp;
+    if (jj_3R_36()) return true;
     }
     }
-    return false;
-  }
-
-  final private boolean jj_3_2() {
-    if (jj_scan_token(52)) return true;
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(53)) return true;
     return false;
   }
 
   final private boolean jj_3R_53() {
-    if (jj_scan_token(57)) return true;
-    if (jj_3R_52()) return true;
-    if (jj_scan_token(52)) return true;
-    if (jj_3R_8()) return true;
-    if (jj_scan_token(53)) return true;
+    if (jj_scan_token(FUNCTION_NAME)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_52() {
+    if (jj_scan_token(PATH)) return true;
+    return false;
+  }
+
+  final private boolean jj_3_2() {
+    if (jj_scan_token(55)) return true;
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(56)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_22() {
+    if (jj_3R_30()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_45() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_52()) {
+    jj_scanpos = xsp;
+    if (jj_3R_53()) return true;
+    }
     return false;
   }
 
@@ -1111,138 +1143,73 @@ public class ValangParser implements ValangParserConstants {
   }
 
   final private boolean jj_3R_20() {
-    if (jj_3R_28()) return true;
+    if (jj_scan_token(55)) return true;
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(56)) return true;
     return false;
   }
 
-  final private boolean jj_3R_19() {
-    if (jj_scan_token(52)) return true;
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(53)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_45() {
-    if (jj_3R_53()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_44() {
-    if (jj_3R_52()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_52() {
-    if (jj_scan_token(PATH)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_23() {
-    if (jj_scan_token(OR)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_14() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_19()) {
-    jj_scanpos = xsp;
-    if (jj_3R_20()) {
-    jj_scanpos = xsp;
-    if (jj_3R_21()) return true;
-    }
-    }
-    return false;
-  }
-
-  final private boolean jj_3R_22() {
-    if (jj_scan_token(AND)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_32() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_44()) {
-    jj_scanpos = xsp;
+  final private boolean jj_3R_33() {
     if (jj_3R_45()) return true;
-    }
+    return false;
+  }
+
+  final private boolean jj_3R_24() {
+    if (jj_scan_token(OR)) return true;
     return false;
   }
 
   final private boolean jj_3R_15() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_22()) {
+    if (jj_3R_20()) {
     jj_scanpos = xsp;
-    if (jj_3R_23()) return true;
+    if (jj_3R_21()) {
+    jj_scanpos = xsp;
+    if (jj_3R_22()) return true;
     }
-    if (jj_3R_14()) return true;
+    }
     return false;
   }
 
-  final private boolean jj_3R_43() {
+  final private boolean jj_3R_23() {
+    if (jj_scan_token(AND)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_16() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_23()) {
+    jj_scanpos = xsp;
+    if (jj_3R_24()) return true;
+    }
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_44() {
     if (jj_scan_token(DATE)) return true;
     return false;
   }
 
-  final private boolean jj_3R_42() {
+  final private boolean jj_3R_43() {
     if (jj_scan_token(NUM)) return true;
     return false;
   }
 
-  final private boolean jj_3R_41() {
+  final private boolean jj_3R_42() {
     if (jj_scan_token(STRING)) return true;
     return false;
   }
 
-  final private boolean jj_3R_40() {
+  final private boolean jj_3R_41() {
     if (jj_scan_token(FALSE)) return true;
     return false;
   }
 
-  final private boolean jj_3R_39() {
+  final private boolean jj_3R_40() {
     if (jj_scan_token(TRUE)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_26() {
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
-  final private boolean jj_3_1() {
-    if (jj_3R_8()) return true;
-    if (jj_scan_token(50)) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_31() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_39()) {
-    jj_scanpos = xsp;
-    if (jj_3R_40()) {
-    jj_scanpos = xsp;
-    if (jj_3R_41()) {
-    jj_scanpos = xsp;
-    if (jj_3R_42()) {
-    jj_scanpos = xsp;
-    if (jj_3R_43()) return true;
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  final private boolean jj_3R_9() {
-    if (jj_3R_14()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_15()) { jj_scanpos = xsp; break; }
-    }
     return false;
   }
 
@@ -1251,60 +1218,106 @@ public class ValangParser implements ValangParserConstants {
     return false;
   }
 
-  final private boolean jj_3R_38() {
-    if (jj_scan_token(MOD)) return true;
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_18() {
+  final private boolean jj_3R_32() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_26()) {
+    if (jj_3R_40()) {
     jj_scanpos = xsp;
-    if (jj_3R_27()) return true;
+    if (jj_3R_41()) {
+    jj_scanpos = xsp;
+    if (jj_3R_42()) {
+    jj_scanpos = xsp;
+    if (jj_3R_43()) {
+    jj_scanpos = xsp;
+    if (jj_3R_44()) return true;
     }
-    return false;
-  }
-
-  final private boolean jj_3R_37() {
-    if (jj_scan_token(DIVIDE)) return true;
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_36() {
-    if (jj_scan_token(MULTIPLY)) return true;
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
-  final private boolean jj_3R_30() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_36()) {
-    jj_scanpos = xsp;
-    if (jj_3R_37()) {
-    jj_scanpos = xsp;
-    if (jj_3R_38()) return true;
+    }
     }
     }
     return false;
   }
 
   final private boolean jj_3R_28() {
-    if (jj_scan_token(NOT)) return true;
-    if (jj_3R_14()) return true;
+    if (jj_3R_33()) return true;
     return false;
   }
 
-  final private boolean jj_3R_24() {
-    if (jj_3R_8()) return true;
+  final private boolean jj_3_1() {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(53)) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_10() {
+    if (jj_3R_15()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
-      if (jj_3R_30()) { jj_scanpos = xsp; break; }
+      if (jj_3R_16()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  final private boolean jj_3R_39() {
+    if (jj_scan_token(MOD)) return true;
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_19() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_27()) {
+    jj_scanpos = xsp;
+    if (jj_3R_28()) return true;
+    }
+    return false;
+  }
+
+  final private boolean jj_3R_38() {
+    if (jj_scan_token(DIVIDE)) return true;
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_37() {
+    if (jj_scan_token(MULTIPLY)) return true;
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_31() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_37()) {
+    jj_scanpos = xsp;
+    if (jj_3R_38()) {
+    jj_scanpos = xsp;
+    if (jj_3R_39()) return true;
+    }
+    }
+    return false;
+  }
+
+  final private boolean jj_3R_29() {
+    if (jj_scan_token(NOT)) return true;
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  final private boolean jj_3R_25() {
+    if (jj_3R_9()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_31()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  final private boolean jj_3R_26() {
+    if (jj_scan_token(SUBTRACT)) return true;
+    if (jj_3R_25()) return true;
     return false;
   }
 
@@ -1317,7 +1330,7 @@ public class ValangParser implements ValangParserConstants {
   public boolean lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[22];
+  final private int[] jj_la1 = new int[24];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -1325,10 +1338,10 @@ public class ValangParser implements ValangParserConstants {
       jj_la1_1();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x0,0x60,0x60,0xc000080,0xf3fff000,0x300,0xc00,0xc000000,0xf3ffff00,0x0,0xc000000,0x0,0x0,0x0,0x0,0xc000000,0xc000000,0x0,0xf0000000,0x3fff000,};
+      jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x60,0x60,0xc000080,0xf3fff000,0x300,0xc00,0xc000000,0xf3ffff00,0x0,0x0,0xc000000,0x0,0x0,0x0,0x0,0xc000000,0xc000000,0x0,0xf0000000,0x3fff000,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x20000,0x20000,0x10000,0x0,0x0,0x3908380,0x3,0x0,0x0,0x3d08380,0x3,0x808000,0x3108380,0x4,0x8,0x70,0x70,0x2008380,0x380,0x2008000,0x3,0x0,};
+      jj_la1_1 = new int[] {0x60000,0x100000,0x100000,0x80000,0x0,0x0,0xc860380,0x3,0x0,0x0,0xe860380,0x3,0x4020000,0x200000,0x8860380,0x4,0x8,0x70,0x70,0x60380,0x380,0x60000,0x3,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[4];
   private boolean jj_rescan = false;
@@ -1340,7 +1353,7 @@ public class ValangParser implements ValangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1350,7 +1363,7 @@ public class ValangParser implements ValangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1360,7 +1373,7 @@ public class ValangParser implements ValangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1370,7 +1383,7 @@ public class ValangParser implements ValangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1379,7 +1392,7 @@ public class ValangParser implements ValangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1388,7 +1401,7 @@ public class ValangParser implements ValangParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 22; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 24; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1499,15 +1512,15 @@ public class ValangParser implements ValangParserConstants {
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[58];
-    for (int i = 0; i < 58; i++) {
+    boolean[] la1tokens = new boolean[60];
+    for (int i = 0; i < 60; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 22; i++) {
+    for (int i = 0; i < 24; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -1519,7 +1532,7 @@ public class ValangParser implements ValangParserConstants {
         }
       }
     }
-    for (int i = 0; i < 58; i++) {
+    for (int i = 0; i < 60; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

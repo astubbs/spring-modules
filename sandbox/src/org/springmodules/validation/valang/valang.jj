@@ -119,7 +119,10 @@ TOKEN :
 |	< #DIGIT : ["0"-"9"] >
 |	< #LOWERLETTER : ["a"-"z"] >
 |	< #UPPERLETTER : ["A"-"Z"] >
-|	< PATH : ( <LOWERLETTER> | <UNDERSCORE> ) ( <LOWERLETTER> | <UPPERLETTER> | <DIGIT> | <DOT> | <UNDERSCORE> )* >
+|   < #PLAIN_PATH_ELEMENT : ( <LOWERLETTER> | <UNDERSCORE> ) ( <LOWERLETTER> | <UPPERLETTER> | <DIGIT> | <UNDERSCORE> )* >
+|	< #INDEXED_PATH_ELEMENT : "[" (~[])+ "]" >
+|	< FUNCTION_NAME : <PLAIN_PATH_ELEMENT> >
+|	< PATH : <PLAIN_PATH_ELEMENT> ( ( <DOT> <PLAIN_PATH_ELEMENT> ) | <INDEXED_PATH_ELEMENT> )* >
 }
 
 Predicate parseExpression() :
@@ -146,7 +149,7 @@ Collection parseValidation() :
 	(
 		( 
 			"{" 
-			<PATH> 
+			( <FUNCTION_NAME> | <PATH> )
 			{ 
 				field = token.image; 
 				fieldFunction = new BeanPropertyFunction(field);
@@ -263,7 +266,7 @@ Predicate predicate(Function fieldFunction) :
 			|	operator = unaryOperator()
 	    	)
 	    	{
-	    		return getVisitor().getPredicate(leftFunction, operator, rightFunction1);
+	    		return getVisitor().getPredicate(leftFunction, operator, rightFunction1, 0, 0);
 	    	}
 	    |	(
 				( <BETWEEN> | <NOT_BETWEEN> { notBetween = true; } )
@@ -274,9 +277,9 @@ Predicate predicate(Function fieldFunction) :
 				)
 				{
 					if (notBetween) {
-						return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }), 0, 0);
 					} else {
-						return getVisitor().getPredicate(leftFunction, OperatorConstants.BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }));
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.BETWEEN_OPERATOR, new LiteralFunction(new Function[] { rightFunction1, rightFunction2 }), 0, 0);
 					}
 				}
 	    	)
@@ -296,9 +299,9 @@ Predicate predicate(Function fieldFunction) :
 						tmpFunction = new LiteralFunction(functions);
 					}
 					if (notIn) {
-						return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, tmpFunction);
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.NOT_IN_OPERATOR, tmpFunction, 0, 0);
 					} else {
-						return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, tmpFunction);
+						return getVisitor().getPredicate(leftFunction, OperatorConstants.IN_OPERATOR, tmpFunction, 0, 0);
 					}
 				}
 	    	)
@@ -313,14 +316,21 @@ Function function(Function fieldFunction) :
     Function rightFunction = null;
     int line = 0;
     int column = 0;
+    Collection functionArguments = new ArrayList();
 }
 {
     (
         LOOKAHEAD(2)
-        ( "!" | <PATH> ) 
+        ( "!" | <FUNCTION_NAME> ) 
         { function = token.image; line = token.beginLine; column = token.beginColumn; } 
-        "(" leftFunction = function(fieldFunction) ")" 
-        { leftFunction = getVisitor().getFunction(function, leftFunction, line, column); }
+        "(" 
+        	leftFunction = function(fieldFunction) { functionArguments.add(leftFunction); }
+        	(
+        		"," 
+        		leftFunction = function(fieldFunction) { functionArguments.add(leftFunction); }
+        	)*
+        ")" 
+        { leftFunction = getVisitor().getFunction(function, (Function[])functionArguments.toArray(new Function[functionArguments.size()]), line, column); }
     |   leftFunction = beanPropertyOrLiteral(fieldFunction)
     |	"?" { leftFunction = fieldFunction; }
     |	"(" leftFunction = additiveExpr(fieldFunction) ")"
@@ -418,38 +428,22 @@ Function beanProperty(Function fieldFunction) :
 	Function function = null;
 }
 {
-	(
-		function = path() { return function; }
-	|	function = mapEntry(fieldFunction) { return function; }
-	)
+	function = path() { return function; }
 }	
 
 Function path() :
-{}
 {
-	<PATH>		{ return new BeanPropertyFunction(token.image); }
-}
-
-Function mapEntry(Function fieldFunction) :
-{
-	Function pathFunction = null;
-	Function function = null;
-	int beginLine = 0;
-	int beginColumn = 0;
+	String path = null;
 }
 {
-	"$"
+	(
+		<PATH>							{ path = token.image; }
+	|	<FUNCTION_NAME>		{ path = token.image; }
+	)
 	{ 
-		beginLine = token.beginLine; 
-		beginColumn = token.beginColumn; 
-	}
-	pathFunction = path() 
-	"(" function = function(fieldFunction) ")"
-	{
-		return new MapEntryFunction(pathFunction, function, beginLine, beginColumn);
+		return new BeanPropertyFunction(path);
 	}
 }
-
 
 Operator binaryOperator() :
 {

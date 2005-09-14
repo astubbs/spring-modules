@@ -23,24 +23,24 @@ package org.springmodules.validation.functions;
  */
 public abstract class AbstractFunction implements Function {
 
-	private Function function = null;
+	private Function[] arguments = null;
 	private FunctionTemplate template = null;
 	
-	public AbstractFunction(Function function, int line, int column) {
+	public AbstractFunction(Function[] arguments, int line, int column) {
 		super();
-		setFunction(function);
+		setArguments(arguments);
 		setTemplate(new FunctionTemplate(line, column));
 	}
 
-	protected Function getFunction() {
-		return function;
+	protected Function[] getArguments() {
+		return arguments;
 	}
 	
-	private void setFunction(Function function) {
-		if (function == null) {
-			throw new IllegalArgumentException("Function parameter should not be null!");
+	private void setArguments(Function[] arguments) {
+		if (arguments == null) {
+			throw new IllegalArgumentException("Function parameters should not be null!");
 		}
-		this.function = function;
+		this.arguments = arguments;
 	}
 
 	private void setTemplate(FunctionTemplate template) {
@@ -51,6 +51,13 @@ public abstract class AbstractFunction implements Function {
 		return this.template;
 	}
 	
-	public abstract Object getResult(Object target);
+	public final Object getResult(Object target) {
+		return getTemplate().execute(target, new FunctionCallback() {
+			public Object execute(Object target) throws Exception {
+				return doGetResult(target);
+			}
+		});
+	}
 
+	protected abstract Object doGetResult(Object target) throws Exception;
 }

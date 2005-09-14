@@ -15,6 +15,8 @@
  */ 
 package org.springmodules.validation.functions;
 
+import org.springframework.util.Assert;
+
 /**
  * <p>Converts a string to lower case.
  * 
@@ -23,16 +25,14 @@ package org.springmodules.validation.functions;
  */
 public class LowerCaseFunction extends AbstractFunction {
 	
-	public LowerCaseFunction(Function function, int line, int column) {
-		super(function, line, column);
+	public LowerCaseFunction(Function[] arguments, int line, int column) {
+		super(arguments, line, column);
 	}
 
-	public Object getResult(Object target) {
-		return getTemplate().execute(target, new FunctionCallback() {
-			public Object execute(Object target) throws Exception {
-				return getFunction().getResult(target).toString().toLowerCase();
-			}
-		});
+	protected Object doGetResult(Object target) {
+		Assert.notEmpty(getArguments(), "Lowercase function requires one argument " + getTemplate().getAtLineString() + "!");
+		Assert.isTrue(getArguments().length == 1, "Lowercase function does not accept more that one argument " + getTemplate().getAtLineString() + "!");
+		return getArguments()[0].getResult(target).toString().toLowerCase();
 	}
 
 }

@@ -25,6 +25,6 @@ import org.springmodules.validation.functions.Function;
  */
 public interface ValangVisitor {
 
-	public Function getFunction(String name, Function function, int line, int column);
+	public Function getFunction(String name, Function[] arguments, int line, int column);
 	
 }
