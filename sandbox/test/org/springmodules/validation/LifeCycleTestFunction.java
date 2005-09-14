@@ -79,7 +79,7 @@ public class LifeCycleTestFunction extends AbstractFunction implements Applicati
 	}
 	
 	protected Object doGetResult(Object target) throws Exception {
-		LifeCycleBean bean = (LifeCycleBean)((BeanWrapper)target).getPropertyValue("lifeCycleBean");
+		LifeCycleBean bean = (LifeCycleBean)getArguments()[0].getResult(target);
 		
 		bean.setApplicationContextSet(this.applicationContext != null);
 		bean.setBeanFactorySet(this.beanFactory != null);
