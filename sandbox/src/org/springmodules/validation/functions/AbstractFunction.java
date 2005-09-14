@@ -26,6 +26,9 @@ public abstract class AbstractFunction implements Function {
 	private Function[] arguments = null;
 	private FunctionTemplate template = null;
 	
+	/**
+	 * Sub classes must implement this constructor.
+	 */
 	public AbstractFunction(Function[] arguments, int line, int column) {
 		super();
 		setArguments(arguments);
