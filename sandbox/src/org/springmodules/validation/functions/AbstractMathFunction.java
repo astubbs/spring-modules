@@ -25,7 +25,7 @@ public abstract class AbstractMathFunction implements Function {
 		this.leftFunction = leftFunction;
 	}
 	
-	protected final Function getLeftFunction() {
+	public final Function getLeftFunction() {
 		return this.leftFunction;
 	}
 
@@ -37,7 +37,7 @@ public abstract class AbstractMathFunction implements Function {
 		this.rightFunction = rightFunction;
 	}
 	
-	protected final Function getRightFunction() {
+    public final Function getRightFunction() {
 		return this.rightFunction;
 	}
 	

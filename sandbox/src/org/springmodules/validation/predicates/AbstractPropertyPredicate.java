@@ -39,7 +39,7 @@ public abstract class AbstractPropertyPredicate implements Predicate {
 		this.leftFunction = leftFunction;
 	}
 	
-	protected final Function getLeftFunction() {
+	public final Function getLeftFunction() {
 		return this.leftFunction;
 	}
 	
@@ -50,7 +50,7 @@ public abstract class AbstractPropertyPredicate implements Predicate {
 		this.operator = operator;
 	}
 	
-	protected final Operator getOperator() {
+	public final Operator getOperator() {
 		return this.operator;
 	}
 	
@@ -58,7 +58,7 @@ public abstract class AbstractPropertyPredicate implements Predicate {
 		this.rightFunction = rightFunction;
 	}
 	
-	protected final Function getRightFunction() {
+	public final Function getRightFunction() {
 		return this.rightFunction;
 	}
 	

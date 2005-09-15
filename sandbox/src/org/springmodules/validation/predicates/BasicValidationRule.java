@@ -30,7 +30,7 @@ public class BasicValidationRule implements ValidationRule {
 		this.predicate = predicate;
 	}
 	
-	private Predicate getPredicate() {
+	public Predicate getPredicate() {
 		return this.predicate;
 	}
 
@@ -41,7 +41,7 @@ public class BasicValidationRule implements ValidationRule {
 		this.errorMessage = errorMessage;
 	}
 
-	private String getErrorMessage() {
+    public String getErrorMessage() {
 		return this.errorMessage;
 	}
 
@@ -52,10 +52,11 @@ public class BasicValidationRule implements ValidationRule {
 		this.field = field;
 	}
 	
-	private String getField() {
+    public String getField() {
 		return this.field;
 	}
-	private void setErrorKey(String errorKey) {		this.errorKey = errorKey;	}		private String getErrorKey() {		return this.errorKey;	}	private void setErrorArgs(Collection errorArgs) {		this.errorArgs = errorArgs;	}		private Collection getErrorArgs() {		return this.errorArgs;	}	
+    
+    private void setErrorKey(String errorKey) {		this.errorKey = errorKey;	}	    public String getErrorKey() {		return this.errorKey;	}	private void setErrorArgs(Collection errorArgs) {		this.errorArgs = errorArgs;	}	    public Collection getErrorArgs() {		return this.errorArgs;	}	
 	public void validate(Object target, Errors errors) {		Object tmpTarget = null;
 
 		if (target instanceof BeanWrapper || target instanceof Map) {
@@ -67,4 +68,6 @@ public class BasicValidationRule implements ValidationRule {
 			
 		}
 	}
+
+    
 }

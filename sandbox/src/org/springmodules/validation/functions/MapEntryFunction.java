@@ -23,7 +23,7 @@ public class MapEntryFunction implements Function {
 		this.mapFunction = mapFunction;
 	}
 	
-	private Function getMapFunction() {
+	public Function getMapFunction() {
 		return this.mapFunction;
 	}
 	
@@ -31,7 +31,7 @@ public class MapEntryFunction implements Function {
 		this.keyFunction = keyFunction;
 	}
 	
-	private Function getKeyFunction() {
+    public Function getKeyFunction() {
 		return this.keyFunction;
 	}
 	

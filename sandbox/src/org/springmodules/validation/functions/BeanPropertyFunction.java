@@ -46,7 +46,7 @@ public class BeanPropertyFunction implements Function {
 		this.field = field;
 	}
 
-	private String getField() {
+	public String getField() {
 		return this.field;
 	}
 	

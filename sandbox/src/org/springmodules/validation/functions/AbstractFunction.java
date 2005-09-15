@@ -15,8 +15,6 @@
  */ 
 package org.springmodules.validation.functions;
 
-import javassist.bytecode.Mnemonic;
-
 import org.springframework.util.Assert;
 import org.springmodules.validation.ValangException;
 
@@ -61,7 +59,7 @@ public abstract class AbstractFunction implements Function {
 		setTemplate(new FunctionTemplate(line, column));
 	}
 
-	protected Function[] getArguments() {
+	public Function[] getArguments() {
 		return arguments;
 	}
 	

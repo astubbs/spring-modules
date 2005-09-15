@@ -60,5 +60,6 @@
 	<classpathentry kind="lib" path="lib/dom4j/dom4j.jar"/>
 	<classpathentry kind="lib" path="lib/ognl/ognl.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/rhino/js.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
