@@ -52,6 +52,7 @@ public class ValangParser implements ValangParserConstants {
                 tmpS = StringUtils.replace(tmpS, "\\t", "\t");
                 tmpS = StringUtils.replace(tmpS, "\\b", "\b");
                 tmpS = StringUtils.replace(tmpS, "\\f", "\f");
+                tmpS = StringUtils.replace(tmpS, "\\\\", "\\");
 
                 return tmpS;
         }

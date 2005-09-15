@@ -376,7 +376,7 @@ public class ValangParserTests extends TestCase {
 	
 	public void testParser36EscapedString() {
 		String text = 
-			"{firstName : 'Steven\\'' = firstName and matches('(Steven|Hans|Erwin)\\'', firstName) = true : ''}"
+			"{firstName : 'Steven\\'' = firstName and matches('(Steven|Hans|Erwin)\\'', firstName) = true and length('\\\\') = 1 : ''}"
 		;
 		assertTrue(validate(new Person(30, "Steven'"), text));
 	}

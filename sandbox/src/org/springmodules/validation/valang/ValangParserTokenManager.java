@@ -1082,11 +1082,15 @@ private final int jjMoveNfa_0(int startState, int curPos)
                   break;
                case 24:
                   if ((0xffffffffefffffffL & l) != 0L)
-                     jjAddStates(10, 12);
+                     jjCheckNAddStates(10, 12);
                   break;
                case 25:
                   if (curChar == 92)
                      jjstateSet[jjnewStateCnt++] = 26;
+                  break;
+               case 26:
+                  if (curChar == 92)
+                     jjCheckNAddStates(10, 12);
                   break;
                case 28:
                   if (curChar == 91)

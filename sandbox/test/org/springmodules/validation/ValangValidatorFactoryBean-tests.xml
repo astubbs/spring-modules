@@ -14,7 +14,7 @@
 		<property name="valang">
 			<value><![CDATA[
 { firstName : length(tupper(?)) > 0 : 'First name is empty' }
-{ lifeCycleBean : lifeCycle(?) is not null and length('abc\'') = 4 : 'Life cycle property is null' }
+{ lifeCycleBean : lifeCycle(?) is not null and length('abc\'') = 4 and length('\\') = 1 : 'Life cycle property is null' }
 			]]></value>
 		</property>
 	</bean>

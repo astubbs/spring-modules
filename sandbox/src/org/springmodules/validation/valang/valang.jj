@@ -70,6 +70,7 @@ public class ValangParser
 		tmpS = StringUtils.replace(tmpS, "\\t", "\t");
 		tmpS = StringUtils.replace(tmpS, "\\b", "\b");
 		tmpS = StringUtils.replace(tmpS, "\\f", "\f");		
+		tmpS = StringUtils.replace(tmpS, "\\\\", "\\");		
 		
 		return tmpS;
 	}
@@ -126,7 +127,7 @@ TOKEN [IGNORE_CASE] :
 TOKEN :
 {
 	< NUM : ("-")?(["0"-"9"])+ | ("-")?(["0"-"9"])+"." (["0"-"9"])* >
-|	< STRING : "'" ( ~["'", "\\", "\n", "\r"] | ( "\\" ( "'" | "\n" | "\r" | "\t" | "\b" | "\f" ) ) )* "'" >
+|	< STRING : "'" ( ~["'", "\\", "\n", "\r"] | ( "\\" ( "'" | "\\" | "\n" | "\r" | "\t" | "\b" | "\f" ) ) )* "'" >
 |	< DATE : "[" (~["[", "]"])* "]" >
 |	< #DOT : "." >
 |   < #UNDERSCORE : "_" >
