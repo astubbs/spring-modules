@@ -373,4 +373,11 @@ public class ValangParserTests extends TestCase {
 		;
 		assertTrue(validate(new Person(30, "Steven"), text));
 	}
+	
+	public void testParser36EscapedString() {
+		String text = 
+			"{firstName : 'Steven\\'' = firstName and matches('(Steven|Hans|Erwin)\\'', firstName) = true : ''}"
+		;
+		assertTrue(validate(new Person(30, "Steven'"), text));
+	}
 }

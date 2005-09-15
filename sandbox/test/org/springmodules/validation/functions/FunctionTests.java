@@ -47,6 +47,10 @@ public class FunctionTests extends TestCase {
 		return new NotFunction(new Function[] { new LiteralFunction(value) }, 1, 1);
 	}
 	
+	private Function getRegExpFunction(String pattern, String str) {
+		return new RegExFunction(new Function[] { new LiteralFunction(pattern), new LiteralFunction(str) }, 1, 1);
+	}
+	
 	public void testLengthOfFunctionSuccess() {
 		Integer result = (Integer)getLengthOfFunction("test").getResult(null);
 		assertEquals(result.intValue(), 4);
@@ -91,6 +95,11 @@ public class FunctionTests extends TestCase {
 
 	public void testNotFunctionSuccess() {
 		Boolean result = (Boolean)getNotFunction(Boolean.FALSE).getResult(null);
+		assertEquals(Boolean.TRUE, result);
+	}
+	
+	public void testRegExpFunctionSuccess() {
+		Boolean result = (Boolean)getRegExpFunction("foo|bar", "bar").getResult(null);
 		assertEquals(Boolean.TRUE, result);
 	}
 }

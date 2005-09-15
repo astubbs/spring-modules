@@ -37,6 +37,8 @@ import org.springmodules.util.dateparser.DateParseException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.util.StringUtils;
+
 import java.math.BigDecimal;
 
 import java.util.Collection;
@@ -59,6 +61,18 @@ public class ValangParser
 		this.visitor = visitor;
 	}
 	
+	private String replace(String s) {
+		String tmpS = s;
+		
+		tmpS = StringUtils.replace(tmpS, "\\'", "'");
+		tmpS = StringUtils.replace(tmpS, "\\n", "\n");
+		tmpS = StringUtils.replace(tmpS, "\\r", "\r");
+		tmpS = StringUtils.replace(tmpS, "\\t", "\t");
+		tmpS = StringUtils.replace(tmpS, "\\b", "\b");
+		tmpS = StringUtils.replace(tmpS, "\\f", "\f");		
+		
+		return tmpS;
+	}
 }
 
 PARSER_END(ValangParser)
@@ -112,7 +126,7 @@ TOKEN [IGNORE_CASE] :
 TOKEN :
 {
 	< NUM : ("-")?(["0"-"9"])+ | ("-")?(["0"-"9"])+"." (["0"-"9"])* >
-|	< STRING : "\'" (~["\'", "\\"])* "\'" >
+|	< STRING : "'" ( ~["'", "\\", "\n", "\r"] | ( "\\" ( "'" | "\n" | "\r" | "\t" | "\b" | "\f" ) ) )* "'" >
 |	< DATE : "[" (~["[", "]"])* "]" >
 |	< #DOT : "." >
 |   < #UNDERSCORE : "_" >
@@ -410,7 +424,7 @@ Function literal() :
     (
         <TRUE>      { return new LiteralFunction(Boolean.TRUE); }
     |   <FALSE>     { return new LiteralFunction(Boolean.FALSE); }
-    |   <STRING>    { return new LiteralFunction(token.image.substring(1, token.image.length() - 1)); }
+    |   <STRING>    { return new LiteralFunction(replace(token.image.substring(1, token.image.length() - 1))); }
     |   <NUM>       { return new LiteralFunction(new BigDecimal(token.image)); }
     |	<DATE>		{
     					try {

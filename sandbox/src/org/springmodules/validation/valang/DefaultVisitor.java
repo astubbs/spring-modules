@@ -40,6 +40,7 @@ import org.springmodules.validation.functions.Function;
 import org.springmodules.validation.functions.LengthOfFunction;
 import org.springmodules.validation.functions.LowerCaseFunction;
 import org.springmodules.validation.functions.NotFunction;
+import org.springmodules.validation.functions.RegExFunction;
 import org.springmodules.validation.functions.ResolveFunction;
 import org.springmodules.validation.functions.UpperCaseFunction;
 import org.springmodules.validation.predicates.GenericTestPredicate;
@@ -105,6 +106,10 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
 			return new NotFunction(arguments, line, column);
 		} else if ("resolve".equals(name)) {
 			return new ResolveFunction(arguments, line, column);
+		} else if ("match".equals(name)) {
+			return new RegExFunction(arguments, line, column);
+		} else if ("matches".equals(name)) {
+			return new RegExFunction(arguments, line, column);
 		}
 
 		throw new ValangException("Could not find function [" + name + "]", line, column);
