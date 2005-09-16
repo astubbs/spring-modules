@@ -71,7 +71,7 @@ CREATE TABLE T_USERS (
 			<value>hibernate.dialect=net.sf.hibernate.dialect.HSQLDialect</value>
 		</property>
 		<property name="entityInterceptor">
-			<bean class="org.springmodules.orm.hibernate.support.ValidatingInterceptor"/>
+			<bean class="org.springmodules.orm.hibernate.support.PolevValidatingInterceptor"/>
 		</property>
 	</bean>
 	
@@ -81,7 +81,7 @@ CREATE TABLE T_USERS (
 			<value>hibernate.dialect=org.hibernate.dialect.HSQLDialect</value>
 		</property>
 		<property name="entityInterceptor">
-			<bean class="org.springmodules.orm.hibernate3.support.ValidatingInterceptor"/>
+			<bean class="org.springmodules.orm.hibernate3.support.PolevValidatingInterceptor"/>
 		</property>
 	</bean>
 
@@ -137,7 +137,7 @@ CREATE TABLE T_USERS (
 		</property>
 	</bean>
 	
-	<bean id="validatingMethodInterceptor1" class="org.springmodules.orm.support.validation.ValidatingMethodInterceptor">
+	<bean id="validatingMethodInterceptor1" class="org.springmodules.orm.support.validation.PolevValidatingMethodInterceptor">
 		<property name="validators">
 			<map>
 				<entry key="org.springmodules.orm.support.domain.User,onSave,onFlushDirty">
@@ -155,7 +155,7 @@ CREATE TABLE T_USERS (
 		</property>
 	</bean>
 
-	<bean id="validatingMethodInterceptor2" class="org.springmodules.orm.support.validation.ValidatingMethodInterceptor">
+	<bean id="validatingMethodInterceptor2" class="org.springmodules.orm.support.validation.PolevValidatingMethodInterceptor">
 		<property name="validators">
 			<map>
 				<entry key="org.springmodules.orm.support.domain.User,onDelete">

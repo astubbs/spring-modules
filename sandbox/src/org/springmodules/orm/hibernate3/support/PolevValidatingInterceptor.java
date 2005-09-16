@@ -13,37 +13,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */ 
-package org.springmodules.orm.hibernate.support;
+package org.springmodules.orm.hibernate3.support;
 
 import java.io.Serializable;
 import java.util.Iterator;
 
-import net.sf.hibernate.CallbackException;
-import net.sf.hibernate.Interceptor;
-import net.sf.hibernate.type.Type;
-
+import org.hibernate.CallbackException;
+import org.hibernate.EntityMode;
+import org.hibernate.Interceptor;
+import org.hibernate.Transaction;
+import org.hibernate.type.Type;
 import org.springmodules.orm.support.validation.ValidatingSupport;
 
 /**
- * <p>Hibernate 2 interceptor that implements the persistent object life-cycle event validation pattern (POLEV). 
- * The semantics of this interceptor are identical to the peer Hibernate 3 interceptor. 
+ * <p>Hibernate 3 interceptor that implements the persistent object life-cycle event validation (POLEV) pattern on three life-cyle events
+ * within the Hibernate session:
+ * 
+ * <ul>
+ * 		<li>onFlushDirty - occurs before a domain object is flushed to the database. This should be considered as an update of an existing object.
+ * 		<li>onSave - occurs before a domain object is saved to the database. This should be considered as an insertion of a new object.
+ * 		<li>onDelete - occurs before a domain object is removed from the database.
+ * </ul>
+ *
+ * <p>Please note the onLoad life-cyle event is not supported since persistent objects are not yet initialized when this event occurs.
+ *  
+ * <p>Making validation of domain classes configurable is the main motivation for this interceptor. Especially for the onFlushDirty event this pattern is
+ * the only way to validate domain objects before they are saved. In general this pattern shift domain object validation away from business components.
+ * 
  * 
  * @author Steven Devijver
- * @since Jun 17, 2005
- * @see org.springmodules.orm.hibernate3.support.ValidatingInterceptor
+ * @since Jun 16, 2005
+ * @see org.springmodules.orm.support.validation.ValidatingSupport
  */
-public class ValidatingInterceptor implements Interceptor {
-
+public class PolevValidatingInterceptor implements Interceptor {
+	
+	private static final String ON_LOAD_EVENT = "onLoad";
 	private static final String ON_FLUSH_DIRTY_EVENT = "onFlushDirty";
 	private static final String ON_SAVE_EVENT = "onSave";
 	private static final String ON_DELETE_EVENT = "onDelete";
 	
-	public ValidatingInterceptor() {
+	public PolevValidatingInterceptor() {
 		super();
 	}
-	
+
 	public boolean onLoad(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) throws CallbackException {
+		ValidatingSupport.validate(entity, ON_LOAD_EVENT);
 		return false;
 	}
 
@@ -72,7 +87,7 @@ public class ValidatingInterceptor implements Interceptor {
 
 	}
 
-	public Boolean isUnsaved(Object arg0) {
+	public Boolean isTransient(Object arg0) {
 		return null;
 	}
 
@@ -81,9 +96,30 @@ public class ValidatingInterceptor implements Interceptor {
 		return null;
 	}
 
-	public Object instantiate(Class arg0, Serializable arg1)
+	public Object instantiate(String arg0, EntityMode arg1, Serializable arg2)
 			throws CallbackException {
 		return null;
+	}
+
+	public String getEntityName(Object arg0) throws CallbackException {
+		return null;
+	}
+
+	public Object getEntity(String arg0, Serializable arg1)
+			throws CallbackException {
+		return null;
+	}
+
+	public void afterTransactionBegin(Transaction arg0) {
+
+	}
+
+	public void beforeTransactionCompletion(Transaction arg0) {
+
+	}
+
+	public void afterTransactionCompletion(Transaction arg0) {
+
 	}
 
 }
