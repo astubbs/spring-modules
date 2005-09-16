@@ -61,5 +61,23 @@
 	<classpathentry kind="lib" path="lib/ognl/ognl.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/rhino/js.jar"/>
+	<classpathentry kind="lib" path="lib/dwr/dwr-0.5.jar"/>
+	<classpathentry kind="lib" path="lib/orbroker/orbroker-2.0.2-debug.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-taglibs/standard.jar"/>
+	<classpathentry kind="lib" path="lib/jbosscache/jboss-cache.jar"/>
+	<classpathentry kind="lib" path="lib/jgroups/jgroups.jar"/>
+	<classpathentry kind="lib" path="lib/stax/jsr173_1.0_api.jar"/>
+	<classpathentry kind="lib" path="lib/xml-rpc/xmlrpc-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/xstream/xpp3_min-1.1.3.4.I.jar"/>
+	<classpathentry kind="lib" path="lib/stax/wstx.jar"/>
+	<classpathentry kind="lib" path="lib/xstream/xstream-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/jbosscache/jboss-common.jar"/>
+	<classpathentry kind="lib" path="lib/jbosscache/jboss-jmx.jar"/>
+	<classpathentry kind="lib" path="lib/jbosscache/jboss-minimal.jar"/>
+	<classpathentry kind="lib" path="lib/jbosscache/jboss-system.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-dbcp.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-httpclient-2.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
