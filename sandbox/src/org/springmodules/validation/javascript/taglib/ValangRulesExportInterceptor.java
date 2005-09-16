@@ -15,6 +15,8 @@
  */
 package org.springmodules.validation.javascript.taglib;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,8 +34,9 @@ import org.springmodules.validation.ValangValidator;
  * <code>ValangValidateTag</code>.
  * 
  * <p>Does nothing if the intercepted handler is not an instance of 
- * <code>BaseCommandController</code> or if the handler's validator 
- * implementation is not an instance of <code>ValangValidator</code> 
+ * <code>BaseCommandController</code>, if the handler's validator 
+ * implementation is not an instance of <code>ValangValidator</code> or
+ * if the handler did not export a command object into the model.
  * 
  * @author Oliver Hutchison 
  * @see ValangValidateTag
@@ -48,10 +51,19 @@ public class ValangRulesExportInterceptor extends HandlerInterceptorAdapter {
         if (handler instanceof BaseCommandController) {
             BaseCommandController controller = (BaseCommandController)handler;
             if (controller.getValidator() instanceof ValangValidator) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Adding Valang rules from handler '" + handler + "' to model");
+                Map model = modelAndView.getModel();
+                if (model == null || !model.containsKey(controller.getCommandName())) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Handler '" + handler + "' did not export command object '" + controller.getCommandName()
+                                + "'; no rules added to model");
+                    }
                 }
-                ValangJavaScriptTagUtils.addValangRulesToModel(controller, modelAndView.getModel());
+                else {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Adding Valang rules from handler '" + handler + "' to model");
+                    }
+                    ValangJavaScriptTagUtils.addValangRulesToModel(controller, model);
+                }
             }
             else {
                 if (logger.isDebugEnabled()) {
