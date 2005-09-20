@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:26 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/20 03:47:57 $
  */
 public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
@@ -96,13 +96,11 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
   }
 
   public void testParsePropertiesWithEmptyString() {
-    property = "";
-    assertParsePropertiesThrowsException();
+    assertNull(BracketSeparatedPropertiesParser.parseProperties(""));
   }
 
   public void testParsePropertiesWithStringEqualToNull() {
-    property = null;
-    assertParsePropertiesThrowsException();
+    assertNull(BracketSeparatedPropertiesParser.parseProperties(null));
   }
 
   public void testParsePropertiesWithStringNotEndingWithBrackets() {
