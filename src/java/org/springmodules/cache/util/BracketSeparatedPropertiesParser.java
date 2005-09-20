@@ -34,20 +34,20 @@ import org.springmodules.cache.regex.Regex;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:30 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/20 03:46:01 $
  */
 public abstract class BracketSeparatedPropertiesParser {
 
   /**
    * Regular expression pattern used to parse a String of form "key=value".
    */
-  protected static final String REGEX_PATTERN = "([a-zA-Z0-9_]+)=([a-zA-Z0-9_ ,]+)";
+  protected static final String KEY_VALUE_PATTERN = "([\\w]+)=([\\w ,\\*]+)";
 
   /**
-   * Compiled representation of <code>{@link #REGEX_PATTERN}</code>.
+   * Compiled representation of <code>{@link #KEY_VALUE_PATTERN}</code>.
    */
-  protected static final Regex REGEX = new Perl5Regex(
-      "([a-zA-Z0-9_]+)=([a-zA-Z0-9_ ,]+)");
+  protected static final Regex KEY_VALUE_REGEX = new Perl5Regex(
+      KEY_VALUE_PATTERN);
 
   /**
    * Takes a String of form "key=value", splits it into two Strings ("key" and
@@ -60,23 +60,22 @@ public abstract class BracketSeparatedPropertiesParser {
    * 
    * @throws IllegalArgumentException
    *           if the specified property does not match the regular expression
-   *           pattern "([a-zA-Z0-9_]+)=([a-zA-Z0-9_ ,]+)".
+   *           pattern defined in <code>REGEX_PATTERN</code>.
    * @throws IllegalArgumentException
    *           if the set of properties already contains the property specified
    *           by the given String.
    * 
-   * @see #REGEX_PATTERN
+   * @see #KEY_VALUE_PATTERN
    */
   protected static void addProperty(String unparsedProperty,
       Properties parsedProperties) {
 
-    Match match = REGEX.match(unparsedProperty);
-    boolean matches = match.isSuccessful();
+    Match match = KEY_VALUE_REGEX.match(unparsedProperty);
 
-    if (!matches) {
+    if (!match.isSuccessful()) {
       String message = "The String \"" + unparsedProperty
-          + "\" should match the regular expression pattern \"" + REGEX_PATTERN
-          + "\"";
+          + "\" should match the regular expression pattern \""
+          + KEY_VALUE_PATTERN + "\"";
 
       throw new IllegalArgumentException(message);
     }
@@ -86,10 +85,8 @@ public abstract class BracketSeparatedPropertiesParser {
     String value = groups[2].trim();
 
     if (parsedProperties.containsKey(key)) {
-      String message = "The property \"" + key
-          + "\" is specified more than once";
-
-      throw new IllegalArgumentException(message);
+      throw new IllegalArgumentException("The property \"" + key
+          + "\" is specified more than once");
     }
 
     parsedProperties.setProperty(key, value);
@@ -110,10 +107,8 @@ public abstract class BracketSeparatedPropertiesParser {
    * @see #addProperty(String, Properties)
    */
   public static Properties parseProperties(String propertiesAsText) {
-
     if (!StringUtils.hasText(propertiesAsText)) {
-      throw new IllegalArgumentException(
-          "The String to parse should not be empty");
+      return null;
     }
 
     if (!propertiesAsText.startsWith("[") || !propertiesAsText.endsWith("]")) {
@@ -122,7 +117,6 @@ public abstract class BracketSeparatedPropertiesParser {
     }
 
     Properties properties = new Properties();
-
     // eliminate the first '[' and the last ']' from the String.
     String propertiesToSplit = propertiesAsText.substring(1, propertiesAsText
         .length() - 1);
