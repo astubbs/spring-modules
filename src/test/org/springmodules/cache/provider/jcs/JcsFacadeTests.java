@@ -17,6 +17,7 @@
  */
 package org.springmodules.cache.provider.jcs;
 
+import java.beans.PropertyEditor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -37,9 +38,9 @@ import org.apache.jcs.engine.control.group.GroupId;
 import org.easymock.AbstractMatcher;
 import org.easymock.classextension.MockClassControl;
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheNotFoundException;
+import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
 import org.springmodules.cache.provider.InvalidConfigurationException;
 
@@ -50,7 +51,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/09/09 02:18:55 $
+ * @version $Revision: 1.15 $ $Date: 2005/09/20 03:50:21 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -229,31 +230,20 @@ public final class JcsFacadeTests extends TestCase {
   protected void tearDown() throws Exception {
     super.tearDown();
 
-    if (cacheManagerControl == null) {
+    if (cacheManager != null) {
       cacheManager.shutDown();
     }
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsFacade#getCacheProfileEditor()}</code> returns an
-   * instance of <code>{@link JcsProfileEditor}</code> not equal to
-   * <code>null</code>.
-   */
   public void testGetCacheProfileEditor() {
-    setUpCacheAdministratorAndCache();
+    PropertyEditor editor = jcsFacade.getCacheProfileEditor();
 
-    AbstractCacheProfileEditor cacheProfileEditor = jcsFacade
-        .getCacheProfileEditor();
+    assertNotNull(editor);
+    assertEquals(CacheProfileEditor.class, editor.getClass());
 
-    assertNotNull("The cache profile editor should not be null",
-        cacheProfileEditor);
-
-    Class expectedClass = JcsProfileEditor.class;
-    Class actualClass = cacheProfileEditor.getClass();
-
-    assertEquals("<Class of the cache profile editor>", expectedClass,
-        actualClass);
+    CacheProfileEditor profileEditor = (CacheProfileEditor) editor;
+    assertEquals(JcsProfile.class, profileEditor.getCacheProfileClass());
+    assertNull(profileEditor.getCacheProfilePropertyEditors());
   }
 
   /**
@@ -263,19 +253,9 @@ public final class JcsFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
-    setUpCacheAdministratorAndCache();
-
-    CacheProfileValidator cacheProfileValidator = jcsFacade
-        .getCacheProfileValidator();
-
-    assertNotNull("The cache profile validator should not be null",
-        cacheProfileValidator);
-
-    Class expectedClass = JcsProfileValidator.class;
-    Class actualClass = cacheProfileValidator.getClass();
-
-    assertEquals("<Class of the cache profile validator>", expectedClass,
-        actualClass);
+    CacheProfileValidator validator = jcsFacade.getCacheProfileValidator();
+    assertNotNull(validator);
+    assertEquals(JcsProfileValidator.class, validator.getClass());
   }
 
   public void testGetCacheWithExistingCache() {
@@ -306,8 +286,6 @@ public final class JcsFacadeTests extends TestCase {
   }
 
   public void testGetKeyWithGroupName() {
-    setUpCacheAdministratorAndCache();
-
     JcsProfile profile = cacheElementStruct.profile;
     Serializable key = cacheElementStruct.key;
 
@@ -325,8 +303,6 @@ public final class JcsFacadeTests extends TestCase {
    * specify any group.
    */
   public void testGetKeyWithoutGroupName() {
-    setUpCacheAdministratorAndCache();
-
     JcsProfile profile = cacheElementStruct.profile;
     profile.setGroup(null);
     Serializable expected = cacheElementStruct.key;
@@ -336,8 +312,6 @@ public final class JcsFacadeTests extends TestCase {
   }
 
   public void testIsSerializableCacheElementRequired() {
-    setUpCacheAdministratorAndCache();
-
     assertTrue(jcsFacade.isSerializableCacheElementRequired());
   }
 
@@ -716,8 +690,6 @@ public final class JcsFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
-    setUpCacheAdministratorAndCache();
-
     jcsFacade.setCacheManager(null);
     try {
       jcsFacade.validateCacheManager();

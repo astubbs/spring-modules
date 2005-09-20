@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.provider;
 
+import java.beans.PropertyEditor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -57,9 +58,9 @@ public final class CacheProviderFacadeImplTests extends TestCase {
    */
   private CacheProfile cacheProfile;
 
-  private AbstractCacheProfileEditor cacheProfileEditor;
+  private PropertyEditor cacheProfileEditor;
 
-  private MockClassControl cacheProfileEditorControl;
+  private MockControl cacheProfileEditorControl;
 
   private Map cacheProfileMap;
 
@@ -135,19 +136,9 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     cacheProviderFacade.setCacheProfiles(cacheProfileMap);
   }
 
-  private void setUpCacheProfileEditorAsMockObject() throws Exception {
-    Class classToMock = AbstractCacheProfileEditor.class;
-
-    Method createCacheProfileMethod = classToMock.getDeclaredMethod(
-        "createCacheProfile", new Class[] { Properties.class });
-
-    Method[] methodsToMock = new Method[] { createCacheProfileMethod };
-
-    cacheProfileEditorControl = MockClassControl.createControl(classToMock,
-        null, null, methodsToMock);
-
-    cacheProfileEditor = (AbstractCacheProfileEditor) cacheProfileEditorControl
-        .getMock();
+  private void setUpCacheProfileEditorAsMockObject() {
+    cacheProfileEditorControl = MockControl.createControl(PropertyEditor.class);
+    cacheProfileEditor = (PropertyEditor) cacheProfileEditorControl.getMock();
   }
 
   private void setUpCacheProfileValidatorAsMockObject() {
@@ -199,35 +190,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
         .getMock();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>
-   * does not try to validate the cache profiles if they have been previously
-   * validated.
-   */
-  public void testAfterPropertiesSetWhenCacheProfilesHaveBeenValidated()
-      throws Exception {
-    // simulate the cache profiles have been validated.
-    cacheProviderFacade.setCacheProfileMapValidated(true);
-
-    // validate the cache manager ONLY.
-    cacheProviderFacade.validateCacheManager();
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.afterPropertiesSet();
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>.
-   * validates both the cache manager and the cache profiles.
-   */
-  public void testAfterPropertiesSetWhenCacheProfilesHaveNotBeenValidated()
-      throws Exception {
+  public void testAfterPropertiesSetValidatesCacheManager() throws Exception {
     setUpCacheProfileValidatorAsMockObject();
 
     // validate cache manager.
@@ -245,33 +208,54 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     verifyExpectationsOfMockControlsWereMet();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>.
-   * throws a <code>{@link InvalidConfigurationException}</code> if the map of
-   * cache profiles is empty.
-   */
   public void testAfterPropertiesSetWhenMapOfCacheProfilesIsEmpty() {
     cacheProfileMap.clear();
     assertAfterPropertiesSetThrowsException();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>.
-   * throws a <code>{@link InvalidConfigurationException}</code> if the map of
-   * cache profiles is equal to <code>null</code>.
-   */
   public void testAfterPropertiesSetWhenMapOfCacheProfilesIsEqualToNull() {
-    cacheProviderFacade.setCacheProfiles((Map) null);
+    cacheProviderFacade.setCacheProfiles(null);
     assertAfterPropertiesSetThrowsException();
+  }
+
+  public void testAfterPropertiesSetWhenMapOfCacheProfilesIsProperties()
+      throws Exception {
+    setUpCacheProfileValidatorAsMockObject();
+
+    this.cacheProviderFacade.validateCacheManager();
+
+    String cacheProfileId = "main";
+    String cacheProfilePropertiesAsText = "[firstName=Luke]";
+
+    Properties properties = new Properties();
+    properties.setProperty(cacheProfileId, cacheProfilePropertiesAsText);
+
+    cacheProviderFacade.setCacheProfiles(properties);
+
+    expectGetCacheProfileEditor();
+    cacheProfileEditor.setAsText(cacheProfilePropertiesAsText);
+    cacheProfileEditor.getValue();
+    cacheProfileEditorControl.setReturnValue(cacheProfile);
+
+    expectGetCacheProfileValidator();
+    cacheProfileValidator.validateCacheProfile(cacheProfile);
+
+    setStateOfMockControlsToReplay();
+
+    // execute the method to test.
+    cacheProviderFacade.afterPropertiesSet();
+
+    assertSame(cacheProfile, cacheProviderFacade.getCacheProfiles().get(
+        cacheProfileId));
+
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
    * Verifies that the method
    * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>
-   * throws a <code>{@link InvalidConfigurationException}</code> that wraps
-   * any exception thrown by the <code>{@link CacheProfileValidator}</code>.
+   * throws a <code>{@link InvalidConfigurationException}</code> wrapping any
+   * exception thrown by the <code>{@link CacheProfileValidator}</code>.
    */
   public void testAfterPropertiesSetWhenValidationOfCacheProfilesThrowsException()
       throws Exception {
@@ -302,7 +286,6 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   }
 
   public void testCancelCacheUpdate() throws Exception {
-    // cancel cache update.
     cacheProviderFacade.onCancelCacheUpdate(cacheKey);
 
     setStateOfMockControlsToReplay();
@@ -772,101 +755,6 @@ public final class CacheProviderFacadeImplTests extends TestCase {
         objectToCache);
 
     verifyExpectationsOfMockControlsWereMet();
-  }
-
-  /**
-   * Tests
-   * <code>{@link AbstractCacheProviderFacadeImpl#setCacheProfiles(Properties)}</code>.
-   * Verifies that an <code>IllegalArgumentException</code> is thrown if the
-   * cache profile editor throws an exception.
-   */
-  public void testSetCacheProfilesWhenCacheProfileEditorThrowsException() {
-    Properties unparsedProperties = new Properties();
-    unparsedProperties.setProperty("key", "[role=Admin]");
-
-    Properties parsedProperties = new Properties();
-    parsedProperties.setProperty("role", "Admin");
-
-    expectGetCacheProfileEditor();
-
-    // use the cache profile editor to create a new cache profile.
-    InvalidCacheProfileException expectedException = this
-        .getNewInvalidCacheProfileException();
-    cacheProfileEditor.createCacheProfile(parsedProperties);
-    cacheProfileEditorControl.setThrowable(expectedException);
-
-    setStateOfMockControlsToReplay();
-
-    try {
-      // execute the method to test.
-      cacheProviderFacade.setCacheProfiles(unparsedProperties);
-      fail();
-
-    } catch (InvalidCacheProfileException exception) {
-      assertSame(expectedException, exception);
-    }
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  /**
-   * Tests
-   * <code>{@link AbstractCacheProviderFacadeImpl#setCacheProfiles(Properties)}</code>.
-   * Verifies that a <code>IllegalArgumentException</code> is thrown if an
-   * empty set of properties is passed as argument.
-   */
-  public void testSetCacheProfilesWithEmptySetOfProperties() {
-    try {
-      Properties properties = new Properties();
-      cacheProviderFacade.setCacheProfiles(properties);
-      fail();
-
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
-  }
-
-  public void testSetCacheProfilesWithProperties() {
-    Properties unparsedProperties = new Properties();
-    unparsedProperties.setProperty("key", "[firstName=Luke]");
-    unparsedProperties.setProperty("main", "[lastName=Skywalker]");
-
-    Map map = unparsedProperties;
-
-    Properties firstParsedProperties = new Properties();
-    firstParsedProperties.setProperty("firstName", "Luke");
-
-    Properties secondParsedProperties = new Properties();
-    secondParsedProperties.setProperty("lastName", "Skywalker");
-
-    expectGetCacheProfileEditor();
-
-    cacheProfileEditor.createCacheProfile(firstParsedProperties);
-    cacheProfileEditorControl.setReturnValue(cacheProfile);
-
-    cacheProfileEditor.createCacheProfile(secondParsedProperties);
-    cacheProfileEditorControl.setReturnValue(cacheProfile);
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.setCacheProfiles(map);
-
-    Map actualCacheProfiles = cacheProviderFacade.getCacheProfiles();
-    assertEquals(2, actualCacheProfiles.size());
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  public void testSetCacheProfilesWithSetOfPropertiesEqualToNull() {
-    try {
-      Properties properties = null;
-      cacheProviderFacade.setCacheProfiles(properties);
-      fail();
-
-    } catch (IllegalArgumentException exception) {
-      // we are expecting this exception.
-    }
   }
 
   private void verifyExpectationsOfMockControlsWereMet() {

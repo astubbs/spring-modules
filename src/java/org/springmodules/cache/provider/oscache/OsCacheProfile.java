@@ -31,7 +31,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/09 02:18:52 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/20 03:50:24 $
  */
 public class OsCacheProfile implements CacheProfile {
 
@@ -71,10 +71,14 @@ public class OsCacheProfile implements CacheProfile {
 
   public OsCacheProfile(String csvGroups, Integer refreshPeriod,
       String cronExpression) {
+    this(csvGroups, cronExpression);
+    setRefreshPeriod(refreshPeriod);
+  }
+
+  public OsCacheProfile(String cvsGroups, String cronExpression) {
     this();
     setCronExpression(cronExpression);
-    setGroups(csvGroups);
-    setRefreshPeriod(refreshPeriod);
+    setGroups(cvsGroups);
   }
 
   /**
@@ -122,7 +126,7 @@ public class OsCacheProfile implements CacheProfile {
    */
   public int hashCode() {
     int multiplier = 31;
-    int hash = 7;
+    int hash = 17;
     hash = multiplier * hash
         + (cronExpression != null ? cronExpression.hashCode() : 0);
 

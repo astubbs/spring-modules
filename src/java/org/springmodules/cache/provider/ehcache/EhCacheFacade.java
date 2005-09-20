@@ -18,18 +18,19 @@
 
 package org.springmodules.cache.provider.ehcache;
 
+import java.beans.PropertyEditor;
 import java.io.Serializable;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheException;
 import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
 import org.springmodules.cache.provider.InvalidConfigurationException;
 import org.springmodules.cache.provider.InvalidObjectToCacheException;
@@ -41,7 +42,7 @@ import org.springmodules.cache.provider.InvalidObjectToCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/09 02:19:06 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/20 03:50:25 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -85,8 +86,10 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
    */
-  protected AbstractCacheProfileEditor getCacheProfileEditor() {
-    return new EhCacheProfileEditor();
+  protected PropertyEditor getCacheProfileEditor() {
+    CacheProfileEditor editor = new CacheProfileEditor();
+    editor.setCacheProfileClass(EhCacheProfile.class);
+    return editor;
   }
 
   /**
@@ -238,12 +241,8 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
           "The Cache Manager should not be null");
     }
 
-    if (!isFailQuietlyEnabled()) {
-      int cacheManagerStatus = cacheManager.getStatus();
-
-      if (cacheManagerStatus != CacheManager.STATUS_ALIVE) {
-        throw new InvalidConfigurationException("Cache Manager is not alive");
-      }
+    if (cacheManager.getStatus() != CacheManager.STATUS_ALIVE) {
+      throw new InvalidConfigurationException("Cache Manager is not alive");
     }
   }
 

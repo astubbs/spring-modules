@@ -17,6 +17,7 @@
  */
 package org.springmodules.cache.provider.oscache;
 
+import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.provider.AbstractCacheProfileEditor;
+import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
 import org.springmodules.cache.provider.InvalidConfigurationException;
 
@@ -41,7 +42,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/09 02:19:22 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/20 03:50:27 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
@@ -91,6 +92,8 @@ public class OsCacheFacadeTests extends TestCase {
     cacheEntryEventListener = new CacheEntryEventListenerImpl();
     cache.addCacheEventListener(cacheEntryEventListener,
         CacheEntryEventListener.class);
+
+    osCacheFacade.setCacheManager(cacheAdministrator);
   }
 
   private void setUpCacheAdministratorAsMockObject(Method methodToMock) {
@@ -111,23 +114,29 @@ public class OsCacheFacadeTests extends TestCase {
   protected void tearDown() throws Exception {
     super.tearDown();
 
-    cacheAdministrator.destroy();
+    if (cacheAdministrator != null) {
+      cacheAdministrator.destroy();
+    }
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheFacade#getCacheProfileEditor()}</code> returns an
-   * instance of <code>{@link OsCacheProfileEditor}</code> not equal to
-   * <code>null</code>.
-   */
   public void testGetCacheProfileEditor() {
-    setUpCacheAdministrator();
+    PropertyEditor editor = osCacheFacade.getCacheProfileEditor();
 
-    AbstractCacheProfileEditor cacheProfileEditor = osCacheFacade
-        .getCacheProfileEditor();
+    assertNotNull(editor);
+    assertEquals(CacheProfileEditor.class, editor.getClass());
 
-    assertNotNull(cacheProfileEditor);
-    assertEquals(OsCacheProfileEditor.class, cacheProfileEditor.getClass());
+    CacheProfileEditor profileEditor = (CacheProfileEditor) editor;
+    assertEquals(OsCacheProfile.class, profileEditor.getCacheProfileClass());
+
+    Map cacheProfilePropertyEditors = profileEditor
+        .getCacheProfilePropertyEditors();
+    assertNotNull(cacheProfilePropertyEditors);
+    assertEquals(1, cacheProfilePropertyEditors.size());
+
+    PropertyEditor refreshPeriodEditor = (PropertyEditor) cacheProfilePropertyEditors
+        .get("refreshPeriod");
+    assertNotNull(refreshPeriodEditor);
+    assertEquals(RefreshPeriodEditor.class, refreshPeriodEditor.getClass());
   }
 
   /**
@@ -137,20 +146,14 @@ public class OsCacheFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
-    setUpCacheAdministrator();
+    CacheProfileValidator validator = osCacheFacade.getCacheProfileValidator();
 
-    CacheProfileValidator cacheProfileValidator = osCacheFacade
-        .getCacheProfileValidator();
+    assertNotNull(validator);
 
-    assertNotNull(cacheProfileValidator);
-
-    assertEquals(OsCacheProfileValidator.class, cacheProfileValidator
-        .getClass());
+    assertEquals(OsCacheProfileValidator.class, validator.getClass());
   }
 
   public void testIsSerializableCacheElementRequired() {
-    setUpCacheAdministrator();
-
     assertFalse(osCacheFacade.isSerializableCacheElementRequired());
   }
 
@@ -188,7 +191,7 @@ public class OsCacheFacadeTests extends TestCase {
     // execute the method to test.
     osCacheFacade.onFlushCache(cacheProfile);
 
-    assertEquals("Number of groups flushed", 1, cacheEntryEventListener
+    assertEquals("<Number of groups flushed>", 1, cacheEntryEventListener
         .getGroupFlushedCount());
   }
 
@@ -315,7 +318,7 @@ public class OsCacheFacadeTests extends TestCase {
     osCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToStore);
 
     Object cachedObject = cacheAdministrator.getFromCache(CACHE_KEY);
-    assertSame("<Cached object>", objectToStore, cachedObject);
+    assertSame(objectToStore, cachedObject);
 
     // if we flush the group used, we should not be able to get the cached
     // object.
@@ -346,7 +349,7 @@ public class OsCacheFacadeTests extends TestCase {
     osCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToStore);
 
     Object cachedObject = cacheAdministrator.getFromCache(CACHE_KEY);
-    assertSame("<Cached object>", objectToStore, cachedObject);
+    assertSame(objectToStore, cachedObject);
 
     // if we flush all the groups, we should be able to get the cached object.
     int groupCount = groups.length;
@@ -382,8 +385,6 @@ public class OsCacheFacadeTests extends TestCase {
   }
 
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
-    setUpCacheAdministrator();
-
     osCacheFacade.setCacheManager(null);
     try {
       osCacheFacade.validateCacheManager();
@@ -401,7 +402,6 @@ public class OsCacheFacadeTests extends TestCase {
   public void testValidateCacheManagerWithCacheManagerNotEqualToNull()
       throws Exception {
     setUpCacheAdministrator();
-
     osCacheFacade.validateCacheManager();
   }
 }

@@ -18,11 +18,14 @@
 
 package org.springmodules.cache.provider.oscache;
 
+import java.beans.PropertyEditor;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
 import org.springmodules.cache.provider.InvalidConfigurationException;
 
@@ -36,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/09 02:18:52 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/20 03:50:24 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -52,8 +55,14 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
    */
-  protected AbstractCacheProfileEditor getCacheProfileEditor() {
-    return new OsCacheProfileEditor();
+  protected PropertyEditor getCacheProfileEditor() {
+    Map propertyEditors = new HashMap();
+    propertyEditors.put("refreshPeriod", new RefreshPeriodEditor());
+
+    CacheProfileEditor editor = new CacheProfileEditor();
+    editor.setCacheProfileClass(OsCacheProfile.class);
+    editor.setCacheProfilePropertyEditors(propertyEditors);
+    return editor;
   }
 
   /**

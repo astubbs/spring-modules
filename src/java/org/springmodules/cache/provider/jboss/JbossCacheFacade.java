@@ -17,13 +17,14 @@
  */
 package org.springmodules.cache.provider.jboss;
 
+import java.beans.PropertyEditor;
 import java.io.Serializable;
 
 import org.jboss.cache.TreeCache;
-import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
 import org.springmodules.cache.provider.InvalidConfigurationException;
 
@@ -47,9 +48,10 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
    */
-  protected AbstractCacheProfileEditor getCacheProfileEditor() {
-    // TODO Auto-generated method stub
-    return null;
+  protected PropertyEditor getCacheProfileEditor() {
+    CacheProfileEditor editor = new CacheProfileEditor();
+    editor.setCacheProfileClass(JbossCacheProfile.class);
+    return editor;
   }
 
   /**

@@ -18,17 +18,15 @@
 
 package org.springmodules.cache.provider;
 
-import java.lang.reflect.Method;
-import java.util.Properties;
+import java.beans.PropertyEditorSupport;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.mock.MockCacheProfile;
-
 /**
  * <p>
- * Unit Tests for <code>{@link AbstractCacheProfileEditor}</code>.
+ * Unit Tests for <code>{@link CacheProfileEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
@@ -37,63 +35,97 @@ import org.springmodules.cache.mock.MockCacheProfile;
  */
 public final class CacheProfileEditorTests extends TestCase {
 
-  private AbstractCacheProfileEditor cacheProfileEditor;
+  private class MockPropertyEditor extends PropertyEditorSupport {
+    String value;
 
-  private MockClassControl cacheProfileEditorControl;
+    public Object getValue() {
+      return value;
+    }
+
+    public void setAsText(String text) {
+      value = "_" + text;
+    }
+  }
+
+  private static final String CACHE_NAME_PROPERTY = "cacheName";
+
+  private static final String GROUP_PROPERTY = "group";
+
+  private CacheProfileEditor cacheProfileEditor;
 
   public CacheProfileEditorTests(String name) {
     super(name);
   }
 
+  private String getPropertiesAsText(String cacheName, String group) {
+    return getPropertyAsText(CACHE_NAME_PROPERTY, cacheName)
+        + getPropertyAsText(GROUP_PROPERTY, group);
+  }
+
+  private String getPropertyAsText(String propertyName, String propertyValue) {
+    return "[" + propertyName + "=" + propertyValue + "]";
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
-    Class classToMock = AbstractCacheProfileEditor.class;
-
-    // set up the methods to mock.
-    Method createCacheProfileMethod = classToMock.getDeclaredMethod(
-        "createCacheProfile", new Class[] { Properties.class });
-
-    Method[] methodsToMock = new Method[] { createCacheProfileMethod };
-
-    // create the mock control.
-    cacheProfileEditorControl = MockClassControl.createControl(classToMock,
-        null, null, methodsToMock);
-
-    // create the mock object.
-    cacheProfileEditor = (AbstractCacheProfileEditor) cacheProfileEditorControl
-        .getMock();
+    cacheProfileEditor = new CacheProfileEditor();
+    cacheProfileEditor.setCacheProfileClass(MockCacheProfile.class);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheProfileEditor#setAsText(String)}</code>.
-   * creates a new instance of <code>{@link CacheProfile}</code> by parsing
-   * the specified set of properties.
-   */
   public void testSetAsText() {
-    // String containing the properties of the cache profile to create.
-    String unparsedProperties = "[name=value]";
+    String cacheName = "main";
+    String group = "pojo";
+    MockCacheProfile expected = new MockCacheProfile(cacheName, group);
 
-    // properties to be constructed by parsing the String above.
-    Properties parsedProperties = new Properties();
-    parsedProperties.setProperty("name", "value");
+    String properties = getPropertiesAsText(cacheName, group);
+    cacheProfileEditor.setAsText(properties);
 
-    CacheProfile cacheProfile = new MockCacheProfile();
-
-    // create a cache profile from the parsed properties.
-    cacheProfileEditor.createCacheProfile(parsedProperties);
-    cacheProfileEditorControl.setReturnValue(cacheProfile);
-
-    cacheProfileEditorControl.replay();
-
-    // execute the method to test.
-    cacheProfileEditor.setAsText(unparsedProperties);
-
-    Object actualCacheProfile = cacheProfileEditor.getValue();
-    assertSame("<cache profile>", cacheProfile, actualCacheProfile);
-
-    cacheProfileEditorControl.verify();
+    assertEquals(expected, cacheProfileEditor.getValue());
   }
 
+  public void testSetAsTextWithCacheProfileClassEqualToNull() {
+    cacheProfileEditor.setCacheProfileClass(null);
+
+    try {
+      cacheProfileEditor.setAsText("");
+      fail();
+    } catch (IllegalStateException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  public void testSetAsTextWithEmptyText() {
+    cacheProfileEditor.setAsText("");
+    assertEquals(new MockCacheProfile(), cacheProfileEditor.getValue());
+  }
+
+  public void testSetAsTextWithPropertyEditors() {
+    MockPropertyEditor cacheNameEditor = new MockPropertyEditor();
+    MockPropertyEditor groupEditor = new MockPropertyEditor();
+
+    Map editors = new HashMap();
+    editors.put(CACHE_NAME_PROPERTY, cacheNameEditor);
+    editors.put(GROUP_PROPERTY, groupEditor);
+
+    cacheProfileEditor.setCacheProfilePropertyEditors(editors);
+
+    String cacheName = "rebels";
+    String group = "jedi";
+
+    String properties = getPropertiesAsText(cacheName, group);
+    cacheProfileEditor.setAsText(properties);
+
+    MockCacheProfile expected = new MockCacheProfile(cacheNameEditor.value,
+        groupEditor.value);
+
+    assertFalse(expected.getCacheName().equals(cacheName));
+    assertFalse(expected.getGroup().equals(group));
+    assertEquals(expected, cacheProfileEditor.getValue());
+  }
+
+  public void testSetAsTextWithTextEqualToNull() {
+    cacheProfileEditor.setAsText(null);
+    assertEquals(new MockCacheProfile(), cacheProfileEditor.getValue());
+  }
 }

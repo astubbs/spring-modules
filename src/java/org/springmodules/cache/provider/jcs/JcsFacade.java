@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.provider.jcs;
 
+import java.beans.PropertyEditor;
 import java.io.Serializable;
 
 import org.apache.jcs.engine.CacheElement;
@@ -28,12 +29,12 @@ import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheException;
 import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
 import org.springmodules.cache.provider.InvalidConfigurationException;
 
@@ -44,7 +45,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.17 $ $Date: 2005/09/09 02:19:17 $
+ * @version $Revision: 1.18 $ $Date: 2005/09/20 03:50:28 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -76,8 +77,10 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
    */
-  protected AbstractCacheProfileEditor getCacheProfileEditor() {
-    return new JcsProfileEditor();
+  protected PropertyEditor getCacheProfileEditor() {
+    CacheProfileEditor editor = new CacheProfileEditor();
+    editor.setCacheProfileClass(JcsProfile.class);
+    return editor;
   }
 
   /**

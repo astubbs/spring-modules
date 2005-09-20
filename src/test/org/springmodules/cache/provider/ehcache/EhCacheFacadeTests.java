@@ -17,6 +17,7 @@
  */
 package org.springmodules.cache.provider.ehcache;
 
+import java.beans.PropertyEditor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -29,10 +30,10 @@ import net.sf.ehcache.Element;
 
 import org.easymock.AbstractMatcher;
 import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.provider.AbstractCacheProfileEditor;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheException;
 import org.springmodules.cache.provider.CacheNotFoundException;
+import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
 import org.springmodules.cache.provider.InvalidConfigurationException;
 
@@ -43,7 +44,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/09 02:19:10 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/20 03:50:27 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -131,6 +132,16 @@ public class EhCacheFacadeTests extends TestCase {
     cacheControl.verify();
   }
 
+  private void assertValidateCacheManagerThrowsException() {
+    try {
+      ehcacheFacade.validateCacheManager();
+      fail();
+
+    } catch (InvalidConfigurationException exception) {
+      // we are expecting this exception.
+    }
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
     cacheManager = CacheManager.create();
@@ -179,23 +190,15 @@ public class EhCacheFacadeTests extends TestCase {
     cacheManager.shutdown();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheFacade#getCacheProfileEditor()}</code> returns an
-   * instance of <code>{@link EhCacheProfileEditor}</code> not equal to
-   * <code>null</code>.
-   */
   public void testGetCacheProfileEditor() {
-    AbstractCacheProfileEditor cacheProfileEditor = ehcacheFacade
-        .getCacheProfileEditor();
+    PropertyEditor editor = ehcacheFacade.getCacheProfileEditor();
 
-    assertNotNull(cacheProfileEditor);
+    assertNotNull(editor);
+    assertEquals(CacheProfileEditor.class, editor.getClass());
 
-    Class expectedClass = EhCacheProfileEditor.class;
-    Class actualClass = cacheProfileEditor.getClass();
-
-    assertEquals("<Class of the cache profile editor>", expectedClass,
-        actualClass);
+    CacheProfileEditor profileEditor = (CacheProfileEditor) editor;
+    assertEquals(EhCacheProfile.class, profileEditor.getCacheProfileClass());
+    assertNull(profileEditor.getCacheProfilePropertyEditors());
   }
 
   /**
@@ -205,16 +208,9 @@ public class EhCacheFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
-    CacheProfileValidator cacheProfileValidator = ehcacheFacade
-        .getCacheProfileValidator();
-
-    assertNotNull(cacheProfileValidator);
-
-    Class expectedClass = EhCacheProfileValidator.class;
-    Class actualClass = cacheProfileValidator.getClass();
-
-    assertEquals("<Class of the cache profile validator>", expectedClass,
-        actualClass);
+    CacheProfileValidator validator = ehcacheFacade.getCacheProfileValidator();
+    assertNotNull(validator);
+    assertEquals(EhCacheProfileValidator.class, validator.getClass());
   }
 
   public void testGetCacheWhenCacheAccessThrowsException() {
@@ -506,33 +502,7 @@ public class EhCacheFacadeTests extends TestCase {
    */
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
     ehcacheFacade.setCacheManager(null);
-    try {
-      ehcacheFacade.validateCacheManager();
-      fail();
-
-    } catch (InvalidConfigurationException exception) {
-      // we are expecting this exception.
-    }
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheFacade#validateCacheManager()}</code> does not throw
-   * any exception if the cache manager is not "alive" and the flag
-   * 'failQuietlyEnabled' is <code>true</code>.
-   */
-  public void testValidateCacheManagerWithCacheManagerNotAliveAndFailQuietlyIsEnabled()
-      throws Exception {
-    setUpCache();
-
-    ehcacheFacade.setFailQuietlyEnabled(true);
-    cacheManager.shutdown();
-
-    try {
-      ehcacheFacade.validateCacheManager();
-    } catch (Throwable throwable) {
-      fail();
-    }
+    assertValidateCacheManagerThrowsException();
   }
 
   /**
@@ -541,17 +511,11 @@ public class EhCacheFacadeTests extends TestCase {
    * <code>{@link InvalidConfigurationException}</code> if the cache manager
    * is not "alive" and the flag 'failQuietlyEnabled' is <code>false</code>.
    */
-  public void testValidateCacheManagerWithCacheManagerNotAliveAndFailQuietlyNotEnabled()
+  public void testValidateCacheManagerWithCacheManagerNotAlive()
       throws Exception {
     ehcacheFacade.setFailQuietlyEnabled(false);
     cacheManager.shutdown();
 
-    try {
-      ehcacheFacade.validateCacheManager();
-      fail();
-
-    } catch (InvalidConfigurationException exception) {
-      // we are expecting this exception.
-    }
+    assertValidateCacheManagerThrowsException();
   }
 }
