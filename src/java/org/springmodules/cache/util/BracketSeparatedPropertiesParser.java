@@ -34,20 +34,16 @@ import org.springmodules.cache.regex.Regex;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/20 03:46:01 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/21 03:06:54 $
  */
 public abstract class BracketSeparatedPropertiesParser {
 
   /**
-   * Regular expression pattern used to parse a String of form "key=value".
-   */
-  protected static final String KEY_VALUE_PATTERN = "([\\w]+)=([\\w ,\\*]+)";
-
-  /**
-   * Compiled representation of <code>{@link #KEY_VALUE_PATTERN}</code>.
+   * Compiled representation of the regular expression pattern used to parse a
+   * String of form "key=value".
    */
   protected static final Regex KEY_VALUE_REGEX = new Perl5Regex(
-      KEY_VALUE_PATTERN);
+      "([\\w]+)=([\\w ,\\*]+)");
 
   /**
    * Takes a String of form "key=value", splits it into two Strings ("key" and
@@ -60,12 +56,10 @@ public abstract class BracketSeparatedPropertiesParser {
    * 
    * @throws IllegalArgumentException
    *           if the specified property does not match the regular expression
-   *           pattern defined in <code>REGEX_PATTERN</code>.
+   *           pattern defined in <code>KEY_VALUE_REGEX</code>.
    * @throws IllegalArgumentException
    *           if the set of properties already contains the property specified
    *           by the given String.
-   * 
-   * @see #KEY_VALUE_PATTERN
    */
   protected static void addProperty(String unparsedProperty,
       Properties parsedProperties) {
@@ -73,9 +67,9 @@ public abstract class BracketSeparatedPropertiesParser {
     Match match = KEY_VALUE_REGEX.match(unparsedProperty);
 
     if (!match.isSuccessful()) {
-      String message = "The String \"" + unparsedProperty
-          + "\" should match the regular expression pattern \""
-          + KEY_VALUE_PATTERN + "\"";
+      String message = "The String " + Strings.quote(unparsedProperty)
+          + " should match the regular expression pattern "
+          + Strings.quote(KEY_VALUE_REGEX.getPattern());
 
       throw new IllegalArgumentException(message);
     }
@@ -85,8 +79,8 @@ public abstract class BracketSeparatedPropertiesParser {
     String value = groups[2].trim();
 
     if (parsedProperties.containsKey(key)) {
-      throw new IllegalArgumentException("The property \"" + key
-          + "\" is specified more than once");
+      throw new IllegalArgumentException("The property " + Strings.quote(key)
+          + " is specified more than once");
     }
 
     parsedProperties.setProperty(key, value);
@@ -112,8 +106,9 @@ public abstract class BracketSeparatedPropertiesParser {
     }
 
     if (!propertiesAsText.startsWith("[") || !propertiesAsText.endsWith("]")) {
-      throw new IllegalArgumentException("The String '" + propertiesAsText
-          + "' should start with '[' and end with ']");
+      throw new IllegalArgumentException("The String "
+          + Strings.quote(propertiesAsText)
+          + " should start with '[' and end with ']");
     }
 
     Properties properties = new Properties();
