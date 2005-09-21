@@ -24,9 +24,14 @@ package org.springmodules.cache.regex;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:25 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/21 03:06:16 $
  */
 public interface Regex {
+
+  /**
+   * @return the pattern used to compile this regular expression.
+   */
+  String getPattern();
 
   /**
    * Attempts to match the entire input sequence against the given regular

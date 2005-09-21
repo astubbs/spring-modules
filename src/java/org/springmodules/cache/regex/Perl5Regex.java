@@ -31,7 +31,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:53 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/21 03:06:15 $
  */
 public class Perl5Regex implements Regex {
 
@@ -39,6 +39,8 @@ public class Perl5Regex implements Regex {
    * Compiled representation of a regular expression.
    */
   private final Pattern pattern;
+
+  private String regexPattern;
 
   /**
    * @param regex
@@ -53,10 +55,19 @@ public class Perl5Regex implements Regex {
 
     try {
       pattern = perl5Compiler.compile(regex);
+      regexPattern = regex;
+
     } catch (MalformedPatternException malformedPatternException) {
       throw new PatternInvalidSyntaxException(malformedPatternException
           .getMessage());
     }
+  }
+
+  /**
+   * @see Regex#getPattern()
+   */
+  public String getPattern() {
+    return regexPattern;
   }
 
   /**
@@ -70,12 +81,12 @@ public class Perl5Regex implements Regex {
     if (matches) {
       MatchResult matchResult = matcher.getMatch();
       int groupCount = matchResult.groups();
-      
+
       groups = new String[groupCount];
       for (int i = 0; i < groupCount; i++) {
         groups[i] = matchResult.group(i);
       }
-      
+
     }
 
     Match match = new Match(matches, groups);
