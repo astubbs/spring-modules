@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="samples/hivemind/src"/>
-	<classpathentry kind="src" path="samples/osworkflow/src/java"/>
-	<classpathentry output="target/sandbox/classes" kind="src" path="sandbox/src"/>
-	<classpathentry output="target/sandbox/test-classes" kind="src" path="sandbox/test"/>
 	<classpathentry output="target/classes" kind="src" path="src/java"/>
 	<classpathentry output="target/test-classes" kind="src" path="src/test"/>
+	<classpathentry output="target/sandbox/classes" kind="src" path="sandbox/src"/>
+	<classpathentry output="target/sandbox/test-classes" kind="src" path="sandbox/test"/>
+	<classpathentry kind="src" path="samples/hivemind/src"/>
+	<classpathentry kind="src" path="samples/osworkflow/src/java"/>
+	<classpathentry kind="lib" path="lib/acegi/acegi-security-0.8.2.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant-junit.jar"/>
 	<classpathentry kind="lib" path="lib/ant/ant-launcher.jar"/>
@@ -14,70 +15,69 @@
 	<classpathentry kind="lib" path="lib/cglib/cglib-nodep-2.1-dev.jar"/>
 	<classpathentry kind="lib" path="lib/clover/clover.jar"/>
 	<classpathentry kind="lib" path="lib/concurrent/concurrent-1.3.4.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j/dom4j.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-base-2.0-beta-21.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-core-2.0-beta-21.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-io-2.0-beta-21.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-java-2.0-beta-21.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-jsr94-2.0-beta-21.jar"/>
 	<classpathentry kind="lib" path="lib/drools/drools-smf-2.0-beta-21.jar"/>
+	<classpathentry kind="lib" path="lib/dwr/dwr-0.5.jar"/>
 	<classpathentry kind="lib" path="lib/easymock/easymock.jar"/>
 	<classpathentry kind="lib" path="lib/easymock/easymockclassextension.jar"/>
 	<classpathentry kind="lib" path="lib/ehcache/ehcache-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate2.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/hivemind/hivemind-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb/hsqldb.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/jsp-api.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/jstl.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/jta.jar"/>
 	<classpathentry kind="lib" path="lib/j2ee/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/j2ee/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-attributes-api-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-attributes-compiler-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-beanutils.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-codec-1.3.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-dbcp.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-digester.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-httpclient-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-commons/commons-pool-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta-commons/commons-validator.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta-taglibs/standard.jar"/>
 	<classpathentry kind="lib" path="lib/janino/janino-2.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/javassist/javassist-2.6.jar"/>
-	<classpathentry kind="lib" path="lib/jcs/jcs-1.2.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/jdbi/jdbi-1.2.5.jar"/>
-	<classpathentry kind="lib" path="lib/jsr94/jsr94-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/junit/junit.jar"/>
-	<classpathentry kind="lib" path="lib/log4j/log4j-1.2.9.jar"/>
-	<classpathentry kind="lib" path="lib/lucene/lucene-1.4.3.jar"/>
-	<classpathentry kind="lib" path="lib/opensymphony/oscache-2.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/opensymphony/oscore-2.2.2.jar"/>
-	<classpathentry kind="lib" path="lib/opensymphony/osworkflow-2.7.0.jar"/>
-	<classpathentry kind="lib" path="lib/opensymphony/propertyset-1.3-21Apr04.jar"/>
-	<classpathentry kind="lib" path="lib/oro/oro-2.0.6.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring.jar"/>
-	<classpathentry kind="lib" path="lib/spring/spring-mock.jar"/>
-	<classpathentry kind="lib" path="lib/xdoclet/xjavadoc-1.1.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/jakarta-commons/commons-pool-1.2.jar"/>
-	<classpathentry kind="lib" path="lib/acegi/acegi-security-0.8.2.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/hibernate2.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate/hibernate3.jar"/>
-	<classpathentry kind="lib" path="lib/j2ee/jta.jar"/>
-	<classpathentry kind="lib" path="lib/dom4j/dom4j.jar"/>
-	<classpathentry kind="lib" path="lib/ognl/ognl.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-commons/commons-lang-2.1.jar"/>
-	<classpathentry kind="lib" path="lib/rhino/js.jar"/>
-	<classpathentry kind="lib" path="lib/dwr/dwr-0.5.jar"/>
-	<classpathentry kind="lib" path="lib/orbroker/orbroker-2.0.2-debug.jar"/>
-	<classpathentry kind="lib" path="lib/j2ee/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-commons/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-taglibs/standard.jar"/>
 	<classpathentry kind="lib" path="lib/jbosscache/jboss-cache.jar"/>
-	<classpathentry kind="lib" path="lib/jgroups/jgroups.jar"/>
-	<classpathentry kind="lib" path="lib/stax/jsr173_1.0_api.jar"/>
-	<classpathentry kind="lib" path="lib/xml-rpc/xmlrpc-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/xstream/xpp3_min-1.1.3.4.I.jar"/>
-	<classpathentry kind="lib" path="lib/stax/wstx.jar"/>
-	<classpathentry kind="lib" path="lib/xstream/xstream-1.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/jbosscache/jboss-common.jar"/>
 	<classpathentry kind="lib" path="lib/jbosscache/jboss-jmx.jar"/>
 	<classpathentry kind="lib" path="lib/jbosscache/jboss-minimal.jar"/>
 	<classpathentry kind="lib" path="lib/jbosscache/jboss-system.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-commons/commons-dbcp.jar"/>
-	<classpathentry kind="lib" path="lib/jakarta-commons/commons-httpclient-2.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/jcs/jcs-1.2.6.5.jar"/>
+	<classpathentry kind="lib" path="lib/jdbi/jdbi-1.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/jgroups/jgroups.jar"/>
+	<classpathentry kind="lib" path="lib/jsr94/jsr94-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/junit/junit.jar"/>
+	<classpathentry kind="lib" path="lib/log4j/log4j-1.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/lucene/lucene-1.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/ognl/ognl.jar"/>
+	<classpathentry kind="lib" path="lib/opensymphony/oscache-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/opensymphony/oscore-2.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/opensymphony/osworkflow-2.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/opensymphony/propertyset-1.3-21Apr04.jar"/>
+	<classpathentry kind="lib" path="lib/orbroker/orbroker-2.0.2-debug.jar"/>
+	<classpathentry kind="lib" path="lib/oro/oro-2.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/rhino/js.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring.jar"/>
+	<classpathentry kind="lib" path="lib/spring/spring-mock.jar"/>
+	<classpathentry kind="lib" path="lib/stax/jsr173_1.0_api.jar"/>
+	<classpathentry kind="lib" path="lib/stax/wstx.jar"/>
+	<classpathentry kind="lib" path="lib/xdoclet/xjavadoc-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/xml-rpc/xmlrpc-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/xstream/xpp3_min-1.1.3.4.I.jar"/>
+	<classpathentry kind="lib" path="lib/xstream/xstream-1.1.2.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
