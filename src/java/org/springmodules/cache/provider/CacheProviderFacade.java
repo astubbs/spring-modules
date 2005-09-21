@@ -24,12 +24,12 @@ import org.springframework.beans.factory.InitializingBean;
 
 /**
  * <p>
- * Unified interface for different cache providers.
+ * Facade (unified interface) for different cache providers.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/08/05 02:18:44 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/21 02:45:45 $
  */
 public interface CacheProviderFacade extends InitializingBean {
 
@@ -72,11 +72,14 @@ public interface CacheProviderFacade extends InitializingBean {
       throws CacheException;
 
   /**
-   * Returns the value of the flag that indicates if an exception should be
-   * thrown or not when an error occurrs when accessing the cache provider.
-   * 
+   * @return the state of this cache provider facade.
+   */
+  CacheProviderFacadeStatus getStatus();
+
+  /**
    * @return <code>true</code> if no exception should be thrown if an error
-   *         occurrs when accessing the cache provider.
+   *         takes place when the cache provider is being configured or
+   *         accessed.
    */
   boolean isFailQuietlyEnabled();
 

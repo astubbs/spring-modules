@@ -23,7 +23,10 @@ import java.util.Properties;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springmodules.cache.provider.CacheProviderFacade;
+import org.springmodules.cache.provider.CacheProviderFacadeStatus;
 
 /**
  * <p>
@@ -32,14 +35,13 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/09 02:19:04 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/21 02:45:49 $
  */
 public final class CacheFlushInterceptor extends CacheFlushAspectSupport
     implements MethodInterceptor {
 
-  /**
-   * Cache provider.
-   */
+  private static Log logger = LogFactory.getLog(CacheFlushInterceptor.class);
+
   private CacheProviderFacade cacheProviderFacade;
 
   public CacheFlushInterceptor() {
@@ -54,14 +56,12 @@ public final class CacheFlushInterceptor extends CacheFlushAspectSupport
    * @return the metadata attribute of the intercepted method.
    */
   protected FlushCache getCacheFlushAttribute(MethodInvocation methodInvocation) {
-
     Method method = methodInvocation.getMethod();
 
     Object thisObject = methodInvocation.getThis();
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
 
-    CacheFlushAttributeSource attributeSource = super
-        .getCacheFlushAttributeSource();
+    CacheFlushAttributeSource attributeSource = getCacheFlushAttributeSource();
     FlushCache attribute = attributeSource.getCacheFlushAttribute(method,
         targetClass);
     return attribute;
@@ -75,6 +75,11 @@ public final class CacheFlushInterceptor extends CacheFlushAspectSupport
    * @return the return value of the intercepted method.
    */
   public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+    if (cacheProviderFacade.getStatus() != CacheProviderFacadeStatus.READY) {
+      logger.info(cacheProviderFacade.getStatus());
+      return methodInvocation.proceed();
+    }
+
     FlushCache attribute = getCacheFlushAttribute(methodInvocation);
 
     if (null == attribute) {

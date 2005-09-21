@@ -42,7 +42,7 @@ import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
-import org.springmodules.cache.provider.InvalidConfigurationException;
+import org.springmodules.cache.provider.IllegalCacheProviderStateException;
 
 /**
  * <p>
@@ -51,7 +51,7 @@ import org.springmodules.cache.provider.InvalidConfigurationException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.15 $ $Date: 2005/09/20 03:50:21 $
+ * @version $Revision: 1.16 $ $Date: 2005/09/21 02:45:59 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -686,7 +686,7 @@ public final class JcsFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link JcsFacade#validateCacheManager()}</code> throws an
-   * <code>{@link InvalidConfigurationException}</code> the cache manager is
+   * <code>{@link IllegalCacheProviderStateException}</code> the cache manager is
    * <code>null</code>.
    */
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
@@ -694,7 +694,7 @@ public final class JcsFacadeTests extends TestCase {
     try {
       jcsFacade.validateCacheManager();
       fail();
-    } catch (InvalidConfigurationException exception) {
+    } catch (IllegalCacheProviderStateException exception) {
       // we are expecting this exception.
     }
   }

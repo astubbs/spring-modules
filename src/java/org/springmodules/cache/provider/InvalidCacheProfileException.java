@@ -18,8 +18,6 @@
 
 package org.springmodules.cache.provider;
 
-import org.springframework.core.NestedRuntimeException;
-
 /**
  * <p>
  * Exception thrown when one or more properties of a
@@ -30,7 +28,7 @@ import org.springframework.core.NestedRuntimeException;
  * 
  * @version $Revision$ $Date$
  */
-public class InvalidCacheProfileException extends NestedRuntimeException {
+public class InvalidCacheProfileException extends CacheException {
 
   private static final long serialVersionUID = 7043423030105935558L;
 

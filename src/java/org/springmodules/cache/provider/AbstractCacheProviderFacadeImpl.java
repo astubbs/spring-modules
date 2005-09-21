@@ -40,82 +40,56 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.17 $ $Date: 2005/09/20 03:49:08 $
+ * @version $Revision: 1.18 $ $Date: 2005/09/21 02:45:45 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
 
   /**
    * Map that stores implementations of <code>{@link CacheProfile}</code>.
+   * Each entry is stored using a unique id (a <code>String</code>).
    */
   private Map cacheProfiles;
 
-  /**
-   * Flag that indicates if an exception should thrown or not when an error
-   * occurrs when accessing the cache provider.
-   */
   private boolean failQuietlyEnabled;
 
   protected final Log logger = LogFactory.getLog(getClass());
 
   private SerializableFactory serializableFactory;
 
+  private CacheProviderFacadeStatus status;
+
   public AbstractCacheProviderFacadeImpl() {
     super();
+    setStatus(CacheProviderFacadeStatus.UNINITIALIZED);
   }
 
   /**
    * Validates the properties of this class after being set by the
    * <code>BeanFactory</code>.
    * 
-   * @throws InvalidConfigurationException
-   *           if the cache manager is <code>null</code> or one or more of its
-   *           properties contain invalid values.
-   * @throws InvalidConfigurationException
-   *           if the map of cache profiles is <code>null</code> or empty.
-   * @throws InvalidConfigurationException
-   *           if one or more cache profiles have invalid values of any of their
-   *           properties.
+   * @see #validateCacheManager()
+   * @see #validateCacheProfiles()
    */
-  public final void afterPropertiesSet() throws InvalidConfigurationException {
-    validateCacheManager();
+  public final void afterPropertiesSet()
+      throws IllegalCacheProviderStateException {
 
-    if (cacheProfiles instanceof Properties) {
-      setCacheProfilesFromProperties((Properties) cacheProfiles);
-    }
+    try {
+      validateCacheManager();
 
-    if (cacheProfiles == null || cacheProfiles.isEmpty()) {
-      throw new InvalidConfigurationException(
-          "The map of cache profiles should not be empty");
-    }
-
-    CacheProfileValidator cacheProfileValidator = getCacheProfileValidator();
-
-    Object invalidCacheProfile = null;
-    InvalidCacheProfileException invalidCacheProfileException = null;
-
-    for (Iterator i = cacheProfiles.keySet().iterator(); i.hasNext();) {
-      String cacheProfileId = (String) i.next();
-      Object cacheProfile = cacheProfiles.get(cacheProfileId);
-
-      try {
-        cacheProfileValidator.validateCacheProfile(cacheProfile);
-
-      } catch (InvalidCacheProfileException exception) {
-        invalidCacheProfileException = exception;
-        invalidCacheProfile = cacheProfile;
+      if (cacheProfiles instanceof Properties) {
+        setCacheProfilesFromProperties((Properties) cacheProfiles);
       }
 
-      if (invalidCacheProfileException != null)
-        break;
+      validateCacheProfiles();
+
+    } catch (IllegalCacheProviderStateException exception) {
+      setStatus(CacheProviderFacadeStatus.INVALID);
+
+      handleCatchedException(exception);
     }
 
-    if (invalidCacheProfileException != null) {
-      String errorMessage = "Invalid cache profile: " + invalidCacheProfile;
-      logger.error(errorMessage, invalidCacheProfileException);
-      throw new InvalidConfigurationException(errorMessage,
-          invalidCacheProfileException);
-    }
+    setStatus(CacheProviderFacadeStatus.READY);
   }
 
   /**
@@ -135,7 +109,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
       onCancelCacheUpdate(cacheKey);
 
     } catch (CacheException exception) {
-      handleCacheException(exception);
+      handleCatchedException(exception);
     }
   }
 
@@ -166,7 +140,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
         }
 
       } catch (CacheException exception) {
-        handleCacheException(exception);
+        handleCatchedException(exception);
       }
     }
   }
@@ -244,28 +218,30 @@ public abstract class AbstractCacheProviderFacadeImpl implements
       }
 
     } catch (CacheException exception) {
-      handleCacheException(exception);
+      handleCatchedException(exception);
     }
     return cachedObject;
   }
 
   /**
-   * Handles the exception thrown while accessing the cache:
-   * <ul>
-   * <li>Creates a log entry including a detail message and the thrown
-   * exception</li>
-   * <li>Rethrows the exception if <code>{@link #failQuietlyEnabled}</code>
-   * is <code>false</code>.</li>
-   * </ul>
+   * @see CacheProviderFacade#getStatus()
+   */
+  public CacheProviderFacadeStatus getStatus() {
+    return status;
+  }
+
+  /**
+   * Rethrows the given exception if
+   * <code>{@link #isFailQuietlyEnabled()}</code> returns <code>true</code>.
    * 
    * @param exception
-   *          the exception thrown when trying to access the cache.
+   *          the catched exception to be potentially rethrown.
+   * @throws CacheException
+   *           if this cache provider has not been configured to "fail quietly."
    */
-  protected final void handleCacheException(CacheException exception)
+  protected final void handleCatchedException(CacheException exception)
       throws CacheException {
-
     logger.error(exception.getMessage(), exception);
-
     if (!isFailQuietlyEnabled()) {
       throw exception;
     }
@@ -296,7 +272,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * @param obj
    *          the object to check.
    * @return the given object as a serializable object if necessary.
-   * @throws InvalidObjectToCacheException
+   * @throws IllegalObjectToCacheException
    *           if the cache requires serializable elements, the given object
    *           does not implement <code>java.io.Serializable</code> and the
    *           factory of serializable objects is <code>null</code>.
@@ -307,13 +283,13 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     if (!isSerializableCacheElementRequired()) {
       return obj;
     }
-    if (serializableFactory != null) {
-      return serializableFactory.makeSerializableIfNecessary(obj);
-    }
     if (obj instanceof Serializable) {
       return obj;
     }
-    throw new InvalidObjectToCacheException(
+    if (serializableFactory != null) {
+      return serializableFactory.makeSerializableIfNecessary(obj);
+    }
+    throw new IllegalObjectToCacheException(
         "The cache can only store implementations of java.io.Serializable");
   }
 
@@ -414,7 +390,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
         }
       }
     } catch (CacheException exception) {
-      handleCacheException(exception);
+      handleCatchedException(exception);
     }
   }
 
@@ -440,7 +416,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
         }
 
       } catch (CacheException exception) {
-        handleCacheException(exception);
+        handleCatchedException(exception);
       }
     }
   }
@@ -449,23 +425,35 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     cacheProfiles = newCacheProfiles;
   }
 
-  private void setCacheProfilesFromProperties(Properties properties) {
-    Map newCacheProfiles = null;
+  /**
+   * @throws IllegalCacheProviderStateException
+   *           if one or more cache profiles cannot be created from the given
+   *           properties.
+   */
+  private void setCacheProfilesFromProperties(Properties properties)
+      throws IllegalCacheProviderStateException {
+    Map newCacheProfiles = new HashMap();
+    PropertyEditor cacheProfileEditor = getCacheProfileEditor();
 
-    if (properties != null && !properties.isEmpty()) {
-      newCacheProfiles = new HashMap();
-      PropertyEditor cacheProfileEditor = getCacheProfileEditor();
+    String cacheProfileId = null;
+    String cacheProfileAsProperties = null;
 
+    try {
       for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
-        String cacheProfileId = (String) i.next();
+        cacheProfileId = (String) i.next();
+        cacheProfileAsProperties = properties.getProperty(cacheProfileId);
 
-        cacheProfileEditor.setAsText(properties.getProperty(cacheProfileId));
-
+        cacheProfileEditor.setAsText(cacheProfileAsProperties);
         CacheProfile cacheProfile = (CacheProfile) cacheProfileEditor
             .getValue();
 
         newCacheProfiles.put(cacheProfileId, cacheProfile);
       }
+    } catch (RuntimeException exception) {
+      throw new IllegalCacheProviderStateException(
+          "Unable to create cache profile from the properties "
+              + Strings.quote(cacheProfileAsProperties) + " with id "
+              + Strings.quote(cacheProfileId), exception);
     }
 
     setCacheProfiles(newCacheProfiles);
@@ -484,13 +472,54 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     serializableFactory = newSerializableFactory;
   }
 
+  private void setStatus(CacheProviderFacadeStatus newStatus) {
+    status = newStatus;
+  }
+
   /**
    * Validates the cache manager used by this facade.
    * 
-   * @throws InvalidConfigurationException
-   *           if the cache manager is <code>null</code> or one or more of its
+   * @throws IllegalCacheProviderStateException
+   *           if the cache manager is <code>null</code> or any of its
    *           properties contain invalid values.
    */
   protected abstract void validateCacheManager()
-      throws InvalidConfigurationException;
+      throws IllegalCacheProviderStateException;
+
+  /**
+   * @throws IllegalCacheProviderStateException
+   *           if the map of cache profiles is <code>null</code> or empty.
+   * @throws IllegalCacheProviderStateException
+   *           if one or more cache profiles have invalid values of any of their
+   *           properties.
+   */
+  private void validateCacheProfiles()
+      throws IllegalCacheProviderStateException {
+
+    if (cacheProfiles == null || cacheProfiles.isEmpty()) {
+      throw new IllegalCacheProviderStateException(
+          "The map of cache profiles should not be empty");
+    }
+
+    CacheProfileValidator cacheProfileValidator = getCacheProfileValidator();
+
+    String cacheProfileId = null;
+    Object cacheProfile = null;
+
+    try {
+      for (Iterator i = cacheProfiles.keySet().iterator(); i.hasNext();) {
+        cacheProfileId = (String) i.next();
+        cacheProfile = cacheProfiles.get(cacheProfileId);
+
+        cacheProfileValidator.validateCacheProfile(cacheProfile);
+      }
+
+    } catch (InvalidCacheProfileException exception) {
+      throw new IllegalCacheProviderStateException("Invalid cache profile <"
+          + cacheProfile + "> with id " + Strings.quote(cacheProfileId),
+          exception);
+    }
+  }
+  
+  
 }

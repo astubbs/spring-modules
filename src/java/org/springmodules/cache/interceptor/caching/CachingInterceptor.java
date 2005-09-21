@@ -30,6 +30,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.cache.key.CacheKeyGenerator;
 import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
 import org.springmodules.cache.provider.CacheProviderFacade;
+import org.springmodules.cache.provider.CacheProviderFacadeStatus;
 
 /**
  * <p>
@@ -38,16 +39,13 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/09 02:18:56 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/21 02:45:54 $
  */
 public class CachingInterceptor extends CachingAspectSupport implements
     MethodInterceptor, InitializingBean {
 
   private static Log logger = LogFactory.getLog(CachingInterceptor.class);
 
-  /**
-   * Facade for a cache provider.
-   */
   private CacheProviderFacade cacheProviderFacade;
 
   public CachingInterceptor() {
@@ -58,11 +56,11 @@ public class CachingInterceptor extends CachingAspectSupport implements
    * @see InitializingBean#afterPropertiesSet()
    */
   public void afterPropertiesSet() {
-    CacheKeyGenerator cacheKeyGenerator = super.getCacheKeyGenerator();
+    CacheKeyGenerator cacheKeyGenerator = getCacheKeyGenerator();
 
     if (cacheKeyGenerator == null) {
       cacheKeyGenerator = new HashCodeCacheKeyGenerator(true);
-      super.setCacheKeyGenerator(cacheKeyGenerator);
+      setCacheKeyGenerator(cacheKeyGenerator);
     }
   }
 
@@ -79,7 +77,7 @@ public class CachingInterceptor extends CachingAspectSupport implements
     Object thisObject = methodInvocation.getThis();
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
 
-    CachingAttributeSource attributeSource = super.getCachingAttributeSource();
+    CachingAttributeSource attributeSource = getCachingAttributeSource();
     Cached attribute = attributeSource.getCachingAttribute(method, targetClass);
 
     return attribute;
@@ -98,6 +96,11 @@ public class CachingInterceptor extends CachingAspectSupport implements
   public final Object invoke(MethodInvocation methodInvocation)
       throws Throwable {
 
+    if (cacheProviderFacade.getStatus() != CacheProviderFacadeStatus.READY) {
+      logger.info(cacheProviderFacade.getStatus());
+      return methodInvocation.proceed();
+    }
+
     Cached cachingAttribute = getCachingAttribute(methodInvocation);
 
     if (cachingAttribute == null) {
@@ -107,7 +110,7 @@ public class CachingInterceptor extends CachingAspectSupport implements
 
     String cacheProfileId = cachingAttribute.getCacheProfileId();
 
-    CacheKeyGenerator cacheKeyGenerator = super.getCacheKeyGenerator();
+    CacheKeyGenerator cacheKeyGenerator = getCacheKeyGenerator();
     Serializable cacheKey = cacheKeyGenerator.generateKey(methodInvocation);
 
     Object cachedObject = cacheProviderFacade.getFromCache(cacheKey,
@@ -137,7 +140,7 @@ public class CachingInterceptor extends CachingAspectSupport implements
         }
 
         // notify the listener a new entry was stored in the cache.
-        EntryStoredListener listener = super.getEntryStoredListener();
+        EntryStoredListener listener = getEntryStoredListener();
         if (listener != null) {
           listener.onEntryAdd(cacheKey, cachedObject);
         }
@@ -173,6 +176,6 @@ public class CachingInterceptor extends CachingAspectSupport implements
   public final void setCachingAttributes(Properties cachingAttributes) {
     NameMatchCachingAttributeSource attributeSource = new NameMatchCachingAttributeSource();
     attributeSource.setProperties(cachingAttributes);
-    super.setCachingAttributeSource(attributeSource);
+    setCachingAttributeSource(attributeSource);
   }
 }

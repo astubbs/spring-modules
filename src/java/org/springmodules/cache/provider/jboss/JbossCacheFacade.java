@@ -26,7 +26,7 @@ import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
-import org.springmodules.cache.provider.InvalidConfigurationException;
+import org.springmodules.cache.provider.IllegalCacheProviderStateException;
 
 /**
  * <p>
@@ -137,7 +137,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
    */
-  protected void validateCacheManager() throws InvalidConfigurationException {
+  protected void validateCacheManager() throws IllegalCacheProviderStateException {
     // TODO Auto-generated method stub
 
   }

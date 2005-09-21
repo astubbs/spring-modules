@@ -18,27 +18,25 @@
 
 package org.springmodules.cache.provider;
 
-import org.springframework.core.NestedCheckedException;
-
 /**
  * <p>
- * Exception thrown when one or more properties of a
- * <code>{@link CacheProfile}</code> contain invalid values.
+ * Exception thrown when an implementation of
+ * <code>{@link CacheProviderFacade}</code> has not been configured properly.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public class InvalidConfigurationException extends NestedCheckedException {
+public class IllegalCacheProviderStateException extends CacheException {
 
   private static final long serialVersionUID = -5778844057206602130L;
 
-  public InvalidConfigurationException(String detailMessage) {
+  public IllegalCacheProviderStateException(String detailMessage) {
     super(detailMessage);
   }
 
-  public InvalidConfigurationException(String detailMessage,
+  public IllegalCacheProviderStateException(String detailMessage,
       Throwable nestedException) {
     super(detailMessage, nestedException);
   }

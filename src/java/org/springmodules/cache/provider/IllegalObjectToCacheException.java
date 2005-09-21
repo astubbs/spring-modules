@@ -19,24 +19,25 @@ package org.springmodules.cache.provider;
 
 /**
  * <p>
- * Exception thrown when an invalid object is going to be stored in a cache.
+ * Exception thrown when an illegal object is going to be stored in a cache.
  * Each cache provider should determine which objects should be considered
- * invalid.
+ * illegal.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public class InvalidObjectToCacheException extends CacheException {
+public class IllegalObjectToCacheException extends CacheException {
 
   private static final long serialVersionUID = -9124262814399202014L;
 
-  public InvalidObjectToCacheException(String detailMessage) {
+  public IllegalObjectToCacheException(String detailMessage) {
     super(detailMessage);
   }
 
-  public InvalidObjectToCacheException(String detailMessage, Throwable nestedException) {
+  public IllegalObjectToCacheException(String detailMessage,
+      Throwable nestedException) {
     super(detailMessage, nestedException);
   }
 

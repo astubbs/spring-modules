@@ -27,7 +27,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
-import org.springmodules.cache.provider.InvalidConfigurationException;
+import org.springmodules.cache.provider.IllegalCacheProviderStateException;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
@@ -39,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/20 03:50:24 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/21 02:45:46 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -191,12 +191,12 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
    * 
-   * @throws InvalidConfigurationException
+   * @throws IllegalCacheProviderStateException
    *           if the cache manager is <code>null</code>.
    */
-  protected void validateCacheManager() throws InvalidConfigurationException {
+  protected void validateCacheManager() throws IllegalCacheProviderStateException {
     if (null == cacheManager) {
-      throw new InvalidConfigurationException(
+      throw new IllegalCacheProviderStateException(
           "The Cache Manager should not be null");
     }
   }

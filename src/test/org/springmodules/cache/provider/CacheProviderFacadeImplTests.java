@@ -31,7 +31,6 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
 import org.springmodules.cache.mock.MockCacheProfile;
-import org.springmodules.cache.serializable.SerializableFactory;
 
 /**
  * <p>
@@ -81,7 +80,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
       cacheProviderFacade.afterPropertiesSet();
       fail();
 
-    } catch (InvalidConfigurationException exception) {
+    } catch (IllegalCacheProviderStateException exception) {
       // we are expecting this exception to be thrown.
     }
   }
@@ -254,8 +253,8 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>
-   * throws a <code>{@link InvalidConfigurationException}</code> wrapping any
-   * exception thrown by the <code>{@link CacheProfileValidator}</code>.
+   * throws a <code>{@link IllegalCacheProviderStateException}</code> wrapping
+   * any exception thrown by the <code>{@link CacheProfileValidator}</code>.
    */
   public void testAfterPropertiesSetWhenValidationOfCacheProfilesThrowsException()
       throws Exception {
@@ -277,7 +276,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
       cacheProviderFacade.afterPropertiesSet();
       fail();
 
-    } catch (InvalidConfigurationException exception) {
+    } catch (IllegalCacheProviderStateException exception) {
       assertSame("<Nested exception>", expectedNestedException, exception
           .getCause());
     }
@@ -558,7 +557,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     CacheException expectedException = getNewCacheException();
 
     try {
-      cacheProviderFacade.handleCacheException(expectedException);
+      cacheProviderFacade.handleCatchedException(expectedException);
       fail();
 
     } catch (CacheException exception) {
@@ -571,7 +570,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     CacheException cacheException = getNewCacheException();
 
     try {
-      cacheProviderFacade.handleCacheException(cacheException);
+      cacheProviderFacade.handleCatchedException(cacheException);
     } catch (CacheException exception) {
       fail();
     }
@@ -602,7 +601,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
       cacheProviderFacade.makeSerializableIfNecessary(objectToCache);
       fail();
 
-    } catch (InvalidObjectToCacheException exception) {
+    } catch (IllegalObjectToCacheException exception) {
       // we are expecting this exception.
     }
   }
@@ -619,26 +618,11 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   }
 
   public void testMakeSerializableIfNecessaryWithCacheRequiringSerializableElementsAndSerializableFactoryIsNotNull() {
-    MockControl serializableFactoryControl = MockControl
-        .createControl(SerializableFactory.class);
-    SerializableFactory serializableFactory = (SerializableFactory) serializableFactoryControl
-        .getMock();
-    cacheProviderFacade.setSerializableFactory(serializableFactory);
-
     expectCacheRequiresSerializableElements(true);
 
     Object objectToCache = "Luke Skywalker";
-    serializableFactory.makeSerializableIfNecessary(objectToCache);
-    serializableFactoryControl.setReturnValue(objectToCache);
-
-    setStateOfMockControlsToReplay();
-    serializableFactoryControl.replay();
-
     assertSame(objectToCache, cacheProviderFacade
         .makeSerializableIfNecessary(objectToCache));
-
-    verifyExpectationsOfMockControlsWereMet();
-    serializableFactoryControl.verify();
   }
 
   public void testPutInCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsFalse()
@@ -701,7 +685,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
       cacheProviderFacade.putInCache(cacheKey, CACHE_PROFILE_ID, objectToCache);
       fail();
 
-    } catch (InvalidObjectToCacheException exception) {
+    } catch (IllegalObjectToCacheException exception) {
       // expecting exception.
     }
 

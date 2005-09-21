@@ -32,8 +32,8 @@ import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
-import org.springmodules.cache.provider.InvalidConfigurationException;
-import org.springmodules.cache.provider.InvalidObjectToCacheException;
+import org.springmodules.cache.provider.IllegalCacheProviderStateException;
+import org.springmodules.cache.provider.IllegalObjectToCacheException;
 
 /**
  * <p>
@@ -42,7 +42,7 @@ import org.springmodules.cache.provider.InvalidObjectToCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/20 03:50:25 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/21 02:45:57 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -164,7 +164,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
    *      CacheProfile, Object)
    * 
-   * @throws InvalidObjectToCacheException
+   * @throws IllegalObjectToCacheException
    *           if the object to store is not an implementation of
    *           <code>java.io.Serializable</code>.
    * @throws CacheNotFoundException
@@ -228,21 +228,21 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    * an error when accessing the cache.)</li>
    * </ul>
    * 
-   * @throws InvalidConfigurationException
+   * @throws IllegalCacheProviderStateException
    *           if the Cache Manager is <code>null</code>.
-   * @throws InvalidConfigurationException
+   * @throws IllegalCacheProviderStateException
    *           if the status of the Cache Manager is not "Alive".
    * @see AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
    */
-  protected void validateCacheManager() throws InvalidConfigurationException {
+  protected void validateCacheManager() throws IllegalCacheProviderStateException {
     if (null == cacheManager) {
-      throw new InvalidConfigurationException(
+      throw new IllegalCacheProviderStateException(
           "The Cache Manager should not be null");
     }
 
     if (cacheManager.getStatus() != CacheManager.STATUS_ALIVE) {
-      throw new InvalidConfigurationException("Cache Manager is not alive");
+      throw new IllegalCacheProviderStateException("Cache Manager is not alive");
     }
   }
 
