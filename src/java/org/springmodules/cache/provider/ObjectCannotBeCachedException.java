@@ -19,9 +19,7 @@ package org.springmodules.cache.provider;
 
 /**
  * <p>
- * Exception thrown when an illegal object is going to be stored in a cache.
- * Each cache provider should determine which objects should be considered
- * illegal.
+ * Exception thrown when an object cannot be stored in the cache.
  * </p>
  * 
  * @author Alex Ruiz
