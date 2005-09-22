@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.CacheException;
 import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
-import org.springmodules.cache.provider.IllegalCacheProviderStateException;
+import org.springmodules.cache.provider.FatalCacheException;
 
 /**
  * <p>
@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.IllegalCacheProviderStateException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.13 $ $Date: 2005/09/21 02:45:48 $
+ * @version $Revision: 1.14 $ $Date: 2005/09/22 10:02:04 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -99,7 +99,7 @@ public class EhCacheFacadeTests extends TestCase {
 
   private EhCacheProfile cacheProfile;
 
-  private EhCacheFacade ehcacheFacade;
+  private EhCacheFacade ehCacheFacade;
 
   public EhCacheFacadeTests(String name) {
     super(name);
@@ -122,7 +122,7 @@ public class EhCacheFacadeTests extends TestCase {
     cacheControl.replay();
 
     try {
-      ehcacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
+      ehCacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
       fail();
 
     } catch (CacheAccessException cacheAccessException) {
@@ -134,10 +134,10 @@ public class EhCacheFacadeTests extends TestCase {
 
   private void assertValidateCacheManagerThrowsException() {
     try {
-      ehcacheFacade.validateCacheManager();
+      ehCacheFacade.validateCacheManager();
       fail();
 
-    } catch (IllegalCacheProviderStateException exception) {
+    } catch (FatalCacheException exception) {
       // we are expecting this exception.
     }
   }
@@ -152,13 +152,13 @@ public class EhCacheFacadeTests extends TestCase {
     Map cacheProfiles = new HashMap();
     cacheProfiles.put(CACHE_PROFILE_ID, cacheProfile);
 
-    ehcacheFacade = new EhCacheFacade();
-    ehcacheFacade.setCacheProfiles(cacheProfiles);
+    ehCacheFacade = new EhCacheFacade();
+    ehCacheFacade.setCacheProfiles(cacheProfiles);
   }
 
   private void setUpCache() {
     cache = cacheManager.getCache(CACHE_NAME);
-    ehcacheFacade.setCacheManager(cacheManager);
+    ehCacheFacade.setCacheManager(cacheManager);
   }
 
   private void setUpCacheAsMockObject(Method methodToMock) throws Exception {
@@ -178,7 +178,7 @@ public class EhCacheFacadeTests extends TestCase {
         constructorTypes, constructorArgs, methodsToMock);
 
     cache = (Cache) cacheControl.getMock();
-    ehcacheFacade.setCacheManager(cacheManager);
+    ehCacheFacade.setCacheManager(cacheManager);
 
     cacheManager.removeCache(CACHE_NAME);
     cacheManager.addCache(cache);
@@ -191,7 +191,7 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   public void testGetCacheProfileEditor() {
-    PropertyEditor editor = ehcacheFacade.getCacheProfileEditor();
+    PropertyEditor editor = ehCacheFacade.getCacheProfileEditor();
 
     assertNotNull(editor);
     assertEquals(CacheProfileEditor.class, editor.getClass());
@@ -208,7 +208,7 @@ public class EhCacheFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheProfileValidator() {
-    CacheProfileValidator validator = ehcacheFacade.getCacheProfileValidator();
+    CacheProfileValidator validator = ehCacheFacade.getCacheProfileValidator();
     assertNotNull(validator);
     assertEquals(EhCacheProfileValidator.class, validator.getClass());
   }
@@ -218,10 +218,10 @@ public class EhCacheFacadeTests extends TestCase {
 
     // we can mock the cache manager since it doesn't have a public constructor.
     // force a NullPointerException.
-    ehcacheFacade.setCacheManager(null);
+    ehCacheFacade.setCacheManager(null);
 
     try {
-      ehcacheFacade.getCache(CACHE_NAME);
+      ehCacheFacade.getCache(CACHE_NAME);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -235,7 +235,7 @@ public class EhCacheFacadeTests extends TestCase {
     setUpCache();
 
     Cache expected = cacheManager.getCache(CACHE_NAME);
-    Cache actual = ehcacheFacade.getCache(CACHE_NAME);
+    Cache actual = ehCacheFacade.getCache(CACHE_NAME);
     assertSame(expected, actual);
   }
 
@@ -243,7 +243,7 @@ public class EhCacheFacadeTests extends TestCase {
     setUpCache();
 
     try {
-      ehcacheFacade.getCache("AnotherCache");
+      ehCacheFacade.getCache("AnotherCache");
       fail();
 
     } catch (CacheNotFoundException exception) {
@@ -252,7 +252,7 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   public void testIsSerializableCacheElementRequired() {
-    assertTrue(ehcacheFacade.isSerializableCacheElementRequired());
+    assertTrue(ehCacheFacade.isSerializableCacheElementRequired());
   }
 
   /**
@@ -266,7 +266,7 @@ public class EhCacheFacadeTests extends TestCase {
     cache.put(new Element(CACHE_KEY, "A Value"));
 
     // execute the method to test.
-    ehcacheFacade.onFlushCache(cacheProfile);
+    ehCacheFacade.onFlushCache(cacheProfile);
 
     Object cachedValue = cache.get(CACHE_KEY);
     assertNull("The cache '" + CACHE_NAME + "' should be empty", cachedValue);
@@ -285,7 +285,7 @@ public class EhCacheFacadeTests extends TestCase {
     cacheControl.replay();
 
     try {
-      ehcacheFacade.onFlushCache(cacheProfile);
+      ehCacheFacade.onFlushCache(cacheProfile);
       fail();
 
     } catch (CacheAccessException cacheAccessException) {
@@ -302,7 +302,7 @@ public class EhCacheFacadeTests extends TestCase {
     cacheProfile.setCacheName("NonExistingCache");
 
     try {
-      ehcacheFacade.onFlushCache(cacheProfile);
+      ehCacheFacade.onFlushCache(cacheProfile);
       fail();
 
     } catch (CacheNotFoundException exception) {
@@ -322,7 +322,7 @@ public class EhCacheFacadeTests extends TestCase {
     String objectToStore = "An Object";
     cache.put(new Element(CACHE_KEY, objectToStore));
 
-    Object cachedObject = ehcacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
+    Object cachedObject = ehCacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
 
     assertEquals("<Cached object>", objectToStore, cachedObject);
   }
@@ -345,7 +345,7 @@ public class EhCacheFacadeTests extends TestCase {
     cacheProfile.setCacheName("NonExistingCache");
 
     try {
-      ehcacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
+      ehCacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
       fail();
 
     } catch (CacheNotFoundException exception) {
@@ -362,7 +362,7 @@ public class EhCacheFacadeTests extends TestCase {
   public void testOnGetFromCacheWhenKeyIsNotFound() throws Exception {
     setUpCache();
 
-    Object cachedObject = ehcacheFacade.onGetFromCache("NonExistingKey",
+    Object cachedObject = ehCacheFacade.onGetFromCache("NonExistingKey",
         cacheProfile);
 
     assertNull(cachedObject);
@@ -378,7 +378,7 @@ public class EhCacheFacadeTests extends TestCase {
     setUpCache();
 
     String objectToCache = "An Object";
-    ehcacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToCache);
+    ehCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToCache);
 
     Object cachedObject = cache.get(CACHE_KEY).getValue();
     assertSame("<Cached object>", objectToCache, cachedObject);
@@ -402,7 +402,7 @@ public class EhCacheFacadeTests extends TestCase {
     cacheControl.replay();
 
     try {
-      ehcacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToCache);
+      ehCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToCache);
       fail();
 
     } catch (CacheAccessException cacheAccessException) {
@@ -423,7 +423,7 @@ public class EhCacheFacadeTests extends TestCase {
 
     cacheProfile.setCacheName("NonExistingCache");
     try {
-      ehcacheFacade.onPutInCache(CACHE_KEY, cacheProfile, "An Object");
+      ehCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, "An Object");
       fail();
 
     } catch (CacheException exception) {
@@ -436,7 +436,7 @@ public class EhCacheFacadeTests extends TestCase {
 
     cache.put(new Element(CACHE_KEY, "An Object"));
 
-    ehcacheFacade.onRemoveFromCache(CACHE_KEY, cacheProfile);
+    ehCacheFacade.onRemoveFromCache(CACHE_KEY, cacheProfile);
 
     Element cacheElement = cache.get(CACHE_KEY);
     assertNull("The element with key '" + CACHE_KEY
@@ -457,7 +457,7 @@ public class EhCacheFacadeTests extends TestCase {
     cacheControl.replay();
 
     try {
-      ehcacheFacade.onRemoveFromCache(CACHE_KEY, cacheProfile);
+      ehCacheFacade.onRemoveFromCache(CACHE_KEY, cacheProfile);
       fail();
 
     } catch (CacheAccessException cacheAccessException) {
@@ -474,7 +474,7 @@ public class EhCacheFacadeTests extends TestCase {
     cacheProfile.setCacheName("NonExistingCache");
 
     try {
-      ehcacheFacade.removeFromCache(CACHE_KEY, CACHE_PROFILE_ID);
+      ehCacheFacade.removeFromCache(CACHE_KEY, CACHE_PROFILE_ID);
       fail();
 
     } catch (CacheException exception) {
@@ -482,40 +482,20 @@ public class EhCacheFacadeTests extends TestCase {
     }
   }
 
+  public void testValidateCacheManagerWithCacheManagerEqualToNull() {
+    ehCacheFacade.setCacheManager(null);
+    assertValidateCacheManagerThrowsException();
+  }
+
   /**
    * Verifies that the method
    * <code>{@link EhCacheFacade#validateCacheManager()}</code> does not throw
-   * any exception if the status of the Cache Manager is "Active".
+   * any exception if the cache manager is not <code>null</code>.
    */
-  public void testValidateCacheManagerWithCacheManagerEqualToActive()
+  public void testValidateCacheManagerWithCacheManagerNotEqualToNull()
       throws Exception {
     setUpCache();
 
-    ehcacheFacade.validateCacheManager();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheFacade#validateCacheManager()}</code> throws an
-   * <code>{@link IllegalCacheProviderStateException}</code> if the cache manager
-   * is <code>null</code>.
-   */
-  public void testValidateCacheManagerWithCacheManagerEqualToNull() {
-    ehcacheFacade.setCacheManager(null);
-    assertValidateCacheManagerThrowsException();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link EhCacheFacade#validateCacheManager()}</code> throws an
-   * <code>{@link IllegalCacheProviderStateException}</code> if the cache manager
-   * is not "alive" and the flag 'failQuietlyEnabled' is <code>false</code>.
-   */
-  public void testValidateCacheManagerWithCacheManagerNotAlive()
-      throws Exception {
-    ehcacheFacade.setFailQuietlyEnabled(false);
-    cacheManager.shutdown();
-
-    assertValidateCacheManagerThrowsException();
+    ehCacheFacade.validateCacheManager();
   }
 }
