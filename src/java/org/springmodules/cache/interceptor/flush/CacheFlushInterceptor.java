@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.CacheProviderFacadeStatus;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/21 02:45:49 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/22 00:41:35 $
  */
 public final class CacheFlushInterceptor extends CacheFlushAspectSupport
     implements MethodInterceptor {
@@ -56,10 +56,10 @@ public final class CacheFlushInterceptor extends CacheFlushAspectSupport
    * @return the metadata attribute of the intercepted method.
    */
   protected FlushCache getCacheFlushAttribute(MethodInvocation methodInvocation) {
-    Method method = methodInvocation.getMethod();
-
     Object thisObject = methodInvocation.getThis();
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
+
+    Method method = methodInvocation.getMethod();
 
     CacheFlushAttributeSource attributeSource = getCacheFlushAttributeSource();
     FlushCache attribute = attributeSource.getCacheFlushAttribute(method,
@@ -75,8 +75,9 @@ public final class CacheFlushInterceptor extends CacheFlushAspectSupport
    * @return the return value of the intercepted method.
    */
   public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-    if (cacheProviderFacade.getStatus() != CacheProviderFacadeStatus.READY) {
-      logger.info(cacheProviderFacade.getStatus());
+    CacheProviderFacadeStatus status = cacheProviderFacade.getStatus();
+    if (status != CacheProviderFacadeStatus.READY) {
+      logger.info(status);
       return methodInvocation.proceed();
     }
 

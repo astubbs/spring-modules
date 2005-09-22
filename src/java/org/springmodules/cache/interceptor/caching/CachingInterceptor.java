@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.CacheProviderFacadeStatus;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/21 02:45:54 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/22 00:41:36 $
  */
 public class CachingInterceptor extends CachingAspectSupport implements
     MethodInterceptor, InitializingBean {
@@ -72,10 +72,10 @@ public class CachingInterceptor extends CachingAspectSupport implements
    * @return the metadata attribute of the intercepted method.
    */
   protected final Cached getCachingAttribute(MethodInvocation methodInvocation) {
-    Method method = methodInvocation.getMethod();
-
     Object thisObject = methodInvocation.getThis();
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
+
+    Method method = methodInvocation.getMethod();
 
     CachingAttributeSource attributeSource = getCachingAttributeSource();
     Cached attribute = attributeSource.getCachingAttribute(method, targetClass);
@@ -96,8 +96,9 @@ public class CachingInterceptor extends CachingAspectSupport implements
   public final Object invoke(MethodInvocation methodInvocation)
       throws Throwable {
 
-    if (cacheProviderFacade.getStatus() != CacheProviderFacadeStatus.READY) {
-      logger.info(cacheProviderFacade.getStatus());
+    CacheProviderFacadeStatus status = cacheProviderFacade.getStatus();
+    if (status != CacheProviderFacadeStatus.READY) {
+      logger.info(status);
       return methodInvocation.proceed();
     }
 
