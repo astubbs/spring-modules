@@ -80,7 +80,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
       cacheProviderFacade.afterPropertiesSet();
       fail();
 
-    } catch (IllegalCacheProviderStateException exception) {
+    } catch (FatalCacheException exception) {
       // we are expecting this exception to be thrown.
     }
   }
@@ -253,7 +253,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>
-   * throws a <code>{@link IllegalCacheProviderStateException}</code> wrapping
+   * throws a <code>{@link FatalCacheException}</code> wrapping
    * any exception thrown by the <code>{@link CacheProfileValidator}</code>.
    */
   public void testAfterPropertiesSetWhenValidationOfCacheProfilesThrowsException()
@@ -276,7 +276,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
       cacheProviderFacade.afterPropertiesSet();
       fail();
 
-    } catch (IllegalCacheProviderStateException exception) {
+    } catch (FatalCacheException exception) {
       assertSame("<Nested exception>", expectedNestedException, exception
           .getCause());
     }
@@ -601,7 +601,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
       cacheProviderFacade.makeSerializableIfNecessary(objectToCache);
       fail();
 
-    } catch (IllegalObjectToCacheException exception) {
+    } catch (ObjectCannotBeCachedException exception) {
       // we are expecting this exception.
     }
   }
@@ -685,7 +685,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
       cacheProviderFacade.putInCache(cacheKey, CACHE_PROFILE_ID, objectToCache);
       fail();
 
-    } catch (IllegalObjectToCacheException exception) {
+    } catch (ObjectCannotBeCachedException exception) {
       // expecting exception.
     }
 

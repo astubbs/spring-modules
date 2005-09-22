@@ -32,8 +32,8 @@ import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
-import org.springmodules.cache.provider.IllegalCacheProviderStateException;
-import org.springmodules.cache.provider.IllegalObjectToCacheException;
+import org.springmodules.cache.provider.FatalCacheException;
+import org.springmodules.cache.provider.ObjectCannotBeCachedException;
 
 /**
  * <p>
@@ -42,7 +42,7 @@ import org.springmodules.cache.provider.IllegalObjectToCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.13 $ $Date: 2005/09/21 02:45:57 $
+ * @version $Revision: 1.14 $ $Date: 2005/09/22 03:14:17 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -71,7 +71,6 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
       if (cacheManager.cacheExists(cacheName)) {
         cache = cacheManager.getCache(cacheName);
       }
-
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -164,7 +163,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
    * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
    *      CacheProfile, Object)
    * 
-   * @throws IllegalObjectToCacheException
+   * @throws ObjectCannotBeCachedException
    *           if the object to store is not an implementation of
    *           <code>java.io.Serializable</code>.
    * @throws CacheNotFoundException
@@ -220,29 +219,14 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * <ul>
-   * <li>Validates that <code>{@link #cacheManager}</code> is not
-   * <code>null</code></li>
-   * <li>Verifies that the state of <code>{@link #cacheManager}</code> is
-   * 'active' (only if this facade is not configured to fail quietly in case of
-   * an error when accessing the cache.)</li>
-   * </ul>
-   * 
-   * @throws IllegalCacheProviderStateException
-   *           if the Cache Manager is <code>null</code>.
-   * @throws IllegalCacheProviderStateException
-   *           if the status of the Cache Manager is not "Alive".
-   * @see AbstractCacheProviderFacadeImpl#isFailQuietlyEnabled()
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
+   * 
+   * @throws FatalCacheException
+   *           if the cache manager is <code>null</code>.
    */
-  protected void validateCacheManager() throws IllegalCacheProviderStateException {
+  protected void validateCacheManager() throws FatalCacheException {
     if (null == cacheManager) {
-      throw new IllegalCacheProviderStateException(
-          "The Cache Manager should not be null");
-    }
-
-    if (cacheManager.getStatus() != CacheManager.STATUS_ALIVE) {
-      throw new IllegalCacheProviderStateException("Cache Manager is not alive");
+      throw new FatalCacheException("The cache manager should not be null");
     }
   }
 

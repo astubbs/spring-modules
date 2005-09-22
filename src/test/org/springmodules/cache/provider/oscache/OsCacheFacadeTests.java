@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import org.easymock.classextension.MockClassControl;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
-import org.springmodules.cache.provider.IllegalCacheProviderStateException;
+import org.springmodules.cache.provider.FatalCacheException;
 
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -42,7 +42,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/21 02:45:51 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/22 03:14:16 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
@@ -389,7 +389,7 @@ public class OsCacheFacadeTests extends TestCase {
     try {
       osCacheFacade.validateCacheManager();
       fail();
-    } catch (IllegalCacheProviderStateException exception) {
+    } catch (FatalCacheException exception) {
       // we are expecting this exception.
     }
   }

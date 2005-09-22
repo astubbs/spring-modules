@@ -20,24 +20,22 @@ package org.springmodules.cache.provider;
 
 /**
  * <p>
- * Exception thrown when an implementation of
- * <code>{@link CacheProviderFacade}</code> has not been configured properly.
+ * Thrown on an unrecoverable problem encountered in the cache package.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public class IllegalCacheProviderStateException extends CacheException {
+public class FatalCacheException extends CacheException {
 
   private static final long serialVersionUID = -5778844057206602130L;
 
-  public IllegalCacheProviderStateException(String detailMessage) {
+  public FatalCacheException(String detailMessage) {
     super(detailMessage);
   }
 
-  public IllegalCacheProviderStateException(String detailMessage,
-      Throwable nestedException) {
+  public FatalCacheException(String detailMessage, Throwable nestedException) {
     super(detailMessage, nestedException);
   }
 

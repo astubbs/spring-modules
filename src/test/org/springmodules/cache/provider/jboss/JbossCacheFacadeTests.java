@@ -79,7 +79,7 @@ public class JbossCacheFacadeTests extends TestCase {
     treeCache = new TreeCache();
     startTreeCache();
 
-    jbossCacheFacade.setTreeCache(treeCache);
+    jbossCacheFacade.setCacheManager(treeCache);
   }
 
   private void setUpTreeCacheAsMockObject(Method methodToMock) throws Exception {
@@ -95,7 +95,7 @@ public class JbossCacheFacadeTests extends TestCase {
     treeCache = (TreeCache) treeCacheControl.getMock();
     startTreeCache();
 
-    jbossCacheFacade.setTreeCache(treeCache);
+    jbossCacheFacade.setCacheManager(treeCache);
   }
 
   private void startTreeCache() throws Exception {

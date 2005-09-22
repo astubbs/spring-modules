@@ -40,7 +40,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.18 $ $Date: 2005/09/21 02:45:45 $
+ * @version $Revision: 1.19 $ $Date: 2005/09/22 03:14:13 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -71,8 +71,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * @see #validateCacheManager()
    * @see #validateCacheProfiles()
    */
-  public final void afterPropertiesSet()
-      throws IllegalCacheProviderStateException {
+  public final void afterPropertiesSet() throws FatalCacheException {
 
     try {
       validateCacheManager();
@@ -83,7 +82,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
       validateCacheProfiles();
 
-    } catch (IllegalCacheProviderStateException exception) {
+    } catch (FatalCacheException exception) {
       setStatus(CacheProviderFacadeStatus.INVALID);
 
       handleCatchedException(exception);
@@ -272,7 +271,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * @param obj
    *          the object to check.
    * @return the given object as a serializable object if necessary.
-   * @throws IllegalObjectToCacheException
+   * @throws ObjectCannotBeCachedException
    *           if the cache requires serializable elements, the given object
    *           does not implement <code>java.io.Serializable</code> and the
    *           factory of serializable objects is <code>null</code>.
@@ -289,7 +288,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     if (serializableFactory != null) {
       return serializableFactory.makeSerializableIfNecessary(obj);
     }
-    throw new IllegalObjectToCacheException(
+    throw new ObjectCannotBeCachedException(
         "The cache can only store implementations of java.io.Serializable");
   }
 
@@ -426,12 +425,12 @@ public abstract class AbstractCacheProviderFacadeImpl implements
   }
 
   /**
-   * @throws IllegalCacheProviderStateException
+   * @throws FatalCacheException
    *           if one or more cache profiles cannot be created from the given
    *           properties.
    */
   private void setCacheProfilesFromProperties(Properties properties)
-      throws IllegalCacheProviderStateException {
+      throws FatalCacheException {
     Map newCacheProfiles = new HashMap();
     PropertyEditor cacheProfileEditor = getCacheProfileEditor();
 
@@ -450,7 +449,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
         newCacheProfiles.put(cacheProfileId, cacheProfile);
       }
     } catch (RuntimeException exception) {
-      throw new IllegalCacheProviderStateException(
+      throw new FatalCacheException(
           "Unable to create cache profile from the properties "
               + Strings.quote(cacheProfileAsProperties) + " with id "
               + Strings.quote(cacheProfileId), exception);
@@ -479,25 +478,22 @@ public abstract class AbstractCacheProviderFacadeImpl implements
   /**
    * Validates the cache manager used by this facade.
    * 
-   * @throws IllegalCacheProviderStateException
+   * @throws FatalCacheException
    *           if the cache manager is <code>null</code> or any of its
    *           properties contain invalid values.
    */
-  protected abstract void validateCacheManager()
-      throws IllegalCacheProviderStateException;
+  protected abstract void validateCacheManager() throws FatalCacheException;
 
   /**
-   * @throws IllegalCacheProviderStateException
+   * @throws FatalCacheException
    *           if the map of cache profiles is <code>null</code> or empty.
-   * @throws IllegalCacheProviderStateException
+   * @throws FatalCacheException
    *           if one or more cache profiles have invalid values of any of their
    *           properties.
    */
-  private void validateCacheProfiles()
-      throws IllegalCacheProviderStateException {
-
+  private void validateCacheProfiles() throws FatalCacheException {
     if (cacheProfiles == null || cacheProfiles.isEmpty()) {
-      throw new IllegalCacheProviderStateException(
+      throw new FatalCacheException(
           "The map of cache profiles should not be empty");
     }
 
@@ -515,11 +511,9 @@ public abstract class AbstractCacheProviderFacadeImpl implements
       }
 
     } catch (InvalidCacheProfileException exception) {
-      throw new IllegalCacheProviderStateException("Invalid cache profile <"
-          + cacheProfile + "> with id " + Strings.quote(cacheProfileId),
-          exception);
+      throw new FatalCacheException("Invalid cache profile <" + cacheProfile
+          + "> with id " + Strings.quote(cacheProfileId), exception);
     }
   }
-  
-  
+
 }

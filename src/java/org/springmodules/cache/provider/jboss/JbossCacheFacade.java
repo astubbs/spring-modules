@@ -26,7 +26,7 @@ import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
-import org.springmodules.cache.provider.IllegalCacheProviderStateException;
+import org.springmodules.cache.provider.FatalCacheException;
 
 /**
  * <p>
@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.IllegalCacheProviderStateException;
  */
 public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
 
-  private TreeCache treeCache;
+  private TreeCache cacheManager;
 
   public JbossCacheFacade() {
     super();
@@ -76,7 +76,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
     JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
 
     try {
-      treeCache.remove(profile.getNodeFqn());
+      cacheManager.remove(profile.getNodeFqn());
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -93,7 +93,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
     Object cachedObject = null;
 
     try {
-      cachedObject = treeCache.get(profile.getNodeFqn(), cacheKey);
+      cachedObject = cacheManager.get(profile.getNodeFqn(), cacheKey);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -109,7 +109,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
     JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
 
     try {
-      treeCache.put(profile.getNodeFqn(), cacheKey, objectToCache);
+      cacheManager.put(profile.getNodeFqn(), cacheKey, objectToCache);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -124,22 +124,26 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
     JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
 
     try {
-      treeCache.remove(profile.getNodeFqn(), cacheKey);
+      cacheManager.remove(profile.getNodeFqn(), cacheKey);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
   }
 
-  public final void setTreeCache(TreeCache newTreeCache) {
-    treeCache = newTreeCache;
+  public final void setCacheManager(TreeCache newCacheManager) {
+    cacheManager = newCacheManager;
   }
 
   /**
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
+   * 
+   * @throws FatalCacheException
+   *           if the cache manager is <code>null</code>.
    */
-  protected void validateCacheManager() throws IllegalCacheProviderStateException {
-    // TODO Auto-generated method stub
-
+  protected void validateCacheManager() throws FatalCacheException {
+    if (null == cacheManager) {
+      throw new FatalCacheException("The cache manager should not be null");
+    }
   }
 
 }

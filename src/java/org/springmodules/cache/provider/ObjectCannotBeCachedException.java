@@ -28,15 +28,15 @@ package org.springmodules.cache.provider;
  * 
  * @version $Revision$ $Date$
  */
-public class IllegalObjectToCacheException extends CacheException {
+public class ObjectCannotBeCachedException extends CacheException {
 
   private static final long serialVersionUID = -9124262814399202014L;
 
-  public IllegalObjectToCacheException(String detailMessage) {
+  public ObjectCannotBeCachedException(String detailMessage) {
     super(detailMessage);
   }
 
-  public IllegalObjectToCacheException(String detailMessage,
+  public ObjectCannotBeCachedException(String detailMessage,
       Throwable nestedException) {
     super(detailMessage, nestedException);
   }

@@ -36,7 +36,7 @@ import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
-import org.springmodules.cache.provider.IllegalCacheProviderStateException;
+import org.springmodules.cache.provider.FatalCacheException;
 
 /**
  * <p>
@@ -45,7 +45,7 @@ import org.springmodules.cache.provider.IllegalCacheProviderStateException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.19 $ $Date: 2005/09/21 02:46:01 $
+ * @version $Revision: 1.20 $ $Date: 2005/09/22 03:14:17 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
 
@@ -250,13 +250,13 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   /**
    * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
    * 
-   * @throws IllegalCacheProviderStateException
-   *           if the Cache Manager is <code>null</code>.
+   * @throws FatalCacheException
+   *           if the cache manager is <code>null</code>.
    */
-  protected void validateCacheManager() throws IllegalCacheProviderStateException {
+  protected void validateCacheManager() throws FatalCacheException {
     if (null == cacheManager) {
-      throw new IllegalCacheProviderStateException(
-          "The Cache Manager should not be null");
+      throw new FatalCacheException("The cache manager should not be null");
     }
   }
+
 }
