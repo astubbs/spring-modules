@@ -40,7 +40,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.19 $ $Date: 2005/09/22 03:14:13 $
+ * @version $Revision: 1.20 $ $Date: 2005/09/22 03:17:22 $
  */
 public abstract class AbstractCacheProviderFacadeImpl implements
     CacheProviderFacade {
@@ -98,10 +98,8 @@ public abstract class AbstractCacheProviderFacadeImpl implements
       throws CacheException {
 
     if (logger.isDebugEnabled()) {
-      String logMessage = "Attempt to cancel a cache update using the key <"
-          + cacheKey + ">";
-
-      logger.debug(logMessage);
+      logger.debug("Attempt to cancel a cache update using the key <"
+          + cacheKey + ">");
     }
 
     try {
