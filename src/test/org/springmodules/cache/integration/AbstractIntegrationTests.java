@@ -26,7 +26,7 @@ import java.util.Map;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.interceptor.caching.CachingAspectSupport;
-import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
+import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 
 /**
  * <p>
@@ -36,7 +36,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/06 01:41:38 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/22 10:03:40 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
@@ -124,7 +124,7 @@ public abstract class AbstractIntegrationTests extends
    */
   public final void testCacheProfileConfiguration() {
     // get the cache profiles.
-    AbstractCacheProviderFacadeImpl cacheProviderFacade = (AbstractCacheProviderFacadeImpl) super.applicationContext
+    AbstractCacheProviderFacade cacheProviderFacade = (AbstractCacheProviderFacade) super.applicationContext
         .getBean("cacheProvider");
     Map cacheProfiles = cacheProviderFacade.getCacheProfiles();
 

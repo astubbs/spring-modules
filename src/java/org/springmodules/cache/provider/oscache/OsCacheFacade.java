@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
+import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileEditor;
 import org.springmodules.cache.provider.CacheProfileValidator;
@@ -39,9 +39,9 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/22 03:14:14 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/22 10:03:42 $
  */
-public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
+public final class OsCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * OSCache cache manager.
@@ -53,7 +53,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
+   * @see AbstractCacheProviderFacade#getCacheProfileEditor()
    */
   protected PropertyEditor getCacheProfileEditor() {
     Map propertyEditors = new HashMap();
@@ -66,7 +66,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#getCacheProfileValidator()
+   * @see AbstractCacheProviderFacade#getCacheProfileValidator()
    * @see OsCacheProfileValidator#validateCacheProfile(Object)
    */
   protected CacheProfileValidator getCacheProfileValidator() {
@@ -85,7 +85,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#isSerializableCacheElementRequired()
+   * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
    */
   protected boolean isSerializableCacheElementRequired() {
     return false;
@@ -93,7 +93,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
   /**
    * 
-   * @see AbstractCacheProviderFacadeImpl#onCancelCacheUpdate(Serializable)
+   * @see AbstractCacheProviderFacade#onCancelCacheUpdate(Serializable)
    */
   protected void onCancelCacheUpdate(Serializable cacheKey) {
     String key = getEntryKey(cacheKey);
@@ -101,7 +101,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
+   * @see AbstractCacheProviderFacade#onFlushCache(CacheProfile)
    */
   protected void onFlushCache(CacheProfile cacheProfile) {
     OsCacheProfile profile = (OsCacheProfile) cacheProfile;
@@ -121,7 +121,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onGetFromCache(Serializable,
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable,
    *      CacheProfile)
    */
   protected Object onGetFromCache(Serializable cacheKey,
@@ -153,7 +153,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable,
    *      CacheProfile, Object)
    */
   protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
@@ -174,7 +174,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
 
   /**
    * 
-   * @see AbstractCacheProviderFacadeImpl#onRemoveFromCache(Serializable,
+   * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
    *      CacheProfile)
    */
   protected void onRemoveFromCache(Serializable cacheKey,
@@ -189,15 +189,13 @@ public final class OsCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
+   * @see AbstractCacheProviderFacade#validateCacheManager()
    * 
    * @throws FatalCacheException
    *           if the cache manager is <code>null</code>.
    */
   protected void validateCacheManager() throws FatalCacheException {
-    if (null == cacheManager) {
-      throw new FatalCacheException("The cache manager should not be null");
-    }
+    assertCacheManagerIsNotNull(cacheManager);
   }
 
 }

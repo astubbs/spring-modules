@@ -29,7 +29,7 @@ import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
+import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheException;
 import org.springmodules.cache.provider.CacheNotFoundException;
@@ -45,9 +45,9 @@ import org.springmodules.cache.provider.FatalCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.20 $ $Date: 2005/09/22 03:14:17 $
+ * @version $Revision: 1.21 $ $Date: 2005/09/22 10:03:44 $
  */
-public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
+public final class JcsFacade extends AbstractCacheProviderFacade {
 
   /**
    * JCS cache manager.
@@ -75,7 +75,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
+   * @see AbstractCacheProviderFacade#getCacheProfileEditor()
    */
   protected PropertyEditor getCacheProfileEditor() {
     CacheProfileEditor editor = new CacheProfileEditor();
@@ -84,7 +84,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#getCacheProfileValidator()
+   * @see AbstractCacheProviderFacade#getCacheProfileValidator()
    * @see JcsProfileValidator#validateCacheProfile(Object)
    */
   protected CacheProfileValidator getCacheProfileValidator() {
@@ -115,14 +115,14 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#isSerializableCacheElementRequired()
+   * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
    */
   protected boolean isSerializableCacheElementRequired() {
     return true;
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
+   * @see AbstractCacheProviderFacade#onFlushCache(CacheProfile)
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given profile cannot be found.
@@ -152,7 +152,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onGetFromCache(Serializable,
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable,
    *      CacheProfile)
    * 
    * @throws CacheNotFoundException
@@ -185,7 +185,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable,
    *      CacheProfile, Object)
    * 
    * @throws CacheNotFoundException
@@ -217,7 +217,7 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onRemoveFromCache(Serializable,
+   * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
    *      CacheProfile)
    * 
    * @throws CacheNotFoundException
@@ -248,15 +248,13 @@ public final class JcsFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
+   * @see AbstractCacheProviderFacade#validateCacheManager()
    * 
    * @throws FatalCacheException
    *           if the cache manager is <code>null</code>.
    */
   protected void validateCacheManager() throws FatalCacheException {
-    if (null == cacheManager) {
-      throw new FatalCacheException("The cache manager should not be null");
-    }
+    assertCacheManagerIsNotNull(cacheManager);
   }
 
 }

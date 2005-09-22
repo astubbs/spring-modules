@@ -25,7 +25,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
+import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheException;
 import org.springmodules.cache.provider.CacheNotFoundException;
@@ -42,9 +42,9 @@ import org.springmodules.cache.provider.ObjectCannotBeCachedException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/09/22 03:14:17 $
+ * @version $Revision: 1.15 $ $Date: 2005/09/22 10:03:42 $
  */
-public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
+public final class EhCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * EHCache cache manager.
@@ -83,7 +83,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
+   * @see AbstractCacheProviderFacade#getCacheProfileEditor()
    */
   protected PropertyEditor getCacheProfileEditor() {
     CacheProfileEditor editor = new CacheProfileEditor();
@@ -92,7 +92,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#getCacheProfileValidator()
+   * @see AbstractCacheProviderFacade#getCacheProfileValidator()
    * @see EhCacheProfileValidator#validateCacheProfile(Object)
    */
   protected CacheProfileValidator getCacheProfileValidator() {
@@ -100,14 +100,14 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#isSerializableCacheElementRequired()
+   * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
    */
   protected boolean isSerializableCacheElementRequired() {
     return true;
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
+   * @see AbstractCacheProviderFacade#onFlushCache(CacheProfile)
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given profile cannot be found.
@@ -129,7 +129,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onGetFromCache(Serializable,
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable,
    *      CacheProfile)
    * 
    * @throws CacheNotFoundException
@@ -160,7 +160,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable,
    *      CacheProfile, Object)
    * 
    * @throws ObjectCannotBeCachedException
@@ -190,7 +190,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onRemoveFromCache(Serializable,
+   * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
    *      CacheProfile)
    * 
    * @throws CacheNotFoundException
@@ -219,15 +219,13 @@ public final class EhCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
+   * @see AbstractCacheProviderFacade#validateCacheManager()
    * 
    * @throws FatalCacheException
    *           if the cache manager is <code>null</code>.
    */
   protected void validateCacheManager() throws FatalCacheException {
-    if (null == cacheManager) {
-      throw new FatalCacheException("The cache manager should not be null");
-    }
+    assertCacheManagerIsNotNull(cacheManager);
   }
 
 }

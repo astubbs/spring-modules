@@ -40,9 +40,9 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.20 $ $Date: 2005/09/22 03:17:22 $
+ * @version $Revision$ $Date$
  */
-public abstract class AbstractCacheProviderFacadeImpl implements
+public abstract class AbstractCacheProviderFacade implements
     CacheProviderFacade {
 
   /**
@@ -59,7 +59,7 @@ public abstract class AbstractCacheProviderFacadeImpl implements
 
   private CacheProviderFacadeStatus status;
 
-  public AbstractCacheProviderFacadeImpl() {
+  public AbstractCacheProviderFacade() {
     super();
     setStatus(CacheProviderFacadeStatus.UNINITIALIZED);
   }
@@ -89,6 +89,13 @@ public abstract class AbstractCacheProviderFacadeImpl implements
     }
 
     setStatus(CacheProviderFacadeStatus.READY);
+  }
+
+  protected final void assertCacheManagerIsNotNull(Object cacheManager)
+      throws FatalCacheException {
+    if (cacheManager == null) {
+      throw new FatalCacheException("The cache manager should not be null");
+    }
   }
 
   /**
@@ -477,10 +484,11 @@ public abstract class AbstractCacheProviderFacadeImpl implements
    * Validates the cache manager used by this facade.
    * 
    * @throws FatalCacheException
-   *           if the cache manager is <code>null</code> or any of its
-   *           properties contain invalid values.
+   *           if the cache manager is in an invalid state.
    */
-  protected abstract void validateCacheManager() throws FatalCacheException;
+  protected void validateCacheManager() throws FatalCacheException {
+    // no implementation.
+  }
 
   /**
    * @throws FatalCacheException

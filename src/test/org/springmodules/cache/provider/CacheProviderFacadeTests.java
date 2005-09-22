@@ -34,14 +34,14 @@ import org.springmodules.cache.mock.MockCacheProfile;
 
 /**
  * <p>
- * Unit Tests for <code>{@link AbstractCacheProviderFacadeImpl}</code>.
+ * Unit Tests for <code>{@link AbstractCacheProviderFacade}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public final class CacheProviderFacadeImplTests extends TestCase {
+public final class CacheProviderFacadeTests extends TestCase {
 
   private static final String CACHE_PROFILE_ID = "CACHE_PROFILE_ID";
 
@@ -67,11 +67,11 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   private MockControl cacheProfileValidatorControl;
 
-  private AbstractCacheProviderFacadeImpl cacheProviderFacade;
+  private AbstractCacheProviderFacade cacheProviderFacade;
 
   private MockClassControl cacheProviderFacadeControl;
 
-  public CacheProviderFacadeImplTests(String name) {
+  public CacheProviderFacadeTests(String name) {
     super(name);
   }
 
@@ -149,7 +149,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
   }
 
   private void setUpCacheProviderFacadeAsMockObject() throws Exception {
-    Class classToMock = AbstractCacheProviderFacadeImpl.class;
+    Class classToMock = AbstractCacheProviderFacade.class;
 
     Method getCacheProfileEditorMethod = classToMock.getDeclaredMethod(
         "getCacheProfileEditor", null);
@@ -185,7 +185,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
     cacheProviderFacadeControl = MockClassControl.createControl(classToMock,
         null, null, methodsToMock);
 
-    cacheProviderFacade = (AbstractCacheProviderFacadeImpl) cacheProviderFacadeControl
+    cacheProviderFacade = (AbstractCacheProviderFacade) cacheProviderFacadeControl
         .getMock();
   }
 
@@ -252,7 +252,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#afterPropertiesSet()}</code>
+   * <code>{@link AbstractCacheProviderFacade#afterPropertiesSet()}</code>
    * throws a <code>{@link FatalCacheException}</code> wrapping
    * any exception thrown by the <code>{@link CacheProfileValidator}</code>.
    */
@@ -378,7 +378,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#flushCache(String[])}</code>
+   * <code>{@link AbstractCacheProviderFacade#flushCache(String[])}</code>
    * does not flush the cache if the array of cache profile ids is equal to
    * <code>null</code>.
    */
@@ -396,7 +396,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#flushCache(String[])}</code>
+   * <code>{@link AbstractCacheProviderFacade#flushCache(String[])}</code>
    * does not flush the cache if the array of cache profile ids is empty.
    */
   public void testFlushCacheWhenProfileIdsIsEmpty() throws Exception {
@@ -427,7 +427,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#flushCache(String[])}</code>
+   * <code>{@link AbstractCacheProviderFacade#flushCache(String[])}</code>
    * does not flush the cache if the specified cache profiles cannot be found.
    */
   public void testFlushCacheWithNotEmptyArrayOfProfileIdsAndNotExistingProfileId()
@@ -536,7 +536,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#getFromCache(Serializable, String)}</code>
+   * <code>{@link AbstractCacheProviderFacade#getFromCache(Serializable, String)}</code>
    * does not try to access the cache if the cache facade does not contain a
    * profile stored under the given id.
    */
@@ -723,7 +723,7 @@ public final class CacheProviderFacadeImplTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeImpl#putInCache(Serializable, String, Object)}</code>.
+   * <code>{@link AbstractCacheProviderFacade#putInCache(Serializable, String, Object)}</code>.
    * does not try to access the cache if the cache facade does not contain a
    * profile stored under the given id.
    */

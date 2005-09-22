@@ -21,7 +21,7 @@ import java.beans.PropertyEditor;
 import java.io.Serializable;
 
 import org.jboss.cache.TreeCache;
-import org.springmodules.cache.provider.AbstractCacheProviderFacadeImpl;
+import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.cache.provider.CacheProfileEditor;
@@ -37,7 +37,7 @@ import org.springmodules.cache.provider.FatalCacheException;
  * 
  * @version $Revision$ $Date$
  */
-public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
+public class JbossCacheFacade extends AbstractCacheProviderFacade {
 
   private TreeCache cacheManager;
 
@@ -46,7 +46,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#getCacheProfileEditor()
+   * @see AbstractCacheProviderFacade#getCacheProfileEditor()
    */
   protected PropertyEditor getCacheProfileEditor() {
     CacheProfileEditor editor = new CacheProfileEditor();
@@ -55,7 +55,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#getCacheProfileValidator()
+   * @see AbstractCacheProviderFacade#getCacheProfileValidator()
    */
   protected CacheProfileValidator getCacheProfileValidator() {
     // TODO Auto-generated method stub
@@ -63,14 +63,14 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#isSerializableCacheElementRequired()
+   * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
    */
   protected boolean isSerializableCacheElementRequired() {
     return false;
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onFlushCache(CacheProfile)
+   * @see AbstractCacheProviderFacade#onFlushCache(CacheProfile)
    */
   protected void onFlushCache(CacheProfile cacheProfile) {
     JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
@@ -83,7 +83,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onGetFromCache(Serializable,
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable,
    *      CacheProfile)
    */
   protected Object onGetFromCache(Serializable cacheKey,
@@ -101,7 +101,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onPutInCache(Serializable,
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable,
    *      CacheProfile, Object)
    */
   protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
@@ -116,7 +116,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#onRemoveFromCache(Serializable,
+   * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
    *      CacheProfile)
    */
   protected void onRemoveFromCache(Serializable cacheKey,
@@ -135,15 +135,13 @@ public class JbossCacheFacade extends AbstractCacheProviderFacadeImpl {
   }
 
   /**
-   * @see AbstractCacheProviderFacadeImpl#validateCacheManager()
+   * @see AbstractCacheProviderFacade#validateCacheManager()
    * 
    * @throws FatalCacheException
    *           if the cache manager is <code>null</code>.
    */
   protected void validateCacheManager() throws FatalCacheException {
-    if (null == cacheManager) {
-      throw new FatalCacheException("The cache manager should not be null");
-    }
+    assertCacheManagerIsNotNull(cacheManager);
   }
 
 }
