@@ -21,6 +21,7 @@ package org.springmodules.cache.interceptor.flush;
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
 import org.springmodules.cache.interceptor.AbstractCacheModuleInterceptorTests;
+import org.springmodules.cache.provider.CacheProviderFacadeStatus;
 
 /**
  * <p>
@@ -29,7 +30,7 @@ import org.springmodules.cache.interceptor.AbstractCacheModuleInterceptorTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/21 02:45:56 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/22 00:42:41 $
  */
 public final class CacheFlushInterceptorTests extends
     AbstractCacheModuleInterceptorTests {
@@ -49,10 +50,32 @@ public final class CacheFlushInterceptorTests extends
     super(name);
   }
 
+  private void assertInterceptorInvocationIsCorrect(
+      Object expectedInvocationReturnValue) throws Throwable {
+    setStateOfMockControlsToReplay();
+
+    Object actualReturnValue = cacheFlushInterceptor.invoke(methodInvocation);
+    assertSame(expectedInvocationReturnValue, actualReturnValue);
+
+    verifyExpectationsOfMockControlsWereMet();
+  }
+
+  private void assertInvokeWithStatusOfCacheProviderNotReadyDoesNotAccessCache(
+      CacheProviderFacadeStatus status) throws Throwable {
+    cacheProviderFacade.getStatus();
+    cacheProviderFacadeControl.setReturnValue(status);
+
+    Object proceedReturnValue = "Luke Skywalker";
+    expectProceedMethodInvocation(proceedReturnValue);
+
+    assertInterceptorInvocationIsCorrect(proceedReturnValue);
+  }
+
   private void expectGetCacheFlushAttributeForInterceptedMethod(
       Object thisObject, FlushCache returnValue) {
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
 
+    expectGetMethodFromMethodInvocation();
     cacheFlushAttributeSource.getCacheFlushAttribute(interceptedMethod,
         targetClass);
     cacheFlushAttributeSourceControl.setReturnValue(returnValue);
@@ -157,13 +180,7 @@ public final class CacheFlushInterceptorTests extends
     // flush the cache.
     cacheProviderFacade.flushCache(cacheFlushAttribute.getCacheProfileIds());
 
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object actualReturnValue = cacheFlushInterceptor.invoke(methodInvocation);
-    assertSame(proceedReturnValue, actualReturnValue);
-
-    verifyExpectationsOfMockControlsWereMet();
+    assertInterceptorInvocationIsCorrect(proceedReturnValue);
   }
 
   /**
@@ -190,13 +207,15 @@ public final class CacheFlushInterceptorTests extends
     Object proceedReturnValue = new Integer(10);
     expectProceedMethodInvocation(proceedReturnValue);
 
-    setStateOfMockControlsToReplay();
+    assertInterceptorInvocationIsCorrect(proceedReturnValue);
+  }
 
-    // execute the method to test.
-    Object actualReturnValue = cacheFlushInterceptor.invoke(methodInvocation);
-    assertSame(proceedReturnValue, actualReturnValue);
+  public void testInvokeWithCacheProviderUninitialized() throws Throwable {
+    assertInvokeWithStatusOfCacheProviderNotReadyDoesNotAccessCache(CacheProviderFacadeStatus.UNINITIALIZED);
+  }
 
-    verifyExpectationsOfMockControlsWereMet();
+  public void testInvokeWithIllegalStatusOfCacheProvider() throws Throwable {
+    assertInvokeWithStatusOfCacheProviderNotReadyDoesNotAccessCache(CacheProviderFacadeStatus.INVALID);
   }
 
   /**
@@ -216,12 +235,6 @@ public final class CacheFlushInterceptorTests extends
     Object proceedReturnValue = new Integer(10);
     expectProceedMethodInvocation(proceedReturnValue);
 
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object actualReturnValue = cacheFlushInterceptor.invoke(methodInvocation);
-    assertSame(proceedReturnValue, actualReturnValue);
-
-    verifyExpectationsOfMockControlsWereMet();
+    assertInterceptorInvocationIsCorrect(proceedReturnValue);
   }
 }

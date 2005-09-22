@@ -58,6 +58,11 @@ public abstract class AbstractCacheModuleInterceptorTests extends TestCase {
     cacheProviderFacadeControl.setReturnValue(CacheProviderFacadeStatus.READY);
   }
 
+  protected final void expectGetMethodFromMethodInvocation() {
+    methodInvocation.getMethod();
+    methodInvocationControl.setReturnValue(interceptedMethod);
+  }
+
   protected final void expectGetThisFromJoinpoint(Object expected) {
     methodInvocation.getThis();
     methodInvocationControl.setReturnValue(expected);
@@ -95,10 +100,6 @@ public abstract class AbstractCacheModuleInterceptorTests extends TestCase {
 
     methodInvocationControl = MockControl.createControl(MethodInvocation.class);
     methodInvocation = (MethodInvocation) methodInvocationControl.getMock();
-
-    // expectation(s) common to all test cases.
-    methodInvocation.getMethod();
-    methodInvocationControl.setReturnValue(interceptedMethod);
 
     onSetUp();
   }

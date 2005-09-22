@@ -25,6 +25,7 @@ import org.easymock.MockControl;
 import org.springmodules.cache.interceptor.AbstractCacheModuleInterceptorTests;
 import org.springmodules.cache.key.CacheKeyGenerator;
 import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
+import org.springmodules.cache.provider.CacheProviderFacadeStatus;
 
 /**
  * <p>
@@ -33,7 +34,7 @@ import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/21 02:45:42 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/22 00:42:40 $
  */
 public final class CachingInterceptorTests extends
     AbstractCacheModuleInterceptorTests {
@@ -66,6 +67,27 @@ public final class CachingInterceptorTests extends
     super(name);
   }
 
+  private void assertInterceptorInvocationIsCorrect(
+      Object expectedInvocationReturnValue) throws Throwable {
+    setStateOfMockControlsToReplay();
+
+    Object actualReturnValue = cachingInterceptor.invoke(methodInvocation);
+    assertSame(expectedInvocationReturnValue, actualReturnValue);
+
+    verifyExpectationsOfMockControlsWereMet();
+  }
+
+  private void assertInvokeWithStatusOfCacheProviderNotReadyDoesNotAccessCache(
+      CacheProviderFacadeStatus status) throws Throwable {
+    cacheProviderFacade.getStatus();
+    cacheProviderFacadeControl.setReturnValue(status);
+
+    Object proceedReturnValue = "Luke Skywalker";
+    expectProceedMethodInvocation(proceedReturnValue);
+
+    assertInterceptorInvocationIsCorrect(proceedReturnValue);
+  }
+
   private void expectGenerateCacheEntryKey() {
     cacheKeyGenerator.generateKey(methodInvocation);
     cacheKeyGeneratorControl.setReturnValue(cacheKey);
@@ -81,6 +103,7 @@ public final class CachingInterceptorTests extends
       Cached returnValue) {
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
 
+    expectGetMethodFromMethodInvocation();
     cachingAttributeSource.getCachingAttribute(interceptedMethod, targetClass);
     cachingAttributeSourceControl.setReturnValue(returnValue);
   }
@@ -241,14 +264,7 @@ public final class CachingInterceptorTests extends
     Object proceedReturnValue = new Integer(10);
     expectProceedMethodInvocation(proceedReturnValue);
 
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object actualReturnValue = cachingInterceptor.invoke(methodInvocation);
-
-    assertSame(proceedReturnValue, actualReturnValue);
-
-    verifyExpectationsOfMockControlsWereMet();
+    assertInterceptorInvocationIsCorrect(proceedReturnValue);
   }
 
   /**
@@ -272,14 +288,7 @@ public final class CachingInterceptorTests extends
     // caching attribute.
     expectGetCacheEntry(CachingAspectSupport.NULL_ENTRY);
 
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object actualCachedObject = cachingInterceptor.invoke(methodInvocation);
-
-    assertNull(actualCachedObject);
-
-    verifyExpectationsOfMockControlsWereMet();
+    assertInterceptorInvocationIsCorrect(null);
   }
 
   /**
@@ -298,19 +307,10 @@ public final class CachingInterceptorTests extends
     expectGetCachingAttributeForInterceptedMethod(thisObject, cachingAttribute);
     expectGenerateCacheEntryKey();
 
-    // get the object stored in the cache under the id retrieved from the
-    // caching attribute.
     Object expectedCachedObject = new Integer(4225);
     expectGetCacheEntry(expectedCachedObject);
 
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object actualCachedObject = cachingInterceptor.invoke(methodInvocation);
-
-    assertSame(expectedCachedObject, actualCachedObject);
-
-    verifyExpectationsOfMockControlsWereMet();
+    assertInterceptorInvocationIsCorrect(expectedCachedObject);
   }
 
   /**
@@ -345,14 +345,7 @@ public final class CachingInterceptorTests extends
 
     entryStoredListener.onEntryAdd(cacheKey, proceedReturnValue);
 
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object actualCachedObject = cachingInterceptor.invoke(methodInvocation);
-
-    assertSame(proceedReturnValue, actualCachedObject);
-
-    verifyExpectationsOfMockControlsWereMet();
+    assertInterceptorInvocationIsCorrect(proceedReturnValue);
   }
 
   /**
@@ -382,14 +375,7 @@ public final class CachingInterceptorTests extends
     cacheProviderFacade.putInCache(cacheKey, cachingAttribute
         .getCacheProfileId(), CachingAspectSupport.NULL_ENTRY);
 
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object actualReturnedValue = cachingInterceptor.invoke(methodInvocation);
-
-    assertNull(actualReturnedValue);
-
-    verifyExpectationsOfMockControlsWereMet();
+    assertInterceptorInvocationIsCorrect(null);
   }
 
   /**
@@ -432,5 +418,13 @@ public final class CachingInterceptorTests extends
     }
 
     verifyExpectationsOfMockControlsWereMet();
+  }
+
+  public void testInvokeWithCacheProviderUninitialized() throws Throwable {
+    assertInvokeWithStatusOfCacheProviderNotReadyDoesNotAccessCache(CacheProviderFacadeStatus.UNINITIALIZED);
+  }
+
+  public void testInvokeWithIllegalStatusOfCacheProvider() throws Throwable {
+    assertInvokeWithStatusOfCacheProviderNotReadyDoesNotAccessCache(CacheProviderFacadeStatus.INVALID);
   }
 }
