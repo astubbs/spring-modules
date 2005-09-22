@@ -22,27 +22,38 @@ import org.springframework.core.io.Resource;
 
 /**
  * <p>
- * Template for factories of cache managers configured through a file.
+ * Template for factories of cache managers.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:26 $
+ * @version $Revision$ $Date$
  */
-public abstract class AbstractConfigurationResourceCacheManagerFactoryBean
-    extends AbstractSingletonCacheManagerFactoryBean {
+public abstract class AbstractCacheManagerFactoryBean implements
+    CacheManagerFactoryBean {
 
   /**
-   * Location of the configuration file for the cache manager to build.
+   * Location of the cache manager configuration file.
    */
   private Resource configLocation;
 
-  public AbstractConfigurationResourceCacheManagerFactoryBean() {
+  public AbstractCacheManagerFactoryBean() {
     super();
   }
 
   public final Resource getConfigLocation() {
     return configLocation;
+  }
+
+  /**
+   * Notifies the Spring IoC container that this factory is a singleton bean.
+   * 
+   * @return <code>true</code>.
+   * 
+   * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+   */
+  public boolean isSingleton() {
+    return true;
   }
 
   public final void setConfigLocation(Resource newConfigLocation) {

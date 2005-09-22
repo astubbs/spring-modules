@@ -25,7 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.springframework.core.io.Resource;
-import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManagerFactoryBean;
+import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 
 /**
  * <p>
@@ -39,10 +39,10 @@ import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManage
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:17 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/22 11:26:36 $
  */
 public final class JcsManagerFactoryBean extends
-    AbstractConfigurationResourceCacheManagerFactoryBean {
+    AbstractCacheManagerFactoryBean {
 
   private static Log logger = LogFactory.getLog(JcsManagerFactoryBean.class);
 

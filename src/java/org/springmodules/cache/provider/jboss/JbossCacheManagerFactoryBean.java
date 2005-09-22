@@ -20,7 +20,7 @@ package org.springmodules.cache.provider.jboss;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.cache.TreeCache;
-import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManagerFactoryBean;
+import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 
 /**
  * <p>
@@ -33,7 +33,7 @@ import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManage
  * @version $Revision$ $Date$
  */
 public class JbossCacheManagerFactoryBean extends
-    AbstractConfigurationResourceCacheManagerFactoryBean {
+    AbstractCacheManagerFactoryBean {
 
   private static Log logger = LogFactory
       .getLog(JbossCacheManagerFactoryBean.class);

@@ -24,7 +24,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
-import org.springmodules.cache.provider.AbstractConfigurationResourceCacheManagerFactoryBean;
+import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
@@ -39,10 +39,10 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * @version $Revision: 1.6 $ $Date: 2005/09/09 02:18:52 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/22 11:26:34 $
  */
 public final class OsCacheManagerFactoryBean extends
-    AbstractConfigurationResourceCacheManagerFactoryBean {
+    AbstractCacheManagerFactoryBean {
 
   private static Log logger = LogFactory
       .getLog(OsCacheManagerFactoryBean.class);
