@@ -17,6 +17,7 @@
  */
 package org.springmodules.cache.provider.jboss;
 
+import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
@@ -25,6 +26,9 @@ import org.easymock.classextension.MockClassControl;
 import org.jboss.cache.Node;
 import org.jboss.cache.TreeCache;
 import org.springmodules.cache.provider.CacheAccessException;
+import org.springmodules.cache.provider.CacheProfileEditor;
+import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.FatalCacheException;
 
 /**
  * <p>
@@ -112,6 +116,30 @@ public class JbossCacheFacadeTests extends TestCase {
     }
   }
 
+  public void testGetCacheProfileEditor() {
+    PropertyEditor editor = jbossCacheFacade.getCacheProfileEditor();
+
+    assertNotNull(editor);
+    assertEquals(CacheProfileEditor.class, editor.getClass());
+
+    CacheProfileEditor profileEditor = (CacheProfileEditor) editor;
+    assertEquals(JbossCacheProfile.class, profileEditor.getCacheProfileClass());
+    assertNull(profileEditor.getCacheProfilePropertyEditors());
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JbossCacheFacade#getCacheProfileValidator()}</code> returns
+   * an an instance of <code>{@link JbossCacheProfileValidator}</code> not
+   * equal to <code>null</code>.
+   */
+  public void testGetCacheProfileValidator() {
+    CacheProfileValidator validator = jbossCacheFacade
+        .getCacheProfileValidator();
+    assertNotNull(validator);
+    assertEquals(JbossCacheProfileValidator.class, validator.getClass());
+  }
+
   public void testOnFlushCache() throws Exception {
     setUpTreeCache();
 
@@ -156,6 +184,30 @@ public class JbossCacheFacadeTests extends TestCase {
     assertEquals(objectToCache, cachedObject);
   }
 
+  public void testOnGetFromCacheWhenCacheAccessThrowsException()
+      throws Exception {
+    Method getMethod = TreeCache.class.getDeclaredMethod("get", new Class[] {
+        String.class, Object.class });
+    setUpTreeCacheAsMockObject(getMethod);
+
+    RuntimeException expected = new RuntimeException();
+
+    treeCache.get(CACHE_NODE_NAME, CACHE_KEY);
+    treeCacheControl.setThrowable(expected);
+
+    treeCacheControl.replay();
+
+    try {
+      jbossCacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
+      fail();
+
+    } catch (CacheAccessException exception) {
+      assertSameNestedException(expected, exception);
+    }
+
+    treeCacheControl.verify();
+  }
+
   public void testOnPutInCache() throws Exception {
     setUpTreeCache();
 
@@ -164,6 +216,30 @@ public class JbossCacheFacadeTests extends TestCase {
 
     Object cachedObject = getFromTreeCache(CACHE_KEY);
     assertEquals(objectToCache, cachedObject);
+  }
+
+  public void testOnPutInCacheWhenCacheAccessThrowsException() throws Exception {
+    Method putMethod = TreeCache.class.getDeclaredMethod("put", new Class[] {
+        String.class, Object.class, Object.class });
+    setUpTreeCacheAsMockObject(putMethod);
+
+    String objectToCache = "Luke";
+    RuntimeException expected = new RuntimeException();
+
+    treeCache.put(CACHE_NODE_NAME, CACHE_KEY, objectToCache);
+    treeCacheControl.setThrowable(expected);
+
+    treeCacheControl.replay();
+
+    try {
+      jbossCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToCache);
+      fail();
+
+    } catch (CacheAccessException exception) {
+      assertSameNestedException(expected, exception);
+    }
+
+    treeCacheControl.verify();
   }
 
   public void testOnRemoveFromCache() throws Exception {
@@ -177,4 +253,52 @@ public class JbossCacheFacadeTests extends TestCase {
     Object cachedObject = getFromTreeCache(CACHE_KEY);
     assertNull(cachedObject);
   }
+
+  public void testOnRemoveFromCacheWhenCacheAccessThrowsException()
+      throws Exception {
+    Method removeMethod = TreeCache.class.getDeclaredMethod("remove",
+        new Class[] { String.class, Object.class });
+    setUpTreeCacheAsMockObject(removeMethod);
+
+    RuntimeException expected = new RuntimeException();
+
+    treeCache.remove(CACHE_NODE_NAME, CACHE_KEY);
+    treeCacheControl.setThrowable(expected);
+
+    treeCacheControl.replay();
+
+    try {
+      jbossCacheFacade.onRemoveFromCache(CACHE_KEY, cacheProfile);
+      fail();
+
+    } catch (CacheAccessException exception) {
+      assertSameNestedException(expected, exception);
+    }
+
+    treeCacheControl.verify();
+  }
+
+  public void testValidateCacheManagerWithCacheManagerEqualToNull() {
+    jbossCacheFacade.setCacheManager(null);
+    try {
+      jbossCacheFacade.validateCacheManager();
+      fail();
+
+    } catch (FatalCacheException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link JbossCacheFacade#validateCacheManager()}</code> does not
+   * throw any exception if the cache manager is not <code>null</code>.
+   */
+  public void testValidateCacheManagerWithCacheManagerNotEqualToNull()
+      throws Exception {
+    setUpTreeCache();
+
+    jbossCacheFacade.validateCacheManager();
+  }
+
 }

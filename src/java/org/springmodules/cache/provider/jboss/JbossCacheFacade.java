@@ -58,8 +58,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
    * @see AbstractCacheProviderFacade#getCacheProfileValidator()
    */
   protected CacheProfileValidator getCacheProfileValidator() {
-    // TODO Auto-generated method stub
-    return null;
+    return new JbossCacheProfileValidator();
   }
 
   /**
@@ -83,8 +82,7 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable,
-   *      CacheProfile)
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CacheProfile)
    */
   protected Object onGetFromCache(Serializable cacheKey,
       CacheProfile cacheProfile) {
@@ -101,8 +99,8 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onPutInCache(Serializable,
-   *      CacheProfile, Object)
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CacheProfile,
+   *      Object)
    */
   protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
       Object objectToCache) {
