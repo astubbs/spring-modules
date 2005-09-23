@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.FatalCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/09/22 10:02:04 $
+ * @version $Revision: 1.15 $ $Date: 2005/09/23 02:59:02 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -130,16 +130,6 @@ public class EhCacheFacadeTests extends TestCase {
     }
 
     cacheControl.verify();
-  }
-
-  private void assertValidateCacheManagerThrowsException() {
-    try {
-      ehCacheFacade.validateCacheManager();
-      fail();
-
-    } catch (FatalCacheException exception) {
-      // we are expecting this exception.
-    }
   }
 
   protected void setUp() throws Exception {
@@ -484,7 +474,13 @@ public class EhCacheFacadeTests extends TestCase {
 
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
     ehCacheFacade.setCacheManager(null);
-    assertValidateCacheManagerThrowsException();
+    try {
+      ehCacheFacade.validateCacheManager();
+      fail();
+
+    } catch (FatalCacheException exception) {
+      // we are expecting this exception.
+    }
   }
 
   /**
