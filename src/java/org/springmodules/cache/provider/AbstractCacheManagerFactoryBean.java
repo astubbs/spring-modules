@@ -18,6 +18,11 @@
 
 package org.springmodules.cache.provider;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 
 /**
@@ -37,20 +42,70 @@ public abstract class AbstractCacheManagerFactoryBean implements
    */
   private Resource configLocation;
 
+  private String cacheProviderName;
+
+  protected final Log logger = LogFactory.getLog(getClass());
+
   public AbstractCacheManagerFactoryBean() {
     super();
   }
+
+  /**
+   * Creates the cache manager after all the properties of this factory has been
+   * set by the Spring container.
+   */
+  public final void afterPropertiesSet() throws Exception {
+    cacheProviderName = getCacheProviderName();
+    logger.info("Creating the " + cacheProviderName + " cache manager.");
+    createCacheManager();
+  }
+
+  protected abstract void createCacheManager() throws Exception;
+
+  /**
+   * Shuts down the cache manager before this factory is destroyed by the Spring
+   * container.
+   */
+  public final void destroy() throws Exception {
+    if (getObject() == null) {
+      logger.info("The " + cacheProviderName
+          + " cache manager was not built. No need to shut it down.");
+
+    } else {
+      logger.info("Shutting down the " + cacheProviderName + " cache manager.");
+      destroyCacheManager();
+    }
+  }
+
+  protected abstract void destroyCacheManager() throws Exception;
+
+  protected abstract String getCacheProviderName();
 
   public final Resource getConfigLocation() {
     return configLocation;
   }
 
   /**
-   * Notifies the Spring IoC container that this factory is a singleton bean.
+   * @return the configuration resource as a <code>java.util.Properties</code>.
+   * @throws IOException
+   *           thrown if there is any I/O error when reading the configuration
+   *           resource.
+   */
+  protected final Properties getConfigProperties() throws IOException {
+    Properties properties = null;
+
+    if (configLocation != null) {
+      properties = new Properties();
+      properties.load(configLocation.getInputStream());
+    }
+
+    return properties;
+  }
+
+  /**
+   * Notifies the Spring container that this factory is a singleton bean.
    * 
    * @return <code>true</code>.
-   * 
-   * @see org.springframework.beans.factory.FactoryBean#isSingleton()
    */
   public boolean isSingleton() {
     return true;
@@ -59,5 +114,4 @@ public abstract class AbstractCacheManagerFactoryBean implements
   public final void setConfigLocation(Resource newConfigLocation) {
     configLocation = newConfigLocation;
   }
-
 }

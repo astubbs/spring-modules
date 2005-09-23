@@ -17,15 +17,13 @@
  */
 package org.springmodules.cache.provider.jboss;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jboss.cache.TreeCache;
 import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 
 /**
  * <p>
- * FactoryBean that exposes a OSCache <code>TreeCache</code> singleton,
- * configured from a specified config location.
+ * Singleton <code>FactoryBean</code> that constructs and exposes a JBossCache
+ * <code>TreeCache</code>.
  * </p>
  * 
  * @author Alex Ruiz
@@ -35,8 +33,7 @@ import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 public class JbossCacheManagerFactoryBean extends
     AbstractCacheManagerFactoryBean {
 
-  private static Log logger = LogFactory
-      .getLog(JbossCacheManagerFactoryBean.class);
+  private static final String CACHE_PROVIDER_NAME = "JBossCache";
 
   private TreeCache treeCache;
 
@@ -45,27 +42,27 @@ public class JbossCacheManagerFactoryBean extends
   }
 
   /**
-   * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+   * @see AbstractCacheManagerFactoryBean#createCacheManager()
    */
-  public void afterPropertiesSet() throws Exception {
+  protected void createCacheManager() throws Exception {
     treeCache = new TreeCache();
     treeCache.createService();
     treeCache.startService();
   }
 
   /**
-   * @see org.springframework.beans.factory.DisposableBean#destroy()
+   * @see AbstractCacheManagerFactoryBean#destroyCacheManager()
    */
-  public void destroy() throws Exception {
-    if (treeCache == null) {
-      logger
-          .info("The JBossCache tree cache was not built. No need to shut it down.");
+  protected void destroyCacheManager() throws Exception {
+    treeCache.stopService();
+    treeCache.destroyService();
+  }
 
-    } else {
-      logger.info("Shutting down the JBossCache tree cache.");
-      treeCache.stopService();
-      treeCache.destroyService();
-    }
+  /**
+   * @see AbstractCacheManagerFactoryBean#getCacheProviderName()
+   */
+  protected String getCacheProviderName() {
+    return CACHE_PROVIDER_NAME;
   }
 
   /**

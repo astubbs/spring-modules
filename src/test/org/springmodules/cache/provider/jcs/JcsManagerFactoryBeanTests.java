@@ -21,12 +21,14 @@ package org.springmodules.cache.provider.jcs;
 import java.io.InputStream;
 import java.util.Properties;
 
+import junit.framework.TestCase;
+
 import org.apache.jcs.engine.behavior.ICompositeCacheAttributes;
 import org.apache.jcs.engine.control.CompositeCache;
 import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springmodules.cache.provider.AbstractCacheManagerFactoryBeanTests;
+import org.springmodules.cache.provider.PathUtils;
 
 /**
  * <p>
@@ -35,23 +37,21 @@ import org.springmodules.cache.provider.AbstractCacheManagerFactoryBeanTests;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:55 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/23 02:58:36 $
  */
-public final class JcsManagerFactoryBeanTests extends
-    AbstractCacheManagerFactoryBeanTests {
+public final class JcsManagerFactoryBeanTests extends TestCase {
 
-  private String alternativeCacheConfigurationFilePath;
+  private static final String ALTERNATIVE_CONFIG_RESOURCE_NAME = "jcs-config.ccf";
+
+  private static final String DEFAULT_CONFIG_RESOURCE_NAME = "cache.ccf";
 
   private JcsManagerFactoryBean cacheManagerFactoryBean;
 
-  /**
-   * Contains the location of the configuration file for
-   * <code>{@link #cacheManagerFactoryBean}</code>.
-   */
   private Resource configLocation;
 
   /**
-   * Configuration properties read from <code>{@link #configLocation}</code>.
+   * Configuration properties to be loaded from
+   * <code>{@link #configLocation}</code>.
    */
   private Properties configProperties;
 
@@ -68,19 +68,16 @@ public final class JcsManagerFactoryBeanTests extends
 
     // verify that the properties of the configuration file are the same as the
     // ones of the cache manager.
-    String maxObjects = configProperties.getProperty("jcs.region." + cacheName
-        + ".cacheattributes.MaxObjects");
-    int expectedMaxObjects = Integer.parseInt(maxObjects);
+    String maxObjectsProperty = configProperties.getProperty("jcs.region."
+        + cacheName + ".cacheattributes.MaxObjects");
+
+    int expected = Integer.parseInt(maxObjectsProperty);
 
     CompositeCache cache = cacheManager.getCache(cacheName);
     ICompositeCacheAttributes cacheAttributes = cache.getCacheAttributes();
-    int actualMaxObjects = cacheAttributes.getMaxObjects();
+    int actual = cacheAttributes.getMaxObjects();
 
-    assertEqualsPropertyMaxObjects(expectedMaxObjects, actualMaxObjects);
-  }
-
-  private void assertEqualsPropertyMaxObjects(int expected, int actual) {
-    assertEquals("<Property 'maxObjects'>", expected, actual);
+    assertEquals(expected, actual);
   }
 
   private void assertObjectTypeIsCorrect() {
@@ -94,24 +91,28 @@ public final class JcsManagerFactoryBeanTests extends
 
   protected void setUp() throws Exception {
     super.setUp();
-    alternativeCacheConfigurationFilePath = getPackageNameAsPath()
-        + "/jcs-config.ccf";
+
     cacheManagerFactoryBean = new JcsManagerFactoryBean();
   }
 
-  private void setUpConfigurationProperties() throws Exception {
-    this.setUpConfigurationProperties(alternativeCacheConfigurationFilePath);
+  private void setUpAlternativeConfigurationProperties() throws Exception {
+    String configLocationPath = PathUtils.getPackageNameAsPath(getClass())
+        + "/" + ALTERNATIVE_CONFIG_RESOURCE_NAME;
+    this.setUpConfigurationProperties(configLocationPath);
   }
 
-  private void setUpConfigurationProperties(String configurationFileName)
+  private void setUpConfigurationProperties(String configLocationPath)
       throws Exception {
-
-    configLocation = new ClassPathResource(configurationFileName);
+    configLocation = new ClassPathResource(configLocationPath);
     cacheManagerFactoryBean.setConfigLocation(configLocation);
 
     InputStream inputStream = configLocation.getInputStream();
     configProperties = new Properties();
     configProperties.load(inputStream);
+  }
+
+  private void setUpDefaultConfigurationProperties() throws Exception {
+    this.setUpConfigurationProperties(DEFAULT_CONFIG_RESOURCE_NAME);
   }
 
   protected void tearDown() {
@@ -124,70 +125,45 @@ public final class JcsManagerFactoryBeanTests extends
     }
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsManagerFactoryBean#afterPropertiesSet()}</code> creates a
-   * new cache manager which properties are loaded from a configuration file.
-   */
-  public void testAfterPropertiesSet() throws Exception {
-    setUpConfigurationProperties();
-    cacheManagerFactoryBean.afterPropertiesSet();
+  public void testCreateCacheManager() throws Exception {
+    setUpAlternativeConfigurationProperties();
+
+    cacheManagerFactoryBean.createCacheManager();
+
     assertCacheManagerWasConfigured("altTestCache");
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JcsManagerFactoryBean#afterPropertiesSet()}</code> creates a
-   * new cache manager using the default configuration file, "cache.ccf", if
-   * there is not any configuration file specified.
-   */
-  public void testAfterPropertiesSetWithConfigLocationEqualToNull()
+  public void testCreateCacheManagerWithConfigLocationEqualToNull()
       throws Exception {
-    setUpConfigurationProperties("cache.ccf");
+    setUpDefaultConfigurationProperties();
     cacheManagerFactoryBean.setConfigLocation(null);
 
-    cacheManagerFactoryBean.afterPropertiesSet();
+    cacheManagerFactoryBean.createCacheManager();
 
     assertCacheManagerWasConfigured("testCache");
   }
 
-  public void testDestroy() throws Exception {
-    setUpConfigurationProperties();
-
-    cacheManagerFactoryBean.afterPropertiesSet();
+  public void testDestroyCacheManager() throws Exception {
+    setUpAlternativeConfigurationProperties();
+    cacheManagerFactoryBean.createCacheManager();
 
     CompositeCacheManager cacheManager = getCacheManager();
 
     assertTrue("There should be at least one cache in the cache manager",
         cacheManager.getCacheNames().length > 0);
 
-    cacheManagerFactoryBean.destroy();
+    cacheManagerFactoryBean.destroyCacheManager();
 
     assertTrue("There should not be any cache in the cache manager",
         cacheManager.getCacheNames().length == 0);
   }
 
-  public void testDestroyWithCacheManagerEqualToNull() throws Exception {
-    assertNull(cacheManagerFactoryBean.getObject());
-
-    try {
-      cacheManagerFactoryBean.destroy();
-    } catch (Throwable throwable) {
-      fail();
-    }
-
-    assertNull(cacheManagerFactoryBean.getObject());
-  }
-
   public void testGetObjectType() throws Exception {
-    // test when the cache manager has been created.
-    cacheManagerFactoryBean.afterPropertiesSet();
-
+    cacheManagerFactoryBean.createCacheManager();
     assertObjectTypeIsCorrect();
   }
 
   public void testGetObjectTypeWhenCacheManagerIsNull() {
-    // test when the cache manager has not been created yet.
     assertObjectTypeIsCorrect();
   }
 

@@ -18,20 +18,16 @@
 
 package org.springmodules.cache.provider.oscache;
 
-import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.Resource;
 import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
 /**
  * <p>
- * FactoryBean that exposes a OSCache <code>GeneralCacheAdministrator</code>
- * singleton, configured from a specified config location.
+ * Singleton <code>FactoryBean</code> that constructs and exposes a OSCache
+ * <code>GeneralCacheAdministrator</code>.
  * </p>
  * <p>
  * If no config location is specified, a <code>GeneralCacheAdministrator</code>
@@ -39,13 +35,12 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * @version $Revision: 1.7 $ $Date: 2005/09/22 11:26:34 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/23 02:58:35 $
  */
 public final class OsCacheManagerFactoryBean extends
     AbstractCacheManagerFactoryBean {
 
-  private static Log logger = LogFactory
-      .getLog(OsCacheManagerFactoryBean.class);
+  private static final String CACHE_PROVIDER_NAME = "OSCache";
 
   /**
    * The cache manager managed by this factory.
@@ -57,37 +52,30 @@ public final class OsCacheManagerFactoryBean extends
   }
 
   /**
-   * Builds the cache manager after all the properties of this factory has been
-   * set by the BeanFactory.
+   * @see AbstractCacheManagerFactoryBean#createCacheManager()
    */
-  public void afterPropertiesSet() throws Exception {
-    logger.info("Creating OSCache cache manager");
-
-    Resource configLocation = getConfigLocation();
-    if (null == configLocation) {
+  protected void createCacheManager() throws Exception {
+    Properties configProperties = getConfigProperties();
+    if (configProperties == null) {
       cacheManager = new GeneralCacheAdministrator();
     } else {
-      InputStream inputStream = configLocation.getInputStream();
-      Properties properties = new Properties();
-      properties.load(inputStream);
-
-      cacheManager = new GeneralCacheAdministrator(properties);
+      cacheManager = new GeneralCacheAdministrator(configProperties);
     }
   }
 
   /**
-   * Shuts down the cache manager before this factory is destroyed by the
-   * BeanFactory.
+   * @see AbstractCacheManagerFactoryBean#destroyCacheManager()
    */
-  public void destroy() throws Exception {
-    if (cacheManager == null) {
-      logger
-          .info("The OSCache cache manager was not built. No need to shut it down.");
-    } else {
-      logger.info("Shutting down the OSCache cache manager.");
-      cacheManager.flushAll();
-      cacheManager.destroy();
-    }
+  protected void destroyCacheManager() throws Exception {
+    cacheManager.flushAll();
+    cacheManager.destroy();
+  }
+
+  /**
+   * @see AbstractCacheManagerFactoryBean#getCacheProviderName()
+   */
+  protected String getCacheProviderName() {
+    return CACHE_PROVIDER_NAME;
   }
 
   /**

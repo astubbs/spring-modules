@@ -253,8 +253,8 @@ public final class CacheProviderFacadeTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link AbstractCacheProviderFacade#afterPropertiesSet()}</code>
-   * throws a <code>{@link FatalCacheException}</code> wrapping
-   * any exception thrown by the <code>{@link CacheProfileValidator}</code>.
+   * throws a <code>{@link FatalCacheException}</code> wrapping any exception
+   * thrown by the <code>{@link CacheProfileValidator}</code>.
    */
   public void testAfterPropertiesSetWhenValidationOfCacheProfilesThrowsException()
       throws Exception {
@@ -282,6 +282,19 @@ public final class CacheProviderFacadeTests extends TestCase {
     }
 
     verifyExpectationsOfMockControlsWereMet();
+  }
+
+  public void testAssertCacheManagerIsNotNullWithCacheManagerEqualToNull() {
+    try {
+      cacheProviderFacade.assertCacheManagerIsNotNull(null);
+      fail();
+    } catch (FatalCacheException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  public void testAssertCacheManagerIsNotNullWithCacheManagerNotEqualToNull() {
+    cacheProviderFacade.assertCacheManagerIsNotNull(new Object());
   }
 
   public void testCancelCacheUpdate() throws Exception {

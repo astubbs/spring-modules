@@ -18,19 +18,15 @@
 
 package org.springmodules.cache.provider.jcs;
 
-import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jcs.engine.control.CompositeCacheManager;
-import org.springframework.core.io.Resource;
 import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 
 /**
  * <p>
- * FactoryBean that exposes a JCS <code>CompositeCacheManager</code>
- * singleton, configured from a specified config location.
+ * Singleton <code>FactoryBean</code> that constructs and exposes a JCS
+ * <code>CompositeCacheManager</code>.
  * </p>
  * <p>
  * If no config location is specified, a <code>CompositeCacheManager</code>
@@ -39,12 +35,12 @@ import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/22 11:26:36 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/23 02:58:37 $
  */
 public final class JcsManagerFactoryBean extends
     AbstractCacheManagerFactoryBean {
 
-  private static Log logger = LogFactory.getLog(JcsManagerFactoryBean.class);
+  private static final String CACHE_PROVIDER_NAME = "JCS";
 
   /**
    * The cache manager managed by this factory.
@@ -56,39 +52,30 @@ public final class JcsManagerFactoryBean extends
   }
 
   /**
-   * Builds the cache manager after all the properties of this factory has been
-   * set by the BeanFactory.
+   * @see AbstractCacheManagerFactoryBean#createCacheManager()
    */
-  public void afterPropertiesSet() throws Exception {
-    logger.info("Creating JCS cache manager.");
-
-    Resource configLocation = getConfigLocation();
-
-    if (null == configLocation) {
+  protected void createCacheManager() throws Exception {
+    Properties configProperties = getConfigProperties();
+    if (configProperties == null) {
       cacheManager = CompositeCacheManager.getInstance();
     } else {
-      InputStream inputStream = configLocation.getInputStream();
-      Properties properties = new Properties();
-      properties.load(inputStream);
-
       cacheManager = CompositeCacheManager.getUnconfiguredInstance();
-      cacheManager.configure(properties);
+      cacheManager.configure(configProperties);
     }
   }
 
   /**
-   * Shuts down the cache manager before this factory is destroyed by the
-   * BeanFactory.
+   * @see AbstractCacheManagerFactoryBean#destroyCacheManager()
    */
-  public void destroy() throws Exception {
-    if (cacheManager == null) {
-      logger
-          .info("The JCS cache manager was not built. No need to shut it down.");
+  protected void destroyCacheManager() throws Exception {
+    cacheManager.shutDown();
+  }
 
-    } else {
-      logger.info("Shutting down the JCS cache manager.");
-      cacheManager.shutDown();
-    }
+  /**
+   * @see AbstractCacheManagerFactoryBean#getCacheProviderName()
+   */
+  protected String getCacheProviderName() {
+    return CACHE_PROVIDER_NAME;
   }
 
   /**

@@ -21,8 +21,10 @@ package org.springmodules.cache.provider.oscache;
 import java.io.InputStream;
 import java.util.Properties;
 
+import junit.framework.TestCase;
+
 import org.springframework.core.io.ClassPathResource;
-import org.springmodules.cache.provider.AbstractCacheManagerFactoryBeanTests;
+import org.springmodules.cache.provider.PathUtils;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
@@ -34,23 +36,23 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/09 02:19:21 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/23 02:58:37 $
  */
-public final class OsCacheManagerFactoryBeanTests extends
-    AbstractCacheManagerFactoryBeanTests {
+public final class OsCacheManagerFactoryBeanTests extends TestCase {
+
+  private static final String ALTERNATIVE_CONFIG_RESOURCE_NAME = "oscache-config.properties";
 
   private static final String CACHE_CAPACITY_PROPERTY_NAME = "cache.capacity";
 
+  private static final String DEFAULT_CONFIG_RESOURCE_NAME = "oscache.properties";
+
   private OsCacheManagerFactoryBean cacheManagerFactoryBean;
 
-  /**
-   * Contains the location of the configuration file for
-   * <code>{@link #cacheManagerFactoryBean}</code>.
-   */
   private ClassPathResource configLocation;
 
   /**
-   * Configuration properties read from <code>{@link #configLocation}</code>.
+   * Configuration properties to be loaded from
+   * <code>{@link #configLocation}</code>.
    */
   private Properties configProperties;
 
@@ -62,6 +64,7 @@ public final class OsCacheManagerFactoryBeanTests extends
     GeneralCacheAdministrator cacheAdministrator = getCacheManager();
 
     assertNotNull(cacheAdministrator);
+
     String expected = configProperties
         .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
 
@@ -82,20 +85,27 @@ public final class OsCacheManagerFactoryBeanTests extends
 
   protected void setUp() throws Exception {
     super.setUp();
-
-    configLocation = new ClassPathResource(getPackageNameAsPath()
-        + "/oscache-config.properties");
-
     cacheManagerFactoryBean = new OsCacheManagerFactoryBean();
-    cacheManagerFactoryBean.setConfigLocation(configLocation);
-
-    setUpConfigProperties();
   }
 
-  protected void setUpConfigProperties() throws Exception {
+  private void setUpAlternativeConfigurationProperties() throws Exception {
+    String configLocationPath = PathUtils.getPackageNameAsPath(getClass())
+        + "/" + ALTERNATIVE_CONFIG_RESOURCE_NAME;
+    this.setUpConfigurationProperties(configLocationPath);
+  }
+
+  private void setUpConfigurationProperties(String configLocationPath)
+      throws Exception {
+    configLocation = new ClassPathResource(configLocationPath);
+    cacheManagerFactoryBean.setConfigLocation(configLocation);
+
     InputStream inputStream = configLocation.getInputStream();
     configProperties = new Properties();
     configProperties.load(inputStream);
+  }
+
+  private void setUpDefaultConfigurationProperties() throws Exception {
+    this.setUpConfigurationProperties(DEFAULT_CONFIG_RESOURCE_NAME);
   }
 
   protected void tearDown() {
@@ -108,45 +118,35 @@ public final class OsCacheManagerFactoryBeanTests extends
     }
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheManagerFactoryBean#afterPropertiesSet()}</code>
-   * creates a new cache manager which properties are loaded from a
-   * configuration file.
-   */
-  public void testAfterPropertiesSet() throws Exception {
-    cacheManagerFactoryBean.afterPropertiesSet();
+  public void testCreateCacheManager() throws Exception {
+    setUpAlternativeConfigurationProperties();
+
+    cacheManagerFactoryBean.createCacheManager();
+
     assertCacheManagerWasConfigured();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link OsCacheManagerFactoryBean#afterPropertiesSet()}</code>
-   * creates a new cache manager using the default configuration file,
-   * "oscache.properties", if there is not any configuration file specified.
-   */
-  public void testAfterPropertiesSetWithConfigLocationEqualToNull()
+  public void testCreateCacheManagerWithConfigLocationEqualToNull()
       throws Exception {
-
-    configLocation = new ClassPathResource("oscache.properties");
-    setUpConfigProperties();
+    setUpDefaultConfigurationProperties();
 
     cacheManagerFactoryBean.setConfigLocation(null);
-    cacheManagerFactoryBean.afterPropertiesSet();
+
+    cacheManagerFactoryBean.createCacheManager();
 
     assertCacheManagerWasConfigured();
   }
 
-  public void testDestroy() throws Exception {
-    cacheManagerFactoryBean.afterPropertiesSet();
+  public void testDestroyCacheManager() throws Exception {
+    setUpAlternativeConfigurationProperties();
+    cacheManagerFactoryBean.createCacheManager();
 
     GeneralCacheAdministrator cacheManager = getCacheManager();
 
-    String key = "javaGuy";
-    String entry = "James Gosling";
+    String key = "jedi";
+    String entry = "Anakin";
     cacheManager.putInCache(key, entry);
-    Object cachedObject = cacheManager.getFromCache(key);
-    assertSame("<Cached object>", entry, cachedObject);
+    assertSame(entry, cacheManager.getFromCache(key));
 
     cacheManagerFactoryBean.destroy();
 
@@ -159,24 +159,12 @@ public final class OsCacheManagerFactoryBeanTests extends
     }
   }
 
-  public void testDestroyWithCacheManagerEqualToNull() throws Exception {
-    // verify that the cache manager is null before calling 'destroy()'
-    assertNull(cacheManagerFactoryBean.getObject());
-
-    cacheManagerFactoryBean.destroy();
-
-    // verify that the cache manager is null after calling 'destroy()'
-    assertNull(cacheManagerFactoryBean.getObject());
-  }
-
   public void testGetObjectType() throws Exception {
-    // test when the cache manager has been created.
-    cacheManagerFactoryBean.afterPropertiesSet();
+    cacheManagerFactoryBean.createCacheManager();
     assertObjectTypeIsCorrect();
   }
 
   public void testGetObjectTypeWhenCacheAdministratorIsNull() {
-    // test when the cache manager has not been created yet.
     assertObjectTypeIsCorrect();
   }
 
