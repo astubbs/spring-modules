@@ -65,7 +65,10 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
    * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
    */
   protected boolean isSerializableCacheElementRequired() {
-    return false;
+    // serializable entries are not necessary if the cache is local (not
+    // replicated). It is recommended to use serializable objects to enable
+    // users to change the cache mode at any time.
+    return true;
   }
 
   /**
