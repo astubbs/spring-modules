@@ -27,7 +27,7 @@ package org.springmodules.cache.integration.oscache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/22 03:27:56 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/25 05:24:28 $
  */
 public final class OsCacheProxyFactoryIntegrationTests extends
     AbstractOsCacheIntegrationTestCases {
@@ -40,9 +40,8 @@ public final class OsCacheProxyFactoryIntegrationTests extends
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    String[] configFileNames = new String[] {
-        "**/oscacheApplicationContext.xml",
-        "**/proxyFactoryApplicationContext.xml" };
+    String[] configFileNames = new String[] { CACHE_APPLICATION_CONTEXT_PATH,
+        PROXY_FACTORY_APPLICATION_CONTEXT_PATH };
 
     return configFileNames;
   }
