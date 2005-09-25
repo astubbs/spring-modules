@@ -29,7 +29,7 @@ import java.util.List;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/07/15 18:55:58 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/25 05:19:59 $
  */
 public final class XmlRpcArray implements XmlRpcElement {
 
@@ -38,34 +38,15 @@ public final class XmlRpcArray implements XmlRpcElement {
    */
   private List elements;
 
-  /**
-   * Constructor.
-   */
   public XmlRpcArray() {
     super();
-    this.elements = new ArrayList();
+    elements = new ArrayList();
   }
 
-  /**
-   * Adds a value as an element of this array.
-   * 
-   * @param value
-   *          the value to add.
-   */
   public void add(XmlRpcElement value) {
-    this.elements.add(value);
+    elements.add(value);
   }
 
-  /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
-   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -76,7 +57,7 @@ public final class XmlRpcArray implements XmlRpcElement {
 
     final XmlRpcArray xmlRpcArray = (XmlRpcArray) obj;
 
-    if (this.elements != null ? !this.elements.equals(xmlRpcArray.elements)
+    if (elements != null ? !elements.equals(xmlRpcArray.elements)
         : xmlRpcArray.elements != null) {
       return false;
     }
@@ -84,14 +65,9 @@ public final class XmlRpcArray implements XmlRpcElement {
     return true;
   }
 
-  /**
-   * Returns the elements of this array.
-   * 
-   * @return the elements of this array.
-   */
   public XmlRpcElement[] getElements() {
-    return (XmlRpcElement[]) this.elements
-        .toArray(new XmlRpcElement[this.elements.size()]);
+    return (XmlRpcElement[]) elements
+        .toArray(new XmlRpcElement[elements.size()]);
   }
 
   /**
@@ -109,11 +85,11 @@ public final class XmlRpcArray implements XmlRpcElement {
     Class componentType = targetType.getComponentType();
     boolean matching = true;
 
-    int valueSize = this.elements.size();
+    int valueSize = elements.size();
     Object array = Array.newInstance(componentType, valueSize);
 
     for (int i = 0; i < valueSize; i++) {
-      XmlRpcElement value = (XmlRpcElement) this.elements.get(i);
+      XmlRpcElement value = (XmlRpcElement) elements.get(i);
       Object item = value.getMatchingValue(componentType);
 
       if (item == NOT_MATCHING) {
@@ -143,11 +119,11 @@ public final class XmlRpcArray implements XmlRpcElement {
 
     boolean matching = true;
 
-    int valueSize = this.elements.size();
+    int valueSize = elements.size();
     Collection collection = new ArrayList(valueSize);
 
     for (int i = 0; i < valueSize; i++) {
-      XmlRpcElement value = (XmlRpcElement) this.elements.get(i);
+      XmlRpcElement value = (XmlRpcElement) elements.get(i);
       if (value instanceof XmlRpcScalar) {
         XmlRpcScalar scalar = (XmlRpcScalar) value;
         collection.add(scalar.getValue());
@@ -187,47 +163,27 @@ public final class XmlRpcArray implements XmlRpcElement {
     Object matchingValue = NOT_MATCHING;
 
     if (targetType.isArray()) {
-      matchingValue = this.getMatchingArrayValue(targetType);
+      matchingValue = getMatchingArrayValue(targetType);
 
     } else if (Collection.class.equals(targetType)
         || List.class.equals(targetType) || ArrayList.class.equals(targetType)) {
-      matchingValue = this.getMatchingCollectionValue();
+      matchingValue = getMatchingCollectionValue();
     }
 
     return matchingValue;
   }
 
-  /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
-   * @see Object#hashCode()
-   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash
-        + (this.elements != null ? this.elements.hashCode() : 0);
+    hash = multiplier * hash + (elements != null ? elements.hashCode() : 0);
     return hash;
   }
 
-  /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
-   * @see Object#toString()
-   */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("elements=" + this.elements + "]");
+    buffer.append("elements=" + elements + "]");
 
     return buffer.toString();
   }

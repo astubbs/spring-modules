@@ -20,6 +20,7 @@ package org.springmodules.remoting.xmlrpc.support;
 import java.util.Arrays;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -28,46 +29,21 @@ import org.apache.commons.codec.binary.Base64;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/07/15 18:55:58 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/25 05:19:59 $
  */
 public final class XmlRpcBase64 implements XmlRpcScalar {
 
-  /**
-   * The value of this scalar.
-   */
   private byte[] value;
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
-  public XmlRpcBase64(byte[] value) {
+  public XmlRpcBase64(byte[] newValue) {
     super();
-    this.value = value;
+    value = newValue;
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
   public XmlRpcBase64(String value) {
     this(Base64.decodeBase64(value.getBytes()));
   }
 
-  /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
-   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -78,7 +54,7 @@ public final class XmlRpcBase64 implements XmlRpcScalar {
 
     final XmlRpcBase64 xmlRpcBase64 = (XmlRpcBase64) obj;
 
-    if (!Arrays.equals(this.value, xmlRpcBase64.value)) {
+    if (!Arrays.equals(value, xmlRpcBase64.value)) {
       return false;
     }
 
@@ -92,7 +68,7 @@ public final class XmlRpcBase64 implements XmlRpcScalar {
     Object matchingValue = NOT_MATCHING;
 
     if (targetType.isArray() && targetType.getComponentType().equals(Byte.TYPE)) {
-      matchingValue = this.value;
+      matchingValue = value;
     }
     return matchingValue;
   }
@@ -101,63 +77,28 @@ public final class XmlRpcBase64 implements XmlRpcScalar {
    * @see XmlRpcScalar#getValue()
    */
   public Object getValue() {
-    return this.value;
+    return value;
   }
 
   /**
    * @see XmlRpcScalar#getValueAsString()
    */
   public String getValueAsString() {
-    byte[] encodedValue = Base64.encodeBase64(this.value);
+    byte[] encodedValue = Base64.encodeBase64(value);
     return new String(encodedValue, 0, encodedValue.length);
   }
 
-  /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
-   * @see Object#hashCode()
-   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (this.value != null ? this.value.hashCode() : 0);
+    hash = multiplier * hash + (value != null ? value.hashCode() : 0);
     return hash;
   }
 
-  /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
-   * @see Object#toString()
-   */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("value=");
-
-    if (this.value == null) {
-      buffer.append("null]");
-    } else {
-      int elementCount = this.value.length;
-      for (int i = 0; i < elementCount; i++) {
-        if (i == 0) {
-          buffer.append("[");
-        } else {
-          buffer.append(", ");
-        }
-
-        buffer.append(this.value[i]);
-      }
-      buffer.append("]");
-    }
+    buffer.append("value=" + ArrayUtils.toString(value) + "]");
 
     return buffer.toString();
   }

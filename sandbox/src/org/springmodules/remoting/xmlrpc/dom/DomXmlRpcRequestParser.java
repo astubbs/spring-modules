@@ -25,6 +25,7 @@ import org.springmodules.remoting.xmlrpc.XmlRpcRequestParser;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElementNames;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
+import org.springmodules.util.Strings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -38,14 +39,11 @@ import org.w3c.dom.NodeList;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/04 18:42:09 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/25 05:20:03 $
  */
 public final class DomXmlRpcRequestParser extends AbstractDomXmlRpcParser
     implements XmlRpcRequestParser {
 
-  /**
-   * Constructor.
-   */
   public DomXmlRpcRequestParser() {
     super();
   }
@@ -54,7 +52,7 @@ public final class DomXmlRpcRequestParser extends AbstractDomXmlRpcParser
    * @see XmlRpcRequestParser#parseRequest(InputStream)
    */
   public XmlRpcRequest parseRequest(InputStream inputStream) {
-    Document document = this.loadXmlDocument(inputStream);
+    Document document = loadXmlDocument(inputStream);
 
     XmlRpcRequest request = new XmlRpcRequest();
 
@@ -80,8 +78,8 @@ public final class DomXmlRpcRequestParser extends AbstractDomXmlRpcParser
           request.setParameters(parameters);
 
         } else {
-          throw new XmlRpcInvalidPayloadException("Unexpected element '"
-              + childName + "'");
+          throw new XmlRpcInvalidPayloadException("Unexpected element "
+              + Strings.quote(childName));
         }
       }
     }

@@ -38,9 +38,6 @@ import org.springframework.beans.BeanWrapperImpl;
  */
 public class XmlRpcElementFactoryImpl implements XmlRpcElementFactory {
 
-  /**
-   * Constructor.
-   */
   public XmlRpcElementFactoryImpl() {
     super();
   }
@@ -106,7 +103,7 @@ public class XmlRpcElementFactoryImpl implements XmlRpcElementFactory {
           xmlRpcElement = new XmlRpcBase64((byte[]) source);
 
         } else {
-          xmlRpcElement = this.createXmlRpcArray(source);
+          xmlRpcElement = createXmlRpcArray(source);
         }
 
       } else {
@@ -117,7 +114,7 @@ public class XmlRpcElementFactoryImpl implements XmlRpcElementFactory {
           xmlRpcElement = new XmlRpcString((Character) source);
 
         } else if (source instanceof Collection) {
-          xmlRpcElement = this.createXmlRpcArray((Collection) source);
+          xmlRpcElement = createXmlRpcArray((Collection) source);
 
         } else if (source instanceof Date) {
           xmlRpcElement = new XmlRpcDateTime((Date) source);
@@ -135,7 +132,7 @@ public class XmlRpcElementFactoryImpl implements XmlRpcElementFactory {
           xmlRpcElement = new XmlRpcString((Long) source);
 
         } else if (source instanceof Map) {
-          xmlRpcElement = this.createXmlRpcStruct((Map) source);
+          xmlRpcElement = createXmlRpcStruct((Map) source);
 
         } else if (source instanceof Short) {
           xmlRpcElement = new XmlRpcInteger((Short) source);
@@ -144,7 +141,7 @@ public class XmlRpcElementFactoryImpl implements XmlRpcElementFactory {
           xmlRpcElement = new XmlRpcString((String) source);
 
         } else {
-          xmlRpcElement = this.createXmlRpcStruct(source);
+          xmlRpcElement = createXmlRpcStruct(source);
         }
       }
     }

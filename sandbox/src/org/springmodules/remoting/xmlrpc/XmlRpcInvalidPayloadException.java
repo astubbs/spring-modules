@@ -29,43 +29,18 @@ package org.springmodules.remoting.xmlrpc;
  */
 public class XmlRpcInvalidPayloadException extends XmlRpcServerException {
 
-  /**
-   * Fault code of this exception.
-   */
   public static final int FAULT_CODE = -32600;
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = -2065698031713146751L;
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   */
   public XmlRpcInvalidPayloadException(String msg) {
     super(msg);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
-   */
   public XmlRpcInvalidPayloadException(String msg, Throwable nestedException) {
     super(msg, nestedException);
   }
 
-  /**
-   * @see XmlRpcException#getCode()
-   */
   public int getCode() {
     return FAULT_CODE;
   }

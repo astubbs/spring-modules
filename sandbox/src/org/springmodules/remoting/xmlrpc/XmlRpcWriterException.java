@@ -29,43 +29,18 @@ package org.springmodules.remoting.xmlrpc;
  */
 public class XmlRpcWriterException extends XmlRpcServerException {
 
-  /**
-   * Fault code of this exception.
-   */
   public static final int FAULT_CODE = -32603;
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3761406417336546864L;
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   */
   public XmlRpcWriterException(String msg) {
     super(msg);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
-   */
   public XmlRpcWriterException(String msg, Throwable nestedException) {
     super(msg, nestedException);
   }
 
-  /**
-   * @see XmlRpcException#getCode()
-   */
   public int getCode() {
     return FAULT_CODE;
   }

@@ -28,7 +28,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/04 18:42:09 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/25 05:20:00 $
  */
 public interface XmlRpcRequestParser {
 
@@ -36,7 +36,7 @@ public interface XmlRpcRequestParser {
    * Creates a new XML-RPC request by parsing the given InputStream.
    * 
    * @param inputStream
-   *          the InputStream containing the XML-RPC request.
+   *          the InputStream containing the XML-RPC request to parse.
    * @return the created XML-RPC request.
    * @throws XmlRpcException
    *           if there are errors during the parsing.

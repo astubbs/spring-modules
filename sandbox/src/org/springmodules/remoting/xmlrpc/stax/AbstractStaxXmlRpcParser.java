@@ -42,6 +42,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcInteger;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
+import org.springmodules.remoting.xmlrpc.util.XmlRpcParsingUtils;
 
 /**
  * <p>
@@ -50,18 +51,12 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/04 18:42:03 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/25 05:20:02 $
  */
 public abstract class AbstractStaxXmlRpcParser {
 
-  /**
-   * Message logger.
-   */
-  protected final Log logger = LogFactory.getLog(this.getClass());
+  protected final Log logger = LogFactory.getLog(getClass());
 
-  /**
-   * Constructor.
-   */
   public AbstractStaxXmlRpcParser() {
     super();
   }
@@ -78,8 +73,8 @@ public abstract class AbstractStaxXmlRpcParser {
   protected final XMLStreamReader loadXmlReader(InputStream inputStream)
       throws XMLStreamException {
     XMLInputFactory factory = XMLInputFactory.newInstance();
-    if (this.logger.isDebugEnabled()) {
-      this.logger.debug("Using StAX implementation [" + factory + "]");
+    if (logger.isDebugEnabled()) {
+      logger.debug("Using StAX implementation [" + factory + "]");
     }
 
     XMLStreamReader reader = factory.createXMLStreamReader(inputStream);
@@ -109,10 +104,9 @@ public abstract class AbstractStaxXmlRpcParser {
           String localName = reader.getLocalName();
 
           if (XmlRpcElementNames.DATA.equals(localName)) {
-            return this.parseDataElement(reader);
+            return parseDataElement(reader);
           }
-          throw new XmlRpcInvalidPayloadException("Unexpected element '"
-              + localName + "'");
+          XmlRpcParsingUtils.handleUnexpectedElementFound(localName);
       }
     }
 
@@ -142,7 +136,7 @@ public abstract class AbstractStaxXmlRpcParser {
           localName = reader.getLocalName();
 
           if (XmlRpcElementNames.VALUE.equals(localName)) {
-            XmlRpcElement element = this.parseValueElement(reader);
+            XmlRpcElement element = parseValueElement(reader);
             array.add(element);
           }
           break;
@@ -182,10 +176,9 @@ public abstract class AbstractStaxXmlRpcParser {
           String localName = reader.getLocalName();
 
           if (XmlRpcElementNames.VALUE.equals(localName)) {
-            return this.parseValueElement(reader);
+            return parseValueElement(reader);
           }
-          throw new XmlRpcInvalidPayloadException("Unexpected element '"
-              + localName + "'");
+          XmlRpcParsingUtils.handleUnexpectedElementFound(localName);
       }
     }
 
@@ -214,12 +207,11 @@ public abstract class AbstractStaxXmlRpcParser {
           localName = reader.getLocalName();
 
           if (XmlRpcElementNames.PARAM.equals(localName)) {
-            XmlRpcElement parameter = this.parseParameterElement(reader);
+            XmlRpcElement parameter = parseParameterElement(reader);
             parameters.add(parameter);
 
           } else {
-            throw new XmlRpcInvalidPayloadException("Unexpected element '"
-                + localName + "'");
+            XmlRpcParsingUtils.handleUnexpectedElementFound(localName);
           }
           break;
 
@@ -259,7 +251,7 @@ public abstract class AbstractStaxXmlRpcParser {
           localName = reader.getLocalName();
 
           if (XmlRpcElementNames.MEMBER.equals(localName)) {
-            XmlRpcMember member = this.parseMemberElement(reader);
+            XmlRpcMember member = parseMemberElement(reader);
             struct.add(member);
           }
           break;
@@ -306,11 +298,10 @@ public abstract class AbstractStaxXmlRpcParser {
             name = reader.getElementText();
 
           } else if (XmlRpcElementNames.VALUE.equals(localName)) {
-            value = this.parseValueElement(reader);
+            value = parseValueElement(reader);
 
           } else {
-            throw new XmlRpcInvalidPayloadException("Unexpected element '"
-                + localName + "'");
+            XmlRpcParsingUtils.handleUnexpectedElementFound(localName);
           }
           break;
 
@@ -356,7 +347,7 @@ public abstract class AbstractStaxXmlRpcParser {
           localName = reader.getLocalName();
 
           if (XmlRpcElementNames.ARRAY.equals(localName)) {
-            return this.parseArrayElement(reader);
+            return parseArrayElement(reader);
 
           } else if (XmlRpcElementNames.BASE_64.equals(localName)) {
             String source = reader.getElementText();
@@ -385,11 +376,10 @@ public abstract class AbstractStaxXmlRpcParser {
             return new XmlRpcString(source);
 
           } else if (XmlRpcElementNames.STRUCT.equals(localName)) {
-            return this.parseStructElement(reader);
+            return parseStructElement(reader);
 
           } else {
-            throw new XmlRpcInvalidPayloadException("Unexpected element '"
-                + localName + "'");
+            XmlRpcParsingUtils.handleUnexpectedElementFound(localName);
           }
 
         case XMLStreamConstants.CHARACTERS:

@@ -24,6 +24,7 @@ import org.springframework.remoting.support.RemoteInvocation;
 import org.springframework.remoting.support.RemoteInvocationBasedExporter;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcElement;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -32,7 +33,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/06 13:05:51 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/25 05:20:00 $
  */
 public final class XmlRpcServiceExporterImpl extends
     RemoteInvocationBasedExporter implements XmlRpcServiceExporter,
@@ -43,9 +44,6 @@ public final class XmlRpcServiceExporterImpl extends
    */
   private Object service;
 
-  /**
-   * Constructor.
-   */
   public XmlRpcServiceExporterImpl() {
     super();
   }
@@ -54,37 +52,36 @@ public final class XmlRpcServiceExporterImpl extends
    * @see InitializingBean#afterPropertiesSet()
    */
   public void afterPropertiesSet() throws Exception {
-    this.service = this.getProxyForService();
+    service = getProxyForService();
   }
 
   /**
-   * Returns a <code>{@link RemoteInvocation}</code> encapsulating the method
-   * to execute and the arguments to use.
-   * 
    * @param xmlRpcRequest
-   *          the XML-RPC request.
-   * @return a <code>RemoteInvocation</code> created from the XML-RPC request.
+   *          the XML-RPC request that specifies the method to execute.
+   * @return a <code>RemoteInvocation</code> containing the service method
+   *         that matches the one specified in the given XML-RPC request.
    * @throws XmlRpcMethodNotFoundException
-   *           if the method specified in the XML-RPC request does not exist.
+   *           if the a matching service method cannot be found.
    */
   protected RemoteInvocation findMatchingMethod(XmlRpcRequest xmlRpcRequest) {
     String requestMethodName = xmlRpcRequest.getMethodName();
     XmlRpcElement[] requestParameters = xmlRpcRequest.getParameters();
+    int requestParameterCount = requestParameters.length;
 
     Method targetMethod = null;
     Object[] arguments = null;
 
-    Method[] methods = this.getServiceInterface().getDeclaredMethods();
-    int methodCount = methods.length;
+    Method[] serviceMethods = getServiceInterface().getDeclaredMethods();
+    int serviceMethodCount = serviceMethods.length;
 
-    for (int i = 0; i < methodCount; i++) {
-      Method method = methods[i];
+    for (int i = 0; i < serviceMethodCount; i++) {
+      Method serviceMethod = serviceMethods[i];
 
-      if (method.getName().equals(requestMethodName)) {
-        Class[] parameterTypes = method.getParameterTypes();
+      if (serviceMethod.getName().equals(requestMethodName)) {
+        Class[] parameterTypes = serviceMethod.getParameterTypes();
         int parameterTypeCount = parameterTypes.length;
 
-        if (parameterTypeCount != requestParameters.length) {
+        if (parameterTypeCount != requestParameterCount) {
           continue;
         }
 
@@ -105,15 +102,15 @@ public final class XmlRpcServiceExporterImpl extends
         }
 
         if (matchingMethod) {
-          targetMethod = method;
+          targetMethod = serviceMethod;
           break;
         }
       }
     }
 
     if (targetMethod == null) {
-      throw new XmlRpcMethodNotFoundException("Unable to find method '"
-          + requestMethodName + "'");
+      throw new XmlRpcMethodNotFoundException("Unable to find method "
+          + Strings.quote(requestMethodName) + "");
     }
 
     RemoteInvocation invocation = new RemoteInvocation(targetMethod.getName(),
@@ -126,7 +123,7 @@ public final class XmlRpcServiceExporterImpl extends
    * @see #findMatchingMethod(XmlRpcRequest)
    */
   public Object invoke(XmlRpcRequest xmlRpcRequest) throws Exception {
-    RemoteInvocation invocation = this.findMatchingMethod(xmlRpcRequest);
-    return this.invoke(invocation, this.service);
+    RemoteInvocation invocation = findMatchingMethod(xmlRpcRequest);
+    return invoke(invocation, service);
   }
 }

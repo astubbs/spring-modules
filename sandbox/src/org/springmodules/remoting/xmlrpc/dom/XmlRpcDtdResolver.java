@@ -38,7 +38,7 @@ import org.xml.sax.InputSource;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:56 $
+ * @version $Revision: 1.2 $ $Date: 2005/09/25 05:20:03 $
  */
 public class XmlRpcDtdResolver implements EntityResolver {
 
@@ -55,7 +55,7 @@ public class XmlRpcDtdResolver implements EntityResolver {
   /**
    * Message logger.
    */
-  protected final Log logger = LogFactory.getLog(this.getClass());
+  protected final Log logger = LogFactory.getLog(getClass());
 
   /**
    * Constructor.
@@ -68,34 +68,34 @@ public class XmlRpcDtdResolver implements EntityResolver {
    * @see EntityResolver#resolveEntity(String, String)
    */
   public InputSource resolveEntity(String publicId, String systemId) {
-    if (this.logger.isDebugEnabled()) {
-      this.logger.debug("Trying to resolve XML entity with public ID ["
-          + publicId + "] and system ID [" + systemId + "]");
+    if (logger.isDebugEnabled()) {
+      logger.debug("Trying to resolve XML entity with public ID [" + publicId
+          + "] and system ID [" + systemId + "]");
     }
     if (systemId != null
         && systemId.indexOf(DTD_NAME) > systemId.lastIndexOf("/")) {
       String dtdFile = systemId.substring(systemId.indexOf(DTD_NAME));
 
-      if (this.logger.isDebugEnabled()) {
-        this.logger.debug("Trying to locate [" + dtdFile + "] under ["
+      if (logger.isDebugEnabled()) {
+        logger.debug("Trying to locate [" + dtdFile + "] under ["
             + SEARCH_PACKAGE + "]");
       }
 
       try {
         Resource resource = new ClassPathResource(SEARCH_PACKAGE + dtdFile,
-            this.getClass());
+            getClass());
         InputSource source = new InputSource(resource.getInputStream());
         source.setPublicId(publicId);
         source.setSystemId(systemId);
 
-        if (this.logger.isDebugEnabled()) {
-          this.logger.debug("Found beans DTD [" + systemId + "] in classpath");
+        if (logger.isDebugEnabled()) {
+          logger.debug("Found beans DTD [" + systemId + "] in classpath");
         }
         return source;
 
       } catch (IOException ex) {
-        if (this.logger.isDebugEnabled()) {
-          this.logger.debug("Could not resolve beans DTD [" + systemId
+        if (logger.isDebugEnabled()) {
+          logger.debug("Could not resolve beans DTD [" + systemId
               + "]: not found in class path", ex);
         }
       }

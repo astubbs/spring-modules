@@ -29,24 +29,10 @@ package org.springmodules.remoting.xmlrpc;
  */
 public abstract class XmlRpcServerException extends XmlRpcException {
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   */
   public XmlRpcServerException(String msg) {
     super(msg);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
-   */
   public XmlRpcServerException(String msg, Throwable nestedException) {
     super(msg, nestedException);
   }

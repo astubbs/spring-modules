@@ -25,28 +25,14 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/07/04 18:42:07 $
+ * @version $Revision: 1.3 $ $Date: 2005/09/25 05:20:00 $
  */
 public abstract class XmlRpcParsingException extends XmlRpcException {
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   */
   public XmlRpcParsingException(String msg) {
     super(msg);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
-   */
   public XmlRpcParsingException(String msg, Throwable nestedException) {
     super(msg, nestedException);
   }

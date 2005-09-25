@@ -26,72 +26,36 @@ import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/07/15 18:55:58 $
+ * @version $Revision: 1.15 $ $Date: 2005/09/25 05:19:58 $
  */
 public final class XmlRpcInteger implements XmlRpcScalar {
 
-  /**
-   * The value of this scalar.
-   */
   private Integer value;
 
-  /**
-   * Constructor.
-   */
   public XmlRpcInteger() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
-  public XmlRpcInteger(Integer value) {
+  public XmlRpcInteger(Integer newValue) {
     this();
-    this.value = value;
+    value = newValue;
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
-  public XmlRpcInteger(Short value) {
-    this(new Integer(value.intValue()));
+  public XmlRpcInteger(Short newValue) {
+    this(new Integer(newValue.intValue()));
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   * @throws XmlRpcInvalidPayloadException
-   *           if the given value is not a parsable number.
-   */
-  public XmlRpcInteger(String value) {
+  public XmlRpcInteger(String newValue) throws XmlRpcInvalidPayloadException {
     super();
     try {
-      this.value = new Integer(value);
+      value = new Integer(newValue);
 
     } catch (NumberFormatException exception) {
-      throw new XmlRpcInvalidPayloadException("'" + value
+      throw new XmlRpcInvalidPayloadException("'" + newValue
           + "' is not a 32-bit signed integer", exception);
     }
   }
 
-  /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
-   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -102,7 +66,7 @@ public final class XmlRpcInteger implements XmlRpcScalar {
 
     final XmlRpcInteger xmlRpcInteger = (XmlRpcInteger) obj;
 
-    if (this.value != null ? !this.value.equals(xmlRpcInteger.value)
+    if (value != null ? !value.equals(xmlRpcInteger.value)
         : xmlRpcInteger.value != null) {
       return false;
     }
@@ -125,7 +89,7 @@ public final class XmlRpcInteger implements XmlRpcScalar {
     Object matchingValue = NOT_MATCHING;
 
     if (Integer.class.equals(targetType) || Integer.TYPE.equals(targetType)) {
-      matchingValue = this.value;
+      matchingValue = value;
     }
     return matchingValue;
   }
@@ -134,46 +98,27 @@ public final class XmlRpcInteger implements XmlRpcScalar {
    * @see XmlRpcScalar#getValue()
    */
   public Object getValue() {
-    return this.value;
+    return value;
   }
 
   /**
    * @see XmlRpcScalar#getValueAsString()
    */
   public String getValueAsString() {
-    return this.value.toString();
+    return value.toString();
   }
 
-  /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
-   * @see Object#hashCode()
-   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (this.value != null ? this.value.hashCode() : 0);
+    hash = multiplier * hash + (value != null ? value.hashCode() : 0);
     return hash;
   }
 
-  /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
-   * @see Object#toString()
-   */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("value=" + this.value + "]");
+    buffer.append("value=" + value + "]");
 
     return buffer.toString();
   }

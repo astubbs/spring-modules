@@ -49,7 +49,7 @@ import org.xml.sax.ErrorHandler;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/04 18:42:09 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/25 05:20:03 $
  */
 public abstract class AbstractDomXmlRpcWriter {
 
@@ -68,17 +68,11 @@ public abstract class AbstractDomXmlRpcWriter {
    */
   private ErrorHandler errorHandler;
 
-  /**
-   * Message logger.
-   */
-  protected final Log logger = LogFactory.getLog(this.getClass());
+  protected final Log logger = LogFactory.getLog(getClass());
 
-  /**
-   * Constructor.
-   */
   public AbstractDomXmlRpcWriter() {
     super();
-    this.setErrorHandler(new SimpleSaxErrorHandler(this.logger));
+    setErrorHandler(new SimpleSaxErrorHandler(logger));
   }
 
   /**
@@ -90,14 +84,15 @@ public abstract class AbstractDomXmlRpcWriter {
    *          the XML document used to create new XML elements.
    * @return the created XML element.
    */
-  protected final Element createArrayElement(XmlRpcArray array, Document document) {
+  protected final Element createArrayElement(XmlRpcArray array,
+      Document document) {
     Element dataElement = document.createElement(XmlRpcElementNames.DATA);
 
     XmlRpcElement[] elements = array.getElements();
     int elementCount = elements.length;
 
     for (int i = 0; i < elementCount; i++) {
-      Element valueElement = this.createValueElement(elements[i], document);
+      Element valueElement = createValueElement(elements[i], document);
       dataElement.appendChild(valueElement);
     }
 
@@ -115,12 +110,12 @@ public abstract class AbstractDomXmlRpcWriter {
   protected final Document createEmptyXmlDocument() {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      if (this.logger.isDebugEnabled()) {
-        this.logger.debug("Using JAXP implementation [" + factory + "]");
+      if (logger.isDebugEnabled()) {
+        logger.debug("Using JAXP implementation [" + factory + "]");
       }
 
       DocumentBuilder docBuilder = factory.newDocumentBuilder();
-      docBuilder.setErrorHandler(this.errorHandler);
+      docBuilder.setErrorHandler(errorHandler);
 
       return docBuilder.newDocument();
 
@@ -139,12 +134,13 @@ public abstract class AbstractDomXmlRpcWriter {
    *          the XML document used to create new XML elements.
    * @return the created XML element.
    */
-  protected final Element createMemberElement(XmlRpcMember member, Document document) {
+  protected final Element createMemberElement(XmlRpcMember member,
+      Document document) {
     Element nameElement = document.createElement(XmlRpcElementNames.NAME);
     Text text = document.createTextNode(member.name);
     nameElement.appendChild(text);
 
-    Element valueElement = this.createValueElement(member.value, document);
+    Element valueElement = createValueElement(member.value, document);
 
     Element memberElement = document.createElement(XmlRpcElementNames.MEMBER);
     memberElement.appendChild(nameElement);
@@ -164,7 +160,7 @@ public abstract class AbstractDomXmlRpcWriter {
    */
   protected final Element createParameterElement(XmlRpcElement parameter,
       Document document) {
-    Element valueElement = this.createValueElement(parameter, document);
+    Element valueElement = createValueElement(parameter, document);
 
     Element parameterElement = document.createElement(XmlRpcElementNames.PARAM);
     parameterElement.appendChild(valueElement);
@@ -188,8 +184,7 @@ public abstract class AbstractDomXmlRpcWriter {
 
     int parameterCount = parameters.length;
     for (int i = 0; i < parameterCount; i++) {
-      Element parameterElement = this.createParameterElement(parameters[i],
-          document);
+      Element parameterElement = createParameterElement(parameters[i], document);
       parametersElement.appendChild(parameterElement);
     }
 
@@ -204,13 +199,14 @@ public abstract class AbstractDomXmlRpcWriter {
    * @param value
    *          the XML-RPC scalar value.
    * @param document
-   *          the XML document used to create new XML elements.
+   *          the DOM document to add the created XML element to.
    * @return the created XML element.
    */
-  protected final Element createScalarElement(String elementName, XmlRpcScalar value,
-      Document document) {
+  protected final Element createScalarElement(String elementName,
+      XmlRpcElement value, Document document) {
     Element scalarElement = document.createElement(elementName);
-    Text text = document.createTextNode(value.getValueAsString());
+    XmlRpcScalar scalarValue = (XmlRpcScalar) value;
+    Text text = document.createTextNode(scalarValue.getValueAsString());
     scalarElement.appendChild(text);
 
     return scalarElement;
@@ -225,14 +221,15 @@ public abstract class AbstractDomXmlRpcWriter {
    *          the XML document used to create new XML elements.
    * @return the created XML element.
    */
-  protected final Element createStructElement(XmlRpcStruct struct, Document document) {
+  protected final Element createStructElement(XmlRpcStruct struct,
+      Document document) {
     Element structElement = document.createElement(XmlRpcElementNames.STRUCT);
 
     XmlRpcMember[] members = struct.getMembers();
     int memberCount = members.length;
 
     for (int i = 0; i < memberCount; i++) {
-      Element memberElement = this.createMemberElement(members[i], document);
+      Element memberElement = createMemberElement(members[i], document);
       structElement.appendChild(memberElement);
     }
 
@@ -248,38 +245,33 @@ public abstract class AbstractDomXmlRpcWriter {
    *          the XML document used to create new XML elements.
    * @return the created XML element.
    */
-  protected final Element createValueElement(XmlRpcElement value, Document document) {
+  protected final Element createValueElement(XmlRpcElement value,
+      Document document) {
     Element child = null;
 
     if (value instanceof XmlRpcArray) {
-      child = this.createArrayElement((XmlRpcArray) value, document);
+      child = createArrayElement((XmlRpcArray) value, document);
 
     } else if (value instanceof XmlRpcBase64) {
-      child = this.createScalarElement(XmlRpcElementNames.BASE_64,
-          (XmlRpcScalar) value, document);
+      child = createScalarElement(XmlRpcElementNames.BASE_64, value, document);
 
     } else if (value instanceof XmlRpcBoolean) {
-      child = this.createScalarElement(XmlRpcElementNames.BOOLEAN,
-          (XmlRpcScalar) value, document);
+      child = createScalarElement(XmlRpcElementNames.BOOLEAN, value, document);
 
     } else if (value instanceof XmlRpcDateTime) {
-      child = this.createScalarElement(XmlRpcElementNames.DATE_TIME,
-          (XmlRpcScalar) value, document);
+      child = createScalarElement(XmlRpcElementNames.DATE_TIME, value, document);
 
     } else if (value instanceof XmlRpcDouble) {
-      child = this.createScalarElement(XmlRpcElementNames.DOUBLE,
-          (XmlRpcScalar) value, document);
+      child = createScalarElement(XmlRpcElementNames.DOUBLE, value, document);
 
     } else if (value instanceof XmlRpcInteger) {
-      child = this.createScalarElement(XmlRpcElementNames.I4,
-          (XmlRpcScalar) value, document);
+      child = createScalarElement(XmlRpcElementNames.I4, value, document);
 
     } else if (value instanceof XmlRpcString) {
-      child = this.createScalarElement(XmlRpcElementNames.STRING,
-          (XmlRpcScalar) value, document);
+      child = createScalarElement(XmlRpcElementNames.STRING, value, document);
 
     } else if (value instanceof XmlRpcStruct) {
-      child = this.createStructElement((XmlRpcStruct) value, document);
+      child = createStructElement((XmlRpcStruct) value, document);
     }
 
     Element valueElement = document.createElement(XmlRpcElementNames.VALUE);
@@ -288,13 +280,7 @@ public abstract class AbstractDomXmlRpcWriter {
     return valueElement;
   }
 
-  /**
-   * Setter for the field <code>{@link #errorHandler}</code>.
-   * 
-   * @param errorHandler
-   *          the new value to set.
-   */
-  public final void setErrorHandler(ErrorHandler errorHandler) {
-    this.errorHandler = errorHandler;
+  public final void setErrorHandler(ErrorHandler newErrorHandler) {
+    errorHandler = newErrorHandler;
   }
 }

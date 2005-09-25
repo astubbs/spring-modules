@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/06/22 08:51:26 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/25 05:20:04 $
  */
 public class XmlRpcDoubleTests extends TestCase {
 
@@ -52,7 +52,7 @@ public class XmlRpcDoubleTests extends TestCase {
    */
   public void testConstructorWithDoubleArgument() {
     Double expected = new Double(884.09);
-    this.xmlRpcDouble = new XmlRpcDouble(expected);
+    xmlRpcDouble = new XmlRpcDouble(expected);
     assertSame("<Value>", expected, this.xmlRpcDouble.getValue());
   }
 

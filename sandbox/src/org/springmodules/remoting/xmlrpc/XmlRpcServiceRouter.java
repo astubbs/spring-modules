@@ -38,17 +38,18 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcElementFactoryImpl;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcFault;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcResponse;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
  * Spring MVC Controller that receives a XML-RPC request, sends it the service
- * specified in the request and writes the result of the execution to HTTP
+ * specified in such request and writes the result of the execution to the HTTP
  * response.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/15 18:55:39 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/25 05:20:00 $
  */
 public class XmlRpcServiceRouter implements InitializingBean, Controller {
 
@@ -58,10 +59,7 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
    */
   private Map exportedServices;
 
-  /**
-   * Message logger.
-   */
-  protected final Log logger = LogFactory.getLog(this.getClass());
+  protected final Log logger = LogFactory.getLog(getClass());
 
   /**
    * <p>
@@ -109,14 +107,13 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
    */
   public void afterPropertiesSet() {
     // validate the services to export.
-    if (this.exportedServices == null || this.exportedServices.isEmpty()) {
+    if (exportedServices == null || exportedServices.isEmpty()) {
       throw new IllegalArgumentException(
           "This router should have at least one service to export");
     }
 
-    Iterator entrySetIterator = this.exportedServices.entrySet().iterator();
-    while (entrySetIterator.hasNext()) {
-      Map.Entry entry = (Map.Entry) entrySetIterator.next();
+    for (Iterator i = exportedServices.entrySet().iterator(); i.hasNext();) {
+      Map.Entry entry = (Map.Entry) i.next();
 
       Object entryValue = entry.getValue();
       if (!(entryValue instanceof XmlRpcServiceExporter)) {
@@ -125,44 +122,29 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
       }
     }
 
-    if (this.requestParser == null) {
-      this.requestParser = new DomXmlRpcRequestParser();
+    if (requestParser == null) {
+      requestParser = new DomXmlRpcRequestParser();
     }
 
-    if (this.responseWriter == null) {
-      this.responseWriter = new DomXmlRpcResponseWriter();
+    if (responseWriter == null) {
+      responseWriter = new DomXmlRpcResponseWriter();
     }
 
-    if (this.xmlRpcElementFactory == null) {
-      this.xmlRpcElementFactory = new XmlRpcElementFactoryImpl();
+    if (xmlRpcElementFactory == null) {
+      xmlRpcElementFactory = new XmlRpcElementFactoryImpl();
     }
   }
 
-  /**
-   * Getter for field <code>{@link #requestParser}</code>.
-   * 
-   * @return the field <code>requestParser</code>.
-   */
   protected final XmlRpcRequestParser getRequestParser() {
-    return this.requestParser;
+    return requestParser;
   }
 
-  /**
-   * Getter for field <code>{@link #responseWriter}</code>.
-   * 
-   * @return the field <code>responseWriter</code>.
-   */
   protected final XmlRpcResponseWriter getResponseWriter() {
-    return this.responseWriter;
+    return responseWriter;
   }
 
-  /**
-   * Getter for field <code>{@link #xmlRpcElementFactory}</code>.
-   * 
-   * @return the field <code>xmlRpcElementFactory</code>.
-   */
   protected final XmlRpcElementFactory getXmlRpcElementFactory() {
-    return this.xmlRpcElementFactory;
+    return xmlRpcElementFactory;
   }
 
   /**
@@ -180,32 +162,32 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
           .parseRequest(requestInputStream);
 
       String serviceName = xmlRpcRequest.getServiceName();
-      if (this.logger.isDebugEnabled()) {
-        this.logger.debug("Remote service: " + serviceName);
+      if (logger.isDebugEnabled()) {
+        logger.debug("Remote service: " + serviceName);
       }
 
-      if (!this.exportedServices.containsKey(serviceName)) {
-        throw new XmlRpcServiceNotFoundException("The service '" + serviceName
-            + "' was not found");
+      if (!exportedServices.containsKey(serviceName)) {
+        throw new XmlRpcServiceNotFoundException("The service "
+            + Strings.quote(serviceName) + " was not found");
       }
 
-      XmlRpcServiceExporter serviceExporter = (XmlRpcServiceExporter) this.exportedServices
+      XmlRpcServiceExporter serviceExporter = (XmlRpcServiceExporter) exportedServices
           .get(serviceName);
       result = serviceExporter.invoke(xmlRpcRequest);
 
-      if (this.logger.isDebugEnabled()) {
-        this.logger.debug("XML-RPC remote invocation result: " + result);
+      if (logger.isDebugEnabled()) {
+        logger.debug("XML-RPC remote invocation result: " + result);
       }
 
     } catch (XmlRpcException exception) {
       xmlRpcException = exception;
-      if (this.logger.isDebugEnabled()) {
-        this.logger.debug("XML-RPC Exception", exception);
+      if (logger.isErrorEnabled()) {
+        logger.error("XML-RPC Exception", exception);
       }
 
     } catch (Exception exception) {
-      if (this.logger.isDebugEnabled()) {
-        this.logger.debug("Server Exception", exception);
+      if (logger.isErrorEnabled()) {
+        logger.error("Server Exception", exception);
       }
       xmlRpcException = new XmlRpcInternalException(
           "Server error. Internal xml-rpc error");
@@ -214,7 +196,7 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
     XmlRpcResponse xmlRpcResponse = null;
 
     if (xmlRpcException == null) {
-      XmlRpcElement parameter = this.xmlRpcElementFactory
+      XmlRpcElement parameter = xmlRpcElementFactory
           .createXmlRpcElement(result);
       xmlRpcResponse = new XmlRpcResponse(parameter);
 
@@ -225,8 +207,7 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
       xmlRpcResponse = new XmlRpcResponse(xmlRpcFault);
     }
 
-    byte[] serializedResponse = this.responseWriter
-        .writeResponse(xmlRpcResponse);
+    byte[] serializedResponse = responseWriter.writeResponse(xmlRpcResponse);
 
     response.setContentType("text/xml");
     response.setContentLength(serializedResponse.length);
@@ -236,8 +217,8 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
       output.write(serializedResponse);
       output.flush();
     } catch (Exception exception) {
-      if (this.logger.isDebugEnabled()) {
-        this.logger.debug(
+      if (logger.isDebugEnabled()) {
+        logger.debug(
             "Unable to write result to request. Server I/O Exception.",
             exception);
       }
@@ -246,45 +227,21 @@ public class XmlRpcServiceRouter implements InitializingBean, Controller {
     return null;
   }
 
-  /**
-   * Setter for the field <code>{@link #exportedServices}</code>.
-   * 
-   * @param exportedServices
-   *          the new value to set.
-   */
-  public final void setExportedServices(Map exportedServices) {
-    this.exportedServices = exportedServices;
+  public final void setExportedServices(Map newExportedServices) {
+    exportedServices = newExportedServices;
   }
 
-  /**
-   * Setter for the field <code>{@link #requestParser}</code>.
-   * 
-   * @param requestParser
-   *          the new value to set.
-   */
-  public final void setRequestParser(XmlRpcRequestParser requestParser) {
-    this.requestParser = requestParser;
+  public final void setRequestParser(XmlRpcRequestParser newRequestParser) {
+    requestParser = newRequestParser;
   }
 
-  /**
-   * Setter for the field <code>{@link #responseWriter}</code>.
-   * 
-   * @param responseWriter
-   *          the new value to set.
-   */
-  public final void setResponseWriter(XmlRpcResponseWriter responseWriter) {
-    this.responseWriter = responseWriter;
+  public final void setResponseWriter(XmlRpcResponseWriter newResponseWriter) {
+    responseWriter = newResponseWriter;
   }
 
-  /**
-   * Setter for the field <code>{@link #xmlRpcElementFactory}</code>.
-   * 
-   * @param xmlRpcElementFactory
-   *          the new value to set.
-   */
   public final void setXmlRpcElementFactory(
-      XmlRpcElementFactory xmlRpcElementFactory) {
-    this.xmlRpcElementFactory = xmlRpcElementFactory;
+      XmlRpcElementFactory newXmlRpcElementFactory) {
+    xmlRpcElementFactory = newXmlRpcElementFactory;
   }
 
 }

@@ -19,6 +19,9 @@ package org.springmodules.remoting.xmlrpc.support;
 
 import java.util.Arrays;
 
+import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Strings;
+
 /**
  * <p>
  * Represents a XML-RPC request.
@@ -26,7 +29,7 @@ import java.util.Arrays;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/07/15 18:55:58 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/25 05:19:59 $
  */
 public final class XmlRpcRequest {
 
@@ -45,41 +48,18 @@ public final class XmlRpcRequest {
    */
   private String serviceName;
 
-  /**
-   * Constructor.
-   */
   public XmlRpcRequest() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param serviceName
-   *          the new name of the service.
-   * @param methodName
-   *          the new name of the method to execute.
-   * @param parameters
-   *          the new parameters to pass to the method.
-   */
-  public XmlRpcRequest(String serviceName, String methodName,
-      XmlRpcElement[] parameters) {
+  public XmlRpcRequest(String newServiceName, String newMethodName,
+      XmlRpcElement[] newParameters) {
     this();
-    this.setMethodName(methodName);
-    this.setParameters(parameters);
-    this.setServiceName(serviceName);
+    setMethodName(newMethodName);
+    setParameters(newParameters);
+    setServiceName(newServiceName);
   }
 
-  /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
-   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -90,97 +70,66 @@ public final class XmlRpcRequest {
 
     final XmlRpcRequest xmlRpcRequest = (XmlRpcRequest) obj;
 
-    if (this.methodName != null ? !this.methodName
-        .equals(xmlRpcRequest.methodName) : xmlRpcRequest.methodName != null) {
+    if (methodName != null ? !methodName.equals(xmlRpcRequest.methodName)
+        : xmlRpcRequest.methodName != null) {
       return false;
     }
-    if (!Arrays.equals(this.parameters, xmlRpcRequest.parameters)) {
+    if (!Arrays.equals(parameters, xmlRpcRequest.parameters)) {
       return false;
     }
-    if (this.serviceName != null ? !this.serviceName
-        .equals(xmlRpcRequest.serviceName) : xmlRpcRequest.serviceName != null) {
+    if (serviceName != null ? !serviceName.equals(xmlRpcRequest.serviceName)
+        : xmlRpcRequest.serviceName != null) {
       return false;
     }
 
     return true;
   }
 
-  /**
-   * Getter for field <code>{@link #methodName}</code>.
-   * 
-   * @return the field <code>methodName</code>.
-   */
   public final String getMethodName() {
-    return this.methodName;
+    return methodName;
   }
 
-  /**
-   * Getter for field <code>{@link #parameters}</code>.
-   * 
-   * @return the field <code>parameters</code>.
-   */
   public final XmlRpcElement[] getParameters() {
-    return this.parameters;
+    return parameters;
   }
 
-  /**
-   * Getter for field <code>{@link #serviceName}</code>.
-   * 
-   * @return the field <code>serviceName</code>.
-   */
   public final String getServiceName() {
-    return this.serviceName;
+    return serviceName;
   }
 
-  /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
-   * @see Object#hashCode()
-   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash
-        + (this.methodName != null ? this.methodName.hashCode() : 0);
+    hash = multiplier * hash + (methodName != null ? methodName.hashCode() : 0);
 
-    if (this.parameters == null) {
+    if (parameters == null) {
       hash = multiplier * hash;
     } else {
-      int parameterCount = this.parameters.length;
+      int parameterCount = parameters.length;
       for (int i = 0; i < parameterCount; i++) {
-        XmlRpcElement parameter = this.parameters[i];
+        XmlRpcElement parameter = parameters[i];
         hash = multiplier * hash
             + (parameter != null ? parameter.hashCode() : 0);
       }
     }
 
     hash = multiplier * hash
-        + (this.serviceName != null ? this.serviceName.hashCode() : 0);
+        + (serviceName != null ? serviceName.hashCode() : 0);
     return hash;
   }
 
-  /**
-   * Setter for the field <code>{@link #methodName}</code>.
-   * 
-   * @param methodName
-   *          the new value to set.
-   */
-  public final void setMethodName(String methodName) {
-    this.methodName = methodName;
+  public final void setMethodName(String newMethodName) {
+    methodName = newMethodName;
   }
 
   /**
    * Setter for the field <code>{@link #parameters}</code>.
    * 
-   * @param parameters
+   * @param newParameters
    *          the new value to set.
    */
-  public final void setParameters(XmlRpcElement[] parameters) {
-    this.parameters = parameters;
+  public final void setParameters(XmlRpcElement[] newParameters) {
+    parameters = newParameters;
   }
 
   /**
@@ -197,76 +146,26 @@ public final class XmlRpcRequest {
 
     if (dotIndex == -1) {
       throw new IllegalArgumentException(
-          "The given text should contain the name of the service and the method separated by a dot");
+          "The given text should have the format 'service.method'");
     }
 
     String newServiceName = serviceAndMethodNames.substring(0, dotIndex);
-    this.setServiceName(newServiceName);
+    setServiceName(newServiceName);
 
     String newMethodName = serviceAndMethodNames.substring(++dotIndex,
         serviceAndMethodNames.length());
-    this.setMethodName(newMethodName);
+    setMethodName(newMethodName);
   }
 
-  /**
-   * Setter for the field <code>{@link #serviceName}</code>.
-   * 
-   * @param serviceName
-   *          the new value to set.
-   */
-  public final void setServiceName(String serviceName) {
-    this.serviceName = serviceName;
+  public final void setServiceName(String newServiceName) {
+    serviceName = newServiceName;
   }
 
-  /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
-   * @see Object#toString()
-   */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-
-    buffer.append("serviceName=");
-    String formattedServiceName = null;
-    if (this.serviceName != null) {
-      formattedServiceName = "'" + this.serviceName + "'";
-    }
-    buffer.append(formattedServiceName);
-
-    buffer.append(", methodName=");
-    String formattedMethodName = null;
-    if (this.methodName != null) {
-      formattedMethodName = "'" + this.methodName + "'";
-    }
-    buffer.append(formattedMethodName);
-
-    buffer.append(", parameters=");
-    if (this.parameters == null) {
-      buffer.append("null]");
-    } else {
-      int parameterCount = this.parameters.length;
-
-      if (parameterCount == 0) {
-        buffer.append("{}]");
-      } else {
-        for (int i = 0; i < parameterCount; i++) {
-          if (i == 0) {
-            buffer.append("{");
-          } else {
-            buffer.append(", ");
-          }
-
-          buffer.append(this.parameters[i]);
-        }
-        buffer.append("}]");
-      }
-    }
+    buffer.append("serviceName=" + Strings.quote(serviceName) + ", ");
+    buffer.append("parameters=" + ArrayUtils.toString(parameters) + "]");
 
     return buffer.toString();
   }

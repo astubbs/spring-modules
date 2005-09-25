@@ -25,49 +25,24 @@ package org.springmodules.remoting.xmlrpc;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/07/04 21:36:36 $
+ * @version $Revision: 1.4 $ $Date: 2005/09/25 05:20:00 $
  */
 public class XmlRpcMethodNotFoundException extends XmlRpcServerException {
 
-  /**
-   * Fault code of this exception.
-   */
   public static final int FAULT_CODE = -32601;
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 3257005449604510518L;
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   */
   public XmlRpcMethodNotFoundException(String msg) {
     super(msg);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
-   */
   public XmlRpcMethodNotFoundException(String msg, Throwable nestedException) {
     super(msg, nestedException);
   }
 
-  /**
-   * @see XmlRpcException#getCode()
-   */
   public int getCode() {
     return FAULT_CODE;
   }
-  
+
 }

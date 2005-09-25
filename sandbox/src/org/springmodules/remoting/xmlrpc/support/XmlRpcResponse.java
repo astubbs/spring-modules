@@ -19,6 +19,8 @@ package org.springmodules.remoting.xmlrpc.support;
 
 import java.util.Arrays;
 
+import org.springmodules.util.ArrayUtils;
+
 /**
  * <p>
  * Represents a XML-RPC response.
@@ -26,7 +28,7 @@ import java.util.Arrays;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/07/15 18:55:58 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/25 05:19:59 $
  */
 public final class XmlRpcResponse {
 
@@ -47,51 +49,33 @@ public final class XmlRpcResponse {
   private XmlRpcElement[] parameters;
 
   /**
-   * Constructor.
-   * 
-   * @param parameter
+   * @param newParameter
    *          the new parameter of this response.
    */
-  public XmlRpcResponse(XmlRpcElement parameter) {
-    super();
-    XmlRpcElement[] newParameters = { parameter };
-    this.parameters = newParameters;
+  public XmlRpcResponse(XmlRpcElement newParameter) {
+    this(new XmlRpcElement[] { newParameter });
   }
 
   /**
-   * Constructor.
-   * 
-   * @param parameters
+   * @param newParameters
    *          the new parameters of this response.
    */
-  public XmlRpcResponse(XmlRpcElement[] parameters) {
+  public XmlRpcResponse(XmlRpcElement[] newParameters) {
     super();
-    this.parameters = parameters;
+    parameters = newParameters;
   }
 
   /**
-   * Constructor.
-   * 
-   * @param fault
+   * @param newFault
    *          the fault thrown if an error ocurred when executing a remote
    *          method.
    */
-  public XmlRpcResponse(XmlRpcFault fault) {
+  public XmlRpcResponse(XmlRpcFault newFault) {
     super();
-    this.fault = fault;
-    this.faultThrown = true;
+    fault = newFault;
+    faultThrown = true;
   }
 
-  /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
-   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -102,59 +86,40 @@ public final class XmlRpcResponse {
 
     final XmlRpcResponse xmlRpcResponse = (XmlRpcResponse) obj;
 
-    if (this.faultThrown != xmlRpcResponse.faultThrown) {
+    if (faultThrown != xmlRpcResponse.faultThrown) {
       return false;
     }
-    if (this.fault != null ? !this.fault.equals(xmlRpcResponse.fault)
+    if (fault != null ? !fault.equals(xmlRpcResponse.fault)
         : xmlRpcResponse.fault != null) {
       return false;
     }
-    if (!Arrays.equals(this.parameters, xmlRpcResponse.parameters)) {
+    if (!Arrays.equals(parameters, xmlRpcResponse.parameters)) {
       return false;
     }
 
     return true;
   }
 
-  /**
-   * Getter for field <code>{@link #fault}</code>.
-   * 
-   * @return the field <code>fault</code>.
-   */
   public XmlRpcFault getFault() {
-    return this.fault;
+    return fault;
   }
 
-  /**
-   * Getter for field <code>{@link #parameters}</code>.
-   * 
-   * @return the field <code>parameters</code>.
-   */
   public XmlRpcElement[] getParameters() {
-    return this.parameters;
+    return parameters;
   }
 
-  /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
-   * @see Object#hashCode()
-   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (this.fault != null ? this.fault.hashCode() : 0);
-    hash = multiplier * hash + (this.faultThrown ? 1 : 0);
+    hash = multiplier * hash + (fault != null ? fault.hashCode() : 0);
+    hash = multiplier * hash + (faultThrown ? 1 : 0);
 
-    if (this.parameters == null) {
+    if (parameters == null) {
       hash = multiplier * hash;
     } else {
-      int parameterCount = this.parameters.length;
+      int parameterCount = parameters.length;
       for (int i = 0; i < parameterCount; i++) {
-        XmlRpcElement parameter = this.parameters[i];
+        XmlRpcElement parameter = parameters[i];
         hash = multiplier * hash
             + (parameter != null ? parameter.hashCode() : 0);
       }
@@ -163,52 +128,16 @@ public final class XmlRpcResponse {
     return hash;
   }
 
-  /**
-   * Getter for field <code>{@link #faultThrown}</code>.
-   * 
-   * @return the field <code>faultThrown</code>.
-   */
   public boolean isFaultThrown() {
-    return this.faultThrown;
+    return faultThrown;
   }
 
-  /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
-   * @see Object#toString()
-   */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("faultThrown=" + this.faultThrown + ", ");
-    buffer.append("fault=" + this.fault + ", ");
-
-    buffer.append("parameters=");
-    if (this.parameters == null) {
-      buffer.append("null]");
-    } else {
-      int parameterCount = this.parameters.length;
-
-      if (parameterCount == 0) {
-        buffer.append("{}]");
-      } else {
-        for (int i = 0; i < parameterCount; i++) {
-          if (i == 0) {
-            buffer.append("{");
-          } else {
-            buffer.append(", ");
-          }
-
-          buffer.append(this.parameters[i]);
-        }
-        buffer.append("}]");
-      }
-    }
+    buffer.append("faultThrown=" + faultThrown + ", ");
+    buffer.append("fault=" + fault + ", ");
+    buffer.append("parameters=" + ArrayUtils.toString(parameters) + "]");
 
     return buffer.toString();
   }

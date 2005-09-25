@@ -28,43 +28,18 @@ package org.springmodules.remoting.xmlrpc;
  */
 public class XmlRpcNotWellFormedException extends XmlRpcParsingException {
 
-  /**
-   * Fault code of this exception.
-   */
   public static final int FAULT_CODE = -32700;
 
-  /**
-   * Version number of this class.
-   * 
-   * @see java.io.Serializable
-   */
   private static final long serialVersionUID = 8272029685122672801L;
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   */
   public XmlRpcNotWellFormedException(String msg) {
     super(msg);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
-   */
   public XmlRpcNotWellFormedException(String msg, Throwable nestedException) {
     super(msg, nestedException);
   }
 
-  /**
-   * @see XmlRpcException#getCode()
-   */
   public int getCode() {
     return FAULT_CODE;
   }

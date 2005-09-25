@@ -38,14 +38,11 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcRequest;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/07/04 18:42:03 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/25 05:20:02 $
  */
 public final class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser
     implements XmlRpcRequestParser {
 
-  /**
-   * Constructor.
-   */
   public StaxXmlRpcRequestParser() {
     super();
   }
@@ -57,7 +54,7 @@ public final class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser
     XmlRpcRequest request = new XmlRpcRequest();
 
     try {
-      XMLStreamReader reader = this.loadXmlReader(inputStream);
+      XMLStreamReader reader = loadXmlReader(inputStream);
 
       while (reader.hasNext()) {
         int event = reader.next();
@@ -71,7 +68,7 @@ public final class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser
               request.setServiceAndMethodNames(serviceAndMethodNames);
 
             } else if (XmlRpcElementNames.PARAMS.equals(localName)) {
-              XmlRpcElement[] parameters = this.parseParametersElement(reader);
+              XmlRpcElement[] parameters = parseParametersElement(reader);
               request.setParameters(parameters);
             }
         }
@@ -86,7 +83,7 @@ public final class StaxXmlRpcRequestParser extends AbstractStaxXmlRpcParser
         try {
           inputStream.close();
         } catch (IOException ex) {
-          this.logger.warn("Could not close InputStream", ex);
+          logger.warn("Could not close InputStream", ex);
         }
       }
     }

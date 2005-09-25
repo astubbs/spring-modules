@@ -21,42 +21,22 @@ import org.springframework.core.NestedRuntimeException;
 
 /**
  * <p>
- * Abstract superclass for all exceptions thrown in the XML-RPC package and
- * subpackages.
+ * Abstract superclass for all exceptions thrown in the XML-RPC module.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/07/04 18:42:06 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/25 05:20:00 $
  */
 public abstract class XmlRpcException extends NestedRuntimeException {
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   */
   public XmlRpcException(String msg) {
     super(msg);
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param msg
-   *          the detail message.
-   * @param nestedException
-   *          the nested exception.
-   */
   public XmlRpcException(String msg, Throwable nestedException) {
     super(msg, nestedException);
   }
 
-  /**
-   * Returns the code of this exception.
-   * 
-   * @return the code of this exception.
-   */
   public abstract int getCode();
 }

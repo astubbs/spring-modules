@@ -17,6 +17,8 @@
  */
 package org.springmodules.remoting.xmlrpc.support;
 
+import org.springmodules.util.Strings;
+
 /**
  * <p>
  * Represents a string or a string representation of a 64-bit signed integer.
@@ -29,7 +31,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/07/15 18:55:57 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/25 05:19:58 $
  */
 public final class XmlRpcString implements XmlRpcScalar {
 
@@ -38,47 +40,19 @@ public final class XmlRpcString implements XmlRpcScalar {
    */
   private String value;
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
   public XmlRpcString(Character value) {
     this(value.toString());
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
   public XmlRpcString(Long value) {
     this(value.toString());
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
-  public XmlRpcString(String value) {
+  public XmlRpcString(String newValue) {
     super();
-    this.value = value;
+    value = newValue;
   }
 
-  /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
-   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -89,7 +63,7 @@ public final class XmlRpcString implements XmlRpcScalar {
 
     final XmlRpcString xmlRpcString = (XmlRpcString) obj;
 
-    if (this.value != null ? !this.value.equals(xmlRpcString.value)
+    if (value != null ? !value.equals(xmlRpcString.value)
         : xmlRpcString.value != null) {
       return false;
     }
@@ -117,11 +91,11 @@ public final class XmlRpcString implements XmlRpcScalar {
     Object matchingValue = NOT_MATCHING;
 
     if (String.class.equals(targetType)) {
-      matchingValue = this.value;
+      matchingValue = value;
 
     } else if (Long.class.equals(targetType) || Long.TYPE.equals(targetType)) {
       try {
-        matchingValue = new Long(this.value);
+        matchingValue = new Long(value);
 
       } catch (NumberFormatException exception) {
         matchingValue = NOT_MATCHING;
@@ -134,53 +108,27 @@ public final class XmlRpcString implements XmlRpcScalar {
    * @see XmlRpcScalar#getValue()
    */
   public Object getValue() {
-    return this.value;
+    return value;
   }
 
   /**
    * @see XmlRpcScalar#getValueAsString()
    */
   public String getValueAsString() {
-    return this.value;
+    return value;
   }
 
-  /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
-   * @see Object#hashCode()
-   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (this.value != null ? this.value.hashCode() : 0);
+    hash = multiplier * hash + (value != null ? value.hashCode() : 0);
     return hash;
   }
 
-  /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
-   * @see Object#toString()
-   */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("value=");
-    
-    String formattedValue = null;
-    if (this.value != null) {
-      formattedValue = "'" + this.value + "'";
-    }
-    buffer.append(formattedValue);
-    buffer.append("]");
+    buffer.append("value=" + Strings.quote(value) + "]");
 
     return buffer.toString();
   }

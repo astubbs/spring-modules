@@ -25,7 +25,7 @@ package org.springmodules.remoting.xmlrpc.support;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/07/15 18:55:58 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/25 05:19:59 $
  */
 public final class XmlRpcFault {
 
@@ -44,25 +44,15 @@ public final class XmlRpcFault {
    */
   public XmlRpcFault(int code, String message) {
     super();
-    this.faultStruct = new XmlRpcStruct();
+    faultStruct = new XmlRpcStruct();
 
     XmlRpcInteger faultCode = new XmlRpcInteger(new Integer(code));
-    this.faultStruct.add(XmlRpcElementNames.FAULT_CODE, faultCode);
+    faultStruct.add(XmlRpcElementNames.FAULT_CODE, faultCode);
 
     XmlRpcString faultString = new XmlRpcString(message);
-    this.faultStruct.add(XmlRpcElementNames.FAULT_STRING, faultString);
+    faultStruct.add(XmlRpcElementNames.FAULT_STRING, faultString);
   }
 
-  /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
-   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -73,52 +63,28 @@ public final class XmlRpcFault {
 
     final XmlRpcFault xmlRpcFault = (XmlRpcFault) obj;
 
-    if (this.faultStruct != null ? !this.faultStruct
-        .equals(xmlRpcFault.faultStruct) : xmlRpcFault.faultStruct != null) {
+    if (faultStruct != null ? !faultStruct.equals(xmlRpcFault.faultStruct)
+        : xmlRpcFault.faultStruct != null) {
       return false;
     }
 
     return true;
   }
 
-  /**
-   * Getter for field <code>{@link #faultStruct}</code>.
-   * 
-   * @return the field <code>faultStruct</code>.
-   */
   public XmlRpcStruct getFaultStruct() {
-    return this.faultStruct;
+    return faultStruct;
   }
 
-  /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
-   * @see Object#hashCode()
-   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
     hash = multiplier * hash
-        + (this.faultStruct != null ? this.faultStruct.hashCode() : 0);
+        + (faultStruct != null ? faultStruct.hashCode() : 0);
     return hash;
   }
 
-  /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
-   * @see Object#toString()
-   */
   public String toString() {
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
     buffer.append("faultStruct=" + this.faultStruct + "]");
 

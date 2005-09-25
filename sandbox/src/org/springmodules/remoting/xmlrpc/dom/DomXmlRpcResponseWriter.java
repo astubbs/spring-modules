@@ -46,14 +46,11 @@ import org.w3c.dom.Element;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/07/04 18:42:09 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/25 05:20:03 $
  */
 public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
     implements XmlRpcResponseWriter {
 
-  /**
-   * Constructor.
-   */
   public DomXmlRpcResponseWriter() {
     super();
   }
@@ -69,7 +66,7 @@ public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
    */
   protected Element createFaultElement(XmlRpcFault fault, Document document) {
     XmlRpcStruct struct = fault.getFaultStruct();
-    Element structElement = this.createStructElement(struct, document);
+    Element structElement = createStructElement(struct, document);
 
     Element faultElement = document.createElement(XmlRpcElementNames.FAULT);
     faultElement.appendChild(structElement);
@@ -91,10 +88,9 @@ public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
 
     Element content = null;
     if (response.isFaultThrown()) {
-      content = this.createFaultElement(response.getFault(), document);
+      content = createFaultElement(response.getFault(), document);
     } else {
-      content = this
-          .createParametersElement(response.getParameters(), document);
+      content = createParametersElement(response.getParameters(), document);
     }
 
     Element methodResponseElement = document
@@ -109,8 +105,8 @@ public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
    * @see XmlRpcResponseWriter#writeResponse(XmlRpcResponse)
    */
   public byte[] writeResponse(XmlRpcResponse response) {
-    Document document = this.createEmptyXmlDocument();
-    Element methodResponseElement = this.createMethodResponseElement(response,
+    Document document = createEmptyXmlDocument();
+    Element methodResponseElement = createMethodResponseElement(response,
         document);
     document.appendChild(methodResponseElement);
 
@@ -137,7 +133,7 @@ public final class DomXmlRpcResponseWriter extends AbstractDomXmlRpcWriter
         try {
           outputStream.close();
         } catch (IOException exception) {
-          this.logger.warn("Could not close InputStream", exception);
+          logger.warn("Could not close InputStream", exception);
         }
       }
     }

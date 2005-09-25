@@ -1,5 +1,5 @@
 /* 
- * Created on Jun 13, 2005
+ * Created on Sep 23, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,39 +17,24 @@
  */
 package org.springmodules.remoting.xmlrpc.util;
 
+import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
+import org.springmodules.util.Strings;
+
 /**
  * <p>
- * A tuple is a pair of objects accessed by first and second, respectively.
+ * Utility methods for parsing XML-RPC requests/responses.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/06/17 09:57:45 $
+ * @version $Revision$ $Date$
  */
-public class Tuple {
+public abstract class XmlRpcParsingUtils {
 
-  /**
-   * The first value of this tuple.
-   */
-  public final Object first;
-
-  /**
-   * The second value of this tuple.
-   */
-  public final Object second;
-
-  /**
-   * Constructor.
-   * 
-   * @param first
-   *          the new first value of this tuple.
-   * @param second
-   *          the new second value of this tuple.
-   */
-  public Tuple(Object first, Object second) {
-    super();
-    this.first = first;
-    this.second = second;
+  public static void handleUnexpectedElementFound(String elementName)
+      throws XmlRpcInvalidPayloadException {
+    throw new XmlRpcInvalidPayloadException("Unexpected element "
+        + Strings.quote(elementName));
   }
 
 }

@@ -32,7 +32,7 @@ import org.springframework.beans.BeanWrapperImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/07/15 18:55:57 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/25 05:19:58 $
  */
 public final class XmlRpcStruct implements XmlRpcElement {
 
@@ -50,30 +50,12 @@ public final class XmlRpcStruct implements XmlRpcElement {
      */
     public final XmlRpcElement value;
 
-    /**
-     * Constructor.
-     * 
-     * @param name
-     *          the new name of this member.
-     * @param value
-     *          the new value of this member.
-     */
-    public XmlRpcMember(String name, XmlRpcElement value) {
+    public XmlRpcMember(String newName, XmlRpcElement newValue) {
       super();
-      this.name = name;
-      this.value = value;
+      name = newName;
+      value = newValue;
     }
 
-    /**
-     * Indicates whether some other object is "equal to" this one.
-     * 
-     * @param obj
-     *          the reference object with which to compare
-     * @return <code>true</code> if this object is the same as the obj
-     *         argument; <code>false</code> otherwise.
-     * 
-     * @see Object#equals(java.lang.Object)
-     */
     public boolean equals(Object obj) {
       if (this == obj) {
         return true;
@@ -84,11 +66,11 @@ public final class XmlRpcStruct implements XmlRpcElement {
 
       final XmlRpcMember xmlRpcMember = (XmlRpcMember) obj;
 
-      if (this.name != null ? !this.name.equals(xmlRpcMember.name)
+      if (name != null ? !name.equals(xmlRpcMember.name)
           : xmlRpcMember.name != null) {
         return false;
       }
-      if (this.value != null ? !this.value.equals(xmlRpcMember.value)
+      if (value != null ? !value.equals(xmlRpcMember.value)
           : xmlRpcMember.value != null) {
         return false;
       }
@@ -96,33 +78,15 @@ public final class XmlRpcStruct implements XmlRpcElement {
       return true;
     }
 
-    /**
-     * Returns a hash code value for the object. This method is supported for
-     * the benefit of hashtables such as those provided by
-     * <code>java.util.Hashtable</code>.
-     * 
-     * @return a hash code value for this object.
-     * 
-     * @see Object#hashCode()
-     */
     public int hashCode() {
       int hash = 7;
-      hash = 31 * hash + (this.name != null ? this.name.hashCode() : 0);
-      hash = 31 * hash + (this.value != null ? this.value.hashCode() : 0);
+      hash = 31 * hash + (name != null ? name.hashCode() : 0);
+      hash = 31 * hash + (value != null ? value.hashCode() : 0);
       return hash;
     }
 
-    /**
-     * Returns a string representation of the object. In general, the
-     * <code>toString</code> method returns a string that "textually
-     * represents" this object.
-     * 
-     * @return a string representation of the object.
-     * 
-     * @see Object#toString()
-     */
     public String toString() {
-      return "XmlRpcMember: name='" + this.name + "', value=" + this.value;
+      return "XmlRpcMember: name='" + name + "', value=" + value;
     }
   }
 
@@ -131,12 +95,9 @@ public final class XmlRpcStruct implements XmlRpcElement {
    */
   private List members;
 
-  /**
-   * Constructor.
-   */
   public XmlRpcStruct() {
     super();
-    this.members = new ArrayList();
+    members = new ArrayList();
   }
 
   /**
@@ -149,7 +110,7 @@ public final class XmlRpcStruct implements XmlRpcElement {
    */
   public void add(String name, XmlRpcElement value) {
     XmlRpcMember member = new XmlRpcMember(name, value);
-    this.add(member);
+    add(member);
   }
 
   /**
@@ -159,19 +120,9 @@ public final class XmlRpcStruct implements XmlRpcElement {
    *          the member to add.
    */
   public void add(XmlRpcMember member) {
-    this.members.add(member);
+    members.add(member);
   }
 
-  /**
-   * Indicates whether some other object is "equal to" this one.
-   * 
-   * @param obj
-   *          the reference object with which to compare
-   * @return <code>true</code> if this object is the same as the obj argument;
-   *         <code>false</code> otherwise.
-   * 
-   * @see Object#equals(java.lang.Object)
-   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -182,7 +133,7 @@ public final class XmlRpcStruct implements XmlRpcElement {
 
     final XmlRpcStruct xmlRpcStruct = (XmlRpcStruct) obj;
 
-    if (this.members != null ? !this.members.equals(xmlRpcStruct.members)
+    if (members != null ? !members.equals(xmlRpcStruct.members)
         : xmlRpcStruct.members != null) {
       return false;
     }
@@ -204,9 +155,9 @@ public final class XmlRpcStruct implements XmlRpcElement {
     BeanWrapper beanWrapper = new BeanWrapperImpl(targetType);
     boolean matching = true;
 
-    int memberCount = this.members.size();
+    int memberCount = members.size();
     for (int i = 0; i < memberCount; i++) {
-      XmlRpcMember member = (XmlRpcMember) this.members.get(i);
+      XmlRpcMember member = (XmlRpcMember) members.get(i);
 
       String propertyName = member.name;
       if (beanWrapper.isWritableProperty(propertyName)) {
@@ -254,9 +205,9 @@ public final class XmlRpcStruct implements XmlRpcElement {
     boolean matching = true;
     Map map = new HashMap();
 
-    int memberCount = this.members.size();
+    int memberCount = members.size();
     for (int i = 0; i < memberCount; i++) {
-      XmlRpcMember member = (XmlRpcMember) this.members.get(i);
+      XmlRpcMember member = (XmlRpcMember) members.get(i);
       XmlRpcElement value = member.value;
 
       if (value instanceof XmlRpcScalar) {
@@ -298,10 +249,10 @@ public final class XmlRpcStruct implements XmlRpcElement {
     Object matchingValue = NOT_MATCHING;
 
     if (Map.class.equals(targetType) || HashMap.class.equals(targetType)) {
-      matchingValue = this.getMapMatchingValue();
+      matchingValue = getMapMatchingValue();
 
     } else {
-      matchingValue = this.getBeanMatchingValue(targetType);
+      matchingValue = getBeanMatchingValue(targetType);
     }
 
     return matchingValue;
@@ -313,41 +264,21 @@ public final class XmlRpcStruct implements XmlRpcElement {
    * @return the members of this struct.
    */
   public XmlRpcMember[] getMembers() {
-    return (XmlRpcMember[]) this.members.toArray(new XmlRpcMember[this.members
-        .size()]);
+    return (XmlRpcMember[]) members.toArray(new XmlRpcMember[members.size()]);
   }
 
-  /**
-   * Returns a hash code value for the object. This method is supported for the
-   * benefit of hashtables such as those provided by
-   * <code>java.util.Hashtable</code>.
-   * 
-   * @return a hash code value for this object.
-   * 
-   * @see Object#hashCode()
-   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash
-        + (this.members != null ? this.members.hashCode() : 0);
+    hash = multiplier * hash + (members != null ? members.hashCode() : 0);
     return hash;
   }
 
-  /**
-   * Returns a string representation of the object. In general, the
-   * <code>toString</code> method returns a string that "textually represents"
-   * this object.
-   * 
-   * @return a string representation of the object.
-   * 
-   * @see Object#toString()
-   */
   public String toString() {
     StringBuffer buffer = new StringBuffer();
-    buffer.append(this.getClass().getName());
+    buffer.append(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("members=" + this.members + "]");
+    buffer.append("members=" + members + "]");
 
     return buffer.toString();
   }

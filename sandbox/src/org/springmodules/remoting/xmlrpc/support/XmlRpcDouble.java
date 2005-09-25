@@ -26,59 +26,33 @@ import org.springmodules.remoting.xmlrpc.XmlRpcInvalidPayloadException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/07/15 18:55:57 $
+ * @version $Revision: 1.15 $ $Date: 2005/09/25 05:19:58 $
  */
 public final class XmlRpcDouble implements XmlRpcScalar {
 
-  /**
-   * The value of this scalar.
-   */
   private Double value;
 
-  /**
-   * Constructor.
-   */
   public XmlRpcDouble() {
     super();
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
-  public XmlRpcDouble(Double value) {
+  public XmlRpcDouble(Double newValue) {
     this();
-    this.value = value;
+    value = newValue;
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   */
-  public XmlRpcDouble(Float value) {
-    this(new Double(value.doubleValue()));
+  public XmlRpcDouble(Float newValue) {
+    this(new Double(newValue.doubleValue()));
   }
 
-  /**
-   * Constructor.
-   * 
-   * @param value
-   *          the new value of this scalar.
-   * @throws XmlRpcInvalidPayloadException
-   *           if the given value is not a parsable number.
-   */
-  public XmlRpcDouble(String value) {
+  public XmlRpcDouble(String newValue) throws XmlRpcInvalidPayloadException {
     this();
 
     try {
-      this.value = new Double(value);
+      value = new Double(newValue);
 
     } catch (NumberFormatException exception) {
-      throw new XmlRpcInvalidPayloadException("'" + value
+      throw new XmlRpcInvalidPayloadException("'" + newValue
           + "' is not a double-precision signed floating point number",
           exception);
     }

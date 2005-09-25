@@ -47,6 +47,7 @@ import org.springmodules.remoting.xmlrpc.support.XmlRpcInteger;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcString;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct;
 import org.springmodules.remoting.xmlrpc.support.XmlRpcStruct.XmlRpcMember;
+import org.springmodules.remoting.xmlrpc.util.XmlRpcParsingUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -64,7 +65,7 @@ import org.xml.sax.SAXParseException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/07/04 18:42:09 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/25 05:20:03 $
  */
 public abstract class AbstractDomXmlRpcParser {
 
@@ -89,10 +90,7 @@ public abstract class AbstractDomXmlRpcParser {
    */
   private ErrorHandler errorHandler;
 
-  /**
-   * Message logger.
-   */
-  protected final Log logger = LogFactory.getLog(this.getClass());
+  protected final Log logger = LogFactory.getLog(getClass());
 
   /**
    * Flag that indicates if the XML parser should validate the XML-RPC request.
@@ -100,13 +98,10 @@ public abstract class AbstractDomXmlRpcParser {
    */
   private boolean validating;
 
-  /**
-   * Constructor.
-   */
   public AbstractDomXmlRpcParser() {
     super();
-    this.setEntityResolver(new XmlRpcDtdResolver());
-    this.setErrorHandler(new SimpleSaxErrorHandler(this.logger));
+    setEntityResolver(new XmlRpcDtdResolver());
+    setErrorHandler(new SimpleSaxErrorHandler(logger));
   }
 
   /**
@@ -123,15 +118,15 @@ public abstract class AbstractDomXmlRpcParser {
   protected final Document loadXmlDocument(InputStream inputStream) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-      if (this.logger.isDebugEnabled()) {
-        this.logger.debug("Using JAXP implementation [" + factory + "]");
+      if (logger.isDebugEnabled()) {
+        logger.debug("Using JAXP implementation [" + factory + "]");
       }
-      factory.setValidating(this.validating);
+      factory.setValidating(validating);
 
       DocumentBuilder docBuilder = factory.newDocumentBuilder();
-      docBuilder.setErrorHandler(this.errorHandler);
-      if (this.entityResolver != null) {
-        docBuilder.setEntityResolver(this.entityResolver);
+      docBuilder.setErrorHandler(errorHandler);
+      if (entityResolver != null) {
+        docBuilder.setEntityResolver(entityResolver);
       }
 
       return docBuilder.parse(inputStream);
@@ -158,7 +153,7 @@ public abstract class AbstractDomXmlRpcParser {
         try {
           inputStream.close();
         } catch (IOException exception) {
-          this.logger.warn("Could not close InputStream", exception);
+          logger.warn("Could not close InputStream", exception);
         }
       }
     }
@@ -187,10 +182,9 @@ public abstract class AbstractDomXmlRpcParser {
 
         if (XmlRpcElementNames.DATA.equals(childName)) {
           Element dataElement = (Element) child;
-          return this.parseDataElement(dataElement);
+          return parseDataElement(dataElement);
         }
-        throw new XmlRpcInvalidPayloadException("Unexpected element '"
-            + childName + "'");
+        XmlRpcParsingUtils.handleUnexpectedElementFound(childName);
       }
     }
 
@@ -220,7 +214,7 @@ public abstract class AbstractDomXmlRpcParser {
 
         if (XmlRpcElementNames.VALUE.equals(childName)) {
           Element valueElement = (Element) child;
-          XmlRpcElement element = this.parseValueElement(valueElement);
+          XmlRpcElement element = parseValueElement(valueElement);
           array.add(element);
         }
       }
@@ -262,11 +256,10 @@ public abstract class AbstractDomXmlRpcParser {
 
         } else if (XmlRpcElementNames.VALUE.equals(childName)) {
           Element valueElement = (Element) child;
-          value = this.parseValueElement(valueElement);
+          value = parseValueElement(valueElement);
 
         } else {
-          throw new XmlRpcInvalidPayloadException("Unexpected element '"
-              + childName + "'");
+          XmlRpcParsingUtils.handleUnexpectedElementFound(childName);
         }
       }
     }
@@ -301,10 +294,9 @@ public abstract class AbstractDomXmlRpcParser {
         String nodeName = child.getNodeName();
         if (XmlRpcElementNames.VALUE.equals(nodeName)) {
           Element valueElement = (Element) child;
-          return this.parseValueElement(valueElement);
+          return parseValueElement(valueElement);
         }
-        throw new XmlRpcInvalidPayloadException("Unexpected element '"
-            + nodeName + "'");
+        XmlRpcParsingUtils.handleUnexpectedElementFound(nodeName);
       }
     }
 
@@ -342,8 +334,7 @@ public abstract class AbstractDomXmlRpcParser {
           parameters.add(parameter);
 
         } else {
-          throw new XmlRpcInvalidPayloadException("Unexpected element '"
-              + childName + "'");
+          XmlRpcParsingUtils.handleUnexpectedElementFound(childName);
         }
       }
     }
@@ -374,7 +365,7 @@ public abstract class AbstractDomXmlRpcParser {
 
         if (XmlRpcElementNames.MEMBER.equals(childName)) {
           Element memberElement = (Element) child;
-          XmlRpcMember member = this.parseMemberElement(memberElement);
+          XmlRpcMember member = parseMemberElement(memberElement);
           struct.add(member);
         }
       }
@@ -407,7 +398,7 @@ public abstract class AbstractDomXmlRpcParser {
         Element xmlElement = (Element) child;
 
         if (XmlRpcElementNames.ARRAY.equals(childName)) {
-          return this.parseArrayElement(xmlElement);
+          return parseArrayElement(xmlElement);
 
         } else if (XmlRpcElementNames.BASE_64.equals(childName)) {
           String source = DomUtils.getTextValue(xmlElement);
@@ -435,11 +426,10 @@ public abstract class AbstractDomXmlRpcParser {
           return new XmlRpcString(source);
 
         } else if (XmlRpcElementNames.STRUCT.equals(childName)) {
-          return this.parseStructElement(xmlElement);
+          return parseStructElement(xmlElement);
 
         } else {
-          throw new XmlRpcInvalidPayloadException("Unexpected element '"
-              + childName + "'");
+          XmlRpcParsingUtils.handleUnexpectedElementFound(childName);
         }
 
       } else if (child instanceof Text) {
@@ -452,33 +442,15 @@ public abstract class AbstractDomXmlRpcParser {
     return null;
   }
 
-  /**
-   * Setter for the field <code>{@link #entityResolver}</code>.
-   * 
-   * @param entityResolver
-   *          the new value to set.
-   */
-  public final void setEntityResolver(EntityResolver entityResolver) {
-    this.entityResolver = entityResolver;
+  public final void setEntityResolver(EntityResolver newEntityResolver) {
+    entityResolver = newEntityResolver;
   }
 
-  /**
-   * Setter for the field <code>{@link #errorHandler}</code>.
-   * 
-   * @param errorHandler
-   *          the new value to set.
-   */
-  public final void setErrorHandler(ErrorHandler errorHandler) {
-    this.errorHandler = errorHandler;
+  public final void setErrorHandler(ErrorHandler newErrorHandler) {
+    errorHandler = newErrorHandler;
   }
 
-  /**
-   * Setter for the field <code>{@link #validating}</code>.
-   * 
-   * @param validating
-   *          the new value to set.
-   */
-  public final void setValidating(boolean validating) {
-    this.validating = validating;
+  public final void setValidating(boolean newValidating) {
+    validating = newValidating;
   }
 }
