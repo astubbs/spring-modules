@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.Strings;
 
 /**
  * <p>

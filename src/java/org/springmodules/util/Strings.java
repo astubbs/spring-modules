@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.cache.util;
+package org.springmodules.util;
 
 /**
  * <p>

@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -33,7 +33,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/09 02:18:59 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/25 05:26:21 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {

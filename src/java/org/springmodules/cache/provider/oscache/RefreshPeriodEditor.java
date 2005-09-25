@@ -20,7 +20,7 @@ package org.springmodules.cache.provider.oscache;
 import java.beans.PropertyEditorSupport;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.Strings;
 
 import com.opensymphony.oscache.base.CacheEntry;
 

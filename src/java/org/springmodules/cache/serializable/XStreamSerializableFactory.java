@@ -19,7 +19,7 @@ package org.springmodules.cache.serializable;
 
 import java.io.Serializable;
 
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.Strings;
 
 import com.thoughtworks.xstream.XStream;
 

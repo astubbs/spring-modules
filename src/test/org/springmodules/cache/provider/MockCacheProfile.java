@@ -17,7 +17,7 @@
  */
 package org.springmodules.cache.provider;
 
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.Strings;
 
 /**
  * <p>

@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheAttribute;
-import org.springmodules.cache.util.ArrayUtils;
+import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -32,7 +32,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/09 02:19:02 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/25 05:20:28 $
  */
 public class FlushCache implements CacheAttribute {
 

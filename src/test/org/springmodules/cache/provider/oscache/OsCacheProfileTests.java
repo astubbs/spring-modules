@@ -24,8 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
-import org.springmodules.cache.util.ArrayUtils;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -34,7 +34,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/09/09 02:19:22 $
+ * @version $Revision: 1.15 $ $Date: 2005/09/25 05:26:22 $
  */
 public final class OsCacheProfileTests extends TestCase implements
     EqualsHashCodeTestCase {

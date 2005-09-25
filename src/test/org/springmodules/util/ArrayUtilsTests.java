@@ -15,7 +15,10 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.cache.util;
+package org.springmodules.util;
+
+import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Strings;
 
 import junit.framework.TestCase;
 
@@ -30,8 +33,8 @@ import junit.framework.TestCase;
  */
 public class ArrayUtilsTests extends TestCase {
 
-  public ArrayUtilsTests(String arg0) {
-    super(arg0);
+  public ArrayUtilsTests(String name) {
+    super(name);
   }
 
   public void testToStringWithNotEmptyStringArray() {
@@ -49,24 +52,15 @@ public class ArrayUtilsTests extends TestCase {
     }
 
     buffer.append("}");
-    String expected = buffer.toString();
-    String actual = ArrayUtils.toString(array);
     
-    assertEquals(expected, actual);
+    assertEquals(buffer.toString(), ArrayUtils.toString(array));
   }
 
   public void testToStringWithEmptyStringArray() {
-    String expected = "{}";
-    String actual = ArrayUtils.toString(new String[0]);
-    
-    assertEquals(expected, actual);
+    assertEquals("{}", ArrayUtils.toString(new String[0]));
   }
 
   public void testToStringWithStringArrayEqualToNull() {
-    String[] array = null;
-    
-    String actual = ArrayUtils.toString(array);
-
-    assertNotNull(actual);
+    assertEquals("null", ArrayUtils.toString((String[]) null));
   }
 }

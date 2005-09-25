@@ -18,7 +18,7 @@
 package org.springmodules.cache.provider.jboss;
 
 import org.springmodules.cache.provider.CacheProfile;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.Strings;
 
 /**
  * <p>

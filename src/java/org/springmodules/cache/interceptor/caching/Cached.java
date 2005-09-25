@@ -19,7 +19,7 @@
 package org.springmodules.cache.interceptor.caching;
 
 import org.springmodules.cache.CacheAttribute;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -29,7 +29,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/09 02:18:56 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/25 05:20:28 $
  */
 public class Cached implements CacheAttribute {
 

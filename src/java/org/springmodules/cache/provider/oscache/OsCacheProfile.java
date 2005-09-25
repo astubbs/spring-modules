@@ -22,8 +22,8 @@ import java.util.Arrays;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.CacheProfile;
-import org.springmodules.cache.util.ArrayUtils;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -31,7 +31,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/20 03:50:24 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/25 05:22:16 $
  */
 public class OsCacheProfile implements CacheProfile {
 

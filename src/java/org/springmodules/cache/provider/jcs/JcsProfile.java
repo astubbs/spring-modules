@@ -19,7 +19,7 @@
 package org.springmodules.cache.provider.jcs;
 
 import org.springmodules.cache.provider.CacheProfile;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ import org.springmodules.cache.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/09 02:19:18 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/25 05:22:17 $
  */
 public class JcsProfile implements CacheProfile {
 

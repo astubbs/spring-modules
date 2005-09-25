@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 import org.springmodules.cache.regex.Match;
 import org.springmodules.cache.regex.Perl5Regex;
 import org.springmodules.cache.regex.Regex;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -34,7 +35,7 @@ import org.springmodules.cache.regex.Regex;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/21 03:06:54 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/25 05:19:21 $
  */
 public abstract class BracketSeparatedPropertiesParser {
 
@@ -43,7 +44,7 @@ public abstract class BracketSeparatedPropertiesParser {
    * String of form "key=value".
    */
   protected static final Regex KEY_VALUE_REGEX = new Perl5Regex(
-      "([\\w]+)=([\\w ,\\*]+)");
+      "([\\w]+)=([\\w /,\\*]+)");
 
   /**
    * Takes a String of form "key=value", splits it into two Strings ("key" and

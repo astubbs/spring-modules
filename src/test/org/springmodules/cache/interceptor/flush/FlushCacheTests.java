@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
-import org.springmodules.cache.util.ArrayUtils;
+import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -33,7 +33,7 @@ import org.springmodules.cache.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/07 02:01:43 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/25 05:26:22 $
  */
 public final class FlushCacheTests extends TestCase implements
     EqualsHashCodeTestCase {

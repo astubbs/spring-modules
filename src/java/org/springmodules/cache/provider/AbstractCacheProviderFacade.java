@@ -30,8 +30,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.serializable.SerializableFactory;
-import org.springmodules.cache.util.ArrayUtils;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Strings;
 
 /**
  * <p>

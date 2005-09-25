@@ -25,7 +25,7 @@ import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
 import org.springmodules.cache.serializable.XStreamSerializableFactory;
 import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWrapper;
-import org.springmodules.cache.util.Strings;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
