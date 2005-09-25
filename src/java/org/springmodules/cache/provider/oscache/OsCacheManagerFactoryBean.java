@@ -35,7 +35,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * @version $Revision: 1.8 $ $Date: 2005/09/23 02:58:35 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/25 05:28:09 $
  */
 public final class OsCacheManagerFactoryBean extends
     AbstractCacheManagerFactoryBean {
@@ -66,7 +66,7 @@ public final class OsCacheManagerFactoryBean extends
   /**
    * @see AbstractCacheManagerFactoryBean#destroyCacheManager()
    */
-  protected void destroyCacheManager() throws Exception {
+  protected void destroyCacheManager() {
     cacheManager.flushAll();
     cacheManager.destroy();
   }

@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/23 02:58:37 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/25 05:27:54 $
  */
 public final class JcsManagerFactoryBean extends
     AbstractCacheManagerFactoryBean {
@@ -67,7 +67,7 @@ public final class JcsManagerFactoryBean extends
   /**
    * @see AbstractCacheManagerFactoryBean#destroyCacheManager()
    */
-  protected void destroyCacheManager() throws Exception {
+  protected void destroyCacheManager() {
     cacheManager.shutDown();
   }
 

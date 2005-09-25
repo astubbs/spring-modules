@@ -36,7 +36,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/23 02:58:37 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/25 05:25:49 $
  */
 public final class OsCacheManagerFactoryBeanTests extends TestCase {
 
@@ -148,7 +148,7 @@ public final class OsCacheManagerFactoryBeanTests extends TestCase {
     cacheManager.putInCache(key, entry);
     assertSame(entry, cacheManager.getFromCache(key));
 
-    cacheManagerFactoryBean.destroy();
+    cacheManagerFactoryBean.destroyCacheManager();
 
     try {
       cacheManager.getFromCache(key);
