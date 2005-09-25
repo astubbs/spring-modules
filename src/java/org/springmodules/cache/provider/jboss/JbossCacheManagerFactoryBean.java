@@ -17,7 +17,9 @@
  */
 package org.springmodules.cache.provider.jboss;
 
+import org.jboss.cache.PropertyConfigurator;
 import org.jboss.cache.TreeCache;
+import org.springframework.core.io.Resource;
 import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 
 /**
@@ -46,6 +48,14 @@ public class JbossCacheManagerFactoryBean extends
    */
   protected void createCacheManager() throws Exception {
     treeCache = new TreeCache();
+
+    Resource configLocation = getConfigLocation();
+
+    if (configLocation != null) {
+      PropertyConfigurator configurator = new PropertyConfigurator();
+      configurator.configure(treeCache, configLocation.getInputStream());
+    }
+
     treeCache.createService();
     treeCache.startService();
   }
@@ -53,7 +63,7 @@ public class JbossCacheManagerFactoryBean extends
   /**
    * @see AbstractCacheManagerFactoryBean#destroyCacheManager()
    */
-  protected void destroyCacheManager() throws Exception {
+  protected void destroyCacheManager() {
     treeCache.stopService();
     treeCache.destroyService();
   }
@@ -68,7 +78,7 @@ public class JbossCacheManagerFactoryBean extends
   /**
    * @see org.springframework.beans.factory.FactoryBean#getObject()
    */
-  public Object getObject() throws Exception {
+  public Object getObject() {
     return treeCache;
   }
 
