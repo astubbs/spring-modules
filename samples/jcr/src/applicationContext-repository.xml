@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+	Document management (JSR-170) specific configuration.
+	    
+    $Id: applicationContext-repository.xml,v 1.1 2005/09/26 10:21:06 costin Exp $
+    -->    
+<beans default-lazy-init="false">
+	
+	<bean id="repository" class="org.springmodules.jcr.jackrabbit.RepositoryFactoryBean">
+		<!-- normal factory beans params -->
+		<property name="configuration" value="classpath:jackrabbit-repo.xml"/>
+		<property name="homeDir" value="/repo"/>
+		
+	</bean>
+
+	<bean id="jeceira-repository" class="org.springmodules.jcr.jeceira.RepositoryFactoryBean">
+		<!-- normal factory beans params -->
+		<property name="configuration" value="classpath:jeceira-repo.xml"/>
+		<property name="repositoryName" value="jeceira-repo"/>
+	</bean>
+	
+	<bean id="jcrTransactionManager" class="org.springmodules.jcr.jackrabbit.JcrLocalTransactionManager">
+		<property name="sessionFactory"><ref bean="jcrSessionFactory" /></property>
+	</bean>
+
+	<bean id="txProxyTemplate" abstract="true" 
+        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="proxyTargetClass">
+            <value>true</value>
+        </property>
+        <property name="transactionManager">
+            <ref local="jcrTransactionManager"/>
+        </property>
+        <property name="transactionAttributes">
+			<props>
+                <prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED, readOnly</prop>
+			</props>
+		</property>
+    </bean>
+		
+	<!-- transaction proxy for Jcr Sessions -->
+	<bean id="txJcrProxyTemplate" parent="txProxyTemplate" abstract="true">
+        <property name="transactionManager" ref="jcrTransactionManager"/>
+    </bean>
+	
+	<bean id="jcrSessionFactory" class="org.springmodules.jcr.JcrSessionFactory">
+		<property name="repository" ref="repository"/>
+		<property name="credentials">
+			<bean class="javax.jcr.SimpleCredentials">
+				<constructor-arg index="0" value="bogus"/>
+				<!-- create the credentials using a bean factory -->
+				<constructor-arg index="1">
+					<bean factory-bean="password"
+					      factory-method="toCharArray"/>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- create the password to return it as a char[] -->
+	<bean id="password" class="java.lang.String">
+		<constructor-arg index="0" value="pass"/>
+	</bean>
+	
+	<bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate">
+		<property name="sessionFactory" ref="jcrSessionFactory"/>
+		<property name="allowCreate" value="true"/>
+	</bean>
+
+</beans>
