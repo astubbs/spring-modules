@@ -18,6 +18,8 @@
 
 package org.springmodules.cache.integration.jboss;
 
+import org.springmodules.cache.integration.ApplicationContextPaths;
+
 /**
  * <p>
  * Verifies that the caching module works correctly when using JBossCache as the
@@ -40,8 +42,9 @@ public final class JbossCacheMetadataIntegrationTests extends
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    String[] configFileNames = new String[] { CACHE_APPLICATION_CONTEXT_PATH,
-        METADATA_APPLICATION_CONTEXT_PATH };
+    String[] configFileNames = new String[] {
+        ApplicationContextPaths.JBOSSCACHE,
+        ApplicationContextPaths.METADATA_ATTRIBUTES };
 
     return configFileNames;
   }

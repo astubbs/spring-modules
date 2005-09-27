@@ -39,12 +39,10 @@ import org.springmodules.cache.provider.jcs.JcsProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/25 05:24:27 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/27 04:38:30 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractIntegrationTests {
-
-  protected static final String CACHE_APPLICATION_CONTEXT_PATH = "**/jcsApplicationContext.xml";
 
   private static final String CACHE_GROUP = "testGroup";
 

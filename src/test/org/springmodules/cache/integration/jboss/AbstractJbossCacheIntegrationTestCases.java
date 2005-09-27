@@ -40,8 +40,6 @@ import org.springmodules.cache.provider.jboss.JbossCacheProfile;
 public abstract class AbstractJbossCacheIntegrationTestCases extends
     AbstractIntegrationTests {
 
-  protected static final String CACHE_APPLICATION_CONTEXT_PATH = "**/jbosscacheApplicationContext.xml";
-
   private static final String CACHE_NODE_FQN = "a/b/c";
 
   /**

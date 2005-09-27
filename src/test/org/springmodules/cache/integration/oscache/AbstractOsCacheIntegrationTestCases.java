@@ -37,12 +37,10 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/25 05:24:28 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/27 04:38:29 $
  */
 public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractIntegrationTests {
-
-  protected static final String CACHE_APPLICATION_CONTEXT_PATH = "**/oscacheApplicationContext.xml";
 
   /**
    * OSCache cache administrator.

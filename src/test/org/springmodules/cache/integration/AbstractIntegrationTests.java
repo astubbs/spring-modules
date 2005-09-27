@@ -36,14 +36,10 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/25 05:24:27 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/27 04:38:28 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
-
-  protected static final String METADATA_APPLICATION_CONTEXT_PATH = "**/metadataApplicationContext.xml";
-
-  protected static final String PROXY_FACTORY_APPLICATION_CONTEXT_PATH = "**/proxyFactoryApplicationContext.xml";
 
   /**
    * Listener that stores the keys used to store objects in the cache. This
