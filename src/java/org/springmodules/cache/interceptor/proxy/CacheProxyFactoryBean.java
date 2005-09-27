@@ -43,7 +43,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/09 02:19:31 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/27 04:37:34 $
  */
 public final class CacheProxyFactoryBean extends ProxyConfig implements
     FactoryBean, InitializingBean {
@@ -61,6 +61,8 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * methods.
    */
   private CachingInterceptor cachingInterceptor;
+
+  private boolean hasCacheFlushAttributes;
 
   /**
    * The proxy to create.
@@ -104,8 +106,11 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     ProxyFactory proxyFactory = new ProxyFactory();
     proxyFactory.addAdvisor(new CachingAttributeSourceAdvisor(
         cachingInterceptor));
-    proxyFactory.addAdvisor(new CacheFlushAttributeSourceAdvisor(
-        cacheFlushInterceptor));
+
+    if (hasCacheFlushAttributes) {
+      proxyFactory.addAdvisor(new CacheFlushAttributeSourceAdvisor(
+          cacheFlushInterceptor));
+    }
 
     proxyFactory.copyFrom(this);
 
@@ -149,6 +154,14 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     return targetSource;
   }
 
+  protected CacheFlushInterceptor getCacheFlushInterceptor() {
+    return cacheFlushInterceptor;
+  }
+
+  protected CachingInterceptor getCachingInterceptor() {
+    return cachingInterceptor;
+  }
+
   /**
    * Returns <code>{@link #proxy}</code>.
    * 
@@ -178,6 +191,10 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     return proxyInterfaces;
   }
 
+  protected boolean isHasCacheFlushAttributes() {
+    return hasCacheFlushAttributes;
+  }
+
   /**
    * @see FactoryBean#isSingleton()
    */
@@ -201,7 +218,15 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * @see org.springmodules.cache.interceptor.flush.NameMatchCacheFlushAttributeSource
    */
   public void setCacheFlushAttributes(Properties cacheFlushAttributes) {
-    cacheFlushInterceptor.setCacheFlushAttributes(cacheFlushAttributes);
+    hasCacheFlushAttributes = cacheFlushAttributes != null
+        && !cacheFlushAttributes.isEmpty();
+
+    if (hasCacheFlushAttributes) {
+      cacheFlushInterceptor.setCacheFlushAttributes(cacheFlushAttributes);
+    }
+    else {
+      cacheFlushInterceptor.setCacheFlushAttributeSource(null);
+    }
   }
 
   /**

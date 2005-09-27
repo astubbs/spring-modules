@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
+import org.springframework.aop.Advisor;
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopConfigException;
@@ -29,6 +30,8 @@ import org.springframework.aop.target.EmptyTargetSource;
 import org.springframework.util.ClassUtils;
 import org.springmodules.cache.integration.CacheableService;
 import org.springmodules.cache.integration.CacheableServiceImpl;
+import org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor;
+import org.springmodules.cache.interceptor.flush.CacheFlushAttributeSourceAdvisor;
 
 /**
  * <p>
@@ -37,7 +40,7 @@ import org.springmodules.cache.integration.CacheableServiceImpl;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:25 $
+ * @version $Revision: 1.8 $ $Date: 2005/09/27 04:37:34 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 
@@ -56,54 +59,103 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     super(name);
   }
 
+  private void assertCacheFlushAttributeSourceIsNotSetIfCacheFlushAttributesAreNullOrEmpty(
+      Properties nullOrEmptyCacheFlushAttributes) {
+    assertTrue(nullOrEmptyCacheFlushAttributes == null
+        || nullOrEmptyCacheFlushAttributes.isEmpty());
+
+    cacheProxyFactoryBean
+        .setCacheFlushAttributes(nullOrEmptyCacheFlushAttributes);
+    assertFalse(cacheProxyFactoryBean.isHasCacheFlushAttributes());
+    assertNull(cacheProxyFactoryBean.getCacheFlushInterceptor()
+        .getCacheFlushAttributeSource());
+  }
+
   protected void setUp() throws Exception {
     super.setUp();
 
-    this.cacheProxyFactoryBean = new CacheProxyFactoryBean();
+    cacheProxyFactoryBean = new CacheProxyFactoryBean();
 
-    this.cacheFlushAttributes = new Properties();
-    this.cacheFlushAttributes.setProperty("update*", "[cacheProfileIds=test]");
-    this.cacheProxyFactoryBean
-        .setCacheFlushAttributes(this.cacheFlushAttributes);
+    setUpCachingAttributes();
 
-    this.cachingAttributes = new Properties();
-    this.cachingAttributes.setProperty("get*", "[cacheProfileId=main]");
-    this.cacheProxyFactoryBean.setCachingAttributes(this.cachingAttributes);
+    cacheFlushAttributes = new Properties();
+    cacheFlushAttributes.setProperty("update*", "[cacheProfileIds=test]");
+    cacheProxyFactoryBean.setCacheFlushAttributes(cacheFlushAttributes);
 
-    this.target = new CacheableServiceImpl();
+    target = new CacheableServiceImpl();
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheProxyFactoryBean#afterPropertiesSet()}</code> throws an
-   * <code>IllegalStateException</code> if the target is not set.
-   */
+  private void setUpCachingAttributes() {
+    cachingAttributes = new Properties();
+    cachingAttributes.setProperty("get*", "[cacheProfileId=main]");
+    cacheProxyFactoryBean.setCachingAttributes(cachingAttributes);
+  }
+
+  public void testAfterPropertiesSetWithCacheFlushAttributesNotSet()
+      throws Exception {
+    cacheProxyFactoryBean = new CacheProxyFactoryBean();
+    setUpCachingAttributes();
+
+    Person targetObject = new PersonImpl("Anakin", "Skywalker");
+    cacheProxyFactoryBean.setTarget(targetObject);
+
+    // cacheProxyFactoryBean.setCacheFlushAttributes(null);
+
+    cacheProxyFactoryBean.afterPropertiesSet();
+
+    // verify that the target is only advised for caching.
+    Advised advised = (Advised) cacheProxyFactoryBean.getProxy();
+    Advisor[] advisors = advised.getAdvisors();
+    assertEquals(1, advisors.length);
+    assertEquals(CachingAttributeSourceAdvisor.class, advisors[0].getClass());
+  }
+
   public void testAfterPropertiesSetWithNullTarget() {
     try {
-      this.cacheProxyFactoryBean.afterPropertiesSet();
+      cacheProxyFactoryBean.afterPropertiesSet();
       fail();
     } catch (IllegalStateException exception) {
       // we are expecting this exception.
     }
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheProxyFactoryBean#afterPropertiesSet()}</code> throws an
-   * <code>AopConfigException<code> if the proxy interfaces are 
-   * <code>null</code>, the flag 'proxyTargetClass' is <code>false</code> and 
-   * the target is an instance of <code>org.springframework.aop.TargetSource</code>.
-   */
+  public void testAfterPropertiesSetWithProxyInterfacesEqualToNullAndProxyTargetClassEqualToTrue() {
+    Person targetObject = new PersonImpl("Darth", "Vader");
+    cacheProxyFactoryBean.setTarget(targetObject);
+    cacheProxyFactoryBean.setProxyTargetClass(true);
+
+    cacheProxyFactoryBean.afterPropertiesSet();
+
+    Advised advised = (Advised) cacheProxyFactoryBean.getProxy();
+    Advisor[] advisors = advised.getAdvisors();
+    assertEquals(2, advisors.length);
+
+    Advisor firstAdvisor = advisors[0];
+    Advisor secondAdvisor = advisors[1];
+
+    if (firstAdvisor instanceof CachingAttributeSourceAdvisor) {
+      assertEquals(CacheFlushAttributeSourceAdvisor.class, secondAdvisor
+          .getClass());
+
+    } else if (firstAdvisor instanceof CacheFlushAttributeSourceAdvisor) {
+      assertEquals(CachingAttributeSourceAdvisor.class, secondAdvisor
+          .getClass());
+    } else {
+      fail("Expected: <" + CachingAttributeSourceAdvisor.class.getName()
+          + "> or <" + CacheFlushAttributeSourceAdvisor.class.getName()
+          + "> but was: <" + firstAdvisor.getClass().getName() + ">");
+    }
+  }
+
   public void testAfterPropertiesSetWithProxyInterfacesEqualToNullAndProxyTargetFlagEqualToFalseAndTargetInstanceOfTargetSource()
       throws Exception {
-    this.cacheProxyFactoryBean.setProxyTargetClass(false);
+    cacheProxyFactoryBean.setProxyTargetClass(false);
     Object targetInstanceOfTargetSource = EmptyTargetSource.INSTANCE;
-    this.cacheProxyFactoryBean.setTarget(targetInstanceOfTargetSource);
+    cacheProxyFactoryBean.setTarget(targetInstanceOfTargetSource);
 
     try {
-      this.cacheProxyFactoryBean.afterPropertiesSet();
+      cacheProxyFactoryBean.afterPropertiesSet();
       fail();
-
     } catch (AopConfigException exception) {
       // we are expecting this exception.
     }
@@ -118,14 +170,14 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   public void testAfterPropertiesSetWithProxyInterfacesNotEqualToNull()
       throws Exception {
     String[] proxyInterfaces = { Person.class.getName() };
-    this.cacheProxyFactoryBean.setProxyInterfaces(proxyInterfaces);
+    cacheProxyFactoryBean.setProxyInterfaces(proxyInterfaces);
 
     Person targetObject = new PersonImpl("Darth", "Vader");
-    this.cacheProxyFactoryBean.setTarget(targetObject);
+    cacheProxyFactoryBean.setTarget(targetObject);
 
-    this.cacheProxyFactoryBean.afterPropertiesSet();
+    cacheProxyFactoryBean.afterPropertiesSet();
 
-    Object proxy = this.cacheProxyFactoryBean.getProxy();
+    Object proxy = cacheProxyFactoryBean.getProxy();
     assertNotNull("The proxy should not be null", proxy);
 
     Class[] targetObjectInterfaces = ClassUtils.getAllInterfaces(targetObject);
@@ -142,14 +194,6 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
         + Advised.class.getName() + "'", proxy instanceof Advised);
   }
 
-  public void testAfterPropertiesSetWithProxyInterfacesEqualToNullAndProxyTargetClassEqualToTrue() {
-    Person targetObject = new PersonImpl("Darth", "Vader");
-    this.cacheProxyFactoryBean.setTarget(targetObject);
-    this.cacheProxyFactoryBean.setProxyTargetClass(true);
-
-    this.cacheProxyFactoryBean.afterPropertiesSet();
-  }
-
   /**
    * Verifies that the method
    * <code>{@link CacheProxyFactoryBean#createTargetSource(Object)}</code>
@@ -159,7 +203,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   public void testCreateTargetSourceWithTargetObjectInstanceOfTargetSource() {
     Object targetObject = EmptyTargetSource.INSTANCE;
 
-    TargetSource targetSource = this.cacheProxyFactoryBean
+    TargetSource targetSource = cacheProxyFactoryBean
         .createTargetSource(targetObject);
 
     assertSame("<Target source>", targetObject, targetSource);
@@ -175,7 +219,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
       throws Exception {
     Object targetObject = new Object();
 
-    TargetSource targetSource = this.cacheProxyFactoryBean
+    TargetSource targetSource = cacheProxyFactoryBean
         .createTargetSource(targetObject);
     Object actualTarget = targetSource.getTarget();
 
@@ -188,13 +232,13 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    * created proxy.
    */
   public void testGetObject() {
-    this.cacheProxyFactoryBean.setTarget(this.target);
-    this.cacheProxyFactoryBean.afterPropertiesSet();
+    cacheProxyFactoryBean.setTarget(target);
+    cacheProxyFactoryBean.afterPropertiesSet();
 
-    Object expectedProxy = this.cacheProxyFactoryBean.getProxy();
-    Object actualProxy = this.cacheProxyFactoryBean.getObject();
+    Object expectedProxy = cacheProxyFactoryBean.getProxy();
+    Object actualProxy = cacheProxyFactoryBean.getObject();
 
-    assertSame("<Proxy>", expectedProxy, actualProxy);
+    assertSame(expectedProxy, actualProxy);
   }
 
   /**
@@ -203,13 +247,13 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    * class of the proxy if the proxy is not <code>null</code>.
    */
   public void testGetObjectTypeWhenProxyIsNotNull() {
-    this.cacheProxyFactoryBean.setTarget(this.target);
-    this.cacheProxyFactoryBean.afterPropertiesSet();
+    cacheProxyFactoryBean.setTarget(target);
+    cacheProxyFactoryBean.afterPropertiesSet();
 
-    Class expectedObjectType = this.cacheProxyFactoryBean.getProxy().getClass();
-    Class actualObjectType = this.cacheProxyFactoryBean.getObjectType();
+    Class expectedObjectType = cacheProxyFactoryBean.getProxy().getClass();
+    Class actualObjectType = cacheProxyFactoryBean.getObjectType();
 
-    assertEquals("<Object type>", expectedObjectType, actualObjectType);
+    assertEquals(expectedObjectType, actualObjectType);
   }
 
   /**
@@ -224,15 +268,15 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   public void testGetObjectTypeWhenProxyIsNullAndTargetIsNotNullAndTargetIsInstanceOfTargetSource() {
     TargetSource instanceOfTargetSource = EmptyTargetSource.INSTANCE;
-    this.cacheProxyFactoryBean.setTarget(instanceOfTargetSource);
+    cacheProxyFactoryBean.setTarget(instanceOfTargetSource);
 
     // verify that the proxy is null before running the method to test.
-    assertNull(this.cacheProxyFactoryBean.getProxy());
+    assertNull(cacheProxyFactoryBean.getProxy());
 
     Class expectedObjectType = instanceOfTargetSource.getClass();
-    Class actualObjectType = this.cacheProxyFactoryBean.getObjectType();
+    Class actualObjectType = cacheProxyFactoryBean.getObjectType();
 
-    assertEquals("<Object type>", expectedObjectType, actualObjectType);
+    assertEquals(expectedObjectType, actualObjectType);
   }
 
   /**
@@ -246,14 +290,14 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    * </ul>
    */
   public void testGetObjectTypeWhenProxyIsNullAndTargetIsNotNullAndTargetIsNotInstanceOfTargetSource() {
-    this.cacheProxyFactoryBean.setTarget(this.target);
+    cacheProxyFactoryBean.setTarget(target);
 
     // verify that the proxy is null before running the method to test.
-    assertNull(this.cacheProxyFactoryBean.getProxy());
+    assertNull(cacheProxyFactoryBean.getProxy());
 
-    Class actualObjectType = this.cacheProxyFactoryBean.getObjectType();
+    Class actualObjectType = cacheProxyFactoryBean.getObjectType();
 
-    assertNull("The object type should be null", actualObjectType);
+    assertNull(actualObjectType);
   }
 
   /**
@@ -263,9 +307,9 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   public void testGetObjectTypeWhenProxyIsNullAndTargetIsNull() {
     // verify that the proxy is null before running the method to test.
-    assertNull(this.cacheProxyFactoryBean.getProxy());
+    assertNull(cacheProxyFactoryBean.getProxy());
 
-    Class actualObjectType = this.cacheProxyFactoryBean.getObjectType();
+    Class actualObjectType = cacheProxyFactoryBean.getObjectType();
 
     assertNull(actualObjectType);
   }
@@ -275,8 +319,16 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    * Spring IoC container that is a singleton.
    */
   public void testIsSingleton() {
-    assertTrue("The proxy factory should be a singleton",
-        this.cacheProxyFactoryBean.isSingleton());
+    assertTrue("The proxy factory should be a singleton", cacheProxyFactoryBean
+        .isSingleton());
+  }
+
+  public void testSetCacheFlushAttributesWithAttributesEqualToNull() {
+    assertCacheFlushAttributeSourceIsNotSetIfCacheFlushAttributesAreNullOrEmpty(null);
+  }
+
+  public void testSetCacheFlushAttributesWithEmptyAttributes() {
+    assertCacheFlushAttributeSourceIsNotSetIfCacheFlushAttributesAreNullOrEmpty(new Properties());
   }
 
   /**
@@ -287,11 +339,10 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   public void testSetProxyInterfaces() throws Exception {
     String[] interfaceNames = new String[] { CacheableService.class.getName() };
 
-    this.cacheProxyFactoryBean.setProxyInterfaces(interfaceNames);
+    cacheProxyFactoryBean.setProxyInterfaces(interfaceNames);
 
     Class[] expectedProxyInterfaces = new Class[] { CacheableService.class };
-    Class[] actualProxyInterfaces = this.cacheProxyFactoryBean
-        .getProxyInterfaces();
+    Class[] actualProxyInterfaces = cacheProxyFactoryBean.getProxyInterfaces();
 
     assertEquals("<Number of proxy interfaces>",
         expectedProxyInterfaces.length, actualProxyInterfaces.length);
@@ -302,5 +353,4 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     assertEquals("<Proxy interface>", expectedProxyInterface,
         actualProxyInterface);
   }
-
 }
