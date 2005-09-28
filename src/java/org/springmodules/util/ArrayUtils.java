@@ -73,7 +73,7 @@ public abstract class ArrayUtils {
       else
         buffer.append(ELEMENT_SEPARATOR);
 
-      buffer.append(array[i]);
+      buffer.append(Strings.quoteIfString(array[i]));
     }
 
     buffer.append(ARRAY_END);
