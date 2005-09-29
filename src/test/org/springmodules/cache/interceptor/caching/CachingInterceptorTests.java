@@ -34,7 +34,7 @@ import org.springmodules.cache.provider.CacheProviderFacadeStatus;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/29 01:22:06 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/29 01:39:19 $
  */
 public final class CachingInterceptorTests extends
     AbstractCacheModuleInterceptorTests {
@@ -75,17 +75,6 @@ public final class CachingInterceptorTests extends
     assertSame(expectedInvocationReturnValue, actualReturnValue);
 
     verifyExpectationsOfMockControlsWereMet();
-  }
-
-  private void assertInvokeWithStatusOfCacheProviderNotReadyDoesNotAccessCache(
-      CacheProviderFacadeStatus status) throws Throwable {
-    cacheProviderFacade.getStatus();
-    cacheProviderFacadeControl.setReturnValue(status);
-
-    Object proceedReturnValue = "Luke Skywalker";
-    expectProceedMethodInvocation(proceedReturnValue);
-
-    assertInterceptorInvocationIsCorrect(proceedReturnValue);
   }
 
   private void expectGenerateCacheEntryKey() {
@@ -420,10 +409,13 @@ public final class CachingInterceptorTests extends
   }
 
   public void testInvokeWithCacheProviderUninitialized() throws Throwable {
-    assertInvokeWithStatusOfCacheProviderNotReadyDoesNotAccessCache(CacheProviderFacadeStatus.UNINITIALIZED);
-  }
+    cacheProviderFacade.getStatus();
+    cacheProviderFacadeControl
+        .setReturnValue(CacheProviderFacadeStatus.UNINITIALIZED);
 
-  public void testInvokeWithIllegalStatusOfCacheProvider() throws Throwable {
-    assertInvokeWithStatusOfCacheProviderNotReadyDoesNotAccessCache(CacheProviderFacadeStatus.INVALID);
+    Object proceedReturnValue = "Luke Skywalker";
+    expectProceedMethodInvocation(proceedReturnValue);
+
+    assertInterceptorInvocationIsCorrect(proceedReturnValue);
   }
 }

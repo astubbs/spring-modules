@@ -30,9 +30,8 @@ import org.springmodules.util.Strings;
  */
 public final class CacheProviderFacadeStatus {
 
-  public static final CacheProviderFacadeStatus INVALID = new CacheProviderFacadeStatus("Invalid");
-
-  public static final CacheProviderFacadeStatus READY = new CacheProviderFacadeStatus("Ready");
+  public static final CacheProviderFacadeStatus READY = new CacheProviderFacadeStatus(
+      "Ready");
 
   public static final CacheProviderFacadeStatus UNINITIALIZED = new CacheProviderFacadeStatus(
       "Uninitialized");

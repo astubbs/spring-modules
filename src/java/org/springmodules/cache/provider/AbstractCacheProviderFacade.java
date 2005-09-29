@@ -72,21 +72,13 @@ public abstract class AbstractCacheProviderFacade implements
    * @see #validateCacheModels()
    */
   public final void afterPropertiesSet() throws FatalCacheException {
+    validateCacheManager();
 
-    try {
-      validateCacheManager();
-
-      if (cacheModels instanceof Properties) {
-        setCacheModelsFromProperties((Properties) cacheModels);
-      }
-
-      validateCacheModels();
-
-    } catch (FatalCacheException exception) {
-      setStatus(CacheProviderFacadeStatus.INVALID);
-
-      handleCatchedException(exception);
+    if (cacheModels instanceof Properties) {
+      setCacheModelsFromProperties((Properties) cacheModels);
     }
+
+    validateCacheModels();
 
     setStatus(CacheProviderFacadeStatus.READY);
   }
