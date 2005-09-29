@@ -19,40 +19,40 @@
 package org.springmodules.cache.provider.ehcache;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.AbstractCacheProfileValidator;
-import org.springmodules.cache.provider.InvalidCacheProfileException;
+import org.springmodules.cache.provider.AbstractCacheModelValidator;
+import org.springmodules.cache.provider.InvalidCacheModelException;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link EhCacheProfile}</code>.
+ * Validates the properties of a <code>{@link EhCacheModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/11 04:27:32 $
+ * @version $Revision$ $Date$
  */
-public class EhCacheProfileValidator extends AbstractCacheProfileValidator {
+public class EhCacheModelValidator extends AbstractCacheModelValidator {
 
-  public EhCacheProfileValidator() {
+  public EhCacheModelValidator() {
     super();
   }
 
   /**
-   * @see AbstractCacheProfileValidator#getTargetClass()
+   * @see AbstractCacheModelValidator#getTargetClass()
    */
   protected Class getTargetClass() {
-    return EhCacheProfile.class;
+    return EhCacheModel.class;
   }
 
   /**
-   * @see AbstractCacheProfileValidator#validateCacheProfileProperties(java.lang.Object)
+   * @see AbstractCacheModelValidator#validateCacheModelProperties(java.lang.Object)
    */
-  protected void validateCacheProfileProperties(Object cacheProfile)
-      throws InvalidCacheProfileException {
-    EhCacheProfile ehCacheProfile = (EhCacheProfile) cacheProfile;
+  protected void validateCacheModelProperties(Object cacheModel)
+      throws InvalidCacheModelException {
+    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
 
-    if (!StringUtils.hasText(ehCacheProfile.getCacheName())) {
-      throw new InvalidCacheProfileException("Cache name should not be empty");
+    if (!StringUtils.hasText(ehCacheModel.getCacheName())) {
+      throw new InvalidCacheModelException("Cache name should not be empty");
     }
   }
 

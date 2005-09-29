@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.1 $ $Date: 2005/05/01 23:20:15 $
+ * @version $Revision: 1.2 $ $Date: 2005/09/29 01:21:47 $
  */
 @Target( { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
 public @interface Cacheable {
 
   /**
-   * The id of the cache profile to use.
+   * The id of the cache model to use.
    */
-  String cacheProfileId();
+  String cacheModelId();
 }

@@ -1,5 +1,5 @@
 /* 
- * Created on Mar 3, 2005
+ * Created on Nov 4, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,27 +13,32 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2005 the original author or authors.
+ * Copyright @2004 the original author or authors.
  */
-package org.springmodules.cache.mock;
 
-import org.springmodules.cache.provider.CacheProfile;
+package org.springmodules.cache.provider;
 
 /**
  * <p>
- * Mock object that simulates a <code>{@link CacheProfile}</code>.
+ * Exception thrown when one or more properties of a
+ * <code>{@link CacheModel}</code> contain invalid values.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/08/04 05:15:10 $
+ * @version $Revision$ $Date$
  */
-public class MockCacheProfile implements CacheProfile {
+public class InvalidCacheModelException extends CacheException {
 
-  private static final long serialVersionUID = 3258134639355769395L;
+  private static final long serialVersionUID = 7043423030105935558L;
 
-  public MockCacheProfile() {
-    super();
+  public InvalidCacheModelException(String detailMessage) {
+    super(detailMessage);
+  }
+
+  public InvalidCacheModelException(String detailMessage,
+      Throwable nestedException) {
+    super(detailMessage, nestedException);
   }
 
 }

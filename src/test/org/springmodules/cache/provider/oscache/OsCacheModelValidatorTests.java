@@ -18,43 +18,43 @@
 
 package org.springmodules.cache.provider.oscache;
 
-import org.springmodules.cache.provider.InvalidCacheProfileException;
+import org.springmodules.cache.provider.InvalidCacheModelException;
 
 import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Tests for <code>{@link OsCacheProfileValidator}</code>.
+ * Unit Tests for <code>{@link OsCacheModelValidator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:23 $
+ * @version $Revision$ $Date$
  */
-public final class OsCacheProfileValidatorTests extends TestCase {
+public final class OsCacheModelValidatorTests extends TestCase {
 
-  private OsCacheProfileValidator cacheProfileValidator;
+  private OsCacheModelValidator cacheModelValidator;
 
-  public OsCacheProfileValidatorTests(String name) {
+  public OsCacheModelValidatorTests(String name) {
     super(name);
   }
 
   protected void setUp() {
-    cacheProfileValidator = new OsCacheProfileValidator();
+    cacheModelValidator = new OsCacheModelValidator();
   }
 
-  public void testValidateCacheProfileWithInstanceOfOscacheCacheProfile() {
-    OsCacheProfile cacheProfile = new OsCacheProfile();
-    Object object = cacheProfile;
+  public void testValidateCacheModelWithInstanceOfOscacheCacheModel() {
+    OsCacheModel cacheModel = new OsCacheModel();
+    Object object = cacheModel;
 
-    cacheProfileValidator.validateCacheProfile(object);
+    cacheModelValidator.validateCacheModel(object);
   }
 
-  public void testValidateCacheProfileObjectWithObjectNotInstanceOfOscacheCacheProfile() {
+  public void testValidateCacheModelObjectWithObjectNotInstanceOfOscacheCacheModel() {
     try {
-      cacheProfileValidator.validateCacheProfile(new Object());
+      cacheModelValidator.validateCacheModel(new Object());
       fail();
-    } catch (InvalidCacheProfileException exception) {
+    } catch (InvalidCacheModelException exception) {
       // we are expecting this exception.
     }
   }

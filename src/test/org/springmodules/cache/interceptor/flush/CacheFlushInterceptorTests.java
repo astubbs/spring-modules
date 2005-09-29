@@ -30,7 +30,7 @@ import org.springmodules.cache.provider.CacheProviderFacadeStatus;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/22 00:42:41 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/29 01:21:41 $
  */
 public final class CacheFlushInterceptorTests extends
     AbstractCacheModuleInterceptorTests {
@@ -88,7 +88,7 @@ public final class CacheFlushInterceptorTests extends
   protected void onSetUp() throws Exception {
     // Create the metadata attribute for the intercepted method.
     cacheFlushAttribute = new FlushCache();
-    cacheFlushAttribute.setCacheProfileIds("CACHE_PROFILE");
+    cacheFlushAttribute.setCacheModelIds("CACHE_MODEL");
 
     // Create the proxy for the interface 'CacheFlushAttributeSource'.
     cacheFlushAttributeSourceControl = MockControl
@@ -178,7 +178,7 @@ public final class CacheFlushInterceptorTests extends
     expectProceedMethodInvocation(proceedReturnValue);
 
     // flush the cache.
-    cacheProviderFacade.flushCache(cacheFlushAttribute.getCacheProfileIds());
+    cacheProviderFacade.flushCache(cacheFlushAttribute.getCacheModelIds());
 
     assertInterceptorInvocationIsCorrect(proceedReturnValue);
   }
@@ -202,7 +202,7 @@ public final class CacheFlushInterceptorTests extends
         cacheFlushAttribute);
 
     // flush the cache.
-    cacheProviderFacade.flushCache(cacheFlushAttribute.getCacheProfileIds());
+    cacheProviderFacade.flushCache(cacheFlushAttribute.getCacheModelIds());
 
     Object proceedReturnValue = new Integer(10);
     expectProceedMethodInvocation(proceedReturnValue);

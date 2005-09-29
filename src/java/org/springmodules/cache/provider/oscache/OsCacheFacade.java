@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
-import org.springmodules.cache.provider.CacheProfile;
-import org.springmodules.cache.provider.CacheProfileEditor;
-import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.CacheModel;
+import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.FatalCacheException;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -39,7 +39,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/22 10:03:42 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/29 01:21:58 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacade {
 
@@ -53,24 +53,24 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#getCacheProfileEditor()
+   * @see AbstractCacheProviderFacade#getCacheModelEditor()
    */
-  protected PropertyEditor getCacheProfileEditor() {
+  protected PropertyEditor getCacheModelEditor() {
     Map propertyEditors = new HashMap();
     propertyEditors.put("refreshPeriod", new RefreshPeriodEditor());
 
-    CacheProfileEditor editor = new CacheProfileEditor();
-    editor.setCacheProfileClass(OsCacheProfile.class);
-    editor.setCacheProfilePropertyEditors(propertyEditors);
+    CacheModelEditor editor = new CacheModelEditor();
+    editor.setCacheModelClass(OsCacheModel.class);
+    editor.setCacheModelPropertyEditors(propertyEditors);
     return editor;
   }
 
   /**
-   * @see AbstractCacheProviderFacade#getCacheProfileValidator()
-   * @see OsCacheProfileValidator#validateCacheProfile(Object)
+   * @see AbstractCacheProviderFacade#getCacheModelValidator()
+   * @see OsCacheModelValidator#validateCacheModel(Object)
    */
-  protected CacheProfileValidator getCacheProfileValidator() {
-    return new OsCacheProfileValidator();
+  protected CacheModelValidator getCacheModelValidator() {
+    return new OsCacheModelValidator();
   }
 
   /**
@@ -101,11 +101,11 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onFlushCache(CacheProfile)
+   * @see AbstractCacheProviderFacade#onFlushCache(CacheModel)
    */
-  protected void onFlushCache(CacheProfile cacheProfile) {
-    OsCacheProfile profile = (OsCacheProfile) cacheProfile;
-    String[] groups = profile.getGroups();
+  protected void onFlushCache(CacheModel cacheModel) {
+    OsCacheModel osCacheModel = (OsCacheModel) cacheModel;
+    String[] groups = osCacheModel.getGroups();
 
     if (groups == null || groups.length == 0) {
       cacheManager.flushAll();
@@ -122,14 +122,14 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#onGetFromCache(Serializable,
-   *      CacheProfile)
+   *      CacheModel)
    */
   protected Object onGetFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) {
-    OsCacheProfile profile = (OsCacheProfile) cacheProfile;
+      CacheModel cacheModel) {
+    OsCacheModel osCacheModel = (OsCacheModel) cacheModel;
 
-    Integer refreshPeriod = profile.getRefreshPeriod();
-    String cronExpression = profile.getCronExpression();
+    Integer refreshPeriod = osCacheModel.getRefreshPeriod();
+    String cronExpression = osCacheModel.getCronExpression();
 
     String key = getEntryKey(cacheKey);
     Object cachedObject = null;
@@ -154,15 +154,15 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#onPutInCache(Serializable,
-   *      CacheProfile, Object)
+   *      CacheModel, Object)
    */
-  protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
+  protected void onPutInCache(Serializable cacheKey, CacheModel cacheModule,
       Object objectToCache) {
 
-    OsCacheProfile profile = (OsCacheProfile) cacheProfile;
+    OsCacheModel osCacheModel = (OsCacheModel) cacheModule;
 
     String key = getEntryKey(cacheKey);
-    String[] groups = profile.getGroups();
+    String[] groups = osCacheModel.getGroups();
 
     if (groups == null || groups.length == 0) {
       cacheManager.putInCache(key, objectToCache);
@@ -175,10 +175,10 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
   /**
    * 
    * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
-   *      CacheProfile)
+   *      CacheModel)
    */
   protected void onRemoveFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) {
+      CacheModel cacheModel) {
 
     String key = getEntryKey(cacheKey);
     cacheManager.flushEntry(key);

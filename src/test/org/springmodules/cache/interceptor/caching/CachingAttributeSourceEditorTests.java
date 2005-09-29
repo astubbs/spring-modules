@@ -33,7 +33,7 @@ import org.springmodules.cache.interceptor.SimulatedService;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:00 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/29 01:22:05 $
  */
 public class CachingAttributeSourceEditorTests extends TestCase {
 
@@ -55,8 +55,8 @@ public class CachingAttributeSourceEditorTests extends TestCase {
     assertNull(editor.getValue());
   }
 
-  private String createProfileIdProperty(String profileId) {
-    return "[cacheProfileId=" + profileId + "]";
+  private String createModelIdProperty(String cacheModelId) {
+    return "[cacheModelId=" + cacheModelId + "]";
   }
 
   protected void setUp() throws Exception {
@@ -80,9 +80,9 @@ public class CachingAttributeSourceEditorTests extends TestCase {
     String targetClassName = targetClass.getName();
     Map expectedAdvisedMethods = new HashMap();
     expectedAdvisedMethods.put(targetClassName + ".get*",
-        createProfileIdProperty(myCacheAttrName));
+        createModelIdProperty(myCacheAttrName));
     expectedAdvisedMethods.put(targetClassName + ".getPersonName",
-        createProfileIdProperty(myOtherCacheAttrName));
+        createModelIdProperty(myOtherCacheAttrName));
 
     // build the text to be used to create a MethodMapCachingAttributeSource.
     StringBuffer buffer = new StringBuffer();
@@ -110,11 +110,11 @@ public class CachingAttributeSourceEditorTests extends TestCase {
     Method getPersonsMethod = clazz.getDeclaredMethod("getPersons", null);
 
     Cached myCacheAttr = (Cached) actualAttributeMap.get(getPersonsMethod);
-    assertEquals(myCacheAttrName, myCacheAttr.getCacheProfileId());
+    assertEquals(myCacheAttrName, myCacheAttr.getCacheModelId());
 
     Cached myOtherCacheAttr = (Cached) actualAttributeMap
         .get(getPersonNameMethod);
-    assertEquals(myOtherCacheAttrName, myOtherCacheAttr.getCacheProfileId());
+    assertEquals(myOtherCacheAttrName, myOtherCacheAttr.getCacheModelId());
   }
 
   /**

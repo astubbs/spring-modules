@@ -33,7 +33,7 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.13 $ $Date: 2005/09/25 05:26:21 $
+ * @version $Revision: 1.14 $ $Date: 2005/09/29 01:22:06 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -49,8 +49,8 @@ public final class CachedTests extends TestCase implements
   private void assertToStringIsCorrect() {
     StringBuffer buffer = new StringBuffer(cached.getClass().getName());
     buffer.append("@" + System.identityHashCode(cached) + "[");
-    buffer.append("cacheProfileId="
-        + Strings.quote(cached.getCacheProfileId()) + "]");
+    buffer.append("cacheModelId="
+        + Strings.quote(cached.getCacheModelId()) + "]");
 
     String expected = buffer.toString();
     String actual = cached.toString();
@@ -71,16 +71,16 @@ public final class CachedTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
-    String cacheProfileId = "main";
-    cached.setCacheProfileId(cacheProfileId);
+    String cacheModelId = "main";
+    cached.setCacheModelId(cacheModelId);
 
-    Cached anotherCached = new Cached(cacheProfileId);
+    Cached anotherCached = new Cached(cacheModelId);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cached,
         anotherCached);
 
-    cached.setCacheProfileId(null);
-    anotherCached.setCacheProfileId(null);
+    cached.setCacheModelId(null);
+    anotherCached.setCacheModelId(null);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cached,
         anotherCached);
@@ -90,13 +90,13 @@ public final class CachedTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    String cacheProfileId = "test";
-    cached.setCacheProfileId(cacheProfileId);
+    String cacheModelId = "test";
+    cached.setCacheModelId(cacheModelId);
 
-    Cached anotherCached = new Cached(cacheProfileId);
+    Cached anotherCached = new Cached(cacheModelId);
     assertEquals(cached, anotherCached);
 
-    anotherCached.setCacheProfileId("main");
+    anotherCached.setCacheModelId("main");
     assertFalse(cached.equals(anotherCached));
   }
 
@@ -111,10 +111,10 @@ public final class CachedTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
-    String cacheProfileId = "test";
-    cached.setCacheProfileId(cacheProfileId);
+    String cacheModelId = "test";
+    cached.setCacheModelId(cacheModelId);
 
-    Cached anotherCached = new Cached(cacheProfileId);
+    Cached anotherCached = new Cached(cacheModelId);
 
     EqualsHashCodeAssert.assertEqualsIsSymmetric(cached, anotherCached);
   }
@@ -123,11 +123,11 @@ public final class CachedTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
-    String cacheProfileId = "test";
-    cached.setCacheProfileId(cacheProfileId);
+    String cacheModelId = "test";
+    cached.setCacheModelId(cacheModelId);
 
-    Cached secondCached = new Cached(cacheProfileId);
-    Cached thirdCached = new Cached(cacheProfileId);
+    Cached secondCached = new Cached(cacheModelId);
+    Cached thirdCached = new Cached(cacheModelId);
 
     EqualsHashCodeAssert.assertEqualsIsTransitive(cached, secondCached,
         thirdCached);
@@ -141,12 +141,12 @@ public final class CachedTests extends TestCase implements
   }
 
   public void testToString() {
-    cached.setCacheProfileId("main");
+    cached.setCacheModelId("main");
     assertToStringIsCorrect();
   }
 
-  public void testToStringWithCacheProfileIdEqualToNull() {
-    cached.setCacheProfileId(null);
+  public void testToStringWithCacheModelIdEqualToNull() {
+    cached.setCacheModelId(null);
     assertToStringIsCorrect();
   }
 }

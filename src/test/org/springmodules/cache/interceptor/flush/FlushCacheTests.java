@@ -33,7 +33,7 @@ import org.springmodules.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/25 05:26:22 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/29 01:21:41 $
  */
 public final class FlushCacheTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -49,8 +49,8 @@ public final class FlushCacheTests extends TestCase implements
   private void assertToStringIsCorrect() {
     StringBuffer buffer = new StringBuffer(this.flushCache.getClass().getName());
     buffer.append("@" + System.identityHashCode(this.flushCache) + "[");
-    buffer.append("cacheProfileIds="
-        + ArrayUtils.toString(this.flushCache.getCacheProfileIds()) + ", ");
+    buffer.append("cacheModelIds="
+        + ArrayUtils.toString(this.flushCache.getCacheModelIds()) + ", ");
     buffer.append("flushBeforeExecution="
         + this.flushCache.isFlushBeforeExecution() + "]");
 
@@ -67,7 +67,7 @@ public final class FlushCacheTests extends TestCase implements
     super.setUp();
 
     this.flushCache = new FlushCache();
-    this.flushCache.setCacheProfileIds("main,test");
+    this.flushCache.setCacheModelIds("main,test");
     this.flushCache.setFlushBeforeExecution(true);
   }
 
@@ -75,27 +75,27 @@ public final class FlushCacheTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
-    String cacheProfileIds = "main,test";
+    String cacheModelIds = "main,test";
     boolean flushBeforeExecution = true;
 
-    this.flushCache.setCacheProfileIds(cacheProfileIds);
+    this.flushCache.setCacheModelIds(cacheModelIds);
     this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
 
-    FlushCache anotherFlushCache = new FlushCache(cacheProfileIds,
+    FlushCache anotherFlushCache = new FlushCache(cacheModelIds,
         flushBeforeExecution);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.flushCache, anotherFlushCache);
 
-    this.flushCache.setCacheProfileIds((String[]) null);
-    anotherFlushCache.setCacheProfileIds((String[]) null);
+    this.flushCache.setCacheModelIds((String[]) null);
+    anotherFlushCache.setCacheModelIds((String[]) null);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.flushCache, anotherFlushCache);
 
-    String[] newCacheProfileIds = { null, "main" };
-    this.flushCache.setCacheProfileIds(newCacheProfileIds);
-    anotherFlushCache.setCacheProfileIds(newCacheProfileIds);
+    String[] newCacheModelIds = { null, "main" };
+    this.flushCache.setCacheModelIds(newCacheModelIds);
+    anotherFlushCache.setCacheModelIds(newCacheModelIds);
 
     EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
         this.flushCache, anotherFlushCache);
@@ -105,21 +105,21 @@ public final class FlushCacheTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    String cacheProfileIds = "main,test";
+    String cacheModelIds = "main,test";
     boolean flushBeforeExecution = true;
 
-    this.flushCache.setCacheProfileIds(cacheProfileIds);
+    this.flushCache.setCacheModelIds(cacheModelIds);
     this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
 
-    FlushCache anotherFlushCache = new FlushCache(cacheProfileIds,
+    FlushCache anotherFlushCache = new FlushCache(cacheModelIds,
         flushBeforeExecution);
 
     assertEquals(this.flushCache, anotherFlushCache);
 
-    anotherFlushCache.setCacheProfileIds("main");
+    anotherFlushCache.setCacheModelIds("main");
     assertFalse(this.flushCache.equals(anotherFlushCache));
 
-    anotherFlushCache.setCacheProfileIds(cacheProfileIds);
+    anotherFlushCache.setCacheModelIds(cacheModelIds);
     anotherFlushCache.setFlushBeforeExecution(false);
     assertFalse(this.flushCache.equals(anotherFlushCache));
   }
@@ -135,13 +135,13 @@ public final class FlushCacheTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
-    String cacheProfileIds = "main,test";
+    String cacheModelIds = "main,test";
     boolean flushBeforeExecution = true;
 
-    this.flushCache.setCacheProfileIds(cacheProfileIds);
+    this.flushCache.setCacheModelIds(cacheModelIds);
     this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
 
-    FlushCache anotherFlushCache = new FlushCache(cacheProfileIds,
+    FlushCache anotherFlushCache = new FlushCache(cacheModelIds,
         flushBeforeExecution);
 
     EqualsHashCodeAssert.assertEqualsIsSymmetric(this.flushCache,
@@ -152,15 +152,15 @@ public final class FlushCacheTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
-    String cacheProfileIds = "main,test";
+    String cacheModelIds = "main,test";
     boolean flushBeforeExecution = true;
 
-    this.flushCache.setCacheProfileIds(cacheProfileIds);
+    this.flushCache.setCacheModelIds(cacheModelIds);
     this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
 
-    FlushCache secondFlushCache = new FlushCache(cacheProfileIds,
+    FlushCache secondFlushCache = new FlushCache(cacheModelIds,
         flushBeforeExecution);
-    FlushCache thirdFlushCache = new FlushCache(cacheProfileIds,
+    FlushCache thirdFlushCache = new FlushCache(cacheModelIds,
         flushBeforeExecution);
 
     EqualsHashCodeAssert.assertEqualsIsTransitive(this.flushCache,
@@ -175,28 +175,28 @@ public final class FlushCacheTests extends TestCase implements
         .assertEqualsNullComparisonReturnsFalse(this.flushCache);
   }
 
-  public void testToStringWithCacheProfileIdEqualToNull() {
-    this.flushCache.setCacheProfileIds(new String[] { "empire", null });
+  public void testToStringWithCacheModelIdEqualToNull() {
+    this.flushCache.setCacheModelIds(new String[] { "empire", null });
     this.flushCache.setFlushBeforeExecution(true);
 
     assertToStringIsCorrect();
   }
 
-  public void testToStringWithCacheProfileIdsEqualToNull() {
-    this.flushCache.setCacheProfileIds((String[]) null);
+  public void testToStringWithCacheModelIdsEqualToNull() {
+    this.flushCache.setCacheModelIds((String[]) null);
     this.flushCache.setFlushBeforeExecution(false);
 
     assertToStringIsCorrect();
   }
 
-  public void testToStringWithEmptyCacheProfileIds() {
-    this.flushCache.setCacheProfileIds(new String[0]);
+  public void testToStringWithEmptyCacheModelIds() {
+    this.flushCache.setCacheModelIds(new String[0]);
 
     assertToStringIsCorrect();
   }
 
-  public void testToStringWithNotEmptyCacheProfileIds() {
-    this.flushCache.setCacheProfileIds(new String[] { "empire", "rebels" });
+  public void testToStringWithNotEmptyCacheModelIds() {
+    this.flushCache.setCacheModelIds(new String[] { "empire", "rebels" });
     assertToStringIsCorrect();
   }
 }

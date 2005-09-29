@@ -28,32 +28,32 @@ import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Unit Tests for <code>{@link EhCacheProfile}</code>.
+ * Unit Tests for <code>{@link EhCacheModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.13 $ $Date: 2005/09/25 05:26:21 $
+ * @version $Revision$ $Date$
  */
-public final class EhCacheProfileTests extends TestCase implements
+public final class EhCacheModelTests extends TestCase implements
     EqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory.getLog(EhCacheProfileTests.class);
+  private static Log logger = LogFactory.getLog(EhCacheModelTests.class);
 
-  private EhCacheProfile cacheProfile;
+  private EhCacheModel cacheModel;
 
-  public EhCacheProfileTests(String name) {
+  public EhCacheModelTests(String name) {
     super(name);
   }
 
   private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(cacheProfile.getClass().getName());
-    buffer.append("@" + System.identityHashCode(cacheProfile) + "[");
-    buffer.append("cacheName=" + Strings.quote(cacheProfile.getCacheName())
-        + "]");
+    StringBuffer buffer = new StringBuffer(cacheModel.getClass().getName());
+    buffer.append("@" + System.identityHashCode(cacheModel) + "[");
+    buffer
+        .append("cacheName=" + Strings.quote(cacheModel.getCacheName()) + "]");
 
     String expected = buffer.toString();
-    String actual = cacheProfile.toString();
+    String actual = cacheModel.toString();
 
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
@@ -64,7 +64,7 @@ public final class EhCacheProfileTests extends TestCase implements
   protected final void setUp() throws Exception {
     super.setUp();
 
-    cacheProfile = new EhCacheProfile();
+    cacheModel = new EhCacheModel();
   }
 
   /**
@@ -73,19 +73,19 @@ public final class EhCacheProfileTests extends TestCase implements
   public void testEqualsHashCodeRelationship() {
     String cacheName = "main";
 
-    cacheProfile.setCacheName(cacheName);
+    cacheModel.setCacheName(cacheName);
 
-    EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
+    EhCacheModel anotherModel = new EhCacheModel(cacheName);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        cacheProfile, anotherProfile);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
+        anotherModel);
 
     cacheName = null;
-    cacheProfile.setCacheName(cacheName);
-    anotherProfile.setCacheName(cacheName);
+    cacheModel.setCacheName(cacheName);
+    anotherModel.setCacheName(cacheName);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        cacheProfile, anotherProfile);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
+        anotherModel);
   }
 
   /**
@@ -94,21 +94,21 @@ public final class EhCacheProfileTests extends TestCase implements
   public void testEqualsIsConsistent() {
     String cacheName = "test";
 
-    cacheProfile.setCacheName(cacheName);
+    cacheModel.setCacheName(cacheName);
 
-    EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
+    EhCacheModel anotherModel = new EhCacheModel(cacheName);
 
-    assertEquals(cacheProfile, anotherProfile);
+    assertEquals(cacheModel, anotherModel);
 
-    anotherProfile.setCacheName("main");
-    assertFalse(cacheProfile.equals(anotherProfile));
+    anotherModel.setCacheName("main");
+    assertFalse(cacheModel.equals(anotherModel));
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheProfile);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheModel);
   }
 
   /**
@@ -117,11 +117,11 @@ public final class EhCacheProfileTests extends TestCase implements
   public void testEqualsIsSymmetric() {
     String cacheName = "test";
 
-    cacheProfile.setCacheName(cacheName);
+    cacheModel.setCacheName(cacheName);
 
-    EhCacheProfile anotherProfile = new EhCacheProfile(cacheName);
+    EhCacheModel anotherModel = new EhCacheModel(cacheName);
 
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheProfile, anotherProfile);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheModel, anotherModel);
   }
 
   /**
@@ -130,30 +130,30 @@ public final class EhCacheProfileTests extends TestCase implements
   public void testEqualsIsTransitive() {
     String cacheName = "test";
 
-    cacheProfile.setCacheName(cacheName);
+    cacheModel.setCacheName(cacheName);
 
-    EhCacheProfile secondProfile = new EhCacheProfile(cacheName);
-    EhCacheProfile thirdProfile = new EhCacheProfile(cacheName);
+    EhCacheModel secondModel = new EhCacheModel(cacheName);
+    EhCacheModel thirdModel = new EhCacheModel(cacheName);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheProfile, secondProfile,
-        thirdProfile);
+    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheModel, secondModel,
+        thirdModel);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cacheProfile);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cacheModel);
   }
 
   public void testToStringWithCacheNameEqualToNull() {
-    cacheProfile.setCacheName(null);
+    cacheModel.setCacheName(null);
 
     assertToStringIsCorrect();
   }
 
   public void testToStringWithCacheNameNotEqualToNull() {
-    cacheProfile.setCacheName("main");
+    cacheModel.setCacheName("main");
 
     assertToStringIsCorrect();
   }

@@ -32,7 +32,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/09 02:18:58 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/29 01:22:05 $
  */
 public class NameMatchCachingAttributeSourceTests extends TestCase {
 
@@ -100,7 +100,7 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
 
     // set the properties to be used to create caching attributes.
     Properties properties = new Properties();
-    properties.setProperty("charAt", "[cacheProfileId=main]");
+    properties.setProperty("charAt", "[cacheModelId=main]");
     attributeSource.setProperties(properties);
 
     setUpMethod();
@@ -127,8 +127,8 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
 
     // both property keys match the name of the method, but the second one is
     // used since has a longer length.
-    properties.setProperty("ch*", "[cacheProfileId=test]");
-    properties.setProperty("char*", "[cacheProfileId=main]");
+    properties.setProperty("ch*", "[cacheModelId=test]");
+    properties.setProperty("char*", "[cacheModelId=main]");
     attributeSource.setProperties(properties);
 
     setUpMethod();
@@ -152,7 +152,7 @@ public class NameMatchCachingAttributeSourceTests extends TestCase {
     setUpMethod();
 
     Properties properties = new Properties();
-    properties.setProperty("aMethodThatDoesNotExist", "[cacheProfileId=main]");
+    properties.setProperty("aMethodThatDoesNotExist", "[cacheModelId=main]");
 
     attributeSource.setProperties(properties);
 

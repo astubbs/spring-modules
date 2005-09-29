@@ -18,40 +18,40 @@
 package org.springmodules.cache.provider.jboss;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.AbstractCacheProfileValidator;
-import org.springmodules.cache.provider.InvalidCacheProfileException;
+import org.springmodules.cache.provider.AbstractCacheModelValidator;
+import org.springmodules.cache.provider.InvalidCacheModelException;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link JbossCacheProfile}</code>.
+ * Validates the properties of a <code>{@link JbossCacheModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public class JbossCacheProfileValidator extends AbstractCacheProfileValidator {
+public class JbossCacheModelValidator extends AbstractCacheModelValidator {
 
-  public JbossCacheProfileValidator() {
+  public JbossCacheModelValidator() {
     super();
   }
 
   /**
-   * @see AbstractCacheProfileValidator#getTargetClass()
+   * @see AbstractCacheModelValidator#getTargetClass()
    */
   protected Class getTargetClass() {
-    return JbossCacheProfile.class;
+    return JbossCacheModel.class;
   }
 
   /**
-   * @see AbstractCacheProfileValidator#validateCacheProfileProperties(java.lang.Object)
+   * @see AbstractCacheModelValidator#validateCacheModelProperties(java.lang.Object)
    */
-  protected void validateCacheProfileProperties(Object cacheProfile)
-      throws InvalidCacheProfileException {
-    JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
+  protected void validateCacheModelProperties(Object cacheModel)
+      throws InvalidCacheModelException {
+    JbossCacheModel jbossCacheModel = (JbossCacheModel) cacheModel;
 
-    if (!StringUtils.hasText(profile.getNodeFqn())) {
-      throw new InvalidCacheProfileException(
+    if (!StringUtils.hasText(jbossCacheModel.getNodeFqn())) {
+      throw new InvalidCacheModelException(
           "The FQN of the cache node should not be empty");
     }
   }

@@ -28,31 +28,31 @@ import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Unit Tests for <code>{@link JbossCacheProfile}</code>.
+ * Unit Tests for <code>{@link JbossCacheModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public final class JbossCacheProfileTests extends TestCase implements
+public final class JbossCacheModelTests extends TestCase implements
     EqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory.getLog(JbossCacheProfileTests.class);
+  private static Log logger = LogFactory.getLog(JbossCacheModelTests.class);
 
-  private JbossCacheProfile cacheProfile;
+  private JbossCacheModel cacheModel;
 
-  public JbossCacheProfileTests(String name) {
+  public JbossCacheModelTests(String name) {
     super(name);
   }
 
   private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(cacheProfile.getClass().getName());
-    buffer.append("@" + System.identityHashCode(cacheProfile) + "[");
-    buffer.append("nodeFqn=" + Strings.quote(cacheProfile.getNodeFqn()) + "]");
+    StringBuffer buffer = new StringBuffer(cacheModel.getClass().getName());
+    buffer.append("@" + System.identityHashCode(cacheModel) + "[");
+    buffer.append("nodeFqn=" + Strings.quote(cacheModel.getNodeFqn()) + "]");
 
     String expected = buffer.toString();
-    String actual = cacheProfile.toString();
+    String actual = cacheModel.toString();
 
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
@@ -63,7 +63,7 @@ public final class JbossCacheProfileTests extends TestCase implements
   protected final void setUp() throws Exception {
     super.setUp();
 
-    cacheProfile = new JbossCacheProfile();
+    cacheModel = new JbossCacheModel();
   }
 
   /**
@@ -72,19 +72,19 @@ public final class JbossCacheProfileTests extends TestCase implements
   public void testEqualsHashCodeRelationship() {
     String nodeFqn = "a/b/c/d/e";
 
-    cacheProfile.setNodeFqn(nodeFqn);
+    cacheModel.setNodeFqn(nodeFqn);
 
-    JbossCacheProfile anotherProfile = new JbossCacheProfile(nodeFqn);
+    JbossCacheModel anotherModel = new JbossCacheModel(nodeFqn);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        cacheProfile, anotherProfile);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
+        anotherModel);
 
     nodeFqn = null;
-    cacheProfile.setNodeFqn(nodeFqn);
-    anotherProfile.setNodeFqn(nodeFqn);
+    cacheModel.setNodeFqn(nodeFqn);
+    anotherModel.setNodeFqn(nodeFqn);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        cacheProfile, anotherProfile);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
+        anotherModel);
   }
 
   /**
@@ -93,21 +93,21 @@ public final class JbossCacheProfileTests extends TestCase implements
   public void testEqualsIsConsistent() {
     String nodeFqn = "a/b";
 
-    cacheProfile.setNodeFqn(nodeFqn);
+    cacheModel.setNodeFqn(nodeFqn);
 
-    JbossCacheProfile anotherProfile = new JbossCacheProfile(nodeFqn);
+    JbossCacheModel anotherModel = new JbossCacheModel(nodeFqn);
 
-    assertEquals(cacheProfile, anotherProfile);
+    assertEquals(cacheModel, anotherModel);
 
-    anotherProfile.setNodeFqn("a/b/c/d");
-    assertFalse(cacheProfile.equals(anotherProfile));
+    anotherModel.setNodeFqn("a/b/c/d");
+    assertFalse(cacheModel.equals(anotherModel));
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheProfile);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheModel);
   }
 
   /**
@@ -116,11 +116,11 @@ public final class JbossCacheProfileTests extends TestCase implements
   public void testEqualsIsSymmetric() {
     String nodeFqn = "a";
 
-    cacheProfile.setNodeFqn(nodeFqn);
+    cacheModel.setNodeFqn(nodeFqn);
 
-    JbossCacheProfile anotherProfile = new JbossCacheProfile(nodeFqn);
+    JbossCacheModel anotherModel = new JbossCacheModel(nodeFqn);
 
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheProfile, anotherProfile);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheModel, anotherModel);
   }
 
   /**
@@ -129,30 +129,30 @@ public final class JbossCacheProfileTests extends TestCase implements
   public void testEqualsIsTransitive() {
     String nodeFqn = "a/b/c";
 
-    cacheProfile.setNodeFqn(nodeFqn);
+    cacheModel.setNodeFqn(nodeFqn);
 
-    JbossCacheProfile secondProfile = new JbossCacheProfile(nodeFqn);
-    JbossCacheProfile thirdProfile = new JbossCacheProfile(nodeFqn);
+    JbossCacheModel secondModel = new JbossCacheModel(nodeFqn);
+    JbossCacheModel thirdModel = new JbossCacheModel(nodeFqn);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheProfile, secondProfile,
-        thirdProfile);
+    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheModel, secondModel,
+        thirdModel);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cacheProfile);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cacheModel);
   }
 
   public void testToStringWithNodeFqnEqualToNull() {
-    cacheProfile.setNodeFqn(null);
+    cacheModel.setNodeFqn(null);
 
     assertToStringIsCorrect();
   }
 
   public void testToStringWithNodeFqnNotEqualToNull() {
-    cacheProfile.setNodeFqn("x/y/z");
+    cacheModel.setNodeFqn("x/y/z");
 
     assertToStringIsCorrect();
   }

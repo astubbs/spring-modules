@@ -17,7 +17,7 @@
  */
 package org.springmodules.cache.provider.jboss;
 
-import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheModel;
 import org.springmodules.util.Strings;
 
 /**
@@ -29,7 +29,7 @@ import org.springmodules.util.Strings;
  * 
  * @version $Revision$ $Date$
  */
-public class JbossCacheProfile implements CacheProfile {
+public class JbossCacheModel implements CacheModel {
 
   private static final long serialVersionUID = -9019322549512783005L;
 
@@ -38,11 +38,11 @@ public class JbossCacheProfile implements CacheProfile {
    */
   private String nodeFqn;
 
-  public JbossCacheProfile() {
+  public JbossCacheModel() {
     super();
   }
 
-  public JbossCacheProfile(String fqn) {
+  public JbossCacheModel(String fqn) {
     this();
     setNodeFqn(fqn);
   }
@@ -51,14 +51,14 @@ public class JbossCacheProfile implements CacheProfile {
     if (obj == null) {
       return false;
     }
-    if (!(obj instanceof JbossCacheProfile)) {
+    if (!(obj instanceof JbossCacheModel)) {
       return false;
     }
 
-    final JbossCacheProfile profile = (JbossCacheProfile) obj;
+    final JbossCacheModel cacheModel = (JbossCacheModel) obj;
 
-    if (nodeFqn != null ? !nodeFqn.equals(profile.nodeFqn)
-        : profile.nodeFqn != null) {
+    if (nodeFqn != null ? !nodeFqn.equals(cacheModel.nodeFqn)
+        : cacheModel.nodeFqn != null) {
       return false;
     }
 

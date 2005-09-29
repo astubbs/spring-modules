@@ -21,7 +21,7 @@ package org.springmodules.cache.provider.oscache;
 import java.util.Arrays;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheModel;
 import org.springmodules.util.ArrayUtils;
 import org.springmodules.util.Strings;
 
@@ -31,9 +31,9 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.13 $ $Date: 2005/09/25 05:22:16 $
+ * @version $Revision$ $Date$
  */
-public class OsCacheProfile implements CacheProfile {
+public class OsCacheModel implements CacheModel {
 
   private static final long serialVersionUID = 3904681574367770928L;
 
@@ -54,28 +54,27 @@ public class OsCacheProfile implements CacheProfile {
    */
   private Integer refreshPeriod;
 
-  public OsCacheProfile() {
+  public OsCacheModel() {
     super();
   }
 
-  public OsCacheProfile(String csvGroups, int refreshPeriod) {
+  public OsCacheModel(String csvGroups, int refreshPeriod) {
     this();
     setGroups(csvGroups);
     setRefreshPeriod(refreshPeriod);
   }
 
-  public OsCacheProfile(String csvGroups, int refreshPeriod,
-      String cronExpression) {
+  public OsCacheModel(String csvGroups, int refreshPeriod, String cronExpression) {
     this(csvGroups, new Integer(refreshPeriod), cronExpression);
   }
 
-  public OsCacheProfile(String csvGroups, Integer refreshPeriod,
+  public OsCacheModel(String csvGroups, Integer refreshPeriod,
       String cronExpression) {
     this(csvGroups, cronExpression);
     setRefreshPeriod(refreshPeriod);
   }
 
-  public OsCacheProfile(String cvsGroups, String cronExpression) {
+  public OsCacheModel(String cvsGroups, String cronExpression) {
     this();
     setCronExpression(cronExpression);
     setGroups(cvsGroups);
@@ -88,21 +87,21 @@ public class OsCacheProfile implements CacheProfile {
     if (this == obj) {
       return true;
     }
-    if (!(obj instanceof OsCacheProfile)) {
+    if (!(obj instanceof OsCacheModel)) {
       return false;
     }
 
-    final OsCacheProfile profile = (OsCacheProfile) obj;
+    final OsCacheModel cacheModel = (OsCacheModel) obj;
 
-    if (cronExpression != null ? !cronExpression.equals(profile.cronExpression)
-        : profile.cronExpression != null) {
+    if (cronExpression != null ? !cronExpression
+        .equals(cacheModel.cronExpression) : cacheModel.cronExpression != null) {
       return false;
     }
-    if (!Arrays.equals(groups, profile.groups)) {
+    if (!Arrays.equals(groups, cacheModel.groups)) {
       return false;
     }
-    if (refreshPeriod != null ? !refreshPeriod.equals(profile.refreshPeriod)
-        : profile.refreshPeriod != null) {
+    if (refreshPeriod != null ? !refreshPeriod.equals(cacheModel.refreshPeriod)
+        : cacheModel.refreshPeriod != null) {
       return false;
     }
 

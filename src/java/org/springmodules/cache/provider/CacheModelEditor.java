@@ -29,7 +29,7 @@ import org.springmodules.cache.util.BracketSeparatedPropertiesParser;
 
 /**
  * <p>
- * Creates a new instance of <code>{@link CacheProfile}</code> by parsing a
+ * Creates a new instance of <code>{@link CacheModel}</code> by parsing a
  * String of the form
  * <code>[propertyName1=propertyValue1][propertyName2=propertyValue2][propertyNameN=propertyValueN]</code>.
  * </p>
@@ -38,53 +38,53 @@ import org.springmodules.cache.util.BracketSeparatedPropertiesParser;
  * 
  * @version $Revision$ $Date$
  */
-public class CacheProfileEditor extends PropertyEditorSupport {
+public class CacheModelEditor extends PropertyEditorSupport {
 
   /**
-   * The class of the <code>{@link CacheProfile}</code> to create.
+   * The class of the <code>{@link CacheModel}</code> to create.
    */
-  private Class cacheProfileClass;
+  private Class cacheModelClass;
 
   /**
-   * <code>PropertyEditor</code>s for the properties of the cache profile to
+   * <code>PropertyEditor</code>s for the properties of the cache model to
    * create. Each <code>PropertyEditor</code> is stored using the name of the
    * property (a String) as key.
    */
-  private Map cacheProfilePropertyEditors;
+  private Map cacheModelPropertyEditors;
 
-  public CacheProfileEditor() {
+  public CacheModelEditor() {
     super();
   }
 
-  public final Class getCacheProfileClass() {
-    return cacheProfileClass;
+  public final Class getCacheModelClass() {
+    return cacheModelClass;
   }
 
-  public final Map getCacheProfilePropertyEditors() {
-    return cacheProfilePropertyEditors;
+  public final Map getCacheModelPropertyEditors() {
+    return cacheModelPropertyEditors;
   }
 
   private PropertyEditor getPropertyEditor(String propertyName) {
-    return cacheProfilePropertyEditors == null ? null
-        : (PropertyEditor) cacheProfilePropertyEditors.get(propertyName);
+    return cacheModelPropertyEditors == null ? null
+        : (PropertyEditor) cacheModelPropertyEditors.get(propertyName);
   }
 
   /**
    * @throws IllegalStateException
-   *           if the class of the cache profile to create has not been set.
+   *           if the class of the cache model to create has not been set.
    * @see PropertyEditor#setAsText(String)
    * @see org.springframework.beans.PropertyAccessor#setPropertyValue(String,
    *      Object)
    */
   public final void setAsText(String text) {
-    if (cacheProfileClass == null) {
-      throw new IllegalStateException("cacheProfileClass should not be null");
+    if (cacheModelClass == null) {
+      throw new IllegalStateException("cacheModelClass should not be null");
     }
 
     Properties properties = BracketSeparatedPropertiesParser
         .parseProperties(text);
 
-    BeanWrapper beanWrapper = new BeanWrapperImpl(cacheProfileClass);
+    BeanWrapper beanWrapper = new BeanWrapperImpl(cacheModelClass);
 
     if (properties != null) {
       for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
@@ -107,12 +107,12 @@ public class CacheProfileEditor extends PropertyEditorSupport {
     setValue(beanWrapper.getWrappedInstance());
   }
 
-  public final void setCacheProfileClass(Class newCacheProfileClass) {
-    cacheProfileClass = newCacheProfileClass;
+  public final void setCacheModelClass(Class newCacheModelClass) {
+    cacheModelClass = newCacheModelClass;
   }
 
-  public final void setCacheProfilePropertyEditors(
-      Map newCacheProfilePropertyEditors) {
-    cacheProfilePropertyEditors = newCacheProfilePropertyEditors;
+  public final void setCacheModelPropertyEditors(
+      Map newCacheModelPropertyEditors) {
+    cacheModelPropertyEditors = newCacheModelPropertyEditors;
   }
 }

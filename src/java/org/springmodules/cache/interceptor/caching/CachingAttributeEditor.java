@@ -26,12 +26,12 @@ import org.springmodules.cache.util.BracketSeparatedPropertiesParser;
 /**
  * <p>
  * Creates a new instance of <code>{@link Cached}</code> by parsing a String
- * of the form <code>[cacheProfileId=<i>value</i>]</code>.
+ * of the form <code>[cacheModelId=<i>value</i>]</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:28 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/29 01:21:46 $
  */
 public class CachingAttributeEditor extends PropertyEditorSupport {
 
@@ -50,10 +50,10 @@ public class CachingAttributeEditor extends PropertyEditorSupport {
    */
   public void setAsText(String text) {
     Properties properties = BracketSeparatedPropertiesParser
-      .parseProperties(text);
+        .parseProperties(text);
 
-    String cacheProfileId = properties.getProperty("cacheProfileId");
-    Cached cached = new Cached(cacheProfileId);
+    String cacheModelId = properties.getProperty("cacheModelId");
+    Cached cached = new Cached(cacheModelId);
     setValue(cached);
   }
 }

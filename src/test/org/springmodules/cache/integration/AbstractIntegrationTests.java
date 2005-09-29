@@ -36,7 +36,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/27 04:38:28 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/29 01:21:52 $
  */
 public abstract class AbstractIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
@@ -66,23 +66,22 @@ public abstract class AbstractIntegrationTests extends
   protected abstract void assertCacheWasFlushed() throws Exception;
 
   /**
-   * Asserts that the cache profiles were configured correctly in the Spring
-   * bean context.
+   * Asserts that the cache models were configured correctly in the Spring bean
+   * context.
    * 
-   * @param cacheProfiles
-   *          the cache profiles to verify. It is an unmodifiable
+   * @param cacheModules
+   *          the cache modules to verify. It is an unmodifiable
    *          <code>Map</code>.
    */
-  protected abstract void assertCorrectCacheProfileConfiguration(
-      Map cacheProfiles);
+  protected abstract void assertCorrectCacheModelConfiguration(Map cacheModules);
 
   protected final void assertEqualCachedObjects(Object expected, Object actual) {
     assertEquals("<Cached object>", expected, actual);
   }
 
-  protected final void assertEqualCacheProfiles(Object expected, Object actual,
-      String cacheProfileId) {
-    assertEquals("<Cache profile with id '" + cacheProfileId + "'>", expected,
+  protected final void assertEqualCacheModules(Object expected, Object actual,
+      String cacheModelId) {
+    assertEquals("<Cache model with id '" + cacheModelId + "'>", expected,
         actual);
   }
 
@@ -119,24 +118,23 @@ public abstract class AbstractIntegrationTests extends
   }
 
   /**
-   * Verifies that the cache profiles were configured correctly in the Spring
-   * bean context.
+   * Verifies that the cache models were configured correctly in the Spring bean
+   * context.
    */
-  public final void testCacheProfileConfiguration() {
-    // get the cache profiles.
+  public final void testCacheModelConfiguration() {
+    // get the cache models.
     AbstractCacheProviderFacade cacheProviderFacade = (AbstractCacheProviderFacade) super.applicationContext
         .getBean("cacheProvider");
-    Map cacheProfiles = cacheProviderFacade.getCacheProfiles();
+    Map cacheModels = cacheProviderFacade.getCacheModels();
 
-    // there should be cache profiles.
-    assertNotNull(cacheProfiles);
-    assertFalse("The map of cache profiles should not be empty", cacheProfiles
+    // there should be cache models.
+    assertNotNull(cacheModels);
+    assertFalse("The map of cache models should not be empty", cacheModels
         .isEmpty());
 
-    Map unmodifiableCacheProfileMap = Collections
-        .unmodifiableMap(cacheProfiles);
+    Map unmodifiableCacheModelMap = Collections.unmodifiableMap(cacheModels);
 
-    assertCorrectCacheProfileConfiguration(unmodifiableCacheProfileMap);
+    assertCorrectCacheModelConfiguration(unmodifiableCacheModelMap);
   }
 
   /**

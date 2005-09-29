@@ -34,7 +34,7 @@ import org.springmodules.cache.interceptor.SimulatedService;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:24 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/29 01:21:41 $
  */
 public class CacheFlushAttributeSourceEditorTests extends TestCase {
 
@@ -72,9 +72,9 @@ public class CacheFlushAttributeSourceEditorTests extends TestCase {
 
     Map expectedAdvisedMethods = new HashMap();
     expectedAdvisedMethods.put(this.targetClass.getName() + ".get*",
-        "[cacheProfileIds=" + myCacheAttrName + "]");
+        "[cacheModelIds=" + myCacheAttrName + "]");
     expectedAdvisedMethods.put(this.targetClass.getName() + ".getPersonName",
-        "[cacheProfileIds=" + myOtherCacheAttrName + "]");
+        "[cacheModelIds=" + myOtherCacheAttrName + "]");
 
     // build the text to be used to create a MethodMapCacheFlushAttributeSource.
     StringBuffer buffer = new StringBuffer();
@@ -105,13 +105,11 @@ public class CacheFlushAttributeSourceEditorTests extends TestCase {
 
     FlushCache myCacheAttr = (FlushCache) actualAttributeMap
         .get(getPersonsMethod);
-    assertEquals("<Cache profile id>", myCacheAttrName, myCacheAttr
-        .getCacheProfileIds()[0]);
+    assertEquals(myCacheAttrName, myCacheAttr.getCacheModelIds()[0]);
 
     FlushCache myOtherCacheAttr = (FlushCache) actualAttributeMap
         .get(getPersonNameMethod);
-    assertEquals("<Cache profile id>", myOtherCacheAttrName, myOtherCacheAttr
-        .getCacheProfileIds()[0]);
+    assertEquals(myOtherCacheAttrName, myOtherCacheAttr.getCacheModelIds()[0]);
   }
 
   /**

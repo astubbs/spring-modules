@@ -29,24 +29,24 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/25 05:20:28 $
+ * @version $Revision: 1.13 $ $Date: 2005/09/29 01:21:46 $
  */
 public class Cached implements CacheAttribute {
 
   private static final long serialVersionUID = 3256728394032297785L;
 
   /**
-   * The id of the cache profile to use.
+   * The id of the cache model to use.
    */
-  private String cacheProfileId;
+  private String cacheModelId;
 
   public Cached() {
     super();
   }
 
-  public Cached(String cacheProfileId) {
+  public Cached(String cacheModelId) {
     this();
-    setCacheProfileId(cacheProfileId);
+    setCacheModelId(cacheModelId);
   }
 
   /**
@@ -62,16 +62,16 @@ public class Cached implements CacheAttribute {
 
     final Cached cached = (Cached) obj;
 
-    if (cacheProfileId != null ? !cacheProfileId.equals(cached.cacheProfileId)
-        : cached.cacheProfileId != null) {
+    if (cacheModelId != null ? !cacheModelId.equals(cached.cacheModelId)
+        : cached.cacheModelId != null) {
       return false;
     }
 
     return true;
   }
 
-  public final String getCacheProfileId() {
-    return cacheProfileId;
+  public final String getCacheModelId() {
+    return cacheModelId;
   }
 
   /**
@@ -81,12 +81,12 @@ public class Cached implements CacheAttribute {
     int multiplier = 31;
     int hash = 7;
     hash = multiplier * hash
-        + (cacheProfileId != null ? cacheProfileId.hashCode() : 0);
+        + (cacheModelId != null ? cacheModelId.hashCode() : 0);
     return hash;
   }
 
-  public final void setCacheProfileId(String newCacheProfileId) {
-    cacheProfileId = newCacheProfileId;
+  public final void setCacheModelId(String newCacheModelId) {
+    cacheModelId = newCacheModelId;
   }
 
   /**
@@ -95,7 +95,7 @@ public class Cached implements CacheAttribute {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheProfileId=" + Strings.quote(cacheProfileId) + "]");
+    buffer.append("cacheModelId=" + Strings.quote(cacheModelId) + "]");
 
     return buffer.toString();
   }

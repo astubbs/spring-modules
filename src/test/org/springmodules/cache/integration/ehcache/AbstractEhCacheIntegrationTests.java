@@ -8,7 +8,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.provider.ehcache.EhCacheProfile;
+import org.springmodules.cache.provider.ehcache.EhCacheModel;
 
 /**
  * <p>
@@ -18,7 +18,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/27 04:38:29 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/29 01:22:13 $
  */
 public abstract class AbstractEhCacheIntegrationTests extends
     AbstractIntegrationTests {
@@ -44,16 +44,16 @@ public abstract class AbstractEhCacheIntegrationTests extends
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCorrectCacheProfileConfiguration(Map)
+   * @see AbstractIntegrationTests#assertCorrectCacheModelConfiguration(Map)
    */
-  protected final void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
-    EhCacheProfile expected = new EhCacheProfile();
+  protected final void assertCorrectCacheModelConfiguration(Map cacheModels) {
+    EhCacheModel expected = new EhCacheModel();
     expected.setCacheName("testCache");
 
-    String cacheProfileId = "test";
-    Object actual = cacheProfiles.get(cacheProfileId);
+    String cacheModelId = "test";
+    Object actual = cacheModels.get(cacheModelId);
 
-    assertEqualCacheProfiles(expected, actual, cacheProfileId);
+    assertEqualCacheModules(expected, actual, cacheModelId);
   }
 
   /**

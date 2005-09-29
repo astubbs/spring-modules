@@ -26,14 +26,14 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Tests for <code>{@link CacheProfileEditor}</code>.
+ * Unit Tests for <code>{@link CacheModelEditor}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public final class CacheProfileEditorTests extends TestCase {
+public final class CacheModelEditorTests extends TestCase {
 
   private class MockPropertyEditor extends PropertyEditorSupport {
     String value;
@@ -51,9 +51,9 @@ public final class CacheProfileEditorTests extends TestCase {
 
   private static final String GROUP_PROPERTY = "group";
 
-  private CacheProfileEditor cacheProfileEditor;
+  private CacheModelEditor cacheModelEditor;
 
-  public CacheProfileEditorTests(String name) {
+  public CacheModelEditorTests(String name) {
     super(name);
   }
 
@@ -69,26 +69,26 @@ public final class CacheProfileEditorTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    cacheProfileEditor = new CacheProfileEditor();
-    cacheProfileEditor.setCacheProfileClass(MockCacheProfile.class);
+    cacheModelEditor = new CacheModelEditor();
+    cacheModelEditor.setCacheModelClass(MockCacheModel.class);
   }
 
   public void testSetAsText() {
     String cacheName = "main";
     String group = "pojo";
-    MockCacheProfile expected = new MockCacheProfile(cacheName, group);
+    MockCacheModel expected = new MockCacheModel(cacheName, group);
 
     String properties = getPropertiesAsText(cacheName, group);
-    cacheProfileEditor.setAsText(properties);
+    cacheModelEditor.setAsText(properties);
 
-    assertEquals(expected, cacheProfileEditor.getValue());
+    assertEquals(expected, cacheModelEditor.getValue());
   }
 
-  public void testSetAsTextWithCacheProfileClassEqualToNull() {
-    cacheProfileEditor.setCacheProfileClass(null);
+  public void testSetAsTextWithCacheModelClassEqualToNull() {
+    cacheModelEditor.setCacheModelClass(null);
 
     try {
-      cacheProfileEditor.setAsText("");
+      cacheModelEditor.setAsText("");
       fail();
     } catch (IllegalStateException exception) {
       // we are expecting this exception.
@@ -96,8 +96,8 @@ public final class CacheProfileEditorTests extends TestCase {
   }
 
   public void testSetAsTextWithEmptyText() {
-    cacheProfileEditor.setAsText("");
-    assertEquals(new MockCacheProfile(), cacheProfileEditor.getValue());
+    cacheModelEditor.setAsText("");
+    assertEquals(new MockCacheModel(), cacheModelEditor.getValue());
   }
 
   public void testSetAsTextWithPropertyEditors() {
@@ -108,24 +108,24 @@ public final class CacheProfileEditorTests extends TestCase {
     editors.put(CACHE_NAME_PROPERTY, cacheNameEditor);
     editors.put(GROUP_PROPERTY, groupEditor);
 
-    cacheProfileEditor.setCacheProfilePropertyEditors(editors);
+    cacheModelEditor.setCacheModelPropertyEditors(editors);
 
     String cacheName = "rebels";
     String group = "jedi";
 
     String properties = getPropertiesAsText(cacheName, group);
-    cacheProfileEditor.setAsText(properties);
+    cacheModelEditor.setAsText(properties);
 
-    MockCacheProfile expected = new MockCacheProfile(cacheNameEditor.value,
+    MockCacheModel expected = new MockCacheModel(cacheNameEditor.value,
         groupEditor.value);
 
     assertFalse(expected.getCacheName().equals(cacheName));
     assertFalse(expected.getGroup().equals(group));
-    assertEquals(expected, cacheProfileEditor.getValue());
+    assertEquals(expected, cacheModelEditor.getValue());
   }
 
   public void testSetAsTextWithTextEqualToNull() {
-    cacheProfileEditor.setAsText(null);
-    assertEquals(new MockCacheProfile(), cacheProfileEditor.getValue());
+    cacheModelEditor.setAsText(null);
+    assertEquals(new MockCacheModel(), cacheModelEditor.getValue());
   }
 }

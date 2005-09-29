@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.provider.oscache.OsCacheProfile;
+import org.springmodules.cache.provider.oscache.OsCacheModel;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
@@ -37,7 +37,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/27 04:38:29 $
+ * @version $Revision: 1.10 $ $Date: 2005/09/29 01:22:13 $
  */
 public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractIntegrationTests {
@@ -68,17 +68,17 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCorrectCacheProfileConfiguration(Map)
+   * @see AbstractIntegrationTests#assertCorrectCacheModelConfiguration(Map)
    */
-  protected void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
-    OsCacheProfile expected = new OsCacheProfile();
+  protected void assertCorrectCacheModelConfiguration(Map cacheModels) {
+    OsCacheModel expected = new OsCacheModel();
     expected.setGroups("testGroup");
     expected.setRefreshPeriod(1);
 
-    String cacheProfileId = "test";
-    Object actual = cacheProfiles.get(cacheProfileId);
+    String cacheModelId = "test";
+    Object actual = cacheModels.get(cacheModelId);
 
-    assertEqualCacheProfiles(expected, actual, cacheProfileId);
+    assertEqualCacheModules(expected, actual, cacheModelId);
   }
 
   /**

@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.CacheProviderFacadeStatus;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/22 00:41:36 $
+ * @version $Revision: 1.11 $ $Date: 2005/09/29 01:21:46 $
  */
 public class CachingInterceptor extends CachingAspectSupport implements
     MethodInterceptor, InitializingBean {
@@ -109,13 +109,13 @@ public class CachingInterceptor extends CachingAspectSupport implements
       return methodInvocation.proceed();
     }
 
-    String cacheProfileId = cachingAttribute.getCacheProfileId();
+    String cacheModelId = cachingAttribute.getCacheModelId();
 
     CacheKeyGenerator cacheKeyGenerator = getCacheKeyGenerator();
     Serializable cacheKey = cacheKeyGenerator.generateKey(methodInvocation);
 
     Object cachedObject = cacheProviderFacade.getFromCache(cacheKey,
-        cacheProfileId);
+        cacheModelId);
 
     if (null == cachedObject) {
       Throwable exceptionThrownByProceed = null;
@@ -133,11 +133,11 @@ public class CachingInterceptor extends CachingAspectSupport implements
 
       if (null == exceptionThrownByProceed) {
         if (null == cachedObject) {
-          cacheProviderFacade.putInCache(cacheKey, cacheProfileId,
+          cacheProviderFacade.putInCache(cacheKey, cacheModelId,
               CachingAspectSupport.NULL_ENTRY);
         } else {
           cacheProviderFacade
-              .putInCache(cacheKey, cacheProfileId, cachedObject);
+              .putInCache(cacheKey, cacheModelId, cachedObject);
         }
 
         // notify the listener a new entry was stored in the cache.

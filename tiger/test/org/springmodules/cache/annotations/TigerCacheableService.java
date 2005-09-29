@@ -38,7 +38,7 @@ public class TigerCacheableService implements CacheableService {
     super();
   }
 
-  @Cacheable(cacheProfileId = "test")
+  @Cacheable(cacheModelId = "test")
   public final String getName(int index) {
     return this.names.get(index);
   }
@@ -47,7 +47,7 @@ public class TigerCacheableService implements CacheableService {
     this.names = names;
   }
 
-  @CacheFlush(cacheProfileIds = { "test" })
+  @CacheFlush(cacheModelIds = { "test" })
   public final void updateName(int index, String name) {
     this.names.set(index, name);
   }

@@ -26,8 +26,8 @@ import org.easymock.classextension.MockClassControl;
 import org.jboss.cache.Node;
 import org.jboss.cache.TreeCache;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.CacheProfileEditor;
-import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.FatalCacheException;
 
 /**
@@ -45,7 +45,7 @@ public class JbossCacheFacadeTests extends TestCase {
 
   private static final String CACHE_NODE_NAME = "a/b/c/d";
 
-  private JbossCacheProfile cacheProfile;
+  private JbossCacheModel cacheModel;
 
   private JbossCacheFacade jbossCacheFacade;
 
@@ -64,11 +64,11 @@ public class JbossCacheFacadeTests extends TestCase {
   }
 
   private Object getFromTreeCache(Object key) throws Exception {
-    return treeCache.get(cacheProfile.getNodeFqn(), key);
+    return treeCache.get(cacheModel.getNodeFqn(), key);
   }
 
   private void putInTreeCache(Object key, Object value) throws Exception {
-    treeCache.put(cacheProfile.getNodeFqn(), key, value);
+    treeCache.put(cacheModel.getNodeFqn(), key, value);
   }
 
   protected void setUp() throws Exception {
@@ -76,7 +76,7 @@ public class JbossCacheFacadeTests extends TestCase {
 
     jbossCacheFacade = new JbossCacheFacade();
 
-    cacheProfile = new JbossCacheProfile(CACHE_NODE_NAME);
+    cacheModel = new JbossCacheModel(CACHE_NODE_NAME);
   }
 
   private void setUpTreeCache() throws Exception {
@@ -116,36 +116,35 @@ public class JbossCacheFacadeTests extends TestCase {
     }
   }
 
-  public void testGetCacheProfileEditor() {
-    PropertyEditor editor = jbossCacheFacade.getCacheProfileEditor();
+  public void testGetCacheModelEditor() {
+    PropertyEditor editor = jbossCacheFacade.getCacheModelEditor();
 
     assertNotNull(editor);
-    assertEquals(CacheProfileEditor.class, editor.getClass());
+    assertEquals(CacheModelEditor.class, editor.getClass());
 
-    CacheProfileEditor profileEditor = (CacheProfileEditor) editor;
-    assertEquals(JbossCacheProfile.class, profileEditor.getCacheProfileClass());
-    assertNull(profileEditor.getCacheProfilePropertyEditors());
+    CacheModelEditor modelEditor = (CacheModelEditor) editor;
+    assertEquals(JbossCacheModel.class, modelEditor.getCacheModelClass());
+    assertNull(modelEditor.getCacheModelPropertyEditors());
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JbossCacheFacade#getCacheProfileValidator()}</code> returns
-   * an an instance of <code>{@link JbossCacheProfileValidator}</code> not
-   * equal to <code>null</code>.
+   * <code>{@link JbossCacheFacade#getCacheModelValidator()}</code> returns an
+   * an instance of <code>{@link JbossCacheModelValidator}</code> not equal to
+   * <code>null</code>.
    */
-  public void testGetCacheProfileValidator() {
-    CacheProfileValidator validator = jbossCacheFacade
-        .getCacheProfileValidator();
+  public void testGetCacheModelValidator() {
+    CacheModelValidator validator = jbossCacheFacade.getCacheModelValidator();
     assertNotNull(validator);
-    assertEquals(JbossCacheProfileValidator.class, validator.getClass());
+    assertEquals(JbossCacheModelValidator.class, validator.getClass());
   }
 
   public void testOnFlushCache() throws Exception {
     setUpTreeCache();
 
-    jbossCacheFacade.onFlushCache(cacheProfile);
+    jbossCacheFacade.onFlushCache(cacheModel);
 
-    Node cacheNode = treeCache.get(cacheProfile.getNodeFqn());
+    Node cacheNode = treeCache.get(cacheModel.getNodeFqn());
     assertNull(cacheNode);
   }
 
@@ -162,7 +161,7 @@ public class JbossCacheFacadeTests extends TestCase {
     treeCacheControl.replay();
 
     try {
-      jbossCacheFacade.onFlushCache(cacheProfile);
+      jbossCacheFacade.onFlushCache(cacheModel);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -178,8 +177,8 @@ public class JbossCacheFacadeTests extends TestCase {
     String objectToCache = "R2-D2";
     putInTreeCache(CACHE_KEY, objectToCache);
 
-    Object cachedObject = jbossCacheFacade.onGetFromCache(CACHE_KEY,
-        cacheProfile);
+    Object cachedObject = jbossCacheFacade
+        .onGetFromCache(CACHE_KEY, cacheModel);
 
     assertEquals(objectToCache, cachedObject);
   }
@@ -198,7 +197,7 @@ public class JbossCacheFacadeTests extends TestCase {
     treeCacheControl.replay();
 
     try {
-      jbossCacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
+      jbossCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -212,7 +211,7 @@ public class JbossCacheFacadeTests extends TestCase {
     setUpTreeCache();
 
     String objectToCache = "Luke Skywalker";
-    jbossCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToCache);
+    jbossCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToCache);
 
     Object cachedObject = getFromTreeCache(CACHE_KEY);
     assertEquals(objectToCache, cachedObject);
@@ -232,7 +231,7 @@ public class JbossCacheFacadeTests extends TestCase {
     treeCacheControl.replay();
 
     try {
-      jbossCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToCache);
+      jbossCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToCache);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -248,7 +247,7 @@ public class JbossCacheFacadeTests extends TestCase {
     String objectToCache = "Falcon Millenium";
     putInTreeCache(CACHE_KEY, objectToCache);
 
-    jbossCacheFacade.onRemoveFromCache(CACHE_KEY, cacheProfile);
+    jbossCacheFacade.onRemoveFromCache(CACHE_KEY, cacheModel);
 
     Object cachedObject = getFromTreeCache(CACHE_KEY);
     assertNull(cachedObject);
@@ -268,7 +267,7 @@ public class JbossCacheFacadeTests extends TestCase {
     treeCacheControl.replay();
 
     try {
-      jbossCacheFacade.onRemoveFromCache(CACHE_KEY, cacheProfile);
+      jbossCacheFacade.onRemoveFromCache(CACHE_KEY, cacheModel);
       fail();
 
     } catch (CacheAccessException exception) {

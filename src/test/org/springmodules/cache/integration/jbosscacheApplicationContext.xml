@@ -12,7 +12,7 @@
   <bean id="cacheProvider"
     class="org.springmodules.cache.provider.jboss.JbossCacheFacade">
     <property name="cacheManager" ref="cacheManager" />
-    <property name="cacheProfiles">
+    <property name="cacheModels">
       <props>
         <prop key="test">[nodeFqn=a/b/c]</prop>
       </props>

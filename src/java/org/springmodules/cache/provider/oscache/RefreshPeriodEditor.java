@@ -27,7 +27,7 @@ import com.opensymphony.oscache.base.CacheEntry;
 /**
  * <p>
  * Property editor for the property "refreshPeriod" of
- * <code>{@link OsCacheProfile}</code>
+ * <code>{@link OsCacheModel}</code>
  * </p>
  * 
  * @author Alex Ruiz

@@ -40,7 +40,7 @@ import org.springmodules.cache.interceptor.flush.CacheFlushAttributeSourceAdviso
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/27 04:37:34 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/29 01:22:14 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 
@@ -79,7 +79,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     setUpCachingAttributes();
 
     cacheFlushAttributes = new Properties();
-    cacheFlushAttributes.setProperty("update*", "[cacheProfileIds=test]");
+    cacheFlushAttributes.setProperty("update*", "[cacheModelIds=test]");
     cacheProxyFactoryBean.setCacheFlushAttributes(cacheFlushAttributes);
 
     target = new CacheableServiceImpl();
@@ -87,7 +87,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
 
   private void setUpCachingAttributes() {
     cachingAttributes = new Properties();
-    cachingAttributes.setProperty("get*", "[cacheProfileId=main]");
+    cachingAttributes.setProperty("get*", "[cacheModelId=main]");
     cacheProxyFactoryBean.setCachingAttributes(cachingAttributes);
   }
 

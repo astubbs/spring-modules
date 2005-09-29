@@ -33,8 +33,9 @@ import org.springmodules.cache.interceptor.flush.FlushCache;
  * </p>
  * 
  * <p>
- * This class reads the JDK 1.5+ <code>{@link CacheFlush}</code> annotation and
- * exposes corresponding cache-flush attributes to our caching infrastructure.
+ * This class reads the JDK 1.5+ <code>{@link CacheFlush}</code> annotation
+ * and exposes corresponding cache-flush attributes to our caching
+ * infrastructure.
  * </p>
  * 
  * <p>
@@ -45,7 +46,7 @@ import org.springmodules.cache.interceptor.flush.FlushCache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/05/21 22:01:22 $
+ * @version $Revision: 1.3 $ $Date: 2005/09/29 01:21:48 $
  */
 public class AnnotationCacheFlushAttributeSource extends
     AbstractCacheFlushAttributeSource {
@@ -78,10 +79,10 @@ public class AnnotationCacheFlushAttributeSource extends
       for (Object attribute : attributes) {
         if (attribute instanceof CacheFlush) {
           CacheFlush cacheFlush = (CacheFlush) attribute;
-          String[] cacheProfileIds = cacheFlush.cacheProfileIds();
+          String[] cacheModelIds = cacheFlush.cacheModelIds();
           boolean flushBeforeExecution = cacheFlush.flushBeforeExecution();
-          
-          flushCache = new FlushCache(cacheProfileIds, flushBeforeExecution);
+
+          flushCache = new FlushCache(cacheModelIds, flushBeforeExecution);
           break;
         }
       }

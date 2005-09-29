@@ -35,7 +35,7 @@ import org.springmodules.cache.provider.CacheProviderFacadeStatus;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/22 00:41:35 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/29 01:21:59 $
  */
 public final class CacheFlushInterceptor extends CacheFlushAspectSupport
     implements MethodInterceptor {
@@ -87,16 +87,16 @@ public final class CacheFlushInterceptor extends CacheFlushAspectSupport
       return methodInvocation.proceed();
     }
 
-    String[] cacheProfileIds = attribute.getCacheProfileIds();
+    String[] cacheModelIds = attribute.getCacheModelIds();
     Object proceedReturnValue = null;
 
     boolean flushedBeforeExecution = attribute.isFlushBeforeExecution();
     if (flushedBeforeExecution) {
-      cacheProviderFacade.flushCache(cacheProfileIds);
+      cacheProviderFacade.flushCache(cacheModelIds);
       proceedReturnValue = methodInvocation.proceed();
     } else {
       proceedReturnValue = methodInvocation.proceed();
-      cacheProviderFacade.flushCache(cacheProfileIds);
+      cacheProviderFacade.flushCache(cacheModelIds);
     }
 
     return proceedReturnValue;

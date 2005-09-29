@@ -38,7 +38,7 @@ import org.springframework.util.StringUtils;
  * </p>
  * <p>
  * For example: <br>
- * <code>com.mycompany.mycode.MyClass.myMethod=[cacheProfileIds=myCache]</code>
+ * <code>com.mycompany.mycode.MyClass.myMethod=[cacheModelIds=myCache]</code>
  * </p>
  * <p>
  * <b>NOTE: </b> The specified class must be the one where the methods are
@@ -52,7 +52,7 @@ import org.springframework.util.StringUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:35 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/29 01:21:59 $
  */
 public class CacheFlushAttributeSourceEditor extends PropertyEditorSupport {
 

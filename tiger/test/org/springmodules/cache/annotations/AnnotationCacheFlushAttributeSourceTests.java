@@ -33,7 +33,7 @@ import org.springmodules.cache.interceptor.flush.FlushCache;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:42 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/29 01:21:57 $
  */
 public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
 
@@ -78,8 +78,8 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
     FlushCache actual = (FlushCache) this.cacheFlushAttributeSource
         .findAttribute(attributes);
 
-    assertTrue("<Cache profile Id>", Arrays.equals(expected.cacheProfileIds(),
-        actual.getCacheProfileIds()));
+    assertTrue(Arrays.equals(expected.cacheModelIds(), actual
+        .getCacheModelIds()));
     assertEquals("<Flag 'flushBeforeExecution'>", expected
         .flushBeforeExecution(), actual.isFlushBeforeExecution());
   }
@@ -87,7 +87,7 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
   public void testFindAttributeWithCollectionOfAttributesEqualToNull() {
     assertNull(this.cacheFlushAttributeSource.findAttribute(null));
   }
-  
+
   public void testFindAttributeWithCollectionOfAttributesWithoutCachingAttributes() {
     Collection<Object> attributes = new ArrayList<Object>();
     attributes.add("Anakin Skywalker");

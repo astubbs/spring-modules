@@ -39,7 +39,7 @@ public class CacheableServiceImpl implements CacheableService {
 
   /**
    * @see CacheableService#getName(int)
-   * @@org.springmodules.cache.interceptor.caching.Cached(cacheProfileId="test")
+   * @@org.springmodules.cache.interceptor.caching.Cached(cacheModelId="test")
    */
   public final String getName(int index) {
     return (String) this.names.get(index);
@@ -51,7 +51,7 @@ public class CacheableServiceImpl implements CacheableService {
 
   /**
    * @see CacheableService#updateName(int, String)
-   * @@org.springmodules.cache.interceptor.flush.FlushCache(cacheProfileIds="test")
+   * @@org.springmodules.cache.interceptor.flush.FlushCache(cacheModelIds="test")
    */
   public final void updateName(int index, String name) {
     this.names.set(index, name);

@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.jboss.cache.TreeCache;
 import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.provider.jboss.JbossCacheProfile;
+import org.springmodules.cache.provider.jboss.JbossCacheModel;
 
 /**
  * <p>
@@ -60,16 +60,16 @@ public abstract class AbstractJbossCacheIntegrationTestCases extends
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCorrectCacheProfileConfiguration(Map)
+   * @see AbstractIntegrationTests#assertCorrectCacheModelConfiguration(Map)
    */
-  protected void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
-    JbossCacheProfile expected = new JbossCacheProfile();
+  protected void assertCorrectCacheModelConfiguration(Map cacheModels) {
+    JbossCacheModel expected = new JbossCacheModel();
     expected.setNodeFqn(CACHE_NODE_FQN);
 
-    String cacheProfileId = "test";
-    Object actual = cacheProfiles.get(cacheProfileId);
+    String cacheModelId = "test";
+    Object actual = cacheModels.get(cacheModelId);
 
-    assertEqualCacheProfiles(expected, actual, cacheProfileId);
+    assertEqualCacheModules(expected, actual, cacheModelId);
   }
 
   /**

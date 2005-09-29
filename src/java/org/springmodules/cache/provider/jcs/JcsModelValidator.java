@@ -19,41 +19,40 @@
 package org.springmodules.cache.provider.jcs;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.AbstractCacheProfileValidator;
-import org.springmodules.cache.provider.InvalidCacheProfileException;
+import org.springmodules.cache.provider.AbstractCacheModelValidator;
+import org.springmodules.cache.provider.InvalidCacheModelException;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link JcsProfile}</code>.
+ * Validates the properties of a <code>{@link JcsModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/08/11 04:28:37 $
+ * @version $Revision$ $Date$
  */
-public class JcsProfileValidator extends AbstractCacheProfileValidator {
+public class JcsModelValidator extends AbstractCacheModelValidator {
 
-  public JcsProfileValidator() {
+  public JcsModelValidator() {
     super();
   }
 
   /**
-   * @see AbstractCacheProfileValidator#getTargetClass()
+   * @see AbstractCacheModelValidator#getTargetClass()
    */
   protected Class getTargetClass() {
-    return JcsProfile.class;
+    return JcsModel.class;
   }
 
   /**
-   * @see AbstractCacheProfileValidator#validateCacheProfileProperties(java.lang.Object)
+   * @see AbstractCacheModelValidator#validateCacheModelProperties(java.lang.Object)
    */
-  protected void validateCacheProfileProperties(Object cacheProfile)
-      throws InvalidCacheProfileException {
-    JcsProfile jcsProfile = (JcsProfile) cacheProfile;
+  protected void validateCacheModelProperties(Object cacheModel)
+      throws InvalidCacheModelException {
+    JcsModel jcsModel = (JcsModel) cacheModel;
 
-    if (!StringUtils.hasText(jcsProfile.getCacheName())) {
-      throw new InvalidCacheProfileException(
-          "Cache name should not be empty");
+    if (!StringUtils.hasText(jcsModel.getCacheName())) {
+      throw new InvalidCacheModelException("Cache name should not be empty");
     }
   }
 }

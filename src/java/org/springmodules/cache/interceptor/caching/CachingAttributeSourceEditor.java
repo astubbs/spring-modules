@@ -38,7 +38,7 @@ import org.springframework.util.StringUtils;
  * </p>
  * <p>
  * For example: <br>
- * <code>com.mycompany.mycode.MyClass.myMethod=[cacheProfileId=myCache]</code>
+ * <code>com.mycompany.mycode.MyClass.myMethod=[cacheModelId=myCache]</code>
  * </p>
  * <p>
  * <b>NOTE: </b> The specified class must be the one where the methods are
@@ -53,7 +53,7 @@ import org.springframework.util.StringUtils;
  * @author Xavier Dury
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/06 01:41:29 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/29 01:21:46 $
  */
 public class CachingAttributeSourceEditor extends PropertyEditorSupport {
 

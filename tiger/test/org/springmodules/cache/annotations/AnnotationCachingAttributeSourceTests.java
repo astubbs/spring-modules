@@ -33,7 +33,7 @@ import org.springmodules.cache.interceptor.caching.Cached;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:42 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/29 01:21:57 $
  */
 public class AnnotationCachingAttributeSourceTests extends TestCase {
 
@@ -78,14 +78,13 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
     Cached actual = (Cached) this.cachingAttributeSource
         .findAttribute(attributes);
 
-    assertEquals("<Cache profile Id>", expected.cacheProfileId(), actual
-        .getCacheProfileId());
+    assertEquals(expected.cacheModelId(), actual.getCacheModelId());
   }
 
   public void testFindAttributeWithCollectionOfAttributesEqualToNull() {
     assertNull(this.cachingAttributeSource.findAttribute(null));
   }
-  
+
   public void testFindAttributeWithCollectionOfAttributesWithoutCachingAttributes() {
     Collection<Object> attributes = new ArrayList<Object>();
     attributes.add("Luke Skywalker");

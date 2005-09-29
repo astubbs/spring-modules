@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:24 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/29 01:21:41 $
  */
 public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
 
@@ -90,9 +90,9 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
     // the first property key matches, but the second one is the one used
     // because it also matches but has longer length.
     properties.setProperty(this.method.getName().substring(0, 2) + "*",
-        "[cacheProfileIds=test]");
+        "[cacheModelIds=test]");
     properties.setProperty(this.method.getName().substring(0, 3) + "*",
-        "[cacheProfileIds=main]");
+        "[cacheModelIds=main]");
 
     this.attributeSource.setProperties(properties);
 
@@ -115,7 +115,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
     FlushCache expected = new FlushCache("main");
 
     Properties properties = new Properties();
-    properties.setProperty(this.method.getName(), "[cacheProfileIds=main]");
+    properties.setProperty(this.method.getName(), "[cacheModelIds=main]");
 
     this.attributeSource.setProperties(properties);
 
@@ -138,7 +138,7 @@ public class NameMatchCacheFlushAttributeSourceTests extends TestCase {
 
     Properties properties = new Properties();
     properties.setProperty("aMethodThatDoesNotExist",
-        "[cacheProfileIds=test,main]");
+        "[cacheModelIds=test,main]");
 
     this.attributeSource.setProperties(properties);
 

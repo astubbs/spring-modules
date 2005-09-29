@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * Set of configuration options needed for:
+ * Configuration options needed for:
  * <ul>
  * <li>Retrieving an entry from the cache</li>
  * <li>Storing an object in the cache</li>
@@ -32,8 +32,8 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:00 $
+ * @version $Revision$ $Date$
  */
-public interface CacheProfile extends Serializable {
+public interface CacheModel extends Serializable {
   // Marker interface.
 }

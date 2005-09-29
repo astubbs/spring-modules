@@ -34,7 +34,7 @@ import org.springmodules.cache.provider.CacheProviderFacadeStatus;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.8 $ $Date: 2005/09/22 00:42:40 $
+ * @version $Revision: 1.9 $ $Date: 2005/09/29 01:22:06 $
  */
 public final class CachingInterceptorTests extends
     AbstractCacheModuleInterceptorTests {
@@ -95,7 +95,7 @@ public final class CachingInterceptorTests extends
 
   private void expectGetCacheEntry(Object returnValue) {
     cacheProviderFacade.getFromCache(cacheKey, cachingAttribute
-        .getCacheProfileId());
+        .getCacheModelId());
     cacheProviderFacadeControl.setReturnValue(returnValue);
   }
 
@@ -122,7 +122,7 @@ public final class CachingInterceptorTests extends
 
   protected void onSetUp() throws Exception {
     cachingAttribute = new Cached();
-    cachingAttribute.setCacheProfileId("CACHE_PROFILE");
+    cachingAttribute.setCacheModelId("CACHE_MODEL");
 
     cachingAttributeSourceControl = MockControl
         .createControl(CachingAttributeSource.class);
@@ -339,9 +339,8 @@ public final class CachingInterceptorTests extends
     expectProceedMethodInvocation(proceedReturnValue);
 
     // put in the cache the return value of the intercepted method.
-    String cacheProfileId = cachingAttribute.getCacheProfileId();
-    cacheProviderFacade
-        .putInCache(cacheKey, cacheProfileId, proceedReturnValue);
+    String cacheModelId = cachingAttribute.getCacheModelId();
+    cacheProviderFacade.putInCache(cacheKey, cacheModelId, proceedReturnValue);
 
     entryStoredListener.onEntryAdd(cacheKey, proceedReturnValue);
 
@@ -372,8 +371,8 @@ public final class CachingInterceptorTests extends
     expectProceedMethodInvocation(null);
 
     // put in the cache the return value of the intercepted method.
-    cacheProviderFacade.putInCache(cacheKey, cachingAttribute
-        .getCacheProfileId(), CachingAspectSupport.NULL_ENTRY);
+    cacheProviderFacade.putInCache(cacheKey,
+        cachingAttribute.getCacheModelId(), CachingAspectSupport.NULL_ENTRY);
 
     assertInterceptorInvocationIsCorrect(null);
   }

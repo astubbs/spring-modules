@@ -29,9 +29,9 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheException;
 import org.springmodules.cache.provider.CacheNotFoundException;
-import org.springmodules.cache.provider.CacheProfile;
-import org.springmodules.cache.provider.CacheProfileEditor;
-import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.CacheModel;
+import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.FatalCacheException;
 import org.springmodules.cache.provider.ObjectCannotBeCachedException;
 
@@ -42,7 +42,7 @@ import org.springmodules.cache.provider.ObjectCannotBeCachedException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.15 $ $Date: 2005/09/22 10:03:42 $
+ * @version $Revision: 1.16 $ $Date: 2005/09/29 01:21:40 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacade {
 
@@ -83,20 +83,20 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#getCacheProfileEditor()
+   * @see AbstractCacheProviderFacade#getCacheModelEditor()
    */
-  protected PropertyEditor getCacheProfileEditor() {
-    CacheProfileEditor editor = new CacheProfileEditor();
-    editor.setCacheProfileClass(EhCacheProfile.class);
+  protected PropertyEditor getCacheModelEditor() {
+    CacheModelEditor editor = new CacheModelEditor();
+    editor.setCacheModelClass(EhCacheModel.class);
     return editor;
   }
 
   /**
-   * @see AbstractCacheProviderFacade#getCacheProfileValidator()
-   * @see EhCacheProfileValidator#validateCacheProfile(Object)
+   * @see AbstractCacheProviderFacade#getCacheModelValidator()
+   * @see EhCacheModelValidator#validateCacheModel(Object)
    */
-  protected CacheProfileValidator getCacheProfileValidator() {
-    return new EhCacheProfileValidator();
+  protected CacheModelValidator getCacheModelValidator() {
+    return new EhCacheModelValidator();
   }
 
   /**
@@ -107,16 +107,16 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onFlushCache(CacheProfile)
+   * @see AbstractCacheProviderFacade#onFlushCache(CacheModel)
    * 
    * @throws CacheNotFoundException
-   *           if the cache specified in the given profile cannot be found.
+   *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected void onFlushCache(CacheProfile cacheProfile) throws CacheException {
-    EhCacheProfile profile = (EhCacheProfile) cacheProfile;
-    String cacheName = profile.getCacheName();
+  protected void onFlushCache(CacheModel cacheModel) throws CacheException {
+    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
+    String cacheName = ehCacheModel.getCacheName();
 
     Cache cache = getCache(cacheName);
 
@@ -130,18 +130,18 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#onGetFromCache(Serializable,
-   *      CacheProfile)
+   *      CacheModel)
    * 
    * @throws CacheNotFoundException
-   *           if the cache specified in the given profile cannot be found.
+   *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
   protected Object onGetFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) throws CacheException {
+      CacheModel cacheModel) throws CacheException {
 
-    EhCacheProfile profile = (EhCacheProfile) cacheProfile;
-    String cacheName = profile.getCacheName();
+    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
+    String cacheName = ehCacheModel.getCacheName();
 
     Cache cache = getCache(cacheName);
     Object cachedObject = null;
@@ -161,21 +161,21 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#onPutInCache(Serializable,
-   *      CacheProfile, Object)
+   *      CacheModel, Object)
    * 
    * @throws ObjectCannotBeCachedException
    *           if the object to store is not an implementation of
    *           <code>java.io.Serializable</code>.
    * @throws CacheNotFoundException
-   *           if the cache specified in the given profile cannot be found.
+   *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
+  protected void onPutInCache(Serializable cacheKey, CacheModel cacheModel,
       Object objectToCache) throws CacheException {
 
-    EhCacheProfile profile = (EhCacheProfile) cacheProfile;
-    String cacheName = profile.getCacheName();
+    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
+    String cacheName = ehCacheModel.getCacheName();
 
     Cache cache = getCache(cacheName);
     Element newCacheElement = new Element(cacheKey,
@@ -191,18 +191,18 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
-   *      CacheProfile)
+   *      CacheModel)
    * 
    * @throws CacheNotFoundException
-   *           if the cache specified in the given profile cannot be found.
+   *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
   protected void onRemoveFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) throws CacheException {
+      CacheModel cacheModel) throws CacheException {
 
-    EhCacheProfile profile = (EhCacheProfile) cacheProfile;
-    String cacheName = profile.getCacheName();
+    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
+    String cacheName = ehCacheModel.getCacheName();
 
     Cache cache = getCache(cacheName);
 

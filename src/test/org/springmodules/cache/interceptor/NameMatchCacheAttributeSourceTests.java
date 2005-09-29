@@ -37,7 +37,7 @@ import org.springmodules.cache.mock.MockCacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/09 02:19:13 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/29 01:22:15 $
  */
 public final class NameMatchCacheAttributeSourceTests extends TestCase {
 
@@ -151,7 +151,7 @@ public final class NameMatchCacheAttributeSourceTests extends TestCase {
   public void testSetPropertiesWhenPropertyEditorReturnsCacheAttributeEqualToNull() {
     setUpCacheAttributeEditorAsMockObject();
 
-    String cacheAttributeProperties = "[cacheProfileId=test]";
+    String cacheAttributeProperties = "[cacheModelId=test]";
     Properties cacheAttributes = new Properties();
     cacheAttributes.setProperty("getNew*", cacheAttributeProperties);
 
@@ -191,7 +191,7 @@ public final class NameMatchCacheAttributeSourceTests extends TestCase {
     setUpCacheAttributeEditorAsMockObject();
 
     String mappedName = "getNew*";
-    String cacheAttributeProperties = "[cacheProfileId=test]";
+    String cacheAttributeProperties = "[cacheModelId=test]";
     Properties cacheAttributes = new Properties();
     cacheAttributes.setProperty(mappedName, cacheAttributeProperties);
 

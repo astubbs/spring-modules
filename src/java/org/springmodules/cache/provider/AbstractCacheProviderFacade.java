@@ -46,10 +46,10 @@ public abstract class AbstractCacheProviderFacade implements
     CacheProviderFacade {
 
   /**
-   * Map that stores implementations of <code>{@link CacheProfile}</code>.
-   * Each entry is stored using a unique id (a <code>String</code>).
+   * Map that stores implementations of <code>{@link CacheModel}</code>. Each
+   * entry is stored using a unique id (a <code>String</code>).
    */
-  private Map cacheProfiles;
+  private Map cacheModels;
 
   private boolean failQuietlyEnabled;
 
@@ -69,18 +69,18 @@ public abstract class AbstractCacheProviderFacade implements
    * <code>BeanFactory</code>.
    * 
    * @see #validateCacheManager()
-   * @see #validateCacheProfiles()
+   * @see #validateCacheModels()
    */
   public final void afterPropertiesSet() throws FatalCacheException {
 
     try {
       validateCacheManager();
 
-      if (cacheProfiles instanceof Properties) {
-        setCacheProfilesFromProperties((Properties) cacheProfiles);
+      if (cacheModels instanceof Properties) {
+        setCacheModelsFromProperties((Properties) cacheModels);
       }
 
-      validateCacheProfiles();
+      validateCacheModels();
 
     } catch (FatalCacheException exception) {
       setStatus(CacheProviderFacadeStatus.INVALID);
@@ -120,23 +120,21 @@ public abstract class AbstractCacheProviderFacade implements
   /**
    * @see CacheProviderFacade#flushCache(String[])
    */
-  public final void flushCache(String[] cacheProfileIds) throws CacheException {
+  public final void flushCache(String[] cacheModelIds) throws CacheException {
 
     if (logger.isDebugEnabled()) {
-      logger.debug("Attempt to flush the cache using cache profile ids <"
-          + ArrayUtils.toString(cacheProfileIds) + ">");
+      logger.debug("Attempt to flush the cache using cache model ids <"
+          + ArrayUtils.toString(cacheModelIds) + ">");
     }
 
-    if (cacheProfileIds != null) {
-      int cacheProfileIdCount = cacheProfileIds.length;
+    if (cacheModelIds != null) {
+      int cacheModelIdCount = cacheModelIds.length;
 
       try {
-        for (int i = 0; i < cacheProfileIdCount; i++) {
-          String cacheProfileId = cacheProfileIds[i];
-
-          CacheProfile cacheProfile = getCacheProfile(cacheProfileId);
-          if (cacheProfile != null) {
-            onFlushCache(cacheProfile);
+        for (int i = 0; i < cacheModelIdCount; i++) {
+          CacheModel cacheModel = getCacheModel(cacheModelIds[i]);
+          if (cacheModel != null) {
+            onFlushCache(cacheModel);
           }
         }
         if (logger.isDebugEnabled()) {
@@ -150,71 +148,70 @@ public abstract class AbstractCacheProviderFacade implements
   }
 
   /**
-   * Returns an implementation of <code>{@link CacheProfile}</code> stored in
-   * <code>{@link #cacheProfiles}</code>.
+   * Returns an implementation of <code>{@link CacheModel}</code> stored in
+   * <code>{@link #cacheModels}</code>.
    * 
-   * @param cacheProfileId
-   *          the id of the cache profile to retrieve.
-   * @return a cache profile.
+   * @param cacheModelId
+   *          the id of the cache model to retrieve.
+   * @return a cache model.
    */
-  protected final CacheProfile getCacheProfile(String cacheProfileId) {
-    CacheProfile cacheProfile = null;
+  protected final CacheModel getCacheModel(String cacheModelId) {
+    CacheModel cacheModel = null;
 
-    if (StringUtils.hasText(cacheProfileId) && cacheProfiles != null) {
-      cacheProfile = (CacheProfile) cacheProfiles.get(cacheProfileId);
+    if (StringUtils.hasText(cacheModelId) && cacheModels != null) {
+      cacheModel = (CacheModel) cacheModels.get(cacheModelId);
     }
 
     if (logger.isDebugEnabled()) {
-      logger.debug("Obtained cache profile <" + cacheProfile + ">");
+      logger.debug("Obtained cache model <" + cacheModel + ">");
     }
 
-    return cacheProfile;
+    return cacheModel;
   }
 
   /**
    * Returns a property editor for an implementation of
-   * <code>{@link CacheProfile}</code>.
+   * <code>{@link CacheModel}</code>.
    * 
-   * @return a property editor for cache profiles.
+   * @return a property editor for cache models.
    */
-  protected abstract PropertyEditor getCacheProfileEditor();
+  protected abstract PropertyEditor getCacheModelEditor();
 
   /**
-   * Returns an unmodifiable view of <code>{@link #cacheProfiles}</code>.
+   * Returns an unmodifiable view of <code>{@link #cacheModels}</code>.
    * 
-   * @return an unmodifiable view of the member variable
-   *         <code>cacheProfiles</code>.
+   * @return an unmodifiable view of the existing cache models.
    */
-  public final Map getCacheProfiles() {
-    return (cacheProfiles != null) ? Collections.unmodifiableMap(cacheProfiles)
+  public final Map getCacheModels() {
+    return (cacheModels != null) ? Collections.unmodifiableMap(cacheModels)
         : null;
   }
 
   /**
-   * Returns a validator for the properties of cache profiles.
+   * Returns a validator for the properties of cache models.
    * 
-   * @return a validator for the properties of cache profiles.
+   * @return a validator for the properties of cache models.
    */
-  protected abstract CacheProfileValidator getCacheProfileValidator();
+  protected abstract CacheModelValidator getCacheModelValidator();
 
   /**
    * @see CacheProviderFacade#getFromCache(Serializable, String)
    */
-  public final Object getFromCache(Serializable cacheKey, String cacheProfileId)
+  public final Object getFromCache(Serializable cacheKey, String cacheModelId)
       throws CacheException {
 
     if (logger.isDebugEnabled()) {
       logger.debug("Attempt to retrieve a cache entry using key <" + cacheKey
-          + "> and cache profile id " + Strings.quote(cacheProfileId));
+          + "> and cache model id " + Strings.quote(cacheModelId));
     }
 
     Object cachedObject = null;
 
     try {
-      CacheProfile cacheProfile = getCacheProfile(cacheProfileId);
+      CacheModel cacheModel = getCacheModel(cacheModelId);
 
-      if (cacheProfile != null) {
-        cachedObject = onGetFromCache(cacheKey, cacheProfile);
+      if (cacheModel != null) {
+        cachedObject = onGetFromCache(cacheKey, cacheModel);
       }
 
       if (logger.isDebugEnabled()) {
@@ -312,14 +309,14 @@ public abstract class AbstractCacheProviderFacade implements
   }
 
   /**
-   * Flushes the caches specified in the given profile.
+   * Flushes the caches specified in the given model.
    * 
-   * @param cacheProfile
-   *          the cache profile that specifies what and how to flush.
+   * @param cacheModel
+   *          the cache model that specifies what and how to flush.
    * @throws CacheException
    *           if an unexpected error takes place when flushing the cache.
    */
-  protected abstract void onFlushCache(CacheProfile cacheProfile)
+  protected abstract void onFlushCache(CacheModel cacheModel)
       throws CacheException;
 
   /**
@@ -327,23 +324,23 @@ public abstract class AbstractCacheProviderFacade implements
    * 
    * @param cacheKey
    *          the key under which the entry is stored.
-   * @param cacheProfile
-   *          the the cache profile that specifies how to retrieve an entry.
+   * @param cacheModel
+   *          the the cache model that specifies how to retrieve an entry.
    * @return the cached entry.
    * @throws CacheException
    *           if an unexpected error takes place when retrieving the entry from
    *           the cache.
    */
   protected abstract Object onGetFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) throws CacheException;
+      CacheModel cacheModel) throws CacheException;
 
   /**
    * Stores an object in the cache.
    * 
    * @param cacheKey
    *          the key used to store the object.
-   * @param cacheProfile
-   *          the cache profile that specifies how to store an object in the
+   * @param cacheModel
+   *          the cache model that specifies how to store an object in the
    *          cache.
    * @param objectToCache
    *          the object to store in the cache.
@@ -352,42 +349,42 @@ public abstract class AbstractCacheProviderFacade implements
    *           cache.
    */
   protected abstract void onPutInCache(Serializable cacheKey,
-      CacheProfile cacheProfile, Object objectToCache) throws CacheException;
+      CacheModel cacheModel, Object objectToCache) throws CacheException;
 
   /**
    * Removes an entry from the cache.
    * 
    * @param cacheKey
    *          the key the entry to remove is stored under.
-   * @param cacheProfile
-   *          the cache profile that specifies how to remove the entry from the
+   * @param cacheModel
+   *          the cache model that specifies how to remove the entry from the
    *          cache.
    * @throws CacheException
    *           if an unexpected error takes place when removing an entry from
    *           the cache.
    */
   protected abstract void onRemoveFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) throws CacheException;
+      CacheModel cacheModel) throws CacheException;
 
   /**
    * @see CacheProviderFacade#putInCache(Serializable, String, Object)
    * @see #makeSerializableIfNecessary(Object)
    */
-  public final void putInCache(Serializable cacheKey, String cacheProfileId,
+  public final void putInCache(Serializable cacheKey, String cacheModelId,
       Object objectToCache) throws CacheException {
 
     if (logger.isDebugEnabled()) {
       logger.debug("Attempt to store the object <" + objectToCache
-          + "> in the cache using key <" + cacheKey + "> and cache profile id "
-          + Strings.quote(cacheProfileId));
+          + "> in the cache using key <" + cacheKey + "> and cache model id "
+          + Strings.quote(cacheModelId));
     }
 
     try {
       Object newCacheElement = makeSerializableIfNecessary(objectToCache);
 
-      CacheProfile cacheProfile = getCacheProfile(cacheProfileId);
-      if (cacheProfile != null) {
-        onPutInCache(cacheKey, cacheProfile, newCacheElement);
+      CacheModel cacheModel = getCacheModel(cacheModelId);
+      if (cacheModel != null) {
+        onPutInCache(cacheKey, cacheModel, newCacheElement);
 
         if (logger.isDebugEnabled()) {
           logger.debug("Object was successfully stored in the cache");
@@ -401,19 +398,18 @@ public abstract class AbstractCacheProviderFacade implements
   /**
    * @see CacheProviderFacade#removeFromCache(Serializable, String)
    */
-  public final void removeFromCache(Serializable cacheKey, String cacheProfileId)
+  public final void removeFromCache(Serializable cacheKey, String cacheModelId)
       throws CacheException {
 
     if (logger.isDebugEnabled()) {
       logger.debug("Attempt to remove an entry from the cache using key <"
-          + cacheKey + "> and cache profile id "
-          + Strings.quote(cacheProfileId));
+          + cacheKey + "> and cache model id " + Strings.quote(cacheModelId));
     }
 
-    CacheProfile cacheProfile = getCacheProfile(cacheProfileId);
-    if (cacheProfile != null) {
+    CacheModel cacheModel = getCacheModel(cacheModelId);
+    if (cacheModel != null) {
       try {
-        onRemoveFromCache(cacheKey, cacheProfile);
+        onRemoveFromCache(cacheKey, cacheModel);
 
         if (logger.isDebugEnabled()) {
           logger.debug("Object removed from the cache");
@@ -425,42 +421,41 @@ public abstract class AbstractCacheProviderFacade implements
     }
   }
 
-  public final void setCacheProfiles(Map newCacheProfiles) {
-    cacheProfiles = newCacheProfiles;
+  public final void setCacheModels(Map newCacheModels) {
+    cacheModels = newCacheModels;
   }
 
   /**
    * @throws FatalCacheException
-   *           if one or more cache profiles cannot be created from the given
+   *           if one or more cache models cannot be created from the given
    *           properties.
    */
-  private void setCacheProfilesFromProperties(Properties properties)
+  private void setCacheModelsFromProperties(Properties properties)
       throws FatalCacheException {
-    Map newCacheProfiles = new HashMap();
-    PropertyEditor cacheProfileEditor = getCacheProfileEditor();
+    Map newCacheModels = new HashMap();
+    PropertyEditor cacheModelEditor = getCacheModelEditor();
 
-    String cacheProfileId = null;
-    String cacheProfileAsProperties = null;
+    String cacheModelId = null;
+    String cacheModelAsProperties = null;
 
     try {
       for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
-        cacheProfileId = (String) i.next();
-        cacheProfileAsProperties = properties.getProperty(cacheProfileId);
+        cacheModelId = (String) i.next();
+        cacheModelAsProperties = properties.getProperty(cacheModelId);
 
-        cacheProfileEditor.setAsText(cacheProfileAsProperties);
-        CacheProfile cacheProfile = (CacheProfile) cacheProfileEditor
-            .getValue();
+        cacheModelEditor.setAsText(cacheModelAsProperties);
+        CacheModel cacheModel = (CacheModel) cacheModelEditor.getValue();
 
-        newCacheProfiles.put(cacheProfileId, cacheProfile);
+        newCacheModels.put(cacheModelId, cacheModel);
       }
     } catch (RuntimeException exception) {
       throw new FatalCacheException(
-          "Unable to create cache profile from the properties "
-              + Strings.quote(cacheProfileAsProperties) + " with id "
-              + Strings.quote(cacheProfileId), exception);
+          "Unable to create cache model from the properties "
+              + Strings.quote(cacheModelAsProperties) + " with id "
+              + Strings.quote(cacheModelId), exception);
     }
 
-    setCacheProfiles(newCacheProfiles);
+    setCacheModels(newCacheModels);
   }
 
   public final void setFailQuietlyEnabled(boolean newFailQuietlyEnabled) {
@@ -492,33 +487,33 @@ public abstract class AbstractCacheProviderFacade implements
 
   /**
    * @throws FatalCacheException
-   *           if the map of cache profiles is <code>null</code> or empty.
+   *           if the map of cache models is <code>null</code> or empty.
    * @throws FatalCacheException
-   *           if one or more cache profiles have invalid values of any of their
+   *           if one or more cache models have invalid values of any of their
    *           properties.
    */
-  private void validateCacheProfiles() throws FatalCacheException {
-    if (cacheProfiles == null || cacheProfiles.isEmpty()) {
+  private void validateCacheModels() throws FatalCacheException {
+    if (cacheModels == null || cacheModels.isEmpty()) {
       throw new FatalCacheException(
-          "The map of cache profiles should not be empty");
+          "The map of cache models should not be empty");
     }
 
-    CacheProfileValidator cacheProfileValidator = getCacheProfileValidator();
+    CacheModelValidator cacheModelValidator = getCacheModelValidator();
 
-    String cacheProfileId = null;
-    Object cacheProfile = null;
+    String cacheModelId = null;
+    Object cacheModel = null;
 
     try {
-      for (Iterator i = cacheProfiles.keySet().iterator(); i.hasNext();) {
-        cacheProfileId = (String) i.next();
-        cacheProfile = cacheProfiles.get(cacheProfileId);
+      for (Iterator i = cacheModels.keySet().iterator(); i.hasNext();) {
+        cacheModelId = (String) i.next();
+        cacheModel = cacheModels.get(cacheModelId);
 
-        cacheProfileValidator.validateCacheProfile(cacheProfile);
+        cacheModelValidator.validateCacheModel(cacheModel);
       }
 
-    } catch (InvalidCacheProfileException exception) {
-      throw new FatalCacheException("Invalid cache profile <" + cacheProfile
-          + "> with id " + Strings.quote(cacheProfileId), exception);
+    } catch (InvalidCacheModelException exception) {
+      throw new FatalCacheException("Invalid cache model <" + cacheModel
+          + "> with id " + Strings.quote(cacheModelId), exception);
     }
   }
 

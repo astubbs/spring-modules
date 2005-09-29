@@ -27,12 +27,12 @@ import org.springmodules.cache.util.BracketSeparatedPropertiesParser;
  * <p>
  * Creates a new instance of <code>{@link FlushCache}</code> by parsing a
  * String of the form
- * <code>[cacheProfileIds=<i>csvString</i>][flushBeforeExecution=<i>yes|no/true|false</i>]</code>.
+ * <code>[cacheModelIds=<i>csvString</i>][flushBeforeExecution=<i>yes|no/true|false</i>]</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:34 $
+ * @version $Revision: 1.6 $ $Date: 2005/09/29 01:21:59 $
  */
 public class CacheFlushAttributeEditor extends PropertyEditorSupport {
 
@@ -53,14 +53,14 @@ public class CacheFlushAttributeEditor extends PropertyEditorSupport {
     Properties properties = BracketSeparatedPropertiesParser
         .parseProperties(text);
 
-    String cacheProfileIds = properties.getProperty("cacheProfileIds");
+    String cacheModelIds = properties.getProperty("cacheModelIds");
     String flushBeforeExecutionAsString = properties
         .getProperty("flushBeforeExecution");
     boolean flushBeforeExecution = "yes"
         .equalsIgnoreCase(flushBeforeExecutionAsString)
         || "true".equalsIgnoreCase(flushBeforeExecutionAsString);
 
-    FlushCache cached = new FlushCache(cacheProfileIds, flushBeforeExecution);
+    FlushCache cached = new FlushCache(cacheModelIds, flushBeforeExecution);
     setValue(cached);
   }
 }

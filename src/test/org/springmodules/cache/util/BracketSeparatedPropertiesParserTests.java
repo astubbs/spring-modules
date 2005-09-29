@@ -29,7 +29,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/20 03:47:57 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/29 01:22:15 $
  */
 public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
@@ -127,11 +127,11 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
     expectedProperties.setProperty(propertyKey, propertyValue);
     expectedProperties.setProperty(secondPropertyKey, secondPropertyValue);
 
-    String cacheProfileProperties = "[" + property + "][" + secondProperty
+    String cacheModelProperties = "[" + property + "][" + secondProperty
         + "]";
 
     Properties actualProperties = BracketSeparatedPropertiesParser
-        .parseProperties(cacheProfileProperties);
+        .parseProperties(cacheModelProperties);
 
     assertEquals(expectedProperties, actualProperties);
   }

@@ -25,8 +25,8 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.provider.CacheProfileEditor;
-import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.FatalCacheException;
 
 import com.opensymphony.oscache.base.Cache;
@@ -42,13 +42,13 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/22 03:14:16 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/29 01:22:08 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
   private static final String CACHE_KEY = "key";
 
-  private static final String CACHE_PROFILE_ID = "cacheProfile";
+  private static final String CACHE_MODEL_ID = "cacheModel";
 
   private GeneralCacheAdministrator cacheAdministrator;
 
@@ -56,7 +56,7 @@ public class OsCacheFacadeTests extends TestCase {
 
   private CacheEntryEventListenerImpl cacheEntryEventListener;
 
-  private OsCacheProfile cacheProfile;
+  private OsCacheModel cacheModel;
 
   /**
    * Name of the groups in <code>{@link #cacheAdministrator}</code> to use.
@@ -72,15 +72,15 @@ public class OsCacheFacadeTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    cacheProfile = new OsCacheProfile();
+    cacheModel = new OsCacheModel();
 
     groups = new String[] { "Empire", "Rebels" };
 
-    Map cacheProfiles = new HashMap();
-    cacheProfiles.put(CACHE_PROFILE_ID, cacheProfile);
+    Map cacheModels = new HashMap();
+    cacheModels.put(CACHE_MODEL_ID, cacheModel);
 
     osCacheFacade = new OsCacheFacade();
-    osCacheFacade.setCacheProfiles(cacheProfiles);
+    osCacheFacade.setCacheModels(cacheModels);
   }
 
   private void setUpCacheAdministrator() {
@@ -119,21 +119,20 @@ public class OsCacheFacadeTests extends TestCase {
     }
   }
 
-  public void testGetCacheProfileEditor() {
-    PropertyEditor editor = osCacheFacade.getCacheProfileEditor();
+  public void testGetCacheModelEditor() {
+    PropertyEditor editor = osCacheFacade.getCacheModelEditor();
 
     assertNotNull(editor);
-    assertEquals(CacheProfileEditor.class, editor.getClass());
+    assertEquals(CacheModelEditor.class, editor.getClass());
 
-    CacheProfileEditor profileEditor = (CacheProfileEditor) editor;
-    assertEquals(OsCacheProfile.class, profileEditor.getCacheProfileClass());
+    CacheModelEditor modelEditor = (CacheModelEditor) editor;
+    assertEquals(OsCacheModel.class, modelEditor.getCacheModelClass());
 
-    Map cacheProfilePropertyEditors = profileEditor
-        .getCacheProfilePropertyEditors();
-    assertNotNull(cacheProfilePropertyEditors);
-    assertEquals(1, cacheProfilePropertyEditors.size());
+    Map cacheModelPropertyEditors = modelEditor.getCacheModelPropertyEditors();
+    assertNotNull(cacheModelPropertyEditors);
+    assertEquals(1, cacheModelPropertyEditors.size());
 
-    PropertyEditor refreshPeriodEditor = (PropertyEditor) cacheProfilePropertyEditors
+    PropertyEditor refreshPeriodEditor = (PropertyEditor) cacheModelPropertyEditors
         .get("refreshPeriod");
     assertNotNull(refreshPeriodEditor);
     assertEquals(RefreshPeriodEditor.class, refreshPeriodEditor.getClass());
@@ -141,16 +140,16 @@ public class OsCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OsCacheFacade#getCacheProfileValidator()}</code> returns an
-   * an instance of <code>{@link OsCacheProfileValidator}</code> not equal to
+   * <code>{@link OsCacheFacade#getCacheModelValidator()}</code> returns an an
+   * instance of <code>{@link OsCacheModelValidator}</code> not equal to
    * <code>null</code>.
    */
-  public void testGetCacheProfileValidator() {
-    CacheProfileValidator validator = osCacheFacade.getCacheProfileValidator();
+  public void testGetCacheModelValidator() {
+    CacheModelValidator validator = osCacheFacade.getCacheModelValidator();
 
     assertNotNull(validator);
 
-    assertEquals(OsCacheProfileValidator.class, validator.getClass());
+    assertEquals(OsCacheModelValidator.class, validator.getClass());
   }
 
   public void testIsSerializableCacheElementRequired() {
@@ -186,10 +185,10 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministrator.putInCache(CACHE_KEY, objectToStore, groups);
 
     String groupToFlush = groups[0];
-    cacheProfile.setGroups(new String[] { groupToFlush });
+    cacheModel.setGroups(new String[] { groupToFlush });
 
     // execute the method to test.
-    osCacheFacade.onFlushCache(cacheProfile);
+    osCacheFacade.onFlushCache(cacheModel);
 
     assertEquals("<Number of groups flushed>", 1, cacheEntryEventListener
         .getGroupFlushedCount());
@@ -201,10 +200,10 @@ public class OsCacheFacadeTests extends TestCase {
     Object objectToStore = "An Object";
     cacheAdministrator.putInCache(CACHE_KEY, objectToStore, groups);
 
-    cacheProfile.setGroups((String[]) null);
+    cacheModel.setGroups((String[]) null);
 
     // execute the method to test.
-    osCacheFacade.onFlushCache(cacheProfile);
+    osCacheFacade.onFlushCache(cacheModel);
 
     String cachedObject = cacheAdministrator.getProperty(CACHE_KEY);
     assertNull(cachedObject);
@@ -217,7 +216,7 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministrator.putInCache(CACHE_KEY, expected);
 
     // execute the method to test.
-    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
+    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
 
     assertSame(expected, actual);
   }
@@ -226,7 +225,7 @@ public class OsCacheFacadeTests extends TestCase {
     setUpCacheAdministrator();
 
     Object cachedObject = osCacheFacade.onGetFromCache("NonExistingKey",
-        cacheProfile);
+        cacheModel);
 
     assertNull(cachedObject);
   }
@@ -241,8 +240,8 @@ public class OsCacheFacadeTests extends TestCase {
     String cronExpression = "* * * 0 0";
     int refreshPeriod = 45;
 
-    cacheProfile.setCronExpression(cronExpression);
-    cacheProfile.setRefreshPeriod(refreshPeriod);
+    cacheModel.setCronExpression(cronExpression);
+    cacheModel.setRefreshPeriod(refreshPeriod);
     Object expected = "Anakin";
 
     cacheAdministrator.getFromCache(CACHE_KEY, refreshPeriod, cronExpression);
@@ -251,7 +250,7 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministratorControl.replay();
 
     // execute the method to test.
-    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
+    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
 
     assertSame(expected, actual);
 
@@ -267,7 +266,7 @@ public class OsCacheFacadeTests extends TestCase {
     setUpCacheAdministratorAsMockObject(getFromCacheMethod);
     int refreshPeriod = 556;
 
-    cacheProfile.setRefreshPeriod(refreshPeriod);
+    cacheModel.setRefreshPeriod(refreshPeriod);
     Object expected = "Anakin";
 
     cacheAdministrator.getFromCache(CACHE_KEY, refreshPeriod);
@@ -276,7 +275,7 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministratorControl.replay();
 
     // execute the method to test.
-    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
+    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
 
     assertSame(expected, actual);
 
@@ -289,7 +288,7 @@ public class OsCacheFacadeTests extends TestCase {
 
     setUpCacheAdministratorAsMockObject(getFromCacheMethod);
 
-    cacheProfile.setRefreshPeriod(null);
+    cacheModel.setRefreshPeriod(null);
     Object expected = "Anakin";
 
     // retrieve an entry using only the provided key.
@@ -299,7 +298,7 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministratorControl.replay();
 
     // execute the method to test.
-    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheProfile);
+    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
 
     assertSame(expected, actual);
 
@@ -312,10 +311,10 @@ public class OsCacheFacadeTests extends TestCase {
     Object objectToStore = "An Object";
 
     String group = groups[0];
-    cacheProfile.setGroups(new String[] { group });
+    cacheModel.setGroups(new String[] { group });
 
     // execute the method to test.
-    osCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToStore);
+    osCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToStore);
 
     Object cachedObject = cacheAdministrator.getFromCache(CACHE_KEY);
     assertSame(objectToStore, cachedObject);
@@ -334,7 +333,7 @@ public class OsCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OsCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile, Object)}</code>
+   * <code>{@link OsCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheModel, Object)}</code>
    * stores an entry using the given key. The entry should not be associated
    * with any group.
    */
@@ -343,10 +342,10 @@ public class OsCacheFacadeTests extends TestCase {
 
     Object objectToStore = "An Object";
 
-    cacheProfile.setGroups((String[]) null);
+    cacheModel.setGroups((String[]) null);
 
     // execute the method to test.
-    osCacheFacade.onPutInCache(CACHE_KEY, cacheProfile, objectToStore);
+    osCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToStore);
 
     Object cachedObject = cacheAdministrator.getFromCache(CACHE_KEY);
     assertSame(objectToStore, cachedObject);
@@ -364,7 +363,7 @@ public class OsCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OsCacheFacade#onRemoveFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link OsCacheFacade#onRemoveFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheModel)}</code>
    * removes from the cache the entry stored under the given key.
    */
   public void testOnRemoveFromCache() throws Exception {

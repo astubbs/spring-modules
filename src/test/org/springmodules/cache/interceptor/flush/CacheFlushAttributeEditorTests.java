@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:26 $
+ * @version $Revision: 1.5 $ $Date: 2005/09/29 01:21:41 $
  */
 public final class CacheFlushAttributeEditorTests extends TestCase {
 
@@ -44,7 +44,7 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
 
   public void testSetAsTextWithFlushBeforeExecutionEqualToTrue() {
     FlushCache expectedCacheFlushAttribute = new FlushCache("main,test", true);
-    String properties = "[cacheProfileIds=main,test][flushBeforeExecution=true]";
+    String properties = "[cacheModelIds=main,test][flushBeforeExecution=true]";
 
     // execute the method to test.
     this.editor.setAsText(properties);
@@ -55,7 +55,7 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
 
   public void testSetAsTextWithFlushBeforeExecutionEqualToYes() {
     FlushCache expectedCacheFlushAttribute = new FlushCache("main,test", true);
-    String properties = "[cacheProfileIds=main,test][flushBeforeExecution=yes]";
+    String properties = "[cacheModelIds=main,test][flushBeforeExecution=yes]";
 
     // execute the method to test.
     this.editor.setAsText(properties);
@@ -66,7 +66,7 @@ public final class CacheFlushAttributeEditorTests extends TestCase {
 
   public void testSetAsTextWithoutFlushBeforeExecution() {
     FlushCache expectedCacheFlushAttribute = new FlushCache("main,test");
-    String properties = "[cacheProfileIds=main,test]";
+    String properties = "[cacheModelIds=main,test]";
 
     // execute the method to test.
     this.editor.setAsText(properties);

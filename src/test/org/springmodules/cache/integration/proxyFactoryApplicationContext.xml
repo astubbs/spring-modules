@@ -23,12 +23,12 @@
     <property name="cacheProviderFacade" ref="cacheProvider" />
     <property name="cachingAttributes">
       <props>
-        <prop key="get*">[cacheProfileId=test]</prop>
+        <prop key="get*">[cacheModelId=test]</prop>
       </props>
     </property>
     <property name="cacheFlushAttributes">
       <props>
-        <prop key="update*">[cacheProfileIds=test]</prop>
+        <prop key="update*">[cacheModelIds=test]</prop>
       </props>
     </property>
     <property name="entryStoredListener" ref="listener" />

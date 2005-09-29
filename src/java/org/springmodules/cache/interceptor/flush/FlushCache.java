@@ -32,16 +32,16 @@ import org.springmodules.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.13 $ $Date: 2005/09/25 05:20:28 $
+ * @version $Revision: 1.14 $ $Date: 2005/09/29 01:21:59 $
  */
 public class FlushCache implements CacheAttribute {
 
   private static final long serialVersionUID = 3689909557149513778L;
 
   /**
-   * Ids of the cache profiles to be used to flush the cache.
+   * Ids of the cache models to be used to flush the cache.
    */
-  private String[] cacheProfileIds;
+  private String[] cacheModelIds;
 
   /**
    * Flag that indicates if the cache should be flushed before or after the
@@ -54,33 +54,33 @@ public class FlushCache implements CacheAttribute {
   }
 
   /**
-   * @param cacheProfileIdsCsv
-   *          ids of the cache profiles to be used to flush the cache, separated
+   * @param cacheModelIdsCsv
+   *          ids of the cache models to be used to flush the cache, separated
    *          by commas.
    */
-  public FlushCache(String cacheProfileIdsCsv) {
+  public FlushCache(String cacheModelIdsCsv) {
     this();
-    setCacheProfileIds(cacheProfileIdsCsv);
+    setCacheModelIds(cacheModelIdsCsv);
   }
 
   /**
-   * @param cacheProfileIdsCsv
-   *          ids of the cache profiles to be used to flush the cache, separated
+   * @param cacheModelIdsCsv
+   *          ids of the cache models to be used to flush the cache, separated
    *          by commas.
    * @param flushedBeforeExecution
    */
-  public FlushCache(String cacheProfileIdsCsv, boolean flushedBeforeExecution) {
-    this(cacheProfileIdsCsv);
+  public FlushCache(String cacheModelIdsCsv, boolean flushedBeforeExecution) {
+    this(cacheModelIdsCsv);
     setFlushBeforeExecution(flushedBeforeExecution);
   }
 
-  public FlushCache(String[] cacheProfileIds) {
+  public FlushCache(String[] cacheModelIds) {
     this();
-    setCacheProfileIds(cacheProfileIds);
+    setCacheModelIds(cacheModelIds);
   }
 
-  public FlushCache(String[] cacheProfileIds, boolean flushedBeforeExecution) {
-    this(cacheProfileIds);
+  public FlushCache(String[] cacheModelIds, boolean flushedBeforeExecution) {
+    this(cacheModelIds);
     setFlushBeforeExecution(flushedBeforeExecution);
   }
 
@@ -100,15 +100,15 @@ public class FlushCache implements CacheAttribute {
     if (flushBeforeExecution != flushCache.flushBeforeExecution) {
       return false;
     }
-    if (!Arrays.equals(cacheProfileIds, flushCache.cacheProfileIds)) {
+    if (!Arrays.equals(cacheModelIds, flushCache.cacheModelIds)) {
       return false;
     }
 
     return true;
   }
 
-  public final String[] getCacheProfileIds() {
-    return cacheProfileIds;
+  public final String[] getCacheModelIds() {
+    return cacheModelIds;
   }
 
   /**
@@ -119,14 +119,14 @@ public class FlushCache implements CacheAttribute {
     int hash = 7;
     hash = multiplier * hash + (flushBeforeExecution ? 1 : 0);
 
-    if (cacheProfileIds == null) {
+    if (cacheModelIds == null) {
       hash = multiplier * hash;
     } else {
-      int cacheProfileIdCount = cacheProfileIds.length;
-      for (int i = 0; i < cacheProfileIdCount; i++) {
-        String cacheProfileId = cacheProfileIds[i];
+      int cacheModelIdCount = cacheModelIds.length;
+      for (int i = 0; i < cacheModelIdCount; i++) {
+        String cacheModelId = cacheModelIds[i];
         hash = multiplier * hash
-            + (cacheProfileId != null ? cacheProfileId.hashCode() : 0);
+            + (cacheModelId != null ? cacheModelId.hashCode() : 0);
       }
     }
 
@@ -138,23 +138,23 @@ public class FlushCache implements CacheAttribute {
   }
 
   /**
-   * Creates <code>{@link #cacheProfileIds}</code> from a String containing
+   * Creates <code>{@link #cacheModelIds}</code> from a String containing
    * comma-separated values.
    * 
-   * @param cacheProfileIdsCsv
+   * @param cacheModelIdsCsv
    *          the String containing comma-separated values.
    */
-  public final void setCacheProfileIds(String cacheProfileIdsCsv) {
-    String[] newProfileIds = null;
-    if (StringUtils.hasText(cacheProfileIdsCsv)) {
-      newProfileIds = StringUtils
-          .commaDelimitedListToStringArray(cacheProfileIdsCsv);
+  public final void setCacheModelIds(String cacheModelIdsCsv) {
+    String[] newModelIds = null;
+    if (StringUtils.hasText(cacheModelIdsCsv)) {
+      newModelIds = StringUtils
+          .commaDelimitedListToStringArray(cacheModelIdsCsv);
     }
-    setCacheProfileIds(newProfileIds);
+    setCacheModelIds(newModelIds);
   }
 
-  public final void setCacheProfileIds(String[] newCacheProfileIds) {
-    cacheProfileIds = newCacheProfileIds;
+  public final void setCacheModelIds(String[] newCacheModelIds) {
+    cacheModelIds = newCacheModelIds;
   }
 
   public final void setFlushBeforeExecution(boolean newFlushBeforeExecution) {
@@ -167,8 +167,7 @@ public class FlushCache implements CacheAttribute {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheProfileIds=" + ArrayUtils.toString(cacheProfileIds)
-        + ", ");
+    buffer.append("cacheModelIds=" + ArrayUtils.toString(cacheModelIds) + ", ");
     buffer.append("flushBeforeExecution=" + flushBeforeExecution + "]");
 
     return buffer.toString();

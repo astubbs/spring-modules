@@ -40,8 +40,8 @@ import org.easymock.classextension.MockClassControl;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheNotFoundException;
-import org.springmodules.cache.provider.CacheProfileEditor;
-import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.FatalCacheException;
 
 /**
@@ -51,7 +51,7 @@ import org.springmodules.cache.provider.FatalCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.17 $ $Date: 2005/09/22 03:14:18 $
+ * @version $Revision: 1.18 $ $Date: 2005/09/29 01:22:02 $
  */
 public final class JcsFacadeTests extends TestCase {
 
@@ -96,18 +96,18 @@ public final class JcsFacadeTests extends TestCase {
 
     final Serializable key;
 
-    final JcsProfile profile;
+    final JcsModel cacheModel;
 
-    final String profileId;
+    final String cacheModelId;
 
     final Object value;
 
-    public JcsCacheElementStruct(JcsProfile newProfile, String newProfileId,
-        Serializable newKey, Object newValue) {
+    public JcsCacheElementStruct(JcsModel newCacheModel,
+        String newCacheModelId, Serializable newKey, Object newValue) {
       super();
       key = newKey;
-      profile = newProfile;
-      profileId = newProfileId;
+      cacheModel = newCacheModel;
+      cacheModelId = newCacheModelId;
       value = newValue;
     }
 
@@ -160,24 +160,24 @@ public final class JcsFacadeTests extends TestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    cacheElementStruct = new JcsCacheElementStruct(new JcsProfile(CACHE_NAME,
+    cacheElementStruct = new JcsCacheElementStruct(new JcsModel(CACHE_NAME,
         "Empire"), "empire", "sith", "Darth Vader");
 
     cacheElementStructs = new JcsCacheElementStruct[] {
         cacheElementStruct,
-        new JcsCacheElementStruct(new JcsProfile(CACHE_NAME, "Rebels"),
-            "rebels", "general", "Han Solo") };
+        new JcsCacheElementStruct(new JcsModel(CACHE_NAME, "Rebels"), "rebels",
+            "general", "Han Solo") };
 
-    Map cacheProfileMap = new HashMap();
+    Map cacheModelMap = new HashMap();
 
-    int cacheProfileCount = cacheElementStructs.length;
-    for (int i = 0; i < cacheProfileCount; i++) {
+    int cacheModelCount = cacheElementStructs.length;
+    for (int i = 0; i < cacheModelCount; i++) {
       JcsCacheElementStruct cacheElement = cacheElementStructs[i];
-      cacheProfileMap.put(cacheElement.profileId, cacheElement.profile);
+      cacheModelMap.put(cacheElement.cacheModelId, cacheElement.cacheModel);
     }
 
     jcsFacade = new JcsFacade();
-    jcsFacade.setCacheProfiles(cacheProfileMap);
+    jcsFacade.setCacheModels(cacheModelMap);
   }
 
   private void setUpCacheAdministratorAndCache() {
@@ -235,27 +235,27 @@ public final class JcsFacadeTests extends TestCase {
     }
   }
 
-  public void testGetCacheProfileEditor() {
-    PropertyEditor editor = jcsFacade.getCacheProfileEditor();
+  public void testGetCacheModelEditor() {
+    PropertyEditor editor = jcsFacade.getCacheModelEditor();
 
     assertNotNull(editor);
-    assertEquals(CacheProfileEditor.class, editor.getClass());
+    assertEquals(CacheModelEditor.class, editor.getClass());
 
-    CacheProfileEditor profileEditor = (CacheProfileEditor) editor;
-    assertEquals(JcsProfile.class, profileEditor.getCacheProfileClass());
-    assertNull(profileEditor.getCacheProfilePropertyEditors());
+    CacheModelEditor modelEditor = (CacheModelEditor) editor;
+    assertEquals(JcsModel.class, modelEditor.getCacheModelClass());
+    assertNull(modelEditor.getCacheModelPropertyEditors());
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#getCacheProfileValidator()}</code> returns an an
-   * instance of <code>{@link JcsProfileValidator}</code> not equal to
+   * <code>{@link JcsFacade#getCacheModelValidator()}</code> returns an an
+   * instance of <code>{@link JcsModelValidator}</code> not equal to
    * <code>null</code>.
    */
-  public void testGetCacheProfileValidator() {
-    CacheProfileValidator validator = jcsFacade.getCacheProfileValidator();
+  public void testGetCacheModelValidator() {
+    CacheModelValidator validator = jcsFacade.getCacheModelValidator();
     assertNotNull(validator);
-    assertEquals(JcsProfileValidator.class, validator.getClass());
+    assertEquals(JcsModelValidator.class, validator.getClass());
   }
 
   public void testGetCacheWithExistingCache() {
@@ -286,28 +286,28 @@ public final class JcsFacadeTests extends TestCase {
   }
 
   public void testGetKeyWithGroupName() {
-    JcsProfile profile = cacheElementStruct.profile;
+    JcsModel model = cacheElementStruct.cacheModel;
     Serializable key = cacheElementStruct.key;
 
-    GroupId groupId = new GroupId(profile.getCacheName(), profile.getGroup());
+    GroupId groupId = new GroupId(model.getCacheName(), model.getGroup());
     GroupAttrName expected = new GroupAttrName(groupId, key);
 
-    Serializable actual = jcsFacade.getKey(key, profile);
+    Serializable actual = jcsFacade.getKey(key, model);
     assertEquals(expected, actual);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#getKey(Serializable, JcsProfile)}</code> creates a
-   * key that does not contain the group if the given cache profile does not
+   * <code>{@link JcsFacade#getKey(Serializable, JcsModel)}</code> creates a
+   * key that does not contain the group if the given cache model does not
    * specify any group.
    */
   public void testGetKeyWithoutGroupName() {
-    JcsProfile profile = cacheElementStruct.profile;
-    profile.setGroup(null);
+    JcsModel model = cacheElementStruct.cacheModel;
+    model.setGroup(null);
     Serializable expected = cacheElementStruct.key;
 
-    Serializable actual = jcsFacade.getKey(expected, profile);
+    Serializable actual = jcsFacade.getKey(expected, model);
     assertEquals(expected, actual);
   }
 
@@ -335,8 +335,8 @@ public final class JcsFacadeTests extends TestCase {
     setStateOfMockControlsToReplay();
 
     try {
-      JcsProfile profile = new JcsProfile(CACHE_NAME);
-      jcsFacade.onFlushCache(profile);
+      JcsModel model = new JcsModel(CACHE_NAME);
+      jcsFacade.onFlushCache(model);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -355,7 +355,7 @@ public final class JcsFacadeTests extends TestCase {
     setStateOfMockControlsToReplay();
 
     try {
-      jcsFacade.onFlushCache(cacheElementStruct.profile);
+      jcsFacade.onFlushCache(cacheElementStruct.cacheModel);
       fail();
 
     } catch (CacheNotFoundException exception) {
@@ -367,7 +367,7 @@ public final class JcsFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheModel)}</code>
    * flushes only the specified groups of the specified cache.
    */
   public void testOnFlushCacheWithGroups() throws Exception {
@@ -378,7 +378,8 @@ public final class JcsFacadeTests extends TestCase {
     int elementToRemoveIndex = 0;
 
     // execute the method to test.
-    jcsFacade.onFlushCache(cacheElementStructs[elementToRemoveIndex].profile);
+    jcsFacade
+        .onFlushCache(cacheElementStructs[elementToRemoveIndex].cacheModel);
 
     int cacheElementCount = keys.length;
     for (int i = 0; i < cacheElementCount; i++) {
@@ -395,7 +396,7 @@ public final class JcsFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link JcsFacade#onFlushCache(org.springmodules.cache.provider.CacheModel)}</code>
    * flushes the whole cache if there are not any specified groups.
    */
   public void testOnFlushCacheWithoutGroups() throws Exception {
@@ -403,7 +404,7 @@ public final class JcsFacadeTests extends TestCase {
 
     int cacheElementCount = cacheElementStructs.length;
     for (int i = 0; i < cacheElementCount; i++) {
-      cacheElementStructs[i].profile.setGroup(null);
+      cacheElementStructs[i].cacheModel.setGroup(null);
     }
 
     updateCache(cacheElementStructs);
@@ -411,7 +412,7 @@ public final class JcsFacadeTests extends TestCase {
         .getSize() > 0);
 
     // execute the method to test.
-    jcsFacade.onFlushCache(cacheElementStruct.profile);
+    jcsFacade.onFlushCache(cacheElementStruct.cacheModel);
 
     // the whole cache should be flushed.
     assertEquals("<Cache size>", 0, cache.getSize());
@@ -424,7 +425,7 @@ public final class JcsFacadeTests extends TestCase {
 
     // execute the method to test.
     Object actual = jcsFacade.onGetFromCache(cacheElementStruct.key,
-        cacheElementStruct.profile);
+        cacheElementStruct.cacheModel);
 
     assertSame(cacheElementStruct.value, actual);
   }
@@ -451,11 +452,11 @@ public final class JcsFacadeTests extends TestCase {
 
     setStateOfMockControlsToReplay();
 
-    JcsProfile profile = cacheElementStruct.profile;
-    profile.setGroup(null);
+    JcsModel model = cacheElementStruct.cacheModel;
+    model.setGroup(null);
 
     try {
-      jcsFacade.onGetFromCache(cacheKey, profile);
+      jcsFacade.onGetFromCache(cacheKey, model);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -476,7 +477,7 @@ public final class JcsFacadeTests extends TestCase {
 
     try {
       jcsFacade.onGetFromCache(cacheElementStruct.key,
-          cacheElementStruct.profile);
+          cacheElementStruct.cacheModel);
       fail();
 
     } catch (CacheNotFoundException exception) {
@@ -486,22 +487,22 @@ public final class JcsFacadeTests extends TestCase {
     verifyExpectationsOfMockControlsWereMet();
   }
 
-  public void testOnGetFromCacheWhenCacheProfileDoesNotHaveCacheName() {
+  public void testOnGetFromCacheWhenCacheModelDoesNotHaveCacheName() {
     setUpCacheAdministratorAndCache();
 
-    JcsProfile profile = cacheElementStruct.profile;
-    profile.setCacheName("");
+    JcsModel model = cacheElementStruct.cacheModel;
+    model.setCacheName("");
 
     // execute the method to test.
     Object cachedObject = jcsFacade.onGetFromCache(cacheElementStruct.key,
-        profile);
+        model);
 
     assertNull(cachedObject);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheProfile)}</code>
+   * <code>{@link JcsFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheModel)}</code>
    * returns <code>null</code> if the specified key does not exist in the
    * cache.
    */
@@ -509,7 +510,7 @@ public final class JcsFacadeTests extends TestCase {
     setUpCacheAdministratorAndCache();
 
     Object cachedObject = jcsFacade.onGetFromCache(cacheElementStruct.key,
-        cacheElementStruct.profile);
+        cacheElementStruct.cacheModel);
     assertNull(cachedObject);
   }
 
@@ -517,13 +518,13 @@ public final class JcsFacadeTests extends TestCase {
     setUpCacheAdministratorAndCache();
 
     Serializable cacheKey = cacheElementStruct.key;
-    JcsProfile cacheProfile = cacheElementStruct.profile;
+    JcsModel cacheModel = cacheElementStruct.cacheModel;
     Object expected = cacheElementStruct.value;
 
     // execute the method to test.
-    jcsFacade.onPutInCache(cacheKey, cacheProfile, expected);
+    jcsFacade.onPutInCache(cacheKey, cacheModel, expected);
 
-    Serializable entryKey = jcsFacade.getKey(cacheKey, cacheProfile);
+    Serializable entryKey = jcsFacade.getKey(cacheKey, cacheModel);
     Object actual = cache.get(entryKey).getVal();
     assertSame(expected, actual);
   }
@@ -543,11 +544,11 @@ public final class JcsFacadeTests extends TestCase {
 
     // cache manager throws exception.
     Serializable cacheKey = cacheElementStruct.key;
-    JcsProfile cacheProfile = cacheElementStruct.profile;
-    cacheProfile.setGroup(null);
+    JcsModel cacheModel = cacheElementStruct.cacheModel;
+    cacheModel.setGroup(null);
     Object objToCache = cacheElementStruct.value;
 
-    CacheElement cacheElement = new CacheElement(cacheProfile.getCacheName(),
+    CacheElement cacheElement = new CacheElement(cacheModel.getCacheName(),
         cacheKey, objToCache);
     cache.update(cacheElement);
     cacheControl.setMatcher(new CacheElementMatcher());
@@ -558,7 +559,7 @@ public final class JcsFacadeTests extends TestCase {
     setStateOfMockControlsToReplay();
 
     try {
-      jcsFacade.onPutInCache(cacheKey, cacheProfile, objToCache);
+      jcsFacade.onPutInCache(cacheKey, cacheModel, objToCache);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -578,7 +579,7 @@ public final class JcsFacadeTests extends TestCase {
 
     try {
       jcsFacade.onPutInCache(cacheElementStruct.key,
-          cacheElementStruct.profile, cacheElementStruct.value);
+          cacheElementStruct.cacheModel, cacheElementStruct.value);
       fail();
 
     } catch (CacheNotFoundException exception) {
@@ -592,13 +593,13 @@ public final class JcsFacadeTests extends TestCase {
     setUpCacheAdministratorAndCache();
 
     Serializable cacheKey = cacheElementStruct.key;
-    JcsProfile cacheProfile = cacheElementStruct.profile;
-    cacheProfile.setCacheName("");
+    JcsModel cacheModel = cacheElementStruct.cacheModel;
+    cacheModel.setCacheName("");
 
     // execute the method to test.
-    jcsFacade.onPutInCache(cacheKey, cacheProfile, cacheElementStruct.value);
+    jcsFacade.onPutInCache(cacheKey, cacheModel, cacheElementStruct.value);
 
-    Serializable entryKey = jcsFacade.getKey(cacheKey, cacheProfile);
+    Serializable entryKey = jcsFacade.getKey(cacheKey, cacheModel);
     assertNull(cache.get(entryKey));
   }
 
@@ -609,7 +610,7 @@ public final class JcsFacadeTests extends TestCase {
 
     // execute the method to test.
     jcsFacade.onRemoveFromCache(cacheElementStruct.key,
-        cacheElementStruct.profile);
+        cacheElementStruct.cacheModel);
 
     ICacheElement cacheElement = cache.get(key);
     assertNull(cacheElement);
@@ -637,11 +638,11 @@ public final class JcsFacadeTests extends TestCase {
 
     setStateOfMockControlsToReplay();
 
-    JcsProfile profile = cacheElementStruct.profile;
-    profile.setGroup(null);
+    JcsModel model = cacheElementStruct.cacheModel;
+    model.setGroup(null);
 
     try {
-      jcsFacade.onRemoveFromCache(cacheKey, profile);
+      jcsFacade.onRemoveFromCache(cacheKey, model);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -662,7 +663,7 @@ public final class JcsFacadeTests extends TestCase {
 
     try {
       jcsFacade.onRemoveFromCache(cacheElementStruct.key,
-          cacheElementStruct.profile);
+          cacheElementStruct.cacheModel);
       fail();
 
     } catch (CacheNotFoundException exception) {
@@ -678,7 +679,7 @@ public final class JcsFacadeTests extends TestCase {
     Serializable key = updateCache(cacheElementStruct);
 
     // execute the method to test.
-    jcsFacade.onRemoveFromCache(key, cacheElementStruct.profile);
+    jcsFacade.onRemoveFromCache(key, cacheElementStruct.cacheModel);
 
     assertNotNull(cache.get(key));
   }
@@ -714,11 +715,11 @@ public final class JcsFacadeTests extends TestCase {
   protected Serializable updateCache(JcsCacheElementStruct cacheElement)
       throws Exception {
     Serializable key = cacheElement.key;
-    JcsProfile profile = cacheElement.profile;
-    String group = profile.getGroup();
+    JcsModel model = cacheElement.cacheModel;
+    String group = model.getGroup();
 
     if (StringUtils.hasText(group)) {
-      GroupId groupId = new GroupId(profile.getCacheName(), group);
+      GroupId groupId = new GroupId(model.getCacheName(), group);
       GroupAttrName groupAttrName = new GroupAttrName(groupId, key);
       key = groupAttrName;
     }

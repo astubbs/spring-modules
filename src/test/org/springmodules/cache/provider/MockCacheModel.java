@@ -1,5 +1,5 @@
 /* 
- * Created on Oct 29, 2004
+ * Created on Sep 9, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,55 +13,60 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2004 the original author or authors.
+ * Copyright @2005 the original author or authors.
  */
+package org.springmodules.cache.provider;
 
-package org.springmodules.cache.provider.ehcache;
-
-import org.springmodules.cache.provider.CacheProfile;
 import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Configuration options needed to access EHCache.
+ * Mock cache model.
+ * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/25 05:22:16 $
+ * @version $Revision$ $Date$
  */
-public class EhCacheProfile implements CacheProfile {
+public class MockCacheModel implements CacheModel {
 
-  private static final long serialVersionUID = 3762529035888112945L;
+  private static final long serialVersionUID = -3403707289414100362L;
 
-  /**
-   * Name of the EHCache cache.
-   */
   private String cacheName;
 
-  public EhCacheProfile() {
+  private String group;
+
+  public MockCacheModel() {
     super();
   }
 
-  public EhCacheProfile(String cacheName) {
+  public MockCacheModel(String newCacheName) {
     this();
-    setCacheName(cacheName);
+    setCacheName(newCacheName);
   }
 
-  /**
-   * @see Object#equals(Object)
-   */
+  public MockCacheModel(String newCacheName, String newGroup) {
+    this(newCacheName);
+    setGroup(newGroup);
+  }
+
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
-    if (!(obj instanceof EhCacheProfile)) {
+
+    if (!(obj instanceof MockCacheModel)) {
       return false;
     }
 
-    final EhCacheProfile ehCacheProfile = (EhCacheProfile) obj;
+    final MockCacheModel cacheModel = (MockCacheModel) obj;
 
-    if (cacheName != null ? !cacheName.equals(ehCacheProfile.cacheName)
-        : ehCacheProfile.cacheName != null) {
+    if (cacheName != null ? !cacheName.equals(cacheModel.cacheName)
+        : cacheModel.cacheName != null) {
+      return false;
+    }
+
+    if (group != null ? !group.equals(cacheModel.group) : group != null) {
       return false;
     }
 
@@ -72,13 +77,13 @@ public class EhCacheProfile implements CacheProfile {
     return cacheName;
   }
 
-  /**
-   * @see Object#hashCode()
-   */
   public int hashCode() {
     int multiplier = 31;
-    int hash = 7;
+    int hash = 17;
+
     hash = multiplier * hash + (cacheName != null ? cacheName.hashCode() : 0);
+    hash = multiplier * hash + (group != null ? group.hashCode() : 0);
+
     return hash;
   }
 
@@ -86,13 +91,20 @@ public class EhCacheProfile implements CacheProfile {
     cacheName = newCacheName;
   }
 
-  /**
-   * @see Object#toString()
-   */
+  public final String getGroup() {
+    return group;
+  }
+
+  public final void setGroup(String newGroup) {
+    group = newGroup;
+  }
+
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheName=" + Strings.quote(cacheName) + "]");
+    buffer.append("cacheName=" + Strings.quote(cacheName) + ", ");
+    buffer.append("group=" + Strings.quote(group) + ", ");
+
     return buffer.toString();
   }
 }

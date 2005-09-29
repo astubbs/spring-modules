@@ -23,9 +23,9 @@ import java.io.Serializable;
 import org.jboss.cache.TreeCache;
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.CacheProfile;
-import org.springmodules.cache.provider.CacheProfileEditor;
-import org.springmodules.cache.provider.CacheProfileValidator;
+import org.springmodules.cache.provider.CacheModel;
+import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.FatalCacheException;
 
 /**
@@ -46,19 +46,19 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#getCacheProfileEditor()
+   * @see AbstractCacheProviderFacade#getCacheModelEditor()
    */
-  protected PropertyEditor getCacheProfileEditor() {
-    CacheProfileEditor editor = new CacheProfileEditor();
-    editor.setCacheProfileClass(JbossCacheProfile.class);
+  protected PropertyEditor getCacheModelEditor() {
+    CacheModelEditor editor = new CacheModelEditor();
+    editor.setCacheModelClass(JbossCacheModel.class);
     return editor;
   }
 
   /**
-   * @see AbstractCacheProviderFacade#getCacheProfileValidator()
+   * @see AbstractCacheProviderFacade#getCacheModelValidator()
    */
-  protected CacheProfileValidator getCacheProfileValidator() {
-    return new JbossCacheProfileValidator();
+  protected CacheModelValidator getCacheModelValidator() {
+    return new JbossCacheModelValidator();
   }
 
   /**
@@ -72,29 +72,28 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onFlushCache(CacheProfile)
+   * @see AbstractCacheProviderFacade#onFlushCache(CacheModel)
    */
-  protected void onFlushCache(CacheProfile cacheProfile) {
-    JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
+  protected void onFlushCache(CacheModel cacheModel) {
+    JbossCacheModel jbossCacheModel = (JbossCacheModel) cacheModel;
 
     try {
-      cacheManager.remove(profile.getNodeFqn());
+      cacheManager.remove(jbossCacheModel.getNodeFqn());
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CacheProfile)
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CacheModel)
    */
-  protected Object onGetFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) {
-    JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
+  protected Object onGetFromCache(Serializable cacheKey, CacheModel cacheModel) {
+    JbossCacheModel jbossCacheModel = (JbossCacheModel) cacheModel;
 
     Object cachedObject = null;
 
     try {
-      cachedObject = cacheManager.get(profile.getNodeFqn(), cacheKey);
+      cachedObject = cacheManager.get(jbossCacheModel.getNodeFqn(), cacheKey);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -102,15 +101,15 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CacheProfile,
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CacheModel,
    *      Object)
    */
-  protected void onPutInCache(Serializable cacheKey, CacheProfile cacheProfile,
+  protected void onPutInCache(Serializable cacheKey, CacheModel cacheModel,
       Object objectToCache) {
-    JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
+    JbossCacheModel jbossCacheModel = (JbossCacheModel) cacheModel;
 
     try {
-      cacheManager.put(profile.getNodeFqn(), cacheKey, objectToCache);
+      cacheManager.put(jbossCacheModel.getNodeFqn(), cacheKey, objectToCache);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -118,14 +117,13 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
-   *      CacheProfile)
+   *      CacheModel)
    */
-  protected void onRemoveFromCache(Serializable cacheKey,
-      CacheProfile cacheProfile) {
-    JbossCacheProfile profile = (JbossCacheProfile) cacheProfile;
+  protected void onRemoveFromCache(Serializable cacheKey, CacheModel cacheModel) {
+    JbossCacheModel jbossCacheModel = (JbossCacheModel) cacheModel;
 
     try {
-      cacheManager.remove(profile.getNodeFqn(), cacheKey);
+      cacheManager.remove(jbossCacheModel.getNodeFqn(), cacheKey);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }

@@ -29,7 +29,7 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/21 02:45:45 $
+ * @version $Revision: 1.7 $ $Date: 2005/09/29 01:21:45 $
  */
 public interface CacheProviderFacade extends InitializingBean {
 
@@ -47,28 +47,27 @@ public interface CacheProviderFacade extends InitializingBean {
   /**
    * Flushes the cache.
    * 
-   * @param cacheProfileIds
-   *          the id(s) of the cache profile(s) that specif(y/ies) what and how
-   *          to flush.
+   * @param cacheModuleIds
+   *          one or more ids of the cache modules that specify what and how to
+   *          flush.
    * @throws CacheException
    *           if an unexpected error takes place when flushing the cache.
    */
-  void flushCache(String[] cacheProfileIds) throws CacheException;
+  void flushCache(String[] cacheModuleIds) throws CacheException;
 
   /**
    * Retrieves an entry from the cache.
    * 
    * @param cacheKey
    *          the key under which the entry is stored.
-   * @param cacheProfileId
-   *          the id of the cache profile that specifies how to retrieve an
-   *          entry.
+   * @param cacheModelId
+   *          the id of the cache model that specifies how to retrieve an entry.
    * @return the cached entry.
    * @throws CacheException
    *           if an unexpected error takes place when retrieving the entry from
    *           the cache.
    */
-  Object getFromCache(Serializable cacheKey, String cacheProfileId)
+  Object getFromCache(Serializable cacheKey, String cacheModelId)
       throws CacheException;
 
   /**
@@ -88,15 +87,15 @@ public interface CacheProviderFacade extends InitializingBean {
    * 
    * @param cacheKey
    *          the key under which the object will be stored.
-   * @param cacheProfileId
-   *          the id of the cache profile that specifies how to store an object.
+   * @param cacheModelId
+   *          the id of the cache model that specifies how to store an object.
    * @param objectToCache
    *          the object to store in the cache.
    * @throws CacheException
    *           if an unexpected error takes place when storing an object in the
    *           cache.
    */
-  void putInCache(Serializable cacheKey, String cacheProfileId,
+  void putInCache(Serializable cacheKey, String cacheModelId,
       Object objectToCache) throws CacheException;
 
   /**
@@ -104,9 +103,9 @@ public interface CacheProviderFacade extends InitializingBean {
    * 
    * @param cacheKey
    *          the key under which the object is stored.
-   * @param cacheProfileId
-   *          the id of the cache profile that specifies how to store an object.
+   * @param cacheModelId
+   *          the id of the cache model that specifies how to store an object.
    */
-  void removeFromCache(Serializable cacheKey, String cacheProfileId)
+  void removeFromCache(Serializable cacheKey, String cacheModelId)
       throws CacheException;
 }

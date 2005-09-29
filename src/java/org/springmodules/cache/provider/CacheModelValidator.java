@@ -1,5 +1,5 @@
 /* 
- * Created on Nov 4, 2004
+ * Created on Jan 21, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,32 +13,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2004 the original author or authors.
+ * Copyright @2005 the original author or authors.
  */
 
 package org.springmodules.cache.provider;
 
 /**
  * <p>
- * Exception thrown when one or more properties of a
- * <code>{@link CacheProfile}</code> contain invalid values.
+ * Validates the properties of cache models.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public class InvalidCacheProfileException extends CacheException {
+public interface CacheModelValidator {
 
-  private static final long serialVersionUID = 7043423030105935558L;
-
-  public InvalidCacheProfileException(String detailMessage) {
-    super(detailMessage);
-  }
-
-  public InvalidCacheProfileException(String detailMessage,
-      Throwable nestedException) {
-    super(detailMessage, nestedException);
-  }
-
+  /**
+   * Validates the properties of the specified cache model.
+   * 
+   * @param cacheModel
+   *          the cache model to validate.
+   * @throws InvalidCacheModelException
+   *           if the given cache model is not valid.
+   */
+  void validateCacheModel(Object cacheModel) throws InvalidCacheModelException;
 }

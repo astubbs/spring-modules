@@ -1,5 +1,5 @@
 /* 
- * Created on Sep 24, 2004
+ * Created on Oct 29, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,66 +16,52 @@
  * Copyright @2004 the original author or authors.
  */
 
-package org.springmodules.cache.provider.jcs;
+package org.springmodules.cache.provider.ehcache;
 
-import org.springmodules.cache.provider.CacheProfile;
+import org.springmodules.cache.provider.CacheModel;
 import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Configuration options for accessing JCS.
+ * Configuration options needed to access EHCache.
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/25 05:22:17 $
+ * @version $Revision$ $Date$
  */
-public class JcsProfile implements CacheProfile {
+public class EhCacheModel implements CacheModel {
 
-  private static final long serialVersionUID = 3257282547976057398L;
+  private static final long serialVersionUID = 3762529035888112945L;
 
   /**
-   * Name of the JCS cache.
+   * Name of the EHCache cache.
    */
   private String cacheName;
 
-  /**
-   * The group the object to cache belongs to.
-   */
-  private String group;
-
-  public JcsProfile() {
+  public EhCacheModel() {
     super();
   }
 
-  public JcsProfile(String cacheName) {
+  public EhCacheModel(String cacheName) {
     this();
     setCacheName(cacheName);
   }
 
-  public JcsProfile(String cacheName, String group) {
-    this(cacheName);
-    setGroup(group);
-  }
-
   /**
-   * @see Object#equals(java.lang.Object)
+   * @see Object#equals(Object)
    */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
     }
-    if (!(obj instanceof JcsProfile)) {
+    if (!(obj instanceof EhCacheModel)) {
       return false;
     }
 
-    final JcsProfile jcsProfile = (JcsProfile) obj;
+    final EhCacheModel cacheModel = (EhCacheModel) obj;
 
-    if (cacheName != null ? !cacheName.equals(jcsProfile.cacheName)
-        : jcsProfile.cacheName != null) {
-      return false;
-    }
-    if (group != null ? !group.equals(jcsProfile.group)
-        : jcsProfile.group != null) {
+    if (cacheName != null ? !cacheName.equals(cacheModel.cacheName)
+        : cacheModel.cacheName != null) {
       return false;
     }
 
@@ -86,10 +72,6 @@ public class JcsProfile implements CacheProfile {
     return cacheName;
   }
 
-  public final String getGroup() {
-    return group;
-  }
-
   /**
    * @see Object#hashCode()
    */
@@ -97,16 +79,11 @@ public class JcsProfile implements CacheProfile {
     int multiplier = 31;
     int hash = 7;
     hash = multiplier * hash + (cacheName != null ? cacheName.hashCode() : 0);
-    hash = multiplier * hash + (group != null ? group.hashCode() : 0);
     return hash;
   }
 
   public final void setCacheName(String newCacheName) {
     cacheName = newCacheName;
-  }
-
-  public final void setGroup(String newGroup) {
-    group = newGroup;
   }
 
   /**
@@ -115,9 +92,7 @@ public class JcsProfile implements CacheProfile {
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheName=" + Strings.quote(cacheName) + ", ");
-    buffer.append("group=" + Strings.quote(group) + "]");
-
+    buffer.append("cacheName=" + Strings.quote(cacheName) + "]");
     return buffer.toString();
   }
 }

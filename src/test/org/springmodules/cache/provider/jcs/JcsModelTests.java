@@ -30,34 +30,33 @@ import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Unit Tests for <code>{@link JcsProfile}</code>.
+ * Unit Tests for <code>{@link JcsModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/09/25 05:26:20 $
+ * @version $Revision$ $Date$
  */
-public final class JcsProfileTests extends TestCase implements
+public final class JcsModelTests extends TestCase implements
     EqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory.getLog(JcsProfileTests.class);
+  private static Log logger = LogFactory.getLog(JcsModelTests.class);
 
-  private JcsProfile cacheProfile;
+  private JcsModel cacheModel;
 
-  public JcsProfileTests(String name) {
+  public JcsModelTests(String name) {
     super(name);
   }
 
   private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(cacheProfile.getClass()
-        .getName());
-    buffer.append("@" + System.identityHashCode(cacheProfile) + "[");
-    buffer.append("cacheName="
-        + Strings.quote(cacheProfile.getCacheName()) + ", ");
-    buffer.append("group=" + Strings.quote(cacheProfile.getGroup()) + "]");
+    StringBuffer buffer = new StringBuffer(cacheModel.getClass().getName());
+    buffer.append("@" + System.identityHashCode(cacheModel) + "[");
+    buffer.append("cacheName=" + Strings.quote(cacheModel.getCacheName())
+        + ", ");
+    buffer.append("group=" + Strings.quote(cacheModel.getGroup()) + "]");
 
     String expected = buffer.toString();
-    String actual = cacheProfile.toString();
+    String actual = cacheModel.toString();
 
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
@@ -67,7 +66,7 @@ public final class JcsProfileTests extends TestCase implements
 
   protected void setUp() throws Exception {
     super.setUp();
-    cacheProfile = new JcsProfile();
+    cacheModel = new JcsModel();
   }
 
   /**
@@ -77,27 +76,27 @@ public final class JcsProfileTests extends TestCase implements
     String cacheName = "main";
     String group = "test";
 
-    cacheProfile.setCacheName(cacheName);
-    cacheProfile.setGroup(group);
+    cacheModel.setCacheName(cacheName);
+    cacheModel.setGroup(group);
 
-    JcsProfile anotherProfile = new JcsProfile(cacheName, group);
+    JcsModel anotherModel = new JcsModel(cacheName, group);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        cacheProfile, anotherProfile);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
+        anotherModel);
 
     cacheName = null;
-    cacheProfile.setCacheName(cacheName);
-    anotherProfile.setCacheName(cacheName);
+    cacheModel.setCacheName(cacheName);
+    anotherModel.setCacheName(cacheName);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        cacheProfile, anotherProfile);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
+        anotherModel);
 
     group = null;
-    cacheProfile.setGroup(group);
-    anotherProfile.setGroup(group);
+    cacheModel.setGroup(group);
+    anotherModel.setGroup(group);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        cacheProfile, anotherProfile);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
+        anotherModel);
   }
 
   /**
@@ -107,26 +106,26 @@ public final class JcsProfileTests extends TestCase implements
     String cacheName = "ch01";
     String group = "grp87";
 
-    cacheProfile.setCacheName(cacheName);
-    cacheProfile.setGroup(group);
+    cacheModel.setCacheName(cacheName);
+    cacheModel.setGroup(group);
 
-    JcsProfile anotherProfile = new JcsProfile(cacheName, group);
+    JcsModel anotherModel = new JcsModel(cacheName, group);
 
-    assertEquals(cacheProfile, anotherProfile);
+    assertEquals(cacheModel, anotherModel);
 
-    anotherProfile.setCacheName("main");
-    assertFalse(cacheProfile.equals(anotherProfile));
+    anotherModel.setCacheName("main");
+    assertFalse(cacheModel.equals(anotherModel));
 
-    anotherProfile.setCacheName(cacheName);
-    anotherProfile.setGroup("test");
-    assertFalse(cacheProfile.equals(anotherProfile));
+    anotherModel.setCacheName(cacheName);
+    anotherModel.setGroup("test");
+    assertFalse(cacheModel.equals(anotherModel));
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheProfile);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheModel);
   }
 
   /**
@@ -136,13 +135,12 @@ public final class JcsProfileTests extends TestCase implements
     String cacheName = "mainCache";
     String group = "testGroup";
 
-    cacheProfile.setCacheName(cacheName);
-    cacheProfile.setGroup(group);
+    cacheModel.setCacheName(cacheName);
+    cacheModel.setGroup(group);
 
-    JcsProfile anotherProfile = new JcsProfile(cacheName, group);
+    JcsModel anotherModel = new JcsModel(cacheName, group);
 
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheProfile,
-        anotherProfile);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheModel, anotherModel);
   }
 
   /**
@@ -152,34 +150,33 @@ public final class JcsProfileTests extends TestCase implements
     String cacheName = "pojos";
     String group = "model";
 
-    cacheProfile.setCacheName(cacheName);
-    cacheProfile.setGroup(group);
+    cacheModel.setCacheName(cacheName);
+    cacheModel.setGroup(group);
 
-    JcsProfile secondProfile = new JcsProfile(cacheName, group);
-    JcsProfile thirdProfile = new JcsProfile(cacheName, group);
+    JcsModel secondModel = new JcsModel(cacheName, group);
+    JcsModel thirdModel = new JcsModel(cacheName, group);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheProfile,
-        secondProfile, thirdProfile);
+    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheModel, secondModel,
+        thirdModel);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert
-        .assertEqualsNullComparisonReturnsFalse(cacheProfile);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cacheModel);
   }
 
   public void testToStringWithCacheNameAndGroupEqualToNull() {
-    cacheProfile.setCacheName(null);
-    cacheProfile.setGroup(null);
+    cacheModel.setCacheName(null);
+    cacheModel.setGroup(null);
 
     assertToStringIsCorrect();
   }
 
   public void testToStringWithCacheNameAndGroupNotEqualToNull() {
-    cacheProfile.setCacheName("main");
-    cacheProfile.setGroup("services");
+    cacheModel.setCacheName("main");
+    cacheModel.setGroup("services");
 
     assertToStringIsCorrect();
   }

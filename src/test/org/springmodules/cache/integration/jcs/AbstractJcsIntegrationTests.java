@@ -29,7 +29,7 @@ import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.provider.jcs.JcsProfile;
+import org.springmodules.cache.provider.jcs.JcsModel;
 
 /**
  * <p>
@@ -39,7 +39,7 @@ import org.springmodules.cache.provider.jcs.JcsProfile;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.11 $ $Date: 2005/09/27 04:38:30 $
+ * @version $Revision: 1.12 $ $Date: 2005/09/29 01:22:11 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractIntegrationTests {
@@ -68,17 +68,17 @@ public abstract class AbstractJcsIntegrationTests extends
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCorrectCacheProfileConfiguration(Map)
+   * @see AbstractIntegrationTests#assertCorrectCacheModelConfiguration(Map)
    */
-  protected void assertCorrectCacheProfileConfiguration(Map cacheProfiles) {
-    JcsProfile expected = new JcsProfile();
+  protected void assertCorrectCacheModelConfiguration(Map cacheModels) {
+    JcsModel expected = new JcsModel();
     expected.setGroup(CACHE_GROUP);
     expected.setCacheName(CACHE_NAME);
 
-    String cacheProfileId = "test";
-    Object actual = cacheProfiles.get(cacheProfileId);
+    String cacheModelId = "test";
+    Object actual = cacheModels.get(cacheModelId);
 
-    assertEqualCacheProfiles(expected, actual, cacheProfileId);
+    assertEqualCacheModules(expected, actual, cacheModelId);
   }
 
   /**
