@@ -1,16 +1,21 @@
 
 package org.springmodules.workflow.osworkflow.configuration;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Arrays;
+
+import junit.framework.TestCase;
+
+import org.springframework.util.ClassUtils;
 
 import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.workflow.StoreException;
 import com.opensymphony.workflow.FactoryException;
+import com.opensymphony.workflow.StoreException;
+import com.opensymphony.workflow.config.DefaultConfiguration;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.query.WorkflowExpressionQuery;
 import com.opensymphony.workflow.query.WorkflowQuery;
@@ -18,9 +23,6 @@ import com.opensymphony.workflow.spi.Step;
 import com.opensymphony.workflow.spi.WorkflowEntry;
 import com.opensymphony.workflow.spi.WorkflowStore;
 import com.opensymphony.workflow.spi.memory.MemoryWorkflowStore;
-import junit.framework.TestCase;
-
-import org.springframework.util.ClassUtils;
 
 /**
  * @author robh
@@ -121,6 +123,22 @@ public class ConfigurationBeanTests extends TestCase {
 			// success
 		}
 	}
+    
+    public void testUserDefinedWorkflowStore() throws Exception
+    {
+        MockWorkflowStore mockStore = new MockWorkflowStore();
+        // do smth on the store to make sure it's our and not overwritten
+        Map marker = new HashMap();
+        marker.put("foo", "bar");
+        mockStore.init(marker);
+        
+        ConfigurationBean cfg = new ConfigurationBean();
+        cfg.setWorkflowStore(mockStore);
+        
+        MockWorkflowStore store = (MockWorkflowStore) cfg.getWorkflowStore();
+        assertSame("Stores are not the same", mockStore, store);
+        assertSame("Persistence args not carried to WorkflowStore", marker, store.getArgs());
+    }
 
 	public static class MockWorkflowStore implements WorkflowStore {
 

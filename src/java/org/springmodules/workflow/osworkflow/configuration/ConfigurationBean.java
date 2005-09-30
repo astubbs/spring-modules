@@ -25,9 +25,11 @@ import java.util.Set;
 
 import com.opensymphony.workflow.FactoryException;
 import com.opensymphony.workflow.InvalidWorkflowDescriptorException;
+import com.opensymphony.workflow.StoreException;
 import com.opensymphony.workflow.config.DefaultConfiguration;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.loader.WorkflowLoader;
+import com.opensymphony.workflow.spi.WorkflowStore;
 import com.opensymphony.workflow.spi.memory.MemoryWorkflowStore;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,6 +48,9 @@ import org.springframework.util.Assert;
  * accepts a <code>Properties</code> instance and treats the key of each entry as the workflow name and the value
  * as the resource path. All standard Spring resource paths are supported including <code>classpath:</code> style
  * resources.
+ * <p/>
+ * By default <code>MemoryWorkflowStore</code> is used as the persistence class. However it is possible
+ * to use an already configured <code>WorkflowStore</code> by calling #setWorkflowStore.
  * <p/>
  *
  * @author Rob Harrop
@@ -75,15 +80,20 @@ public class ConfigurationBean extends DefaultConfiguration {
 	 * Indicates whether this instance is initialized or not
 	 */
 	private boolean initialized;
+    
+    /**
+     * User defined store - can be null.
+     */
+    private WorkflowStore workflowStore;
 
-	/**
-	 * Creates a new <code>ConfigurationBean</code> with <code>MemoryWorkflowStore</code>
-	 * as the persistence class.
-	 */
-	public ConfigurationBean() {
-		setPersistence(MemoryWorkflowStore.class.getName());
-	}
-
+    /**
+     * Creates a new <code>ConfigurationBean</code> with <code>MemoryWorkflowStore</code>
+     * as the persistence class.
+     */
+    public ConfigurationBean() {
+        setPersistence(MemoryWorkflowStore.class.getName());
+    }
+    
 	/**
 	 * Gets the <code>Map</code> of arguments to be passed to the persistence object
 	 */
@@ -180,5 +190,22 @@ public class ConfigurationBean extends DefaultConfiguration {
 		}
 		return workflowDescriptor;
 	}
+
+    /**
+     * @see com.opensymphony.workflow.config.DefaultConfiguration#getWorkflowStore()
+     */
+    public WorkflowStore getWorkflowStore() throws StoreException {
+        // default behavior
+        if (workflowStore == null)
+            return super.getWorkflowStore();
+        return workflowStore;
+    }
+
+    /**
+     * @param workflowStore The workflowStore to set.
+     */
+    public void setWorkflowStore(WorkflowStore workflowStore) {
+        this.workflowStore = workflowStore;
+    }
 
 }
