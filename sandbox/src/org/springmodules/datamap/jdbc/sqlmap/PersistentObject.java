@@ -38,6 +38,7 @@ public class PersistentObject {
     private Map persistentFields;
     private Set primaryKeyColumns;
     private boolean dependentObject;
+    private boolean versioned = false;
 
     public String getTableName() {
         return tableName;
@@ -109,5 +110,13 @@ public class PersistentObject {
 
     public void setDependentObject(boolean dependentObject) {
         this.dependentObject = dependentObject;
+    }
+
+    public boolean isVersioned() {
+        return versioned;
+    }
+
+    public void setVersioned(boolean versioned) {
+        this.versioned = versioned;
     }
 }

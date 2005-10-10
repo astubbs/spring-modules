@@ -18,6 +18,8 @@ package org.springmodules.datamap.jdbc.sqlmap;
 
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.StatementCreatorUtils;
@@ -50,6 +52,8 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
     private PersistentObject persistentObject;
     private String tableNameToUse;
     private boolean overrideTableName = false;
+    private String versionColumnToUse = "lock_version";
+    private boolean overrideVersionColumn = false;
     private Map pluralExceptions;
     private ActiveRowMapper rowMapper;
 
@@ -83,6 +87,17 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         return tableNameToUse;
     }
 
+    public void setVersionColumnToUse(String versionColumnToUse) {
+        if (overrideVersionColumn)
+            throw new InvalidDataAccessApiUsageException("Version column can only be overriden once");
+        this.versionColumnToUse = versionColumnToUse;
+        this.overrideVersionColumn = true;
+    }
+
+    public String getVersionColumnToUse() {
+        return versionColumnToUse;
+    }
+
     protected PersistentObject getPersistentObject() {
         return persistentObject;
     }
@@ -97,6 +112,9 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         persistentObject = ActiveMapperUtils.getPersistenceMetaData(mappedClass, getDataSource(), getPluralExceptions());
         if (!overrideTableName) {
             tableNameToUse = persistentObject.getTableName();
+        }
+        if (persistentObject.getPersistentFields().containsKey(getVersionColumnToUse())) {
+            persistentObject.setVersioned(true);
         }
         rowMapper = new ActiveRowMapper(mappedClass, persistentObject);
     }
@@ -194,12 +212,14 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         return result;
     }
 
-    public void save(Object o) {
+    public void save(Object o) throws DataAccessException {
         Map mappedFields = new HashMap(10);
         Map unmappedFields = new HashMap(10);
         List columnValues = new LinkedList();
         List idValues = new LinkedList();
         Set fieldSet = persistentObject.getPersistentFields().entrySet();
+        Number oldVersionValue = null;
+        Number newVersionValue = null;
         boolean isNewRow = false;
         for (Iterator i = fieldSet.iterator(); i.hasNext();) {
             Map.Entry e = (Map.Entry)i.next();
@@ -216,8 +236,37 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
                         }
                     }
                     else {
-                        columnValues.add(new PersistentValue(pf.getColumnName(), pf.getSqlType(), r));
+                        if (persistentObject.isVersioned() && getVersionColumnToUse().equals(pf.getColumnName())) {
+                            if (r == null || r instanceof Number) {
+                                if (r != null) {
+                                    oldVersionValue = (Number)r;
+                                    if (pf.getClass() == Integer.class) {
+                                        newVersionValue = new Integer(oldVersionValue.intValue() + 1);
+                                    }
+                                    else {
+                                        newVersionValue = new Long(oldVersionValue.longValue() + 1);
+                                    }
+                                }
+                                else {
+                                    oldVersionValue = null;
+                                    if (pf.getClass() == Integer.class) {
+                                        newVersionValue = new Integer(1);
+                                    }
+                                    else {
+                                        newVersionValue = new Long(1);
+                                    }
+                                }
+                                columnValues.add(new PersistentValue(pf.getColumnName(), pf.getSqlType(), newVersionValue));
+                            }
+                            else {
+                                throw new InvalidDataAccessApiUsageException("Invalid type for version column.  Must be of type Number.");
+                            }
+                        }
+                        else {
+                            columnValues.add(new PersistentValue(pf.getColumnName(), pf.getSqlType(), r));
+                        }
                     }
+
                 } catch (NoSuchMethodException e1) {
                     throw new DataAccessResourceFailureException(new StringBuffer().append("Failed to map field ").append(pf.getFieldName()).append(".").toString(), e1);
                 } catch (IllegalAccessException e1) {
@@ -280,6 +329,11 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
                 sql.append(((PersistentValue) idValues.get(i)).getColumnName()).append(" = ?");
                 parameterValues.add(idValues.get(i));
             }
+            if (persistentObject.isVersioned() && oldVersionValue != null) {
+                sql.append(" and ");
+                sql.append(((PersistentField)persistentObject.getPersistentFields().get(getVersionColumnToUse())).getColumnName()).append(" = ?");
+                parameterValues.add(new PersistentValue(((PersistentField)persistentObject.getPersistentFields().get(getVersionColumnToUse())).getColumnName(), Types.NUMERIC, oldVersionValue));
+            }
         }
         else {
             StringBuffer placeholders = new StringBuffer();
@@ -319,10 +373,11 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
             sql.append(")");
         }
         logger.debug("SQL for Save: " + sql);
+        int updateCount = 0;
         if (isNewRow && persistentObject.isUsingGeneratedKeysStrategy()) {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             final String prepSql = sql.toString();
-            getJdbcTemplate().update(new PreparedStatementCreator() {
+            updateCount = getJdbcTemplate().update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                     PreparedStatement ps = con.prepareStatement(prepSql, Statement.RETURN_GENERATED_KEYS);
                     int cnt = 0;
@@ -338,7 +393,7 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
         }
         else {
             final String prepSql = sql.toString();
-            getJdbcTemplate().update(new PreparedStatementCreator() {
+            updateCount = getJdbcTemplate().update(new PreparedStatementCreator() {
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                     PreparedStatement ps = con.prepareStatement(prepSql);
                     int cnt = 0;
@@ -350,6 +405,14 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
                     return ps;
                 }
             });
+        }
+        if (persistentObject.isVersioned()) {
+            if (updateCount > 0) {
+                assignNewVersion(o, getVersionColumnToUse(), newVersionValue);
+            }
+            else {
+                throw new OptimisticLockingFailureException("Versioning error for " + o.getClass().getName() + " with " + ((PersistentField)persistentObject.getPersistentFields().get(getVersionColumnToUse())).getFieldName() + " " + oldVersionValue + " and key(s) " + idValues);
+            }
         }
     }
 
@@ -410,6 +473,21 @@ public class ActiveMapper extends JdbcDaoSupport implements DataMapper {
             e1.printStackTrace();
         }
         return newId;
+    }
+
+    protected Object assignNewVersion(Object o, String columnName, Object newVersionNumber) {
+        PersistentField pf = (PersistentField)persistentObject.getPersistentFields().get(columnName);
+        try {
+            Method m = o.getClass().getMethod(ActiveMapperUtils.setterName(pf.getFieldName()), new Class[] {newVersionNumber.getClass()});
+            m.invoke(o, new Object[] {newVersionNumber});
+        } catch (NoSuchMethodException e1) {
+            e1.printStackTrace();
+        } catch (IllegalAccessException e1) {
+            e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+            e1.printStackTrace();
+        }
+        return o;
     }
 
     private class ActiveRowMapper implements RowMapper {

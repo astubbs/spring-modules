@@ -71,6 +71,6 @@ public class PersistentValue {
     }
 
     public String toString() {
-        return this.columnName + " [" + this.sqlType + "] = " + value + (isIdValue() ? " (ID)" : "");
+        return this.columnName + " = " + value;
     }
 }

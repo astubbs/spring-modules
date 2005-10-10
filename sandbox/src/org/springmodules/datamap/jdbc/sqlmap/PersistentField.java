@@ -29,6 +29,7 @@ public class PersistentField {
     private Class javaType;
     private int sqlType;
     private boolean idField = false;
+    private boolean versionField = false;
 
     public String getFieldName() {
         return fieldName;
@@ -71,6 +72,6 @@ public class PersistentField {
     }
 
     public String toString() {
-        return this.fieldName + " " + this.columnName + ": " + this.sqlType;
+        return this.fieldName + " " + this.columnName + " [" + this.sqlType + "]";
     }
 }
