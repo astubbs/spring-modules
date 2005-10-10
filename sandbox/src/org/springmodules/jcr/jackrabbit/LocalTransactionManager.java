@@ -17,6 +17,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
 import org.springmodules.jcr.SessionHolder;
+import org.springmodules.jcr.jackrabbit.support.UserTxSessionHolder;
 
 /**
  * PlatformTransactionManager implementation for a single JCR SessionFactory.
@@ -50,7 +51,7 @@ import org.springmodules.jcr.SessionHolder;
  * @author Guillaume Bort <guillaume.bort@zenexity.fr>
  * 
  */
-public class JcrLocalTransactionManager extends AbstractPlatformTransactionManager implements InitializingBean {
+public class LocalTransactionManager extends AbstractPlatformTransactionManager implements InitializingBean {
 
     private SessionFactory sessionFactory;
 
@@ -69,7 +70,7 @@ public class JcrLocalTransactionManager extends AbstractPlatformTransactionManag
      * Create a new JcrTransactionManager instance.
      * 
      */
-    public JcrLocalTransactionManager() {
+    public LocalTransactionManager() {
     }
 
     /**
@@ -78,7 +79,7 @@ public class JcrLocalTransactionManager extends AbstractPlatformTransactionManag
      * @param sessionFactory
      *            Repository to manage transactions for
      */
-    public JcrLocalTransactionManager(SessionFactory sessionFactory) {
+    public LocalTransactionManager(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -133,6 +134,9 @@ public class JcrLocalTransactionManager extends AbstractPlatformTransactionManag
             sessionHolder.setSynchronizedWithTransaction(true);
             session = (XASession)sessionHolder.getSession();
 
+            /*
+             * We have no notion of flushing inside a JCR session
+             * 
             if (transactionDefinition.isReadOnly() && txObject.isNewSessionHolder()) {
                 sessionHolder.setReadOnly(true);
             }
@@ -142,6 +146,7 @@ public class JcrLocalTransactionManager extends AbstractPlatformTransactionManag
                     sessionHolder.setReadOnly(false);
                 }
             }
+            */
 
             // start the transaction
             sessionHolder.getTransaction().begin();

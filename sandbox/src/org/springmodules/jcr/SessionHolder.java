@@ -15,22 +15,12 @@ public class SessionHolder extends ResourceHolderSupport {
 
     private Session session;
 
-    private boolean readOnly = false;
-
     public SessionHolder(Session session) {
         setSession(session);
     }
 
     public void setSession(Session session) {
         this.session = session;
-    }
-
-    public void setReadOnly(boolean readOnly) {
-        this.readOnly = readOnly;
-    }
-
-    public boolean isReadOnly() {
-        return readOnly;
     }
 
     public Session getSession() {

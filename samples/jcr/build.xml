@@ -12,7 +12,7 @@
 	<property name="springmodules.root" value="../.."/>
 	<property name="springmodules.dist" value="${springmodules.root}/dist"/>
 	
-	<property name="main.class" value="org.springmodules.examples.jcr.JcrService"/>
+	<property name="main.class" value="org.springmodules.examples.jcr.Main"/>
 
 
 	<path id="lib-classpath">
@@ -20,6 +20,11 @@
 		<fileset dir="${springmodules.root}/lib/spring">
 			<include name="spring.jar"/>
 		</fileset>
+
+		<fileset dir="${springmodules.root}/lib/cglib">
+			<include name="*.jar"/>
+		</fileset>
+		
 		<fileset dir="${springmodules.root}/lib/concurrent">
 			<include name="concurrent*.jar"/>
 		</fileset>
@@ -27,9 +32,15 @@
 			<include name="hsqldb*.jar"/>
 		</fileset>
 		
-		<fileset dir="${springmodules.root}/lib/jcr">
-			<include name="jcr-1.0.jar"/>
+		<fileset dir="${springmodules.root}/lib/geronimo">
+			<include name="geronimo*.jar"/>
 		</fileset>
+
+		<fileset dir="${springmodules.root}/lib/j2ee">
+			<include name="jta*.jar"/>
+			<include name="connector*.jar"/>			
+		</fileset>
+		
 		<fileset dir="${springmodules.root}/lib/jakarta-commons">
 			<include name="commons-collection*.jar"/>			
 			<include name="commons-lang*.jar"/>
@@ -38,9 +49,20 @@
 		<fileset dir="${springmodules.root}/lib/jackrabbit">
 			<include name="*.jar"/>
 		</fileset>
+		
+		<fileset dir="${springmodules.root}/lib/jcr">
+			<include name="jcr-1.0.jar"/>
+		</fileset>
+		
 		<fileset dir="${springmodules.root}/lib/jeceira">
 			<include name="*.jar"/>
 		</fileset>
+
+		<fileset dir="${springmodules.root}/lib/jencks">
+			<include name="*.jar"/>
+		</fileset>
+
+				
 		<fileset dir="${springmodules.root}/lib/lucene">
 			<include name="lucene*.jar"/>
 		</fileset>
@@ -74,6 +96,7 @@
 		<echo message=""/>
 		<echo message="clean    --> Clean output dirs"/>
 		<echo message="build    --> Compile main Java sources and copy libraries"/>
+		<echo message="launch   --> Run the example"/>		
 		<echo message="all      --> Clean, build, warfile"/>
 		<echo message=""/>
 
@@ -113,12 +136,11 @@
 
 		<mkdir dir="${build.dir}/repo"/>
 		<java classname="${main.class}" fork="yes" failonerror="true">
+			<classpath refid="lib-classpath"/>
 			<classpath>
 				<pathelement path="${build.dir}"/>
 			</classpath>
-			<classpath refid="lib-classpath"/>
 		</java>
-
 	</target>
 
 	<target name="dist" depends="build">

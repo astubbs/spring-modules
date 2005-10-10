@@ -10,6 +10,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
@@ -20,9 +23,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.springframework.core.CollectionFactory;
 import org.springframework.dao.DataAccessException;
 import org.xml.sax.ContentHandler;
 
@@ -34,17 +39,14 @@ import sun.net.www.MimeTable;
  * Typically used to implement data access or business logic services that use
  * JCR within their implementation but are JCR-agnostic in their interface.
  * 
- * Requires a {@link JCRSessionFactory} to provide access to a JCR repository. A
+ * Requires a {@link JcrSessionFactory} to provide access to a JCR repository. A
  * workspace name is optional, as the repository will choose the default
  * workspace if a name is not provided.
  * 
  * @author Costin Leau
- * @author Brian Moseley <bcm@osafoundation.org>
  * 
  */
 public class JcrTemplate extends JcrAccessor implements JcrOperations {
-
-    private static final Log logger = LogFactory.getLog(JcrTemplate.class);
 
     private boolean allowCreate = false;
 
@@ -65,13 +67,14 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     // InitializingBean methods
 
     /**
-     * @see org.springmodules.jcr.JcrOperations#execute(org.springmodules.jcr.JcrCallback, boolean)
+     * @see org.springmodules.jcr.JcrOperations#execute(org.springmodules.jcr.JcrCallback,
+     *      boolean)
      */
     public Object execute(JcrCallback action, boolean exposeNativeSession) throws DataAccessException {
         Session session = getSession();
         boolean existingTransaction = SessionFactoryUtils.isSessionTransactional(session, getSessionFactory());
         if (existingTransaction) {
-            logger.debug("Found thread-bound Session for HibernateTemplate");
+            logger.debug("Found thread-bound Session for JcrTemplate");
         }
 
         try {
@@ -119,7 +122,8 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     // -------------------------------------------------------------------------
 
     /**
-     * @see org.springmodules.jcr.JcrOperations#importFile(javax.jcr.Node, java.io.File)
+     * @see org.springmodules.jcr.JcrOperations#importFile(javax.jcr.Node,
+     *      java.io.File)
      */
     public Node importFile(final Node parentNode, final File file) {
         return (Node) execute(new JcrCallback() {
@@ -133,13 +137,13 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
                 // first we do the checking
                 if (!file.exists() || !file.canRead())
                     throw new IllegalArgumentException("can't work with file " + file);
-                
+
                 Node parentNd = parentNode;
-                
+
                 if (parentNd == null)
                     parentNd = session.getRootNode();
 
-                Node resNode  = doImportFile(parentNd, file);
+                Node resNode = doImportFile(parentNd, file);
 
                 session.save();
                 return resNode;
@@ -148,7 +152,8 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     }
 
     /**
-     * @see org.springmodules.jcr.JcrOperations#importFolder(javax.jcr.Node, java.io.File)
+     * @see org.springmodules.jcr.JcrOperations#importFolder(javax.jcr.Node,
+     *      java.io.File)
      */
     public Node importFolder(final Node parentNode, final File directory, final boolean includeStartDir) {
 
@@ -157,35 +162,36 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
              * @see org.springmodules.jcr.JcrCallback#doInJcr(javax.jcr.Session)
              */
             public Object doInJcr(Session session) throws RepositoryException {
-                
+
                 if (directory == null)
                     throw new IllegalArgumentException("file is null");
                 // do some sanity checks
                 if (!directory.exists() || !directory.canRead() || !directory.isDirectory())
                     throw new IllegalArgumentException("can't work with directory " + directory);
-                
+
                 // copy the reference to work with it
                 Node parentNd = parentNode;
-                
+
                 if (parentNd == null)
                     parentNd = session.getRootNode();
-                
+
                 doImportFolder(parentNd, directory, includeStartDir);
-                
+
                 session.save();
                 return parentNd;
             }
         }, true);
     }
-    
+
     /**
-     * The actual import file implementation - separated in order to prevent recursive doInJcr when parsing directories.
+     * The actual import file implementation - separated in order to prevent
+     * recursive doInJcr when parsing directories.
+     * 
      * @param parentNode
      * @param file
      * @return
      */
-    private Node doImportFile(Node parentNode, File file) throws RepositoryException
-    {
+    private Node doImportFile(Node parentNode, File file) throws RepositoryException {
         InputStream fileStream = null;
         try {
             fileStream = new FileInputStream(file);
@@ -200,9 +206,7 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
 
         // copy the reference to work with it
         Node parentNd = parentNode;
-        
 
-        
         Node fileNode = parentNd.addNode(file.getName(), "nt:file");
         Node resNode = fileNode.addNode("jcr:content", "nt:resource");
         resNode.setProperty("jcr:mimeType", mimeType);
@@ -211,21 +215,22 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
         Calendar lastModified = Calendar.getInstance();
         lastModified.setTimeInMillis(file.lastModified());
         resNode.setProperty("jcr:lastModified", lastModified);
-        
+
         return resNode;
     }
-    
+
     /**
-     * The actual import Folder implementation - separated in order to prevent recursive doInJcr when parsing directories.
+     * The actual import Folder implementation - separated in order to prevent
+     * recursive doInJcr when parsing directories.
+     * 
      * @param parentNode
      * @param directory
      * @param includeStartDir
      */
-    private void doImportFolder(Node parentNode, File directory, boolean includeStartDir) throws RepositoryException
-    {
+    private void doImportFolder(Node parentNode, File directory, boolean includeStartDir) throws RepositoryException {
         if (includeStartDir)
             parentNode = parentNode.addNode(directory.getName(), "nt:folder");
-        
+
         File[] dirEntries = directory.listFiles();
         for (int i = 0; i < dirEntries.length; i++) {
             File dirEntry = dirEntries[i];
@@ -281,9 +286,10 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     }
 
     /**
-     * @see org.springmodules.jcr.JcrOperations#getImportContentHandler(java.lang.String, int)
+     * @see org.springmodules.jcr.JcrOperations#getImportContentHandler(java.lang.String,
+     *      int)
      */
-    public ContentHandler getImportContentHandler(final String parentAbsPath, final int uuidBehavior){
+    public ContentHandler getImportContentHandler(final String parentAbsPath, final int uuidBehavior) {
         return (ContentHandler) execute(new JcrCallback() {
             /**
              * @see org.springmodules.jcr.JcrCallback#doInJcr(javax.jcr.Session)
@@ -379,6 +385,20 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     }
 
     /**
+     * @see org.springmodules.jcr.JcrOperations#getRootNode()
+     */
+    public Node getRootNode() {
+        return (Node) execute(new JcrCallback() {
+            /**
+             * @see org.springmodules.jcr.JcrCallback#doInJcr(javax.jcr.Session)
+             */
+            public Object doInJcr(Session session) throws RepositoryException {
+                return session.getRootNode();
+            }
+        }, true);
+    }
+
+    /**
      * @see org.springmodules.jcr.JcrOperations#getUserID()
      */
     public String getUserID() {
@@ -421,7 +441,8 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     }
 
     /**
-     * @see org.springmodules.jcr.JcrOperations#importXML(java.lang.String, java.io.InputStream, int)
+     * @see org.springmodules.jcr.JcrOperations#importXML(java.lang.String,
+     *      java.io.InputStream, int)
      */
     public void importXML(final String parentAbsPath, final InputStream in, final int uuidBehavior) {
         execute(new JcrCallback() {
@@ -470,7 +491,8 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     }
 
     /**
-     * @see org.springmodules.jcr.JcrOperations#setNamespacePrefix(java.lang.String, java.lang.String)
+     * @see org.springmodules.jcr.JcrOperations#setNamespacePrefix(java.lang.String,
+     *      java.lang.String)
      */
     public void setNamespacePrefix(final String prefix, final String uri) {
         execute(new JcrCallback() {
@@ -513,7 +535,8 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     }
 
     /**
-     * @see org.springmodules.jcr.JcrOperations#move(java.lang.String, java.lang.String)
+     * @see org.springmodules.jcr.JcrOperations#move(java.lang.String,
+     *      java.lang.String)
      */
     public void move(final String srcAbsPath, final String destAbsPath) {
         execute(new JcrCallback() {
@@ -553,10 +576,10 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
              */
             public Object doInJcr(Session session) throws RepositoryException {
                 Node nd = node;
-                
+
                 if (nd == null)
                     nd = session.getRootNode();
-                
+
                 return dumpNode(nd);
             }
 
@@ -604,6 +627,130 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     }
 
     /**
+     * @see org.springmodules.jcr.JcrOperations#query(javax.jcr.Node)
+     */
+    public QueryResult query(final Node node) {
+
+        if (node == null)
+            throw new IllegalArgumentException("node can't be null");
+
+        return (QueryResult) execute(new JcrCallback() {
+            /**
+             * @see org.springmodules.jcr.JcrCallback#doInJcr(javax.jcr.Session)
+             */
+            public Object doInJcr(Session session) throws RepositoryException {
+                boolean debug = logger.isDebugEnabled();
+
+                // get query manager
+                QueryManager manager = session.getWorkspace().getQueryManager();
+                if (debug)
+                    logger.debug("retrieved manager " + manager);
+
+                Query query = manager.getQuery(node);
+                if (debug)
+                    logger.debug("created query " + query);
+
+                return query.execute();
+            }
+        }, true);
+    }
+
+    /**
+     * @see org.springmodules.jcr.JcrOperations#query(java.lang.String)
+     */
+    public QueryResult query(final String statement) {
+        return query(statement, null);
+    }
+
+    /**
+     * @see org.springmodules.jcr.JcrOperations#query(java.lang.String,
+     *      java.lang.String)
+     */
+    public QueryResult query(final String statement, final String language) {
+
+        if (statement == null)
+            throw new IllegalArgumentException("statement can't be null");
+
+        return (QueryResult) execute(new JcrCallback() {
+            /**
+             * @see org.springmodules.jcr.JcrCallback#doInJcr(javax.jcr.Session)
+             */
+            public Object doInJcr(Session session) throws RepositoryException {
+                // check language
+                String lang = language;
+                if (lang == null)
+                    lang = Query.XPATH;
+                boolean debug = logger.isDebugEnabled();
+
+                // get query manager
+                QueryManager manager = session.getWorkspace().getQueryManager();
+                if (debug)
+                    logger.debug("retrieved manager " + manager);
+
+                Query query = manager.createQuery(statement, lang);
+                if (debug)
+                    logger.debug("created query " + query);
+
+                return query.execute();
+            }
+        }, true);
+    }
+
+    /**
+     * @see org.springmodules.jcr.JcrOperations#query(java.util.List)
+     */
+    public Map query(final List list) {
+        return query(list, null, false);
+    }
+
+    /**
+     * @see org.springmodules.jcr.JcrOperations#query(java.util.List, java.lang.String, boolean)
+     */
+    public Map query(final List list, final String language, final boolean ignoreErrors) {
+        if (list == null)
+            throw new IllegalArgumentException("list can't be null");
+
+        return (Map) execute(new JcrCallback() {
+            /**
+             * @see org.springmodules.jcr.JcrCallback#doInJcr(javax.jcr.Session)
+             */
+            public Object doInJcr(Session session) throws RepositoryException {
+                // check language
+                String lang = language;
+                if (lang == null)
+                    lang = Query.XPATH;
+                boolean debug = logger.isDebugEnabled();
+
+                Map map = CollectionFactory.createLinkedMapIfPossible(list.size());
+
+                // get query manager
+                QueryManager manager = session.getWorkspace().getQueryManager();
+                if (debug)
+                    logger.debug("retrieved manager " + manager);
+                for (Iterator iter = list.iterator(); iter.hasNext();) {
+                    String statement = (String) iter.next();
+
+                    Query query = manager.createQuery(statement, lang);
+                    if (debug)
+                        logger.debug("created query " + query);
+
+                    QueryResult result;
+                    try {
+                        result = query.execute();
+                        map.put(statement, result);
+                    } catch (RepositoryException e) {
+                        if (ignoreErrors)
+                            map.put(statement, null);
+                        else
+                            throw convertJcrAccessException(e);
+                    }
+                }
+                return map;
+            }
+        }, true);
+    }
+
+    /**
      * @return Returns the allowCreate.
      */
     public boolean isAllowCreate() {
@@ -611,26 +758,25 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     }
 
     /**
-     * @param allowCreate
-     *            The allowCreate to set.
+     * @param allowCreate The allowCreate to set.
      */
     public void setAllowCreate(boolean allowCreate) {
         this.allowCreate = allowCreate;
     }
 
     /**
-     * Create a close-suppressing proxy for the given Hibernate Session. The
-     * proxy also prepares returned Query and Criteria objects.
+     * Create a close-suppressing proxy for the given Jcr Session. 
+     * The proxy also prepares returned Query and Criteria objects.
      * 
-     * @param session
-     *            the Hibernate Session to create a proxy for
+     * @param session the Jcr Session to create a proxy for
      * @return the Session proxy
-     * @see org.hibernate.Session#close
+     * @see javax.jcr.Session#logout()
      * @see #prepareQuery
      * @see #prepareCriteria
      */
     protected Session createSessionProxy(Session session) {
-        return (Session) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { Session.class }, new LogoutSuppressingInvocationHandler(session));
+        return (Session) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { Session.class },
+                new LogoutSuppressingInvocationHandler(session));
     }
 
     /**
@@ -647,7 +793,7 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
         }
 
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            // Invocation on PersistenceManager interface (or vendor-specific
+            // Invocation on Session interface (or vendor-specific
             // extension) coming in...
 
             if (method.getName().equals("equals")) {
@@ -685,10 +831,10 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
     }
 
     /**
-     * @param exposeNativeSession
-     *            The exposeNativeSession to set.
+     * @param exposeNativeSession The exposeNativeSession to set.
      */
     public void setExposeNativeSession(boolean exposeNativeSession) {
         this.exposeNativeSession = exposeNativeSession;
     }
+
 }

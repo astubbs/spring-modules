@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: OpenSessionInViewInterceptor.java,v 1.1 2005/09/26 10:21:55 costin Exp $
- * $Revision: 1.1 $
+ * $Id: OpenSessionInViewInterceptor.java,v 1.2 2005/10/10 09:20:49 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
 import org.springmodules.jcr.SessionHolder;
-import org.springmodules.jcr.TransactionSessionHolder;
+import org.springmodules.jcr.SessionHolderProvider;
 
 /**
  * Spring web HandlerInterceptor that binds a JCR PersistenceManager to the
@@ -39,9 +39,14 @@ import org.springmodules.jcr.TransactionSessionHolder;
  * in a Spring application context and can thus take advantage of bean wiring.
  * It derives from JcrAccessor to inherit common JCR configuration properties.
  * 
+ * <p/>
+ * By default the interceptor uses the default session holder - the developer can 
+ * set his own provider though.
+ * 
  * @author Costin Leau
  */
-public abstract class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter implements TransactionSessionHolder{
+public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter
+{
     /**
      * Suffix that gets appended to the SessionFactory toString
      * representation for the "participate in existing persistence manager
@@ -54,6 +59,8 @@ public abstract class OpenSessionInViewInterceptor extends HandlerInterceptorAda
     protected final Log logger = LogFactory.getLog(getClass());
 
     private SessionFactory sessionFactory;
+    
+    private SessionHolderProvider sessionHolderProvider = new DefaultSessionHolderProvider();
 
     /**
      * Set the JCR JcrSessionFactory that should be used to create
@@ -83,9 +90,9 @@ public abstract class OpenSessionInViewInterceptor extends HandlerInterceptorAda
         }
 
         else {
-            logger.debug("Opening JCR persistence manager in OpenSessionInViewInterceptor");
+            logger.debug("Opening JCR session in OpenSessionInViewInterceptor");
             Session s = SessionFactoryUtils.getSession(getSessionFactory(), true);
-            TransactionSynchronizationManager.bindResource(getSessionFactory(), new SessionHolder(s));
+            TransactionSynchronizationManager.bindResource(getSessionFactory(), sessionHolderProvider.createSessionHolder(s));
         }
 
         return true;
@@ -106,7 +113,7 @@ public abstract class OpenSessionInViewInterceptor extends HandlerInterceptorAda
 
         else {
             SessionHolder sesHolder = (SessionHolder) TransactionSynchronizationManager.unbindResource(getSessionFactory());
-            logger.debug("Closing JCR persistence manager in OpenSessionInViewInterceptor");
+            logger.debug("Closing JCR session in OpenSessionInViewInterceptor");
             SessionFactoryUtils.releaseSession(sesHolder.getSession(), getSessionFactory());
         }
     }
@@ -121,5 +128,22 @@ public abstract class OpenSessionInViewInterceptor extends HandlerInterceptorAda
      */
     protected String getParticipateAttributeName() {
         return getSessionFactory().toString() + PARTICIPATE_SUFFIX;
+    }
+
+    /**
+     * @return Returns the sessionHolderProvider.
+     */
+    public SessionHolderProvider getSessionHolderProvider() {
+        return sessionHolderProvider;
+    }
+
+    /**
+     *  Set the sessionHolder provider to be used internally. Should be set when implementation
+     *  specific holders should be used (like JackRabbit for transaction support).
+     *  
+     * @param sessionHolderProvider The sessionHolderProvider to set.
+     */
+    public void setSessionHolderProvider(SessionHolderProvider sessionHolderProvider) {
+        this.sessionHolderProvider = sessionHolderProvider;
     }
 }

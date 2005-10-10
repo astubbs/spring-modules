@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrInterceptorTests.java,v 1.1 2005/09/26 10:21:56 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrInterceptorTests.java,v 1.2 2005/10/10 09:20:46 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
@@ -18,7 +18,6 @@ import org.aopalliance.intercept.Invocation;
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springmodules.jcr.jackrabbit.JcrInterceptor;
 
 /**
  * @author Costin Leau
@@ -40,10 +39,11 @@ public class JcrInterceptorTests extends TestCase {
 
         JcrInterceptor interceptor = new JcrInterceptor();
         interceptor.setSessionFactory(sf);
+        interceptor.afterPropertiesSet();
         try {
             interceptor.invoke(new TestInvocation(sf));
         } catch (Throwable t) {
-            fail("Should not have thrown Throwable: " + t.getMessage());
+            fail("Should not have thrown Throwable: " + t);
         }
 
         sfControl.verify();

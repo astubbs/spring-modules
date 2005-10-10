@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrTemplateTests.java,v 1.1 2005/09/26 10:21:56 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrTemplateTests.java,v 1.2 2005/10/10 09:20:46 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
@@ -31,10 +32,14 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
+import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.InvalidQueryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
 import junit.framework.TestCase;
@@ -794,5 +799,174 @@ public class JcrTemplateTests extends TestCase {
         jt.dump(null);
         
         nodeCtrl.verify();
+    }
+    
+    public void testQueryNode() throws RepositoryException
+    {
+        try {
+            jt.query((Node)null);
+            fail("should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // it's okay
+        }
+        
+        MockControl ndCtrl = MockControl.createControl(Node.class);
+        Node nd = (Node)ndCtrl.getMock();
+        
+        MockControl wsCtrl = MockControl.createControl(Workspace.class);
+        Workspace ws = (Workspace) wsCtrl.getMock();
+
+        MockControl qmCtrl = MockControl.createControl(QueryManager.class);
+        QueryManager qm = (QueryManager) qmCtrl.getMock();
+        
+        MockControl queryCtrl = MockControl.createControl(Query.class);
+        Query query = (Query) queryCtrl.getMock();
+
+        MockControl resultCtrl = MockControl.createControl(QueryResult.class);
+        QueryResult result = (QueryResult) resultCtrl.getMock();
+
+        sessionControl.expectAndReturn(session.getWorkspace(), ws);
+        wsCtrl.expectAndReturn(ws.getQueryManager(), qm);
+        qmCtrl.expectAndReturn(qm.getQuery(nd), query);
+        queryCtrl.expectAndReturn(query.execute(), result);
+        
+        sfControl.replay();
+        sessionControl.replay();
+        wsCtrl.replay();
+        qmCtrl.replay();
+        queryCtrl.replay();
+        resultCtrl.replay();
+        
+        assertSame(result, jt.query(nd));
+        
+        sfControl.verify();
+        sessionControl.verify();
+        wsCtrl.verify();
+        qmCtrl.verify();
+        queryCtrl.verify();
+        resultCtrl.verify();
+    }
+
+    public void testExecuteQuery() throws RepositoryException
+    {
+        try {
+            jt.query(null, null);
+            fail("should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // it's okay
+        }
+
+        MockControl ndCtrl = MockControl.createControl(Node.class);
+        Node nd = (Node)ndCtrl.getMock();
+        
+        MockControl wsCtrl = MockControl.createControl(Workspace.class);
+        Workspace ws = (Workspace) wsCtrl.getMock();
+
+        MockControl qmCtrl = MockControl.createControl(QueryManager.class);
+        QueryManager qm = (QueryManager) qmCtrl.getMock();
+        
+        MockControl queryCtrl = MockControl.createControl(Query.class);
+        Query query = (Query) queryCtrl.getMock();
+
+        MockControl resultCtrl = MockControl.createControl(QueryResult.class);
+        QueryResult result = (QueryResult) resultCtrl.getMock();
+
+        String stmt = "//*/@bogus:title";
+        String language = Query.XPATH;
+
+        sessionControl.expectAndReturn(session.getWorkspace(), ws);
+        wsCtrl.expectAndReturn(ws.getQueryManager(), qm);
+        qmCtrl.expectAndReturn(qm.createQuery(stmt, language), query);
+        queryCtrl.expectAndReturn(query.execute(), result);
+        
+        sfControl.replay();
+        sessionControl.replay();
+        wsCtrl.replay();
+        qmCtrl.replay();
+        queryCtrl.replay();
+        resultCtrl.replay();
+        
+        assertSame(result, jt.query(stmt, null));
+        
+        sfControl.verify();
+        sessionControl.verify();
+        wsCtrl.verify();
+        qmCtrl.verify();
+        queryCtrl.verify();
+        resultCtrl.verify();
+    }
+    
+    public void testExecuteQuerySimple() throws RepositoryException
+    {
+        try {
+            jt.query((String)null);
+            fail("should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            // it's okay
+        }
+        // the rest of the test is covered by testExecuteQuery
+
+    }
+
+    
+    public void testGetTree() throws RepositoryException
+    {
+        try {
+            jt.query((List)null);
+            fail("should have thown IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // it's okay
+        }
+        
+        List list = new ArrayList();
+        String stmt1 = "//*/@bogus:title";
+        String stmt2 = "//*";
+        
+        list.add(stmt1);
+        list.add(stmt2);
+        boolean silent = false;
+        
+        String language = Query.XPATH;
+        
+        MockControl ndCtrl = MockControl.createControl(Node.class);
+        Node nd = (Node)ndCtrl.getMock();
+        
+        MockControl wsCtrl = MockControl.createControl(Workspace.class);
+        Workspace ws = (Workspace) wsCtrl.getMock();
+
+        MockControl qmCtrl = MockControl.createControl(QueryManager.class);
+        QueryManager qm = (QueryManager) qmCtrl.getMock();
+        
+        MockControl queryCtrl = MockControl.createControl(Query.class);
+        Query query = (Query) queryCtrl.getMock();
+
+        MockControl resultCtrl = MockControl.createControl(QueryResult.class);
+        QueryResult result = (QueryResult) resultCtrl.getMock();
+
+        sessionControl.expectAndReturn(session.getWorkspace(), ws);
+        wsCtrl.expectAndReturn(ws.getQueryManager(), qm);
+        qmCtrl.expectAndReturn(qm.createQuery(stmt1, language), query);
+        qmCtrl.expectAndReturn(qm.createQuery(stmt2, language), query);
+        queryCtrl.expectAndReturn(query.execute(), result);
+        queryCtrl.expectAndReturn(query.execute(), result);
+        
+        sfControl.replay();
+        sessionControl.replay();
+        wsCtrl.replay();
+        qmCtrl.replay();
+        queryCtrl.replay();
+        resultCtrl.replay();
+        
+        Map tree = jt.query(list, null, silent);
+        
+        assertSame("Results are not the same", result, tree.get("//*"));
+        assertSame("Results are not the same", result, tree.get("//*/@bogus:title"));
+        
+        sfControl.verify();
+        sessionControl.verify();
+        wsCtrl.verify();
+        qmCtrl.verify();
+        queryCtrl.verify();
+        resultCtrl.verify();
     }
 }

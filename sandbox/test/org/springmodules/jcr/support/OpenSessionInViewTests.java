@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: OpenSessionInViewTests.java,v 1.1 2005/09/26 10:21:53 costin Exp $
- * $Revision: 1.1 $
+ * $Id: OpenSessionInViewTests.java,v 1.2 2005/10/10 09:20:55 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -25,8 +25,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springmodules.jcr.SessionFactory;
-import org.springmodules.jcr.jackrabbit.support.OpenSessionInViewFilter;
-import org.springmodules.jcr.jackrabbit.support.OpenSessionInViewInterceptor;
+import org.springmodules.jcr.SessionHolder;
+import org.springmodules.jcr.SessionHolderProvider;
 /**
  * @author Costin Leau
  *
@@ -94,7 +94,14 @@ public class OpenSessionInViewTests extends TestCase {
         MockControl sfControl = MockControl.createControl(SessionFactory.class);
         final SessionFactory sf = (SessionFactory) sfControl.getMock();
         MockControl sessionControl = MockControl.createControl(Session.class);
-        Session session = (Session) sessionControl.getMock();
+        final Session session = (Session) sessionControl.getMock();
+
+        final MockControl providerControl = MockControl.createControl(SessionHolderProvider.class);
+        final SessionHolderProvider provider = (SessionHolderProvider) providerControl.getMock();
+        final SessionHolder holder = new SessionHolder(session);
+        
+        providerControl.expectAndReturn(provider.createSessionHolder(session), holder);
+        providerControl.replay();
 
         sf.getSession();
         sfControl.setReturnValue(session, 1);
@@ -106,7 +113,8 @@ public class OpenSessionInViewTests extends TestCase {
         MockControl sf2Control = MockControl.createControl(SessionFactory.class);
         final SessionFactory sf2 = (SessionFactory) sf2Control.getMock();
         MockControl session2Control = MockControl.createControl(Session.class);
-        Session session2 = (Session) session2Control.getMock();
+        final Session session2 = (Session) session2Control.getMock();
+        
 
         sf2.getSession();
         sf2Control.setReturnValue(session2, 1);
@@ -114,30 +122,43 @@ public class OpenSessionInViewTests extends TestCase {
         session2Control.setVoidCallable(1);
         sf2Control.replay();
         session2Control.replay();
+        
 
         MockServletContext sc = new MockServletContext();
         StaticWebApplicationContext wac = new StaticWebApplicationContext();
         wac.setServletContext(sc);
         wac.getDefaultListableBeanFactory().registerSingleton("sessionFactory", sf);
         wac.getDefaultListableBeanFactory().registerSingleton("mySessionFactory", sf2);
+        wac.getDefaultListableBeanFactory().registerSingleton("sessionHolderProvider", provider);
         wac.refresh();
         sc.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, wac);
         MockHttpServletRequest request = new MockHttpServletRequest(sc);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         MockFilterConfig filterConfig = new MockFilterConfig(wac.getServletContext(), "filter");
+        filterConfig.addInitParameter("sessionHolderProviderBeanName", "sessionHolderProvider");
         MockFilterConfig filterConfig2 = new MockFilterConfig(wac.getServletContext(), "filter2");
         filterConfig2.addInitParameter("sessionFactoryBeanName", "mySessionFactory");
+
+        MockFilterConfig filterConfig3 = new MockFilterConfig(wac.getServletContext(), "filter3");
 
         final OpenSessionInViewFilter filter = new OpenSessionInViewFilter();
         filter.init(filterConfig);
         final OpenSessionInViewFilter filter2 = new OpenSessionInViewFilter();
         filter2.init(filterConfig2);
+        final OpenSessionInViewFilter filter3 = new OpenSessionInViewFilter();
+        filter3.init(filterConfig3);
 
         final FilterChain filterChain = new FilterChain() {
             public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
                 throws IOException, ServletException {
                 assertTrue(TransactionSynchronizationManager.hasResource(sf));
+                // check sf-related things
+                Object obj = TransactionSynchronizationManager.getResource(sf);
+                assertTrue(obj instanceof SessionHolder);
+                assertSame(holder, obj);
+                assertSame(session, ((SessionHolder)obj).getSession());
+                
                 servletRequest.setAttribute("invoked", Boolean.TRUE);
             }
         };
@@ -145,21 +166,40 @@ public class OpenSessionInViewTests extends TestCase {
         final FilterChain filterChain2 = new FilterChain() {
             public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
                 throws IOException, ServletException {
-                assertTrue(TransactionSynchronizationManager.hasResource(sf2));
-                filter.doFilter(servletRequest, servletResponse, filterChain);
+                assertTrue(TransactionSynchronizationManager.hasResource(sf));
+                // check sf-related things
+                Object obj = TransactionSynchronizationManager.getResource(sf);
+                assertTrue(obj instanceof SessionHolder);
+                assertSame(holder, obj);
+                assertSame(session, ((SessionHolder)obj).getSession());
+                
+                filter3.doFilter(servletRequest, servletResponse, filterChain);
             }
         };
 
-        FilterChain filterChain3 = new FilterChain() {
+        final FilterChain filterChain3 = new FilterChain() {
             public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
                 throws IOException, ServletException {
-                filter2.doFilter(servletRequest, servletResponse, filterChain2);
+                assertTrue(TransactionSynchronizationManager.hasResource(sf2));
+                // check sf2-related things
+                Object obj = TransactionSynchronizationManager.getResource(sf2);
+                assertTrue(obj instanceof SessionHolder);
+                assertSame(session2, ((SessionHolder)obj).getSession());
+                
+                filter.doFilter(servletRequest, servletResponse, filterChain2);
+            }
+        };
+
+        FilterChain filterChain4 = new FilterChain() {
+            public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
+                throws IOException, ServletException {
+                filter2.doFilter(servletRequest, servletResponse, filterChain3);
             }
         };
 
         assertFalse(TransactionSynchronizationManager.hasResource(sf));
         assertFalse(TransactionSynchronizationManager.hasResource(sf2));
-        filter2.doFilter(request, response, filterChain3);
+        filter2.doFilter(request, response, filterChain4);
         assertFalse(TransactionSynchronizationManager.hasResource(sf));
         assertFalse(TransactionSynchronizationManager.hasResource(sf2));
         assertNotNull(request.getAttribute("invoked"));
@@ -168,6 +208,7 @@ public class OpenSessionInViewTests extends TestCase {
         sessionControl.verify();
         sfControl.verify();
         sessionControl.verify();
+        providerControl.verify();
 
         wac.close();
     }

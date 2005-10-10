@@ -1,15 +1,15 @@
 /**
  * Created on Sep 1, 2005
  *
- * $Id: EventListenerDefinition.java,v 1.1 2005/09/26 10:21:53 costin Exp $
- * $Revision: 1.1 $
+ * $Id: EventListenerDefinition.java,v 1.2 2005/10/10 09:20:44 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
 import javax.jcr.observation.EventListener;
 
 /**
- * Wrapper class used for registering event types inside a workspace.
+ * Transport class used for registering event types inside a workspace.
  * 
  * @see javax.jcr.observation.ObservationManager#addEventListener(javax.jcr.observation.EventListener, int, java.lang.String, boolean, java.lang.String[], java.lang.String[], boolean)
  * @author Costin Leau

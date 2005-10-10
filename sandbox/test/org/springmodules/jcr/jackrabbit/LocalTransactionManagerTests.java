@@ -23,8 +23,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springmodules.jcr.JcrCallback;
 import org.springmodules.jcr.JcrTemplate;
 import org.springmodules.jcr.SessionFactory;
+import org.springmodules.jcr.jackrabbit.support.UserTxSessionHolder;
 
-public class JcrLocalTransactionManagerTests extends TestCase {
+public class LocalTransactionManagerTests extends TestCase {
 
     public void testTransactionCommit() throws Exception {
         MockControl sfControl = MockControl.createControl(SessionFactory.class);
@@ -57,7 +58,7 @@ public class JcrLocalTransactionManagerTests extends TestCase {
         sessionControl.replay();
         xaResControl.replay();
 
-        PlatformTransactionManager tm = new JcrLocalTransactionManager(sf);
+        PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
         final List l = new ArrayList();
         l.add("test");
@@ -108,7 +109,7 @@ public class JcrLocalTransactionManagerTests extends TestCase {
         sessionControl.replay();
         xaResControl.replay();
 
-        PlatformTransactionManager tm = new JcrLocalTransactionManager(sf);
+        PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
         final List l = new ArrayList();
         l.add("test");
@@ -169,7 +170,7 @@ public class JcrLocalTransactionManagerTests extends TestCase {
         sessionControl.replay();
         xaResControl.replay();
 
-        PlatformTransactionManager tm = new JcrLocalTransactionManager(sf);
+        PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
         final List l = new ArrayList();
         l.add("test");
@@ -204,13 +205,13 @@ public class JcrLocalTransactionManagerTests extends TestCase {
     }    
 
     
-    public void testtestInvalidIsolation() throws Exception {
+    public void testInvalidIsolation() throws Exception {
         MockControl sfControl = MockControl.createControl(SessionFactory.class);
         final SessionFactory sf = (SessionFactory) sfControl.getMock();
         
         sfControl.replay();
 
-        PlatformTransactionManager tm = new JcrLocalTransactionManager(sf);
+        PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
         
         assertTrue("Hasn't thread session", !TransactionSynchronizationManager.hasResource(sf));
@@ -257,7 +258,7 @@ public class JcrLocalTransactionManagerTests extends TestCase {
         sessionControl.replay();
         xaResControl.replay();
 
-        PlatformTransactionManager tm = new JcrLocalTransactionManager(sf);
+        PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
         UserTxSessionHolder uTx = new UserTxSessionHolder(session);
         TransactionSynchronizationManager.bindResource(sf, uTx);
@@ -281,7 +282,7 @@ public class JcrLocalTransactionManagerTests extends TestCase {
         xaResControl.verify();
     }
     
-    public void testTransactionReadOnlyWithPrebound() throws Exception {
+    public void testTransactionRollbackOnlyWithPrebound() throws Exception {
         MockControl sfControl = MockControl.createControl(SessionFactory.class);
         final SessionFactory sf = (SessionFactory) sfControl.getMock();
         MockControl sessionControl = MockControl.createControl(XASession.class);
@@ -297,7 +298,7 @@ public class JcrLocalTransactionManagerTests extends TestCase {
         sessionControl.replay();
         xaResControl.replay();
 
-        PlatformTransactionManager tm = new JcrLocalTransactionManager(sf);
+        PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
         UserTxSessionHolder uTx = new UserTxSessionHolder(session);
         uTx.setRollbackOnly();
@@ -315,7 +316,7 @@ public class JcrLocalTransactionManagerTests extends TestCase {
             });
          
         } catch (UnexpectedRollbackException e) {
-            // it's okay
+            System.out.println(e);
         }
 
         assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));

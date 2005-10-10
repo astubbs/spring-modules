@@ -2,49 +2,20 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
     "http://www.springframework.org/dtd/spring-beans.dtd">
 <!--
-	Document management (JSR-170) specific configuration.
+	JSR-170 configuration support. Note that the transaction managers are defined
+	in separate files.
 	    
-    $Id: applicationContext-repository.xml,v 1.1 2005/09/26 10:21:06 costin Exp $
+    $Id: applicationContext-repository.xml,v 1.2 2005/10/10 09:20:42 costin Exp $
     -->    
-<beans default-lazy-init="false">
+<beans default-lazy-init="true">
+	<import resource="applicationContext-jr-jca.xml"/>
 	
-	<bean id="repository" class="org.springmodules.jcr.jackrabbit.RepositoryFactoryBean">
-		<!-- normal factory beans params -->
-		<property name="configuration" value="classpath:jackrabbit-repo.xml"/>
-		<property name="homeDir" value="/repo"/>
-		
-	</bean>
 
 	<bean id="jeceira-repository" class="org.springmodules.jcr.jeceira.RepositoryFactoryBean">
 		<!-- normal factory beans params -->
 		<property name="configuration" value="classpath:jeceira-repo.xml"/>
 		<property name="repositoryName" value="jeceira-repo"/>
 	</bean>
-	
-	<bean id="jcrTransactionManager" class="org.springmodules.jcr.jackrabbit.JcrLocalTransactionManager">
-		<property name="sessionFactory"><ref bean="jcrSessionFactory" /></property>
-	</bean>
-
-	<bean id="txProxyTemplate" abstract="true" 
-        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="proxyTargetClass">
-            <value>true</value>
-        </property>
-        <property name="transactionManager">
-            <ref local="jcrTransactionManager"/>
-        </property>
-        <property name="transactionAttributes">
-			<props>
-                <prop key="save*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED, readOnly</prop>
-			</props>
-		</property>
-    </bean>
-		
-	<!-- transaction proxy for Jcr Sessions -->
-	<bean id="txJcrProxyTemplate" parent="txProxyTemplate" abstract="true">
-        <property name="transactionManager" ref="jcrTransactionManager"/>
-    </bean>
 	
 	<bean id="jcrSessionFactory" class="org.springmodules.jcr.JcrSessionFactory">
 		<property name="repository" ref="repository"/>
@@ -70,4 +41,27 @@
 		<property name="allowCreate" value="true"/>
 	</bean>
 
+	<!-- transaction proxy for Jcr services/facades -->
+	<bean id="txProxyTemplate" abstract="true" 
+        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="proxyTargetClass">
+            <value>true</value>
+        </property>
+        <property name="transactionManager" ref="jcrTransactionManager"/>
+        <property name="transactionAttributes">
+			<props>
+                <prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED, readOnly</prop>
+			</props>
+		</property>
+    </bean>
+<!--
+	<bean id="jcrService" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="org.springmodules.examples.jcr.JcrService">
+				<property name="template" ref="jcrTemplate"/>
+			</bean>
+		</property>
+	</bean>
+	-->
 </beans>

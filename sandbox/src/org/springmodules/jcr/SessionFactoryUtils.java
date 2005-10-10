@@ -31,7 +31,8 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.util.Assert;
 
 /**
- * Helper class.
+ * FactoryBean for instantiating a Java Content Repository. This abstract class adds
+ * custom functionality subclasses handling only the configuration issues.
  * 
  * TODO: add JTA lookups/support
  * 
@@ -54,8 +55,7 @@ public abstract class SessionFactoryUtils {
      * JtaTransactionManager) and non-Spring JTA transactions (i.e. plain JTA or
      * EJB CMT).
      * 
-     * @param sessionFactory
-     *            JcrSessionFactory to create session with
+     * @param sessionFactory Jcr Repository to create session with
      * @param allowCreate
      *            if a non-transactional Session should be created when no
      *            transactional Session can be found for the current thread
@@ -274,5 +274,4 @@ public abstract class SessionFactoryUtils {
             releaseSession(this.sessionHolder.getSession(), this.sessionFactory);
         }
     }
-
 }

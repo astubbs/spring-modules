@@ -1,20 +1,19 @@
 /**
  * Created on Aug 31, 2005
  *
- * $Id: RepositoryFactoryBean.java,v 1.1 2005/09/26 10:21:49 costin Exp $
- * $Revision: 1.1 $
+ * $Id: RepositoryFactoryBean.java,v 1.2 2005/10/10 09:20:41 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.jackrabbit;
 
 import javax.jcr.Repository;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.xml.sax.InputSource;
 
 /**
  * FactoryBean for creating a JackRabbit (JCR-170) repository through Spring
@@ -28,10 +27,6 @@ import org.springframework.core.io.Resource;
  * 
  */
 public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFactoryBean {
-    /**
-     * Logger for this class
-     */
-    private static final Log log = LogFactory.getLog(RepositoryFactoryBean.class);
 
     /**
      * Default repository configuration file.
@@ -69,7 +64,7 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
         if (repositoryConfig != null)
             return;
 
-        if (configuration == null) {
+        if (this.configuration == null) {
             if (log.isDebugEnabled())
                 log.debug("no configuration resource specified, using the default one:" + DEFAULT_CONF_FILE);
             configuration = new ClassPathResource(DEFAULT_CONF_FILE);
@@ -81,15 +76,15 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
             homeDir = new FileSystemResource(DEFAULT_REP_DIR);
         }
 
-        repositoryConfig = RepositoryConfig.create(configuration.getFile().getAbsolutePath(), homeDir.getFile().getAbsolutePath());
+        repositoryConfig = RepositoryConfig.create(new InputSource(configuration.getInputStream()), homeDir.getFile().getAbsolutePath());
     }
 
     /**
      * Shutdown method.
      * 
      */
-    public void destroy() {
-        // stops the server
+    public void destroy() throws Exception {
+        // force cast
         ((RepositoryImpl) repository).shutdown();
     }
 
@@ -97,7 +92,7 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
      * @return Returns the defaultRepDir.
      */
     public Resource getHomeDir() {
-        return homeDir;
+        return this.homeDir;
     }
 
     /**
@@ -112,7 +107,7 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
      * @return Returns the repositryConfig.
      */
     public RepositoryConfig getRepositoryConfig() {
-        return repositoryConfig;
+        return this.repositoryConfig;
     }
 
     /**

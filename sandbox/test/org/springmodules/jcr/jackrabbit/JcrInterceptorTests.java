@@ -7,7 +7,10 @@ import junit.framework.TestCase;
 
 import org.apache.jackrabbit.core.XASession;
 import org.easymock.MockControl;
+import org.springmodules.jcr.JcrInterceptor;
 import org.springmodules.jcr.SessionHolder;
+import org.springmodules.jcr.SessionHolderProvider;
+import org.springmodules.jcr.jackrabbit.support.JackRabbitSessionHolderProvider;
 
 public class JcrInterceptorTests extends TestCase {
 
@@ -30,20 +33,15 @@ public class JcrInterceptorTests extends TestCase {
         xaResCtrl.replay();
         
         JcrInterceptor interceptor = new JcrInterceptor();
+        SessionHolderProvider provider = new JackRabbitSessionHolderProvider();
+        interceptor.setSessionHolderProvider(provider);
         SessionHolder holder = null;
-        try {
-            holder = interceptor.createSessionHolder(session);
-            fail("should throw exception - session is not of type XASession");
-        } catch (IllegalArgumentException e) {
-            // it's okay
-        }
-        holder = interceptor.createSessionHolder(xaSession);
-        assertTrue(holder instanceof UserTxSessionHolder);
-        UserTxSessionHolder hld = (UserTxSessionHolder) holder;
-        assertSame(xaSession, hld.getSession());
-        assertNotNull(hld.getTransaction());
         
-
+        assertSame(provider, interceptor.getSessionHolderProvider());
+        holder = provider.createSessionHolder(xaSession);
+        
+        assertSame(xaSession, holder.getSession());
+        
         xaSessionControl.verify();
         sessionControl.verify();
         xaResCtrl.verify();

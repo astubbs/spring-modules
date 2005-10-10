@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrAccessor.java,v 1.1 2005/09/26 10:21:52 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrAccessor.java,v 1.2 2005/10/10 09:20:45 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
+import org.springmodules.jcr.support.DefaultSessionHolderProvider;
 
 /**
  * Base class for JcrTemplate and JcrInterceptor, defining common properties
@@ -20,24 +21,28 @@ import org.springframework.dao.DataAccessException;
  * <p>
  * Not intended to be used directly. See JcrTemplate and JcrInterceptor.
  * 
- * @author Costin Leau
  * @see JcrTemplate
  * @see JcrInterceptor
+ * @author Costin Leau
  */
 public abstract class JcrAccessor implements InitializingBean {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
     private SessionFactory sessionFactory;
+    
+    private SessionHolderProvider sessionHolderProvider;
 
     /**
-     * Eagerly initialize the JDO dialect, creating a default one for the
-     * specified PersistenceManagerFactory if none set.
+     * Eagerly initialize the session holder provider, creating a default one
+     * if one is not set.
      */
-    public void afterPropertiesSet() {
+    public void afterPropertiesSet(){
         if (getSessionFactory() == null) {
             throw new IllegalArgumentException("jcrSessionFactory is required");
         }
+        if (getSessionHolderProvider() == null)
+           setSessionHolderProvider(new DefaultSessionHolderProvider());
     }
 
     /**
@@ -66,5 +71,20 @@ public abstract class JcrAccessor implements InitializingBean {
      */
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    /**
+     * @return Returns the sessionHolderProvider.
+     */
+    public SessionHolderProvider getSessionHolderProvider() {
+        return sessionHolderProvider;
+    }
+
+    /**
+     * Not required - by default it uses a default session holder provider.
+     * @param sessionHolderProvider The sessionHolderProvider to set.
+     */
+    public void setSessionHolderProvider(SessionHolderProvider sessionHolderProvider) {
+        this.sessionHolderProvider = sessionHolderProvider;
     }
 }

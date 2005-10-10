@@ -2,26 +2,27 @@ package org.springmodules.jcr;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Item;
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
+import javax.jcr.query.QueryResult;
 
 import org.springframework.dao.DataAccessException;
 import org.xml.sax.ContentHandler;
 
 /**
- * Interface that specifies a basic set of JCR operations.
- * Implemented by JcrTemplate. Not often used, but a useful option
- * to enhance testability, as it can easily be mocked or stubbed.
- *
- * <p>Provides JcrTemplate's data access methods that mirror various
- * Session methods. See the JCR Session javadocs
- * for details on those methods.
- *
+ * Interface that specifies a basic set of JCR operations. Not often used, 
+ * but a useful option to enhance testability, as it can easily be mocked or stubbed.
+ * 
+ * <p>
+ * Provides JcrTemplate's data access methods that mirror various Session
+ * methods. See the JCR Session javadocs for details on those methods.
+ * 
  * @author Costin Leau
- *
+ * 
  */
 public interface JcrOperations {
 
@@ -34,7 +35,7 @@ public interface JcrOperations {
      *            whether to expose the native Jcr Session to callback code
      * @return a result object returned by the action, or null
      * @throws org.springframework.dao.DataAccessException
-     *             in case of Hibernate errors
+     *             in case of Jcr errors
      */
     public Object execute(JcrCallback action, boolean exposeNativeSession) throws DataAccessException;
 
@@ -60,8 +61,8 @@ public interface JcrOperations {
     public Object execute(JcrCallback callback) throws DataAccessException;
 
     /**
-     * Imports a File in the current workspace on the given node. If the parentNode is null the root
-     * node will be used.
+     * Import a File in the current workspace on the given node. If the
+     * parentNode is null the root node will be used.
      * 
      * <strong>Note</strong> this method has been mainly inspired from the
      * contrib/examples package inside JackRabbit repository.
@@ -73,11 +74,11 @@ public interface JcrOperations {
      * 
      * @return the child node to which the file belongs to
      */
-    public Node importFile(final Node parentNode, final File file);
+    public Node importFile(Node parentNode, File file);
 
     /**
-     * Import a Folder using the current session on the given node. If the parentNode is null the root
-     * node will be used.
+     * Import a Folder using the current session on the given node. If the
+     * parentNode is null the root node will be used.
      * 
      * <strong>Note</strong> this method has been mainly inspired from the
      * contrib/examples package inside JackRabbit repository.
@@ -87,20 +88,21 @@ public interface JcrOperations {
      * @param directory
      *            Directory to be traversed
      * @param includeStartDir
-     *            true if the given directory should be included or just it's entries
+     *            true if the given directory should be included or just it's
+     *            entries
      */
 
-    public Node importFolder(final Node parentnode, final File directory, final boolean includeStartDirectory);
+    public Node importFolder(Node parentnode, File directory, boolean includeStartDirectory);
 
     /**
      * @see javax.jcr.Session#addLockToken(java.lang.String)
      */
-    public void addLockToken(final String lock);
+    public void addLockToken(String lock);
 
     /**
      * @see javax.jcr.Session#getAttribute(java.lang.String)
      */
-    public Object getAttribute(final String name);
+    public Object getAttribute(String name);
 
     /**
      * @see javax.jcr.Session#getAttributeNames()
@@ -110,12 +112,12 @@ public interface JcrOperations {
     /**
      * @see javax.jcr.Session#getImportContentHandler(java.lang.String, int)
      */
-    public ContentHandler getImportContentHandler(final String parentAbsPath, final int uuidBehavior);
+    public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehavior);
 
     /**
      * @see javax.jcr.Session#getItem(java.lang.String)
      */
-    public Item getItem(final String absPath);
+    public Item getItem(String absPath);
 
     /**
      * @see javax.jcr.Session#getLockTokens()
@@ -125,7 +127,7 @@ public interface JcrOperations {
     /**
      * @see javax.jcr.Session#getNamespacePrefix(java.lang.String)
      */
-    public String getNamespacePrefix(final String uri);
+    public String getNamespacePrefix(String uri);
 
     /**
      * @see javax.jcr.Session#getNamespacePrefixes()
@@ -135,13 +137,18 @@ public interface JcrOperations {
     /**
      * @see javax.jcr.Session#getNamespaceURI(java.lang.String)
      */
-    public String getNamespaceURI(final String prefix);
+    public String getNamespaceURI(String prefix);
 
     /**
      * @see javax.jcr.Session#getNodeByUUID(java.lang.String)
      */
-    public Node getNodeByUUID(final String uuid);
+    public Node getNodeByUUID(String uuid);
 
+    /**
+     * @see javax.jcr.Session#getRootNode(); 
+     */
+    public Node getRootNode();
+    
     /**
      * @see javax.jcr.Session#getUserID()
      */
@@ -161,23 +168,23 @@ public interface JcrOperations {
      * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream,
      *      int)
      */
-    public void importXML(final String parentAbsPath, final InputStream in, final int uuidBehavior);
+    public void importXML(String parentAbsPath, InputStream in, int uuidBehavior);
 
     /**
      * @see javax.jcr.Session#refresh(boolean)
      */
-    public void refresh(final boolean keepChanges);
+    public void refresh(boolean keepChanges);
 
     /**
      * @see javax.jcr.Session#removeLockToken(java.lang.String)
      */
-    public void removeLockToken(final String lt);
+    public void removeLockToken(String lt);
 
     /**
      * @see javax.jcr.Session#setNamespacePrefix(java.lang.String,
      *      java.lang.String)
      */
-    public void setNamespacePrefix(final String prefix, final String uri);
+    public void setNamespacePrefix(String prefix, String uri);
 
     /**
      * @see javax.jcr.Session#isLive()
@@ -187,12 +194,12 @@ public interface JcrOperations {
     /**
      * @see javax.jcr.Session#itemExists(java.lang.String)
      */
-    public boolean itemExists(final String absPath);
+    public boolean itemExists(String absPath);
 
     /**
      * @see javax.jcr.Session#move(java.lang.String, java.lang.String)
      */
-    public void move(final String srcAbsPath, final String destAbsPath);
+    public void move(String srcAbsPath, String destAbsPath);
 
     /**
      * @see javax.jcr.Session#save()
@@ -200,13 +207,71 @@ public interface JcrOperations {
     public void save();
 
     /**
-     * Dumps the contents of the given node to standard output.
+     * Dump the contents of the given node in a String. This method parses the whole
+     * tree under the node and can generate a huge String.
      * 
      * @param node
-     *            the node to be dumped (null is equivalent to the root node)
-     * @throws RepositoryException
-     *             on repository errors
+     *            node to be dumped (null is equivalent to the root node)
+     *            
+     * @return node tree in a string representation.
+     *             
      */
-    public String dump(final Node node);
+    public String dump(Node node);
+
+    /**
+     * Execute a persistent query from the given node.
+     * 
+     * @see javax.jcr.query.QueryManager#getQuery(javax.jcr.Node)
+     * @param node node to be dumped
+     * @return query result
+     */
+    public QueryResult query(Node node);
+
+    /**
+     * Execute a query with the given strings with XPATH as default language.
+     * It's the same as #query(java.lang.String, java.lang.String)
+     * 
+     * @see javax.jcr.query.QueryManager#createQuery(java.lang.String, java.lang.String)
+     * @param statement query statement
+     * @return query result
+     */
+    public QueryResult query(String statement);
+
+    /**
+     * Execute a query with the given strings.
+     * 
+     * @see javax.jcr.query.QueryManager#createQuery(java.lang.String, java.lang.String)
+     * @param statement query statement
+     * @param language language statement
+     * @return query result
+     */
+    public QueryResult query(String statement, String language);
+    
+    /**
+     * Default method for doing multiple queries. It assumes the language is
+     * XPATH and that errors will not be ignored.
+     * 
+     * @param list a list of queries that will be executed against the
+     *            repository
+     * @return a map containing the queries as keys and results as values
+     */
+    public Map query(final List list);
+    
+    /**
+     * Utility method for executing a list of queries against the repository.
+     * Reads the queries given and returns the results in a map.
+     * 
+     * <p/> If possible the map will be a LinkedHashSet on JDK 1.4+, otherwise
+     * LinkedHashSet from Commons collections 3.1 if the package is found. If
+     * the above fails a HashMap will be returned.
+     * 
+     * @see org.springframework.core.CollectionFactory
+     * 
+     * @param list list of queries
+     * @param language language of the queries. If null XPATH is assumed.
+     * @param ignoreErrors if true it will populate unfound nodes with null
+     * @return a map containing the queries as keys and results as values
+     */
+    public Map query(final List list, final String language, final boolean ignoreErrors);
 
 }

@@ -4,13 +4,19 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
+ * Callback interface for Jcr code. To be used with JcrTemplate's execute method, 
+ * assumably often as anonymous classes within a method implementation. The typical 
+ * implementation will call Session.get/move/query to perform some operations on 
+ * the repository.
+ * 
+ * @author Costin Leau
  * @author Brian Moseley <bcm@osafoundation.org>
  */
 public interface JcrCallback {
 
     /**
      * Called by {@link JcrTemplate#execute} within an active JCR
-     * {@link javax.jcr.JCRSession}. Is not responsible for logging
+     * {@link javax.jcr.JCRSession}. It is not responsible for logging
      * out of the <code>Session</code> or handling transactions.
      *
      * Allows for returning a result object created within the

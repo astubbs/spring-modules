@@ -4,9 +4,9 @@ import javax.jcr.Repository;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+
 
 public class RepositoryFactoryBeanTests extends TestCase {
 
@@ -42,9 +42,9 @@ public class RepositoryFactoryBeanTests extends TestCase {
         Repository rep = (Repository) factory.getObject();
         assertEquals(rep.getDescriptor("jcr.repository.name"), "Jackrabbit");
         
-        assertSame(factory.getObject(), rep);
-        assertEquals(factory.isSingleton(), true);
-        assertEquals(factory.getObjectType(), Repository.class);
+        assertEquals(true, factory.getObject() instanceof Repository);
+        assertEquals(true, factory.isSingleton());
+        assertEquals(Repository.class, factory.getObjectType());
         factory.destroy();
 
     }

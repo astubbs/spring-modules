@@ -4,24 +4,37 @@ import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Workspace;
+import javax.jcr.observation.ObservationManager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.util.ArrayUtils;
 
 /**
- * Jcr Session Factory. Right now this class is just a simple wrapper around the
- * repository but it offers a central point for adding more functionality later.
+ * Jcr Session Factory. This class is just a simple wrapper around the
+ * repository which facilitates session retrieval through a central point.
+ * </p>
+ * The session factory is able to add event listener definitions for each session.
+ * Note that for added functionality (like JackRabbit SessionListener) you can use
+ * the decorators package (available from JackRabbit). 
  * 
  * @author Costin Leau
  * @author Brian Moseley <bcm@osafoundation.org>
  * 
  */
-public class JcrSessionFactory implements InitializingBean, SessionFactory {
+public class JcrSessionFactory implements InitializingBean {
+
+    private static final Log log = LogFactory.getLog(JcrSessionFactory.class);
 
     private Repository repository;
 
     private String workspaceName;
 
     private Credentials credentials;
+
+    private EventListenerDefinition eventListenerDefinitions[];
 
     /**
      * @param repository
@@ -32,7 +45,7 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
         this.workspaceName = workspaceName;
         this.credentials = credentials;
         afterPropertiesSet();
-        
+
     }
 
     public JcrSessionFactory() {
@@ -56,10 +69,36 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
      */
     public Session getSession(String workspace) {
         try {
-            return repository.login(credentials, workspace);
+            return addListeners(repository.login(credentials, workspace));
+
         } catch (RepositoryException e) {
             throw SessionFactoryUtils.translateException(e);
         }
+    }
+
+    /**
+     * Hook for adding listeners to the newly returned session.
+     * We have to treat exceptions manually and can't reply on the template.
+     * 
+     * @param session JCR session
+     * @return the listened session
+     */
+    protected Session addListeners(Session session) throws RepositoryException {
+        if (eventListenerDefinitions != null) {
+            Workspace ws = session.getWorkspace();
+            ObservationManager manager = ws.getObservationManager();
+            if (log.isDebugEnabled())
+                log.debug("adding listeners " + ArrayUtils.toString(eventListenerDefinitions) + " for session " + session);
+
+            for (int i = 0; i < eventListenerDefinitions.length; i++) {
+                manager.addEventListener(eventListenerDefinitions[i].getListener(),
+                        eventListenerDefinitions[i].getEventTypes(), eventListenerDefinitions[i].getAbsPath(),
+                        eventListenerDefinitions[i].isDeep(), eventListenerDefinitions[i].getUuid(),
+                        eventListenerDefinitions[i].getNodeTypeName(), eventListenerDefinitions[i].isNoLocal());
+            }
+        }
+        return session;
+
     }
 
     /**
@@ -132,6 +171,20 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
             result = 37 * result + workspaceName.hashCode();
 
         return result;
+    }
+
+    /**
+     * @return Returns the eventListenerDefinitions.
+     */
+    public EventListenerDefinition[] getEventListenerDefinitions() {
+        return eventListenerDefinitions;
+    }
+
+    /**
+     * @param eventListenerDefinitions The eventListenerDefinitions to set.
+     */
+    public void setEventListenerDefinitions(EventListenerDefinition[] eventListenerDefinitions) {
+        this.eventListenerDefinitions = eventListenerDefinitions;
     }
 
 }

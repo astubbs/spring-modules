@@ -1,15 +1,13 @@
 /**
  * Created on Sep 23, 2005
  *
- * $Id: RepositoryFactoryBean.java,v 1.1 2005/09/26 10:21:56 costin Exp $
- * $Revision: 1.1 $
+ * $Id: RepositoryFactoryBean.java,v 1.2 2005/10/10 09:20:48 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.jeceira;
 
 import javax.jcr.Repository;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import com.jeceira.config.ConfigManager;
@@ -24,11 +22,6 @@ import com.jeceira.repository.RepositoryFactory;
  * 
  */
 public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFactoryBean {
-
-    /**
-     * Logger for this class
-     */
-    private static final Log log = LogFactory.getLog(RepositoryFactoryBean.class);
 
     /**
      * Default repository configuration file.
@@ -90,7 +83,7 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
      * @return Returns the configManager.
      */
     public ConfigManager getConfigManager() {
-        return configManager;
+        return this.configManager;
     }
 
     /**

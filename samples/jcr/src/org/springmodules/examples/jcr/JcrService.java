@@ -1,41 +1,61 @@
 package org.springmodules.examples.jcr;
 
-import java.io.IOException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springmodules.jcr.JcrCallback;
 import org.springmodules.jcr.JcrTemplate;
-import org.springmodules.jcr.SessionFactory;
 
 /**
  * Sample class for working with the JCR repository.
+ * 
  * @author Costin Leau
  *
  */
 public class JcrService {
+    private static final Log log = LogFactory.getLog(JcrService.class);
+
+    private JcrTemplate template;
 
     /**
-     * Main method.
-     * 
+     * Save something inside the repository;
+     *
      */
-    public static void main(String args[]) {
-        AbstractApplicationContext context = new ClassPathXmlApplicationContext("/applicationContext-repository.xml");
-        
-        ResourceLoader loader = new DefaultResourceLoader();
-        Resource resource = loader.getResource("test.file");
-        
-        SessionFactory factory = (SessionFactory)context.getBean("jcrSessionFactory");
-        factory.getSession();
-        
-        JcrTemplate template = (JcrTemplate)context.getBean("jcrTemplate");
-        try {
-            template.importFile(null, resource.getFile());
-        } catch (IOException e) {
-            System.out.println("file doesn't exist");
-        }
-        context.close();
+    public void saveWithRollback() {
+        saveSmth();
+        throw new RuntimeException("do rollback");
     }
+
+    public void saveSmth() {
+        template.execute(new JcrCallback() {
+
+            public Object doInJcr(Session session) throws RepositoryException {
+                Node root = session.getRootNode();
+                log.info("starting from root node " + root);
+                Node sample = root.addNode("sample node");
+                sample.setProperty("sample property", "bla bla");
+                log.info("saved property " + sample);
+                session.save();
+                return null;
+            }
+        });
+    }
+
+    /**
+     * @return Returns the template.
+     */
+    public JcrTemplate getTemplate() {
+        return template;
+    }
+
+    /**
+     * @param template The template to set.
+     */
+    public void setTemplate(JcrTemplate template) {
+        this.template = template;
+    }
+
 }

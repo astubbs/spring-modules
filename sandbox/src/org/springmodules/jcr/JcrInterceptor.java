@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrInterceptor.java,v 1.1 2005/09/26 10:21:51 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrInterceptor.java,v 1.2 2005/10/10 09:20:44 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
@@ -64,7 +64,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * @author Costin Leau
  * 
  */
-public abstract class JcrInterceptor extends JcrAccessor implements MethodInterceptor, TransactionSessionHolder {
+public class JcrInterceptor extends JcrAccessor implements MethodInterceptor {
 
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         boolean existingTransaction = false;
@@ -74,7 +74,7 @@ public abstract class JcrInterceptor extends JcrAccessor implements MethodInterc
             existingTransaction = true;
         } else {
             logger.debug("Using new Session for JCR interceptor");
-            TransactionSynchronizationManager.bindResource(getSessionFactory(), new SessionHolder(session));
+            TransactionSynchronizationManager.bindResource(getSessionFactory(), getSessionHolderProvider().createSessionHolder(session));
         }
         try {
             Object retVal = methodInvocation.proceed();

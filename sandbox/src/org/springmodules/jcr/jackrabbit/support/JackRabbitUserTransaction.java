@@ -1,10 +1,10 @@
 /**
  * Created on Sep 8, 2005
  *
- * $Id: JackRabbitUserTransaction.java,v 1.1 2005/09/26 10:21:49 costin Exp $
+ * $Id: JackRabbitUserTransaction.java,v 1.1 2005/10/10 09:20:55 costin Exp $
  * $Revision: 1.1 $
  */
-package org.springmodules.jcr.jackrabbit;
+package org.springmodules.jcr.jackrabbit.support;
 
 import javax.jcr.Session;
 import javax.transaction.NotSupportedException;
@@ -19,11 +19,11 @@ import javax.transaction.xa.Xid;
 import org.apache.jackrabbit.core.XASession;
 
 /**
- * Taken from JackRabbit test suite.
- * 
+ * JackRabbit User transaction (based on the XA Resource returned by JackRabbit).
+ * <p/>
+ * Inspired from JackRabbit test suite.
  * 
  * Internal {@link javax.transaction.UserTransaction} implementation.
- * 
  * 
  */
 public class JackRabbitUserTransaction implements UserTransaction {
