@@ -17,11 +17,9 @@
  */
 package org.springmodules.cache.interceptor.caching;
 
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.aopalliance.intercept.MethodInvocation;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.util.Strings;
@@ -37,38 +35,20 @@ import org.springmodules.util.Strings;
  * @version $Revision$ $Date$
  */
 public final class MethodMapCachingInterceptor extends
-    AbstractCachingInterceptor {
-
-  /**
-   * Retrieves caching models from class methods.
-   */
-  private CachingModelSource cachingModelSource;
+    AbstractModelSourceCachingInterceptor {
 
   public MethodMapCachingInterceptor() {
     super();
-  }
-
-  public CachingModelSource getCachingModelSource() {
-    return cachingModelSource;
-  }
-
-  /**
-   * @see AbstractCachingInterceptor#getModel(MethodInvocation)
-   */
-  protected CachingModel getModel(MethodInvocation methodInvocation) {
-    Object thisObject = methodInvocation.getThis();
-    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
-    Method method = methodInvocation.getMethod();
-    return cachingModelSource.getCachingModel(method, targetClass);
   }
 
   /**
    * @see AbstractCachingInterceptor#onAfterPropertiesSet()
    */
   protected void onAfterPropertiesSet() throws FatalCacheException {
+    CachingModelSource cachingModelSource = getCachingModelSource();
+
     if (cachingModelSource == null) {
       MethodMapCachingModelSource newSource = new MethodMapCachingModelSource();
-      setCachingModelSource(newSource);
 
       Map models = getCachingModels();
       FatalCacheException fatalCacheException = null;
@@ -89,15 +69,12 @@ public final class MethodMapCachingInterceptor extends
             "Unable to add model stored under the key " + Strings.quote(key),
             exception);
       }
-      
+
       if (fatalCacheException != null) {
         throw fatalCacheException;
       }
+
+      setCachingModelSource(newSource);
     }
   }
-
-  public void setCachingModelSource(CachingModelSource newCachingModelSource) {
-    cachingModelSource = newCachingModelSource;
-  }
-
 }

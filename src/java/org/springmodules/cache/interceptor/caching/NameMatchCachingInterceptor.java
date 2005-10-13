@@ -17,9 +17,6 @@
  */
 package org.springmodules.cache.interceptor.caching;
 
-import java.lang.reflect.Method;
-
-import org.aopalliance.intercept.MethodInvocation;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 
@@ -34,44 +31,18 @@ import org.springmodules.cache.FatalCacheException;
  * @version $Revision$ $Date$
  */
 public final class NameMatchCachingInterceptor extends
-    AbstractCachingInterceptor {
-
-  /**
-   * Retrieves caching models from class methods.
-   */
-  private CachingModelSource cachingModelSource;
-
-  public NameMatchCachingInterceptor() {
-    super();
-  }
-
-  public CachingModelSource getCachingModelSource() {
-    return cachingModelSource;
-  }
-
-  /**
-   * @see AbstractCachingInterceptor#getModel(MethodInvocation)
-   */
-  protected CachingModel getModel(MethodInvocation methodInvocation) {
-    Object thisObject = methodInvocation.getThis();
-    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
-    Method method = methodInvocation.getMethod();
-    return cachingModelSource.getCachingModel(method, targetClass);
-  }
+    AbstractModelSourceCachingInterceptor {
 
   /**
    * @see AbstractCachingInterceptor#onAfterPropertiesSet()
    */
   protected void onAfterPropertiesSet() throws FatalCacheException {
+    CachingModelSource cachingModelSource = getCachingModelSource();
     if (cachingModelSource == null) {
       NameMatchCachingModelSource newSource = new NameMatchCachingModelSource();
       newSource.setCachingModels(getCachingModels());
       setCachingModelSource(newSource);
     }
-  }
-
-  public void setCachingModelSource(CachingModelSource newCachingModelSource) {
-    cachingModelSource = newCachingModelSource;
   }
 
 }
