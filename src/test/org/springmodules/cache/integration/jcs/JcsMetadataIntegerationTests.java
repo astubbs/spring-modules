@@ -27,8 +27,6 @@ package org.springmodules.cache.integration.jcs;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.7 $ $Date: 2005/10/13 04:53:15 $
  */
 public final class JcsMetadataIntegerationTests extends
     AbstractJcsIntegrationTests {

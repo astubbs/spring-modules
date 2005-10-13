@@ -26,8 +26,6 @@ package org.springmodules.cache.integration.jcs;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.7 $ $Date: 2005/10/13 04:53:13 $
  */
 public final class JcsProxyFactoryIntegerationTests extends
     AbstractJcsIntegrationTests {

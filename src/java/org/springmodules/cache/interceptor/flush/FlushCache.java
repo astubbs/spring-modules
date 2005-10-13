@@ -28,8 +28,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.15 $ $Date: 2005/10/13 04:52:30 $
  */
 public class FlushCache implements CacheAttribute {
 

@@ -25,8 +25,6 @@ package org.springmodules.cache.regex;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.4 $ $Date: 2005/08/04 04:50:11 $
  */
 public class PatternInvalidSyntaxException extends RuntimeException {
 

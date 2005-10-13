@@ -47,8 +47,6 @@ import org.springmodules.util.ArrayUtils;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.23 $ $Date: 2005/10/13 04:53:33 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacade {
 

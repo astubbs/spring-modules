@@ -28,8 +28,6 @@ import java.lang.reflect.Method;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public interface FlushingAttributeSource {
 

@@ -23,8 +23,6 @@ package org.springmodules.cache.interceptor.proxy;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public interface Person {
 

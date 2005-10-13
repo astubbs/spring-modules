@@ -29,8 +29,6 @@ import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class JcsModelValidatorTests extends TestCase {
 
@@ -70,8 +68,7 @@ public final class JcsModelValidatorTests extends TestCase {
     }
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void setUp() {
     cachingModel = new JcsCachingModel();
     flushingModel = new JcsFlushingModel();
     validator = new JcsModelValidator();

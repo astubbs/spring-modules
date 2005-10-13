@@ -27,8 +27,6 @@ import java.lang.reflect.Method;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.5 $ $Date: 2005/10/13 04:51:57 $
  */
 public final class HashCodeCacheKeyGeneratorTests extends
     AbstractCacheKeyGeneratorTests {

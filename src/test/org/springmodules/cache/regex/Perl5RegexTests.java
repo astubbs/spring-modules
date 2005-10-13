@@ -23,8 +23,6 @@ package org.springmodules.cache.regex;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class Perl5RegexTests extends AbstractRegexTestCases {
 

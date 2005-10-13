@@ -34,8 +34,6 @@ import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.10 $ $Date: 2005/09/25 05:27:54 $
  */
 public final class JcsManagerFactoryBean extends
     AbstractCacheManagerFactoryBean {

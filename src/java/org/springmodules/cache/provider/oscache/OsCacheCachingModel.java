@@ -30,8 +30,6 @@ import org.springmodules.util.Strings;
  * Configuration options needed to access OSCache.
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class OsCacheCachingModel implements CachingModel {
 

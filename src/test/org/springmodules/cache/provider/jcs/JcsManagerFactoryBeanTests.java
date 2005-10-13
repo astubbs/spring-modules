@@ -36,8 +36,6 @@ import org.springmodules.cache.provider.PathUtils;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.6 $ $Date: 2005/09/23 02:58:36 $
  */
 public final class JcsManagerFactoryBeanTests extends TestCase {
 
@@ -89,9 +87,7 @@ public final class JcsManagerFactoryBeanTests extends TestCase {
     return (CompositeCacheManager) cacheManagerFactoryBean.getObject();
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  protected void setUp() {
     cacheManagerFactoryBean = new JcsManagerFactoryBean();
   }
 

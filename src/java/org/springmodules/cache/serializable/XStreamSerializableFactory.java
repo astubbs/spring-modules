@@ -30,8 +30,6 @@ import com.thoughtworks.xstream.XStream;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class XStreamSerializableFactory implements SerializableFactory {
 

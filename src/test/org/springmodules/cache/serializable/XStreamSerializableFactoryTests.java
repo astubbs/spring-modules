@@ -31,8 +31,6 @@ import com.thoughtworks.xstream.XStream;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class XStreamSerializableFactoryTests extends TestCase {
 
@@ -47,9 +45,7 @@ public class XStreamSerializableFactoryTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  protected void setUp() {
     serializableFactory = new XStreamSerializableFactory();
     puppy = new Puppy("Scooby");
   }

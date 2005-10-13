@@ -27,8 +27,6 @@ import java.io.Serializable;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public interface SerializableFactory {
 

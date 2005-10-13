@@ -35,8 +35,6 @@ import org.springmodules.cache.mock.MockFlushingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class NameMatchFlushingInterceptorTests extends TestCase {
 

@@ -36,8 +36,6 @@ import org.springmodules.cache.mock.MockCachingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class MetadataCachingInterceptorTests extends TestCase {
 

@@ -30,8 +30,6 @@ import org.springmodules.cache.interceptor.AbstractNameMatchCacheModelSource;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class NameMatchFlushingModelSource extends
     AbstractNameMatchCacheModelSource implements FlushingModelSource {

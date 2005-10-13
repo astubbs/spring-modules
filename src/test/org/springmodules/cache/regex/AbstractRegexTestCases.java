@@ -25,8 +25,6 @@ import junit.framework.TestCase;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class AbstractRegexTestCases extends TestCase {
 

@@ -33,8 +33,6 @@ import org.springmodules.cache.CachingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
 

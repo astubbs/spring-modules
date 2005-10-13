@@ -32,8 +32,6 @@ import org.springmodules.cache.CacheAttribute;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:40 $
  */
 public abstract class AbstractSingleMetadataCacheAttributeSource extends
     AbstractMetadataCacheAttributeSource {

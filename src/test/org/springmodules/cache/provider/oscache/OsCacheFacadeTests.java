@@ -40,8 +40,6 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.13 $ $Date: 2005/10/13 04:53:07 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
@@ -104,9 +102,7 @@ public class OsCacheFacadeTests extends TestCase {
     osCacheFacade.setCacheManager(cacheAdministrator);
   }
 
-  protected void tearDown() throws Exception {
-    super.tearDown();
-
+  protected void tearDown() {
     if (cacheAdministrator != null) {
       cacheAdministrator.destroy();
     }

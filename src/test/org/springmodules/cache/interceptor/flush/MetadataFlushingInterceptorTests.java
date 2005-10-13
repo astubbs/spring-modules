@@ -36,8 +36,6 @@ import org.springmodules.cache.mock.MockFlushingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class MetadataFlushingInterceptorTests extends TestCase {
 

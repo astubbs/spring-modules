@@ -33,8 +33,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class SemicolonSeparatedPropertiesParser {
 

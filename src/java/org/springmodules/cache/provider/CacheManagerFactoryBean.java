@@ -27,8 +27,6 @@ import org.springframework.beans.factory.InitializingBean;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public interface CacheManagerFactoryBean extends FactoryBean, InitializingBean,
     DisposableBean {

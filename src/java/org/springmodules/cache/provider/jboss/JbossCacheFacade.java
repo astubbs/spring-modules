@@ -35,8 +35,6 @@ import org.springmodules.cache.provider.CacheModelValidator;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class JbossCacheFacade extends AbstractCacheProviderFacade {
 

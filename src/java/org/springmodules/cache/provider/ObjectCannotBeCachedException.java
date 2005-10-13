@@ -25,8 +25,6 @@ import org.springmodules.cache.CacheException;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class ObjectCannotBeCachedException extends CacheException {
 

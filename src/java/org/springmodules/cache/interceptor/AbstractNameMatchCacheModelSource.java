@@ -33,8 +33,6 @@ import org.springmodules.cache.util.TextMatcher;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class AbstractNameMatchCacheModelSource {
 

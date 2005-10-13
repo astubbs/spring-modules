@@ -25,8 +25,6 @@ package org.springmodules.cache.key;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:20 $
  */
 public final class HashCodeCalculator {
 

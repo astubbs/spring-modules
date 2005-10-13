@@ -23,8 +23,6 @@ package org.springmodules.cache.regex;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:53 $
  */
 public final class Match {
 

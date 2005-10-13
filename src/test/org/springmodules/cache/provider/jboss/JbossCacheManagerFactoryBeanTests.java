@@ -1,5 +1,5 @@
 /* 
- * Created on Oct 18, 2004
+ * Created on Sep 1, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -30,8 +30,6 @@ import org.springmodules.cache.provider.PathUtils;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class JbossCacheManagerFactoryBeanTests extends TestCase {
 
@@ -50,8 +48,7 @@ public final class JbossCacheManagerFactoryBeanTests extends TestCase {
     return (TreeCache) cacheManagerFactoryBean.getObject();
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void setUp() {
     cacheManagerFactoryBean = new JbossCacheManagerFactoryBean();
   }
 

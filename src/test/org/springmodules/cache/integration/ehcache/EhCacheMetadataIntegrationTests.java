@@ -26,17 +26,12 @@ package org.springmodules.cache.integration.ehcache;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.8 $ $Date: 2005/10/13 04:52:53 $
  */
 public final class EhCacheMetadataIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
   private static final String METADATA_CONFIG = "**/ehCacheMetadataContext.xml";
 
-  /**
-   * Constructor.
-   */
   public EhCacheMetadataIntegrationTests() {
     super();
   }

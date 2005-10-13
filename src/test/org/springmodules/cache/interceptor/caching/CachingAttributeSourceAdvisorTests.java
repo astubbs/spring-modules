@@ -31,8 +31,6 @@ import org.springframework.aop.framework.AopConfigException;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:07 $
  */
 public final class CachingAttributeSourceAdvisorTests extends TestCase {
 

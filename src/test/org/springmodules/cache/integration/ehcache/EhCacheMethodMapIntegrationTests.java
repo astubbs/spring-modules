@@ -26,8 +26,6 @@ package org.springmodules.cache.integration.ehcache;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class EhCacheMethodMapIntegrationTests extends
     AbstractEhCacheIntegrationTests {

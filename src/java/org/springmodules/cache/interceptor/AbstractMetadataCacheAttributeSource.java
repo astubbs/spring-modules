@@ -30,8 +30,6 @@ import java.util.Map;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:39 $
  */
 public abstract class AbstractMetadataCacheAttributeSource {
 

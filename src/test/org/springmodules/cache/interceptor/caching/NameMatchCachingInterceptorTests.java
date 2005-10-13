@@ -33,8 +33,6 @@ import org.springmodules.cache.mock.MockCachingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class NameMatchCachingInterceptorTests extends TestCase {
 

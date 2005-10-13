@@ -30,8 +30,6 @@ import junit.framework.Assert;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class SerializationAssert {
 

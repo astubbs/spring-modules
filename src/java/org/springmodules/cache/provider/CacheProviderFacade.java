@@ -32,8 +32,6 @@ import org.springmodules.cache.FlushingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.8 $ $Date: 2005/10/13 04:53:02 $
  */
 public interface CacheProviderFacade extends InitializingBean {
 

@@ -32,8 +32,6 @@ import org.springmodules.cache.CacheModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class NameMatchCacheModelSourceTests extends TestCase {
 

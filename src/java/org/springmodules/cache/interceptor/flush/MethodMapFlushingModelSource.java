@@ -29,8 +29,6 @@ import org.springmodules.cache.interceptor.AbstractMethodMapCacheModelSource;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class MethodMapFlushingModelSource extends
     AbstractMethodMapCacheModelSource implements FlushingModelSource {

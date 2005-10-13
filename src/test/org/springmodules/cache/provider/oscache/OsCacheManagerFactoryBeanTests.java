@@ -35,8 +35,6 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.8 $ $Date: 2005/09/25 05:25:49 $
  */
 public final class OsCacheManagerFactoryBeanTests extends TestCase {
 
@@ -83,8 +81,7 @@ public final class OsCacheManagerFactoryBeanTests extends TestCase {
     return (GeneralCacheAdministrator) cacheManagerFactoryBean.getObject();
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void setUp() {
     cacheManagerFactoryBean = new OsCacheManagerFactoryBean();
   }
 

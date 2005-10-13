@@ -34,8 +34,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.8 $ $Date: 2005/09/25 05:19:21 $
  */
 public abstract class BracketSeparatedPropertiesParser {
 

@@ -25,8 +25,6 @@ import org.springmodules.cache.FlushingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class AbstractFlushingModel implements FlushingModel {
 

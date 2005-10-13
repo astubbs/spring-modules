@@ -33,8 +33,6 @@ import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeS
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.6 $ $Date: 2005/10/13 04:51:38 $
  */
 public final class MetadataCachingAttributeSource extends
     AbstractCachingAttributeSource {

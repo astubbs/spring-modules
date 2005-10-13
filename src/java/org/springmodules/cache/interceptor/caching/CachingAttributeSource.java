@@ -27,8 +27,6 @@ import java.lang.reflect.Method;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.3 $ $Date: 2005/04/27 01:41:08 $
  */
 public interface CachingAttributeSource {
 

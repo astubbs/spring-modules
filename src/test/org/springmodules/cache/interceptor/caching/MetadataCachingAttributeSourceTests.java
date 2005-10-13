@@ -35,8 +35,6 @@ import org.springmodules.cache.CacheAttribute;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.5 $ $Date: 2005/10/13 04:52:06 $
  */
 public final class MetadataCachingAttributeSourceTests extends TestCase {
 

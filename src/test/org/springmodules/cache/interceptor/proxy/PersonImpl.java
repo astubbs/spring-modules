@@ -23,14 +23,9 @@ package org.springmodules.cache.interceptor.proxy;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class PersonImpl implements Person {
 
-  /**
-   * Version of this class.
-   */
   private static final long serialVersionUID = 5359948798614362318L;
 
   /**

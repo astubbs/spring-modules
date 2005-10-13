@@ -31,8 +31,6 @@ import org.springmodules.EqualsHashCodeTestCase;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.8 $ $Date: 2005/10/13 04:51:58 $
  */
 public final class HashCodeCacheKeyTests extends TestCase implements
     EqualsHashCodeTestCase {

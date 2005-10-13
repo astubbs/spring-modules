@@ -39,8 +39,6 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class FlushingInterceptorTests extends TestCase {
 

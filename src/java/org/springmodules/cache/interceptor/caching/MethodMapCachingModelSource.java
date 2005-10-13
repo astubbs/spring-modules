@@ -30,8 +30,6 @@ import org.springmodules.cache.interceptor.AbstractMethodMapCacheModelSource;
  * 
  * @author Xavier Dury
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class MethodMapCachingModelSource extends
     AbstractMethodMapCacheModelSource implements CachingModelSource {

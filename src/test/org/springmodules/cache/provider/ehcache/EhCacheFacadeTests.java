@@ -41,8 +41,6 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.17 $ $Date: 2005/10/13 04:52:34 $
  */
 public class EhCacheFacadeTests extends TestCase {
 

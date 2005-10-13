@@ -1,6 +1,4 @@
 /* 
- * OscacheIntegrationTest.java
- * 
  * Created on Sep 22, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -36,8 +34,6 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.11 $ $Date: 2005/10/13 04:52:04 $
  */
 public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractCacheIntegrationTests {

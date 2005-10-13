@@ -25,8 +25,6 @@ import org.springmodules.cache.CacheAttribute;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.2 $ $Date: 2005/08/04 05:15:10 $
  */
 public class MockCacheAttribute implements CacheAttribute {
 

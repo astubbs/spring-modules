@@ -36,8 +36,6 @@ import org.springmodules.cache.util.SemicolonSeparatedPropertiesParser;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class ReflectionCacheModelEditor extends PropertyEditorSupport {
 

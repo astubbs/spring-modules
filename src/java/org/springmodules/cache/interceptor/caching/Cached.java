@@ -28,8 +28,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.14 $ $Date: 2005/10/13 04:51:30 $
  */
 public class Cached implements CacheAttribute {
 

@@ -29,8 +29,6 @@ import junit.framework.TestCase;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class CacheManagerFactoryBeanTests extends TestCase {
 
@@ -70,8 +68,7 @@ public class CacheManagerFactoryBeanTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void setUp() {
     factoryBean = new MockCacheManagerFactoryBean();
   }
 

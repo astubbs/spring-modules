@@ -28,8 +28,6 @@ import junit.framework.TestCase;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.7 $ $Date: 2005/09/29 01:22:15 $
  */
 public final class BracketSeparatedPropertiesParserTests extends TestCase {
 
@@ -66,9 +64,7 @@ public final class BracketSeparatedPropertiesParserTests extends TestCase {
     }
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  protected void setUp() {
     properties = new Properties();
 
     propertyKey = "name";

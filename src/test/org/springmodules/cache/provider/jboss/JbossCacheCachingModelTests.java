@@ -1,5 +1,5 @@
 /* 
- * Created on Oct 29, 2004
+ * Created on Sep 1, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,8 +32,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class JbossCacheCachingModelTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -60,9 +58,7 @@ public final class JbossCacheCachingModelTests extends TestCase implements
     assertEquals(expected, actual);
   }
 
-  protected final void setUp() throws Exception {
-    super.setUp();
-
+  protected final void setUp() {
     cacheModel = new JbossCacheCachingModel();
   }
 

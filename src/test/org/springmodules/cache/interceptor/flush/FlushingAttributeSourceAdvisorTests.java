@@ -31,8 +31,6 @@ import org.springframework.aop.framework.AopConfigException;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class FlushingAttributeSourceAdvisorTests extends TestCase {
 

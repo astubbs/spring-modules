@@ -40,8 +40,6 @@ import org.springmodules.cache.serializable.SerializableFactory;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class CacheProviderFacadeTests extends TestCase {
 

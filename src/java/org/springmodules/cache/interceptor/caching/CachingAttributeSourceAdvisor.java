@@ -31,8 +31,6 @@ import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.6 $ $Date: 2005/10/13 04:51:40 $
  */
 public class CachingAttributeSourceAdvisor extends
     StaticMethodMatcherPointcutAdvisor {

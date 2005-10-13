@@ -30,8 +30,6 @@ import org.apache.oro.text.regex.Perl5Matcher;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.6 $ $Date: 2005/09/21 03:06:15 $
  */
 public class Perl5Regex implements Regex {
 

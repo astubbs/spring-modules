@@ -40,8 +40,6 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.14 $ $Date: 2005/10/13 04:52:15 $
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacade {
 

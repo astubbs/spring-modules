@@ -33,8 +33,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class OsCacheCachingModelTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -65,9 +63,7 @@ public final class OsCacheCachingModelTests extends TestCase implements
     assertEquals(expected, actual);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  protected void setUp() {
     cacheModel = new OsCacheCachingModel();
   }
 

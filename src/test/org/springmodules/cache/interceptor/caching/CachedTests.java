@@ -32,8 +32,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.15 $ $Date: 2005/10/13 04:52:09 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {

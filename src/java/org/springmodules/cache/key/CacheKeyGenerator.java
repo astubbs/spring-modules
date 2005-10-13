@@ -28,8 +28,6 @@ import org.aopalliance.intercept.MethodInvocation;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.4 $ $Date: 2005/05/30 13:30:31 $
  */
 public interface CacheKeyGenerator {
 

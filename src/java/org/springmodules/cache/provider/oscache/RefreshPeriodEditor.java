@@ -31,8 +31,6 @@ import com.opensymphony.oscache.base.CacheEntry;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class RefreshPeriodEditor extends PropertyEditorSupport {
 

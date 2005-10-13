@@ -48,8 +48,6 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.10 $ $Date: 2005/10/13 04:53:38 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 

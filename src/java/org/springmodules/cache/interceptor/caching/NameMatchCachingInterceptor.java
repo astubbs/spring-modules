@@ -27,8 +27,6 @@ import org.springmodules.cache.FatalCacheException;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class NameMatchCachingInterceptor extends
     AbstractModelSourceCachingInterceptor {

@@ -32,8 +32,6 @@ import org.aopalliance.intercept.MethodInvocation;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.7 $ $Date: 2005/09/09 02:19:20 $
  */
 public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
 
@@ -90,17 +88,16 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
    * @return the hash code of the specified method argument.
    */
   protected final int getMethodArgumentHashCode(Object methodArgument) {
-    int methodArgumentHashCode = 0;
+    int hashCode = 0;
 
     if (methodArgument != null) {
       if (generateArgumentHashCode) {
-        methodArgumentHashCode = HashCodeBuilder
-            .reflectionHashCode(methodArgument);
+        hashCode = HashCodeBuilder.reflectionHashCode(methodArgument);
       } else {
-        methodArgumentHashCode = methodArgument.hashCode();
+        hashCode = methodArgument.hashCode();
       }
     }
-    return methodArgumentHashCode;
+    return hashCode;
   }
 
   public final void setGenerateArgumentHashCode(

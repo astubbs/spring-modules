@@ -33,8 +33,6 @@ import org.springmodules.cache.FlushingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class MetadataFlushingInterceptor extends AbstractFlushingInterceptor {
 

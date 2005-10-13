@@ -37,8 +37,6 @@ import org.springmodules.cache.mock.MockCacheAttribute;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:36 $
  */
 public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 

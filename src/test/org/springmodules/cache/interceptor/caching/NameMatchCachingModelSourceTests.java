@@ -33,8 +33,6 @@ import junit.framework.TestCase;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class NameMatchCachingModelSourceTests extends TestCase {
 

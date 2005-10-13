@@ -32,8 +32,6 @@ import org.springmodules.cache.FlushingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class NameMatchFlushingInterceptor extends
     AbstractFlushingInterceptor {

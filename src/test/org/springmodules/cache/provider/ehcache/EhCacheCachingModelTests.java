@@ -32,8 +32,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class EhCacheCachingModelTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -60,8 +58,7 @@ public final class EhCacheCachingModelTests extends TestCase implements
     assertEquals(expected, actual);
   }
 
-  protected final void setUp() throws Exception {
-    super.setUp();
+  protected final void setUp() {
     model = new EhCacheCachingModel();
   }
 

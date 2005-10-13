@@ -42,8 +42,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
     InitializingBean {

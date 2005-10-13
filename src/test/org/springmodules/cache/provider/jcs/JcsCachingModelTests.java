@@ -1,6 +1,4 @@
 /* 
- * JcsCachingAttributeTest.java
- * 
  * Created on Sep 24, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -34,8 +32,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class JcsCachingModelTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -64,8 +60,7 @@ public final class JcsCachingModelTests extends TestCase implements
     assertEquals(expected, actual);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void setUp() {
     cacheModel = new JcsCachingModel();
   }
 

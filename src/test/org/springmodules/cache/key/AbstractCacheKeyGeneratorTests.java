@@ -33,8 +33,6 @@ import org.easymock.MockControl;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.5 $ $Date: 2005/10/13 04:51:58 $
  */
 public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
 

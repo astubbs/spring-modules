@@ -26,8 +26,6 @@ import junit.framework.TestCase;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.4 $ $Date: 2005/10/13 04:51:57 $
  */
 public final class HashCodeCalculatorTests extends TestCase {
 
@@ -37,8 +35,7 @@ public final class HashCodeCalculatorTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void setUp() {
     hashCodeCalculator = new HashCodeCalculator();
   }
 

@@ -34,8 +34,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class MethodMapFlushingInterceptor extends
     AbstractFlushingInterceptor {

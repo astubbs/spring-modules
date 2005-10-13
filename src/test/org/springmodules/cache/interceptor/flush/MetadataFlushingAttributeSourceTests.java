@@ -34,8 +34,6 @@ import org.springframework.metadata.Attributes;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class MetadataFlushingAttributeSourceTests extends TestCase {
 

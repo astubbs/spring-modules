@@ -31,8 +31,6 @@ import org.springframework.core.io.Resource;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class AbstractCacheManagerFactoryBean implements
     CacheManagerFactoryBean {

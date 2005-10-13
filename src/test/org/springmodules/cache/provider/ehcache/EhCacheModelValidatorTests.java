@@ -28,8 +28,6 @@ import org.springmodules.cache.provider.InvalidCacheModelException;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class EhCacheModelValidatorTests extends TestCase {
 
@@ -69,8 +67,7 @@ public final class EhCacheModelValidatorTests extends TestCase {
     }
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
+  protected void setUp() {
     cachingModel = new EhCacheCachingModel();
     flushingModel = new EhCacheFlushingModel();
     validator = new EhCacheModelValidator();

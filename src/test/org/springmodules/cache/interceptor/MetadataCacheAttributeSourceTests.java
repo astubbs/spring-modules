@@ -29,8 +29,6 @@ import junit.framework.TestCase;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.5 $ $Date: 2005/10/13 04:52:39 $
  */
 public class MetadataCacheAttributeSourceTests extends TestCase {
 
@@ -40,9 +38,7 @@ public class MetadataCacheAttributeSourceTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  protected void setUp() {
     attributeSource = new AbstractMetadataCacheAttributeSource() {
       protected Collection findAllAttributes(Method method) {
         return null;

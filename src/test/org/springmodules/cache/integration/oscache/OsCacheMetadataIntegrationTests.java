@@ -26,8 +26,6 @@ package org.springmodules.cache.integration.oscache;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.7 $ $Date: 2005/10/13 04:52:03 $
  */
 public final class OsCacheMetadataIntegrationTests extends
     AbstractOsCacheIntegrationTestCases {

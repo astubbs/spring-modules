@@ -24,8 +24,6 @@ package org.springmodules.cache.provider;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public interface CacheModelValidator {
 

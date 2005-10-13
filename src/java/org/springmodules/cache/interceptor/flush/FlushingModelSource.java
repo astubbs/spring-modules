@@ -28,8 +28,6 @@ import org.springmodules.cache.FlushingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public interface FlushingModelSource {
 

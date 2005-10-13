@@ -42,8 +42,6 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.10 $ $Date: 2005/10/13 04:53:39 $
  */
 public final class CacheProxyFactoryBean extends ProxyConfig implements
     FactoryBean, InitializingBean {

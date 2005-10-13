@@ -29,8 +29,6 @@ import org.springmodules.util.ArrayUtils;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public final class EhCacheModelValidator implements CacheModelValidator {
 

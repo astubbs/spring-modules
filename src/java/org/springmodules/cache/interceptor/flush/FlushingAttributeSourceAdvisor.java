@@ -31,8 +31,6 @@ import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class FlushingAttributeSourceAdvisor extends
     StaticMethodMatcherPointcutAdvisor {

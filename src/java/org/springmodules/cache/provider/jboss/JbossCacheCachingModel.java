@@ -27,8 +27,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class JbossCacheCachingModel implements CachingModel {
 

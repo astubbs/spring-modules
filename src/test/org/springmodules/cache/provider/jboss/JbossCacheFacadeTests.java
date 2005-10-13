@@ -36,8 +36,6 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class JbossCacheFacadeTests extends TestCase {
 

@@ -49,8 +49,6 @@ import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.19 $ $Date: 2005/10/13 04:53:30 $
  */
 public final class JcsFacadeTests extends TestCase {
 

@@ -42,8 +42,6 @@ import org.springmodules.cache.provider.ObjectCannotBeCachedException;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.17 $ $Date: 2005/10/13 04:53:27 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacade {
 

@@ -1,7 +1,5 @@
 /* 
- * OscacheIntegrationTest.java
- * 
- * Created on Sep 22, 2004
+ * Created on Sep 1, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -32,8 +30,6 @@ import org.springmodules.cache.provider.jboss.JbossCacheCachingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class AbstractJbossCacheIntegrationTestCases extends
     AbstractCacheIntegrationTests {

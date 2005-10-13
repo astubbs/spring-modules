@@ -32,8 +32,6 @@ import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeS
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class AbstractFlushingAttributeSource extends
     AbstractSingleMetadataCacheAttributeSource implements

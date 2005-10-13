@@ -27,8 +27,6 @@ import junit.framework.TestCase;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class RefreshPeriodEditorTests extends TestCase {
 
@@ -38,9 +36,7 @@ public class RefreshPeriodEditorTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  protected void setUp() {
     editor = new RefreshPeriodEditor();
   }
 

@@ -33,8 +33,6 @@ import org.springmodules.util.Strings;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class ObjectWrapperTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -62,9 +60,7 @@ public class ObjectWrapperTests extends TestCase implements
     assertEquals(expected, actual);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
+  protected void setUp() {
     wrapper = new ObjectWrapper();
   }
 

@@ -26,8 +26,6 @@ import org.springmodules.util.Strings;
  * Configuration options for accessing JCS.
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class JcsCachingModel implements CachingModel {
 

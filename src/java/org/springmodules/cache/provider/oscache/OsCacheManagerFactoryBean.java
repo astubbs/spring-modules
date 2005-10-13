@@ -35,7 +35,6 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * </p>
  * 
  * @author Alex Ruiz
- * @version $Revision: 1.9 $ $Date: 2005/09/25 05:28:09 $
  */
 public final class OsCacheManagerFactoryBean extends
     AbstractCacheManagerFactoryBean {

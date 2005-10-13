@@ -25,8 +25,6 @@ import java.util.List;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.2 $ $Date: 2005/08/05 02:18:54 $
  */
 public interface SimulatedService {
 

@@ -1,6 +1,4 @@
 /* 
- * JcsIntegrationTest.java
- * 
  * Created on Oct 22, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -36,8 +34,6 @@ import org.springmodules.cache.provider.jcs.JcsCachingModel;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision: 1.13 $ $Date: 2005/10/13 04:53:15 $
  */
 public abstract class AbstractJcsIntegrationTests extends
     AbstractCacheIntegrationTests {

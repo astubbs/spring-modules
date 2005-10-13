@@ -27,8 +27,6 @@ import org.springmodules.util.Strings;
  * EHCache.
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class EhCacheCachingModel implements CachingModel {
 
