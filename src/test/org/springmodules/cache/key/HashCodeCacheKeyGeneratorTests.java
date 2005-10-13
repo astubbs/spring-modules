@@ -28,30 +28,25 @@ import java.lang.reflect.Method;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/06 01:41:30 $
+ * @version $Revision: 1.5 $ $Date: 2005/10/13 04:51:57 $
  */
 public final class HashCodeCacheKeyGeneratorTests extends
     AbstractCacheKeyGeneratorTests {
 
-  /**
-   * @see HashCodeCacheKeyGeneratorTests#argument
-   * @see HashCodeCacheKeyGeneratorTests#testGetMethodArgumentHashCodeGeneratingHashCode()
-   * @see HashCodeCacheKeyGeneratorTests#testGetMethodArgumentHashCodeNotGeneratingHashCode()
-   */
   private class Argument {
 
     private String name;
 
     public String getName() {
-      return this.name;
+      return name;
     }
 
     public int hashCode() {
       return 10;
     }
 
-    public void setName(String name) {
-      this.name = name;
+    public void setName(String newName) {
+      name = newName;
     }
   }
 
@@ -67,19 +62,19 @@ public final class HashCodeCacheKeyGeneratorTests extends
     super(name);
   }
 
-  protected void afterSetUp() throws Exception {
-    this.keyGenerator = new HashCodeCacheKeyGenerator();
+  protected void afterSetUp() {
+    keyGenerator = new HashCodeCacheKeyGenerator();
   }
 
   /**
    * @see AbstractCacheKeyGeneratorTests#getCacheKeyGenerator()
    */
   protected CacheKeyGenerator getCacheKeyGenerator() {
-    return this.keyGenerator;
+    return keyGenerator;
   }
 
   private void setUpArgument() {
-    this.argument = new Argument();
+    argument = new Argument();
   }
 
   /**
@@ -100,13 +95,12 @@ public final class HashCodeCacheKeyGeneratorTests extends
     long checkSum = hashCodeCalculator.getCheckSum();
     int hashCode = hashCodeCalculator.getHashCode();
 
-    Serializable expectedCacheKey = new HashCodeCacheKey(checkSum, hashCode);
+    Serializable expected = new HashCodeCacheKey(checkSum, hashCode);
 
     // get the actual key.
-    Serializable actualCacheKey = executeGenerateArgumentHashCode(
-        toStringMethod, null);
+    Serializable actual = executeGenerateArgumentHashCode(toStringMethod, null);
 
-    assertEquals("<Cache key>", expectedCacheKey, actualCacheKey);
+    assertEquals(expected, actual);
   }
 
   /**
@@ -117,11 +111,10 @@ public final class HashCodeCacheKeyGeneratorTests extends
    */
   public void testGetMethodArgumentHashCodeGeneratingHashCode() {
     setUpArgument();
-    this.keyGenerator.setGenerateArgumentHashCode(true);
+    keyGenerator.setGenerateArgumentHashCode(true);
 
-    int generatedHashCode = this.keyGenerator
-        .getMethodArgumentHashCode(this.argument);
-    int argumentHashCode = this.argument.hashCode();
+    int generatedHashCode = keyGenerator.getMethodArgumentHashCode(argument);
+    int argumentHashCode = argument.hashCode();
 
     assertTrue("The generated hash code '" + generatedHashCode
         + "' should not be equal to the argument's hash code '"
@@ -136,11 +129,10 @@ public final class HashCodeCacheKeyGeneratorTests extends
    */
   public void testGetMethodArgumentHashCodeNotGeneratingHashCode() {
     setUpArgument();
-    this.keyGenerator.setGenerateArgumentHashCode(false);
+    keyGenerator.setGenerateArgumentHashCode(false);
 
-    int generatedHashCode = this.keyGenerator
-        .getMethodArgumentHashCode(this.argument);
-    int argumentHashCode = this.argument.hashCode();
+    int generatedHashCode = keyGenerator.getMethodArgumentHashCode(argument);
+    int argumentHashCode = argument.hashCode();
 
     assertEquals(argumentHashCode, generatedHashCode);
   }
@@ -151,9 +143,6 @@ public final class HashCodeCacheKeyGeneratorTests extends
    * returns zero if the given method argument is <code>null</code>.
    */
   public void testGetMethodArgumentHashCodeWithArgumentEqualToNull() {
-    int actualArgumentHashCode = this.keyGenerator
-        .getMethodArgumentHashCode(null);
-
-    assertEquals(0, actualArgumentHashCode);
+    assertEquals(0, keyGenerator.getMethodArgumentHashCode(null));
   }
 }

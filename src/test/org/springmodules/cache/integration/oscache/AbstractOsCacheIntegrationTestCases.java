@@ -21,10 +21,10 @@
 package org.springmodules.cache.integration.oscache;
 
 import java.io.Serializable;
-import java.util.Map;
 
-import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.provider.oscache.OsCacheModel;
+import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
+import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
+import org.springmodules.util.Strings;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
@@ -37,10 +37,12 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.10 $ $Date: 2005/09/29 01:22:13 $
+ * @version $Revision: 1.11 $ $Date: 2005/10/13 04:52:04 $
  */
 public abstract class AbstractOsCacheIntegrationTestCases extends
-    AbstractIntegrationTests {
+    AbstractCacheIntegrationTests {
+
+  protected static final String CACHE_CONFIG = "**/osCacheContext.xml";
 
   /**
    * OSCache cache administrator.
@@ -52,54 +54,37 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCacheWasFlushed()
+   * @see AbstractCacheIntegrationTests#assertCacheWasFlushed()
    */
   protected void assertCacheWasFlushed() {
-    Serializable cacheKey = getGeneratedKey(0);
-    String key = cacheKey.toString();
+    KeyAndModel keyAndModel = getKeyAndModel(0);
+    Serializable key = keyAndModel.key;
 
     try {
-      cacheAdministrator.getFromCache(key);
-      fail("There should not be any object cached under the key '" + cacheKey
-          + "'");
+      cacheAdministrator.getFromCache(key.toString());
+      fail("There should not be any object cached under the key <"
+          + Strings.quoteIfString(key) + ">");
+
     } catch (NeedsRefreshException needsRefreshException) {
       // expecting this exception.
     }
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCorrectCacheModelConfiguration(Map)
+   * @see AbstractCacheIntegrationTests#assertObjectWasCached(Object, int)
    */
-  protected void assertCorrectCacheModelConfiguration(Map cacheModels) {
-    OsCacheModel expected = new OsCacheModel();
-    expected.setGroups("testGroup");
-    expected.setRefreshPeriod(1);
-
-    String cacheModelId = "test";
-    Object actual = cacheModels.get(cacheModelId);
-
-    assertEqualCacheModules(expected, actual, cacheModelId);
-  }
-
-  /**
-   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
-   */
-  protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
-      throws Exception {
-    Serializable cacheKey = getGeneratedKey(keyIndex);
-    String key = cacheKey.toString();
-
-    Object actualCachedObject = cacheAdministrator.getFromCache(key);
-
-    assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
+  protected void assertObjectWasCached(Object expectedCachedObject,
+      int keyAndModelIndex) throws Exception {
+    KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
+    Object actual = cacheAdministrator.getFromCache(keyAndModel.key.toString());
+    assertEquals(expectedCachedObject, actual);
   }
 
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
    */
   protected final void onSetUp() throws Exception {
-    // get the cache administrator from the Spring bean context.
     cacheAdministrator = (GeneralCacheAdministrator) applicationContext
-        .getBean("cacheManager");
+        .getBean(CACHE_MANAGER_BEAN_ID);
   }
 }

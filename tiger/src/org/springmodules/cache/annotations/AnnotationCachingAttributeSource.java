@@ -45,21 +45,16 @@ import org.springmodules.cache.interceptor.caching.Cached;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/09/29 01:21:48 $
+ * @version $Revision: 1.3 $ $Date: 2005/10/13 04:52:01 $
  */
 public class AnnotationCachingAttributeSource extends
     AbstractCachingAttributeSource {
 
-  /**
-   * Constructor.
-   */
   public AnnotationCachingAttributeSource() {
     super();
   }
 
   /**
-   * Returns all JDK 1.5+ annotations found for the given method.
-   * 
    * @return all JDK 1.5+ annotations found for the given method.
    */
   @Override
@@ -86,9 +81,7 @@ public class AnnotationCachingAttributeSource extends
       for (Object attribute : attributes) {
         if (attribute instanceof Cacheable) {
           Cacheable cacheable = (Cacheable) attribute;
-          String cacheModelId = cacheable.cacheModelId();
-
-          cached = new Cached(cacheModelId);
+          cached = new Cached(cacheable.modelId());
           break;
         }
       }

@@ -20,12 +20,10 @@
 
 package org.springmodules.cache.integration.jboss;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.jboss.cache.TreeCache;
-import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.provider.jboss.JbossCacheModel;
+import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
+import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
+import org.springmodules.cache.provider.jboss.JbossCacheCachingModel;
 
 /**
  * <p>
@@ -38,9 +36,9 @@ import org.springmodules.cache.provider.jboss.JbossCacheModel;
  * @version $Revision$ $Date$
  */
 public abstract class AbstractJbossCacheIntegrationTestCases extends
-    AbstractIntegrationTests {
+    AbstractCacheIntegrationTests {
 
-  private static final String CACHE_NODE_FQN = "a/b/c";
+  protected static final String CACHE_CONFIG = "**/jbossCacheContext.xml";
 
   /**
    * JBossCache cache manager.
@@ -52,34 +50,27 @@ public abstract class AbstractJbossCacheIntegrationTestCases extends
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCacheWasFlushed()
+   * @see AbstractCacheIntegrationTests#assertCacheWasFlushed()
    */
   protected void assertCacheWasFlushed() throws Exception {
-    Serializable cacheKey = getGeneratedKey(0);
-    assertNull(cacheManager.get(CACHE_NODE_FQN, cacheKey));
+    int index = 0;
+    Object cachedObject = getCachedObject(index);
+    assertCacheEntryFromCacheIsNull(cachedObject, getKeyAndModel(index).key);
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCorrectCacheModelConfiguration(Map)
+   * @see AbstractCacheIntegrationTests#assertObjectWasCached(Object, int)
    */
-  protected void assertCorrectCacheModelConfiguration(Map cacheModels) {
-    JbossCacheModel expected = new JbossCacheModel();
-    expected.setNodeFqn(CACHE_NODE_FQN);
-
-    String cacheModelId = "test";
-    Object actual = cacheModels.get(cacheModelId);
-
-    assertEqualCacheModules(expected, actual, cacheModelId);
+  protected void assertObjectWasCached(Object expectedCachedObject,
+      int keyAndModelIndex) throws Exception {
+    Object actual = getCachedObject(keyAndModelIndex);
+    assertEquals(expectedCachedObject, actual);
   }
 
-  /**
-   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
-   */
-  protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
-      throws Exception {
-    Serializable cacheKey = getGeneratedKey(keyIndex);
-    Object actualCachedObject = cacheManager.get(CACHE_NODE_FQN, cacheKey);
-    assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
+  private Object getCachedObject(int keyAndModelIndex) throws Exception {
+    KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
+    JbossCacheCachingModel model = (JbossCacheCachingModel) keyAndModel.model;
+    return cacheManager.get(model.getNode(), keyAndModel.key);
   }
 
   /**
@@ -87,6 +78,7 @@ public abstract class AbstractJbossCacheIntegrationTestCases extends
    */
   protected final void onSetUp() throws Exception {
     // get the cache administrator from the Spring bean context.
-    cacheManager = (TreeCache) applicationContext.getBean("cacheManager");
+    cacheManager = (TreeCache) applicationContext
+        .getBean(CACHE_MANAGER_BEAN_ID);
   }
 }

@@ -28,14 +28,12 @@ package org.springmodules.cache.integration;
  * @version $Revision$ $Date$
  */
 public final class ApplicationContextPaths {
-
-  public static final String EHCACHE = "**/ehcacheApplicationContext.xml";
-
+  
   public static final String JBOSSCACHE = "**/jbosscacheApplicationContext.xml";
 
   public static final String JCS = "**/jcsApplicationContext.xml";
 
-  public static final String METADATA_ATTRIBUTES = "**/metadataApplicationContext.xml";
+  public static final String METADATA_ATTRIBUTES = "**/metadataContext.xml";
 
   public static final String OSCACHE = "**/oscacheApplicationContext.xml";
 

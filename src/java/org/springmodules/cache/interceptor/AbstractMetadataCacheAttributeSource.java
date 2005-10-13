@@ -31,12 +31,12 @@ import java.util.Map;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:08 $
+ * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:39 $
  */
 public abstract class AbstractMetadataCacheAttributeSource {
 
   /**
-   * Canonical value held in cache to indicate no attribute was found for this
+   * Canonical value held in cache to indicate no attribute was found for a
    * method, and we don't need to look again.
    */
   protected static final Object NULL_ATTRIBUTE = new Object();
@@ -72,8 +72,7 @@ public abstract class AbstractMetadataCacheAttributeSource {
    * @return the key to access the attribute cache.
    */
   protected final Object getAttributeEntryKey(Method method, Class targetClass) {
-    StringBuffer keyBuffer = new StringBuffer(64);
-    keyBuffer.append(targetClass);
+    StringBuffer keyBuffer = new StringBuffer(targetClass.toString());
     keyBuffer.append(System.identityHashCode(method));
     return keyBuffer.toString();
   }

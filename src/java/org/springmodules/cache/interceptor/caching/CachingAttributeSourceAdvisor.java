@@ -26,13 +26,13 @@ import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 /**
  * <p>
  * Advisor driven by a <code>{@link CachingAttributeSource}</code> that points
- * to <code>{@link CachingInterceptor}</code> which methods should be
+ * to <code>{@link MetadataCachingInterceptor}</code> which methods should be
  * intercepted.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:57 $
+ * @version $Revision: 1.6 $ $Date: 2005/10/13 04:51:40 $
  */
 public class CachingAttributeSourceAdvisor extends
     StaticMethodMatcherPointcutAdvisor {
@@ -46,36 +46,33 @@ public class CachingAttributeSourceAdvisor extends
   private CachingAttributeSource cachingAttributeSource;
 
   /**
-   * @param cacheInterceptor
+   * @param interceptor
    *          Advice that caches the returned value of intercepted methods.
    * @throws AopConfigException
    *           if the <code>CachingAttributeSource</code> of
    *           <code>cacheInterceptor</code> is <code>null</code>.
    */
-  public CachingAttributeSourceAdvisor(CachingInterceptor cacheInterceptor) {
-    super(cacheInterceptor);
+  public CachingAttributeSourceAdvisor(MetadataCachingInterceptor interceptor) {
+    super(interceptor);
 
-    CachingAttributeSource tempAttributeSource = cacheInterceptor
-        .getCachingAttributeSource();
+    CachingAttributeSource tempSource = interceptor.getCachingAttributeSource();
 
-    if (tempAttributeSource == null) {
-      String message = "Constructor 'CachingAttributeSourceAdvisor'. "
-          + "CacheFlushInterceptor has no CachingAttributeSource configured";
-
-      throw new AopConfigException(message);
+    if (tempSource == null) {
+      throw new AopConfigException("<" + interceptor.getClass().getName()
+          + "> has no <" + CachingAttributeSource.class.getName()
+          + "> configured");
     }
 
-    cachingAttributeSource = tempAttributeSource;
+    cachingAttributeSource = tempSource;
   }
 
   /**
-   * Returns <code>true</code> if the intercepted method should be cached.
-   * 
    * @param method
    *          the intercepted method to verify.
    * @param targetClass
    *          the class declaring the method.
-   * @return <code>true</code> if the specified method should be cached.
+   * @return <code>true</code> if the return value of the intercepted method
+   *         should be cached.
    */
   public final boolean matches(Method method, Class targetClass) {
     Cached attribute = cachingAttributeSource.getCachingAttribute(method,

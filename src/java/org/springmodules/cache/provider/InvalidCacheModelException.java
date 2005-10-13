@@ -18,10 +18,13 @@
 
 package org.springmodules.cache.provider;
 
+import org.springmodules.cache.CacheException;
+import org.springmodules.cache.CachingModel;
+
 /**
  * <p>
  * Exception thrown when one or more properties of a
- * <code>{@link CacheModel}</code> contain invalid values.
+ * <code>{@link CachingModel}</code> contain invalid values.
  * </p>
  * 
  * @author Alex Ruiz

@@ -29,14 +29,17 @@ import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.springframework.util.StringUtils;
+import org.springmodules.cache.CacheException;
+import org.springmodules.cache.CachingModel;
+import org.springmodules.cache.FatalCacheException;
+import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.CacheException;
-import org.springmodules.cache.provider.CacheNotFoundException;
-import org.springmodules.cache.provider.CacheModel;
-import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
-import org.springmodules.cache.provider.FatalCacheException;
+import org.springmodules.cache.provider.CacheNotFoundException;
+import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
+import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -45,7 +48,7 @@ import org.springmodules.cache.provider.FatalCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.22 $ $Date: 2005/09/29 01:22:01 $
+ * @version $Revision: 1.23 $ $Date: 2005/10/13 04:53:33 $
  */
 public final class JcsFacade extends AbstractCacheProviderFacade {
 
@@ -54,64 +57,63 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
    */
   private CompositeCacheManager cacheManager;
 
+  private CacheModelValidator cacheModelValidator;
+
   public JcsFacade() {
     super();
+    cacheModelValidator = new JcsModelValidator();
   }
 
   /**
-   * @param cacheName
+   * @param name
    *          the name of the cache.
    * @return the cache retrieved from the cache manager.
    * @throws CacheNotFoundException
    *           if the cache does not exist.
    */
-  protected CompositeCache getCache(String cacheName) {
-    CompositeCache cache = cacheManager.getCache(cacheName);
+  protected CompositeCache getCache(String name) {
+    CompositeCache cache = cacheManager.getCache(name);
     if (cache == null) {
-      throw new CacheNotFoundException(cacheName);
+      throw new CacheNotFoundException(name);
     }
 
     return cache;
   }
 
-  /**
-   * @see AbstractCacheProviderFacade#getCacheModelEditor()
-   */
-  protected PropertyEditor getCacheModelEditor() {
-    CacheModelEditor editor = new CacheModelEditor();
-    editor.setCacheModelClass(JcsModel.class);
+  public CacheModelValidator getCacheModelValidator() {
+    return cacheModelValidator;
+  }
+
+  public PropertyEditor getCachingModelEditor() {
+    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+    editor.setCacheModelClass(JcsCachingModel.class);
     return editor;
   }
 
-  /**
-   * @see AbstractCacheProviderFacade#getCacheModelValidator()
-   * @see JcsModelValidator#validateCacheModel(Object)
-   */
-  protected CacheModelValidator getCacheModelValidator() {
-    return new JcsModelValidator();
+  public PropertyEditor getFlushingModelEditor() {
+    return new JcsFlushingModelEditor();
   }
 
   /**
    * Returns the key of a cache entry.
    * 
-   * @param cacheKey
+   * @param key
    *          the generated key.
-   * @param jcsModel
-   *          the the cache model that specifies how to retrieve or store an
-   *          entry.
+   * @param model
+   *          the model that specifies how to retrieve or store an entry.
    * @return the key of a cache entry.
    */
-  protected Serializable getKey(Serializable cacheKey, JcsModel jcsModel) {
-    Serializable key = cacheKey;
+  protected Serializable getKey(Serializable key, JcsCachingModel model) {
+    Serializable newKey = key;
 
-    String group = jcsModel.getGroup();
+    String group = model.getGroup();
     if (StringUtils.hasText(group)) {
-      GroupId groupId = new GroupId(jcsModel.getCacheName(), group);
-      GroupAttrName groupAttrName = new GroupAttrName(groupId, cacheKey);
-      key = groupAttrName;
+      GroupId groupId = new GroupId(model.getCacheName(), group);
+      GroupAttrName groupAttrName = new GroupAttrName(groupId, key);
+      newKey = groupAttrName;
     }
 
-    return key;
+    return newKey;
   }
 
   /**
@@ -122,56 +124,67 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onFlushCache(CacheModel)
+   * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected void onFlushCache(CacheModel cacheModel) throws CacheException {
-    JcsModel jcsModel = (JcsModel) cacheModel;
-    String cacheName = jcsModel.getCacheName();
+  protected void onFlushCache(FlushingModel model) throws CacheException {
+    JcsFlushingModel flushingModel = (JcsFlushingModel) model;
 
-    CompositeCache cache = getCache(cacheName);
-
-    String cacheGroup = jcsModel.getGroup();
+    CacheStruct[] cacheStructs = flushingModel.getCacheStructs();
+    if (cacheStructs == null) {
+      return;
+    }
 
     try {
-      if (StringUtils.hasText(cacheGroup)) {
-        GroupId groupId = new GroupId(cacheName, cacheGroup);
-        cache.remove(groupId);
+      int structCount = cacheStructs.length;
 
-      } else {
-        cache.removeAll();
+      for (int i = 0; i < structCount; i++) {
+        CacheStruct cacheStruct = cacheStructs[i];
+
+        String cacheName = cacheStruct.getCacheName();
+        String[] groups = cacheStruct.getGroups();
+
+        CompositeCache cache = getCache(cacheName);
+
+        if (ArrayUtils.hasElements(groups)) {
+          int groupCount = groups.length;
+          for (int j = 0; j < groupCount; j++) {
+            GroupId groupId = new GroupId(cacheName, groups[j]);
+            cache.remove(groupId);
+          }
+        } else {
+          cache.removeAll();
+        }
       }
-
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CacheModel)
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CachingModel)
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected Object onGetFromCache(Serializable cacheKey, CacheModel cacheModel)
+  protected Object onGetFromCache(Serializable key, CachingModel model)
       throws CacheException {
-
-    JcsModel jcsModel = (JcsModel) cacheModel;
-    String cacheName = jcsModel.getCacheName();
+    JcsCachingModel cachingModel = (JcsCachingModel) model;
+    String cacheName = cachingModel.getCacheName();
 
     CompositeCache cache = getCache(cacheName);
 
-    Serializable key = getKey(cacheKey, jcsModel);
+    Serializable newKey = getKey(key, cachingModel);
     Object cachedObject = null;
 
     try {
-      ICacheElement cacheElement = cache.get(key);
+      ICacheElement cacheElement = cache.get(newKey);
       if (cacheElement != null) {
         cachedObject = cacheElement.getVal();
       }
@@ -184,7 +197,7 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CacheModel,
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CachingModel,
    *      Object)
    * 
    * @throws CacheNotFoundException
@@ -192,17 +205,17 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected void onPutInCache(Serializable cacheKey, CacheModel cacheModel,
-      Object objectToCache) throws CacheException {
+  protected void onPutInCache(Serializable key, CachingModel model, Object obj)
+      throws CacheException {
 
-    JcsModel jcsModule = (JcsModel) cacheModel;
-    String cacheName = jcsModule.getCacheName();
+    JcsCachingModel cachingModel = (JcsCachingModel) model;
+    String cacheName = cachingModel.getCacheName();
 
     CompositeCache cache = getCache(cacheName);
 
-    Serializable key = getKey(cacheKey, jcsModule);
-    ICacheElement newCacheElement = new CacheElement(cache.getCacheName(), key,
-        objectToCache);
+    Serializable newKey = getKey(key, cachingModel);
+    ICacheElement newCacheElement = new CacheElement(cache.getCacheName(),
+        newKey, obj);
 
     IElementAttributes elementAttributes = cache.getElementAttributes().copy();
     newCacheElement.setElementAttributes(elementAttributes);
@@ -217,25 +230,24 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
-   *      CacheModel)
+   *      CachingModel)
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected void onRemoveFromCache(Serializable cacheKey, CacheModel cacheModel)
+  protected void onRemoveFromCache(Serializable key, CachingModel model)
       throws CacheException {
-
-    JcsModel jcsModel = (JcsModel) cacheModel;
-    String cacheName = jcsModel.getCacheName();
+    JcsCachingModel cachingModel = (JcsCachingModel) model;
+    String cacheName = cachingModel.getCacheName();
 
     CompositeCache cache = getCache(cacheName);
 
-    Serializable key = getKey(cacheKey, jcsModel);
+    Serializable newKey = getKey(key, cachingModel);
 
     try {
-      cache.remove(key);
+      cache.remove(newKey);
 
     } catch (Exception exception) {
       throw new CacheAccessException(exception);

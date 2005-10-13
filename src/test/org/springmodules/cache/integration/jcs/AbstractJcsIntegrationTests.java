@@ -20,16 +20,14 @@
 
 package org.springmodules.cache.integration.jcs;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.apache.jcs.engine.behavior.ICacheElement;
 import org.apache.jcs.engine.control.CompositeCache;
 import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
-import org.springmodules.cache.integration.AbstractIntegrationTests;
-import org.springmodules.cache.provider.jcs.JcsModel;
+import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
+import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
+import org.springmodules.cache.provider.jcs.JcsCachingModel;
 
 /**
  * <p>
@@ -39,14 +37,12 @@ import org.springmodules.cache.provider.jcs.JcsModel;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/29 01:22:11 $
+ * @version $Revision: 1.13 $ $Date: 2005/10/13 04:53:15 $
  */
 public abstract class AbstractJcsIntegrationTests extends
-    AbstractIntegrationTests {
+    AbstractCacheIntegrationTests {
 
-  private static final String CACHE_GROUP = "testGroup";
-
-  private static final String CACHE_NAME = "testCache";
+  protected static final String CACHE_CONFIG = "**/jcsContext.xml";
 
   /**
    * JCS cache manager.
@@ -58,50 +54,32 @@ public abstract class AbstractJcsIntegrationTests extends
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCacheWasFlushed()
+   * @see AbstractCacheIntegrationTests#assertCacheWasFlushed()
    */
-  protected void assertCacheWasFlushed() throws Exception {
-    Serializable key = getGeneratedKey(0);
-    ICacheElement cacheEntry = getCacheElement(key);
-
-    assertCacheEntryFromCacheIsNull(cacheEntry, key);
+  protected final void assertCacheWasFlushed() {
+    int index = 0;
+    ICacheElement cacheElement = getCacheElement(0);
+    assertCacheEntryFromCacheIsNull(cacheElement, getCacheElement(index));
   }
 
   /**
-   * @see AbstractIntegrationTests#assertCorrectCacheModelConfiguration(Map)
+   * @see AbstractCacheIntegrationTests#assertObjectWasCached(Object, int)
    */
-  protected void assertCorrectCacheModelConfiguration(Map cacheModels) {
-    JcsModel expected = new JcsModel();
-    expected.setGroup(CACHE_GROUP);
-    expected.setCacheName(CACHE_NAME);
-
-    String cacheModelId = "test";
-    Object actual = cacheModels.get(cacheModelId);
-
-    assertEqualCacheModules(expected, actual, cacheModelId);
+  protected final void assertObjectWasCached(Object expectedCachedObject,
+      int keyAndModelIndex) {
+    ICacheElement cacheElement = getCacheElement(keyAndModelIndex);
+    assertEquals(expectedCachedObject, cacheElement.getVal());
   }
 
-  /**
-   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
-   */
-  protected void assertObjectWasCached(Object expectedCachedObject, int keyIndex)
-      throws Exception {
-    Serializable key = getGeneratedKey(keyIndex);
-    ICacheElement cacheElement = getCacheElement(key);
+  private ICacheElement getCacheElement(int keyAndModelIndex) {
+    KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
+    JcsCachingModel model = (JcsCachingModel) keyAndModel.model;
 
-    Object actualCachedObject = cacheElement.getVal();
-
-    assertEqualCachedObjects(expectedCachedObject, actualCachedObject);
-  }
-
-  private ICacheElement getCacheElement(Serializable key) {
-    CompositeCache cache = cacheManager.getCache(CACHE_NAME);
-    String group = CACHE_GROUP;
-    GroupId groupId = new GroupId(CACHE_NAME, group);
-    GroupAttrName groupAttrName = new GroupAttrName(groupId, key);
-
-    ICacheElement cacheElement = cache.get(groupAttrName);
-    return cacheElement;
+    String cacheName = model.getCacheName();
+    CompositeCache cache = cacheManager.getCache(cacheName);
+    GroupId groupId = new GroupId(cacheName, model.getGroup());
+    GroupAttrName groupAttrName = new GroupAttrName(groupId, keyAndModel.key);
+    return cache.get(groupAttrName);
   }
 
   /**
@@ -109,7 +87,7 @@ public abstract class AbstractJcsIntegrationTests extends
    */
   protected final void onSetUp() throws Exception {
     cacheManager = (CompositeCacheManager) applicationContext
-        .getBean("cacheManager");
+        .getBean(CACHE_MANAGER_BEAN_ID);
   }
 
 }

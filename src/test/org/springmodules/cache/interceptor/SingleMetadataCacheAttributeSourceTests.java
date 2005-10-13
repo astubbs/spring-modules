@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -39,15 +38,15 @@ import org.springmodules.cache.mock.MockCacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:19:12 $
+ * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:36 $
  */
 public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
   /**
-   * Collection to be used as the return value of the method
-   * <code>{@link AbstractMetadataCacheAttributeSource#findAllAttributes(Method)}</code>
-   * which is supposed to contain all the metadata attributes for a given
-   * method.
+   * Collection to be used as return value for the method
+   * <code>{@link AbstractMetadataCacheAttributeSource#findAllAttributes(Method)}</code>.
+   * This collection is supposed to contain all the metadata attributes for a
+   * given <code>Method</code>.
    */
   private Collection allAttributes;
 
@@ -83,32 +82,19 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    */
   private void assertCacheAttributeIsCached(Object expectedCachedAttribute) {
     Map attributeMap = attributeSource.getAttributeMap();
-    assertFalse("The map of cached attributes should not be empty",
-        attributeMap.isEmpty());
-
-    Set attributeMapEntrySet = attributeMap.entrySet();
-    Iterator attributeMapEntryIterator = attributeMapEntrySet.iterator();
+    assertFalse(attributeMap.isEmpty());
 
     boolean found = false;
-    while (attributeMapEntryIterator.hasNext()) {
-      Map.Entry attributeMapEntry = (Map.Entry) attributeMapEntryIterator
-          .next();
-
-      Object actualCachedAttribute = attributeMapEntry.getValue();
-      found = (expectedCachedAttribute == actualCachedAttribute);
+    for (Iterator i = attributeMap.entrySet().iterator(); i.hasNext();) {
+      Map.Entry attributeMapEntry = (Map.Entry) i.next();
+      found = (expectedCachedAttribute == attributeMapEntry.getValue());
     }
 
     assertTrue("The metadata attribute '" + expectedCachedAttribute
         + "' was not cached.", found);
   }
 
-  private void setStateOfMockControlsToReplay() {
-    attributeSourceControl.replay();
-  }
-
   protected void setUp() throws Exception {
-    super.setUp();
-
     setUpSingleAttributeSourceAsMockObject();
 
     targetClass = String.class;
@@ -121,9 +107,10 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
   private void setUpSingleAttributeSourceAsMockObject() throws Exception {
     Class classToMock = AbstractSingleMetadataCacheAttributeSource.class;
+    Class superOfClassToMock = AbstractMetadataCacheAttributeSource.class;
 
-    Method findAllAttributesMethod = AbstractMetadataCacheAttributeSource.class
-        .getDeclaredMethod("findAllAttributes", new Class[] { Method.class });
+    Method findAllAttributesMethod = superOfClassToMock.getDeclaredMethod(
+        "findAllAttributes", new Class[] { Method.class });
 
     Method findAttributeMethod = classToMock.getDeclaredMethod("findAttribute",
         new Class[] { Collection.class });
@@ -131,8 +118,8 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     Method[] methodsToMock = new Method[] { findAllAttributesMethod,
         findAttributeMethod };
 
-    attributeSourceControl = MockClassControl.createControl(classToMock, null,
-        null, methodsToMock);
+    attributeSourceControl = MockClassControl.createStrictControl(classToMock,
+        null, null, methodsToMock);
 
     attributeSource = (AbstractSingleMetadataCacheAttributeSource) attributeSourceControl
         .getMock();
@@ -141,7 +128,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link AbstractSingleMetadataCacheAttributeSource#getAttribute(Method, Class)}</code>
-   * caches
+   * stores
    * <code>{@link AbstractMetadataCacheAttributeSource#NULL_ATTRIBUTE}</code>
    * as an metadata attribute if the map of attributes returns <code>null</code>.
    */
@@ -160,7 +147,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
       attributeSourceControl.setReturnValue(null);
     }
 
-    setStateOfMockControlsToReplay();
+    attributeSourceControl.replay();
 
     // execute the method to test.
     CacheAttribute returnedAttribute = attributeSource.getAttribute(method,
@@ -169,17 +156,16 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     // we are expecting not to find the cache attribute.
     assertNull(returnedAttribute);
 
-    // verify that the object represing a null cache attribute was cached.
-    Object expectedCachedAttribute = AbstractMetadataCacheAttributeSource.NULL_ATTRIBUTE;
-    assertCacheAttributeIsCached(expectedCachedAttribute);
+    // verify that the object representing a null cache attribute was cached.
+    assertCacheAttributeIsCached(AbstractMetadataCacheAttributeSource.NULL_ATTRIBUTE);
 
-    verifyExpectationsOfMockControlsWereMet();
+    attributeSourceControl.verify();
   }
 
   /**
    * Verifies that the method
    * <code>{@link AbstractSingleMetadataCacheAttributeSource#getAttribute(Method, Class)}</code>
-   * retrieves and caches the (non-null) metadata attribute for the given class
+   * retrieves and caches the non-null metadata attribute for the given class
    * and method.
    */
   public void testGetAttributeWhenCacheAttributeFoundIsNotEqualToNull() {
@@ -190,7 +176,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     attributeSource.findAttribute(allAttributes);
     attributeSourceControl.setReturnValue(cacheAttribute);
 
-    setStateOfMockControlsToReplay();
+    attributeSourceControl.replay();
 
     // execute the method to test.
     CacheAttribute returnedCacheAttribute = attributeSource.getAttribute(
@@ -199,7 +185,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     assertSame(cacheAttribute, returnedCacheAttribute);
     assertCacheAttributeIsCached(cacheAttribute);
 
-    verifyExpectationsOfMockControlsWereMet();
+    attributeSourceControl.verify();
   }
 
   /**
@@ -212,22 +198,19 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     // add NULL_ATTRIBUTE to the map of cached attributes.
     Map attributeMap = attributeSource.getAttributeMap();
 
-    StringBuffer keyBuffer = new StringBuffer();
-    keyBuffer.append(targetClass);
+    StringBuffer keyBuffer = new StringBuffer(targetClass.toString());
     keyBuffer.append(System.identityHashCode(method));
 
     attributeMap.put(keyBuffer.toString(),
         AbstractMetadataCacheAttributeSource.NULL_ATTRIBUTE);
 
-    setStateOfMockControlsToReplay();
+    attributeSourceControl.replay();
 
     // execute the method to test.
-    CacheAttribute returnedCacheAttribute = attributeSource.getAttribute(
-        method, targetClass);
+    CacheAttribute actual = attributeSource.getAttribute(method, targetClass);
+    assertNull(actual);
 
-    assertNull(returnedCacheAttribute);
-
-    verifyExpectationsOfMockControlsWereMet();
+    attributeSourceControl.verify();
   }
 
   /**
@@ -243,7 +226,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     attributeSource.findAttribute(allAttributes);
     attributeSourceControl.setReturnValue(cacheAttribute);
 
-    setStateOfMockControlsToReplay();
+    attributeSourceControl.replay();
 
     // execute the method to test.
     CacheAttribute returnedCacheAttribute = attributeSource.retrieveAttribute(
@@ -251,7 +234,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
     assertSame(cacheAttribute, returnedCacheAttribute);
 
-    verifyExpectationsOfMockControlsWereMet();
+    attributeSourceControl.verify();
   }
 
   /**
@@ -268,7 +251,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     attributeSource.findAttribute(allAttributes);
     attributeSourceControl.setReturnValue(null);
 
-    setStateOfMockControlsToReplay();
+    attributeSourceControl.replay();
 
     // we are not using the target class we set up for this test case. We send
     // 'int.class' to trick 'AopUtils.getMostSpecificMethod(..)', making the
@@ -278,7 +261,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
     assertNull(returnedCacheAttribute);
 
-    verifyExpectationsOfMockControlsWereMet();
+    attributeSourceControl.verify();
   }
 
   /**
@@ -303,7 +286,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     attributeSource.findAttribute(allAttributes);
     attributeSourceControl.setReturnValue(cacheAttribute);
 
-    setStateOfMockControlsToReplay();
+    attributeSourceControl.replay();
 
     // execute the method to test.
     CacheAttribute returnedCacheAttribute = attributeSource.retrieveAttribute(
@@ -311,7 +294,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
     assertSame(cacheAttribute, returnedCacheAttribute);
 
-    verifyExpectationsOfMockControlsWereMet();
+    attributeSourceControl.verify();
   }
 
   /**
@@ -329,24 +312,21 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     for (int i = 0; i < 2; i++) {
       // get all the metadata attributes.
       attributeSource.findAllAttributes(method);
-      this.attributeSourceControl.setReturnValue(this.allAttributes);
+      attributeSourceControl.setReturnValue(allAttributes);
 
-      this.attributeSource.findAttribute(this.allAttributes);
-      this.attributeSourceControl.setReturnValue(null);
+      attributeSource.findAttribute(allAttributes);
+      attributeSourceControl.setReturnValue(null);
     }
 
-    setStateOfMockControlsToReplay();
+    attributeSourceControl.replay();
 
     // execute the method to test.
-    CacheAttribute returnedCacheAttribute = this.attributeSource
-        .retrieveAttribute(this.method, this.targetClass);
+    CacheAttribute returnedCacheAttribute = attributeSource.retrieveAttribute(
+        method, targetClass);
 
     assertNull(returnedCacheAttribute);
 
-    verifyExpectationsOfMockControlsWereMet();
+    attributeSourceControl.verify();
   }
 
-  private void verifyExpectationsOfMockControlsWereMet() {
-    this.attributeSourceControl.verify();
-  }
 }

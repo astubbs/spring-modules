@@ -19,15 +19,14 @@ package org.springmodules.cache.provider.oscache;
 
 import java.beans.PropertyEditor;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.provider.CacheModelValidator;
-import org.springmodules.cache.provider.FatalCacheException;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
@@ -42,13 +41,11 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.12 $ $Date: 2005/09/29 01:22:08 $
+ * @version $Revision: 1.13 $ $Date: 2005/10/13 04:53:07 $
  */
 public class OsCacheFacadeTests extends TestCase {
 
   private static final String CACHE_KEY = "key";
-
-  private static final String CACHE_MODEL_ID = "cacheModel";
 
   private GeneralCacheAdministrator cacheAdministrator;
 
@@ -56,7 +53,9 @@ public class OsCacheFacadeTests extends TestCase {
 
   private CacheEntryEventListenerImpl cacheEntryEventListener;
 
-  private OsCacheModel cacheModel;
+  private OsCacheCachingModel cachingModel;
+
+  private OsCacheFlushingModel flushingModel;
 
   /**
    * Name of the groups in <code>{@link #cacheAdministrator}</code> to use.
@@ -69,18 +68,12 @@ public class OsCacheFacadeTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    cacheModel = new OsCacheModel();
-
+  protected void setUp() {
+    cachingModel = new OsCacheCachingModel();
     groups = new String[] { "Empire", "Rebels" };
-
-    Map cacheModels = new HashMap();
-    cacheModels.put(CACHE_MODEL_ID, cacheModel);
+    flushingModel = new OsCacheFlushingModel();
 
     osCacheFacade = new OsCacheFacade();
-    osCacheFacade.setCacheModels(cacheModels);
   }
 
   private void setUpCacheAdministrator() {
@@ -120,13 +113,13 @@ public class OsCacheFacadeTests extends TestCase {
   }
 
   public void testGetCacheModelEditor() {
-    PropertyEditor editor = osCacheFacade.getCacheModelEditor();
+    PropertyEditor editor = osCacheFacade.getCachingModelEditor();
 
     assertNotNull(editor);
-    assertEquals(CacheModelEditor.class, editor.getClass());
+    assertEquals(ReflectionCacheModelEditor.class, editor.getClass());
 
-    CacheModelEditor modelEditor = (CacheModelEditor) editor;
-    assertEquals(OsCacheModel.class, modelEditor.getCacheModelClass());
+    ReflectionCacheModelEditor modelEditor = (ReflectionCacheModelEditor) editor;
+    assertEquals(OsCacheCachingModel.class, modelEditor.getCacheModelClass());
 
     Map cacheModelPropertyEditors = modelEditor.getCacheModelPropertyEditors();
     assertNotNull(cacheModelPropertyEditors);
@@ -185,10 +178,10 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministrator.putInCache(CACHE_KEY, objectToStore, groups);
 
     String groupToFlush = groups[0];
-    cacheModel.setGroups(new String[] { groupToFlush });
+    flushingModel.setGroups(new String[] { groupToFlush });
 
     // execute the method to test.
-    osCacheFacade.onFlushCache(cacheModel);
+    osCacheFacade.onFlushCache(flushingModel);
 
     assertEquals("<Number of groups flushed>", 1, cacheEntryEventListener
         .getGroupFlushedCount());
@@ -200,10 +193,10 @@ public class OsCacheFacadeTests extends TestCase {
     Object objectToStore = "An Object";
     cacheAdministrator.putInCache(CACHE_KEY, objectToStore, groups);
 
-    cacheModel.setGroups((String[]) null);
+    flushingModel.setGroups((String[]) null);
 
     // execute the method to test.
-    osCacheFacade.onFlushCache(cacheModel);
+    osCacheFacade.onFlushCache(flushingModel);
 
     String cachedObject = cacheAdministrator.getProperty(CACHE_KEY);
     assertNull(cachedObject);
@@ -216,7 +209,7 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministrator.putInCache(CACHE_KEY, expected);
 
     // execute the method to test.
-    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
+    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cachingModel);
 
     assertSame(expected, actual);
   }
@@ -225,7 +218,7 @@ public class OsCacheFacadeTests extends TestCase {
     setUpCacheAdministrator();
 
     Object cachedObject = osCacheFacade.onGetFromCache("NonExistingKey",
-        cacheModel);
+        cachingModel);
 
     assertNull(cachedObject);
   }
@@ -240,8 +233,8 @@ public class OsCacheFacadeTests extends TestCase {
     String cronExpression = "* * * 0 0";
     int refreshPeriod = 45;
 
-    cacheModel.setCronExpression(cronExpression);
-    cacheModel.setRefreshPeriod(refreshPeriod);
+    cachingModel.setCronExpression(cronExpression);
+    cachingModel.setRefreshPeriod(refreshPeriod);
     Object expected = "Anakin";
 
     cacheAdministrator.getFromCache(CACHE_KEY, refreshPeriod, cronExpression);
@@ -250,7 +243,7 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministratorControl.replay();
 
     // execute the method to test.
-    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
+    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cachingModel);
 
     assertSame(expected, actual);
 
@@ -266,7 +259,7 @@ public class OsCacheFacadeTests extends TestCase {
     setUpCacheAdministratorAsMockObject(getFromCacheMethod);
     int refreshPeriod = 556;
 
-    cacheModel.setRefreshPeriod(refreshPeriod);
+    cachingModel.setRefreshPeriod(refreshPeriod);
     Object expected = "Anakin";
 
     cacheAdministrator.getFromCache(CACHE_KEY, refreshPeriod);
@@ -275,7 +268,7 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministratorControl.replay();
 
     // execute the method to test.
-    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
+    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cachingModel);
 
     assertSame(expected, actual);
 
@@ -288,7 +281,7 @@ public class OsCacheFacadeTests extends TestCase {
 
     setUpCacheAdministratorAsMockObject(getFromCacheMethod);
 
-    cacheModel.setRefreshPeriod(null);
+    cachingModel.setRefreshPeriod(null);
     Object expected = "Anakin";
 
     // retrieve an entry using only the provided key.
@@ -298,7 +291,7 @@ public class OsCacheFacadeTests extends TestCase {
     cacheAdministratorControl.replay();
 
     // execute the method to test.
-    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
+    Object actual = osCacheFacade.onGetFromCache(CACHE_KEY, cachingModel);
 
     assertSame(expected, actual);
 
@@ -311,10 +304,10 @@ public class OsCacheFacadeTests extends TestCase {
     Object objectToStore = "An Object";
 
     String group = groups[0];
-    cacheModel.setGroups(new String[] { group });
+    cachingModel.setGroups(new String[] { group });
 
     // execute the method to test.
-    osCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToStore);
+    osCacheFacade.onPutInCache(CACHE_KEY, cachingModel, objectToStore);
 
     Object cachedObject = cacheAdministrator.getFromCache(CACHE_KEY);
     assertSame(objectToStore, cachedObject);
@@ -333,7 +326,7 @@ public class OsCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OsCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheModel, Object)}</code>
+   * <code>{@link OsCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.CachingModel, Object)}</code>
    * stores an entry using the given key. The entry should not be associated
    * with any group.
    */
@@ -342,10 +335,10 @@ public class OsCacheFacadeTests extends TestCase {
 
     Object objectToStore = "An Object";
 
-    cacheModel.setGroups((String[]) null);
+    cachingModel.setGroups((String[]) null);
 
     // execute the method to test.
-    osCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToStore);
+    osCacheFacade.onPutInCache(CACHE_KEY, cachingModel, objectToStore);
 
     Object cachedObject = cacheAdministrator.getFromCache(CACHE_KEY);
     assertSame(objectToStore, cachedObject);
@@ -363,7 +356,7 @@ public class OsCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OsCacheFacade#onRemoveFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheModel)}</code>
+   * <code>{@link OsCacheFacade#onRemoveFromCache(java.io.Serializable, org.springmodules.cache.CachingModel)}</code>
    * removes from the cache the entry stored under the given key.
    */
   public void testOnRemoveFromCache() throws Exception {

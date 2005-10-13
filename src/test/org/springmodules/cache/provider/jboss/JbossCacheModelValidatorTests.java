@@ -33,17 +33,36 @@ import org.springmodules.cache.provider.InvalidCacheModelException;
  */
 public final class JbossCacheModelValidatorTests extends TestCase {
 
-  private JbossCacheModel cacheModel;
+  private JbossCacheCachingModel cachingModel;
 
-  private JbossCacheModelValidator cacheModelValidator;
+  private JbossCacheFlushingModel flushingModel;
+
+  private JbossCacheModelValidator validator;
 
   public JbossCacheModelValidatorTests(String name) {
     super(name);
   }
 
-  private void assertValidateCacheModelPropertiesThrowsException() {
+  private void assertValidateCachingModelThrowsException() {
+    assertValidateCachingModelThrowsException(cachingModel);
+  }
+
+  private void assertValidateCachingModelThrowsException(Object model) {
     try {
-      cacheModelValidator.validateCacheModelProperties(cacheModel);
+      validator.validateCachingModel(model);
+      fail();
+    } catch (InvalidCacheModelException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  private void assertValidateFlushingModelThrowsException() {
+    assertValidateFlushingModelThrowsException(flushingModel);
+  }
+
+  private void assertValidateFlushingModelThrowsException(Object model) {
+    try {
+      validator.validateFlushingModel(model);
       fail();
     } catch (InvalidCacheModelException exception) {
       // we are expecting this exception.
@@ -52,26 +71,46 @@ public final class JbossCacheModelValidatorTests extends TestCase {
 
   protected void setUp() throws Exception {
     super.setUp();
-    cacheModel = new JbossCacheModel();
-    cacheModelValidator = new JbossCacheModelValidator();
+    cachingModel = new JbossCacheCachingModel();
+    flushingModel = new JbossCacheFlushingModel();
+    validator = new JbossCacheModelValidator();
   }
 
-  public void testGetTargetClass() {
-    assertEquals(JbossCacheModel.class, cacheModelValidator.getTargetClass());
+  public void testValidateCachingModel() {
+    cachingModel.setNode("a/b");
+    validator.validateCachingModel(cachingModel);
   }
 
-  public void testValidateCacheModelPropertiesWithNodeFqnEqualToNull() {
-    cacheModel.setNodeFqn(null);
-    assertValidateCacheModelPropertiesThrowsException();
+  public void testValidateCachingModelWithArgumentNotBeingCachingModel() {
+    assertValidateCachingModelThrowsException("Han Solo");
   }
 
-  public void testValidateCacheModelPropertiesWithEmptyNodeFqn() {
-    cacheModel.setNodeFqn("");
-    assertValidateCacheModelPropertiesThrowsException();
+  public void testValidateCachingModelWithEmptyNodeFqn() {
+    cachingModel.setNode("");
+    assertValidateCachingModelThrowsException();
   }
 
-  public void testValidateCacheModelPropertiesWithNotEmptyNodeFqn() {
-    cacheModel.setNodeFqn("a/b/c");
-    cacheModelValidator.validateCacheModelProperties(cacheModel);
+  public void testValidateCachingModelWithNodeFqnEqualToNull() {
+    cachingModel.setNode(null);
+    assertValidateCachingModelThrowsException();
+  }
+
+  public void testValidateFlushingModel() {
+    flushingModel.setNodes(new String[] { "a/b/c", "a/b/c/d" });
+    validator.validateFlushingModel(flushingModel);
+  }
+
+  public void testValidateFlushingModelWithArgumentNotBeingFlushingModel() {
+    assertValidateFlushingModelThrowsException("Lando");
+  }
+
+  public void testValidateFlushingModelWithEmptyNodeFqnArray() {
+    flushingModel.setNodes(new String[0]);
+    assertValidateFlushingModelThrowsException();
+  }
+
+  public void testValidateFlushingModelWithNodeFqnArrayEqualToNull() {
+    flushingModel.setNodes((String[]) null);
+    assertValidateFlushingModelThrowsException();
   }
 }

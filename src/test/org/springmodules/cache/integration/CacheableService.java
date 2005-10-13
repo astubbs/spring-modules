@@ -30,22 +30,7 @@ package org.springmodules.cache.integration;
  */
 public interface CacheableService {
 
-  /**
-   * Returns a name from the list of names.
-   * 
-   * @param index
-   *          the index of the element in the list.
-   * @return a name from the list of names.
-   */
-  String getName(int index);
+  String getName(int id);
 
-  /**
-   * Updates the name in the specified position in the list.
-   * 
-   * @param index
-   *          the index of the element to update.
-   * @param name
-   *          the new name.
-   */
-  void updateName(int index, String name);
+  void updateName(int id, String name);
 }

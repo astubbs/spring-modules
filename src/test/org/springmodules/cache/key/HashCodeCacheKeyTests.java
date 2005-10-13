@@ -32,7 +32,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/06 01:41:30 $
+ * @version $Revision: 1.8 $ $Date: 2005/10/13 04:51:58 $
  */
 public final class HashCodeCacheKeyTests extends TestCase implements
     EqualsHashCodeTestCase {
@@ -45,19 +45,18 @@ public final class HashCodeCacheKeyTests extends TestCase implements
     super(name);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-    this.key = new HashCodeCacheKey(44322, 544);
+  protected void setUp() {
+    key = new HashCodeCacheKey(44322, 544);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
-    HashCodeCacheKey anotherKey = new HashCodeCacheKey(this.key.getCheckSum(),
-        this.key.getHashCode());
+    HashCodeCacheKey anotherKey = new HashCodeCacheKey(key.getCheckSum(), key
+        .getHashCode());
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(this.key,
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(key,
         anotherKey);
   }
 
@@ -65,57 +64,56 @@ public final class HashCodeCacheKeyTests extends TestCase implements
    * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    long checkSum = this.key.getCheckSum();
-    int hashCode = this.key.getHashCode();
+    long checkSum = key.getCheckSum();
+    int hashCode = key.getHashCode();
 
     HashCodeCacheKey anotherKey = new HashCodeCacheKey(checkSum, hashCode);
 
-    assertEquals(this.key, anotherKey);
+    assertEquals(key, anotherKey);
 
     anotherKey.setCheckSum(589l);
-    assertFalse(this.key.equals(anotherKey));
+    assertFalse(key.equals(anotherKey));
 
     anotherKey.setCheckSum(checkSum);
     anotherKey.setHashCode(33);
-    assertFalse(this.key.equals(anotherKey));
+    assertFalse(key.equals(anotherKey));
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(this.key);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(key);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
-    HashCodeCacheKey anotherKey = new HashCodeCacheKey(this.key.getCheckSum(),
-        this.key.getHashCode());
+    HashCodeCacheKey anotherKey = new HashCodeCacheKey(key.getCheckSum(), key
+        .getHashCode());
 
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.key, anotherKey);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(key, anotherKey);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
-    long checkSum = this.key.getCheckSum();
-    int hashCode = this.key.getHashCode();
+    long checkSum = key.getCheckSum();
+    int hashCode = key.getHashCode();
 
     HashCodeCacheKey secondKey = new HashCodeCacheKey(checkSum, hashCode);
     HashCodeCacheKey thirdKey = new HashCodeCacheKey(checkSum, hashCode);
 
-    EqualsHashCodeAssert
-        .assertEqualsIsTransitive(this.key, secondKey, thirdKey);
+    EqualsHashCodeAssert.assertEqualsIsTransitive(key, secondKey, thirdKey);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(this.key);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(key);
   }
 
   /**
@@ -123,12 +121,12 @@ public final class HashCodeCacheKeyTests extends TestCase implements
    * returns a String representation of <code>{@link HashCodeCacheKey}</code>.
    */
   public void testToString() {
-    String expected = this.key.getHashCode() + "|" + this.key.getCheckSum();
-    String actual = this.key.toString();
+    String expected = key.getHashCode() + "|" + key.getCheckSum();
+    String actual = key.toString();
 
     logger.debug("Expected toString: " + expected);
     logger.debug("Actual toString:   " + actual);
 
-    assertEquals("<ToString>", expected, actual);
+    assertEquals(expected, actual);
   }
 }

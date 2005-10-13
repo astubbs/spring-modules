@@ -18,7 +18,7 @@
 
 package org.springmodules.cache.interceptor.proxy;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.AopConfigException;
@@ -29,11 +29,11 @@ import org.springframework.aop.target.SingletonTargetSource;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ClassUtils;
-import org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor;
-import org.springmodules.cache.interceptor.caching.CachingInterceptor;
-import org.springmodules.cache.interceptor.caching.EntryStoredListener;
-import org.springmodules.cache.interceptor.flush.CacheFlushAttributeSourceAdvisor;
-import org.springmodules.cache.interceptor.flush.CacheFlushInterceptor;
+import org.springmodules.cache.interceptor.caching.CachingListener;
+import org.springmodules.cache.interceptor.caching.CachingModelSourceAdvisor;
+import org.springmodules.cache.interceptor.caching.NameMatchCachingInterceptor;
+import org.springmodules.cache.interceptor.flush.FlushingModelSourceAdvisor;
+import org.springmodules.cache.interceptor.flush.NameMatchFlushingInterceptor;
 import org.springmodules.cache.provider.CacheProviderFacade;
 
 /**
@@ -43,26 +43,18 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/27 04:37:34 $
+ * @version $Revision: 1.10 $ $Date: 2005/10/13 04:53:39 $
  */
 public final class CacheProxyFactoryBean extends ProxyConfig implements
     FactoryBean, InitializingBean {
 
   private static final long serialVersionUID = 3688501099833603120L;
 
-  /**
-   * Interceptor that performs cache flushing/invalidation when the advised
-   * methods are executed.
-   */
-  private CacheFlushInterceptor cacheFlushInterceptor;
+  private NameMatchCachingInterceptor cachingInterceptor;
 
-  /**
-   * Interceptor that performs caching of the returned values of the advised
-   * methods.
-   */
-  private CachingInterceptor cachingInterceptor;
+  private NameMatchFlushingInterceptor flushingInterceptor;
 
-  private boolean hasCacheFlushAttributes;
+  private boolean hasFlushingModels;
 
   /**
    * The proxy to create.
@@ -70,19 +62,16 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
   private Object proxy;
 
   /**
-   * Set of interfaces being proxied.
+   * Set of interfaces to be implemented by the proxy.
    */
   private Class[] proxyInterfaces;
 
-  /**
-   * The bean to be wrapped with a caching proxy.
-   */
   private Object target;
 
   public CacheProxyFactoryBean() {
     super();
-    cacheFlushInterceptor = new CacheFlushInterceptor();
-    cachingInterceptor = new CachingInterceptor();
+    flushingInterceptor = new NameMatchFlushingInterceptor();
+    cachingInterceptor = new NameMatchCachingInterceptor();
   }
 
   /**
@@ -98,18 +87,18 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    */
   public void afterPropertiesSet() {
     cachingInterceptor.afterPropertiesSet();
+    flushingInterceptor.afterPropertiesSet();
 
     if (target == null) {
       throw new IllegalStateException("Property 'target' is required");
     }
 
     ProxyFactory proxyFactory = new ProxyFactory();
-    proxyFactory.addAdvisor(new CachingAttributeSourceAdvisor(
-        cachingInterceptor));
+    proxyFactory.addAdvisor(new CachingModelSourceAdvisor(cachingInterceptor));
 
-    if (hasCacheFlushAttributes) {
-      proxyFactory.addAdvisor(new CacheFlushAttributeSourceAdvisor(
-          cacheFlushInterceptor));
+    if (hasFlushingModels) {
+      proxyFactory.addAdvisor(new FlushingModelSourceAdvisor(
+          flushingInterceptor));
     }
 
     proxyFactory.copyFrom(this);
@@ -154,12 +143,12 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     return targetSource;
   }
 
-  protected CacheFlushInterceptor getCacheFlushInterceptor() {
-    return cacheFlushInterceptor;
+  protected NameMatchCachingInterceptor getCachingInterceptor() {
+    return cachingInterceptor;
   }
 
-  protected CachingInterceptor getCachingInterceptor() {
-    return cachingInterceptor;
+  protected NameMatchFlushingInterceptor getFlushingInterceptor() {
+    return flushingInterceptor;
   }
 
   /**
@@ -191,8 +180,8 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     return proxyInterfaces;
   }
 
-  protected boolean isHasCacheFlushAttributes() {
-    return hasCacheFlushAttributes;
+  protected boolean isHasFlushingModels() {
+    return hasFlushingModels;
   }
 
   /**
@@ -203,72 +192,74 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
   }
 
   /**
-   * Set properties with method names as keys and caching-attribute descriptors
-   * (parsed via
-   * <code>{@link org.springmodules.cache.interceptor.flush.CacheFlushAttributeEditor}</code>)
-   * as values.
-   * <p>
-   * Note: Method names are always applied to the target class, no matter if
-   * defined in an interface or the class itself.
-   * <p>
-   * Internally, a
-   * <code>{@link org.springmodules.cache.interceptor.flush.NameMatchCacheFlushAttributeSource}</code>
-   * will be created from the given properties.
-   * 
-   * @see org.springmodules.cache.interceptor.flush.NameMatchCacheFlushAttributeSource
-   */
-  public void setCacheFlushAttributes(Properties cacheFlushAttributes) {
-    hasCacheFlushAttributes = cacheFlushAttributes != null
-        && !cacheFlushAttributes.isEmpty();
-
-    if (hasCacheFlushAttributes) {
-      cacheFlushInterceptor.setCacheFlushAttributes(cacheFlushAttributes);
-    }
-    else {
-      cacheFlushInterceptor.setCacheFlushAttributeSource(null);
-    }
-  }
-
-  /**
    * Sets the cache provider facade for the interceptors
-   * <code>{@link #cacheFlushInterceptor}</code> and
+   * <code>{@link #flushingInterceptor}</code> and
    * <code>{@link #cachingInterceptor}</code>.
    * 
    * @param cacheProviderFacade
    *          the cache provider facade.
    */
   public void setCacheProviderFacade(CacheProviderFacade cacheProviderFacade) {
-    cacheFlushInterceptor.setCacheProviderFacade(cacheProviderFacade);
+    flushingInterceptor.setCacheProviderFacade(cacheProviderFacade);
     cachingInterceptor.setCacheProviderFacade(cacheProviderFacade);
   }
 
-  /**
-   * Set properties with method names as keys and caching-attribute descriptors
-   * (parsed via
-   * <code>{@link org.springmodules.cache.interceptor.caching.CachingAttributeEditor}</code>)
-   * as values.
-   * <p>
-   * Note: Method names are always applied to the target class, no matter if
-   * defined in an interface or the class itself.
-   * <p>
-   * Internally, a
-   * <code>{@link org.springmodules.cache.interceptor.caching.NameMatchCachingAttributeSource}</code>
-   * will be created from the given properties.
-   * 
-   * @see org.springmodules.cache.interceptor.caching.NameMatchCachingAttributeSource
-   */
-  public void setCachingAttributes(Properties cachingAttributes) {
-    cachingInterceptor.setCachingAttributes(cachingAttributes);
+  protected void setCachingInterceptor(
+      NameMatchCachingInterceptor newCachingInterceptor) {
+    cachingInterceptor = newCachingInterceptor;
   }
 
   /**
    * Sets the listener to be notified each time an entry is stored in the cache.
    * 
-   * @param entryStoredListener
+   * @param cachingListeners
    *          the listener.
    */
-  public void setEntryStoredListener(EntryStoredListener entryStoredListener) {
-    cachingInterceptor.setEntryStoredListener(entryStoredListener);
+  public void setCachingListeners(CachingListener[] cachingListeners) {
+    cachingInterceptor.setCachingListeners(cachingListeners);
+  }
+
+  /**
+   * Sets the caching models with method names as keys.
+   * <p>
+   * Note: Method names are always applied to the target class, no matter if
+   * defined in an interface or the class itself.
+   * <p>
+   * Internally, a
+   * <code>{@link org.springmodules.cache.interceptor.caching.NameMatchCachingModelSource}</code>
+   * will be created from the given properties.
+   * 
+   * @see org.springmodules.cache.interceptor.caching.NameMatchCachingModelSource
+   */
+  public void setCachingModels(Map cachingModels) {
+    cachingInterceptor.setCachingModels(cachingModels);
+  }
+
+  protected void setFlushingInterceptor(
+      NameMatchFlushingInterceptor newFlushingInterceptor) {
+    flushingInterceptor = newFlushingInterceptor;
+  }
+
+  /**
+   * Sets the cache-flushing models with method names as keys.
+   * <p>
+   * Note: Method names are always applied to the target class, no matter if
+   * defined in an interface or the class itself.
+   * <p>
+   * Internally, a
+   * <code>{@link org.springmodules.cache.interceptor.flush.NameMatchFlushingModelSource}</code>
+   * will be created from the given properties.
+   * 
+   * @see org.springmodules.cache.interceptor.flush.NameMatchFlushingModelSource
+   */
+  public void setFlushingModels(Map flushingModels) {
+    hasFlushingModels = flushingModels != null && !flushingModels.isEmpty();
+
+    if (hasFlushingModels) {
+      flushingInterceptor.setFlushingModels(flushingModels);
+    } else {
+      flushingInterceptor.setFlushingModelSource(null);
+    }
   }
 
   /**

@@ -29,14 +29,11 @@ import org.springmodules.cache.integration.ehcache.AbstractEhCacheIntegrationTes
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/08/23 01:18:12 $
+ * @version $Revision: 1.4 $ $Date: 2005/10/13 04:53:03 $
  */
 public final class EhCacheAnnotationIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  /**
-   * Constructor.
-   */
   public EhCacheAnnotationIntegrationTests() {
     super();
   }
@@ -46,10 +43,6 @@ public final class EhCacheAnnotationIntegrationTests extends
    */
   @Override
   protected String[] getConfigLocations() {
-    String[] configFileNames = new String[] {
-        "**/ehcacheApplicationContext.xml",
-        "**/annotationApplicationContext.xml" };
-
-    return configFileNames;
+    return new String[] { CACHE_CONFIG, "**/annotationContext.xml" };
   }
 }

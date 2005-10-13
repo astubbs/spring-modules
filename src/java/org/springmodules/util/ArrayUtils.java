@@ -38,6 +38,27 @@ public abstract class ArrayUtils {
 
   private static final String NULL_ARRAY = "null";
 
+  public static boolean hasElements(Object[] array) {
+    return (array != null && array.length > 0);
+  }
+
+  public static int hashCode(Object[] array) {
+    int multiplier = 31;
+    int hash = 7;
+
+    if (array == null || array.length == 0) {
+      hash = multiplier * hash;
+    } else {
+      int elementCount = array.length;
+      for (int i = 0; i < elementCount; i++) {
+        Object obj = array[i];
+        hash = multiplier * hash + (obj != null ? obj.hashCode() : 0);
+      }
+    }
+
+    return hash;
+  }
+
   public static String toString(byte[] array) {
     if (array == null)
       return NULL_ARRAY;

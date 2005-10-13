@@ -21,12 +21,13 @@ import java.beans.PropertyEditor;
 import java.io.Serializable;
 
 import org.jboss.cache.TreeCache;
+import org.springmodules.cache.CachingModel;
+import org.springmodules.cache.FatalCacheException;
+import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.CacheModel;
-import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
-import org.springmodules.cache.provider.FatalCacheException;
 
 /**
  * <p>
@@ -37,28 +38,31 @@ import org.springmodules.cache.provider.FatalCacheException;
  * 
  * @version $Revision$ $Date$
  */
-public class JbossCacheFacade extends AbstractCacheProviderFacade {
+public final class JbossCacheFacade extends AbstractCacheProviderFacade {
 
   private TreeCache cacheManager;
 
+  private CacheModelValidator cacheModelValidator;
+
   public JbossCacheFacade() {
     super();
+    cacheModelValidator = new JbossCacheModelValidator();
   }
 
-  /**
-   * @see AbstractCacheProviderFacade#getCacheModelEditor()
-   */
-  protected PropertyEditor getCacheModelEditor() {
-    CacheModelEditor editor = new CacheModelEditor();
-    editor.setCacheModelClass(JbossCacheModel.class);
+  public PropertyEditor getCachingModelEditor() {
+    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+    editor.setCacheModelClass(JbossCacheCachingModel.class);
     return editor;
   }
 
-  /**
-   * @see AbstractCacheProviderFacade#getCacheModelValidator()
-   */
-  protected CacheModelValidator getCacheModelValidator() {
-    return new JbossCacheModelValidator();
+  public PropertyEditor getFlushingModelEditor() {
+    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+    editor.setCacheModelClass(JbossCacheFlushingModel.class);
+    return editor;
+  }
+
+  public CacheModelValidator getCacheModelValidator() {
+    return cacheModelValidator;
   }
 
   /**
@@ -72,28 +76,36 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onFlushCache(CacheModel)
+   * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
    */
-  protected void onFlushCache(CacheModel cacheModel) {
-    JbossCacheModel jbossCacheModel = (JbossCacheModel) cacheModel;
+  protected void onFlushCache(FlushingModel model) {
+    JbossCacheFlushingModel flushingModel = (JbossCacheFlushingModel) model;
 
-    try {
-      cacheManager.remove(jbossCacheModel.getNodeFqn());
-    } catch (Exception exception) {
-      throw new CacheAccessException(exception);
+    String[] nodeFqns = flushingModel.getNodes();
+
+    if (nodeFqns != null) {
+      int fqnCount = nodeFqns.length;
+
+      try {
+        for (int i = 0; i < fqnCount; i++) {
+          cacheManager.remove(nodeFqns[i]);
+        }
+      } catch (Exception exception) {
+        throw new CacheAccessException(exception);
+      }
     }
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CacheModel)
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CachingModel)
    */
-  protected Object onGetFromCache(Serializable cacheKey, CacheModel cacheModel) {
-    JbossCacheModel jbossCacheModel = (JbossCacheModel) cacheModel;
+  protected Object onGetFromCache(Serializable key, CachingModel model) {
+    JbossCacheCachingModel cachingModel = (JbossCacheCachingModel) model;
 
     Object cachedObject = null;
 
     try {
-      cachedObject = cacheManager.get(jbossCacheModel.getNodeFqn(), cacheKey);
+      cachedObject = cacheManager.get(cachingModel.getNode(), key);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -101,15 +113,14 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CacheModel,
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CachingModel,
    *      Object)
    */
-  protected void onPutInCache(Serializable cacheKey, CacheModel cacheModel,
-      Object objectToCache) {
-    JbossCacheModel jbossCacheModel = (JbossCacheModel) cacheModel;
+  protected void onPutInCache(Serializable key, CachingModel model, Object obj) {
+    JbossCacheCachingModel cachingModel = (JbossCacheCachingModel) model;
 
     try {
-      cacheManager.put(jbossCacheModel.getNodeFqn(), cacheKey, objectToCache);
+      cacheManager.put(cachingModel.getNode(), key, obj);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
@@ -117,19 +128,19 @@ public class JbossCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
-   *      CacheModel)
+   *      CachingModel)
    */
-  protected void onRemoveFromCache(Serializable cacheKey, CacheModel cacheModel) {
-    JbossCacheModel jbossCacheModel = (JbossCacheModel) cacheModel;
+  protected void onRemoveFromCache(Serializable key, CachingModel model) {
+    JbossCacheCachingModel cachingModel = (JbossCacheCachingModel) model;
 
     try {
-      cacheManager.remove(jbossCacheModel.getNodeFqn(), cacheKey);
+      cacheManager.remove(cachingModel.getNode(), key);
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
   }
 
-  public final void setCacheManager(TreeCache newCacheManager) {
+  public void setCacheManager(TreeCache newCacheManager) {
     cacheManager = newCacheManager;
   }
 

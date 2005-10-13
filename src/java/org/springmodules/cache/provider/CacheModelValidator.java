@@ -30,12 +30,24 @@ package org.springmodules.cache.provider;
 public interface CacheModelValidator {
 
   /**
-   * Validates the properties of the specified cache model.
+   * Validates the properties of the specified caching model.
    * 
-   * @param cacheModel
-   *          the cache model to validate.
+   * @param cachingModel
+   *          the model to validate.
    * @throws InvalidCacheModelException
-   *           if the given cache model is not valid.
+   *           if one or more properties of the given model are not valid.
    */
-  void validateCacheModel(Object cacheModel) throws InvalidCacheModelException;
+  void validateCachingModel(Object cachingModel)
+      throws InvalidCacheModelException;
+
+  /**
+   * Validates the properties of the specified cache-flushing model.
+   * 
+   * @param flushingModel
+   *          the model to validate.
+   * @throws InvalidCacheModelException
+   *           if one or more properties of the given model are not valid.
+   */
+  void validateFlushingModel(Object flushingModel)
+      throws InvalidCacheModelException;
 }

@@ -18,7 +18,6 @@
 
 package org.springmodules.cache.integration.jcs;
 
-import org.springmodules.cache.integration.ApplicationContextPaths;
 
 /**
  * <p>
@@ -29,10 +28,12 @@ import org.springmodules.cache.integration.ApplicationContextPaths;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.6 $ $Date: 2005/09/27 04:38:30 $
+ * @version $Revision: 1.7 $ $Date: 2005/10/13 04:53:15 $
  */
 public final class JcsMetadataIntegerationTests extends
     AbstractJcsIntegrationTests {
+
+  private static final String METADATA_CONFIG = "**/jcsMetadataContext.xml";
 
   public JcsMetadataIntegerationTests() {
     super();
@@ -42,10 +43,6 @@ public final class JcsMetadataIntegerationTests extends
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    String[] configFileNames = new String[] {
-        ApplicationContextPaths.JCS,
-        ApplicationContextPaths.METADATA_ATTRIBUTES };
-
-    return configFileNames;
+    return new String[] { CACHE_CONFIG, METADATA_CONFIG };
   }
 }

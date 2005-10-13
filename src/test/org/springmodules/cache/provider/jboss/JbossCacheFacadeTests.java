@@ -25,10 +25,10 @@ import junit.framework.TestCase;
 import org.easymock.classextension.MockClassControl;
 import org.jboss.cache.Node;
 import org.jboss.cache.TreeCache;
+import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.CacheModelEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
-import org.springmodules.cache.provider.FatalCacheException;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 /**
  * <p>
@@ -41,13 +41,15 @@ import org.springmodules.cache.provider.FatalCacheException;
  */
 public class JbossCacheFacadeTests extends TestCase {
 
-  private static final String CACHE_KEY = "key";
+  private static final String KEY = "key";
 
-  private static final String CACHE_NODE_NAME = "a/b/c/d";
+  private static final String NODE_FQN = "a/b/c/d";
 
-  private JbossCacheModel cacheModel;
+  private JbossCacheFacade cacheFacade;
 
-  private JbossCacheFacade jbossCacheFacade;
+  private JbossCacheCachingModel cachingModel;
+
+  private JbossCacheFlushingModel flushingModel;
 
   private TreeCache treeCache;
 
@@ -60,30 +62,26 @@ public class JbossCacheFacadeTests extends TestCase {
   private void assertSameNestedException(Exception expected,
       CacheAccessException root) {
     assertSame(expected, root.getCause());
-
   }
 
   private Object getFromTreeCache(Object key) throws Exception {
-    return treeCache.get(cacheModel.getNodeFqn(), key);
+    return treeCache.get(cachingModel.getNode(), key);
   }
 
   private void putInTreeCache(Object key, Object value) throws Exception {
-    treeCache.put(cacheModel.getNodeFqn(), key, value);
+    treeCache.put(cachingModel.getNode(), key, value);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    jbossCacheFacade = new JbossCacheFacade();
-
-    cacheModel = new JbossCacheModel(CACHE_NODE_NAME);
+  protected void setUp() {
+    cacheFacade = new JbossCacheFacade();
+    cachingModel = new JbossCacheCachingModel(NODE_FQN);
+    flushingModel = new JbossCacheFlushingModel(NODE_FQN);
   }
 
   private void setUpTreeCache() throws Exception {
     treeCache = new TreeCache();
     startTreeCache();
-
-    jbossCacheFacade.setCacheManager(treeCache);
+    cacheFacade.setCacheManager(treeCache);
   }
 
   private void setUpTreeCacheAsMockObject(Method methodToMock) throws Exception {
@@ -99,7 +97,7 @@ public class JbossCacheFacadeTests extends TestCase {
     treeCache = (TreeCache) treeCacheControl.getMock();
     startTreeCache();
 
-    jbossCacheFacade.setCacheManager(treeCache);
+    cacheFacade.setCacheManager(treeCache);
   }
 
   private void startTreeCache() throws Exception {
@@ -107,23 +105,33 @@ public class JbossCacheFacadeTests extends TestCase {
     treeCache.startService();
   }
 
-  protected void tearDown() throws Exception {
-    super.tearDown();
-
+  protected void tearDown() {
     if (treeCache != null) {
       treeCache.stopService();
       treeCache.destroyService();
     }
   }
 
-  public void testGetCacheModelEditor() {
-    PropertyEditor editor = jbossCacheFacade.getCacheModelEditor();
+  public void testGetCachingModelEditor() {
+    PropertyEditor editor = cacheFacade.getCachingModelEditor();
 
     assertNotNull(editor);
-    assertEquals(CacheModelEditor.class, editor.getClass());
+    assertEquals(ReflectionCacheModelEditor.class, editor.getClass());
 
-    CacheModelEditor modelEditor = (CacheModelEditor) editor;
-    assertEquals(JbossCacheModel.class, modelEditor.getCacheModelClass());
+    ReflectionCacheModelEditor modelEditor = (ReflectionCacheModelEditor) editor;
+    assertEquals(JbossCacheCachingModel.class, modelEditor.getCacheModelClass());
+    assertNull(modelEditor.getCacheModelPropertyEditors());
+  }
+
+  public void testGetFlushingModelEditor() {
+    PropertyEditor editor = cacheFacade.getFlushingModelEditor();
+
+    assertNotNull(editor);
+    assertEquals(ReflectionCacheModelEditor.class, editor.getClass());
+
+    ReflectionCacheModelEditor modelEditor = (ReflectionCacheModelEditor) editor;
+    assertEquals(JbossCacheFlushingModel.class, modelEditor
+        .getCacheModelClass());
     assertNull(modelEditor.getCacheModelPropertyEditors());
   }
 
@@ -134,17 +142,15 @@ public class JbossCacheFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheModelValidator() {
-    CacheModelValidator validator = jbossCacheFacade.getCacheModelValidator();
+    CacheModelValidator validator = cacheFacade.getCacheModelValidator();
     assertNotNull(validator);
     assertEquals(JbossCacheModelValidator.class, validator.getClass());
   }
 
   public void testOnFlushCache() throws Exception {
     setUpTreeCache();
-
-    jbossCacheFacade.onFlushCache(cacheModel);
-
-    Node cacheNode = treeCache.get(cacheModel.getNodeFqn());
+    cacheFacade.onFlushCache(flushingModel);
+    Node cacheNode = treeCache.get(NODE_FQN);
     assertNull(cacheNode);
   }
 
@@ -155,13 +161,12 @@ public class JbossCacheFacadeTests extends TestCase {
 
     RuntimeException expected = new RuntimeException();
 
-    treeCache.remove(CACHE_NODE_NAME);
+    treeCache.remove(NODE_FQN);
     treeCacheControl.setThrowable(expected);
-
     treeCacheControl.replay();
 
     try {
-      jbossCacheFacade.onFlushCache(cacheModel);
+      cacheFacade.onFlushCache(flushingModel);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -175,10 +180,9 @@ public class JbossCacheFacadeTests extends TestCase {
     setUpTreeCache();
 
     String objectToCache = "R2-D2";
-    putInTreeCache(CACHE_KEY, objectToCache);
+    putInTreeCache(KEY, objectToCache);
 
-    Object cachedObject = jbossCacheFacade
-        .onGetFromCache(CACHE_KEY, cacheModel);
+    Object cachedObject = cacheFacade.onGetFromCache(KEY, cachingModel);
 
     assertEquals(objectToCache, cachedObject);
   }
@@ -191,13 +195,13 @@ public class JbossCacheFacadeTests extends TestCase {
 
     RuntimeException expected = new RuntimeException();
 
-    treeCache.get(CACHE_NODE_NAME, CACHE_KEY);
+    treeCache.get(NODE_FQN, KEY);
     treeCacheControl.setThrowable(expected);
 
     treeCacheControl.replay();
 
     try {
-      jbossCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
+      cacheFacade.onGetFromCache(KEY, cachingModel);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -211,9 +215,9 @@ public class JbossCacheFacadeTests extends TestCase {
     setUpTreeCache();
 
     String objectToCache = "Luke Skywalker";
-    jbossCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToCache);
+    cacheFacade.onPutInCache(KEY, cachingModel, objectToCache);
 
-    Object cachedObject = getFromTreeCache(CACHE_KEY);
+    Object cachedObject = getFromTreeCache(KEY);
     assertEquals(objectToCache, cachedObject);
   }
 
@@ -225,13 +229,13 @@ public class JbossCacheFacadeTests extends TestCase {
     String objectToCache = "Luke";
     RuntimeException expected = new RuntimeException();
 
-    treeCache.put(CACHE_NODE_NAME, CACHE_KEY, objectToCache);
+    treeCache.put(NODE_FQN, KEY, objectToCache);
     treeCacheControl.setThrowable(expected);
 
     treeCacheControl.replay();
 
     try {
-      jbossCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToCache);
+      cacheFacade.onPutInCache(KEY, cachingModel, objectToCache);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -245,11 +249,11 @@ public class JbossCacheFacadeTests extends TestCase {
     setUpTreeCache();
 
     String objectToCache = "Falcon Millenium";
-    putInTreeCache(CACHE_KEY, objectToCache);
+    putInTreeCache(KEY, objectToCache);
 
-    jbossCacheFacade.onRemoveFromCache(CACHE_KEY, cacheModel);
+    cacheFacade.onRemoveFromCache(KEY, cachingModel);
 
-    Object cachedObject = getFromTreeCache(CACHE_KEY);
+    Object cachedObject = getFromTreeCache(KEY);
     assertNull(cachedObject);
   }
 
@@ -261,13 +265,13 @@ public class JbossCacheFacadeTests extends TestCase {
 
     RuntimeException expected = new RuntimeException();
 
-    treeCache.remove(CACHE_NODE_NAME, CACHE_KEY);
+    treeCache.remove(NODE_FQN, KEY);
     treeCacheControl.setThrowable(expected);
 
     treeCacheControl.replay();
 
     try {
-      jbossCacheFacade.onRemoveFromCache(CACHE_KEY, cacheModel);
+      cacheFacade.onRemoveFromCache(KEY, cachingModel);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -278,9 +282,9 @@ public class JbossCacheFacadeTests extends TestCase {
   }
 
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
-    jbossCacheFacade.setCacheManager(null);
+    cacheFacade.setCacheManager(null);
     try {
-      jbossCacheFacade.validateCacheManager();
+      cacheFacade.validateCacheManager();
       fail();
 
     } catch (FatalCacheException exception) {
@@ -297,7 +301,7 @@ public class JbossCacheFacadeTests extends TestCase {
       throws Exception {
     setUpTreeCache();
 
-    jbossCacheFacade.validateCacheManager();
+    cacheFacade.validateCacheManager();
   }
 
 }

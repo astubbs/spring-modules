@@ -28,12 +28,12 @@ import org.springmodules.cache.interceptor.caching.Cached;
 
 /**
  * <p>
- * Unit Test for <code>{@link AnnotationCachingAttributeSource}s</code>.
+ * Unit Tests for <code>{@link AnnotationCachingAttributeSource}s</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/29 01:21:57 $
+ * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:45 $
  */
 public class AnnotationCachingAttributeSourceTests extends TestCase {
 
@@ -50,45 +50,37 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
 
   @Override
   protected void setUp() throws Exception {
-    super.setUp();
-
-    this.cachingAttributeSource = new AnnotationCachingAttributeSource();
+    cachingAttributeSource = new AnnotationCachingAttributeSource();
 
     Class targetClass = TigerCacheableService.class;
-    this.annotatedMethod = targetClass.getDeclaredMethod("getName",
+    annotatedMethod = targetClass.getDeclaredMethod("getName",
         new Class[] { int.class });
   }
 
   public void testFindAllAttributes() throws Exception {
-    Collection expectedAnnotations = Arrays.asList(this.annotatedMethod
-        .getAnnotations());
+    Collection expected = Arrays.asList(annotatedMethod.getAnnotations());
+    Collection actual = cachingAttributeSource
+        .findAllAttributes(annotatedMethod);
 
-    Collection actualAnnotations = this.cachingAttributeSource
-        .findAllAttributes(this.annotatedMethod);
-
-    assertEquals("<Annotations>", expectedAnnotations, actualAnnotations);
+    assertEquals(expected, actual);
   }
 
   public void testFindAttribute() {
-    Collection attributes = Arrays
-        .asList(this.annotatedMethod.getAnnotations());
+    Collection attributes = Arrays.asList(annotatedMethod.getAnnotations());
+    Cacheable expected = annotatedMethod.getAnnotation(Cacheable.class);
+    Cached actual = (Cached) cachingAttributeSource.findAttribute(attributes);
 
-    Cacheable expected = this.annotatedMethod.getAnnotation(Cacheable.class);
-
-    Cached actual = (Cached) this.cachingAttributeSource
-        .findAttribute(attributes);
-
-    assertEquals(expected.cacheModelId(), actual.getCacheModelId());
+    assertEquals(expected.modelId(), actual.getModelId());
   }
 
   public void testFindAttributeWithCollectionOfAttributesEqualToNull() {
-    assertNull(this.cachingAttributeSource.findAttribute(null));
+    assertNull(cachingAttributeSource.findAttribute(null));
   }
 
   public void testFindAttributeWithCollectionOfAttributesWithoutCachingAttributes() {
     Collection<Object> attributes = new ArrayList<Object>();
     attributes.add("Luke Skywalker");
 
-    assertNull(this.cachingAttributeSource.findAttribute(attributes));
+    assertNull(cachingAttributeSource.findAttribute(attributes));
   }
 }

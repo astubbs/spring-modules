@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"
+>
+
+<beans>
+  <bean id="cacheManager"
+    class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" />
+
+  <bean id="cacheProviderFacade"
+    class="org.springmodules.cache.provider.ehcache.EhCacheFacade">
+    <property name="cacheManager" ref="cacheManager" />
+  </bean>
+
+  <bean id="cachingListener"
+    class="org.springmodules.cache.integration.KeyAndModelListCachingListener" />
+</beans>

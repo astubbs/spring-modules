@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springmodules.EqualsHashCodeAssert;
 import org.springmodules.EqualsHashCodeTestCase;
-import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -33,29 +33,26 @@ import org.springmodules.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.13 $ $Date: 2005/09/29 01:21:41 $
+ * @version $Revision: 1.14 $ $Date: 2005/10/13 04:51:48 $
  */
 public final class FlushCacheTests extends TestCase implements
     EqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(FlushCacheTests.class);
 
-  private FlushCache flushCache;
+  private FlushCache attribute;
 
   public FlushCacheTests(String name) {
     super(name);
   }
 
   private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(this.flushCache.getClass().getName());
-    buffer.append("@" + System.identityHashCode(this.flushCache) + "[");
-    buffer.append("cacheModelIds="
-        + ArrayUtils.toString(this.flushCache.getCacheModelIds()) + ", ");
-    buffer.append("flushBeforeExecution="
-        + this.flushCache.isFlushBeforeExecution() + "]");
+    StringBuffer buffer = new StringBuffer(attribute.getClass().getName());
+    buffer.append("@" + System.identityHashCode(attribute) + "[");
+    buffer.append("modelId=" + Strings.quote(attribute.getModelId()) + "]");
 
     String expected = buffer.toString();
-    String actual = this.flushCache.toString();
+    String actual = attribute.toString();
 
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
@@ -63,140 +60,90 @@ public final class FlushCacheTests extends TestCase implements
     assertEquals(expected, actual);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    this.flushCache = new FlushCache();
-    this.flushCache.setCacheModelIds("main,test");
-    this.flushCache.setFlushBeforeExecution(true);
+  protected void setUp() {
+    attribute = new FlushCache();
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
-    String cacheModelIds = "main,test";
-    boolean flushBeforeExecution = true;
+    String modelId = "main";
+    attribute.setModelId(modelId);
 
-    this.flushCache.setCacheModelIds(cacheModelIds);
-    this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
+    FlushCache attribute2 = new FlushCache(modelId);
 
-    FlushCache anotherFlushCache = new FlushCache(cacheModelIds,
-        flushBeforeExecution);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(attribute,
+        attribute2);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        this.flushCache, anotherFlushCache);
+    attribute.setModelId(null);
+    attribute2.setModelId(null);
 
-    this.flushCache.setCacheModelIds((String[]) null);
-    anotherFlushCache.setCacheModelIds((String[]) null);
-
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        this.flushCache, anotherFlushCache);
-
-    String[] newCacheModelIds = { null, "main" };
-    this.flushCache.setCacheModelIds(newCacheModelIds);
-    anotherFlushCache.setCacheModelIds(newCacheModelIds);
-
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        this.flushCache, anotherFlushCache);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(attribute,
+        attribute2);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    String cacheModelIds = "main,test";
-    boolean flushBeforeExecution = true;
+    String modelId = "test";
+    attribute.setModelId(modelId);
 
-    this.flushCache.setCacheModelIds(cacheModelIds);
-    this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
+    FlushCache attribute2 = new FlushCache(modelId);
+    assertEquals(attribute, attribute2);
 
-    FlushCache anotherFlushCache = new FlushCache(cacheModelIds,
-        flushBeforeExecution);
-
-    assertEquals(this.flushCache, anotherFlushCache);
-
-    anotherFlushCache.setCacheModelIds("main");
-    assertFalse(this.flushCache.equals(anotherFlushCache));
-
-    anotherFlushCache.setCacheModelIds(cacheModelIds);
-    anotherFlushCache.setFlushBeforeExecution(false);
-    assertFalse(this.flushCache.equals(anotherFlushCache));
+    attribute2.setModelId("main");
+    assertFalse(attribute.equals(attribute2));
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(this.flushCache);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(attribute);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
-    String cacheModelIds = "main,test";
-    boolean flushBeforeExecution = true;
+    String modelId = "service";
+    attribute.setModelId(modelId);
 
-    this.flushCache.setCacheModelIds(cacheModelIds);
-    this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
+    FlushCache attribute2 = new FlushCache(modelId);
 
-    FlushCache anotherFlushCache = new FlushCache(cacheModelIds,
-        flushBeforeExecution);
-
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(this.flushCache,
-        anotherFlushCache);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(attribute, attribute2);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
-    String cacheModelIds = "main,test";
-    boolean flushBeforeExecution = true;
+    String modelId = "pojo";
+    attribute.setModelId(modelId);
 
-    this.flushCache.setCacheModelIds(cacheModelIds);
-    this.flushCache.setFlushBeforeExecution(flushBeforeExecution);
+    FlushCache attribute2 = new FlushCache(modelId);
+    FlushCache attribute3 = new FlushCache(modelId);
 
-    FlushCache secondFlushCache = new FlushCache(cacheModelIds,
-        flushBeforeExecution);
-    FlushCache thirdFlushCache = new FlushCache(cacheModelIds,
-        flushBeforeExecution);
-
-    EqualsHashCodeAssert.assertEqualsIsTransitive(this.flushCache,
-        secondFlushCache, thirdFlushCache);
+    EqualsHashCodeAssert.assertEqualsIsTransitive(attribute, attribute2,
+        attribute3);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert
-        .assertEqualsNullComparisonReturnsFalse(this.flushCache);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(attribute);
   }
 
-  public void testToStringWithCacheModelIdEqualToNull() {
-    this.flushCache.setCacheModelIds(new String[] { "empire", null });
-    this.flushCache.setFlushBeforeExecution(true);
-
+  public void testToString() {
+    attribute.setModelId("main");
     assertToStringIsCorrect();
   }
 
-  public void testToStringWithCacheModelIdsEqualToNull() {
-    this.flushCache.setCacheModelIds((String[]) null);
-    this.flushCache.setFlushBeforeExecution(false);
-
-    assertToStringIsCorrect();
-  }
-
-  public void testToStringWithEmptyCacheModelIds() {
-    this.flushCache.setCacheModelIds(new String[0]);
-
-    assertToStringIsCorrect();
-  }
-
-  public void testToStringWithNotEmptyCacheModelIds() {
-    this.flushCache.setCacheModelIds(new String[] { "empire", "rebels" });
+  public void testToStringWithModelIdEqualToNull() {
+    attribute.setModelId(null);
     assertToStringIsCorrect();
   }
 }

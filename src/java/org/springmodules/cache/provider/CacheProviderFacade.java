@@ -18,9 +18,13 @@
 
 package org.springmodules.cache.provider;
 
+import java.beans.PropertyEditor;
 import java.io.Serializable;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.cache.CacheException;
+import org.springmodules.cache.CachingModel;
+import org.springmodules.cache.FlushingModel;
 
 /**
  * <p>
@@ -29,51 +33,51 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/29 01:21:45 $
+ * @version $Revision: 1.8 $ $Date: 2005/10/13 04:53:02 $
  */
 public interface CacheProviderFacade extends InitializingBean {
 
   /**
    * Cancels the update being made to the cache.
    * 
-   * @param cacheKey
+   * @param key
    *          the key being used in the cache update.
    * @throws CacheException
    *           if an unexpected error takes place when attempting to cancel the
    *           update.
    */
-  void cancelCacheUpdate(Serializable cacheKey) throws CacheException;
+  void cancelCacheUpdate(Serializable key) throws CacheException;
 
   /**
    * Flushes the cache.
    * 
-   * @param cacheModuleIds
-   *          one or more ids of the cache modules that specify what and how to
-   *          flush.
+   * @param model
+   *          the model that specifies what and how to flush.
    * @throws CacheException
    *           if an unexpected error takes place when flushing the cache.
    */
-  void flushCache(String[] cacheModuleIds) throws CacheException;
+  void flushCache(FlushingModel model) throws CacheException;
+
+  CacheModelValidator getCacheModelValidator();
+
+  PropertyEditor getCachingModelEditor();
+
+  PropertyEditor getFlushingModelEditor();
 
   /**
    * Retrieves an entry from the cache.
    * 
-   * @param cacheKey
+   * @param key
    *          the key under which the entry is stored.
-   * @param cacheModelId
-   *          the id of the cache model that specifies how to retrieve an entry.
+   * @param model
+   *          the model that specifies how to retrieve an entry.
    * @return the cached entry.
    * @throws CacheException
    *           if an unexpected error takes place when retrieving the entry from
    *           the cache.
    */
-  Object getFromCache(Serializable cacheKey, String cacheModelId)
+  Object getFromCache(Serializable key, CachingModel model)
       throws CacheException;
-
-  /**
-   * @return the state of this cache provider facade.
-   */
-  CacheProviderFacadeStatus getStatus();
 
   /**
    * @return <code>true</code> if no exception should be thrown if an error
@@ -85,27 +89,27 @@ public interface CacheProviderFacade extends InitializingBean {
   /**
    * Stores an object in the cache.
    * 
-   * @param cacheKey
+   * @param key
    *          the key under which the object will be stored.
-   * @param cacheModelId
-   *          the id of the cache model that specifies how to store an object.
-   * @param objectToCache
+   * @param model
+   *          the model that specifies how to store an object.
+   * @param obj
    *          the object to store in the cache.
    * @throws CacheException
    *           if an unexpected error takes place when storing an object in the
    *           cache.
    */
-  void putInCache(Serializable cacheKey, String cacheModelId,
-      Object objectToCache) throws CacheException;
+  void putInCache(Serializable key, CachingModel model, Object obj)
+      throws CacheException;
 
   /**
    * Removes an object from the cache.
    * 
-   * @param cacheKey
+   * @param key
    *          the key under which the object is stored.
-   * @param cacheModelId
-   *          the id of the cache model that specifies how to store an object.
+   * @param model
+   *          the model that specifies how to store an object.
    */
-  void removeFromCache(Serializable cacheKey, String cacheModelId)
+  void removeFromCache(Serializable key, CachingModel model)
       throws CacheException;
 }

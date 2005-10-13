@@ -28,12 +28,12 @@ import org.springmodules.cache.interceptor.flush.FlushCache;
 
 /**
  * <p>
- * Unit Test for <code>{@link AnnotationCacheFlushAttributeSource}</code>.
+ * Unit Tests for <code>{@link AnnotationFlushingAttributeSource}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/29 01:21:57 $
+ * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:46 $
  */
 public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
 
@@ -42,7 +42,7 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
    */
   private Method annotatedMethod;
 
-  private AnnotationCacheFlushAttributeSource cacheFlushAttributeSource;
+  private AnnotationFlushingAttributeSource cacheFlushAttributeSource;
 
   public AnnotationCacheFlushAttributeSourceTests(String name) {
     super(name);
@@ -50,48 +50,37 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
 
   @Override
   protected void setUp() throws Exception {
-    super.setUp();
-
-    this.cacheFlushAttributeSource = new AnnotationCacheFlushAttributeSource();
+    cacheFlushAttributeSource = new AnnotationFlushingAttributeSource();
 
     Class targetClass = TigerCacheableService.class;
-    this.annotatedMethod = targetClass.getDeclaredMethod("updateName",
-        new Class[] { int.class, String.class });
+    annotatedMethod = targetClass.getDeclaredMethod("updateName", new Class[] {
+        int.class, String.class });
   }
 
   public void testFindAllAttributes() throws Exception {
-    Collection expectedAnnotations = Arrays.asList(this.annotatedMethod
-        .getAnnotations());
+    Collection expected = Arrays.asList(annotatedMethod.getAnnotations());
+    Collection actual = cacheFlushAttributeSource
+        .findAllAttributes(annotatedMethod);
 
-    Collection actualAnnotations = this.cacheFlushAttributeSource
-        .findAllAttributes(this.annotatedMethod);
-
-    assertEquals("<Annotations>", expectedAnnotations, actualAnnotations);
+    assertEquals(expected, actual);
   }
 
   public void testFindAttribute() {
-    Collection attributes = Arrays
-        .asList(this.annotatedMethod.getAnnotations());
-
-    CacheFlush expected = this.annotatedMethod.getAnnotation(CacheFlush.class);
-
-    FlushCache actual = (FlushCache) this.cacheFlushAttributeSource
+    Collection attributes = Arrays.asList(annotatedMethod.getAnnotations());
+    CacheFlush expected = annotatedMethod.getAnnotation(CacheFlush.class);
+    FlushCache actual = (FlushCache) cacheFlushAttributeSource
         .findAttribute(attributes);
 
-    assertTrue(Arrays.equals(expected.cacheModelIds(), actual
-        .getCacheModelIds()));
-    assertEquals("<Flag 'flushBeforeExecution'>", expected
-        .flushBeforeExecution(), actual.isFlushBeforeExecution());
+    assertEquals(expected.modelId(), actual.getModelId());
   }
 
   public void testFindAttributeWithCollectionOfAttributesEqualToNull() {
-    assertNull(this.cacheFlushAttributeSource.findAttribute(null));
+    assertNull(cacheFlushAttributeSource.findAttribute(null));
   }
 
   public void testFindAttributeWithCollectionOfAttributesWithoutCachingAttributes() {
     Collection<Object> attributes = new ArrayList<Object>();
     attributes.add("Anakin Skywalker");
-
-    assertNull(this.cacheFlushAttributeSource.findAttribute(attributes));
+    assertNull(cacheFlushAttributeSource.findAttribute(attributes));
   }
 }

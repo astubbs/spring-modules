@@ -32,24 +32,23 @@ import org.springframework.aop.framework.AopConfigException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:59 $
+ * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:07 $
  */
 public final class CachingAttributeSourceAdvisorTests extends TestCase {
 
-  private CachingAttributeSource cachingAttributeSource;
+  private CachingAttributeSource source;
 
-  private CachingAttributeSourceAdvisor cachingAttributeSourceAdvisor;
+  private CachingAttributeSourceAdvisor advisor;
 
-  private MockControl cachingAttributeSourceControl;
+  private MockControl sourceControl;
 
   /**
-   * Caching interceptor used only to obtain
-   * <code>{@link #cachingAttributeSource}</code>.
+   * Interceptor used only to obtain <code>{@link #source}</code>.
    */
-  private CachingInterceptor cachingInterceptor;
+  private MetadataCachingInterceptor interceptor;
 
   /**
-   * Method definition containing caching metadata attributes.
+   * Method definition containing metadata attributes.
    */
   private Method method;
 
@@ -62,26 +61,17 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     super(name);
   }
 
-  private void setStateOfMockControlsToReplay() {
-    cachingAttributeSourceControl.replay();
-  }
-
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    cachingInterceptor = new CachingInterceptor();
+  protected void setUp() {
+    interceptor = new MetadataCachingInterceptor();
   }
 
   private void setUpCachingAttributeSourceAsMockObject() {
-    cachingAttributeSourceControl = MockControl
-        .createControl(CachingAttributeSource.class);
-    cachingAttributeSource = (CachingAttributeSource) cachingAttributeSourceControl
-        .getMock();
+    sourceControl = MockControl.createControl(CachingAttributeSource.class);
+    source = (CachingAttributeSource) sourceControl.getMock();
 
-    cachingInterceptor.setCachingAttributeSource(cachingAttributeSource);
+    interceptor.setCachingAttributeSource(source);
 
-    cachingAttributeSourceAdvisor = new CachingAttributeSourceAdvisor(
-        cachingInterceptor);
+    advisor = new CachingAttributeSourceAdvisor(interceptor);
   }
 
   private void setUpTargetClassAndMethod() throws Exception {
@@ -91,17 +81,16 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
 
   /**
    * Verifies that the constructor
-   * <code>{@link CachingAttributeSourceAdvisor#CachingAttributeSourceAdvisor(CachingInterceptor)}</code>
-   * throws a <code>{@link AopConfigException}</code> when the specified
-   * <code>{@link CachingInterceptor}</code> does not contain a
+   * <code>{@link CachingAttributeSourceAdvisor#CachingAttributeSourceAdvisor(MetadataCachingInterceptor)}</code>
+   * throws a <code>AopConfigException</code> when the argument
+   * <code>{@link MetadataCachingInterceptor}</code> does not contain a
    * <code>{@link CachingAttributeSource}</code>.
    */
   public void testConstructorWithMethodInterceptorNotHavingCachingAttributeSource() {
-    cachingInterceptor.setCachingAttributeSource(null);
+    interceptor.setCachingAttributeSource(null);
 
     try {
-      cachingAttributeSourceAdvisor = new CachingAttributeSourceAdvisor(
-          cachingInterceptor);
+      advisor = new CachingAttributeSourceAdvisor(interceptor);
       fail();
 
     } catch (AopConfigException exception) {
@@ -109,52 +98,34 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     }
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CachingAttributeSourceAdvisor#matches(Method, Class)}</code>
-   * return <code>false</code> if <code>{@link #cachingAttributeSource}</code>
-   * does not contain a metadata attribute for a given method.
-   */
   public void testMatchesWhenAttributeIsNotFound() throws Exception {
     setUpCachingAttributeSourceAsMockObject();
     setUpTargetClassAndMethod();
 
     // a caching attribute should not be found for the specified method and
     // class.
-    cachingAttributeSource.getCachingAttribute(method, targetClass);
-    cachingAttributeSourceControl.setReturnValue(null);
+    source.getCachingAttribute(method, targetClass);
+    sourceControl.setReturnValue(null);
 
-    setStateOfMockControlsToReplay();
+    sourceControl.replay();
 
-    assertFalse(cachingAttributeSourceAdvisor.matches(method, targetClass));
+    assertFalse(advisor.matches(method, targetClass));
 
-    verifyExpectationsOfMockControlsWereMet();
+    sourceControl.verify();
   }
 
-  /**
-   * Tests
-   * <code>{@link CachingAttributeSourceAdvisor#matches(Method, Class)}</code>.
-   * Verifies that <code>true</code> is returned if there is an instance of
-   * <code>{@link Cached}</code> returned by
-   * <code>{@link #cachingAttributeSource}</code>.
-   */
   public void testMatchesWhenNotNullAttributeIsFound() throws Exception {
     setUpCachingAttributeSourceAsMockObject();
     setUpTargetClassAndMethod();
 
     // a caching attribute should be found for the specified method and class.
-    cachingAttributeSource.getCachingAttribute(method, targetClass);
-    cachingAttributeSourceControl.setReturnValue(new Cached());
+    source.getCachingAttribute(method, targetClass);
+    sourceControl.setReturnValue(new Cached());
 
-    setStateOfMockControlsToReplay();
+    sourceControl.replay();
 
-    assertTrue(cachingAttributeSourceAdvisor.matches(method, targetClass));
+    assertTrue(advisor.matches(method, targetClass));
 
-    verifyExpectationsOfMockControlsWereMet();
+    sourceControl.verify();
   }
-
-  private void verifyExpectationsOfMockControlsWereMet() {
-    cachingAttributeSourceControl.verify();
-  }
-
 }

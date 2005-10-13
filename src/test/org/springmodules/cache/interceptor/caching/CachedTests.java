@@ -33,120 +33,117 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.14 $ $Date: 2005/09/29 01:22:06 $
+ * @version $Revision: 1.15 $ $Date: 2005/10/13 04:52:09 $
  */
 public final class CachedTests extends TestCase implements
     EqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(CachedTests.class);
 
-  private Cached cached;
+  private Cached attribute;
 
   public CachedTests(String name) {
     super(name);
   }
 
   private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(cached.getClass().getName());
-    buffer.append("@" + System.identityHashCode(cached) + "[");
-    buffer.append("cacheModelId="
-        + Strings.quote(cached.getCacheModelId()) + "]");
+    StringBuffer buffer = new StringBuffer(attribute.getClass().getName());
+    buffer.append("@" + System.identityHashCode(attribute) + "[");
+    buffer.append("modelId=" + Strings.quote(attribute.getModelId()) + "]");
 
     String expected = buffer.toString();
-    String actual = cached.toString();
-    
+    String actual = attribute.toString();
+
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
-    
+
     assertEquals(expected, actual);
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    cached = new Cached();
+  protected void setUp() {
+    attribute = new Cached();
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
-    String cacheModelId = "main";
-    cached.setCacheModelId(cacheModelId);
+    String modelId = "main";
+    attribute.setModelId(modelId);
 
-    Cached anotherCached = new Cached(cacheModelId);
+    Cached attribute2 = new Cached(modelId);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cached,
-        anotherCached);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(attribute,
+        attribute2);
 
-    cached.setCacheModelId(null);
-    anotherCached.setCacheModelId(null);
+    attribute.setModelId(null);
+    attribute2.setModelId(null);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cached,
-        anotherCached);
+    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(attribute,
+        attribute2);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    String cacheModelId = "test";
-    cached.setCacheModelId(cacheModelId);
+    String modelId = "test";
+    attribute.setModelId(modelId);
 
-    Cached anotherCached = new Cached(cacheModelId);
-    assertEquals(cached, anotherCached);
+    Cached attribute2 = new Cached(modelId);
+    assertEquals(attribute, attribute2);
 
-    anotherCached.setCacheModelId("main");
-    assertFalse(cached.equals(anotherCached));
+    attribute2.setModelId("main");
+    assertFalse(attribute.equals(attribute2));
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(cached);
+    EqualsHashCodeAssert.assertEqualsIsReflexive(attribute);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
-    String cacheModelId = "test";
-    cached.setCacheModelId(cacheModelId);
+    String modelId = "service";
+    attribute.setModelId(modelId);
 
-    Cached anotherCached = new Cached(cacheModelId);
+    Cached attribute2 = new Cached(modelId);
 
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(cached, anotherCached);
+    EqualsHashCodeAssert.assertEqualsIsSymmetric(attribute, attribute2);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
-    String cacheModelId = "test";
-    cached.setCacheModelId(cacheModelId);
+    String modelId = "pojo";
+    attribute.setModelId(modelId);
 
-    Cached secondCached = new Cached(cacheModelId);
-    Cached thirdCached = new Cached(cacheModelId);
+    Cached attribute2 = new Cached(modelId);
+    Cached attribute3 = new Cached(modelId);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(cached, secondCached,
-        thirdCached);
+    EqualsHashCodeAssert.assertEqualsIsTransitive(attribute, attribute2,
+        attribute3);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cached);
+    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(attribute);
   }
 
   public void testToString() {
-    cached.setCacheModelId("main");
+    attribute.setModelId("main");
     assertToStringIsCorrect();
   }
 
-  public void testToStringWithCacheModelIdEqualToNull() {
-    cached.setCacheModelId(null);
+  public void testToStringWithModelIdEqualToNull() {
+    attribute.setModelId(null);
     assertToStringIsCorrect();
   }
 }

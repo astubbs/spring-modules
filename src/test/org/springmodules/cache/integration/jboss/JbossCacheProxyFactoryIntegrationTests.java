@@ -18,8 +18,6 @@
 
 package org.springmodules.cache.integration.jboss;
 
-import org.springmodules.cache.integration.ApplicationContextPaths;
-
 /**
  * <p>
  * Verifies that the caching module works correctly when using JBossCache as the
@@ -34,6 +32,8 @@ import org.springmodules.cache.integration.ApplicationContextPaths;
 public final class JbossCacheProxyFactoryIntegrationTests extends
     AbstractJbossCacheIntegrationTestCases {
 
+  private static final String PROXY_FACTORY_CONFIG = "**/jbossCacheProxyFactoryContext.xml";
+
   public JbossCacheProxyFactoryIntegrationTests() {
     super();
   }
@@ -42,10 +42,6 @@ public final class JbossCacheProxyFactoryIntegrationTests extends
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    String[] configFileNames = new String[] {
-        ApplicationContextPaths.JBOSSCACHE,
-        ApplicationContextPaths.PROXY_FACTORY };
-
-    return configFileNames;
+    return new String[] { CACHE_CONFIG, PROXY_FACTORY_CONFIG };
   }
 }

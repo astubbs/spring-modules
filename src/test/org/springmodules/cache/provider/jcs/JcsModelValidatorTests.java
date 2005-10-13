@@ -21,6 +21,7 @@ package org.springmodules.cache.provider.jcs;
 import junit.framework.TestCase;
 
 import org.springmodules.cache.provider.InvalidCacheModelException;
+import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 
 /**
  * <p>
@@ -33,17 +34,36 @@ import org.springmodules.cache.provider.InvalidCacheModelException;
  */
 public final class JcsModelValidatorTests extends TestCase {
 
-  private JcsModel cacheModel;
+  private JcsCachingModel cachingModel;
 
-  private JcsModelValidator cacheModelValidator;
+  private JcsFlushingModel flushingModel;
+
+  private JcsModelValidator validator;
 
   public JcsModelValidatorTests(String name) {
     super(name);
   }
 
-  private void assertValidateCacheModelPropertiesThrowsException() {
+  private void assertValidateCachingModelThrowsException() {
+    assertValidateCachingModelThrowsException(cachingModel);
+  }
+
+  private void assertValidateCachingModelThrowsException(Object model) {
     try {
-      cacheModelValidator.validateCacheModelProperties(cacheModel);
+      validator.validateCachingModel(model);
+      fail();
+    } catch (InvalidCacheModelException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  private void assertValidateFlushingModelThrowsException() {
+    assertValidateFlushingModelThrowsException(flushingModel);
+  }
+
+  private void assertValidateFlushingModelThrowsException(Object model) {
+    try {
+      validator.validateFlushingModel(model);
       fail();
     } catch (InvalidCacheModelException exception) {
       // we are expecting this exception.
@@ -52,27 +72,51 @@ public final class JcsModelValidatorTests extends TestCase {
 
   protected void setUp() throws Exception {
     super.setUp();
-    cacheModel = new JcsModel();
-    cacheModelValidator = new JcsModelValidator();
+    cachingModel = new JcsCachingModel();
+    flushingModel = new JcsFlushingModel();
+    validator = new JcsModelValidator();
   }
 
-  public void testGetTargetClass() {
-    assertEquals(JcsModel.class, cacheModelValidator.getTargetClass());
+  public void testValidateCachingModel() {
+    cachingModel.setCacheName("main");
+    validator.validateCachingModel(cachingModel);
   }
 
-  public void testValidateCacheModelPropertiesWithCacheNameEqualToNull() {
-    cacheModel.setCacheName(null);
-    assertValidateCacheModelPropertiesThrowsException();
+  public void testValidateCachingModelWithArgumentNotBeingCachingModel() {
+    assertValidateCachingModelThrowsException("Endor");
   }
 
-  public void testValidateCacheModelPropertiesWithEmptyCacheName() {
-    cacheModel.setCacheName("");
-    assertValidateCacheModelPropertiesThrowsException();
+  public void testValidateCachingModelWithCacheNameEqualToNull() {
+    cachingModel.setCacheName(null);
+    assertValidateCachingModelThrowsException();
   }
 
-  public void testValidateCacheModelPropertiesWithNotEmptyCacheName() {
-    cacheModel.setCacheName("mapping");
-    cacheModelValidator.validateCacheModelProperties(cacheModel);
+  public void testValidateCachingModelWithEmptyCacheName() {
+    cachingModel.setCacheName("");
+    assertValidateCachingModelThrowsException();
   }
 
+  public void testValidateFlushingModel() {
+    flushingModel.setCacheStruct(new CacheStruct("test"));
+    validator.validateFlushingModel(flushingModel);
+  }
+
+  public void testValidateFlushingModelWithArgumentNotBeingFlushingModel() {
+    assertValidateFlushingModelThrowsException("Ewok");
+  }
+
+  public void testValidateFlushingModelWithCacheStructArrayEqualToNull() {
+    flushingModel.setCacheStructs((CacheStruct[]) null);
+    assertValidateFlushingModelThrowsException();
+  }
+
+  public void testValidateFlushingModelWithCacheStructArrayNotHavingCacheName() {
+    flushingModel.setCacheStruct(new CacheStruct());
+    assertValidateFlushingModelThrowsException();
+  }
+
+  public void testValidateFlushingModelWithEmptyCacheStructArray() {
+    flushingModel.setCacheStructs(new CacheStruct[0]);
+    assertValidateFlushingModelThrowsException();
+  }
 }

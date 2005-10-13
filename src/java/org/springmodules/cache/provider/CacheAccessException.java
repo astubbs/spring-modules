@@ -17,6 +17,8 @@
  */
 package org.springmodules.cache.provider;
 
+import org.springmodules.cache.CacheException;
+
 /**
  * <p>
  * Exception thrown when the cache provider cannot be accessed.

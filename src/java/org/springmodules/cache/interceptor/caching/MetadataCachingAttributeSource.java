@@ -20,8 +20,11 @@ package org.springmodules.cache.interceptor.caching;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.springframework.metadata.Attributes;
+import org.springmodules.cache.CacheAttribute;
+import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource;
 
 /**
  * <p>
@@ -31,7 +34,7 @@ import org.springframework.metadata.Attributes;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/09 02:18:57 $
+ * @version $Revision: 1.6 $ $Date: 2005/10/13 04:51:38 $
  */
 public final class MetadataCachingAttributeSource extends
     AbstractCachingAttributeSource {
@@ -53,7 +56,27 @@ public final class MetadataCachingAttributeSource extends
     return allAttributes;
   }
 
-  public final void setAttributes(Attributes newAttributes) {
+  /**
+   * @see AbstractSingleMetadataCacheAttributeSource#findAttribute(Collection)
+   */
+  protected CacheAttribute findAttribute(Collection methodAttributes) {
+    CacheAttribute attribute = null;
+    if (methodAttributes != null && !methodAttributes.isEmpty()) {
+      for (Iterator i = methodAttributes.iterator(); i.hasNext();) {
+        Object object = i.next();
+        if (object instanceof Cached) {
+          attribute = (CacheAttribute) object;
+        }
+      }
+    }
+    return attribute;
+  }
+
+  protected Attributes getAttributes() {
+    return attributes;
+  }
+
+  public void setAttributes(Attributes newAttributes) {
     attributes = newAttributes;
   }
 

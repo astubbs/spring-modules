@@ -30,7 +30,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.4 $ $Date: 2005/09/09 02:19:13 $
+ * @version $Revision: 1.5 $ $Date: 2005/10/13 04:52:39 $
  */
 public class MetadataCacheAttributeSourceTests extends TestCase {
 
@@ -44,7 +44,7 @@ public class MetadataCacheAttributeSourceTests extends TestCase {
     super.setUp();
 
     attributeSource = new AbstractMetadataCacheAttributeSource() {
-      protected Collection findAllAttributes(Method argMethod) {
+      protected Collection findAllAttributes(Method method) {
         return null;
       }
     };
@@ -60,15 +60,13 @@ public class MetadataCacheAttributeSourceTests extends TestCase {
     Class targetClass = String.class;
     Method method = targetClass.getMethod("charAt", new Class[] { int.class });
 
-    StringBuffer buffer = new StringBuffer();
-    buffer.append(targetClass);
+    StringBuffer buffer = new StringBuffer(targetClass.toString());
     buffer.append(System.identityHashCode(method));
-    String expectedKey = buffer.toString();
 
-    Object actualKey = attributeSource
-        .getAttributeEntryKey(method, targetClass);
+    String expected = buffer.toString();
+    Object actual = attributeSource.getAttributeEntryKey(method, targetClass);
 
-    assertEquals(expectedKey, actualKey);
+    assertEquals(expected, actual);
   }
 
 }

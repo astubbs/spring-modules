@@ -18,20 +18,29 @@
 
 package org.springmodules.cache.interceptor.proxy;
 
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.easymock.MockControl;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopConfigException;
 import org.springframework.aop.target.EmptyTargetSource;
 import org.springframework.util.ClassUtils;
+import org.springmodules.cache.CachingModel;
+import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.integration.CacheableService;
 import org.springmodules.cache.integration.CacheableServiceImpl;
-import org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor;
-import org.springmodules.cache.interceptor.flush.CacheFlushAttributeSourceAdvisor;
+import org.springmodules.cache.interceptor.caching.CachingModelSourceAdvisor;
+import org.springmodules.cache.interceptor.flush.FlushingModelSourceAdvisor;
+import org.springmodules.cache.mock.MockCachingModel;
+import org.springmodules.cache.mock.MockFlushingModel;
+import org.springmodules.cache.provider.CacheModelValidator;
+import org.springmodules.cache.provider.CacheProviderFacade;
 
 /**
  * <p>
@@ -40,125 +49,195 @@ import org.springmodules.cache.interceptor.flush.CacheFlushAttributeSourceAdviso
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.9 $ $Date: 2005/09/29 01:22:14 $
+ * @version $Revision: 1.10 $ $Date: 2005/10/13 04:53:38 $
  */
 public final class CacheProxyFactoryBeanTests extends TestCase {
 
-  private Properties cacheFlushAttributes;
+  private CacheProviderFacade cacheProviderFacade;
 
-  private CacheProxyFactoryBean cacheProxyFactoryBean;
+  private MockControl cacheProviderFacadeControl;
 
-  private Properties cachingAttributes;
+  private Map cachingModels;
 
-  /**
-   * Target of the proxy factory.
-   */
+  private CacheProxyFactoryBean factoryBean;
+
+  private Map flushingModels;
+
   private CacheableServiceImpl target;
+
+  private CacheModelValidator validator;
+
+  private MockControl validatorControl;
 
   public CacheProxyFactoryBeanTests(String name) {
     super(name);
   }
 
-  private void assertCacheFlushAttributeSourceIsNotSetIfCacheFlushAttributesAreNullOrEmpty(
-      Properties nullOrEmptyCacheFlushAttributes) {
-    assertTrue(nullOrEmptyCacheFlushAttributes == null
-        || nullOrEmptyCacheFlushAttributes.isEmpty());
+  private void assertFlushingModelSourceIsNotSetIfFlushingModelMapIsNullOrEmpty(
+      Map models) {
+    assertTrue(models == null || models.isEmpty());
 
-    cacheProxyFactoryBean
-        .setCacheFlushAttributes(nullOrEmptyCacheFlushAttributes);
-    assertFalse(cacheProxyFactoryBean.isHasCacheFlushAttributes());
-    assertNull(cacheProxyFactoryBean.getCacheFlushInterceptor()
-        .getCacheFlushAttributeSource());
+    factoryBean.setFlushingModels(models);
+    assertFalse(factoryBean.isHasFlushingModels());
+    assertNull(factoryBean.getFlushingInterceptor().getFlushingModelSource());
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
+  private void expectAfterPropertiesSetOnCachingInterceptor() {
+    expectGetValidator();
+    for (Iterator i = cachingModels.entrySet().iterator(); i.hasNext();) {
+      Map.Entry entry = (Map.Entry) i.next();
+      CachingModel model = (CachingModel) entry.getValue();
+      validator.validateCachingModel(model);
+    }
+  }
 
-    cacheProxyFactoryBean = new CacheProxyFactoryBean();
+  private void expectAfterPropertiesSetOnCachingInterceptorOnly() {
+    setUpCacheModelValidator();
+    setUpCacheProviderFacade();
+    expectAfterPropertiesSetOnCachingInterceptor();
+  }
 
-    setUpCachingAttributes();
+  private void expectAfterPropertiesSetOnFlushingInterceptor() {
+    expectGetValidator();
+    for (Iterator i = flushingModels.entrySet().iterator(); i.hasNext();) {
+      Map.Entry entry = (Map.Entry) i.next();
+      FlushingModel model = (FlushingModel) entry.getValue();
+      validator.validateFlushingModel(model);
+    }
+  }
 
-    cacheFlushAttributes = new Properties();
-    cacheFlushAttributes.setProperty("update*", "[cacheModelIds=test]");
-    cacheProxyFactoryBean.setCacheFlushAttributes(cacheFlushAttributes);
+  private void expectAfterPropertiesSetOnInterceptors() {
+    setUpCacheModelValidator();
+    setUpCacheProviderFacade();
+
+    expectAfterPropertiesSetOnCachingInterceptor();
+    expectAfterPropertiesSetOnFlushingInterceptor();
+  }
+
+  private void expectGetValidator() {
+    cacheProviderFacade.getCacheModelValidator();
+    cacheProviderFacadeControl.setReturnValue(validator);
+  }
+
+  private void setStateOfMockControlsToReplay() {
+    cacheProviderFacadeControl.replay();
+    validatorControl.replay();
+  }
+
+  protected void setUp() {
+    flushingModels = new HashMap();
+    flushingModels.put("update*", new MockFlushingModel());
+
+    factoryBean = new CacheProxyFactoryBean();
+    factoryBean.setFlushingModels(flushingModels);
+    setUpCachingModels();
 
     target = new CacheableServiceImpl();
   }
 
-  private void setUpCachingAttributes() {
-    cachingAttributes = new Properties();
-    cachingAttributes.setProperty("get*", "[cacheModelId=main]");
-    cacheProxyFactoryBean.setCachingAttributes(cachingAttributes);
+  private void setUpCacheModelValidator() {
+    validatorControl = MockControl.createControl(CacheModelValidator.class);
+    validator = (CacheModelValidator) validatorControl.getMock();
+  }
+
+  private void setUpCacheProviderFacade() {
+    cacheProviderFacadeControl = MockControl
+        .createStrictControl(CacheProviderFacade.class);
+    cacheProviderFacade = (CacheProviderFacade) cacheProviderFacadeControl
+        .getMock();
+    factoryBean.setCacheProviderFacade(cacheProviderFacade);
+  }
+
+  private void setUpCachingModels() {
+    cachingModels = new HashMap();
+    cachingModels.put("get*", new MockCachingModel());
+    factoryBean.setCachingModels(cachingModels);
   }
 
   public void testAfterPropertiesSetWithCacheFlushAttributesNotSet()
       throws Exception {
-    cacheProxyFactoryBean = new CacheProxyFactoryBean();
-    setUpCachingAttributes();
+    factoryBean = new CacheProxyFactoryBean();
+    setUpCachingModels();
+
+    expectAfterPropertiesSetOnCachingInterceptorOnly();
+    setStateOfMockControlsToReplay();
 
     Person targetObject = new PersonImpl("Anakin", "Skywalker");
-    cacheProxyFactoryBean.setTarget(targetObject);
+    factoryBean.setTarget(targetObject);
 
-    // cacheProxyFactoryBean.setCacheFlushAttributes(null);
-
-    cacheProxyFactoryBean.afterPropertiesSet();
+    factoryBean.afterPropertiesSet();
 
     // verify that the target is only advised for caching.
-    Advised advised = (Advised) cacheProxyFactoryBean.getProxy();
+    Advised advised = (Advised) factoryBean.getProxy();
     Advisor[] advisors = advised.getAdvisors();
     assertEquals(1, advisors.length);
-    assertEquals(CachingAttributeSourceAdvisor.class, advisors[0].getClass());
+    assertEquals(CachingModelSourceAdvisor.class, advisors[0].getClass());
+
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testAfterPropertiesSetWithNullTarget() {
+    expectAfterPropertiesSetOnInterceptors();
+    setStateOfMockControlsToReplay();
+
     try {
-      cacheProxyFactoryBean.afterPropertiesSet();
+      factoryBean.afterPropertiesSet();
       fail();
     } catch (IllegalStateException exception) {
       // we are expecting this exception.
     }
+
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testAfterPropertiesSetWithProxyInterfacesEqualToNullAndProxyTargetClassEqualToTrue() {
+    expectAfterPropertiesSetOnInterceptors();
+    setStateOfMockControlsToReplay();
+
     Person targetObject = new PersonImpl("Darth", "Vader");
-    cacheProxyFactoryBean.setTarget(targetObject);
-    cacheProxyFactoryBean.setProxyTargetClass(true);
+    factoryBean.setTarget(targetObject);
+    factoryBean.setProxyTargetClass(true);
 
-    cacheProxyFactoryBean.afterPropertiesSet();
+    factoryBean.afterPropertiesSet();
 
-    Advised advised = (Advised) cacheProxyFactoryBean.getProxy();
+    Advised advised = (Advised) factoryBean.getProxy();
     Advisor[] advisors = advised.getAdvisors();
     assertEquals(2, advisors.length);
+    Advisor advisor1 = advisors[0];
+    Advisor advisor2 = advisors[1];
 
-    Advisor firstAdvisor = advisors[0];
-    Advisor secondAdvisor = advisors[1];
+    if (advisor1 instanceof CachingModelSourceAdvisor) {
+      assertEquals(FlushingModelSourceAdvisor.class, advisor2.getClass());
 
-    if (firstAdvisor instanceof CachingAttributeSourceAdvisor) {
-      assertEquals(CacheFlushAttributeSourceAdvisor.class, secondAdvisor
-          .getClass());
+    } else if (advisor1 instanceof FlushingModelSourceAdvisor) {
+      assertEquals(CachingModelSourceAdvisor.class, advisor2.getClass());
 
-    } else if (firstAdvisor instanceof CacheFlushAttributeSourceAdvisor) {
-      assertEquals(CachingAttributeSourceAdvisor.class, secondAdvisor
-          .getClass());
     } else {
-      fail("Expected: <" + CachingAttributeSourceAdvisor.class.getName()
-          + "> or <" + CacheFlushAttributeSourceAdvisor.class.getName()
-          + "> but was: <" + firstAdvisor.getClass().getName() + ">");
+      fail("Expected: <" + CachingModelSourceAdvisor.class.getName() + "> or <"
+          + FlushingModelSourceAdvisor.class.getName() + "> but was: <"
+          + advisor1.getClass().getName() + ">");
     }
+
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testAfterPropertiesSetWithProxyInterfacesEqualToNullAndProxyTargetFlagEqualToFalseAndTargetInstanceOfTargetSource()
       throws Exception {
-    cacheProxyFactoryBean.setProxyTargetClass(false);
+    expectAfterPropertiesSetOnInterceptors();
+    setStateOfMockControlsToReplay();
+
+    factoryBean.setProxyTargetClass(false);
     Object targetInstanceOfTargetSource = EmptyTargetSource.INSTANCE;
-    cacheProxyFactoryBean.setTarget(targetInstanceOfTargetSource);
+    factoryBean.setTarget(targetInstanceOfTargetSource);
 
     try {
-      cacheProxyFactoryBean.afterPropertiesSet();
+      factoryBean.afterPropertiesSet();
       fail();
     } catch (AopConfigException exception) {
       // we are expecting this exception.
     }
+
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -169,29 +248,34 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   public void testAfterPropertiesSetWithProxyInterfacesNotEqualToNull()
       throws Exception {
+    expectAfterPropertiesSetOnInterceptors();
+    setStateOfMockControlsToReplay();
+
     String[] proxyInterfaces = { Person.class.getName() };
-    cacheProxyFactoryBean.setProxyInterfaces(proxyInterfaces);
+    factoryBean.setProxyInterfaces(proxyInterfaces);
 
     Person targetObject = new PersonImpl("Darth", "Vader");
-    cacheProxyFactoryBean.setTarget(targetObject);
+    factoryBean.setTarget(targetObject);
 
-    cacheProxyFactoryBean.afterPropertiesSet();
+    factoryBean.afterPropertiesSet();
 
-    Object proxy = cacheProxyFactoryBean.getProxy();
-    assertNotNull("The proxy should not be null", proxy);
+    Object proxy = factoryBean.getProxy();
+    assertNotNull(proxy);
 
     Class[] targetObjectInterfaces = ClassUtils.getAllInterfaces(targetObject);
     int interfacesCount = targetObjectInterfaces.length;
     Class proxyClass = proxy.getClass();
     for (int i = 0; i < interfacesCount; i++) {
       Class targetObjectInterface = targetObjectInterfaces[i];
-      assertTrue("The proxy should implement the interface '"
-          + targetObjectInterface.getName(), targetObjectInterface
+      assertTrue("The proxy should implement the interface <"
+          + targetObjectInterface.getName() + ">", targetObjectInterface
           .isAssignableFrom(proxyClass));
     }
 
-    assertTrue("The proxy should implement the interface '"
-        + Advised.class.getName() + "'", proxy instanceof Advised);
+    assertTrue("The proxy should implement the interface <"
+        + Advised.class.getName() + ">", proxy instanceof Advised);
+
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -202,11 +286,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   public void testCreateTargetSourceWithTargetObjectInstanceOfTargetSource() {
     Object targetObject = EmptyTargetSource.INSTANCE;
-
-    TargetSource targetSource = cacheProxyFactoryBean
-        .createTargetSource(targetObject);
-
-    assertSame("<Target source>", targetObject, targetSource);
+    assertSame(targetObject, factoryBean.createTargetSource(targetObject));
   }
 
   /**
@@ -218,12 +298,8 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   public void testCreateTargetSourceWithTargetObjectNotInstanceOfTargetSource()
       throws Exception {
     Object targetObject = new Object();
-
-    TargetSource targetSource = cacheProxyFactoryBean
-        .createTargetSource(targetObject);
-    Object actualTarget = targetSource.getTarget();
-
-    assertSame("<Target>", targetObject, actualTarget);
+    TargetSource targetSource = factoryBean.createTargetSource(targetObject);
+    assertSame(targetObject, targetSource.getTarget());
   }
 
   /**
@@ -232,13 +308,14 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    * created proxy.
    */
   public void testGetObject() {
-    cacheProxyFactoryBean.setTarget(target);
-    cacheProxyFactoryBean.afterPropertiesSet();
+    expectAfterPropertiesSetOnInterceptors();
+    setStateOfMockControlsToReplay();
 
-    Object expectedProxy = cacheProxyFactoryBean.getProxy();
-    Object actualProxy = cacheProxyFactoryBean.getObject();
+    factoryBean.setTarget(target);
+    factoryBean.afterPropertiesSet();
+    assertSame(factoryBean.getProxy(), factoryBean.getObject());
 
-    assertSame(expectedProxy, actualProxy);
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -247,13 +324,14 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    * class of the proxy if the proxy is not <code>null</code>.
    */
   public void testGetObjectTypeWhenProxyIsNotNull() {
-    cacheProxyFactoryBean.setTarget(target);
-    cacheProxyFactoryBean.afterPropertiesSet();
+    expectAfterPropertiesSetOnInterceptors();
+    setStateOfMockControlsToReplay();
 
-    Class expectedObjectType = cacheProxyFactoryBean.getProxy().getClass();
-    Class actualObjectType = cacheProxyFactoryBean.getObjectType();
+    factoryBean.setTarget(target);
+    factoryBean.afterPropertiesSet();
+    assertEquals(factoryBean.getProxy().getClass(), factoryBean.getObjectType());
 
-    assertEquals(expectedObjectType, actualObjectType);
+    verifyExpectationsOfMockControlsWereMet();
   }
 
   /**
@@ -268,15 +346,10 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   public void testGetObjectTypeWhenProxyIsNullAndTargetIsNotNullAndTargetIsInstanceOfTargetSource() {
     TargetSource instanceOfTargetSource = EmptyTargetSource.INSTANCE;
-    cacheProxyFactoryBean.setTarget(instanceOfTargetSource);
-
+    factoryBean.setTarget(instanceOfTargetSource);
     // verify that the proxy is null before running the method to test.
-    assertNull(cacheProxyFactoryBean.getProxy());
-
-    Class expectedObjectType = instanceOfTargetSource.getClass();
-    Class actualObjectType = cacheProxyFactoryBean.getObjectType();
-
-    assertEquals(expectedObjectType, actualObjectType);
+    assertNull(factoryBean.getProxy());
+    assertEquals(instanceOfTargetSource.getClass(), factoryBean.getObjectType());
   }
 
   /**
@@ -290,14 +363,10 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    * </ul>
    */
   public void testGetObjectTypeWhenProxyIsNullAndTargetIsNotNullAndTargetIsNotInstanceOfTargetSource() {
-    cacheProxyFactoryBean.setTarget(target);
-
+    factoryBean.setTarget(target);
     // verify that the proxy is null before running the method to test.
-    assertNull(cacheProxyFactoryBean.getProxy());
-
-    Class actualObjectType = cacheProxyFactoryBean.getObjectType();
-
-    assertNull(actualObjectType);
+    assertNull(factoryBean.getProxy());
+    assertNull(factoryBean.getObjectType());
   }
 
   /**
@@ -307,11 +376,8 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   public void testGetObjectTypeWhenProxyIsNullAndTargetIsNull() {
     // verify that the proxy is null before running the method to test.
-    assertNull(cacheProxyFactoryBean.getProxy());
-
-    Class actualObjectType = cacheProxyFactoryBean.getObjectType();
-
-    assertNull(actualObjectType);
+    assertNull(factoryBean.getProxy());
+    assertNull(factoryBean.getObjectType());
   }
 
   /**
@@ -319,38 +385,30 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    * Spring IoC container that is a singleton.
    */
   public void testIsSingleton() {
-    assertTrue("The proxy factory should be a singleton", cacheProxyFactoryBean
-        .isSingleton());
+    assertTrue(factoryBean.isSingleton());
   }
 
-  public void testSetCacheFlushAttributesWithAttributesEqualToNull() {
-    assertCacheFlushAttributeSourceIsNotSetIfCacheFlushAttributesAreNullOrEmpty(null);
+  public void testSetFlushingModelsWithEmptyModelMap() {
+    assertFlushingModelSourceIsNotSetIfFlushingModelMapIsNullOrEmpty(new HashMap());
   }
 
-  public void testSetCacheFlushAttributesWithEmptyAttributes() {
-    assertCacheFlushAttributeSourceIsNotSetIfCacheFlushAttributesAreNullOrEmpty(new Properties());
+  public void testSetFlushingModelsWithModelMapEqualToNull() {
+    assertFlushingModelSourceIsNotSetIfFlushingModelMapIsNullOrEmpty(null);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link CacheProxyFactoryBean#setProxyInterfaces(String[])}</code>
-   * gets the classes of the given names of interfaces.
-   */
   public void testSetProxyInterfaces() throws Exception {
     String[] interfaceNames = new String[] { CacheableService.class.getName() };
-
-    cacheProxyFactoryBean.setProxyInterfaces(interfaceNames);
+    factoryBean.setProxyInterfaces(interfaceNames);
 
     Class[] expectedProxyInterfaces = new Class[] { CacheableService.class };
-    Class[] actualProxyInterfaces = cacheProxyFactoryBean.getProxyInterfaces();
+    Class[] actualProxyInterfaces = factoryBean.getProxyInterfaces();
 
-    assertEquals("<Number of proxy interfaces>",
-        expectedProxyInterfaces.length, actualProxyInterfaces.length);
+    assertEquals(expectedProxyInterfaces.length, actualProxyInterfaces.length);
+    assertEquals(expectedProxyInterfaces[0], actualProxyInterfaces[0]);
+  }
 
-    Class expectedProxyInterface = expectedProxyInterfaces[0];
-    Class actualProxyInterface = actualProxyInterfaces[0];
-
-    assertEquals("<Proxy interface>", expectedProxyInterface,
-        actualProxyInterface);
+  private void verifyExpectationsOfMockControlsWereMet() {
+    cacheProviderFacadeControl.verify();
+    validatorControl.verify();
   }
 }

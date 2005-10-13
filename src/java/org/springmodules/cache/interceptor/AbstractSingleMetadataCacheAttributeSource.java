@@ -33,7 +33,7 @@ import org.springmodules.cache.CacheAttribute;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.5 $ $Date: 2005/09/06 01:41:36 $
+ * @version $Revision: 1.6 $ $Date: 2005/10/13 04:52:40 $
  */
 public abstract class AbstractSingleMetadataCacheAttributeSource extends
     AbstractMetadataCacheAttributeSource {
@@ -46,12 +46,12 @@ public abstract class AbstractSingleMetadataCacheAttributeSource extends
    * Returns an instance of <code>{@link CacheAttribute}</code>, given this
    * set of metadata attributes attached to a method or class.
    * 
-   * @param attributes
+   * @param methodAttributes
    *          metadata attributes attached to a method. May be <code>null</code>,
    *          in which case <code>null</code> will be returned.
    * @return an instance of <code>CacheAttribute</code>.
    */
-  protected abstract CacheAttribute findAttribute(Collection attributes);
+  protected abstract CacheAttribute findAttribute(Collection methodAttributes);
 
   /**
    * Returns an instance of <code>{@link CacheAttribute}</code> for the

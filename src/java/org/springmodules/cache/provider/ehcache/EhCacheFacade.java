@@ -25,14 +25,15 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.springmodules.cache.CacheException;
+import org.springmodules.cache.CachingModel;
+import org.springmodules.cache.FatalCacheException;
+import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.CacheException;
 import org.springmodules.cache.provider.CacheNotFoundException;
-import org.springmodules.cache.provider.CacheModel;
-import org.springmodules.cache.provider.CacheModelEditor;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
-import org.springmodules.cache.provider.FatalCacheException;
 import org.springmodules.cache.provider.ObjectCannotBeCachedException;
 
 /**
@@ -42,7 +43,7 @@ import org.springmodules.cache.provider.ObjectCannotBeCachedException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.16 $ $Date: 2005/09/29 01:21:40 $
+ * @version $Revision: 1.17 $ $Date: 2005/10/13 04:53:27 $
  */
 public final class EhCacheFacade extends AbstractCacheProviderFacade {
 
@@ -51,12 +52,15 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
    */
   private CacheManager cacheManager;
 
+  private CacheModelValidator cacheModelValidator;
+
   public EhCacheFacade() {
     super();
+    cacheModelValidator = new EhCacheModelValidator();
   }
 
   /**
-   * @param cacheName
+   * @param name
    *          the name of the cache.
    * @return the cache retrieved from the cache manager.
    * @throws CacheNotFoundException
@@ -64,39 +68,38 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected Cache getCache(String cacheName) {
+  protected Cache getCache(String name) {
     Cache cache = null;
 
     try {
-      if (cacheManager.cacheExists(cacheName)) {
-        cache = cacheManager.getCache(cacheName);
+      if (cacheManager.cacheExists(name)) {
+        cache = cacheManager.getCache(name);
       }
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
 
     if (cache == null) {
-      throw new CacheNotFoundException(cacheName);
+      throw new CacheNotFoundException(name);
     }
 
     return cache;
   }
 
-  /**
-   * @see AbstractCacheProviderFacade#getCacheModelEditor()
-   */
-  protected PropertyEditor getCacheModelEditor() {
-    CacheModelEditor editor = new CacheModelEditor();
-    editor.setCacheModelClass(EhCacheModel.class);
+  public CacheModelValidator getCacheModelValidator() {
+    return cacheModelValidator;
+  }
+
+  public PropertyEditor getCachingModelEditor() {
+    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+    editor.setCacheModelClass(EhCacheCachingModel.class);
     return editor;
   }
 
-  /**
-   * @see AbstractCacheProviderFacade#getCacheModelValidator()
-   * @see EhCacheModelValidator#validateCacheModel(Object)
-   */
-  protected CacheModelValidator getCacheModelValidator() {
-    return new EhCacheModelValidator();
+  public PropertyEditor getFlushingModelEditor() {
+    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+    editor.setCacheModelClass(EhCacheFlushingModel.class);
+    return editor;
   }
 
   /**
@@ -107,47 +110,57 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onFlushCache(CacheModel)
+   * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected void onFlushCache(CacheModel cacheModel) throws CacheException {
-    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
-    String cacheName = ehCacheModel.getCacheName();
+  protected void onFlushCache(FlushingModel model) throws CacheException {
+    EhCacheFlushingModel flushingModel = (EhCacheFlushingModel) model;
+    String[] cacheNames = flushingModel.getCacheNames();
 
-    Cache cache = getCache(cacheName);
+    if (cacheNames != null) {
+      CacheException cacheException = null;
+      int nameCount = cacheNames.length;
 
-    try {
-      cache.removeAll();
+      try {
+        for (int i = 0; i < nameCount; i++) {
+          Cache cache = getCache(cacheNames[i]);
+          cache.removeAll();
+        }
+      } catch (CacheException exception) {
+        cacheException = exception;
+      } catch (Exception exception) {
+        cacheException = new CacheAccessException(exception);
+      }
 
-    } catch (Exception exception) {
-      throw new CacheAccessException(exception);
+      if (cacheException != null) {
+        throw cacheException;
+      }
     }
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable,
-   *      CacheModel)
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CachingModel)
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected Object onGetFromCache(Serializable cacheKey,
-      CacheModel cacheModel) throws CacheException {
+  protected Object onGetFromCache(Serializable key, CachingModel model)
+      throws CacheException {
 
-    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
-    String cacheName = ehCacheModel.getCacheName();
+    EhCacheCachingModel cachingModel = (EhCacheCachingModel) model;
+    String cacheName = cachingModel.getCacheName();
 
     Cache cache = getCache(cacheName);
     Object cachedObject = null;
 
     try {
-      Element cacheElement = cache.get(cacheKey);
+      Element cacheElement = cache.get(key);
       if (cacheElement != null) {
         cachedObject = cacheElement.getValue();
       }
@@ -160,8 +173,8 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onPutInCache(Serializable,
-   *      CacheModel, Object)
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CachingModel,
+   *      Object)
    * 
    * @throws ObjectCannotBeCachedException
    *           if the object to store is not an implementation of
@@ -171,15 +184,14 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected void onPutInCache(Serializable cacheKey, CacheModel cacheModel,
-      Object objectToCache) throws CacheException {
+  protected void onPutInCache(Serializable key, CachingModel model, Object obj)
+      throws CacheException {
 
-    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
-    String cacheName = ehCacheModel.getCacheName();
+    EhCacheCachingModel cachingModel = (EhCacheCachingModel) model;
+    String cacheName = cachingModel.getCacheName();
 
     Cache cache = getCache(cacheName);
-    Element newCacheElement = new Element(cacheKey,
-        (Serializable) objectToCache);
+    Element newCacheElement = new Element(key, (Serializable) obj);
 
     try {
       cache.put(newCacheElement);
@@ -191,23 +203,23 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
-   *      CacheModel)
+   *      CachingModel)
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
    */
-  protected void onRemoveFromCache(Serializable cacheKey,
-      CacheModel cacheModel) throws CacheException {
+  protected void onRemoveFromCache(Serializable key, CachingModel model)
+      throws CacheException {
 
-    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
-    String cacheName = ehCacheModel.getCacheName();
+    EhCacheCachingModel cachingModel = (EhCacheCachingModel) model;
+    String cacheName = cachingModel.getCacheName();
 
     Cache cache = getCache(cacheName);
 
     try {
-      cache.remove(cacheKey);
+      cache.remove(key);
 
     } catch (Exception exception) {
       throw new CacheAccessException(exception);

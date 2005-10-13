@@ -18,19 +18,15 @@
 
 package org.springmodules.cache.provider;
 
-import java.beans.PropertyEditor;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.StringUtils;
+import org.springmodules.cache.CacheException;
+import org.springmodules.cache.CachingModel;
+import org.springmodules.cache.FatalCacheException;
+import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.serializable.SerializableFactory;
-import org.springmodules.util.ArrayUtils;
 import org.springmodules.util.Strings;
 
 /**
@@ -45,44 +41,37 @@ import org.springmodules.util.Strings;
 public abstract class AbstractCacheProviderFacade implements
     CacheProviderFacade {
 
-  /**
-   * Map that stores implementations of <code>{@link CacheModel}</code>. Each
-   * entry is stored using a unique id (a <code>String</code>).
-   */
-  private Map cacheModels;
-
   private boolean failQuietlyEnabled;
 
   protected final Log logger = LogFactory.getLog(getClass());
 
   private SerializableFactory serializableFactory;
 
-  private CacheProviderFacadeStatus status;
-
   public AbstractCacheProviderFacade() {
     super();
-    setStatus(CacheProviderFacadeStatus.UNINITIALIZED);
   }
 
   /**
    * Validates the properties of this class after being set by the
    * <code>BeanFactory</code>.
    * 
+   * @throws FatalCacheException
+   *           if one or more properties of this facade are in an illegal state.
    * @see #validateCacheManager()
-   * @see #validateCacheModels()
    */
   public final void afterPropertiesSet() throws FatalCacheException {
     validateCacheManager();
-
-    if (cacheModels instanceof Properties) {
-      setCacheModelsFromProperties((Properties) cacheModels);
-    }
-
-    validateCacheModels();
-
-    setStatus(CacheProviderFacadeStatus.READY);
+    onAfterPropertiesSet();
   }
 
+  /**
+   * Asserts that the given cache manager is not <code>null</code>.
+   * 
+   * @param cacheManager
+   *          the cache manager to check.
+   * @throws FatalCacheException
+   *           if the cache manager is <code>null</code>.s
+   */
   protected final void assertCacheManagerIsNotNull(Object cacheManager)
       throws FatalCacheException {
     if (cacheManager == null) {
@@ -93,16 +82,14 @@ public abstract class AbstractCacheProviderFacade implements
   /**
    * @see CacheProviderFacade#cancelCacheUpdate(Serializable)
    */
-  public final void cancelCacheUpdate(Serializable cacheKey)
-      throws CacheException {
-
+  public final void cancelCacheUpdate(Serializable key) throws CacheException {
     if (logger.isDebugEnabled()) {
       logger.debug("Attempt to cancel a cache update using the key <"
-          + cacheKey + ">");
+          + Strings.quoteIfString(key) + ">");
     }
 
     try {
-      onCancelCacheUpdate(cacheKey);
+      onCancelCacheUpdate(key);
 
     } catch (CacheException exception) {
       handleCatchedException(exception);
@@ -110,28 +97,17 @@ public abstract class AbstractCacheProviderFacade implements
   }
 
   /**
-   * @see CacheProviderFacade#flushCache(String[])
+   * @see CacheProviderFacade#flushCache(FlushingModel)
    */
-  public final void flushCache(String[] cacheModelIds) throws CacheException {
-
+  public final void flushCache(FlushingModel model) throws CacheException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Attempt to flush the cache using cache model ids <"
-          + ArrayUtils.toString(cacheModelIds) + ">");
+      logger.debug("Attempt to flush the cache using model <" + model + ">");
     }
 
-    if (cacheModelIds != null) {
-      int cacheModelIdCount = cacheModelIds.length;
-
+    if (model != null) {
       try {
-        for (int i = 0; i < cacheModelIdCount; i++) {
-          CacheModel cacheModel = getCacheModel(cacheModelIds[i]);
-          if (cacheModel != null) {
-            onFlushCache(cacheModel);
-          }
-        }
-        if (logger.isDebugEnabled()) {
-          logger.debug("Cache has been flushed.");
-        }
+        onFlushCache(model);
+        logger.debug("Cache has been flushed.");
 
       } catch (CacheException exception) {
         handleCatchedException(exception);
@@ -140,87 +116,32 @@ public abstract class AbstractCacheProviderFacade implements
   }
 
   /**
-   * Returns an implementation of <code>{@link CacheModel}</code> stored in
-   * <code>{@link #cacheModels}</code>.
-   * 
-   * @param cacheModelId
-   *          the id of the cache model to retrieve.
-   * @return a cache model.
+   * @see CacheProviderFacade#getFromCache(Serializable, CachingModel)
    */
-  protected final CacheModel getCacheModel(String cacheModelId) {
-    CacheModel cacheModel = null;
-
-    if (StringUtils.hasText(cacheModelId) && cacheModels != null) {
-      cacheModel = (CacheModel) cacheModels.get(cacheModelId);
-    }
-
-    if (logger.isDebugEnabled()) {
-      logger.debug("Obtained cache model <" + cacheModel + ">");
-    }
-
-    return cacheModel;
-  }
-
-  /**
-   * Returns a property editor for an implementation of
-   * <code>{@link CacheModel}</code>.
-   * 
-   * @return a property editor for cache models.
-   */
-  protected abstract PropertyEditor getCacheModelEditor();
-
-  /**
-   * Returns an unmodifiable view of <code>{@link #cacheModels}</code>.
-   * 
-   * @return an unmodifiable view of the existing cache models.
-   */
-  public final Map getCacheModels() {
-    return (cacheModels != null) ? Collections.unmodifiableMap(cacheModels)
-        : null;
-  }
-
-  /**
-   * Returns a validator for the properties of cache models.
-   * 
-   * @return a validator for the properties of cache models.
-   */
-  protected abstract CacheModelValidator getCacheModelValidator();
-
-  /**
-   * @see CacheProviderFacade#getFromCache(Serializable, String)
-   */
-  public final Object getFromCache(Serializable cacheKey, String cacheModelId)
+  public final Object getFromCache(Serializable key, CachingModel model)
       throws CacheException {
 
     if (logger.isDebugEnabled()) {
-      logger.debug("Attempt to retrieve a cache entry using key <" + cacheKey
-          + "> and cache model id " + Strings.quote(cacheModelId));
+      logger.debug("Attempt to retrieve a cache entry using key <"
+          + Strings.quoteIfString(key) + "> and cache model <" + model + ">");
     }
 
     Object cachedObject = null;
 
     try {
-      CacheModel cacheModel = getCacheModel(cacheModelId);
-
-      if (cacheModel != null) {
-        cachedObject = onGetFromCache(cacheKey, cacheModel);
+      if (model != null) {
+        cachedObject = onGetFromCache(key, model);
       }
 
       if (logger.isDebugEnabled()) {
-        logger.debug("Retrieved cache element <" + cachedObject + ">");
+        logger.debug("Retrieved cache element <"
+            + Strings.quoteIfString(cachedObject) + ">");
       }
 
     } catch (CacheException exception) {
       handleCatchedException(exception);
     }
     return cachedObject;
-  }
-
-  /**
-   * @see CacheProviderFacade#getStatus()
-   */
-  public CacheProviderFacadeStatus getStatus() {
-    return status;
   }
 
   /**
@@ -287,100 +208,105 @@ public abstract class AbstractCacheProviderFacade implements
   }
 
   /**
+   * Gives subclasses the opportunity to initialize their own properties. Called
+   * after <code>{@link #afterPropertiesSet()}</code> has finished setting up
+   * the properties of an instance of this class.
+   * 
+   * @throws FatalCacheException
+   *           if one or more properties of the facade or its dependencies have
+   *           incorrect values.
+   */
+  protected void onAfterPropertiesSet() throws FatalCacheException {
+    // no implementation.
+  }
+
+  /**
    * Cancels the update being made to the cache.
    * 
-   * @param cacheKey
+   * @param key
    *          the key being used in the cache update.
    * @throws CacheException
    *           if an unexpected error takes place when attempting to cancel the
    *           update.
    */
-  protected void onCancelCacheUpdate(Serializable cacheKey)
-      throws CacheException {
+  protected void onCancelCacheUpdate(Serializable key) throws CacheException {
     logger.info("Cache provider does not support cancelation of updates");
   }
 
   /**
    * Flushes the caches specified in the given model.
    * 
-   * @param cacheModel
-   *          the cache model that specifies what and how to flush.
+   * @param model
+   *          the model that specifies what and how to flush.
    * @throws CacheException
    *           if an unexpected error takes place when flushing the cache.
    */
-  protected abstract void onFlushCache(CacheModel cacheModel)
+  protected abstract void onFlushCache(FlushingModel model)
       throws CacheException;
 
   /**
    * Retrieves an entry from the cache.
    * 
-   * @param cacheKey
+   * @param key
    *          the key under which the entry is stored.
-   * @param cacheModel
-   *          the the cache model that specifies how to retrieve an entry.
+   * @param model
+   *          the model that specifies how to retrieve an entry.
    * @return the cached entry.
    * @throws CacheException
    *           if an unexpected error takes place when retrieving the entry from
    *           the cache.
    */
-  protected abstract Object onGetFromCache(Serializable cacheKey,
-      CacheModel cacheModel) throws CacheException;
+  protected abstract Object onGetFromCache(Serializable key, CachingModel model)
+      throws CacheException;
 
   /**
    * Stores an object in the cache.
    * 
-   * @param cacheKey
+   * @param key
    *          the key used to store the object.
-   * @param cacheModel
-   *          the cache model that specifies how to store an object in the
-   *          cache.
-   * @param objectToCache
+   * @param model
+   *          the model that specifies how to store an object in the cache.
+   * @param obj
    *          the object to store in the cache.
    * @throws CacheException
    *           if an unexpected error takes place when storing an object in the
    *           cache.
    */
-  protected abstract void onPutInCache(Serializable cacheKey,
-      CacheModel cacheModel, Object objectToCache) throws CacheException;
+  protected abstract void onPutInCache(Serializable key, CachingModel model,
+      Object obj) throws CacheException;
 
   /**
    * Removes an entry from the cache.
    * 
-   * @param cacheKey
+   * @param key
    *          the key the entry to remove is stored under.
-   * @param cacheModel
-   *          the cache model that specifies how to remove the entry from the
-   *          cache.
+   * @param model
+   *          the model that specifies how to remove the entry from the cache.
    * @throws CacheException
    *           if an unexpected error takes place when removing an entry from
    *           the cache.
    */
-  protected abstract void onRemoveFromCache(Serializable cacheKey,
-      CacheModel cacheModel) throws CacheException;
+  protected abstract void onRemoveFromCache(Serializable key, CachingModel model)
+      throws CacheException;
 
   /**
-   * @see CacheProviderFacade#putInCache(Serializable, String, Object)
+   * @see CacheProviderFacade#putInCache(Serializable, CachingModel, Object)
    * @see #makeSerializableIfNecessary(Object)
    */
-  public final void putInCache(Serializable cacheKey, String cacheModelId,
-      Object objectToCache) throws CacheException {
-
+  public final void putInCache(Serializable key, CachingModel model, Object obj)
+      throws CacheException {
     if (logger.isDebugEnabled()) {
-      logger.debug("Attempt to store the object <" + objectToCache
-          + "> in the cache using key <" + cacheKey + "> and cache model id "
-          + Strings.quote(cacheModelId));
+      logger.debug("Attempt to store the object <" + obj
+          + "> in the cache using key <" + Strings.quoteIfString(key)
+          + "> and model <" + model + ">");
     }
 
     try {
-      Object newCacheElement = makeSerializableIfNecessary(objectToCache);
+      Object newCacheElement = makeSerializableIfNecessary(obj);
 
-      CacheModel cacheModel = getCacheModel(cacheModelId);
-      if (cacheModel != null) {
-        onPutInCache(cacheKey, cacheModel, newCacheElement);
-
-        if (logger.isDebugEnabled()) {
-          logger.debug("Object was successfully stored in the cache");
-        }
+      if (model != null) {
+        onPutInCache(key, model, newCacheElement);
+        logger.debug("Object was successfully stored in the cache");
       }
     } catch (CacheException exception) {
       handleCatchedException(exception);
@@ -388,66 +314,24 @@ public abstract class AbstractCacheProviderFacade implements
   }
 
   /**
-   * @see CacheProviderFacade#removeFromCache(Serializable, String)
+   * @see CacheProviderFacade#removeFromCache(Serializable, CachingModel)
    */
-  public final void removeFromCache(Serializable cacheKey, String cacheModelId)
+  public final void removeFromCache(Serializable key, CachingModel model)
       throws CacheException {
-
     if (logger.isDebugEnabled()) {
       logger.debug("Attempt to remove an entry from the cache using key <"
-          + cacheKey + "> and cache model id " + Strings.quote(cacheModelId));
+          + Strings.quoteIfString(key) + "> and model <" + model + ">");
     }
 
-    CacheModel cacheModel = getCacheModel(cacheModelId);
-    if (cacheModel != null) {
+    if (model != null) {
       try {
-        onRemoveFromCache(cacheKey, cacheModel);
-
-        if (logger.isDebugEnabled()) {
-          logger.debug("Object removed from the cache");
-        }
+        onRemoveFromCache(key, model);
+        logger.debug("Object removed from the cache");
 
       } catch (CacheException exception) {
         handleCatchedException(exception);
       }
     }
-  }
-
-  public final void setCacheModels(Map newCacheModels) {
-    cacheModels = newCacheModels;
-  }
-
-  /**
-   * @throws FatalCacheException
-   *           if one or more cache models cannot be created from the given
-   *           properties.
-   */
-  private void setCacheModelsFromProperties(Properties properties)
-      throws FatalCacheException {
-    Map newCacheModels = new HashMap();
-    PropertyEditor cacheModelEditor = getCacheModelEditor();
-
-    String cacheModelId = null;
-    String cacheModelAsProperties = null;
-
-    try {
-      for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
-        cacheModelId = (String) i.next();
-        cacheModelAsProperties = properties.getProperty(cacheModelId);
-
-        cacheModelEditor.setAsText(cacheModelAsProperties);
-        CacheModel cacheModel = (CacheModel) cacheModelEditor.getValue();
-
-        newCacheModels.put(cacheModelId, cacheModel);
-      }
-    } catch (RuntimeException exception) {
-      throw new FatalCacheException(
-          "Unable to create cache model from the properties "
-              + Strings.quote(cacheModelAsProperties) + " with id "
-              + Strings.quote(cacheModelId), exception);
-    }
-
-    setCacheModels(newCacheModels);
   }
 
   public final void setFailQuietlyEnabled(boolean newFailQuietlyEnabled) {
@@ -463,50 +347,14 @@ public abstract class AbstractCacheProviderFacade implements
     serializableFactory = newSerializableFactory;
   }
 
-  private void setStatus(CacheProviderFacadeStatus newStatus) {
-    status = newStatus;
-  }
-
   /**
    * Validates the cache manager used by this facade.
    * 
-   * @throws FatalCacheException
+   * @throws IllegalStateException
    *           if the cache manager is in an invalid state.
    */
   protected void validateCacheManager() throws FatalCacheException {
     // no implementation.
-  }
-
-  /**
-   * @throws FatalCacheException
-   *           if the map of cache models is <code>null</code> or empty.
-   * @throws FatalCacheException
-   *           if one or more cache models have invalid values of any of their
-   *           properties.
-   */
-  private void validateCacheModels() throws FatalCacheException {
-    if (cacheModels == null || cacheModels.isEmpty()) {
-      throw new FatalCacheException(
-          "The map of cache models should not be empty");
-    }
-
-    CacheModelValidator cacheModelValidator = getCacheModelValidator();
-
-    String cacheModelId = null;
-    Object cacheModel = null;
-
-    try {
-      for (Iterator i = cacheModels.keySet().iterator(); i.hasNext();) {
-        cacheModelId = (String) i.next();
-        cacheModel = cacheModels.get(cacheModelId);
-
-        cacheModelValidator.validateCacheModel(cacheModel);
-      }
-
-    } catch (InvalidCacheModelException exception) {
-      throw new FatalCacheException("Invalid cache model <" + cacheModel
-          + "> with id " + Strings.quote(cacheModelId), exception);
-    }
   }
 
 }

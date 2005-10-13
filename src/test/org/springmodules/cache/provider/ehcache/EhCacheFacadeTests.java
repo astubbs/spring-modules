@@ -20,8 +20,6 @@ package org.springmodules.cache.provider.ehcache;
 import java.beans.PropertyEditor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 import junit.framework.TestCase;
 import net.sf.ehcache.Cache;
@@ -30,12 +28,12 @@ import net.sf.ehcache.Element;
 
 import org.easymock.AbstractMatcher;
 import org.easymock.classextension.MockClassControl;
+import org.springmodules.cache.CacheException;
+import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.CacheException;
-import org.springmodules.cache.provider.CacheNotFoundException;
-import org.springmodules.cache.provider.CacheModelEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
-import org.springmodules.cache.provider.FatalCacheException;
+import org.springmodules.cache.provider.CacheNotFoundException;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 /**
  * <p>
@@ -44,7 +42,7 @@ import org.springmodules.cache.provider.FatalCacheException;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.16 $ $Date: 2005/09/29 01:22:10 $
+ * @version $Revision: 1.17 $ $Date: 2005/10/13 04:52:34 $
  */
 public class EhCacheFacadeTests extends TestCase {
 
@@ -85,21 +83,21 @@ public class EhCacheFacadeTests extends TestCase {
 
   }
 
-  private static final String CACHE_KEY = "key";
-
   private static final String CACHE_NAME = "testCache";
 
-  private static final String CACHE_MODEL_ID = "cacheModel";
+  private static final String KEY = "key";
 
   private Cache cache;
 
   private MockClassControl cacheControl;
 
+  private EhCacheFacade cacheFacade;
+
   private CacheManager cacheManager;
 
-  private EhCacheModel cacheModel;
+  private EhCacheCachingModel cachingModel;
 
-  private EhCacheFacade ehCacheFacade;
+  private EhCacheFlushingModel flushingModel;
 
   public EhCacheFacadeTests(String name) {
     super(name);
@@ -116,13 +114,13 @@ public class EhCacheFacadeTests extends TestCase {
         new Class[] { Serializable.class });
     setUpCacheAsMockObject(getMethod);
 
-    cache.get(CACHE_KEY);
+    cache.get(KEY);
     cacheControl.setThrowable(expectedCatchedException);
 
     cacheControl.replay();
 
     try {
-      ehCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
+      cacheFacade.onGetFromCache(KEY, cachingModel);
       fail();
 
     } catch (CacheAccessException cacheAccessException) {
@@ -133,22 +131,20 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   protected void setUp() throws Exception {
-    super.setUp();
     cacheManager = CacheManager.create();
 
-    cacheModel = new EhCacheModel();
-    cacheModel.setCacheName(CACHE_NAME);
+    cachingModel = new EhCacheCachingModel();
+    cachingModel.setCacheName(CACHE_NAME);
 
-    Map cacheModels = new HashMap();
-    cacheModels.put(CACHE_MODEL_ID, cacheModel);
+    flushingModel = new EhCacheFlushingModel();
+    flushingModel.setCacheNames(CACHE_NAME);
 
-    ehCacheFacade = new EhCacheFacade();
-    ehCacheFacade.setCacheModels(cacheModels);
+    cacheFacade = new EhCacheFacade();
   }
 
   private void setUpCache() {
     cache = cacheManager.getCache(CACHE_NAME);
-    ehCacheFacade.setCacheManager(cacheManager);
+    cacheFacade.setCacheManager(cacheManager);
   }
 
   private void setUpCacheAsMockObject(Method methodToMock) throws Exception {
@@ -168,27 +164,14 @@ public class EhCacheFacadeTests extends TestCase {
         constructorTypes, constructorArgs, methodsToMock);
 
     cache = (Cache) cacheControl.getMock();
-    ehCacheFacade.setCacheManager(cacheManager);
+    cacheFacade.setCacheManager(cacheManager);
 
     cacheManager.removeCache(CACHE_NAME);
     cacheManager.addCache(cache);
   }
 
-  protected void tearDown() throws Exception {
-    super.tearDown();
-
+  protected void tearDown() {
     cacheManager.shutdown();
-  }
-
-  public void testGetCacheModelEditor() {
-    PropertyEditor editor = ehCacheFacade.getCacheModelEditor();
-
-    assertNotNull(editor);
-    assertEquals(CacheModelEditor.class, editor.getClass());
-
-    CacheModelEditor modelEditor = (CacheModelEditor) editor;
-    assertEquals(EhCacheModel.class, modelEditor.getCacheModelClass());
-    assertNull(modelEditor.getCacheModelPropertyEditors());
   }
 
   /**
@@ -198,7 +181,7 @@ public class EhCacheFacadeTests extends TestCase {
    * <code>null</code>.
    */
   public void testGetCacheModelValidator() {
-    CacheModelValidator validator = ehCacheFacade.getCacheModelValidator();
+    CacheModelValidator validator = cacheFacade.getCacheModelValidator();
     assertNotNull(validator);
     assertEquals(EhCacheModelValidator.class, validator.getClass());
   }
@@ -206,12 +189,13 @@ public class EhCacheFacadeTests extends TestCase {
   public void testGetCacheWhenCacheAccessThrowsException() {
     setUpCache();
 
-    // we can mock the cache manager since it doesn't have a public constructor.
+    // we can't mock the cache manager since it doesn't have a public
+    // constructor.
     // force a NullPointerException.
-    ehCacheFacade.setCacheManager(null);
+    cacheFacade.setCacheManager(null);
 
     try {
-      ehCacheFacade.getCache(CACHE_NAME);
+      cacheFacade.getCache(CACHE_NAME);
       fail();
 
     } catch (CacheAccessException exception) {
@@ -223,78 +207,86 @@ public class EhCacheFacadeTests extends TestCase {
 
   public void testGetCacheWithExistingCache() {
     setUpCache();
-
-    Cache expected = cacheManager.getCache(CACHE_NAME);
-    Cache actual = ehCacheFacade.getCache(CACHE_NAME);
-    assertSame(expected, actual);
+    assertSame(cacheManager.getCache(CACHE_NAME), cacheFacade
+        .getCache(CACHE_NAME));
   }
 
   public void testGetCacheWithNotExistingCache() {
     setUpCache();
-
     try {
-      ehCacheFacade.getCache("AnotherCache");
+      cacheFacade.getCache("AnotherCache");
       fail();
-
     } catch (CacheNotFoundException exception) {
       // we are expecting this exception.
     }
   }
 
+  public void testGetCachingModelEditor() {
+    PropertyEditor editor = cacheFacade.getCachingModelEditor();
+
+    assertNotNull(editor);
+    assertEquals(ReflectionCacheModelEditor.class, editor.getClass());
+
+    ReflectionCacheModelEditor modelEditor = (ReflectionCacheModelEditor) editor;
+    assertEquals(EhCacheCachingModel.class, modelEditor.getCacheModelClass());
+    assertNull(modelEditor.getCacheModelPropertyEditors());
+  }
+
+  public void testGetFlushingModelEditor() {
+    PropertyEditor editor = cacheFacade.getFlushingModelEditor();
+
+    assertNotNull(editor);
+    assertEquals(ReflectionCacheModelEditor.class, editor.getClass());
+
+    ReflectionCacheModelEditor modelEditor = (ReflectionCacheModelEditor) editor;
+    assertEquals(EhCacheFlushingModel.class, modelEditor.getCacheModelClass());
+    assertNull(modelEditor.getCacheModelPropertyEditors());
+  }
+
   public void testIsSerializableCacheElementRequired() {
-    assertTrue(ehCacheFacade.isSerializableCacheElementRequired());
+    assertTrue(cacheFacade.isSerializableCacheElementRequired());
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhCacheFacade#onFlushCache(org.springmodules.cache.provider.CacheModel)}</code>
+   * <code>{@link EhCacheFacade#onFlushCache(org.springmodules.cache.FlushingModel)}</code>
    * flushes the cache specified in the given cache model.
    */
   public void testOnFlushCache() throws Exception {
     setUpCache();
-
-    cache.put(new Element(CACHE_KEY, "A Value"));
-
-    // execute the method to test.
-    ehCacheFacade.onFlushCache(cacheModel);
-
-    Object cachedValue = cache.get(CACHE_KEY);
+    cache.put(new Element(KEY, "A Value"));
+    cacheFacade.onFlushCache(flushingModel);
+    Object cachedValue = cache.get(KEY);
     assertNull("The cache '" + CACHE_NAME + "' should be empty", cachedValue);
   }
 
   public void testOnFlushCacheWhenCacheAccessThrowsIllegalStateException()
       throws Exception {
-    Method removeAllMethod = Cache.class.getMethod("removeAll", null);
-    setUpCacheAsMockObject(removeAllMethod);
+    Method removeAll = Cache.class.getMethod("removeAll", null);
+    setUpCacheAsMockObject(removeAll);
 
-    IllegalStateException expectedCatchedException = new IllegalStateException();
-
+    IllegalStateException expected = new IllegalStateException();
     cache.removeAll();
-    cacheControl.setThrowable(expectedCatchedException);
-
+    cacheControl.setThrowable(expected);
     cacheControl.replay();
 
     try {
-      ehCacheFacade.onFlushCache(cacheModel);
+      cacheFacade.onFlushCache(flushingModel);
       fail();
-
-    } catch (CacheAccessException cacheAccessException) {
-      assertSame(expectedCatchedException, cacheAccessException.getCause());
+    } catch (CacheAccessException exception) {
+      assertSame(expected, exception.getCause());
     }
-
     cacheControl.verify();
   }
 
   public void testOnFlushCacheWhenCacheIsNotFound() {
     setUpCache();
-
-    cache.put(new Element(CACHE_KEY, "A Value"));
-    cacheModel.setCacheName("NonExistingCache");
+    cache.put(new Element(KEY, "A Value"));
+    flushingModel.setCacheNames("NonExistingCache");
 
     try {
-      ehCacheFacade.onFlushCache(cacheModel);
+      cacheFacade.onFlushCache(flushingModel);
       fail();
-
     } catch (CacheNotFoundException exception) {
       // expecting this exception.
     }
@@ -302,42 +294,36 @@ public class EhCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheModel)}</code>
+   * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.CachingModel)}</code>
    * retrieves, from the cache specified in the given cache model, the entry
    * stored under the given key.
    */
   public void testOnGetFromCache() throws Exception {
     setUpCache();
 
-    String objectToStore = "An Object";
-    cache.put(new Element(CACHE_KEY, objectToStore));
+    String expected = "An Object";
+    cache.put(new Element(KEY, expected));
 
-    Object cachedObject = ehCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
-
-    assertEquals("<Cached object>", objectToStore, cachedObject);
+    Object cachedObject = cacheFacade.onGetFromCache(KEY, cachingModel);
+    assertEquals(expected, cachedObject);
   }
 
   public void testOnGetFromCacheWhenCacheAccessThrowsCacheException()
       throws Exception {
-    Exception expectedCatchedException = new net.sf.ehcache.CacheException();
-    assertOnGetFromCacheWrapsCatchedException(expectedCatchedException);
+    assertOnGetFromCacheWrapsCatchedException(new net.sf.ehcache.CacheException());
   }
 
   public void testOnGetFromCacheWhenCacheAccessThrowsIllegalStateException()
       throws Exception {
-    Exception expectedCatchedException = new IllegalStateException();
-    assertOnGetFromCacheWrapsCatchedException(expectedCatchedException);
+    assertOnGetFromCacheWrapsCatchedException(new IllegalStateException());
   }
 
   public void testOnGetFromCacheWhenCacheIsNotFound() {
     setUpCache();
-
-    cacheModel.setCacheName("NonExistingCache");
-
+    cachingModel.setCacheName("NonExistingCache");
     try {
-      ehCacheFacade.onGetFromCache(CACHE_KEY, cacheModel);
+      cacheFacade.onGetFromCache(KEY, cachingModel);
       fail();
-
     } catch (CacheNotFoundException exception) {
       // we are expecting this exception.
     }
@@ -345,77 +331,67 @@ public class EhCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.provider.CacheModel)}</code>
+   * <code>{@link EhCacheFacade#onGetFromCache(java.io.Serializable, org.springmodules.cache.CachingModel)}</code>
    * returns <code>null</code> if the specified key does not exist in the
    * cache.
    */
   public void testOnGetFromCacheWhenKeyIsNotFound() throws Exception {
     setUpCache();
-
-    Object cachedObject = ehCacheFacade.onGetFromCache("NonExistingKey",
-        cacheModel);
-
+    Object cachedObject = cacheFacade.onGetFromCache("NonExistingKey",
+        cachingModel);
     assertNull(cachedObject);
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheModel, Object)}</code>
+   * <code>{@link EhCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.CachingModel, Object)}</code>
    * stores an entry in the cache specified in the given cache model using the
    * given key.
    */
   public void testOnPutInCache() throws Exception {
     setUpCache();
+    String expected = "An Object";
+    cacheFacade.onPutInCache(KEY, cachingModel, expected);
 
-    String objectToCache = "An Object";
-    ehCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToCache);
-
-    Object cachedObject = cache.get(CACHE_KEY).getValue();
-    assertSame("<Cached object>", objectToCache, cachedObject);
+    Object cachedObject = cache.get(KEY).getValue();
+    assertSame(expected, cachedObject);
   }
 
   public void testOnPutInCacheWhenCacheAccessThrowsIllegalStateException()
       throws Exception {
-    Method putMethod = Cache.class.getMethod("put",
-        new Class[] { Element.class });
-    setUpCacheAsMockObject(putMethod);
+    Method put = Cache.class.getMethod("put", new Class[] { Element.class });
+    setUpCacheAsMockObject(put);
 
-    IllegalStateException expectedCatchedException = new IllegalStateException();
-
+    IllegalStateException expected = new IllegalStateException();
     String objectToCache = "Luke";
-    Element expectedElement = new Element(CACHE_KEY, objectToCache);
+    Element element = new Element(KEY, objectToCache);
 
-    cache.put(expectedElement);
+    cache.put(element);
     cacheControl.setMatcher(new ElementMatcher());
-    cacheControl.setThrowable(expectedCatchedException);
-
+    cacheControl.setThrowable(expected);
     cacheControl.replay();
 
     try {
-      ehCacheFacade.onPutInCache(CACHE_KEY, cacheModel, objectToCache);
+      cacheFacade.onPutInCache(KEY, cachingModel, objectToCache);
       fail();
-
-    } catch (CacheAccessException cacheAccessException) {
-      assertSame(expectedCatchedException, cacheAccessException.getCause());
+    } catch (CacheAccessException exception) {
+      assertSame(expected, exception.getCause());
     }
-
     cacheControl.verify();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link EhCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.provider.CacheModel, Object)}</code>
+   * <code>{@link EhCacheFacade#onPutInCache(java.io.Serializable, org.springmodules.cache.CachingModel, Object)}</code>
    * does not store any entry in any cache if the cache specified in the given
    * cache model does not exist.
    */
   public void testOnPutInCacheWhenCacheIsNotFound() throws Exception {
     setUpCache();
-
-    cacheModel.setCacheName("NonExistingCache");
+    cachingModel.setCacheName("NonExistingCache");
     try {
-      ehCacheFacade.onPutInCache(CACHE_KEY, cacheModel, "An Object");
+      cacheFacade.onPutInCache(KEY, cachingModel, "An Object");
       fail();
-
     } catch (CacheException exception) {
       assertCacheExceptionIsCacheNotFoundException(exception);
     }
@@ -423,48 +399,39 @@ public class EhCacheFacadeTests extends TestCase {
 
   public void testOnRemoveFromCache() throws Exception {
     setUpCache();
+    cache.put(new Element(KEY, "An Object"));
+    cacheFacade.onRemoveFromCache(KEY, cachingModel);
 
-    cache.put(new Element(CACHE_KEY, "An Object"));
-
-    ehCacheFacade.onRemoveFromCache(CACHE_KEY, cacheModel);
-
-    Element cacheElement = cache.get(CACHE_KEY);
-    assertNull("The element with key '" + CACHE_KEY
-        + "' should have been removed from the cache", cacheElement);
+    assertNull("The element with key '" + KEY
+        + "' should have been removed from the cache", cache.get(KEY));
   }
 
   public void testOnRemoveFromCacheWhenCacheAccessThrowsIllegalStateException()
       throws Exception {
-    Method removeMethod = Cache.class.getDeclaredMethod("remove",
+    Method remove = Cache.class.getDeclaredMethod("remove",
         new Class[] { Serializable.class });
-    setUpCacheAsMockObject(removeMethod);
+    setUpCacheAsMockObject(remove);
 
-    IllegalStateException expectedCatchedException = new IllegalStateException();
-
-    cache.remove(CACHE_KEY);
-    cacheControl.setThrowable(expectedCatchedException);
-
+    IllegalStateException expected = new IllegalStateException();
+    cache.remove(KEY);
+    cacheControl.setThrowable(expected);
     cacheControl.replay();
 
     try {
-      ehCacheFacade.onRemoveFromCache(CACHE_KEY, cacheModel);
+      cacheFacade.onRemoveFromCache(KEY, cachingModel);
       fail();
-
-    } catch (CacheAccessException cacheAccessException) {
-      assertSame(expectedCatchedException, cacheAccessException.getCause());
+    } catch (CacheAccessException exception) {
+      assertSame(expected, exception.getCause());
     }
-
     cacheControl.verify();
   }
 
   public void testOnRemoveFromCacheWhenCacheIsNotFound() throws Exception {
     setUpCache();
-
-    cache.put(new Element(CACHE_KEY, "An Object"));
-    cacheModel.setCacheName("NonExistingCache");
-
+    cache.put(new Element(KEY, "An Object"));
+    cachingModel.setCacheName("NonExistingCache");
     try {
-      ehCacheFacade.removeFromCache(CACHE_KEY, CACHE_MODEL_ID);
+      cacheFacade.onRemoveFromCache(KEY, cachingModel);
       fail();
 
     } catch (CacheException exception) {
@@ -473,11 +440,10 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   public void testValidateCacheManagerWithCacheManagerEqualToNull() {
-    ehCacheFacade.setCacheManager(null);
+    cacheFacade.setCacheManager(null);
     try {
-      ehCacheFacade.validateCacheManager();
+      cacheFacade.validateCacheManager();
       fail();
-
     } catch (FatalCacheException exception) {
       // we are expecting this exception.
     }
@@ -491,7 +457,6 @@ public class EhCacheFacadeTests extends TestCase {
   public void testValidateCacheManagerWithCacheManagerNotEqualToNull()
       throws Exception {
     setUpCache();
-
-    ehCacheFacade.validateCacheManager();
+    cacheFacade.validateCacheManager();
   }
 }

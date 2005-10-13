@@ -18,8 +18,6 @@
 
 package org.springmodules.cache.integration.ehcache;
 
-import org.springmodules.cache.integration.ApplicationContextPaths;
-
 /**
  * <p>
  * Verifies that the caching module works correctly when using EHCache as the
@@ -29,10 +27,12 @@ import org.springmodules.cache.integration.ApplicationContextPaths;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.7 $ $Date: 2005/09/27 04:38:29 $
+ * @version $Revision: 1.8 $ $Date: 2005/10/13 04:52:53 $
  */
 public final class EhCacheMetadataIntegrationTests extends
     AbstractEhCacheIntegrationTests {
+
+  private static final String METADATA_CONFIG = "**/ehCacheMetadataContext.xml";
 
   /**
    * Constructor.
@@ -45,10 +45,6 @@ public final class EhCacheMetadataIntegrationTests extends
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    String[] configFileNames = new String[] {
-        ApplicationContextPaths.EHCACHE,
-        ApplicationContextPaths.METADATA_ATTRIBUTES };
-
-    return configFileNames;
+    return new String[] { CACHE_CONFIG, METADATA_CONFIG };
   }
 }

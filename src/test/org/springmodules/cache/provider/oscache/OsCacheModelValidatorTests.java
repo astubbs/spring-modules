@@ -44,15 +44,15 @@ public final class OsCacheModelValidatorTests extends TestCase {
   }
 
   public void testValidateCacheModelWithInstanceOfOscacheCacheModel() {
-    OsCacheModel cacheModel = new OsCacheModel();
+    OsCacheCachingModel cacheModel = new OsCacheCachingModel();
     Object object = cacheModel;
 
-    cacheModelValidator.validateCacheModel(object);
+    cacheModelValidator.validateCachingModel(object);
   }
 
   public void testValidateCacheModelObjectWithObjectNotInstanceOfOscacheCacheModel() {
     try {
-      cacheModelValidator.validateCacheModel(new Object());
+      cacheModelValidator.validateCachingModel(new Object());
       fail();
     } catch (InvalidCacheModelException exception) {
       // we are expecting this exception.

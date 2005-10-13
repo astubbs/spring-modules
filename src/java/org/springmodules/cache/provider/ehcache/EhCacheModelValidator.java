@@ -19,41 +19,68 @@
 package org.springmodules.cache.provider.ehcache;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.AbstractCacheModelValidator;
+import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.InvalidCacheModelException;
+import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link EhCacheModel}</code>.
+ * Validates the properties of a <code>{@link EhCacheCachingModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public class EhCacheModelValidator extends AbstractCacheModelValidator {
+public final class EhCacheModelValidator implements CacheModelValidator {
 
   public EhCacheModelValidator() {
     super();
   }
 
   /**
-   * @see AbstractCacheModelValidator#getTargetClass()
+   * @throws InvalidCacheModelException
+   *           if the model is not an instance of
+   *           <code>EhCacheCachingModel</code>.
+   * @throws InvalidCacheModelException
+   *           if the model does not have a cache name.
+   * @see CacheModelValidator#validateCachingModel(Object)
    */
-  protected Class getTargetClass() {
-    return EhCacheModel.class;
-  }
-
-  /**
-   * @see AbstractCacheModelValidator#validateCacheModelProperties(java.lang.Object)
-   */
-  protected void validateCacheModelProperties(Object cacheModel)
+  public void validateCachingModel(Object model)
       throws InvalidCacheModelException {
-    EhCacheModel ehCacheModel = (EhCacheModel) cacheModel;
+    if (!(model instanceof EhCacheCachingModel)) {
+      throw new InvalidCacheModelException(
+          "The caching model should be an instance of <"
+              + EhCacheCachingModel.class.getName() + ">");
+    }
 
-    if (!StringUtils.hasText(ehCacheModel.getCacheName())) {
+    EhCacheCachingModel cachingModel = (EhCacheCachingModel) model;
+    if (!StringUtils.hasText(cachingModel.getCacheName())) {
       throw new InvalidCacheModelException("Cache name should not be empty");
     }
   }
 
+  /**
+   * @throws InvalidCacheModelException
+   *           if the model is not an instance of
+   *           <code>EhCacheFlushingModel</code>.
+   * @throws InvalidCacheModelException
+   *           if the model does not have at least one cache name.
+   * @see CacheModelValidator#validateFlushingModel(Object)
+   */
+  public void validateFlushingModel(Object model)
+      throws InvalidCacheModelException {
+    if (!(model instanceof EhCacheFlushingModel)) {
+      throw new InvalidCacheModelException(
+          "The flushing model should be an instance of <"
+              + EhCacheFlushingModel.class.getName() + ">");
+    }
+
+    EhCacheFlushingModel flushingModel = (EhCacheFlushingModel) model;
+    String[] cacheNames = flushingModel.getCacheNames();
+    if (!ArrayUtils.hasElements(cacheNames)) {
+      throw new InvalidCacheModelException(
+          "There should be at least one cache name");
+    }
+  }
 }

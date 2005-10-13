@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.2 $ $Date: 2005/09/29 01:21:48 $
+ * @version $Revision: 1.3 $ $Date: 2005/10/13 04:52:02 $
  */
 @Target( { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
@@ -41,13 +41,7 @@ import java.lang.annotation.Target;
 public @interface CacheFlush {
 
   /**
-   * Ids of the cache models to be used to flush the cache.
+   * Ids of the flushing model to be used to flush the cache.
    */
-  String[] cacheModelIds();
-
-  /**
-   * Flag that indicates if the cache should be flushed before or after the
-   * execution of the intercepted method.
-   */
-  boolean flushBeforeExecution() default false;
+  String modelId();
 }

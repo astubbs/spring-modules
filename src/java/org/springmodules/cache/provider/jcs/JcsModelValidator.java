@@ -19,40 +19,74 @@
 package org.springmodules.cache.provider.jcs;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.AbstractCacheModelValidator;
+import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.InvalidCacheModelException;
+import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
+import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link JcsModel}</code>.
+ * Validates the properties of a <code>{@link JcsCachingModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  * 
  * @version $Revision$ $Date$
  */
-public class JcsModelValidator extends AbstractCacheModelValidator {
+public final class JcsModelValidator implements CacheModelValidator {
 
   public JcsModelValidator() {
     super();
   }
 
   /**
-   * @see AbstractCacheModelValidator#getTargetClass()
+   * @throws InvalidCacheModelException
+   *           if the model is not an instance of <code>JcsCachingModel</code>.
+   * @throws InvalidCacheModelException
+   *           if the model does not have a cache name.
+   * @see CacheModelValidator#validateCachingModel(Object)
    */
-  protected Class getTargetClass() {
-    return JcsModel.class;
+  public void validateCachingModel(Object model)
+      throws InvalidCacheModelException {
+    if (!(model instanceof JcsCachingModel)) {
+      throw new InvalidCacheModelException(
+          "The caching model should be an instance of <"
+              + JcsCachingModel.class.getName() + ">");
+    }
+    JcsCachingModel cachingModel = (JcsCachingModel) model;
+    if (!StringUtils.hasText(cachingModel.getCacheName())) {
+      throw new InvalidCacheModelException("Cache name should not be empty");
+    }
   }
 
   /**
-   * @see AbstractCacheModelValidator#validateCacheModelProperties(java.lang.Object)
+   * @throws InvalidCacheModelException
+   *           if the model does not contain any cache structs.
+   * @throws InvalidCacheModelException
+   *           if any of the cache structs does not have a cache name.
+   * @see CacheModelValidator#validateFlushingModel(Object)
    */
-  protected void validateCacheModelProperties(Object cacheModel)
+  public void validateFlushingModel(Object model)
       throws InvalidCacheModelException {
-    JcsModel jcsModel = (JcsModel) cacheModel;
-
-    if (!StringUtils.hasText(jcsModel.getCacheName())) {
-      throw new InvalidCacheModelException("Cache name should not be empty");
+    if (!(model instanceof JcsFlushingModel)) {
+      throw new InvalidCacheModelException(
+          "The caching model should be an instance of <"
+              + JcsFlushingModel.class.getName() + ">");
+    }
+    JcsFlushingModel flushingModel = (JcsFlushingModel) model;
+    CacheStruct[] structs = flushingModel.getCacheStructs();
+    if (!ArrayUtils.hasElements(structs)) {
+      throw new InvalidCacheModelException(
+          "There should be at least one cache to flush");
+    }
+    int structCount = structs.length;
+    for (int i = 0; i < structCount; i++) {
+      CacheStruct struct = structs[i];
+      if (!StringUtils.hasText(struct.getCacheName())) {
+        throw new InvalidCacheModelException(
+            "Cache name should not be empty in the struct with index <" + i
+                + ">");
+      }
     }
   }
 }

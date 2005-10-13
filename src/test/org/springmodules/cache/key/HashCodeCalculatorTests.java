@@ -27,7 +27,7 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  * 
- * @version $Revision: 1.3 $ $Date: 2005/09/06 01:41:29 $
+ * @version $Revision: 1.4 $ $Date: 2005/10/13 04:51:57 $
  */
 public final class HashCodeCalculatorTests extends TestCase {
 
@@ -39,7 +39,7 @@ public final class HashCodeCalculatorTests extends TestCase {
 
   protected void setUp() throws Exception {
     super.setUp();
-    this.hashCodeCalculator = new HashCodeCalculator();
+    hashCodeCalculator = new HashCodeCalculator();
   }
 
   public void testAppend() {
@@ -52,7 +52,7 @@ public final class HashCodeCalculatorTests extends TestCase {
 
     for (int i = 0; i < valueCount; i++) {
       int value = values[i];
-      this.hashCodeCalculator.append(value);
+      hashCodeCalculator.append(value);
 
       count++;
       value *= count;
@@ -60,11 +60,11 @@ public final class HashCodeCalculatorTests extends TestCase {
       expectedCheckSum += value;
     }
 
-    long actualCheckSum = this.hashCodeCalculator.getCheckSum();
-    int actualHashCode = this.hashCodeCalculator.getHashCode();
+    long actualCheckSum = hashCodeCalculator.getCheckSum();
+    int actualHashCode = hashCodeCalculator.getHashCode();
 
-    assertEquals("<checkSum>", expectedCheckSum, actualCheckSum);
-    assertEquals("<hashCode>", expectedHashCode, actualHashCode);
+    assertEquals(expectedCheckSum, actualCheckSum);
+    assertEquals(expectedHashCode, actualHashCode);
   }
 
 }

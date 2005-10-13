@@ -18,19 +18,21 @@
 
 package org.springmodules.cache.provider;
 
-import java.beans.PropertyEditor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.mock.MockCacheModel;
+import org.springmodules.cache.CacheException;
+import org.springmodules.cache.CachingModel;
+import org.springmodules.cache.FatalCacheException;
+import org.springmodules.cache.FlushingModel;
+import org.springmodules.cache.mock.MockCachingModel;
+import org.springmodules.cache.mock.MockFlushingModel;
+import org.springmodules.cache.serializable.SerializableFactory;
 
 /**
  * <p>
@@ -43,46 +45,22 @@ import org.springmodules.cache.mock.MockCacheModel;
  */
 public final class CacheProviderFacadeTests extends TestCase {
 
-  private static final String CACHE_MODEL_ID = "CACHE_MODEL_ID";
+  private AbstractCacheProviderFacade cacheProviderFacade;
+
+  private MockClassControl cacheProviderFacadeControl;
+
+  private CachingModel cachingModel;
+
+  private FlushingModel flushingModel;
 
   /**
    * Key of the cached object to be retrieved from
    * <code>{@link #cacheProviderFacade}</code>.
    */
-  private Serializable cacheKey;
-
-  /**
-   * Cache model to be stored in <code>{@link #cacheModelMap}</code> using the
-   * key <code>{@link #CACHE_MODEL_ID}</code>.
-   */
-  private CacheModel cacheModel;
-
-  private PropertyEditor cacheModelEditor;
-
-  private MockControl cacheModelEditorControl;
-
-  private Map cacheModelMap;
-
-  private CacheModelValidator cacheModelValidator;
-
-  private MockControl cacheModelValidatorControl;
-
-  private AbstractCacheProviderFacade cacheProviderFacade;
-
-  private MockClassControl cacheProviderFacadeControl;
+  private Serializable key;
 
   public CacheProviderFacadeTests(String name) {
     super(name);
-  }
-
-  private void assertAfterPropertiesSetThrowsException() {
-    try {
-      cacheProviderFacade.afterPropertiesSet();
-      fail();
-
-    } catch (FatalCacheException exception) {
-      // we are expecting this exception to be thrown.
-    }
   }
 
   private void assertIsNotSerializable(Object obj) {
@@ -90,196 +68,96 @@ public final class CacheProviderFacadeTests extends TestCase {
         obj instanceof Serializable);
   }
 
+  private CacheException createCacheException() {
+    return new CacheNotFoundException("someCache");
+  }
+
   private void expectCacheRequiresSerializableElements(boolean requires) {
     cacheProviderFacade.isSerializableCacheElementRequired();
     cacheProviderFacadeControl.setReturnValue(requires);
   }
 
-  private void expectGetCacheModelEditor() {
-    cacheProviderFacade.getCacheModelEditor();
-    cacheProviderFacadeControl.setReturnValue(cacheModelEditor);
+  private CacheException expectOnCancelCacheUpdateToThrowException() {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onCancelCacheUpdate(key);
+    cacheProviderFacadeControl.setThrowable(expected);
+
+    return expected;
   }
 
-  private void expectGetCacheModelValidator() {
-    cacheProviderFacade.getCacheModelValidator();
-    cacheProviderFacadeControl.setReturnValue(cacheModelValidator);
+  private CacheException expectOnFlushCacheToThrowException() {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onFlushCache(flushingModel);
+    cacheProviderFacadeControl.setThrowable(expected);
+
+    return expected;
   }
 
-  private CacheException getNewCacheException() {
-    return new CacheNotFoundException("someCache");
+  private CacheException expectOnGetFromCacheToThrowException() {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onGetFromCache(key, cachingModel);
+    cacheProviderFacadeControl.setThrowable(expected);
+
+    return expected;
   }
 
-  private InvalidCacheModelException getNewInvalidCacheModelException() {
-    return new InvalidCacheModelException(
-        "This exception should not make the test fail");
-  }
-
-  private void setStateOfMockControlsToReplay() {
-    cacheModelEditorControl.replay();
-    if (cacheModelValidatorControl != null) {
-      cacheModelValidatorControl.replay();
-    }
-    cacheProviderFacadeControl.replay();
+  private CacheException expectOnPutInCacheThrowsException(Object objectToStore) {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onPutInCache(key, cachingModel, objectToStore);
+    cacheProviderFacadeControl.setThrowable(expected);
+    return expected;
   }
 
   protected void setUp() throws Exception {
-    super.setUp();
-
     setUpCacheProviderFacadeAsMockObject();
-    setUpCacheModelEditorAsMockObject();
 
-    cacheKey = "Key";
-    cacheModel = new MockCacheModel();
-    cacheModelMap = new HashMap();
-    cacheModelMap.put(CACHE_MODEL_ID, cacheModel);
-    cacheProviderFacade.setCacheModels(cacheModelMap);
-  }
-
-  private void setUpCacheModelEditorAsMockObject() {
-    cacheModelEditorControl = MockControl.createControl(PropertyEditor.class);
-    cacheModelEditor = (PropertyEditor) cacheModelEditorControl.getMock();
-  }
-
-  private void setUpCacheModelValidatorAsMockObject() {
-    cacheModelValidatorControl = MockControl
-        .createControl(CacheModelValidator.class);
-
-    cacheModelValidator = (CacheModelValidator) cacheModelValidatorControl
-        .getMock();
+    key = "Key";
+    cachingModel = new MockCachingModel();
+    flushingModel = new MockFlushingModel();
   }
 
   private void setUpCacheProviderFacadeAsMockObject() throws Exception {
     Class classToMock = AbstractCacheProviderFacade.class;
 
-    Method getCacheModelEditorMethod = classToMock.getDeclaredMethod(
-        "getCacheModelEditor", null);
+    Method isSerializableCacheElementRequired = classToMock.getDeclaredMethod(
+        "isSerializableCacheElementRequired", null);
 
-    Method getCacheModelValidatorMethod = classToMock.getDeclaredMethod(
-        "getCacheModelValidator", null);
+    Method onAfterPropertiesSet = classToMock.getDeclaredMethod(
+        "onAfterPropertiesSet", null);
 
-    Method isSerializableCacheElementRequiredMethod = classToMock
-        .getDeclaredMethod("isSerializableCacheElementRequired", null);
-
-    Method onCancelCacheUpdateMethod = classToMock.getDeclaredMethod(
+    Method onCancelCacheUpdate = classToMock.getDeclaredMethod(
         "onCancelCacheUpdate", new Class[] { Serializable.class });
 
-    Method onFlushCacheMethod = classToMock.getDeclaredMethod("onFlushCache",
-        new Class[] { CacheModel.class });
+    Method onFlushCache = classToMock.getDeclaredMethod("onFlushCache",
+        new Class[] { FlushingModel.class });
 
-    Method onGetFromCacheMethod = classToMock.getDeclaredMethod(
-        "onGetFromCache", new Class[] { Serializable.class, CacheModel.class });
+    Method onGetFromCache = classToMock.getDeclaredMethod("onGetFromCache",
+        new Class[] { Serializable.class, CachingModel.class });
 
-    Method onPutInCacheMethod = classToMock.getDeclaredMethod("onPutInCache",
-        new Class[] { Serializable.class, CacheModel.class, Object.class });
+    Method onPutInCache = classToMock.getDeclaredMethod("onPutInCache",
+        new Class[] { Serializable.class, CachingModel.class, Object.class });
 
-    Method validateCacheManagerMethod = classToMock.getDeclaredMethod(
+    Method validateCacheManager = classToMock.getDeclaredMethod(
         "validateCacheManager", null);
 
-    Method[] methodsToMock = new Method[] { getCacheModelEditorMethod,
-        getCacheModelValidatorMethod, isSerializableCacheElementRequiredMethod,
-        onCancelCacheUpdateMethod, onFlushCacheMethod, onGetFromCacheMethod,
-        onPutInCacheMethod, validateCacheManagerMethod };
+    Method[] methodsToMock = new Method[] { isSerializableCacheElementRequired,
+        onAfterPropertiesSet, onCancelCacheUpdate, onFlushCache,
+        onGetFromCache, onPutInCache, validateCacheManager };
 
-    cacheProviderFacadeControl = MockClassControl.createControl(classToMock,
-        null, null, methodsToMock);
+    cacheProviderFacadeControl = MockClassControl.createStrictControl(
+        classToMock, null, null, methodsToMock);
 
     cacheProviderFacade = (AbstractCacheProviderFacade) cacheProviderFacadeControl
         .getMock();
   }
 
-  public void testAfterPropertiesSetValidatesCacheManager() throws Exception {
-    setUpCacheModelValidatorAsMockObject();
-
-    // validate cache manager.
+  public void testAfterPropertiesSet() throws Exception {
     cacheProviderFacade.validateCacheManager();
+    cacheProviderFacade.onAfterPropertiesSet();
+    cacheProviderFacadeControl.replay();
 
-    // validate the cache model(s).
-    expectGetCacheModelValidator();
-    cacheModelValidator.validateCacheModel(cacheModel);
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
     cacheProviderFacade.afterPropertiesSet();
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  public void testAfterPropertiesSetWhenMapOfCacheModelsIsEmpty() {
-    cacheModelMap.clear();
-    assertAfterPropertiesSetThrowsException();
-  }
-
-  public void testAfterPropertiesSetWhenMapOfCacheModelsIsEqualToNull() {
-    cacheProviderFacade.setCacheModels(null);
-    assertAfterPropertiesSetThrowsException();
-  }
-
-  public void testAfterPropertiesSetWhenMapOfCacheModelsIsProperties()
-      throws Exception {
-    setUpCacheModelValidatorAsMockObject();
-
-    this.cacheProviderFacade.validateCacheManager();
-
-    String cacheModelId = "main";
-    String cacheModelPropertiesAsText = "[firstName=Luke]";
-
-    Properties properties = new Properties();
-    properties.setProperty(cacheModelId, cacheModelPropertiesAsText);
-
-    cacheProviderFacade.setCacheModels(properties);
-
-    expectGetCacheModelEditor();
-    cacheModelEditor.setAsText(cacheModelPropertiesAsText);
-    cacheModelEditor.getValue();
-    cacheModelEditorControl.setReturnValue(cacheModel);
-
-    expectGetCacheModelValidator();
-    cacheModelValidator.validateCacheModel(cacheModel);
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.afterPropertiesSet();
-
-    assertSame(cacheModel, cacheProviderFacade.getCacheModels().get(
-        cacheModelId));
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacade#afterPropertiesSet()}</code>
-   * throws a <code>{@link FatalCacheException}</code> wrapping any exception
-   * thrown by the <code>{@link CacheModelValidator}</code>.
-   */
-  public void testAfterPropertiesSetWhenValidationOfCacheModelsThrowsException()
-      throws Exception {
-    setUpCacheModelValidatorAsMockObject();
-
-    // validate cache manager.
-    cacheProviderFacade.validateCacheManager();
-
-    // the cache model is invalid.
-    InvalidCacheModelException expectedNestedException = this
-        .getNewInvalidCacheModelException();
-    expectGetCacheModelValidator();
-    cacheModelValidator.validateCacheModel(cacheModel);
-    cacheModelValidatorControl.setThrowable(expectedNestedException);
-
-    setStateOfMockControlsToReplay();
-
-    try {
-      cacheProviderFacade.afterPropertiesSet();
-      fail();
-
-    } catch (FatalCacheException exception) {
-      assertSame("<Nested exception>", expectedNestedException, exception
-          .getCause());
-    }
-
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacadeControl.verify();
   }
 
   public void testAssertCacheManagerIsNotNullWithCacheManagerEqualToNull() {
@@ -292,275 +170,131 @@ public final class CacheProviderFacadeTests extends TestCase {
   }
 
   public void testAssertCacheManagerIsNotNullWithCacheManagerNotEqualToNull() {
+    // shouldn't throw an exception
     cacheProviderFacade.assertCacheManagerIsNotNull(new Object());
   }
 
   public void testCancelCacheUpdate() throws Exception {
-    cacheProviderFacade.onCancelCacheUpdate(cacheKey);
+    cacheProviderFacade.onCancelCacheUpdate(key);
+    cacheProviderFacadeControl.replay();
 
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.cancelCacheUpdate(cacheKey);
-
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacade.cancelCacheUpdate(key);
+    cacheProviderFacadeControl.verify();
   }
 
   public void testCancelCacheUpdateWhenCacheAccessThrowsExceptionAndFailQuietlyIsFalse()
       throws Exception {
     cacheProviderFacade.setFailQuietlyEnabled(false);
 
-    CacheException expectedException = getNewCacheException();
-    cacheProviderFacade.onCancelCacheUpdate(cacheKey);
-    cacheProviderFacadeControl.setThrowable(expectedException);
+    CacheException expected = expectOnCancelCacheUpdateToThrowException();
 
-    setStateOfMockControlsToReplay();
+    cacheProviderFacadeControl.replay();
 
     try {
-      // execute the method to test.
-      cacheProviderFacade.cancelCacheUpdate(cacheKey);
+      cacheProviderFacade.cancelCacheUpdate(key);
       fail();
 
     } catch (CacheException exception) {
-      assertSame(expectedException, exception);
+      assertSame(expected, exception);
     }
 
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacadeControl.verify();
   }
 
   public void testCancelCacheUpdateWhenCacheAccessThrowsExceptionAndFailQuietlyIsTrue()
       throws Exception {
     cacheProviderFacade.setFailQuietlyEnabled(true);
 
-    // facade is unable to cancel cache update.
-    cacheProviderFacade.onCancelCacheUpdate(cacheKey);
-    cacheProviderFacadeControl.setThrowable(new CacheNotFoundException(
-        "myCache"));
+    expectOnCancelCacheUpdateToThrowException();
 
-    setStateOfMockControlsToReplay();
+    cacheProviderFacadeControl.replay();
 
-    // execute the method to test.
-    cacheProviderFacade.cancelCacheUpdate(cacheKey);
-
-    verifyExpectationsOfMockControlsWereMet();
+    // shouldn't throw exceptions.
+    cacheProviderFacade.cancelCacheUpdate(key);
+    cacheProviderFacadeControl.verify();
   }
 
   public void testFlushCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsFalse()
       throws Exception {
-    String[] cacheModelIds = new String[] { CACHE_MODEL_ID };
     cacheProviderFacade.setFailQuietlyEnabled(false);
-
-    // facade is unable to flush the cache.
-    CacheException expectedException = getNewCacheException();
-    cacheProviderFacade.onFlushCache(cacheModel);
-    cacheProviderFacadeControl.setThrowable(expectedException);
-
-    setStateOfMockControlsToReplay();
+    CacheException expected = expectOnFlushCacheToThrowException();
+    cacheProviderFacadeControl.replay();
 
     try {
-      // execute the method to test.
-      cacheProviderFacade.flushCache(cacheModelIds);
+      cacheProviderFacade.flushCache(flushingModel);
       fail();
 
     } catch (CacheException exception) {
-      assertSame(expectedException, exception);
+      assertSame(expected, exception);
     }
 
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacadeControl.verify();
   }
 
   public void testFlushCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsTrue()
       throws Exception {
-    String[] cacheModelIds = { CACHE_MODEL_ID };
     cacheProviderFacade.setFailQuietlyEnabled(true);
+    expectOnFlushCacheToThrowException();
+    cacheProviderFacadeControl.replay();
 
-    // facade is unable to flush the cache.
-    CacheException cacheException = getNewCacheException();
-    cacheProviderFacade.onFlushCache(cacheModel);
-    cacheProviderFacadeControl.setThrowable(cacheException);
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.flushCache(cacheModelIds);
-
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacade.flushCache(flushingModel);
+    cacheProviderFacadeControl.verify();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacade#flushCache(String[])}</code>
-   * does not flush the cache if the array of cache model ids is equal to
-   * <code>null</code>.
+   * <code>{@link AbstractCacheProviderFacade#flushCache(FlushingModel)}</code>
+   * does not flush the cache if the model is <code>null</code>.
    */
-  public void testFlushCacheWhenArrayOfModelIdsIsEqualToNull() throws Exception {
-    String[] cacheModelIds = null;
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.flushCache(cacheModelIds);
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacade#flushCache(String[])}</code>
-   * does not flush the cache if the array of cache model ids is empty.
-   */
-  public void testFlushCacheWhenModelIdsIsEmpty() throws Exception {
-    String[] cacheModelIds = new String[0];
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.flushCache(cacheModelIds);
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  public void testFlushCacheWithNotEmptyArrayOfCacheModelIdsAndExistingCacheModelId()
-      throws Exception {
-    String[] cacheModelIds = new String[] { CACHE_MODEL_ID };
-
-    // flush the cache.
-    cacheProviderFacade.onFlushCache(cacheModel);
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.flushCache(cacheModelIds);
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacade#flushCache(String[])}</code>
-   * does not flush the cache if the specified cache models cannot be found.
-   */
-  public void testFlushCacheWithNotEmptyArrayOfCacheModelIdsAndNotExistingCacheModelId()
-      throws Exception {
-    String[] cacheModelIds = new String[] { "anotherCacheModelId" };
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.flushCache(cacheModelIds);
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  public void testGetCacheModelsReturnsAnUnmodifiableMap() {
-    Map unmodifiableMap = cacheProviderFacade.getCacheModels();
-
-    try {
-      unmodifiableMap.clear();
-      fail();
-
-    } catch (UnsupportedOperationException exception) {
-      // we are expecting this exception.
-    }
-  }
-
-  public void testGetCacheModelWhenCacheModelIdIsNotEmpty() {
-    CacheModel actual = cacheProviderFacade.getCacheModel(CACHE_MODEL_ID);
-    assertSame(cacheModel, actual);
-  }
-
-  public void testGetCacheModelWhenCacheModelIdIsNull() {
-    CacheModel actual = cacheProviderFacade.getCacheModel(null);
-    assertNull(actual);
-  }
-
-  public void testGetCacheModelWithCacheModelIdIsEmpty() {
-    CacheModel actual = cacheProviderFacade.getCacheModel("");
-    assertNull(actual);
+  public void testFlushCacheWhenModelIsNull() throws Exception {
+    cacheProviderFacadeControl.replay();
+    cacheProviderFacade.flushCache(null);
+    cacheProviderFacadeControl.verify();
   }
 
   public void testGetFromCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsFalse()
       throws Exception {
     cacheProviderFacade.setFailQuietlyEnabled(false);
-
-    // facade is unable to get an entry from the cache.
-    CacheException expectedException = getNewCacheException();
-    cacheProviderFacade.onGetFromCache(cacheKey, cacheModel);
-    cacheProviderFacadeControl.setThrowable(expectedException);
-
-    setStateOfMockControlsToReplay();
+    CacheException expectedException = expectOnGetFromCacheToThrowException();
+    cacheProviderFacadeControl.replay();
 
     try {
-      // execute the method to test.
-      cacheProviderFacade.getFromCache(cacheKey, CACHE_MODEL_ID);
+      cacheProviderFacade.getFromCache(key, cachingModel);
       fail();
 
     } catch (CacheException exception) {
       assertSame(expectedException, exception);
     }
 
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacadeControl.verify();
   }
 
   public void testGetFromCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsTrue()
       throws Exception {
     cacheProviderFacade.setFailQuietlyEnabled(true);
+    expectOnGetFromCacheToThrowException();
+    cacheProviderFacadeControl.replay();
 
-    // facade is unable to get an entry from the cache.
-    cacheProviderFacade.onGetFromCache(cacheKey, cacheModel);
-    cacheProviderFacadeControl.setThrowable(new CacheNotFoundException(
-        "testCache"));
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object cachedObject = cacheProviderFacade.getFromCache(cacheKey,
-        CACHE_MODEL_ID);
-
+    Object cachedObject = cacheProviderFacade.getFromCache(key, cachingModel);
     assertNull(cachedObject);
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  public void testGetFromCacheWithExistingCacheModelId() throws Exception {
-    String cachedString = "Cached String";
-
-    // get an entry from the cache.
-    cacheProviderFacade.onGetFromCache(cacheKey, cacheModel);
-    cacheProviderFacadeControl.setReturnValue(cachedString);
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object cachedObject = cacheProviderFacade.getFromCache(cacheKey,
-        CACHE_MODEL_ID);
-
-    assertSame("<Cached object>", cachedString, cachedObject);
-
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacadeControl.verify();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacade#getFromCache(Serializable, String)}</code>
-   * does not try to access the cache if the cache facade does not contain a
-   * model stored under the given id.
+   * <code>{@link AbstractCacheProviderFacade#getFromCache(Serializable, CachingModel)}</code>
+   * does not try to access the cache if the model is <code>null</code>.
    */
-  public void testGetFromCacheWithNotExistingCacheModelId() throws Exception {
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    Object cachedObject = cacheProviderFacade.getFromCache(cacheKey,
-        "anotherCacheModelId");
-
+  public void testGetFromCacheWhenModelIsNull() throws Exception {
+    cacheProviderFacadeControl.replay();
+    Object cachedObject = cacheProviderFacade.getFromCache(key, null);
     assertNull(cachedObject);
-
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacadeControl.verify();
   }
 
   public void testHandleCacheAccessExceptionWhenFailedQuietlyIsFalse() {
     cacheProviderFacade.setFailQuietlyEnabled(false);
-    CacheException expectedException = getNewCacheException();
+    CacheException expectedException = createCacheException();
 
     try {
       cacheProviderFacade.handleCatchedException(expectedException);
@@ -573,184 +307,178 @@ public final class CacheProviderFacadeTests extends TestCase {
 
   public void testHandleCacheAccessExceptionWhenFailedQuietlyIsTrue() {
     cacheProviderFacade.setFailQuietlyEnabled(true);
-    CacheException cacheException = getNewCacheException();
+    CacheException cacheException = createCacheException();
 
-    try {
-      cacheProviderFacade.handleCatchedException(cacheException);
-    } catch (CacheException exception) {
-      fail();
-    }
+    // should not throw exceptions.
+    cacheProviderFacade.handleCatchedException(cacheException);
   }
 
-  public void testMakeSerializableIfNecessaryWithCacheNotRequiringSerializableElementsAndNotSerializableObjectToCache() {
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheProviderFacade#makeSerializableIfNecessary(Object)}</code>
+   * does not make the given non-serializable object serializable if the cache
+   * does not require serializable entries.
+   */
+  public void testMakeSerializableIfNecessaryWhenSerializableIsNotRequiredAndEntryIsNotSerializable() {
     expectCacheRequiresSerializableElements(false);
 
-    Object objectToCache = new Socket();
-    assertIsNotSerializable(objectToCache);
+    Object objectToStore = new Socket();
+    assertIsNotSerializable(objectToStore);
 
-    setStateOfMockControlsToReplay();
-
-    assertSame(objectToCache, cacheProviderFacade
-        .makeSerializableIfNecessary(objectToCache));
-
-    verifyExpectationsOfMockControlsWereMet();
+    assertSame(objectToStore, cacheProviderFacade
+        .makeSerializableIfNecessary(objectToStore));
   }
 
-  public void testMakeSerializableIfNecessaryWithCacheRequiringSerializableElementAndSerializableFactoryIsNullAndCacheElementIsNotSerializable() {
+  public void testMakeSerializableIfNecessaryWhenSerializableIsRequiredAndSerializableFactoryIsNotNullAndEntryIsSerializable() {
     expectCacheRequiresSerializableElements(true);
-    setStateOfMockControlsToReplay();
+    cacheProviderFacadeControl.replay();
 
-    Object objectToCache = new Socket();
-    assertIsNotSerializable(objectToCache);
+    Object objectToStore = "Luke Skywalker";
+    assertSame(objectToStore, cacheProviderFacade
+        .makeSerializableIfNecessary(objectToStore));
+
+    cacheProviderFacadeControl.verify();
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheProviderFacade#makeSerializableIfNecessary(Object)}</code>
+   * throws a <code>{@link ObjectCannotBeCachedException}</code> if:
+   * <ul>
+   * <li>the cache requires serializable entries</li>
+   * <li>the serializable factory of the facade is <code>null</code></li>
+   * <li>the given object is not serializable</li>
+   * </ul>
+   */
+  public void testMakeSerializableIfNecessaryWhenSerializableIsRequiredAndSerializableFactoryIsNullAndEntryIsNotSerializable() {
+    expectCacheRequiresSerializableElements(true);
+    cacheProviderFacadeControl.replay();
+
+    Object objectToStore = new Socket();
+    assertIsNotSerializable(objectToStore);
 
     try {
-      cacheProviderFacade.makeSerializableIfNecessary(objectToCache);
+      cacheProviderFacade.makeSerializableIfNecessary(objectToStore);
       fail();
 
     } catch (ObjectCannotBeCachedException exception) {
       // we are expecting this exception.
     }
+
+    cacheProviderFacadeControl.verify();
   }
 
-  public void testMakeSerializableIfNecessaryWithCacheRequiringSerializableElementAndSerializableFactoryIsNullAndCacheElementIsSerializable() {
+  public void testMakeSerializableIfNecessaryWhenSerializableIsRequiredAndSerializableFactoryIsNotNullAndEntryIsNotSerializable() {
+    MockControl factoryControl = MockControl
+        .createControl(SerializableFactory.class);
+    SerializableFactory factory = (SerializableFactory) factoryControl
+        .getMock();
+    cacheProviderFacade.setSerializableFactory(factory);
+
     expectCacheRequiresSerializableElements(true);
-    setStateOfMockControlsToReplay();
+    cacheProviderFacadeControl.replay();
 
-    Object objectToCache = "R2-D2";
-    assertSame(objectToCache, cacheProviderFacade
-        .makeSerializableIfNecessary(objectToCache));
+    Serializable expected = "Leia";
+    Object objectToStore = new Object();
+    factory.makeSerializableIfNecessary(objectToStore);
+    factoryControl.setReturnValue(expected);
+    factoryControl.replay();
 
-    verifyExpectationsOfMockControlsWereMet();
+    Object actual = cacheProviderFacade
+        .makeSerializableIfNecessary(objectToStore);
+    assertSame(expected, actual);
+
+    cacheProviderFacadeControl.verify();
+    factoryControl.verify();
   }
 
-  public void testMakeSerializableIfNecessaryWithCacheRequiringSerializableElementsAndSerializableFactoryIsNotNull() {
+  public void testMakeSerializableIfNecessaryWhenSerializableIsRequiredAndSerializableFactoryIsNullAndEntryIsSerializable() {
     expectCacheRequiresSerializableElements(true);
+    cacheProviderFacadeControl.replay();
 
-    Object objectToCache = "Luke Skywalker";
-    assertSame(objectToCache, cacheProviderFacade
-        .makeSerializableIfNecessary(objectToCache));
+    Object objectToStore = "R2-D2";
+    assertSame(objectToStore, cacheProviderFacade
+        .makeSerializableIfNecessary(objectToStore));
+
+    cacheProviderFacadeControl.verify();
   }
 
   public void testPutInCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsFalse()
       throws Exception {
-    expectCacheRequiresSerializableElements(false);
-
-    Object objectToCache = new Object();
     cacheProviderFacade.setFailQuietlyEnabled(false);
+    Object objectToStore = new Object();
 
-    // facade is unable to store an entry in the cache.
-    CacheException expectedException = getNewCacheException();
-    cacheProviderFacade.onPutInCache(cacheKey, cacheModel, objectToCache);
-    cacheProviderFacadeControl.setThrowable(expectedException);
-
-    setStateOfMockControlsToReplay();
+    expectCacheRequiresSerializableElements(false);
+    CacheException expectedException = expectOnPutInCacheThrowsException(objectToStore);
+    cacheProviderFacadeControl.replay();
 
     try {
-      // execute the method to test.
-      cacheProviderFacade.putInCache(cacheKey, CACHE_MODEL_ID, objectToCache);
+      cacheProviderFacade.putInCache(key, cachingModel, objectToStore);
       fail();
 
     } catch (CacheException exception) {
-      assertSame("<Catched exception>", expectedException, exception);
+      assertSame(expectedException, exception);
     }
 
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacadeControl.verify();
   }
 
   public void testPutInCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsTrue()
       throws Exception {
-    expectCacheRequiresSerializableElements(false);
-
-    Object objectToCache = new Object();
+    Object objectToStore = new Object();
     cacheProviderFacade.setFailQuietlyEnabled(true);
 
-    // facade is unable to store an entry in the cache.
-    cacheProviderFacade.onPutInCache(cacheKey, cacheModel, objectToCache);
-    cacheProviderFacadeControl.setThrowable(new CacheNotFoundException(
-        "testCache"));
-
-    setStateOfMockControlsToReplay();
+    expectCacheRequiresSerializableElements(false);
+    expectOnPutInCacheThrowsException(objectToStore);
+    cacheProviderFacadeControl.replay();
 
     // execute the method to test.
-    cacheProviderFacade.putInCache(cacheKey, CACHE_MODEL_ID, objectToCache);
+    cacheProviderFacade.putInCache(key, cachingModel, objectToStore);
 
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacadeControl.verify();
   }
 
   public void testPutInCacheWhenMakeSerializableThrowsExceptionAndFailQuietlyIsFalse() {
     expectCacheRequiresSerializableElements(true);
     cacheProviderFacade.setFailQuietlyEnabled(false);
 
-    Object objectToCache = new Object();
-    assertIsNotSerializable(objectToCache);
+    Object objectToStore = new Object();
+    assertIsNotSerializable(objectToStore);
 
-    setStateOfMockControlsToReplay();
+    cacheProviderFacadeControl.replay();
 
     try {
-      // execute the method to test.
-      cacheProviderFacade.putInCache(cacheKey, CACHE_MODEL_ID, objectToCache);
+      cacheProviderFacade.putInCache(key, cachingModel, objectToStore);
       fail();
 
     } catch (ObjectCannotBeCachedException exception) {
       // expecting exception.
     }
 
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacadeControl.verify();
   }
 
   public void testPutInCacheWhenMakeSerializableThrowsExceptionAndFailQuietlyIsTrue() {
-    expectCacheRequiresSerializableElements(true);
     cacheProviderFacade.setFailQuietlyEnabled(true);
+    Object objectToStore = new Object();
+    assertIsNotSerializable(objectToStore);
 
-    Object objectToCache = new Object();
-    assertIsNotSerializable(objectToCache);
+    expectCacheRequiresSerializableElements(true);
+    cacheProviderFacadeControl.replay();
 
-    setStateOfMockControlsToReplay();
-
-    cacheProviderFacade.putInCache(cacheKey, CACHE_MODEL_ID, objectToCache);
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  public void testPutInCacheWithExistingCacheModelId() throws Exception {
-    expectCacheRequiresSerializableElements(false);
-
-    Object objectToCache = new Object();
-
-    cacheProviderFacade.onPutInCache(cacheKey, cacheModel, objectToCache);
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.putInCache(cacheKey, CACHE_MODEL_ID, objectToCache);
-
-    verifyExpectationsOfMockControlsWereMet();
+    cacheProviderFacade.putInCache(key, cachingModel, objectToStore);
+    cacheProviderFacadeControl.verify();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacade#putInCache(Serializable, String, Object)}</code>.
-   * does not try to access the cache if the cache facade does not contain a
-   * cache model stored under the given id.
+   * <code>{@link AbstractCacheProviderFacade#putInCache(Serializable, CachingModel, Object)}</code>.
+   * does not try to access the cache if the model is <code>null</code>.
    */
-  public void testPutInCacheWithNotExistingCacheModelId() throws Exception {
+  public void testPutInCacheWhenModelIsNull() throws Exception {
     expectCacheRequiresSerializableElements(false);
-
-    Object objectToCache = new Object();
-
-    setStateOfMockControlsToReplay();
-
-    // execute the method to test.
-    cacheProviderFacade.putInCache(cacheKey, "someCacheModelId", objectToCache);
-
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  private void verifyExpectationsOfMockControlsWereMet() {
-    cacheModelEditorControl.verify();
-    if (cacheModelValidatorControl != null) {
-      cacheModelValidatorControl.verify();
-    }
+    cacheProviderFacadeControl.replay();
+    cacheProviderFacade.putInCache(key, null, new Object());
     cacheProviderFacadeControl.verify();
   }
 }

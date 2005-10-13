@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"
+>
+
+<beans>
+  <bean id="autoproxy"
+    class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+
+  <bean id="attributes"
+    class="org.springframework.metadata.commons.CommonsAttributes" />
+
+  <bean id="cachingInterceptor"
+    class="org.springmodules.cache.interceptor.caching.MetadataCachingInterceptor">
+    <property name="attributes" ref="attributes" />
+    <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+    <property name="cachingListeners">
+      <list>
+        <ref bean="cachingListener" />
+      </list>
+    </property>
+    <property name="cachingModels">
+      <props>
+        <prop key="test">cacheName=testCache</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="cachingAttributeSourceAdvisor"
+    class="org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor">
+    <constructor-arg ref="cachingInterceptor" />
+  </bean>
+
+  <bean id="flushingInterceptor"
+    class="org.springmodules.cache.interceptor.flush.MetadataFlushingInterceptor">
+    <property name="attributes" ref="attributes" />
+    <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+    <property name="flushingModels">
+      <props>
+        <prop key="test">cacheNames=testCache</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="flushingAttributeSourceAdvisor"
+    class="org.springmodules.cache.interceptor.flush.FlushingAttributeSourceAdvisor">
+    <constructor-arg ref="flushingInterceptor" />
+  </bean>
+
+  <!-- Set up the objects to apply caching to -->
+  <bean id="cacheableService"
+    class="org.springmodules.cache.integration.CacheableServiceImpl">
+    <property name="names">
+      <list>
+        <value>Luke Skywalker</value>
+        <value>Leia Organa</value>
+      </list>
+    </property>
+  </bean>
+</beans>
