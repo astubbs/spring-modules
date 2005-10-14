@@ -18,7 +18,7 @@
 package org.springmodules.cache.provider.jboss;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.cache.provider.CacheModelValidator;
+import org.springmodules.cache.provider.AbstractCacheModelValidator;
 import org.springmodules.cache.provider.InvalidCacheModelException;
 import org.springmodules.util.ArrayUtils;
 
@@ -29,56 +29,52 @@ import org.springmodules.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  */
-public final class JbossCacheModelValidator implements CacheModelValidator {
+public final class JbossCacheModelValidator extends AbstractCacheModelValidator {
 
   public JbossCacheModelValidator() {
     super();
   }
 
   /**
-   * @throws InvalidCacheModelException
-   *           if the model is not an instance of
-   *           <code>JbossCacheCachingModel</code>.
+   * @see AbstractCacheModelValidator#getCachingModelTargetClass()
+   */
+  protected Class getCachingModelTargetClass() {
+    return JbossCacheCachingModel.class;
+  }
+
+  /**
+   * @see AbstractCacheModelValidator#getFlushingModelTargetClass()
+   */
+  protected Class getFlushingModelTargetClass() {
+    return JbossCacheFlushingModel.class;
+  }
+
+  /**
+   * @see AbstractCacheModelValidator#validateCachingModelProperties(Object)
    * @throws InvalidCacheModelException
    *           if the model does not have a node FQN.
-   * @see CacheModelValidator#validateCachingModel(Object)
    */
-  public void validateCachingModel(Object model)
+  protected void validateCachingModelProperties(Object cachingModel)
       throws InvalidCacheModelException {
-    if (!(model instanceof JbossCacheCachingModel)) {
-      throw new InvalidCacheModelException(
-          "The caching model should be an instance of <"
-              + JbossCacheCachingModel.class.getName() + ">");
-    }
-    JbossCacheCachingModel cachingModel = (JbossCacheCachingModel) model;
-    if (!StringUtils.hasText(cachingModel.getNode())) {
+    JbossCacheCachingModel model = (JbossCacheCachingModel) cachingModel;
+    if (!StringUtils.hasText(model.getNode())) {
       throw new InvalidCacheModelException(
           "The FQN of the cache node should not be empty");
     }
   }
 
   /**
+   * @see AbstractCacheModelValidator#validateFlushingModelProperties(Object)
    * @throws InvalidCacheModelException
-   *           if the model is not an instance of
-   *           <code>JbossCacheFlushingModel</code>.
-   * @throws InvalidCacheModelException
-   *           if the model does not have at least one nodeFQN.
-   * @see CacheModelValidator#validateFlushingModel(Object)
+   *           if the model does not have at least one node FQN.
    */
-  public void validateFlushingModel(Object model)
+  protected void validateFlushingModelProperties(Object flushingModel)
       throws InvalidCacheModelException {
-    if (!(model instanceof JbossCacheFlushingModel)) {
-      throw new InvalidCacheModelException(
-          "The flushing model should be an instance of <"
-              + JbossCacheFlushingModel.class.getName() + ">");
-    }
-
-    JbossCacheFlushingModel flushingModel = (JbossCacheFlushingModel) model;
-    String[] nodeFqns = flushingModel.getNodes();
-    if (!ArrayUtils.hasElements(nodeFqns)) {
+    JbossCacheFlushingModel model = (JbossCacheFlushingModel) flushingModel;
+    String[] nodes = model.getNodes();
+    if (!ArrayUtils.hasElements(nodes)) {
       throw new InvalidCacheModelException(
           "There should be at least one node FQN");
     }
   }
-
 }

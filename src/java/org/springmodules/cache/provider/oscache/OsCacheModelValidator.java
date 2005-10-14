@@ -18,7 +18,7 @@
 
 package org.springmodules.cache.provider.oscache;
 
-import org.springmodules.cache.provider.CacheModelValidator;
+import org.springmodules.cache.provider.AbstractCacheModelValidator;
 import org.springmodules.cache.provider.InvalidCacheModelException;
 import org.springmodules.util.ArrayUtils;
 
@@ -29,48 +29,35 @@ import org.springmodules.util.ArrayUtils;
  * 
  * @author Alex Ruiz
  */
-public final class OsCacheModelValidator implements CacheModelValidator {
+public final class OsCacheModelValidator extends AbstractCacheModelValidator {
 
   public OsCacheModelValidator() {
     super();
   }
 
   /**
-   * @throws InvalidCacheModelException
-   *           if the model is not an instance of
-   *           <code>OSCacheCachingModule</code>.
-   * @see CacheModelValidator#validateCachingModel(Object)
+   * @see AbstractCacheModelValidator#getCachingModelTargetClass()
    */
-  public void validateCachingModel(Object model) {
-    if (!(model instanceof OsCacheCachingModel)) {
-      throw new InvalidCacheModelException(
-          "The caching model should be an instance of <"
-              + OsCacheCachingModel.class.getName() + ">");
-    }
+  protected Class getCachingModelTargetClass() {
+    return OsCacheCachingModel.class;
   }
 
   /**
-   * @throws InvalidCacheModelException
-   *           if the model is not an instance of
-   *           <code>{@link OsCacheFlushingModel}</code>.
-   * @throws InvalidCacheModelException
-   *           if the model does not have at least one group name.
-   * @see CacheModelValidator#validateFlushingModel(Object)
+   * @see AbstractCacheModelValidator#getFlushingModelTargetClass()
    */
-  public void validateFlushingModel(Object model)
+  protected Class getFlushingModelTargetClass() {
+    return OsCacheFlushingModel.class;
+  }
+
+  /**
+   * @see AbstractCacheModelValidator#validateFlushingModelProperties(Object)
+   */
+  protected void validateFlushingModelProperties(Object flushingModel)
       throws InvalidCacheModelException {
-    if (!(model instanceof OsCacheFlushingModel)) {
-      throw new InvalidCacheModelException(
-          "The flushing model should be an instance of <"
-              + OsCacheFlushingModel.class.getName() + ">");
-    }
-
-    OsCacheFlushingModel flushingModel = (OsCacheFlushingModel) model;
-
-    if (!ArrayUtils.hasElements(flushingModel.getGroups())) {
+    OsCacheFlushingModel model = (OsCacheFlushingModel) flushingModel;
+    if (!ArrayUtils.hasElements(model.getGroups())) {
       throw new InvalidCacheModelException(
           "The model should have at least one group name");
     }
   }
-
 }
