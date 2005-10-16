@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<module id="org.springmodules.web.tapestry" version="1.0.0">
+
+    Contains services and contributions to Tapestry to improve Spring integration.
+
+    <service-point id="WebApplicationContextLocatorApplicationInitializer"
+                   interface="org.apache.tapestry.services.ApplicationInitializer">
+
+        Sets the application context found in the servlet context on
+        hivemind.lib.DefaultSpringBeanFactoryHolder. This application context
+        is loaded by org.springframework.web.context.ContextLoaderListener. If no
+        application context is found the bean factory is set to null.
+
+        <invoke-factory>
+            <construct class="org.springmodules.web.tapestry.WebApplicationContextLocatorApplicationInitializer">
+                <set-service property="springBeanFactoryHolder"
+                             service-id="hivemind.lib.DefaultSpringBeanFactoryHolder"/>
+            </construct>
+        </invoke-factory>
+    </service-point>
+
+    <contribution configuration-id="tapestry.init.ApplicationInitializers">
+        <command id="WebApplicationContextLocatorApplicationInitializer"
+                 object="service:WebApplicationContextLocatorApplicationInitializer"/>
+    </contribution>
+</module>
