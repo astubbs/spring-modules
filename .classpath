@@ -79,5 +79,16 @@
 	<classpathentry kind="lib" path="lib/xstream/xpp3_min-1.1.3.4.I.jar"/>
 	<classpathentry kind="lib" path="lib/xstream/xstream-1.1.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/jcr/jcr-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jackrabbit/jackrabbit-commons-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/jcr-mapping/graffito-commons-1.0-a1-dev.jar"/>
+	<classpathentry kind="lib" path="lib/jeceira/commons-0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jencks/jencks-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jackrabbit/jackrabbit-core-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/jackrabbit/jackrabbit-jca-1.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/jcr-mapping/graffito-jcr-mapping-1.0-a1-dev.jar"/>
+	<classpathentry kind="lib" path="lib/jeceira/doka-0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jeceira/jeceira-0.1.1-200509221159.jar"/>
+	<classpathentry kind="lib" path="lib/jeceira/jug-asl-2.0rc4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
