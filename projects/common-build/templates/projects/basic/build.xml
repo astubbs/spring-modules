@@ -13,7 +13,4 @@
 
   <import file="${common.build.dir}/common-targets.xml"/>
 
-  <!-- import clover support -->
-  <import file="${common.build.dir}/clover-targets.xml"/>
-
 </project>
