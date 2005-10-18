@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.mock.web.MockServletConfig;
 import org.springframework.web.context.ContextLoader;
+import org.springframework.beans.factory.BeanFactory;
 import org.apache.tapestry.ApplicationServlet;
 import org.apache.hivemind.Registry;
 
@@ -28,7 +29,8 @@ public class SpringTapestryIntegrationTests extends TestCase {
         Registry hiveMindRegistry = (Registry) servletContext.getAttribute("org.apache.tapestry.Registry:servlet");
         assertNotNull("HiveMind registry is not available in servlet context", hiveMindRegistry);
 
-        String name = (String)hiveMindRegistry.getService("spring:name", String.class);
+        BeanFactory beanFactory = (BeanFactory) hiveMindRegistry.getService("hivemind.lib.DefaultSpringBeanFactory", BeanFactory.class);
+        String name = (String) beanFactory.getBean("name", String.class);
         assertNotNull(name);
         assertEquals("Steven Devijver", name);
     }
