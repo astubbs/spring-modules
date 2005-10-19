@@ -29,8 +29,6 @@
 			<src path="${sandbox.src.dir}"/>
 			<classpath refid="all-libs"/>
 			<classpath location="${target.classes.dir}"/>
-			<!-- exclude packages that contain compilation errors -->
-			<exclude name="org/springmodules/dwr/**/*.java"/>
 		</javac>
 
 		<copy todir="${sandbox.target.classes.dir}" preservelastmodified="true">
@@ -56,6 +54,118 @@
 		</makejar>
 
 	</target>
+	
+	<target name="sandbox.modulejars" depends="sandbox.build,initdist" description="Create module-specific sandbox JAR files">
+		<property name="sandbox-marker" value="springmodules-sandbox"/>
+
+		<delete file="${dist.dir}/${sandbox-marker}-*.jar"/>
+		
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-beans-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/beans/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-commons-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/commons/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-context-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/context/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-datamap-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/datamap/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-db-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/db/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-jcr-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/jcr/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-jdbi-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/jdbi/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-lucene-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/lucene/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-orm-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/orm/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-remoting-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/remoting/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-resource-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/resource/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-util-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/util/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-validation-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/validation/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
+		<makejar jarfile="${dist.dir}/${sandbox-marker}-web-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${sandbox.target.classes.dir}">
+					<include name="org/springmodules/web/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+	</target>	
 
 
 	<target name="sandbox.srczip" depends="initdist" description="Create sandbox source ZIP (containing Java sources)">
@@ -77,11 +187,13 @@
 
 		<javac destdir="${sandbox.target.testclasses.dir}" source="1.3" target="1.3" debug="${debug}"
 					 deprecation="false" optimize="false" failonerror="true">
+			
 			<src path="${sandbox.test.dir}"/>
 			<classpath refid="all-libs"/>
 			<classpath location="${target.classes.dir}"/>
 			<classpath location="${sandbox.target.classes.dir}"/>
 			<classpath location="${target.testclasses.dir}"/>
+			<include name="org/springmodules/jcr/**/*.java"/>
 			<!-- exclude packages that contain compilation errors -->
 			<exclude name="org/springmodules/dwr/**/*.java"/>
 			
