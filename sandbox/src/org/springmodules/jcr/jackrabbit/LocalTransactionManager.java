@@ -55,10 +55,6 @@ public class LocalTransactionManager extends AbstractPlatformTransactionManager 
 
     private SessionFactory sessionFactory;
 
-    public void setRepository(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
     /**
      * @return Returns the sessionFactory.
      */
