@@ -1,7 +1,7 @@
 /**
  * Created on Oct 4, 2005
  *
- * $Id: DefaultSessionHolderProvider.java,v 1.1 2005/10/10 09:20:49 costin Exp $
+ * $Id: DefaultSessionHolderProvider.java,v 1.1 2005/10/21 08:16:43 costin Exp $
  * $Revision: 1.1 $
  */
 package org.springmodules.jcr.support;

@@ -1,8 +1,8 @@
 /**
  * Created on Aug 31, 2005
  *
- * $Id: RepositoryFactoryBean.java,v 1.2 2005/10/10 09:20:41 costin Exp $
- * $Revision: 1.2 $
+ * $Id: RepositoryFactoryBean.java,v 1.1 2005/10/21 08:17:23 costin Exp $
+ * $Revision: 1.1 $
  */
 package org.springmodules.jcr.jackrabbit;
 

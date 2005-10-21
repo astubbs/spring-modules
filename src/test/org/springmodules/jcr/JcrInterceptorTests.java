@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrInterceptorTests.java,v 1.2 2005/10/10 09:20:46 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JcrInterceptorTests.java,v 1.1 2005/10/21 08:17:08 costin Exp $
+ * $Revision: 1.1 $
  */
 package org.springmodules.jcr;
 

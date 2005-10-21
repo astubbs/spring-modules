@@ -1,7 +1,7 @@
 /**
  * Created on Oct 4, 2005
  *
- * $Id: JackRabbitSessionHolderProvider.java,v 1.1 2005/10/10 09:20:55 costin Exp $
+ * $Id: JackRabbitSessionHolderProvider.java,v 1.1 2005/10/21 08:17:34 costin Exp $
  * $Revision: 1.1 $
  */
 package org.springmodules.jcr.jackrabbit.support;

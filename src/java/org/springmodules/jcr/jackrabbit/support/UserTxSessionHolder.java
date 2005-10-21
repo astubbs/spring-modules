@@ -1,7 +1,7 @@
 /**
  * Created on Sep 8, 2005
  *
- * $Id: UserTxSessionHolder.java,v 1.1 2005/10/10 09:20:54 costin Exp $
+ * $Id: UserTxSessionHolder.java,v 1.1 2005/10/21 08:17:33 costin Exp $
  * $Revision: 1.1 $
  */
 package org.springmodules.jcr.jackrabbit.support;

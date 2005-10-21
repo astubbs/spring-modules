@@ -1,7 +1,7 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrDaoSupportTests.java,v 1.1 2005/09/26 10:21:53 costin Exp $
+ * $Id: JcrDaoSupportTests.java,v 1.1 2005/10/21 08:17:31 costin Exp $
  * $Revision: 1.1 $
  */
 package org.springmodules.jcr.support;

@@ -1,8 +1,8 @@
 /**
  * Created on Sep 1, 2005
  *
- * $Id: EventListenerDefinition.java,v 1.2 2005/10/10 09:20:44 costin Exp $
- * $Revision: 1.2 $
+ * $Id: EventListenerDefinition.java,v 1.1 2005/10/21 08:17:06 costin Exp $
+ * $Revision: 1.1 $
  */
 package org.springmodules.jcr;
 

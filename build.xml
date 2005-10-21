@@ -199,6 +199,15 @@
 				</fileset>
 			</jar-contents>
 		</makejar>
+
+		<makejar jarfile="${dist.dir}/springmodules-jcr-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${target.classes.dir}">
+					<include name="org/springmodules/jcr/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
 	</target>
 
 
