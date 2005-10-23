@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrTemplateTests.java,v 1.1 2005/10/21 08:17:08 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrTemplateTests.java,v 1.2 2005/10/23 12:07:37 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
@@ -367,7 +367,7 @@ public class JcrTemplateTests extends TestCase {
      * File)'
      */
     public void testImportFile() throws Exception {
-        File file = new File("./bin/repository.xml");
+        File file = new File("./bin/jackrabbit-repo.xml");
         jt.setAllowCreate(true);
 
         sessionControl.replay();
