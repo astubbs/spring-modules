@@ -78,9 +78,16 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
     return hash;
   }
 
+  /**
+   * Sets the names of the caches to flush.
+   * 
+   * @param csvCacheNames
+   *          a comma-separated list of Strings containing the names of the
+   *          caches to flush.
+   */
   public void setCacheNames(String csvCacheNames) {
     String[] newCacheNames = null;
-    if (StringUtils.hasText(csvCacheNames)) {
+    if (csvCacheNames != null) {
       newCacheNames = StringUtils
           .commaDelimitedListToStringArray(csvCacheNames);
     }
@@ -88,7 +95,7 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
   }
 
   public void setCacheNames(String[] newCacheNames) {
-    cacheNames = newCacheNames;
+    cacheNames = ArrayUtils.removeDuplicates(newCacheNames);
   }
 
   public String toString() {
