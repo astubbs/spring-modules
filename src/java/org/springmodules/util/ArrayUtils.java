@@ -17,6 +17,9 @@
  */
 package org.springmodules.util;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * <p>
  * Utiltity methods for manipulating arrays.
@@ -57,6 +60,18 @@ public abstract class ArrayUtils {
     }
 
     return hash;
+  }
+
+  public static String[] removeDuplicates(String[] array) {
+    if (!hasElements(array)) {
+      return array;
+    }
+    Set set = new TreeSet();
+    int count = array.length;
+    for (int i = 0; i < count; i++) {
+      set.add(array[i]);
+    }
+    return (String[]) set.toArray(new String[set.size()]);
   }
 
   public static String toString(byte[] array) {

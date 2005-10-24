@@ -17,6 +17,7 @@
  */
 package org.springmodules.util;
 
+import org.springmodules.ArrayAssert;
 import org.springmodules.util.ArrayUtils;
 import org.springmodules.util.Strings;
 
@@ -28,8 +29,6 @@ import junit.framework.TestCase;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public class ArrayUtilsTests extends TestCase {
 
@@ -37,6 +36,30 @@ public class ArrayUtilsTests extends TestCase {
     super(name);
   }
 
+  public void testRemoveDuplicatesWithArrayEqualToNull() {
+    assertNull(ArrayUtils.removeDuplicates(null));
+  }
+
+  public void testRemoveDuplicatesWithDuplicatedValues() {
+    String[] array = { "str1", "str2", "str1" };
+    String[] expected = { "str1", "str2" };
+    ArrayAssert.assertEquals(expected, ArrayUtils.removeDuplicates(array));
+  }
+
+  public void testRemoveDuplicatesWithEmptyArray() {
+    String[] expected = new String[0];
+    ArrayAssert.assertEquals(expected, ArrayUtils.removeDuplicates(expected));
+  }
+
+  public void testRemoveDuplicatesWithoutDuplicatedValues() {
+    String[] expected = { "str1", "str2", "str3" };
+    ArrayAssert.assertEquals(expected, ArrayUtils.removeDuplicates(expected));
+  }
+  
+  public void testToStringWithEmptyStringArray() {
+    assertEquals("{}", ArrayUtils.toString(new String[0]));
+  }
+  
   public void testToStringWithNotEmptyStringArray() {
     String[] array = { "Luke", "Han", "Leia" };
     StringBuffer buffer = new StringBuffer();
@@ -52,14 +75,10 @@ public class ArrayUtilsTests extends TestCase {
     }
 
     buffer.append("}");
-    
+
     assertEquals(buffer.toString(), ArrayUtils.toString(array));
   }
-
-  public void testToStringWithEmptyStringArray() {
-    assertEquals("{}", ArrayUtils.toString(new String[0]));
-  }
-
+  
   public void testToStringWithStringArrayEqualToNull() {
     assertEquals("null", ArrayUtils.toString((String[]) null));
   }
