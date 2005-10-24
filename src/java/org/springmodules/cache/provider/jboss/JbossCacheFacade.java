@@ -74,6 +74,12 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
+   * Removes all the nodes which FQNs are specified in the given flushing model.
+   * The flushing model should be an instance of
+   * <code>{@link JbossCacheFlushingModel}</code>.
+   * 
+   * @param model
+   *          the flushing model.
    * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
    */
   protected void onFlushCache(FlushingModel model) {
