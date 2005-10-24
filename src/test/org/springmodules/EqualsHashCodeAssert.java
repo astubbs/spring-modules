@@ -29,46 +29,46 @@ import junit.framework.Assert;
  * 
  * @version $Revision$ $Date$
  */
-public abstract class EqualsHashCodeAssert extends Assert {
+public abstract class EqualsHashCodeAssert {
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
-  public static void assertEqualsHashCodeRelationshipIsCorrect(Object first,
-      Object second) {
-    assertEquals(first, second);
-    assertEquals(first.hashCode(), second.hashCode());
+  public static void assertEqualsHashCodeRelationshipIsCorrect(Object obj1,
+      Object obj2) {
+    Assert.assertEquals(obj1, obj2);
+    Assert.assertEquals(obj1.hashCode(), obj2.hashCode());
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public static void assertEqualsIsReflexive(Object obj) {
-    assertEquals(obj, obj);
+    Assert.assertEquals(obj, obj);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
-  public static void assertEqualsIsSymmetric(Object first, Object second) {
-    assertEquals(first, second);
-    assertEquals(second, first);
+  public static void assertEqualsIsSymmetric(Object obj1, Object obj2) {
+    Assert.assertEquals(obj1, obj2);
+    Assert.assertEquals(obj2, obj1);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
-  public static void assertEqualsIsTransitive(Object first, Object second,
-      Object third) {
-    assertEquals(first, second);
-    assertEquals(second, third);
-    assertEquals(first, third);
+  public static void assertEqualsIsTransitive(Object obj1, Object obj2,
+      Object obj3) {
+    Assert.assertEquals(obj1, obj2);
+    Assert.assertEquals(obj2, obj3);
+    Assert.assertEquals(obj1, obj3);
   }
 
   /**
    * @see EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public static void assertEqualsNullComparisonReturnsFalse(Object obj) {
-    assertFalse(obj.equals(null));
+    Assert.assertFalse(obj.equals(null));
   }
 }
