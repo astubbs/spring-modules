@@ -25,7 +25,7 @@ import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
- * Configuration options needed to flush one or more nodes from JBossCache.
+ * Configuration options needed to remove one or more nodes from JBossCache.
  * </p>
  * 
  * @author Alex Ruiz
@@ -35,7 +35,7 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
   private static final long serialVersionUID = 7299844898815952890L;
 
   /**
-   * FQN of the nodes to flush.
+   * FQN of the nodes to remove from the cache.
    */
   private String[] nodes;
 
@@ -43,14 +43,14 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
     super();
   }
 
-  public JbossCacheFlushingModel(String csvNodeFqns) {
+  public JbossCacheFlushingModel(String csvNodes) {
     this();
-    setNodes(csvNodeFqns);
+    setNodes(csvNodes);
   }
 
-  public JbossCacheFlushingModel(String[] newNodeFqns) {
+  public JbossCacheFlushingModel(String[] newNodes) {
     this();
-    setNodes(newNodeFqns);
+    setNodes(newNodes);
   }
 
   public boolean equals(Object obj) {
@@ -80,20 +80,20 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
 
   public void setNodes(String csvNodes) {
     String[] newNodeFqns = null;
-    if (StringUtils.hasText(csvNodes)) {
+    if (csvNodes != null) {
       newNodeFqns = StringUtils.commaDelimitedListToStringArray(csvNodes);
     }
     setNodes(newNodeFqns);
   }
 
   public void setNodes(String[] newNodes) {
-    nodes = newNodes;
+    nodes = ArrayUtils.removeDuplicates(newNodes);
   }
 
   public String toString() {
     StringBuffer buffer = new StringBuffer(getClass().getName());
     buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("nodeFqns=" + ArrayUtils.toString(nodes) + ", ");
+    buffer.append("nodes=" + ArrayUtils.toString(nodes) + ", ");
     buffer.append("flushBeforeMethodExecution="
         + isFlushBeforeMethodExecution() + "]");
     return buffer.toString();
