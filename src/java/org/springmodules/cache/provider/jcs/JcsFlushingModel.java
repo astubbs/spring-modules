@@ -109,7 +109,7 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
     }
 
     public void setGroups(String[] newGroups) {
-      groups = newGroups;
+      groups = ArrayUtils.removeDuplicates(newGroups);
     }
 
     public String toString() {
