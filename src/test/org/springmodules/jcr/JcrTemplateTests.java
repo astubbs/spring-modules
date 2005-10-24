@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrTemplateTests.java,v 1.2 2005/10/23 12:07:37 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JcrTemplateTests.java,v 1.3 2005/10/24 08:18:38 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr;
 
@@ -367,7 +367,9 @@ public class JcrTemplateTests extends TestCase {
      * File)'
      */
     public void testImportFile() throws Exception {
-        File file = new File("./bin/jackrabbit-repo.xml");
+    	File cur = new File(".");
+    	System.out.println(cur.getAbsolutePath());
+        File file = new File("./build.xml");
         jt.setAllowCreate(true);
 
         sessionControl.replay();
@@ -433,7 +435,7 @@ public class JcrTemplateTests extends TestCase {
      * File)'
      */
     public void testImportFolder() throws Exception {
-        File dir = new File("./bin/blabla/");
+        File dir = new File("./foo-bar");
         dir.mkdir();
         dir.deleteOnExit();
 
