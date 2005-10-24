@@ -18,12 +18,9 @@
 
 package org.springmodules.cache.provider.jcs;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.EqualsHashCodeAssert;
-import org.springmodules.EqualsHashCodeTestCase;
+import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.util.Strings;
 
 /**
@@ -33,26 +30,24 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  */
-public final class JcsCachingModelTests extends TestCase implements
-    EqualsHashCodeTestCase {
+public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(JcsCachingModelTests.class);
 
-  private JcsCachingModel cacheModel;
+  private JcsCachingModel model;
 
   public JcsCachingModelTests(String name) {
     super(name);
   }
 
   private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(cacheModel.getClass().getName());
-    buffer.append("@" + System.identityHashCode(cacheModel) + "[");
-    buffer.append("cacheName=" + Strings.quote(cacheModel.getCacheName())
-        + ", ");
-    buffer.append("group=" + Strings.quote(cacheModel.getGroup()) + "]");
+    StringBuffer buffer = new StringBuffer(model.getClass().getName());
+    buffer.append("@" + System.identityHashCode(model) + "[");
+    buffer.append("cacheName=" + Strings.quote(model.getCacheName()) + ", ");
+    buffer.append("group=" + Strings.quote(model.getGroup()) + "]");
 
     String expected = buffer.toString();
-    String actual = cacheModel.toString();
+    String actual = model.toString();
 
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
@@ -61,118 +56,111 @@ public final class JcsCachingModelTests extends TestCase implements
   }
 
   protected void setUp() {
-    cacheModel = new JcsCachingModel();
+    model = new JcsCachingModel();
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
     String cacheName = "main";
     String group = "test";
 
-    cacheModel.setCacheName(cacheName);
-    cacheModel.setGroup(group);
+    model.setCacheName(cacheName);
+    model.setGroup(group);
 
-    JcsCachingModel anotherModel = new JcsCachingModel(cacheName, group);
+    JcsCachingModel model2 = new JcsCachingModel(cacheName, group);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
     cacheName = null;
-    cacheModel.setCacheName(cacheName);
-    anotherModel.setCacheName(cacheName);
+    model.setCacheName(cacheName);
+    model2.setCacheName(cacheName);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
     group = null;
-    cacheModel.setGroup(group);
-    anotherModel.setGroup(group);
+    model.setGroup(group);
+    model2.setGroup(group);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
     String cacheName = "ch01";
     String group = "grp87";
 
-    cacheModel.setCacheName(cacheName);
-    cacheModel.setGroup(group);
+    model.setCacheName(cacheName);
+    model.setGroup(group);
 
-    JcsCachingModel anotherModel = new JcsCachingModel(cacheName, group);
+    JcsCachingModel model2 = new JcsCachingModel(cacheName, group);
 
-    assertEquals(cacheModel, anotherModel);
+    assertEquals(model, model2);
 
-    anotherModel.setCacheName("main");
-    assertFalse(cacheModel.equals(anotherModel));
+    model2.setCacheName("main");
+    assertFalse(model.equals(model2));
 
-    anotherModel.setCacheName(cacheName);
-    anotherModel.setGroup("test");
-    assertFalse(cacheModel.equals(anotherModel));
+    model2.setCacheName(cacheName);
+    model2.setGroup("test");
+    assertFalse(model.equals(model2));
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheModel);
+    assertEqualsIsReflexive(model);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
     String cacheName = "mainCache";
     String group = "testGroup";
 
-    cacheModel.setCacheName(cacheName);
-    cacheModel.setGroup(group);
+    model.setCacheName(cacheName);
+    model.setGroup(group);
 
-    JcsCachingModel anotherModel = new JcsCachingModel(cacheName, group);
-
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheModel, anotherModel);
+    JcsCachingModel model2 = new JcsCachingModel(cacheName, group);
+    assertEqualsIsSymmetric(model, model2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
     String cacheName = "pojos";
     String group = "model";
 
-    cacheModel.setCacheName(cacheName);
-    cacheModel.setGroup(group);
+    model.setCacheName(cacheName);
+    model.setGroup(group);
 
-    JcsCachingModel secondModel = new JcsCachingModel(cacheName, group);
-    JcsCachingModel thirdModel = new JcsCachingModel(cacheName, group);
+    JcsCachingModel model2 = new JcsCachingModel(cacheName, group);
+    JcsCachingModel model3 = new JcsCachingModel(cacheName, group);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheModel, secondModel,
-        thirdModel);
+    assertEqualsIsTransitive(model, model2, model3);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cacheModel);
+    assertEqualsNullComparisonReturnsFalse(model);
   }
 
   public void testToStringWithCacheNameAndGroupEqualToNull() {
-    cacheModel.setCacheName(null);
-    cacheModel.setGroup(null);
-
+    model.setCacheName(null);
+    model.setGroup(null);
     assertToStringIsCorrect();
   }
 
   public void testToStringWithCacheNameAndGroupNotEqualToNull() {
-    cacheModel.setCacheName("main");
-    cacheModel.setGroup("services");
-
+    model.setCacheName("main");
+    model.setGroup("services");
     assertToStringIsCorrect();
   }
 }

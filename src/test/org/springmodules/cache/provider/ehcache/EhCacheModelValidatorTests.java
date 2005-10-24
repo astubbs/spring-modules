@@ -93,7 +93,7 @@ public final class EhCacheModelValidatorTests extends TestCase {
   }
 
   public void testValidateFlushingModel() {
-    flushingModel.setCacheNames(new String[] { "services", "pojos" });
+    flushingModel.setCacheNames("services,pojos");
     validator.validateFlushingModel(flushingModel);
   }
 
@@ -101,13 +101,13 @@ public final class EhCacheModelValidatorTests extends TestCase {
     assertValidateFlushingModelThrowsException("Darth Vader");
   }
 
-  public void testValidateFlushingModelWithCacheNameArrayEqualToNull() {
-    flushingModel.setCacheNames((String[]) null);
+  public void testValidateFlushingModelWithCacheNamesCsvEqualToNull() {
+    flushingModel.setCacheNames((String) null);
     assertValidateFlushingModelThrowsException();
   }
 
-  public void testValidateFlushingModelWithEmptyCacheNameArray() {
-    flushingModel.setCacheNames(new String[0]);
+  public void testValidateFlushingModelWithEmptyCacheNamesCsv() {
+    flushingModel.setCacheNames("");
     assertValidateFlushingModelThrowsException();
   }
 }

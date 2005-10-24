@@ -18,12 +18,9 @@
 
 package org.springmodules.cache.key;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.EqualsHashCodeAssert;
-import org.springmodules.EqualsHashCodeTestCase;
+import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
  * <p>
@@ -32,8 +29,7 @@ import org.springmodules.EqualsHashCodeTestCase;
  * 
  * @author Alex Ruiz
  */
-public final class HashCodeCacheKeyTests extends TestCase implements
-    EqualsHashCodeTestCase {
+public final class HashCodeCacheKeyTests extends AbstractEqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(HashCodeCacheKeyTests.class);
 
@@ -48,25 +44,22 @@ public final class HashCodeCacheKeyTests extends TestCase implements
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
     HashCodeCacheKey anotherKey = new HashCodeCacheKey(key.getCheckSum(), key
         .getHashCode());
-
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(key,
-        anotherKey);
+    assertEqualsHashCodeRelationshipIsCorrect(key, anotherKey);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
     long checkSum = key.getCheckSum();
     int hashCode = key.getHashCode();
 
     HashCodeCacheKey anotherKey = new HashCodeCacheKey(checkSum, hashCode);
-
     assertEquals(key, anotherKey);
 
     anotherKey.setCheckSum(589l);
@@ -78,24 +71,23 @@ public final class HashCodeCacheKeyTests extends TestCase implements
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(key);
+    assertEqualsIsReflexive(key);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
     HashCodeCacheKey anotherKey = new HashCodeCacheKey(key.getCheckSum(), key
         .getHashCode());
-
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(key, anotherKey);
+    assertEqualsIsSymmetric(key, anotherKey);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
     long checkSum = key.getCheckSum();
@@ -104,14 +96,14 @@ public final class HashCodeCacheKeyTests extends TestCase implements
     HashCodeCacheKey secondKey = new HashCodeCacheKey(checkSum, hashCode);
     HashCodeCacheKey thirdKey = new HashCodeCacheKey(checkSum, hashCode);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(key, secondKey, thirdKey);
+    assertEqualsIsTransitive(key, secondKey, thirdKey);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(key);
+    assertEqualsNullComparisonReturnsFalse(key);
   }
 
   /**

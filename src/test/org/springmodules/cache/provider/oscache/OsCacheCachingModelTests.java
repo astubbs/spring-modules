@@ -18,12 +18,9 @@
 
 package org.springmodules.cache.provider.oscache;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.EqualsHashCodeAssert;
-import org.springmodules.EqualsHashCodeTestCase;
+import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.util.ArrayUtils;
 import org.springmodules.util.Strings;
 
@@ -34,28 +31,27 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  */
-public final class OsCacheCachingModelTests extends TestCase implements
-    EqualsHashCodeTestCase {
+public final class OsCacheCachingModelTests extends
+    AbstractEqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(OsCacheCachingModelTests.class);
 
-  private OsCacheCachingModel cacheModel;
+  private OsCacheCachingModel model;
 
   public OsCacheCachingModelTests(String name) {
     super(name);
   }
 
   private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(cacheModel.getClass().getName());
-    buffer.append("@" + System.identityHashCode(cacheModel) + "[");
-    buffer.append("refreshPeriod=" + cacheModel.getRefreshPeriod() + ", ");
-    buffer.append("groups=" + ArrayUtils.toString(cacheModel.getGroups())
-        + ", ");
-    buffer.append("cronExpression="
-        + Strings.quote(cacheModel.getCronExpression()) + "]");
+    StringBuffer buffer = new StringBuffer(model.getClass().getName());
+    buffer.append("@" + System.identityHashCode(model) + "[");
+    buffer.append("refreshPeriod=" + model.getRefreshPeriod() + ", ");
+    buffer.append("groups=" + ArrayUtils.toString(model.getGroups()) + ", ");
+    buffer.append("cronExpression=" + Strings.quote(model.getCronExpression())
+        + "]");
 
     String expected = buffer.toString();
-    String actual = cacheModel.toString();
+    String actual = model.toString();
 
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
@@ -64,154 +60,145 @@ public final class OsCacheCachingModelTests extends TestCase implements
   }
 
   protected void setUp() {
-    cacheModel = new OsCacheCachingModel();
+    model = new OsCacheCachingModel();
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
     String cronExpression = "* * 0 0 0";
     String groups = "Test,Valid";
     Integer refreshPeriod = new Integer(43);
 
-    cacheModel.setCronExpression(cronExpression);
-    cacheModel.setGroups(groups);
-    cacheModel.setRefreshPeriod(refreshPeriod);
+    model.setCronExpression(cronExpression);
+    model.setGroups(groups);
+    model.setRefreshPeriod(refreshPeriod);
 
-    OsCacheCachingModel anotherModel = new OsCacheCachingModel(groups,
-        refreshPeriod, cronExpression);
+    OsCacheCachingModel model2 = new OsCacheCachingModel(groups, refreshPeriod,
+        cronExpression);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
     cronExpression = null;
-    cacheModel.setCronExpression(cronExpression);
-    anotherModel.setCronExpression(cronExpression);
+    model.setCronExpression(cronExpression);
+    model2.setCronExpression(cronExpression);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
     groups = null;
-    cacheModel.setGroups(groups);
-    anotherModel.setGroups(groups);
+    model.setGroups(groups);
+    model2.setGroups(groups);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
     String[] groupArray = { null, "Pojos" };
-    cacheModel.setGroups(groupArray);
-    anotherModel.setGroups(groupArray);
+    model.setGroups(groupArray);
+    model2.setGroups(groupArray);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
     refreshPeriod = null;
-    cacheModel.setRefreshPeriod(refreshPeriod);
-    anotherModel.setRefreshPeriod(refreshPeriod);
+    model.setRefreshPeriod(refreshPeriod);
+    model2.setRefreshPeriod(refreshPeriod);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
     String groups = "Services,Pojos";
     int refreshPeriod = 43;
 
-    cacheModel.setGroups(groups);
-    cacheModel.setRefreshPeriod(refreshPeriod);
+    model.setGroups(groups);
+    model.setRefreshPeriod(refreshPeriod);
 
-    OsCacheCachingModel anotherModel = new OsCacheCachingModel(groups,
-        refreshPeriod);
+    OsCacheCachingModel model2 = new OsCacheCachingModel(groups, refreshPeriod);
 
-    assertEquals(cacheModel, anotherModel);
+    assertEquals(model, model2);
 
-    anotherModel.setCronExpression("* * * * *");
-    assertFalse(cacheModel.equals(anotherModel));
+    model2.setCronExpression("* * * * *");
+    assertFalse(model.equals(model2));
 
-    anotherModel.setCronExpression(null);
-    anotherModel.setGroups("Pojos");
-    assertFalse(cacheModel.equals(anotherModel));
+    model2.setCronExpression(null);
+    model2.setGroups("Pojos");
+    assertFalse(model.equals(model2));
 
-    anotherModel.setGroups(groups);
-    anotherModel.setRefreshPeriod(99);
-    assertFalse(cacheModel.equals(anotherModel));
+    model2.setGroups(groups);
+    model2.setRefreshPeriod(99);
+    assertFalse(model.equals(model2));
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheModel);
+    assertEqualsIsReflexive(model);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
     String cronExpression = "* * * * *";
     String groups = "Services,Pojos";
     int refreshPeriod = 43;
 
-    cacheModel.setCronExpression(cronExpression);
-    cacheModel.setGroups(groups);
-    cacheModel.setRefreshPeriod(refreshPeriod);
+    model.setCronExpression(cronExpression);
+    model.setGroups(groups);
+    model.setRefreshPeriod(refreshPeriod);
 
-    OsCacheCachingModel anotherModel = new OsCacheCachingModel(groups,
-        refreshPeriod, cronExpression);
+    OsCacheCachingModel model2 = new OsCacheCachingModel(groups, refreshPeriod,
+        cronExpression);
 
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheModel, anotherModel);
+    assertEqualsIsSymmetric(model, model2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
     String groups = "Persistence";
     int refreshPeriod = 35;
 
-    cacheModel.setGroups(groups);
-    cacheModel.setRefreshPeriod(refreshPeriod);
+    model.setGroups(groups);
+    model.setRefreshPeriod(refreshPeriod);
 
-    OsCacheCachingModel secondModel = new OsCacheCachingModel(groups,
-        refreshPeriod);
-    OsCacheCachingModel thirdModel = new OsCacheCachingModel(groups,
-        refreshPeriod);
+    OsCacheCachingModel model2 = new OsCacheCachingModel(groups, refreshPeriod);
+    OsCacheCachingModel model3 = new OsCacheCachingModel(groups, refreshPeriod);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheModel, secondModel,
-        thirdModel);
+    assertEqualsIsTransitive(model, model2, model3);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cacheModel);
+    assertEqualsNullComparisonReturnsFalse(model);
   }
 
   public void testToStringWithEmptyGroups() {
-    cacheModel.setGroups(new String[0]);
-    cacheModel.setRefreshPeriod(98);
-    cacheModel.setCronExpression("* * 0 0 0");
+    model.setGroups(new String[0]);
+    model.setRefreshPeriod(98);
+    model.setCronExpression("* * 0 0 0");
 
     assertToStringIsCorrect();
   }
 
   public void testToStringWithGroupsAndCronExpressionEqualToNull() {
-    cacheModel.setGroups((String[]) null);
-    cacheModel.setRefreshPeriod(34);
-    cacheModel.setCronExpression(null);
+    model.setGroups((String[]) null);
+    model.setRefreshPeriod(34);
+    model.setCronExpression(null);
 
     assertToStringIsCorrect();
   }
 
   public void testToStringWithNotEmptyGroups() {
-    cacheModel.setGroups(new String[] { "main", null });
-    cacheModel.setRefreshPeriod(9);
-    cacheModel.setCronExpression("* * * * *");
+    model.setGroups(new String[] { "main", null });
+    model.setRefreshPeriod(9);
+    model.setCronExpression("* * * * *");
 
     assertToStringIsCorrect();
   }

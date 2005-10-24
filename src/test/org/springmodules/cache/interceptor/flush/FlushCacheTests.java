@@ -18,12 +18,9 @@
 
 package org.springmodules.cache.interceptor.flush;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.EqualsHashCodeAssert;
-import org.springmodules.EqualsHashCodeTestCase;
+import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.util.Strings;
 
 /**
@@ -33,8 +30,7 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  */
-public final class FlushCacheTests extends TestCase implements
-    EqualsHashCodeTestCase {
+public final class FlushCacheTests extends AbstractEqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(FlushCacheTests.class);
 
@@ -63,7 +59,7 @@ public final class FlushCacheTests extends TestCase implements
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
     String modelId = "main";
@@ -71,18 +67,16 @@ public final class FlushCacheTests extends TestCase implements
 
     FlushCache attribute2 = new FlushCache(modelId);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(attribute,
-        attribute2);
+    assertEqualsHashCodeRelationshipIsCorrect(attribute, attribute2);
 
     attribute.setModelId(null);
     attribute2.setModelId(null);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(attribute,
-        attribute2);
+    assertEqualsHashCodeRelationshipIsCorrect(attribute, attribute2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
     String modelId = "test";
@@ -96,14 +90,14 @@ public final class FlushCacheTests extends TestCase implements
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(attribute);
+    assertEqualsIsReflexive(attribute);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
     String modelId = "service";
@@ -111,11 +105,11 @@ public final class FlushCacheTests extends TestCase implements
 
     FlushCache attribute2 = new FlushCache(modelId);
 
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(attribute, attribute2);
+    assertEqualsIsSymmetric(attribute, attribute2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
     String modelId = "pojo";
@@ -124,15 +118,14 @@ public final class FlushCacheTests extends TestCase implements
     FlushCache attribute2 = new FlushCache(modelId);
     FlushCache attribute3 = new FlushCache(modelId);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(attribute, attribute2,
-        attribute3);
+    assertEqualsIsTransitive(attribute, attribute2, attribute3);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(attribute);
+    assertEqualsNullComparisonReturnsFalse(attribute);
   }
 
   public void testToString() {

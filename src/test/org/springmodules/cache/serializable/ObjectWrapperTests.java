@@ -17,13 +17,9 @@
  */
 package org.springmodules.cache.serializable;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.EqualsHashCodeAssert;
-import org.springmodules.EqualsHashCodeTestCase;
-import org.springmodules.cache.serializable.XStreamSerializableFactory;
+import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWrapper;
 import org.springmodules.util.Strings;
 
@@ -34,8 +30,7 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  */
-public class ObjectWrapperTests extends TestCase implements
-    EqualsHashCodeTestCase {
+public class ObjectWrapperTests extends AbstractEqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(ObjectWrapperTests.class);
 
@@ -48,15 +43,14 @@ public class ObjectWrapperTests extends TestCase implements
   private void assertToStringIsCorrect() {
     StringBuffer buffer = new StringBuffer(wrapper.getClass().getName());
     buffer.append("@" + System.identityHashCode(wrapper) + "[");
-    buffer.append("value="
-        + Strings.quoteIfString(wrapper.getValue()) + "]");
+    buffer.append("value=" + Strings.quoteIfString(wrapper.getValue()) + "]");
 
     String expected = buffer.toString();
     String actual = wrapper.toString();
-    
+
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
-    
+
     assertEquals(expected, actual);
   }
 
@@ -65,73 +59,70 @@ public class ObjectWrapperTests extends TestCase implements
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
     String obj = "Leia";
 
     wrapper.setValue(obj);
-    ObjectWrapper anotherWrapper = new ObjectWrapper(obj);
+    ObjectWrapper wrapper2 = new ObjectWrapper(obj);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        wrapper, anotherWrapper);
+    assertEqualsHashCodeRelationshipIsCorrect(wrapper, wrapper2);
 
     obj = null;
 
     wrapper.setValue(obj);
-    anotherWrapper.setValue(obj);
+    wrapper2.setValue(obj);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(
-        wrapper, anotherWrapper);
+    assertEqualsHashCodeRelationshipIsCorrect(wrapper, wrapper2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    ObjectWrapper anotherWrapper = new ObjectWrapper();
-    assertEquals(wrapper, anotherWrapper);
+    ObjectWrapper wrapper2 = new ObjectWrapper();
+    assertEquals(wrapper, wrapper2);
 
-    anotherWrapper.setValue("Luke");
-    assertFalse(wrapper.equals(anotherWrapper));
+    wrapper2.setValue("Luke");
+    assertFalse(wrapper.equals(wrapper2));
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(wrapper);
+    assertEqualsIsReflexive(wrapper);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
-    ObjectWrapper anotherWrapper = new ObjectWrapper();
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(wrapper, anotherWrapper);
+    ObjectWrapper wrapper2 = new ObjectWrapper();
+    assertEqualsIsSymmetric(wrapper, wrapper2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
     String obj = "Han";
 
     wrapper.setValue(obj);
-    ObjectWrapper secondWrapper = new ObjectWrapper(obj);
-    ObjectWrapper thirdWrapper = new ObjectWrapper(obj);
+    ObjectWrapper wrapper2 = new ObjectWrapper(obj);
+    ObjectWrapper wrapper3 = new ObjectWrapper(obj);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(wrapper, secondWrapper,
-        thirdWrapper);
+    assertEqualsIsTransitive(wrapper, wrapper2, wrapper3);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(wrapper);
+    assertEqualsNullComparisonReturnsFalse(wrapper);
   }
-  
+
   public void testToStringWithValueBeingString() {
     wrapper.setValue("C-3PO");
 
@@ -140,7 +131,7 @@ public class ObjectWrapperTests extends TestCase implements
 
   public void testToStringWithValueNotBeingString() {
     wrapper.setValue(new Integer(10));
-    
+
     assertToStringIsCorrect();
   }
 }

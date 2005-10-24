@@ -93,7 +93,7 @@ public final class JbossCacheModelValidatorTests extends TestCase {
   }
 
   public void testValidateFlushingModel() {
-    flushingModel.setNodes(new String[] { "a/b/c", "a/b/c/d" });
+    flushingModel.setNodes("a/b/c,a/b/c/d");
     validator.validateFlushingModel(flushingModel);
   }
 
@@ -101,13 +101,13 @@ public final class JbossCacheModelValidatorTests extends TestCase {
     assertValidateFlushingModelThrowsException("Lando");
   }
 
-  public void testValidateFlushingModelWithEmptyNodeFqnArray() {
-    flushingModel.setNodes(new String[0]);
+  public void testValidateFlushingModelWithEmptyNodesCsv() {
+    flushingModel.setNodes("");
     assertValidateFlushingModelThrowsException();
   }
 
-  public void testValidateFlushingModelWithNodeFqnArrayEqualToNull() {
-    flushingModel.setNodes((String[]) null);
+  public void testValidateFlushingModelWithNodesCsvEqualToNull() {
+    flushingModel.setNodes((String) null);
     assertValidateFlushingModelThrowsException();
   }
 }

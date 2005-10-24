@@ -18,12 +18,9 @@
 
 package org.springmodules.cache.provider.jboss;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.EqualsHashCodeAssert;
-import org.springmodules.EqualsHashCodeTestCase;
+import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.util.Strings;
 
 /**
@@ -33,24 +30,25 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  */
-public final class JbossCacheCachingModelTests extends TestCase implements
-    EqualsHashCodeTestCase {
+public final class JbossCacheCachingModelTests extends
+    AbstractEqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory.getLog(JbossCacheCachingModelTests.class);
+  private static Log logger = LogFactory
+      .getLog(JbossCacheCachingModelTests.class);
 
-  private JbossCacheCachingModel cacheModel;
+  private JbossCacheCachingModel model;
 
   public JbossCacheCachingModelTests(String name) {
     super(name);
   }
 
   private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(cacheModel.getClass().getName());
-    buffer.append("@" + System.identityHashCode(cacheModel) + "[");
-    buffer.append("nodeFqn=" + Strings.quote(cacheModel.getNode()) + "]");
+    StringBuffer buffer = new StringBuffer(model.getClass().getName());
+    buffer.append("@" + System.identityHashCode(model) + "[");
+    buffer.append("nodeFqn=" + Strings.quote(model.getNode()) + "]");
 
     String expected = buffer.toString();
-    String actual = cacheModel.toString();
+    String actual = model.toString();
 
     logger.debug("Expected 'toString': " + expected);
     logger.debug("Actual 'toString':   " + actual);
@@ -59,97 +57,82 @@ public final class JbossCacheCachingModelTests extends TestCase implements
   }
 
   protected final void setUp() {
-    cacheModel = new JbossCacheCachingModel();
+    model = new JbossCacheCachingModel();
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
     String nodeFqn = "a/b/c/d/e";
 
-    cacheModel.setNode(nodeFqn);
-
-    JbossCacheCachingModel anotherModel = new JbossCacheCachingModel(nodeFqn);
-
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    model.setNode(nodeFqn);
+    JbossCacheCachingModel model2 = new JbossCacheCachingModel(nodeFqn);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
     nodeFqn = null;
-    cacheModel.setNode(nodeFqn);
-    anotherModel.setNode(nodeFqn);
-
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(cacheModel,
-        anotherModel);
+    model.setNode(nodeFqn);
+    model2.setNode(nodeFqn);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
     String nodeFqn = "a/b";
 
-    cacheModel.setNode(nodeFqn);
+    model.setNode(nodeFqn);
+    JbossCacheCachingModel model2 = new JbossCacheCachingModel(nodeFqn);
+    assertEquals(model, model2);
 
-    JbossCacheCachingModel anotherModel = new JbossCacheCachingModel(nodeFqn);
-
-    assertEquals(cacheModel, anotherModel);
-
-    anotherModel.setNode("a/b/c/d");
-    assertFalse(cacheModel.equals(anotherModel));
+    model2.setNode("a/b/c/d");
+    assertFalse(model.equals(model2));
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(cacheModel);
+    assertEqualsIsReflexive(model);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
     String nodeFqn = "a";
-
-    cacheModel.setNode(nodeFqn);
-
+    model.setNode(nodeFqn);
     JbossCacheCachingModel anotherModel = new JbossCacheCachingModel(nodeFqn);
-
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(cacheModel, anotherModel);
+    assertEqualsIsSymmetric(model, anotherModel);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
     String nodeFqn = "a/b/c";
+    model.setNode(nodeFqn);
+    JbossCacheCachingModel model2 = new JbossCacheCachingModel(nodeFqn);
+    JbossCacheCachingModel model3 = new JbossCacheCachingModel(nodeFqn);
 
-    cacheModel.setNode(nodeFqn);
-
-    JbossCacheCachingModel secondModel = new JbossCacheCachingModel(nodeFqn);
-    JbossCacheCachingModel thirdModel = new JbossCacheCachingModel(nodeFqn);
-
-    EqualsHashCodeAssert.assertEqualsIsTransitive(cacheModel, secondModel,
-        thirdModel);
+    assertEqualsIsTransitive(model, model2, model3);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(cacheModel);
+    assertEqualsNullComparisonReturnsFalse(model);
   }
 
   public void testToStringWithNodeFqnEqualToNull() {
-    cacheModel.setNode(null);
-
+    model.setNode(null);
     assertToStringIsCorrect();
   }
 
   public void testToStringWithNodeFqnNotEqualToNull() {
-    cacheModel.setNode("x/y/z");
-
+    model.setNode("x/y/z");
     assertToStringIsCorrect();
   }
 }

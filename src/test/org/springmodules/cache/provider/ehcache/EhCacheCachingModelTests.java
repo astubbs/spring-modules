@@ -18,12 +18,9 @@
 
 package org.springmodules.cache.provider.ehcache;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.EqualsHashCodeAssert;
-import org.springmodules.EqualsHashCodeTestCase;
+import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.util.Strings;
 
 /**
@@ -33,8 +30,8 @@ import org.springmodules.util.Strings;
  * 
  * @author Alex Ruiz
  */
-public final class EhCacheCachingModelTests extends TestCase implements
-    EqualsHashCodeTestCase {
+public final class EhCacheCachingModelTests extends
+    AbstractEqualsHashCodeTestCase {
 
   private static Log logger = LogFactory.getLog(EhCacheCachingModelTests.class);
 
@@ -63,26 +60,24 @@ public final class EhCacheCachingModelTests extends TestCase implements
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
     String cacheName = "main";
     model.setCacheName(cacheName);
     EhCacheCachingModel model2 = new EhCacheCachingModel(cacheName);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(model,
-        model2);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
     cacheName = null;
     model.setCacheName(cacheName);
     model2.setCacheName(cacheName);
 
-    EqualsHashCodeAssert.assertEqualsHashCodeRelationshipIsCorrect(model,
-        model2);
+    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsConsistent()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
     String cacheName = "test";
@@ -96,25 +91,25 @@ public final class EhCacheCachingModelTests extends TestCase implements
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsReflexive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
    */
   public void testEqualsIsReflexive() {
-    EqualsHashCodeAssert.assertEqualsIsReflexive(model);
+    assertEqualsIsReflexive(model);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
     String cacheName = "test";
     model.setCacheName(cacheName);
 
     EhCacheCachingModel model2 = new EhCacheCachingModel(cacheName);
-    EqualsHashCodeAssert.assertEqualsIsSymmetric(model, model2);
+    assertEqualsIsSymmetric(model, model2);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsIsTransitive()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
     String cacheName = "test";
@@ -123,14 +118,14 @@ public final class EhCacheCachingModelTests extends TestCase implements
     EhCacheCachingModel model2 = new EhCacheCachingModel(cacheName);
     EhCacheCachingModel model3 = new EhCacheCachingModel(cacheName);
 
-    EqualsHashCodeAssert.assertEqualsIsTransitive(model, model2, model3);
+    assertEqualsIsTransitive(model, model2, model3);
   }
 
   /**
-   * @see EqualsHashCodeTestCase#testEqualsNullComparison()
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
    */
   public void testEqualsNullComparison() {
-    EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(model);
+    assertEqualsNullComparisonReturnsFalse(model);
   }
 
   public void testToStringWithCacheNameEqualToNull() {
