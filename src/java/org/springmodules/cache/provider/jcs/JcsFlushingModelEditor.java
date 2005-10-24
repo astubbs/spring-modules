@@ -36,11 +36,11 @@ import org.springmodules.cache.util.SemicolonSeparatedPropertiesParser;
  */
 public class JcsFlushingModelEditor extends PropertyEditorSupport {
 
+  private static final String CACHE_STRUCT_DELIMETER = "|";
+
   public JcsFlushingModelEditor() {
     super();
   }
-
-  private static final String CACHE_STRUCT_DELIMETER = "|";
 
   /**
    * @see PropertyEditorSupport#setAsText(String)
