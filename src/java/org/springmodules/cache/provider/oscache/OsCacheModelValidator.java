@@ -19,8 +19,6 @@
 package org.springmodules.cache.provider.oscache;
 
 import org.springmodules.cache.provider.AbstractCacheModelValidator;
-import org.springmodules.cache.provider.InvalidCacheModelException;
-import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -47,17 +45,5 @@ public final class OsCacheModelValidator extends AbstractCacheModelValidator {
    */
   protected Class getFlushingModelTargetClass() {
     return OsCacheFlushingModel.class;
-  }
-
-  /**
-   * @see AbstractCacheModelValidator#validateFlushingModelProperties(Object)
-   */
-  protected void validateFlushingModelProperties(Object flushingModel)
-      throws InvalidCacheModelException {
-    OsCacheFlushingModel model = (OsCacheFlushingModel) flushingModel;
-    if (!ArrayUtils.hasElements(model.getGroups())) {
-      throw new InvalidCacheModelException(
-          "The model should have at least one group name");
-    }
   }
 }
