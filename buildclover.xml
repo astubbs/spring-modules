@@ -34,4 +34,14 @@
 			</current>
 		</clover-report>
 	</target>
+
+	<target name="sandbox.clover.html" depends="sandbox.clean, with.clover, sandbox.tests"
+					description="Run Clover tests and generate HTML coverage reports">
+		<clover-report>
+			<current outfile="${target.clover.dir}/clover_html" title="${springmodules.title}" summary="true">
+				<format type="html"/>
+			</current>
+		</clover-report>
+	</target>
+
 </project>
