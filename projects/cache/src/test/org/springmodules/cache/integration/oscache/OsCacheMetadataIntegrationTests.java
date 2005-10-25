@@ -30,7 +30,7 @@ package org.springmodules.cache.integration.oscache;
 public final class OsCacheMetadataIntegrationTests extends
     AbstractOsCacheIntegrationTestCases {
 
-  private static final String METADATA_CONFIG = "**/osCacheMetadataContext.xml";
+  private static final String METADATA_CONFIG = "classpath:org/springmodules/cache/integration/oscache/osCacheMetadataContext.xml";
 
   public OsCacheMetadataIntegrationTests() {
     super();

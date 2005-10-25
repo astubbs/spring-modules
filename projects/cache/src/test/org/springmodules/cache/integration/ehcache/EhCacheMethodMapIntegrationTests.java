@@ -30,7 +30,7 @@ package org.springmodules.cache.integration.ehcache;
 public final class EhCacheMethodMapIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  private static final String METHOD_MAP_CONFIG = "**/ehCacheMethodMapContext.xml";
+  private static final String METHOD_MAP_CONFIG = "classpath:org/springmodules/cache/integration/ehcache/ehCacheMethodMapContext.xml";
 
   public EhCacheMethodMapIntegrationTests() {
     super();

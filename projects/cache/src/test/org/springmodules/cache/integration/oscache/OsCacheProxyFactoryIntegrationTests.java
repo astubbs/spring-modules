@@ -30,7 +30,7 @@ package org.springmodules.cache.integration.oscache;
 public final class OsCacheProxyFactoryIntegrationTests extends
     AbstractOsCacheIntegrationTestCases {
 
-  private static final String PROXY_FACTORY_CONFIG = "**/osCacheProxyFactoryContext.xml";
+  private static final String PROXY_FACTORY_CONFIG = "classpath:org/springmodules/cache/integration/oscache/osCacheProxyFactoryContext.xml";
 
   public OsCacheProxyFactoryIntegrationTests() {
     super();

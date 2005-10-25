@@ -38,7 +38,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractCacheIntegrationTests {
 
-  protected static final String CACHE_CONFIG = "**/osCacheContext.xml";
+  protected static final String CACHE_CONFIG = "classpath:org/springmodules/cache/integration/oscache/osCacheContext.xml";
 
   /**
    * OSCache cache administrator.

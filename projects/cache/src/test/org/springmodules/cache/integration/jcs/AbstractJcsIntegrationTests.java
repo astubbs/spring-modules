@@ -38,7 +38,7 @@ import org.springmodules.cache.provider.jcs.JcsCachingModel;
 public abstract class AbstractJcsIntegrationTests extends
     AbstractCacheIntegrationTests {
 
-  protected static final String CACHE_CONFIG = "**/jcsContext.xml";
+  protected static final String CACHE_CONFIG = "classpath:org/springmodules/cache/integration/jcs/jcsContext.xml";
 
   /**
    * JCS cache manager.

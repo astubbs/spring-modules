@@ -36,7 +36,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheCachingModel;
 public abstract class AbstractEhCacheIntegrationTests extends
     AbstractCacheIntegrationTests {
 
-  protected static final String CACHE_CONFIG = "**/ehCacheContext.xml";
+  protected static final String CACHE_CONFIG = "classpath:org/springmodules/cache/integration/ehcache/ehCacheContext.xml";
 
   private CacheManager cacheManager;
 

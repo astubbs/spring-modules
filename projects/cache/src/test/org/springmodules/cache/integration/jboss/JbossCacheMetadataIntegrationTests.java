@@ -30,7 +30,7 @@ package org.springmodules.cache.integration.jboss;
 public final class JbossCacheMetadataIntegrationTests extends
     AbstractJbossCacheIntegrationTestCases {
 
-  private static final String METADATA_CONFIG = "**/jbossCacheMetadataContext.xml";
+  private static final String METADATA_CONFIG = "classpath:org/springmodules/cache/integration/jboss/jbossCacheMetadataContext.xml";
 
   public JbossCacheMetadataIntegrationTests() {
     super();

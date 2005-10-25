@@ -30,7 +30,7 @@ package org.springmodules.cache.integration.ehcache;
 public final class EhCacheProxyFactoryIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  private static final String PROXY_FACTORY_CONFIG = "**/ehCacheProxyFactoryContext.xml";
+  private static final String PROXY_FACTORY_CONFIG = "classpath:org/springmodules/cache/integration/ehcache/ehCacheProxyFactoryContext.xml";
 
   public EhCacheProxyFactoryIntegrationTests() {
     super();

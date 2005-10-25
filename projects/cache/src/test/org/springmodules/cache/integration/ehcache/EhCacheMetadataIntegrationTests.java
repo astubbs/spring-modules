@@ -30,7 +30,7 @@ package org.springmodules.cache.integration.ehcache;
 public final class EhCacheMetadataIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  private static final String METADATA_CONFIG = "**/ehCacheMetadataContext.xml";
+  private static final String METADATA_CONFIG = "classpath:org/springmodules/cache/integration/ehcache/ehCacheMetadataContext.xml";
 
   public EhCacheMetadataIntegrationTests() {
     super();

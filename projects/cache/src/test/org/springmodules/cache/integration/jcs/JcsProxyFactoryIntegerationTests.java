@@ -30,7 +30,7 @@ package org.springmodules.cache.integration.jcs;
 public final class JcsProxyFactoryIntegerationTests extends
     AbstractJcsIntegrationTests {
 
-  private static final String PROXY_FACTORY_CONFIG = "**/jcsProxyFactoryContext.xml";
+  private static final String PROXY_FACTORY_CONFIG = "classpath:org/springmodules/cache/integration/jcs/jcsProxyFactoryContext.xml";
 
   public JcsProxyFactoryIntegerationTests() {
     super();

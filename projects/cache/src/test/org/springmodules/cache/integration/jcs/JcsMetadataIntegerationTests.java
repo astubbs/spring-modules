@@ -31,7 +31,7 @@ package org.springmodules.cache.integration.jcs;
 public final class JcsMetadataIntegerationTests extends
     AbstractJcsIntegrationTests {
 
-  private static final String METADATA_CONFIG = "**/jcsMetadataContext.xml";
+  private static final String METADATA_CONFIG = "classpath:org/springmodules/cache/integration/jcs/jcsMetadataContext.xml";
 
   public JcsMetadataIntegerationTests() {
     super();
