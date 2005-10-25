@@ -12,12 +12,29 @@
     <target name="gen.main">
         <echo>compiling metadata attributes</echo>
         <taskdef resource="org/apache/commons/attributes/anttasks.properties">
-          <classpath refid="compile.classpath"/>
+            <classpath refid="compile.classpath" />
         </taskdef>
         <attribute-compiler destdir="${target.gen.java.test.dir}">
-          <fileset dir="${src.java.test.dir}">
-            <include name="org/springmodules/cache/integration/CacheableServiceImpl.java"/>
-          </fileset>
+            <fileset dir="${src.java.test.dir}">
+                <include name="org/springmodules/cache/integration/CacheableServiceImpl.java" />
+            </fileset>
         </attribute-compiler>
+    </target>
+
+    <target name="compile.tests">
+        <echo>compiling test sources (including generated code)</echo>
+        <javac destdir="${target.testclasses.dir}"
+               debug="${debug}"
+               deprecation="${deprecation}"
+               optimize="${optimize}"
+               source="${javac.source}"
+               target="${javac.target}">
+            <src path="${target.gen.java.test.dir}" />
+            <src path="${src.java.test.dir}" />
+            <classpath>
+                <pathelement location="${target.classes.dir}" />
+                <path refid="test.classpath" />
+            </classpath>
+        </javac>
     </target>
 </project>
