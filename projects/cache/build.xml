@@ -8,4 +8,16 @@
     <property file="${user.home}/build.properties" />
 
     <import file="${common.build.dir}/common-targets.xml" />
+
+    <target name="gen.main">
+        <echo>compiling metadata attributes</echo>
+        <taskdef resource="org/apache/commons/attributes/anttasks.properties">
+          <classpath refid="compile.classpath"/>
+        </taskdef>
+        <attribute-compiler destdir="${target.gen.java.test.dir}">
+          <fileset dir="${src.java.test.dir}">
+            <include name="org/springmodules/cache/integration/CacheableServiceImpl.java"/>
+          </fileset>
+        </attribute-compiler>
+    </target>
 </project>
