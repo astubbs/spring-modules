@@ -56,8 +56,30 @@ public class ArrayUtilsTests extends TestCase {
     ArrayAssert.assertEquals(expected, ArrayUtils.removeDuplicates(expected));
   }
   
+  public void testToStringWithEmptyObjectArray() {
+    assertEquals("{}", ArrayUtils.toString(new Object[0]));
+  }
+  
   public void testToStringWithEmptyStringArray() {
     assertEquals("{}", ArrayUtils.toString(new String[0]));
+  }
+
+  public void testToStringWithNotEmptyObjectArray() {
+    Object[] array = { new Long(4l), "C-3P0" };
+    StringBuffer buffer = new StringBuffer();
+
+    int elementCount = array.length;
+    for (int i = 0; i < elementCount; i++) {
+      if (i == 0)
+        buffer.append('{');
+      else
+        buffer.append(", ");
+
+      buffer.append(Strings.quoteIfString(array[i]));
+    }
+    buffer.append("}");
+
+    assertEquals(buffer.toString(), ArrayUtils.toString(array));
   }
   
   public void testToStringWithNotEmptyStringArray() {
@@ -73,12 +95,15 @@ public class ArrayUtilsTests extends TestCase {
 
       buffer.append(Strings.quote(array[i]));
     }
-
     buffer.append("}");
 
     assertEquals(buffer.toString(), ArrayUtils.toString(array));
   }
-  
+
+  public void testToStringWithObjectArrayEqualToNull() {
+    assertEquals("null", ArrayUtils.toString((Object[]) null));
+  }
+
   public void testToStringWithStringArrayEqualToNull() {
     assertEquals("null", ArrayUtils.toString((String[]) null));
   }
