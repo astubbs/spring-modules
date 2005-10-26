@@ -149,7 +149,7 @@
 
 	</target>
 
-	<target name="build" depends="buildmain,buildtiger" if="tiger.available"
+	<target name="build" depends="buildmain" if="tiger.available"
 					description="Compile main and JDK 1.5 sources"/>
 
 	<target name="modulejars" depends="build,initdist" description="Create module-specific JAR files">
@@ -308,7 +308,7 @@
 
 		<javac destdir="${target.testclasses.dir}" source="1.3" target="1.3" debug="${debug}"
 					 deprecation="false" optimize="false" failonerror="true">
-			<src path="${commons.attributes.tempdir.test}"/>
+			<!--src path="${commons.attributes.tempdir.test}"/-->
 			<src path="${test.dir}"/>
 			<classpath refid="all-libs"/>
 			<classpath location="${target.classes.dir}"/>
@@ -351,7 +351,7 @@
 	<!--
 		Compile the main and the JDK 1.5 test source tree.
 	-->
-	<target name="buildtests" depends="buildmaintests,buildtigertests"
+	<target name="buildtests" depends="buildmaintests"
 					description="Compile main and JDK 1.5 test source tree"/>
 
 	
