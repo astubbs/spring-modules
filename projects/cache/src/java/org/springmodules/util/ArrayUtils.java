@@ -52,8 +52,8 @@ public abstract class ArrayUtils {
     if (array == null || array.length == 0) {
       hash = multiplier * hash;
     } else {
-      int elementCount = array.length;
-      for (int i = 0; i < elementCount; i++) {
+      int length = array.length;
+      for (int i = 0; i < length; i++) {
         Object obj = array[i];
         hash = multiplier * hash + (obj != null ? obj.hashCode() : 0);
       }
@@ -67,32 +67,11 @@ public abstract class ArrayUtils {
       return array;
     }
     Set set = new TreeSet();
-    int count = array.length;
-    for (int i = 0; i < count; i++) {
+    int length = array.length;
+    for (int i = 0; i < length; i++) {
       set.add(array[i]);
     }
     return (String[]) set.toArray(new String[set.size()]);
-  }
-
-  public static String toString(byte[] array) {
-    if (array == null)
-      return NULL_ARRAY;
-    if (array.length == 0)
-      return EMPTY_ARRAY;
-
-    StringBuffer buffer = new StringBuffer();
-
-    for (int i = 0; i < array.length; i++) {
-      if (i == 0)
-        buffer.append(ARRAY_START);
-      else
-        buffer.append(ELEMENT_SEPARATOR);
-
-      buffer.append(array[i]);
-    }
-
-    buffer.append(ARRAY_END);
-    return buffer.toString();
   }
 
   public static String toString(Object[] array) {
@@ -102,10 +81,10 @@ public abstract class ArrayUtils {
       return EMPTY_ARRAY;
 
     StringBuffer buffer = new StringBuffer();
-
-    for (int i = 0; i < array.length; i++) {
+    int length = array.length;
+    for (int i = 0; i < length; i++) {
       if (i == 0)
-        buffer.append('{');
+        buffer.append(ARRAY_START);
       else
         buffer.append(ELEMENT_SEPARATOR);
 
@@ -123,10 +102,10 @@ public abstract class ArrayUtils {
       return EMPTY_ARRAY;
 
     StringBuffer buffer = new StringBuffer();
-
-    for (int i = 0; i < array.length; i++) {
+    int length = array.length;
+    for (int i = 0; i < length; i++) {
       if (i == 0)
-        buffer.append('{');
+        buffer.append(ARRAY_START);
       else
         buffer.append(ELEMENT_SEPARATOR);
 
