@@ -3,7 +3,6 @@ package org.springmodules.template;
 import java.util.*;
 
 import junit.framework.*;
-import org.springmodules.template.samples.emailer.*;
 
 /**
  * @author Uri Boness

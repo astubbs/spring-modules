@@ -24,7 +24,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 
 import junit.framework.*;
-import org.springmodules.template.samples.emailer.*;
+import org.springmodules.template.*;
 import org.springmodules.template.providers.xslt.converters.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
