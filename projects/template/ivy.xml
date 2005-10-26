@@ -35,9 +35,13 @@
 	<dependency org="springframework" name="springframework" rev="1.2.5" conf="buildtime->default">
 	    <artifact name="spring" type="jar"/>
     </dependency>
+    <dependency org="javax.servlet" name="javax.servlet" rev="2.4" conf="buildtime->default">
+		<artifact name="servlet-api" type="jar"/> 
+	</dependency>
         
 	<!-- test dependencies -->
 	<dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
+	<dependency org="easymock" name="easymock" rev="1.1" conf="test->default"/>
 	<dependency org="apache" name="logkit" rev="1.0.1" conf="test->default"/>
     <dependency org="objectweb" name="asm" rev="1.5.2" conf="test->default"/>
     
