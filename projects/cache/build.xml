@@ -8,6 +8,7 @@
     <property file="${user.home}/build.properties" />
 
     <import file="${common.build.dir}/common-targets.xml" />
+    <import file="${common.build.dir}/clover-targets.xml" />
 
     <!--
       Set up properties that indicate whether we're building on JDK 1.5.
