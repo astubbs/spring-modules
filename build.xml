@@ -301,7 +301,7 @@
 		</attribute-compiler>
 	</target>
 
-	<target name="buildmaintests" depends="build,compiletestattr"
+	<target name="buildmaintests" depends="build"
 					description="Compile test source tree java files into class files">
 
 		<mkdir dir="${target.testclasses.dir}"/>
