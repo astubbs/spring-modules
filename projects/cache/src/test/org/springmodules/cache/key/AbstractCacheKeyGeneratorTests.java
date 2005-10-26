@@ -61,20 +61,18 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
     CacheKeyGenerator cacheKeyGenerator = getCacheKeyGenerator();
 
     // get the method from the description of the invocation.
-    methodInvocation.getMethod();
-    methodInvocationControl.setReturnValue(method);
+    methodInvocationControl.expectAndReturn(methodInvocation.getMethod(),
+        method);
 
     // get the arguments of the invocated method.
-    methodInvocation.getArguments();
-    methodInvocationControl.setReturnValue(methodArguments);
+    methodInvocationControl.expectAndReturn(methodInvocation.getArguments(),
+        methodArguments);
 
-    // set the state of the mock control to 'replay'.
     methodInvocationControl.replay();
 
     // get the key for the method.
     Serializable cacheKey = cacheKeyGenerator.generateKey(methodInvocation);
 
-    // verify that the expectations of the mock control were met.
     methodInvocationControl.verify();
 
     return cacheKey;

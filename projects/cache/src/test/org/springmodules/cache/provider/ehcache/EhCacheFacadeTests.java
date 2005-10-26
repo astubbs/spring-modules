@@ -112,8 +112,7 @@ public class EhCacheFacadeTests extends TestCase {
         new Class[] { Serializable.class });
     setUpCacheAsMockObject(getMethod);
 
-    cache.get(KEY);
-    cacheControl.setThrowable(expectedCatchedException);
+    cacheControl.expectAndThrow(cache.get(KEY), expectedCatchedException);
 
     cacheControl.replay();
 
@@ -411,8 +410,7 @@ public class EhCacheFacadeTests extends TestCase {
     setUpCacheAsMockObject(remove);
 
     IllegalStateException expected = new IllegalStateException();
-    cache.remove(KEY);
-    cacheControl.setThrowable(expected);
+    cacheControl.expectAndThrow(cache.remove(KEY), expected);
     cacheControl.replay();
 
     try {

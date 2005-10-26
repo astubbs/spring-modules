@@ -142,7 +142,7 @@ public final class JcsFacadeTests extends TestCase {
         new Class[] { String.class });
   }
 
-  private void setStateOfMockControlsToReplay() {
+  private void replayMocks() {
     if (cacheControl != null) {
       cacheControl.replay();
     }
@@ -237,7 +237,7 @@ public final class JcsFacadeTests extends TestCase {
     setUpCacheAdministratorAsMockObject(getCacheMethod);
 
     expectCacheIsNotFound();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       jcsFacade.getCache(CACHE_NAME);
@@ -245,7 +245,7 @@ public final class JcsFacadeTests extends TestCase {
     } catch (CacheNotFoundException exception) {
       // expecting this exception
     }
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testGetCachingModelEditor() {
@@ -303,7 +303,7 @@ public final class JcsFacadeTests extends TestCase {
     cache.removeAll();
     cacheControl.setThrowable(expected);
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       jcsFacade.onFlushCache(flushingModel);
@@ -312,7 +312,7 @@ public final class JcsFacadeTests extends TestCase {
     } catch (CacheAccessException exception) {
       assertSame(expected, exception.getCause());
     }
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testOnFlushCacheWhenCacheIsNotFound() throws Exception {
@@ -321,7 +321,7 @@ public final class JcsFacadeTests extends TestCase {
     setUpCacheAdministratorAsMockObject(getCacheMethod);
 
     expectCacheIsNotFound();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       jcsFacade.onFlushCache(flushingModel);
@@ -329,7 +329,7 @@ public final class JcsFacadeTests extends TestCase {
     } catch (CacheAccessException exception) {
       // expecting this exception
     }
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   /**
@@ -404,9 +404,8 @@ public final class JcsFacadeTests extends TestCase {
     // cache manager throws exception.
     Serializable key = "R2-D2";
     RuntimeException expected = new RuntimeException();
-    cache.get(key);
-    cacheControl.setThrowable(expected);
-    setStateOfMockControlsToReplay();
+    cacheControl.expectAndThrow(cache.get(key), expected);
+    replayMocks();
 
     try {
       jcsFacade.onGetFromCache(key, cachingModel);
@@ -414,7 +413,7 @@ public final class JcsFacadeTests extends TestCase {
     } catch (CacheAccessException exception) {
       assertSame(expected, exception.getCause());
     }
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testOnGetFromCacheWhenCacheIsNotFound() throws Exception {
@@ -423,7 +422,7 @@ public final class JcsFacadeTests extends TestCase {
     setUpCacheAdministratorAsMockObject(getCacheMethod);
 
     expectCacheIsNotFound();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       jcsFacade.onGetFromCache("C-3PO", cachingModel);
@@ -431,7 +430,7 @@ public final class JcsFacadeTests extends TestCase {
     } catch (CacheNotFoundException exception) {
       // expecting this exception
     }
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   /**
@@ -478,7 +477,7 @@ public final class JcsFacadeTests extends TestCase {
     RuntimeException expected = new RuntimeException();
     cacheControl.setThrowable(expected);
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       jcsFacade.onPutInCache(key, cachingModel, objToStore);
@@ -486,7 +485,7 @@ public final class JcsFacadeTests extends TestCase {
     } catch (CacheAccessException exception) {
       assertSame(expected, exception.getCause());
     }
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testOnPutInCacheWhenCacheIsNotFound() throws Exception {
@@ -494,7 +493,7 @@ public final class JcsFacadeTests extends TestCase {
     setUpCacheAdministratorAsMockObject(getCache);
 
     expectCacheIsNotFound();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       jcsFacade.onPutInCache("Skywalker", cachingModel, "Luke");
@@ -502,7 +501,7 @@ public final class JcsFacadeTests extends TestCase {
     } catch (CacheNotFoundException exception) {
       // expecting this exception
     }
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testOnRemoveFromCache() throws Exception {
@@ -537,7 +536,7 @@ public final class JcsFacadeTests extends TestCase {
     cache.remove(key);
     cacheControl.setThrowable(expected);
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       jcsFacade.onRemoveFromCache(key, cachingModel);
@@ -546,7 +545,7 @@ public final class JcsFacadeTests extends TestCase {
     } catch (CacheAccessException exception) {
       assertSame(expected, exception.getCause());
     }
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
 
   }
 
@@ -555,7 +554,7 @@ public final class JcsFacadeTests extends TestCase {
     setUpCacheAdministratorAsMockObject(getCache);
 
     expectCacheIsNotFound();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       jcsFacade.onRemoveFromCache("Chewbacca", cachingModel);
@@ -563,7 +562,7 @@ public final class JcsFacadeTests extends TestCase {
     } catch (CacheNotFoundException exception) {
       // expecting this exception
     }
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   /**
@@ -623,7 +622,7 @@ public final class JcsFacadeTests extends TestCase {
     return key;
   }
 
-  private void verifyExpectationsOfMockControlsWereMet() {
+  private void verifyMocks() {
     if (cacheControl != null) {
       cacheControl.verify();
     }

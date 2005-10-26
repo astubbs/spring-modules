@@ -62,7 +62,7 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
     super(name);
   }
 
-  private void setStateOfMockControlsToReplay() {
+  private void replayMocks() {
     invocationControl.replay();
     sourceControl.replay();
   }
@@ -81,21 +81,19 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
 
   public void testGetFlushingAttribute() throws Exception {
     Object thisObject = "Anakin";
-    invocation.getThis();
-    invocationControl.setReturnValue(thisObject);
+    invocationControl.expectAndReturn(invocation.getThis(), thisObject);
 
     Method method = String.class.getDeclaredMethod("toLowerCase", null);
-    invocation.getMethod();
-    invocationControl.setReturnValue(method);
+    invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     FlushCache expected = new FlushCache();
-    source.getFlushingAttribute(method, thisObject.getClass());
-    sourceControl.setReturnValue(expected);
+    sourceControl.expectAndReturn(source.getFlushingAttribute(method,
+        thisObject.getClass()), expected);
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     assertSame(expected, interceptor.getFlushingAttribute(invocation));
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testGetModel() {
@@ -137,7 +135,7 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
         .getAttributes());
   }
 
-  private void verifyExpectationsOfMockControlsWereMet() {
+  private void verifyMocks() {
     invocationControl.verify();
     sourceControl.verify();
   }

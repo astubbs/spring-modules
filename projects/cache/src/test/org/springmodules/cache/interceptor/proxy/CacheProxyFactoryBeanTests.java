@@ -81,7 +81,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   }
 
   private void expectAfterPropertiesSetOnCachingInterceptor() {
-    expectGetValidator();
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade.getCacheModelValidator(), validator);
     for (Iterator i = cachingModels.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
       CachingModel model = (CachingModel) entry.getValue();
@@ -96,7 +96,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   }
 
   private void expectAfterPropertiesSetOnFlushingInterceptor() {
-    expectGetValidator();
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade.getCacheModelValidator(), validator);
     for (Iterator i = flushingModels.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
       FlushingModel model = (FlushingModel) entry.getValue();
@@ -112,12 +112,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     expectAfterPropertiesSetOnFlushingInterceptor();
   }
 
-  private void expectGetValidator() {
-    cacheProviderFacade.getCacheModelValidator();
-    cacheProviderFacadeControl.setReturnValue(validator);
-  }
-
-  private void setStateOfMockControlsToReplay() {
+  private void replayMocks() {
     cacheProviderFacadeControl.replay();
     validatorControl.replay();
   }
@@ -158,7 +153,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     setUpCachingModels();
 
     expectAfterPropertiesSetOnCachingInterceptorOnly();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     Person targetObject = new PersonImpl("Anakin", "Skywalker");
     factoryBean.setTarget(targetObject);
@@ -171,12 +166,12 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     assertEquals(1, advisors.length);
     assertEquals(CachingModelSourceAdvisor.class, advisors[0].getClass());
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testAfterPropertiesSetWithNullTarget() {
     expectAfterPropertiesSetOnInterceptors();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       factoryBean.afterPropertiesSet();
@@ -185,12 +180,12 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
       // we are expecting this exception.
     }
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testAfterPropertiesSetWithProxyInterfacesEqualToNullAndProxyTargetClassEqualToTrue() {
     expectAfterPropertiesSetOnInterceptors();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     Person targetObject = new PersonImpl("Darth", "Vader");
     factoryBean.setTarget(targetObject);
@@ -216,13 +211,13 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
           + advisor1.getClass().getName() + ">");
     }
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testAfterPropertiesSetWithProxyInterfacesEqualToNullAndProxyTargetFlagEqualToFalseAndTargetInstanceOfTargetSource()
       throws Exception {
     expectAfterPropertiesSetOnInterceptors();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     factoryBean.setProxyTargetClass(false);
     Object targetInstanceOfTargetSource = EmptyTargetSource.INSTANCE;
@@ -235,7 +230,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
       // we are expecting this exception.
     }
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   /**
@@ -247,7 +242,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   public void testAfterPropertiesSetWithProxyInterfacesNotEqualToNull()
       throws Exception {
     expectAfterPropertiesSetOnInterceptors();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     String[] proxyInterfaces = { Person.class.getName() };
     factoryBean.setProxyInterfaces(proxyInterfaces);
@@ -273,7 +268,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     assertTrue("The proxy should implement the interface <"
         + Advised.class.getName() + ">", proxy instanceof Advised);
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   /**
@@ -307,13 +302,13 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   public void testGetObject() {
     expectAfterPropertiesSetOnInterceptors();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     factoryBean.setTarget(target);
     factoryBean.afterPropertiesSet();
     assertSame(factoryBean.getProxy(), factoryBean.getObject());
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   /**
@@ -323,13 +318,13 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
    */
   public void testGetObjectTypeWhenProxyIsNotNull() {
     expectAfterPropertiesSetOnInterceptors();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     factoryBean.setTarget(target);
     factoryBean.afterPropertiesSet();
     assertEquals(factoryBean.getProxy().getClass(), factoryBean.getObjectType());
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   /**
@@ -405,7 +400,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     assertEquals(expectedProxyInterfaces[0], actualProxyInterfaces[0]);
   }
 
-  private void verifyExpectationsOfMockControlsWereMet() {
+  private void verifyMocks() {
     cacheProviderFacadeControl.verify();
     validatorControl.verify();
   }

@@ -88,8 +88,8 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
     setUpTargetClassAndMethod(true);
 
     List attributeList = new ArrayList();
-    attributes.getAttributes(method);
-    attributesControl.setReturnValue(attributeList);
+    attributesControl.expectAndReturn(attributes.getAttributes(method),
+        attributeList);
     attributesControl.replay();
 
     Collection returnedAttributes = source.findAllAttributes(method);
@@ -155,8 +155,8 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
     List attributeList = new ArrayList();
     attributeList.add(expected);
 
-    attributes.getAttributes(method);
-    attributesControl.setReturnValue(attributeList);
+    attributesControl.expectAndReturn(attributes.getAttributes(method),
+        attributeList);
     attributesControl.replay();
 
     assertSame(expected, source.getCachingAttribute(method, targetClass));

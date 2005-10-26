@@ -60,27 +60,26 @@ public class FlushingAttributeSourceAdvisorTests extends TestCase {
   }
 
   protected void setUp() {
-    this.interceptor = new MetadataFlushingInterceptor();
+    interceptor = new MetadataFlushingInterceptor();
   }
 
   private void setUpCachingAttributeSourceAdvisorAsMockObject() {
-    this.sourceControl = MockControl
-        .createControl(FlushingAttributeSource.class);
-    this.source = (FlushingAttributeSource) this.sourceControl.getMock();
+    sourceControl = MockControl.createControl(FlushingAttributeSource.class);
+    source = (FlushingAttributeSource) sourceControl.getMock();
 
-    this.interceptor.setFlushingAttributeSource(this.source);
-    this.sourceAdvisor = new FlushingAttributeSourceAdvisor(this.interceptor);
+    interceptor.setFlushingAttributeSource(source);
+    sourceAdvisor = new FlushingAttributeSourceAdvisor(interceptor);
   }
 
   private void setUpTargetClassAndMethod() throws Exception {
-    this.targetClass = String.class;
-    this.method = this.targetClass.getMethod("toUpperCase", null);
+    targetClass = String.class;
+    method = targetClass.getMethod("toUpperCase", null);
   }
 
   public void testConstructorWithMethodInterceptorNotHavingCacheFlushAttributeSource() {
-    this.interceptor.setFlushingAttributeSource(null);
+    interceptor.setFlushingAttributeSource(null);
     try {
-      this.sourceAdvisor = new FlushingAttributeSourceAdvisor(this.interceptor);
+      sourceAdvisor = new FlushingAttributeSourceAdvisor(interceptor);
       fail();
     } catch (AopConfigException exception) {
       // we are expecting this exception.
@@ -92,12 +91,12 @@ public class FlushingAttributeSourceAdvisorTests extends TestCase {
     setUpTargetClassAndMethod();
 
     // metadata attributes not be found for the specified method and class.
-    this.source.getFlushingAttribute(this.method, this.targetClass);
-    this.sourceControl.setReturnValue(null);
-    this.sourceControl.replay();
+    sourceControl.expectAndReturn(source.getFlushingAttribute(method,
+        targetClass), null);
+    sourceControl.replay();
 
-    assertFalse(this.sourceAdvisor.matches(this.method, this.targetClass));
-    this.sourceControl.verify();
+    assertFalse(sourceAdvisor.matches(method, targetClass));
+    sourceControl.verify();
   }
 
   /**
@@ -111,11 +110,11 @@ public class FlushingAttributeSourceAdvisorTests extends TestCase {
     setUpTargetClassAndMethod();
 
     // metadata attributes not be found for the specified method and class.
-    this.source.getFlushingAttribute(this.method, this.targetClass);
-    this.sourceControl.setReturnValue(new FlushCache());
-    this.sourceControl.replay();
+    sourceControl.expectAndReturn(source.getFlushingAttribute(method,
+        targetClass), new FlushCache());
+    sourceControl.replay();
 
-    assertTrue(this.sourceAdvisor.matches(this.method, this.targetClass));
-    this.sourceControl.verify();
+    assertTrue(sourceAdvisor.matches(method, targetClass));
+    sourceControl.verify();
   }
 }

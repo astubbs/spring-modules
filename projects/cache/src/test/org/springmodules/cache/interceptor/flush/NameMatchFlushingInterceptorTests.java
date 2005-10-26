@@ -66,16 +66,14 @@ public class NameMatchFlushingInterceptorTests extends TestCase {
     interceptor.setFlushingModelSource(source);
 
     Object thisObject = "Anakin";
-    invocation.getThis();
-    invocationControl.setReturnValue(thisObject);
+    invocationControl.expectAndReturn(invocation.getThis(), thisObject);
 
     Method method = String.class.getDeclaredMethod("toUpperCase", null);
-    invocation.getMethod();
-    invocationControl.setReturnValue(method);
+    invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     FlushingModel expected = new MockFlushingModel();
-    source.getFlushingModel(method, thisObject.getClass());
-    sourceControl.setReturnValue(expected);
+    sourceControl.expectAndReturn(source.getFlushingModel(method, thisObject
+        .getClass()), expected);
 
     sourceControl.replay();
     invocationControl.replay();

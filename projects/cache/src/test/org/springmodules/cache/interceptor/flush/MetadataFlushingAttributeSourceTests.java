@@ -48,11 +48,11 @@ public final class MetadataFlushingAttributeSourceTests extends TestCase {
   }
 
   protected void setUp() {
-    this.attributesControl = MockControl.createStrictControl(Attributes.class);
-    this.attributes = (Attributes) this.attributesControl.getMock();
+    attributesControl = MockControl.createStrictControl(Attributes.class);
+    attributes = (Attributes) attributesControl.getMock();
 
-    this.source = new MetadataFlushingAttributeSource();
-    this.source.setAttributes(this.attributes);
+    source = new MetadataFlushingAttributeSource();
+    source.setAttributes(attributes);
   }
 
   /**
@@ -66,14 +66,14 @@ public final class MetadataFlushingAttributeSourceTests extends TestCase {
     Method method = clazz.getMethod("charAt", new Class[] { int.class });
 
     List attributeList = new ArrayList();
-    this.attributes.getAttributes(method);
-    this.attributesControl.setReturnValue(attributeList);
-    this.attributesControl.replay();
+    attributesControl.expectAndReturn(attributes.getAttributes(method),
+        attributeList);
+    attributesControl.replay();
 
-    Collection returnedAttributes = this.source.findAllAttributes(method);
+    Collection returnedAttributes = source.findAllAttributes(method);
 
-    this.attributesControl.verify();
-    assertSame("<Returned attributes>", attributeList, returnedAttributes);
+    attributesControl.verify();
+    assertSame(attributeList, returnedAttributes);
   }
 
 }

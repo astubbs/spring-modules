@@ -70,11 +70,6 @@ public final class CacheProviderFacadeTests extends TestCase {
     return new CacheNotFoundException("someCache");
   }
 
-  private void expectCacheRequiresSerializableElements(boolean requires) {
-    cacheProviderFacade.isSerializableCacheElementRequired();
-    cacheProviderFacadeControl.setReturnValue(requires);
-  }
-
   private CacheException expectOnCancelCacheUpdateToThrowException() {
     CacheException expected = createCacheException();
     cacheProviderFacade.onCancelCacheUpdate(key);
@@ -318,7 +313,8 @@ public final class CacheProviderFacadeTests extends TestCase {
    * does not require serializable entries.
    */
   public void testMakeSerializableIfNecessaryWhenSerializableIsNotRequiredAndEntryIsNotSerializable() {
-    expectCacheRequiresSerializableElements(false);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), false);
 
     Object objectToStore = new Socket();
     assertIsNotSerializable(objectToStore);
@@ -327,8 +323,34 @@ public final class CacheProviderFacadeTests extends TestCase {
         .makeSerializableIfNecessary(objectToStore));
   }
 
+  public void testMakeSerializableIfNecessaryWhenSerializableIsRequiredAndSerializableFactoryIsNotNullAndEntryIsNotSerializable() {
+    MockControl factoryControl = MockControl
+        .createControl(SerializableFactory.class);
+    SerializableFactory factory = (SerializableFactory) factoryControl
+        .getMock();
+    cacheProviderFacade.setSerializableFactory(factory);
+
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), true);
+    cacheProviderFacadeControl.replay();
+
+    Serializable expected = "Leia";
+    Object objectToStore = new Object();
+    factoryControl.expectAndReturn(factory
+        .makeSerializableIfNecessary(objectToStore), expected);
+    factoryControl.replay();
+
+    Object actual = cacheProviderFacade
+        .makeSerializableIfNecessary(objectToStore);
+    assertSame(expected, actual);
+
+    cacheProviderFacadeControl.verify();
+    factoryControl.verify();
+  }
+
   public void testMakeSerializableIfNecessaryWhenSerializableIsRequiredAndSerializableFactoryIsNotNullAndEntryIsSerializable() {
-    expectCacheRequiresSerializableElements(true);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), true);
     cacheProviderFacadeControl.replay();
 
     Object objectToStore = "Luke Skywalker";
@@ -349,7 +371,8 @@ public final class CacheProviderFacadeTests extends TestCase {
    * </ul>
    */
   public void testMakeSerializableIfNecessaryWhenSerializableIsRequiredAndSerializableFactoryIsNullAndEntryIsNotSerializable() {
-    expectCacheRequiresSerializableElements(true);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), true);
     cacheProviderFacadeControl.replay();
 
     Object objectToStore = new Socket();
@@ -366,32 +389,9 @@ public final class CacheProviderFacadeTests extends TestCase {
     cacheProviderFacadeControl.verify();
   }
 
-  public void testMakeSerializableIfNecessaryWhenSerializableIsRequiredAndSerializableFactoryIsNotNullAndEntryIsNotSerializable() {
-    MockControl factoryControl = MockControl
-        .createControl(SerializableFactory.class);
-    SerializableFactory factory = (SerializableFactory) factoryControl
-        .getMock();
-    cacheProviderFacade.setSerializableFactory(factory);
-
-    expectCacheRequiresSerializableElements(true);
-    cacheProviderFacadeControl.replay();
-
-    Serializable expected = "Leia";
-    Object objectToStore = new Object();
-    factory.makeSerializableIfNecessary(objectToStore);
-    factoryControl.setReturnValue(expected);
-    factoryControl.replay();
-
-    Object actual = cacheProviderFacade
-        .makeSerializableIfNecessary(objectToStore);
-    assertSame(expected, actual);
-
-    cacheProviderFacadeControl.verify();
-    factoryControl.verify();
-  }
-
   public void testMakeSerializableIfNecessaryWhenSerializableIsRequiredAndSerializableFactoryIsNullAndEntryIsSerializable() {
-    expectCacheRequiresSerializableElements(true);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), true);
     cacheProviderFacadeControl.replay();
 
     Object objectToStore = "R2-D2";
@@ -406,7 +406,8 @@ public final class CacheProviderFacadeTests extends TestCase {
     cacheProviderFacade.setFailQuietlyEnabled(false);
     Object objectToStore = new Object();
 
-    expectCacheRequiresSerializableElements(false);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), false);
     CacheException expectedException = expectOnPutInCacheThrowsException(objectToStore);
     cacheProviderFacadeControl.replay();
 
@@ -426,18 +427,19 @@ public final class CacheProviderFacadeTests extends TestCase {
     Object objectToStore = new Object();
     cacheProviderFacade.setFailQuietlyEnabled(true);
 
-    expectCacheRequiresSerializableElements(false);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), false);
     expectOnPutInCacheThrowsException(objectToStore);
     cacheProviderFacadeControl.replay();
 
-    // execute the method to test.
     cacheProviderFacade.putInCache(key, cachingModel, objectToStore);
 
     cacheProviderFacadeControl.verify();
   }
 
   public void testPutInCacheWhenMakeSerializableThrowsExceptionAndFailQuietlyIsFalse() {
-    expectCacheRequiresSerializableElements(true);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), true);
     cacheProviderFacade.setFailQuietlyEnabled(false);
 
     Object objectToStore = new Object();
@@ -461,7 +463,8 @@ public final class CacheProviderFacadeTests extends TestCase {
     Object objectToStore = new Object();
     assertIsNotSerializable(objectToStore);
 
-    expectCacheRequiresSerializableElements(true);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), true);
     cacheProviderFacadeControl.replay();
 
     cacheProviderFacade.putInCache(key, cachingModel, objectToStore);
@@ -474,7 +477,8 @@ public final class CacheProviderFacadeTests extends TestCase {
    * does not try to access the cache if the model is <code>null</code>.
    */
   public void testPutInCacheWhenModelIsNull() throws Exception {
-    expectCacheRequiresSerializableElements(false);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .isSerializableCacheElementRequired(), false);
     cacheProviderFacadeControl.replay();
     cacheProviderFacade.putInCache(key, null, new Object());
     cacheProviderFacadeControl.verify();

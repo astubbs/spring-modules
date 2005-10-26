@@ -233,8 +233,8 @@ public class OsCacheFacadeTests extends TestCase {
     cachingModel.setRefreshPeriod(refreshPeriod);
     Object expected = "Anakin";
 
-    cacheAdministrator.getFromCache(CACHE_KEY, refreshPeriod, cronExpression);
-    cacheAdministratorControl.setReturnValue(expected);
+    cacheAdministratorControl.expectAndReturn(cacheAdministrator.getFromCache(
+        CACHE_KEY, refreshPeriod, cronExpression), expected);
 
     cacheAdministratorControl.replay();
 
@@ -258,8 +258,8 @@ public class OsCacheFacadeTests extends TestCase {
     cachingModel.setRefreshPeriod(refreshPeriod);
     Object expected = "Anakin";
 
-    cacheAdministrator.getFromCache(CACHE_KEY, refreshPeriod);
-    cacheAdministratorControl.setReturnValue(expected);
+    cacheAdministratorControl.expectAndReturn(cacheAdministrator.getFromCache(
+        CACHE_KEY, refreshPeriod), expected);
 
     cacheAdministratorControl.replay();
 
@@ -281,8 +281,8 @@ public class OsCacheFacadeTests extends TestCase {
     Object expected = "Anakin";
 
     // retrieve an entry using only the provided key.
-    cacheAdministrator.getFromCache(CACHE_KEY);
-    cacheAdministratorControl.setReturnValue(expected);
+    cacheAdministratorControl.expectAndReturn(cacheAdministrator
+        .getFromCache(CACHE_KEY), expected);
 
     cacheAdministratorControl.replay();
 

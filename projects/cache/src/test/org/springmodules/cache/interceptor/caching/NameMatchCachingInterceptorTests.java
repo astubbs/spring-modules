@@ -58,16 +58,14 @@ public class NameMatchCachingInterceptorTests extends TestCase {
         .getMock();
 
     Object thisObject = "Anakin";
-    invocation.getThis();
-    invocationControl.setReturnValue(thisObject);
+    invocationControl.expectAndReturn(invocation.getThis(), thisObject);
 
     Method method = String.class.getDeclaredMethod("toUpperCase", null);
-    invocation.getMethod();
-    invocationControl.setReturnValue(method);
+    invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     CachingModel expected = new MockCachingModel();
-    source.getCachingModel(method, thisObject.getClass());
-    sourceControl.setReturnValue(expected);
+    sourceControl.expectAndReturn(source.getCachingModel(method, thisObject
+        .getClass()), expected);
 
     sourceControl.replay();
     invocationControl.replay();

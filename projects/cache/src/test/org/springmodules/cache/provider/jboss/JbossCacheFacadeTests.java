@@ -193,8 +193,7 @@ public class JbossCacheFacadeTests extends TestCase {
 
     RuntimeException expected = new RuntimeException();
 
-    treeCache.get(NODE_FQN, KEY);
-    treeCacheControl.setThrowable(expected);
+    treeCacheControl.expectAndThrow(treeCache.get(NODE_FQN, KEY), expected);
 
     treeCacheControl.replay();
 
@@ -227,8 +226,8 @@ public class JbossCacheFacadeTests extends TestCase {
     String objectToCache = "Luke";
     RuntimeException expected = new RuntimeException();
 
-    treeCache.put(NODE_FQN, KEY, objectToCache);
-    treeCacheControl.setThrowable(expected);
+    treeCacheControl.expectAndThrow(
+        treeCache.put(NODE_FQN, KEY, objectToCache), expected);
 
     treeCacheControl.replay();
 
@@ -263,8 +262,7 @@ public class JbossCacheFacadeTests extends TestCase {
 
     RuntimeException expected = new RuntimeException();
 
-    treeCache.remove(NODE_FQN, KEY);
-    treeCacheControl.setThrowable(expected);
+    treeCacheControl.expectAndThrow(treeCache.remove(NODE_FQN, KEY), expected);
 
     treeCacheControl.replay();
 

@@ -57,11 +57,11 @@ public class FlushingInterceptorTests extends TestCase {
     }
   }
 
-  private MockFlushingInterceptor interceptor;
-
   private CacheProviderFacade cacheProviderFacade;
 
   private MockControl cacheProviderFacadeControl;
+
+  private MockFlushingInterceptor interceptor;
 
   private MethodInvocation invocation;
 
@@ -84,21 +84,15 @@ public class FlushingInterceptorTests extends TestCase {
     }
   }
 
-  private void expectGetValidatorFromCacheProviderFacade() {
-    cacheProviderFacade.getCacheModelValidator();
-    cacheProviderFacadeControl.setReturnValue(validator);
-  }
-
   private Object expectMethodInvocationCallsProceed() throws Throwable {
     setUpMethodInvocation();
 
     Object expected = new Object();
-    invocation.proceed();
-    invocationControl.setReturnValue(expected);
+    invocationControl.expectAndReturn(invocation.proceed(), expected);
     return expected;
   }
 
-  private void setStateOfMockControlsToReplay() {
+  private void replayMocks() {
     cacheProviderFacadeControl.replay();
 
     if (invocationControl != null) {
@@ -147,7 +141,8 @@ public class FlushingInterceptorTests extends TestCase {
       models.setProperty(keyPrefix + i, valuePrefix + i);
     }
 
-    expectGetValidatorFromCacheProviderFacade();
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCacheModelValidator(), validator);
 
     MockControl editorControl = MockControl.createControl(PropertyEditor.class);
     PropertyEditor editor = (PropertyEditor) editorControl.getMock();
@@ -172,14 +167,14 @@ public class FlushingInterceptorTests extends TestCase {
       expected.put(key, model);
     }
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
     editorControl.replay();
 
     interceptor.setFlushingModels(models);
     interceptor.afterPropertiesSet();
     assertEquals(expected, interceptor.getFlushingModels());
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
     editorControl.verify();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
   }
@@ -192,7 +187,8 @@ public class FlushingInterceptorTests extends TestCase {
       models.put(Integer.toString(i), new MockFlushingModel());
     }
 
-    expectGetValidatorFromCacheProviderFacade();
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCacheModelValidator(), validator);
 
     for (Iterator i = models.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
@@ -200,37 +196,13 @@ public class FlushingInterceptorTests extends TestCase {
       validator.validateFlushingModel(model);
     }
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     interceptor.setFlushingModels(models);
     interceptor.afterPropertiesSet();
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
-  }
-
-  public void testInvokeWithReturnedCachingModelEqualToNull() throws Throwable {
-    interceptor.model = null;
-
-    Object expected = expectMethodInvocationCallsProceed();
-    setStateOfMockControlsToReplay();
-
-    assertSame(expected, interceptor.invoke(invocation));
-    verifyExpectationsOfMockControlsWereMet();
-  }
-
-  public void testInvokeWhenFlushingBeforeMethodExecution() throws Throwable {
-    MockFlushingModel model = new MockFlushingModel();
-    model.setFlushBeforeMethodExecution(true);
-    interceptor.model = model;
-
-    cacheProviderFacade.flushCache(model);
-    Object expected = expectMethodInvocationCallsProceed();
-
-    setStateOfMockControlsToReplay();
-
-    assertSame(expected, interceptor.invoke(invocation));
-    verifyExpectationsOfMockControlsWereMet();
   }
 
   public void testInvokeWhenFlushingAfterMethodExecution() throws Throwable {
@@ -241,13 +213,37 @@ public class FlushingInterceptorTests extends TestCase {
     Object expected = expectMethodInvocationCallsProceed();
     cacheProviderFacade.flushCache(model);
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
-  private void verifyExpectationsOfMockControlsWereMet() {
+  public void testInvokeWhenFlushingBeforeMethodExecution() throws Throwable {
+    MockFlushingModel model = new MockFlushingModel();
+    model.setFlushBeforeMethodExecution(true);
+    interceptor.model = model;
+
+    cacheProviderFacade.flushCache(model);
+    Object expected = expectMethodInvocationCallsProceed();
+
+    replayMocks();
+
+    assertSame(expected, interceptor.invoke(invocation));
+    verifyMocks();
+  }
+
+  public void testInvokeWithReturnedCachingModelEqualToNull() throws Throwable {
+    interceptor.model = null;
+
+    Object expected = expectMethodInvocationCallsProceed();
+    replayMocks();
+
+    assertSame(expected, interceptor.invoke(invocation));
+    verifyMocks();
+  }
+
+  private void verifyMocks() {
     cacheProviderFacadeControl.verify();
 
     if (invocationControl != null) {

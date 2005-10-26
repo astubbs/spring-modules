@@ -104,27 +104,20 @@ public class CachingInterceptorTests extends TestCase {
     keyGenerator.generateKey(invocation);
     keyGeneratorControl.setReturnValue(key);
 
-    cacheProviderFacade.getFromCache(key, model);
-    cacheProviderFacadeControl.setReturnValue(expected);
-
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getFromCache(key, model), expected);
     return model;
-  }
-
-  private void expectGetValidatorFromCacheProviderFacade() {
-    cacheProviderFacade.getCacheModelValidator();
-    cacheProviderFacadeControl.setReturnValue(validator);
   }
 
   private Object expectMethodInvocationCallsProceed() throws Throwable {
     setUpMethodInvocation();
 
     Object expected = new Object();
-    invocation.proceed();
-    invocationControl.setReturnValue(expected);
+    invocationControl.expectAndReturn(invocation.proceed(), expected);
     return expected;
   }
 
-  private void setStateOfMockControlsToReplay() {
+  private void replayMocks() {
     cacheProviderFacadeControl.replay();
 
     if (invocationControl != null) {
@@ -190,7 +183,8 @@ public class CachingInterceptorTests extends TestCase {
       models.setProperty(keyPrefix + i, valuePrefix + i);
     }
 
-    expectGetValidatorFromCacheProviderFacade();
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCacheModelValidator(), validator);
 
     MockControl editorControl = MockControl.createControl(PropertyEditor.class);
     PropertyEditor editor = (PropertyEditor) editorControl.getMock();
@@ -215,14 +209,14 @@ public class CachingInterceptorTests extends TestCase {
       expected.put(key, model);
     }
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
     editorControl.replay();
 
     interceptor.setCachingModels(models);
     interceptor.afterPropertiesSet();
     assertEquals(expected, interceptor.getCachingModels());
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
     editorControl.verify();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
   }
@@ -246,7 +240,8 @@ public class CachingInterceptorTests extends TestCase {
       models.put(Integer.toString(i), new MockCachingModel());
     }
 
-    expectGetValidatorFromCacheProviderFacade();
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCacheModelValidator(), validator);
 
     for (Iterator i = models.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
@@ -254,7 +249,7 @@ public class CachingInterceptorTests extends TestCase {
       validator.validateCachingModel(model);
     }
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     interceptor.setCachingModels(models);
     interceptor.afterPropertiesSet();
@@ -262,7 +257,7 @@ public class CachingInterceptorTests extends TestCase {
     assertEquals(HashCodeCacheKeyGenerator.class, interceptor
         .getCacheKeyGenerator().getClass());
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
   }
 
@@ -273,17 +268,16 @@ public class CachingInterceptorTests extends TestCase {
     Serializable key = "Luke Skywalker";
     CachingModel model = expectGetFromCache(key, null);
 
-    invocation.proceed();
-    invocationControl.setReturnValue(null);
+    invocationControl.expectAndReturn(invocation.proceed(), null);
 
     cacheProviderFacade.putInCache(key, model,
         AbstractCachingInterceptor.NULL_ENTRY);
 
     listener.onCaching(key, null, model);
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     assertNull(interceptor.invoke(invocation));
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testInvokeWhenCacheReturnsNullAndProceedReturnsObjectNotEqualToNull()
@@ -294,16 +288,15 @@ public class CachingInterceptorTests extends TestCase {
     Object expected = new Object();
     CachingModel model = expectGetFromCache(key, null);
 
-    invocation.proceed();
-    invocationControl.setReturnValue(expected);
+    invocationControl.expectAndReturn(invocation.proceed(), expected);
 
     cacheProviderFacade.putInCache(key, model, expected);
 
     listener.onCaching(key, expected, model);
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testInvokeWhenCacheReturnsNullAndProceedThrowsException()
@@ -312,11 +305,10 @@ public class CachingInterceptorTests extends TestCase {
     expectGetFromCache(key, null);
 
     Exception expected = new Exception();
-    invocation.proceed();
-    invocationControl.setThrowable(expected);
+    invocationControl.expectAndThrow(invocation.proceed(), expected);
 
     cacheProviderFacade.cancelCacheUpdate(key);
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     try {
       interceptor.invoke(invocation);
@@ -325,39 +317,39 @@ public class CachingInterceptorTests extends TestCase {
       assertSame(expected, exception);
     }
 
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testInvokeWhenCacheReturnsNullEntryObject() throws Throwable {
     Serializable key = "C3-PO";
     expectGetFromCache(key, AbstractCachingInterceptor.NULL_ENTRY);
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     assertNull(interceptor.invoke(invocation));
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testInvokeWhenCacheReturnsStoredObject() throws Throwable {
     Serializable key = "R2-D2";
     Object expected = new Object();
     expectGetFromCache(key, expected);
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testInvokeWithReturnedCachingModelEqualToNull() throws Throwable {
     interceptor.model = null;
 
     Object expected = expectMethodInvocationCallsProceed();
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
-  private void verifyExpectationsOfMockControlsWereMet() {
+  private void verifyMocks() {
     cacheProviderFacadeControl.verify();
 
     if (invocationControl != null) {

@@ -62,7 +62,7 @@ public final class MetadataCachingInterceptorTests extends TestCase {
     super(name);
   }
 
-  private void setStateOfMockControlsToReplay() {
+  private void replayMocks() {
     invocationControl.replay();
     sourceControl.replay();
   }
@@ -81,21 +81,19 @@ public final class MetadataCachingInterceptorTests extends TestCase {
 
   public void testGetCachingAttribute() throws Exception {
     Object thisObject = "Anakin";
-    invocation.getThis();
-    invocationControl.setReturnValue(thisObject);
+    invocationControl.expectAndReturn(invocation.getThis(), thisObject);
 
     Method method = String.class.getDeclaredMethod("toLowerCase", null);
-    invocation.getMethod();
-    invocationControl.setReturnValue(method);
+    invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     Cached expected = new Cached();
-    source.getCachingAttribute(method, thisObject.getClass());
-    sourceControl.setReturnValue(expected);
+    sourceControl.expectAndReturn(source.getCachingAttribute(method, thisObject
+        .getClass()), expected);
 
-    setStateOfMockControlsToReplay();
+    replayMocks();
 
     assertSame(expected, interceptor.getCachingAttribute(invocation));
-    verifyExpectationsOfMockControlsWereMet();
+    verifyMocks();
   }
 
   public void testGetModel() {
@@ -136,7 +134,7 @@ public final class MetadataCachingInterceptorTests extends TestCase {
         .getAttributes());
   }
 
-  private void verifyExpectationsOfMockControlsWereMet() {
+  private void verifyMocks() {
     invocationControl.verify();
     sourceControl.verify();
   }

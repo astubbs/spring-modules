@@ -136,13 +136,13 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     // method.
     for (int i = 0; i < 2; i++) {
       // get all the metadata attributes.
-      attributeSource.findAllAttributes(method);
-      attributeSourceControl.setReturnValue(allAttributes);
+      attributeSourceControl.expectAndReturn(attributeSource
+          .findAllAttributes(method), allAttributes);
 
       // should not be able to find a CacheAttribute from the collection
       // containing all the metadata attributes.
-      attributeSource.findAttribute(allAttributes);
-      attributeSourceControl.setReturnValue(null);
+      attributeSourceControl.expectAndReturn(attributeSource
+          .findAttribute(allAttributes), null);
     }
 
     attributeSourceControl.replay();
@@ -167,12 +167,11 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * and method.
    */
   public void testGetAttributeWhenCacheAttributeFoundIsNotEqualToNull() {
-    // get all the metadata attributes for the most specific method.
-    attributeSource.findAllAttributes(method);
-    attributeSourceControl.setReturnValue(allAttributes);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAllAttributes(method), allAttributes);
 
-    attributeSource.findAttribute(allAttributes);
-    attributeSourceControl.setReturnValue(cacheAttribute);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAttribute(allAttributes), cacheAttribute);
 
     attributeSourceControl.replay();
 
@@ -218,11 +217,11 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * the most specific method.
    */
   public void testRetrieveAttributeFromMostSpecificMethod() {
-    attributeSource.findAllAttributes(method);
-    attributeSourceControl.setReturnValue(allAttributes);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAllAttributes(method), allAttributes);
 
-    attributeSource.findAttribute(allAttributes);
-    attributeSourceControl.setReturnValue(cacheAttribute);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAttribute(allAttributes), cacheAttribute);
 
     attributeSourceControl.replay();
 
@@ -243,11 +242,11 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * original method are the same.
    */
   public void testRetrieveAttributeFromMostSpecificMethodWhenMostSpecificMethodAndOriginalMethodAreTheSame() {
-    attributeSource.findAllAttributes(method);
-    attributeSourceControl.setReturnValue(allAttributes);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAllAttributes(method), allAttributes);
 
-    attributeSource.findAttribute(allAttributes);
-    attributeSourceControl.setReturnValue(null);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAttribute(allAttributes), null);
 
     attributeSourceControl.replay();
 
@@ -272,17 +271,17 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    * </ul>
    */
   public void testRetrieveAttributeFromOriginalMethod() {
-    attributeSource.findAllAttributes(method);
-    attributeSourceControl.setReturnValue(allAttributes);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAllAttributes(method), allAttributes);
 
-    attributeSource.findAttribute(allAttributes);
-    attributeSourceControl.setReturnValue(null);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAttribute(allAttributes), null);
 
-    attributeSource.findAllAttributes(method);
-    attributeSourceControl.setReturnValue(allAttributes);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAllAttributes(method), allAttributes);
 
-    attributeSource.findAttribute(allAttributes);
-    attributeSourceControl.setReturnValue(cacheAttribute);
+    attributeSourceControl.expectAndReturn(attributeSource
+        .findAttribute(allAttributes), cacheAttribute);
 
     attributeSourceControl.replay();
 
@@ -309,11 +308,11 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     // method.
     for (int i = 0; i < 2; i++) {
       // get all the metadata attributes.
-      attributeSource.findAllAttributes(method);
-      attributeSourceControl.setReturnValue(allAttributes);
+      attributeSourceControl.expectAndReturn(attributeSource
+          .findAllAttributes(method), allAttributes);
 
-      attributeSource.findAttribute(allAttributes);
-      attributeSourceControl.setReturnValue(null);
+      attributeSourceControl.expectAndReturn(attributeSource
+          .findAttribute(allAttributes), null);
     }
 
     attributeSourceControl.replay();
