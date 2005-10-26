@@ -1,0 +1,45 @@
+<ivy-module version="1.1">
+
+    <info organisation="springmodules" module="template"/>
+
+    <configurations>
+		<!-- default configuration that 'by default' pulls in the global configuration -->
+		<conf name="default" extends="global"/>
+
+		<!-- core dependencies needed at compile-time, test-time, and runtime -->
+		<conf name="global" visibility="private"/>
+
+		<!-- additional dependencies needed only at build-time -->
+		<conf name="buildtime" visibility="private"/>
+
+		<!-- additional dependencies needed only at test-time -->
+		<conf name="test" visibility="private"/>
+    </configurations>
+
+    <dependencies defaultconf="global->default">
+    
+	<!-- global dependencies -->
+	<dependency org="apache" name="commons-beanutils" rev="1.6"/>
+	<dependency org="apache" name="commons-logging" rev="1.0.4"/>
+                
+	<!-- buildtime dependencies -->
+    <dependency org="cglib" name="cglib" rev="2.1" conf="buildtime->default"/>
+	<dependency org="freemarker" name="freemarker" rev="2.3.3" conf="buildtime->default"/>
+	<dependency org="apache" name="velocity" rev="1.4" conf="buildtime->default"/>
+	<dependency org="jdom" name="jdom" rev="1.0" conf="buildtime->default"/>
+	<dependency org="codehaus" name="groovy" rev="1.0-beta-10" conf="buildtime->default"/>
+	<dependency org="codehaus" name="jaxen" rev="1.1-beta-6" conf="buildtime->default"/>
+	<dependency org="ognl" name="ognl" rev="2.6.7" conf="buildtime->default"/>
+	<dependency org="dom4j" name="dom4j" rev="1.6" conf="buildtime->default"/>
+	<dependency org="apache" name="commons-collections" rev="3.1" conf="buildtime->default"/>
+	<dependency org="springframework" name="springframework" rev="1.2.5" conf="buildtime->default">
+	    <artifact name="spring" type="jar"/>
+    </dependency>
+        
+	<!-- test dependencies -->
+	<dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
+	<dependency org="apache" name="logkit" rev="1.0.1" conf="test->default"/>
+    <dependency org="objectweb" name="asm" rev="1.5.2" conf="test->default"/>
+    
+    </dependencies>
+</ivy-module>
