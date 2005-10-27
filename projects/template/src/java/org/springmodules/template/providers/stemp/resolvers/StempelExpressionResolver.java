@@ -38,7 +38,7 @@ public class StempelExpressionResolver implements ExpressionResolver {
     public String resolve(String expression, Map model) {
         Object result = null;
         try {
-             Stempel.evaluate(expression, model);
+             result = Stempel.evaluate(expression, model);
         } catch (ExpressionEvaluationException eee) {
             log.error("Could not resolve stempel expressoin '" + expression + "'.", eee);
         }
