@@ -61,32 +61,9 @@ public abstract class AbstractCachingAttributeSource extends
    */
   public final Cached getCachingAttribute(Method method, Class targetClass) {
     Cached attribute = null;
-    if (isCacheable(method)) {
+    if (CachingUtils.isCacheable(method)) {
       attribute = (Cached) getAttribute(method, targetClass);
     }
     return attribute;
-  }
-
-  /**
-   * Returns <code>true</code> if the return type of a method can be
-   * cacheable. In order to be cacheable, the method should:
-   * <ul>
-   * <li>have a return type (not <code>void</code>)</li>
-   * </ul>
-   * 
-   * @param method
-   *          the method definition to verify.
-   * @return <code>true</code> if the return type of a method can be
-   *         cacheable.
-   */
-  protected final boolean isCacheable(Method method) {
-    boolean cacheable = true;
-
-    Class returnType = method.getReturnType();
-    if ("void".equalsIgnoreCase(returnType.getName())) {
-      cacheable = false;
-    }
-
-    return cacheable;
   }
 }

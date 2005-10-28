@@ -36,10 +36,4 @@ public class InvalidCacheModelException extends CacheException {
   public InvalidCacheModelException(String detailMessage) {
     super(detailMessage);
   }
-
-  public InvalidCacheModelException(String detailMessage,
-      Throwable nestedException) {
-    super(detailMessage, nestedException);
-  }
-
 }

@@ -33,10 +33,4 @@ public class ObjectCannotBeCachedException extends CacheException {
   public ObjectCannotBeCachedException(String detailMessage) {
     super(detailMessage);
   }
-
-  public ObjectCannotBeCachedException(String detailMessage,
-      Throwable nestedException) {
-    super(detailMessage, nestedException);
-  }
-
 }

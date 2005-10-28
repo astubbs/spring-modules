@@ -202,11 +202,6 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     cachingInterceptor.setCacheProviderFacade(cacheProviderFacade);
   }
 
-  protected void setCachingInterceptor(
-      NameMatchCachingInterceptor newCachingInterceptor) {
-    cachingInterceptor = newCachingInterceptor;
-  }
-
   /**
    * Sets the listener to be notified each time an entry is stored in the cache.
    * 
@@ -231,11 +226,6 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    */
   public void setCachingModels(Map cachingModels) {
     cachingInterceptor.setCachingModels(cachingModels);
-  }
-
-  protected void setFlushingInterceptor(
-      NameMatchFlushingInterceptor newFlushingInterceptor) {
-    flushingInterceptor = newFlushingInterceptor;
   }
 
   /**

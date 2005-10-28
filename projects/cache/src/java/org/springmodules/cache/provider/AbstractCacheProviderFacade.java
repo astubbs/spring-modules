@@ -351,8 +351,5 @@ public abstract class AbstractCacheProviderFacade implements
    * @throws IllegalStateException
    *           if the cache manager is in an invalid state.
    */
-  protected void validateCacheManager() throws FatalCacheException {
-    // no implementation.
-  }
-
+  protected abstract void validateCacheManager() throws FatalCacheException;
 }

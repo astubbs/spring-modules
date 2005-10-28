@@ -49,27 +49,18 @@ public final class MethodMapCachingInterceptor extends
       MethodMapCachingModelSource newSource = new MethodMapCachingModelSource();
 
       Map models = getCachingModels();
-      FatalCacheException fatalCacheException = null;
-
       String key = null;
       try {
-        for (Iterator i = models.keySet().iterator(); i.hasNext();) {
-          key = (String) i.next();
-          CachingModel model = (CachingModel) models.get(key);
-          newSource.addCachingModel(key, model);
+        for (Iterator i = models.entrySet().iterator(); i.hasNext();) {
+          Map.Entry entry = (Map.Entry) i.next();
+          key = (String) entry.getKey();
+          newSource.addCachingModel(key, (CachingModel) entry.getValue());
         }
 
-      } catch (FatalCacheException exception) {
-        fatalCacheException = exception;
-
       } catch (Exception exception) {
-        fatalCacheException = new FatalCacheException(
+        throw new FatalCacheException(
             "Unable to add model stored under the key " + Strings.quote(key),
             exception);
-      }
-
-      if (fatalCacheException != null) {
-        throw fatalCacheException;
       }
 
       setCachingModelSource(newSource);

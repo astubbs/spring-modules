@@ -20,6 +20,7 @@ package org.springmodules.cache.interceptor.caching;
 
 import java.beans.PropertyEditor;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -165,14 +166,6 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     return cacheKeyGenerator;
   }
 
-  protected final CacheProviderFacade getCacheProviderFacade() {
-    return cacheProviderFacade;
-  }
-
-  public final CachingListener[] getCachingListeners() {
-    return cachingListeners;
-  }
-
   protected final Map getCachingModels() {
     return cachingModels;
   }
@@ -191,11 +184,19 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
    */
   public final Object invoke(MethodInvocation methodInvocation)
       throws Throwable {
+    Method method = methodInvocation.getMethod();
+    if (!CachingUtils.isCacheable(method)) {
+      logger.debug("Unable to perform caching. Intercepted method <"
+          + method.getName() + "> does not return a value");
+      return methodInvocation.proceed();
+    }
+
     CachingModel model = getModel(methodInvocation);
 
     if (model == null) {
-      logger.info("Unable to perform caching. "
-          + "No model is associated to the intercepted method");
+      logger.debug("Unable to perform caching. "
+          + "No model is associated to the intercepted method <"
+          + method.getName() + ">");
       return methodInvocation.proceed();
     }
 

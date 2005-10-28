@@ -45,10 +45,6 @@ public class NameMatchCachingModelSource extends
     return (CachingModel) getCacheModel(method);
   }
 
-  protected final Map getCachingModels() {
-    return getCacheModels();
-  }
-  
   public void setCachingModels(Map models) {
     setCacheModels(models);
   }
