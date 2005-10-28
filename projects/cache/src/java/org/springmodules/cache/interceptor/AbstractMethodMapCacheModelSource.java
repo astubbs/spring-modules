@@ -120,13 +120,6 @@ public abstract class AbstractMethodMapCacheModelSource {
         // name.
         registeredMethodMap.put(method, fullyQualifiedTargetMethodName);
         addCacheModel(method, cacheModel);
-
-      } else {
-        if (logger.isDebugEnabled() && registeredMethodName != null) {
-          logger.debug("Keeping attribute for cached method [" + method
-              + "]: current name '" + fullyQualifiedTargetMethodName
-              + "' is not more specific than '" + registeredMethodName + "'");
-        }
       }
     }
   }
