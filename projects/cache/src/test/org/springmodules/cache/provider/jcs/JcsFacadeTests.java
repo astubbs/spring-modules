@@ -290,7 +290,7 @@ public final class JcsFacadeTests extends TestCase {
   }
 
   public void testOnFlushCacheWhenCacheAccessThrowsException() throws Exception {
-    Method getCache = this.getGetCacheMethodFromCompositeCacheManagerClass();
+    Method getCache = getGetCacheMethodFromCompositeCacheManagerClass();
     setUpCacheAdministratorAsMockObject(getCache);
 
     Method removeAll = CompositeCache.class.getMethod("removeAll", null);
@@ -392,7 +392,7 @@ public final class JcsFacadeTests extends TestCase {
 
   public void testOnGetFromCacheWhenCacheAccessThrowsException()
       throws Exception {
-    Method getCache = this.getGetCacheMethodFromCompositeCacheManagerClass();
+    Method getCache = getGetCacheMethodFromCompositeCacheManagerClass();
     setUpCacheAdministratorAsMockObject(getCache);
 
     Method get = CompositeCache.class.getMethod("get",
@@ -455,7 +455,7 @@ public final class JcsFacadeTests extends TestCase {
   }
 
   public void testOnPutInCacheWhenCacheAccessThrowsException() throws Exception {
-    Method getCache = this.getGetCacheMethodFromCompositeCacheManagerClass();
+    Method getCache = getGetCacheMethodFromCompositeCacheManagerClass();
     setUpCacheAdministratorAsMockObject(getCache);
 
     Method update = CompositeCache.class.getMethod("update",
@@ -489,7 +489,7 @@ public final class JcsFacadeTests extends TestCase {
   }
 
   public void testOnPutInCacheWhenCacheIsNotFound() throws Exception {
-    Method getCache = this.getGetCacheMethodFromCompositeCacheManagerClass();
+    Method getCache = getGetCacheMethodFromCompositeCacheManagerClass();
     setUpCacheAdministratorAsMockObject(getCache);
 
     expectCacheIsNotFound();
@@ -550,7 +550,7 @@ public final class JcsFacadeTests extends TestCase {
   }
 
   public void testOnRemoveFromCacheWhenCacheIsNotFound() throws Exception {
-    Method getCache = this.getGetCacheMethodFromCompositeCacheManagerClass();
+    Method getCache = getGetCacheMethodFromCompositeCacheManagerClass();
     setUpCacheAdministratorAsMockObject(getCache);
 
     expectCacheIsNotFound();

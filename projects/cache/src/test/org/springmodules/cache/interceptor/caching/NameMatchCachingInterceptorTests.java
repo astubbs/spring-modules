@@ -18,14 +18,10 @@
 package org.springmodules.cache.interceptor.caching;
 
 import java.lang.reflect.Method;
-import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.aopalliance.intercept.MethodInvocation;
-import org.easymock.MockControl;
 import org.springmodules.cache.CachingModel;
-import org.springmodules.cache.mock.MockCachingModel;
 
 /**
  * <p>
@@ -46,45 +42,24 @@ public class NameMatchCachingInterceptorTests extends TestCase {
     interceptor = new NameMatchCachingInterceptor();
   }
 
-  public void testGetModel() throws Exception {
-    MockControl sourceControl = MockControl
-        .createStrictControl(CachingModelSource.class);
-    CachingModelSource source = (CachingModelSource) sourceControl.getMock();
-    interceptor.setCachingModelSource(source);
-
-    MockControl invocationControl = MockControl
-        .createStrictControl(MethodInvocation.class);
-    MethodInvocation invocation = (MethodInvocation) invocationControl
-        .getMock();
-
-    Object thisObject = "Anakin";
-    invocationControl.expectAndReturn(invocation.getThis(), thisObject);
-
-    Method method = String.class.getDeclaredMethod("toUpperCase", null);
-    invocationControl.expectAndReturn(invocation.getMethod(), method);
-
-    CachingModel expected = new MockCachingModel();
-    sourceControl.expectAndReturn(source.getCachingModel(method, thisObject
-        .getClass()), expected);
-
-    sourceControl.replay();
-    invocationControl.replay();
-
-    assertSame(expected, interceptor.getModel(invocation));
-    sourceControl.verify();
-    invocationControl.verify();
-  }
-
-  public void testOnAfterPropertiesSet() {
-    Properties models = new Properties();
-    models.setProperty("get*", "cacheName=main");
-    interceptor.setCachingModels(models);
+  public void testOnAfterPropertiesSetWithCachingModelSourceEqualToNull() {
+    interceptor.setCachingModelSource(null);
 
     interceptor.onAfterPropertiesSet();
-    CachingModelSource source = interceptor.getCachingModelSource();
+    CachingModelSource modelSource = interceptor.getCachingModelSource();
+    assertNotNull(modelSource);
+    assertEquals(NameMatchCachingModelSource.class, modelSource.getClass());
+  }
 
-    assertEquals(NameMatchCachingModelSource.class, source.getClass());
-    NameMatchCachingModelSource nameMatchSource = (NameMatchCachingModelSource) source;
-    assertSame(models, nameMatchSource.getCachingModels());
+  public void testOnAfterPropertiesSetWithCachingModelSourceNotNull() {
+    CachingModelSource modelSource = new CachingModelSource() {
+      public CachingModel getCachingModel(Method method, Class targetClass) {
+        return null;
+      }
+    };
+    
+    interceptor.setCachingModelSource(modelSource);
+    interceptor.onAfterPropertiesSet();
+    assertSame(modelSource, interceptor.getCachingModelSource());
   }
 }

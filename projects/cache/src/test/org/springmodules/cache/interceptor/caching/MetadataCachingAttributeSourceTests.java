@@ -66,26 +66,18 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
     source.setAttributes(attributes);
   }
 
-  /**
-   * @param useCacheableMethod
-   *          if <code>true</code>, a method with return type other than
-   *          <code>void</code> will be used. If <code>false</code>, a
-   *          method with return type <code>void</code> will be used.
-   */
-  private void setUpTargetClassAndMethod(boolean useCacheableMethod)
-      throws Exception {
+  private void setUpTargetClassAndCacheableMethod() throws Exception {
+    method = CachingTestUtils.createCacheableMethod();
+    targetClass = method.getDeclaringClass();
+  }
 
-    targetClass = String.class;
-
-    if (useCacheableMethod) {
-      method = targetClass.getMethod("charAt", new Class[] { int.class });
-    } else {
-      method = targetClass.getMethod("notify", null);
-    }
+  private void setUpTargetClassAndNonCacheableMethod() throws Exception {
+    method = CachingTestUtils.createNonCacheableMethod();
+    targetClass = method.getDeclaringClass();
   }
 
   public void testFindAllAttributesMethod() throws Exception {
-    setUpTargetClassAndMethod(true);
+    setUpTargetClassAndCacheableMethod();
 
     List attributeList = new ArrayList();
     attributesControl.expectAndReturn(attributes.getAttributes(method),
@@ -148,7 +140,7 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
    * the specified method is not <code>void</code>.
    */
   public void testGetCachingAttributeWithCacheableMethod() throws Exception {
-    setUpTargetClassAndMethod(true);
+    setUpTargetClassAndCacheableMethod();
 
     Cached expected = new Cached();
 
@@ -172,18 +164,7 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
    * <code>void</code>.
    */
   public void testGetCachingAttributeWithNotCacheableMethod() throws Exception {
-    setUpTargetClassAndMethod(false);
+    setUpTargetClassAndNonCacheableMethod();
     assertNull(source.getCachingAttribute(method, targetClass));
   }
-
-  public void testIsCacheableWithCacheableMethod() throws Exception {
-    setUpTargetClassAndMethod(true);
-    assertTrue(source.isCacheable(method));
-  }
-
-  public void testIsCacheableWithNotCacheableMethod() throws Exception {
-    setUpTargetClassAndMethod(false);
-    assertFalse(source.isCacheable(method));
-  }
-
 }

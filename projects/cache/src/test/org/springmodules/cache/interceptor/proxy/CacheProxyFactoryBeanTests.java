@@ -36,7 +36,9 @@ import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.integration.CacheableService;
 import org.springmodules.cache.integration.CacheableServiceImpl;
 import org.springmodules.cache.interceptor.caching.CachingModelSourceAdvisor;
+import org.springmodules.cache.interceptor.caching.NameMatchCachingInterceptor;
 import org.springmodules.cache.interceptor.flush.FlushingModelSourceAdvisor;
+import org.springmodules.cache.interceptor.flush.NameMatchFlushingInterceptor;
 import org.springmodules.cache.mock.MockCachingModel;
 import org.springmodules.cache.mock.MockFlushingModel;
 import org.springmodules.cache.provider.CacheModelValidator;
@@ -81,7 +83,8 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   }
 
   private void expectAfterPropertiesSetOnCachingInterceptor() {
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade.getCacheModelValidator(), validator);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCacheModelValidator(), validator);
     for (Iterator i = cachingModels.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
       CachingModel model = (CachingModel) entry.getValue();
@@ -96,7 +99,8 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
   }
 
   private void expectAfterPropertiesSetOnFlushingInterceptor() {
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade.getCacheModelValidator(), validator);
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCacheModelValidator(), validator);
     for (Iterator i = flushingModels.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
       FlushingModel model = (FlushingModel) entry.getValue();
@@ -269,6 +273,19 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
         + Advised.class.getName() + ">", proxy instanceof Advised);
 
     verifyMocks();
+  }
+
+  /**
+   * Verifies that the constructor
+   * <code>{@link CacheProxyFactoryBean#CacheProxyFactoryBean()}</code>
+   * creates a new <code>{@link NameMatchFlushingInterceptor}</code> and a new
+   * <code>{@link NameMatchCachingInterceptor}</code>.
+   */
+  public void testCacheProxyFactoryBean() {
+    assertEquals(NameMatchFlushingInterceptor.class, factoryBean
+        .getFlushingInterceptor().getClass());
+    assertEquals(NameMatchCachingInterceptor.class, factoryBean
+        .getCachingInterceptor().getClass());
   }
 
   /**

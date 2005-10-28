@@ -66,6 +66,11 @@ public class JbossCacheFacadeTests extends TestCase {
     return treeCache.get(cachingModel.getNode(), key);
   }
 
+  private Method getRemoveMethodFromTreeCache() throws NoSuchMethodException, SecurityException {
+    return TreeCache.class.getDeclaredMethod("remove",
+        new Class[] { String.class });
+  }
+
   private void putInTreeCache(Object key, Object value) throws Exception {
     treeCache.put(cachingModel.getNode(), key, value);
   }
@@ -110,6 +115,18 @@ public class JbossCacheFacadeTests extends TestCase {
     }
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link JbossCacheFacade#getCacheModelValidator()}</code> returns an
+   * an instance of <code>{@link JbossCacheModelValidator}</code> not equal to
+   * <code>null</code>.
+   */
+  public void testGetCacheModelValidator() {
+    CacheModelValidator validator = cacheFacade.getCacheModelValidator();
+    assertNotNull(validator);
+    assertEquals(JbossCacheModelValidator.class, validator.getClass());
+  }
+
   public void testGetCachingModelEditor() {
     PropertyEditor editor = cacheFacade.getCachingModelEditor();
 
@@ -133,18 +150,6 @@ public class JbossCacheFacadeTests extends TestCase {
     assertNull(modelEditor.getCacheModelPropertyEditors());
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link JbossCacheFacade#getCacheModelValidator()}</code> returns an
-   * an instance of <code>{@link JbossCacheModelValidator}</code> not equal to
-   * <code>null</code>.
-   */
-  public void testGetCacheModelValidator() {
-    CacheModelValidator validator = cacheFacade.getCacheModelValidator();
-    assertNotNull(validator);
-    assertEquals(JbossCacheModelValidator.class, validator.getClass());
-  }
-
   public void testOnFlushCache() throws Exception {
     setUpTreeCache();
     cacheFacade.onFlushCache(flushingModel);
@@ -153,8 +158,7 @@ public class JbossCacheFacadeTests extends TestCase {
   }
 
   public void testOnFlushCacheWhenCacheAccessThrowsException() throws Exception {
-    Method removeMethod = TreeCache.class.getDeclaredMethod("remove",
-        new Class[] { String.class });
+    Method removeMethod = getRemoveMethodFromTreeCache();
     setUpTreeCacheAsMockObject(removeMethod);
 
     RuntimeException expected = new RuntimeException();
@@ -170,6 +174,18 @@ public class JbossCacheFacadeTests extends TestCase {
     } catch (CacheAccessException exception) {
       assertSameNestedException(expected, exception);
     }
+
+    treeCacheControl.verify();
+  }
+
+  public void testOnFlushCacheWithModelNotHavingNodes() throws Exception {
+    Method removeMethod = getRemoveMethodFromTreeCache();
+    setUpTreeCacheAsMockObject(removeMethod);
+
+    flushingModel.setNodes((String[]) null);
+    treeCacheControl.replay();
+
+    cacheFacade.onFlushCache(flushingModel);
 
     treeCacheControl.verify();
   }

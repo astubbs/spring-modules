@@ -108,9 +108,9 @@ public class EhCacheFacadeTests extends TestCase {
 
   private void assertOnGetFromCacheWrapsCatchedException(
       Exception expectedCatchedException) throws Exception {
-    Method getMethod = Cache.class.getDeclaredMethod("get",
+    Method get = Cache.class.getDeclaredMethod("get",
         new Class[] { Serializable.class });
-    setUpCacheAsMockObject(getMethod);
+    setUpCacheAsMockObject(get);
 
     cacheControl.expectAndThrow(cache.get(KEY), expectedCatchedException);
 
@@ -125,6 +125,10 @@ public class EhCacheFacadeTests extends TestCase {
     }
 
     cacheControl.verify();
+  }
+
+  private Method getRemoveAllMethodFromCache() throws Exception {
+    return Cache.class.getMethod("removeAll", null);
   }
 
   protected void setUp() throws Exception {
@@ -259,7 +263,7 @@ public class EhCacheFacadeTests extends TestCase {
 
   public void testOnFlushCacheWhenCacheAccessThrowsIllegalStateException()
       throws Exception {
-    Method removeAll = Cache.class.getMethod("removeAll", null);
+    Method removeAll = getRemoveAllMethodFromCache();
     setUpCacheAsMockObject(removeAll);
 
     IllegalStateException expected = new IllegalStateException();
@@ -287,6 +291,18 @@ public class EhCacheFacadeTests extends TestCase {
     } catch (CacheNotFoundException exception) {
       // expecting this exception.
     }
+  }
+
+  public void testOnFlushCacheWithModelNotHavingCacheNames() throws Exception {
+    Method removeAll = getRemoveAllMethodFromCache();
+    setUpCacheAsMockObject(removeAll);
+
+    cacheControl.replay();
+
+    flushingModel.setCacheNames((String[]) null);
+    cacheFacade.onFlushCache(flushingModel);
+
+    cacheControl.verify();
   }
 
   /**

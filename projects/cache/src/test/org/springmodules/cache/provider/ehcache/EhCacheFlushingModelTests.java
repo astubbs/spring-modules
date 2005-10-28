@@ -88,10 +88,10 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    String[] cacheNames = { "dao" };
+    String csvCacheNames = "dao";
 
-    model.setCacheNames(cacheNames);
-    EhCacheFlushingModel model2 = new EhCacheFlushingModel(cacheNames);
+    model.setCacheNames(csvCacheNames);
+    EhCacheFlushingModel model2 = new EhCacheFlushingModel(csvCacheNames);
     assertEquals(model, model2);
 
     model2.setCacheNames(new String[0]);
