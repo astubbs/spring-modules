@@ -20,12 +20,9 @@ package org.springmodules.cache.interceptor.flush;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.aopalliance.intercept.MethodInvocation;
-import org.easymock.MockControl;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.mock.MockFlushingModel;
 
@@ -44,63 +41,57 @@ public class NameMatchFlushingInterceptorTests extends TestCase {
     super(name);
   }
 
-  private void assertOnAfterPropertiesSetDoesNotCreateModelSource(Map models) {
-    interceptor.setFlushingModels(models);
-    interceptor.onAfterPropertiesSet();
-    assertNull(interceptor.getFlushingModelSource());
+  private Map createNotEmptyModelMap() {
+    FlushingModel model = new MockFlushingModel();
+    Map models = new HashMap();
+    models.put("get*", model);
+    return models;
   }
 
   protected void setUp() {
     interceptor = new NameMatchFlushingInterceptor();
   }
 
-  public void testGetModel() throws Exception {
-    MockControl sourceControl = MockControl
-        .createStrictControl(FlushingModelSource.class);
-    FlushingModelSource source = (FlushingModelSource) sourceControl.getMock();
-
-    MockControl invocationControl = MockControl
-        .createStrictControl(MethodInvocation.class);
-    MethodInvocation invocation = (MethodInvocation) invocationControl
-        .getMock();
-    interceptor.setFlushingModelSource(source);
-
-    Object thisObject = "Anakin";
-    invocationControl.expectAndReturn(invocation.getThis(), thisObject);
-
-    Method method = String.class.getDeclaredMethod("toUpperCase", null);
-    invocationControl.expectAndReturn(invocation.getMethod(), method);
-
-    FlushingModel expected = new MockFlushingModel();
-    sourceControl.expectAndReturn(source.getFlushingModel(method, thisObject
-        .getClass()), expected);
-
-    sourceControl.replay();
-    invocationControl.replay();
-
-    assertSame(expected, interceptor.getModel(invocation));
-    sourceControl.verify();
-    invocationControl.verify();
-  }
-
-  public void testOnAfterPropertiesSet() {
-    Properties models = new Properties();
-    models.setProperty("get*", "cacheName=main");
-    interceptor.setFlushingModels(models);
+  public void testOnAfterPropertiesSetWithFlushingModelSourceEqualToNullAndEmptyFlushingModelMap() {
+    interceptor.setFlushingModels(new HashMap());
+    interceptor.setFlushingModelSource(null);
 
     interceptor.onAfterPropertiesSet();
-    FlushingModelSource source = interceptor.getFlushingModelSource();
-
-    assertEquals(NameMatchFlushingModelSource.class, source.getClass());
-    NameMatchFlushingModelSource nameMatchSource = (NameMatchFlushingModelSource) source;
-    assertSame(models, nameMatchSource.getFlushingModels());
+    assertNull(interceptor.getFlushingModelSource());
   }
 
-  public void testOnAfterPropertiesSetWithEmptyModelMap() {
-    assertOnAfterPropertiesSetDoesNotCreateModelSource(new HashMap());
+  public void testOnAfterPropertiesSetWithFlushingModelSourceEqualToNullAndFlushingModelMapEqualToNull() {
+    interceptor.setFlushingModels(null);
+    interceptor.setFlushingModelSource(null);
+
+    interceptor.onAfterPropertiesSet();
+    assertNull(interceptor.getFlushingModelSource());
   }
 
-  public void testOnAfterPropertiesSetWithModelMapEqualToNull() {
-    assertOnAfterPropertiesSetDoesNotCreateModelSource(new HashMap());
+  public void testOnAfterPropertiesSetWithFlushingModelSourceEqualToNullAndFlushingModels() {
+    Map models = createNotEmptyModelMap();
+    interceptor.setFlushingModels(models);
+    interceptor.setFlushingModelSource(null);
+
+    interceptor.onAfterPropertiesSet();
+    FlushingModelSource modelSource = interceptor.getFlushingModelSource();
+    assertNotNull(modelSource);
+    assertEquals(NameMatchFlushingModelSource.class, modelSource.getClass());
+
+  }
+
+  public void testOnAfterPropertiesSetWithFlushingModelSourceNotNullAndFlushingModels() {
+    Map models = createNotEmptyModelMap();
+    interceptor.setFlushingModels(models);
+
+    FlushingModelSource modelSource = new FlushingModelSource() {
+      public FlushingModel getFlushingModel(Method method, Class targetClass) {
+        return null;
+      }
+    };
+
+    interceptor.setFlushingModelSource(modelSource);
+    interceptor.onAfterPropertiesSet();
+    assertSame(modelSource, interceptor.getFlushingModelSource());
   }
 }

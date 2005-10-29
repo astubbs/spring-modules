@@ -87,7 +87,7 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
   }
 
   public void setGroups(String[] newGroups) {
-    groups = newGroups;
+    groups = ArrayUtils.removeDuplicates(newGroups);
   }
 
   public String toString() {

@@ -62,6 +62,17 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
     super(name);
   }
 
+  private Map createNotEmptyFlushingAttributeMap() {
+    Map map = new HashMap();
+    map.put("main", new FlushCache());
+
+    return map;
+  }
+
+  private Method defaultMethod() throws Exception {
+    return String.class.getDeclaredMethod("toLowerCase", null);
+  }
+
   private void replayMocks() {
     invocationControl.replay();
     sourceControl.replay();
@@ -83,12 +94,28 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
     Object thisObject = "Anakin";
     invocationControl.expectAndReturn(invocation.getThis(), thisObject);
 
-    Method method = String.class.getDeclaredMethod("toLowerCase", null);
+    Method method = defaultMethod();
     invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     FlushCache expected = new FlushCache();
     sourceControl.expectAndReturn(source.getFlushingAttribute(method,
         thisObject.getClass()), expected);
+
+    replayMocks();
+
+    assertSame(expected, interceptor.getFlushingAttribute(invocation));
+    verifyMocks();
+  }
+
+  public void testGetFlushingAttributeWhenThisObjectIsNull() throws Exception {
+    invocationControl.expectAndReturn(invocation.getThis(), null);
+
+    Method method = defaultMethod();
+    invocationControl.expectAndReturn(invocation.getMethod(), method);
+
+    FlushCache expected = new FlushCache();
+    sourceControl.expectAndReturn(source.getFlushingAttribute(method, null),
+        expected);
 
     replayMocks();
 
@@ -113,14 +140,26 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
 
   public void testGetModelWhenFlushingAttributeDoesNotHaveModelId() {
     MockMetadataFlushingInterceptor mockInterceptor = new MockMetadataFlushingInterceptor();
+    mockInterceptor.setFlushingModels(createNotEmptyFlushingAttributeMap());
     mockInterceptor.flushingAttribute = new FlushCache();
     assertNull(mockInterceptor.getModel(invocation));
   }
 
   public void testGetModelWhenFlushingAttributeIsNull() {
     MockMetadataFlushingInterceptor mockInterceptor = new MockMetadataFlushingInterceptor();
+    mockInterceptor.setFlushingModels(createNotEmptyFlushingAttributeMap());
     mockInterceptor.flushingAttribute = null;
     assertNull(mockInterceptor.getModel(invocation));
+  }
+
+  public void testGetModelWhenFlushingAttributeMapIsEmpty() {
+    interceptor.setFlushingModels(new HashMap());
+    assertNull(interceptor.getModel(invocation));
+  }
+
+  public void testGetModelWhenFlushingAttributeMapIsNull() {
+    interceptor.setFlushingModels(null);
+    assertNull(interceptor.getModel(invocation));
   }
 
   public void testSetAttributes() {

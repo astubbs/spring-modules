@@ -18,10 +18,7 @@
 
 package org.springmodules.cache.provider.jboss;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -33,27 +30,10 @@ import org.springmodules.util.Strings;
 public final class JbossCacheCachingModelTests extends
     AbstractEqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory
-      .getLog(JbossCacheCachingModelTests.class);
-
   private JbossCacheCachingModel model;
 
   public JbossCacheCachingModelTests(String name) {
     super(name);
-  }
-
-  private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(model.getClass().getName());
-    buffer.append("@" + System.identityHashCode(model) + "[");
-    buffer.append("nodeFqn=" + Strings.quote(model.getNode()) + "]");
-
-    String expected = buffer.toString();
-    String actual = model.toString();
-
-    logger.debug("Expected 'toString': " + expected);
-    logger.debug("Actual 'toString':   " + actual);
-
-    assertEquals(expected, actual);
   }
 
   protected final void setUp() {
@@ -128,11 +108,15 @@ public final class JbossCacheCachingModelTests extends
 
   public void testToStringWithNodeFqnEqualToNull() {
     model.setNode(null);
-    assertToStringIsCorrect();
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model) + "[nodeFqn=null]";
+    assertEquals(model.toString(), actual);
   }
 
   public void testToStringWithNodeFqnNotEqualToNull() {
     model.setNode("x/y/z");
-    assertToStringIsCorrect();
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model) + "[nodeFqn='x/y/z']";
+    assertEquals(model.toString(), actual);
   }
 }

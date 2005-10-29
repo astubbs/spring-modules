@@ -75,11 +75,9 @@ public class JcsFlushingModelEditor extends PropertyEditorSupport {
       cacheStructList.add(struct);
     }
 
-    if (!cacheStructList.isEmpty()) {
-      CacheStruct[] cacheStructs = (CacheStruct[]) cacheStructList
-          .toArray(new CacheStruct[cacheStructList.size()]);
-      model.setCacheStructs(cacheStructs);
-    }
+    CacheStruct[] cacheStructs = (CacheStruct[]) cacheStructList
+        .toArray(new CacheStruct[cacheStructList.size()]);
+    model.setCacheStructs(cacheStructs);
 
     setValue(model);
   }

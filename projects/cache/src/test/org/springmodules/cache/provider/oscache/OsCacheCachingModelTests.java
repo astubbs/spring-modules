@@ -18,11 +18,7 @@
 
 package org.springmodules.cache.provider.oscache;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
-import org.springmodules.util.ArrayUtils;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -34,29 +30,10 @@ import org.springmodules.util.Strings;
 public final class OsCacheCachingModelTests extends
     AbstractEqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory.getLog(OsCacheCachingModelTests.class);
-
   private OsCacheCachingModel model;
 
   public OsCacheCachingModelTests(String name) {
     super(name);
-  }
-
-  private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(model.getClass().getName());
-    buffer.append("@" + System.identityHashCode(model) + "[");
-    buffer.append("refreshPeriod=" + model.getRefreshPeriod() + ", ");
-    buffer.append("groups=" + ArrayUtils.toString(model.getGroups()) + ", ");
-    buffer.append("cronExpression=" + Strings.quote(model.getCronExpression())
-        + "]");
-
-    String expected = buffer.toString();
-    String actual = model.toString();
-
-    logger.debug("Expected 'toString': " + expected);
-    logger.debug("Actual 'toString':   " + actual);
-
-    assertEquals(expected, actual);
   }
 
   protected void setUp() {
@@ -183,23 +160,30 @@ public final class OsCacheCachingModelTests extends
     model.setGroups(new String[0]);
     model.setRefreshPeriod(98);
     model.setCronExpression("* * 0 0 0");
-
-    assertToStringIsCorrect();
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model)
+        + "[refreshPeriod=98, groups={}, cronExpression='* * 0 0 0']";
+    assertEquals(model.toString(), actual);
   }
 
   public void testToStringWithGroupsAndCronExpressionEqualToNull() {
     model.setGroups((String[]) null);
     model.setRefreshPeriod(34);
     model.setCronExpression(null);
-
-    assertToStringIsCorrect();
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model)
+        + "[refreshPeriod=34, groups=null, cronExpression=null]";
+    assertEquals(model.toString(), actual);
   }
 
   public void testToStringWithNotEmptyGroups() {
     model.setGroups(new String[] { "main", null });
     model.setRefreshPeriod(9);
     model.setCronExpression("* * * * *");
-
-    assertToStringIsCorrect();
+    String actual = model.getClass().getName()
+        + "@"
+        + System.identityHashCode(model)
+        + "[refreshPeriod=9, groups={'main', null}, cronExpression='* * * * *']";
+    assertEquals(model.toString(), actual);
   }
 }

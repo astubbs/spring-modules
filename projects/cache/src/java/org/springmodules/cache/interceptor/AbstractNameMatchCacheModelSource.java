@@ -79,10 +79,6 @@ public abstract class AbstractNameMatchCacheModelSource {
     return model;
   }
 
-  protected final Map getCacheModels() {
-    return cacheModels;
-  }
-
   /**
    * Returns <code>true</code> if the given method name matches the mapped
    * name. The default implementation checks for "xxx*" and "*xxx" matches.

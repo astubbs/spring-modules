@@ -17,11 +17,9 @@
  */
 package org.springmodules.cache.interceptor.flush;
 
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.aopalliance.intercept.MethodInvocation;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.util.Strings;
@@ -36,22 +34,10 @@ import org.springmodules.util.Strings;
  * @author Alex Ruiz
  */
 public final class MethodMapFlushingInterceptor extends
-    AbstractFlushingInterceptor {
-
-  private FlushingModelSource flushingModelSource;
+    AbstractModelSourceFlushingInterceptor {
 
   public MethodMapFlushingInterceptor() {
     super();
-  }
-
-  /**
-   * @see AbstractFlushingInterceptor#getModel(MethodInvocation)
-   */
-  protected FlushingModel getModel(MethodInvocation methodInvocation) {
-    Object thisObject = methodInvocation.getThis();
-    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
-    Method method = methodInvocation.getMethod();
-    return flushingModelSource.getFlushingModel(method, targetClass);
   }
 
   /**
@@ -64,7 +50,6 @@ public final class MethodMapFlushingInterceptor extends
       if (flushingModelSource == null) {
         MethodMapFlushingModelSource newSource = new MethodMapFlushingModelSource();
 
-        FatalCacheException fatalCacheException = null;
         String key = null;
         try {
           for (Iterator i = flushingModels.keySet().iterator(); i.hasNext();) {
@@ -72,29 +57,14 @@ public final class MethodMapFlushingInterceptor extends
             FlushingModel model = (FlushingModel) flushingModels.get(key);
             newSource.addFlushingModel(key, model);
           }
-        } catch (FatalCacheException exception) {
-          fatalCacheException = exception;
-
         } catch (Exception exception) {
-          fatalCacheException = new FatalCacheException(
+          throw new FatalCacheException(
               "Unable to add model stored under the key " + Strings.quote(key),
               exception);
-        }
-
-        if (fatalCacheException != null) {
-          throw fatalCacheException;
         }
         setFlushingModelSource(newSource);
       }
     }
-  }
-
-  public FlushingModelSource getFlushingModelSource() {
-    return flushingModelSource;
-  }
-
-  public void setFlushingModelSource(FlushingModelSource newFlushingModelSource) {
-    flushingModelSource = newFlushingModelSource;
   }
 
 }

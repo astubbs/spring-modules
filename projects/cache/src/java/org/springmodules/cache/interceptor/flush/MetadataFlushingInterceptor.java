@@ -71,8 +71,7 @@ public class MetadataFlushingInterceptor extends AbstractFlushingInterceptor {
   /**
    * @see AbstractFlushingInterceptor#getModel(MethodInvocation)
    */
-  protected final FlushingModel getModel(
-      MethodInvocation methodInvocation) {
+  protected final FlushingModel getModel(MethodInvocation methodInvocation) {
     Map flushingModels = getFlushingModels();
     FlushingModel model = null;
 

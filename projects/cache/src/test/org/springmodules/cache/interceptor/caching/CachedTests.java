@@ -18,10 +18,7 @@
 
 package org.springmodules.cache.interceptor.caching;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -32,26 +29,10 @@ import org.springmodules.util.Strings;
  */
 public final class CachedTests extends AbstractEqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory.getLog(CachedTests.class);
-
   private Cached attribute;
 
   public CachedTests(String name) {
     super(name);
-  }
-
-  private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(attribute.getClass().getName());
-    buffer.append("@" + System.identityHashCode(attribute) + "[");
-    buffer.append("modelId=" + Strings.quote(attribute.getModelId()) + "]");
-
-    String expected = buffer.toString();
-    String actual = attribute.toString();
-
-    logger.debug("Expected 'toString': " + expected);
-    logger.debug("Actual 'toString':   " + actual);
-
-    assertEquals(expected, actual);
   }
 
   protected void setUp() {
@@ -130,11 +111,15 @@ public final class CachedTests extends AbstractEqualsHashCodeTestCase {
 
   public void testToString() {
     attribute.setModelId("main");
-    assertToStringIsCorrect();
+    String actual = attribute.getClass().getName() + "@"
+        + System.identityHashCode(attribute) + "[modelId='main']";
+    assertEquals(attribute.toString(), actual);
   }
 
   public void testToStringWithModelIdEqualToNull() {
     attribute.setModelId(null);
-    assertToStringIsCorrect();
+    String actual = attribute.getClass().getName() + "@"
+        + System.identityHashCode(attribute) + "[modelId=null]";
+    assertEquals(attribute.toString(), actual);
   }
 }

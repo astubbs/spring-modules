@@ -116,7 +116,7 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
       StringBuffer buffer = new StringBuffer(getClass().getName());
       buffer.append("@" + System.identityHashCode(this) + "[");
       buffer.append("cacheName=" + Strings.quote(cacheName) + ", ");
-      buffer.append("groups=" + ArrayUtils.toString(groups));
+      buffer.append("groups=" + ArrayUtils.toString(groups) + "]");
       return buffer.toString();
     }
   }

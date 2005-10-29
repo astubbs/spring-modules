@@ -17,10 +17,8 @@
  */
 package org.springmodules.cache.interceptor.flush;
 
-import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.aopalliance.intercept.MethodInvocation;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 
@@ -34,22 +32,10 @@ import org.springmodules.cache.FlushingModel;
  * @author Alex Ruiz
  */
 public final class NameMatchFlushingInterceptor extends
-    AbstractFlushingInterceptor {
-
-  private FlushingModelSource flushingModelSource;
+    AbstractModelSourceFlushingInterceptor {
 
   public NameMatchFlushingInterceptor() {
     super();
-  }
-
-  /**
-   * @see AbstractFlushingInterceptor#getModel(MethodInvocation)
-   */
-  protected FlushingModel getModel(MethodInvocation methodInvocation) {
-    Object thisObject = methodInvocation.getThis();
-    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
-    Method method = methodInvocation.getMethod();
-    return flushingModelSource.getFlushingModel(method, targetClass);
   }
 
   /**
@@ -65,14 +51,6 @@ public final class NameMatchFlushingInterceptor extends
         setFlushingModelSource(newSource);
       }
     }
-  }
-
-  public FlushingModelSource getFlushingModelSource() {
-    return flushingModelSource;
-  }
-
-  public void setFlushingModelSource(FlushingModelSource newFlushingModelSource) {
-    flushingModelSource = newFlushingModelSource;
   }
 
 }

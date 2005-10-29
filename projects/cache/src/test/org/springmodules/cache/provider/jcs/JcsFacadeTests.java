@@ -289,6 +289,20 @@ public final class JcsFacadeTests extends TestCase {
     assertTrue(jcsFacade.isSerializableCacheElementRequired());
   }
 
+  public void testOnFlushCacheCacheStructArrayEqualToNull() throws Exception {
+    setUpCacheAdministratorAndCache();
+    setUpCacheEntries();
+    updateCache();
+
+    int expected = cache.getSize();
+    
+    flushingModel.setCacheStructs(null);
+    jcsFacade.onFlushCache(flushingModel);
+
+    // the cache should not be flushed.
+    assertEquals(expected, cache.getSize());
+  }
+
   public void testOnFlushCacheWhenCacheAccessThrowsException() throws Exception {
     Method getCache = getGetCacheMethodFromCompositeCacheManagerClass();
     setUpCacheAdministratorAsMockObject(getCache);
@@ -361,6 +375,20 @@ public final class JcsFacadeTests extends TestCase {
         assertNotNull(cache.get(keys[i]));
       }
     }
+  }
+  
+  public void testOnFlushCacheWithoutCacheStructs() throws Exception {
+    setUpCacheAdministratorAndCache();
+    setUpCacheEntries();
+    updateCache();
+
+    int expected = cache.getSize();
+    
+    flushingModel.setCacheStruct(null);
+    jcsFacade.onFlushCache(flushingModel);
+
+    // the cache should not be flushed.
+    assertEquals(expected, cache.getSize());
   }
 
   /**

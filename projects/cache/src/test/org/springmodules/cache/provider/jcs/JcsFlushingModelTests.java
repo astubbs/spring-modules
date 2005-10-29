@@ -1,5 +1,5 @@
 /* 
- * Created on Oct 14, 2005
+ * Created on Oct 28, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,48 +15,43 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.cache.provider.jboss;
+package org.springmodules.cache.provider.jcs;
 
 import org.springmodules.AbstractEqualsHashCodeTestCase;
+import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 
 /**
  * <p>
- * Unit Tests for <code>{@link JbossCacheFlushingModel}</code>.
+ * Unit Tests for <code>{@link JcsFlushingModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public class JbossCacheFlushingModelTests extends
-    AbstractEqualsHashCodeTestCase {
+public class JcsFlushingModelTests extends AbstractEqualsHashCodeTestCase {
 
-  private JbossCacheFlushingModel model;
+  private JcsFlushingModel model;
 
-  public JbossCacheFlushingModelTests(String newName) {
-    super(newName);
+  public JcsFlushingModelTests(String name) {
+    super(name);
   }
 
   protected void setUp() {
-    model = new JbossCacheFlushingModel();
+    model = new JcsFlushingModel();
   }
 
   /**
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
-    String[] nodes = { "a/b/c", "x/y/z" };
+    CacheStruct cacheStruct = new CacheStruct("main");
+    model.setCacheStruct(cacheStruct);
 
-    model.setNodes(nodes);
-    JbossCacheFlushingModel model2 = new JbossCacheFlushingModel(nodes);
+    JcsFlushingModel model2 = new JcsFlushingModel(cacheStruct);
     assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
-    nodes = null;
-    model.setNodes(nodes);
-    model2.setNodes(nodes);
-    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
-
-    boolean flushBeforeMethodExecution = true;
-    model.setFlushBeforeMethodExecution(flushBeforeMethodExecution);
-    model2.setFlushBeforeMethodExecution(flushBeforeMethodExecution);
+    cacheStruct = null;
+    model.setCacheStruct(cacheStruct);
+    model2.setCacheStruct(cacheStruct);
     assertEqualsHashCodeRelationshipIsCorrect(model, model2);
   }
 
@@ -64,13 +59,13 @@ public class JbossCacheFlushingModelTests extends
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    String[] nodes = { "o/p/q" };
+    CacheStruct cacheStruct = new CacheStruct("main");
+    model.setCacheStruct(cacheStruct);
 
-    model.setNodes(nodes);
-    JbossCacheFlushingModel model2 = new JbossCacheFlushingModel(nodes);
+    JcsFlushingModel model2 = new JcsFlushingModel(cacheStruct);
     assertEquals(model, model2);
 
-    model2.setNodes(new String[0]);
+    model2.setCacheStructs(new CacheStruct[0]);
     assertFalse(model.equals(model2));
   }
 
@@ -85,7 +80,10 @@ public class JbossCacheFlushingModelTests extends
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
-    JbossCacheFlushingModel model2 = new JbossCacheFlushingModel();
+    CacheStruct cacheStruct = new CacheStruct("test", "group1,group2");
+    model.setCacheStruct(cacheStruct);
+
+    JcsFlushingModel model2 = new JcsFlushingModel(cacheStruct);
     assertEqualsIsSymmetric(model, model2);
   }
 
@@ -93,11 +91,11 @@ public class JbossCacheFlushingModelTests extends
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
-    String[] nodes = { "a/b" };
+    CacheStruct cacheStruct = new CacheStruct("main", "group1,group2");
+    model.setCacheStruct(cacheStruct);
 
-    model.setNodes(nodes);
-    JbossCacheFlushingModel model2 = new JbossCacheFlushingModel(nodes);
-    JbossCacheFlushingModel model3 = new JbossCacheFlushingModel(nodes);
+    JcsFlushingModel model2 = new JcsFlushingModel(cacheStruct);
+    JcsFlushingModel model3 = new JcsFlushingModel(cacheStruct);
 
     assertEqualsIsTransitive(model, model2, model3);
   }
@@ -109,30 +107,37 @@ public class JbossCacheFlushingModelTests extends
     assertEqualsNullComparisonReturnsFalse(model);
   }
 
-  public void testToStringWithNodesEqualToNull() {
-    model.setNodes((String[]) null);
+  public void testToString() {
+    CacheStruct cacheStruct = new CacheStruct("main");
+    model.setCacheStruct(cacheStruct);
     model.setFlushBeforeMethodExecution(true);
+
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
-        + "[nodes=null, flushBeforeMethodExecution=true]";
+        + System.identityHashCode(model) + "[cacheStructs={"
+        + cacheStruct.getClass().getName() + "@"
+        + System.identityHashCode(cacheStruct)
+        + "[cacheName='main', groups=null]"
+        + "}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
 
-  public void testToStringWithEmptyNodes() {
-    model.setNodes(new String[0]);
+  public void testToStringWithCacheStructArrayEqualToNull() {
+    model.setCacheStructs(null);
     model.setFlushBeforeMethodExecution(true);
+
     String actual = model.getClass().getName() + "@"
         + System.identityHashCode(model)
-        + "[nodes={}, flushBeforeMethodExecution=true]";
+        + "[cacheStructs=null, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
 
-  public void testToStringWithNotEmptyNodes() {
-    model.setNodes(new String[] { "a/b/c" });
+  public void testToStringWithEmptyCacheStructArray() {
+    model.setCacheStructs(new CacheStruct[0]);
     model.setFlushBeforeMethodExecution(true);
+
     String actual = model.getClass().getName() + "@"
         + System.identityHashCode(model)
-        + "[nodes={'a/b/c'}, flushBeforeMethodExecution=true]";
+        + "[cacheStructs={}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
 

@@ -17,12 +17,9 @@
  */
 package org.springmodules.cache.provider.ehcache;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.ArrayAssert;
-import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -33,30 +30,10 @@ import org.springmodules.util.ArrayUtils;
  */
 public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory
-      .getLog(EhCacheFlushingModelTests.class);
-
   private EhCacheFlushingModel model;
 
   public EhCacheFlushingModelTests(String name) {
     super(name);
-  }
-
-  private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(model.getClass().getName());
-    buffer.append("@" + System.identityHashCode(model) + "[");
-    buffer.append("cacheNames=" + ArrayUtils.toString(model.getCacheNames())
-        + ", ");
-    buffer.append("flushBeforeMethodExecution="
-        + model.isFlushBeforeMethodExecution() + "]");
-
-    String expected = buffer.toString();
-    String actual = model.toString();
-
-    logger.debug("Expected 'toString': " + expected);
-    logger.debug("Actual 'toString':   " + actual);
-
-    assertEquals(expected, actual);
   }
 
   protected void setUp() {
@@ -171,16 +148,31 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
 
   public void testToStringWithCacheNamesEqualToNull() {
     model.setCacheNames((String[]) null);
-    assertToStringIsCorrect();
+    model.setFlushBeforeMethodExecution(true);
+
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model)
+        + "[cacheNames=null, flushBeforeMethodExecution=true]";
+    assertEquals(model.toString(), actual);
   }
 
   public void testToStringWithEmptyCacheNames() {
     model.setCacheNames(new String[0]);
-    assertToStringIsCorrect();
+    model.setFlushBeforeMethodExecution(true);
+
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model)
+        + "[cacheNames={}, flushBeforeMethodExecution=true]";
+    assertEquals(model.toString(), actual);
   }
 
   public void testToStringWithNotEmptyCacheNames() {
     model.setCacheNames(new String[] { "main" });
-    assertToStringIsCorrect();
+    model.setFlushBeforeMethodExecution(true);
+
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model)
+        + "[cacheNames={'main'}, flushBeforeMethodExecution=true]";
+    assertEquals(model.toString(), actual);
   }
 }

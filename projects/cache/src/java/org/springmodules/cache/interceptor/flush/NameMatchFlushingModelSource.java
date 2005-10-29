@@ -45,10 +45,6 @@ public class NameMatchFlushingModelSource extends
     return (FlushingModel) getCacheModel(method);
   }
 
-  protected Map getFlushingModels() {
-    return getCacheModels();
-  }
-  
   public void setFlushingModels(Map models) {
     setCacheModels(models);
   }

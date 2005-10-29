@@ -125,10 +125,6 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
     onAfterPropertiesSet();
   }
 
-  protected final CacheProviderFacade getCacheProviderFacade() {
-    return cacheProviderFacade;
-  }
-
   protected abstract FlushingModel getModel(MethodInvocation methodInvocation);
 
   protected final Map getFlushingModels() {

@@ -142,6 +142,9 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
 
       for (int i = 0; i < structCount; i++) {
         CacheStruct cacheStruct = cacheStructs[i];
+        if (cacheStruct == null) {
+          continue;
+        }
 
         String cacheName = cacheStruct.getCacheName();
         String[] groups = cacheStruct.getGroups();

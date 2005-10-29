@@ -18,10 +18,7 @@
 
 package org.springmodules.cache.provider.ehcache;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -33,26 +30,10 @@ import org.springmodules.util.Strings;
 public final class EhCacheCachingModelTests extends
     AbstractEqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory.getLog(EhCacheCachingModelTests.class);
-
   private EhCacheCachingModel model;
 
   public EhCacheCachingModelTests(String name) {
     super(name);
-  }
-
-  private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(model.getClass().getName());
-    buffer.append("@" + System.identityHashCode(model) + "[");
-    buffer.append("cacheName=" + Strings.quote(model.getCacheName()) + "]");
-
-    String expected = buffer.toString();
-    String actual = model.toString();
-
-    logger.debug("Expected 'toString': " + expected);
-    logger.debug("Actual 'toString':   " + actual);
-
-    assertEquals(expected, actual);
   }
 
   protected final void setUp() {
@@ -130,11 +111,15 @@ public final class EhCacheCachingModelTests extends
 
   public void testToStringWithCacheNameEqualToNull() {
     model.setCacheName(null);
-    assertToStringIsCorrect();
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model) + "[cacheName=null]";
+    assertEquals(model.toString(), actual);
   }
 
   public void testToStringWithCacheNameNotEqualToNull() {
     model.setCacheName("main");
-    assertToStringIsCorrect();
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model) + "[cacheName='main']";
+    assertEquals(model.toString(), actual);
   }
 }

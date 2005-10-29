@@ -17,11 +17,8 @@
  */
 package org.springmodules.cache.serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWrapper;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -32,26 +29,10 @@ import org.springmodules.util.Strings;
  */
 public class ObjectWrapperTests extends AbstractEqualsHashCodeTestCase {
 
-  private static Log logger = LogFactory.getLog(ObjectWrapperTests.class);
-
   private ObjectWrapper wrapper;
 
   public ObjectWrapperTests(String name) {
     super(name);
-  }
-
-  private void assertToStringIsCorrect() {
-    StringBuffer buffer = new StringBuffer(wrapper.getClass().getName());
-    buffer.append("@" + System.identityHashCode(wrapper) + "[");
-    buffer.append("value=" + Strings.quoteIfString(wrapper.getValue()) + "]");
-
-    String expected = buffer.toString();
-    String actual = wrapper.toString();
-
-    logger.debug("Expected 'toString': " + expected);
-    logger.debug("Actual 'toString':   " + actual);
-
-    assertEquals(expected, actual);
   }
 
   protected void setUp() {
@@ -125,13 +106,15 @@ public class ObjectWrapperTests extends AbstractEqualsHashCodeTestCase {
 
   public void testToStringWithValueBeingString() {
     wrapper.setValue("C-3PO");
-
-    assertToStringIsCorrect();
+    String actual = wrapper.getClass().getName() + "@"
+        + System.identityHashCode(wrapper) + "[value='C-3PO']";
+    assertEquals(wrapper.toString(), actual);
   }
 
   public void testToStringWithValueNotBeingString() {
     wrapper.setValue(new Integer(10));
-
-    assertToStringIsCorrect();
+    String actual = wrapper.getClass().getName() + "@"
+        + System.identityHashCode(wrapper) + "[value=10]";
+    assertEquals(wrapper.toString(), actual);
   }
 }

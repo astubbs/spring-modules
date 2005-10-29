@@ -54,9 +54,9 @@ public abstract class AbstractFlushingAttributeSource extends
 
         if (object instanceof FlushCache) {
           attribute = (CacheAttribute) object;
-        } // end 'if (object instanceof FlushCache)'
-      } // end 'while (attributeIterator.hasNext() && null == attribute)'
-    } // if (attributes != null)
+        }
+      }
+    }
 
     return attribute;
   }

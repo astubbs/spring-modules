@@ -1,5 +1,5 @@
 /* 
- * Created on Sep 24, 2004
+ * Created on Oct 27, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,56 +13,44 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2004 the original author or authors.
+ * Copyright @2005 the original author or authors.
  */
-
-package org.springmodules.cache.provider.jcs;
+package org.springmodules.cache.provider.oscache;
 
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
  * <p>
- * Unit Tests for <code>{@link JcsCachingModel}</code>.
+ * Unit Tests for <code>{@link OsCacheFlushingModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
+public class OsCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
 
-  private JcsCachingModel model;
+  private OsCacheFlushingModel model;
 
-  public JcsCachingModelTests(String name) {
+  public OsCacheFlushingModelTests(String name) {
     super(name);
   }
 
   protected void setUp() {
-    model = new JcsCachingModel();
+    model = new OsCacheFlushingModel();
   }
 
   /**
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
   public void testEqualsHashCodeRelationship() {
-    String cacheName = "main";
-    String group = "test";
+    String groups = "main,pojos";
+    model.setGroups(groups);
 
-    model.setCacheName(cacheName);
-    model.setGroup(group);
-
-    JcsCachingModel model2 = new JcsCachingModel(cacheName, group);
-
+    OsCacheFlushingModel model2 = new OsCacheFlushingModel(groups);
     assertEqualsHashCodeRelationshipIsCorrect(model, model2);
 
-    cacheName = null;
-    model.setCacheName(cacheName);
-    model2.setCacheName(cacheName);
-
-    assertEqualsHashCodeRelationshipIsCorrect(model, model2);
-
-    group = null;
-    model.setGroup(group);
-    model2.setGroup(group);
-
+    groups = "test";
+    model.setGroups(groups);
+    model2.setGroups(groups);
     assertEqualsHashCodeRelationshipIsCorrect(model, model2);
   }
 
@@ -70,21 +58,13 @@ public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
    */
   public void testEqualsIsConsistent() {
-    String cacheName = "ch01";
-    String group = "grp87";
+    String groups = "empire,rebels";
+    model.setGroups(groups);
 
-    model.setCacheName(cacheName);
-    model.setGroup(group);
-
-    JcsCachingModel model2 = new JcsCachingModel(cacheName, group);
-
+    OsCacheFlushingModel model2 = new OsCacheFlushingModel(groups);
     assertEquals(model, model2);
 
-    model2.setCacheName("main");
-    assertFalse(model.equals(model2));
-
-    model2.setCacheName(cacheName);
-    model2.setGroup("test");
+    model2.setGroups((String) null);
     assertFalse(model.equals(model2));
   }
 
@@ -99,13 +79,10 @@ public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
    */
   public void testEqualsIsSymmetric() {
-    String cacheName = "mainCache";
-    String group = "testGroup";
+    String[] groups = { "pojos" };
+    model.setGroups(groups);
 
-    model.setCacheName(cacheName);
-    model.setGroup(group);
-
-    JcsCachingModel model2 = new JcsCachingModel(cacheName, group);
+    OsCacheFlushingModel model2 = new OsCacheFlushingModel(groups);
     assertEqualsIsSymmetric(model, model2);
   }
 
@@ -113,14 +90,11 @@ public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
    */
   public void testEqualsIsTransitive() {
-    String cacheName = "pojos";
-    String group = "model";
+    String[] groups = { "main" };
+    model.setGroups(groups);
 
-    model.setCacheName(cacheName);
-    model.setGroup(group);
-
-    JcsCachingModel model2 = new JcsCachingModel(cacheName, group);
-    JcsCachingModel model3 = new JcsCachingModel(cacheName, group);
+    OsCacheFlushingModel model2 = new OsCacheFlushingModel(groups);
+    OsCacheFlushingModel model3 = new OsCacheFlushingModel(groups);
 
     assertEqualsIsTransitive(model, model2, model3);
   }
@@ -132,20 +106,34 @@ public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
     assertEqualsNullComparisonReturnsFalse(model);
   }
 
-  public void testToStringWithCacheNameAndGroupEqualToNull() {
-    model.setCacheName(null);
-    model.setGroup(null);
+  public void testToStringWithCacheNamesEqualToNull() {
+    model.setGroups((String[]) null);
+    model.setFlushBeforeMethodExecution(true);
+
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model) + "[cacheName=null, group=null]";
+        + System.identityHashCode(model)
+        + "[groups=null, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
 
-  public void testToStringWithCacheNameAndGroupNotEqualToNull() {
-    model.setCacheName("main");
-    model.setGroup("services");
+  public void testToStringWithEmptyCacheNames() {
+    model.setGroups(new String[0]);
+    model.setFlushBeforeMethodExecution(true);
+
     String actual = model.getClass().getName() + "@"
         + System.identityHashCode(model)
-        + "[cacheName='main', group='services']";
+        + "[groups={}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
+
+  public void testToStringWithNotEmptyCacheNames() {
+    model.setGroups(new String[] { "main" });
+    model.setFlushBeforeMethodExecution(true);
+
+    String actual = model.getClass().getName() + "@"
+        + System.identityHashCode(model)
+        + "[groups={'main'}, flushBeforeMethodExecution=true]";
+    assertEquals(model.toString(), actual);
+  }
+
 }
