@@ -101,6 +101,13 @@ public final class CacheProviderFacadeTests extends TestCase {
     return expected;
   }
 
+  private CacheException expectOnRemoveFromCacheThrowsException() {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onRemoveFromCache(key, cachingModel);
+    cacheProviderFacadeControl.setThrowable(expected);
+    return expected;
+  }
+
   protected void setUp() throws Exception {
     setUpCacheProviderFacadeAsMockObject();
 
@@ -130,12 +137,16 @@ public final class CacheProviderFacadeTests extends TestCase {
     Method onPutInCache = classToMock.getDeclaredMethod("onPutInCache",
         new Class[] { Serializable.class, CachingModel.class, Object.class });
 
+    Method onRemoveFromCache = classToMock.getDeclaredMethod(
+        "onRemoveFromCache", new Class[] { Serializable.class,
+            CachingModel.class });
+
     Method validateCacheManager = classToMock.getDeclaredMethod(
         "validateCacheManager", null);
 
     Method[] methodsToMock = new Method[] { isSerializableCacheElementRequired,
         onAfterPropertiesSet, onCancelCacheUpdate, onFlushCache,
-        onGetFromCache, onPutInCache, validateCacheManager };
+        onGetFromCache, onPutInCache, onRemoveFromCache, validateCacheManager };
 
     cacheProviderFacadeControl = MockClassControl.createStrictControl(
         classToMock, null, null, methodsToMock);
@@ -483,4 +494,45 @@ public final class CacheProviderFacadeTests extends TestCase {
     cacheProviderFacade.putInCache(key, null, new Object());
     cacheProviderFacadeControl.verify();
   }
+
+  public void testRemoveFromCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsFalse()
+      throws Exception {
+    cacheProviderFacade.setFailQuietlyEnabled(false);
+
+    CacheException expectedException = expectOnRemoveFromCacheThrowsException();
+    cacheProviderFacadeControl.replay();
+
+    try {
+      cacheProviderFacade.removeFromCache(key, cachingModel);
+      fail();
+
+    } catch (CacheException exception) {
+      assertSame(expectedException, exception);
+    }
+
+    cacheProviderFacadeControl.verify();
+  }
+
+  public void testRemoveFromCacheWhenAccessToCacheThrowsExceptionAndFailQuietlyIsTrue()
+      throws Exception {
+    cacheProviderFacade.setFailQuietlyEnabled(true);
+
+    expectOnRemoveFromCacheThrowsException();
+    cacheProviderFacadeControl.replay();
+
+    cacheProviderFacade.removeFromCache(key, cachingModel);
+    cacheProviderFacadeControl.verify();
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheProviderFacade#removeFromCache(Serializable, CachingModel)}</code>.
+   * does not try to access the cache if the model is <code>null</code>.
+   */
+  public void testRemoveFromCacheWhenModelIsNull() throws Exception {
+    cacheProviderFacadeControl.replay();
+    cacheProviderFacade.removeFromCache(key, null);
+    cacheProviderFacadeControl.verify();
+  }
+
 }
