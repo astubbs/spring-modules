@@ -9,6 +9,7 @@
 
     <import file="${common.build.dir}/common-targets.xml" />
     <import file="${common.build.dir}/clover-targets.xml" />
+    <import file="${common.build.dir}/doc-targets.xml" />
 
     <!--
       Set up properties that indicate whether we're building on JDK 1.5.
