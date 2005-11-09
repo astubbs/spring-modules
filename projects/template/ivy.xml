@@ -32,6 +32,7 @@
 	<dependency org="ognl" name="ognl" rev="2.6.7" conf="buildtime->default"/>
 	<dependency org="dom4j" name="dom4j" rev="1.6" conf="buildtime->default"/>
 	<dependency org="apache" name="commons-collections" rev="3.1" conf="buildtime->default"/>
+	<dependency org="webmacro" name="webmacro" rev="2.0" conf="buildtime->default"/>
 	<dependency org="springframework" name="springframework" rev="1.2.5" conf="buildtime->default">
 	    <artifact name="spring" type="jar"/>
     </dependency>
