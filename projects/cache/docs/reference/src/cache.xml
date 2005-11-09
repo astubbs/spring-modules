@@ -71,7 +71,7 @@
 
           <listitem>
             <para>
-              <ulink url="http://jakarta.apache.org/jcs/">JCS</ulink>.
+              <ulink url="http://jakarta.apache.org/jcs/">Java Caching System (JCS)</ulink>.
             </para>
           </listitem>
 
@@ -255,7 +255,7 @@
             </itemizedlist>
           
             These factories have a common, 
-            <emphasis role="bold">required</emphasis> property, 
+            <emphasis role="bold">optional</emphasis> property, 
             <emphasis role="bold"><literal>configLocation</literal></emphasis>,
             which can be any resource used for configuration of the cache manager, 
             such as a file or class path resource.
@@ -272,7 +272,9 @@
               If <literal>true</literal>, any exception thrown at runtime by the 
               cache manager will not be rethrown, allowing applications to continue
               running even if the caching services fail. The default
-              value is <literal>false</literal>.
+              value is <literal>false</literal>: any exception thrown by the
+              cache manager will be propagated and eventually will stop the
+              execution of the application.
             </para>
           </para>
         </listitem>
@@ -313,6 +315,8 @@
                   the cache.</para>
                 </listitem>
               </itemizedlist>
+              This feature is disabled by default (the value of 
+              <literal>serializableFactory</literal> is <literal>null</literal>.)
             </para>
           </para>
         </listitem>
@@ -323,112 +327,107 @@
 
         <para>
           <programlisting>
+            &lt;!--  
+              The created cache manager is a singleton instance of
+              net.sf.ehcache.CacheManager
+            --&gt;
             &lt;bean id="cacheManager"
               class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"&gt;
             &lt;/bean&gt;
-          </programlisting>
-        </para>
 
-        <para>
-          The cache manager is a singleton instance of
-          <literal>net.sf.ehcache.CacheManager</literal>
-          created by the bean factory
-          <literal>org.springframework.cache.ehcache.EhCacheManagerFactoryBean</literal>.
+            &lt;bean id="cacheProviderFacade"
+              class="org.springmodules.cache.provider.ehcache.EhCacheFacade"&gt;
+              &lt;property name="cacheManager" ref="cacheManager" /&gt;
+              
+              &lt;!-- Optional properties --&gt;
+              &lt;property name="failQuietlyEnabled" value="true" /&gt;
+              &lt;property name="serializableFactory"&gt;
+                &lt;bean class="org.springmodules.cache.serializable.XStreamSerializableFactory" /&gt;
+              &lt;/property&gt;
+            &lt;/bean&gt;</programlisting>
         </para>
-
+        
         <para>
           <emphasis>
-            Please refer to the
+            Please refer to the 
+            <ulink url="http://ehcache.sourceforge.net/documentation/">online documentation</ulink>
+            for more information about EHCache.  Omar Irbouh posted an
             <ulink
-              url="http://ehcache.sourceforge.net/documentation/">
-              EHCache documentation
-            </ulink>
-            for more information. Also, Omar Irbouh wrote an
-            <ulink
-              url="http://opensource.atlassian.com/confluence/spring/display/DISC/Caching+the+result+of+methods+using+Spring+and+EHCache">
-              interesting article
-            </ulink>
-            about using EHCache with Spring.
+                url="http://opensource.atlassian.com/confluence/spring/display/DISC/Caching+the+result+of+methods+using+Spring+and+EHCache">
+                article</ulink> in the Spring Wiki about using EHCache with Spring.
           </emphasis>
-        </para>
-
-        <para>
-          <programlisting>
-            &lt;bean id="cacheProvider"
-            class="org.springmodules.cache.provider.ehcache.EhCacheFacade"&gt;
-            &lt;property name="cacheManager" ref="cacheManager" /&gt;
-
-            &lt;!-- Cache profiles specified as a java.util.Map --&gt;
-            &lt;property name="cacheProfiles"&gt; &lt;map&gt; &lt;entry
-            key="test"&gt; &lt;bean
-            class="org.springmodules.cache.provider.ehcache.EhCacheProfile"&gt;
-            &lt;property name="cacheName" value="testCache" /&gt;&lt;!--
-            Required --&gt; &lt;/bean&gt; &lt;/entry&gt; &lt;/map&gt;
-            &lt;/property&gt;
-
-            &lt;!-- Same cache profiles specified as a
-            java.util.Properties --&gt; &lt;property
-            name="cacheProfiles"&gt; &lt;props&gt; &lt;prop
-            key="test"&gt;[cacheName=testCache]&lt;/prop&gt;
-            &lt;/props&gt; &lt;/property&gt; &lt;/bean&gt;
-          </programlisting>
         </para>
       </sect3>
 
       <sect3>
-        <title>JCS</title>
+        <title>JBoss Cache</title>
 
         <para>
           <programlisting>
+            &lt;!-- 
+              The created cache manager is a singleton instance of 
+              org.jboss.cache.TreeCache
+            --&gt;
             &lt;bean id="cacheManager"
-            class="org.springmodules.cache.provider.jcs.JcsManagerFactoryBean"&gt;
+              class="org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean"&gt;
+              &lt;!-- Optional properties --&gt;
+              &lt;property name="configLocation" value="classpath:org/springmodules/samples/cache-service.xml" /&gt;                            
             &lt;/bean&gt;
-          </programlisting>
-        </para>
 
-        <para>
-          The cache manager is a singleton instance of
-          <literal>
-            org.apache.jcs.engine.control.CompositeCacheManager
-          </literal>
-          created by the bean factory
-          <literal>
-            org.springmodules.cache.provider.jcs.JcsManagerFactoryBean
-          </literal>
-          .
+            &lt;bean id="cacheProviderFacade"
+              class="org.springmodules.cache.provider.jboss.JbossCacheFacade"&gt;
+              &lt;property name="cacheManager" ref="cacheManager" /&gt;
+
+              &lt;!-- Optional properties --&gt;
+              &lt;property name="failQuietlyEnabled" value="true" /&gt;
+              &lt;property name="serializableFactory"&gt;
+                &lt;bean class="org.springmodules.cache.serializable.XStreamSerializableFactory" /&gt;
+              &lt;/property&gt;
+            &lt;/bean&gt;</programlisting>
         </para>
 
         <para>
           <emphasis>
             Please refer to the
-            <ulink url="http://jakarta.apache.org/jcs/">
-              JCS documentation
-            </ulink>
-            for more information.
+            <ulink url="http://www.jboss.com/products/jbosscache/docs">online documentation</ulink>
+            for more information about JBoss Cache.
           </emphasis>
         </para>
+      </sect3>
+
+      <sect3>
+        <title>Java Caching System</title>
 
         <para>
           <programlisting>
-            &lt;bean id="cacheProvider"
-            class="org.springmodules.cache.provider.jcs.JcsFacade"&gt;
-            &lt;property name="cacheManager" ref="cacheManager" /&gt;
+            &lt;!-- 
+              The created cache manager is a singleton instance of 
+              org.apache.jcs.engine.control.CompositeCacheManager
+            --&gt;
+            &lt;bean id="cacheManager"
+              class="org.springmodules.cache.provider.jcs.JcsManagerFactoryBean"&gt;
+              &lt;!-- Optional properties --&gt;
+              &lt;property name="configLocation" value="classpath:org/springmodules/samples/jcs-config.properties" /&gt;                            
+            &lt;/bean&gt;
 
-            &lt;!-- Cache profiles specified as a java.util.Map --&gt;
-            &lt;property name="cacheProfiles"&gt; &lt;map&gt; &lt;entry
-            key="test"&gt; &lt;bean
-            class="org.springmodules.cache.provider.jcs.JcsProfile"&gt;
-            &lt;property name="cacheName" value="testCache" /&gt;&lt;!--
-            Required --&gt; &lt;property name="group" value="testGroup"
-            /&gt;&lt;!-- Optional --&gt; &lt;/bean&gt; &lt;/entry&gt;
-            &lt;/map&gt; &lt;/property&gt;
+            &lt;bean id="cacheProviderFacade"
+              class="org.springmodules.cache.provider.jcs.JcsFacade"&gt;
+              &lt;property name="cacheManager" ref="cacheManager" /&gt;
 
-            &lt;!-- Same cache profiles specified as a
-            java.util.Properties --&gt; &lt;property
-            name="cacheProfiles"&gt; &lt;props&gt; &lt;prop
-            key="test"&gt;[cacheName=testCache][group=testGroup]&lt;/prop&gt;
-            &lt;/props&gt; &lt;/property&gt; &lt;/bean&gt;
-          </programlisting>
+              &lt;!-- Optional properties --&gt;
+              &lt;property name="failQuietlyEnabled" value="true" /&gt;
+              &lt;property name="serializableFactory"&gt;
+                &lt;bean class="org.springmodules.cache.serializable.XStreamSerializableFactory" /&gt;
+              &lt;/property&gt;
+            &lt;/bean&gt;</programlisting>
+        </para>
+
+        <para>
+          <emphasis>
+            Please refer to the
+            <ulink url="http://jakarta.apache.org/jcs/">online documentation</ulink>
+            for more information about JCS.
+          </emphasis>
         </para>
       </sect3>
 
@@ -437,22 +436,26 @@
 
         <para>
           <programlisting>
+            &lt;!-- 
+              The created cache manager is a singleton instance of 
+              com.opensymphony.oscache.general.GeneralCacheAdministrator
+            --&gt;
             &lt;bean id="cacheManager"
-            class="org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean"&gt;
+              class="org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean"&gt;
+              &lt;!-- Optional properties --&gt;
+              &lt;property name="configLocation" value="classpath:org/springmodules/samples/oscache-config.properties" /&gt;                            
             &lt;/bean&gt;
-          </programlisting>
-        </para>
 
-        <para>
-          The cache manager is a singleton instance of
-          <literal>
-            com.opensymphony.oscache.general.GeneralCacheAdministrator
-          </literal>
-          created by the bean factory
-          <literal>
-            org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean
-          </literal>
-          .
+            &lt;bean id="cacheProviderFacade"
+              class="org.springmodules.cache.provider.oscache.OsCacheFacade"&gt;
+              &lt;property name="cacheManager" ref="cacheManager" /&gt;
+
+              &lt;!-- Optional properties --&gt;
+              &lt;property name="failQuietlyEnabled" value="true" /&gt;
+              &lt;property name="serializableFactory"&gt;
+                &lt;bean class="org.springmodules.cache.serializable.XStreamSerializableFactory" /&gt;
+              &lt;/property&gt;
+            &lt;/bean&gt;</programlisting>
         </para>
 
         <para>
@@ -460,41 +463,15 @@
             Please refer to the
             <ulink
               url="http://www.opensymphony.com/oscache/wiki/Documentation.html">
-              OSCache documentation
+              online documentation
             </ulink>
-            for more information. Rob Harrop posted in the
+            for more information about OSCache. Rob Harrop posted in the
             <ulink
               url="http://opensource.atlassian.com/confluence/spring/display/INTEGRATE/OSCache">
               Spring Wiki
             </ulink>
             a much simpler way to set up OSCache with Spring.
           </emphasis>
-        </para>
-
-        <para>
-          <programlisting>
-            &lt;bean id="cacheProvider"
-            class="org.springmodules.cache.provider.oscache.OsCacheFacade"&gt;
-            &lt;property name="cacheManager" ref="cacheManager" /&gt;
-
-            &lt;!-- Cache profiles specified as a java.util.Map --&gt;
-            &lt;property name="cacheProfiles"&gt; &lt;map&gt; &lt;entry
-            key="test"&gt; &lt;bean
-            class="org.springmodules.cache.provider.oscache.OsCacheProfile"&gt;
-            &lt;property name="cronExpression" value="* * * * *"
-            /&gt;&lt;!-- Optional --&gt; &lt;property name="groups"
-            value="group1,group2" /&gt;&lt;!-- Optional --&gt;
-            &lt;property name="refreshPeriod" value="600" /&gt;&lt;!--
-            Optional --&gt; &lt;/bean&gt; &lt;/entry&gt; &lt;/map&gt;
-            &lt;/property&gt;
-
-            &lt;!-- Same cache profiles specified as a
-            java.util.Properties --&gt; &lt;property
-            name="cacheProfiles"&gt; &lt;props&gt; &lt;prop
-            key="test"&gt;[cronExpression=* * * *
-            *][groups=group1,group2][refreshPeriod=600]&lt;/prop&gt;
-            &lt;/props&gt; &lt;/property&gt; &lt;/bean&gt;
-          </programlisting>
         </para>
       </sect3>
     </sect2>
