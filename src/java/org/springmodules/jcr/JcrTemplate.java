@@ -196,7 +196,7 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
         try {
             fileStream = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException(e);
+            throw new IllegalArgumentException("can't work with file " + e);
         }
 
         MimeTable mt = MimeTable.getDefaultTable();
@@ -766,13 +766,10 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
 
     /**
      * Create a close-suppressing proxy for the given Jcr Session. 
-     * The proxy also prepares returned Query and Criteria objects.
      * 
      * @param session the Jcr Session to create a proxy for
      * @return the Session proxy
      * @see javax.jcr.Session#logout()
-     * @see #prepareQuery
-     * @see #prepareCriteria
      */
     protected Session createSessionProxy(Session session) {
         return (Session) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { Session.class },
