@@ -4,7 +4,7 @@
 <!--
 	Local transaction manager only for JackRabbit
 	    
-    $Id: applicationContext-jr-local.xml,v 1.1 2005/10/10 09:20:42 costin Exp $
+    $Id: applicationContext-jr-local.xml,v 1.2 2005/11/11 15:47:58 costin Exp $
     -->    
 <beans>
 	<bean id="jcrTransactionManager"
@@ -14,7 +14,7 @@
 	
 	<bean id="repository" class="org.springmodules.jcr.jackrabbit.RepositoryFactoryBean">
 		<!-- normal factory beans params -->
-		<property name="configuration" value="classpath:jackrabbit-repo.xml"/>
+		<property name="configuration" value="src/jackrabbit-repo.xml"/>
 		<property name="homeDir" value="/repo"/>
 	</bean>
 </beans>

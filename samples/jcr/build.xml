@@ -2,14 +2,14 @@
 
 <project name="spring-jcr-sample" basedir="." default="usage">
 
-	<property name="name" value="spring-jcr"/>
+	<property name="name" value="spring-jcr-sample"/>
 
-	<property name="src.dir" value="src"/>
-	<property name="build.dir" value=".classes"/>
-	<property name="dist.dir" value="dist"/>
-	<property name="repository.dir" value="repo"/>
+	<property name="src.dir" value="${basedir}/src"/>
+	<property name="build.dir" value="${basedir}/.classes"/>
+	<property name="dist.dir" value="${basedir}/dist"/>
+	<property name="repository.dir" value="${basedir}/repo"/>
 	
-	<property name="springmodules.root" value="../.."/>
+	<property name="springmodules.root" value="${basedir}/../.."/>
 	<property name="springmodules.dist" value="${springmodules.root}/dist"/>
 	
 	<property name="main.class" value="org.springmodules.examples.jcr.Main"/>
@@ -127,12 +127,9 @@
 			</fileset>
 		</copy>
 
-		<mkdir dir="${dist.dir}"/>
-		<jar jarfile="${dist.dir}/${name}.jar" compress="true" basedir="${build.dir}"/>
-
 	</target>
 
-	<target name="launch" description="Launch the sample application">
+	<target name="launch" description="Launch the sample application" depends="build">
 
 		<mkdir dir="${build.dir}/repo"/>
 		<java classname="${main.class}" fork="yes" failonerror="true">
@@ -149,6 +146,9 @@
 			a generic target name across all Spring sample apps that may be used
 			for autobuilds testing.
 		-->
+		<mkdir dir="${dist.dir}"/>
+		<jar jarfile="${dist.dir}/${name}.jar" compress="true" basedir="${build.dir}"/>
+
 	</target>
 
 
