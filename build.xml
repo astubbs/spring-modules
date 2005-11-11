@@ -24,6 +24,7 @@
 
 	<!-- load project properties -->
 	<property file="project.properties"/>
+	<property name="etc" value="${basedir}/etc"/>
 
 	<!--
 		Set up properties that indicate whether we're building on JDK 1.5.
@@ -200,10 +201,36 @@
 			</jar-contents>
 		</makejar>
 
+		<!-- jar just the JCR API support -->
 		<makejar jarfile="${dist.dir}/springmodules-jcr-${springmodules.version}.jar">
 			<jar-contents>
 				<fileset dir="${target.classes.dir}">
-					<include name="org/springmodules/jcr/**"/>
+					<include name="org/springmodules/jcr/*"/>
+					<include name="org/springmodules/jcr/support/*"/>					
+				</fileset>
+				<fileset dir="${etc}/jcr/">
+					<include name="META-INF/**"/>
+				</fileset>				
+			</jar-contents>
+		</makejar>
+
+		<!-- jar just the JackRabbit support -->
+		<makejar jarfile="${dist.dir}/springmodules-jcr-jackrabbit-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${target.classes.dir}">
+					<include name="org/springmodules/jcr/jackrabbit/**"/>
+				</fileset>
+				<fileset dir="${etc}/jcr/jackrabbit">
+					<include name="META-INF/**"/>
+				</fileset>
+			</jar-contents>
+		</makejar>
+
+		<!-- jar just the Jeceira support -->
+		<makejar jarfile="${dist.dir}/springmodules-jcr-jeceira-${springmodules.version}.jar">
+			<jar-contents>
+				<fileset dir="${target.classes.dir}">
+					<include name="org/springmodules/jcr/jeceira/**"/>
 				</fileset>
 			</jar-contents>
 		</makejar>
