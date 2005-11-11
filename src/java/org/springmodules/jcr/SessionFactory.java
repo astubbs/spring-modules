@@ -1,9 +1,12 @@
 package org.springmodules.jcr;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
- * Session Factory interface.
+ * Session Factory interface. This interface describes a simplfied contract for retrieving
+ * a session and acts as a central point inside Spring Modules JCR support.
+ * </p>
  * 
  * @author Costin Leau
  *
@@ -11,22 +14,16 @@ import javax.jcr.Session;
 public interface SessionFactory {
 
     /**
-     * Returns a Jcr Session using the credentials on this JcrSessionFactory.
+     * Returns a JCR Session using the credentials and workspace on this JcrSessionFactory.
+     * The session factory doesn't allow specification of a different workspace name because:
+     * <p>
+     * " Each Session object is associated one-to-one with a Workspace object. The Workspace 
+     * object represents a `view` of an actual repository workspace entity as seen through 
+     * the authorization settings of its associated Session." (quote from javax.jcr.Session javadoc).
+     * </p>
      * 
-     * @return
+     * @return the JCR session.
+     * @throws RepositoryException
      */
-    public Session getSession();
-
-    /**
-     * Returns a session connected to the given workspaceName using the
-     * credentials on this JcrSessionFactory.
-     * 
-     * @param workspace
-     *            the name of the workspace to login to; if not provided, the
-     *            workspace named by the <code>workspace</code> property will
-     *            be used. If that property is also <code>null</code>, the
-     *            repository's default workspace will be used.
-     */
-    public Session getSession(String workspace);
-
+    public Session getSession() throws RepositoryException;
 }

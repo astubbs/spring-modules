@@ -1,14 +1,16 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrInterceptorTests.java,v 1.1 2005/10/21 08:17:08 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrInterceptorTests.java,v 1.2 2005/11/11 15:47:08 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
 
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import junit.framework.TestCase;
@@ -25,15 +27,21 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  */
 public class JcrInterceptorTests extends TestCase {
 
-    public void testInterceptor() {
+    public void testInterceptor() throws RepositoryException {
         MockControl sfControl = MockControl.createControl(SessionFactory.class);
         SessionFactory sf = (SessionFactory) sfControl.getMock();
         MockControl sessionControl = MockControl.createControl(Session.class);
         Session session = (Session) sessionControl.getMock();
+        MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
+        Repository repo = (Repository) repositoryControl.getMock();
+
+        repositoryControl.replay();
+        
         sf.getSession();
-        sfControl.setReturnValue(session, 1);
+        sfControl.setReturnValue(session, 2);
         session.logout();
         sessionControl.setVoidCallable(1);
+        sessionControl.expectAndReturn(session.getRepository(), repo);
         sfControl.replay();
         sessionControl.replay();
 

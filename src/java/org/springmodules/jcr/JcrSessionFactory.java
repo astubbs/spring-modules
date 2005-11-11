@@ -14,11 +14,13 @@ import org.springmodules.util.ArrayUtils;
 
 /**
  * Jcr Session Factory. This class is just a simple wrapper around the
- * repository which facilitates session retrieval through a central point.
+ * repository which facilitates session retrieval through a central point. No exception
+ * conversion from Jcr Repository exceptions to Spring DAO exceptions is done.
  * </p>
- * The session factory is able to add event listener definitions for each session.
+ * The session factory is able to add event listener definitions for each session and some
+ * utility methods.
  * Note that for added functionality (like JackRabbit SessionListener) you can use
- * the decorators package (available from JackRabbit). 
+ * the decorators package (available from JackRabbit).
  * 
  * @author Costin Leau
  * @author Brian Moseley <bcm@osafoundation.org>
@@ -52,28 +54,17 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 	}
 
 	public void afterPropertiesSet() {
-
 		if (getRepository() == null)
 			throw new IllegalArgumentException("repository is required");
+		if (!supportsObservation() && eventListenerDefinitions != null)
+			throw new IllegalArgumentException("repository " + getRepositoryInfo() + " does NOT support Observation; remove Listener definitions");
 	}
 
 	/**
 	 * @see org.springmodules.jcr.SessionFactory#getSession()
 	 */
-	public Session getSession() {
-		return getSession(workspaceName);
-	}
-
-	/**
-	 * @see org.springmodules.jcr.SessionFactory#getSession(java.lang.String)
-	 */
-	public Session getSession(String workspace) {
-		try {
-			return addListeners(repository.login(credentials, workspace));
-
-		} catch (RepositoryException e) {
-			throw SessionFactoryUtils.translateException(e);
-		}
+	public Session getSession() throws RepositoryException {
+		return addListeners(repository.login(credentials, workspaceName));
 	}
 
 	/**
@@ -88,13 +79,17 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 			Workspace ws = session.getWorkspace();
 			ObservationManager manager = ws.getObservationManager();
 			if (log.isDebugEnabled())
-				log.debug("adding listeners " + ArrayUtils.toString(eventListenerDefinitions) + " for session " + session);
+				log.debug("adding listeners "
+						+ ArrayUtils.toString(eventListenerDefinitions)
+						+ " for session "
+						+ session);
 
 			for (int i = 0; i < eventListenerDefinitions.length; i++) {
 				manager.addEventListener(eventListenerDefinitions[i].getListener(),
-						eventListenerDefinitions[i].getEventTypes(), eventListenerDefinitions[i].getAbsPath(),
-						eventListenerDefinitions[i].isDeep(), eventListenerDefinitions[i].getUuid(),
-						eventListenerDefinitions[i].getNodeTypeName(), eventListenerDefinitions[i].isNoLocal());
+						eventListenerDefinitions[i].getEventTypes(),
+						eventListenerDefinitions[i].getAbsPath(), eventListenerDefinitions[i].isDeep(),
+						eventListenerDefinitions[i].getUuid(), eventListenerDefinitions[i].getNodeTypeName(),
+						eventListenerDefinitions[i].isNoLocal());
 			}
 		}
 		return session;
@@ -174,6 +169,18 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 	}
 
 	/**
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("SessionFactory for ");
+		buffer.append(getRepositoryInfo());
+		buffer.append("|workspace=");
+		buffer.append(getWorkspaceName());
+		return buffer.toString();
+	}
+
+	/**
 	 * @return Returns the eventListenerDefinitions.
 	 */
 	public EventListenerDefinition[] getEventListenerDefinitions() {
@@ -185,6 +192,46 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 	 */
 	public void setEventListenerDefinitions(EventListenerDefinition[] eventListenerDefinitions) {
 		this.eventListenerDefinitions = eventListenerDefinitions;
+	}
+
+	public boolean supportsLevel2() {
+		return "true".equals(getRepository().getDescriptor(Repository.LEVEL_2_SUPPORTED));
+	}
+
+	public boolean supportsTransactions() {
+		return "true".equals(getRepository().getDescriptor(Repository.OPTION_TRANSACTIONS_SUPPORTED));
+	}
+
+	public boolean supportsVersioning() {
+		return "true".equals(getRepository().getDescriptor(Repository.OPTION_VERSIONING_SUPPORTED));
+	}
+
+	public boolean supportsObservation() {
+		return "true".equals(getRepository().getDescriptor(Repository.OPTION_OBSERVATION_SUPPORTED));
+	}
+
+	public boolean supportsLocking() {
+		return "true".equals(getRepository().getDescriptor(Repository.OPTION_LOCKING_SUPPORTED));
+	}
+
+	public boolean supportsSQLQuery() {
+		return "true".equals(getRepository().getDescriptor(Repository.OPTION_QUERY_SQL_SUPPORTED));
+	}
+
+	public boolean supportsXPathPosIndex() {
+		return "true".equals(getRepository().getDescriptor(Repository.QUERY_XPATH_POS_INDEX));
+	}
+
+	public boolean supportsXPathDocOrder() {
+		return "true".equals(getRepository().getDescriptor(Repository.QUERY_XPATH_DOC_ORDER));
+	}
+
+	private String getRepositoryInfo() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(getRepository().getDescriptor(Repository.REP_NAME_DESC));
+		buffer.append(" ");
+		buffer.append(getRepository().getDescriptor(Repository.REP_VERSION_DESC));
+		return buffer.toString();
 	}
 
 }

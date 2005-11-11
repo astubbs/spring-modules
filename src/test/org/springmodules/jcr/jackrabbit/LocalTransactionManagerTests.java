@@ -3,6 +3,7 @@ package org.springmodules.jcr.jackrabbit;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.transaction.xa.XAResource;
@@ -37,10 +38,17 @@ public class LocalTransactionManagerTests extends TestCase {
         XAResource xaRes = (XAResource) xaResControl.getMock();
 
         sfControl.expectAndReturn(sf.getSession(), session);
-
         sessionControl.expectAndReturn(session.getXAResource(), xaRes);
+        
         session.save();
         session.logout();
+
+        // used for ServiceProvider
+        MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
+        Repository repository = (Repository) repositoryControl.getMock();
+        repositoryControl.replay();
+
+        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
 
         Xid xidMock = new XidMock();
 
@@ -53,6 +61,7 @@ public class LocalTransactionManagerTests extends TestCase {
         xaResControl.setMatcher(MockControl.ALWAYS_MATCHER);
         xaRes.end(xidMock, XAResource.TMSUCCESS);
         xaResControl.setMatcher(MockControl.ALWAYS_MATCHER);
+
 
         sfControl.replay();
         sessionControl.replay();
@@ -96,6 +105,14 @@ public class LocalTransactionManagerTests extends TestCase {
         session.save();
         session.logout();
 
+        // used for ServiceProvider
+        MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
+        Repository repository = (Repository) repositoryControl.getMock();
+        repositoryControl.replay();
+
+        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
+        
+        
         Xid xidMock = new XidMock();
 
         xaRes.start(xidMock, XAResource.TMNOFLAGS);
@@ -166,6 +183,13 @@ public class LocalTransactionManagerTests extends TestCase {
         xaRes.rollback(xidMock);
         xaResControl.setMatcher(MockControl.ALWAYS_MATCHER);
 
+        // used for ServiceProvider
+        MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
+        Repository repository = (Repository) repositoryControl.getMock();
+        repositoryControl.replay();
+
+        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
+        
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
@@ -254,6 +278,13 @@ public class LocalTransactionManagerTests extends TestCase {
         sessionControl.expectAndReturn(session.getXAResource(), xaRes);
         session.save();
 
+        // used for ServiceProvider
+        MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
+        Repository repository = (Repository) repositoryControl.getMock();
+        repositoryControl.replay();
+
+        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
+        
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
@@ -293,6 +324,13 @@ public class LocalTransactionManagerTests extends TestCase {
 
         sessionControl.expectAndReturn(session.getXAResource(), xaRes);
         session.save();
+        
+        // used for ServiceProvider
+        MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
+        Repository repository = (Repository) repositoryControl.getMock();
+        repositoryControl.replay();
+
+        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
 
         sfControl.replay();
         sessionControl.replay();

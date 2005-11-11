@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrTemplateTests.java,v 1.3 2005/10/24 08:18:38 costin Exp $
- * $Revision: 1.3 $
+ * $Id: JcrTemplateTests.java,v 1.4 2005/11/11 15:47:08 costin Exp $
+ * $Revision: 1.4 $
  */
 package org.springmodules.jcr;
 
@@ -27,6 +27,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyIterator;
 import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -66,36 +67,50 @@ public class JcrTemplateTests extends TestCase {
     private SessionFactory sf;
 
     private MockControl sessionControl;
-
+    private MockControl repositoryControl;
+    private Repository repository;
     private Session session;
 
     private JcrTemplate jt;
 
-    protected void setUp() {
+    protected void setUp() throws RepositoryException {
 
         sfControl = MockControl.createControl(SessionFactory.class);
         sf = (SessionFactory) sfControl.getMock();
         sessionControl = MockControl.createControl(Session.class);
         session = (Session) sessionControl.getMock();
+        repositoryControl = MockControl.createNiceControl(Repository.class);
+        repository = (Repository) repositoryControl.getMock();
 
-        jt = new JcrTemplate(sf);
-
-        jt.setAllowCreate(true);
-
-        session.logout();
+        repositoryControl.replay();
+        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
         sfControl.expectAndReturn(sf.getSession(), session);
+
+    	sfControl.replay();
+    	sessionControl.replay();
+        jt = new JcrTemplate(sf);
+        jt.setAllowCreate(true);
+        
+    	sfControl.reset();
+    	sessionControl.reset();
+    	
+    	session.logout();
+        sfControl.expectAndReturn(sf.getSession(), session, MockControl.ONE_OR_MORE);
+        
     }
 
     protected void tearDown() {
         try {
-            sfControl.verify();
             sessionControl.verify();
+            sfControl.verify();
+            repositoryControl.verify();
         } catch (IllegalStateException ex) {
             // ignore: test method didn't call replay
         }
     }
 
     public void testAfterPropertiesSet() {
+
         try {
             jt.setSessionFactory(null);
             jt.afterPropertiesSet();
@@ -109,9 +124,10 @@ public class JcrTemplateTests extends TestCase {
         sessionControl.expectAndReturn(session.getAttribute("smth"), null);
         sessionControl.replay();
         sfControl.replay();
-
+        
         jt.setAllowCreate(true);
         jt.setExposeNativeSession(true);
+        
 
         jt.execute(new JcrCallback() {
             public Object doInJcr(Session sess) throws RepositoryException {
@@ -178,7 +194,7 @@ public class JcrTemplateTests extends TestCase {
         assertTrue("Correct result list", result == l);
     }
 
-    public void testTemplateExceptions() {
+    public void testTemplateExceptions() throws RepositoryException {
 
         try {
             createTemplate().execute(new JcrCallback() {
@@ -352,13 +368,20 @@ public class JcrTemplateTests extends TestCase {
 
     }
 
-    private JcrOperations createTemplate() {
+    private JcrOperations createTemplate() throws RepositoryException {
         sfControl.reset();
+        sessionControl.reset();
+        
+        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
         sfControl.expectAndReturn(sf.getSession(), session);
+        sfControl.expectAndReturn(sf.getSession(), session);
+        session.logout();
+        
+        sfControl.replay();
+        sessionControl.replay();
 
         JcrTemplate template = new JcrTemplate(sf);
         template.setAllowCreate(true);
-        sfControl.replay();
         return template;
     }
 
@@ -451,6 +474,7 @@ public class JcrTemplateTests extends TestCase {
         sfControl.verify();
         sessionControl.verify();
 
+        
         sfControl.reset();
         sessionControl.reset();
 

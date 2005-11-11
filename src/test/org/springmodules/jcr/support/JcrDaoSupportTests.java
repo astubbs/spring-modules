@@ -1,14 +1,15 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrDaoSupportTests.java,v 1.1 2005/10/21 08:17:31 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrDaoSupportTests.java,v 1.2 2005/11/11 15:47:13 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -25,9 +26,11 @@ import org.springmodules.jcr.SessionFactory;
  */
 public class JcrDaoSupportTests extends TestCase {
 
-    private MockControl sfCtrl, sessCtrl;
+    private MockControl sfCtrl, sessCtrl, repositoryCtrl;
     private SessionFactory sf;
     private Session sess;
+    private Repository repository;
+    
     
     protected void setUp() throws Exception {
         super.setUp();
@@ -36,6 +39,10 @@ public class JcrDaoSupportTests extends TestCase {
 
         sessCtrl = MockControl.createControl(Session.class);
         sess = (Session)sessCtrl.getMock();
+        repositoryCtrl = MockControl.createNiceControl(Repository.class);
+        repository = (Repository) repositoryCtrl.getMock();
+        repositoryCtrl.replay();
+
 
     }
 
@@ -45,6 +52,7 @@ public class JcrDaoSupportTests extends TestCase {
         try {
             sessCtrl.verify();
             sfCtrl.verify();
+            repositoryCtrl.verify();
         }
         catch (IllegalStateException ex) {
             // ignore: test method didn't call replay
@@ -52,7 +60,14 @@ public class JcrDaoSupportTests extends TestCase {
     }
     
     public void testJcrDaoSupportWithSessionFactory() throws Exception {
+    	
+        // used for ServiceProvider
+
+        sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
+        sfCtrl.expectAndReturn(sf.getSession(), sess);
         sfCtrl.replay();
+        sessCtrl.replay();
+        
         final List test = new ArrayList();
         JcrDaoSupport dao = new JcrDaoSupport() {
             protected void initDao() {
@@ -68,6 +83,7 @@ public class JcrDaoSupportTests extends TestCase {
     }
 
     public void testJcrDaoSupportWithJcrTemplate() throws Exception {
+    	
         JcrTemplate template = new JcrTemplate();
         final List test = new ArrayList();
         JcrDaoSupport dao = new JcrDaoSupport() {
@@ -95,21 +111,29 @@ public class JcrDaoSupportTests extends TestCase {
         }
     }
     
-    public void testSetSessionFactory()
+    public void testSetSessionFactory() throws RepositoryException
     {
+        sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
+        sfCtrl.expectAndReturn(sf.getSession(), sess);
+        sfCtrl.replay();
+        sessCtrl.replay();
+        
         JcrDaoSupport dao = new JcrDaoSupport() {};
         
-        sfCtrl.replay();
         dao.setSessionFactory(sf);
         assertEquals(dao.getSessionFactory(), sf);
     }
     
-    public void testGetSession()
+    public void testGetSession() throws RepositoryException
     {
         JcrDaoSupport dao = new JcrDaoSupport() {};
         sfCtrl.expectAndReturn(sf.getSession(), sess);
         
+        sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
+        sfCtrl.expectAndReturn(sf.getSession(), sess);
         sfCtrl.replay();
+        sessCtrl.replay();
+        
         dao.setSessionFactory(sf);
         try {
             dao.getSession();
@@ -120,15 +144,18 @@ public class JcrDaoSupportTests extends TestCase {
         assertEquals(dao.getSession(true), sess);
     }
 
-    public void testReleaseSession()
+    public void testReleaseSession() throws RepositoryException
     {
         JcrDaoSupport dao = new JcrDaoSupport() {};
         
         dao.releaseSession(null);
         
         sfCtrl.expectAndReturn(sf.getSession(), sess);
-        
+        sess.logout();
+        sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
         sfCtrl.replay();
+        sessCtrl.replay();
+        
         dao.setSessionFactory(sf);
         dao.releaseSession(sess);
     }

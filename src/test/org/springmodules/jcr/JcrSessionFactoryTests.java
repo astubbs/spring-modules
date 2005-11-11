@@ -50,20 +50,6 @@ public class JcrSessionFactoryTests extends TestCase {
     }
 
     /*
-     * Test method for 'org.springmodules.jcr.JcrSessionFactory.getSession(String)'
-     */
-    public void testGetSessionString() {
-        String otherWs = "other ws";
-        try {
-            repoCtrl.expectAndReturn(repo.login(null, otherWs), null);
-            factory.getSession(otherWs);
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /*
      * Test method for 'org.springmodules.jcr.JcrSessionFactory.afterPropertiesSet'
      */
     public void testAfterPropertiesSet() {
