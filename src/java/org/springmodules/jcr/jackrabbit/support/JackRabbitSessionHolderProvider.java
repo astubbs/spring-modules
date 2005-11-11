@@ -1,8 +1,8 @@
 /**
  * Created on Oct 4, 2005
  *
- * $Id: JackRabbitSessionHolderProvider.java,v 1.1 2005/10/21 08:17:34 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JackRabbitSessionHolderProvider.java,v 1.2 2005/11/11 15:48:52 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.jackrabbit.support;
 
@@ -22,6 +22,13 @@ import org.springmodules.jcr.SessionHolderProvider;
 public class JackRabbitSessionHolderProvider implements SessionHolderProvider {
 
     /**
+	 * @see org.springmodules.jcr.SessionHolderProvider#acceptsRepository(java.lang.String)
+	 */
+	public boolean acceptsRepository(String repositoryName) {
+		return "Jackrabbit".equals(repositoryName);
+	}
+
+	/**
      * @see org.springmodules.jcr.SessionHolderProvider#createSessionHolder(javax.jcr.Session)
      */
     public SessionHolder createSessionHolder(Session session) {
