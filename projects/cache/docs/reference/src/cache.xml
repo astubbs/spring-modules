@@ -157,7 +157,7 @@
       <orderedlist>
         <listitem>
           <para>
-            <emphasis role="bold"><literal>cacheManager</literal>(required).</emphasis>
+            <emphasis role="bold"><literal>cacheManager</literal> (required)</emphasis>
             <para>
               A cache manager administrates the cache. In general, a cache manager 
               should be able to:
@@ -222,7 +222,7 @@
           <para>
             <emphasis role="bold">
               <literal>failQuietlyEnabled</literal>
-              (optional).
+              (optional)
             </emphasis>
             <para>
               If <literal>true</literal>, any exception thrown at runtime by the 
@@ -239,7 +239,7 @@
           <para>
             <emphasis role="bold">
               <literal>serializableFactory</literal>
-              (optional).
+              (optional)
             </emphasis>
             <para>
               Some cache providers, like EHCache and JCS, can only store objects
@@ -282,36 +282,34 @@
         <title>EHCache</title>
 
         <para>
-          <programlisting>
-            &lt;!--  
-              The created cache manager is a singleton instance of
-              net.sf.ehcache.CacheManager
-            --&gt;
-            &lt;bean id="cacheManager"
-              class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"&gt;
-            &lt;/bean&gt;
-
-            &lt;bean id="cacheProviderFacade"
-              class="org.springmodules.cache.provider.ehcache.EhCacheFacade"&gt;
-              &lt;property name="cacheManager" ref="cacheManager" /&gt;
-              
-              &lt;!-- Optional properties --&gt;
-              &lt;property name="failQuietlyEnabled" value="true" /&gt;
-              &lt;property name="serializableFactory"&gt;
-                &lt;bean class="org.springmodules.cache.serializable.XStreamSerializableFactory" /&gt;
-              &lt;/property&gt;
-            &lt;/bean&gt;</programlisting>
+          <ulink url="http://ehcache.sourceforge.net/">EHCache</ulink> 
+          can be used as cache provider through the facade 
+          <literal>org.springmodules.cache.provider.ehcache.EhCacheFacade</literal>.
+          It must have a <literal>net.sf.ehcache.CacheManager</literal>
+          as the underlying cache manager.
         </para>
-        
+
         <para>
-          <emphasis>
-            Please refer to the 
-            <ulink url="http://ehcache.sourceforge.net/documentation/">online documentation</ulink>
-            for more information about EHCache.  Omar Irbouh posted an
+          <programlisting>
+&lt;!--  
+  The created cache manager is an instance of net.sf.ehcache.CacheManager
+--&gt;
+&lt;bean id=&quot;cacheManager&quot;
+  class=&quot;org.springframework.cache.ehcache.EhCacheManagerFactoryBean&quot;&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;cacheProviderFacade&quot;
+  class=&quot;org.springmodules.cache.provider.ehcache.EhCacheFacade&quot;&gt;
+  &lt;property name=&quot;cacheManager&quot; ref=&quot;cacheManager&quot; /&gt;
+&lt;/bean&gt;</programlisting>
+        </para>
+
+        <para>
+          For more details about using EHCache with Spring, please refer to 
+          this excellent 
             <ulink
                 url="http://opensource.atlassian.com/confluence/spring/display/DISC/Caching+the+result+of+methods+using+Spring+and+EHCache">
-                article</ulink> in the Spring Wiki about using EHCache with Spring.
-          </emphasis>
+                article</ulink> by Omar Irbouh.
         </para>
       </sect3>
 
@@ -319,115 +317,96 @@
         <title>JBoss Cache</title>
 
         <para>
-          <programlisting>
-            &lt;!-- 
-              The created cache manager is a singleton instance of 
-              org.jboss.cache.TreeCache
-            --&gt;
-            &lt;bean id="cacheManager"
-              class="org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean"&gt;
-              &lt;!-- Optional properties --&gt;
-              &lt;property name="configLocation" value="classpath:org/springmodules/samples/cache-service.xml" /&gt;                            
-            &lt;/bean&gt;
-
-            &lt;bean id="cacheProviderFacade"
-              class="org.springmodules.cache.provider.jboss.JbossCacheFacade"&gt;
-              &lt;property name="cacheManager" ref="cacheManager" /&gt;
-
-              &lt;!-- Optional properties --&gt;
-              &lt;property name="failQuietlyEnabled" value="true" /&gt;
-              &lt;property name="serializableFactory"&gt;
-                &lt;bean class="org.springmodules.cache.serializable.XStreamSerializableFactory" /&gt;
-              &lt;/property&gt;
-            &lt;/bean&gt;</programlisting>
+          <ulink url="http://www.jboss.com/products/jbosscache">JBoss Cache</ulink>
+          can be used as cache provider through the facade 
+          <literal>org.springmodules.cache.provider.jboss.JbossCacheFacade</literal>.
+          It must have a <literal>org.jboss.cache.TreeCache</literal>
+          as the underlying cache manager.
         </para>
 
         <para>
-          <emphasis>
-            Please refer to the
-            <ulink url="http://www.jboss.com/products/jbosscache/docs">online documentation</ulink>
-            for more information about JBoss Cache.
-          </emphasis>
+          <programlisting>
+&lt;!-- 
+  The created cache manager is a singleton instance of org.jboss.cache.TreeCache
+--&gt;
+&lt;bean id=&quot;cacheManager&quot;
+  class=&quot;org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean&quot;&gt;
+  &lt;!-- Optional properties --&gt;
+  &lt;property name=&quot;configLocation&quot; value=&quot;classpath:org/springmodules/samples/cache-service.xml&quot; /&gt;                            
+&lt;/bean&gt;
+
+&lt;bean id=&quot;cacheProviderFacade&quot;
+  class=&quot;org.springmodules.cache.provider.jboss.JbossCacheFacade&quot;&gt;
+  &lt;property name=&quot;cacheManager&quot; ref=&quot;cacheManager&quot; /&gt;
+&lt;/bean&gt;</programlisting>
         </para>
       </sect3>
 
       <sect3>
-        <title>Java Caching System</title>
+        <title>Java Caching System (JCS)</title>
+
+        <para>
+          <ulink url="http://jakarta.apache.org/jcs/">JCS</ulink>
+          can be used as cache provider through the facade 
+          <literal>org.springmodules.cache.provider.jcs.JcsFacade</literal>.
+          It must have a <literal>org.apache.jcs.engine.control.CompositeCacheManager</literal>
+          as the underlying cache manager.
+        </para>
 
         <para>
           <programlisting>
-            &lt;!-- 
-              The created cache manager is a singleton instance of 
-              org.apache.jcs.engine.control.CompositeCacheManager
-            --&gt;
-            &lt;bean id="cacheManager"
-              class="org.springmodules.cache.provider.jcs.JcsManagerFactoryBean"&gt;
-              &lt;!-- Optional properties --&gt;
-              &lt;property name="configLocation" value="classpath:org/springmodules/samples/jcs-config.properties" /&gt;                            
-            &lt;/bean&gt;
+&lt;!-- 
+  The created cache manager is a singleton instance of org.apache.jcs.engine.control.CompositeCacheManager
+--&gt;
+&lt;bean id=&quot;cacheManager&quot;
+  class=&quot;org.springmodules.cache.provider.jcs.JcsManagerFactoryBean&quot;&gt;
+  &lt;!-- Optional properties --&gt;
+  &lt;property name=&quot;configLocation&quot; value=&quot;classpath:org/springmodules/samples/jcs-config.properties&quot; /&gt;                            
+&lt;/bean&gt;
 
-            &lt;bean id="cacheProviderFacade"
-              class="org.springmodules.cache.provider.jcs.JcsFacade"&gt;
-              &lt;property name="cacheManager" ref="cacheManager" /&gt;
-
-              &lt;!-- Optional properties --&gt;
-              &lt;property name="failQuietlyEnabled" value="true" /&gt;
-              &lt;property name="serializableFactory"&gt;
-                &lt;bean class="org.springmodules.cache.serializable.XStreamSerializableFactory" /&gt;
-              &lt;/property&gt;
-            &lt;/bean&gt;</programlisting>
+&lt;bean id=&quot;cacheProviderFacade&quot;
+  class=&quot;org.springmodules.cache.provider.jcs.JcsFacade&quot;&gt;
+  &lt;property name=&quot;cacheManager&quot; ref=&quot;cacheManager&quot; /&gt;
+&lt;/bean&gt;</programlisting>
         </para>
 
-        <para>
-          <emphasis>
-            Please refer to the
-            <ulink url="http://jakarta.apache.org/jcs/">online documentation</ulink>
-            for more information about JCS.
-          </emphasis>
-        </para>
       </sect3>
 
       <sect3>
         <title>OSCache</title>
 
         <para>
-          <programlisting>
-            &lt;!-- 
-              The created cache manager is a singleton instance of 
-              com.opensymphony.oscache.general.GeneralCacheAdministrator
-            --&gt;
-            &lt;bean id="cacheManager"
-              class="org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean"&gt;
-              &lt;!-- Optional properties --&gt;
-              &lt;property name="configLocation" value="classpath:org/springmodules/samples/oscache-config.properties" /&gt;                            
-            &lt;/bean&gt;
-
-            &lt;bean id="cacheProviderFacade"
-              class="org.springmodules.cache.provider.oscache.OsCacheFacade"&gt;
-              &lt;property name="cacheManager" ref="cacheManager" /&gt;
-
-              &lt;!-- Optional properties --&gt;
-              &lt;property name="failQuietlyEnabled" value="true" /&gt;
-              &lt;property name="serializableFactory"&gt;
-                &lt;bean class="org.springmodules.cache.serializable.XStreamSerializableFactory" /&gt;
-              &lt;/property&gt;
-            &lt;/bean&gt;</programlisting>
+          <ulink url="http://www.opensymphony.com/oscache">OSCache</ulink>
+          can be used as cache provider through the facade 
+          <literal>org.springmodules.cache.provider.oscache.OsCacheFacade</literal>.
+          It must have a <literal>com.opensymphony.oscache.general.GeneralCacheAdministrator</literal>
+          as the underlying cache manager
         </para>
 
         <para>
-          <emphasis>
-            Please refer to the
-            <ulink
-              url="http://www.opensymphony.com/oscache/wiki/Documentation.html">
-              online documentation
-            </ulink>
-            for more information about OSCache. Rob Harrop posted in the
-            <ulink
-              url="http://opensource.atlassian.com/confluence/spring/display/INTEGRATE/OSCache">
-              Spring Wiki
-            </ulink>
-            a much simpler way to set up OSCache with Spring.
-          </emphasis>
+          <programlisting>
+&lt;!-- 
+  The created cache manager is a singleton instance of 
+  com.opensymphony.oscache.general.GeneralCacheAdministrator
+--&gt;
+&lt;bean id=&quot;cacheManager&quot;
+  class=&quot;org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean&quot;&gt;
+  &lt;!-- Optional properties --&gt;
+  &lt;property name=&quot;configLocation&quot; value=&quot;classpath:org/springmodules/samples/oscache-config.properties&quot; /&gt;                            
+&lt;/bean&gt;
+
+&lt;bean id=&quot;cacheProviderFacade&quot;
+  class=&quot;org.springmodules.cache.provider.oscache.OsCacheFacade&quot;&gt;
+  &lt;property name=&quot;cacheManager&quot; ref=&quot;cacheManager&quot; /&gt;
+&lt;/bean&gt;</programlisting>
+        </para>
+
+        <para>
+          Rob Harrop posted an
+          <ulink
+            url="http://opensource.atlassian.com/confluence/spring/display/INTEGRATE/OSCache">
+            article</ulink>
+          explaining how to set up OSCache in Spring without using any factory.
         </para>
       </sect3>
     </sect2>
@@ -436,11 +415,51 @@
       <title>Declarative Caching Services</title>
 
       <para>
-        Declarative caching services are powered by
+        The <emphasis>Caching Module</emphasis> offers declarative caching
+        services powered by
         <ulink
-          url="http://www.springframework.org/docs/reference/aop.html">Spring AOP</ulink>
-        and enabled by these two types of advices.
+          url="http://www.springframework.org/docs/reference/aop.html">Spring AOP</ulink>.
+      </para>
+      <para>
+        <emphasis>
+          Declarative caching services offers a non-invasive solution, eliminating
+          any dependencies on any cache implementation from your Java code.
+        </emphasis>
+      </para>
 
+      <para>
+        The following sections describe the internal components common to 
+        the different strategies for declarative caching services.
+      </para>
+      
+      <sect3>
+        <title>Caching Advice.</title>
+        <para>
+          Applies caching to the return value of advised methods. It first
+          checks that a value previously returned from a method call, with
+          the same method arguments, is already stored in the cache. If a
+          value is found, it will skip the method call and return the cached value. 
+          On the other hand, if the advice cannot find a cached value, it will
+          proceed with the method call, store the return value in the cache 
+          and finally return such value.
+        </para>
+        
+        <para>
+          Methods that do not have a return value (<literal>void</literal>) are 
+          ignored, even if they were registered for aspect weaving.
+        </para>
+      </sect3>
+      
+      <sect3>
+        <title>Caching Models.</title>
+        <para>
+          Caching models encapsulate the rules to be followed by the
+          <emphasis>caching advice</emphasis> when accessing the cache
+          for object storage or retrieval.
+        </para>
+      </sect3>
+      
+      <para>
         <orderedlist>
           <listitem>
             <para>
@@ -451,31 +470,17 @@
                 store in the cache the return value of advised methods.
 
                 <para>
-                  Caching interceptors have the following common properties:
+                  Common properties:
                   <itemizedlist>
                     <listitem>
                       <para>
                         <emphasis role="bold">
-                          <literal>cacheProviderFacade</literal> (required).
+                          <literal>cachingModels</literal> (required).
                         </emphasis>
                         <para>
-                          An implementation of 
-                          <literal>org.springmodules.cache.provider.CacheProviderFacade</literal>. 
-                          Please refer to
-                          <xref linkend="cache-setup-provider"/>
-                          for more details.
-                        </para>
-                      </para>
-                    </listitem>
-                    <listitem>
-                      <para>
-                        <emphasis role="bold">
-                          <literal id="cachingModels">cachingModels</literal> (required).
-                        </emphasis>
-                        <para>
-                          <phrase id="cachingModelsPhrase">
-                            Caching Models encapsulate the setti how objects are stored in the database.
-                          </phrase>
+                          Caching Models encapsulate the rules that determine how objects 
+                          are stored in the cache. For more information about
+                          caching models please refer to <xref linkend="caching-models"/>.
                         </para>
                       </para>
                     </listitem>
@@ -517,7 +522,7 @@
           </listitem>
 
           <listitem>
-            <para>
+            <para id="flushingInterceptor">
               <emphasis role="bold">Flushing Interceptor.</emphasis>
               <para>
                 Subclasses of the template 
@@ -525,10 +530,49 @@
                 flush one or more regions of the cache, or the whole
                 cache (depending on the
                 cache provider) before or after executing advised methods.
+              
+                <para>
+                    Common properties:
+                    <itemizedlist>
+                      <listitem>
+                        <para>
+                          <emphasis role="bold">
+                            <literal>flushingModels</literal> (optional).
+                          </emphasis>
+                          <para>
+                            Flushing Models emcapsulate the rules that determine
+                            how the cache should be flushed. For more information about
+                            caching models please refer to <xref linkend="flushing-models"/>.
+                          </para>
+                        </para>
+                      </listitem>
+                    </itemizedlist>
+                </para>
               </para>
             </para>
           </listitem>
         </orderedlist>
+      </para>
+
+      <para>
+        Both types of interceptors have the common property:
+        <itemizedlist>
+          <listitem>
+              <para id="cacheProviderFacade">
+                <emphasis role="bold">
+                  <literal id="cacheProviderFacadePhrase">cacheProviderFacade</literal> (required).
+                </emphasis>
+                <para>
+                  An implementation of 
+                  <literal>org.springmodules.cache.provider.CacheProviderFacade</literal>. 
+                  Necessary for accessing the cache manager.
+                  Please refer to
+                  <xref linkend="cache-setup-provider"/>
+                  for more details.
+                </para>
+              </para>
+          </listitem>
+        </itemizedlist>
       </para>
 
       <para>
@@ -537,20 +581,6 @@
       </para>
 
       <!--  
-      <itemizedlist>
-        <listitem>
-          <para>
-            <emphasis role="bold">CacheProxyFactoryBean.</emphasis>
-            The factory
-            <literal>
-              org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean
-            </literal>
-            creates a AOP proxy for a single bean definition. By using the
-            CacheProxyFactoryBean all the configuration details for the caching
-            services are declared in the Spring configuration file.
-          </para>
-        </listitem>
-
         <listitem>
           <para>
             <emphasis role="bold">Source-level metadata-driven Autoproxy.</emphasis>
@@ -590,69 +620,92 @@
         <title>CacheProxyFactoryBean</title>
 
         <para>
-          The factory
           <literal>org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean</literal>
-          advises a single bean definition. Under the hood weaving is performed
-          using the following advises.
+          applies caching services to a single bean definition. It exposes the following properties.
 
           <itemizedlist>
             <listitem>
               <para>
-                <literal>org.springmodules.cache.interceptor.caching.NameMatchCachingInterceptor</literal>.
+                <emphasis role="bold"><literal>target</literal> (required).</emphasis>
+                <para>
+                  The <emphasis>advised</emphasis> or <emphasis>proxied</emphasis> object
+                  (the bean to apply caching services to.)          
+                </para>              
               </para>
             </listitem>
+          
             <listitem>
               <para>
-                <literal>org.springmodules.cache.interceptor.flush.NameMatchFlushingInterceptor</literal>.
+                <emphasis role="bold"><literal>cacheProviderFacade</literal> (required).</emphasis>
+                <para>
+                  Needed by the internal <emphasis>caching</emphasis> and 
+                  <emphasis>flushing</emphasis> advices to access the
+                  underlying cache manager.
+                  Please refer to
+                  <xref linkend="cache-setup-provider"/>
+                  for more details.
+                </para>
+              </para>
+            </listitem>
+          
+            <listitem>
+              <para>
+                <emphasis role="bold"><literal>cachingModels</literal> (required).</emphasis>
+                <para>
+                  Caching models for <literal>NameMatchCachingInterceptor</literal>.
+                  Please refer to the section
+                  <xref linkend="cachingInterceptor" endterm="cachingInterceptorPhrase"/>
+                  for more details.
+                </para>
+              </para>
+            </listitem>
+          
+            <listitem>
+              <para>
+                <emphasis role="bold"><literal>cachingListeners</literal> (required).</emphasis>
+                <para>
+                  Caching listeners of the internal caching interceptor.
+                </para>
               </para>
             </listitem>
           </itemizedlist>
-        </para>
-
-        <para>We are going to use EHCache as our cache provider:</para>
-
-        <programlisting>
-          1 &lt;bean id="cacheProviderFacade" class="..." /&gt;
-          2
-          3 &lt;property name="cacheManager" ref="cacheManager" /&gt; 4
-          5 &lt;!-- Cache profiles specified as a java.util.Properties
-          --&gt; 6 &lt;property name="cacheProfiles"&gt; 7 &lt;props&gt;
-          8 &lt;prop key="first"&gt;[cacheName=firstCache]&lt;/prop&gt;
-          9 &lt;prop
-          key="second"&gt;[cacheName=secondCache]&lt;/prop&gt; 10
-          &lt;/props&gt; 11 &lt;/property&gt; 12 &lt;/bean&gt;
-        </programlisting>
-
-        <para>
-          Now we need to set up the proxy factory,
-          <literal>CacheProxyFactoryBean</literal>
-          :
-        </para>
+        </para>  
 
         <para>
           <programlisting>
-            13 &lt;bean id="cacheable" 14
-            class="org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean"&gt;
-            15 &lt;property name="cacheProviderFacade"
-            ref="cacheProvider" /&gt; 16 &lt;property
-            name="cachingAttributes"&gt; 17 &lt;props&gt; 18 &lt;!-- We
-            are going to cache the return value of the methods which
-            names start with "get" --&gt; 19 &lt;prop
-            key="get*"&gt;[cacheProfileId=first]&lt;/prop&gt; 20
-            &lt;/props&gt; 21 &lt;/property&gt; 22 &lt;property
-            name="cacheFlushAttributes"&gt; 23 &lt;props&gt; 24 &lt;!--
-            We are going to flush the cache when the methods which names
-            start with "update" are executed --&gt; 25 &lt;prop
-            key="update*"&gt;[cacheProfileIds=first,second][flushBeforeExecution=true]&lt;/prop&gt;
-            26 &lt;/props&gt; 27 &lt;/property&gt; 28 &lt;property
-            name="target"&gt; 29 &lt;!-- The bean to proxy --&gt; 30
-            &lt;bean
-            class="org.springmodules.cache.integration.CacheableServiceImpl"&gt;
-            31 &lt;property name="names"&gt; 32 &lt;list&gt; 33
-            &lt;value&gt;James Gosling&lt;/value&gt; 34 &lt;/list&gt; 35
-            &lt;/property&gt; 36 &lt;/bean&gt; 37 &lt;/property&gt; 38
-            &lt;/bean&gt;
-          </programlisting>
+ 1 &lt;!-- Using a EHCache cache manager --&gt;
+ 2 &lt;bean id="cacheProviderFacade" class="..." /&gt;
+
+ 3 &lt;bean id="cacheableServiceTarget"
+ 4   class="org.springmodules.cache.integration.CacheableServiceImpl"&gt;
+ 5   &lt;property name="names"&gt;
+ 6     &lt;list&gt;
+ 7       &lt;value&gt;Luke Skywalker&lt;/value&gt;
+ 8       &lt;value&gt;Leia Organa&lt;/value&gt;
+ 9     &lt;/list&gt;
+10   &lt;/property&gt;
+11 &lt;/bean&gt;
+12
+13 &lt;bean id="cacheableService"
+14   class="org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean"&gt;
+15   &lt;property name="cacheProviderFacade" ref="cacheProviderFacade" /&gt;
+16   &lt;property name="cachingModels"&gt;
+17     &lt;props&gt;
+18       &lt;prop key="get*"&gt;cacheName=testCache&lt;/prop&gt;
+19     &lt;/props&gt;
+20   &lt;/property&gt;
+21   &lt;property name="flushingModels"&gt;
+22     &lt;props&gt;
+23       &lt;prop key="update*"&gt;cacheNames=testCache&lt;/prop&gt;
+24     &lt;/props&gt;
+25   &lt;/property&gt;
+26   &lt;property name="cachingListeners"&gt;
+27     &lt;list&gt;
+28       &lt;ref bean="cachingListener" /&gt;
+29     &lt;/list&gt;
+30   &lt;/property&gt;
+31   &lt;property name="target" ref="cacheableServiceTarget" /&gt;
+32 &lt;/bean&gt;</programlisting>
         </para>
 
         <para>
