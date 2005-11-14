@@ -432,149 +432,256 @@
         the different strategies for declarative caching services.
       </para>
       
-      <sect3>
+      <sect3 id="cachingAdvice">
         <title>Caching Advice.</title>
         <para>
-          Applies caching to the return value of advised methods. It first
+          A <phrase id="cachingAdvicePhrase">caching advice</phrase> applies 
+          caching to the return value of advised methods. It first
           checks that a value previously returned from a method call, with
           the same method arguments, is already stored in the cache. If a
           value is found, it will skip the method call and return the cached value. 
           On the other hand, if the advice cannot find a cached value, it will
-          proceed with the method call, store the return value in the cache 
-          and finally return such value.
+          proceed with the method call, store the return value of the call in 
+          the cache and finally return the new cached value.
         </para>
         
         <para>
-          Methods that do not have a return value (<literal>void</literal>) are 
+          Methods that do not have a return value 
+          (return value is <literal>void</literal>) are 
           ignored, even if they were registered for aspect weaving.
         </para>
       </sect3>
       
-      <sect3>
+      <sect3 id="cachingModels">
         <title>Caching Models.</title>
         <para>
           Caching models encapsulate the rules to be followed by the
           <emphasis>caching advice</emphasis> when accessing the cache
-          for object storage or retrieval.
+          for object storage or retrieval. The <emphasis>Caching Module</emphasis>
+          provides caching models for each of the supported cache providers:
+          <itemizedlist>
+            <listitem>
+              <para>
+                <literal>org.springmodules.cache.provider.ehcache.EhCacheCachingModel</literal> 
+                specifies the name of the cache to use.
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>org.springmodules.cache.provider.jboss.JbossCacheCachingModel</literal> 
+                  specifies the <emphasis>fully qualified name</emphasis> (FQN)
+                  of the node of the <literal>TreeCache</literal> to use.
+              </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>org.springmodules.cache.provider.jcs.JcsCachingModel</literal>
+                specifies the name of the cache and (optionally) the group to
+                use.
+              </para>
+            </listitem> 
+            <listitem>
+              <para>
+                <literal>org.springmodules.cache.provider.oscache.OsCacheCachingModel</literal>
+                specifies the names of the groups to use, the cron expression to
+                use to invalidate cache entries and the number of seconds that 
+                the object can stay in cache.  All these properties are optional.
+              </para>
+            </listitem>
+          </itemizedlist>
+        </para>
+        <para>
+          <emphasis>Caching advices</emphasis> can be configured to have
+          <phrase id="cachingModelPhrase">caching models</phrase> in a 
+          <literal>java.util.Map</literal> having
+          each entry defined using standard Spring configuration:
+          
+          <programlisting>
+&lt;-- property of some caching advice --&gt;
+&lt;property name=&quot;cachingModels&quot;&gt;
+  &lt;map&gt;
+    &lt;entry key=&quot;get*&quot;&gt;
+      &lt;bean class=&quot;org.springmodules.cache.provider.jcs.JcsCachingModel&quot;&gt;
+        &lt;property name=&quot;cacheName&quot; value=&quot;someCache&quot; /&gt;
+        &lt;property name=&quot;group&quot; value=&quot;someGroup&quot; /&gt;
+      &lt;/bean&gt;
+    &lt;/entry&gt;
+  &lt;/map&gt;
+&lt;/property&gt;</programlisting>
+
+          <emphasis>          
+            The type of caching model must match the chosen cache implementation:
+            the example above must use 
+            <ulink url="http://jakarta.apache.org/jcs/">Java Caching System (JCS)</ulink>
+            as the cache provider.                        
+          </emphasis>
+        </para>
+      
+        <para>
+          <emphasis>Caching advices</emphasis> can also have caching models
+          as <literal>java.util.Properties</literal> resulting in a less verbose
+          configuration:
+          
+          <programlisting>
+&lt;-- property of some caching advice --&gt;
+&lt;property name=&quot;cachingModels&quot;&gt;
+  &lt;props&gt;
+    &lt;prop key=&quot;get*&quot;&gt;cacheName=someCache;group=someGroup&lt;/prop&gt;
+  &lt;/props&gt;
+&lt;/property&gt;</programlisting>
+        </para>
+
+        <para>
+          The caching model has been defined as a String in the format
+          <emphasis>propertyName1=propertyValue1;propertyName2=propertyValue2</emphasis>
+          which the <emphasis>Caching Module</emphasis> will automatically 
+          convert into a caching model using a <literal>PropertyEditor</literal>
+          provided by the <literal>CacheProviderFacade</literal>. 
+        </para>
+      
+        <para>          
+          The key of each entry is different for each declarative caching 
+          service strategy. More details will be provided in further sections.
+        </para>
+      </sect3>
+
+      <sect3 id="cachingListeners">
+        <title>Caching Listeners.</title>
+        <para>
+            An implementation of the interface
+            <literal>org.springmodules.cache.interceptor.caching.CachingListener</literal>.
+            A listener is notified when an object is stored in
+            the cache. The <emphasis>Caching Module</emphasis>
+            does not provide any implementation of this interface.
+        </para>
+      </sect3>
+
+      <sect3 id="keyGenerator">
+        <title>Key Generator.</title>
+        <para>
+            An implementation of 
+            <literal>org.springmodules.cache.key.CacheKeyGenerator</literal>.
+            Generates the keys under which objects are stored in
+            the cache. Only one implementation is provided,
+            <literal>org.springmodules.cache.key.HashCodeCacheKeyGenerator</literal>,
+            which creates keys based on the hash code of the
+            object to store and a unique identifier.
+        </para>
+      </sect3>
+
+      <sect3 id="flushingAdvice">
+        <title>Flushing Advice.</title>        
+        <para>
+          A <phrase id="flushingAdvicePhrase">flushing advice</phrase> flushes 
+          one or more groups of the cache, or the whole cache (depending
+          on the cache provider) <emphasis>before</emphasis> or
+          <emphasis>after</emphasis> an advised method is executed.
         </para>
       </sect3>
       
-      <para>
-        <orderedlist>
-          <listitem>
-            <para>
-              <emphasis role="bold">Caching Interceptor.</emphasis>
+      <sect3 id="flushingModels">
+        <title>Flushing Models.</title>
+        <para>
+          Similar to <xref linkend="cachingModels" endterm="cachingModelPhrase" />.
+          Flushing models encapsulate the rules to be followed by the
+          <emphasis>flushing advice</emphasis> when accessing the cache
+          for invalidation or flushing. The <emphasis>Caching Module</emphasis>
+          provides flushing models for each of the supported cache providers:
+          <itemizedlist>
+            <listitem>
               <para>
-                Subclasses of the template 
-                <literal>org.springmodules.cache.interceptor.caching.AbstractCachingInterceptor</literal>
-                store in the cache the return value of advised methods.
-
-                <para>
-                  Common properties:
-                  <itemizedlist>
-                    <listitem>
-                      <para>
-                        <emphasis role="bold">
-                          <literal>cachingModels</literal> (required).
-                        </emphasis>
-                        <para>
-                          Caching Models encapsulate the rules that determine how objects 
-                          are stored in the cache. For more information about
-                          caching models please refer to <xref linkend="caching-models"/>.
-                        </para>
-                      </para>
-                    </listitem>
-                    <listitem>
-                      <para>
-                        <emphasis role="bold">
-                          <literal>cacheKeyGenerator</literal> (optional).
-                        </emphasis>
-                        <para>
-                          An implementation of 
-                          <literal>org.springmodules.cache.key.CacheKeyGenerator</literal>.
-                          Generates the keys under which objects are stored in
-                          the cache. If not set, the caching interceptor will
-                          use an instance of 
-                          <literal>org.springmodules.cache.key.HashCodeCacheKeyGenerator</literal>,
-                          which creates keys based on the hash code of the
-                          object to store and a unique identifier.
-                        </para>
-                      </para>
-                    </listitem>
-                    <listitem>
-                      <para>
-                        <emphasis role="bold">
-                          <literal>cachingListeners</literal> (optional).
-                        </emphasis>
-                        <para>
-                          An array of instances of the interface
-                          <literal>org.springmodules.cache.interceptor.caching.CachingListener</literal>.
-                          Each listener is notified when an object is stored in
-                          the cache. The <emphasis>Caching Module</emphasis>
-                          does not provide any implementation of this interface.
-                        </para>
-                      </para>
-                    </listitem>
-                  </itemizedlist>
-                </para>
-              </para>  
-            </para>
-          </listitem>
-
-          <listitem>
-            <para id="flushingInterceptor">
-              <emphasis role="bold">Flushing Interceptor.</emphasis>
+                <literal>org.springmodules.cache.provider.ehcache.EhCacheFlushingModel</literal> 
+                specifies which caches should be flushed.
+              </para>
+            </listitem>
+            <listitem>
               <para>
-                Subclasses of the template 
-                <literal>org.springmodules.cache.interceptor.flush.AbstractFlushingInterceptor</literal>
-                flush one or more regions of the cache, or the whole
-                cache (depending on the
-                cache provider) before or after executing advised methods.
-              
-                <para>
-                    Common properties:
-                    <itemizedlist>
-                      <listitem>
-                        <para>
-                          <emphasis role="bold">
-                            <literal>flushingModels</literal> (optional).
-                          </emphasis>
-                          <para>
-                            Flushing Models emcapsulate the rules that determine
-                            how the cache should be flushed. For more information about
-                            caching models please refer to <xref linkend="flushing-models"/>.
-                          </para>
-                        </para>
-                      </listitem>
-                    </itemizedlist>
-                </para>
+                <literal>org.springmodules.cache.provider.jboss.JbossCacheFlushingModel</literal> 
+                  specifies the FQN of the nodes to be removed from the 
+                  <literal>TreeCache</literal>.
               </para>
-            </para>
-          </listitem>
-        </orderedlist>
-      </para>
-
-      <para>
-        Both types of interceptors have the common property:
-        <itemizedlist>
-          <listitem>
-              <para id="cacheProviderFacade">
-                <emphasis role="bold">
-                  <literal id="cacheProviderFacadePhrase">cacheProviderFacade</literal> (required).
-                </emphasis>
-                <para>
-                  An implementation of 
-                  <literal>org.springmodules.cache.provider.CacheProviderFacade</literal>. 
-                  Necessary for accessing the cache manager.
-                  Please refer to
-                  <xref linkend="cache-setup-provider"/>
-                  for more details.
-                </para>
+            </listitem>
+            <listitem>
+              <para>
+                <literal>org.springmodules.cache.provider.jcs.JcsFlushingModel</literal>
+                specifies which groups in which caches should be flushed.
+                If the a cache is specified without groups, the whole cache is flushed.
               </para>
-          </listitem>
-        </itemizedlist>
-      </para>
+            </listitem> 
+            <listitem>
+              <para>
+                <literal>org.springmodules.cache.provider.oscache.OsCacheFlushingModel</literal>
+                specifies which groups should be flushed. If none is specified,
+                the whole cache is flushed.
+              </para>
+            </listitem>
+          </itemizedlist>
+        </para>
 
+        <para>
+          Like caching advices, <emphasis>flushing advices</emphasis> can be 
+          configured to have <phrase id="flushingModelPhrase">flushing models</phrase> in a 
+          <literal>java.util.Map</literal>:
+          
+          <programlisting>
+&lt;-- property of some Flushing advice --&gt;
+&lt;property name=&quot;flushingModels&quot;&gt;
+  &lt;map&gt;
+    &lt;entry key=&quot;update*&quot;&gt;
+      &lt;bean class=&quot;org.springmodules.cache.provider.jcs.JcsFlushingModel&quot;&gt;
+        &lt;property name=&quot;cacheStructs&quot;&gt;
+          &lt;list&gt;
+            &lt;bean class=&quot;org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct&quot;&gt;
+              &lt;property name=&quot;cacheName&quot; value=&quot;someCache&quot; /&gt;
+              &lt;property name=&quot;groups&quot; value=&quot;group1,group2&quot; /&gt;
+            &lt;/bean&gt;
+          &lt;/list&gt;
+        &lt;/property&gt;
+      &lt;/bean&gt;
+    &lt;/entry&gt;
+  &lt;/map&gt;
+&lt;/property&gt;</programlisting>
+
+          <emphasis>          
+            The type of flushing model must match the chosen cache implementation:
+            the example above must use 
+            <ulink url="http://jakarta.apache.org/jcs/">Java Caching System (JCS)</ulink>
+            as the cache provider.                        
+          </emphasis>
+        </para>
+      
+        <para>
+          <emphasis>Flushing advices</emphasis> can also have flushing models
+          as <literal>java.util.Properties</literal> resulting in a less verbose
+          configuration:
+          
+          <programlisting>
+&lt;-- property of some flushing advice --&gt;
+&lt;property name=&quot;flushingModels&quot;&gt;
+  &lt;props&gt;
+    &lt;prop key=&quot;update*&quot;&gt;cacheName=someCache;group=group1,group2&lt;/prop&gt;
+  &lt;/props&gt;
+&lt;/property&gt;</programlisting>
+        </para>
+
+        <para>
+          The flushing model has been defined as a String in the format
+          <emphasis>propertyName1=propertyValue1;propertyName2=propertyValue2</emphasis>
+          which the <emphasis>Caching Module</emphasis> will automatically 
+          convert into a flushing model using a <literal>PropertyEditor</literal>
+          provided by the <literal>CacheProviderFacade</literal>. 
+        </para>
+      
+        <para>          
+          The key of each entry is different for each declarative caching 
+          service strategy. More details will be provided in further sections.
+        </para>
+      </sect3>
+    </sect2>
+
+    <sect2>
+      <title>Strategies for Declarative Caching Services</title>
+      
       <para>
         The following sections describe the different strategies for declarative 
         caching services provided by the <emphasis>Caching Module</emphasis>.
@@ -620,8 +727,18 @@
         <title>CacheProxyFactoryBean</title>
 
         <para>
-          <literal>org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean</literal>
-          applies caching services to a single bean definition. It exposes the following properties.
+          A <literal>CacheProxyFactoryBean</literal>
+          applies caching services to a single bean definition, performing aspect weaving
+          using a 
+          <literal>NameMatchCachingInterceptor</literal>
+          as <emphasis><xref endterm="cachingAdvicePhrase" linkend="cachingAdvice" /></emphasis>
+          and a 
+          <literal>NameMatchFlushingInterceptor</literal>
+          as <emphasis><xref endterm="flushingAdvicePhrase" linkend="flushingAdvice"/></emphasis>.
+
+        </para>
+        <para>  
+          A <literal>CacheProxyFactoryBean</literal> exposes the following properties:
 
           <itemizedlist>
             <listitem>
@@ -654,7 +771,7 @@
                 <para>
                   Caching models for <literal>NameMatchCachingInterceptor</literal>.
                   Please refer to the section
-                  <xref linkend="cachingInterceptor" endterm="cachingInterceptorPhrase"/>
+                  <xref linkend="cachingAdvice" endterm="cachingAdvicePhrase"/>
                   for more details.
                 </para>
               </para>
