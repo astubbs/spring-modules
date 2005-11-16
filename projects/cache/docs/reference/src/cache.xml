@@ -690,26 +690,6 @@
       <!--  
         <listitem>
           <para>
-            <emphasis role="bold">Source-level metadata-driven Autoproxy.</emphasis>
-            Autoproxying is driven by metadata. This produces a similar
-            programming model to Microsoft's .Net
-            <literal>ServicedComponents</literal>. 
-            AOP proxies for caching services are created automatically for
-            the bean definition(s) containing source-level metadata. The
-            <emphasis>Caching Module</emphasis>
-            supports metadata provided by
-            <ulink
-              url="http://jakarta.apache.org/commons/attributes/">
-              Commons-Attributes</ulink>
-            and 
-            <ulink 
-              url="http://java.sun.com/j2se/1.5.0/docs/guide/language/annotations.html">
-            JDK 1.5+ Annotations</ulink>.
-          </para>
-        </listitem>
-
-        <listitem>
-          <para>
             <emphasis role="bold">
               Single
               <literal>MethodInterceptor</literal>
@@ -797,302 +777,352 @@
       </para>
     </sect2>
 
-      <sect2>
-        <title>Metadata-driven Autoproxy with Commons-Attributes</title>
-
-        <para>We are going to use JCS as our cache provider:</para>
-
-        <para>
-          <programlisting>
-            1 &lt;bean id="cacheProvider" 2
-            class="org.springmodules.cache.provider.jcs.JcsFacade"&gt; 3
-            &lt;property name="cacheManager" ref="cacheManager" /&gt; 4
-            5 &lt;!-- Cache profiles specified as a java.util.Properties
-            --&gt; 6 &lt;property name="cacheProfiles"&gt; 7
-            &lt;props&gt; 8 &lt;prop
-            key="first"&gt;[cacheName=firstCache][group=aGroup]&lt;/prop&gt;
-            9 &lt;prop
-            key="second"&gt;[cacheName=secondCache][group=anotherGroup]&lt;/prop&gt;
-            10 &lt;/props&gt; 11 &lt;/property&gt; 12 &lt;/bean&gt;
-          </programlisting>
-        </para>
-
-        <para>
-          <ulink
-            url="http://www.springframework.org/docs/reference/aop.html#aop-autoproxy">
-            Autoproxy
-          </ulink>
-          lets Spring "automagically" proxy bean definitions:
-        </para>
-
-        <programlisting>
-          &lt;bean id="autoproxy"
-          class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
-          /&gt;
-        </programlisting>
-
-        <para>
-          The metadata processor retrieves the source-level metadata
-          which specifies the methods of the bean definitions that
-          should be part of the caching services:
-        </para>
-
-        <programlisting>
-          &lt;bean id="attributes"
-          class="org.springframework.metadata.commons.CommonsAttributes"
-          /&gt;
-        </programlisting>
-
-        <para>
-          The caching advisor tells "autoproxy" to create proxies only
-          for the bean definitions containing source-level metadata for
-          caching:
-        </para>
-
-        <programlisting>
-          &lt;bean id="cachingAttributeSource"
-          class="org.springmodules.cache.interceptor.caching.MetadataCachingAttributeSource"&gt;
-          &lt;property name="attributes" ref="attributes" /&gt;
-          &lt;/bean&gt;
-
-          &lt;bean id="cachingInterceptor"
-          class="org.springmodules.cache.interceptor.caching.CachingInterceptor"&gt;
-          &lt;property name="cacheProviderFacade" ref="cacheProvider"
-          /&gt; &lt;property name="cachingAttributeSource"
-          ref="cachingAttributeSource" /&gt; &lt;/bean&gt;
-
-          &lt;bean id="cachingAttributeSourceAdvisor"
-          class="org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor"&gt;
-          &lt;constructor-arg ref="cachingInterceptor" /&gt;
-          &lt;/bean&gt;
-        </programlisting>
-
-        <para>
-          The cache-flush advisor tells "autoproxy" to create proxies
-          only for the bean definitions containing source-level metadata
-          for flushing the cache:
-        </para>
-
-        <programlisting>
-          &lt;bean id="cacheFlushAttributeSource"
-          class="org.springmodules.cache.interceptor.flush.MetadataCacheFlushAttributeSource"&gt;
-          &lt;property name="attributes" ref="attributes" /&gt;
-          &lt;/bean&gt;
-
-          &lt;bean id="cacheFlushInterceptor"
-          class="org.springmodules.cache.interceptor.flush.CacheFlushInterceptor"&gt;
-          &lt;property name="cacheProviderFacade" ref="cacheProvider"
-          /&gt; &lt;property name="cacheFlushAttributeSource"
-          ref="cacheFlushAttributeSource" /&gt; &lt;/bean&gt;
-
-          &lt;bean id="cacheFlushAttributeSourceAdvisor"
-          class="org.springmodules.cache.interceptor.flush.CacheFlushAttributeSourceAdvisor"&gt;
-          &lt;constructor-arg ref="cacheFlushInterceptor" /&gt;
-          &lt;/bean&gt;
-        </programlisting>
-
-        <para>Now we define the bean(s) to proxy:</para>
-
-        <programlisting>
-          47 &lt;bean id="cacheable" 48
-          class="org.springmodules.cache.integration.CacheableServiceImpl"&gt;
-          49 &lt;property name="names"&gt; 50 &lt;list&gt; 51
-          &lt;value&gt;James Gosling&lt;/value&gt; 52 &lt;/list&gt; 53
-          &lt;/property&gt; 54 &lt;/bean&gt;
-        </programlisting>
-
-        <para>
-          The defined beans must have source-level metadata attributes
-          for caching and flushing the cache in order to be proxied. The
-          following is the source code of the bean defined on line 47:
-        </para>
-
-        <programlisting>
-          100 /** 101 * @see Cacheable#getName(int) 102 * 103 *
-          @@org.springmodules.cache.interceptor.caching.Cached(cacheProfileId="first")
-          104 */ 105 public String getName(int index) { 106 return
-          (String) this.names.get(index); 107 } 108 109 /** 110 * @see
-          Cacheable#getName(int) 111 * 112 *
-          @@org.springmodules.cache.interceptor.flush.FlushCache(cacheProfileIds="first,second",flushBeforeExecution="true")
-          113 */ 114 public void updateName(int index, String name) {
-          115 this.names.set(index, name); 116 }
-        </programlisting>
-
-        <para>
-          On line 103 of the Java source we are telling the caching
-          advisor to store in the group "aGroup" of the cache
-          "firstCache" the return value of the method "
-          <literal>getName(int)</literal>
-          ." The id "first" is a reference to the cache profile defined
-          on line 8 of the Spring configuration file.
-        </para>
-
-        <para>
-          On line 112 of the Java source we are telling the cache-flush
-          advisor to flush the entries in the group "aGroup" of the
-          cache "firstCache" and the entries of the group "anotherGroup"
-          of the cache "secondCache"
-          <emphasis>after</emphasis>
-          the method "
-          <literal>updateName(int, String)</literal>
-          " is executed. The ids "first" and "second" are references to
-          the cache profiles defined on lines 8 and 9 of the Spring
-          configuration file respectively.
-        </para>
-
-      </sect2>
-
-      <sect2>
-        <title>Reusing a single MethodInterceptor</title>
-
-        <para>We are going to use OSCache as our cache provider:</para>
-
-        <para>
-          <programlisting>
-            1 &lt;bean id="cacheProvider" 2
-            class="org.springmodules.cache.provider.oscache.OsCacheFacade"&gt;
-            3 &lt;property name="cacheManager" ref="cacheManager" /&gt;
-            4 5 &lt;!-- Cache profiles specified as a
-            java.util.Properties --&gt; 6 &lt;property
-            name="cacheProfiles"&gt; 7 &lt;props&gt; 8 &lt;prop
-            key="first"&gt;[cronExpression=* * * *
-            *][groups=firstGroup][refreshPeriod=600]&lt;/prop&gt; 9
-            &lt;prop key="second"&gt;[groups=secondGroup]&lt;/prop&gt;
-            10 &lt;/props&gt; 11 &lt;/property&gt; 12 &lt;/bean&gt;
-          </programlisting>
-        </para>
-
-        <para>
-          We need to register custom
-          <literal>PropertyEditor</literal>
-          s in Spring:
-        </para>
-
-        <programlisting>
-          13 &lt;bean 14
-          class="org.springframework.beans.factory.config.CustomEditorConfigurer"&gt;
-          15 &lt;property name="customEditors"&gt; 16 &lt;map&gt; 17
-          &lt;entry 18
-          key="org.springmodules.cache.interceptor.caching.CachingAttributeSource"
-          &gt; 19 &lt;bean 20
-          class="org.springmodules.cache.interceptor.caching.CachingAttributeSourceEditor"
-          /&gt; 21 &lt;/entry&gt; 22 &lt;entry 23
-          key="org.springmodules.cache.interceptor.caching.CacheFlushAttributeSource"
-          &gt; 24 &lt;bean 25
-          class="org.springmodules.cache.interceptor.caching.CacheFlushAttributeSourceEditor"
-          /&gt; 26 &lt;/entry&gt; 27 &lt;/map&gt; 28 &lt;/property&gt;
-          29 &lt;/bean&gt;
-        </programlisting>
-
-        <para>
-          Now it is possible to use a single
-          <literal>CachingInterceptor</literal>
-          and
-          <literal>CacheFlushInterceptor</literal>
-          to many beans and have a full control of the methods to
-          advise:
-        </para>
-
-        <programlisting>
-          30 &lt;bean id="cachingInterceptor" 31
-          class="org.springmodules.cache.interceptor.caching.CachingInterceptor"&gt;
-          32 &lt;property name="cacheProviderFacade" ref="cacheProvider"
-          /&gt; 33 &lt;property name="cachingAttributeSource"&gt; 34
-          org.springmodules.cache.integration.CacheableServiceImpl.get*=[cacheProfileId=first]
-          35 &lt;/property&gt; 36 &lt;/bean&gt; 37 38 &lt;bean
-          id="cacheFlushInterceptor" 39
-          class="org.springmodules.cache.interceptor.caching.CacheFlushInterceptor"&gt;
-          40 &lt;property name="cacheProviderFacade" ref="cacheProvider"
-          /&gt; 41 &lt;property name="cacheFlushAttributeSource"&gt; 42
-          org.springmodules.cache.integration.CacheableServiceImpl.update*=[cacheProfileIds=first,second][flushBeforeExecution=true]
-          43 &lt;/property&gt; 44 &lt;/bean&gt;
-        </programlisting>
-
-        <para>
-          On line 34 we are telling the caching interceptor to store in
-          the group "firstGroup" (with the cron expression "* * * * *"
-          and the refresh period of 600 seconds) the return value of the
-          methods that start with "get" of a bean of class
-          <literal>
-            org.springmodules.cache.integration.CacheableServiceImpl
-          </literal>
-          . The id "first" is a reference to the cache profile defined
-          on line 8.
-        </para>
-
-        <para>
-          On line 42 we are telling the cache-flush interceptor to flush
-          the groups "firstGroup" and "secondGroup"
-          <emphasis>after</emphasis>
-          the methods that start with "update" of a bean of class
-          <literal>
-            org.springmodules.cache.integration.CacheableServiceImpl
-          </literal>
-          are executed. The ids "first" and "second" are references to
-          the cache profiles defined on lines 8 and 9 respectively.
-        </para>
-
-        <para>Now we need to proxy the bean(s):</para>
-
-        <programlisting>
-          &lt;!-- Auto proxy --&gt; &lt;bean
-          class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator"&gt;
-          &lt;property name="beanNames" value="cacheable" / &lt;property
-          name="interceptorNames"&gt; &lt;list&gt;
-          &lt;value&gt;cachingInterceptor&lt;/value&gt;
-          &lt;value&gt;cacheFlushInterceptor&lt;/value&gt; &lt;/list&gt;
-          &lt;/property&gt; &lt;/bean&gt;
-
-          &lt;!-- Bean to proxy --&gt; &lt;bean id="cacheable"
-          class="org.springmodules.cache.integration.CacheableServiceImpl"&gt;
-          &lt;property name="names"&gt; &lt;list&gt; &lt;value&gt;James
-          Gosling&lt;/value&gt; &lt;/list&gt; &lt;/property&gt;
-          &lt;/bean&gt;
-        </programlisting>
-      </sect2>
-    </sect1>
-
-    <sect1>
-      <title>Programmatic Use</title>
-
-      <para>We are going to use EHCache as our cache provider:</para>
-
-      <programlisting>
-        1 &lt;bean id="cacheProvider" 2
-        class="org.springmodules.cache.provider.ehcache.EhCacheFacade"&gt;
-        3 &lt;property name="cacheManager" ref="cacheManager" /&gt; 4 5
-        &lt;!-- Cache profiles specified as a java.util.Properties
-        --&gt; 6 &lt;property name="cacheProfiles"&gt; 7 &lt;props&gt; 8
-        &lt;prop key="first"&gt;[cacheName=firstCache]&lt;/prop&gt; 9
-        &lt;prop key="second"&gt;[cacheName=secondCache]&lt;/prop&gt; 10
-        &lt;/props&gt; 11 &lt;/property&gt; 12 &lt;/bean&gt;
-      </programlisting>
+    <sect2>
+      <title>Source-level Metadata-driven Autoproxy</title>
 
       <para>
-        Obtain a reference to the cache provider (the bean
-        "cacheProvider" in our example), which should be an
-        implementation of the interface
-        <literal>
-          org.springmodules.cache.provider.CacheProviderFacade
-        </literal>
-        . This interface exposes the following methods:
+        Autoproxying is driven by metadata. This produces a similar
+        programming model to Microsoft's .Net
+        <literal>ServicedComponents</literal>. 
+        AOP proxies for caching services are created automatically for
+        the beans containing source-level, caching metadata attributes. The
+        <emphasis>Caching Module</emphasis>
+        supports metadata provided by
+        <ulink
+          url="http://jakarta.apache.org/commons/attributes/">
+          Commons-Attributes</ulink>
+        and 
+        <ulink 
+          url="http://java.sun.com/j2se/1.5.0/docs/guide/language/annotations.html">
+        JDK 1.5+ Annotations</ulink>. Both approaches are very flexible, because
+        metadata attributes are restricted to describe <emphasis>whether</emphasis>
+        caching services should be applied instead of describing <emphasis>how</emphasis>
+        caching should occur. The <emphasis>how</emphasis> is described in the
+        Spring configuration file.
+     </para>   
+
+     <para>   
+        Setting up
+        <emphasis><ulink
+          url="http://www.springframework.org/docs/reference/aop.html#aop-autoproxy">
+          autoproxy</ulink></emphasis>
+        is quite simple:
+
+        <programlisting>
+&lt;bean id=&quot;autoproxy&quot;
+  class=&quot;org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator&quot; /&gt;</programlisting>
       </para>
 
+      <sect3>
+        <title>Jakarta Commons-Attributes</title>
+        
+        <para>
+          The attributes 
+          <literal>org.springmodules.cache.interceptor.caching.Cached</literal>
+          and
+          <literal>org.springmodules.cache.interceptor.flush.FlushCache</literal>
+          are used to indicate that an interface, interface method, class, or 
+          class method should be target for caching services.
+          
+          <programlisting>
+public class CacheableServiceImpl implements CacheableService {
+
+  /**
+   * @@org.springmodules.cache.interceptor.caching.Cached(modelId="testCaching")
+   */
+  public final String getName(int index) {
+    // some implementation
+  }
+
+  /**
+   * @@org.springmodules.cache.interceptor.flush.FlushCache(modelId="testFlushing")
+   */
+  public final void updateName(int index, String name) {
+    // some implementation
+  }
+}</programlisting>
+        </para>
+        
+        <para>
+          Now we need to tell Spring to apply caching services to the beans 
+          having Commons-Attributes metadata:
+          
+          <programlisting>
+&lt;bean id=&quot;attributes&quot;
+  class=&quot;org.springframework.metadata.commons.CommonsAttributes&quot; /&gt;
+
+&lt;bean id="cachingInterceptor"
+  class="org.springmodules.cache.interceptor.caching.MetadataCachingInterceptor"&gt;
+  &lt;property name="attributes" ref="attributes" /&gt;
+  &lt;property name="cacheProviderFacade" ref="cacheProviderFacade" /&gt;
+  &lt;property name="cachingListeners"&gt;
+    &lt;list&gt;
+      &lt;ref bean="cachingListener" /&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+  &lt;property name="cachingModels"&gt;
+    &lt;props&gt;
+      &lt;prop key="testCaching"&gt;cacheName=testCache&lt;/prop&gt;
+    &lt;/props&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id="cachingAttributeSourceAdvisor"
+  class="org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor"&gt;
+  &lt;constructor-arg ref="cachingInterceptor" /&gt;
+&lt;/bean&gt;
+
+&lt;bean id="flushingInterceptor"
+  class="org.springmodules.cache.interceptor.flush.MetadataFlushingInterceptor"&gt;
+  &lt;property name="attributes" ref="attributes" /&gt;
+  &lt;property name="cacheProviderFacade" ref="cacheProviderFacade" /&gt;
+  &lt;property name="flushingModels"&gt;
+    &lt;props&gt;
+      &lt;prop key="testFlushing"&gt;cacheNames=testCache&lt;/prop&gt;
+    &lt;/props&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id="flushingAttributeSourceAdvisor"
+  class="org.springmodules.cache.interceptor.flush.FlushingAttributeSourceAdvisor"&gt;
+  &lt;constructor-arg ref="flushingInterceptor" /&gt;
+&lt;/bean&gt;
+
+&lt;!-- Set up the objects to apply caching to --&gt;
+&lt;bean id="cacheableService"
+  class="org.springmodules.cache.integration.CacheableServiceImpl"&gt;
+  &lt;property name="names"&gt;
+    &lt;list&gt;
+      &lt;value&gt;Luke Skywalker&lt;/value&gt;
+      &lt;value&gt;Leia Organa&lt;/value&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</programlisting>  
+        </para>
+      
+        <para>
+          The property <literal>modelId</literal> of the metadata attribute 
+          <literal>Cached</literal> should match the id of a caching model
+          configured in the caching advice (in our example the bean with id
+          <emphasis>cachingInterceptor</emphasis>.) This way the caching advice
+          will know which caching model should use and how caching should be
+          applied. In the above example, the caching advice will
+          store in the EHCache <emphasis>testCache</emphasis> the return value
+          of the method <literal>getName</literal>.
+        </para>
+        
+        <para>
+          The same matching mechanism is applied to flushing models. The 
+          property <literal>modelId</literal> of the metadata attribute
+          <literal>FlushCache</literal> shoule match the id of a flushing model
+          configured in the flushing advice (the bean with id <emphasis>flushingInterceptor</emphasis>.)
+          The flushing advice will know which flushing model to use. In the
+          above example, the EHCache <emphasis>testCache</emphasis> will be
+          flushed after executing the method <literal>updateName</literal>.
+        </para>
+        
+        <para>
+          <emphasis>Usage of Commons-Attributes requires an 
+          extra compilation step which generates the code necessary to
+          access metadata attributes. Please refer to its <ulink
+          url="http://jakarta.apache.org/commons/attributes/">
+          documentation</ulink> for more details.</emphasis>
+        </para>
+      </sect3>
+
+      <sect3>
+        <title>JDK 1.5+ Annotations</title>
+        
+        <para>Source-level metadata attributes can be declared using
+        JDK 1.5+ Annotations:
+          <programlisting>
+public class TigerCacheableService implements CacheableService {
+
+  @Cacheable(modelId = "testCaching")
+  public final String getName(int index) {
+    // some implementation.
+  }
+
+  @CacheFlush(modelId = "testFlushing")
+  public final void updateName(int index, String name) {
+    // some implementation.
+  }
+}</programlisting>
+        </para>
+
+        <para>
+          The annotations <literal>org.springmodules.cache.annotations.Cacheable</literal>
+          and <literal>org.springmodules.cache.annotations.CacheFlush</literal> work
+          exactly the same as their Commons-Attributes counterparts. Configuration
+          in the Spring context is also very similar:
+          
+          <programlisting>
+&lt;bean id=&quot;cachingAttributeSource&quot;
+  class=&quot;org.springmodules.cache.annotations.AnnotationCachingAttributeSource&quot;&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;cachingInterceptor&quot;
+  class=&quot;org.springmodules.cache.interceptor.caching.MetadataCachingInterceptor&quot;&gt;
+  &lt;property name=&quot;cacheProviderFacade&quot; ref=&quot;cacheProviderFacade&quot; /&gt;
+  &lt;property name=&quot;cachingAttributeSource&quot; ref=&quot;cachingAttributeSource&quot; /&gt;
+  &lt;property name=&quot;cachingListeners&quot;&gt;
+    &lt;list&gt;
+      &lt;ref bean=&quot;cachingListener&quot; /&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+  &lt;property name=&quot;cachingModels&quot;&gt;
+    &lt;props&gt;
+      &lt;prop key=&quot;testCaching&quot;&gt;cacheName=testCache&lt;/prop&gt;
+    &lt;/props&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;cachingAttributeSourceAdvisor&quot;
+  class=&quot;org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor&quot;&gt;
+  &lt;constructor-arg ref=&quot;cachingInterceptor&quot; /&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;flushingAttributeSource&quot;
+  class=&quot;org.springmodules.cache.annotations.AnnotationFlushingAttributeSource&quot;&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;flushingInterceptor&quot;
+  class=&quot;org.springmodules.cache.interceptor.flush.MetadataFlushingInterceptor&quot;&gt;
+  &lt;property name=&quot;cacheProviderFacade&quot; ref=&quot;cacheProviderFacade&quot; /&gt;
+  &lt;property name=&quot;flushingAttributeSource&quot; ref=&quot;flushingAttributeSource&quot; /&gt;
+  &lt;property name=&quot;flushingModels&quot;&gt;
+    &lt;props&gt;
+      &lt;prop key=&quot;testFlushing&quot;&gt;cacheNames=testCache&lt;/prop&gt;
+    &lt;/props&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;flushingAttributeSourceAdvisor&quot;
+  class=&quot;org.springmodules.cache.interceptor.flush.FlushingAttributeSourceAdvisor&quot;&gt;
+  &lt;constructor-arg ref=&quot;flushingInterceptor&quot; /&gt;
+&lt;/bean&gt; 
+
+&lt;!-- Set up the objects to apply caching to --&gt;
+&lt;bean id=&quot;cacheableService&quot;
+  class=&quot;org.springmodules.cache.annotations.TigerCacheableService&quot;&gt;
+  &lt;property name=&quot;names&quot;&gt;
+    &lt;list&gt;
+      &lt;value&gt;Luke Skywalker&lt;/value&gt;
+      &lt;value&gt;Leia Organa&lt;/value&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+          </programlisting>
+        </para>        
+        
+        <para>
+          <emphasis>
+            By using JDK 1.5+ Annotations, we don't need the extra compilation
+            step (required by Commons-Attributes.) The only downside is we can
+            not use Annotations with JDK 1.4.
+          </emphasis>
+        </para>
+      </sect3>
+    </sect2>
+
+    <sect2>
+      <title>BeanNameAutoProxyCreator</title>
+      
+      <para>
+        <programlisting>
+&lt;bean id=&quot;cachingInterceptor&quot;
+  class=&quot;org.springmodules.cache.interceptor.caching.MethodMapCachingInterceptor&quot;&gt;
+  &lt;property name=&quot;cacheProviderFacade&quot; ref=&quot;cacheProviderFacade&quot; /&gt;
+  &lt;property name=&quot;cachingListeners&quot;&gt;
+    &lt;list&gt;
+      &lt;ref bean=&quot;cachingListener&quot; /&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+  &lt;property name=&quot;cachingModels&quot;&gt;
+    &lt;props&gt;
+      &lt;prop key=&quot;org.springmodules.cache.integration.CacheableService.get*&quot;&gt;cacheName=testCache&lt;/prop&gt;
+    &lt;/props&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;flushingInterceptor&quot;
+  class=&quot;org.springmodules.cache.interceptor.flush.MethodMapFlushingInterceptor&quot;&gt;
+  &lt;property name=&quot;cacheProviderFacade&quot; ref=&quot;cacheProviderFacade&quot; /&gt;
+  &lt;property name=&quot;flushingModels&quot;&gt;
+    &lt;props&gt;
+      &lt;prop key=&quot;org.springmodules.cache.integration.CacheableService.update*&quot;&gt;cacheNames=testCache&lt;/prop&gt;
+    &lt;/props&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean
+  class=&quot;org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator&quot;&gt;
+  &lt;property name=&quot;beanNames&quot;&gt;
+    &lt;list&gt;
+      &lt;idref local=&quot;cacheableService&quot;/&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+  &lt;property name=&quot;interceptorNames&quot;&gt;
+    &lt;list&gt;
+      &lt;value&gt;cachingInterceptor&lt;/value&gt;
+      &lt;value&gt;flushingInterceptor&lt;/value&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id=&quot;cacheableService&quot;
+  class=&quot;org.springmodules.cache.integration.CacheableServiceImpl&quot;&gt;
+  &lt;property name=&quot;names&quot;&gt;
+    &lt;list&gt;
+      &lt;value&gt;Luke Skywalker&lt;/value&gt;
+      &lt;value&gt;Leia Organa&lt;/value&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+      </para>
+      
+      <para>
+        Assuming that we already have a <literal>CacheProviderFacade</literal> 
+        instance in our ApplicationContext, the first thing we need to do is 
+        create the <emphasis>caching advice</emphasis>
+        <literal>MethodMapCachingInterceptor</literal> and the 
+        <emphasis>flushing advice</emphasis> 
+        <literal>MethodMapFlushingInterceptor</literal>> to use.
+        The advices decide which methods to intercept matching them using
+        the fully qualified name of the class with the name of the name (which accepts 
+        wildcards.)
+      </para>
+      <para>
+        Once we have the advices, we feed them to a 
+        <literal>BeanNameAutoProxyCreator</literal> along with the
+        names of the beans in the ApplicationContext we want to apply
+        caching services to.
+      </para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Programmatic Use</title>
+  
+    <para>
+      First, we need to configure a       
+      <literal>org.springmodules.cache.provider.CacheProviderFacade</literal>
+      in the Spring ApplicationContext (please refer to <xref linkend="cache-setup-provider"/> for more details.)
+      Then we need to obtain a reference to it and call any of this methods from
+      our Java code:
+  
       <programlisting>
-        void cancelCacheUpdate(Serializable cacheKey);
+void cancelCacheUpdate(Serializable key) throws CacheException;
 
-        void flushCache(String[] cacheProfileIds);
+void flushCache(FlushingModel model) throws CacheException;
 
-        Object getFromCache(Serializable cacheKey, String
-        cacheProfileId) throws EntryRetrievalException;
+Object getFromCache(Serializable key, CachingModel model) throws CacheException;
 
-        boolean isFailQuietlyEnabled();
+boolean isFailQuietlyEnabled();
 
-        void putInCache(Serializable cacheKey, String cacheProfileId,
-        Object objectToCache);
+void putInCache(Serializable key, CachingModel model, Object obj) throws CacheException;
 
-        void removeFromCache(Serializable cacheKey, String
-        cacheProfileId);
-      </programlisting>
-    </sect1>
+void removeFromCache(Serializable key, CachingModel model) throws CacheException;</programlisting>
+    </para>
+  </sect1>
 </chapter>
