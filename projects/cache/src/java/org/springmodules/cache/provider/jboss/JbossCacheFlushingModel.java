@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractFlushingModel;
 import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.HashCodeBuilder;
 import org.springmodules.util.Strings;
 
 /**
@@ -75,7 +76,7 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + ArrayUtils.hashCode(nodes);
+    hash = multiplier * hash + HashCodeBuilder.hashCode(nodes);
     return hash;
   }
 

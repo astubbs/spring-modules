@@ -48,10 +48,6 @@ public abstract class HashCodeBuilder {
     return obj.hashCode();
   }
 
-  private static boolean isMap(Object obj) {
-    return obj instanceof Map;
-  }
-
   private static boolean isNull(Object obj) {
     return obj == null;
   }
@@ -92,12 +88,33 @@ public abstract class HashCodeBuilder {
       return 0;
     }
 
-    if (isMap(obj)) {
+    if (obj instanceof Map) {
       return reflectionHashCode((Map) obj);
     }
 
     return org.apache.commons.lang.builder.HashCodeBuilder
         .reflectionHashCode(obj);
+  }
+
+  public static int hashCode(Object[] array) {
+    if (isNull(array)) {
+      return 0;
+    }
+
+    int hash = INITIAL_HASH;
+
+    int length = array.length;
+    if (length > 0) {
+      for (int i = 0; i < length; i++) {
+        Object obj = array[i];
+        hash = MULTIPLIER * hash + (obj != null ? obj.hashCode() : 0);
+      }
+
+    } else {
+      hash = MULTIPLIER * hash;
+    }
+
+    return hash;
   }
 
 }

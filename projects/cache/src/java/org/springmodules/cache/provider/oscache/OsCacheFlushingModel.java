@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractFlushingModel;
 import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.HashCodeBuilder;
 import org.springmodules.util.Strings;
 
 /**
@@ -43,12 +44,12 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
   public OsCacheFlushingModel() {
     super();
   }
-  
+
   public OsCacheFlushingModel(String csvGroups) {
     this();
     setGroups(csvGroups);
   }
-  
+
   public OsCacheFlushingModel(String[] groups) {
     this();
     setGroups(groups);
@@ -75,7 +76,7 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + ArrayUtils.hashCode(groups);
+    hash = multiplier * hash + HashCodeBuilder.hashCode(groups);
     return hash;
   }
 

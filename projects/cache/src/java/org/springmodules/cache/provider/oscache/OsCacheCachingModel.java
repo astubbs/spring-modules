@@ -23,6 +23,7 @@ import java.util.Arrays;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.HashCodeBuilder;
 import org.springmodules.util.Strings;
 
 /**
@@ -129,7 +130,7 @@ public class OsCacheCachingModel implements CachingModel {
     int hash = 17;
     hash = multiplier * hash
         + (cronExpression != null ? cronExpression.hashCode() : 0);
-    hash = multiplier * hash + ArrayUtils.hashCode(groups);
+    hash = multiplier * hash + HashCodeBuilder.hashCode(groups);
     hash = multiplier * hash
         + (refreshPeriod != null ? refreshPeriod.hashCode() : 0);
     return hash;

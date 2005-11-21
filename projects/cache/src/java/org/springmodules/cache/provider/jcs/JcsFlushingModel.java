@@ -23,6 +23,7 @@ import java.util.Arrays;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractFlushingModel;
 import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.HashCodeBuilder;
 import org.springmodules.util.Strings;
 
 /**
@@ -92,7 +93,7 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
       int multiplier = 31;
       int hash = 7;
       hash = multiplier * hash + (cacheName != null ? cacheName.hashCode() : 0);
-      hash = multiplier * hash + ArrayUtils.hashCode(groups);
+      hash = multiplier * hash + HashCodeBuilder.hashCode(groups);
       return hash;
     }
 
@@ -162,7 +163,7 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + ArrayUtils.hashCode(cacheStructs);
+    hash = multiplier * hash + HashCodeBuilder.hashCode(cacheStructs);
     return hash;
   }
 
