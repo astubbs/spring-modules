@@ -162,7 +162,7 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     onAfterPropertiesSet();
   }
 
-  protected final CacheKeyGenerator getCacheKeyGenerator() {
+  public final CacheKeyGenerator getCacheKeyGenerator() {
     return cacheKeyGenerator;
   }
 

@@ -39,6 +39,8 @@ import org.springmodules.cache.interceptor.caching.CachingModelSourceAdvisor;
 import org.springmodules.cache.interceptor.caching.NameMatchCachingInterceptor;
 import org.springmodules.cache.interceptor.flush.FlushingModelSourceAdvisor;
 import org.springmodules.cache.interceptor.flush.NameMatchFlushingInterceptor;
+import org.springmodules.cache.key.CacheKeyGenerator;
+import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
 import org.springmodules.cache.mock.MockCachingModel;
 import org.springmodules.cache.mock.MockFlushingModel;
 import org.springmodules.cache.provider.CacheModelValidator;
@@ -415,6 +417,14 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
 
     assertEquals(expectedProxyInterfaces.length, actualProxyInterfaces.length);
     assertEquals(expectedProxyInterfaces[0], actualProxyInterfaces[0]);
+  }
+
+  public void testSetCacheKeyGenerator() {
+    CacheKeyGenerator keyGenerator = new HashCodeCacheKeyGenerator();
+    factoryBean.setCacheKeyGenerator(keyGenerator);
+
+    assertSame(keyGenerator, factoryBean.getCachingInterceptor()
+        .getCacheKeyGenerator());
   }
 
   private void verifyMocks() {

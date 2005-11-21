@@ -34,6 +34,7 @@ import org.springmodules.cache.interceptor.caching.CachingModelSourceAdvisor;
 import org.springmodules.cache.interceptor.caching.NameMatchCachingInterceptor;
 import org.springmodules.cache.interceptor.flush.FlushingModelSourceAdvisor;
 import org.springmodules.cache.interceptor.flush.NameMatchFlushingInterceptor;
+import org.springmodules.cache.key.CacheKeyGenerator;
 import org.springmodules.cache.provider.CacheProviderFacade;
 
 /**
@@ -187,6 +188,10 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    */
   public boolean isSingleton() {
     return true;
+  }
+
+  public void setCacheKeyGenerator(CacheKeyGenerator cacheKeyGenerator) {
+    cachingInterceptor.setCacheKeyGenerator(cacheKeyGenerator);
   }
 
   /**
