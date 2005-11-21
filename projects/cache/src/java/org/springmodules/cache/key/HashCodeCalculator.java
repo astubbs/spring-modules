@@ -28,13 +28,15 @@ package org.springmodules.cache.key;
  */
 public final class HashCodeCalculator {
 
+  private static final int INITIAL_HASH = 17;
+
   /**
    * Prime number used as multiplier.
    */
   private static final int MULTIPLIER = 37;
 
   /**
-   * Checksum to build.
+   * Ensures the combination hashCode/checkSum is unique.
    */
   private long checkSum;
 
@@ -52,7 +54,7 @@ public final class HashCodeCalculator {
 
   public HashCodeCalculator() {
     super();
-    hashCode = 17;
+    hashCode = INITIAL_HASH;
   }
 
   /**
@@ -63,23 +65,18 @@ public final class HashCodeCalculator {
    *          the specified value.
    */
   public void append(int value) {
-
-    int valueToAppend = value;
-
     count++;
-    valueToAppend *= count;
+    int valueToAppend = count * value;
 
     hashCode = MULTIPLIER * hashCode + (valueToAppend ^ (valueToAppend >>> 32));
-
     checkSum += valueToAppend;
   }
 
-  public final long getCheckSum() {
+  public long getCheckSum() {
     return checkSum;
   }
 
-  public final int getHashCode() {
+  public int getHashCode() {
     return hashCode;
   }
-
 }

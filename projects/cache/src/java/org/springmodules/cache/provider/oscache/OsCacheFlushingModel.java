@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractFlushingModel;
 import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -87,7 +88,7 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
   }
 
   public void setGroups(String[] newGroups) {
-    groups = ArrayUtils.removeDuplicates(newGroups);
+    groups = Strings.removeDuplicates(newGroups);
   }
 
   public String toString() {

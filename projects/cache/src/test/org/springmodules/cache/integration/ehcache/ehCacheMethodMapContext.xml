@@ -30,7 +30,11 @@
 
   <bean
     class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
-    <property name="beanNames" value="cacheableService" />
+    <property name="beanNames">
+      <list>
+        <idref local="cacheableService"/>
+      </list>
+    </property>
     <property name="interceptorNames">
       <list>
         <value>cachingInterceptor</value>

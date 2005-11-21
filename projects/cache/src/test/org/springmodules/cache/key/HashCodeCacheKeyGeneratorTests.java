@@ -20,6 +20,8 @@ package org.springmodules.cache.key;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -30,29 +32,6 @@ import java.lang.reflect.Method;
  */
 public final class HashCodeCacheKeyGeneratorTests extends
     AbstractCacheKeyGeneratorTests {
-
-  private class Argument {
-
-    private String name;
-
-    public String getName() {
-      return name;
-    }
-
-    public int hashCode() {
-      return 10;
-    }
-
-    public void setName(String newName) {
-      name = newName;
-    }
-  }
-
-  /**
-   * Object used as argument of the method
-   * <code>{@link HashCodeCacheKeyGenerator#getMethodArgumentHashCode(Object)}</code>.
-   */
-  private Argument argument;
 
   private HashCodeCacheKeyGenerator keyGenerator;
 
@@ -69,10 +48,6 @@ public final class HashCodeCacheKeyGeneratorTests extends
    */
   protected CacheKeyGenerator getCacheKeyGenerator() {
     return keyGenerator;
-  }
-
-  private void setUpArgument() {
-    argument = new Argument();
   }
 
   /**
@@ -101,46 +76,29 @@ public final class HashCodeCacheKeyGeneratorTests extends
     assertEquals(expected, actual);
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link HashCodeCacheKeyGenerator#getMethodArgumentHashCode(Object)}</code>
-   * generates the key for the given method argument if the flag
-   * 'generateArgumentHashCode' is set to <code>true</code>.
-   */
-  public void testGetMethodArgumentHashCodeGeneratingHashCode() {
-    setUpArgument();
+  public void testGenerateKeyWithTwoMapsHavingDifferentEntriesAndGeneratingArgumentHashCode()
+      throws Exception {
     keyGenerator.setGenerateArgumentHashCode(true);
 
-    int generatedHashCode = keyGenerator.getMethodArgumentHashCode(argument);
-    int argumentHashCode = argument.hashCode();
+    Map foo = new HashMap();
+    foo.put("foo", "foo");
 
-    assertTrue("The generated hash code '" + generatedHashCode
-        + "' should not be equal to the argument's hash code '"
-        + argumentHashCode + "'", argumentHashCode != generatedHashCode);
+    Map bar = new HashMap();
+    bar.put("bar", "bar");
+
+    Class targetClass = String.class;
+    Method toStringMethod = targetClass.getMethod("toString", null);
+
+    Object fooKey = executeGenerateArgumentHashCode(toStringMethod,
+        new Object[] { foo });
+    Object barKey = executeGenerateArgumentHashCode(toStringMethod,
+        new Object[] { bar });
+
+    System.out.println("fooKey: " + fooKey);
+    System.out.println("barKey: " + barKey);
+    
+    assertFalse("Key <" + fooKey + "> should be different than <" + barKey
+        + ">", fooKey.equals(barKey));
   }
 
-  /**
-   * Verifies that the method
-   * <code>{@link HashCodeCacheKeyGenerator#getMethodArgumentHashCode(Object)}</code>
-   * does not generate the key for the given method argument if the flag
-   * 'generateArgumentHashCode' is set to <code>false</code>.
-   */
-  public void testGetMethodArgumentHashCodeNotGeneratingHashCode() {
-    setUpArgument();
-    keyGenerator.setGenerateArgumentHashCode(false);
-
-    int generatedHashCode = keyGenerator.getMethodArgumentHashCode(argument);
-    int argumentHashCode = argument.hashCode();
-
-    assertEquals(argumentHashCode, generatedHashCode);
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link HashCodeCacheKeyGenerator#getMethodArgumentHashCode(Object)}</code>
-   * returns zero if the given method argument is <code>null</code>.
-   */
-  public void testGetMethodArgumentHashCodeWithArgumentEqualToNull() {
-    assertEquals(0, keyGenerator.getMethodArgumentHashCode(null));
-  }
 }

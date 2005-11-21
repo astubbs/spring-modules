@@ -17,8 +17,6 @@
  */
 package org.springmodules.util;
 
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * <p>
@@ -39,6 +37,10 @@ public abstract class ArrayUtils {
 
   private static final String EMPTY_ARRAY = "{}";
 
+  private static final int INITIAL_HASH = 7;
+
+  private static final int MULTIPLIER = 31;
+
   private static final String NULL_ARRAY = "null";
 
   public static boolean hasElements(Object[] array) {
@@ -46,32 +48,25 @@ public abstract class ArrayUtils {
   }
 
   public static int hashCode(Object[] array) {
-    int multiplier = 31;
-    int hash = 7;
+    if (array == null) {
+      return 0;
+    }
 
-    if (array == null || array.length == 0) {
-      hash = multiplier * hash;
-    } else {
-      int length = array.length;
+    int multiplier = MULTIPLIER;
+    int hash = INITIAL_HASH;
+
+    int length = array.length;
+    if (length > 0) {
       for (int i = 0; i < length; i++) {
         Object obj = array[i];
         hash = multiplier * hash + (obj != null ? obj.hashCode() : 0);
       }
+
+    } else {
+      hash = multiplier * hash;
     }
 
     return hash;
-  }
-
-  public static String[] removeDuplicates(String[] array) {
-    if (!hasElements(array)) {
-      return array;
-    }
-    Set set = new TreeSet();
-    int length = array.length;
-    for (int i = 0; i < length; i++) {
-      set.add(array[i]);
-    }
-    return (String[]) set.toArray(new String[set.size()]);
   }
 
   public static String toString(Object[] array) {

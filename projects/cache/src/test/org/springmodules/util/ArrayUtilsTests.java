@@ -17,10 +17,6 @@
  */
 package org.springmodules.util;
 
-import org.springmodules.ArrayAssert;
-import org.springmodules.util.ArrayUtils;
-import org.springmodules.util.Strings;
-
 import junit.framework.TestCase;
 
 /**
@@ -36,26 +32,6 @@ public class ArrayUtilsTests extends TestCase {
     super(name);
   }
 
-  public void testRemoveDuplicatesWithArrayEqualToNull() {
-    assertNull(ArrayUtils.removeDuplicates(null));
-  }
-
-  public void testRemoveDuplicatesWithDuplicatedValues() {
-    String[] array = { "str1", "str2", "str1" };
-    String[] expected = { "str1", "str2" };
-    ArrayAssert.assertEquals(expected, ArrayUtils.removeDuplicates(array));
-  }
-
-  public void testRemoveDuplicatesWithEmptyArray() {
-    String[] expected = new String[0];
-    ArrayAssert.assertEquals(expected, ArrayUtils.removeDuplicates(expected));
-  }
-
-  public void testRemoveDuplicatesWithoutDuplicatedValues() {
-    String[] expected = { "str1", "str2", "str3" };
-    ArrayAssert.assertEquals(expected, ArrayUtils.removeDuplicates(expected));
-  }
-  
   public void testToStringWithEmptyObjectArray() {
     assertEquals("{}", ArrayUtils.toString(new Object[0]));
   }

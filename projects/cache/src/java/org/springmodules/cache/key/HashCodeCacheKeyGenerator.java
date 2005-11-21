@@ -21,9 +21,8 @@ package org.springmodules.cache.key;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-
 import org.aopalliance.intercept.MethodInvocation;
+import org.springmodules.util.HashCodeBuilder;
 
 /**
  * <p>
@@ -58,18 +57,23 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
     HashCodeCalculator hashCodeCalculator = new HashCodeCalculator();
 
     Method method = methodInvocation.getMethod();
-    int methodHashCode = System.identityHashCode(method);
-    hashCodeCalculator.append(methodHashCode);
+    hashCodeCalculator.append(System.identityHashCode(method));
 
     Object[] methodArguments = methodInvocation.getArguments();
     if (methodArguments != null) {
       int methodArgumentCount = methodArguments.length;
 
       for (int i = 0; i < methodArgumentCount; i++) {
-        int methodArgumentHashCode = this
-            .getMethodArgumentHashCode(methodArguments[i]);
+        Object methodArgument = methodArguments[i];
+        int hash = 0;
 
-        hashCodeCalculator.append(methodArgumentHashCode);
+        if (generateArgumentHashCode) {
+          hash = HashCodeBuilder.reflectionHashCode(methodArgument);
+        } else {
+          hash = HashCodeBuilder.hashCode(methodArgument);
+        }
+        
+        hashCodeCalculator.append(hash);
       }
     }
 
@@ -78,26 +82,6 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
 
     Serializable cacheKey = new HashCodeCacheKey(checkSum, hashCode);
     return cacheKey;
-  }
-
-  /**
-   * Returns the hash code of the specified method argument.
-   * 
-   * @param methodArgument
-   *          the method argument.
-   * @return the hash code of the specified method argument.
-   */
-  protected final int getMethodArgumentHashCode(Object methodArgument) {
-    int hashCode = 0;
-
-    if (methodArgument != null) {
-      if (generateArgumentHashCode) {
-        hashCode = HashCodeBuilder.reflectionHashCode(methodArgument);
-      } else {
-        hashCode = methodArgument.hashCode();
-      }
-    }
-    return hashCode;
   }
 
   public final void setGenerateArgumentHashCode(

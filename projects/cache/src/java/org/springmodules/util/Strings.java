@@ -17,6 +17,9 @@
  */
 package org.springmodules.util;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * <p>
  * Utility methods for Strings.
@@ -34,5 +37,17 @@ public abstract class Strings {
 
   public static Object quoteIfString(Object obj) {
     return (obj instanceof String) ? quote((String) obj) : obj;
+  }
+
+  public static String[] removeDuplicates(String[] array) {
+    if (!ArrayUtils.hasElements(array)) {
+      return array;
+    }
+    Set set = new TreeSet();
+    int length = array.length;
+    for (int i = 0; i < length; i++) {
+      set.add(array[i]);
+    }
+    return (String[]) set.toArray(new String[set.size()]);
   } 
 }

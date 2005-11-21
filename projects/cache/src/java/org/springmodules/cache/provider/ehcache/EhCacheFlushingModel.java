@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractFlushingModel;
 import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -95,7 +96,7 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
   }
 
   public void setCacheNames(String[] newCacheNames) {
-    cacheNames = ArrayUtils.removeDuplicates(newCacheNames);
+    cacheNames = Strings.removeDuplicates(newCacheNames);
   }
 
   public String toString() {

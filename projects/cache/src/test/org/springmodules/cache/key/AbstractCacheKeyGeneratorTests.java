@@ -74,7 +74,8 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
     Serializable cacheKey = cacheKeyGenerator.generateKey(methodInvocation);
 
     methodInvocationControl.verify();
-
+    methodInvocationControl.reset();
+    
     return cacheKey;
   }
 
