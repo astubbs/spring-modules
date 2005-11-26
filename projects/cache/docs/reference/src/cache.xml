@@ -78,7 +78,7 @@
 
     <para>
       Caching and cache-flushing can be easily configured by following
-      the following steps.
+      these steps.
     </para>
 
     <orderedlist>
@@ -265,7 +265,7 @@
             <ulink url="http://xstream.codehaus.org/">XStream</ulink> to
             <itemizedlist>
               <listitem>
-                <para>Serialize objects to XML before being stored in the cache.</para>
+                <para>Serialize objects to XML before they are stored in the cache.</para>
               </listitem>
               <listitem>
                 <para>Create objects back from XML after being retrieved from 
@@ -437,7 +437,7 @@
       <para>
         A <phrase id="cachingAdvicePhrase">caching advice</phrase> applies 
         caching to the return value of advised methods. It first
-        checks that a value previously returned from a method call, with
+        checks that a value returned from a method call, with
         the same method arguments, is already stored in the cache. If a
         value is found, it will skip the method call and return the cached value. 
         On the other hand, if the advice cannot find a cached value, it will
@@ -1087,9 +1087,9 @@ public class TigerCacheableService implements CacheableService {
         create the <emphasis>caching advice</emphasis>
         <literal>MethodMapCachingInterceptor</literal> and the 
         <emphasis>flushing advice</emphasis> 
-        <literal>MethodMapFlushingInterceptor</literal>> to use.
-        The advices decide which methods to intercept matching them using
-        the fully qualified name of the class with the name of the name (which accepts 
+        <literal>MethodMapFlushingInterceptor</literal> to use.
+        AOP proxies are created for the objects which match the given
+        fully qualified class name and method name (which accepts 
         wildcards.)
       </para>
       <para>
