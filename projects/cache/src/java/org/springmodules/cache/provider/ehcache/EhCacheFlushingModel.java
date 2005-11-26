@@ -21,8 +21,7 @@ import java.util.Arrays;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractFlushingModel;
-import org.springmodules.util.ArrayUtils;
-import org.springmodules.util.HashCodeBuilder;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -76,7 +75,7 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + HashCodeBuilder.hashCode(cacheNames);
+    hash = multiplier * hash + Objects.nullSafeHashCode(cacheNames);
     return hash;
   }
 
@@ -101,9 +100,8 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
   }
 
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheNames=" + ArrayUtils.toString(cacheNames) + ", ");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[cacheNames=" + Objects.nullSafeToString(cacheNames) + ", ");
     buffer.append("flushBeforeMethodExecution="
         + isFlushBeforeMethodExecution() + "]");
     return buffer.toString();

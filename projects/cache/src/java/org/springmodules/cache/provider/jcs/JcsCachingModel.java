@@ -18,7 +18,9 @@
 
 package org.springmodules.cache.provider.jcs;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CachingModel;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -66,14 +68,12 @@ public class JcsCachingModel implements CachingModel {
       return false;
     }
 
-    final JcsCachingModel cachingModel = (JcsCachingModel) obj;
+    JcsCachingModel cachingModel = (JcsCachingModel) obj;
 
-    if (cacheName != null ? !cacheName.equals(cachingModel.cacheName)
-        : cachingModel.cacheName != null) {
+    if (!ObjectUtils.nullSafeEquals(cacheName, cachingModel.cacheName)) {
       return false;
     }
-    if (group != null ? !group.equals(cachingModel.group)
-        : cachingModel.group != null) {
+    if (!ObjectUtils.nullSafeEquals(group, cachingModel.group)) {
       return false;
     }
 
@@ -94,8 +94,8 @@ public class JcsCachingModel implements CachingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (cacheName != null ? cacheName.hashCode() : 0);
-    hash = multiplier * hash + (group != null ? group.hashCode() : 0);
+    hash = multiplier * hash + Objects.nullSafeHashCode(cacheName);
+    hash = multiplier * hash + Objects.nullSafeHashCode(group);
     return hash;
   }
 
@@ -111,9 +111,8 @@ public class JcsCachingModel implements CachingModel {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheName=" + Strings.quote(cacheName) + ", ");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[cacheName=" + Strings.quote(cacheName) + ", ");
     buffer.append("group=" + Strings.quote(group) + "]");
 
     return buffer.toString();

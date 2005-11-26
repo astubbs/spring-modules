@@ -20,10 +20,10 @@ package org.springmodules.cache.provider.oscache;
 
 import java.util.Arrays;
 
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.CachingModel;
-import org.springmodules.util.ArrayUtils;
-import org.springmodules.util.HashCodeBuilder;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -91,19 +91,15 @@ public class OsCacheCachingModel implements CachingModel {
       return false;
     }
 
-    final OsCacheCachingModel cachingModel = (OsCacheCachingModel) obj;
+    OsCacheCachingModel cachingModel = (OsCacheCachingModel) obj;
 
-    if (cronExpression != null ? !cronExpression
-        .equals(cachingModel.cronExpression)
-        : cachingModel.cronExpression != null) {
+    if (!ObjectUtils.nullSafeEquals(cronExpression, cachingModel.cronExpression)) {
       return false;
     }
     if (!Arrays.equals(groups, cachingModel.groups)) {
       return false;
     }
-    if (refreshPeriod != null ? !refreshPeriod
-        .equals(cachingModel.refreshPeriod)
-        : cachingModel.refreshPeriod != null) {
+    if (!ObjectUtils.nullSafeEquals(refreshPeriod, cachingModel.refreshPeriod)) {
       return false;
     }
 
@@ -128,11 +124,9 @@ public class OsCacheCachingModel implements CachingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 17;
-    hash = multiplier * hash
-        + (cronExpression != null ? cronExpression.hashCode() : 0);
-    hash = multiplier * hash + HashCodeBuilder.hashCode(groups);
-    hash = multiplier * hash
-        + (refreshPeriod != null ? refreshPeriod.hashCode() : 0);
+    hash = multiplier * hash + Objects.nullSafeHashCode(cronExpression);
+    hash = multiplier * hash + Objects.nullSafeHashCode(groups);
+    hash = multiplier * hash + Objects.nullSafeHashCode(refreshPeriod);
     return hash;
   }
 
@@ -170,10 +164,9 @@ public class OsCacheCachingModel implements CachingModel {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("refreshPeriod=" + refreshPeriod + ", ");
-    buffer.append("groups=" + ArrayUtils.toString(groups) + ", ");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[refreshPeriod=" + refreshPeriod + ", ");
+    buffer.append("groups=" + Objects.nullSafeToString(groups) + ", ");
     buffer.append("cronExpression=" + Strings.quote(cronExpression) + "]");
 
     return buffer.toString();

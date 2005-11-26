@@ -18,7 +18,9 @@
 
 package org.springmodules.cache.interceptor.caching;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CacheAttribute;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -34,9 +36,8 @@ public class Cached implements CacheAttribute {
   private static final long serialVersionUID = 3256728394032297785L;
 
   /**
-   * The id of the
-   * <code>{@link org.springmodules.cache.CachingModel}</code> to
-   * use.
+   * The id of the <code>{@link org.springmodules.cache.CachingModel}</code>
+   * to use.
    */
   private String modelId;
 
@@ -60,10 +61,9 @@ public class Cached implements CacheAttribute {
       return false;
     }
 
-    final Cached cached = (Cached) obj;
+    Cached cached = (Cached) obj;
 
-    if (modelId != null ? !modelId.equals(cached.modelId)
-        : cached.modelId != null) {
+    if (!ObjectUtils.nullSafeEquals(modelId, cached.modelId)) {
       return false;
     }
 
@@ -80,7 +80,7 @@ public class Cached implements CacheAttribute {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (modelId != null ? modelId.hashCode() : 0);
+    hash = multiplier * hash + (Objects.nullSafeHashCode(modelId));
     return hash;
   }
 
@@ -92,9 +92,8 @@ public class Cached implements CacheAttribute {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("modelId=" + Strings.quote(modelId) + "]");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[modelId=" + Strings.quote(modelId) + "]");
 
     return buffer.toString();
   }

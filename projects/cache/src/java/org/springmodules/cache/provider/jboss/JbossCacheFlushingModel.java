@@ -21,8 +21,7 @@ import java.util.Arrays;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractFlushingModel;
-import org.springmodules.util.ArrayUtils;
-import org.springmodules.util.HashCodeBuilder;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -76,7 +75,7 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + HashCodeBuilder.hashCode(nodes);
+    hash = multiplier * hash + Objects.nullSafeHashCode(nodes);
     return hash;
   }
 
@@ -93,9 +92,8 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
   }
 
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("nodes=" + ArrayUtils.toString(nodes) + ", ");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[nodes=" + Objects.nullSafeToString(nodes) + ", ");
     buffer.append("flushBeforeMethodExecution="
         + isFlushBeforeMethodExecution() + "]");
     return buffer.toString();

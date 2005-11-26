@@ -23,13 +23,13 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
-import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
-import org.springmodules.util.ArrayUtils;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
@@ -109,7 +109,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
     OsCacheFlushingModel cachingModel = (OsCacheFlushingModel) model;
     String[] groups = cachingModel.getGroups();
 
-    if (ArrayUtils.hasElements(groups)) {
+    if (!ObjectUtils.isEmpty(groups)) {
       int groupCount = groups.length;
 
       for (int i = 0; i < groupCount; i++) {

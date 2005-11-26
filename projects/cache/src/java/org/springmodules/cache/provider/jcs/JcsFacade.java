@@ -28,6 +28,7 @@ import org.apache.jcs.engine.control.CompositeCache;
 import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
@@ -35,11 +36,10 @@ import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheNotFoundException;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
-import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -151,7 +151,7 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
 
         CompositeCache cache = getCache(cacheName);
 
-        if (ArrayUtils.hasElements(groups)) {
+        if (!ObjectUtils.isEmpty(groups)) {
           int groupCount = groups.length;
           for (int j = 0; j < groupCount; j++) {
             GroupId groupId = new GroupId(cacheName, groups[j]);

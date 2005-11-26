@@ -21,6 +21,8 @@ import java.beans.PropertyEditorSupport;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.ObjectUtils;
+
 import junit.framework.TestCase;
 
 /**
@@ -48,7 +50,7 @@ public class ReflectionCacheModelEditorTests extends TestCase {
 
       LightSaber saber = (LightSaber) obj;
 
-      if (color != null ? !color.equals(saber.color) : saber.color != null) {
+      if (!ObjectUtils.nullSafeEquals(color, saber.color)) {
         return false;
       }
       if (on != saber.on) {

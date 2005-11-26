@@ -17,6 +17,8 @@
  */
 package org.springmodules.cache.interceptor.proxy;
 
+import org.springmodules.util.Objects;
+
 /**
  * <p>
  * Default implementation of <code>{@link Person}</code>.
@@ -74,9 +76,8 @@ public class PersonImpl implements Person {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("firstName='" + this.firstName + "', ");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[firstName='" + this.firstName + "', ");
     buffer.append("lastName='" + this.lastName + "']");
 
     return buffer.toString();

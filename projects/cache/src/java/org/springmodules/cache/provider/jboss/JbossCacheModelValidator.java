@@ -17,10 +17,10 @@
  */
 package org.springmodules.cache.provider.jboss;
 
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractCacheModelValidator;
 import org.springmodules.cache.provider.InvalidCacheModelException;
-import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -72,7 +72,8 @@ public final class JbossCacheModelValidator extends AbstractCacheModelValidator 
       throws InvalidCacheModelException {
     JbossCacheFlushingModel model = (JbossCacheFlushingModel) flushingModel;
     String[] nodes = model.getNodes();
-    if (!ArrayUtils.hasElements(nodes)) {
+    
+    if (ObjectUtils.isEmpty(nodes)) {
       throw new InvalidCacheModelException(
           "There should be at least one node FQN");
     }

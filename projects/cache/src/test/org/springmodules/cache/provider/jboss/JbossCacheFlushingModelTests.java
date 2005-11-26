@@ -17,6 +17,7 @@
  */
 package org.springmodules.cache.provider.jboss;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -113,7 +114,7 @@ public class JbossCacheFlushingModelTests extends
     model.setNodes((String[]) null);
     model.setFlushBeforeMethodExecution(true);
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[nodes=null, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
@@ -122,7 +123,7 @@ public class JbossCacheFlushingModelTests extends
     model.setNodes(new String[0]);
     model.setFlushBeforeMethodExecution(true);
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[nodes={}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
@@ -131,7 +132,7 @@ public class JbossCacheFlushingModelTests extends
     model.setNodes(new String[] { "a/b/c" });
     model.setFlushBeforeMethodExecution(true);
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[nodes={'a/b/c'}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }

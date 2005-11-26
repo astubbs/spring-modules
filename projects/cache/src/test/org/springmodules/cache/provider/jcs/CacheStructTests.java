@@ -17,6 +17,7 @@
  */
 package org.springmodules.cache.provider.jcs;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 
@@ -131,7 +132,7 @@ public class CacheStructTests extends AbstractEqualsHashCodeTestCase {
     struct.setGroups((String[]) null);
 
     String actual = struct.getClass().getName() + "@"
-        + System.identityHashCode(struct) + "[cacheName='ewok', groups=null]";
+        + ObjectUtils.getIdentityHexString(struct) + "[cacheName='ewok', groups=null]";
     assertEquals(struct.toString(), actual);
   }
 
@@ -140,7 +141,7 @@ public class CacheStructTests extends AbstractEqualsHashCodeTestCase {
     struct.setGroups(new String[0]);
 
     String actual = struct.getClass().getName() + "@"
-        + System.identityHashCode(struct) + "[cacheName='jabba', groups={}]";
+        + ObjectUtils.getIdentityHexString(struct) + "[cacheName='jabba', groups={}]";
     assertEquals(struct.toString(), actual);
   }
 
@@ -149,7 +150,7 @@ public class CacheStructTests extends AbstractEqualsHashCodeTestCase {
     struct.setGroups(new String[] { "c3p0" });
 
     String actual = struct.getClass().getName() + "@"
-        + System.identityHashCode(struct)
+        + ObjectUtils.getIdentityHexString(struct)
         + "[cacheName='androids', groups={'c3p0'}]";
     assertEquals(struct.toString(), actual);
   }

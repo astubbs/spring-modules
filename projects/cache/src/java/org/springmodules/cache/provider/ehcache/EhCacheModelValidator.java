@@ -18,10 +18,10 @@
 
 package org.springmodules.cache.provider.ehcache;
 
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractCacheModelValidator;
 import org.springmodules.cache.provider.InvalidCacheModelException;
-import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -72,7 +72,8 @@ public final class EhCacheModelValidator extends AbstractCacheModelValidator {
       throws InvalidCacheModelException {
     EhCacheFlushingModel model = (EhCacheFlushingModel) flushingModel;
     String[] cacheNames = model.getCacheNames();
-    if (!ArrayUtils.hasElements(cacheNames)) {
+    
+    if (ObjectUtils.isEmpty(cacheNames)) {
       throw new InvalidCacheModelException(
           "There should be at least one cache name");
     }

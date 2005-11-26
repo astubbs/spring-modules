@@ -31,13 +31,13 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.key.CacheKeyGenerator;
 import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheProviderFacade;
-import org.springmodules.util.ArrayUtils;
 import org.springmodules.util.Strings;
 
 /**
@@ -60,7 +60,7 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     private static final long serialVersionUID = 3257007674280522803L;
 
     public String toString() {
-      return "NULL_ENTRY@" + System.identityHashCode(this);
+      return "NULL_ENTRY@" + ObjectUtils.getIdentityHexString(this);
     }
   };
 
@@ -224,7 +224,7 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
         }
 
         // notify the listeners a new entry was stored in the cache.
-        if (ArrayUtils.hasElements(cachingListeners)) {
+        if (!ObjectUtils.isEmpty(cachingListeners)) {
           int listenerCount = cachingListeners.length;
           for (int i = 0; i < listenerCount; i++) {
             cachingListeners[i].onCaching(key, cachedObject, model);

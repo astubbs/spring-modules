@@ -25,17 +25,17 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.CacheNotFoundException;
-import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
+import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.ObjectCannotBeCachedException;
-import org.springmodules.util.ArrayUtils;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 /**
  * <p>
@@ -120,7 +120,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
     EhCacheFlushingModel flushingModel = (EhCacheFlushingModel) model;
     String[] cacheNames = flushingModel.getCacheNames();
 
-    if (ArrayUtils.hasElements(cacheNames)) {
+    if (!ObjectUtils.isEmpty(cacheNames)) {
       CacheException cacheException = null;
       int nameCount = cacheNames.length;
 

@@ -17,6 +17,7 @@
  */
 package org.springmodules.cache.provider.oscache;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -111,7 +112,7 @@ public class OsCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setFlushBeforeMethodExecution(true);
 
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[groups=null, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
@@ -121,7 +122,7 @@ public class OsCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setFlushBeforeMethodExecution(true);
 
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[groups={}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
@@ -131,7 +132,7 @@ public class OsCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setFlushBeforeMethodExecution(true);
 
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[groups={'main'}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }

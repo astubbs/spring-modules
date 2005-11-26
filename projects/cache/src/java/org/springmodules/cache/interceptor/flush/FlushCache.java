@@ -18,7 +18,9 @@
 
 package org.springmodules.cache.interceptor.flush;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CacheAttribute;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -57,10 +59,9 @@ public class FlushCache implements CacheAttribute {
     if (!(obj instanceof FlushCache)) {
       return false;
     }
-    final FlushCache flushCache = (FlushCache) obj;
+    FlushCache flushCache = (FlushCache) obj;
 
-    if (modelId != null ? !modelId.equals(flushCache.modelId)
-        : flushCache.modelId != null) {
+    if (!ObjectUtils.nullSafeEquals(modelId, flushCache.modelId)) {
       return false;
     }
 
@@ -77,7 +78,7 @@ public class FlushCache implements CacheAttribute {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (modelId != null ? modelId.hashCode() : 0);
+    hash = multiplier * hash + (Objects.nullSafeHashCode(modelId));
     return hash;
   }
 
@@ -89,9 +90,8 @@ public class FlushCache implements CacheAttribute {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("modelId=" + Strings.quote(modelId) + "]");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[modelId=" + Strings.quote(modelId) + "]");
 
     return buffer.toString();
   }

@@ -17,6 +17,7 @@
  */
 package org.springmodules.cache.provider.ehcache;
 
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.ArrayAssert;
@@ -151,7 +152,7 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setFlushBeforeMethodExecution(true);
 
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[cacheNames=null, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
@@ -161,7 +162,7 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setFlushBeforeMethodExecution(true);
 
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[cacheNames={}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
@@ -171,7 +172,7 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setFlushBeforeMethodExecution(true);
 
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[cacheNames={'main'}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }

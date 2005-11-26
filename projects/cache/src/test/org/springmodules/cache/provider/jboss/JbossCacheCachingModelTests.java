@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.provider.jboss;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -109,14 +110,14 @@ public final class JbossCacheCachingModelTests extends
   public void testToStringWithNodeFqnEqualToNull() {
     model.setNode(null);
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model) + "[nodeFqn=null]";
+        + ObjectUtils.getIdentityHexString(model) + "[nodeFqn=null]";
     assertEquals(model.toString(), actual);
   }
 
   public void testToStringWithNodeFqnNotEqualToNull() {
     model.setNode("x/y/z");
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model) + "[nodeFqn='x/y/z']";
+        + ObjectUtils.getIdentityHexString(model) + "[nodeFqn='x/y/z']";
     assertEquals(model.toString(), actual);
   }
 }

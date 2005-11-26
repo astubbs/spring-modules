@@ -19,6 +19,8 @@ package org.springmodules.cache.serializable;
 
 import java.io.Serializable;
 
+import org.springframework.util.ObjectUtils;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 import com.thoughtworks.xstream.XStream;
@@ -60,7 +62,7 @@ public class XStreamSerializableFactory implements SerializableFactory {
       }
 
       ObjectWrapper wrapper = (ObjectWrapper) obj;
-      if (value != null ? !value.equals(wrapper.value) : wrapper.value != null) {
+      if (!ObjectUtils.nullSafeEquals(value, wrapper.value)) {
         return false;
       }
 
@@ -75,7 +77,7 @@ public class XStreamSerializableFactory implements SerializableFactory {
       int multiplier = 31;
       int hash = 17;
 
-      hash = multiplier * hash + (value != null ? value.hashCode() : 0);
+      hash = multiplier * hash + Objects.nullSafeHashCode(value);
 
       return hash;
     }
@@ -85,9 +87,8 @@ public class XStreamSerializableFactory implements SerializableFactory {
     }
 
     public String toString() {
-      StringBuffer buffer = new StringBuffer(getClass().getName());
-      buffer.append("@" + System.identityHashCode(this) + "[");
-      buffer.append("value=" + Strings.quoteIfString(value) + "]");
+      StringBuffer buffer = Objects.identityToString(this);
+      buffer.append("[value=" + Strings.quoteIfString(value) + "]");
 
       return buffer.toString();
     }

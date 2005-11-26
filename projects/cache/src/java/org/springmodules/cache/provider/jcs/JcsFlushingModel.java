@@ -20,10 +20,10 @@ package org.springmodules.cache.provider.jcs;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractFlushingModel;
-import org.springmodules.util.ArrayUtils;
-import org.springmodules.util.HashCodeBuilder;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -70,9 +70,10 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
       if (!(obj instanceof CacheStruct)) {
         return false;
       }
+      
       CacheStruct cacheStruct = (CacheStruct) obj;
-      if (cacheName != null ? !cacheName.equals(cacheStruct.cacheName)
-          : cacheStruct.cacheName != null) {
+      
+      if (!ObjectUtils.nullSafeEquals(cacheName, cacheStruct.cacheName)) {
         return false;
       }
       if (!Arrays.equals(groups, cacheStruct.groups)) {
@@ -92,8 +93,8 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
     public int hashCode() {
       int multiplier = 31;
       int hash = 7;
-      hash = multiplier * hash + (cacheName != null ? cacheName.hashCode() : 0);
-      hash = multiplier * hash + HashCodeBuilder.hashCode(groups);
+      hash = multiplier * hash + Objects.nullSafeHashCode(cacheName);
+      hash = multiplier * hash + Objects.nullSafeHashCode(groups);
       return hash;
     }
 
@@ -114,10 +115,9 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
     }
 
     public String toString() {
-      StringBuffer buffer = new StringBuffer(getClass().getName());
-      buffer.append("@" + System.identityHashCode(this) + "[");
-      buffer.append("cacheName=" + Strings.quote(cacheName) + ", ");
-      buffer.append("groups=" + ArrayUtils.toString(groups) + "]");
+      StringBuffer buffer = Objects.identityToString(this);
+      buffer.append("[cacheName=" + Strings.quote(cacheName) + ", ");
+      buffer.append("groups=" + Objects.nullSafeToString(groups) + "]");
       return buffer.toString();
     }
   }
@@ -163,7 +163,7 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + HashCodeBuilder.hashCode(cacheStructs);
+    hash = multiplier * hash + Objects.nullSafeHashCode(cacheStructs);
     return hash;
   }
 
@@ -176,9 +176,8 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
   }
 
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheStructs=" + ArrayUtils.toString(cacheStructs) + ", ");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[cacheStructs=" + Objects.nullSafeToString(cacheStructs) + ", ");
     buffer.append("flushBeforeMethodExecution="
         + isFlushBeforeMethodExecution() + "]");
     return buffer.toString();

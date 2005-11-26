@@ -17,7 +17,9 @@
  */
 package org.springmodules.cache.provider.jboss;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CachingModel;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -54,10 +56,9 @@ public class JbossCacheCachingModel implements CachingModel {
       return false;
     }
 
-    final JbossCacheCachingModel cachingModel = (JbossCacheCachingModel) obj;
+    JbossCacheCachingModel cachingModel = (JbossCacheCachingModel) obj;
 
-    if (node != null ? !node.equals(cachingModel.node)
-        : cachingModel.node != null) {
+    if (!ObjectUtils.nullSafeEquals(node, cachingModel.node)) {
       return false;
     }
 
@@ -72,7 +73,7 @@ public class JbossCacheCachingModel implements CachingModel {
     int multiplier = 31;
     int hash = 17;
 
-    hash = multiplier * hash + (node != null ? node.hashCode() : 0);
+    hash = multiplier * hash + Objects.nullSafeHashCode(node);
 
     return hash;
   }
@@ -82,9 +83,8 @@ public class JbossCacheCachingModel implements CachingModel {
   }
 
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("nodeFqn=" + Strings.quote(node) + "]");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[nodeFqn=" + Strings.quote(node) + "]");
 
     return buffer.toString();
   }

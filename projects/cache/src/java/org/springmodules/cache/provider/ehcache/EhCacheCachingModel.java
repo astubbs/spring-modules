@@ -18,7 +18,9 @@
 
 package org.springmodules.cache.provider.ehcache;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.cache.CachingModel;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -57,10 +59,9 @@ public class EhCacheCachingModel implements CachingModel {
       return false;
     }
 
-    final EhCacheCachingModel cachingModel = (EhCacheCachingModel) obj;
+    EhCacheCachingModel cachingModel = (EhCacheCachingModel) obj;
 
-    if (cacheName != null ? !cacheName.equals(cachingModel.cacheName)
-        : cachingModel.cacheName != null) {
+    if (!ObjectUtils.nullSafeEquals(cacheName, cachingModel.cacheName)) {
       return false;
     }
 
@@ -77,7 +78,7 @@ public class EhCacheCachingModel implements CachingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (cacheName != null ? cacheName.hashCode() : 0);
+    hash = multiplier * hash + (Objects.nullSafeHashCode(cacheName));
     return hash;
   }
 
@@ -89,9 +90,8 @@ public class EhCacheCachingModel implements CachingModel {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("cacheName=" + Strings.quote(cacheName) + "]");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[cacheName=" + Strings.quote(cacheName) + "]");
     return buffer.toString();
   }
 }

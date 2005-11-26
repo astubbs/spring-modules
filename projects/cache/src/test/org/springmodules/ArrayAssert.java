@@ -21,7 +21,7 @@ import java.util.Arrays;
 
 import junit.framework.Assert;
 
-import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Objects;
 
 /**
  * <p>
@@ -33,8 +33,7 @@ import org.springmodules.util.ArrayUtils;
 public abstract class ArrayAssert {
 
   public static void assertEquals(Object[] expected, Object[] actual) {
-    Assert.assertTrue("expected:<" + ArrayUtils.toString(expected)
-        + "> but was:<" + ArrayUtils.toString(actual) + ">", Arrays.equals(
-        expected, actual));
+    Assert.assertTrue("expected:<" + Objects.nullSafeToString(expected) + "> but was:<"
+        + Objects.nullSafeToString(actual) + ">", Arrays.equals(expected, actual));
   }
 }

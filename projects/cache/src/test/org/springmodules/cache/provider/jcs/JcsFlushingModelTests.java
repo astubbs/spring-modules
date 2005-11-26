@@ -17,6 +17,7 @@
  */
 package org.springmodules.cache.provider.jcs;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 
@@ -113,9 +114,9 @@ public class JcsFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setFlushBeforeMethodExecution(true);
 
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model) + "[cacheStructs={"
+        + ObjectUtils.getIdentityHexString(model) + "[cacheStructs={"
         + cacheStruct.getClass().getName() + "@"
-        + System.identityHashCode(cacheStruct)
+        + ObjectUtils.getIdentityHexString(cacheStruct)
         + "[cacheName='main', groups=null]"
         + "}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
@@ -126,7 +127,7 @@ public class JcsFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setFlushBeforeMethodExecution(true);
 
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[cacheStructs=null, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
@@ -136,7 +137,7 @@ public class JcsFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setFlushBeforeMethodExecution(true);
 
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[cacheStructs={}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }

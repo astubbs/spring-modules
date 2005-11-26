@@ -22,7 +22,8 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.springmodules.util.HashCodeBuilder;
+import org.springmodules.util.Objects;
+import org.springmodules.util.Reflections;
 
 /**
  * <p>
@@ -68,9 +69,9 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
         int hash = 0;
 
         if (generateArgumentHashCode) {
-          hash = HashCodeBuilder.reflectionHashCode(methodArgument);
+          hash = Reflections.reflectionHashCode(methodArgument);
         } else {
-          hash = HashCodeBuilder.hashCode(methodArgument);
+          hash = Objects.nullSafeHashCode(methodArgument);
         }
         
         hashCodeCalculator.append(hash);

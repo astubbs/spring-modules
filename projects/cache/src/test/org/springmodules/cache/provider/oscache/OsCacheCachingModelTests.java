@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.provider.oscache;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -161,7 +162,7 @@ public final class OsCacheCachingModelTests extends
     model.setRefreshPeriod(98);
     model.setCronExpression("* * 0 0 0");
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[refreshPeriod=98, groups={}, cronExpression='* * 0 0 0']";
     assertEquals(model.toString(), actual);
   }
@@ -171,7 +172,7 @@ public final class OsCacheCachingModelTests extends
     model.setRefreshPeriod(34);
     model.setCronExpression(null);
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[refreshPeriod=34, groups=null, cronExpression=null]";
     assertEquals(model.toString(), actual);
   }
@@ -182,7 +183,7 @@ public final class OsCacheCachingModelTests extends
     model.setCronExpression("* * * * *");
     String actual = model.getClass().getName()
         + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[refreshPeriod=9, groups={'main', null}, cronExpression='* * * * *']";
     assertEquals(model.toString(), actual);
   }

@@ -18,6 +18,7 @@
 
 package org.springmodules.cache.provider.jcs;
 
+import org.springframework.util.ObjectUtils;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -136,7 +137,8 @@ public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setCacheName(null);
     model.setGroup(null);
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model) + "[cacheName=null, group=null]";
+        + ObjectUtils.getIdentityHexString(model)
+        + "[cacheName=null, group=null]";
     assertEquals(model.toString(), actual);
   }
 
@@ -144,7 +146,7 @@ public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setCacheName("main");
     model.setGroup("services");
     String actual = model.getClass().getName() + "@"
-        + System.identityHashCode(model)
+        + ObjectUtils.getIdentityHexString(model)
         + "[cacheName='main', group='services']";
     assertEquals(model.toString(), actual);
   }

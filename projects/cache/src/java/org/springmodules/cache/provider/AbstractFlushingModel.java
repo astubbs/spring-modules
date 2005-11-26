@@ -18,6 +18,7 @@
 package org.springmodules.cache.provider;
 
 import org.springmodules.cache.FlushingModel;
+import org.springmodules.util.Objects;
 
 /**
  * <p>
@@ -51,7 +52,8 @@ public abstract class AbstractFlushingModel implements FlushingModel {
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash + (flushBeforeMethodExecution ? 1 : 0);
+    hash = multiplier * hash
+        + (Objects.hashCode(flushBeforeMethodExecution));
     return hash;
   }
 

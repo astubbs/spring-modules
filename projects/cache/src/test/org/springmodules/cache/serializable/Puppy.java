@@ -17,6 +17,8 @@
  */
 package org.springmodules.cache.serializable;
 
+import org.springframework.util.ObjectUtils;
+import org.springmodules.util.Objects;
 import org.springmodules.util.Strings;
 
 /**
@@ -52,7 +54,7 @@ public class Puppy {
     }
 
     Puppy puppy = (Puppy) obj;
-    if (name != null ? !name.equals(puppy.name) : puppy.name != null) {
+    if (!ObjectUtils.nullSafeEquals(name, puppy.name)) {
       return false;
     }
 
@@ -70,7 +72,7 @@ public class Puppy {
     int multiplier = 31;
     int hash = 17;
 
-    hash = multiplier * hash + (name != null ? name.hashCode() : 0);
+    hash = multiplier * hash + Objects.nullSafeHashCode(name);
 
     return hash;
   }
@@ -83,9 +85,8 @@ public class Puppy {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = new StringBuffer(getClass().getName());
-    buffer.append("@" + System.identityHashCode(this) + "[");
-    buffer.append("name=" + Strings.quote(name) + "]");
+    StringBuffer buffer = Objects.identityToString(this);
+    buffer.append("[name=" + Strings.quote(name) + "]");
     return buffer.toString();
   }
 

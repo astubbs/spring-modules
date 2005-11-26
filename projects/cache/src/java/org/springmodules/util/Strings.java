@@ -20,6 +20,8 @@ package org.springmodules.util;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.springframework.util.ObjectUtils;
+
 /**
  * <p>
  * Utility methods for Strings.
@@ -40,7 +42,7 @@ public abstract class Strings {
   }
 
   public static String[] removeDuplicates(String[] array) {
-    if (!ArrayUtils.hasElements(array)) {
+    if (ObjectUtils.isEmpty(array)) {
       return array;
     }
     Set set = new TreeSet();

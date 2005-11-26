@@ -18,11 +18,11 @@
 
 package org.springmodules.cache.provider.jcs;
 
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.provider.AbstractCacheModelValidator;
 import org.springmodules.cache.provider.InvalidCacheModelException;
 import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
-import org.springmodules.util.ArrayUtils;
 
 /**
  * <p>
@@ -73,10 +73,12 @@ public final class JcsModelValidator extends AbstractCacheModelValidator {
       throws InvalidCacheModelException {
     JcsFlushingModel model = (JcsFlushingModel) flushingModel;
     CacheStruct[] structs = model.getCacheStructs();
-    if (!ArrayUtils.hasElements(structs)) {
+
+    if (ObjectUtils.isEmpty(structs)) {
       throw new InvalidCacheModelException(
           "There should be at least one cache to flush");
     }
+
     int structCount = structs.length;
     for (int i = 0; i < structCount; i++) {
       CacheStruct struct = structs[i];
