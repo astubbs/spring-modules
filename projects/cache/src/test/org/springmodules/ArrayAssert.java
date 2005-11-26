@@ -33,7 +33,8 @@ import org.springmodules.util.Objects;
 public abstract class ArrayAssert {
 
   public static void assertEquals(Object[] expected, Object[] actual) {
-    Assert.assertTrue("expected:<" + Objects.nullSafeToString(expected) + "> but was:<"
-        + Objects.nullSafeToString(actual) + ">", Arrays.equals(expected, actual));
+    Assert.assertTrue("expected:<" + Objects.nullSafeToString(expected)
+        + "> but was:<" + Objects.nullSafeToString(actual) + ">", Arrays
+        .equals(expected, actual));
   }
 }
