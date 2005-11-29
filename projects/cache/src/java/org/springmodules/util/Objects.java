@@ -68,24 +68,24 @@ public abstract class Objects {
   }
 
   /**
-   * Returns the hash code for the given <code>boolean</code>.
+   * Returns the same value as <code>{@link Boolean#hashCode()}</code>.
    * 
    * @param bool
    *          the given <code>boolean</code>.
-   * @return the integer <code>1</code> if the given <code>boolean</code>
-   *         represents <code>true</code>; returns the integer <code>0</code>
-   *         if this object represents <code>false</code>.
+   * @return the hash code for the given <code>boolean</code>.
+   * @see Boolean#hashCode()
    */
   public static int hashCode(boolean bool) {
-    return bool ? 1 : 0;
+    return bool ? 1231 : 1237;
   }
 
   /**
-   * Returns the hash code for the given <code>double</code>.
+   * Returns the same value as <code>{@link Double#hashCode()}</code>.
    * 
    * @param dbl
    *          the given <code>double</code>.
    * @return the hash code for the given <code>double</code>.
+   * @see Double#hashCode()
    */
   public static int hashCode(double dbl) {
     long bits = Double.doubleToLongBits(dbl);
@@ -93,22 +93,24 @@ public abstract class Objects {
   }
 
   /**
-   * Returns the hash code for the given <code>float</code>.
+   * Returns the same value as <code>{@link Float#hashCode()}</code>.
    * 
    * @param flt
    *          the given <code>float</code>.
    * @return the hash code for the given <code>float</code>.
+   * @see Float#hashCode()
    */
   public static int hashCode(float flt) {
     return Float.floatToIntBits(flt);
   }
 
   /**
-   * Returns the hash code for the given <code>long</code>.
+   * Returns the same value as <code>{@link Long#hashCode()}</code>.
    * 
    * @param lng
    *          the given <code>long</code>.
    * @return the hash code for the given <code>long</code>.
+   * @see Long#hashCode()
    */
   public static int hashCode(long lng) {
     return (int) (lng ^ (lng >>> 32));
@@ -408,34 +410,32 @@ public abstract class Objects {
     if (obj == null)
       return 0;
 
-    if (obj.getClass().isArray()) {
-      if (obj instanceof boolean[]) {
-        return nullSafeHashCode((boolean[]) obj);
-      }
-      if (obj instanceof byte[]) {
-        return nullSafeHashCode((byte[]) obj);
-      }
-      if (obj instanceof char[]) {
-        return nullSafeHashCode((char[]) obj);
-      }
-      if (obj instanceof double[]) {
-        return nullSafeHashCode((double[]) obj);
-      }
-      if (obj instanceof float[]) {
-        return nullSafeHashCode((float[]) obj);
-      }
-      if (obj instanceof int[]) {
-        return nullSafeHashCode((int[]) obj);
-      }
-      if (obj instanceof long[]) {
-        return nullSafeHashCode((long[]) obj);
-      }
-      if (obj instanceof short[]) {
-        return nullSafeHashCode((short[]) obj);
-      }
-      if (obj instanceof Object[]) {
-        return nullSafeHashCode((Object[]) obj);
-      }
+    if (obj instanceof boolean[]) {
+      return nullSafeHashCode((boolean[]) obj);
+    }
+    if (obj instanceof byte[]) {
+      return nullSafeHashCode((byte[]) obj);
+    }
+    if (obj instanceof char[]) {
+      return nullSafeHashCode((char[]) obj);
+    }
+    if (obj instanceof double[]) {
+      return nullSafeHashCode((double[]) obj);
+    }
+    if (obj instanceof float[]) {
+      return nullSafeHashCode((float[]) obj);
+    }
+    if (obj instanceof int[]) {
+      return nullSafeHashCode((int[]) obj);
+    }
+    if (obj instanceof long[]) {
+      return nullSafeHashCode((long[]) obj);
+    }
+    if (obj instanceof short[]) {
+      return nullSafeHashCode((short[]) obj);
+    }
+    if (obj instanceof Object[]) {
+      return nullSafeHashCode((Object[]) obj);
     }
 
     return obj.hashCode();
@@ -611,6 +611,39 @@ public abstract class Objects {
    * @return a string representation of <code>array</code>.
    */
   public static String nullSafeToString(double[] array) {
+    if (array == null)
+      return NULL_ARRAY;
+
+    int length = array.length;
+    if (length == 0)
+      return EMPTY_ARRAY;
+
+    StringBuffer buffer = new StringBuffer();
+    for (int i = 0; i < length; i++) {
+      if (i == 0)
+        buffer.append(ARRAY_START);
+      else
+        buffer.append(ARRAY_ELEMENT_SEPARATOR);
+
+      buffer.append(array[i]);
+    }
+
+    buffer.append(ARRAY_END);
+    return buffer.toString();
+  }
+
+  /**
+   * Returns a string representation of the contents of the specified array. The
+   * string representation consists of a list of the array's elements, enclosed
+   * in curly braces (<code>"{}"</code>). Adjacent elements are separated by
+   * the characters <code>", "</code> (a comma followed by a space). Returns
+   * <code>"null"</code> if <code>array</code> is <code>null</code>.
+   * 
+   * @param array
+   *          the array whose string representation to return.
+   * @return a string representation of <code>array</code>.
+   */
+  public static String nullSafeToString(float[] array) {
     if (array == null)
       return NULL_ARRAY;
 
