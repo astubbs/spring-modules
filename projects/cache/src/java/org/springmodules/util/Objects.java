@@ -146,6 +146,26 @@ public abstract class Objects {
   }
 
   /**
+   * Returns <code>true</code> if the given object is an array of primitives.
+   * 
+   * @param array
+   *          the given object to check.
+   * @return <code>true</code> if the given object is an array of primitives.
+   */
+  public static boolean isArrayOfPrimitives(Object array) {
+    boolean primitiveArray = false;
+
+    if (array != null) {
+      Class clazz = array.getClass();
+
+      primitiveArray = clazz.isArray()
+          && clazz.getComponentType().isPrimitive();
+    }
+
+    return primitiveArray;
+  }
+
+  /**
    * Returns <code>true</code> if the given class is any of the following:
    * <ul>
    * <li><code>boolean</code></li>

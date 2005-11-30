@@ -104,6 +104,22 @@ public class ObjectsTests extends TestCase {
     assertEquals("", Objects.identityToString(null).toString());
   }
 
+  public void testIsArrayOfPrimitivesWithBooleanArray() {
+    assertTrue(Objects.isArrayOfPrimitives(new boolean[] { true, false }));
+  }
+
+  public void testIsArrayOfPrimitivesWithObjectArray() {
+    assertFalse(Objects.isArrayOfPrimitives(new Object[] { "Darth Vader " }));
+  }
+
+  public void testIsArrayOfPrimitivesWithObjectEqualToNull() {
+    assertFalse(Objects.isArrayOfPrimitives(null));
+  }
+
+  public void testIsArrayOfPrimitivesWithObjectNotBeingArray() {
+    assertFalse(Objects.isArrayOfPrimitives("Han Solo"));
+  }
+
   public void testIsPrimitiveOrWrapperWithBooleanPrimitiveClass() {
     assertTrue(Objects.isPrimitiveOrWrapper(boolean.class));
   }
