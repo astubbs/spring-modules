@@ -72,11 +72,15 @@ public abstract class Reflections {
       return 0;
 
     Class targetClass = obj.getClass();
-    if (targetClass.isArray() || Objects.isPrimitiveOrWrapper(targetClass)
-        || obj instanceof String) {
+    if (Objects.isArrayOfPrimitives(obj)
+        || Objects.isPrimitiveOrWrapper(targetClass) || obj instanceof String) {
       return Objects.nullSafeHashCode(obj);
     }
 
+    if (targetClass.isArray()) {
+      return reflectionHashCode((Object[]) obj);
+    }
+    
     if (obj instanceof Collection) {
       return reflectionHashCode((Collection) obj);
     }
@@ -103,7 +107,19 @@ public abstract class Reflections {
         targetClass = targetClass.getSuperclass();
       }
     } catch (IllegalAccessException exception) {
+      // ///CLOVER:OFF
       ReflectionUtils.handleReflectionException(exception);
+      // ///CLOVER:ON
+    }
+
+    return hash;
+  }
+  
+  private static int reflectionHashCode(Object[] array) {
+    int hash = INITIAL_HASH;
+    int arraySize = array.length;
+    for (int i = 0; i < arraySize; i++) {
+      hash = MULTIPLIER * hash + reflectionHashCode(array[i]);
     }
 
     return hash;
