@@ -36,10 +36,6 @@ public abstract class AbstractCachingAttributeSource extends
     AbstractSingleMetadataCacheAttributeSource implements
     CachingAttributeSource {
 
-  public AbstractCachingAttributeSource() {
-    super();
-  }
-
   /**
    * @see AbstractSingleMetadataCacheAttributeSource#findAttribute(Collection)
    */

@@ -37,10 +37,6 @@ public abstract class AbstractFlushingAttributeSource extends
     AbstractSingleMetadataCacheAttributeSource implements
     FlushingAttributeSource {
 
-  public AbstractFlushingAttributeSource() {
-    super();
-  }
-
   /**
    * @see AbstractSingleMetadataCacheAttributeSource#findAttribute(Collection)
    */

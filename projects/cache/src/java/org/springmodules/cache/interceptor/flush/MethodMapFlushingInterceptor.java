@@ -26,19 +26,15 @@ import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Flushes part(s) of the cache when the intercepted method is executed.
- * Intercepts the methods that have <code>{@link FlushingModel}</code>s
- * associated to them.
+ * Caching interceptor that internally uses a
+ * <code>{@link MethodMapFlushingModelSource}</code> to retrieve flushing
+ * models bound to intercepted methods.
  * </p>
  * 
  * @author Alex Ruiz
  */
 public final class MethodMapFlushingInterceptor extends
     AbstractModelSourceFlushingInterceptor {
-
-  public MethodMapFlushingInterceptor() {
-    super();
-  }
 
   /**
    * @see AbstractFlushingInterceptor#onAfterPropertiesSet()
@@ -47,7 +43,7 @@ public final class MethodMapFlushingInterceptor extends
     Map flushingModels = getFlushingModels();
 
     if (flushingModels != null && !flushingModels.isEmpty()) {
-      if (flushingModelSource == null) {
+      if (getFlushingModelSource() == null) {
         MethodMapFlushingModelSource newSource = new MethodMapFlushingModelSource();
 
         String key = null;

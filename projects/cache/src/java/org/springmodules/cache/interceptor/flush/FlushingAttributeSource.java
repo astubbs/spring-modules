@@ -22,9 +22,8 @@ import java.lang.reflect.Method;
 
 /**
  * <p>
- * Interface used by <code>{@link MetadataFlushingInterceptor}</code> to retrieve
- * the <code>{@link FlushCache}</code> attribute that belongs to the
- * intercepted method.
+ * Interface used by <code>{@link MetadataFlushingInterceptor}</code> to
+ * retrieve the flushing metadata attributes bound to intercepted methods.
  * </p>
  * 
  * @author Alex Ruiz
@@ -32,15 +31,14 @@ import java.lang.reflect.Method;
 public interface FlushingAttributeSource {
 
   /**
-   * Returns an instance of <code>{@link FlushCache}</code> attribute from the
-   * intercepted method.
+   * Returns the flushing metadata attribute bound to the intercepted method.
    * 
    * @param method
-   *          the intercepted method.
+   *          the intercepted method
    * @param targetClass
-   *          the target class. May be null, in which case the declaring class
-   *          of the method must be used.
-   * @return a metadata attribute from the intercepted method.
+   *          the target class. May be <code>null</code>, in which case the
+   *          declaring class of the method must be used
+   * @return the flushing metadata attribute bound the intercepted method.
    */
   FlushCache getFlushingAttribute(Method method, Class targetClass);
 }

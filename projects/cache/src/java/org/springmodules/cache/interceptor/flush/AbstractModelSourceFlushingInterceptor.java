@@ -25,7 +25,7 @@ import org.springmodules.cache.FlushingModel;
 /**
  * <p>
  * Template for flushing interceptors that intercept the methods that have
- * <code>{@link FlushingModel}</code>s associated to them.
+ * flushing models associated to them.
  * </p>
  * 
  * @author Alex Ruiz
@@ -33,8 +33,11 @@ import org.springmodules.cache.FlushingModel;
 public abstract class AbstractModelSourceFlushingInterceptor extends
     AbstractFlushingInterceptor {
 
-  protected FlushingModelSource flushingModelSource;
+  private FlushingModelSource flushingModelSource;
 
+  /**
+   * @return the source of flushing models for class methods
+   */
   public FlushingModelSource getFlushingModelSource() {
     return flushingModelSource;
   }
@@ -49,6 +52,12 @@ public abstract class AbstractModelSourceFlushingInterceptor extends
     return flushingModelSource.getFlushingModel(method, targetClass);
   }
 
+  /**
+   * Sets the source of flusshing models for class methods.
+   * 
+   * @param newFlushingModelSource
+   *          the new source of flushing models
+   */
   public void setFlushingModelSource(FlushingModelSource newFlushingModelSource) {
     flushingModelSource = newFlushingModelSource;
   }

@@ -26,17 +26,13 @@ import org.springmodules.cache.interceptor.AbstractNameMatchCacheModelSource;
 /**
  * <p>
  * Simple implementation of <code>{@link CachingModelSource}</code> that
- * allows <code>{@link CachingModel}</code> to be matched by registered name.
+ * allows caching models to be matched by registered name.
  * </p>
  * 
  * @author Alex Ruiz
  */
 public class NameMatchCachingModelSource extends
     AbstractNameMatchCacheModelSource implements CachingModelSource {
-
-  public NameMatchCachingModelSource() {
-    super();
-  }
 
   /**
    * @see CachingModelSource#getCachingModel(Method, Class)
@@ -45,6 +41,13 @@ public class NameMatchCachingModelSource extends
     return (CachingModel) getCacheModel(method);
   }
 
+  /**
+   * Sets the map of caching models to use. Each map entry uses the name of the
+   * method to advise as key (a String) and the caching model to bind as value.
+   * 
+   * @param models
+   *          the new map of caching models
+   */
   public void setCachingModels(Map models) {
     setCacheModels(models);
   }

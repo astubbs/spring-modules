@@ -17,16 +17,18 @@
  */
 package org.springmodules.cache.interceptor.caching;
 
-import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 
 /**
  * <p>
- * Caches the return value of the intercepted method. Intercepts the methods
- * that have <code>{@link CachingModel}</code>s associated to them.
+ * Caching interceptor that internally uses a
+ * <code>{@link NameMatchCachingModelSource}</code> to retrieve caching
+ * models bound to intercepted methods.
  * </p>
  * 
  * @author Alex Ruiz
+ * 
+ * @see org.springmodules.cache.interceptor.caching.AbstractCachingInterceptor
  */
 public final class NameMatchCachingInterceptor extends
     AbstractModelSourceCachingInterceptor {

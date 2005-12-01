@@ -37,14 +37,7 @@ import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeS
 public final class MetadataCachingAttributeSource extends
     AbstractCachingAttributeSource {
 
-  /**
-   * Underlying Attributes implementation we're using.
-   */
   private Attributes attributes;
-
-  public MetadataCachingAttributeSource() {
-    super();
-  }
 
   /**
    * @see org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource#findAllAttributes(Method)
@@ -70,10 +63,19 @@ public final class MetadataCachingAttributeSource extends
     return attribute;
   }
 
+  /**
+   * @return the underlying metadata attributes we are using
+   */
   protected Attributes getAttributes() {
     return attributes;
   }
 
+  /**
+   * Sets the underlying metadata attributes to use.
+   * 
+   * @param newAttributes
+   *          the new underlying metadata attributes
+   */
   public void setAttributes(Attributes newAttributes) {
     attributes = newAttributes;
   }

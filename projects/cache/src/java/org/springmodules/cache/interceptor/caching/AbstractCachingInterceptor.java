@@ -59,21 +59,18 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 
     private static final long serialVersionUID = 3257007674280522803L;
 
+    /**
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
       return "NULL_ENTRY@" + ObjectUtils.getIdentityHexString(this);
     }
   };
 
-  /**
-   * Generates the keys for cache entries.
-   */
   private CacheKeyGenerator cacheKeyGenerator;
 
   private CacheProviderFacade cacheProviderFacade;
 
-  /**
-   * Listener(s) being notified each time an entry is stored in the cache.
-   */
   private CachingListener[] cachingListeners;
 
   /**
@@ -83,17 +80,28 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
    */
   private Map cachingModels;
 
+  /** Logger available to subclasses */
   protected final Log logger = LogFactory.getLog(getClass());
 
-  public AbstractCachingInterceptor() {
-    super();
-  }
-
   /**
+   * Performs property validation and initialization after this interceptor has
+   * been created and configured.
+   * <ul>
+   * <li>Verifies that caching models have been set.</li>
+   * <li>Validates that the caching models have valid property values</li>
+   * <li>Eagerly initialize the key generator, creating a new
+   * <code>{@link HashCodeCacheKeyGenerator}</code> if none set.
+   * </ul>
+   * 
    * @throws FatalCacheException
-   *           if the cache provider facade is <code>null</code>.
+   *           if the cache provider facade is <code>null</code>
    * @throws FatalCacheException
-   *           if the map of caching models is <code>null</code> or empty.
+   *           if the map of caching models is <code>null</code> or empty
+   * @throws FatalCacheException
+   *           if an unexpected exception is thrown when creating caching models
+   *           from <code>java.util.Properties</code>
+   * @throws FatalCacheException
+   *           if one or more caching models have invalid property values
    * 
    * @see InitializingBean#afterPropertiesSet()
    * @see #onAfterPropertiesSet()
@@ -109,49 +117,11 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
           "The map of caching models should not be empty");
     }
 
-    CacheModelValidator validator = cacheProviderFacade
-        .getCacheModelValidator();
-
     if (cachingModels instanceof Properties) {
-      PropertyEditor editor = cacheProviderFacade.getCachingModelEditor();
-      Properties properties = (Properties) cachingModels;
-      Map newCachingModels = new HashMap();
-
-      String id = null;
-
-      try {
-        for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
-          id = (String) i.next();
-
-          String property = properties.getProperty(id);
-          editor.setAsText(property);
-          Object cachingModel = editor.getValue();
-          validator.validateCachingModel(cachingModel);
-
-          newCachingModels.put(id, cachingModel);
-        }
-      } catch (Exception exception) {
-        throw new FatalCacheException(
-            "Unable to create the caching model with id " + Strings.quote(id),
-            exception);
-      }
-
-      setCachingModels(newCachingModels);
+      setCachingModelsFromProperties();
 
     } else {
-      String id = null;
-
-      try {
-        for (Iterator i = cachingModels.keySet().iterator(); i.hasNext();) {
-          id = (String) i.next();
-          Object cachingModel = cachingModels.get(id);
-          validator.validateCachingModel(cachingModel);
-        }
-      } catch (Exception exception) {
-        throw new FatalCacheException(
-            "Unable to validate caching model with id " + Strings.quote(id),
-            exception);
-      }
+      validateCachingModels();
     }
 
     if (cacheKeyGenerator == null) {
@@ -162,25 +132,51 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     onAfterPropertiesSet();
   }
 
+  /**
+   * @return the generator of cache entry keys.
+   */
   public final CacheKeyGenerator getCacheKeyGenerator() {
     return cacheKeyGenerator;
   }
 
+  /**
+   * @return the map that specifies how caching models should be bound to class
+   *         methods
+   */
   protected final Map getCachingModels() {
     return cachingModels;
   }
 
+  /**
+   * Returns the caching model bound to an advised method.
+   * 
+   * @param methodInvocation
+   *          the description of an invocation to the advised method
+   * @return the caching model bound to an advised method
+   */
   protected abstract CachingModel getModel(MethodInvocation methodInvocation);
 
   /**
-   * Returns from the cache provider the value saved with the key generated
-   * using the specified <code>MethodInvocation</code>. If the object is not
-   * found in the cache, the intercepted method is executed and its returned
-   * value is saved in the cached and returned by this method.
+   * <p>
+   * Performs caching following these steps:
+   * <ol>
+   * <li>Generates a unique key from the description of the invocation to the
+   * intercepted method</li>
+   * <li>Verifies if the cache already has an entry under the generated key, if
+   * it does returns the cached value</li>
+   * <li>Otherwise executes the intercepted method, stores its return value in
+   * the cache under the generated key and returns the new cached value</li>
+   * </ol>
+   * </p>
+   * <p>
+   * Intercepted methods which return type is <code>void</code> are ignored.
+   * </p>
    * 
    * @param methodInvocation
-   *          the description of the intercepted method.
-   * @return the object stored in the cache.
+   *          the description of the intercepted method
+   * @return the object stored in the cache
+   * @throws Throwable
+   *           any exception thrown when executing the intercepted method
    */
   public final Object invoke(MethodInvocation methodInvocation)
       throws Throwable {
@@ -243,30 +239,141 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
   }
 
   /**
-   * Gives subclasses the opportunity to set up their own properties.
+   * Gives subclasses the opportunity to initialize and validate their own
+   * properties.
    * 
    * @throws FatalCacheException
    *           if one or more properties of this interceptor contain invalid
-   *           values or have an illegal state.
+   *           values or have an illegal state
    */
   protected void onAfterPropertiesSet() throws FatalCacheException {
     // no implementation.
   }
 
+  /**
+   * Sets the generator of cache entry keys.
+   * 
+   * @param newCacheKeyGenerator
+   *          the new generator of cache entry keys
+   */
   public final void setCacheKeyGenerator(CacheKeyGenerator newCacheKeyGenerator) {
     cacheKeyGenerator = newCacheKeyGenerator;
   }
 
+  /**
+   * Sets the facade for the cache provider to use.
+   * 
+   * @param newCacheProviderFacade
+   *          the new cache provider facade
+   */
   public final void setCacheProviderFacade(
       CacheProviderFacade newCacheProviderFacade) {
     cacheProviderFacade = newCacheProviderFacade;
   }
 
+  /**
+   * Sets the listeners to be notified when an object is stored in the cache.
+   * 
+   * @param newCachingListeners
+   *          the new listeners
+   */
   public final void setCachingListeners(CachingListener[] newCachingListeners) {
     cachingListeners = newCachingListeners;
   }
 
+  /**
+   * Sets the caching models to use.
+   * 
+   * @param newCachingModels
+   *          the new caching models
+   */
   public final void setCachingModels(Map newCachingModels) {
     cachingModels = newCachingModels;
+  }
+
+  /**
+   * <p>
+   * <ol>
+   * <li>Creates a new caching model from each property using a
+   * <code>PropertyEditor</code></li>
+   * <li>Validates the created caching model using a
+   * <code>{@link CacheModelValidator}</code></li>
+   * <li>Stores the created caching model in a <code>java.util.Map</code>
+   * using the same key as the property previously used</li>
+   * <li>Replaces the <code>java.util.Properties</code> with the created map</li>
+   * </ol>
+   * </p>
+   * <p>
+   * <b>Note:</b> This method is executed by
+   * <code>{@link #afterPropertiesSet()}</code> <b>only</b> when
+   * <code>{@link #cachingModels}</code> has been set as a
+   * <code>java.util.Properties</code>.
+   * </p>
+   * 
+   * @throws FatalCacheException
+   *           if an unexpected exception is thrown when creating or validating
+   *           a caching model
+   * @see CacheModelValidator#validateCachingModel(Object)
+   */
+  private void setCachingModelsFromProperties() throws FatalCacheException {
+    CacheModelValidator validator = cacheProviderFacade
+        .getCacheModelValidator();
+
+    PropertyEditor editor = cacheProviderFacade.getCachingModelEditor();
+    Properties properties = (Properties) cachingModels;
+    Map newCachingModels = new HashMap();
+
+    String id = null;
+
+    try {
+      for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
+        id = (String) i.next();
+
+        String property = properties.getProperty(id);
+        editor.setAsText(property);
+        Object cachingModel = editor.getValue();
+        validator.validateCachingModel(cachingModel);
+
+        newCachingModels.put(id, cachingModel);
+      }
+    } catch (Exception exception) {
+      throw new FatalCacheException(
+          "Unable to create the caching model with id " + Strings.quote(id),
+          exception);
+    }
+
+    setCachingModels(newCachingModels);
+  }
+
+  /**
+   * <p>
+   * Validates the caching models in <code>{@link #cachingModels}</code>.
+   * </p>
+   * <p>
+   * <b>Note:</b> This method is executed by
+   * <code>{@link #afterPropertiesSet()}</code> <b>only</b> when
+   * <code>{@link #cachingModels}</code> has <b>not</b> been set as a
+   * <code>java.util.Properties</code>.
+   * </p>
+   * 
+   * @throws FatalCacheException
+   *           wrapping any exception thrown by the validator
+   */
+  private void validateCachingModels() throws FatalCacheException {
+    CacheModelValidator validator = cacheProviderFacade
+        .getCacheModelValidator();
+
+    String id = null;
+
+    try {
+      for (Iterator i = cachingModels.keySet().iterator(); i.hasNext();) {
+        id = (String) i.next();
+        Object cachingModel = cachingModels.get(id);
+        validator.validateCachingModel(cachingModel);
+      }
+    } catch (Exception exception) {
+      throw new FatalCacheException("Unable to validate caching model with id "
+          + Strings.quote(id), exception);
+    }
   }
 }

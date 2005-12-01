@@ -28,11 +28,14 @@ import org.springmodules.cache.CachingModel;
 
 /**
  * <p>
- * Caches the return value of the intercepted method. Intercepts the methods
- * that have been marked as cacheable using metadata attributes.
+ * Caching interceptor that internally uses a
+ * <code>{@link CachingAttributeSource}</code> to retrieve caching metadata
+ * attributes bound to intercepted methods.
  * </p>
  * 
  * @author Alex Ruiz
+ * 
+ * @see org.springmodules.cache.interceptor.caching.AbstractCachingInterceptor
  */
 public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
 
@@ -40,10 +43,6 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
    * Retrieves metadata attributes from class methods.
    */
   private CachingAttributeSource cachingAttributeSource;
-
-  public MetadataCachingInterceptor() {
-    super();
-  }
 
   /**
    * Returns the metadata attribute of the intercepted method.
@@ -61,6 +60,9 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
     return attribute;
   }
 
+  /**
+   * @return the source of caching metadata attributes for class methods
+   */
   public final CachingAttributeSource getCachingAttributeSource() {
     return cachingAttributeSource;
   }
@@ -94,6 +96,12 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
     setCachingAttributeSource(source);
   }
 
+  /**
+   * Sets the source of caching metadata attributes for class methods.
+   * 
+   * @param newCachingAttributeSource
+   *          the new source of caching metadata attributes
+   */
   public final void setCachingAttributeSource(
       CachingAttributeSource newCachingAttributeSource) {
     cachingAttributeSource = newCachingAttributeSource;

@@ -33,10 +33,6 @@ import org.springmodules.cache.interceptor.AbstractMethodMapCacheModelSource;
 public class MethodMapFlushingModelSource extends
     AbstractMethodMapCacheModelSource implements FlushingModelSource {
 
-  public MethodMapFlushingModelSource() {
-    super();
-  }
-
   /**
    * <p>
    * Adds a new entry to map of flushing models using the methods which name
@@ -66,9 +62,9 @@ public class MethodMapFlushingModelSource extends
   }
 
   /**
-   * @see FlushingAttributeSource#getFlushingAttribute(Method, Class)
+   * @see FlushingModelSource#getFlushingModel(Method, Class)
    */
   public FlushingModel getFlushingModel(Method method, Class targetClass) {
-    return (FlushingModel) getModelMap().get(method);
+    return (FlushingModel) getCacheModels().get(method);
   }
 }

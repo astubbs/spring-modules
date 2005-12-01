@@ -28,22 +28,18 @@ import org.springmodules.cache.FlushingModel;
 
 /**
  * <p>
- * Flushes part(s) of the cache when the intercepted method is executed. The
- * methods that trigger cache flush are marked using metadata attributes.
+ * Caching interceptor that internally uses a
+ * <code>{@link FlushingAttributeSource}</code> to retrieve flushing metadata
+ * attributes bound to intercepted methods.
  * </p>
  * 
  * @author Alex Ruiz
+ * 
+ * @see org.springmodules.cache.interceptor.flush.AbstractFlushingInterceptor
  */
 public class MetadataFlushingInterceptor extends AbstractFlushingInterceptor {
 
-  /**
-   * Retrieves source-level metadata attributes from class methods.
-   */
   private FlushingAttributeSource flushingAttributeSource;
-
-  public MetadataFlushingInterceptor() {
-    super();
-  }
 
   /**
    * Returns the metadata attribute of the intercepted method.
@@ -64,6 +60,9 @@ public class MetadataFlushingInterceptor extends AbstractFlushingInterceptor {
     return attribute;
   }
 
+  /**
+   * @return the source of flushing metadata attributes for class methods
+   */
   public final FlushingAttributeSource getFlushingAttributeSource() {
     return flushingAttributeSource;
   }
@@ -100,6 +99,12 @@ public class MetadataFlushingInterceptor extends AbstractFlushingInterceptor {
     setFlushingAttributeSource(source);
   }
 
+  /**
+   * Sets the source of flushing metadata attributes for class methods.
+   * 
+   * @param newFlushingAttributeSource
+   *          the new source of flushing metadata attributes
+   */
   public final void setFlushingAttributeSource(
       FlushingAttributeSource newFlushingAttributeSource) {
     flushingAttributeSource = newFlushingAttributeSource;

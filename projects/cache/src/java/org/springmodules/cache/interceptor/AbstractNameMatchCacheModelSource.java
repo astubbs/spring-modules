@@ -29,7 +29,7 @@ import org.springmodules.cache.util.TextMatcher;
 
 /**
  * <p>
- * Template for classes that allow attributes to be matched by registered name.
+ * Template that allows attributes to be matched by registered name.
  * </p>
  * 
  * @author Alex Ruiz
@@ -42,19 +42,15 @@ public abstract class AbstractNameMatchCacheModelSource {
    */
   private Map cacheModels;
 
+  /** Logger available to subclasses */
   protected final Log logger = LogFactory.getLog(getClass());
 
-  public AbstractNameMatchCacheModelSource() {
-    super();
-  }
-
   /**
-   * Returns an instance of <code>{@link CacheModel}</code> for the
-   * intercepted method.
+   * Returns the cache model bound to the intercepted method.
    * 
    * @param method
-   *          the definition of the intercepted method.
-   * @return a model from the intercepted method.
+   *          the definition of the intercepted method
+   * @return the model bound to the intercepted method
    */
   protected final CacheModel getCacheModel(Method method) {
     String methodName = method.getName();
@@ -80,19 +76,32 @@ public abstract class AbstractNameMatchCacheModelSource {
   }
 
   /**
+   * <p>
    * Returns <code>true</code> if the given method name matches the mapped
    * name. The default implementation checks for "xxx*" and "*xxx" matches.
+   * </p>
+   * <p>
+   * For example, this method will return <code>true</code> if the given
+   * method name is &quot;getUser&quot; and the mapped name is &quot;get*&quot;
+   * </p>
    * 
    * @param methodName
-   *          the method name of the class.
+   *          the method name
    * @param mappedName
-   *          the name in the descriptor.
-   * @return <code>true</code> if the names match.
+   *          the name in the descriptor
+   * @return <code>true</code> if the names match
    */
   protected boolean isMatch(String methodName, String mappedName) {
     return TextMatcher.isMatch(methodName, mappedName);
   }
 
+  /**
+   * Sets the map of cache models to use. Each map entry uses the name of the
+   * method to advise as key (a String) and the cache model to bind as value.
+   * 
+   * @param newCacheModels
+   *          the new map of cache models
+   */
   protected final void setCacheModels(Map newCacheModels) {
     cacheModels = newCacheModels;
   }

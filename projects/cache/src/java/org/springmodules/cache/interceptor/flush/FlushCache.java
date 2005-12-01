@@ -40,10 +40,19 @@ public class FlushCache implements CacheAttribute {
    */
   private String modelId;
 
+  /**
+   * Construct a <code>FlushCache</code>.
+   */
   public FlushCache() {
     super();
   }
 
+  /**
+   * Construct a new <code>FlushCache</code> with the given flushing model id.
+   * 
+   * @param newModelId
+   *          the id of the flushing model associated to this flushing attribute
+   */
   public FlushCache(String newModelId) {
     this();
     setModelId(newModelId);
@@ -68,6 +77,9 @@ public class FlushCache implements CacheAttribute {
     return true;
   }
 
+  /**
+   * @return the id of the flushing model associated to this flushing attribute
+   */
   public final String getModelId() {
     return modelId;
   }
@@ -82,6 +94,12 @@ public class FlushCache implements CacheAttribute {
     return hash;
   }
 
+  /**
+   * Sets the id of the flushing model to associate to this flushing attribute.
+   * 
+   * @param newModelId
+   *          the new flushing model id
+   */
   public final void setModelId(String newModelId) {
     modelId = newModelId;
   }

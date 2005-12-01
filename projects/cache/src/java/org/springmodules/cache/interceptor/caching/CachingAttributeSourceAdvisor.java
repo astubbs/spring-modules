@@ -25,8 +25,8 @@ import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 
 /**
  * <p>
- * Advisor driven by a <code>{@link CachingAttributeSource}</code> that points
- * to <code>{@link MetadataCachingInterceptor}</code> which methods should be
+ * Advisor driven by a <code>{@link CachingAttributeSource}</code> that tells
+ * <code>{@link MetadataCachingInterceptor}</code> which methods should be
  * intercepted.
  * </p>
  * 

@@ -29,12 +29,28 @@ import org.springframework.core.NestedRuntimeException;
  */
 public abstract class CacheException extends NestedRuntimeException {
 
-  public CacheException(String detailMessage) {
-    super(detailMessage);
+  /**
+   * Construct a <code>CacheException</code> with the specified detail
+   * message.
+   * 
+   * @param msg
+   *          the detail message
+   */
+  public CacheException(String msg) {
+    super(msg);
   }
 
-  public CacheException(String detailMessage, Throwable nestedException) {
-    super(detailMessage, nestedException);
+  /**
+   * Construct a <code>CacheException</code> with the specified detail message
+   * and nested exception.
+   * 
+   * @param msg
+   *          the detail message
+   * @param ex
+   *          the nested exception
+   */
+  public CacheException(String msg, Throwable ex) {
+    super(msg, ex);
   }
 
 }

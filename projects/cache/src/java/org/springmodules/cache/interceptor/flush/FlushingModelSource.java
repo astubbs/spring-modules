@@ -23,8 +23,7 @@ import org.springmodules.cache.FlushingModel;
 
 /**
  * <p>
- * Returns an instance of <code>{@link FlushingModel}</code> from the
- * intercepted method.
+ * Returns an instance flushing models bound to intercepted methods.
  * </p>
  * 
  * @author Alex Ruiz
@@ -32,15 +31,14 @@ import org.springmodules.cache.FlushingModel;
 public interface FlushingModelSource {
 
   /**
-   * Returns an instance of <code>{@link FlushingModel}</code> for the
-   * intercepted method.
+   * Returns the flushing model bound to the intercepted method.
    * 
    * @param method
    *          the definition of the intercepted method.
    * @param targetClass
    *          the target class. May be <code>null</code>, in which case the
    *          declaring class of the method must be used.
-   * @return a cache-flushing model from the intercepted method.
+   * @return a flushing model bound the intercepted method.
    */
   FlushingModel getFlushingModel(Method method, Class targetClass);
 }

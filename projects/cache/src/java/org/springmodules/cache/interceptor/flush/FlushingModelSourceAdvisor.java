@@ -26,9 +26,9 @@ import org.springmodules.cache.FlushingModel;
 
 /**
  * <p>
- * Advisor driven by a <code>{@link FlushingModelSource}</code> that points to
- * <code>{@link NameMatchFlushingInterceptor}</code> which methods should
- * be intercepted.
+ * Advisor driven by a <code>{@link FlushingModelSource}</code> that tells
+ * <code>{@link NameMatchFlushingInterceptor}</code> which methods should be
+ * intercepted.
  * </p>
  * 
  * @author Alex Ruiz

@@ -20,23 +20,20 @@ package org.springmodules.cache.interceptor.flush;
 import java.util.Map;
 
 import org.springmodules.cache.FatalCacheException;
-import org.springmodules.cache.FlushingModel;
 
 /**
  * <p>
- * Flushes part(s) of the cache when the intercepted method is executed.
- * Intercepts the methods that have <code>{@link FlushingModel}</code>s
- * associated to them.
+ * Flushing interceptor that internally uses a
+ * <code>{@link NameMatchFlushingModelSource}</code> to retrieve flushing
+ * models bound to intercepted methods.
  * </p>
  * 
  * @author Alex Ruiz
+ * 
+ * @see org.springmodules.cache.interceptor.flush.AbstractFlushingInterceptor
  */
 public final class NameMatchFlushingInterceptor extends
     AbstractModelSourceFlushingInterceptor {
-
-  public NameMatchFlushingInterceptor() {
-    super();
-  }
 
   /**
    * @see AbstractFlushingInterceptor#onAfterPropertiesSet()
@@ -45,7 +42,7 @@ public final class NameMatchFlushingInterceptor extends
     Map flushingModels = getFlushingModels();
 
     if (flushingModels != null && !flushingModels.isEmpty()) {
-      if (flushingModelSource == null) {
+      if (getFlushingModelSource() == null) {
         NameMatchFlushingModelSource newSource = new NameMatchFlushingModelSource();
         newSource.setFlushingModels(getFlushingModels());
         setFlushingModelSource(newSource);

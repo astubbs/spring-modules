@@ -45,6 +45,8 @@ public class CachingModelSourceAdvisor extends
   private CachingModelSource cachingModelSource;
 
   /**
+   * Construct a <code>CachingModelSourceAdvisor</code>.
+   * 
    * @param interceptor
    *          Advice that caches the returned value of intercepted methods.
    * @throws AopConfigException
@@ -65,6 +67,9 @@ public class CachingModelSourceAdvisor extends
   }
 
   /**
+   * Returns <code>true</code> if the return value of the intercepted method
+   * should be cached.
+   * 
    * @param method
    *          the intercepted method to verify.
    * @param targetClass

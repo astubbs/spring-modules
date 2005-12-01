@@ -54,11 +54,8 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
    */
   private Map flushingModels;
 
+  /** Logger available to subclasses */
   protected final Log logger = LogFactory.getLog(getClass());
-
-  public AbstractFlushingInterceptor() {
-    super();
-  }
 
   /**
    * @throws FatalCacheException
@@ -125,8 +122,19 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
     onAfterPropertiesSet();
   }
 
+  /**
+   * Returns the flushing model bound to an intercepted method.
+   * 
+   * @param methodInvocation
+   *          the description of the invocation to the intercepted method
+   * @return the flushing model boudn to the given intercepted method
+   */
   protected abstract FlushingModel getModel(MethodInvocation methodInvocation);
 
+  /**
+   * @return the map that specifies how caching models should be bound to class
+   *         methods
+   */
   protected final Map getFlushingModels() {
     return flushingModels;
   }
@@ -137,6 +145,8 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
    * @param methodInvocation
    *          the description of the intercepted method.
    * @return the return value of the intercepted method.
+   * @throws Throwable
+   *           any exception thrown when executing the intercepted method
    */
   public final Object invoke(MethodInvocation methodInvocation)
       throws Throwable {
@@ -173,11 +183,23 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
     // no implementation.
   }
 
+  /**
+   * Sets the facade for the cache provider to use.
+   * 
+   * @param newCacheProviderFacade
+   *          the new cache provider facade
+   */
   public final void setCacheProviderFacade(
       CacheProviderFacade newCacheProviderFacade) {
     cacheProviderFacade = newCacheProviderFacade;
   }
 
+  /**
+   * Sets the flushing models to use.
+   * 
+   * @param newFlushingModels
+   *          the new flushing models
+   */
   public final void setFlushingModels(Map newFlushingModels) {
     flushingModels = newFlushingModels;
   }

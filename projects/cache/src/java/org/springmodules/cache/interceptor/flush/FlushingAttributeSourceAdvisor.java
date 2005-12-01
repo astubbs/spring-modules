@@ -25,9 +25,9 @@ import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 
 /**
  * <p>
- * Advisor driven by a <code>{@link FlushingAttributeSource}</code> that
- * points to <code>{@link MetadataFlushingInterceptor}</code> the methods that
- * should be intercepted.
+ * Advisor driven by a <code>{@link FlushingAttributeSource}</code> that tells
+ * <code>{@link MetadataFlushingInterceptor}</code> the methods that should be
+ * intercepted.
  * </p>
  * 
  * @author Alex Ruiz
@@ -50,7 +50,8 @@ public class FlushingAttributeSourceAdvisor extends
    *           if the <code>CacheFlushAttributeSource</code> of
    *           <code>cacheInterceptor</code> is <code>null</code>.
    */
-  public FlushingAttributeSourceAdvisor(MetadataFlushingInterceptor cacheInterceptor) {
+  public FlushingAttributeSourceAdvisor(
+      MetadataFlushingInterceptor cacheInterceptor) {
 
     super(cacheInterceptor);
 

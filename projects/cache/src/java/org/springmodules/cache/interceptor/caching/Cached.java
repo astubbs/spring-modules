@@ -35,16 +35,21 @@ public class Cached implements CacheAttribute {
 
   private static final long serialVersionUID = 3256728394032297785L;
 
-  /**
-   * The id of the <code>{@link org.springmodules.cache.CachingModel}</code>
-   * to use.
-   */
   private String modelId;
 
+  /**
+   * Construct a new <code>Cached</code>.
+   */
   public Cached() {
     super();
   }
 
+  /**
+   * Construct a new <code>Cached</code> with the given caching model id.
+   * 
+   * @param newModelId
+   *          the id of the caching model associated to this caching attribute
+   */
   public Cached(String newModelId) {
     this();
     setModelId(newModelId);
@@ -70,6 +75,9 @@ public class Cached implements CacheAttribute {
     return true;
   }
 
+  /**
+   * @return the id of the caching model associated to this caching attribute
+   */
   public final String getModelId() {
     return modelId;
   }
@@ -84,8 +92,14 @@ public class Cached implements CacheAttribute {
     return hash;
   }
 
-  public final void setModelId(String newCachingModelId) {
-    modelId = newCachingModelId;
+  /**
+   * Sets the id of the caching model to associate to this caching attribute.
+   * 
+   * @param newModelId
+   *          the new caching model id
+   */
+  public final void setModelId(String newModelId) {
+    modelId = newModelId;
   }
 
   /**

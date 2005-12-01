@@ -32,22 +32,17 @@ import org.springmodules.cache.util.TextMatcher;
 
 /**
  * <p>
- * Template for classes that allow cache models to be stored per method in a
- * map.
+ * Template thats allow cache models to be stored per method in a map.
  * </p>
  * 
  * @author Alex Ruiz
  */
 public abstract class AbstractMethodMapCacheModelSource {
 
+  /** Logger available to subclasses */
   protected final Log logger = LogFactory.getLog(getClass());
 
-  /**
-   * Map containing instances of <code>{@link CacheModel}</code>. The key of
-   * each entry is instance of <code>{@link Method}</code> to attach the
-   * attribute to.
-   */
-  private Map modelMap;
+  private Map cacheModels;
 
   /**
    * Map containing the methods that matches a given fully qualified name. Each
@@ -56,32 +51,33 @@ public abstract class AbstractMethodMapCacheModelSource {
    */
   private Map registeredMethodMap;
 
+  /**
+   * Construct a <code>AbstractMethodMapCacheModelSource</code>.s
+   */
   public AbstractMethodMapCacheModelSource() {
     super();
-    modelMap = new HashMap();
+    cacheModels = new HashMap();
     registeredMethodMap = new HashMap();
   }
 
   /**
    * <p>
-   * Adds a new entry to <code>{@link #modelMap}</code> using the methods,
-   * which names match the given method name, as the entry key and the given
-   * cache model as the entry value.
+   * Binds the given cache model to the methods of the given class or interface
+   * which names match the given target method key.
    * </p>
    * <p>
-   * Fully qualified names can end or start with "*" for matching multiple
-   * methods.
+   * Methods names can end or start with "*" for matching multiple methods.
    * </p>
    * 
    * @param targetClass
-   *          target interface or class.
+   *          target interface or class
    * @param targetMethodName
-   *          the method name to match.
+   *          the method name to match
    * @param cacheModel
-   *          the cache model.
+   *          the cache model
    * 
    * @throws IllegalArgumentException
-   *           if there are not any methods matching the given name.
+   *           if there are not any methods matching the given name
    */
   private void addCacheModel(Class targetClass, String targetMethodName,
       CacheModel cacheModel) {
@@ -111,7 +107,7 @@ public abstract class AbstractMethodMapCacheModelSource {
     // register all matching methods.
     for (Iterator i = matchingMethods.iterator(); i.hasNext();) {
       Method method = (Method) i.next();
-      String registeredMethodName = getRegisteredMethodName(method);
+      String registeredMethodName = (String) registeredMethodMap.get(method);
 
       if (registeredMethodName == null
           || (!registeredMethodName.equals(fullyQualifiedTargetMethodName) && registeredMethodName
@@ -124,47 +120,41 @@ public abstract class AbstractMethodMapCacheModelSource {
     }
   }
 
-  private String getRegisteredMethodName(Method key) {
-    return (String) registeredMethodMap.get(key);
-  }
-
   /**
-   * Adds a new entry to <code>{@link #modelMap}</code> using the given method
-   * as key and the given cache attribute as value.
+   * Binds the given cache model to the given method.
    * 
    * @param method
-   *          the method to use as key of the new entry.
+   *          the given method
    * @param cacheModel
-   *          the cache model used as value of the new entry.
+   *          the cache model to bind to the method
    */
   private void addCacheModel(Method method, CacheModel cacheModel) {
     logger.info("Adding method [" + method + "] with cache model ["
         + cacheModel + "]");
-    modelMap.put(method, cacheModel);
+    cacheModels.put(method, cacheModel);
   }
 
   /**
    * <p>
-   * Adds a new entry to <code>{@link #modelMap}</code> using the methods
-   * which name that match the given fully qualified name as the entry key and
-   * the given cache model as the entry value.
+   * Binds the given cache model to the methods which names match the given
+   * method name. The fully qualified name of the class declaring the method
+   * should be included.
    * </p>
    * <p>
-   * Fully qualified names can end or start with "*" for matching multiple
-   * methods.
+   * Method names can end or start with "*" for matching multiple methods.
    * </p>
    * 
    * @param fullyQualifiedMethodName
-   *          the fully qualified name of the methods to attach the cache
+   *          the fully qualified name of the class methods to attach the cache
    *          attribute to. class and method name, separated by a dot
    * @param cacheModel
-   *          the cache model.
+   *          the cache model
    * 
    * @throws IllegalArgumentException
-   *           if the given method name is not a fully qualified name.
+   *           if the given method name does not include the fully qualified
+   *           name of the declaring class
    * @throws IllegalArgumentException
-   *           if the class specified in the fully qualified method name cannot
-   *           be found.
+   *           if the specified class cannot be found
    * 
    * @see #addCacheModel(Class, String, CacheModel)
    */
@@ -193,24 +183,29 @@ public abstract class AbstractMethodMapCacheModelSource {
   }
 
   /**
-   * Returns an unmodifiable view of <code>{@link #modelMap}</code>.
-   * 
-   * @return an unmodifiable view of the member variable
-   *         <code>attributeMap</code>.
+   * @return an <i>unmodifiable</i> view of the map containing cache models.
+   *          The key of each entry is the <code>java.lang.reflect.Method</code>
+   *          to which the cache model is attached to
    */
-  public final Map getModelMap() {
-    return Collections.unmodifiableMap(modelMap);
+  public final Map getCacheModels() {
+    return Collections.unmodifiableMap(cacheModels);
   }
 
   /**
+   * <p>
    * Returns <code>true</code> if the given method name matches the mapped
    * name. The default implementation checks for "xxx*" and "*xxx" matches.
+   * </p>
+   * <p>
+   * For example, this method will return <code>true</code> if the given
+   * method name is &quot;getUser&quot; and the mapped name is &quot;get*&quot;
+   * </p>
    * 
    * @param methodName
-   *          the method name of the class.
+   *          the method name
    * @param mappedName
-   *          the name in the descriptor.
-   * @return <code>true</code> if the names match.
+   *          the name in the descriptor
+   * @return <code>true</code> if the names match
    */
   protected boolean isMatch(String methodName, String mappedName) {
     return TextMatcher.isMatch(methodName, mappedName);

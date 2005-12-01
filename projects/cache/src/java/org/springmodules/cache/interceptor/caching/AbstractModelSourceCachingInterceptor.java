@@ -25,7 +25,7 @@ import org.springmodules.cache.CachingModel;
 /**
  * <p>
  * Template for caching interceptors that intercept the methods that have
- * <code>{@link CachingModel}</code>s associated to them.
+ * caching models bound to them.
  * </p>
  * 
  * @author Alex Ruiz
@@ -33,15 +33,11 @@ import org.springmodules.cache.CachingModel;
 public abstract class AbstractModelSourceCachingInterceptor extends
     AbstractCachingInterceptor {
 
-  /**
-   * Retrieves caching models from class methods.
-   */
   private CachingModelSource cachingModelSource;
 
-  public AbstractModelSourceCachingInterceptor() {
-    super();
-  }
-
+  /**
+   * @return the source of caching models for class methods
+   */
   public final CachingModelSource getCachingModelSource() {
     return cachingModelSource;
   }
@@ -56,6 +52,12 @@ public abstract class AbstractModelSourceCachingInterceptor extends
     return cachingModelSource.getCachingModel(method, targetClass);
   }
 
+  /**
+   * Sets the source of caching models for class methods.
+   * 
+   * @param newCachingModelSource
+   *          the new source of caching models
+   */
   public final void setCachingModelSource(
       CachingModelSource newCachingModelSource) {
     cachingModelSource = newCachingModelSource;

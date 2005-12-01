@@ -43,10 +43,6 @@ public final class MetadataFlushingAttributeSource extends
    */
   private Attributes attributes;
 
-  public MetadataFlushingAttributeSource() {
-    super();
-  }
-
   /**
    * @see org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource#findAllAttributes(Method)
    */
@@ -73,7 +69,10 @@ public final class MetadataFlushingAttributeSource extends
     return attribute;
   }
 
-  protected final Attributes getAttributes() {
+  /**
+   * @return the underlying metadata attributes we are using
+   */
+  protected Attributes getAttributes() {
     return attributes;
   }
 
@@ -85,6 +84,12 @@ public final class MetadataFlushingAttributeSource extends
     return attribute;
   }
 
+  /**
+   * Sets the underlying metadata attributes to use.
+   * 
+   * @param newAttributes
+   *          the new underlying metadata attributes
+   */
   public final void setAttributes(Attributes newAttributes) {
     attributes = newAttributes;
   }

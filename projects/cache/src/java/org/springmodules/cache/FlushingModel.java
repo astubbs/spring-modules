@@ -30,8 +30,7 @@ public interface FlushingModel extends CacheModel {
    * @return <code>true</code> if the cache should be flushed <b>before</b>
    *         the intercepted method is executed. Returns <code>false</code> if
    *         the cache should be flushed <b>after</b> the intercepted method is
-   *         executed. This property is used only if caching is performed
-   *         through Spring AOP.
+   *         executed. Used only with declarative caching services
    */
   boolean isFlushBeforeMethodExecution();
 }

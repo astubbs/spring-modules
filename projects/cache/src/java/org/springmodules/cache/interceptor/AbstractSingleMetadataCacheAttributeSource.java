@@ -27,8 +27,8 @@ import org.springmodules.cache.CacheAttribute;
 
 /**
  * <p>
- * Template for classes that retrieve a single source-level metadata attribute
- * per class method.
+ * Template that retrieves a single source-level metadata attribute per class
+ * method.
  * </p>
  * 
  * @author Alex Ruiz
@@ -36,13 +36,9 @@ import org.springmodules.cache.CacheAttribute;
 public abstract class AbstractSingleMetadataCacheAttributeSource extends
     AbstractMetadataCacheAttributeSource {
 
-  public AbstractSingleMetadataCacheAttributeSource() {
-    super();
-  }
-
   /**
-   * Returns an instance of <code>{@link CacheAttribute}</code>, given this
-   * set of metadata attributes attached to a method or class.
+   * Returns a source-level metadata attribute, given a set of metadata
+   * attributes bound to a method or class.
    * 
    * @param methodAttributes
    *          metadata attributes attached to a method. May be <code>null</code>,
@@ -97,10 +93,11 @@ public abstract class AbstractSingleMetadataCacheAttributeSource extends
    * decorator for the specified method definition.
    * 
    * @param method
-   *          the specified method definition.
+   *          the specified method definition
    * @param targetClass
    *          the target class. May be null, in which case the declaring class
-   *          of the method must be used.
+   *          of the method must be used
+   * @return the retrieved metadata attribute
    */
   protected final CacheAttribute retrieveAttribute(Method method,
       Class targetClass) {

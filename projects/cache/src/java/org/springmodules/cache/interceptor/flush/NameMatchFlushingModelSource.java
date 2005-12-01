@@ -34,10 +34,6 @@ import org.springmodules.cache.interceptor.AbstractNameMatchCacheModelSource;
 public class NameMatchFlushingModelSource extends
     AbstractNameMatchCacheModelSource implements FlushingModelSource {
 
-  public NameMatchFlushingModelSource() {
-    super();
-  }
-
   /**
    * @see FlushingModelSource#getFlushingModel(Method, Class)
    */
@@ -45,6 +41,13 @@ public class NameMatchFlushingModelSource extends
     return (FlushingModel) getCacheModel(method);
   }
 
+  /**
+   * Sets the map of flushing models to use. Each map entry uses the name of the
+   * method to advise as key (a String) and the flushing model to bind as value.
+   * 
+   * @param models
+   *          the new map of flushing models
+   */
   public void setFlushingModels(Map models) {
     setCacheModels(models);
   }

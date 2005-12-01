@@ -34,10 +34,6 @@ import org.springmodules.cache.interceptor.AbstractMethodMapCacheModelSource;
 public class MethodMapCachingModelSource extends
     AbstractMethodMapCacheModelSource implements CachingModelSource {
 
-  public MethodMapCachingModelSource() {
-    super();
-  }
-
   /**
    * <p>
    * Adds a new entry to map of caching attributes using the methods which name
@@ -70,6 +66,6 @@ public class MethodMapCachingModelSource extends
    * @see CachingModelSource#getCachingModel(Method, Class)
    */
   public CachingModel getCachingModel(Method method, Class targetClass) {
-    return (CachingModel) getModelMap().get(method);
+    return (CachingModel) getCacheModels().get(method);
   }
 }

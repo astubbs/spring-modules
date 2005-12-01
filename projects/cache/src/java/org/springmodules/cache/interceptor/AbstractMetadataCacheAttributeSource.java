@@ -25,8 +25,8 @@ import java.util.Map;
 
 /**
  * <p>
- * Template for classes that retrieve a source-level metadata attribute from a
- * method.
+ * Template that retrieves source-level metadata attributes that are bound to a
+ * given method.
  * </p>
  * 
  * @author Alex Ruiz
@@ -39,12 +39,11 @@ public abstract class AbstractMetadataCacheAttributeSource {
    */
   protected static final Object NULL_ATTRIBUTE = new Object();
 
-  /**
-   * Map that caches the source-level metadata attributes found for classes and
-   * methods.
-   */
   private Map attributeMap;
 
+  /**
+   * Construct a <code>AbstractMetadataCacheAttributeSource</code>.
+   */
   public AbstractMetadataCacheAttributeSource() {
     super();
     attributeMap = new HashMap();
@@ -55,8 +54,8 @@ public abstract class AbstractMetadataCacheAttributeSource {
    * attributes from the specified method. May return <code>null</code>.
    * 
    * @param method
-   *          the method to retrieve attributes for.
-   * @return all the metadata attributes associated with the specified method.
+   *          the method to retrieve attributes for
+   * @return all the metadata attributes associated with the specified method
    */
   protected abstract Collection findAllAttributes(Method method);
 
@@ -64,10 +63,10 @@ public abstract class AbstractMetadataCacheAttributeSource {
    * Returns the key of an entry of <code>{@link #attributeMap}</code>.
    * 
    * @param method
-   *          the method to retrieve attributes for.
+   *          the method to retrieve attributes for
    * @param targetClass
-   *          the target class declaring the method.
-   * @return the key to access the attribute cache.
+   *          the target class declaring the method
+   * @return the key to access the attribute cache
    */
   protected final Object getAttributeEntryKey(Method method, Class targetClass) {
     StringBuffer keyBuffer = new StringBuffer(targetClass.toString());
@@ -75,6 +74,10 @@ public abstract class AbstractMetadataCacheAttributeSource {
     return keyBuffer.toString();
   }
 
+  /**
+   * @return the map that stores the source-level metadata attributes bound to
+   *         previously processed methods
+   */
   protected final Map getAttributeMap() {
     return attributeMap;
   }

@@ -23,8 +23,7 @@ import org.springmodules.cache.CachingModel;
 
 /**
  * <p>
- * Returns an instance of <code>{@link CachingModel}</code> from the
- * intercepted method.
+ * Returns the caching model bound to an intercepted method.
  * </p>
  * 
  * @author Alex Ruiz
@@ -32,15 +31,14 @@ import org.springmodules.cache.CachingModel;
 public interface CachingModelSource {
 
   /**
-   * Returns an instance of <code>{@link CachingModel}</code> for the
-   * intercepted method.
+   * Returns the caching model bound to the intercepted method.
    * 
    * @param method
    *          the definition of the intercepted method.
    * @param targetClass
    *          the target class. May be <code>null</code>, in which case the
    *          declaring class of the method must be used.
-   * @return a caching model from the intercepted method.
+   * @return a caching model bound to the intercepted method.
    */
   CachingModel getCachingModel(Method method, Class targetClass);
 }

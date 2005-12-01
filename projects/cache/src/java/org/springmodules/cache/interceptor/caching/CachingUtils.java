@@ -29,11 +29,14 @@ import java.lang.reflect.Method;
 public abstract class CachingUtils {
 
   /**
+   * Returns <code>true</code> if the return type of a method can be
+   * cacheable. In order to be cacheable, the method should have a return type
+   * (not <code>void</code>).
+   * 
    * @param method
    *          the method definition to verify.
    * @return <code>true</code> if the return type of a method can be
-   *         cacheable. In order to be cacheable, the method should have a
-   *         return type (not <code>void</code>).
+   *         cacheable.
    */
   public static boolean isCacheable(Method method) {
     Class returnType = method.getReturnType();

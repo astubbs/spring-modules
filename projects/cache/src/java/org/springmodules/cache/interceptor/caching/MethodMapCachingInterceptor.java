@@ -26,18 +26,17 @@ import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Caches the return value of the intercepted method. Intercepts the methods
- * that have <code>{@link CachingModel}</code>s associated to them.
+ * Caching interceptor that internally uses a
+ * <code>{@link MethodMapCachingModelSource}</code> to retrieve caching models
+ * bound to intercepted methods.
  * </p>
  * 
  * @author Alex Ruiz
+ * 
+ * @see org.springmodules.cache.interceptor.caching.AbstractCachingInterceptor
  */
 public final class MethodMapCachingInterceptor extends
     AbstractModelSourceCachingInterceptor {
-
-  public MethodMapCachingInterceptor() {
-    super();
-  }
 
   /**
    * @see AbstractCachingInterceptor#onAfterPropertiesSet()
