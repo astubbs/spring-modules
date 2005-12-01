@@ -20,7 +20,7 @@ package org.springmodules.cache.key;
 
 /**
  * <p>
- * Builds the checksum and hash code necessary to create a new instance of
+ * Builds the checksum and hash code needed to create a
  * <code>{@link HashCodeCacheKey}</code>.
  * </p>
  * 
@@ -30,14 +30,8 @@ public final class HashCodeCalculator {
 
   private static final int INITIAL_HASH = 17;
 
-  /**
-   * Prime number used as multiplier.
-   */
   private static final int MULTIPLIER = 37;
 
-  /**
-   * Ensures the combination hashCode/checkSum is unique.
-   */
   private long checkSum;
 
   /**
@@ -52,6 +46,9 @@ public final class HashCodeCalculator {
    */
   private int hashCode;
 
+  /**
+   * Constructor.
+   */
   public HashCodeCalculator() {
     super();
     hashCode = INITIAL_HASH;
@@ -72,10 +69,17 @@ public final class HashCodeCalculator {
     checkSum += valueToAppend;
   }
 
+  /**
+   * @return the number that ensures that the combination hashCode/checSum is
+   *         unique
+   */
   public long getCheckSum() {
     return checkSum;
   }
 
+  /**
+   * @return the calculated hash code
+   */
   public int getHashCode() {
     return hashCode;
   }

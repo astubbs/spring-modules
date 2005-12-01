@@ -41,10 +41,21 @@ public final class HashCodeCacheKey implements Serializable {
    */
   private int hashCode;
 
+  /**
+   * Construct a <code>HashCodeCacheKey</code>.
+   */
   public HashCodeCacheKey() {
     super();
   }
 
+  /**
+   * Construct a <code>HashCodeCacheKey</code>.
+   * 
+   * @param newCheckSum
+   *          the number that helps keep the uniqueness of this key
+   * @param newHashCode
+   *          the pre-calculated hash code
+   */
   public HashCodeCacheKey(long newCheckSum, int newHashCode) {
     this();
     setCheckSum(newCheckSum);
@@ -74,10 +85,16 @@ public final class HashCodeCacheKey implements Serializable {
     return true;
   }
 
+  /**
+   * @return the number that helps keep the uniqueness of this key
+   */
   public long getCheckSum() {
     return checkSum;
   }
 
+  /**
+   * @return the pre-calculated hash code
+   */
   public int getHashCode() {
     return hashCode;
   }
@@ -89,10 +106,22 @@ public final class HashCodeCacheKey implements Serializable {
     return getHashCode();
   }
 
+  /**
+   * Sets the number that helps keep the uniqueness of this key.
+   * 
+   * @param newCheckSum
+   *          the new number
+   */
   public void setCheckSum(long newCheckSum) {
     checkSum = newCheckSum;
   }
 
+  /**
+   * Sets the pre-calculated hash code.
+   * 
+   * @param newHashCode
+   *          the new hash code
+   */
   public void setHashCode(int newHashCode) {
     hashCode = newHashCode;
   }

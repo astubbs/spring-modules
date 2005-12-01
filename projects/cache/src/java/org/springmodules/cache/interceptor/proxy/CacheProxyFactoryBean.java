@@ -67,6 +67,9 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
 
   private Object target;
 
+  /**
+   * Construct a <code>CacheProxyFactoryBean</code>.
+   */
   public CacheProxyFactoryBean() {
     super();
     flushingInterceptor = new NameMatchFlushingInterceptor();
@@ -74,17 +77,17 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
   }
 
   /**
-   * Creates the proxy for <code>{@link #target}</code>. This method is
-   * invoked by a BeanFactory after it has set all bean properties supplied.
+   * Creates the proxy for target object. This method is invoked by a
+   * BeanFactory after it has set all bean properties supplied.
    * 
    * @throws IllegalStateException
-   *           if the member variable 'target' is <code>null</code>.
+   *           if target is <code>null</code>.
    * @throws AopConfigException
-   *           if the proxy interfaces are <code>null</code>, the flag
-   *           'proxyTargetClass' is <code>false</code> and the target is an
-   *           instance of <code>org.springframework.aop.TargetSource</code>.
+   *           if the proxy interfaces or proxyTargetClass are not set and the
+   *           target type is <code>org.springframework.aop.TargetSource</code>.
    */
-  public void afterPropertiesSet() {
+  public void afterPropertiesSet() throws IllegalStateException,
+      AopConfigException {
     cachingInterceptor.afterPropertiesSet();
     flushingInterceptor.afterPropertiesSet();
 
@@ -142,23 +145,33 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     return targetSource;
   }
 
+  /**
+   * @return the internal caching interceptor
+   */
   protected NameMatchCachingInterceptor getCachingInterceptor() {
     return cachingInterceptor;
   }
 
+  /**
+   * @return the internal flushing interceptor
+   */
   protected NameMatchFlushingInterceptor getFlushingInterceptor() {
     return flushingInterceptor;
   }
 
   /**
-   * Returns <code>{@link #proxy}</code>.
-   * 
-   * @return the proxy.
+   * @return the created AOP proxy.
    */
   public Object getObject() {
     return proxy;
   }
 
+  /**
+   * @return the class of the created AOP proxy (if created), the target object
+   *         (if set) or <code>null</code>.
+   * 
+   * @see FactoryBean#getObjectType()
+   */
   public Class getObjectType() {
     Class objectType = null;
 
@@ -171,14 +184,23 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     return objectType;
   }
 
+  /**
+   * @return the created AOP proxy
+   */
   protected Object getProxy() {
     return proxy;
   }
 
+  /**
+   * @return the interfaces to be implemented by the AOP proxy
+   */
   protected Class[] getProxyInterfaces() {
     return proxyInterfaces;
   }
 
+  /**
+   * @return <code>true</code> if this proxy factory contains flushing models
+   */
   protected boolean isHasFlushingModels() {
     return hasFlushingModels;
   }
@@ -190,6 +212,12 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     return true;
   }
 
+  /**
+   * Sets the generator of cache entry keys.
+   * 
+   * @param cacheKeyGenerator
+   *          the new generator of cache entry keys
+   */
   public void setCacheKeyGenerator(CacheKeyGenerator cacheKeyGenerator) {
     cachingInterceptor.setCacheKeyGenerator(cacheKeyGenerator);
   }
@@ -200,7 +228,7 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * <code>{@link #cachingInterceptor}</code>.
    * 
    * @param cacheProviderFacade
-   *          the cache provider facade.
+   *          the cache provider facade
    */
   public void setCacheProviderFacade(CacheProviderFacade cacheProviderFacade) {
     flushingInterceptor.setCacheProviderFacade(cacheProviderFacade);
@@ -211,7 +239,7 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * Sets the listener to be notified each time an entry is stored in the cache.
    * 
    * @param cachingListeners
-   *          the listener.
+   *          the new caching listeners
    */
   public void setCachingListeners(CachingListener[] cachingListeners) {
     cachingInterceptor.setCachingListeners(cachingListeners);
@@ -226,6 +254,9 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * Internally, a
    * <code>{@link org.springmodules.cache.interceptor.caching.NameMatchCachingModelSource}</code>
    * will be created from the given properties.
+   * 
+   * @param cachingModels
+   *          the new caching models
    * 
    * @see org.springmodules.cache.interceptor.caching.NameMatchCachingModelSource
    */
@@ -242,6 +273,9 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * Internally, a
    * <code>{@link org.springmodules.cache.interceptor.flush.NameMatchFlushingModelSource}</code>
    * will be created from the given properties.
+   * 
+   * @param flushingModels
+   *          the new flushing models
    * 
    * @see org.springmodules.cache.interceptor.flush.NameMatchFlushingModelSource
    */
@@ -265,6 +299,8 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    * interfaces that the target object implements.
    * </p>
    * 
+   * @param interfaceNames
+   *          the interfaces
    * @throws ClassNotFoundException
    *           if any of the classes can't be loaded
    */
@@ -273,6 +309,12 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     proxyInterfaces = AopUtils.toInterfaceArray(interfaceNames);
   }
 
+  /**
+   * Sets the target object to be proxied.
+   * 
+   * @param newTarget
+   *          the new target object
+   */
   public void setTarget(Object newTarget) {
     target = newTarget;
   }

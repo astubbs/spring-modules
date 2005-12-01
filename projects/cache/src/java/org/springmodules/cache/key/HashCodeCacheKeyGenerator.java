@@ -42,10 +42,22 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
    */
   private boolean generateArgumentHashCode;
 
+  /**
+   * Construct a <code>HashCodeCacheKeyGenerator</code>.
+   */
   public HashCodeCacheKeyGenerator() {
     super();
   }
 
+  /**
+   * Construct a <code>HashCodeCacheKeyGenerator</code>.
+   * 
+   * @param generateArgumentHashCode
+   *          the new value for the flag that indicates if this generator should
+   *          generate the hash code of the arguments passed to the method to
+   *          apply caching to. If <code>false</code>, this generator uses
+   *          the default hash code of the arguments.
+   */
   public HashCodeCacheKeyGenerator(boolean generateArgumentHashCode) {
     this();
     setGenerateArgumentHashCode(generateArgumentHashCode);
@@ -73,7 +85,7 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
         } else {
           hash = Objects.nullSafeHashCode(methodArgument);
         }
-        
+
         hashCodeCalculator.append(hash);
       }
     }
@@ -85,6 +97,15 @@ public class HashCodeCacheKeyGenerator implements CacheKeyGenerator {
     return cacheKey;
   }
 
+  /**
+   * Sets the flag that indicates if this generator should generate the hash
+   * code of the arguments passed to the method to apply caching to. If
+   * <code>false</code>, this generator uses the default hash code of the
+   * arguments.
+   * 
+   * @param newGenerateArgumentHashCode
+   *          the new value of the flag
+   */
   public final void setGenerateArgumentHashCode(
       boolean newGenerateArgumentHashCode) {
     generateArgumentHashCode = newGenerateArgumentHashCode;

@@ -24,7 +24,8 @@ import org.aopalliance.intercept.MethodInvocation;
 
 /**
  * <p>
- * Generates the key to retrive/save objects from/to the cache.
+ * Generates a unique key based on the description of an invocation to an
+ * intercepted method.
  * </p>
  * 
  * @author Alex Ruiz
@@ -36,7 +37,7 @@ public interface CacheKeyGenerator {
    * 
    * @param methodInvocation
    *          the description of an invocation to the intercepted method.
-   * @return the key for a cache entry.
+   * @return the created key.
    */
   Serializable generateKey(MethodInvocation methodInvocation);
 }
