@@ -39,7 +39,9 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 /**
  * <p>
- * Facade for EHCache.
+ * Implementation of
+ * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
+ * that uses EHCache as the underlying cache implementation
  * </p>
  * 
  * @author Alex Ruiz
@@ -53,19 +55,24 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
 
   private CacheModelValidator cacheModelValidator;
 
+  /**
+   * Constructor.
+   */
   public EhCacheFacade() {
     super();
     cacheModelValidator = new EhCacheModelValidator();
   }
 
   /**
+   * Returns a EHCache cache from the cache manager.
+   * 
    * @param name
-   *          the name of the cache.
-   * @return the cache retrieved from the cache manager.
+   *          the name of the cache
+   * @return the cache retrieved from the cache manager
    * @throws CacheNotFoundException
-   *           if the cache does not exist.
+   *           if the cache does not exist
    * @throws CacheAccessException
-   *           wrapping any unexpected exception thrown by the cache.
+   *           wrapping any unexpected exception thrown by the cache
    */
   protected Cache getCache(String name) {
     Cache cache = null;
@@ -85,16 +92,28 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
     return cache;
   }
 
+  /**
+   * Returns the validator of cache models. It is always an instance of
+   * <code>{@link EhCacheModelValidator}</code>.
+   * 
+   * @return the validator of cache models
+   */
   public CacheModelValidator getCacheModelValidator() {
     return cacheModelValidator;
   }
 
+  /**
+   * @return the <code>PropertyEditor</code> for caching models
+   */
   public PropertyEditor getCachingModelEditor() {
     ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
     editor.setCacheModelClass(EhCacheCachingModel.class);
     return editor;
   }
 
+  /**
+   * @return the <code>PropertyEditor</code> for flushing models
+   */
   public PropertyEditor getFlushingModelEditor() {
     ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
     editor.setCacheModelClass(EhCacheFlushingModel.class);
@@ -225,6 +244,12 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
     }
   }
 
+  /**
+   * Sets the EHCache cache manager to use.
+   * 
+   * @param newCacheManager
+   *          the new cache manager
+   */
   public void setCacheManager(CacheManager newCacheManager) {
     cacheManager = newCacheManager;
   }

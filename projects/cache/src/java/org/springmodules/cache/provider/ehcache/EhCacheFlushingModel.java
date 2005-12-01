@@ -40,20 +40,39 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
    */
   private String[] cacheNames;
 
+  /**
+   * Constructor.
+   */
   public EhCacheFlushingModel() {
     super();
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param csvCacheNames
+   *          a String containing the names of the EHCache caches to flush
+   *          separated by commas
+   */
   public EhCacheFlushingModel(String csvCacheNames) {
     this();
     setCacheNames(csvCacheNames);
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param newCacheNames
+   *          the names of the EHCache caches to flush
+   */
   public EhCacheFlushingModel(String[] newCacheNames) {
     this();
     setCacheNames(newCacheNames);
   }
 
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -68,10 +87,16 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
     return true;
   }
 
+  /**
+   * @return the names of the EHCache caches to flush
+   */
   public String[] getCacheNames() {
     return cacheNames;
   }
 
+  /**
+   * @see java.lang.Object#hashCode()
+   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
@@ -95,10 +120,20 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
     setCacheNames(newCacheNames);
   }
 
+  /**
+   * Sets the names of the EHCache caches to flush. It also removes any
+   * duplicated cache names.
+   * 
+   * @param newCacheNames
+   *          the names of the caches
+   */
   public void setCacheNames(String[] newCacheNames) {
     cacheNames = Strings.removeDuplicates(newCacheNames);
   }
 
+  /**
+   * @see java.lang.Object#toString()
+   */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
     buffer.append("[cacheNames=" + Objects.nullSafeToString(cacheNames) + ", ");

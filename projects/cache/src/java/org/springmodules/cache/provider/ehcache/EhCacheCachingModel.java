@@ -25,8 +25,12 @@ import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Configuration options needed to store, retrieve and remove objects from
- * EHCache.
+ * Configuration options needed for:
+ * <ul>
+ * <li>storing objects in EHCache</li>
+ * <li>retrieving objects from EHCache</li>
+ * <li>removing objects from EHCache</li>
+ * </ul>
  * 
  * @author Alex Ruiz
  */
@@ -34,15 +38,21 @@ public class EhCacheCachingModel implements CachingModel {
 
   private static final long serialVersionUID = 3762529035888112945L;
 
-  /**
-   * Name of the EHCache cache.
-   */
   private String cacheName;
 
+  /**
+   * Constructor.
+   */
   public EhCacheCachingModel() {
     super();
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param cacheName
+   *          the name of the EHCache cache to use
+   */
   public EhCacheCachingModel(String cacheName) {
     this();
     setCacheName(cacheName);
@@ -68,6 +78,9 @@ public class EhCacheCachingModel implements CachingModel {
     return true;
   }
 
+  /**
+   * @return the name of the EHCache cache to use
+   */
   public final String getCacheName() {
     return cacheName;
   }
@@ -82,6 +95,12 @@ public class EhCacheCachingModel implements CachingModel {
     return hash;
   }
 
+  /**
+   * Sets the name of the EHCache cache to use.
+   * 
+   * @param newCacheName
+   *          the new name of the EHCache cache
+   */
   public final void setCacheName(String newCacheName) {
     cacheName = newCacheName;
   }

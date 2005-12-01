@@ -25,16 +25,12 @@ import org.springmodules.cache.provider.InvalidCacheModelException;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link EhCacheCachingModel}</code>.
+ * Validates the property values of <code>{@link EhCacheCachingModel}</code>s.
  * </p>
  * 
  * @author Alex Ruiz
  */
 public final class EhCacheModelValidator extends AbstractCacheModelValidator {
-
-  public EhCacheModelValidator() {
-    super();
-  }
 
   /**
    * @see AbstractCacheModelValidator#getCachingModelTargetClass()
@@ -72,7 +68,7 @@ public final class EhCacheModelValidator extends AbstractCacheModelValidator {
       throws InvalidCacheModelException {
     EhCacheFlushingModel model = (EhCacheFlushingModel) flushingModel;
     String[] cacheNames = model.getCacheNames();
-    
+
     if (ObjectUtils.isEmpty(cacheNames)) {
       throw new InvalidCacheModelException(
           "There should be at least one cache name");
