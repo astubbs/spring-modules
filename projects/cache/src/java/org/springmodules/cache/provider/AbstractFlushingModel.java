@@ -31,10 +31,9 @@ public abstract class AbstractFlushingModel implements FlushingModel {
 
   private boolean flushBeforeMethodExecution;
 
-  public AbstractFlushingModel() {
-    super();
-  }
-
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -49,11 +48,13 @@ public abstract class AbstractFlushingModel implements FlushingModel {
     return true;
   }
 
+  /**
+   * @see java.lang.Object#hashCode()
+   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
-    hash = multiplier * hash
-        + (Objects.hashCode(flushBeforeMethodExecution));
+    hash = multiplier * hash + (Objects.hashCode(flushBeforeMethodExecution));
     return hash;
   }
 
@@ -64,6 +65,13 @@ public abstract class AbstractFlushingModel implements FlushingModel {
     return flushBeforeMethodExecution;
   }
 
+  /**
+   * Sets the flag that indicates if the cache should be flushed before or after
+   * the execution of an intercepted method.
+   * 
+   * @param newFlushBeforeMethodExecution
+   *          the new value for the flag
+   */
   public final void setFlushBeforeMethodExecution(
       boolean newFlushBeforeMethodExecution) {
     flushBeforeMethodExecution = newFlushBeforeMethodExecution;

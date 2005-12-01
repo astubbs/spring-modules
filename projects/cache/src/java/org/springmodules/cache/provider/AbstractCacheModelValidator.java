@@ -27,14 +27,27 @@ package org.springmodules.cache.provider;
 public abstract class AbstractCacheModelValidator implements
     CacheModelValidator {
 
-  public AbstractCacheModelValidator() {
-    super();
-  }
-
+  /**
+   * @return the type of caching model that this validator accepts
+   */
   protected abstract Class getCachingModelTargetClass();
 
+  /**
+   * @return the type of flushing model that this validator accepts
+   */
   protected abstract Class getFlushingModelTargetClass();
 
+  /**
+   * Returns <code>true</code> if the given object is an instance of the given
+   * class.
+   * 
+   * @param obj
+   *          the object to check
+   * @param targetClass
+   *          the given class
+   * @return <code>true</code> if the given object is an instance of the given
+   *         class.
+   */
   protected final boolean isInstanceOf(Object obj, Class targetClass) {
     return (obj != null && targetClass.isAssignableFrom(obj.getClass()));
   }

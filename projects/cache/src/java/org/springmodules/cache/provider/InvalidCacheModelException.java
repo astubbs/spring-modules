@@ -33,7 +33,14 @@ public class InvalidCacheModelException extends CacheException {
 
   private static final long serialVersionUID = 7043423030105935558L;
 
-  public InvalidCacheModelException(String detailMessage) {
-    super(detailMessage);
+  /**
+   * Construct a <code>InvalidCacheModelException</code> with the specified detail
+   * message.
+   * 
+   * @param msg
+   *          the detail message
+   */
+  public InvalidCacheModelException(String msg) {
+    super(msg);
   }
 }

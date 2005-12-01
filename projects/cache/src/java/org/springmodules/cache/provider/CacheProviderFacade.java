@@ -56,10 +56,19 @@ public interface CacheProviderFacade extends InitializingBean {
    */
   void flushCache(FlushingModel model) throws CacheException;
 
+  /**
+   * @return the validator for both caching and flushing models
+   */
   CacheModelValidator getCacheModelValidator();
 
+  /**
+   * @return the <code>PropertyEditor</code> for caching models
+   */
   PropertyEditor getCachingModelEditor();
 
+  /**
+   * @return the <code>PropertyEditor</code> for flushing models
+   */
   PropertyEditor getFlushingModelEditor();
 
   /**
@@ -107,6 +116,9 @@ public interface CacheProviderFacade extends InitializingBean {
    *          the key under which the object is stored.
    * @param model
    *          the model that specifies how to store an object.
+   * @throws CacheException
+   *           if an unexpected error takes place when removing an object from
+   *           the cache.
    */
   void removeFromCache(Serializable key, CachingModel model)
       throws CacheException;

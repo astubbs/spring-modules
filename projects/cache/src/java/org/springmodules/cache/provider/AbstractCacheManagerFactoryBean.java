@@ -42,8 +42,12 @@ public abstract class AbstractCacheManagerFactoryBean implements
 
   private String cacheProviderName;
 
+  /** Logger available to subclasses */
   protected final Log logger = LogFactory.getLog(getClass());
 
+  /**
+   * Constructor.
+   */
   public AbstractCacheManagerFactoryBean() {
     super();
   }
@@ -51,6 +55,10 @@ public abstract class AbstractCacheManagerFactoryBean implements
   /**
    * Creates the cache manager after all the properties of this factory has been
    * set by the Spring container.
+   * 
+   * @throws Exception
+   *           any exception thrown when creating the cache manager
+   * @see #createCacheManager()
    */
   public final void afterPropertiesSet() throws Exception {
     cacheProviderName = getCacheProviderName();
@@ -58,11 +66,20 @@ public abstract class AbstractCacheManagerFactoryBean implements
     createCacheManager();
   }
 
+  /**
+   * Creates the cache manager.
+   * 
+   * @throws Exception
+   *           any exception thrown when creating the cache manager
+   */
   protected abstract void createCacheManager() throws Exception;
 
   /**
    * Shuts down the cache manager before this factory is destroyed by the Spring
    * container.
+   * 
+   * @throws Exception
+   *           any exception thrown when shutting down the cache manager
    */
   public final void destroy() throws Exception {
     if (getObject() == null) {
@@ -75,11 +92,24 @@ public abstract class AbstractCacheManagerFactoryBean implements
     }
   }
 
+  /**
+   * Shuts down the cache manager (if it was previously created.)
+   * 
+   * @throws Exception
+   *           any exception thrown when shutting down the cache manager
+   */
   protected abstract void destroyCacheManager() throws Exception;
 
+  /**
+   * @return the name of the cache provider whose cache manager is created by
+   *         this factory
+   */
   protected abstract String getCacheProviderName();
 
-  public final Resource getConfigLocation() {
+  /**
+   * @return the location of the cache manager configuration file
+   */
+  protected final Resource getConfigLocation() {
     return configLocation;
   }
 
@@ -109,6 +139,12 @@ public abstract class AbstractCacheManagerFactoryBean implements
     return true;
   }
 
+  /**
+   * Sets the location of the cache manager configuration file.
+   * 
+   * @param newConfigLocation
+   *          the new location of the cache manager configuration file
+   */
   public final void setConfigLocation(Resource newConfigLocation) {
     configLocation = newConfigLocation;
   }

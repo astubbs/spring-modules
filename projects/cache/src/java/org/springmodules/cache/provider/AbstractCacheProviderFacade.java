@@ -41,20 +41,17 @@ public abstract class AbstractCacheProviderFacade implements
 
   private boolean failQuietlyEnabled;
 
+  /** Logger available to subclasses */
   protected final Log logger = LogFactory.getLog(getClass());
 
   private SerializableFactory serializableFactory;
-
-  public AbstractCacheProviderFacade() {
-    super();
-  }
 
   /**
    * Validates the properties of this class after being set by the
    * <code>BeanFactory</code>.
    * 
    * @throws FatalCacheException
-   *           if one or more properties of this facade are in an illegal state.
+   *           if one or more properties of this facade are in an illegal state
    * @see #validateCacheManager()
    */
   public final void afterPropertiesSet() throws FatalCacheException {
@@ -66,9 +63,9 @@ public abstract class AbstractCacheProviderFacade implements
    * Asserts that the given cache manager is not <code>null</code>.
    * 
    * @param cacheManager
-   *          the cache manager to check.
+   *          the cache manager to check
    * @throws FatalCacheException
-   *           if the cache manager is <code>null</code>.s
+   *           if the cache manager is <code>null</code>
    */
   protected final void assertCacheManagerIsNotNull(Object cacheManager)
       throws FatalCacheException {
@@ -143,8 +140,7 @@ public abstract class AbstractCacheProviderFacade implements
   }
 
   /**
-   * Rethrows the given exception if
-   * <code>{@link #isFailQuietlyEnabled()}</code> returns <code>true</code>.
+   * Rethrows the given exception if "fail quietly" is enabled.
    * 
    * @param exception
    *          the catched exception to be potentially rethrown.
@@ -332,6 +328,13 @@ public abstract class AbstractCacheProviderFacade implements
     }
   }
 
+  /**
+   * Sets the flag that indicates if any exception thrown at run-time by the
+   * cache manager should be propagated (<code>false</code>) or not (<code>true</code>.)
+   * 
+   * @param newFailQuietlyEnabled
+   *          the new value for the flag
+   */
   public final void setFailQuietlyEnabled(boolean newFailQuietlyEnabled) {
     failQuietlyEnabled = newFailQuietlyEnabled;
   }
@@ -339,6 +342,9 @@ public abstract class AbstractCacheProviderFacade implements
   /**
    * Sets the factory that makes serializable the objects to be stored in the
    * cache (if the cache requires serializable elements).
+   * 
+   * @param newSerializableFactory
+   *          the new factory of serializable objects
    */
   public final void setSerializableFactory(
       SerializableFactory newSerializableFactory) {
@@ -348,7 +354,7 @@ public abstract class AbstractCacheProviderFacade implements
   /**
    * Validates the cache manager used by this facade.
    * 
-   * @throws IllegalStateException
+   * @throws FatalCacheException
    *           if the cache manager is in an invalid state.
    */
   protected abstract void validateCacheManager() throws FatalCacheException;

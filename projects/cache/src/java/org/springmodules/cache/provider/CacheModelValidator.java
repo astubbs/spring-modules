@@ -31,9 +31,9 @@ public interface CacheModelValidator {
    * Validates the properties of the specified caching model.
    * 
    * @param cachingModel
-   *          the model to validate.
+   *          the model to validate
    * @throws InvalidCacheModelException
-   *           if one or more properties of the given model are not valid.
+   *           if one or more properties of the given model are not valid
    */
   void validateCachingModel(Object cachingModel)
       throws InvalidCacheModelException;
@@ -42,9 +42,9 @@ public interface CacheModelValidator {
    * Validates the properties of the specified cache-flushing model.
    * 
    * @param flushingModel
-   *          the model to validate.
+   *          the model to validate
    * @throws InvalidCacheModelException
-   *           if one or more properties of the given model are not valid.
+   *           if one or more properties of the given model are not valid
    */
   void validateFlushingModel(Object flushingModel)
       throws InvalidCacheModelException;

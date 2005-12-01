@@ -51,14 +51,18 @@ public class ReflectionCacheModelEditor extends PropertyEditorSupport {
    */
   private Map cacheModelPropertyEditors;
 
-  public ReflectionCacheModelEditor() {
-    super();
-  }
-
+  /**
+   * @return the class of the caching model to create
+   */
   public final Class getCacheModelClass() {
     return cacheModelClass;
   }
 
+  /**
+   * @return the <code>PropertyEditor</code>s for the properties of the cache
+   *         model to create. Each <code>PropertyEditor</code> is stored using
+   *         the name of the property (a String) as key
+   */
   public final Map getCacheModelPropertyEditors() {
     return cacheModelPropertyEditors;
   }
@@ -107,10 +111,24 @@ public class ReflectionCacheModelEditor extends PropertyEditorSupport {
     setValue(beanWrapper.getWrappedInstance());
   }
 
+  /**
+   * Sets the class of the caching model to create
+   * 
+   * @param newCacheModelClass
+   *          the new class
+   */
   public final void setCacheModelClass(Class newCacheModelClass) {
     cacheModelClass = newCacheModelClass;
   }
 
+  /**
+   * Sets the <code>PropertyEditor</code>s for the properties of the cache
+   * model to create. Each <code>PropertyEditor</code> is stored using the
+   * name of the property (a String) as key.
+   * 
+   * @param newCacheModelPropertyEditors
+   *          the new <code>PropertyEditor</code>s
+   */
   public final void setCacheModelPropertyEditors(
       Map newCacheModelPropertyEditors) {
     cacheModelPropertyEditors = newCacheModelPropertyEditors;

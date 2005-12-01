@@ -30,7 +30,14 @@ public class ObjectCannotBeCachedException extends CacheException {
 
   private static final long serialVersionUID = -9124262814399202014L;
 
-  public ObjectCannotBeCachedException(String detailMessage) {
-    super(detailMessage);
+  /**
+   * Construct a <code>ObjectCannotBeCachedException</code> with the specified
+   * detail message.
+   * 
+   * @param msg
+   *          the detail message
+   */
+  public ObjectCannotBeCachedException(String msg) {
+    super(msg);
   }
 }

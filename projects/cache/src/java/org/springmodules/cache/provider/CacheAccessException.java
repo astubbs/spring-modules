@@ -30,9 +30,15 @@ public class CacheAccessException extends CacheException {
 
   private static final long serialVersionUID = -5016099756340093513L;
 
-  public CacheAccessException(Throwable nestedException) {
-    super("An unexpected error occurred when accessing the cache",
-        nestedException);
+  /**
+   * Construct a <code>CacheException</code> with the specified nested
+   * exception.
+   * 
+   * @param ex
+   *          the nested exception
+   */
+  public CacheAccessException(Throwable ex) {
+    super("An unexpected error occurred when accessing the cache", ex);
   }
 
 }
