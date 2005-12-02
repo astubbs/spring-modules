@@ -40,20 +40,39 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
    */
   private String[] nodes;
 
+  /**
+   * Constructor.
+   */
   public JbossCacheFlushingModel() {
     super();
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param csvNodes
+   *          a comma-separated list containing the names of the nodes to remove
+   *          from the cache
+   */
   public JbossCacheFlushingModel(String csvNodes) {
     this();
     setNodes(csvNodes);
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param newNodes
+   *          the names of the nodes to remove from the cache
+   */
   public JbossCacheFlushingModel(String[] newNodes) {
     this();
     setNodes(newNodes);
   }
 
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -68,10 +87,16 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
     return true;
   }
 
+  /**
+   * @return the names of the nodes to remove from the cache
+   */
   public String[] getNodes() {
     return nodes;
   }
 
+  /**
+   * @see java.lang.Object#hashCode()
+   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
@@ -79,6 +104,13 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
     return hash;
   }
 
+  /**
+   * Sets the names of the nodes to remove from the cache.
+   * 
+   * @param csvNodes
+   *          a comma-separated list of Strings containing the nodes to remove
+   *          from the cache
+   */
   public void setNodes(String csvNodes) {
     String[] newNodeFqns = null;
     if (csvNodes != null) {
@@ -87,10 +119,19 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
     setNodes(newNodeFqns);
   }
 
+  /**
+   * Sets the names of the nodes to remove from the cache.
+   * 
+   * @param newNodes
+   *          the new names
+   */
   public void setNodes(String[] newNodes) {
     nodes = Strings.removeDuplicates(newNodes);
   }
 
+  /**
+   * @see java.lang.Object#toString()
+   */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
     buffer.append("[nodes=" + Objects.nullSafeToString(nodes) + ", ");

@@ -51,7 +51,7 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
    * Constructor.
    * 
    * @param csvCacheNames
-   *          a String containing the names of the EHCache caches to flush
+   *          a comma-separated list containing the names of the EHCache caches to flush
    *          separated by commas
    */
   public EhCacheFlushingModel(String csvCacheNames) {

@@ -31,10 +31,6 @@ import org.springmodules.cache.provider.InvalidCacheModelException;
  */
 public final class JbossCacheModelValidator extends AbstractCacheModelValidator {
 
-  public JbossCacheModelValidator() {
-    super();
-  }
-
   /**
    * @see AbstractCacheModelValidator#getCachingModelTargetClass()
    */

@@ -37,10 +37,6 @@ public class JbossCacheManagerFactoryBean extends
 
   private TreeCache treeCache;
 
-  public JbossCacheManagerFactoryBean() {
-    super();
-  }
-
   /**
    * @see AbstractCacheManagerFactoryBean#createCacheManager()
    */

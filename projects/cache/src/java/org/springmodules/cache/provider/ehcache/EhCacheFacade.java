@@ -121,6 +121,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
+   * @return <code>true</code>. EHCache can only store Serializable objects
    * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
    */
   protected boolean isSerializableCacheElementRequired() {
@@ -128,12 +129,18 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
+   * Removes all the entries in the caches specified in the given flushing
+   * model. The flushing model should be an instance of
+   * <code>{@link EhCacheFlushingModel}</code>.
+   * 
+   * @param model
+   *          the flushing model.
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
+   * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
    */
   protected void onFlushCache(FlushingModel model) throws CacheException {
     EhCacheFlushingModel flushingModel = (EhCacheFlushingModel) model;
@@ -161,12 +168,21 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CachingModel)
+   * Retrieves an object stored under the given key from the cache specified in
+   * the given caching model. The caching model should be an instance of
+   * <code>{@link EhCacheCachingModel}</code>.
+   * 
+   * @param key
+   *          the key of the cache entry
+   * @param model
+   *          the caching model
+   * @return the object retrieved from the cache. Can be <code>null</code>.
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CachingModel)
    */
   protected Object onGetFromCache(Serializable key, CachingModel model)
       throws CacheException {
@@ -191,8 +207,16 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CachingModel,
-   *      Object)
+   * Stores the given object under the given key in the cache specified in the
+   * given caching model. The caching model should be an instance of
+   * <code>{@link EhCacheCachingModel}</code>.
+   * 
+   * @param key
+   *          the key of the cache entry
+   * @param model
+   *          the caching model
+   * @param obj
+   *          the object to store in the cache
    * 
    * @throws ObjectCannotBeCachedException
    *           if the object to store is not an implementation of
@@ -201,6 +225,9 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
+   * 
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CachingModel,
+   *      Object)
    */
   protected void onPutInCache(Serializable key, CachingModel model, Object obj)
       throws CacheException {
@@ -220,13 +247,21 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
-   *      CachingModel)
+   * Removes the object stored under the given key from the cache specified in
+   * the given caching model. The caching model should be an instance of
+   * <code>{@link EhCacheCachingModel}</code>.
+   * 
+   * @param key
+   *          the key of the cache entry
+   * @param model
+   *          the caching model
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
+   * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
+   *      CachingModel)
    */
   protected void onRemoveFromCache(Serializable key, CachingModel model)
       throws CacheException {

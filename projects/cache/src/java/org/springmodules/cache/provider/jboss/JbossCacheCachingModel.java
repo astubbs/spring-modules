@@ -34,20 +34,29 @@ public class JbossCacheCachingModel implements CachingModel {
 
   private static final long serialVersionUID = -9019322549512783005L;
 
-  /**
-   * FQN of the node where to store cache elements.
-   */
   private String node;
 
+  /**
+   * Constructor.
+   */
   public JbossCacheCachingModel() {
     super();
   }
 
-  public JbossCacheCachingModel(String fqn) {
+  /**
+   * Constructor.
+   * 
+   * @param newNode
+   *          the fully qualified name of the node to use
+   */
+  public JbossCacheCachingModel(String newNode) {
     this();
-    setNode(fqn);
+    setNode(newNode);
   }
 
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -65,10 +74,16 @@ public class JbossCacheCachingModel implements CachingModel {
     return true;
   }
 
+  /**
+   * @return the fully qualified name of the node to use
+   */
   public final String getNode() {
     return node;
   }
 
+  /**
+   * @see java.lang.Object#hashCode()
+   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 17;
@@ -78,10 +93,19 @@ public class JbossCacheCachingModel implements CachingModel {
     return hash;
   }
 
+  /**
+   * Sets the fully qualified name of the node to use
+   * 
+   * @param newNodeFqn
+   *          the new node FQN
+   */
   public final void setNode(String newNodeFqn) {
     node = newNodeFqn;
   }
 
+  /**
+   * @see java.lang.Object#toString()
+   */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
     buffer.append("[nodeFqn=" + Strings.quote(node) + "]");

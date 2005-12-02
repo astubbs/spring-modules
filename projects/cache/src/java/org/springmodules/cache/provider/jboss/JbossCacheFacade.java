@@ -26,8 +26,9 @@ import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
-import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.CacheModelValidator;
+import org.springmodules.cache.provider.ObjectCannotBeCachedException;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 /**
  * <p>
@@ -42,34 +43,50 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
 
   private CacheModelValidator cacheModelValidator;
 
+  /**
+   * Constructor.
+   */
   public JbossCacheFacade() {
     super();
     cacheModelValidator = new JbossCacheModelValidator();
   }
 
+  /**
+   * Returns the validator of cache models. It is always an instance of
+   * <code>{@link JbossCacheModelValidator}</code>.
+   * 
+   * @return the validator of cache models
+   */
+  public CacheModelValidator getCacheModelValidator() {
+    return cacheModelValidator;
+  }
+
+  /**
+   * @return the <code>PropertyEditor</code> for caching models
+   */
   public PropertyEditor getCachingModelEditor() {
     ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
     editor.setCacheModelClass(JbossCacheCachingModel.class);
     return editor;
   }
 
+  /**
+   * @return the <code>PropertyEditor</code> for flushing models
+   */
   public PropertyEditor getFlushingModelEditor() {
     ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
     editor.setCacheModelClass(JbossCacheFlushingModel.class);
     return editor;
   }
 
-  public CacheModelValidator getCacheModelValidator() {
-    return cacheModelValidator;
-  }
-
   /**
+   * @return <code>true</code>. Serializable entries are not necessary if the
+   *         cache is local (not replicated). It is recommended to use
+   *         serializable objects to enable users to change the cache mode at
+   *         any time.
    * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
    */
   protected boolean isSerializableCacheElementRequired() {
-    // serializable entries are not necessary if the cache is local (not
-    // replicated). It is recommended to use serializable objects to enable
-    // users to change the cache mode at any time.
     return true;
   }
 
@@ -79,7 +96,11 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
    * <code>{@link JbossCacheFlushingModel}</code>.
    * 
    * @param model
-   *          the flushing model.
+   *          the flushing model
+   * 
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
+   * 
    * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
    */
   protected void onFlushCache(FlushingModel model) {
@@ -101,6 +122,19 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
+   * Retrieves an object stored under the given key from the node specified in
+   * the given caching model. The caching model should be an instance of
+   * <code>{@link JbossCacheCachingModel}</code>.
+   * 
+   * @param key
+   *          the key of the cache entry
+   * @param model
+   *          the caching model
+   * @return the object retrieved from the cache. Can be <code>null</code>.
+   * 
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
+   * 
    * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CachingModel)
    */
   protected Object onGetFromCache(Serializable key, CachingModel model) {
@@ -117,6 +151,23 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
+   * Stores the given object under the given key in the node specified in the
+   * given caching model. The caching model should be an instance of
+   * <code>{@link JbossCacheCachingModel}</code>.
+   * 
+   * @param key
+   *          the key of the cache entry
+   * @param model
+   *          the caching model
+   * @param obj
+   *          the object to store in the cache
+   * 
+   * @throws ObjectCannotBeCachedException
+   *           if the object to store is not an implementation of
+   *           <code>java.io.Serializable</code>.
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
+   * 
    * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CachingModel,
    *      Object)
    */
@@ -131,6 +182,18 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
+   * Removes the object stored under the given key from the node specified in
+   * the given caching model. The caching model should be an instance of
+   * <code>{@link JbossCacheCachingModel}</code>.
+   * 
+   * @param key
+   *          the key of the cache entry
+   * @param model
+   *          the caching model
+   * 
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache.
+   * 
    * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
    *      CachingModel)
    */
@@ -144,6 +207,12 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
     }
   }
 
+  /**
+   * Sets the JBossCache cache manager to use.
+   * 
+   * @param newCacheManager
+   *          the new cache manager
+   */
   public void setCacheManager(TreeCache newCacheManager) {
     cacheManager = newCacheManager;
   }
