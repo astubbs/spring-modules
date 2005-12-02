@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE form-validation PUBLIC 
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" 
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+
+<form-validation>
+	<formset>
+		<form name="personData">
+			<field property="password" depends="required">
+				<arg0 key="person.password" />
+			</field>
+			<field property="verifyPassword" depends="validwhen">
+				<arg0 key="person.password.not.matching" />
+				<var>
+					<var-name>test</var-name>
+					<var-value>
+						(*this* == password)
+					</var-value>
+				</var>
+			</field>
+			<field property="firstName" depends="required">
+				<arg0 key="person.first.name" />
+			</field>
+			<field property="lastName" depends="required">
+				<arg0 key="person.last.name" />
+			</field>
+			<field property="email" depends="email">
+				<arg0 key="person.email" />
+			</field>
+		</form>
+	</formset>
+</form-validation>
