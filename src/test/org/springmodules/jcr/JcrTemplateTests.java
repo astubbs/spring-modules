@@ -1,17 +1,15 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrTemplateTests.java,v 1.4 2005/11/11 15:47:08 costin Exp $
- * $Revision: 1.4 $
+ * $Id: JcrTemplateTests.java,v 1.5 2005/12/06 10:37:05 costin Exp $
+ * $Revision: 1.5 $
  */
 package org.springmodules.jcr;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -52,9 +50,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springmodules.jcr.support.ListSessionHolderProviderManager;
 import org.xml.sax.ContentHandler;
-
-import sun.net.www.MimeTable;
 
 /**
  * @author Costin Leau
@@ -70,7 +67,7 @@ public class JcrTemplateTests extends TestCase {
     private MockControl repositoryControl;
     private Repository repository;
     private Session session;
-
+    private SessionHolderProviderManager providerManager;
     private JcrTemplate jt;
 
     protected void setUp() throws RepositoryException {
@@ -88,7 +85,10 @@ public class JcrTemplateTests extends TestCase {
 
     	sfControl.replay();
     	sessionControl.replay();
-        jt = new JcrTemplate(sf);
+
+    	providerManager = new ListSessionHolderProviderManager();
+    	
+        jt = new JcrTemplate(sf, providerManager);
         jt.setAllowCreate(true);
         
     	sfControl.reset();
@@ -118,6 +118,7 @@ public class JcrTemplateTests extends TestCase {
         } catch (IllegalArgumentException e) {
             // expected
         }
+
     }
 
     public void testInvocationHandler() {
@@ -372,131 +373,17 @@ public class JcrTemplateTests extends TestCase {
         sfControl.reset();
         sessionControl.reset();
         
-        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
+        //sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
         sfControl.expectAndReturn(sf.getSession(), session);
-        sfControl.expectAndReturn(sf.getSession(), session);
+        //sfControl.expectAndReturn(sf.getSession(), session);
         session.logout();
         
         sfControl.replay();
         sessionControl.replay();
 
-        JcrTemplate template = new JcrTemplate(sf);
+        JcrTemplate template = new JcrTemplate(sf, providerManager);
         template.setAllowCreate(true);
         return template;
-    }
-
-    /*
-     * Test method for 'org.springmodules.jcr.JcrTemplate.importFile(Node,
-     * File)'
-     */
-    public void testImportFile() throws Exception {
-    	File cur = new File(".");
-    	System.out.println(cur.getAbsolutePath());
-        File file = new File("./build.xml");
-        jt.setAllowCreate(true);
-
-        sessionControl.replay();
-        sfControl.replay();
-
-        try {
-            jt.importFile(null, null);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            // it's okay
-        }
-        sfControl.verify();
-        sessionControl.verify();
-
-        sfControl.reset();
-        sessionControl.reset();
-
-        sfControl.expectAndReturn(sf.getSession(), session);
-        // create a node mock
-        MockControl nodeCtrl = MockControl.createControl(Node.class);
-        Node node = (Node) nodeCtrl.getMock();
-
-        MockControl fileNodeCtrl = MockControl.createControl(Node.class);
-        Node fileNode = (Node) fileNodeCtrl.getMock();
-
-        // we need a nice control to get pass the FileStream comparison
-        MockControl resNodeCtrl = MockControl.createNiceControl(Node.class);
-        Node resNode = (Node) resNodeCtrl.getMock();
-
-        nodeCtrl.expectAndReturn(node.addNode(file.getName(), "nt:file"), fileNode);
-        nodeCtrl.replay();
-
-        fileNodeCtrl.expectAndReturn(fileNode.addNode("jcr:content", "nt:resource"), resNode);
-        fileNodeCtrl.replay();
-
-        String mimeType = MimeTable.getDefaultTable().getContentTypeFor(file.getName());
-        if (mimeType == null)
-            mimeType = "application/octet-stream";
-
-        resNodeCtrl.expectAndReturn(resNode.setProperty("jcr:mimeType", mimeType), null);
-        resNodeCtrl.expectAndReturn(resNode.setProperty("jcr:encoding", ""), null);
-        Calendar lastModified = Calendar.getInstance();
-        lastModified.setTimeInMillis(file.lastModified());
-        resNodeCtrl.expectAndReturn(resNode.setProperty("jcr:lastModified", lastModified), null);
-        resNodeCtrl.replay();
-
-        sessionControl.expectAndReturn(session.getRootNode(), node);
-        session.save();
-        session.logout();
-
-        sfControl.replay();
-        sessionControl.replay();
-
-        jt.importFile(null, file);
-
-        nodeCtrl.verify();
-        fileNodeCtrl.verify();
-        resNodeCtrl.verify();
-    }
-
-    /*
-     * Test method for 'org.springmodules.jcr.JcrTemplate.importFolder(Node,
-     * File)'
-     */
-    public void testImportFolder() throws Exception {
-        File dir = new File("./foo-bar");
-        dir.mkdir();
-        dir.deleteOnExit();
-
-        sessionControl.replay();
-        sfControl.replay();
-
-        try {
-            jt.importFolder(null, null, true);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            // it's okay
-        }
-        sfControl.verify();
-        sessionControl.verify();
-
-        
-        sfControl.reset();
-        sessionControl.reset();
-
-        sfControl.expectAndReturn(sf.getSession(), session);
-        // create a node mock
-        MockControl nodeCtrl = MockControl.createControl(Node.class);
-        Node node = (Node) nodeCtrl.getMock();
-
-        nodeCtrl.expectAndReturn(node.addNode(dir.getName(), "nt:folder"), null);
-        nodeCtrl.replay();
-
-        sessionControl.expectAndReturn(session.getRootNode(), node);
-        session.save();
-        session.logout();
-
-        sfControl.replay();
-        sessionControl.replay();
-
-        jt.importFolder(null, dir, true);
-
-        nodeCtrl.verify();
-        dir.delete();
     }
 
     /*

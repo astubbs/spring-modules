@@ -184,7 +184,7 @@ public abstract class SessionFactoryUtils {
 			return new DataRetrievalFailureException("Invalid query", ex);
 		}
 		if (ex instanceof InvalidSerializedDataException) {
-			return new DataRetrievalFailureException("invalid serialized data", ex);
+			return new DataRetrievalFailureException("Invalid serialized data", ex);
 		}
 		if (ex instanceof ItemExistsException) {
 			return new DataIntegrityViolationException("An item already exists", ex);

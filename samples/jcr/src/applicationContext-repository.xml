@@ -5,10 +5,10 @@
 	JSR-170 configuration support. Note that the transaction managers are defined
 	in separate files.
 	    
-    $Id: applicationContext-repository.xml,v 1.3 2005/11/11 15:47:58 costin Exp $
+    $Id: applicationContext-repository.xml,v 1.4 2005/12/06 10:37:04 costin Exp $
     -->    
 <beans default-lazy-init="true">
-	<import resource="applicationContext-jr-jca.xml"/>
+	<import resource="applicationContext-jr-local.xml"/>
 	
 
 	<bean id="jeceira-repository" class="org.springmodules.jcr.jeceira.RepositoryFactoryBean">
@@ -29,6 +29,24 @@
 				</constructor-arg>
 			</bean>
 		</property>
+		<!-- register some bogus namespaces -->
+		<property name="namespaces">
+			<props>
+				<prop key="foo">http://bar.com/jcr</prop>
+				<prop key="hocus">http://pocus.com/jcr</prop>
+			</props>
+		</property>
+		<!-- register a simple listener -->
+		<property name="eventListeners">
+			<list>
+				<bean class="org.springmodules.jcr.EventListenerDefinition">
+					<property name="listener">
+						<bean class="org.springmodules.examples.jcr.DummyEventListener"/>
+					</property>
+				</bean>
+			</list>
+		</property>
+			
 	</bean>
 	
 	<!-- create the password to return it as a char[] -->
@@ -36,8 +54,11 @@
 		<constructor-arg index="0" value="pass"/>
 	</bean>
 	
+	<bean id="providerManager" class="org.springmodules.jcr.support.ServiceSessionHolderProviderManager"/>
+	
 	<bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate">
 		<property name="sessionFactory" ref="jcrSessionFactory"/>
+		<property name="providerManager" ref="providerManager"/>
 		<property name="allowCreate" value="true"/>
 	</bean>
 

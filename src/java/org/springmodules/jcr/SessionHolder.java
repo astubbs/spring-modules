@@ -19,7 +19,7 @@ public class SessionHolder extends ResourceHolderSupport {
         setSession(session);
     }
 
-    public void setSession(Session session) {
+    protected void setSession(Session session) {
         this.session = session;
     }
 

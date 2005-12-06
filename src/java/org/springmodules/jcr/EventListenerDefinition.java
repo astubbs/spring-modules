@@ -1,15 +1,25 @@
 /**
  * Created on Sep 1, 2005
  *
- * $Id: EventListenerDefinition.java,v 1.1 2005/10/21 08:17:06 costin Exp $
- * $Revision: 1.1 $
+ * $Id: EventListenerDefinition.java,v 1.2 2005/12/06 10:37:01 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
+import javax.jcr.observation.Event;
 import javax.jcr.observation.EventListener;
 
 /**
- * Transport class used for registering event types inside a workspace.
+ * Transport class used for registering event types inside a workspace. It contains defaults for
+ * all properties except the listener (obviously):
+ * <ol>
+ * <li> absPath = "/" </li>
+ * <li> eventTypes = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED </li>
+ * <li> isDeep = true </li> 
+ * <li> uuid = null </li>
+ * <li> nodeTypeName = null </li>
+ * <li> noLocal = false </li>
+ * </ol>
  * 
  * @see javax.jcr.observation.ObservationManager#addEventListener(javax.jcr.observation.EventListener, int, java.lang.String, boolean, java.lang.String[], java.lang.String[], boolean)
  * @author Costin Leau
@@ -18,12 +28,13 @@ import javax.jcr.observation.EventListener;
 public class EventListenerDefinition {
     
     private EventListener listener;
-    private int eventTypes;
-    String absPath;
-    boolean isDeep;
+    private int eventTypes = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
+    
+    String absPath ="/";
+    boolean isDeep = true;
     String[] uuid;
     String[] nodeTypeName;
-    boolean noLocal;
+    boolean noLocal = false;
     
     /**
      * @return Returns the absPath.

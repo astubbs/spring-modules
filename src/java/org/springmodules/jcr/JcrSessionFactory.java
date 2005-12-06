@@ -1,6 +1,11 @@
 package org.springmodules.jcr;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+
 import javax.jcr.Credentials;
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -36,7 +41,9 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 
 	private Credentials credentials;
 
-	private EventListenerDefinition eventListenerDefinitions[];
+	private EventListenerDefinition eventListeners[];
+
+	private Properties namespaces;
 
 	/**
 	 * @param repository
@@ -46,18 +53,40 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 		this.repository = repository;
 		this.workspaceName = workspaceName;
 		this.credentials = credentials;
-		afterPropertiesSet();
-
+		try {
+			afterPropertiesSet();
+		}
+		catch (RepositoryException ex) {
+			// convert the exception 
+			throw SessionFactoryUtils.translateException(ex);
+		}
 	}
 
 	public JcrSessionFactory() {
 	}
 
-	public void afterPropertiesSet() {
+	public void afterPropertiesSet() throws RepositoryException {
 		if (getRepository() == null)
 			throw new IllegalArgumentException("repository is required");
-		if (!supportsObservation() && eventListenerDefinitions != null)
-			throw new IllegalArgumentException("repository " + getRepositoryInfo() + " does NOT support Observation; remove Listener definitions");
+		if (eventListeners != null
+				&& (eventListeners.length > 0)
+				&& !supportsObservation())
+			throw new IllegalArgumentException("repository "
+					+ getRepositoryInfo()
+					+ " does NOT support Observation; remove Listener definitions");
+
+		// register namespaces (if we have any)
+		if (namespaces != null && !namespaces.isEmpty()) {
+			if (log.isDebugEnabled())
+				log.debug("registering custom namespaces " + namespaces);
+			// get the session
+			Session session = getSession();
+			NamespaceRegistry registry = session.getWorkspace().getNamespaceRegistry();
+			for (Iterator iter = namespaces.entrySet().iterator(); iter.hasNext();) {
+				Map.Entry namespace = (Map.Entry) iter.next();
+				registry.registerNamespace((String) namespace.getKey(), (String) namespace.getValue());
+			}
+		}
 	}
 
 	/**
@@ -75,25 +104,24 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 	 * @return the listened session
 	 */
 	protected Session addListeners(Session session) throws RepositoryException {
-		if (eventListenerDefinitions != null) {
+		if (eventListeners != null && eventListeners.length > 0) {
 			Workspace ws = session.getWorkspace();
 			ObservationManager manager = ws.getObservationManager();
 			if (log.isDebugEnabled())
 				log.debug("adding listeners "
-						+ ArrayUtils.toString(eventListenerDefinitions)
+						+ ArrayUtils.toString(eventListeners)
 						+ " for session "
 						+ session);
 
-			for (int i = 0; i < eventListenerDefinitions.length; i++) {
-				manager.addEventListener(eventListenerDefinitions[i].getListener(),
-						eventListenerDefinitions[i].getEventTypes(),
-						eventListenerDefinitions[i].getAbsPath(), eventListenerDefinitions[i].isDeep(),
-						eventListenerDefinitions[i].getUuid(), eventListenerDefinitions[i].getNodeTypeName(),
-						eventListenerDefinitions[i].isNoLocal());
+			for (int i = 0; i < eventListeners.length; i++) {
+				manager.addEventListener(eventListeners[i].getListener(),
+						eventListeners[i].getEventTypes(),
+						eventListeners[i].getAbsPath(), eventListeners[i].isDeep(),
+						eventListeners[i].getUuid(), eventListeners[i].getNodeTypeName(),
+						eventListeners[i].isNoLocal());
 			}
 		}
 		return session;
-
 	}
 
 	/**
@@ -183,15 +211,15 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 	/**
 	 * @return Returns the eventListenerDefinitions.
 	 */
-	public EventListenerDefinition[] getEventListenerDefinitions() {
-		return eventListenerDefinitions;
+	public EventListenerDefinition[] getEventListeners() {
+		return eventListeners;
 	}
 
 	/**
 	 * @param eventListenerDefinitions The eventListenerDefinitions to set.
 	 */
-	public void setEventListenerDefinitions(EventListenerDefinition[] eventListenerDefinitions) {
-		this.eventListenerDefinitions = eventListenerDefinitions;
+	public void setEventListeners(EventListenerDefinition[] eventListenerDefinitions) {
+		this.eventListeners = eventListenerDefinitions;
 	}
 
 	public boolean supportsLevel2() {
@@ -232,6 +260,20 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 		buffer.append(" ");
 		buffer.append(getRepository().getDescriptor(Repository.REP_VERSION_DESC));
 		return buffer.toString();
+	}
+
+	/**
+	 * @return Returns the namespaces.
+	 */
+	public Properties getNamespaces() {
+		return namespaces;
+	}
+
+	/**
+	 * @param namespaces The namespaces to set.
+	 */
+	public void setNamespaces(Properties namespaces) {
+		this.namespaces = namespaces;
 	}
 
 }

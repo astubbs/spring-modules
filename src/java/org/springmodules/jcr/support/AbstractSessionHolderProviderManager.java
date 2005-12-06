@@ -1,8 +1,8 @@
 /**
  * Created on Nov 10, 2005
  *
- * $Id: AbstractSessionHolderProviderManager.java,v 1.1 2005/11/11 15:47:10 costin Exp $
- * $Revision: 1.1 $
+ * $Id: AbstractSessionHolderProviderManager.java,v 1.2 2005/12/06 10:36:59 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -44,8 +44,6 @@ public abstract class AbstractSessionHolderProviderManager implements SessionHol
 		// graceful fallback
 		if (sessionFactory == null)
 			return defaultProvider;
-		//System.out.println("session is " + sessionFactory.getSession());
-		//System.out.println("repository is " + sessionFactory.getSession().getRepository());
 		
 		String key = SessionFactoryUtils.getSession(sessionFactory, true).getRepository().getDescriptor(Repository.REP_NAME_DESC);
 		List providers = getProviders();

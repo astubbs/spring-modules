@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrAccessor.java,v 1.2 2005/11/11 15:47:11 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JcrAccessor.java,v 1.3 2005/12/06 10:37:00 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr;
 
@@ -12,20 +12,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
-import org.springmodules.jcr.support.ServiceSessionHolderProviderManager;
 
 /**
  * Base class for JcrTemplate and JcrInterceptor, defining common properties
  * like JcrSessionFactory.
- * The required properties are sessionFactory.
- * If the sessionHolderProvider is not set the sessionProviderManager property is used.
- * If it's null the ServiceSessionHolderProviderManager will be used by default.
+ * The required properties are sessionFactory and sessionHolderProviderManager.
  * 
  * <p>
  * Not intended to be used directly. See JcrTemplate and JcrInterceptor.
  * 
  * @see JcrTemplate
  * @see JcrInterceptor
+ * @see org.springmodules.jcr.support.ServiceSessionHolderProviderManager
+ * 
  * @author Costin Leau
  */
 public abstract class JcrAccessor implements InitializingBean {
@@ -34,8 +33,14 @@ public abstract class JcrAccessor implements InitializingBean {
 
 	private SessionFactory sessionFactory;
 
+	/**
+	 * sessionHolder Factory.
+	 */
 	private SessionHolderProvider sessionHolderProvider;
 
+	/**
+	 * 'Detector' for sessionHolderProvider.
+	 */
 	private SessionHolderProviderManager providerManager;
 
 	/**
@@ -44,14 +49,15 @@ public abstract class JcrAccessor implements InitializingBean {
 	 */
 	public void afterPropertiesSet() {
 		if (getSessionFactory() == null) {
-			throw new IllegalArgumentException("jcrSessionFactory is required");
+			throw new IllegalArgumentException("sessionFactory is required");
 		}
-		if (getSessionHolderProvider() == null) {
-			if (providerManager == null)
-				providerManager = new ServiceSessionHolderProviderManager();
-			// use the provider manager
-			setSessionHolderProvider(providerManager.getSessionProvider(sessionFactory));
+
+		if (getProviderManager() == null) {
+			throw new IllegalArgumentException("providerManager is required");
 		}
+
+		// use the provider manager
+		setSessionHolderProvider(providerManager.getSessionProvider(sessionFactory));
 	}
 
 	/**
@@ -90,6 +96,8 @@ public abstract class JcrAccessor implements InitializingBean {
 	}
 
 	/**
+	 * By default ServiceSessionHolderProviderManager is used.
+	 * 
 	 * @param providerManager The providerManager to set.
 	 */
 	public void setProviderManager(SessionHolderProviderManager providerManager) {
@@ -97,6 +105,8 @@ public abstract class JcrAccessor implements InitializingBean {
 	}
 
 	/**
+	 * SessionHolderProvider (used internally by TransactionManager).
+	 * 
 	 * @return Returns the sessionHolderProvider.
 	 */
 	public SessionHolderProvider getSessionHolderProvider() {
@@ -104,9 +114,11 @@ public abstract class JcrAccessor implements InitializingBean {
 	}
 
 	/**
+	 * Only subclasses should work with it (we minimize the method for this classes). 
+	 * 
 	 * @param sessionHolderProvider The sessionHolderProvider to set.
 	 */
-	public void setSessionHolderProvider(SessionHolderProvider sessionHolderProvider) {
+	protected void setSessionHolderProvider(SessionHolderProvider sessionHolderProvider) {
 		this.sessionHolderProvider = sessionHolderProvider;
 	}
 }

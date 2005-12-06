@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrInterceptorTests.java,v 1.2 2005/11/11 15:47:08 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JcrInterceptorTests.java,v 1.3 2005/12/06 10:37:05 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr;
 
@@ -20,6 +20,7 @@ import org.aopalliance.intercept.Invocation;
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springmodules.jcr.support.ListSessionHolderProviderManager;
 
 /**
  * @author Costin Leau
@@ -47,6 +48,7 @@ public class JcrInterceptorTests extends TestCase {
 
         JcrInterceptor interceptor = new JcrInterceptor();
         interceptor.setSessionFactory(sf);
+        interceptor.setProviderManager(new ListSessionHolderProviderManager());
         interceptor.afterPropertiesSet();
         try {
             interceptor.invoke(new TestInvocation(sf));
@@ -63,12 +65,20 @@ public class JcrInterceptorTests extends TestCase {
         SessionFactory sf = (SessionFactory) sfControl.getMock();
         MockControl sessionControl = MockControl.createControl(Session.class);
         Session session = (Session) sessionControl.getMock();
+        MockControl repoControl = MockControl.createNiceControl(Repository.class);
+        Repository repo = (Repository) repoControl.getMock();
+        
+        sessionControl.expectAndReturn(session.getRepository(), repo);
+        
         sfControl.replay();
         sessionControl.replay();
+        repoControl.replay();
 
         TransactionSynchronizationManager.bindResource(sf, new SessionHolder(session));
         JcrInterceptor interceptor = new JcrInterceptor();
         interceptor.setSessionFactory(sf);
+        interceptor.setProviderManager(new ListSessionHolderProviderManager());
+        interceptor.afterPropertiesSet();
         try {
             interceptor.invoke(new TestInvocation(sf));
         } catch (Throwable t) {

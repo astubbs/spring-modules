@@ -24,7 +24,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springmodules.jcr.JcrCallback;
 import org.springmodules.jcr.JcrTemplate;
 import org.springmodules.jcr.SessionFactory;
+import org.springmodules.jcr.SessionHolderProviderManager;
 import org.springmodules.jcr.jackrabbit.support.UserTxSessionHolder;
+import org.springmodules.jcr.support.ListSessionHolderProviderManager;
 
 public class LocalTransactionManagerTests extends TestCase {
 
@@ -49,6 +51,7 @@ public class LocalTransactionManagerTests extends TestCase {
         repositoryControl.replay();
 
         sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
+        final SessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
 
         Xid xidMock = new XidMock();
 
@@ -77,7 +80,7 @@ public class LocalTransactionManagerTests extends TestCase {
         tt.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                JcrTemplate template = new JcrTemplate(sf);
+                JcrTemplate template = new JcrTemplate(sf, providerManager);
                 template.save();
             }
         });
@@ -125,7 +128,8 @@ public class LocalTransactionManagerTests extends TestCase {
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
-
+        final SessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
+        
         PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
         final List l = new ArrayList();
@@ -137,7 +141,7 @@ public class LocalTransactionManagerTests extends TestCase {
             tt.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                    JcrTemplate template = new JcrTemplate(sf);
+                    JcrTemplate template = new JcrTemplate(sf, providerManager);
                     template.execute(new JcrCallback() {
                         public Object doInJcr(Session se) throws RepositoryException {
                             se.save();
@@ -193,6 +197,8 @@ public class LocalTransactionManagerTests extends TestCase {
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
+        final SessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
+        
 
         PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
@@ -205,7 +211,7 @@ public class LocalTransactionManagerTests extends TestCase {
             tt.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                    JcrTemplate template = new JcrTemplate(sf);
+                    JcrTemplate template = new JcrTemplate(sf, providerManager);
                     template.execute(new JcrCallback() {
                         public Object doInJcr(Session se) throws RepositoryException {
                             se.save();
@@ -234,7 +240,8 @@ public class LocalTransactionManagerTests extends TestCase {
         final SessionFactory sf = (SessionFactory) sfControl.getMock();
         
         sfControl.replay();
-
+        final SessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
+        
         PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
         
@@ -246,7 +253,7 @@ public class LocalTransactionManagerTests extends TestCase {
             tt.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                    JcrTemplate template = new JcrTemplate(sf);
+                    JcrTemplate template = new JcrTemplate(sf, providerManager);
                     template.execute(new JcrCallback() {
                         public Object doInJcr(Session session) throws RepositoryException {
                             return null;
@@ -288,6 +295,7 @@ public class LocalTransactionManagerTests extends TestCase {
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
+        final SessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
 
         PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
@@ -299,7 +307,7 @@ public class LocalTransactionManagerTests extends TestCase {
         tt.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                JcrTemplate template = new JcrTemplate(sf);
+                JcrTemplate template = new JcrTemplate(sf, providerManager);
                 template.save();
             }
         });
@@ -335,6 +343,7 @@ public class LocalTransactionManagerTests extends TestCase {
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
+        final SessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
 
         PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
@@ -348,7 +357,7 @@ public class LocalTransactionManagerTests extends TestCase {
             tt.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                    JcrTemplate template = new JcrTemplate(sf);
+                    JcrTemplate template = new JcrTemplate(sf, providerManager);
                     template.save();
                 }
             });

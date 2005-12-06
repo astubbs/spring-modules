@@ -63,5 +63,14 @@ public interface JcrOperations extends JcrOptionalOperations {
      *             
      */
     public String dump(Node node);
+    
+    /**
+     * Renames a node (with the given name) 
+     * 
+     * @param node node to rename
+     * @param newName new name for the node
+     * 
+     */
+    public void rename(Node node, String newName);
 
 }

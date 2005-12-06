@@ -107,6 +107,11 @@
 		<delete dir="${build.dir}"/>
 		<delete dir="${dist.dir}"/>
 	</target>
+	
+	<target name="clean:repository" description="Cleans out the repository storage">
+		<delete dir=".classes/xa-rep"/>
+		<delete dir=".classes/repo"/>
+	</target>
 
 	<target name="build" description="Compile main source tree java files into class files, generate jar files">
 
@@ -129,10 +134,10 @@
 
 	</target>
 
-	<target name="launch" description="Launch the sample application" depends="build">
+	<target name="launch" description="Launch the sample application" depends="clean:repository">
 
 		<mkdir dir="${build.dir}/repo"/>
-		<java classname="${main.class}" fork="yes" failonerror="true">
+		<java classname="${main.class}" fork="yes" failonerror="true" dir="${basedir}">
 			<classpath refid="lib-classpath"/>
 			<classpath>
 				<pathelement path="${build.dir}"/>

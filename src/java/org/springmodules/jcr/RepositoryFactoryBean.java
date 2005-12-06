@@ -1,10 +1,12 @@
 /**
  * Created on Sep 23, 2005
  *
- * $Id: RepositoryFactoryBean.java,v 1.1 2005/10/21 08:17:06 costin Exp $
- * $Revision: 1.1 $
+ * $Id: RepositoryFactoryBean.java,v 1.2 2005/12/06 10:37:01 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
+
+import java.util.Properties;
 
 import javax.jcr.Repository;
 
@@ -22,82 +24,82 @@ import org.springframework.core.io.Resource;
  * @author Costin Leau
  *
  */
-public abstract class RepositoryFactoryBean
-        implements InitializingBean, DisposableBean, FactoryBean {
+public abstract class RepositoryFactoryBean implements InitializingBean, DisposableBean, FactoryBean {
 
-    protected final Log log = LogFactory.getLog(getClass());
+	protected final Log log = LogFactory.getLog(getClass());
 
-    /**
-     * Repository configuration.
-     */
-    protected Resource configuration;
+	/**
+	 * Repository configuration.
+	 */
+	protected Resource configuration;
 
-    /**
-     * The actual repository.
-     */
-    protected Repository repository;
+	/**
+	 * The actual repository.
+	 */
+	protected Repository repository;
 
-    /**
-     * Subclasses have to implement this method to allow specific JSR-170 implementation repository configuration.
-     *
-     */
-    protected abstract void resolveConfigurationResource() throws Exception;
+	/**
+	 * Subclasses have to implement this method to allow specific JSR-170 implementation repository configuration.
+	 *
+	 */
+	protected abstract void resolveConfigurationResource() throws Exception;
 
-    /**
-     * Subclasses have to implement this method to allow specific JSR-170 implementation repository creation.
-     * 
-     * @return
-     */
-    protected abstract Repository createRepository() throws Exception;
+	/**
+	 * Subclasses have to implement this method to allow specific JSR-170 implementation repository creation.
+	 * 
+	 * @return
+	 */
+	protected abstract Repository createRepository() throws Exception;
 
-    /**
-     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-     */
-    public void afterPropertiesSet() throws Exception {
-        resolveConfigurationResource();
-        repository = createRepository();
-    }
+	/**
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+		resolveConfigurationResource();
+		repository = createRepository();
 
-    /**
-     * @see org.springframework.beans.factory.DisposableBean#destroy()
-     */
-    public void destroy() throws Exception {
-    }
+	}
 
-    /**
-     * @see org.springframework.beans.factory.FactoryBean#getObject()
-     */
-    public Object getObject() throws Exception {
-        return this.repository;
-    }
+	/**
+	 * @see org.springframework.beans.factory.DisposableBean#destroy()
+	 */
+	public void destroy() throws Exception {
+	}
 
-    /**
-     * @see org.springframework.beans.factory.FactoryBean#getObjectType()
-     */
-    public Class getObjectType() {
-        // the repository is proxied.
-        return Repository.class;
-    }
+	/**
+	 * @see org.springframework.beans.factory.FactoryBean#getObject()
+	 */
+	public Object getObject() throws Exception {
+		return this.repository;
+	}
 
-    /**
-     * @see org.springframework.beans.factory.FactoryBean#isSingleton()
-     */
-    public boolean isSingleton() {
-        return true;
-    }
+	/**
+	 * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+	 */
+	public Class getObjectType() {
+		// the repository is proxied.
+		return Repository.class;
+	}
 
-    /**
-     * @return Returns the configuration.
-     */
-    public Resource getConfiguration() {
-        return this.configuration;
-    }
+	/**
+	 * @see org.springframework.beans.factory.FactoryBean#isSingleton()
+	 */
+	public boolean isSingleton() {
+		return true;
+	}
 
-    /**
-     * @param configuration The configuration to set.
-     */
-    public void setConfiguration(Resource configuration) {
-        this.configuration = configuration;
-    }
+	/**
+	 * @return Returns the configuration.
+	 */
+	public Resource getConfiguration() {
+		return this.configuration;
+	}
+
+	/**
+	 * @param configuration The configuration to set.
+	 */
+	public void setConfiguration(Resource configuration) {
+		this.configuration = configuration;
+	}
 
 }

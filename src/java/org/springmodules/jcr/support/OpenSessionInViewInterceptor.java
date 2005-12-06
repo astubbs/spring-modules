@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: OpenSessionInViewInterceptor.java,v 1.1 2005/10/21 08:16:43 costin Exp $
- * $Revision: 1.1 $
+ * $Id: OpenSessionInViewInterceptor.java,v 1.2 2005/12/06 10:36:59 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -19,33 +20,30 @@ import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
 import org.springmodules.jcr.SessionHolder;
 import org.springmodules.jcr.SessionHolderProvider;
+import org.springmodules.jcr.SessionHolderProviderManager;
 
 /**
- * Spring web HandlerInterceptor that binds a JCR PersistenceManager to the
+ * Spring web HandlerInterceptor that binds a JCR Session to the
  * thread for the entire processing of the request. Intended for the "Open
- * PersistenceManager in View" pattern, i.e. to allow for lazy loading in web
+ * Session in View" pattern, i.e. to allow for lazy loading in web
  * views despite the original transactions already being completed.
  * 
  * <p>
  * This filter works similar to the AOP JcrInterceptor: It just makes JCR
- * PersistenceManagers available via the thread. It is suitable for
+ * Sessions available via the thread. It is suitable for
  * non-transactional execution but also for middle tier transactions via
  * JcrTransactionManager or JtaTransactionManager. In the latter case,
- * PersistenceManagers pre-bound by this filter will automatically be used for
+ * Sessions pre-bound by this filter will automatically be used for
  * the transactions.
  * 
  * <p>
- * In contrast to OpenPersistenceManagerInViewFilter, this interceptor is set up
+ * In contrast to OpenSessionInViewFilter, this interceptor is set up
  * in a Spring application context and can thus take advantage of bean wiring.
  * It derives from JcrAccessor to inherit common JCR configuration properties.
  * 
- * <p/>
- * By default the interceptor uses the default session holder - the developer can 
- * set his own provider though.
- * 
  * @author Costin Leau
  */
-public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter
+public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter implements InitializingBean
 {
     /**
      * Suffix that gets appended to the SessionFactory toString
@@ -60,7 +58,9 @@ public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter
 
     private SessionFactory sessionFactory;
     
-    private SessionHolderProvider sessionHolderProvider = new DefaultSessionHolderProvider();
+    private SessionHolderProvider sessionHolderProvider;
+    
+    private SessionHolderProviderManager providerManager;
 
     /**
      * Set the JCR JcrSessionFactory that should be used to create
@@ -137,13 +137,37 @@ public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter
         return sessionHolderProvider;
     }
 
-    /**
-     *  Set the sessionHolder provider to be used internally. Should be set when implementation
-     *  specific holders should be used (like JackRabbit for transaction support).
-     *  
-     * @param sessionHolderProvider The sessionHolderProvider to set.
-     */
-    public void setSessionHolderProvider(SessionHolderProvider sessionHolderProvider) {
-        this.sessionHolderProvider = sessionHolderProvider;
-    }
+	/**
+	 * @return Returns the sessionHolderProviderManager.
+	 */
+	public SessionHolderProviderManager getProviderManager() {
+		return providerManager;
+	}
+
+	/**
+	 * Sets the sessionHolderProviderManager which will determine the approapriate sessionHolderProvider
+	 * for the underlying repository/sessionFactory.
+	 * 
+	 * @param sessionHolderProviderManager The sessionHolderProviderManager to set.
+	 */
+	public void setProviderManager(SessionHolderProviderManager sessionHolderProviderManager) {
+		this.providerManager = sessionHolderProviderManager;
+	}
+
+	/**
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+		if (sessionFactory == null)
+			throw new IllegalArgumentException("sessionFactory is required");
+		if (providerManager == null)
+			throw new IllegalArgumentException("providerManager is required");
+		
+		this.sessionHolderProvider = providerManager.getSessionProvider(sessionFactory);
+	}
+	
+	
+    
+    
+
 }

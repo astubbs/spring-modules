@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: OpenSessionInViewFilter.java,v 1.1 2005/10/21 08:16:42 costin Exp $
- * $Revision: 1.1 $
+ * $Id: OpenSessionInViewFilter.java,v 1.2 2005/12/06 10:36:59 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -21,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
 import org.springmodules.jcr.SessionHolderProvider;
+import org.springmodules.jcr.SessionHolderProviderManager;
 
 /**
  * Servlet 2.3 Filter that binds a JCR Session to the thread for the
@@ -46,135 +47,146 @@ import org.springmodules.jcr.SessionHolderProvider;
  * <i>after</i> this filter).
  * 
  * <p>
- * The filter can be configured to use a SessionHolderProvider where implementation specific
+ * Looks up the SessionHolderProviderManager in Spring's root web application
+ * context. Supports a "ProviderManagerBeanName" filter init-param in
+ * <code>web.xml</code>; the default bean name is
+ * "providerManager". Looks up the SessionHolderProviderManager on each
+ * request, to avoid initialization order issues (when using
+ * ContextLoaderServlet, the root application context will get initialized
+ * <i>after</i> this filter). 
+ * 
+ * <p>
+ * The filter can be configured to use a SessionHolderManagerProvider where implementation specific
  * session holder are required (like JackRabbit which extends the JCR session to provide 
- * transactional support). Support a "SessionHolderProviderBeanName" filter init-param
- * in <code>web.xml</code>; by default, the filter instantiates a DefaultSessionHolderProvider.
+ * transactional support). Support a "SessionHolderProviderManagerBeanName" filter init-param
+ * in <code>web.xml</code>; by default this param i , the filter uses ServiceSessionHolderProviderManager which
+ * can dynamically detect the approapriate SessionHolder for the underlying repository at runtime.
  * 
  * @author Costin Leau
  */
-public class OpenSessionInViewFilter extends OncePerRequestFilter{
-    public static final String DEFAULT_JCR_SESSION_FACTORY_FACTORY_BEAN_NAME = "sessionFactory";
-    public static final String DEFAULT_JCR_SESSION_HOLDER_PROVIDER_BEAN_NAME = null;
+public class OpenSessionInViewFilter extends OncePerRequestFilter {
+	public static final String DEFAULT_JCR_SESSION_FACTORY_FACTORY_BEAN_NAME = "sessionFactory";
+	public static final String DEFAULT_JCR_SESSION_HOLDER_PROVIDER_MANAGER_BEAN_NAME = "providerManager";
 
-    private String SessionFactoryBeanName = DEFAULT_JCR_SESSION_FACTORY_FACTORY_BEAN_NAME;
-    private String SessionHolderProviderBeanName = DEFAULT_JCR_SESSION_HOLDER_PROVIDER_BEAN_NAME;
-    
-    /**
-     * Set the bean name of the SessionFactory to fetch from Spring's
-     * root application context. Default is "SessionFactory".
-     * 
-     * @see #DEFAULT_JCR_SESSION_FACTORY_FACTORY_BEAN_NAME
-     */
-    public void setSessionFactoryBeanName(String SessionFactoryBeanName) {
-        this.SessionFactoryBeanName = SessionFactoryBeanName;
-    }
-    
-    /**
-     * Set the bean name of the SessionHolderProvider to fetch from Spring's
-     * root application context. By default, no holder provider is looked up and 
-     * the DefaultSessionHolderProvider is instantiated.
-     * 
-     * @see #DEFAULT_JCR_SESSION_HOLDER_PROVIDER_BEAN_NAME
-     */
-    public void setSessionHolderProviderBeanName(String SessionHolderProviderBeanName) {
-        this.SessionHolderProviderBeanName = SessionHolderProviderBeanName;
-    }
+	private String SessionFactoryBeanName = DEFAULT_JCR_SESSION_FACTORY_FACTORY_BEAN_NAME;
+	private String SessionHolderProviderManagerBeanName = DEFAULT_JCR_SESSION_HOLDER_PROVIDER_MANAGER_BEAN_NAME;
 
-    /**
-     * Return the bean name of the SessionFactory to fetch from
-     * Spring's root application context.
-     */
-    protected String getSessionFactoryBeanName() {
-        return SessionFactoryBeanName;
-    }
+	/**
+	 * Set the bean name of the SessionFactory to fetch from Spring's
+	 * root application context. Default is "SessionFactory".
+	 * 
+	 * @see #DEFAULT_JCR_SESSION_FACTORY_FACTORY_BEAN_NAME
+	 */
+	public void setSessionFactoryBeanName(String SessionFactoryBeanName) {
+		this.SessionFactoryBeanName = SessionFactoryBeanName;
+	}
 
-    /**
-     * Return the bean name of the SessionHolderProvider to fetch from
-     * Spring's root application context.
-     */
-    protected String getSessionHolderProviderBeanName() {
-        return SessionHolderProviderBeanName;
-    }
-    
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+	/**
+	 * Set the bean name of the SessionHolderProviderManager to fetch from Spring's
+	 * root application context. By default, no holder provider is looked up and 
+	 * the ServiceSessionHolderProviderManager is used to dynamically determine the 
+	 * approapriate SessionHolderProvider for the underlying repository.
+	 * 
+	 * @see #DEFAULT_JCR_SESSION_HOLDER_PROVIDER_MANAGER_BEAN_NAME
+	 */
+	public void setSessionHolderProviderManagerBeanName(String SessionHolderProviderBeanName) {
+		this.SessionHolderProviderManagerBeanName = SessionHolderProviderBeanName;
+	}
 
-        SessionFactory sf = lookupSessionFactory(request);
-        SessionHolderProvider sessionHolderProvider = lookupSessionHolderProvider(request);
-        
-        Session session = null;
-        boolean participate = false;
+	/**
+	 * Return the bean name of the SessionFactory to fetch from
+	 * Spring's root application context.
+	 */
+	protected String getSessionFactoryBeanName() {
+		return SessionFactoryBeanName;
+	}
 
-        if (TransactionSynchronizationManager.hasResource(sf)) {
-            // Do not modify the Session: just set the participate
-            // flag.
-            participate = true;
-        } else {
-            logger.debug("Opening JCR session in OpenSessionInViewFilter");
-            session = SessionFactoryUtils.getSession(sf, true);
-            TransactionSynchronizationManager.bindResource(sf, sessionHolderProvider.createSessionHolder(session));
-        }
+	/**
+	 * Return the bean name of the SessionHolderProvider to fetch from
+	 * Spring's root application context.
+	 */
+	protected String getSessionHolderProviderManagerBeanName() {
+		return SessionHolderProviderManagerBeanName;
+	}
 
-        try {
-            filterChain.doFilter(request, response);
-        }
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+			FilterChain filterChain) throws ServletException, IOException {
 
-        finally {
-            if (!participate) {
-                TransactionSynchronizationManager.unbindResource(sf);
-                logger.debug("Closing JCR session in OpenSessionInViewFilter");
-                SessionFactoryUtils.releaseSession(session, sf);
-            }
-        }
-    }
+		SessionFactory sf = lookupSessionFactory(request);
+		SessionHolderProvider sessionHolderProvider = lookupSessionHolderProvider(sf);
 
-    protected SessionHolderProvider lookupSessionHolderProvider(HttpServletRequest request) {
-        return lookupSessionHolderProvider();
-    }
+		Session session = null;
+		boolean participate = false;
 
-    /**
-     * Look up the SessionFactory that this filter should use, taking
-     * the current HTTP request as argument.
-     * <p>
-     * Default implementation delegates to the
-     * <code>lookupSessionFactory</code> without arguments.
-     * 
-     * @return the SessionFactory to use
-     * @see #lookupSessionFactory()
-     */
-    protected SessionFactory lookupSessionFactory(HttpServletRequest request) {
-        return lookupSessionFactory();
-    }
+		if (TransactionSynchronizationManager.hasResource(sf)) {
+			// Do not modify the Session: just set the participate
+			// flag.
+			participate = true;
+		}
+		else {
+			logger.debug("Opening JCR session in OpenSessionInViewFilter");
+			session = SessionFactoryUtils.getSession(sf, true);
+			TransactionSynchronizationManager.bindResource(sf,
+					sessionHolderProvider.createSessionHolder(session));
+		}
 
-    /**
-     * Look up the SessionFactory that this filter should use. The
-     * default implementation looks for a bean with the specified name in
-     * Spring's root application context.
-     * 
-     * @return the SessionFactory to use
-     * @see #getSessionFactoryBeanName
-     */
-    protected SessionFactory lookupSessionFactory() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Using session factory '" + getSessionFactoryBeanName() + "' for OpenSessionInViewFilter");
-        }
-        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-        return (SessionFactory) wac.getBean(getSessionFactoryBeanName(), SessionFactory.class);
-    }
-    
-    protected SessionHolderProvider lookupSessionHolderProvider()
-    {
-        if (SessionHolderProviderBeanName == null)
-        {
-            logger.debug("Using default session holder provider");
-            return new DefaultSessionHolderProvider();
-        }
-        
-        if (logger.isDebugEnabled()) {
-            logger.debug("Using session holder provider '" + getSessionHolderProviderBeanName() + "' for OpenSessionInViewFilter");
-        }
-        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-        return (SessionHolderProvider) wac.getBean(getSessionHolderProviderBeanName(), SessionHolderProvider.class);
-    }
-    
+		try {
+			filterChain.doFilter(request, response);
+		}
+
+		finally {
+			if (!participate) {
+				TransactionSynchronizationManager.unbindResource(sf);
+				logger.debug("Closing JCR session in OpenSessionInViewFilter");
+				SessionFactoryUtils.releaseSession(session, sf);
+			}
+		}
+	}
+
+	/**
+	 * Look up the SessionFactory that this filter should use, taking
+	 * the current HTTP request as argument.
+	 * <p>
+	 * Default implementation delegates to the
+	 * <code>lookupSessionFactory</code> without arguments.
+	 * 
+	 * @return the SessionFactory to use
+	 * @see #lookupSessionFactory()
+	 */
+	protected SessionFactory lookupSessionFactory(HttpServletRequest request) {
+		return lookupSessionFactory();
+	}
+
+	/**
+	 * Look up the SessionFactory that this filter should use. The
+	 * default implementation looks for a bean with the specified name in
+	 * Spring's root application context.
+	 * 
+	 * @return the SessionFactory to use
+	 * @see #getSessionFactoryBeanName
+	 */
+	protected SessionFactory lookupSessionFactory() {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Using session factory '"
+					+ getSessionFactoryBeanName()
+					+ "' for OpenSessionInViewFilter");
+		}
+		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+		return (SessionFactory) wac.getBean(getSessionFactoryBeanName(), SessionFactory.class);
+	}
+
+	protected SessionHolderProvider lookupSessionHolderProvider(SessionFactory sf) {
+	
+		if (logger.isDebugEnabled()) {
+			logger.debug("Using session holder provider manager '"
+					+ getSessionHolderProviderManagerBeanName()
+					+ "' for OpenSessionInViewFilter");
+		}
+		
+		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+		SessionHolderProviderManager manager = (SessionHolderProviderManager) wac.getBean(getSessionHolderProviderManagerBeanName(),
+				SessionHolderProviderManager.class);
+
+		return manager.getSessionProvider(sf);
+	}
 }

@@ -1,5 +1,7 @@
 package org.springmodules.jcr;
 
+import java.io.IOException;
+
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -25,5 +27,5 @@ public interface JcrCallback {
      * application exeception; it is propagated to the caller of the
      * template.
      */
-    public Object doInJcr(Session session) throws RepositoryException;
+    public Object doInJcr(Session session) throws IOException, RepositoryException;
 }

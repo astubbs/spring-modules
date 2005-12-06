@@ -17,40 +17,6 @@ import javax.jcr.Node;
 public interface JcrModel2Operations extends JcrModel1Operations {
 
 	/**
-	 * Import a File in the current workspace on the given node. If the
-	 * parentNode is null the root node will be used.
-	 * 
-	 * <strong>Note</strong> this method has been mainly inspired from the
-	 * contrib/examples package inside JackRabbit repository.
-	 * 
-	 * @param parentNode
-	 *            Parent Repository Node
-	 * @param file
-	 *            File to be imported
-	 * 
-	 * @return the child node to which the file belongs to
-	 */
-	public Node importFile(Node parentNode, File file);
-
-	/**
-	 * Import a Folder using the current session on the given node. If the
-	 * parentNode is null the root node will be used.
-	 * 
-	 * <strong>Note</strong> this method has been mainly inspired from the
-	 * contrib/examples package inside JackRabbit repository.
-	 * 
-	 * @param parentnode
-	 *            Parent Repository Node
-	 * @param directory
-	 *            Directory to be traversed
-	 * @param includeStartDir
-	 *            true if the given directory should be included or just it's
-	 *            entries
-	 */
-
-	public Node importFolder(Node parentnode, File directory, boolean includeStartDirectory);
-
-	/**
 	 * @see javax.jcr.Session#hasPendingChanges()
 	 */
 	public boolean hasPendingChanges();

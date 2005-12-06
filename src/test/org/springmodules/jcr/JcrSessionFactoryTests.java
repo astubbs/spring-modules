@@ -1,5 +1,8 @@
 package org.springmodules.jcr;
 
+import java.util.Properties;
+
+import javax.jcr.NamespaceRegistry;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -52,7 +55,7 @@ public class JcrSessionFactoryTests extends TestCase {
     /*
      * Test method for 'org.springmodules.jcr.JcrSessionFactory.afterPropertiesSet'
      */
-    public void testAfterPropertiesSet() {
+    public void testAfterPropertiesSet() throws Exception{
         try {
             factory.setRepository(null);
             factory.afterPropertiesSet();
@@ -92,7 +95,7 @@ public class JcrSessionFactoryTests extends TestCase {
         EventListenerDefinition def2 = new EventListenerDefinition();
 
         EventListenerDefinition listeners[] = new EventListenerDefinition[] { def1, def2 };
-        factory.setEventListenerDefinitions(listeners);
+        factory.setEventListeners(listeners);
 
         MockControl sessionCtrl = MockControl.createControl(Session.class);
         Session session = (Session) sessionCtrl.getMock();
@@ -119,7 +122,7 @@ public class JcrSessionFactoryTests extends TestCase {
         omCtrl.replay();
 
         // coverage madness
-        assertSame(listeners, factory.getEventListenerDefinitions());
+        assertSame(listeners, factory.getEventListeners());
         Session sess = factory.getSession();
         assertSame(session, sess);
 
@@ -128,5 +131,44 @@ public class JcrSessionFactoryTests extends TestCase {
         wsCtrl.verify();
         omCtrl.verify();
     }
+    
+    public void testRegisterNamespaces() throws RepositoryException
+    {
+    	Properties namespaces = new Properties();
+    	namespaces.put("foo", "bar");
+    	namespaces.put("hocus", "pocus");
+    	
+    	factory.setNamespaces(namespaces);
+    	
+        MockControl sessionCtrl = MockControl.createControl(Session.class);
+        Session session = (Session) sessionCtrl.getMock();
+
+        MockControl wsCtrl = MockControl.createControl(Workspace.class);
+        Workspace ws = (Workspace) wsCtrl.getMock();
+
+        MockControl nrCtrl = MockControl.createControl(NamespaceRegistry.class);
+        NamespaceRegistry registry = (NamespaceRegistry) nrCtrl.getMock();
+        
+        repoCtrl.expectAndReturn(repo.login(null, null), session);
+        sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
+        wsCtrl.expectAndReturn(ws.getNamespaceRegistry(), registry);
+        registry.registerNamespace("foo", "bar");
+        registry.registerNamespace("hocus", "pocus");
+        
+        nrCtrl.replay();
+        wsCtrl.replay();
+        sessionCtrl.replay();
+        repoCtrl.replay();
+        
+        factory.afterPropertiesSet();
+        
+        nrCtrl.verify();
+        wsCtrl.verify();
+        sessionCtrl.verify();
+        
+    	
+    }
+    
+    
 
 }
