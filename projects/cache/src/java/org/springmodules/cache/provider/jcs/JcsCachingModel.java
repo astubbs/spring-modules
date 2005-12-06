@@ -25,7 +25,7 @@ import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Configuration options for accessing JCS.
+ * Configuration options needed to store, retrieve and remove objects from JCS.
  * 
  * @author Alex Ruiz
  */
@@ -33,25 +33,37 @@ public class JcsCachingModel implements CachingModel {
 
   private static final long serialVersionUID = 3257282547976057398L;
 
-  /**
-   * Name of the JCS cache.
-   */
   private String cacheName;
 
-  /**
-   * The group the object to cache belongs to.
-   */
   private String group;
 
+  /**
+   * Constructor.
+   */
   public JcsCachingModel() {
     super();
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param cacheName
+   *          the name of the JCS cache to use.
+   */
   public JcsCachingModel(String cacheName) {
     this();
     setCacheName(cacheName);
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param cacheName
+   *          the name of the JCS cache to use
+   * @param group
+   *          the name of the group to use. This group belongs to the specified
+   *          cache
+   */
   public JcsCachingModel(String cacheName, String group) {
     this(cacheName);
     setGroup(group);
@@ -80,10 +92,18 @@ public class JcsCachingModel implements CachingModel {
     return true;
   }
 
+  /**
+   * @return the name of the JCS cache to use
+   */
   public final String getCacheName() {
     return cacheName;
   }
 
+  /**
+   * @return the name of the group to use. The group returned by this getter
+   *         belongs to the cache returned by the cache specified by
+   *         <code>getCacheName()</code>
+   */
   public final String getGroup() {
     return group;
   }
@@ -99,10 +119,23 @@ public class JcsCachingModel implements CachingModel {
     return hash;
   }
 
+  /**
+   * Sets the name of the cache name to use.
+   * 
+   * @param newCacheName
+   *          the new name of the cache
+   */
   public final void setCacheName(String newCacheName) {
     cacheName = newCacheName;
   }
 
+  /**
+   * Sets the name of the group to use. The group should belong to the cache
+   * specified in this model.
+   * 
+   * @param newGroup
+   *          the new name of the group
+   */
   public final void setGroup(String newGroup) {
     group = newGroup;
   }

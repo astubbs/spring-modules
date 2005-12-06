@@ -29,7 +29,12 @@ import org.springmodules.cache.util.SemicolonSeparatedPropertiesParser;
 /**
  * <p>
  * <code>PropertyEditor</code> that creates instances of
- * <code>{@link JcsFlushingModel}</code>.
+ * <code>{@link JcsFlushingModel}</code>. It uses the character '|' as delimeter
+ * for <code>{@link CacheStruct}</code>. 
+ * </p>
+ * <p>
+ * Example:
+ * cacheName=pojos;groups=services,daos|cacheName=tests;groups=unit,integration
  * </p>
  * 
  * @author Alex Ruiz
@@ -37,10 +42,6 @@ import org.springmodules.cache.util.SemicolonSeparatedPropertiesParser;
 public class JcsFlushingModelEditor extends PropertyEditorSupport {
 
   private static final String CACHE_STRUCT_DELIMETER = "|";
-
-  public JcsFlushingModelEditor() {
-    super();
-  }
 
   /**
    * @see PropertyEditorSupport#setAsText(String)

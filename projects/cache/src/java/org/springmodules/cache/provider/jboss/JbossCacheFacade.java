@@ -62,7 +62,7 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @return the <code>PropertyEditor</code> for caching models
+   * @see org.springmodules.cache.provider.CacheProviderFacade#getCachingModelEditor()
    */
   public PropertyEditor getCachingModelEditor() {
     ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
@@ -71,7 +71,7 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @return the <code>PropertyEditor</code> for flushing models
+   * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
    */
   public PropertyEditor getFlushingModelEditor() {
     ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();

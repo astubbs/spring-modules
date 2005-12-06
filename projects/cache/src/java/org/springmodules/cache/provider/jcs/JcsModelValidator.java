@@ -33,10 +33,6 @@ import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
  */
 public final class JcsModelValidator extends AbstractCacheModelValidator {
 
-  public JcsModelValidator() {
-    super();
-  }
-
   /**
    * @see AbstractCacheModelValidator#getCachingModelTargetClass()
    */

@@ -25,12 +25,8 @@ import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Configuration options needed for:
- * <ul>
- * <li>storing objects in EHCache</li>
- * <li>retrieving objects from EHCache</li>
- * <li>removing objects from EHCache</li>
- * </ul>
+ * Configuration options needed to store, retrieve and remove objects from
+ * EHCache.
  * 
  * @author Alex Ruiz
  */

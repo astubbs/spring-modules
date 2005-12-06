@@ -38,6 +38,7 @@ import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheNotFoundException;
+import org.springmodules.cache.provider.ObjectCannotBeCachedException;
 import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 
@@ -57,12 +58,17 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
 
   private CacheModelValidator cacheModelValidator;
 
+  /**
+   * Constructor.
+   */
   public JcsFacade() {
     super();
     cacheModelValidator = new JcsModelValidator();
   }
 
   /**
+   * Returns a JCS cache from the cache manager.
+   * 
    * @param name
    *          the name of the cache.
    * @return the cache retrieved from the cache manager.
@@ -78,28 +84,41 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
     return cache;
   }
 
+  /**
+   * Returns the validator of cache models. It is always an instance of
+   * <code>{@link JcsModelValidator}</code>.
+   * 
+   * @return the validator of cache models
+   */
   public CacheModelValidator getCacheModelValidator() {
     return cacheModelValidator;
   }
 
+  /**
+   * @see org.springmodules.cache.provider.CacheProviderFacade#getCachingModelEditor()
+   */
   public PropertyEditor getCachingModelEditor() {
     ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
     editor.setCacheModelClass(JcsCachingModel.class);
     return editor;
   }
 
+  /**
+   * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
+   */
   public PropertyEditor getFlushingModelEditor() {
     return new JcsFlushingModelEditor();
   }
 
   /**
-   * Returns the key of a cache entry.
+   * Returns the key of a cache entry. JCS needs to store group information (if
+   * any) with the entry key.
    * 
    * @param key
-   *          the generated key.
+   *          the entry key.
    * @param model
    *          the model that specifies how to retrieve or store an entry.
-   * @return the key of a cache entry.
+   * @return the key of a cache entry containing group information.
    */
   protected Serializable getKey(Serializable key, JcsCachingModel model) {
     Serializable newKey = key;
@@ -115,6 +134,7 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
   }
 
   /**
+   * @return <code>true</code>. JCS can only store Serializable objects
    * @see AbstractCacheProviderFacade#isSerializableCacheElementRequired()
    */
   protected boolean isSerializableCacheElementRequired() {
@@ -122,12 +142,20 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
+   * Removes all the entries in the groups specified in the given flushing
+   * model. If a cache is specified without groups, the whole cache is flushed.
+   * The flushing model should be an instance of
+   * <code>{@link JcsFlushingModel}</code>.
+   * 
+   * @param model
+   *          the flushing model.
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
+   * 
+   * @see AbstractCacheProviderFacade#onFlushCache(FlushingModel)
    */
   protected void onFlushCache(FlushingModel model) throws CacheException {
     JcsFlushingModel flushingModel = (JcsFlushingModel) model;
@@ -167,12 +195,21 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CachingModel)
+   * Retrieves an object stored under the given key from the cache (and group,
+   * if any) specified in the given caching model. The caching model should be
+   * an instance of <code>{@link JcsCachingModel}</code>.
+   * 
+   * @param key
+   *          the key of the cache entry
+   * @param model
+   *          the caching model
+   * @return the object retrieved from the cache. Can be <code>null</code>.
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
+   * @see AbstractCacheProviderFacade#onGetFromCache(Serializable, CachingModel)
    */
   protected Object onGetFromCache(Serializable key, CachingModel model)
       throws CacheException {
@@ -198,13 +235,27 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CachingModel,
-   *      Object)
+   * Stores the given object under the given key in the cache (and group, if
+   * any) specified in the given caching model. The caching model should be an
+   * instance of <code>{@link JcsCachingModel}</code>.
    * 
+   * @param key
+   *          the key of the cache entry
+   * @param model
+   *          the caching model
+   * @param obj
+   *          the object to store in the cache
+   * 
+   * @throws ObjectCannotBeCachedException
+   *           if the object to store is not an implementation of
+   *           <code>java.io.Serializable</code>.
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
+   * 
+   * @see AbstractCacheProviderFacade#onPutInCache(Serializable, CachingModel,
+   *      Object)
    */
   protected void onPutInCache(Serializable key, CachingModel model, Object obj)
       throws CacheException {
@@ -230,13 +281,21 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
-   *      CachingModel)
+   * Removes the object stored under the given key from the cache (and group, if
+   * any) specified in the given caching model. The caching model should be an
+   * instance of <code>{@link JcsCachingModel}</code>.
+   * 
+   * @param key
+   *          the key of the cache entry
+   * @param model
+   *          the caching model
    * 
    * @throws CacheNotFoundException
    *           if the cache specified in the given model cannot be found.
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache.
+   * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
+   *      CachingModel)
    */
   protected void onRemoveFromCache(Serializable key, CachingModel model)
       throws CacheException {
@@ -255,6 +314,12 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
     }
   }
 
+  /**
+   * Sets the JCS cache manager to use.
+   * 
+   * @param newCacheManager
+   *          the new cache manager
+   */
   public void setCacheManager(CompositeCacheManager newCacheManager) {
     cacheManager = newCacheManager;
   }

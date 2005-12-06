@@ -45,10 +45,6 @@ public final class JcsManagerFactoryBean extends
    */
   private CompositeCacheManager cacheManager;
 
-  public JcsManagerFactoryBean() {
-    super();
-  }
-
   /**
    * @see AbstractCacheManagerFactoryBean#createCacheManager()
    */

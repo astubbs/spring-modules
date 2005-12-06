@@ -36,6 +36,9 @@ import org.springmodules.util.Strings;
  */
 public final class JcsFlushingModel extends AbstractFlushingModel {
 
+  /**
+   * Specifies which cache (and optionally which groups) should be flushed.
+   */
   public static class CacheStruct implements Serializable {
 
     private static final long serialVersionUID = -2168328935167938683L;
@@ -44,25 +47,54 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
 
     private String[] groups;
 
+    /**
+     * Constructor.
+     */
     public CacheStruct() {
       super();
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param cacheName
+     *          the name of the cache to flush.
+     */
     public CacheStruct(String cacheName) {
       this();
       setCacheName(cacheName);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param cacheName
+     *          the name of the cache to use.
+     * @param csvGroups
+     *          a comma-delimited list containing the groups to flush. Such
+     *          groups belong to the specified cache.
+     */
     public CacheStruct(String cacheName, String csvGroups) {
       this(cacheName);
       setGroups(csvGroups);
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param cacheName
+     *          the name of the cache to use.
+     * @param groups
+     *          the groups to flush. Such groups belong to the specified cache.
+     */
     public CacheStruct(String cacheName, String[] groups) {
       this(cacheName);
       setGroups(groups);
     }
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     public boolean equals(Object obj) {
       if (this == obj) {
         return true;
@@ -70,9 +102,9 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
       if (!(obj instanceof CacheStruct)) {
         return false;
       }
-      
+
       CacheStruct cacheStruct = (CacheStruct) obj;
-      
+
       if (!ObjectUtils.nullSafeEquals(cacheName, cacheStruct.cacheName)) {
         return false;
       }
@@ -82,14 +114,25 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
       return true;
     }
 
+    /**
+     * @return the name of the cache to flush. If no groups are specified, the
+     *         whole cache is flushed.
+     */
     public String getCacheName() {
       return cacheName;
     }
 
+    /**
+     * @return the groups to flush. If no groups are specified, the whole cache
+     *         is flushed.
+     */
     public String[] getGroups() {
       return groups;
     }
 
+    /**
+     * @see java.lang.Object#hashCode()
+     */
     public int hashCode() {
       int multiplier = 31;
       int hash = 7;
@@ -98,10 +141,24 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
       return hash;
     }
 
+    /**
+     * Sets the name of the cache to flush. If no groups are specified, the
+     * whole cache is flushed.
+     * 
+     * @param newCacheName
+     *          the new name
+     */
     public void setCacheName(String newCacheName) {
       cacheName = newCacheName;
     }
 
+    /**
+     * Sets the groups to flush in a comma-delimited list. If no groups are
+     * specified, the whole cache is flushed.
+     * 
+     * @param csvGroups
+     *          the new groups to flush
+     */
     public void setGroups(String csvGroups) {
       String[] newGroups = null;
       if (StringUtils.hasText(csvGroups)) {
@@ -110,10 +167,20 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
       setGroups(newGroups);
     }
 
+    /**
+     * Sets the groups to flush. If no groups are specified, the whole cache is
+     * flushed.
+     * 
+     * @param newGroups
+     *          the new groups to flush
+     */
     public void setGroups(String[] newGroups) {
       groups = Strings.removeDuplicates(newGroups);
     }
 
+    /**
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
       StringBuffer buffer = Objects.identityToString(this);
       buffer.append("[cacheName=" + Strings.quote(cacheName) + ", ");
@@ -129,19 +196,37 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
    */
   private CacheStruct[] cacheStructs;
 
+  /**
+   * Constructor.
+   */
   public JcsFlushingModel() {
     super();
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param cacheStruct
+   *          a single cache structure that specifies what should be flushed
+   */
   public JcsFlushingModel(CacheStruct cacheStruct) {
     this();
     setCacheStruct(cacheStruct);
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param cacheName
+   *          the name of the cache that should be flushed
+   */
   public JcsFlushingModel(String cacheName) {
     this(new CacheStruct(cacheName));
   }
 
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -156,10 +241,17 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
     return true;
   }
 
+  /**
+   * @return the cache structures that specify which caches (and optionally
+   *         groups) should to be flushed.
+   */
   public CacheStruct[] getCacheStructs() {
     return cacheStructs;
   }
 
+  /**
+   * @see java.lang.Object#hashCode()
+   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
@@ -167,17 +259,35 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
     return hash;
   }
 
+  /**
+   * Sets a single structure specifying which cache (and optionally groups)
+   * should be flushed
+   * 
+   * @param cacheStruct
+   *          the new cache structure
+   */
   public void setCacheStruct(CacheStruct cacheStruct) {
     setCacheStructs(new CacheStruct[] { cacheStruct });
   }
 
+  /**
+   * Sets the cache structures that specify which caches (and optionally groups)
+   * should to be flushed.
+   * 
+   * @param newCacheStructs
+   *          the new cache structs
+   */
   public void setCacheStructs(CacheStruct[] newCacheStructs) {
     cacheStructs = newCacheStructs;
   }
 
+  /**
+   * @see java.lang.Object#toString()
+   */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[cacheStructs=" + Objects.nullSafeToString(cacheStructs) + ", ");
+    buffer.append("[cacheStructs=" + Objects.nullSafeToString(cacheStructs)
+        + ", ");
     buffer.append("flushBeforeMethodExecution="
         + isFlushBeforeMethodExecution() + "]");
     return buffer.toString();

@@ -33,14 +33,38 @@ import org.springframework.util.ObjectUtils;
  */
 public abstract class Strings {
 
+  /**
+   * Surrounds the given String in single quotes. Returns <code>null</code> if
+   * the given String is <code>null</code>.
+   * 
+   * @param str
+   *          the given String
+   * @return the given String surrounded by single quotes.
+   */
   public static String quote(String str) {
     return (str != null) ? "'" + str + "'" : str;
   }
 
+  /**
+   * Surrounds the given Object in single quotes only if it is a String.
+   * 
+   * @param obj
+   *          the given Object
+   * @return the given Object surrounded by single quotes (if it is a String.)
+   * 
+   * @see #quote(String)
+   */
   public static Object quoteIfString(Object obj) {
     return (obj instanceof String) ? quote((String) obj) : obj;
   }
 
+  /**
+   * Removes duplicates from the given String array.
+   * 
+   * @param array
+   *          the given array
+   * @return a new String array without duplicated entries
+   */
   public static String[] removeDuplicates(String[] array) {
     if (ObjectUtils.isEmpty(array)) {
       return array;
@@ -51,5 +75,5 @@ public abstract class Strings {
       set.add(array[i]);
     }
     return (String[]) set.toArray(new String[set.size()]);
-  } 
+  }
 }
