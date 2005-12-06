@@ -52,7 +52,7 @@ public class MethodMapCacheModelSourceTests extends TestCase {
   public void testAddCacheModel()
       throws Exception {
     Method length = String.class.getMethod("length", null);
-    Map modelMap = source.getModelMap();
+    Map modelMap = source.getCacheModels();
 
     CacheModel model1 = new MockCachingModel();
     CacheModel model2 = new MockCachingModel();
@@ -67,7 +67,7 @@ public class MethodMapCacheModelSourceTests extends TestCase {
   public void testAddCacheModelWithFirstMethodNameBeingMoreSpecificThanSecond()
       throws Exception {
     Method toLowerCase = String.class.getMethod("toLowerCase", null);
-    Map modelMap = source.getModelMap();
+    Map modelMap = source.getCacheModels();
 
     CacheModel model1 = new MockCachingModel();
     CacheModel model2 = new MockCachingModel();
@@ -108,12 +108,12 @@ public class MethodMapCacheModelSourceTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractMethodMapCacheModelSource#getModelMap()}</code>
+   * <code>{@link AbstractMethodMapCacheModelSource#getCacheModels()}</code>
    * returns an unmodifiable <code>Map</code>.
    */
   public void testGetModelMap() {
     try {
-      source.getModelMap().clear();
+      source.getCacheModels().clear();
       fail();
     } catch (UnsupportedOperationException exception) {
       // expecting exception.
