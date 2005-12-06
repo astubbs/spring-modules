@@ -152,19 +152,21 @@ public class ValangJavaScriptTranslator {
     }
 
     protected void append(String string) throws IOException {
-        writer.append(string);
+        writer.write(string);
     }
 
     protected void appendJsString(String string) throws IOException {
-        writer.append('\'').append(JavaScriptUtils.javaScriptEscape(string)).append('\'');
+        writer.write('\'');
+        writer.write(JavaScriptUtils.javaScriptEscape(string));
+        writer.write('\'');
     }
 
     protected void append(char c) throws IOException {
-        writer.append(c);
+        writer.write(c);
     }
 
     private void append(int i) throws IOException {
-        writer.append(Integer.toString(i));
+        writer.write(Integer.toString(i));
     }
 
     protected void appendArrayValidators(Collection rules, MessageSourceAccessor messageSource) throws IOException {

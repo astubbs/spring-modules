@@ -66,11 +66,11 @@ public class ValangCodebaseTag extends RequestContextAwareTag {
         try {
             JspWriter out = pageContext.getOut();
             if (includeScriptTags) {
-                out.append("<script type=\"text/javascript\">\n");
+                out.write("<script type=\"text/javascript\">\n");
             }
             copy(ValangJavaScriptTranslator.getCodebaseReader(), out);
             if (includeScriptTags) {
-                out.append("\n</script>");
+                out.write("\n</script>");
             }
             return EVAL_PAGE;
         }

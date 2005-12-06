@@ -114,12 +114,12 @@ public class ValangValidateTag extends RequestContextAwareTag implements BodyTag
             }
 
             JspWriter out = pageContext.getOut();
-            out.append("<script type=\"text/javascript\" id=\"");
-            out.append(commandName + "ValangValidator");
-            out.append("\">");
+            out.write("<script type=\"text/javascript\" id=\"");
+            out.write(commandName + "ValangValidator");
+            out.write("\">");
             translator.writeJavaScriptValangValidator(out, commandName, true, rules, new MessageSourceAccessor(
                     getRequestContext().getWebApplicationContext(), getRequestContext().getLocale()));
-            out.append("</script>");
+            out.write("</script>");
             return EVAL_PAGE;
         }
         catch (IOException e) {
