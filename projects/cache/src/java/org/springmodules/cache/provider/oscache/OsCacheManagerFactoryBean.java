@@ -46,10 +46,6 @@ public final class OsCacheManagerFactoryBean extends
    */
   private GeneralCacheAdministrator cacheManager;
 
-  public OsCacheManagerFactoryBean() {
-    super();
-  }
-
   /**
    * @see AbstractCacheManagerFactoryBean#createCacheManager()
    */
@@ -78,18 +74,14 @@ public final class OsCacheManagerFactoryBean extends
   }
 
   /**
-   * Returns <code>{@link #cacheManager}</code>.
-   * 
-   * @return the cache manager managed by this factory.
+   * @see org.springframework.beans.factory.FactoryBean#getObject()
    */
   public Object getObject() {
     return cacheManager;
   }
 
   /**
-   * Returns the type of <code>{@link #cacheManager}</code>.
-   * 
-   * @return the type of the cache manager managed by this factory.
+   * @see org.springframework.beans.factory.FactoryBean#getObjectType()
    */
   public Class getObjectType() {
     return cacheManager != null ? cacheManager.getClass()

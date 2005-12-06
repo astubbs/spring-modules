@@ -50,15 +50,27 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
 
   private CacheModelValidator cacheModelValidator;
 
+  /**
+   * Constructor.
+   */
   public OsCacheFacade() {
     super();
     cacheModelValidator = new OsCacheModelValidator();
   }
 
+  /**
+   * Returns the validator of cache models. It is always an instance of
+   * <code>{@link OsCacheModelValidator}</code>.
+   * 
+   * @return the validator of cache models
+   */
   public CacheModelValidator getCacheModelValidator() {
     return cacheModelValidator;
   }
 
+  /**
+   * @see org.springmodules.cache.provider.CacheProviderFacade#getCachingModelEditor()
+   */
   public PropertyEditor getCachingModelEditor() {
     Map propertyEditors = new HashMap();
     propertyEditors.put("refreshPeriod", new RefreshPeriodEditor());
@@ -80,6 +92,9 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
     return key.toString();
   }
 
+  /**
+   * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
+   */
   public PropertyEditor getFlushingModelEditor() {
     ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
     editor.setCacheModelClass(OsCacheFlushingModel.class);
@@ -181,6 +196,12 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
     cacheManager.flushEntry(newKey);
   }
 
+  /**
+   * Sets the OSCache cache manager to use.
+   * 
+   * @param newCacheManager
+   *          the new cache manager
+   */
   public void setCacheManager(GeneralCacheAdministrator newCacheManager) {
     cacheManager = newCacheManager;
   }

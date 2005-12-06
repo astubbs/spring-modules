@@ -34,6 +34,9 @@ import com.opensymphony.oscache.base.CacheEntry;
  */
 public class RefreshPeriodEditor extends PropertyEditorSupport {
 
+  /**
+   * Indicates that a cache entry never gets expired.
+   */
   public static final String INDEFINITE_EXPIRY = "INDEFINITE_EXPIRY";
 
   /**

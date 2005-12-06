@@ -28,7 +28,9 @@ import org.springmodules.util.Strings;
 
 /**
  * <p>
- * Configuration options needed to access OSCache.
+ * Configuration options needed to store, retrieve and remove objects from
+ * OSCache. All properties are optional.
+ * </p>
  * 
  * @author Alex Ruiz
  */
@@ -36,48 +38,82 @@ public class OsCacheCachingModel implements CachingModel {
 
   private static final long serialVersionUID = 3904681574367770928L;
 
-  /**
-   * A cron expression that the age of the cache entry will be compared to. If
-   * the entry is older than the most recent match for the cron expression, the
-   * entry will be considered stale.
-   */
   private String cronExpression;
 
-  /**
-   * The group(s) that the object to cache belongs to.
-   */
   private String[] groups;
 
-  /**
-   * How long the object can stay in cache in seconds.
-   */
   private Integer refreshPeriod;
 
+  /**
+   * Constructor.
+   */
   public OsCacheCachingModel() {
     super();
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param csvGroups
+   *          comma-delimited list containing the names of the groups to use
+   * @param refreshPeriod
+   *          how long the object can stay in the cache (in seconds)
+   */
   public OsCacheCachingModel(String csvGroups, int refreshPeriod) {
     this();
     setGroups(csvGroups);
     setRefreshPeriod(refreshPeriod);
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param csvGroups
+   *          comma-delimited list containing the names of the groups to use
+   * @param refreshPeriod
+   *          how long the object can stay in the cache (in seconds)
+   * @param cronExpression
+   *          cron expression that the age of the cache entry will be compared
+   *          to. If the entry is older than the most recent match for the cron
+   *          expression, the entry will be considered stale
+   */
   public OsCacheCachingModel(String csvGroups, int refreshPeriod,
       String cronExpression) {
     this(csvGroups, new Integer(refreshPeriod), cronExpression);
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param csvGroups
+   *          comma-delimited list containing the names of the groups to use
+   * @param refreshPeriod
+   *          how long the object can stay in the cache (in seconds)
+   * @param cronExpression
+   *          cron expression that the age of the cache entry will be compared
+   *          to. If the entry is older than the most recent match for the cron
+   *          expression, the entry will be considered stale
+   */
   public OsCacheCachingModel(String csvGroups, Integer refreshPeriod,
       String cronExpression) {
     this(csvGroups, cronExpression);
     setRefreshPeriod(refreshPeriod);
   }
 
-  public OsCacheCachingModel(String cvsGroups, String cronExpression) {
+  /**
+   * Constructor.
+   * 
+   * @param csvGroups
+   *          comma-delimited list containing the names of the groups to use
+   * @param cronExpression
+   *          cron expression that the age of the cache entry will be compared
+   *          to. If the entry is older than the most recent match for the cron
+   *          expression, the entry will be considered stale
+   */
+  public OsCacheCachingModel(String csvGroups, String cronExpression) {
     this();
     setCronExpression(cronExpression);
-    setGroups(cvsGroups);
+    setGroups(csvGroups);
   }
 
   /**
@@ -93,7 +129,8 @@ public class OsCacheCachingModel implements CachingModel {
 
     OsCacheCachingModel cachingModel = (OsCacheCachingModel) obj;
 
-    if (!ObjectUtils.nullSafeEquals(cronExpression, cachingModel.cronExpression)) {
+    if (!ObjectUtils
+        .nullSafeEquals(cronExpression, cachingModel.cronExpression)) {
       return false;
     }
     if (!Arrays.equals(groups, cachingModel.groups)) {
@@ -106,14 +143,25 @@ public class OsCacheCachingModel implements CachingModel {
     return true;
   }
 
+  /**
+   * @return the cron expression that the age of the cache entry will be
+   *         compared to. If the entry is older than the most recent match for
+   *         the cron expression, the entry will be considered stale
+   */
   public final String getCronExpression() {
     return cronExpression;
   }
 
+  /**
+   * @return the groups to use
+   */
   public final String[] getGroups() {
     return groups;
   }
 
+  /**
+   * @return how long the object can stay in the cache (in seconds)
+   */
   public final Integer getRefreshPeriod() {
     return refreshPeriod;
   }
@@ -130,6 +178,14 @@ public class OsCacheCachingModel implements CachingModel {
     return hash;
   }
 
+  /**
+   * Sets the cron expression that the age of the cache entry will be compared
+   * to. If the entry is older than the most recent match for the cron
+   * expression, the entry will be considered stale
+   * 
+   * @param newCronExpression
+   *          the new cron expression
+   */
   public final void setCronExpression(String newCronExpression) {
     cronExpression = newCronExpression;
   }
@@ -148,14 +204,32 @@ public class OsCacheCachingModel implements CachingModel {
     setGroups(newGroups);
   }
 
+  /**
+   * Sets the groups to use.
+   * 
+   * @param newGroups
+   *          the new groups
+   */
   public final void setGroups(String[] newGroups) {
     groups = newGroups;
   }
 
+  /**
+   * Sets how long the object can stay in the cache (in seconds).
+   * 
+   * @param newRefreshPeriod
+   *          the new refresh period
+   */
   public final void setRefreshPeriod(int newRefreshPeriod) {
     setRefreshPeriod(new Integer(newRefreshPeriod));
   }
 
+  /**
+   * Sets how long the object can stay in the cache (in seconds).
+   * 
+   * @param newRefreshPeriod
+   *          the new refresh period
+   */
   public final void setRefreshPeriod(Integer newRefreshPeriod) {
     refreshPeriod = newRefreshPeriod;
   }

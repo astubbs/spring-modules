@@ -29,10 +29,6 @@ import org.springmodules.cache.provider.AbstractCacheModelValidator;
  */
 public final class OsCacheModelValidator extends AbstractCacheModelValidator {
 
-  public OsCacheModelValidator() {
-    super();
-  }
-
   /**
    * @see AbstractCacheModelValidator#getCachingModelTargetClass()
    */

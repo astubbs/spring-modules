@@ -40,20 +40,38 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
    */
   private String[] groups;
 
+  /**
+   * Constructor.
+   */
   public OsCacheFlushingModel() {
     super();
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param csvGroups
+   *          a comma-delimited list containing the groups to flush
+   */
   public OsCacheFlushingModel(String csvGroups) {
     this();
     setGroups(csvGroups);
   }
 
+  /**
+   * Constructor.
+   * 
+   * @param groups
+   *          the groups to flush
+   */
   public OsCacheFlushingModel(String[] groups) {
     this();
     setGroups(groups);
   }
 
+  /**
+   * @see Object#equals(Object)
+   */
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
@@ -68,10 +86,16 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
     return true;
   }
 
+  /**
+   * @return the groups to flush
+   */
   public String[] getGroups() {
     return groups;
   }
 
+  /**
+   * @see Object#hashCode()
+   */
   public int hashCode() {
     int multiplier = 31;
     int hash = 7;
@@ -79,6 +103,12 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
     return hash;
   }
 
+  /**
+   * Sets the groups that should be flushed.
+   * 
+   * @param csvGroups
+   *          a comma-delimited list containing the new groups to flush
+   */
   public void setGroups(String csvGroups) {
     String[] newGroups = null;
     if (StringUtils.hasText(csvGroups)) {
@@ -87,10 +117,19 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
     setGroups(newGroups);
   }
 
+  /**
+   * Sets the groups that should be flushed.
+   * 
+   * @param newGroups
+   *          the new groups to flush
+   */
   public void setGroups(String[] newGroups) {
     groups = Strings.removeDuplicates(newGroups);
   }
 
+  /**
+   * @see Object#toString()
+   */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
     buffer.append("[groups=" + Objects.nullSafeToString(groups) + ", ");
