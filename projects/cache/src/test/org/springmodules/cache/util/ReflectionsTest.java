@@ -15,7 +15,7 @@
  *
  * Copyright @2005 the original author or authors.
  */
-package org.springmodules.util;
+package org.springmodules.cache.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+
+import org.springmodules.util.Objects;
 
 /**
  * <p>
