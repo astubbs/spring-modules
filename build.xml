@@ -182,10 +182,10 @@
 			</jar-contents>
 		</makejar>
 
-		<makejar jarfile="${dist.dir}/springmodules-osworkflow-${springmodules.version}.jar">
+		<makejar jarfile="${dist.dir}/springmodules-workflow-${springmodules.version}.jar">
 			<jar-contents>
 				<fileset dir="${target.classes.dir}">
-					<include name="org/springmodules/workflow/osworkflow/**"/>
+					<include name="org/springmodules/workflow/**"/>
 				</fileset>
 				<fileset dir="${target.classes.dir}">
 					<include name="META-INF/**"/>
