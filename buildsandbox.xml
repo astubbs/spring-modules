@@ -17,7 +17,7 @@
 	</target>
 
 
-	<target name="sandbox.build" description="Compile sandbox source tree java files into class files">
+	<target name="sandbox.build" description="Compile sandbox source tree java files into class files" depends="build">
 
 		<echo message="WARNING: To keep things speedy, there's no Ant dependency on the build target"/>
 
@@ -29,6 +29,8 @@
 			<src path="${sandbox.src.dir}"/>
 			<classpath refid="all-libs"/>
 			<classpath location="${target.classes.dir}"/>
+			<exclude name="org/springmodules/workflow/osworkflow/**"/>
+			<exclude name="org/springmodules/jcr/mapper/**"/>			
 		</javac>
 
 		<copy todir="${sandbox.target.classes.dir}" preservelastmodified="true">
@@ -49,6 +51,7 @@
 			<jar-contents>
 				<fileset dir="${sandbox.target.classes.dir}">
 					<include name="org/springmodules/**"/>
+					<exclude name="org/springmodules/workflow/osworkflow/**"/>
 				</fileset>
 			</jar-contents>
 		</makejar>
@@ -193,10 +196,11 @@
 			<classpath location="${target.classes.dir}"/>
 			<classpath location="${sandbox.target.classes.dir}"/>
 			<classpath location="${target.testclasses.dir}"/>
-			<include name="org/springmodules/jcr/**/*.java"/>
+			<include name="org/springmodules/lucene/**/*.java"/>
 			<!-- exclude packages that contain compilation errors -->
 			<exclude name="org/springmodules/dwr/**/*.java"/>
-			
+			<exclude name="org/springmodules/workflow/osworkflow/**/*.java"/>			
+			<exclude name="org/springmodules/jcr/mapper/**"/>			
 		</javac>
 
 		<!-- Pick up logging config from test directory -->
