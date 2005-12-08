@@ -35,24 +35,36 @@ import com.thoughtworks.xstream.XStream;
  */
 public class XStreamSerializableFactory implements SerializableFactory {
 
+  /**
+   * Wraps an XML-serialized object.
+   */
   public static class ObjectWrapper implements Serializable {
 
     private static final long serialVersionUID = -1308206556015427863L;
 
-    /**
-     * Value to wrap.
-     */
     private Serializable value;
 
+    /**
+     * Constructor.
+     */
     public ObjectWrapper() {
       super();
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param value
+     *          the new value to wrap
+     */
     public ObjectWrapper(Serializable value) {
       this();
       setValue(value);
     }
 
+    /**
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     public boolean equals(Object obj) {
       if (this == obj) {
         return true;
@@ -69,10 +81,16 @@ public class XStreamSerializableFactory implements SerializableFactory {
       return true;
     }
 
+    /**
+     * @return the wrapped value
+     */
     public Serializable getValue() {
       return value;
     }
 
+    /**
+     * @see java.lang.Object#hashCode()
+     */
     public int hashCode() {
       int multiplier = 31;
       int hash = 17;
@@ -82,10 +100,19 @@ public class XStreamSerializableFactory implements SerializableFactory {
       return hash;
     }
 
+    /**
+     * Sets the new value to wrap
+     * 
+     * @param newValue
+     *          the new value
+     */
     public void setValue(Serializable newValue) {
       value = newValue;
     }
 
+    /**
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
       StringBuffer buffer = Objects.identityToString(this);
       buffer.append("[value=" + Strings.quoteIfString(value) + "]");
@@ -96,6 +123,9 @@ public class XStreamSerializableFactory implements SerializableFactory {
 
   private XStream xstream;
 
+  /**
+   * Constructor.
+   */
   public XStreamSerializableFactory() {
     super();
     xstream = new XStream();

@@ -26,29 +26,40 @@ package org.springmodules.cache.regex;
  */
 public final class Match {
 
-  /**
-   * Groups contained in the result. This number includes the 0th group. In
-   * other words, the result refers to the number of parenthesized subgroups
-   * plus the entire match itself.
-   */
   private String[] groups;
 
-  /**
-   * Indicates whether the match is successful.
-   */
   private boolean successful;
 
-  public Match(boolean newSuccessful, String[] newGroups) {
+  /**
+   * Constructor.
+   * 
+   * @param newSuccessful
+   *          flag that indicates whether the match is successful
+   * @param newGroups
+   *          the groups contained in the result. This number includes the 0th
+   *          group. In other words, the result refers to the number of
+   *          parenthesized subgroups plus the entire match itself
+   */
+  protected Match(boolean newSuccessful, String[] newGroups) {
     super();
 
     successful = newSuccessful;
     groups = newGroups;
   }
 
+  /**
+   * @return the groups contained in the result. This number includes the 0th
+   *         group. In other words, the result refers to the number of
+   *         parenthesized subgroups plus the entire match itself
+   */
   public String[] getGroups() {
     return groups;
   }
 
+  /**
+   * @return <code>true</code> if the match was successful, <code>false</code>
+   *         otherwise
+   */
   public boolean isSuccessful() {
     return successful;
   }

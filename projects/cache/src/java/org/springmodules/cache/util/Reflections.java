@@ -68,6 +68,32 @@ public abstract class Reflections {
     return hash;
   }
 
+  /**
+   * <p>
+   * This method uses reflection to build a valid hash code.
+   * </p>
+   * 
+   * <p>
+   * It uses <code>AccessibleObject.setAccessible</code> to gain access to
+   * private fields. This means that it will throw a security exception if run
+   * under a security manager, if the permissions are not set up correctly. It
+   * is also not as efficient as testing explicitly.
+   * </p>
+   * 
+   * <p>
+   * Transient members will be not be used, as they are likely derived fields,
+   * and not part of the value of the <code>Object</code>.
+   * </p>
+   * 
+   * <p>
+   * Static fields will not be tested. Superclass fields will be included.
+   * </p>
+   * 
+   * @param obj
+   *          the object to create a <code>hashCode</code> for
+   * @return the generated hash code, or zero if the given object is
+   *         <code>null</code>
+   */
   public static int reflectionHashCode(Object obj) {
     if (obj == null)
       return 0;
@@ -81,7 +107,7 @@ public abstract class Reflections {
     if (targetClass.isArray()) {
       return reflectionHashCode((Object[]) obj);
     }
-    
+
     if (obj instanceof Collection) {
       return reflectionHashCode((Collection) obj);
     }
@@ -115,7 +141,7 @@ public abstract class Reflections {
 
     return hash;
   }
-  
+
   private static int reflectionHashCode(Object[] array) {
     int hash = INITIAL_HASH;
     int arraySize = array.length;

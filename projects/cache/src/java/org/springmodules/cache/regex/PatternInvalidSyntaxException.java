@@ -30,7 +30,14 @@ public class PatternInvalidSyntaxException extends RuntimeException {
 
   private static final long serialVersionUID = 3833182532136219191L;
 
-  public PatternInvalidSyntaxException(String message) {
-    super(message);
+  /**
+   * Constructs a <code>PatternInvalidSyntaxException</code> with the
+   * specified detail message.
+   * 
+   * @param msg
+   *          the detail message
+   */
+  public PatternInvalidSyntaxException(String msg) {
+    super(msg);
   }
 }
