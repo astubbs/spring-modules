@@ -90,7 +90,7 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
             return result.getLength() == 0;
         }
         catch (IOException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException(e.getMessage());
         }
         finally {
             //System.out.println(Context.toString(ScriptableObject.getProperty(scope, "logMessages")));
