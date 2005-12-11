@@ -131,7 +131,7 @@ public abstract class SessionFactoryUtils {
 	 *            be null)
 	 * @return whether the Session is transactional
 	 */
-	public static boolean isSessionTheadBound(Session session, SessionFactory sessionFactory) {
+	public static boolean isSessionThreadBound(Session session, SessionFactory sessionFactory) {
 		if (sessionFactory == null) {
 			return false;
 		}
@@ -154,7 +154,7 @@ public abstract class SessionFactoryUtils {
 			return;
 		}
 		// Only close non thread bound Sessions.
-		if (!isSessionTheadBound(session, sessionFactory)) {
+		if (!isSessionThreadBound(session, sessionFactory)) {
 			logger.debug("Closing JCR Session");
 			session.logout();
 		}

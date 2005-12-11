@@ -74,7 +74,7 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
 	 */
 	public Object execute(JcrCallback action, boolean exposeNativeSession) throws DataAccessException {
 		Session session = getSession();
-		boolean existingTransaction = SessionFactoryUtils.isSessionTheadBound(session, getSessionFactory());
+		boolean existingTransaction = SessionFactoryUtils.isSessionThreadBound(session, getSessionFactory());
 		if (existingTransaction) {
 			logger.debug("Found thread-bound Session for JcrTemplate");
 		}
