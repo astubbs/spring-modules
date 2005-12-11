@@ -45,7 +45,7 @@
 
     <para>The standard support works only with the JSR-170 API (represented by
     javax.jcr package) without making any use of specific features of the
-    implementations (which we will discuss later). </para>
+    implementations (which we will discuss later).</para>
 
     <sect2>
       <title>SessionFactory</title>
@@ -84,9 +84,10 @@
   &lt;constructor-arg index="0" value="pass"/&gt;
 &lt;/bean&gt;</programlisting>Using the static toCharArray (from
       java.lang.String) we transformed the String supplied as password (with
-      value 'pass') to SimpleCredentials for user 'bogus'. Note that you can
-      configure the JcrSessionFactory to add event listeners to every session
-      returned from the repository.</para>
+      value 'pass') to SimpleCredentials for user 'bogus'. Note that
+      JcrSessionFactory can also register namespaces, add listeners and has
+      utility methods for determing the underlying repository properties - see
+      the javadoc and the samples for more information.</para>
     </sect2>
 
     <sect2>
@@ -172,7 +173,7 @@
       current version supports jackrabbit and jeceira as repository
       implementations but adding new ones is very easy. Note that through
       Spring, one can configure a repository without the mentioned
-      RepositoryFactoryBean. </para>
+      RepositoryFactoryBean.</para>
     </sect2>
   </sect1>
 
@@ -180,8 +181,8 @@
     <title>Extensions support</title>
 
     <para>JSR-170 defines 2 levels of complains and a number of optional
-    features which can be provided by implementations transactions being one.
-    </para>
+    features which can be provided by implementations transactions being
+    one.</para>
 
     <sect2>
       <title>JackRabbit</title>
@@ -212,8 +213,8 @@
         through a JTA transaction manager. As a side note the JCA scenario can
         be used within an application server along with a specific descriptor
         or using a portable JCA connector (like <ulink
-        url="http://www.jencks.org">Jencks</ulink>) which can work outside or inside an
-        application server.</para>
+        url="http://www.jencks.org">Jencks</ulink>) which can work outside or
+        inside an application server.</para>
 
         <sect4>
           <title>LocalTransactionManager</title>
@@ -225,25 +226,47 @@
 &lt;/bean&gt;</programlisting>for which only the session factory is required.
           As JackRabbit exposes a XA Resource the LocalTransactionManager
           creates a UserTransaction behinds the scenes and uses that for
-          commiting/rolling back the changes. Note that when using JackRabbit
-          LocalTransactionManager support you have to use the appoapriate
-          SessionHolderProvider (i.e.
-          org.springmodules.jcr.jackrabbit.support.JackRabbitSessionHolderProvider).
-          This class is used internally by the JCR support classes
-          (JcrAccessor subclasses, JcrInterceptor,
-          OpenSessionInViewFilter/Interceptor) and has to be set inside the
-          application context or the default one (non trasactional aware one)
-          will be used. Unfortunatelly implementation that support
-          transactions don't have a standard way of exposing them - that's why
-          this requirement. Basically all you have to do is configure the
-          JcrTemplate for example like this:<programlisting>&lt;bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate"&gt;
+          commiting/rolling back the changes.</para>
+
+          <para>and has to be set inside the application context or the
+          default one (non trasactional aware one) will be used.
+          Unfortunatelly implementation that support transactions don't have a
+          standard way of exposing them - that's why this requirement.
+          Basically all you have to do is configure the JcrTemplate for
+          example like this:<programlisting>&lt;bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate"&gt;
   &lt;property name="sessionFactory" ref="sessionFactory"/&gt;
-  &lt;property name="sessionHolderProvider"&gt;
-    &lt;bean class="org.springmodules.jcr.jackrabbit.support.JackRabbitSessionHolderProvider"/&gt;
-  &lt;/property&gt;
+  &lt;property name="providerManager" ref="providerManager"/&gt;
 &lt;/bean&gt;</programlisting>Note that when using transactions in most cases
           you want to reuse the session (which means allowCreate property on
           jcrTemplate should be false (default)).</para>
+        </sect4>
+
+        <sect4>
+          <title>SessionHolderProviderManager and
+          SessionHolderProvider</title>
+
+          <para>Because JSR-170 doesn't directly address transaction, details
+          vary from repository to repository and results in various
+          SessionHolderProvider implementations (this class is used internally
+          by the JCR support classes (JcrAccessor subclasses, JcrInterceptor,
+          OpenSessionInViewFilter/Interceptor). JCR support contains (quite a
+          lot of) classes to make this issue as painful as possible.
+          SessionHolderProviderManager acts as a registry of
+          SessionHolderProviders for different repositories and has several
+          implementations that return user defined provider or discover them
+          automatically.</para>
+
+          <para>ServiceSessionHolderProvider is suitable for most of the
+          cases. It uses <ulink
+          url="http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html#Service%20Provider">JDK
+          1.3+ Service Provider specification</ulink> (also known as
+          META-INF/services) for determining the holder provider. The class
+          looks on the classpath under META-INF/services for the file named
+          "org.springmodules.jcr.SessionHolderProvider" (which contains the
+          full qualified name of a SessionHolderProvider implementation). The
+          providers found are instantiated and registered and later on used
+          for the repository they support. Using the
+          ServiceSessionHolderProvider is straight forward:<programlisting>&lt;bean id="providerManager" class="org.springmodules.jcr.support.ServiceSessionHolderProviderManager"/&gt;</programlisting></para>
         </sect4>
 
         <sect4>
@@ -265,17 +288,18 @@
     <para>Working with the JCR resembles to some degree to working with JDBC.
     Mapping support for the JCR seems to be the next logical step but the
     software market doesn't seem to offer any mature solution. The current
-    package offers support for <ulink url="http://incubator.apache.org/graffito/project-structure.html">jcr-mapping</ulink>which is
-    part of <ulink url="http://incubator.apache.org/graffito/">Graffito project</ulink> which belongs to the
-    Apache foundation. However, Graffito itself is still in the incubator and
-    the jcr-mapping is described as a prototype. The current support provides
-    some base functionality taken from a snapshot which can be found inside
-    the distribtution which most probably is old. However as jcr-mapping is
-    clearly in alpha stage and a work in progress users should not invest too
-    much in this area but are encouraged to experiment and provide feedback.
-    The current support contains a JcrMappingCallback and Template plus a
-    FactoryBean for creating MappingDescriptors (which allows using more then
-    one mapping file which is not possible at the moment in the jcr-mapping
-    project).</para>
+    package offers support for <ulink
+    url="http://incubator.apache.org/graffito/project-structure.html">jcr-mapping</ulink>which
+    is part of <ulink url="http://incubator.apache.org/graffito/">Graffito
+    project</ulink> which belongs to the Apache foundation. However, Graffito
+    itself is still in the incubator and the jcr-mapping is described as a
+    prototype. The current support provides some base functionality taken from
+    a snapshot which can be found inside the distribtution which most probably
+    is old. However as jcr-mapping is clearly in alpha stage and a work in
+    progress, users should not invest too much in this area but are encouraged
+    to experiment and provide feedback. The current support contains a
+    JcrMappingCallback and Template plus a FactoryBean for creating
+    MappingDescriptors (which allows using more then one mapping file which is
+    not possible at the moment in the jcr-mapping project).</para>
   </sect1>
 </chapter>
