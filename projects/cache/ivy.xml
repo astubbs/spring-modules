@@ -52,7 +52,13 @@
     </dependency>
     <dependency org="jcs" name="jcs" rev="1.2.6.5" />
     <dependency org="jgroups" name="jgroups" rev="2.2.8" />
+	<!-- use geronimo instead
     <dependency org="jta" name="jta" rev="1.0.1" />
+		-->
+    <dependency org="geronimo-spec" name="geronimo-spec" rev="1.0.1B-rc4">
+		<artifact type="jar" name="geronimo-spec-jta"/>
+	</dependency>
+
     <dependency org="opensymphony" name="opensymphony" rev="2.1.1">
       <artifact name="oscache" type="jar" />
     </dependency>
