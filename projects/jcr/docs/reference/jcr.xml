@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="jcr">
+  <title>Java Content Repository (JSR-170) Support</title>
+
+  <sect1>
+    <title>Introduction</title>
+
+    <para>JSR-170 defines "a standard, implementation independent, way to
+    access content bi-directionally on a granular level within a content
+    repository. A Content Repository is a high-level information management
+    system that is a superset of traditional data repositories. A content
+    repository implements "content services" such as: author based versioning,
+    full textual searching, fine grained access control, content
+    categorization and content event monitoring. It is these "content
+    services" that differentiate a Content Repository from a Data Repository."
+    (taken from the JSR-170 description page).</para>
+
+    <para>More information about Java Content Repository (from here on refered
+    as JCR) can be found at <ulink
+    url="http://www.jcp.org/en/jsr/detail?id=170">here</ulink>.</para>
+
+    <para>The package has been designed to resemble as much as possible the
+    ORM packages from the main Spring distribution. Users familiar with these
+    can start using the JCR-support right away without much hassle; the
+    documentation resembles the main documentation structure also. For those
+    who haven't used them, please refer to the main Spring documentation,
+    mainly <ulink
+    url="http://static.springframework.org/spring/docs/1.2.x/reference/orm.html">chapter
+    12 (Data Access using O/R Mappers)</ulink> as the current documentation
+    focuses on the JCR specific details, the Spring infrastructure being
+    outside the scope of this document. As the ORM package, the main reason
+    for the JCR support is to ease development using Spring unchecked
+    DAOexception hierarchy, integrated transaction management, ease of
+    testing.</para>
+
+    <para>Before going any further I would like to thank Guillaume Bort
+    &lt;guillaume.bort@zenexity.fr&gt; and Brian Moseley
+    &lt;bcm@osafoundation.org&gt; which worked on some implementation of their
+    own and were kind enough to provide their code and ideas when I started
+    working on this package.</para>
+  </sect1>
+
+  <sect1>
+    <title>JSR standard support</title>
+
+    <para>The standard support works only with the JSR-170 API (represented by
+    javax.jcr package) without making any use of specific features of the
+    implementations (which we will discuss later).</para>
+
+    <sect2>
+      <title>SessionFactory</title>
+
+      <para>JSR-170 doesn't provide a notion of SessionFactory but rather a
+      repository which based on the credentials and workspace provided
+      returnes a session. The SessionFactory interface describes a basic
+      contract for retrieving session without any knowledge of credentials,
+      it's implementation acting as a wrapper around the
+      javax.jcr.Repository:<programlisting>&lt;bean id="sessionFactory" class="org.springmodules.jcr.JcrSessionFactory"&gt;
+ &lt;property name="repository" ref="repository"/&gt;
+&lt;/bean&gt;</programlisting>The only requirement for creating a
+      sessionFactory is the repository (which will be discussed later). There
+      are cases were credentials have to be submitted. One problem that new
+      users have is that javax.jcr.SimpleCredentials requires a char array
+      (char[]) as constructor parameter and not a String and the current
+      Spring distribution (1.2.5) does not contains a PropertyEditor for char
+      arrays. The following examples (taken from the sample) shows how we can
+      use String statical methods to obtain a char array:<programlisting>&lt;bean id="sessionFactory" class="org.springmodules.jcr.JcrSessionFactory"&gt;
+  &lt;property name="repository" ref="repository"/&gt;
+  &lt;property name="credentials"&gt;
+   &lt;bean class="javax.jcr.SimpleCredentials"&gt;
+    &lt;constructor-arg index="0" value="bogus"/&gt;
+    &lt;!-- create the credentials using a bean factory --&gt;
+    &lt;constructor-arg index="1"&gt;
+     &lt;bean factory-bean="password"
+          factory-method="toCharArray"/&gt;
+    &lt;/constructor-arg&gt;
+   &lt;/bean&gt;
+  &lt;/property&gt;
+  &lt;property&gt;
+&lt;/bean&gt;
+
+&lt;!-- create the password to return it as a char[] --&gt;
+&lt;bean id="password" class="java.lang.String"&gt;
+  &lt;constructor-arg index="0" value="pass"/&gt;
+&lt;/bean&gt;</programlisting>Using the static toCharArray (from
+      java.lang.String) we transformed the String supplied as password (with
+      value 'pass') to SimpleCredentials for user 'bogus'. Note that
+      JcrSessionFactory can also register namespaces, add listeners and has
+      utility methods for determing the underlying repository properties - see
+      the javadoc and the samples for more information.</para>
+    </sect2>
+
+    <sect2>
+      <title>Inversion of Control: JcrTemplate and JcrCallback</title>
+
+      <para>Most of the work with the JCR will be made through the JcrTemplate
+      itself or through a JcrCallback. The template requires a SessionFactory
+      and can be configured to create sessions on demand or reuse them
+      (thread-bound) - the default behavior.<programlisting>&lt;bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate"&gt;
+  &lt;property name="sessionFactory" ref="sessionFactory"/&gt;
+  &lt;property name="allowCreate" value="true"/&gt;
+&lt;/bean&gt;</programlisting>JcrTemplate contains many of the operations
+      defined in javax.jcr.Session and javax.jcr.query.Query classes plus some
+      convenient ones; however there are cases when they are not enought. With
+      JcrCallback, one can work directly with the Session, the callback begin
+      thread-safe, opens/closes sessions and deals with
+      exceptions:<programlisting>    public void saveSmth() {
+        template.execute(new JcrCallback() {
+
+            public Object doInJcr(Session session) throws RepositoryException {
+                Node root = session.getRootNode();
+                log.info("starting from root node " + root);
+                Node sample = root.addNode("sample node");
+                sample.setProperty("sample property", "bla bla");
+                log.info("saved property " + sample);
+                session.save();
+                return null;
+            }
+        });
+    } </programlisting></para>
+
+      <sect3>
+        <title>Implementing Spring-based DAOs without callbacks</title>
+
+        <para>The developer can access the repository in a more 'traditional'
+        way without using JcrTemplate (and JcrCallback) but still use Spring
+        DAO exception hierarchy. SpringModules JcrDaoSupport offers base
+        methods for retrieving Session from the SessionFactory (in a
+        transaction-aware manner is transactions are supported) and for
+        converting exceptions (which use SessionFactoryUtils static methods).
+        Note that such code will usually pass "false" into getSession's the
+        "allowCreate" flag, to enforce running within a transaction (which
+        avoids the need to close the returned Session, as it its lifecycle is
+        managed by the transaction):</para>
+
+        <para><programlisting>public class ProductDaoImpl extends JcrDaoSupport {
+
+    public void saveSmth()
+            throws DataAccessException, MyException {
+
+        Session session = getSession(getSessionFactory(), false);
+        try {
+                Node root = session.getRootNode();
+                log.info("starting from root node " + root);
+                Node sample = root.addNode("sample node");
+                sample.setProperty("sample property", "bla bla");
+                log.info("saved property " + sample);
+                session.save();
+                return null;
+        }
+        catch (RepositoryException ex) {
+            throw convertJCRAccessException(ex);
+        }
+    }
+}</programlisting>The major advantage of such direct JCR access code is that
+        it allows any checked application exception to be thrown within the
+        data access code, while JcrTemplate is restricted to unchecked
+        exceptions within the callback. Note that one can often defer the
+        corresponding checks and the throwing of application exceptions to
+        after the callback, which still allows working with JcrTemplate. In
+        general, JcrTemplate's convenience methods are simpler and more
+        convenient for many scenarios.</para>
+      </sect3>
+    </sect2>
+
+    <sect2>
+      <title>RepositoryFactoryBean</title>
+
+      <para>Repository configuration have not been discussed by JSR-170 and
+      every implementation has a different approach. The JCR-support provides
+      an abstract repository factory bean which defined the main functionality
+      leaving subclasses to deal only with the configuration issues. The
+      current version supports jackrabbit and jeceira as repository
+      implementations but adding new ones is very easy. Note that through
+      Spring, one can configure a repository without the mentioned
+      RepositoryFactoryBean.</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Extensions support</title>
+
+    <para>JSR-170 defines 2 levels of complains and a number of optional
+    features which can be provided by implementations transactions being
+    one.</para>
+
+    <sect2>
+      <title>JackRabbit</title>
+
+      <para><ulink
+      url="http://incubator.apache.org/jackrabbit/">JackRabbit</ulink> is the
+      default implementation of the JSR-170 and it's part of the Apache
+      Foundation. Even though at the time of writing it's still part of the
+      incubator, there are plans for releasing 1.0 in the near future.
+      JackRabbit support both levels and all the optional features described
+      in the specifications. <programlisting>&lt;bean id="repository" class="org.springmodules.jcr.jackrabbit.RepositoryFactoryBean"&gt;
+  &lt;!-- normal factory beans params --&gt;
+  &lt;property name="configuration" value="classpath:jackrabbit-repo.xml"/&gt;
+  &lt;property name="homeDir" value="/repo"/&gt;
+&lt;/bean&gt;</programlisting>Note that RepositoryFactoryBean makes use of
+      Spring Resource to find the configuration file.</para>
+
+      <sect3>
+        <title>Transaction Management</title>
+
+        <para>One of the nicest features of the JCR support in Spring modules
+        is transaction management (find out more about Spring transaction
+        management in <ulink
+        url="http://static.springframework.org/spring/docs/1.2.x/reference/transaction.html">Chapter
+        8</ulink> of the Spring official reference documentation. At the
+        moment it's possible to use a LocalTransactionManager or use the JCA
+        connector from JackRabbit to enlist the repository in a XA transaction
+        through a JTA transaction manager. As a side note the JCA scenario can
+        be used within an application server along with a specific descriptor
+        or using a portable JCA connector (like <ulink
+        url="http://www.jencks.org">Jencks</ulink>) which can work outside or
+        inside an application server.</para>
+
+        <sect4>
+          <title>LocalTransactionManager</title>
+
+          <para>For local transaction the LocalTransactionManager should be
+          used:<programlisting>&lt;bean id="jcrTransactionManager"
+ class="org.springmodules.jcr.jackrabbit.LocalTransactionManager"&gt;
+   &lt;property name="sessionFactory" ref="jcrSessionFactory"/&gt;
+&lt;/bean&gt;</programlisting>for which only the session factory is required.
+          As JackRabbit exposes a XA Resource the LocalTransactionManager
+          creates a UserTransaction behinds the scenes and uses that for
+          commiting/rolling back the changes.</para>
+
+          <para>and has to be set inside the application context or the
+          default one (non trasactional aware one) will be used.
+          Unfortunatelly implementation that support transactions don't have a
+          standard way of exposing them - that's why this requirement.
+          Basically all you have to do is configure the JcrTemplate for
+          example like this:<programlisting>&lt;bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate"&gt;
+  &lt;property name="sessionFactory" ref="sessionFactory"/&gt;
+  &lt;property name="providerManager" ref="providerManager"/&gt;
+&lt;/bean&gt;</programlisting>Note that when using transactions in most cases
+          you want to reuse the session (which means allowCreate property on
+          jcrTemplate should be false (default)).</para>
+        </sect4>
+
+        <sect4>
+          <title>SessionHolderProviderManager and
+          SessionHolderProvider</title>
+
+          <para>Because JSR-170 doesn't directly address transaction, details
+          vary from repository to repository and results in various
+          SessionHolderProvider implementations (this class is used internally
+          by the JCR support classes (JcrAccessor subclasses, JcrInterceptor,
+          OpenSessionInViewFilter/Interceptor). JCR support contains (quite a
+          lot of) classes to make this issue as painful as possible.
+          SessionHolderProviderManager acts as a registry of
+          SessionHolderProviders for different repositories and has several
+          implementations that return user defined provider or discover them
+          automatically.</para>
+
+          <para>ServiceSessionHolderProvider is suitable for most of the
+          cases. It uses <ulink
+          url="http://java.sun.com/j2se/1.3/docs/guide/jar/jar.html#Service%20Provider">JDK
+          1.3+ Service Provider specification</ulink> (also known as
+          META-INF/services) for determining the holder provider. The class
+          looks on the classpath under META-INF/services for the file named
+          "org.springmodules.jcr.SessionHolderProvider" (which contains the
+          full qualified name of a SessionHolderProvider implementation). The
+          providers found are instantiated and registered and later on used
+          for the repository they support. Using the
+          ServiceSessionHolderProvider is straight forward:<programlisting>&lt;bean id="providerManager" class="org.springmodules.jcr.support.ServiceSessionHolderProviderManager"/&gt;</programlisting></para>
+        </sect4>
+
+        <sect4>
+          <title>JTA transactions</title>
+
+          <para>For distributed transactions, using JCA is recommend in
+          JackRabbit's case. An example is found inside the sample. You are
+          free to use your application server JCA support; Jencks is used only
+          for demonstrative purpose, the code inside the jackrabbit support
+          having no dependency on it.</para>
+        </sect4>
+      </sect3>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Mapping support</title>
+
+    <para>Working with the JCR resembles to some degree to working with JDBC.
+    Mapping support for the JCR seems to be the next logical step but the
+    software market doesn't seem to offer any mature solution. The current
+    package offers support for <ulink
+    url="http://incubator.apache.org/graffito/project-structure.html">jcr-mapping</ulink>which
+    is part of <ulink url="http://incubator.apache.org/graffito/">Graffito
+    project</ulink> which belongs to the Apache foundation. However, Graffito
+    itself is still in the incubator and the jcr-mapping is described as a
+    prototype. The current support provides some base functionality taken from
+    a snapshot which can be found inside the distribtution which most probably
+    is old. However as jcr-mapping is clearly in alpha stage and a work in
+    progress, users should not invest too much in this area but are encouraged
+    to experiment and provide feedback. The current support contains a
+    JcrMappingCallback and Template plus a FactoryBean for creating
+    MappingDescriptors (which allows using more then one mapping file which is
+    not possible at the moment in the jcr-mapping project).</para>
+  </sect1>
+</chapter>
