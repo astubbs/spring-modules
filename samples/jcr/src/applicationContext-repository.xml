@@ -5,7 +5,7 @@
 	JSR-170 configuration support. Note that the transaction managers are defined
 	in separate files.
 	    
-    $Id: applicationContext-repository.xml,v 1.4 2005/12/06 10:37:04 costin Exp $
+    $Id: applicationContext-repository.xml,v 1.5 2005/12/21 13:53:39 costin Exp $
     -->    
 <beans default-lazy-init="true">
 	<import resource="applicationContext-jr-local.xml"/>
@@ -54,6 +54,7 @@
 		<constructor-arg index="0" value="pass"/>
 	</bean>
 	
+	<!-- optional setting - used for discovery of transaction support for various repositories -->
 	<bean id="providerManager" class="org.springmodules.jcr.support.ServiceSessionHolderProviderManager"/>
 	
 	<bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate">
