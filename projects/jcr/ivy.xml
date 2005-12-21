@@ -1,4 +1,7 @@
-<ivy-module version="1.1">
+<?xml-stylesheet type="text/xsl" href="http://www.jayasoft.fr/org/ivyrep/ivy-doc.xsl"?>
+<ivy-module version="1.1"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="http://www.jayasoft.fr/org/modules/ivy/samples/ivy.xsd">
 
   <info organisation="springmodules" module="jcr"/>
 
@@ -27,23 +30,52 @@
     </dependency>
 
     <!-- common dependencies -->
-    <dependency org="jsr170" name="jsr170" rev="1.0" />
-    <dependency org="commons-lang" name="commons-lang" rev="2.1" />
-    <dependency org="commons-collections" name="commons-collections"
+    <dependency org="jcr" name="jcr" rev="1.0"/>
+	<dependency org="springmodules" name="util" rev="latest.integration"/>
+	  
+    <dependency org="apache" name="commons-lang" rev="2.1" />
+    <dependency org="apache" name="commons-collections"
       rev="3.1" />
 	  
-    <!-- jackrabbit deps -->
-    <dependency org="concurrent" name="concurrent" rev="1.3.4" />
-    <dependency org="geronimo-spec" name="geronimo-spec" rev="1.0.1B-rc4">
-		<artifact type="jar" name="geronimo-spec-jta"/>
+    <dependency org="apache" name="geronimo-spec" rev="1.0.1B-rc4">
+		<artifact name="geronimo-spec-jta" type="jar"/>
 	</dependency>
-    <dependency org="lucene" name="lucene" rev="1.4.3"/>
-    <dependency org="xerces" name="xerces" rev="2.6.2">
+    <dependency org="sun" name="javax.servlet" rev="2.3">
+		<artifact name="servlet-api" type="jar"/> 		
+	</dependency>
+	  
+    <!-- jackrabbit deps -->
+	<dependency org="apache" name="jackrabbit" rev="1.0-SNAPSHOT">
+		<artifact name="jackrabbit-commons" type="jar"/>
+		<artifact name="jackrabbit" type="jar"/>		
+		<artifact name="jackrabbit-jca" type="jar"/>
+	</dependency>
+	  
+    <dependency org="concurrent" name="concurrent" rev="1.3.4" />
+		
+    <dependency org="apache" name="lucene" rev="1.4.3"/>
+    <dependency org="apache" name="xerces" rev="2.6.2">
 		<artifact type="jar" name="xercesImpl"/>
 		<artifact type="jar" name="xmlParserAPIs"/>
     </dependency>
-
+	  
     <!-- jeceira deps -->
+	<dependency org="jeceira" name="jeceira" rev="0.1.4">
+		<artifact name="jeceira" type="jar"/>			
+	</dependency>
+	  
+	<dependency org="aparzev" name="doka" rev="0.1">
+			<artifact name="doka" type="jar"/>				
+	</dependency>
+
+  	<dependency org="aparzev" name="commons" rev="0.2">
+		<artifact name="commons" type="jar"/>				
+	</dependency>
+	  
+	<dependency org="safehaus" name="jug" rev="2.0.0">
+		<artifact name="jug-asl" type="jar"/>
+	</dependency>
+	  
     <dependency org="hsqldb" name="hsqldb" rev="1.8.0.1"/>
 
     <!-- test time only dependencies -->
@@ -53,6 +85,9 @@
       conf="test->default">
       <artifact name="easymock" type="jar" conf="test" />
       <artifact name="easymockclassextension" type="jar" conf="test" />
+    </dependency>
+    <dependency org="cglib" name="cglib" rev="2.1_3" conf="test->default">
+    	<artifact name="cglib-nodep" type="jar" conf="test"/>
     </dependency>
     <dependency org="junit" name="junit" rev="3.8.1"
       conf="test->default" />
