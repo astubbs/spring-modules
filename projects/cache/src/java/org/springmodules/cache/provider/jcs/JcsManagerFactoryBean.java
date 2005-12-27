@@ -73,9 +73,9 @@ public final class JcsManagerFactoryBean extends
   }
 
   /**
-   * Returns <code>{@link #cacheManager}</code>.
-   * 
-   * @return the cache manager managed by this factory.
+   * @return the cache manager (a JCS CompositeCacheManager) managed by this
+   *         factory
+   * @see org.springframework.beans.factory.FactoryBean#getObject()
    */
   public Object getObject() {
     return cacheManager;

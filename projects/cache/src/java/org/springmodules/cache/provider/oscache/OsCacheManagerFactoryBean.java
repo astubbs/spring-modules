@@ -74,6 +74,8 @@ public final class OsCacheManagerFactoryBean extends
   }
 
   /**
+   * @return the cache manager (a OSCache GeneralCacheAdministrator) managed by
+   *         this factory
    * @see org.springframework.beans.factory.FactoryBean#getObject()
    */
   public Object getObject() {

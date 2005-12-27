@@ -70,6 +70,8 @@ public class JbossCacheManagerFactoryBean extends
   }
 
   /**
+   * @return the cache manager (a JBossCache TreeCache) managed by this
+   *         factory
    * @see org.springframework.beans.factory.FactoryBean#getObject()
    */
   public Object getObject() {
