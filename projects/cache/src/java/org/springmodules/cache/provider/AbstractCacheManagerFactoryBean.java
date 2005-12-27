@@ -82,13 +82,13 @@ public abstract class AbstractCacheManagerFactoryBean implements
    *           any exception thrown when shutting down the cache manager
    */
   public final void destroy() throws Exception {
-    if (getObject() == null) {
-      logger.info("The " + cacheProviderName
-          + " cache manager was not built. No need to shut it down.");
-
-    } else {
+    if (getObject() != null) {
       logger.info("Shutting down the " + cacheProviderName + " cache manager.");
       destroyCacheManager();
+
+    } else {
+      logger.info("The " + cacheProviderName
+          + " cache manager was not built. No need to shut it down.");
     }
   }
 
