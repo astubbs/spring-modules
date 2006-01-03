@@ -23,8 +23,6 @@ package org.springmodules;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public interface EqualsHashCodeTestCase {
 

@@ -26,8 +26,6 @@ import junit.framework.Assert;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class EqualsHashCodeAssert {
 
