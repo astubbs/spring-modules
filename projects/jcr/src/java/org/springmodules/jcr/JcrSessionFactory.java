@@ -15,6 +15,10 @@ import javax.jcr.observation.ObservationManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.jcr.EventListenerDefinition;
+import org.springmodules.jcr.JcrUtils;
+import org.springmodules.jcr.SessionFactory;
+import org.springmodules.jcr.SessionFactoryUtils;
 import org.springmodules.util.Objects;
 
 /**
@@ -70,7 +74,7 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 			throw new IllegalArgumentException("repository is required");
 		if (eventListeners != null
 				&& (eventListeners.length > 0)
-				&& !supportsObservation())
+				&& !JcrUtils.supportsObservation(getRepository()))
 			throw new IllegalArgumentException("repository "
 					+ getRepositoryInfo()
 					+ " does NOT support Observation; remove Listener definitions");
@@ -222,38 +226,11 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 		this.eventListeners = eventListenerDefinitions;
 	}
 
-	public boolean supportsLevel2() {
-		return "true".equals(getRepository().getDescriptor(Repository.LEVEL_2_SUPPORTED));
-	}
-
-	public boolean supportsTransactions() {
-		return "true".equals(getRepository().getDescriptor(Repository.OPTION_TRANSACTIONS_SUPPORTED));
-	}
-
-	public boolean supportsVersioning() {
-		return "true".equals(getRepository().getDescriptor(Repository.OPTION_VERSIONING_SUPPORTED));
-	}
-
-	public boolean supportsObservation() {
-		return "true".equals(getRepository().getDescriptor(Repository.OPTION_OBSERVATION_SUPPORTED));
-	}
-
-	public boolean supportsLocking() {
-		return "true".equals(getRepository().getDescriptor(Repository.OPTION_LOCKING_SUPPORTED));
-	}
-
-	public boolean supportsSQLQuery() {
-		return "true".equals(getRepository().getDescriptor(Repository.OPTION_QUERY_SQL_SUPPORTED));
-	}
-
-	public boolean supportsXPathPosIndex() {
-		return "true".equals(getRepository().getDescriptor(Repository.QUERY_XPATH_POS_INDEX));
-	}
-
-	public boolean supportsXPathDocOrder() {
-		return "true".equals(getRepository().getDescriptor(Repository.QUERY_XPATH_DOC_ORDER));
-	}
-
+	/**
+	 * A toString representation of the Repository.
+	 * 
+	 * @return
+	 */
 	private String getRepositoryInfo() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getRepository().getDescriptor(Repository.REP_NAME_DESC));

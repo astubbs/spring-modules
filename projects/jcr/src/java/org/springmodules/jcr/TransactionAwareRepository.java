@@ -1,8 +1,8 @@
 /**
  * Created on Nov 11, 2005
  *
- * $Id: TransactionAwareRepository.java,v 1.1 2005/12/20 17:38:05 costin Exp $
- * $Revision: 1.1 $
+ * $Id: TransactionAwareRepository.java,v 1.2 2006/01/09 15:17:39 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
@@ -57,14 +57,12 @@ import org.springframework.util.ObjectUtils;
  * even when your DAOs go through this proxy, by defining a bean reference
  * that points directly at your target Repository bean.
  * 
-
  * @author Costin Leau
  *
  */
 public class TransactionAwareRepository implements InitializingBean, FactoryBean {
 
 	private JcrSessionFactory sessionFactory;
-	private Repository target;
 	private Repository proxy;
 
 	/**
@@ -112,7 +110,7 @@ public class TransactionAwareRepository implements InitializingBean, FactoryBean
 		if (sessionFactory == null)
 			throw new IllegalArgumentException("sessionFactory is required");
 		// the rest of the properties are set by the setTargetFactory
-		if (!allowNonTxRepository && !sessionFactory.supportsTransactions())
+		if (!allowNonTxRepository && !JcrUtils.supportsTransactions(sessionFactory.getRepository()))
 			throw new IllegalArgumentException(sessionFactory.toString() + " does NOT support transactions and allowNonTxRepository is false");
 	}
 
@@ -166,7 +164,6 @@ public class TransactionAwareRepository implements InitializingBean, FactoryBean
 	 */
 	public void setTargetFactory(JcrSessionFactory target) {
 		this.sessionFactory = target;
-		this.target = sessionFactory.getRepository();
 		this.proxy = (Repository) Proxy.newProxyInstance(Repository.class.getClassLoader(),
 				new Class[] { Repository.class }, new TransactionAwareRepositoryInvocationHandler());
 	}
@@ -175,7 +172,7 @@ public class TransactionAwareRepository implements InitializingBean, FactoryBean
 	 * Return the target JCR Repository that this proxy delegates to.
 	 */
 	public Repository getTargetRepository() {
-		return this.target;
+		return this.sessionFactory.getRepository();
 	}
 
 	/**
