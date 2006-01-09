@@ -1,8 +1,8 @@
 /**
  * Created on Jan 9, 2006
  *
- * $Id: JcrUtils.java,v 1.1 2006/01/09 15:17:39 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrUtils.java,v 1.2 2006/01/09 15:45:56 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
@@ -198,8 +198,8 @@ public abstract class JcrUtils {
 	 * @param unescaped
 	 * @return
 	 */
-	public static String escapeJcrName(String unescaped) {
-		return escaper.encode(unescaped);
+	public static String encode(String decoded) {
+		return escaper.encode(decoded);
 	}
 
 	/**
@@ -208,8 +208,8 @@ public abstract class JcrUtils {
 	 * @param escaped
 	 * @return
 	 */
-	public static String unescapeJcrName(String escaped) {
-		return escaper.decode(escaped);
+	public static String decode(String encoded) {
+		return escaper.decode(encoded);
 	}
 
 }
