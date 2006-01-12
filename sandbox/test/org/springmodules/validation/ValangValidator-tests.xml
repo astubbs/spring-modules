@@ -25,4 +25,15 @@
 		<constructor-arg value="foo|bar"/>
 	</bean>
 	
+	<bean id="personValidator" class="org.springmodules.validation.ValangValidatorFactoryBean" lazy-init="true">
+		<property name="valang">
+			<value><![CDATA[
+ { form[name] : length(?) BETWEEN 4 AND 30 : 'name must be between 4 and 30' }
+ { form[passwd] : length(?) BETWEEN 5 AND 20 : 'password must be between 5 and 20' }
+			]]></value>
+		</property>
+	</bean>	
+	
+	
+	
 </beans>
