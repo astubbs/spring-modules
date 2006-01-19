@@ -22,8 +22,10 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.aopalliance.intercept.MethodInvocation;
+
 import org.springframework.metadata.Attributes;
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.CachingModel;
 
 /**
@@ -45,43 +47,10 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
   private CachingAttributeSource cachingAttributeSource;
 
   /**
-   * Returns the metadata attribute of the intercepted method.
-   * 
-   * @param methodInvocation
-   *          the description of an invocation to the method.
-   * @return the metadata attribute of the intercepted method.
-   */
-  protected Cached getCachingAttribute(MethodInvocation methodInvocation) {
-    Object thisObject = methodInvocation.getThis();
-    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
-    Method method = methodInvocation.getMethod();
-    Cached attribute = cachingAttributeSource.getCachingAttribute(method,
-        targetClass);
-    return attribute;
-  }
-
-  /**
    * @return the source of caching metadata attributes for class methods
    */
   public final CachingAttributeSource getCachingAttributeSource() {
     return cachingAttributeSource;
-  }
-
-  /**
-   * @see AbstractCachingInterceptor#getModel(MethodInvocation)
-   */
-  protected final CachingModel getModel(MethodInvocation methodInvocation) {
-    CachingModel model = null;
-    Cached attribute = getCachingAttribute(methodInvocation);
-    if (attribute != null) {
-      String modelId = attribute.getModelId();
-      if (StringUtils.hasText(modelId)) {
-        Map cachingModels = getCachingModels();
-        model = (CachingModel) cachingModels.get(modelId);
-      }
-    }
-
-    return model;
   }
 
   /**
@@ -105,5 +74,38 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
   public final void setCachingAttributeSource(
       CachingAttributeSource newCachingAttributeSource) {
     cachingAttributeSource = newCachingAttributeSource;
+  }
+
+  /**
+   * Returns the metadata attribute of the intercepted method.
+   * 
+   * @param methodInvocation
+   *          the description of an invocation to the method.
+   * @return the metadata attribute of the intercepted method.
+   */
+  protected Cached getCachingAttribute(MethodInvocation methodInvocation) {
+    Object thisObject = methodInvocation.getThis();
+    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
+    Method method = methodInvocation.getMethod();
+    Cached attribute = cachingAttributeSource.getCachingAttribute(method,
+        targetClass);
+    return attribute;
+  }
+
+  /**
+   * @see AbstractCachingInterceptor#getModel(MethodInvocation)
+   */
+  protected final CachingModel getModel(MethodInvocation methodInvocation) {
+    CachingModel model = null;
+    Cached attribute = getCachingAttribute(methodInvocation);
+    if (attribute != null) {
+      String modelId = attribute.getModelId();
+      if (StringUtils.hasText(modelId)) {
+        Map cachingModels = getCachingModels();
+        model = (CachingModel) cachingModels.get(modelId);
+      }
+    }
+
+    return model;
   }
 }

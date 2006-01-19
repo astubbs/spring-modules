@@ -19,9 +19,9 @@ package org.springmodules.cache.provider.oscache;
 
 import java.beans.PropertyEditorSupport;
 
-import org.springframework.util.StringUtils;
-
 import com.opensymphony.oscache.base.CacheEntry;
+
+import org.springframework.util.StringUtils;
 
 /**
  * <p>

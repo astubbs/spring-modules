@@ -22,7 +22,9 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
@@ -39,10 +41,10 @@ import org.springmodules.cache.serializable.SerializableFactory;
 public abstract class AbstractCacheProviderFacade implements
     CacheProviderFacade {
 
-  private boolean failQuietlyEnabled;
-
   /** Logger available to subclasses */
   protected final Log logger = LogFactory.getLog(getClass());
+
+  private boolean failQuietlyEnabled;
 
   private SerializableFactory serializableFactory;
 
@@ -57,21 +59,6 @@ public abstract class AbstractCacheProviderFacade implements
   public final void afterPropertiesSet() throws FatalCacheException {
     validateCacheManager();
     onAfterPropertiesSet();
-  }
-
-  /**
-   * Asserts that the given cache manager is not <code>null</code>.
-   * 
-   * @param cacheManager
-   *          the cache manager to check
-   * @throws FatalCacheException
-   *           if the cache manager is <code>null</code>
-   */
-  protected final void assertCacheManagerIsNotNull(Object cacheManager)
-      throws FatalCacheException {
-    if (cacheManager == null) {
-      throw new FatalCacheException("The cache manager should not be null");
-    }
   }
 
   /**
@@ -141,6 +128,96 @@ public abstract class AbstractCacheProviderFacade implements
   }
 
   /**
+   * @see CacheProviderFacade#isFailQuietlyEnabled()
+   */
+  public final boolean isFailQuietlyEnabled() {
+    return failQuietlyEnabled;
+  }
+
+  /**
+   * @see CacheProviderFacade#putInCache(Serializable, CachingModel, Object)
+   * @see #makeSerializableIfNecessary(Object)
+   */
+  public final void putInCache(Serializable key, CachingModel model, Object obj)
+      throws CacheException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Attempt to store the object <" + obj
+          + "> in the cache using key <" + StringUtils.quoteIfString(key)
+          + "> and model <" + model + ">");
+    }
+
+    try {
+      Object newCacheElement = makeSerializableIfNecessary(obj);
+
+      if (model != null) {
+        onPutInCache(key, model, newCacheElement);
+        logger.debug("Object was successfully stored in the cache");
+      }
+    } catch (CacheException exception) {
+      handleCatchedException(exception);
+    }
+  }
+
+  /**
+   * @see CacheProviderFacade#removeFromCache(Serializable, CachingModel)
+   */
+  public final void removeFromCache(Serializable key, CachingModel model)
+      throws CacheException {
+    if (logger.isDebugEnabled()) {
+      logger.debug("Attempt to remove an entry from the cache using key <"
+          + StringUtils.quoteIfString(key) + "> and model <" + model + ">");
+    }
+
+    if (model != null) {
+      try {
+        onRemoveFromCache(key, model);
+        logger.debug("Object removed from the cache");
+
+      } catch (CacheException exception) {
+        handleCatchedException(exception);
+      }
+    }
+  }
+
+  /**
+   * Sets the flag that indicates if any exception thrown at run-time by the
+   * cache manager should be propagated (<code>false</code>) or not (<code>true</code>.)
+   * 
+   * @param newFailQuietlyEnabled
+   *          the new value for the flag
+   */
+  public final void setFailQuietlyEnabled(boolean newFailQuietlyEnabled) {
+    failQuietlyEnabled = newFailQuietlyEnabled;
+  }
+
+  /**
+   * Sets the factory that makes serializable the objects to be stored in the
+   * cache (if the cache requires serializable elements).
+   * 
+   * @param newSerializableFactory
+   *          the new factory of serializable objects
+   */
+  public final void setSerializableFactory(
+      SerializableFactory newSerializableFactory) {
+    serializableFactory = newSerializableFactory;
+  }
+
+  /**
+   * Asserts that the given cache manager is not <code>null</code>.
+   * 
+   * @param cacheManager
+   *          the cache manager to check
+   * @throws FatalCacheException
+   *           if the cache manager is <code>null</code>
+   */
+  protected final void assertCacheManagerIsNotNull(Object cacheManager)
+      throws FatalCacheException {
+    if (cacheManager == null) {
+      throw new FatalCacheException("The cache manager should not be null");
+    }
+  }
+
+  /**
    * Rethrows the given exception if "fail quietly" is enabled.
    * 
    * @param exception
@@ -154,13 +231,6 @@ public abstract class AbstractCacheProviderFacade implements
     if (!isFailQuietlyEnabled()) {
       throw exception;
     }
-  }
-
-  /**
-   * @see CacheProviderFacade#isFailQuietlyEnabled()
-   */
-  public final boolean isFailQuietlyEnabled() {
-    return failQuietlyEnabled;
   }
 
   /**
@@ -283,74 +353,6 @@ public abstract class AbstractCacheProviderFacade implements
    */
   protected abstract void onRemoveFromCache(Serializable key, CachingModel model)
       throws CacheException;
-
-  /**
-   * @see CacheProviderFacade#putInCache(Serializable, CachingModel, Object)
-   * @see #makeSerializableIfNecessary(Object)
-   */
-  public final void putInCache(Serializable key, CachingModel model, Object obj)
-      throws CacheException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Attempt to store the object <" + obj
-          + "> in the cache using key <" + StringUtils.quoteIfString(key)
-          + "> and model <" + model + ">");
-    }
-
-    try {
-      Object newCacheElement = makeSerializableIfNecessary(obj);
-
-      if (model != null) {
-        onPutInCache(key, model, newCacheElement);
-        logger.debug("Object was successfully stored in the cache");
-      }
-    } catch (CacheException exception) {
-      handleCatchedException(exception);
-    }
-  }
-
-  /**
-   * @see CacheProviderFacade#removeFromCache(Serializable, CachingModel)
-   */
-  public final void removeFromCache(Serializable key, CachingModel model)
-      throws CacheException {
-    if (logger.isDebugEnabled()) {
-      logger.debug("Attempt to remove an entry from the cache using key <"
-          + StringUtils.quoteIfString(key) + "> and model <" + model + ">");
-    }
-
-    if (model != null) {
-      try {
-        onRemoveFromCache(key, model);
-        logger.debug("Object removed from the cache");
-
-      } catch (CacheException exception) {
-        handleCatchedException(exception);
-      }
-    }
-  }
-
-  /**
-   * Sets the flag that indicates if any exception thrown at run-time by the
-   * cache manager should be propagated (<code>false</code>) or not (<code>true</code>.)
-   * 
-   * @param newFailQuietlyEnabled
-   *          the new value for the flag
-   */
-  public final void setFailQuietlyEnabled(boolean newFailQuietlyEnabled) {
-    failQuietlyEnabled = newFailQuietlyEnabled;
-  }
-
-  /**
-   * Sets the factory that makes serializable the objects to be stored in the
-   * cache (if the cache requires serializable elements).
-   * 
-   * @param newSerializableFactory
-   *          the new factory of serializable objects
-   */
-  public final void setSerializableFactory(
-      SerializableFactory newSerializableFactory) {
-    serializableFactory = newSerializableFactory;
-  }
 
   /**
    * Validates the cache manager used by this facade.

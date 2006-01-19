@@ -22,6 +22,7 @@ import java.beans.PropertyEditor;
 import java.io.Serializable;
 
 import org.springframework.beans.factory.InitializingBean;
+
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FlushingModel;

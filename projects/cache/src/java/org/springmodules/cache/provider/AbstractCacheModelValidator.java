@@ -28,6 +28,34 @@ public abstract class AbstractCacheModelValidator implements
     CacheModelValidator {
 
   /**
+   * @see CacheModelValidator#validateCachingModel(Object)
+   */
+  public final void validateCachingModel(Object cachingModel)
+      throws InvalidCacheModelException {
+    Class targetClass = getCachingModelTargetClass();
+    if (!isInstanceOf(cachingModel, targetClass)) {
+      throw new InvalidCacheModelException(
+          "The caching model should be an instance of <"
+              + targetClass.getName() + ">");
+    }
+    validateCachingModelProperties(cachingModel);
+  }
+
+  /**
+   * @see CacheModelValidator#validateFlushingModel(Object)
+   */
+  public final void validateFlushingModel(Object flushingModel)
+      throws InvalidCacheModelException {
+    Class targetClass = getFlushingModelTargetClass();
+    if (!isInstanceOf(flushingModel, targetClass)) {
+      throw new InvalidCacheModelException(
+          "The flushing model should be an instance of <"
+              + targetClass.getName() + ">");
+    }
+    validateFlushingModelProperties(flushingModel);
+  }
+
+  /**
    * @return the type of caching model that this validator accepts
    */
   protected abstract Class getCachingModelTargetClass();
@@ -53,20 +81,6 @@ public abstract class AbstractCacheModelValidator implements
   }
 
   /**
-   * @see CacheModelValidator#validateCachingModel(Object)
-   */
-  public final void validateCachingModel(Object cachingModel)
-      throws InvalidCacheModelException {
-    Class targetClass = getCachingModelTargetClass();
-    if (!isInstanceOf(cachingModel, targetClass)) {
-      throw new InvalidCacheModelException(
-          "The caching model should be an instance of <"
-              + targetClass.getName() + ">");
-    }
-    validateCachingModelProperties(cachingModel);
-  }
-
-  /**
    * Validates the properties of the given model.
    * 
    * @param cachingModel
@@ -77,20 +91,6 @@ public abstract class AbstractCacheModelValidator implements
   protected void validateCachingModelProperties(Object cachingModel)
       throws InvalidCacheModelException {
     // no implementation.
-  }
-
-  /**
-   * @see CacheModelValidator#validateFlushingModel(Object)
-   */
-  public final void validateFlushingModel(Object flushingModel)
-      throws InvalidCacheModelException {
-    Class targetClass = getFlushingModelTargetClass();
-    if (!isInstanceOf(flushingModel, targetClass)) {
-      throw new InvalidCacheModelException(
-          "The flushing model should be an instance of <"
-              + targetClass.getName() + ">");
-    }
-    validateFlushingModelProperties(flushingModel);
   }
 
   /**

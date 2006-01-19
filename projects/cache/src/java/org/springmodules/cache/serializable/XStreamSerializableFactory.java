@@ -19,11 +19,12 @@ package org.springmodules.cache.serializable;
 
 import java.io.Serializable;
 
+import com.thoughtworks.xstream.XStream;
+
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springmodules.util.Objects;
 
-import com.thoughtworks.xstream.XStream;
+import org.springmodules.util.Objects;
 
 /**
  * <p>

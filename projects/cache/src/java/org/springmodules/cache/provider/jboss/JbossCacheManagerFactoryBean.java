@@ -19,7 +19,9 @@ package org.springmodules.cache.provider.jboss;
 
 import org.jboss.cache.PropertyConfigurator;
 import org.jboss.cache.TreeCache;
+
 import org.springframework.core.io.Resource;
+
 import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 
 /**
@@ -36,6 +38,22 @@ public class JbossCacheManagerFactoryBean extends
   private static final String CACHE_PROVIDER_NAME = "JBossCache";
 
   private TreeCache treeCache;
+
+  /**
+   * @return the cache manager (a JBossCache TreeCache) managed by this
+   *         factory
+   * @see org.springframework.beans.factory.FactoryBean#getObject()
+   */
+  public Object getObject() {
+    return treeCache;
+  }
+
+  /**
+   * @see org.springframework.beans.factory.FactoryBean#getObjectType()
+   */
+  public Class getObjectType() {
+    return (treeCache != null) ? treeCache.getClass() : TreeCache.class;
+  }
 
   /**
    * @see AbstractCacheManagerFactoryBean#createCacheManager()
@@ -67,22 +85,6 @@ public class JbossCacheManagerFactoryBean extends
    */
   protected String getCacheProviderName() {
     return CACHE_PROVIDER_NAME;
-  }
-
-  /**
-   * @return the cache manager (a JBossCache TreeCache) managed by this
-   *         factory
-   * @see org.springframework.beans.factory.FactoryBean#getObject()
-   */
-  public Object getObject() {
-    return treeCache;
-  }
-
-  /**
-   * @see org.springframework.beans.factory.FactoryBean#getObjectType()
-   */
-  public Class getObjectType() {
-    return (treeCache != null) ? treeCache.getClass() : TreeCache.class;
   }
 
 }

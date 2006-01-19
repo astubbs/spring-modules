@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.springframework.metadata.Attributes;
+
 import org.springmodules.cache.CacheAttribute;
 import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource;
 
@@ -42,6 +43,24 @@ public final class MetadataFlushingAttributeSource extends
    * Underlying Attributes implementation we're using.
    */
   private Attributes attributes;
+
+  /**
+   * @see FlushingAttributeSource#getFlushingAttribute(Method, Class)
+   */
+  public FlushCache getFlushingAttribute(Method method, Class targetClass) {
+    FlushCache attribute = (FlushCache) getAttribute(method, targetClass);
+    return attribute;
+  }
+
+  /**
+   * Sets the underlying metadata attributes to use.
+   * 
+   * @param newAttributes
+   *          the new underlying metadata attributes
+   */
+  public final void setAttributes(Attributes newAttributes) {
+    attributes = newAttributes;
+  }
 
   /**
    * @see org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource#findAllAttributes(Method)
@@ -74,24 +93,6 @@ public final class MetadataFlushingAttributeSource extends
    */
   protected Attributes getAttributes() {
     return attributes;
-  }
-
-  /**
-   * @see FlushingAttributeSource#getFlushingAttribute(Method, Class)
-   */
-  public FlushCache getFlushingAttribute(Method method, Class targetClass) {
-    FlushCache attribute = (FlushCache) getAttribute(method, targetClass);
-    return attribute;
-  }
-
-  /**
-   * Sets the underlying metadata attributes to use.
-   * 
-   * @param newAttributes
-   *          the new underlying metadata attributes
-   */
-  public final void setAttributes(Attributes newAttributes) {
-    attributes = newAttributes;
   }
 
 }

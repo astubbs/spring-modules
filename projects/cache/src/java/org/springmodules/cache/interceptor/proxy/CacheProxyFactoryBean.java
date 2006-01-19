@@ -29,6 +29,7 @@ import org.springframework.aop.target.SingletonTargetSource;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ClassUtils;
+
 import org.springmodules.cache.interceptor.caching.CachingListener;
 import org.springmodules.cache.interceptor.caching.CachingModelSourceAdvisor;
 import org.springmodules.cache.interceptor.caching.NameMatchCachingInterceptor;
@@ -125,41 +126,6 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
   }
 
   /**
-   * Set the target or <code>TargetSource</code>.
-   * 
-   * @param targetObject
-   *          target. If this is an implementation of <code>TargetSource</code>
-   *          it is used as our <code>TargetSource</code>; otherwise it is
-   *          wrapped in a <code>SingletonTargetSource</code>.
-   * @return a <code>TargetSource</code> for this object.
-   */
-  protected TargetSource createTargetSource(Object targetObject) {
-    TargetSource targetSource = null;
-
-    if (targetObject instanceof TargetSource) {
-      targetSource = (TargetSource) targetObject;
-    } else {
-      targetSource = new SingletonTargetSource(targetObject);
-    }
-
-    return targetSource;
-  }
-
-  /**
-   * @return the internal caching interceptor
-   */
-  protected NameMatchCachingInterceptor getCachingInterceptor() {
-    return cachingInterceptor;
-  }
-
-  /**
-   * @return the internal flushing interceptor
-   */
-  protected NameMatchFlushingInterceptor getFlushingInterceptor() {
-    return flushingInterceptor;
-  }
-
-  /**
    * @return the created AOP proxy.
    */
   public Object getObject() {
@@ -182,27 +148,6 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
     }
 
     return objectType;
-  }
-
-  /**
-   * @return the created AOP proxy
-   */
-  protected Object getProxy() {
-    return proxy;
-  }
-
-  /**
-   * @return the interfaces to be implemented by the AOP proxy
-   */
-  protected Class[] getProxyInterfaces() {
-    return proxyInterfaces;
-  }
-
-  /**
-   * @return <code>true</code> if this proxy factory contains flushing models
-   */
-  protected boolean isHasFlushingModels() {
-    return hasFlushingModels;
   }
 
   /**
@@ -317,6 +262,62 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    */
   public void setTarget(Object newTarget) {
     target = newTarget;
+  }
+
+  /**
+   * Set the target or <code>TargetSource</code>.
+   * 
+   * @param targetObject
+   *          target. If this is an implementation of <code>TargetSource</code>
+   *          it is used as our <code>TargetSource</code>; otherwise it is
+   *          wrapped in a <code>SingletonTargetSource</code>.
+   * @return a <code>TargetSource</code> for this object.
+   */
+  protected TargetSource createTargetSource(Object targetObject) {
+    TargetSource targetSource = null;
+
+    if (targetObject instanceof TargetSource) {
+      targetSource = (TargetSource) targetObject;
+    } else {
+      targetSource = new SingletonTargetSource(targetObject);
+    }
+
+    return targetSource;
+  }
+
+  /**
+   * @return the internal caching interceptor
+   */
+  protected NameMatchCachingInterceptor getCachingInterceptor() {
+    return cachingInterceptor;
+  }
+
+  /**
+   * @return the internal flushing interceptor
+   */
+  protected NameMatchFlushingInterceptor getFlushingInterceptor() {
+    return flushingInterceptor;
+  }
+
+  /**
+   * @return the created AOP proxy
+   */
+  protected Object getProxy() {
+    return proxy;
+  }
+
+  /**
+   * @return the interfaces to be implemented by the AOP proxy
+   */
+  protected Class[] getProxyInterfaces() {
+    return proxyInterfaces;
+  }
+
+  /**
+   * @return <code>true</code> if this proxy factory contains flushing models
+   */
+  protected boolean isHasFlushingModels() {
+    return hasFlushingModels;
   }
 
 }

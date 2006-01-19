@@ -21,6 +21,7 @@ package org.springmodules.cache.provider.jcs;
 import java.util.Properties;
 
 import org.apache.jcs.engine.control.CompositeCacheManager;
+
 import org.springmodules.cache.provider.AbstractCacheManagerFactoryBean;
 
 /**
@@ -44,6 +45,25 @@ public final class JcsManagerFactoryBean extends
    * The cache manager managed by this factory.
    */
   private CompositeCacheManager cacheManager;
+
+  /**
+   * @return the cache manager (a JCS CompositeCacheManager) managed by this
+   *         factory
+   * @see org.springframework.beans.factory.FactoryBean#getObject()
+   */
+  public Object getObject() {
+    return cacheManager;
+  }
+
+  /**
+   * Returns the type of <code>{@link #cacheManager}</code>.
+   * 
+   * @return the type of the cache manager managed by this factory.
+   */
+  public Class getObjectType() {
+    return cacheManager != null ? cacheManager.getClass()
+        : CompositeCacheManager.class;
+  }
 
   /**
    * @see AbstractCacheManagerFactoryBean#createCacheManager()
@@ -70,24 +90,5 @@ public final class JcsManagerFactoryBean extends
    */
   protected String getCacheProviderName() {
     return CACHE_PROVIDER_NAME;
-  }
-
-  /**
-   * @return the cache manager (a JCS CompositeCacheManager) managed by this
-   *         factory
-   * @see org.springframework.beans.factory.FactoryBean#getObject()
-   */
-  public Object getObject() {
-    return cacheManager;
-  }
-
-  /**
-   * Returns the type of <code>{@link #cacheManager}</code>.
-   * 
-   * @return the type of the cache manager managed by this factory.
-   */
-  public Class getObjectType() {
-    return cacheManager != null ? cacheManager.getClass()
-        : CompositeCacheManager.class;
   }
 }

@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.util.SemicolonSeparatedPropertiesParser;
 
@@ -65,11 +66,6 @@ public class ReflectionCacheModelEditor extends PropertyEditorSupport {
    */
   public final Map getCacheModelPropertyEditors() {
     return cacheModelPropertyEditors;
-  }
-
-  private PropertyEditor getPropertyEditor(String propertyName) {
-    return cacheModelPropertyEditors == null ? null
-        : (PropertyEditor) cacheModelPropertyEditors.get(propertyName);
   }
 
   /**
@@ -132,5 +128,10 @@ public class ReflectionCacheModelEditor extends PropertyEditorSupport {
   public final void setCacheModelPropertyEditors(
       Map newCacheModelPropertyEditors) {
     cacheModelPropertyEditors = newCacheModelPropertyEditors;
+  }
+
+  private PropertyEditor getPropertyEditor(String propertyName) {
+    return cacheModelPropertyEditors == null ? null
+        : (PropertyEditor) cacheModelPropertyEditors.get(propertyName);
   }
 }

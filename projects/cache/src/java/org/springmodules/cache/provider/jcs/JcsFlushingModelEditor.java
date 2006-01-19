@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 import org.springmodules.cache.util.SemicolonSeparatedPropertiesParser;
 

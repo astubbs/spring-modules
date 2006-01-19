@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springmodules.cache.CacheModel;
 import org.springmodules.cache.util.TextMatcher;
 
@@ -36,14 +37,14 @@ import org.springmodules.cache.util.TextMatcher;
  */
 public abstract class AbstractNameMatchCacheModelSource {
 
+  /** Logger available to subclasses */
+  protected final Log logger = LogFactory.getLog(getClass());
+
   /**
    * Stores instances of <code>{@link CacheModel}</code> implementations under
    * the name of the method associated to it.
    */
   private Map cacheModels;
-
-  /** Logger available to subclasses */
-  protected final Log logger = LogFactory.getLog(getClass());
 
   /**
    * Returns the cache model bound to the intercepted method.

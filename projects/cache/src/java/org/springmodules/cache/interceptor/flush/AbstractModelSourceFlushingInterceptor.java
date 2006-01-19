@@ -20,6 +20,7 @@ package org.springmodules.cache.interceptor.flush;
 import java.lang.reflect.Method;
 
 import org.aopalliance.intercept.MethodInvocation;
+
 import org.springmodules.cache.FlushingModel;
 
 /**
@@ -43,16 +44,6 @@ public abstract class AbstractModelSourceFlushingInterceptor extends
   }
 
   /**
-   * @see AbstractFlushingInterceptor#getModel(MethodInvocation)
-   */
-  protected FlushingModel getModel(MethodInvocation methodInvocation) {
-    Object thisObject = methodInvocation.getThis();
-    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
-    Method method = methodInvocation.getMethod();
-    return flushingModelSource.getFlushingModel(method, targetClass);
-  }
-
-  /**
    * Sets the source of flusshing models for class methods.
    * 
    * @param newFlushingModelSource
@@ -60,6 +51,16 @@ public abstract class AbstractModelSourceFlushingInterceptor extends
    */
   public void setFlushingModelSource(FlushingModelSource newFlushingModelSource) {
     flushingModelSource = newFlushingModelSource;
+  }
+
+  /**
+   * @see AbstractFlushingInterceptor#getModel(MethodInvocation)
+   */
+  protected FlushingModel getModel(MethodInvocation methodInvocation) {
+    Object thisObject = methodInvocation.getThis();
+    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
+    Method method = methodInvocation.getMethod();
+    return flushingModelSource.getFlushingModel(method, targetClass);
   }
 
 }

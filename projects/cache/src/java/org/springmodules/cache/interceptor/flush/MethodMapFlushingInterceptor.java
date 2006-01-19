@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 
@@ -42,24 +43,23 @@ public final class MethodMapFlushingInterceptor extends
   protected void onAfterPropertiesSet() throws FatalCacheException {
     Map flushingModels = getFlushingModels();
 
-    if (flushingModels != null && !flushingModels.isEmpty()) {
-      if (getFlushingModelSource() == null) {
-        MethodMapFlushingModelSource newSource = new MethodMapFlushingModelSource();
+    if (flushingModels != null && !flushingModels.isEmpty()
+        && getFlushingModelSource() == null) {
+      MethodMapFlushingModelSource newSource = new MethodMapFlushingModelSource();
 
-        String key = null;
-        try {
-          for (Iterator i = flushingModels.keySet().iterator(); i.hasNext();) {
-            key = (String) i.next();
-            FlushingModel model = (FlushingModel) flushingModels.get(key);
-            newSource.addFlushingModel(key, model);
-          }
-        } catch (Exception exception) {
-          throw new FatalCacheException(
-              "Unable to add model stored under the key "
-                  + StringUtils.quote(key), exception);
+      String key = null;
+      try {
+        for (Iterator i = flushingModels.keySet().iterator(); i.hasNext();) {
+          key = (String) i.next();
+          FlushingModel model = (FlushingModel) flushingModels.get(key);
+          newSource.addFlushingModel(key, model);
         }
-        setFlushingModelSource(newSource);
+      } catch (Exception exception) {
+        throw new FatalCacheException(
+            "Unable to add model stored under the key "
+                + StringUtils.quote(key), exception);
       }
+      setFlushingModelSource(newSource);
     }
   }
 

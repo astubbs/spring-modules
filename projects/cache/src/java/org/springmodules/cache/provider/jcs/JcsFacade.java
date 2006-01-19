@@ -28,8 +28,10 @@ import org.apache.jcs.engine.control.CompositeCache;
 import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
+
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
@@ -67,24 +69,6 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * Returns a JCS cache from the cache manager.
-   * 
-   * @param name
-   *          the name of the cache.
-   * @return the cache retrieved from the cache manager.
-   * @throws CacheNotFoundException
-   *           if the cache does not exist.
-   */
-  protected CompositeCache getCache(String name) {
-    CompositeCache cache = cacheManager.getCache(name);
-    if (cache == null) {
-      throw new CacheNotFoundException(name);
-    }
-
-    return cache;
-  }
-
-  /**
    * Returns the validator of cache models. It is always an instance of
    * <code>{@link JcsModelValidator}</code>.
    * 
@@ -108,6 +92,34 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
    */
   public PropertyEditor getFlushingModelEditor() {
     return new JcsFlushingModelEditor();
+  }
+
+  /**
+   * Sets the JCS cache manager to use.
+   * 
+   * @param newCacheManager
+   *          the new cache manager
+   */
+  public void setCacheManager(CompositeCacheManager newCacheManager) {
+    cacheManager = newCacheManager;
+  }
+
+  /**
+   * Returns a JCS cache from the cache manager.
+   * 
+   * @param name
+   *          the name of the cache.
+   * @return the cache retrieved from the cache manager.
+   * @throws CacheNotFoundException
+   *           if the cache does not exist.
+   */
+  protected CompositeCache getCache(String name) {
+    CompositeCache cache = cacheManager.getCache(name);
+    if (cache == null) {
+      throw new CacheNotFoundException(name);
+    }
+
+    return cache;
   }
 
   /**
@@ -312,16 +324,6 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
-  }
-
-  /**
-   * Sets the JCS cache manager to use.
-   * 
-   * @param newCacheManager
-   *          the new cache manager
-   */
-  public void setCacheManager(CompositeCacheManager newCacheManager) {
-    cacheManager = newCacheManager;
   }
 
   /**

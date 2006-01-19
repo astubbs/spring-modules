@@ -30,9 +30,11 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.key.CacheKeyGenerator;
@@ -67,6 +69,9 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     }
   };
 
+  /** Logger available to subclasses */
+  protected final Log logger = LogFactory.getLog(getClass());
+
   private CacheKeyGenerator cacheKeyGenerator;
 
   private CacheProviderFacade cacheProviderFacade;
@@ -79,9 +84,6 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
    * under a unique id (a String).
    */
   private Map cachingModels;
-
-  /** Logger available to subclasses */
-  protected final Log logger = LogFactory.getLog(getClass());
 
   /**
    * Performs property validation and initialization after this interceptor has
@@ -138,23 +140,6 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
   public final CacheKeyGenerator getCacheKeyGenerator() {
     return cacheKeyGenerator;
   }
-
-  /**
-   * @return the map that specifies how caching models should be bound to class
-   *         methods
-   */
-  protected final Map getCachingModels() {
-    return cachingModels;
-  }
-
-  /**
-   * Returns the caching model bound to an advised method.
-   * 
-   * @param methodInvocation
-   *          the description of an invocation to the advised method
-   * @return the caching model bound to an advised method
-   */
-  protected abstract CachingModel getModel(MethodInvocation methodInvocation);
 
   /**
    * <p>
@@ -239,18 +224,6 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
   }
 
   /**
-   * Gives subclasses the opportunity to initialize and validate their own
-   * properties.
-   * 
-   * @throws FatalCacheException
-   *           if one or more properties of this interceptor contain invalid
-   *           values or have an illegal state
-   */
-  protected void onAfterPropertiesSet() throws FatalCacheException {
-    // no implementation.
-  }
-
-  /**
    * Sets the generator of cache entry keys.
    * 
    * @param newCacheKeyGenerator
@@ -289,6 +262,35 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
    */
   public final void setCachingModels(Map newCachingModels) {
     cachingModels = newCachingModels;
+  }
+
+  /**
+   * @return the map that specifies how caching models should be bound to class
+   *         methods
+   */
+  protected final Map getCachingModels() {
+    return cachingModels;
+  }
+
+  /**
+   * Returns the caching model bound to an advised method.
+   * 
+   * @param methodInvocation
+   *          the description of an invocation to the advised method
+   * @return the caching model bound to an advised method
+   */
+  protected abstract CachingModel getModel(MethodInvocation methodInvocation);
+
+  /**
+   * Gives subclasses the opportunity to initialize and validate their own
+   * properties.
+   * 
+   * @throws FatalCacheException
+   *           if one or more properties of this interceptor contain invalid
+   *           values or have an illegal state
+   */
+  protected void onAfterPropertiesSet() throws FatalCacheException {
+    // no implementation.
   }
 
   /**

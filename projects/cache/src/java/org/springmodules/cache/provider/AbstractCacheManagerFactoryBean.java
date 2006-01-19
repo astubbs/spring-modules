@@ -23,6 +23,7 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.core.io.Resource;
 
 /**
@@ -35,15 +36,15 @@ import org.springframework.core.io.Resource;
 public abstract class AbstractCacheManagerFactoryBean implements
     CacheManagerFactoryBean {
 
+  /** Logger available to subclasses */
+  protected final Log logger = LogFactory.getLog(getClass());
+
+  private String cacheProviderName;
+
   /**
    * Location of the cache manager configuration file.
    */
   private Resource configLocation;
-
-  private String cacheProviderName;
-
-  /** Logger available to subclasses */
-  protected final Log logger = LogFactory.getLog(getClass());
 
   /**
    * Constructor.
@@ -67,14 +68,6 @@ public abstract class AbstractCacheManagerFactoryBean implements
   }
 
   /**
-   * Creates the cache manager.
-   * 
-   * @throws Exception
-   *           any exception thrown when creating the cache manager
-   */
-  protected abstract void createCacheManager() throws Exception;
-
-  /**
    * Shuts down the cache manager before this factory is destroyed by the Spring
    * container.
    * 
@@ -91,6 +84,33 @@ public abstract class AbstractCacheManagerFactoryBean implements
           + " cache manager was not built. No need to shut it down.");
     }
   }
+
+  /**
+   * Notifies the Spring container that this factory is a singleton bean.
+   * 
+   * @return <code>true</code>.
+   */
+  public boolean isSingleton() {
+    return true;
+  }
+
+  /**
+   * Sets the location of the cache manager configuration file.
+   * 
+   * @param newConfigLocation
+   *          the new location of the cache manager configuration file
+   */
+  public final void setConfigLocation(Resource newConfigLocation) {
+    configLocation = newConfigLocation;
+  }
+
+  /**
+   * Creates the cache manager.
+   * 
+   * @throws Exception
+   *           any exception thrown when creating the cache manager
+   */
+  protected abstract void createCacheManager() throws Exception;
 
   /**
    * Shuts down the cache manager (if it was previously created.)
@@ -128,24 +148,5 @@ public abstract class AbstractCacheManagerFactoryBean implements
     }
 
     return properties;
-  }
-
-  /**
-   * Notifies the Spring container that this factory is a singleton bean.
-   * 
-   * @return <code>true</code>.
-   */
-  public boolean isSingleton() {
-    return true;
-  }
-
-  /**
-   * Sets the location of the cache manager configuration file.
-   * 
-   * @param newConfigLocation
-   *          the new location of the cache manager configuration file
-   */
-  public final void setConfigLocation(Resource newConfigLocation) {
-    configLocation = newConfigLocation;
   }
 }

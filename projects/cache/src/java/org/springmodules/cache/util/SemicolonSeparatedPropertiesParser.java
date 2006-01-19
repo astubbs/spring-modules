@@ -21,6 +21,7 @@ package org.springmodules.cache.util;
 import java.util.Properties;
 
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.regex.Match;
 import org.springmodules.cache.regex.Perl5Regex;
 import org.springmodules.cache.regex.Regex;

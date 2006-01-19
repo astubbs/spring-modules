@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 
 import org.springframework.aop.framework.AopConfigException;
 import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
+
 import org.springmodules.cache.FlushingModel;
 
 /**

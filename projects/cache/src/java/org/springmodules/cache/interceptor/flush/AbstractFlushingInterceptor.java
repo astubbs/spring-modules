@@ -28,8 +28,10 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.CacheModelValidator;
@@ -46,6 +48,9 @@ import org.springmodules.cache.provider.CacheProviderFacade;
 public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
     InitializingBean {
 
+  /** Logger available to subclasses */
+  protected final Log logger = LogFactory.getLog(getClass());
+
   private CacheProviderFacade cacheProviderFacade;
 
   /**
@@ -53,9 +58,6 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
    * cache. Each cache model is stored under a unique id (a String).
    */
   private Map flushingModels;
-
-  /** Logger available to subclasses */
-  protected final Log logger = LogFactory.getLog(getClass());
 
   /**
    * @throws FatalCacheException
@@ -123,23 +125,6 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
   }
 
   /**
-   * Returns the flushing model bound to an intercepted method.
-   * 
-   * @param methodInvocation
-   *          the description of the invocation to the intercepted method
-   * @return the flushing model boudn to the given intercepted method
-   */
-  protected abstract FlushingModel getModel(MethodInvocation methodInvocation);
-
-  /**
-   * @return the map that specifies how caching models should be bound to class
-   *         methods
-   */
-  protected final Map getFlushingModels() {
-    return flushingModels;
-  }
-
-  /**
    * Flushes the cache.
    * 
    * @param methodInvocation
@@ -173,17 +158,6 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
   }
 
   /**
-   * Gives subclasses the opportunity to set up their own properties.
-   * 
-   * @throws FatalCacheException
-   *           if one or more properties of this interceptor contain invalid
-   *           values or have an illegal state.
-   */
-  protected void onAfterPropertiesSet() throws FatalCacheException {
-    // no implementation.
-  }
-
-  /**
    * Sets the facade for the cache provider to use.
    * 
    * @param newCacheProviderFacade
@@ -202,6 +176,34 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
    */
   public final void setFlushingModels(Map newFlushingModels) {
     flushingModels = newFlushingModels;
+  }
+
+  /**
+   * @return the map that specifies how caching models should be bound to class
+   *         methods
+   */
+  protected final Map getFlushingModels() {
+    return flushingModels;
+  }
+
+  /**
+   * Returns the flushing model bound to an intercepted method.
+   * 
+   * @param methodInvocation
+   *          the description of the invocation to the intercepted method
+   * @return the flushing model boudn to the given intercepted method
+   */
+  protected abstract FlushingModel getModel(MethodInvocation methodInvocation);
+
+  /**
+   * Gives subclasses the opportunity to set up their own properties.
+   * 
+   * @throws FatalCacheException
+   *           if one or more properties of this interceptor contain invalid
+   *           values or have an illegal state.
+   */
+  protected void onAfterPropertiesSet() throws FatalCacheException {
+    // no implementation.
   }
 
 }

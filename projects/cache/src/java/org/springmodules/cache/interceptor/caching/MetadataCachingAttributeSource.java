@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.springframework.metadata.Attributes;
+
 import org.springmodules.cache.CacheAttribute;
 import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource;
 
@@ -38,6 +39,16 @@ public final class MetadataCachingAttributeSource extends
     AbstractCachingAttributeSource {
 
   private Attributes attributes;
+
+  /**
+   * Sets the underlying metadata attributes to use.
+   * 
+   * @param newAttributes
+   *          the new underlying metadata attributes
+   */
+  public void setAttributes(Attributes newAttributes) {
+    attributes = newAttributes;
+  }
 
   /**
    * @see org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource#findAllAttributes(Method)
@@ -68,16 +79,6 @@ public final class MetadataCachingAttributeSource extends
    */
   protected Attributes getAttributes() {
     return attributes;
-  }
-
-  /**
-   * Sets the underlying metadata attributes to use.
-   * 
-   * @param newAttributes
-   *          the new underlying metadata attributes
-   */
-  public void setAttributes(Attributes newAttributes) {
-    attributes = newAttributes;
   }
 
 }

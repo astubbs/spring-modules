@@ -37,6 +37,17 @@ public abstract class AbstractCachingAttributeSource extends
     CachingAttributeSource {
 
   /**
+   * @see CachingAttributeSource#getCachingAttribute(Method, Class)
+   */
+  public final Cached getCachingAttribute(Method method, Class targetClass) {
+    Cached attribute = null;
+    if (CachingUtils.isCacheable(method)) {
+      attribute = (Cached) getAttribute(method, targetClass);
+    }
+    return attribute;
+  }
+
+  /**
    * @see AbstractSingleMetadataCacheAttributeSource#findAttribute(Collection)
    */
   protected CacheAttribute findAttribute(Collection attributes) {
@@ -48,17 +59,6 @@ public abstract class AbstractCachingAttributeSource extends
           attribute = (CacheAttribute) object;
         }
       }
-    }
-    return attribute;
-  }
-
-  /**
-   * @see CachingAttributeSource#getCachingAttribute(Method, Class)
-   */
-  public final Cached getCachingAttribute(Method method, Class targetClass) {
-    Cached attribute = null;
-    if (CachingUtils.isCacheable(method)) {
-      attribute = (Cached) getAttribute(method, targetClass);
     }
     return attribute;
   }

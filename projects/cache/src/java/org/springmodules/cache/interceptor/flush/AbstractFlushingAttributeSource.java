@@ -38,6 +38,14 @@ public abstract class AbstractFlushingAttributeSource extends
     FlushingAttributeSource {
 
   /**
+   * @see FlushingAttributeSource#getFlushingAttribute(Method, Class)
+   */
+  public FlushCache getFlushingAttribute(Method method, Class targetClass) {
+    FlushCache attribute = (FlushCache) getAttribute(method, targetClass);
+    return attribute;
+  }
+
+  /**
    * @see AbstractSingleMetadataCacheAttributeSource#findAttribute(Collection)
    */
   protected CacheAttribute findAttribute(Collection attributes) {
@@ -54,14 +62,6 @@ public abstract class AbstractFlushingAttributeSource extends
       }
     }
 
-    return attribute;
-  }
-
-  /**
-   * @see FlushingAttributeSource#getFlushingAttribute(Method, Class)
-   */
-  public FlushCache getFlushingAttribute(Method method, Class targetClass) {
-    FlushCache attribute = (FlushCache) getAttribute(method, targetClass);
     return attribute;
   }
 

@@ -20,6 +20,7 @@ package org.springmodules.cache.interceptor.caching;
 import java.lang.reflect.Method;
 
 import org.aopalliance.intercept.MethodInvocation;
+
 import org.springmodules.cache.CachingModel;
 
 /**
@@ -43,16 +44,6 @@ public abstract class AbstractModelSourceCachingInterceptor extends
   }
 
   /**
-   * @see AbstractCachingInterceptor#getModel(MethodInvocation)
-   */
-  protected final CachingModel getModel(MethodInvocation methodInvocation) {
-    Object thisObject = methodInvocation.getThis();
-    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
-    Method method = methodInvocation.getMethod();
-    return cachingModelSource.getCachingModel(method, targetClass);
-  }
-
-  /**
    * Sets the source of caching models for class methods.
    * 
    * @param newCachingModelSource
@@ -61,6 +52,16 @@ public abstract class AbstractModelSourceCachingInterceptor extends
   public final void setCachingModelSource(
       CachingModelSource newCachingModelSource) {
     cachingModelSource = newCachingModelSource;
+  }
+
+  /**
+   * @see AbstractCachingInterceptor#getModel(MethodInvocation)
+   */
+  protected final CachingModel getModel(MethodInvocation methodInvocation) {
+    Object thisObject = methodInvocation.getThis();
+    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
+    Method method = methodInvocation.getMethod();
+    return cachingModelSource.getCachingModel(method, targetClass);
   }
 
 }

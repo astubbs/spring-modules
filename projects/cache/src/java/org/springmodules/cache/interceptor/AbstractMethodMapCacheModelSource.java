@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springmodules.cache.CacheModel;
 import org.springmodules.cache.util.TextMatcher;
 
@@ -58,6 +59,83 @@ public abstract class AbstractMethodMapCacheModelSource {
     super();
     cacheModels = new HashMap();
     registeredMethodMap = new HashMap();
+  }
+
+  /**
+   * @return an <i>unmodifiable</i> view of the map containing cache models.
+   *          The key of each entry is the <code>java.lang.reflect.Method</code>
+   *          to which the cache model is attached to
+   */
+  public final Map getCacheModels() {
+    return Collections.unmodifiableMap(cacheModels);
+  }
+
+  /**
+   * <p>
+   * Binds the given cache model to the methods which names match the given
+   * method name. The fully qualified name of the class declaring the method
+   * should be included.
+   * </p>
+   * <p>
+   * Method names can end or start with "*" for matching multiple methods.
+   * </p>
+   * 
+   * @param fullyQualifiedMethodName
+   *          the fully qualified name of the class methods to attach the cache
+   *          attribute to. class and method name, separated by a dot
+   * @param cacheModel
+   *          the cache model
+   * 
+   * @throws IllegalArgumentException
+   *           if the given method name does not include the fully qualified
+   *           name of the declaring class
+   * @throws IllegalArgumentException
+   *           if the specified class cannot be found
+   * 
+   * @see #addCacheModel(Class, String, CacheModel)
+   */
+  protected final void addCacheModel(String fullyQualifiedMethodName,
+      CacheModel cacheModel) {
+    int methodSeparatorIndex = fullyQualifiedMethodName.lastIndexOf(".");
+
+    if (methodSeparatorIndex == -1) {
+      throw new IllegalArgumentException("'" + fullyQualifiedMethodName
+          + "' is not a fully qualified name");
+    }
+
+    String className = fullyQualifiedMethodName.substring(0,
+        methodSeparatorIndex);
+    String methodName = fullyQualifiedMethodName
+        .substring(methodSeparatorIndex + 1);
+
+    try {
+      Class targetClass = Class.forName(className, true, Thread.currentThread()
+          .getContextClassLoader());
+      addCacheModel(targetClass, methodName, cacheModel);
+
+    } catch (ClassNotFoundException exception) {
+      throw new IllegalArgumentException("Class '" + className + "' not found");
+    }
+  }
+
+  /**
+   * <p>
+   * Returns <code>true</code> if the given method name matches the mapped
+   * name. The default implementation checks for "xxx*" and "*xxx" matches.
+   * </p>
+   * <p>
+   * For example, this method will return <code>true</code> if the given
+   * method name is &quot;getUser&quot; and the mapped name is &quot;get*&quot;
+   * </p>
+   * 
+   * @param methodName
+   *          the method name
+   * @param mappedName
+   *          the name in the descriptor
+   * @return <code>true</code> if the names match
+   */
+  protected boolean isMatch(String methodName, String mappedName) {
+    return TextMatcher.isMatch(methodName, mappedName);
   }
 
   /**
@@ -132,82 +210,5 @@ public abstract class AbstractMethodMapCacheModelSource {
     logger.info("Adding method [" + method + "] with cache model ["
         + cacheModel + "]");
     cacheModels.put(method, cacheModel);
-  }
-
-  /**
-   * <p>
-   * Binds the given cache model to the methods which names match the given
-   * method name. The fully qualified name of the class declaring the method
-   * should be included.
-   * </p>
-   * <p>
-   * Method names can end or start with "*" for matching multiple methods.
-   * </p>
-   * 
-   * @param fullyQualifiedMethodName
-   *          the fully qualified name of the class methods to attach the cache
-   *          attribute to. class and method name, separated by a dot
-   * @param cacheModel
-   *          the cache model
-   * 
-   * @throws IllegalArgumentException
-   *           if the given method name does not include the fully qualified
-   *           name of the declaring class
-   * @throws IllegalArgumentException
-   *           if the specified class cannot be found
-   * 
-   * @see #addCacheModel(Class, String, CacheModel)
-   */
-  protected final void addCacheModel(String fullyQualifiedMethodName,
-      CacheModel cacheModel) {
-    int methodSeparatorIndex = fullyQualifiedMethodName.lastIndexOf(".");
-
-    if (methodSeparatorIndex == -1) {
-      throw new IllegalArgumentException("'" + fullyQualifiedMethodName
-          + "' is not a fully qualified name");
-    }
-
-    String className = fullyQualifiedMethodName.substring(0,
-        methodSeparatorIndex);
-    String methodName = fullyQualifiedMethodName
-        .substring(methodSeparatorIndex + 1);
-
-    try {
-      Class targetClass = Class.forName(className, true, Thread.currentThread()
-          .getContextClassLoader());
-      addCacheModel(targetClass, methodName, cacheModel);
-
-    } catch (ClassNotFoundException exception) {
-      throw new IllegalArgumentException("Class '" + className + "' not found");
-    }
-  }
-
-  /**
-   * @return an <i>unmodifiable</i> view of the map containing cache models.
-   *          The key of each entry is the <code>java.lang.reflect.Method</code>
-   *          to which the cache model is attached to
-   */
-  public final Map getCacheModels() {
-    return Collections.unmodifiableMap(cacheModels);
-  }
-
-  /**
-   * <p>
-   * Returns <code>true</code> if the given method name matches the mapped
-   * name. The default implementation checks for "xxx*" and "*xxx" matches.
-   * </p>
-   * <p>
-   * For example, this method will return <code>true</code> if the given
-   * method name is &quot;getUser&quot; and the mapped name is &quot;get*&quot;
-   * </p>
-   * 
-   * @param methodName
-   *          the method name
-   * @param mappedName
-   *          the name in the descriptor
-   * @return <code>true</code> if the names match
-   */
-  protected boolean isMatch(String methodName, String mappedName) {
-    return TextMatcher.isMatch(methodName, mappedName);
   }
 }

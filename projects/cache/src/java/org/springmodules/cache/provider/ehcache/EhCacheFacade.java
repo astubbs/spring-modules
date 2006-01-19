@@ -26,6 +26,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
@@ -64,6 +65,44 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
+   * Returns the validator of cache models. It is always an instance of
+   * <code>{@link EhCacheModelValidator}</code>.
+   * 
+   * @return the validator of cache models
+   */
+  public CacheModelValidator getCacheModelValidator() {
+    return cacheModelValidator;
+  }
+
+  /**
+   * @see org.springmodules.cache.provider.CacheProviderFacade#getCachingModelEditor()
+   */
+  public PropertyEditor getCachingModelEditor() {
+    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+    editor.setCacheModelClass(EhCacheCachingModel.class);
+    return editor;
+  }
+
+  /**
+   * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
+   */
+  public PropertyEditor getFlushingModelEditor() {
+    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+    editor.setCacheModelClass(EhCacheFlushingModel.class);
+    return editor;
+  }
+
+  /**
+   * Sets the EHCache cache manager to use.
+   * 
+   * @param newCacheManager
+   *          the new cache manager
+   */
+  public void setCacheManager(CacheManager newCacheManager) {
+    cacheManager = newCacheManager;
+  }
+
+  /**
    * Returns a EHCache cache from the cache manager.
    * 
    * @param name
@@ -90,34 +129,6 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
     }
 
     return cache;
-  }
-
-  /**
-   * Returns the validator of cache models. It is always an instance of
-   * <code>{@link EhCacheModelValidator}</code>.
-   * 
-   * @return the validator of cache models
-   */
-  public CacheModelValidator getCacheModelValidator() {
-    return cacheModelValidator;
-  }
-
-  /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#getCachingModelEditor()
-   */
-  public PropertyEditor getCachingModelEditor() {
-    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
-    editor.setCacheModelClass(EhCacheCachingModel.class);
-    return editor;
-  }
-
-  /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
-   */
-  public PropertyEditor getFlushingModelEditor() {
-    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
-    editor.setCacheModelClass(EhCacheFlushingModel.class);
-    return editor;
   }
 
   /**
@@ -277,16 +288,6 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
-  }
-
-  /**
-   * Sets the EHCache cache manager to use.
-   * 
-   * @param newCacheManager
-   *          the new cache manager
-   */
-  public void setCacheManager(CacheManager newCacheManager) {
-    cacheManager = newCacheManager;
   }
 
   /**

@@ -22,8 +22,10 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.aopalliance.intercept.MethodInvocation;
+
 import org.springframework.metadata.Attributes;
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.FlushingModel;
 
 /**
@@ -42,49 +44,10 @@ public class MetadataFlushingInterceptor extends AbstractFlushingInterceptor {
   private FlushingAttributeSource flushingAttributeSource;
 
   /**
-   * Returns the metadata attribute of the intercepted method.
-   * 
-   * @param methodInvocation
-   *          the description of an invocation to the method.
-   * @return the metadata attribute of the intercepted method.
-   */
-  protected FlushCache getFlushingAttribute(MethodInvocation methodInvocation) {
-    Object thisObject = methodInvocation.getThis();
-    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
-
-    Method method = methodInvocation.getMethod();
-
-    FlushingAttributeSource attributeSource = getFlushingAttributeSource();
-    FlushCache attribute = attributeSource.getFlushingAttribute(method,
-        targetClass);
-    return attribute;
-  }
-
-  /**
    * @return the source of flushing metadata attributes for class methods
    */
   public final FlushingAttributeSource getFlushingAttributeSource() {
     return flushingAttributeSource;
-  }
-
-  /**
-   * @see AbstractFlushingInterceptor#getModel(MethodInvocation)
-   */
-  protected final FlushingModel getModel(MethodInvocation methodInvocation) {
-    Map flushingModels = getFlushingModels();
-    FlushingModel model = null;
-
-    if (flushingModels != null && !flushingModels.isEmpty()) {
-      FlushCache attribute = getFlushingAttribute(methodInvocation);
-      if (attribute != null) {
-        String id = attribute.getModelId();
-        if (StringUtils.hasText(id)) {
-          model = (FlushingModel) flushingModels.get(id);
-        }
-      }
-    }
-
-    return model;
   }
 
   /**
@@ -108,6 +71,45 @@ public class MetadataFlushingInterceptor extends AbstractFlushingInterceptor {
   public final void setFlushingAttributeSource(
       FlushingAttributeSource newFlushingAttributeSource) {
     flushingAttributeSource = newFlushingAttributeSource;
+  }
+
+  /**
+   * Returns the metadata attribute of the intercepted method.
+   * 
+   * @param methodInvocation
+   *          the description of an invocation to the method.
+   * @return the metadata attribute of the intercepted method.
+   */
+  protected FlushCache getFlushingAttribute(MethodInvocation methodInvocation) {
+    Object thisObject = methodInvocation.getThis();
+    Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
+
+    Method method = methodInvocation.getMethod();
+
+    FlushingAttributeSource attributeSource = getFlushingAttributeSource();
+    FlushCache attribute = attributeSource.getFlushingAttribute(method,
+        targetClass);
+    return attribute;
+  }
+
+  /**
+   * @see AbstractFlushingInterceptor#getModel(MethodInvocation)
+   */
+  protected final FlushingModel getModel(MethodInvocation methodInvocation) {
+    Map flushingModels = getFlushingModels();
+    FlushingModel model = null;
+
+    if (flushingModels != null && !flushingModels.isEmpty()) {
+      FlushCache attribute = getFlushingAttribute(methodInvocation);
+      if (attribute != null) {
+        String id = attribute.getModelId();
+        if (StringUtils.hasText(id)) {
+          model = (FlushingModel) flushingModels.get(id);
+        }
+      }
+    }
+
+    return model;
   }
 
 }

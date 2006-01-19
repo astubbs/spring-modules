@@ -21,6 +21,7 @@ import java.beans.PropertyEditor;
 import java.io.Serializable;
 
 import org.jboss.cache.TreeCache;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
@@ -77,6 +78,16 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
     ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
     editor.setCacheModelClass(JbossCacheFlushingModel.class);
     return editor;
+  }
+
+  /**
+   * Sets the JBossCache cache manager to use.
+   * 
+   * @param newCacheManager
+   *          the new cache manager
+   */
+  public void setCacheManager(TreeCache newCacheManager) {
+    cacheManager = newCacheManager;
   }
 
   /**
@@ -205,16 +216,6 @@ public final class JbossCacheFacade extends AbstractCacheProviderFacade {
     } catch (Exception exception) {
       throw new CacheAccessException(exception);
     }
-  }
-
-  /**
-   * Sets the JBossCache cache manager to use.
-   * 
-   * @param newCacheManager
-   *          the new cache manager
-   */
-  public void setCacheManager(TreeCache newCacheManager) {
-    cacheManager = newCacheManager;
   }
 
   /**

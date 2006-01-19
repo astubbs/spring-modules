@@ -23,16 +23,17 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.opensymphony.oscache.base.NeedsRefreshException;
+import com.opensymphony.oscache.general.GeneralCacheAdministrator;
+
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.AbstractCacheProviderFacade;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.ReflectionCacheModelEditor;
-
-import com.opensymphony.oscache.base.NeedsRefreshException;
-import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
 /**
  * <p>
@@ -82,6 +83,25 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
+   * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
+   */
+  public PropertyEditor getFlushingModelEditor() {
+    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
+    editor.setCacheModelClass(OsCacheFlushingModel.class);
+    return editor;
+  }
+
+  /**
+   * Sets the OSCache cache manager to use.
+   * 
+   * @param newCacheManager
+   *          the new cache manager
+   */
+  public void setCacheManager(GeneralCacheAdministrator newCacheManager) {
+    cacheManager = newCacheManager;
+  }
+
+  /**
    * Returns the <code>String</code> representation of the given key.
    * 
    * @param key
@@ -90,15 +110,6 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
    */
   protected String getEntryKey(Serializable key) {
     return key.toString();
-  }
-
-  /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#getFlushingModelEditor()
-   */
-  public PropertyEditor getFlushingModelEditor() {
-    ReflectionCacheModelEditor editor = new ReflectionCacheModelEditor();
-    editor.setCacheModelClass(OsCacheFlushingModel.class);
-    return editor;
   }
 
   /**
@@ -194,16 +205,6 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
   protected void onRemoveFromCache(Serializable key, CachingModel model) {
     String newKey = getEntryKey(key);
     cacheManager.flushEntry(newKey);
-  }
-
-  /**
-   * Sets the OSCache cache manager to use.
-   * 
-   * @param newCacheManager
-   *          the new cache manager
-   */
-  public void setCacheManager(GeneralCacheAdministrator newCacheManager) {
-    cacheManager = newCacheManager;
   }
 
   /**
