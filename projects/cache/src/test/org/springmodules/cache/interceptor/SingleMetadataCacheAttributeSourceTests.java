@@ -27,6 +27,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.easymock.classextension.MockClassControl;
+
 import org.springmodules.cache.CacheAttribute;
 import org.springmodules.cache.mock.MockCacheAttribute;
 
@@ -69,58 +70,6 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
   public SingleMetadataCacheAttributeSourceTests(String name) {
     super(name);
-  }
-
-  /**
-   * Asserts that the specified metadata attribute was cached by
-   * <code>{@link AbstractSingleMetadataCacheAttributeSource}</code>.
-   * 
-   * @param expectedCachedAttribute
-   *          the attribute that is expected to be cached.
-   */
-  private void assertCacheAttributeIsCached(Object expectedCachedAttribute) {
-    Map attributeMap = attributeSource.getAttributeMap();
-    assertFalse(attributeMap.isEmpty());
-
-    boolean found = false;
-    for (Iterator i = attributeMap.entrySet().iterator(); i.hasNext();) {
-      Map.Entry attributeMapEntry = (Map.Entry) i.next();
-      found = (expectedCachedAttribute == attributeMapEntry.getValue());
-    }
-
-    assertTrue("The metadata attribute '" + expectedCachedAttribute
-        + "' was not cached.", found);
-  }
-
-  protected void setUp() throws Exception {
-    setUpSingleAttributeSourceAsMockObject();
-
-    targetClass = String.class;
-    method = targetClass.getMethod("charAt", new Class[] { int.class });
-
-    cacheAttribute = new MockCacheAttribute();
-
-    allAttributes = new ArrayList();
-  }
-
-  private void setUpSingleAttributeSourceAsMockObject() throws Exception {
-    Class classToMock = AbstractSingleMetadataCacheAttributeSource.class;
-    Class superOfClassToMock = AbstractMetadataCacheAttributeSource.class;
-
-    Method findAllAttributesMethod = superOfClassToMock.getDeclaredMethod(
-        "findAllAttributes", new Class[] { Method.class });
-
-    Method findAttributeMethod = classToMock.getDeclaredMethod("findAttribute",
-        new Class[] { Collection.class });
-
-    Method[] methodsToMock = new Method[] { findAllAttributesMethod,
-        findAttributeMethod };
-
-    attributeSourceControl = MockClassControl.createStrictControl(classToMock,
-        null, null, methodsToMock);
-
-    attributeSource = (AbstractSingleMetadataCacheAttributeSource) attributeSourceControl
-        .getMock();
   }
 
   /**
@@ -324,6 +273,58 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     assertNull(returnedCacheAttribute);
 
     attributeSourceControl.verify();
+  }
+
+  protected void setUp() throws Exception {
+    setUpSingleAttributeSourceAsMockObject();
+
+    targetClass = String.class;
+    method = targetClass.getMethod("charAt", new Class[] { int.class });
+
+    cacheAttribute = new MockCacheAttribute();
+
+    allAttributes = new ArrayList();
+  }
+
+  /**
+   * Asserts that the specified metadata attribute was cached by
+   * <code>{@link AbstractSingleMetadataCacheAttributeSource}</code>.
+   * 
+   * @param expectedCachedAttribute
+   *          the attribute that is expected to be cached.
+   */
+  private void assertCacheAttributeIsCached(Object expectedCachedAttribute) {
+    Map attributeMap = attributeSource.getAttributeMap();
+    assertFalse(attributeMap.isEmpty());
+
+    boolean found = false;
+    for (Iterator i = attributeMap.entrySet().iterator(); i.hasNext();) {
+      Map.Entry attributeMapEntry = (Map.Entry) i.next();
+      found = (expectedCachedAttribute == attributeMapEntry.getValue());
+    }
+
+    assertTrue("The metadata attribute '" + expectedCachedAttribute
+        + "' was not cached.", found);
+  }
+
+  private void setUpSingleAttributeSourceAsMockObject() throws Exception {
+    Class classToMock = AbstractSingleMetadataCacheAttributeSource.class;
+    Class superOfClassToMock = AbstractMetadataCacheAttributeSource.class;
+
+    Method findAllAttributesMethod = superOfClassToMock.getDeclaredMethod(
+        "findAllAttributes", new Class[] { Method.class });
+
+    Method findAttributeMethod = classToMock.getDeclaredMethod("findAttribute",
+        new Class[] { Collection.class });
+
+    Method[] methodsToMock = new Method[] { findAllAttributesMethod,
+        findAttributeMethod };
+
+    attributeSourceControl = MockClassControl.createStrictControl(classToMock,
+        null, null, methodsToMock);
+
+    attributeSource = (AbstractSingleMetadataCacheAttributeSource) attributeSourceControl
+        .getMock();
   }
 
 }
