@@ -42,14 +42,6 @@ public class MethodMapFlushingInterceptorTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    Map models = new HashMap();
-    models.put("java.lang.String.toString", new MockFlushingModel());
-
-    interceptor = new MethodMapFlushingInterceptor();
-    interceptor.setFlushingModels(models);
-  }
-
   public void testOnAfterPropertiesSetWithFlushingModelSourceEqualToNull()
       throws Exception {
     interceptor.setFlushingModelSource(null);
@@ -115,5 +107,13 @@ public class MethodMapFlushingInterceptorTests extends TestCase {
     interceptor.setFlushingModelSource(modelSource);
     interceptor.onAfterPropertiesSet();
     assertSame(modelSource, interceptor.getFlushingModelSource());
+  }
+
+  protected void setUp() {
+    Map models = new HashMap();
+    models.put("java.lang.String.toString", new MockFlushingModel());
+
+    interceptor = new MethodMapFlushingInterceptor();
+    interceptor.setFlushingModels(models);
   }
 }

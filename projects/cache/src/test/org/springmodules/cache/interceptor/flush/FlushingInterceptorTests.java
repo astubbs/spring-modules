@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
+
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.mock.MockFlushingModel;
@@ -78,77 +79,6 @@ public class FlushingInterceptorTests extends TestCase {
 
   public FlushingInterceptorTests(String name) {
     super(name);
-  }
-
-  private void assertAfterPropertiesSetThrowsException() {
-    try {
-      interceptor.afterPropertiesSet();
-      fail();
-    } catch (FatalCacheException exception) {
-      // we are expecting this exception.
-    }
-  }
-
-  private Properties createModelsAsProperties(int modelCount) {
-    String keyPrefix = "key";
-    String valuePrefix = "value";
-
-    Properties models = new Properties();
-    for (int i = 0; i < modelCount; i++) {
-      models.setProperty(keyPrefix + i, valuePrefix + i);
-    }
-
-    return models;
-  }
-
-  private Object expectMethodInvocationCallsProceed() throws Throwable {
-    setUpMethodInvocation();
-
-    Object expected = new Object();
-    invocationControl.expectAndReturn(invocation.proceed(), expected);
-    return expected;
-  }
-
-  private void replayMocks() {
-    cacheProviderFacadeControl.replay();
-
-    if (editorControl != null) {
-      editorControl.replay();
-    }
-
-    if (invocationControl != null) {
-      invocationControl.replay();
-    }
-
-    if (validatorControl != null) {
-      validatorControl.replay();
-    }
-  }
-
-  protected void setUp() {
-    cacheProviderFacadeControl = MockControl
-        .createStrictControl(CacheProviderFacade.class);
-    cacheProviderFacade = (CacheProviderFacade) cacheProviderFacadeControl
-        .getMock();
-
-    interceptor = new MockFlushingInterceptor();
-    interceptor.setCacheProviderFacade(cacheProviderFacade);
-  }
-
-  private void setUpFlushingModelEditor() {
-    editorControl = MockControl.createControl(PropertyEditor.class);
-    editor = (PropertyEditor) editorControl.getMock();
-  }
-
-  private void setUpMethodInvocation() {
-    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
-    invocation = (MethodInvocation) invocationControl.getMock();
-  }
-
-  private void setUpValidator() {
-    validatorControl = MockControl
-        .createStrictControl(CacheModelValidator.class);
-    validator = (CacheModelValidator) validatorControl.getMock();
   }
 
   public void testAfterPropertiesSetWhenCacheModelValidatorThrowsException() {
@@ -320,6 +250,77 @@ public class FlushingInterceptorTests extends TestCase {
 
     assertSame(expected, interceptor.invoke(invocation));
     verifyMocks();
+  }
+
+  protected void setUp() {
+    cacheProviderFacadeControl = MockControl
+        .createStrictControl(CacheProviderFacade.class);
+    cacheProviderFacade = (CacheProviderFacade) cacheProviderFacadeControl
+        .getMock();
+
+    interceptor = new MockFlushingInterceptor();
+    interceptor.setCacheProviderFacade(cacheProviderFacade);
+  }
+
+  private void assertAfterPropertiesSetThrowsException() {
+    try {
+      interceptor.afterPropertiesSet();
+      fail();
+    } catch (FatalCacheException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  private Properties createModelsAsProperties(int modelCount) {
+    String keyPrefix = "key";
+    String valuePrefix = "value";
+
+    Properties models = new Properties();
+    for (int i = 0; i < modelCount; i++) {
+      models.setProperty(keyPrefix + i, valuePrefix + i);
+    }
+
+    return models;
+  }
+
+  private Object expectMethodInvocationCallsProceed() throws Throwable {
+    setUpMethodInvocation();
+
+    Object expected = new Object();
+    invocationControl.expectAndReturn(invocation.proceed(), expected);
+    return expected;
+  }
+
+  private void replayMocks() {
+    cacheProviderFacadeControl.replay();
+
+    if (editorControl != null) {
+      editorControl.replay();
+    }
+
+    if (invocationControl != null) {
+      invocationControl.replay();
+    }
+
+    if (validatorControl != null) {
+      validatorControl.replay();
+    }
+  }
+
+  private void setUpFlushingModelEditor() {
+    editorControl = MockControl.createControl(PropertyEditor.class);
+    editor = (PropertyEditor) editorControl.getMock();
+  }
+
+  private void setUpMethodInvocation() {
+    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
+    invocation = (MethodInvocation) invocationControl.getMock();
+  }
+
+  private void setUpValidator() {
+    validatorControl = MockControl
+        .createStrictControl(CacheModelValidator.class);
+    validator = (CacheModelValidator) validatorControl.getMock();
   }
 
   private void verifyMocks() {

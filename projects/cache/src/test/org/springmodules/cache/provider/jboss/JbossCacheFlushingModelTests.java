@@ -18,6 +18,7 @@
 package org.springmodules.cache.provider.jboss;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -34,10 +35,6 @@ public class JbossCacheFlushingModelTests extends
 
   public JbossCacheFlushingModelTests(String newName) {
     super(newName);
-  }
-
-  protected void setUp() {
-    model = new JbossCacheFlushingModel();
   }
 
   /**
@@ -110,21 +107,21 @@ public class JbossCacheFlushingModelTests extends
     assertEqualsNullComparisonReturnsFalse(model);
   }
 
-  public void testToStringWithNodesEqualToNull() {
-    model.setNodes((String[]) null);
-    model.setFlushBeforeMethodExecution(true);
-    String actual = model.getClass().getName() + "@"
-        + ObjectUtils.getIdentityHexString(model)
-        + "[nodes=null, flushBeforeMethodExecution=true]";
-    assertEquals(model.toString(), actual);
-  }
-
   public void testToStringWithEmptyNodes() {
     model.setNodes(new String[0]);
     model.setFlushBeforeMethodExecution(true);
     String actual = model.getClass().getName() + "@"
         + ObjectUtils.getIdentityHexString(model)
         + "[nodes={}, flushBeforeMethodExecution=true]";
+    assertEquals(model.toString(), actual);
+  }
+
+  public void testToStringWithNodesEqualToNull() {
+    model.setNodes((String[]) null);
+    model.setFlushBeforeMethodExecution(true);
+    String actual = model.getClass().getName() + "@"
+        + ObjectUtils.getIdentityHexString(model)
+        + "[nodes=null, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
   }
 
@@ -135,6 +132,10 @@ public class JbossCacheFlushingModelTests extends
         + ObjectUtils.getIdentityHexString(model)
         + "[nodes={'a/b/c'}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
+  }
+
+  protected void setUp() {
+    model = new JbossCacheFlushingModel();
   }
 
 }

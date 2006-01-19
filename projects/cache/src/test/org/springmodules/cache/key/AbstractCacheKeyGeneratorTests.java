@@ -48,6 +48,66 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
     super(name);
   }
 
+  public void testGenerateKeyGeneratesDifferentKeysForNotEqualMethodsWithEqualArguments()
+      throws Exception {
+    Method indexOf = createStringIndexOfMethod();
+    Object[] indexOfArgs = new Object[] { new Integer(4), new Integer(0) };
+
+    Method lastIndexOf = createStringLastIndexOfMethod();
+    Object[] lastIndexOfArgs = new Object[] { new Integer(4), new Integer(0) };
+
+    Serializable key1 = executeGenerateArgumentHashCode(indexOf, indexOfArgs);
+
+    methodInvocationControl.reset();
+    Serializable key2 = executeGenerateArgumentHashCode(lastIndexOf,
+        lastIndexOfArgs);
+
+    assertFalse(key1.equals(key2));
+  }
+
+  public void testGenerateKeyGeneratesDifferentKeysForNotEqualMethodsWithNotEqualArguments()
+      throws Exception {
+    Method indexOf = createStringIndexOfMethod();
+    Object[] indexOfArgs = new Object[] { new Integer(4), new Integer(0) };
+
+    Method lastIndexOf = createStringLastIndexOfMethod();
+    Object[] lastIndexOfArgs = new Object[] { new Integer(5), new Integer(4) };
+
+    Serializable key1 = executeGenerateArgumentHashCode(indexOf, indexOfArgs);
+
+    methodInvocationControl.reset();
+    Serializable key2 = executeGenerateArgumentHashCode(lastIndexOf,
+        lastIndexOfArgs);
+
+    assertFalse(key1.equals(key2));
+  }
+
+  public void testGenerateKeyGeneratesDifferentKeysForSameMethodWithNotEqualArguments()
+      throws Exception {
+    Method method = createStringIndexOfMethod();
+    Object[] args1 = new Object[] { new Integer(4), new Integer(0) };
+    Serializable key1 = executeGenerateArgumentHashCode(method, args1);
+
+    methodInvocationControl.reset();
+    Object[] args2 = new Object[] { new Integer(5), new Integer(2) };
+    Serializable key2 = executeGenerateArgumentHashCode(method, args2);
+
+    assertFalse(key1.equals(key2));
+  }
+
+  public void testGenerateKeyGeneratesSameKeyForSameMethodAndEqualArguments()
+      throws Exception {
+    Method method = createStringIndexOfMethod();
+    Object[] args = new Object[] { new Integer(4), new Integer(0) };
+
+    Serializable expected = executeGenerateArgumentHashCode(method, args);
+
+    methodInvocationControl.reset();
+    Serializable actual = executeGenerateArgumentHashCode(method, args);
+
+    assertEquals(expected, actual);
+  }
+
   /**
    * Gives subclasses the opportunity to set up their own fixture.
    */
@@ -107,65 +167,5 @@ public abstract class AbstractCacheKeyGeneratorTests extends TestCase {
   private Method createStringLastIndexOfMethod() throws Exception {
     return String.class.getMethod("lastIndexOf", new Class[] { int.class,
         int.class });
-  }
-
-  public void testGenerateKeyGeneratesDifferentKeysForNotEqualMethodsWithEqualArguments()
-      throws Exception {
-    Method indexOf = createStringIndexOfMethod();
-    Object[] indexOfArgs = new Object[] { new Integer(4), new Integer(0) };
-
-    Method lastIndexOf = createStringLastIndexOfMethod();
-    Object[] lastIndexOfArgs = new Object[] { new Integer(4), new Integer(0) };
-
-    Serializable key1 = executeGenerateArgumentHashCode(indexOf, indexOfArgs);
-
-    methodInvocationControl.reset();
-    Serializable key2 = executeGenerateArgumentHashCode(lastIndexOf,
-        lastIndexOfArgs);
-
-    assertFalse(key1.equals(key2));
-  }
-
-  public void testGenerateKeyGeneratesDifferentKeysForNotEqualMethodsWithNotEqualArguments()
-      throws Exception {
-    Method indexOf = createStringIndexOfMethod();
-    Object[] indexOfArgs = new Object[] { new Integer(4), new Integer(0) };
-
-    Method lastIndexOf = createStringLastIndexOfMethod();
-    Object[] lastIndexOfArgs = new Object[] { new Integer(5), new Integer(4) };
-
-    Serializable key1 = executeGenerateArgumentHashCode(indexOf, indexOfArgs);
-
-    methodInvocationControl.reset();
-    Serializable key2 = executeGenerateArgumentHashCode(lastIndexOf,
-        lastIndexOfArgs);
-
-    assertFalse(key1.equals(key2));
-  }
-
-  public void testGenerateKeyGeneratesDifferentKeysForSameMethodWithNotEqualArguments()
-      throws Exception {
-    Method method = createStringIndexOfMethod();
-    Object[] args1 = new Object[] { new Integer(4), new Integer(0) };
-    Serializable key1 = executeGenerateArgumentHashCode(method, args1);
-
-    methodInvocationControl.reset();
-    Object[] args2 = new Object[] { new Integer(5), new Integer(2) };
-    Serializable key2 = executeGenerateArgumentHashCode(method, args2);
-
-    assertFalse(key1.equals(key2));
-  }
-
-  public void testGenerateKeyGeneratesSameKeyForSameMethodAndEqualArguments()
-      throws Exception {
-    Method method = createStringIndexOfMethod();
-    Object[] args = new Object[] { new Integer(4), new Integer(0) };
-
-    Serializable expected = executeGenerateArgumentHashCode(method, args);
-
-    methodInvocationControl.reset();
-    Serializable actual = executeGenerateArgumentHashCode(method, args);
-
-    assertEquals(expected, actual);
   }
 }

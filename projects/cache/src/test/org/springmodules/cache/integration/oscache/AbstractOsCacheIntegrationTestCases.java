@@ -20,12 +20,13 @@ package org.springmodules.cache.integration.oscache;
 
 import java.io.Serializable;
 
-import org.springframework.util.StringUtils;
-import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
-import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
-
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
+
+import org.springframework.util.StringUtils;
+
+import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
+import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 
 /**
  * <p>

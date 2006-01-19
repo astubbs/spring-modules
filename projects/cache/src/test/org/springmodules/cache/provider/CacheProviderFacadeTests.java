@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
+
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
@@ -59,100 +60,6 @@ public final class CacheProviderFacadeTests extends TestCase {
 
   public CacheProviderFacadeTests(String name) {
     super(name);
-  }
-
-  private void assertIsNotSerializable(Object obj) {
-    assertFalse(obj.getClass().getName() + " should not be serializable",
-        obj instanceof Serializable);
-  }
-
-  private CacheException createCacheException() {
-    return new CacheNotFoundException("someCache");
-  }
-
-  private CacheException expectOnCancelCacheUpdateToThrowException() {
-    CacheException expected = createCacheException();
-    cacheProviderFacade.onCancelCacheUpdate(key);
-    cacheProviderFacadeControl.setThrowable(expected);
-
-    return expected;
-  }
-
-  private CacheException expectOnFlushCacheToThrowException() {
-    CacheException expected = createCacheException();
-    cacheProviderFacade.onFlushCache(flushingModel);
-    cacheProviderFacadeControl.setThrowable(expected);
-
-    return expected;
-  }
-
-  private CacheException expectOnGetFromCacheToThrowException() {
-    CacheException expected = createCacheException();
-    cacheProviderFacade.onGetFromCache(key, cachingModel);
-    cacheProviderFacadeControl.setThrowable(expected);
-
-    return expected;
-  }
-
-  private CacheException expectOnPutInCacheThrowsException(Object objectToStore) {
-    CacheException expected = createCacheException();
-    cacheProviderFacade.onPutInCache(key, cachingModel, objectToStore);
-    cacheProviderFacadeControl.setThrowable(expected);
-    return expected;
-  }
-
-  private CacheException expectOnRemoveFromCacheThrowsException() {
-    CacheException expected = createCacheException();
-    cacheProviderFacade.onRemoveFromCache(key, cachingModel);
-    cacheProviderFacadeControl.setThrowable(expected);
-    return expected;
-  }
-
-  protected void setUp() throws Exception {
-    setUpCacheProviderFacadeAsMockObject();
-
-    key = "Key";
-    cachingModel = new MockCachingModel();
-    flushingModel = new MockFlushingModel();
-  }
-
-  private void setUpCacheProviderFacadeAsMockObject() throws Exception {
-    Class classToMock = AbstractCacheProviderFacade.class;
-
-    Method isSerializableCacheElementRequired = classToMock.getDeclaredMethod(
-        "isSerializableCacheElementRequired", null);
-
-    Method onAfterPropertiesSet = classToMock.getDeclaredMethod(
-        "onAfterPropertiesSet", null);
-
-    Method onCancelCacheUpdate = classToMock.getDeclaredMethod(
-        "onCancelCacheUpdate", new Class[] { Serializable.class });
-
-    Method onFlushCache = classToMock.getDeclaredMethod("onFlushCache",
-        new Class[] { FlushingModel.class });
-
-    Method onGetFromCache = classToMock.getDeclaredMethod("onGetFromCache",
-        new Class[] { Serializable.class, CachingModel.class });
-
-    Method onPutInCache = classToMock.getDeclaredMethod("onPutInCache",
-        new Class[] { Serializable.class, CachingModel.class, Object.class });
-
-    Method onRemoveFromCache = classToMock.getDeclaredMethod(
-        "onRemoveFromCache", new Class[] { Serializable.class,
-            CachingModel.class });
-
-    Method validateCacheManager = classToMock.getDeclaredMethod(
-        "validateCacheManager", null);
-
-    Method[] methodsToMock = new Method[] { isSerializableCacheElementRequired,
-        onAfterPropertiesSet, onCancelCacheUpdate, onFlushCache,
-        onGetFromCache, onPutInCache, onRemoveFromCache, validateCacheManager };
-
-    cacheProviderFacadeControl = MockClassControl.createStrictControl(
-        classToMock, null, null, methodsToMock);
-
-    cacheProviderFacade = (AbstractCacheProviderFacade) cacheProviderFacadeControl
-        .getMock();
   }
 
   public void testAfterPropertiesSet() throws Exception {
@@ -533,6 +440,100 @@ public final class CacheProviderFacadeTests extends TestCase {
     cacheProviderFacadeControl.replay();
     cacheProviderFacade.removeFromCache(key, null);
     cacheProviderFacadeControl.verify();
+  }
+
+  protected void setUp() throws Exception {
+    setUpCacheProviderFacadeAsMockObject();
+
+    key = "Key";
+    cachingModel = new MockCachingModel();
+    flushingModel = new MockFlushingModel();
+  }
+
+  private void assertIsNotSerializable(Object obj) {
+    assertFalse(obj.getClass().getName() + " should not be serializable",
+        obj instanceof Serializable);
+  }
+
+  private CacheException createCacheException() {
+    return new CacheNotFoundException("someCache");
+  }
+
+  private CacheException expectOnCancelCacheUpdateToThrowException() {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onCancelCacheUpdate(key);
+    cacheProviderFacadeControl.setThrowable(expected);
+
+    return expected;
+  }
+
+  private CacheException expectOnFlushCacheToThrowException() {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onFlushCache(flushingModel);
+    cacheProviderFacadeControl.setThrowable(expected);
+
+    return expected;
+  }
+
+  private CacheException expectOnGetFromCacheToThrowException() {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onGetFromCache(key, cachingModel);
+    cacheProviderFacadeControl.setThrowable(expected);
+
+    return expected;
+  }
+
+  private CacheException expectOnPutInCacheThrowsException(Object objectToStore) {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onPutInCache(key, cachingModel, objectToStore);
+    cacheProviderFacadeControl.setThrowable(expected);
+    return expected;
+  }
+
+  private CacheException expectOnRemoveFromCacheThrowsException() {
+    CacheException expected = createCacheException();
+    cacheProviderFacade.onRemoveFromCache(key, cachingModel);
+    cacheProviderFacadeControl.setThrowable(expected);
+    return expected;
+  }
+
+  private void setUpCacheProviderFacadeAsMockObject() throws Exception {
+    Class classToMock = AbstractCacheProviderFacade.class;
+
+    Method isSerializableCacheElementRequired = classToMock.getDeclaredMethod(
+        "isSerializableCacheElementRequired", null);
+
+    Method onAfterPropertiesSet = classToMock.getDeclaredMethod(
+        "onAfterPropertiesSet", null);
+
+    Method onCancelCacheUpdate = classToMock.getDeclaredMethod(
+        "onCancelCacheUpdate", new Class[] { Serializable.class });
+
+    Method onFlushCache = classToMock.getDeclaredMethod("onFlushCache",
+        new Class[] { FlushingModel.class });
+
+    Method onGetFromCache = classToMock.getDeclaredMethod("onGetFromCache",
+        new Class[] { Serializable.class, CachingModel.class });
+
+    Method onPutInCache = classToMock.getDeclaredMethod("onPutInCache",
+        new Class[] { Serializable.class, CachingModel.class, Object.class });
+
+    Method onRemoveFromCache = classToMock.getDeclaredMethod(
+        "onRemoveFromCache", new Class[] { Serializable.class,
+            CachingModel.class });
+
+    Method validateCacheManager = classToMock.getDeclaredMethod(
+        "validateCacheManager", null);
+
+    Method[] methodsToMock = new Method[] { isSerializableCacheElementRequired,
+        onAfterPropertiesSet, onCancelCacheUpdate, onFlushCache,
+        onGetFromCache, onPutInCache, onRemoveFromCache, validateCacheManager };
+
+    cacheProviderFacadeControl = MockClassControl.createStrictControl(
+        classToMock, null, null, methodsToMock);
+
+    cacheProviderFacade = (AbstractCacheProviderFacade) cacheProviderFacadeControl
+        .getMock();
   }
 
 }

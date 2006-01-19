@@ -19,6 +19,7 @@ package org.springmodules.cache.provider.ehcache;
 
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.ArrayAssert;
 
@@ -35,10 +36,6 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
 
   public EhCacheFlushingModelTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    model = new EhCacheFlushingModel();
   }
 
   /**
@@ -175,5 +172,9 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
         + ObjectUtils.getIdentityHexString(model)
         + "[cacheNames={'main'}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
+  }
+
+  protected void setUp() {
+    model = new EhCacheFlushingModel();
   }
 }

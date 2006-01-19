@@ -48,10 +48,6 @@ public class FlushingModelTests extends AbstractEqualsHashCodeTestCase {
     super(name);
   }
 
-  protected void setUp() {
-    model = new FlushingModel();
-  }
-
   /**
    * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
@@ -118,6 +114,10 @@ public class FlushingModelTests extends AbstractEqualsHashCodeTestCase {
    */
   public void testEqualsNullComparison() {
     assertEqualsNullComparisonReturnsFalse(model);
+  }
+
+  protected void setUp() {
+    model = new FlushingModel();
   }
 
 }

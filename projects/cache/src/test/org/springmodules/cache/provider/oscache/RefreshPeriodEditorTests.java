@@ -17,9 +17,9 @@
  */
 package org.springmodules.cache.provider.oscache;
 
-import com.opensymphony.oscache.base.CacheEntry;
-
 import junit.framework.TestCase;
+
+import com.opensymphony.oscache.base.CacheEntry;
 
 /**
  * <p>
@@ -34,10 +34,6 @@ public class RefreshPeriodEditorTests extends TestCase {
 
   public RefreshPeriodEditorTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    editor = new RefreshPeriodEditor();
   }
 
   public void testSetAsTextWithEmptyText() {
@@ -70,5 +66,9 @@ public class RefreshPeriodEditorTests extends TestCase {
     } catch (IllegalArgumentException exception) {
       exception.printStackTrace();
     }
+  }
+
+  protected void setUp() {
+    editor = new RefreshPeriodEditor();
   }
 }

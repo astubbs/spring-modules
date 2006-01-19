@@ -17,10 +17,9 @@
  */
 package org.springmodules.util;
 
-import org.springmodules.ArrayAssert;
-import org.springmodules.util.Strings;
-
 import junit.framework.TestCase;
+
+import org.springmodules.ArrayAssert;
 
 /**
  * <p>

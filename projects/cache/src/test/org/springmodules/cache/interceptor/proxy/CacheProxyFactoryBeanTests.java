@@ -25,12 +25,14 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+
 import org.springframework.aop.Advisor;
 import org.springframework.aop.TargetSource;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.AopConfigException;
 import org.springframework.aop.target.EmptyTargetSource;
 import org.springframework.util.ClassUtils;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.integration.CacheableService;
@@ -73,84 +75,6 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
 
   public CacheProxyFactoryBeanTests(String name) {
     super(name);
-  }
-
-  private void assertFlushingModelSourceIsNotSetIfFlushingModelMapIsNullOrEmpty(
-      Map models) {
-    assertTrue(models == null || models.isEmpty());
-
-    factoryBean.setFlushingModels(models);
-    assertFalse(factoryBean.isHasFlushingModels());
-    assertNull(factoryBean.getFlushingInterceptor().getFlushingModelSource());
-  }
-
-  private void expectAfterPropertiesSetOnCachingInterceptor() {
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
-    for (Iterator i = cachingModels.entrySet().iterator(); i.hasNext();) {
-      Map.Entry entry = (Map.Entry) i.next();
-      CachingModel model = (CachingModel) entry.getValue();
-      validator.validateCachingModel(model);
-    }
-  }
-
-  private void expectAfterPropertiesSetOnCachingInterceptorOnly() {
-    setUpCacheModelValidator();
-    setUpCacheProviderFacade();
-    expectAfterPropertiesSetOnCachingInterceptor();
-  }
-
-  private void expectAfterPropertiesSetOnFlushingInterceptor() {
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
-    for (Iterator i = flushingModels.entrySet().iterator(); i.hasNext();) {
-      Map.Entry entry = (Map.Entry) i.next();
-      FlushingModel model = (FlushingModel) entry.getValue();
-      validator.validateFlushingModel(model);
-    }
-  }
-
-  private void expectAfterPropertiesSetOnInterceptors() {
-    setUpCacheModelValidator();
-    setUpCacheProviderFacade();
-
-    expectAfterPropertiesSetOnCachingInterceptor();
-    expectAfterPropertiesSetOnFlushingInterceptor();
-  }
-
-  private void replayMocks() {
-    cacheProviderFacadeControl.replay();
-    validatorControl.replay();
-  }
-
-  protected void setUp() {
-    flushingModels = new HashMap();
-    flushingModels.put("update*", new MockFlushingModel());
-
-    factoryBean = new CacheProxyFactoryBean();
-    factoryBean.setFlushingModels(flushingModels);
-    setUpCachingModels();
-
-    target = new CacheableServiceImpl();
-  }
-
-  private void setUpCacheModelValidator() {
-    validatorControl = MockControl.createControl(CacheModelValidator.class);
-    validator = (CacheModelValidator) validatorControl.getMock();
-  }
-
-  private void setUpCacheProviderFacade() {
-    cacheProviderFacadeControl = MockControl
-        .createStrictControl(CacheProviderFacade.class);
-    cacheProviderFacade = (CacheProviderFacade) cacheProviderFacadeControl
-        .getMock();
-    factoryBean.setCacheProviderFacade(cacheProviderFacade);
-  }
-
-  private void setUpCachingModels() {
-    cachingModels = new HashMap();
-    cachingModels.put("get*", new MockCachingModel());
-    factoryBean.setCachingModels(cachingModels);
   }
 
   public void testAfterPropertiesSetWithCacheFlushAttributesNotSet()
@@ -400,6 +324,14 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     assertTrue(factoryBean.isSingleton());
   }
 
+  public void testSetCacheKeyGenerator() {
+    CacheKeyGenerator keyGenerator = new HashCodeCacheKeyGenerator();
+    factoryBean.setCacheKeyGenerator(keyGenerator);
+
+    assertSame(keyGenerator, factoryBean.getCachingInterceptor()
+        .getCacheKeyGenerator());
+  }
+
   public void testSetFlushingModelsWithEmptyModelMap() {
     assertFlushingModelSourceIsNotSetIfFlushingModelMapIsNullOrEmpty(new HashMap());
   }
@@ -419,12 +351,82 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     assertEquals(expectedProxyInterfaces[0], actualProxyInterfaces[0]);
   }
 
-  public void testSetCacheKeyGenerator() {
-    CacheKeyGenerator keyGenerator = new HashCodeCacheKeyGenerator();
-    factoryBean.setCacheKeyGenerator(keyGenerator);
+  protected void setUp() {
+    flushingModels = new HashMap();
+    flushingModels.put("update*", new MockFlushingModel());
 
-    assertSame(keyGenerator, factoryBean.getCachingInterceptor()
-        .getCacheKeyGenerator());
+    factoryBean = new CacheProxyFactoryBean();
+    factoryBean.setFlushingModels(flushingModels);
+    setUpCachingModels();
+
+    target = new CacheableServiceImpl();
+  }
+
+  private void assertFlushingModelSourceIsNotSetIfFlushingModelMapIsNullOrEmpty(
+      Map models) {
+    assertTrue(models == null || models.isEmpty());
+
+    factoryBean.setFlushingModels(models);
+    assertFalse(factoryBean.isHasFlushingModels());
+    assertNull(factoryBean.getFlushingInterceptor().getFlushingModelSource());
+  }
+
+  private void expectAfterPropertiesSetOnCachingInterceptor() {
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCacheModelValidator(), validator);
+    for (Iterator i = cachingModels.entrySet().iterator(); i.hasNext();) {
+      Map.Entry entry = (Map.Entry) i.next();
+      CachingModel model = (CachingModel) entry.getValue();
+      validator.validateCachingModel(model);
+    }
+  }
+
+  private void expectAfterPropertiesSetOnCachingInterceptorOnly() {
+    setUpCacheModelValidator();
+    setUpCacheProviderFacade();
+    expectAfterPropertiesSetOnCachingInterceptor();
+  }
+
+  private void expectAfterPropertiesSetOnFlushingInterceptor() {
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCacheModelValidator(), validator);
+    for (Iterator i = flushingModels.entrySet().iterator(); i.hasNext();) {
+      Map.Entry entry = (Map.Entry) i.next();
+      FlushingModel model = (FlushingModel) entry.getValue();
+      validator.validateFlushingModel(model);
+    }
+  }
+
+  private void expectAfterPropertiesSetOnInterceptors() {
+    setUpCacheModelValidator();
+    setUpCacheProviderFacade();
+
+    expectAfterPropertiesSetOnCachingInterceptor();
+    expectAfterPropertiesSetOnFlushingInterceptor();
+  }
+
+  private void replayMocks() {
+    cacheProviderFacadeControl.replay();
+    validatorControl.replay();
+  }
+
+  private void setUpCacheModelValidator() {
+    validatorControl = MockControl.createControl(CacheModelValidator.class);
+    validator = (CacheModelValidator) validatorControl.getMock();
+  }
+
+  private void setUpCacheProviderFacade() {
+    cacheProviderFacadeControl = MockControl
+        .createStrictControl(CacheProviderFacade.class);
+    cacheProviderFacade = (CacheProviderFacade) cacheProviderFacadeControl
+        .getMock();
+    factoryBean.setCacheProviderFacade(cacheProviderFacade);
+  }
+
+  private void setUpCachingModels() {
+    cachingModels = new HashMap();
+    cachingModels.put("get*", new MockCachingModel());
+    factoryBean.setCachingModels(cachingModels);
   }
 
   private void verifyMocks() {

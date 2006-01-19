@@ -26,7 +26,9 @@ import junit.framework.TestCase;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
+
 import org.springframework.metadata.Attributes;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.mock.MockCachingModel;
 
@@ -60,27 +62,6 @@ public final class MetadataCachingInterceptorTests extends TestCase {
 
   public MetadataCachingInterceptorTests(String name) {
     super(name);
-  }
-
-  private Method defaultMethod() throws Exception {
-    return String.class.getDeclaredMethod("toLowerCase", null);
-  }
-
-  private void replayMocks() {
-    invocationControl.replay();
-    sourceControl.replay();
-  }
-
-  protected void setUp() {
-    sourceControl = MockControl
-        .createStrictControl(CachingAttributeSource.class);
-    source = (CachingAttributeSource) sourceControl.getMock();
-
-    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
-    invocation = (MethodInvocation) invocationControl.getMock();
-
-    interceptor = new MetadataCachingInterceptor();
-    interceptor.setCachingAttributeSource(source);
   }
 
   public void testGetCachingAttribute() throws Exception {
@@ -152,6 +133,27 @@ public final class MetadataCachingInterceptorTests extends TestCase {
     assertEquals(MetadataCachingAttributeSource.class, newSource.getClass());
     assertSame(attributes, ((MetadataCachingAttributeSource) newSource)
         .getAttributes());
+  }
+
+  protected void setUp() {
+    sourceControl = MockControl
+        .createStrictControl(CachingAttributeSource.class);
+    source = (CachingAttributeSource) sourceControl.getMock();
+
+    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
+    invocation = (MethodInvocation) invocationControl.getMock();
+
+    interceptor = new MetadataCachingInterceptor();
+    interceptor.setCachingAttributeSource(source);
+  }
+
+  private Method defaultMethod() throws Exception {
+    return String.class.getDeclaredMethod("toLowerCase", null);
+  }
+
+  private void replayMocks() {
+    invocationControl.replay();
+    sourceControl.replay();
   }
 
   private void verifyMocks() {

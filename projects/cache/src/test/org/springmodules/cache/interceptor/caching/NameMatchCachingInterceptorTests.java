@@ -38,10 +38,6 @@ public class NameMatchCachingInterceptorTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    interceptor = new NameMatchCachingInterceptor();
-  }
-
   public void testOnAfterPropertiesSetWithCachingModelSourceEqualToNull() {
     interceptor.setCachingModelSource(null);
 
@@ -61,5 +57,9 @@ public class NameMatchCachingInterceptorTests extends TestCase {
     interceptor.setCachingModelSource(modelSource);
     interceptor.onAfterPropertiesSet();
     assertSame(modelSource, interceptor.getCachingModelSource());
+  }
+
+  protected void setUp() {
+    interceptor = new NameMatchCachingInterceptor();
   }
 }

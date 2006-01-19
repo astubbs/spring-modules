@@ -19,6 +19,7 @@
 package org.springmodules.cache.provider.jboss;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -35,10 +36,6 @@ public final class JbossCacheCachingModelTests extends
 
   public JbossCacheCachingModelTests(String name) {
     super(name);
-  }
-
-  protected final void setUp() {
-    model = new JbossCacheCachingModel();
   }
 
   /**
@@ -119,5 +116,9 @@ public final class JbossCacheCachingModelTests extends
     String actual = model.getClass().getName() + "@"
         + ObjectUtils.getIdentityHexString(model) + "[nodeFqn='x/y/z']";
     assertEquals(model.toString(), actual);
+  }
+
+  protected final void setUp() {
+    model = new JbossCacheCachingModel();
   }
 }

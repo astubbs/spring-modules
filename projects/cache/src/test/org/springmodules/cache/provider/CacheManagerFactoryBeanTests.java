@@ -19,9 +19,9 @@ package org.springmodules.cache.provider;
 
 import java.util.Properties;
 
-import org.springframework.core.io.ClassPathResource;
-
 import junit.framework.TestCase;
+
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * <p>
@@ -41,6 +41,14 @@ public class CacheManagerFactoryBeanTests extends TestCase {
 
     boolean cacheManagerDestroyed;
 
+    public Object getObject() throws Exception {
+      return cacheManager;
+    }
+
+    public Class getObjectType() {
+      return null;
+    }
+
     protected void createCacheManager() throws Exception {
       cacheManagerCreated = true;
     }
@@ -52,24 +60,12 @@ public class CacheManagerFactoryBeanTests extends TestCase {
     protected String getCacheProviderName() {
       return null;
     }
-
-    public Object getObject() throws Exception {
-      return cacheManager;
-    }
-
-    public Class getObjectType() {
-      return null;
-    }
   }
 
   private MockCacheManagerFactoryBean factoryBean;
 
   public CacheManagerFactoryBeanTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    factoryBean = new MockCacheManagerFactoryBean();
   }
 
   public void testAfterPropertiesSet() throws Exception {
@@ -99,6 +95,10 @@ public class CacheManagerFactoryBeanTests extends TestCase {
 
     factoryBean.setConfigLocation(new ClassPathResource(path));
     assertEquals(expected, factoryBean.getConfigProperties());
+  }
+
+  protected void setUp() {
+    factoryBean = new MockCacheManagerFactoryBean();
   }
 
 }

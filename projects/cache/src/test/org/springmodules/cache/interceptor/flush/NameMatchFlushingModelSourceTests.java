@@ -36,14 +36,21 @@ import org.springmodules.cache.mock.MockFlushingModel;
  */
 public class NameMatchFlushingModelSourceTests extends TestCase {
 
-  private NameMatchFlushingModelSource source;
+  private Method method;
 
   private Map models;
 
-  private Method method;
+  private NameMatchFlushingModelSource source;
 
   public NameMatchFlushingModelSourceTests(String name) {
     super(name);
+  }
+
+  public void testGetCachingModel() {
+    FlushingModel expected = new MockFlushingModel();
+    models.put(method.getName(), expected);
+
+    assertSame(expected, source.getFlushingModel(method, null));
   }
 
   protected void setUp() throws Exception {
@@ -52,12 +59,5 @@ public class NameMatchFlushingModelSourceTests extends TestCase {
 
     source = new NameMatchFlushingModelSource();
     source.setFlushingModels(models);
-  }
-
-  public void testGetCachingModel() {
-    FlushingModel expected = new MockFlushingModel();
-    models.put(method.getName(), expected);
-
-    assertSame(expected, source.getFlushingModel(method, null));
   }
 }

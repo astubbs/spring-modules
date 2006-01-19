@@ -38,14 +38,6 @@ public class MetadataCacheAttributeSourceTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    attributeSource = new AbstractMetadataCacheAttributeSource() {
-      protected Collection findAllAttributes(Method method) {
-        return null;
-      }
-    };
-  }
-
   /**
    * Verifies that the method
    * <code>{@link AbstractMetadataCacheAttributeSource#getAttributeEntryKey(Method, Class)}</code>
@@ -63,6 +55,14 @@ public class MetadataCacheAttributeSourceTests extends TestCase {
     Object actual = attributeSource.getAttributeEntryKey(method, targetClass);
 
     assertEquals(expected, actual);
+  }
+
+  protected void setUp() {
+    attributeSource = new AbstractMetadataCacheAttributeSource() {
+      protected Collection findAllAttributes(Method method) {
+        return null;
+      }
+    };
   }
 
 }

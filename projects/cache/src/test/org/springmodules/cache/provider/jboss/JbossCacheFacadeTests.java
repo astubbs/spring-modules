@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import org.easymock.classextension.MockClassControl;
 import org.jboss.cache.Node;
 import org.jboss.cache.TreeCache;
+
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheModelValidator;
@@ -55,64 +56,6 @@ public class JbossCacheFacadeTests extends TestCase {
 
   public JbossCacheFacadeTests(String name) {
     super(name);
-  }
-
-  private void assertSameNestedException(Exception expected,
-      CacheAccessException root) {
-    assertSame(expected, root.getCause());
-  }
-
-  private Object getFromTreeCache(Object key) throws Exception {
-    return treeCache.get(cachingModel.getNode(), key);
-  }
-
-  private Method getRemoveMethodFromTreeCache() throws NoSuchMethodException, SecurityException {
-    return TreeCache.class.getDeclaredMethod("remove",
-        new Class[] { String.class });
-  }
-
-  private void putInTreeCache(Object key, Object value) throws Exception {
-    treeCache.put(cachingModel.getNode(), key, value);
-  }
-
-  protected void setUp() {
-    cacheFacade = new JbossCacheFacade();
-    cachingModel = new JbossCacheCachingModel(NODE_FQN);
-    flushingModel = new JbossCacheFlushingModel(NODE_FQN);
-  }
-
-  private void setUpTreeCache() throws Exception {
-    treeCache = new TreeCache();
-    startTreeCache();
-    cacheFacade.setCacheManager(treeCache);
-  }
-
-  private void setUpTreeCacheAsMockObject(Method methodToMock) throws Exception {
-    setUpTreeCacheAsMockObject(new Method[] { methodToMock });
-  }
-
-  private void setUpTreeCacheAsMockObject(Method[] methodsToMock)
-      throws Exception {
-    Class targetClass = TreeCache.class;
-
-    treeCacheControl = MockClassControl.createControl(targetClass, null, null,
-        methodsToMock);
-    treeCache = (TreeCache) treeCacheControl.getMock();
-    startTreeCache();
-
-    cacheFacade.setCacheManager(treeCache);
-  }
-
-  private void startTreeCache() throws Exception {
-    treeCache.createService();
-    treeCache.startService();
-  }
-
-  protected void tearDown() {
-    if (treeCache != null) {
-      treeCache.stopService();
-      treeCache.destroyService();
-    }
   }
 
   /**
@@ -314,6 +257,64 @@ public class JbossCacheFacadeTests extends TestCase {
     setUpTreeCache();
 
     cacheFacade.validateCacheManager();
+  }
+
+  protected void setUp() {
+    cacheFacade = new JbossCacheFacade();
+    cachingModel = new JbossCacheCachingModel(NODE_FQN);
+    flushingModel = new JbossCacheFlushingModel(NODE_FQN);
+  }
+
+  protected void tearDown() {
+    if (treeCache != null) {
+      treeCache.stopService();
+      treeCache.destroyService();
+    }
+  }
+
+  private void assertSameNestedException(Exception expected,
+      CacheAccessException root) {
+    assertSame(expected, root.getCause());
+  }
+
+  private Object getFromTreeCache(Object key) throws Exception {
+    return treeCache.get(cachingModel.getNode(), key);
+  }
+
+  private Method getRemoveMethodFromTreeCache() throws NoSuchMethodException, SecurityException {
+    return TreeCache.class.getDeclaredMethod("remove",
+        new Class[] { String.class });
+  }
+
+  private void putInTreeCache(Object key, Object value) throws Exception {
+    treeCache.put(cachingModel.getNode(), key, value);
+  }
+
+  private void setUpTreeCache() throws Exception {
+    treeCache = new TreeCache();
+    startTreeCache();
+    cacheFacade.setCacheManager(treeCache);
+  }
+
+  private void setUpTreeCacheAsMockObject(Method methodToMock) throws Exception {
+    setUpTreeCacheAsMockObject(new Method[] { methodToMock });
+  }
+
+  private void setUpTreeCacheAsMockObject(Method[] methodsToMock)
+      throws Exception {
+    Class targetClass = TreeCache.class;
+
+    treeCacheControl = MockClassControl.createControl(targetClass, null, null,
+        methodsToMock);
+    treeCache = (TreeCache) treeCacheControl.getMock();
+    startTreeCache();
+
+    cacheFacade.setCacheManager(treeCache);
+  }
+
+  private void startTreeCache() throws Exception {
+    treeCache.createService();
+    treeCache.startService();
   }
 
 }

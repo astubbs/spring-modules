@@ -46,15 +46,6 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
     super(name);
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    cachingAttributeSource = new AnnotationCachingAttributeSource();
-
-    Class targetClass = TigerCacheableService.class;
-    annotatedMethod = targetClass.getDeclaredMethod("getName",
-        new Class[] { int.class });
-  }
-
   public void testFindAllAttributes() throws Exception {
     Collection expected = Arrays.asList(annotatedMethod.getAnnotations());
     Collection actual = cachingAttributeSource
@@ -80,5 +71,14 @@ public class AnnotationCachingAttributeSourceTests extends TestCase {
     attributes.add("Luke Skywalker");
 
     assertNull(cachingAttributeSource.findAttribute(attributes));
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    cachingAttributeSource = new AnnotationCachingAttributeSource();
+
+    Class targetClass = TigerCacheableService.class;
+    annotatedMethod = targetClass.getDeclaredMethod("getName",
+        new Class[] { int.class });
   }
 }

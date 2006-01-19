@@ -41,17 +41,6 @@ public class NameMatchFlushingInterceptorTests extends TestCase {
     super(name);
   }
 
-  private Map createNotEmptyModelMap() {
-    FlushingModel model = new MockFlushingModel();
-    Map models = new HashMap();
-    models.put("get*", model);
-    return models;
-  }
-
-  protected void setUp() {
-    interceptor = new NameMatchFlushingInterceptor();
-  }
-
   public void testOnAfterPropertiesSetWithFlushingModelSourceEqualToNullAndEmptyFlushingModelMap() {
     interceptor.setFlushingModels(new HashMap());
     interceptor.setFlushingModelSource(null);
@@ -93,5 +82,16 @@ public class NameMatchFlushingInterceptorTests extends TestCase {
     interceptor.setFlushingModelSource(modelSource);
     interceptor.onAfterPropertiesSet();
     assertSame(modelSource, interceptor.getFlushingModelSource());
+  }
+
+  protected void setUp() {
+    interceptor = new NameMatchFlushingInterceptor();
+  }
+
+  private Map createNotEmptyModelMap() {
+    FlushingModel model = new MockFlushingModel();
+    Map models = new HashMap();
+    models.put("get*", model);
+    return models;
   }
 }

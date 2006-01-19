@@ -22,7 +22,9 @@ import java.lang.reflect.Method;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+
 import org.springframework.aop.framework.AopConfigException;
+
 import org.springmodules.cache.mock.MockCachingModel;
 
 /**
@@ -44,18 +46,6 @@ public class CachingModelSourceAdvisorTests extends TestCase {
 
   public CachingModelSourceAdvisorTests(String name) {
     super(name);
-  }
-
-  private Method defaultMethod() throws Exception {
-    return String.class.getDeclaredMethod("toLowerCase", null);
-  }
-
-  protected void setUp() {
-    modelSourceControl = MockControl.createControl(CachingModelSource.class);
-    modelSource = (CachingModelSource) modelSourceControl.getMock();
-
-    interceptor = new NameMatchCachingInterceptor();
-    interceptor.setCachingModelSource(modelSource);
   }
 
   public void testCachingModelSourceAdvisorWithInterceptorNotHavingModelSource() {
@@ -97,5 +87,17 @@ public class CachingModelSourceAdvisorTests extends TestCase {
     assertFalse(advisor.matches(method, targetClass));
 
     modelSourceControl.verify();
+  }
+
+  protected void setUp() {
+    modelSourceControl = MockControl.createControl(CachingModelSource.class);
+    modelSource = (CachingModelSource) modelSourceControl.getMock();
+
+    interceptor = new NameMatchCachingInterceptor();
+    interceptor.setCachingModelSource(modelSource);
+  }
+
+  private Method defaultMethod() throws Exception {
+    return String.class.getDeclaredMethod("toLowerCase", null);
   }
 }

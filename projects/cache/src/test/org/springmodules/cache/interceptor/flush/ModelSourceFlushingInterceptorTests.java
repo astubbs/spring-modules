@@ -19,12 +19,13 @@ package org.springmodules.cache.interceptor.flush;
 
 import java.lang.reflect.Method;
 
+import junit.framework.TestCase;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
+
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.mock.MockFlushingModel;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -52,26 +53,6 @@ public class ModelSourceFlushingInterceptorTests extends TestCase {
 
   public ModelSourceFlushingInterceptorTests(String name) {
     super(name);
-  }
-
-  private Method defaultMethod() throws Exception {
-    return String.class.getDeclaredMethod("toLowerCase", null);
-  }
-
-  private void replayMocks() {
-    invocationControl.replay();
-    sourceControl.replay();
-  }
-
-  protected void setUp() {
-    sourceControl = MockControl.createControl(FlushingModelSource.class);
-    source = (FlushingModelSource) sourceControl.getMock();
-
-    interceptor = new ModelSourceFlushingInterceptor();
-    interceptor.setFlushingModelSource(source);
-
-    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
-    invocation = (MethodInvocation) invocationControl.getMock();
   }
 
   public void testGetModel() throws Exception {
@@ -105,6 +86,26 @@ public class ModelSourceFlushingInterceptorTests extends TestCase {
 
     assertSame(expected, interceptor.getModel(invocation));
     verifyMocks();
+  }
+
+  protected void setUp() {
+    sourceControl = MockControl.createControl(FlushingModelSource.class);
+    source = (FlushingModelSource) sourceControl.getMock();
+
+    interceptor = new ModelSourceFlushingInterceptor();
+    interceptor.setFlushingModelSource(source);
+
+    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
+    invocation = (MethodInvocation) invocationControl.getMock();
+  }
+
+  private Method defaultMethod() throws Exception {
+    return String.class.getDeclaredMethod("toLowerCase", null);
+  }
+
+  private void replayMocks() {
+    invocationControl.replay();
+    sourceControl.replay();
   }
 
   private void verifyMocks() {

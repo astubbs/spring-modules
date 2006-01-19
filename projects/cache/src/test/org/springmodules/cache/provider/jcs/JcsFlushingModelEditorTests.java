@@ -36,8 +36,9 @@ public class JcsFlushingModelEditorTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    editor = new JcsFlushingModelEditor();
+  public void testSetAsTextWithEmptyText() {
+    editor.setAsText("");
+    assertEquals(new JcsFlushingModel(), editor.getValue());
   }
 
   public void testSetAsTextWithText() {
@@ -45,11 +46,6 @@ public class JcsFlushingModelEditorTests extends TestCase {
     JcsFlushingModel expected = new JcsFlushingModel(new CacheStruct(
         "starwars", "rebels,empire"));
     assertEquals(expected, editor.getValue());
-  }
-
-  public void testSetAsTextWithEmptyText() {
-    editor.setAsText("");
-    assertEquals(new JcsFlushingModel(), editor.getValue());
   }
 
   public void testSetAsTextWithTextEndingWithDelimeter() {
@@ -67,6 +63,10 @@ public class JcsFlushingModelEditorTests extends TestCase {
   public void testSetAsTextWithTextHavingOnlyDelimiter() {
     editor.setAsText("|");
     assertEquals(new JcsFlushingModel(), editor.getValue());
+  }
+
+  protected void setUp() {
+    editor = new JcsFlushingModelEditor();
   }
 
 }

@@ -19,6 +19,7 @@
 package org.springmodules.cache.provider.oscache;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -35,10 +36,6 @@ public final class OsCacheCachingModelTests extends
 
   public OsCacheCachingModelTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    model = new OsCacheCachingModel();
   }
 
   /**
@@ -186,5 +183,9 @@ public final class OsCacheCachingModelTests extends
         + ObjectUtils.getIdentityHexString(model)
         + "[refreshPeriod=9, groups={'main', null}, cronExpression='* * * * *']";
     assertEquals(model.toString(), actual);
+  }
+
+  protected void setUp() {
+    model = new OsCacheCachingModel();
   }
 }

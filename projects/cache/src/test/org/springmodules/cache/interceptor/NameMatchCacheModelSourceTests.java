@@ -45,28 +45,21 @@ public final class NameMatchCacheModelSourceTests extends TestCase {
     super(name);
   }
 
-  private CacheModel putNewCacheModelInMap(String key) {
-    CacheModel model = new CacheModel() {
-      private static final long serialVersionUID = 4608839803287089680L;
-    };
-    cacheModels.put(key, model);
-    return model;
-  }
-
-  protected void setUp() throws Exception {
-    method = String.class.getDeclaredMethod("toLowerCase", null);
-
-    cacheModels = new HashMap();
-
-    source = new AbstractNameMatchCacheModelSource() {
-      // no extra implementation.
-    };
-    source.setCacheModels(cacheModels);
-  }
-
   public void testGetCacheModelWithMappedNameEqualToMethodName() {
     String mappedName = method.getName();
     assertSame(putNewCacheModelInMap(mappedName), source.getCacheModel(method));
+  }
+
+  public void testGetCacheModelWithMatchingMappedNameBeingBestMatch() {
+    String methodName = method.getName();
+    String mappedName = methodName.substring(0, methodName.length() - 4) + "*";
+    putNewCacheModelInMap(mappedName);
+
+    String bestMatchMappedName = methodName.substring(0,
+        methodName.length() - 3)
+        + "*";
+    assertSame(putNewCacheModelInMap(bestMatchMappedName), source
+        .getCacheModel(method));
   }
 
   public void testGetCacheModelWithMatchingMappedNameEndingWithWildcard() {
@@ -85,15 +78,22 @@ public final class NameMatchCacheModelSourceTests extends TestCase {
     assertNull(source.getCacheModel(method));
   }
 
-  public void testGetCacheModelWithMatchingMappedNameBeingBestMatch() {
-    String methodName = method.getName();
-    String mappedName = methodName.substring(0, methodName.length() - 4) + "*";
-    putNewCacheModelInMap(mappedName);
+  protected void setUp() throws Exception {
+    method = String.class.getDeclaredMethod("toLowerCase", null);
 
-    String bestMatchMappedName = methodName.substring(0,
-        methodName.length() - 3)
-        + "*";
-    assertSame(putNewCacheModelInMap(bestMatchMappedName), source
-        .getCacheModel(method));
+    cacheModels = new HashMap();
+
+    source = new AbstractNameMatchCacheModelSource() {
+      // no extra implementation.
+    };
+    source.setCacheModels(cacheModels);
+  }
+
+  private CacheModel putNewCacheModelInMap(String key) {
+    CacheModel model = new CacheModel() {
+      private static final long serialVersionUID = 4608839803287089680L;
+    };
+    cacheModels.put(key, model);
+    return model;
   }
 }

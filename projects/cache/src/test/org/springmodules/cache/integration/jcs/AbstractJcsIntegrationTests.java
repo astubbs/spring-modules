@@ -23,6 +23,7 @@ import org.apache.jcs.engine.control.CompositeCache;
 import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
+
 import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.provider.jcs.JcsCachingModel;
@@ -67,6 +68,14 @@ public abstract class AbstractJcsIntegrationTests extends
     assertEquals(expectedCachedObject, cacheElement.getVal());
   }
 
+  /**
+   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
+   */
+  protected final void onSetUp() throws Exception {
+    cacheManager = (CompositeCacheManager) applicationContext
+        .getBean(CACHE_MANAGER_BEAN_ID);
+  }
+
   private ICacheElement getCacheElement(int keyAndModelIndex) {
     KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
     JcsCachingModel model = (JcsCachingModel) keyAndModel.model;
@@ -76,14 +85,6 @@ public abstract class AbstractJcsIntegrationTests extends
     GroupId groupId = new GroupId(cacheName, model.getGroup());
     GroupAttrName groupAttrName = new GroupAttrName(groupId, keyAndModel.key);
     return cache.get(groupAttrName);
-  }
-
-  /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
-   */
-  protected final void onSetUp() throws Exception {
-    cacheManager = (CompositeCacheManager) applicationContext
-        .getBean(CACHE_MANAGER_BEAN_ID);
   }
 
 }

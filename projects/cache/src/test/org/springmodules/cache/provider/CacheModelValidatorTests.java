@@ -17,10 +17,10 @@
  */
 package org.springmodules.cache.provider;
 
+import junit.framework.TestCase;
+
 import org.springmodules.cache.mock.MockCachingModel;
 import org.springmodules.cache.mock.MockFlushingModel;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -65,10 +65,6 @@ public class CacheModelValidatorTests extends TestCase {
 
   public CacheModelValidatorTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    validator = new CacheModelValidator();
   }
 
   public void testIsInstaceOfWithObjectNotInstanceOfClass() {
@@ -117,5 +113,9 @@ public class CacheModelValidatorTests extends TestCase {
     } catch (InvalidCacheModelException exception) {
       // expecting exception.
     }
+  }
+
+  protected void setUp() {
+    validator = new CacheModelValidator();
   }
 }

@@ -24,15 +24,16 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.easymock.classextension.MockClassControl;
-import org.springmodules.cache.FatalCacheException;
-import org.springmodules.cache.provider.CacheModelValidator;
-import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.base.events.CacheEntryEventListener;
 import com.opensymphony.oscache.extra.CacheEntryEventListenerImpl;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
+
+import org.springmodules.cache.FatalCacheException;
+import org.springmodules.cache.provider.CacheModelValidator;
+import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 /**
  * <p>
@@ -64,48 +65,6 @@ public class OsCacheFacadeTests extends TestCase {
 
   public OsCacheFacadeTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    cachingModel = new OsCacheCachingModel();
-    groups = new String[] { "Empire", "Rebels" };
-    flushingModel = new OsCacheFlushingModel();
-
-    osCacheFacade = new OsCacheFacade();
-  }
-
-  private void setUpCacheAdministrator() {
-    cacheAdministrator = new GeneralCacheAdministrator();
-    osCacheFacade.setCacheManager(cacheAdministrator);
-
-    Cache cache = cacheAdministrator.getCache();
-
-    cacheEntryEventListener = new CacheEntryEventListenerImpl();
-    cache.addCacheEventListener(cacheEntryEventListener,
-        CacheEntryEventListener.class);
-
-    osCacheFacade.setCacheManager(cacheAdministrator);
-  }
-
-  private void setUpCacheAdministratorAsMockObject(Method methodToMock) {
-    setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
-  }
-
-  private void setUpCacheAdministratorAsMockObject(Method[] methodsToMock) {
-    Class targetClass = GeneralCacheAdministrator.class;
-
-    cacheAdministratorControl = MockClassControl.createControl(targetClass,
-        null, null, methodsToMock);
-    cacheAdministrator = (GeneralCacheAdministrator) cacheAdministratorControl
-        .getMock();
-
-    osCacheFacade.setCacheManager(cacheAdministrator);
-  }
-
-  protected void tearDown() {
-    if (cacheAdministrator != null) {
-      cacheAdministrator.destroy();
-    }
   }
 
   public void testGetCacheModelEditor() {
@@ -391,5 +350,47 @@ public class OsCacheFacadeTests extends TestCase {
       throws Exception {
     setUpCacheAdministrator();
     osCacheFacade.validateCacheManager();
+  }
+
+  protected void setUp() {
+    cachingModel = new OsCacheCachingModel();
+    groups = new String[] { "Empire", "Rebels" };
+    flushingModel = new OsCacheFlushingModel();
+
+    osCacheFacade = new OsCacheFacade();
+  }
+
+  protected void tearDown() {
+    if (cacheAdministrator != null) {
+      cacheAdministrator.destroy();
+    }
+  }
+
+  private void setUpCacheAdministrator() {
+    cacheAdministrator = new GeneralCacheAdministrator();
+    osCacheFacade.setCacheManager(cacheAdministrator);
+
+    Cache cache = cacheAdministrator.getCache();
+
+    cacheEntryEventListener = new CacheEntryEventListenerImpl();
+    cache.addCacheEventListener(cacheEntryEventListener,
+        CacheEntryEventListener.class);
+
+    osCacheFacade.setCacheManager(cacheAdministrator);
+  }
+
+  private void setUpCacheAdministratorAsMockObject(Method methodToMock) {
+    setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
+  }
+
+  private void setUpCacheAdministratorAsMockObject(Method[] methodsToMock) {
+    Class targetClass = GeneralCacheAdministrator.class;
+
+    cacheAdministratorControl = MockClassControl.createControl(targetClass,
+        null, null, methodsToMock);
+    cacheAdministrator = (GeneralCacheAdministrator) cacheAdministratorControl
+        .getMock();
+
+    osCacheFacade.setCacheManager(cacheAdministrator);
   }
 }

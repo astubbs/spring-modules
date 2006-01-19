@@ -22,10 +22,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.mock.MockCachingModel;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -36,14 +36,21 @@ import junit.framework.TestCase;
  */
 public class NameMatchCachingModelSourceTests extends TestCase {
 
+  private Method method;
+
   private Map models;
 
   private NameMatchCachingModelSource source;
 
-  private Method method;
-
   public NameMatchCachingModelSourceTests(String name) {
     super(name);
+  }
+
+  public void testGetCachingModel() {
+    CachingModel expected = new MockCachingModel();
+    models.put(method.getName(), expected);
+
+    assertSame(expected, source.getCachingModel(method, null));
   }
 
   protected void setUp() throws Exception {
@@ -52,12 +59,5 @@ public class NameMatchCachingModelSourceTests extends TestCase {
 
     source = new NameMatchCachingModelSource();
     source.setCachingModels(models);
-  }
-
-  public void testGetCachingModel() {
-    CachingModel expected = new MockCachingModel();
-    models.put(method.getName(), expected);
-
-    assertSame(expected, source.getCachingModel(method, null));
   }
 }

@@ -20,6 +20,7 @@ package org.springmodules.cache.key;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -37,10 +38,6 @@ public final class HashCodeCacheKeyTests extends AbstractEqualsHashCodeTestCase 
 
   public HashCodeCacheKeyTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    key = new HashCodeCacheKey(44322, 544);
   }
 
   /**
@@ -118,5 +115,9 @@ public final class HashCodeCacheKeyTests extends AbstractEqualsHashCodeTestCase 
     logger.debug("Actual toString:   " + actual);
 
     assertEquals(expected, actual);
+  }
+
+  protected void setUp() {
+    key = new HashCodeCacheKey(44322, 544);
   }
 }

@@ -18,6 +18,7 @@
 package org.springmodules.cache.serializable;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWrapper;
 
@@ -34,10 +35,6 @@ public class ObjectWrapperTests extends AbstractEqualsHashCodeTestCase {
 
   public ObjectWrapperTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    wrapper = new ObjectWrapper();
   }
 
   /**
@@ -117,5 +114,9 @@ public class ObjectWrapperTests extends AbstractEqualsHashCodeTestCase {
     String actual = wrapper.getClass().getName() + "@"
         + ObjectUtils.getIdentityHexString(wrapper) + "[value=10]";
     assertEquals(wrapper.toString(), actual);
+  }
+
+  protected void setUp() {
+    wrapper = new ObjectWrapper();
   }
 }

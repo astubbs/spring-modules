@@ -21,7 +21,9 @@ package org.springmodules.cache.provider.jboss;
 import junit.framework.TestCase;
 
 import org.jboss.cache.TreeCache;
+
 import org.springframework.core.io.ClassPathResource;
+
 import org.springmodules.cache.provider.PathUtils;
 
 /**
@@ -37,29 +39,6 @@ public final class JbossCacheManagerFactoryBeanTests extends TestCase {
 
   public JbossCacheManagerFactoryBeanTests(String name) {
     super(name);
-  }
-
-  private void assertObjectTypeIsCorrect() {
-    Class actualObjectType = cacheManagerFactoryBean.getObjectType();
-    assertEquals(TreeCache.class, actualObjectType);
-  }
-
-  private TreeCache getCacheManager() {
-    return (TreeCache) cacheManagerFactoryBean.getObject();
-  }
-
-  protected void setUp() {
-    cacheManagerFactoryBean = new JbossCacheManagerFactoryBean();
-  }
-
-  protected void tearDown() {
-    if (cacheManagerFactoryBean != null) {
-      try {
-        cacheManagerFactoryBean.destroy();
-      } catch (Exception exception) {
-        // ignore the exception.
-      }
-    }
   }
 
   public void testCreateCacheManager() throws Exception {
@@ -95,5 +74,28 @@ public final class JbossCacheManagerFactoryBeanTests extends TestCase {
 
   public void testIsSingleton() {
     assertTrue(cacheManagerFactoryBean.isSingleton());
+  }
+
+  protected void setUp() {
+    cacheManagerFactoryBean = new JbossCacheManagerFactoryBean();
+  }
+
+  protected void tearDown() {
+    if (cacheManagerFactoryBean != null) {
+      try {
+        cacheManagerFactoryBean.destroy();
+      } catch (Exception exception) {
+        // ignore the exception.
+      }
+    }
+  }
+
+  private void assertObjectTypeIsCorrect() {
+    Class actualObjectType = cacheManagerFactoryBean.getObjectType();
+    assertEquals(TreeCache.class, actualObjectType);
+  }
+
+  private TreeCache getCacheManager() {
+    return (TreeCache) cacheManagerFactoryBean.getObject();
   }
 }

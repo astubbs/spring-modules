@@ -19,12 +19,13 @@ package org.springmodules.cache.interceptor.caching;
 
 import java.lang.reflect.Method;
 
+import junit.framework.TestCase;
+
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.mock.MockCachingModel;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -52,26 +53,6 @@ public class ModelSourceCachingInterceptorTests extends TestCase {
 
   public ModelSourceCachingInterceptorTests(String name) {
     super(name);
-  }
-
-  private Method defaultMethod() throws Exception {
-    return String.class.getDeclaredMethod("toLowerCase", null);
-  }
-
-  private void replayMocks() {
-    invocationControl.replay();
-    sourceControl.replay();
-  }
-
-  protected void setUp() {
-    sourceControl = MockControl.createControl(CachingModelSource.class);
-    source = (CachingModelSource) sourceControl.getMock();
-
-    interceptor = new ModelSourceCachingInterceptor();
-    interceptor.setCachingModelSource(source);
-
-    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
-    invocation = (MethodInvocation) invocationControl.getMock();
   }
 
   public void testGetModel() throws Exception {
@@ -105,6 +86,26 @@ public class ModelSourceCachingInterceptorTests extends TestCase {
 
     assertSame(expected, interceptor.getModel(invocation));
     verifyMocks();
+  }
+
+  protected void setUp() {
+    sourceControl = MockControl.createControl(CachingModelSource.class);
+    source = (CachingModelSource) sourceControl.getMock();
+
+    interceptor = new ModelSourceCachingInterceptor();
+    interceptor.setCachingModelSource(source);
+
+    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
+    invocation = (MethodInvocation) invocationControl.getMock();
+  }
+
+  private Method defaultMethod() throws Exception {
+    return String.class.getDeclaredMethod("toLowerCase", null);
+  }
+
+  private void replayMocks() {
+    invocationControl.replay();
+    sourceControl.replay();
   }
 
   private void verifyMocks() {

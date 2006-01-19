@@ -30,14 +30,6 @@ import junit.framework.TestCase;
 public abstract class AbstractEqualsHashCodeTestCase extends TestCase implements
     EqualsHashCodeTestCase {
 
-  public AbstractEqualsHashCodeTestCase() {
-    super();
-  }
-
-  public AbstractEqualsHashCodeTestCase(String newName) {
-    super(newName);
-  }
-
   /**
    * @see EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
    */
@@ -73,6 +65,14 @@ public abstract class AbstractEqualsHashCodeTestCase extends TestCase implements
    */
   public static void assertEqualsNullComparisonReturnsFalse(Object obj) {
     EqualsHashCodeAssert.assertEqualsNullComparisonReturnsFalse(obj);
+  }
+
+  public AbstractEqualsHashCodeTestCase() {
+    super();
+  }
+
+  public AbstractEqualsHashCodeTestCase(String newName) {
+    super(newName);
   }
 
 }

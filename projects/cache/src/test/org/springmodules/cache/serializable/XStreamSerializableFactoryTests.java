@@ -21,9 +21,9 @@ import java.io.Serializable;
 
 import junit.framework.TestCase;
 
-import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWrapper;
-
 import com.thoughtworks.xstream.XStream;
+
+import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWrapper;
 
 /**
  * <p>
@@ -43,11 +43,6 @@ public class XStreamSerializableFactoryTests extends TestCase {
 
   public XStreamSerializableFactoryTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    serializableFactory = new XStreamSerializableFactory();
-    puppy = new Puppy("Scooby");
   }
 
   public void testGetOriginalValueWithArgumentBeingObjectWrapper() {
@@ -84,5 +79,10 @@ public class XStreamSerializableFactoryTests extends TestCase {
     Object obj = "Luke Skywalker";
     Object actual = serializableFactory.makeSerializableIfNecessary(obj);
     assertSame(obj, actual);
+  }
+
+  protected void setUp() {
+    serializableFactory = new XStreamSerializableFactory();
+    puppy = new Puppy("Scooby");
   }
 }

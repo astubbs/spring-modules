@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+
 import org.springframework.aop.framework.AopConfigException;
 
 /**
@@ -34,12 +35,6 @@ import org.springframework.aop.framework.AopConfigException;
  */
 public class FlushingAttributeSourceAdvisorTests extends TestCase {
 
-  private FlushingAttributeSource source;
-
-  private FlushingAttributeSourceAdvisor sourceAdvisor;
-
-  private MockControl sourceControl;
-
   /**
    * Interceptor used only to obtain <code>{@link #source}</code>.
    */
@@ -50,6 +45,12 @@ public class FlushingAttributeSourceAdvisorTests extends TestCase {
    */
   private Method method;
 
+  private FlushingAttributeSource source;
+
+  private FlushingAttributeSourceAdvisor sourceAdvisor;
+
+  private MockControl sourceControl;
+
   /**
    * Class declaring <code>{@link #method}</code>.
    */
@@ -57,23 +58,6 @@ public class FlushingAttributeSourceAdvisorTests extends TestCase {
 
   public FlushingAttributeSourceAdvisorTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    interceptor = new MetadataFlushingInterceptor();
-  }
-
-  private void setUpCachingAttributeSourceAdvisorAsMockObject() {
-    sourceControl = MockControl.createControl(FlushingAttributeSource.class);
-    source = (FlushingAttributeSource) sourceControl.getMock();
-
-    interceptor.setFlushingAttributeSource(source);
-    sourceAdvisor = new FlushingAttributeSourceAdvisor(interceptor);
-  }
-
-  private void setUpTargetClassAndMethod() throws Exception {
-    targetClass = String.class;
-    method = targetClass.getMethod("toUpperCase", null);
   }
 
   public void testConstructorWithMethodInterceptorNotHavingCacheFlushAttributeSource() {
@@ -116,5 +100,22 @@ public class FlushingAttributeSourceAdvisorTests extends TestCase {
 
     assertTrue(sourceAdvisor.matches(method, targetClass));
     sourceControl.verify();
+  }
+
+  protected void setUp() {
+    interceptor = new MetadataFlushingInterceptor();
+  }
+
+  private void setUpCachingAttributeSourceAdvisorAsMockObject() {
+    sourceControl = MockControl.createControl(FlushingAttributeSource.class);
+    source = (FlushingAttributeSource) sourceControl.getMock();
+
+    interceptor.setFlushingAttributeSource(source);
+    sourceAdvisor = new FlushingAttributeSourceAdvisor(interceptor);
+  }
+
+  private void setUpTargetClassAndMethod() throws Exception {
+    targetClass = String.class;
+    method = targetClass.getMethod("toUpperCase", null);
   }
 }

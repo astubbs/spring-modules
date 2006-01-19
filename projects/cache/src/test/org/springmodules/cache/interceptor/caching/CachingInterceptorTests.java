@@ -29,6 +29,7 @@ import junit.framework.TestCase;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.key.CacheKeyGenerator;
@@ -90,98 +91,6 @@ public class CachingInterceptorTests extends TestCase {
 
   public CachingInterceptorTests(String name) {
     super(name);
-  }
-
-  private void assertAfterPropertiesSetThrowsException() {
-    try {
-      interceptor.afterPropertiesSet();
-      fail();
-    } catch (FatalCacheException exception) {
-      // we are expecting this exception.
-    }
-  }
-
-  private Properties createModelsAsProperties(int modelCount) {
-    String keyPrefix = "key";
-    String valuePrefix = "value";
-
-    Properties models = new Properties();
-    for (int i = 0; i < modelCount; i++) {
-      models.setProperty(keyPrefix + i, valuePrefix + i);
-    }
-
-    return models;
-  }
-
-  private CachingModel expectGetFromCache(Serializable key, Object expected) {
-    MockCachingModel model = new MockCachingModel();
-    interceptor.model = model;
-
-    keyGenerator.generateKey(invocation);
-    keyGeneratorControl.setReturnValue(key);
-
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getFromCache(key, model), expected);
-    return model;
-  }
-
-  private void replayMocks() {
-    cacheProviderFacadeControl.replay();
-
-    if (editorControl != null) {
-      editorControl.replay();
-    }
-
-    if (invocationControl != null) {
-      invocationControl.replay();
-    }
-
-    if (listenerControl != null) {
-      listenerControl.replay();
-    }
-
-    keyGeneratorControl.replay();
-
-    if (validatorControl != null) {
-      validatorControl.replay();
-    }
-  }
-
-  protected void setUp() {
-    cacheProviderFacadeControl = MockControl
-        .createStrictControl(CacheProviderFacade.class);
-    cacheProviderFacade = (CacheProviderFacade) cacheProviderFacadeControl
-        .getMock();
-
-    keyGeneratorControl = MockControl
-        .createStrictControl(CacheKeyGenerator.class);
-    keyGenerator = (CacheKeyGenerator) keyGeneratorControl.getMock();
-
-    interceptor = new MockCachingInterceptor();
-    interceptor.setCacheKeyGenerator(keyGenerator);
-    interceptor.setCacheProviderFacade(cacheProviderFacade);
-  }
-
-  private void setUpCachingListener() {
-    listenerControl = MockControl.createControl(CachingListener.class);
-    listener = (CachingListener) listenerControl.getMock();
-
-    interceptor.setCachingListeners(new CachingListener[] { listener });
-  }
-
-  private void setUpCachingModelEditor() {
-    editorControl = MockControl.createControl(PropertyEditor.class);
-    editor = (PropertyEditor) editorControl.getMock();
-  }
-
-  private void setUpMethodInvocation() {
-    invocationControl = MockControl.createControl(MethodInvocation.class);
-    invocation = (MethodInvocation) invocationControl.getMock();
-  }
-
-  private void setUpValidator() {
-    validatorControl = MockControl.createControl(CacheModelValidator.class);
-    validator = (CacheModelValidator) validatorControl.getMock();
   }
 
   public void testAfterPropertiesSetWhenCacheModelValidatorThrowsException() {
@@ -329,12 +238,6 @@ public class CachingInterceptorTests extends TestCase {
     assertTrue(interceptor.onAfterPropertiesSetCalled);
   }
 
-  private void expectMethodInvocationReturnsCacheableMethod() throws Exception {
-    setUpMethodInvocation();
-    Method method = CachingTestUtils.createCacheableMethod();
-    invocationControl.expectAndReturn(invocation.getMethod(), method);
-  }
-
   public void testInvokeWhenCacheReturnsNullAndProceedReturnsNull()
       throws Throwable {
     setUpCachingListener();
@@ -450,6 +353,104 @@ public class CachingInterceptorTests extends TestCase {
 
     assertSame(expected, interceptor.invoke(invocation));
     verifyMocks();
+  }
+
+  protected void setUp() {
+    cacheProviderFacadeControl = MockControl
+        .createStrictControl(CacheProviderFacade.class);
+    cacheProviderFacade = (CacheProviderFacade) cacheProviderFacadeControl
+        .getMock();
+
+    keyGeneratorControl = MockControl
+        .createStrictControl(CacheKeyGenerator.class);
+    keyGenerator = (CacheKeyGenerator) keyGeneratorControl.getMock();
+
+    interceptor = new MockCachingInterceptor();
+    interceptor.setCacheKeyGenerator(keyGenerator);
+    interceptor.setCacheProviderFacade(cacheProviderFacade);
+  }
+
+  private void assertAfterPropertiesSetThrowsException() {
+    try {
+      interceptor.afterPropertiesSet();
+      fail();
+    } catch (FatalCacheException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  private Properties createModelsAsProperties(int modelCount) {
+    String keyPrefix = "key";
+    String valuePrefix = "value";
+
+    Properties models = new Properties();
+    for (int i = 0; i < modelCount; i++) {
+      models.setProperty(keyPrefix + i, valuePrefix + i);
+    }
+
+    return models;
+  }
+
+  private CachingModel expectGetFromCache(Serializable key, Object expected) {
+    MockCachingModel model = new MockCachingModel();
+    interceptor.model = model;
+
+    keyGenerator.generateKey(invocation);
+    keyGeneratorControl.setReturnValue(key);
+
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getFromCache(key, model), expected);
+    return model;
+  }
+
+  private void expectMethodInvocationReturnsCacheableMethod() throws Exception {
+    setUpMethodInvocation();
+    Method method = CachingTestUtils.createCacheableMethod();
+    invocationControl.expectAndReturn(invocation.getMethod(), method);
+  }
+
+  private void replayMocks() {
+    cacheProviderFacadeControl.replay();
+
+    if (editorControl != null) {
+      editorControl.replay();
+    }
+
+    if (invocationControl != null) {
+      invocationControl.replay();
+    }
+
+    if (listenerControl != null) {
+      listenerControl.replay();
+    }
+
+    keyGeneratorControl.replay();
+
+    if (validatorControl != null) {
+      validatorControl.replay();
+    }
+  }
+
+  private void setUpCachingListener() {
+    listenerControl = MockControl.createControl(CachingListener.class);
+    listener = (CachingListener) listenerControl.getMock();
+
+    interceptor.setCachingListeners(new CachingListener[] { listener });
+  }
+
+  private void setUpCachingModelEditor() {
+    editorControl = MockControl.createControl(PropertyEditor.class);
+    editor = (PropertyEditor) editorControl.getMock();
+  }
+
+  private void setUpMethodInvocation() {
+    invocationControl = MockControl.createControl(MethodInvocation.class);
+    invocation = (MethodInvocation) invocationControl.getMock();
+  }
+
+  private void setUpValidator() {
+    validatorControl = MockControl.createControl(CacheModelValidator.class);
+    validator = (CacheModelValidator) validatorControl.getMock();
   }
 
   private void verifyMocks() {

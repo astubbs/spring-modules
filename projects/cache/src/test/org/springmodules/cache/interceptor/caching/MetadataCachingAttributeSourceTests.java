@@ -26,7 +26,9 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+
 import org.springframework.metadata.Attributes;
+
 import org.springmodules.cache.CacheAttribute;
 
 /**
@@ -56,24 +58,6 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
 
   public MetadataCachingAttributeSourceTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    attributesControl = MockControl.createControl(Attributes.class);
-    attributes = (Attributes) attributesControl.getMock();
-
-    source = new MetadataCachingAttributeSource();
-    source.setAttributes(attributes);
-  }
-
-  private void setUpTargetClassAndCacheableMethod() throws Exception {
-    method = CachingTestUtils.createCacheableMethod();
-    targetClass = method.getDeclaringClass();
-  }
-
-  private void setUpTargetClassAndNonCacheableMethod() throws Exception {
-    method = CachingTestUtils.createNonCacheableMethod();
-    targetClass = method.getDeclaringClass();
   }
 
   public void testFindAllAttributesMethod() throws Exception {
@@ -113,16 +97,6 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
   /**
    * Verifies that the method
    * <code>{@link MetadataCachingAttributeSource#findAttribute(Collection)}</code>
-   * does not return any <code>{@link CacheAttribute}</code> if the given
-   * collection of metadata attributes is empty.
-   */
-  public void testFindAttributeWithEmptyCollection() {
-    assertNull(source.findAttribute(new ArrayList()));
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link MetadataCachingAttributeSource#findAttribute(Collection)}</code>
    * returns <code>null</code> if the given collection of metadata attributes
    * is not empty but does not contain any instance of
    * <code>{@link Cached}</code>.
@@ -131,6 +105,16 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
     Collection allAttributes = new ArrayList();
     allAttributes.add("A String!");
     assertNull(source.findAttribute(allAttributes));
+  }
+
+  /**
+   * Verifies that the method
+   * <code>{@link MetadataCachingAttributeSource#findAttribute(Collection)}</code>
+   * does not return any <code>{@link CacheAttribute}</code> if the given
+   * collection of metadata attributes is empty.
+   */
+  public void testFindAttributeWithEmptyCollection() {
+    assertNull(source.findAttribute(new ArrayList()));
   }
 
   /**
@@ -166,5 +150,23 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
   public void testGetCachingAttributeWithNotCacheableMethod() throws Exception {
     setUpTargetClassAndNonCacheableMethod();
     assertNull(source.getCachingAttribute(method, targetClass));
+  }
+
+  protected void setUp() {
+    attributesControl = MockControl.createControl(Attributes.class);
+    attributes = (Attributes) attributesControl.getMock();
+
+    source = new MetadataCachingAttributeSource();
+    source.setAttributes(attributes);
+  }
+
+  private void setUpTargetClassAndCacheableMethod() throws Exception {
+    method = CachingTestUtils.createCacheableMethod();
+    targetClass = method.getDeclaringClass();
+  }
+
+  private void setUpTargetClassAndNonCacheableMethod() throws Exception {
+    method = CachingTestUtils.createNonCacheableMethod();
+    targetClass = method.getDeclaringClass();
   }
 }

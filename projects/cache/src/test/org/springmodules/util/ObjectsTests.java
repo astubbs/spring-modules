@@ -17,9 +17,9 @@
  */
 package org.springmodules.util;
 
-import org.springframework.util.ObjectUtils;
-
 import junit.framework.TestCase;
+
+import org.springframework.util.ObjectUtils;
 
 /**
  * <p>
@@ -32,22 +32,6 @@ public class ObjectsTests extends TestCase {
 
   public ObjectsTests(String name) {
     super(name);
-  }
-
-  /**
-   * Asserts that the given hash code is equal to the one obtained from
-   * <code>{@link Objects#nullSafeHashCode(Object)}</code>.
-   * 
-   * @param expected
-   *          the expected hash code.
-   * @param array
-   *          the array of primitives.
-   */
-  private void assertEqualHashCodes(int expected, Object array) {
-    int actual = Objects.nullSafeHashCode(array);
-
-    assertEquals(expected, actual);
-    assertTrue(array.hashCode() != actual);
   }
 
   public void testHashCodeWithBooleanFalse() {
@@ -573,6 +557,22 @@ public class ObjectsTests extends TestCase {
 
   public void testNullSafeToStringWithStringArrayEqualToNull() {
     assertEquals("null", Objects.nullSafeToString((String[]) null));
+  }
+
+  /**
+   * Asserts that the given hash code is equal to the one obtained from
+   * <code>{@link Objects#nullSafeHashCode(Object)}</code>.
+   * 
+   * @param expected
+   *          the expected hash code.
+   * @param array
+   *          the array of primitives.
+   */
+  private void assertEqualHashCodes(int expected, Object array) {
+    int actual = Objects.nullSafeHashCode(array);
+
+    assertEquals(expected, actual);
+    assertTrue(array.hashCode() != actual);
   }
 
 }

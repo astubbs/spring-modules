@@ -45,17 +45,13 @@ public class CachingAttributeSourceTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    source = new CachingAttributeSource();
-  }
-
   public void testFindAttribute() {
     Cached expected = new Cached();
     List attributes = new ArrayList();
     attributes.add(expected);
     assertSame(expected, source.findAttribute(attributes));
   }
-  
+
   public void testFindAttributeWithCollectionEqualToNull() {
     assertNull(source.findAttribute(null));
   }
@@ -69,5 +65,9 @@ public class CachingAttributeSourceTests extends TestCase {
   
   public void testFindAttributeWithEmptyCollection() {
     assertNull(source.findAttribute(new ArrayList()));
+  }
+  
+  protected void setUp() {
+    source = new CachingAttributeSource();
   }
 }

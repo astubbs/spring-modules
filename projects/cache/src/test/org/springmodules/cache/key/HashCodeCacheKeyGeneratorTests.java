@@ -39,17 +39,6 @@ public final class HashCodeCacheKeyGeneratorTests extends
     super(name);
   }
 
-  protected void afterSetUp() {
-    keyGenerator = new HashCodeCacheKeyGenerator();
-  }
-
-  /**
-   * @see AbstractCacheKeyGeneratorTests#getCacheKeyGenerator()
-   */
-  protected CacheKeyGenerator getCacheKeyGenerator() {
-    return keyGenerator;
-  }
-
   /**
    * Verifies that the method
    * <code>{@link HashCodeCacheKeyGenerator#generateKey(org.aopalliance.intercept.MethodInvocation)}</code>
@@ -99,6 +88,17 @@ public final class HashCodeCacheKeyGeneratorTests extends
     
     assertFalse("Key <" + fooKey + "> should be different than <" + barKey
         + ">", fooKey.equals(barKey));
+  }
+
+  protected void afterSetUp() {
+    keyGenerator = new HashCodeCacheKeyGenerator();
+  }
+
+  /**
+   * @see AbstractCacheKeyGeneratorTests#getCacheKeyGenerator()
+   */
+  protected CacheKeyGenerator getCacheKeyGenerator() {
+    return keyGenerator;
   }
 
 }

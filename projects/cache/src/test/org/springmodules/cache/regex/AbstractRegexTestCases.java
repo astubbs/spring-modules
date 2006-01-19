@@ -36,16 +36,6 @@ public abstract class AbstractRegexTestCases extends TestCase {
     super(name);
   }
 
-  /**
-   * Returns an instance of the implementation of <code>{@link Regex}</code>
-   * to test.
-   * 
-   * @param pattern
-   *          the regular expression pattern to compile.
-   * @return the compiled regular expression to test.
-   */
-  protected abstract Regex getRegexToTest(String pattern);
-
   public final void testMatchesStringStringWithInvalidRegularExpression() {
     String regularExpression = "[kkk";
 
@@ -55,22 +45,6 @@ public abstract class AbstractRegexTestCases extends TestCase {
 
     } catch (PatternInvalidSyntaxException exception) {
       // we are expecting this exception
-    }
-  }
-
-  protected final void assertInputMatchesPattern(String input, String pattern,
-      Match match) {
-    assertTrue("The input '" + input
-        + "' should match the regular expression '" + pattern + "'", match
-        .isSuccessful());
-  }
-
-  protected final void assertEqualGroups(String[] expected, String[] actual) {
-    int groupCount = expected.length;
-    assertEquals("<Group count>", groupCount, actual.length);
-
-    for (int i = 0; i < groupCount; i++) {
-      assertEquals("<Group " + i + ">", expected[i], actual[i]);
     }
   }
 
@@ -121,4 +95,30 @@ public abstract class AbstractRegexTestCases extends TestCase {
 
     assertNull("There should not be any groups", match.getGroups());
   }
+
+  protected final void assertEqualGroups(String[] expected, String[] actual) {
+    int groupCount = expected.length;
+    assertEquals("<Group count>", groupCount, actual.length);
+
+    for (int i = 0; i < groupCount; i++) {
+      assertEquals("<Group " + i + ">", expected[i], actual[i]);
+    }
+  }
+
+  protected final void assertInputMatchesPattern(String input, String pattern,
+      Match match) {
+    assertTrue("The input '" + input
+        + "' should match the regular expression '" + pattern + "'", match
+        .isSuccessful());
+  }
+
+  /**
+   * Returns an instance of the implementation of <code>{@link Regex}</code>
+   * to test.
+   * 
+   * @param pattern
+   *          the regular expression pattern to compile.
+   * @return the compiled regular expression to test.
+   */
+  protected abstract Regex getRegexToTest(String pattern);
 }

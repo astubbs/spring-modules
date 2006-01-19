@@ -18,6 +18,7 @@
 package org.springmodules.cache.provider.oscache;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -33,10 +34,6 @@ public class OsCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
 
   public OsCacheFlushingModelTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    model = new OsCacheFlushingModel();
   }
 
   /**
@@ -135,6 +132,10 @@ public class OsCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
         + ObjectUtils.getIdentityHexString(model)
         + "[groups={'main'}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
+  }
+
+  protected void setUp() {
+    model = new OsCacheFlushingModel();
   }
 
 }

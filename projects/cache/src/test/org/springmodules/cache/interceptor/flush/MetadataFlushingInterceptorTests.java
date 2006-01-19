@@ -26,7 +26,9 @@ import junit.framework.TestCase;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
+
 import org.springframework.metadata.Attributes;
+
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.mock.MockFlushingModel;
 
@@ -60,34 +62,6 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
 
   public MetadataFlushingInterceptorTests(String name) {
     super(name);
-  }
-
-  private Map createNotEmptyFlushingAttributeMap() {
-    Map map = new HashMap();
-    map.put("main", new FlushCache());
-
-    return map;
-  }
-
-  private Method defaultMethod() throws Exception {
-    return String.class.getDeclaredMethod("toLowerCase", null);
-  }
-
-  private void replayMocks() {
-    invocationControl.replay();
-    sourceControl.replay();
-  }
-
-  protected void setUp() {
-    sourceControl = MockControl
-        .createStrictControl(FlushingAttributeSource.class);
-    source = (FlushingAttributeSource) sourceControl.getMock();
-
-    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
-    invocation = (MethodInvocation) invocationControl.getMock();
-
-    interceptor = new MetadataFlushingInterceptor();
-    interceptor.setFlushingAttributeSource(source);
   }
 
   public void testGetFlushingAttribute() throws Exception {
@@ -172,6 +146,34 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
     assertEquals(MetadataFlushingAttributeSource.class, newSource.getClass());
     assertSame(attributes, ((MetadataFlushingAttributeSource) newSource)
         .getAttributes());
+  }
+
+  protected void setUp() {
+    sourceControl = MockControl
+        .createStrictControl(FlushingAttributeSource.class);
+    source = (FlushingAttributeSource) sourceControl.getMock();
+
+    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
+    invocation = (MethodInvocation) invocationControl.getMock();
+
+    interceptor = new MetadataFlushingInterceptor();
+    interceptor.setFlushingAttributeSource(source);
+  }
+
+  private Map createNotEmptyFlushingAttributeMap() {
+    Map map = new HashMap();
+    map.put("main", new FlushCache());
+
+    return map;
+  }
+
+  private Method defaultMethod() throws Exception {
+    return String.class.getDeclaredMethod("toLowerCase", null);
+  }
+
+  private void replayMocks() {
+    invocationControl.replay();
+    sourceControl.replay();
   }
 
   private void verifyMocks() {

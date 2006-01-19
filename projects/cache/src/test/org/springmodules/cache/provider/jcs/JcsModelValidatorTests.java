@@ -42,38 +42,6 @@ public final class JcsModelValidatorTests extends TestCase {
     super(name);
   }
 
-  private void assertValidateCachingModelThrowsException() {
-    assertValidateCachingModelThrowsException(cachingModel);
-  }
-
-  private void assertValidateCachingModelThrowsException(Object model) {
-    try {
-      validator.validateCachingModel(model);
-      fail();
-    } catch (InvalidCacheModelException exception) {
-      // we are expecting this exception.
-    }
-  }
-
-  private void assertValidateFlushingModelThrowsException() {
-    assertValidateFlushingModelThrowsException(flushingModel);
-  }
-
-  private void assertValidateFlushingModelThrowsException(Object model) {
-    try {
-      validator.validateFlushingModel(model);
-      fail();
-    } catch (InvalidCacheModelException exception) {
-      // we are expecting this exception.
-    }
-  }
-
-  protected void setUp() {
-    cachingModel = new JcsCachingModel();
-    flushingModel = new JcsFlushingModel();
-    validator = new JcsModelValidator();
-  }
-
   public void testValidateCachingModel() {
     cachingModel.setCacheName("main");
     validator.validateCachingModel(cachingModel);
@@ -115,5 +83,37 @@ public final class JcsModelValidatorTests extends TestCase {
   public void testValidateFlushingModelWithEmptyCacheStructArray() {
     flushingModel.setCacheStructs(new CacheStruct[0]);
     assertValidateFlushingModelThrowsException();
+  }
+
+  protected void setUp() {
+    cachingModel = new JcsCachingModel();
+    flushingModel = new JcsFlushingModel();
+    validator = new JcsModelValidator();
+  }
+
+  private void assertValidateCachingModelThrowsException() {
+    assertValidateCachingModelThrowsException(cachingModel);
+  }
+
+  private void assertValidateCachingModelThrowsException(Object model) {
+    try {
+      validator.validateCachingModel(model);
+      fail();
+    } catch (InvalidCacheModelException exception) {
+      // we are expecting this exception.
+    }
+  }
+
+  private void assertValidateFlushingModelThrowsException() {
+    assertValidateFlushingModelThrowsException(flushingModel);
+  }
+
+  private void assertValidateFlushingModelThrowsException(Object model) {
+    try {
+      validator.validateFlushingModel(model);
+      fail();
+    } catch (InvalidCacheModelException exception) {
+      // we are expecting this exception.
+    }
   }
 }

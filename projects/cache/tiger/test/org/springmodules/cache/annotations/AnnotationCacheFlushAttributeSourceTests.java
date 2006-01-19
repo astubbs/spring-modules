@@ -46,15 +46,6 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
     super(name);
   }
 
-  @Override
-  protected void setUp() throws Exception {
-    cacheFlushAttributeSource = new AnnotationFlushingAttributeSource();
-
-    Class targetClass = TigerCacheableService.class;
-    annotatedMethod = targetClass.getDeclaredMethod("updateName", new Class[] {
-        int.class, String.class });
-  }
-
   public void testFindAllAttributes() throws Exception {
     Collection expected = Arrays.asList(annotatedMethod.getAnnotations());
     Collection actual = cacheFlushAttributeSource
@@ -80,5 +71,14 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
     Collection<Object> attributes = new ArrayList<Object>();
     attributes.add("Anakin Skywalker");
     assertNull(cacheFlushAttributeSource.findAttribute(attributes));
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    cacheFlushAttributeSource = new AnnotationFlushingAttributeSource();
+
+    Class targetClass = TigerCacheableService.class;
+    annotatedMethod = targetClass.getDeclaredMethod("updateName", new Class[] {
+        int.class, String.class });
   }
 }

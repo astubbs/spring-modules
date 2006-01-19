@@ -22,7 +22,9 @@ import java.lang.reflect.Method;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+
 import org.springframework.aop.framework.AopConfigException;
+
 import org.springmodules.cache.mock.MockFlushingModel;
 
 /**
@@ -44,18 +46,6 @@ public class FlushingModelSourceAdvisorTests extends TestCase {
 
   public FlushingModelSourceAdvisorTests(String name) {
     super(name);
-  }
-
-  private Method defaultMethod() throws Exception {
-    return String.class.getDeclaredMethod("toLowerCase", null);
-  }
-
-  protected void setUp() {
-    modelSourceControl = MockControl.createControl(FlushingModelSource.class);
-    modelSource = (FlushingModelSource) modelSourceControl.getMock();
-
-    interceptor = new NameMatchFlushingInterceptor();
-    interceptor.setFlushingModelSource(modelSource);
   }
 
   public void testFlushingModelSourceAdvisorWithInterceptorNotHavingModelSource() {
@@ -97,5 +87,17 @@ public class FlushingModelSourceAdvisorTests extends TestCase {
     assertFalse(advisor.matches(method, targetClass));
 
     modelSourceControl.verify();
+  }
+
+  protected void setUp() {
+    modelSourceControl = MockControl.createControl(FlushingModelSource.class);
+    modelSource = (FlushingModelSource) modelSourceControl.getMock();
+
+    interceptor = new NameMatchFlushingInterceptor();
+    interceptor.setFlushingModelSource(modelSource);
+  }
+
+  private Method defaultMethod() throws Exception {
+    return String.class.getDeclaredMethod("toLowerCase", null);
   }
 }

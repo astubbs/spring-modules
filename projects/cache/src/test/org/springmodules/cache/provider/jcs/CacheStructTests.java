@@ -18,6 +18,7 @@
 package org.springmodules.cache.provider.jcs;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 
@@ -34,10 +35,6 @@ public class CacheStructTests extends AbstractEqualsHashCodeTestCase {
 
   public CacheStructTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    struct = new CacheStruct();
   }
 
   /**
@@ -153,6 +150,10 @@ public class CacheStructTests extends AbstractEqualsHashCodeTestCase {
         + ObjectUtils.getIdentityHexString(struct)
         + "[cacheName='androids', groups={'c3p0'}]";
     assertEquals(struct.toString(), actual);
+  }
+
+  protected void setUp() {
+    struct = new CacheStruct();
   }
 
 }

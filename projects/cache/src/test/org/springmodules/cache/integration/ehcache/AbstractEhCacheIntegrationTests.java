@@ -62,18 +62,18 @@ public abstract class AbstractEhCacheIntegrationTests extends
     assertEquals(expectedCachedObject, element.getValue());
   }
 
-  private Element getCacheElement(int keyAndModelIndex) throws Exception {
-    KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
-    EhCacheCachingModel model = (EhCacheCachingModel) keyAndModel.model;
-    Cache cache = cacheManager.getCache(model.getCacheName());
-    return cache.get(keyAndModel.key);
-  }
-
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
    */
   protected final void onSetUp() {
     cacheManager = (CacheManager) applicationContext
         .getBean(CACHE_MANAGER_BEAN_ID);
+  }
+
+  private Element getCacheElement(int keyAndModelIndex) throws Exception {
+    KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
+    EhCacheCachingModel model = (EhCacheCachingModel) keyAndModel.model;
+    Cache cache = cacheManager.getCache(model.getCacheName());
+    return cache.get(keyAndModel.key);
   }
 }

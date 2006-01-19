@@ -18,9 +18,9 @@
 
 package org.springmodules.cache.provider.oscache;
 
-import org.springmodules.cache.provider.InvalidCacheModelException;
-
 import junit.framework.TestCase;
+
+import org.springmodules.cache.provider.InvalidCacheModelException;
 
 /**
  * <p>
@@ -37,8 +37,13 @@ public final class OsCacheModelValidatorTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    cacheModelValidator = new OsCacheModelValidator();
+  public void testValidateCacheModelObjectWithObjectNotInstanceOfOscacheCacheModel() {
+    try {
+      cacheModelValidator.validateCachingModel(new Object());
+      fail();
+    } catch (InvalidCacheModelException exception) {
+      // we are expecting this exception.
+    }
   }
 
   public void testValidateCacheModelWithInstanceOfOscacheCacheModel() {
@@ -48,12 +53,7 @@ public final class OsCacheModelValidatorTests extends TestCase {
     cacheModelValidator.validateCachingModel(object);
   }
 
-  public void testValidateCacheModelObjectWithObjectNotInstanceOfOscacheCacheModel() {
-    try {
-      cacheModelValidator.validateCachingModel(new Object());
-      fail();
-    } catch (InvalidCacheModelException exception) {
-      // we are expecting this exception.
-    }
+  protected void setUp() {
+    cacheModelValidator = new OsCacheModelValidator();
   }
 }

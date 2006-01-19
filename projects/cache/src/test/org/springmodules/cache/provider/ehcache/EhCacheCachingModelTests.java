@@ -19,6 +19,7 @@
 package org.springmodules.cache.provider.ehcache;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -35,10 +36,6 @@ public final class EhCacheCachingModelTests extends
 
   public EhCacheCachingModelTests(String name) {
     super(name);
-  }
-
-  protected final void setUp() {
-    model = new EhCacheCachingModel();
   }
 
   /**
@@ -122,5 +119,9 @@ public final class EhCacheCachingModelTests extends
     String actual = model.getClass().getName() + "@"
         + ObjectUtils.getIdentityHexString(model) + "[cacheName='main']";
     assertEquals(model.toString(), actual);
+  }
+
+  protected final void setUp() {
+    model = new EhCacheCachingModel();
   }
 }

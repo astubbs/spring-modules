@@ -26,6 +26,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+
 import org.springframework.metadata.Attributes;
 
 /**
@@ -47,14 +48,6 @@ public final class MetadataFlushingAttributeSourceTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    attributesControl = MockControl.createStrictControl(Attributes.class);
-    attributes = (Attributes) attributesControl.getMock();
-
-    source = new MetadataFlushingAttributeSource();
-    source.setAttributes(attributes);
-  }
-
   /**
    * Verifies that the method
    * <code>{@link MetadataFlushingAttributeSource#findAllAttributes(Method)}</code>.
@@ -74,6 +67,14 @@ public final class MetadataFlushingAttributeSourceTests extends TestCase {
 
     attributesControl.verify();
     assertSame(attributeList, returnedAttributes);
+  }
+
+  protected void setUp() {
+    attributesControl = MockControl.createStrictControl(Attributes.class);
+    attributes = (Attributes) attributesControl.getMock();
+
+    source = new MetadataFlushingAttributeSource();
+    source.setAttributes(attributes);
   }
 
 }

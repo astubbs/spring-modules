@@ -19,6 +19,7 @@
 package org.springmodules.cache.integration.jboss;
 
 import org.jboss.cache.TreeCache;
+
 import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.provider.jboss.JbossCacheCachingModel;
@@ -63,12 +64,6 @@ public abstract class AbstractJbossCacheIntegrationTestCases extends
     assertEquals(expectedCachedObject, actual);
   }
 
-  private Object getCachedObject(int keyAndModelIndex) throws Exception {
-    KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
-    JbossCacheCachingModel model = (JbossCacheCachingModel) keyAndModel.model;
-    return cacheManager.get(model.getNode(), keyAndModel.key);
-  }
-
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
    */
@@ -76,5 +71,11 @@ public abstract class AbstractJbossCacheIntegrationTestCases extends
     // get the cache administrator from the Spring bean context.
     cacheManager = (TreeCache) applicationContext
         .getBean(CACHE_MANAGER_BEAN_ID);
+  }
+
+  private Object getCachedObject(int keyAndModelIndex) throws Exception {
+    KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
+    JbossCacheCachingModel model = (JbossCacheCachingModel) keyAndModel.model;
+    return cacheManager.get(model.getNode(), keyAndModel.key);
   }
 }

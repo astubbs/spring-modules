@@ -18,6 +18,7 @@
 package org.springmodules.cache.provider.jcs;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 
@@ -34,10 +35,6 @@ public class JcsFlushingModelTests extends AbstractEqualsHashCodeTestCase {
 
   public JcsFlushingModelTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    model = new JcsFlushingModel();
   }
 
   /**
@@ -140,6 +137,10 @@ public class JcsFlushingModelTests extends AbstractEqualsHashCodeTestCase {
         + ObjectUtils.getIdentityHexString(model)
         + "[cacheStructs={}, flushBeforeMethodExecution=true]";
     assertEquals(model.toString(), actual);
+  }
+
+  protected void setUp() {
+    model = new JcsFlushingModel();
   }
 
 }

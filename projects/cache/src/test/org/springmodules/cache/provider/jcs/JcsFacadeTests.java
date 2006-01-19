@@ -35,7 +35,9 @@ import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 import org.easymock.AbstractMatcher;
 import org.easymock.classextension.MockClassControl;
+
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.provider.CacheAccessException;
 import org.springmodules.cache.provider.CacheModelValidator;
@@ -124,93 +126,6 @@ public final class JcsFacadeTests extends TestCase {
 
   public JcsFacadeTests(String name) {
     super(name);
-  }
-
-  private void expectCacheIsFound() {
-    cacheManager.getCache(CACHE_NAME);
-    cacheManagerControl.setReturnValue(cache);
-  }
-
-  private void expectCacheIsNotFound() {
-    cacheManager.getCache(CACHE_NAME);
-    cacheManagerControl.setReturnValue(null);
-  }
-
-  private Method getGetCacheMethodFromCompositeCacheManagerClass()
-      throws Exception {
-    return CompositeCacheManager.class.getDeclaredMethod("getCache",
-        new Class[] { String.class });
-  }
-
-  private void replayMocks() {
-    if (cacheControl != null) {
-      cacheControl.replay();
-    }
-    cacheManagerControl.replay();
-  }
-
-  protected void setUp() {
-    cachingModel = new JcsCachingModel(CACHE_NAME);
-    flushingModel = new JcsFlushingModel(CACHE_NAME);
-    jcsFacade = new JcsFacade();
-  }
-
-  private void setUpCacheAdministratorAndCache() {
-    cacheManager = CompositeCacheManager.getInstance();
-    cache = cacheManager.getCache(CACHE_NAME);
-
-    jcsFacade.setCacheManager(cacheManager);
-  }
-
-  private void setUpCacheAdministratorAsMockObject(Method methodToMock) {
-    setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
-  }
-
-  private void setUpCacheAdministratorAsMockObject(Method[] methodsToMock) {
-    Class targetClass = CompositeCacheManager.class;
-
-    cacheManagerControl = MockClassControl.createControl(targetClass, null,
-        null, methodsToMock);
-    cacheManager = (CompositeCacheManager) cacheManagerControl.getMock();
-
-    jcsFacade.setCacheManager(cacheManager);
-  }
-
-  private void setUpCacheAsMockObject(Method methodToMock) throws Exception {
-    setUpCacheAsMockObject(new Method[] { methodToMock });
-  }
-
-  private void setUpCacheAsMockObject(Method[] methodsToMock) throws Exception {
-    Class[] constructorTypes = new Class[] { String.class,
-        ICompositeCacheAttributes.class, IElementAttributes.class };
-
-    ICompositeCacheAttributes cacheAttributes = new CompositeCacheAttributes();
-    cacheAttributes.setCacheName(CACHE_NAME);
-    cacheAttributes.setMaxObjects(10);
-    cacheAttributes
-        .setMemoryCacheName("org.apache.jcs.engine.memory.lru.LRUMemoryCache");
-    ElementAttributes elementAttributes = new ElementAttributes();
-    Object[] constructorArgs = new Object[] { CACHE_NAME, cacheAttributes,
-        elementAttributes };
-
-    // set up the methods to mock.
-    Class targetClass = CompositeCache.class;
-
-    cacheControl = MockClassControl.createControl(targetClass,
-        constructorTypes, constructorArgs, methodsToMock);
-    cache = (CompositeCache) cacheControl.getMock();
-  }
-
-  private void setUpCacheEntries() {
-    cacheEntries = new CacheEntry[] {
-        new CacheEntry("sith", "empire", "Darth Vader"),
-        new CacheEntry("jedi", "rebellion", "Luke Skywalker") };
-  }
-
-  protected void tearDown() {
-    if (cacheManager != null) {
-      cacheManager.shutDown();
-    }
   }
 
   /**
@@ -376,7 +291,7 @@ public final class JcsFacadeTests extends TestCase {
       }
     }
   }
-  
+
   public void testOnFlushCacheWithoutCacheStructs() throws Exception {
     setUpCacheAdministratorAndCache();
     setUpCacheEntries();
@@ -592,7 +507,7 @@ public final class JcsFacadeTests extends TestCase {
     }
     verifyMocks();
   }
-
+  
   /**
    * Verifies that the method
    * <code>{@link JcsFacade#validateCacheManager()}</code> throws an
@@ -618,6 +533,93 @@ public final class JcsFacadeTests extends TestCase {
       throws Exception {
     setUpCacheAdministratorAndCache();
     jcsFacade.validateCacheManager();
+  }
+
+  protected void setUp() {
+    cachingModel = new JcsCachingModel(CACHE_NAME);
+    flushingModel = new JcsFlushingModel(CACHE_NAME);
+    jcsFacade = new JcsFacade();
+  }
+
+  protected void tearDown() {
+    if (cacheManager != null) {
+      cacheManager.shutDown();
+    }
+  }
+
+  private void expectCacheIsFound() {
+    cacheManager.getCache(CACHE_NAME);
+    cacheManagerControl.setReturnValue(cache);
+  }
+
+  private void expectCacheIsNotFound() {
+    cacheManager.getCache(CACHE_NAME);
+    cacheManagerControl.setReturnValue(null);
+  }
+
+  private Method getGetCacheMethodFromCompositeCacheManagerClass()
+      throws Exception {
+    return CompositeCacheManager.class.getDeclaredMethod("getCache",
+        new Class[] { String.class });
+  }
+
+  private void replayMocks() {
+    if (cacheControl != null) {
+      cacheControl.replay();
+    }
+    cacheManagerControl.replay();
+  }
+
+  private void setUpCacheAdministratorAndCache() {
+    cacheManager = CompositeCacheManager.getInstance();
+    cache = cacheManager.getCache(CACHE_NAME);
+
+    jcsFacade.setCacheManager(cacheManager);
+  }
+
+  private void setUpCacheAdministratorAsMockObject(Method methodToMock) {
+    setUpCacheAdministratorAsMockObject(new Method[] { methodToMock });
+  }
+
+  private void setUpCacheAdministratorAsMockObject(Method[] methodsToMock) {
+    Class targetClass = CompositeCacheManager.class;
+
+    cacheManagerControl = MockClassControl.createControl(targetClass, null,
+        null, methodsToMock);
+    cacheManager = (CompositeCacheManager) cacheManagerControl.getMock();
+
+    jcsFacade.setCacheManager(cacheManager);
+  }
+
+  private void setUpCacheAsMockObject(Method methodToMock) throws Exception {
+    setUpCacheAsMockObject(new Method[] { methodToMock });
+  }
+
+  private void setUpCacheAsMockObject(Method[] methodsToMock) throws Exception {
+    Class[] constructorTypes = new Class[] { String.class,
+        ICompositeCacheAttributes.class, IElementAttributes.class };
+
+    ICompositeCacheAttributes cacheAttributes = new CompositeCacheAttributes();
+    cacheAttributes.setCacheName(CACHE_NAME);
+    cacheAttributes.setMaxObjects(10);
+    cacheAttributes
+        .setMemoryCacheName("org.apache.jcs.engine.memory.lru.LRUMemoryCache");
+    ElementAttributes elementAttributes = new ElementAttributes();
+    Object[] constructorArgs = new Object[] { CACHE_NAME, cacheAttributes,
+        elementAttributes };
+
+    // set up the methods to mock.
+    Class targetClass = CompositeCache.class;
+
+    cacheControl = MockClassControl.createControl(targetClass,
+        constructorTypes, constructorArgs, methodsToMock);
+    cache = (CompositeCache) cacheControl.getMock();
+  }
+
+  private void setUpCacheEntries() {
+    cacheEntries = new CacheEntry[] {
+        new CacheEntry("sith", "empire", "Darth Vader"),
+        new CacheEntry("jedi", "rebellion", "Luke Skywalker") };
   }
 
   private Serializable[] updateCache() throws Exception {

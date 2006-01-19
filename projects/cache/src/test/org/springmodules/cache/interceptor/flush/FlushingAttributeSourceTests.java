@@ -45,10 +45,6 @@ public class FlushingAttributeSourceTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    source = new FlushingAttributeSource();
-  }
-
   public void testFindAttribute() {
     FlushCache expected = new FlushCache();
     List attributes = new ArrayList();
@@ -69,5 +65,9 @@ public class FlushingAttributeSourceTests extends TestCase {
 
   public void testFindAttributeWithEmptyCollection() {
     assertNull(source.findAttribute(new ArrayList()));
+  }
+
+  protected void setUp() {
+    source = new FlushingAttributeSource();
   }
 }

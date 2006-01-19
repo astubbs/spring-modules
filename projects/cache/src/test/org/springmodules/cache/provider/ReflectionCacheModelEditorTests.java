@@ -21,9 +21,9 @@ import java.beans.PropertyEditorSupport;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.util.ObjectUtils;
-
 import junit.framework.TestCase;
+
+import org.springframework.util.ObjectUtils;
 
 /**
  * <p>
@@ -96,12 +96,6 @@ public class ReflectionCacheModelEditorTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    lightSaber = new LightSaber();
-    editor = new ReflectionCacheModelEditor();
-    editor.setCacheModelClass(lightSaber.getClass());
-  }
-
   public void testSetAsTextString() {
     String color = "red";
     boolean on = true;
@@ -117,7 +111,7 @@ public class ReflectionCacheModelEditorTests extends TestCase {
     editor.setAsText("");
     assertEquals(lightSaber, editor.getValue());
   }
-  
+
   public void testSetAsTextWithCacheModelClassNotSet() {
     editor.setCacheModelClass(null);
     
@@ -138,5 +132,11 @@ public class ReflectionCacheModelEditorTests extends TestCase {
 
     lightSaber.setOn(true);
     assertEquals(lightSaber, editor.getValue());
+  }
+  
+  protected void setUp() {
+    lightSaber = new LightSaber();
+    editor = new ReflectionCacheModelEditor();
+    editor.setCacheModelClass(lightSaber.getClass());
   }
 }

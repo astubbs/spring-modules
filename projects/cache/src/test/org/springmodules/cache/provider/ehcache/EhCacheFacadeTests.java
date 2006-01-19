@@ -28,6 +28,7 @@ import net.sf.ehcache.Element;
 
 import org.easymock.AbstractMatcher;
 import org.easymock.classextension.MockClassControl;
+
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.provider.CacheAccessException;
@@ -99,80 +100,6 @@ public class EhCacheFacadeTests extends TestCase {
 
   public EhCacheFacadeTests(String name) {
     super(name);
-  }
-
-  private void assertCacheExceptionIsCacheNotFoundException(
-      CacheException exception) {
-    assertEquals(CacheNotFoundException.class, exception.getClass());
-  }
-
-  private void assertOnGetFromCacheWrapsCatchedException(
-      Exception expectedCatchedException) throws Exception {
-    Method get = Cache.class.getDeclaredMethod("get",
-        new Class[] { Serializable.class });
-    setUpCacheAsMockObject(get);
-
-    cacheControl.expectAndThrow(cache.get(KEY), expectedCatchedException);
-
-    cacheControl.replay();
-
-    try {
-      cacheFacade.onGetFromCache(KEY, cachingModel);
-      fail();
-
-    } catch (CacheAccessException cacheAccessException) {
-      assertSame(expectedCatchedException, cacheAccessException.getCause());
-    }
-
-    cacheControl.verify();
-  }
-
-  private Method getRemoveAllMethodFromCache() throws Exception {
-    return Cache.class.getMethod("removeAll", null);
-  }
-
-  protected void setUp() throws Exception {
-    cacheManager = CacheManager.create();
-
-    cachingModel = new EhCacheCachingModel();
-    cachingModel.setCacheName(CACHE_NAME);
-
-    flushingModel = new EhCacheFlushingModel();
-    flushingModel.setCacheNames(CACHE_NAME);
-
-    cacheFacade = new EhCacheFacade();
-  }
-
-  private void setUpCache() {
-    cache = cacheManager.getCache(CACHE_NAME);
-    cacheFacade.setCacheManager(cacheManager);
-  }
-
-  private void setUpCacheAsMockObject(Method methodToMock) throws Exception {
-    setUpCacheAsMockObject(new Method[] { methodToMock });
-  }
-
-  private void setUpCacheAsMockObject(Method[] methodsToMock) throws Exception {
-    Class[] constructorTypes = new Class[] { String.class, int.class,
-        boolean.class, boolean.class, long.class, long.class };
-
-    Object[] constructorArgs = new Object[] { CACHE_NAME, new Integer(10),
-        new Boolean(false), new Boolean(false), new Long(300), new Long(600) };
-
-    Class classToMock = Cache.class;
-
-    cacheControl = MockClassControl.createControl(classToMock,
-        constructorTypes, constructorArgs, methodsToMock);
-
-    cache = (Cache) cacheControl.getMock();
-    cacheFacade.setCacheManager(cacheManager);
-
-    cacheManager.removeCache(CACHE_NAME);
-    cacheManager.addCache(cache);
-  }
-
-  protected void tearDown() {
-    cacheManager.shutdown();
   }
 
   /**
@@ -470,5 +397,79 @@ public class EhCacheFacadeTests extends TestCase {
       throws Exception {
     setUpCache();
     cacheFacade.validateCacheManager();
+  }
+
+  protected void setUp() throws Exception {
+    cacheManager = CacheManager.create();
+
+    cachingModel = new EhCacheCachingModel();
+    cachingModel.setCacheName(CACHE_NAME);
+
+    flushingModel = new EhCacheFlushingModel();
+    flushingModel.setCacheNames(CACHE_NAME);
+
+    cacheFacade = new EhCacheFacade();
+  }
+
+  protected void tearDown() {
+    cacheManager.shutdown();
+  }
+
+  private void assertCacheExceptionIsCacheNotFoundException(
+      CacheException exception) {
+    assertEquals(CacheNotFoundException.class, exception.getClass());
+  }
+
+  private void assertOnGetFromCacheWrapsCatchedException(
+      Exception expectedCatchedException) throws Exception {
+    Method get = Cache.class.getDeclaredMethod("get",
+        new Class[] { Serializable.class });
+    setUpCacheAsMockObject(get);
+
+    cacheControl.expectAndThrow(cache.get(KEY), expectedCatchedException);
+
+    cacheControl.replay();
+
+    try {
+      cacheFacade.onGetFromCache(KEY, cachingModel);
+      fail();
+
+    } catch (CacheAccessException cacheAccessException) {
+      assertSame(expectedCatchedException, cacheAccessException.getCause());
+    }
+
+    cacheControl.verify();
+  }
+
+  private Method getRemoveAllMethodFromCache() throws Exception {
+    return Cache.class.getMethod("removeAll", null);
+  }
+
+  private void setUpCache() {
+    cache = cacheManager.getCache(CACHE_NAME);
+    cacheFacade.setCacheManager(cacheManager);
+  }
+
+  private void setUpCacheAsMockObject(Method methodToMock) throws Exception {
+    setUpCacheAsMockObject(new Method[] { methodToMock });
+  }
+
+  private void setUpCacheAsMockObject(Method[] methodsToMock) throws Exception {
+    Class[] constructorTypes = new Class[] { String.class, int.class,
+        boolean.class, boolean.class, long.class, long.class };
+
+    Object[] constructorArgs = new Object[] { CACHE_NAME, new Integer(10),
+        new Boolean(false), new Boolean(false), new Long(300), new Long(600) };
+
+    Class classToMock = Cache.class;
+
+    cacheControl = MockClassControl.createControl(classToMock,
+        constructorTypes, constructorArgs, methodsToMock);
+
+    cache = (Cache) cacheControl.getMock();
+    cacheFacade.setCacheManager(cacheManager);
+
+    cacheManager.removeCache(CACHE_NAME);
+    cacheManager.addCache(cache);
   }
 }

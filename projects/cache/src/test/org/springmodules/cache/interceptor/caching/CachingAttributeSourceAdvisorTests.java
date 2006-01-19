@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+
 import org.springframework.aop.framework.AopConfigException;
 
 /**
@@ -34,11 +35,7 @@ import org.springframework.aop.framework.AopConfigException;
  */
 public final class CachingAttributeSourceAdvisorTests extends TestCase {
 
-  private CachingAttributeSource source;
-
   private CachingAttributeSourceAdvisor advisor;
-
-  private MockControl sourceControl;
 
   /**
    * Interceptor used only to obtain <code>{@link #source}</code>.
@@ -50,6 +47,10 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
    */
   private Method method;
 
+  private CachingAttributeSource source;
+
+  private MockControl sourceControl;
+
   /**
    * Class declaring <code>{@link #method}</code>.
    */
@@ -57,24 +58,6 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
 
   public CachingAttributeSourceAdvisorTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    interceptor = new MetadataCachingInterceptor();
-  }
-
-  private void setUpCachingAttributeSourceAsMockObject() {
-    sourceControl = MockControl.createControl(CachingAttributeSource.class);
-    source = (CachingAttributeSource) sourceControl.getMock();
-
-    interceptor.setCachingAttributeSource(source);
-
-    advisor = new CachingAttributeSourceAdvisor(interceptor);
-  }
-
-  private void setUpTargetClassAndMethod() throws Exception {
-    targetClass = String.class;
-    method = targetClass.getMethod("charAt", new Class[] { int.class });
   }
 
   /**
@@ -125,5 +108,23 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     assertTrue(advisor.matches(method, targetClass));
 
     sourceControl.verify();
+  }
+
+  protected void setUp() {
+    interceptor = new MetadataCachingInterceptor();
+  }
+
+  private void setUpCachingAttributeSourceAsMockObject() {
+    sourceControl = MockControl.createControl(CachingAttributeSource.class);
+    source = (CachingAttributeSource) sourceControl.getMock();
+
+    interceptor.setCachingAttributeSource(source);
+
+    advisor = new CachingAttributeSourceAdvisor(interceptor);
+  }
+
+  private void setUpTargetClassAndMethod() throws Exception {
+    targetClass = String.class;
+    method = targetClass.getMethod("charAt", new Class[] { int.class });
   }
 }

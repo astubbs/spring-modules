@@ -19,6 +19,7 @@
 package org.springmodules.cache.interceptor.caching;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -34,10 +35,6 @@ public final class CachedTests extends AbstractEqualsHashCodeTestCase {
 
   public CachedTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    attribute = new Cached();
   }
 
   /**
@@ -122,5 +119,9 @@ public final class CachedTests extends AbstractEqualsHashCodeTestCase {
     String actual = attribute.getClass().getName() + "@"
         + ObjectUtils.getIdentityHexString(attribute) + "[modelId=null]";
     assertEquals(attribute.toString(), actual);
+  }
+
+  protected void setUp() {
+    attribute = new Cached();
   }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.interceptor.caching.AbstractCachingInterceptor;
 
@@ -61,43 +62,13 @@ public abstract class AbstractCacheIntegrationTests extends
     super();
   }
 
-  protected final void assertCacheEntryFromCacheIsNull(Object cacheEntry,
-      Serializable key) {
-    assertNull("There should not be any object stored under the key <"
-        + StringUtils.quoteIfString(key) + ">", cacheEntry);
-  }
-
-  protected abstract void assertCacheWasFlushed() throws Exception;
-
-  /**
-   * Asserts that the given object was cached.
-   * 
-   * @param expectedCachedObject
-   *          the object that should have been cached.
-   * @param keyAndModelIndex
-   *          the index of the key/model stored in <code>cachingListener</code>.
-   * @see KeyAndModelListCachingListener
-   */
-  protected abstract void assertObjectWasCached(Object expectedCachedObject,
-      int keyAndModelIndex) throws Exception;
-
-  protected final KeyAndModelListCachingListener getCachingListener() {
-    return cachingListener;
-  }
-
-  protected final KeyAndModel getKeyAndModel(int index) {
-    List keyAndModelPairs = cachingListener.getKeyAndModelPairs();
-    KeyAndModel keyModel = (KeyAndModel) keyAndModelPairs.get(index);
-    return keyModel;
-  }
-
   /**
    * Verifies that the caching and the cache-flushing are working correctly.
    */
   public final void testCachingAndCacheFlushing() throws Exception {
     cachingListener = (KeyAndModelListCachingListener) applicationContext
         .getBean(CACHING_LISTENER_BEAN_ID);
-    
+
     target = (CacheableService) applicationContext.getBean(TARGET_BEAN_ID);
 
     logger.debug("Storing in the cache...");
@@ -135,5 +106,35 @@ public abstract class AbstractCacheIntegrationTests extends
     assertObjectWasCached(AbstractCachingInterceptor.NULL_ENTRY, nameIndex);
 
     assertNull(cachedObject);
+  }
+
+  protected final void assertCacheEntryFromCacheIsNull(Object cacheEntry,
+      Serializable key) {
+    assertNull("There should not be any object stored under the key <"
+        + StringUtils.quoteIfString(key) + ">", cacheEntry);
+  }
+
+  protected abstract void assertCacheWasFlushed() throws Exception;
+
+  /**
+   * Asserts that the given object was cached.
+   * 
+   * @param expectedCachedObject
+   *          the object that should have been cached.
+   * @param keyAndModelIndex
+   *          the index of the key/model stored in <code>cachingListener</code>.
+   * @see KeyAndModelListCachingListener
+   */
+  protected abstract void assertObjectWasCached(Object expectedCachedObject,
+      int keyAndModelIndex) throws Exception;
+
+  protected final KeyAndModelListCachingListener getCachingListener() {
+    return cachingListener;
+  }
+
+  protected final KeyAndModel getKeyAndModel(int index) {
+    List keyAndModelPairs = cachingListener.getKeyAndModelPairs();
+    KeyAndModel keyModel = (KeyAndModel) keyAndModelPairs.get(index);
+    return keyModel;
   }
 }

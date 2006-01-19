@@ -20,10 +20,10 @@ package org.springmodules.cache.interceptor;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.springmodules.cache.CacheModel;
 import org.springmodules.cache.mock.MockCachingModel;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -43,10 +43,6 @@ public class MethodMapCacheModelSourceTests extends TestCase {
 
   public MethodMapCacheModelSourceTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    source = new MethodMapCacheModelSource();
   }
 
   public void testAddCacheModel()
@@ -118,5 +114,9 @@ public class MethodMapCacheModelSourceTests extends TestCase {
     } catch (UnsupportedOperationException exception) {
       // expecting exception.
     }
+  }
+
+  protected void setUp() {
+    source = new MethodMapCacheModelSource();
   }
 }

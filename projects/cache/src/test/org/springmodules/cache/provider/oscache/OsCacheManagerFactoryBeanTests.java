@@ -23,11 +23,12 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springmodules.cache.provider.PathUtils;
-
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
+
+import org.springframework.core.io.ClassPathResource;
+
+import org.springmodules.cache.provider.PathUtils;
 
 /**
  * <p>
@@ -56,63 +57,6 @@ public final class OsCacheManagerFactoryBeanTests extends TestCase {
 
   public OsCacheManagerFactoryBeanTests(String name) {
     super(name);
-  }
-
-  private void assertCacheManagerWasConfigured() {
-    GeneralCacheAdministrator cacheAdministrator = getCacheManager();
-
-    assertNotNull(cacheAdministrator);
-
-    String expected = configProperties
-        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
-
-    String actual = cacheAdministrator
-        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
-
-    assertEquals(expected, actual);
-  }
-
-  private void assertObjectTypeIsCorrect() {
-    Class actualObjectType = cacheManagerFactoryBean.getObjectType();
-    assertEquals(GeneralCacheAdministrator.class, actualObjectType);
-  }
-
-  private GeneralCacheAdministrator getCacheManager() {
-    return (GeneralCacheAdministrator) cacheManagerFactoryBean.getObject();
-  }
-
-  protected void setUp() {
-    cacheManagerFactoryBean = new OsCacheManagerFactoryBean();
-  }
-
-  private void setUpAlternativeConfigurationProperties() throws Exception {
-    String configLocationPath = PathUtils.getPackageNameAsPath(getClass())
-        + "/" + ALTERNATIVE_CONFIG_RESOURCE_NAME;
-    this.setUpConfigurationProperties(configLocationPath);
-  }
-
-  private void setUpConfigurationProperties(String configLocationPath)
-      throws Exception {
-    configLocation = new ClassPathResource(configLocationPath);
-    cacheManagerFactoryBean.setConfigLocation(configLocation);
-
-    InputStream inputStream = configLocation.getInputStream();
-    configProperties = new Properties();
-    configProperties.load(inputStream);
-  }
-
-  private void setUpDefaultConfigurationProperties() throws Exception {
-    this.setUpConfigurationProperties(DEFAULT_CONFIG_RESOURCE_NAME);
-  }
-
-  protected void tearDown() {
-    if (cacheManagerFactoryBean != null) {
-      try {
-        cacheManagerFactoryBean.destroy();
-      } catch (Exception exception) {
-        // ignore the exception.
-      }
-    }
   }
 
   public void testCreateCacheManager() throws Exception {
@@ -167,5 +111,62 @@ public final class OsCacheManagerFactoryBeanTests extends TestCase {
 
   public void testIsSingleton() {
     assertTrue(cacheManagerFactoryBean.isSingleton());
+  }
+
+  protected void setUp() {
+    cacheManagerFactoryBean = new OsCacheManagerFactoryBean();
+  }
+
+  protected void tearDown() {
+    if (cacheManagerFactoryBean != null) {
+      try {
+        cacheManagerFactoryBean.destroy();
+      } catch (Exception exception) {
+        // ignore the exception.
+      }
+    }
+  }
+
+  private void assertCacheManagerWasConfigured() {
+    GeneralCacheAdministrator cacheAdministrator = getCacheManager();
+
+    assertNotNull(cacheAdministrator);
+
+    String expected = configProperties
+        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
+
+    String actual = cacheAdministrator
+        .getProperty(CACHE_CAPACITY_PROPERTY_NAME);
+
+    assertEquals(expected, actual);
+  }
+
+  private void assertObjectTypeIsCorrect() {
+    Class actualObjectType = cacheManagerFactoryBean.getObjectType();
+    assertEquals(GeneralCacheAdministrator.class, actualObjectType);
+  }
+
+  private GeneralCacheAdministrator getCacheManager() {
+    return (GeneralCacheAdministrator) cacheManagerFactoryBean.getObject();
+  }
+
+  private void setUpAlternativeConfigurationProperties() throws Exception {
+    String configLocationPath = PathUtils.getPackageNameAsPath(getClass())
+        + "/" + ALTERNATIVE_CONFIG_RESOURCE_NAME;
+    this.setUpConfigurationProperties(configLocationPath);
+  }
+
+  private void setUpConfigurationProperties(String configLocationPath)
+      throws Exception {
+    configLocation = new ClassPathResource(configLocationPath);
+    cacheManagerFactoryBean.setConfigLocation(configLocation);
+
+    InputStream inputStream = configLocation.getInputStream();
+    configProperties = new Properties();
+    configProperties.load(inputStream);
+  }
+
+  private void setUpDefaultConfigurationProperties() throws Exception {
+    this.setUpConfigurationProperties(DEFAULT_CONFIG_RESOURCE_NAME);
   }
 }

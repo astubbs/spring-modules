@@ -19,6 +19,7 @@
 package org.springmodules.cache.provider.jcs;
 
 import org.springframework.util.ObjectUtils;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -34,10 +35,6 @@ public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
 
   public JcsCachingModelTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    model = new JcsCachingModel();
   }
 
   /**
@@ -149,5 +146,9 @@ public final class JcsCachingModelTests extends AbstractEqualsHashCodeTestCase {
         + ObjectUtils.getIdentityHexString(model)
         + "[cacheName='main', group='services']";
     assertEquals(model.toString(), actual);
+  }
+
+  protected void setUp() {
+    model = new JcsCachingModel();
   }
 }

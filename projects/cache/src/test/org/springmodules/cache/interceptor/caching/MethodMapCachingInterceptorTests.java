@@ -21,11 +21,11 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.mock.MockCachingModel;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -40,10 +40,6 @@ public class MethodMapCachingInterceptorTests extends TestCase {
 
   public MethodMapCachingInterceptorTests(String name) {
     super(name);
-  }
-
-  protected void setUp() {
-    interceptor = new MethodMapCachingInterceptor();
   }
 
   public void testOnAfterPropertiesSetWithCachingModelSourceEqualToNull()
@@ -98,5 +94,9 @@ public class MethodMapCachingInterceptorTests extends TestCase {
     interceptor.setCachingModelSource(modelSource);
     interceptor.onAfterPropertiesSet();
     assertSame(modelSource, interceptor.getCachingModelSource());
+  }
+
+  protected void setUp() {
+    interceptor = new MethodMapCachingInterceptor();
   }
 }
