@@ -18,9 +18,9 @@
 package org.springmodules.cache.provider.jboss;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -108,7 +108,7 @@ public class JbossCacheCachingModel implements CachingModel {
    */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[nodeFqn=" + Strings.quote(node) + "]");
+    buffer.append("[nodeFqn=" + StringUtils.quote(node) + "]");
 
     return buffer.toString();
   }

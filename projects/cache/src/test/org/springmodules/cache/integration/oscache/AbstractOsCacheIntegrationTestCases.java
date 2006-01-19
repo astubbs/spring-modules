@@ -20,9 +20,9 @@ package org.springmodules.cache.integration.oscache;
 
 import java.io.Serializable;
 
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
-import org.springmodules.util.Strings;
 
 import com.opensymphony.oscache.base.NeedsRefreshException;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
@@ -59,7 +59,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
     try {
       cacheAdministrator.getFromCache(key.toString());
       fail("There should not be any object cached under the key <"
-          + Strings.quoteIfString(key) + ">");
+          + StringUtils.quoteIfString(key) + ">");
 
     } catch (NeedsRefreshException needsRefreshException) {
       // expecting this exception.

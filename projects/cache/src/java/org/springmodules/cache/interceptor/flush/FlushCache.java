@@ -19,9 +19,9 @@
 package org.springmodules.cache.interceptor.flush;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheAttribute;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -109,7 +109,7 @@ public class FlushCache implements CacheAttribute {
    */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[modelId=" + Strings.quote(modelId) + "]");
+    buffer.append("[modelId=" + StringUtils.quote(modelId) + "]");
 
     return buffer.toString();
   }

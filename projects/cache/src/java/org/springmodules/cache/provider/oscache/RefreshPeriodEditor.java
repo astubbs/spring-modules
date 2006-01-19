@@ -20,7 +20,6 @@ package org.springmodules.cache.provider.oscache;
 import java.beans.PropertyEditorSupport;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.util.Strings;
 
 import com.opensymphony.oscache.base.CacheEntry;
 
@@ -56,10 +55,9 @@ public class RefreshPeriodEditor extends PropertyEditorSupport {
         refreshPeriod = new Integer(newText);
 
       } catch (NumberFormatException numberFormatException) {
-        throw new IllegalArgumentException(
-            Strings.quote(newText)
-                + " is not a valid value. Refresh period should be an integer or the String "
-                + Strings.quote(INDEFINITE_EXPIRY));
+        throw new IllegalArgumentException(StringUtils.quote(newText)
+            + " is not a valid value. Refresh period should be an integer "
+            + "or the String " + StringUtils.quote(INDEFINITE_EXPIRY));
       }
     }
 

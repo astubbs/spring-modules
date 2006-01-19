@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * <p>
@@ -777,7 +778,7 @@ public abstract class Objects {
       else
         buffer.append(ARRAY_ELEMENT_SEPARATOR);
 
-      buffer.append(Strings.quoteIfString(array[i]));
+      buffer.append(StringUtils.quoteIfString(array[i]));
     }
 
     buffer.append(ARRAY_END);
@@ -843,7 +844,7 @@ public abstract class Objects {
       else
         buffer.append(ARRAY_ELEMENT_SEPARATOR);
 
-      buffer.append(Strings.quote(array[i]));
+      buffer.append(StringUtils.quote(array[i]));
     }
 
     buffer.append(ARRAY_END);

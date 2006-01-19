@@ -19,9 +19,9 @@
 package org.springmodules.cache.provider.ehcache;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -106,7 +106,7 @@ public class EhCacheCachingModel implements CachingModel {
    */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[cacheName=" + Strings.quote(cacheName) + "]");
+    buffer.append("[cacheName=" + StringUtils.quote(cacheName) + "]");
     return buffer.toString();
   }
 }

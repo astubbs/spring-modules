@@ -18,8 +18,8 @@
 package org.springmodules.cache.serializable;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -86,7 +86,7 @@ public class Puppy {
    */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[name=" + Strings.quote(name) + "]");
+    buffer.append("[name=" + StringUtils.quote(name) + "]");
     return buffer.toString();
   }
 

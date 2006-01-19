@@ -19,9 +19,9 @@
 package org.springmodules.cache.provider.jcs;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -145,8 +145,8 @@ public class JcsCachingModel implements CachingModel {
    */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[cacheName=" + Strings.quote(cacheName) + ", ");
-    buffer.append("group=" + Strings.quote(group) + "]");
+    buffer.append("[cacheName=" + StringUtils.quote(cacheName) + ", ");
+    buffer.append("group=" + StringUtils.quote(group) + "]");
 
     return buffer.toString();
   }

@@ -24,7 +24,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -241,7 +240,7 @@ public class OsCacheCachingModel implements CachingModel {
     StringBuffer buffer = Objects.identityToString(this);
     buffer.append("[refreshPeriod=" + refreshPeriod + ", ");
     buffer.append("groups=" + Objects.nullSafeToString(groups) + ", ");
-    buffer.append("cronExpression=" + Strings.quote(cronExpression) + "]");
+    buffer.append("cronExpression=" + StringUtils.quote(cronExpression) + "]");
 
     return buffer.toString();
   }

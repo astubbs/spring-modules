@@ -183,7 +183,7 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
      */
     public String toString() {
       StringBuffer buffer = Objects.identityToString(this);
-      buffer.append("[cacheName=" + Strings.quote(cacheName) + ", ");
+      buffer.append("[cacheName=" + StringUtils.quote(cacheName) + ", ");
       buffer.append("groups=" + Objects.nullSafeToString(groups) + "]");
       return buffer.toString();
     }

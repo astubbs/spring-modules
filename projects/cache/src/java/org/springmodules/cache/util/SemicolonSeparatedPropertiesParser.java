@@ -24,7 +24,6 @@ import org.springframework.util.StringUtils;
 import org.springmodules.cache.regex.Match;
 import org.springmodules.cache.regex.Perl5Regex;
 import org.springmodules.cache.regex.Regex;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -84,9 +83,9 @@ public abstract class SemicolonSeparatedPropertiesParser {
       Match match = KEY_VALUE_REGEX.match(property);
 
       if (!match.isSuccessful()) {
-        String message = "The String " + Strings.quote(property)
+        String message = "The String " + StringUtils.quote(property)
             + " should match the regular expression pattern "
-            + Strings.quote(KEY_VALUE_REGEX.getPattern());
+            + StringUtils.quote(KEY_VALUE_REGEX.getPattern());
         throw new IllegalArgumentException(message);
       }
 
@@ -95,8 +94,8 @@ public abstract class SemicolonSeparatedPropertiesParser {
       String value = groups[2].trim();
 
       if (properties.containsKey(key)) {
-        throw new IllegalArgumentException("The property " + Strings.quote(key)
-            + " is specified more than once");
+        throw new IllegalArgumentException("The property "
+            + StringUtils.quote(key) + " is specified more than once");
       }
       properties.setProperty(key, value);
     }

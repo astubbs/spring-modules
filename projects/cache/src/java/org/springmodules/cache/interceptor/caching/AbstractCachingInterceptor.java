@@ -32,13 +32,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.key.CacheKeyGenerator;
 import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheProviderFacade;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -338,7 +338,7 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
       }
     } catch (Exception exception) {
       throw new FatalCacheException(
-          "Unable to create the caching model with id " + Strings.quote(id),
+          "Unable to create the caching model with id " + StringUtils.quote(id),
           exception);
     }
 
@@ -373,7 +373,7 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
       }
     } catch (Exception exception) {
       throw new FatalCacheException("Unable to validate caching model with id "
-          + Strings.quote(id), exception);
+          + StringUtils.quote(id), exception);
     }
   }
 }

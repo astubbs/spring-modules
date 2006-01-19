@@ -20,9 +20,9 @@ package org.springmodules.cache.interceptor.flush;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -55,8 +55,8 @@ public final class MethodMapFlushingInterceptor extends
           }
         } catch (Exception exception) {
           throw new FatalCacheException(
-              "Unable to add model stored under the key " + Strings.quote(key),
-              exception);
+              "Unable to add model stored under the key "
+                  + StringUtils.quote(key), exception);
         }
         setFlushingModelSource(newSource);
       }

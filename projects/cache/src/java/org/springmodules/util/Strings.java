@@ -28,35 +28,8 @@ import org.springframework.util.ObjectUtils;
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @version $Revision$ $Date$
  */
 public abstract class Strings {
-
-  /**
-   * Surrounds the given String in single quotes. Returns <code>null</code> if
-   * the given String is <code>null</code>.
-   * 
-   * @param str
-   *          the given String
-   * @return the given String surrounded by single quotes.
-   */
-  public static String quote(String str) {
-    return (str != null) ? "'" + str + "'" : str;
-  }
-
-  /**
-   * Surrounds the given Object in single quotes only if it is a String.
-   * 
-   * @param obj
-   *          the given Object
-   * @return the given Object surrounded by single quotes (if it is a String.)
-   * 
-   * @see #quote(String)
-   */
-  public static Object quoteIfString(Object obj) {
-    return (obj instanceof String) ? quote((String) obj) : obj;
-  }
 
   /**
    * Removes duplicates from the given String array.
@@ -70,8 +43,9 @@ public abstract class Strings {
       return array;
     }
     Set set = new TreeSet();
-    int length = array.length;
-    for (int i = 0; i < length; i++) {
+
+    int arraySize = array.length;
+    for (int i = 0; i < arraySize; i++) {
       set.add(array[i]);
     }
     return (String[]) set.toArray(new String[set.size()]);

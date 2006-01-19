@@ -35,29 +35,6 @@ public class StringsTests extends TestCase {
     super(name);
   }
 
-  public void testQuote() {
-    String str = "Leia";
-    assertEquals("'" + str + "'", Strings.quote(str));
-  }
-
-  public void testQuoteIfStringWithNotStringArg() {
-    Integer number = new Integer(3);
-    assertEquals(number, Strings.quoteIfString(number));
-  }
-
-  public void testQuoteIfStringWithStringArg() {
-    String str = "Luke";
-    assertEquals("'" + str + "'", Strings.quoteIfString(str));
-  }
-
-  public void testQuoteIfStringWithStringEqualToNull() {
-    assertNull(Strings.quoteIfString(null));
-  }
-
-  public void testQuoteWithStringEqualToNull() {
-    assertNull(Strings.quote(null));
-  }
-
   public void testRemoveDuplicatesWithArrayEqualToNull() {
     assertNull(Strings.removeDuplicates(null));
   }

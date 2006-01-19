@@ -20,8 +20,8 @@ package org.springmodules.cache.serializable;
 import java.io.Serializable;
 
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -115,7 +115,7 @@ public class XStreamSerializableFactory implements SerializableFactory {
      */
     public String toString() {
       StringBuffer buffer = Objects.identityToString(this);
-      buffer.append("[value=" + Strings.quoteIfString(value) + "]");
+      buffer.append("[value=" + StringUtils.quoteIfString(value) + "]");
 
       return buffer.toString();
     }

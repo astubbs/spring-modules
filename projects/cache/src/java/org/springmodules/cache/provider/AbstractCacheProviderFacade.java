@@ -22,12 +22,12 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.serializable.SerializableFactory;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -80,7 +80,7 @@ public abstract class AbstractCacheProviderFacade implements
   public final void cancelCacheUpdate(Serializable key) throws CacheException {
     if (logger.isDebugEnabled()) {
       logger.debug("Attempt to cancel a cache update using the key <"
-          + Strings.quoteIfString(key) + ">");
+          + StringUtils.quoteIfString(key) + ">");
     }
 
     try {
@@ -118,7 +118,8 @@ public abstract class AbstractCacheProviderFacade implements
 
     if (logger.isDebugEnabled()) {
       logger.debug("Attempt to retrieve a cache entry using key <"
-          + Strings.quoteIfString(key) + "> and cache model <" + model + ">");
+          + StringUtils.quoteIfString(key) + "> and cache model <" + model
+          + ">");
     }
 
     Object cachedObject = null;
@@ -130,7 +131,7 @@ public abstract class AbstractCacheProviderFacade implements
 
       if (logger.isDebugEnabled()) {
         logger.debug("Retrieved cache element <"
-            + Strings.quoteIfString(cachedObject) + ">");
+            + StringUtils.quoteIfString(cachedObject) + ">");
       }
 
     } catch (CacheException exception) {
@@ -291,7 +292,7 @@ public abstract class AbstractCacheProviderFacade implements
       throws CacheException {
     if (logger.isDebugEnabled()) {
       logger.debug("Attempt to store the object <" + obj
-          + "> in the cache using key <" + Strings.quoteIfString(key)
+          + "> in the cache using key <" + StringUtils.quoteIfString(key)
           + "> and model <" + model + ">");
     }
 
@@ -314,7 +315,7 @@ public abstract class AbstractCacheProviderFacade implements
       throws CacheException {
     if (logger.isDebugEnabled()) {
       logger.debug("Attempt to remove an entry from the cache using key <"
-          + Strings.quoteIfString(key) + "> and model <" + model + ">");
+          + StringUtils.quoteIfString(key) + "> and model <" + model + ">");
     }
 
     if (model != null) {

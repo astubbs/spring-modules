@@ -29,11 +29,11 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.StringUtils;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheProviderFacade;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -97,8 +97,8 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
         }
       } catch (Exception exception) {
         throw new FatalCacheException(
-            "Unable to create the flushing model with id " + Strings.quote(id),
-            exception);
+            "Unable to create the flushing model with id "
+                + StringUtils.quote(id), exception);
       }
 
       setFlushingModels(newFlushingModels);
@@ -114,8 +114,8 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
         }
       } catch (Exception exception) {
         throw new FatalCacheException(
-            "Unable to validate flushing model with id " + Strings.quote(id),
-            exception);
+            "Unable to validate flushing model with id "
+                + StringUtils.quote(id), exception);
       }
     }
 

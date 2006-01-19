@@ -25,7 +25,6 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springframework.util.StringUtils;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.interceptor.caching.AbstractCachingInterceptor;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -65,7 +64,7 @@ public abstract class AbstractCacheIntegrationTests extends
   protected final void assertCacheEntryFromCacheIsNull(Object cacheEntry,
       Serializable key) {
     assertNull("There should not be any object stored under the key <"
-        + Strings.quoteIfString(key) + ">", cacheEntry);
+        + StringUtils.quoteIfString(key) + ">", cacheEntry);
   }
 
   protected abstract void assertCacheWasFlushed() throws Exception;
