@@ -7,6 +7,6 @@
        http://www.springmodules.org/schema/cache http://www.springmodules.org/schema/cache/springmodules-cache.xsd">
 
   <cache:config id="customLocationCacheManager" provider="JBOSS_CACHE"
-    configLocation="classpath:org/springmodules/cache/config/jboss-config.xml" />
+    configLocation="classpath:org/springmodules/cache/config/jbossCache-config.xml" />
 
 </beans>
