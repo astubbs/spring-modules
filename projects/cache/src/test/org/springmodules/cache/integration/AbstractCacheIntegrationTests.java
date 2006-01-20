@@ -40,9 +40,17 @@ import org.springmodules.cache.interceptor.caching.AbstractCachingInterceptor;
 public abstract class AbstractCacheIntegrationTests extends
     AbstractDependencyInjectionSpringContextTests {
 
+  /**
+   * Id used to reference the cache manager in the Spring application context.
+   */
   protected static final String CACHE_MANAGER_BEAN_ID = "cacheManager";
 
   protected static final String CACHING_LISTENER_BEAN_ID = "cachingListener";
+
+  /**
+   * "classpath:" prefix for resources loaded from the class path.
+   */
+  protected static final String CLASSPATH = "classpath:";
 
   protected static final String TARGET_BEAN_ID = "cacheableService";
 

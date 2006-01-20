@@ -23,6 +23,7 @@ import net.sf.ehcache.Element;
 
 import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
+import org.springmodules.cache.provider.PathUtils;
 import org.springmodules.cache.provider.ehcache.EhCacheCachingModel;
 
 /**
@@ -36,13 +37,14 @@ import org.springmodules.cache.provider.ehcache.EhCacheCachingModel;
 public abstract class AbstractEhCacheIntegrationTests extends
     AbstractCacheIntegrationTests {
 
-  protected static final String CACHE_CONFIG = "classpath:org/springmodules/cache/integration/ehcache/ehCacheContext.xml";
+  /**
+   * Path of the Spring file specifying the configuration of the cache manager.
+   */
+  protected static final String CACHE_CONFIG = CLASSPATH
+      + PathUtils.getPackageNameAsPath(AbstractEhCacheIntegrationTests.class)
+      + "/ehCacheContext.xml";
 
   private CacheManager cacheManager;
-
-  public AbstractEhCacheIntegrationTests() {
-    super();
-  }
 
   /**
    * @see AbstractCacheIntegrationTests#assertCacheWasFlushed()

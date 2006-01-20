@@ -18,6 +18,8 @@
 
 package org.springmodules.cache.integration.ehcache;
 
+import org.springmodules.cache.provider.PathUtils;
+
 /**
  * <p>
  * Verifies that the caching module works correctly when using EHCache as the
@@ -30,11 +32,9 @@ package org.springmodules.cache.integration.ehcache;
 public final class EhCacheMethodMapIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  private static final String METHOD_MAP_CONFIG = "classpath:org/springmodules/cache/integration/ehcache/ehCacheMethodMapContext.xml";
-
-  public EhCacheMethodMapIntegrationTests() {
-    super();
-  }
+  private static final String METHOD_MAP_CONFIG = CLASSPATH
+      + PathUtils.getPackageNameAsPath(EhCacheMethodMapIntegrationTests.class)
+      + "/ehCacheMethodMapContext.xml";
 
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()

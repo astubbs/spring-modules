@@ -18,6 +18,8 @@
 
 package org.springmodules.cache.integration.ehcache;
 
+import org.springmodules.cache.provider.PathUtils;
+
 /**
  * <p>
  * Verifies that the caching module works correctly when using EHCache as the
@@ -30,11 +32,10 @@ package org.springmodules.cache.integration.ehcache;
 public final class EhCacheProxyFactoryIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  private static final String PROXY_FACTORY_CONFIG = "classpath:org/springmodules/cache/integration/ehcache/ehCacheProxyFactoryContext.xml";
-
-  public EhCacheProxyFactoryIntegrationTests() {
-    super();
-  }
+  private static final String PROXY_FACTORY_CONFIG = CLASSPATH
+      + PathUtils
+          .getPackageNameAsPath(EhCacheProxyFactoryIntegrationTests.class)
+      + "/ehCacheProxyFactoryContext.xml";
 
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
