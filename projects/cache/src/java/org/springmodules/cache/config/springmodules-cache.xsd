@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.springmodules.org/schema/cache"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://www.springmodules.org/schema/cache"
+  elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+  <xsd:element name="config">
+    <xsd:complexType>
+      <xsd:attribute name="id" type="xsd:string" default="cacheManager" />
+      <xsd:attribute name="provider" use="required">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="EHCACHE" />
+            <xsd:enumeration value="JBOSSCACHE" />
+            <xsd:enumeration value="JCS" />
+            <xsd:enumeration value="OSCACHE" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+      <xsd:attribute name="configLocation" type="xsd:string" use="optional" />
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>

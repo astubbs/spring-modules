@@ -1,0 +1,6 @@
+http\://www.springframework.org/schema/beans/spring-beans.xsd=org/springframework/beans/factory/xml/spring-beans.xsd
+http\://www.springframework.org/schema/util/spring-util.xsd=org/springframework/beans/factory/xml/spring-util.xsd
+http\://www.springframework.org/schema/aop/spring-aop.xsd=org/springframework/aop/config/spring-aop.xsd
+http\://www.springframework.org/schema/jndi/spring-jndi.xsd=org/springframework/jndi/config/spring-jndi.xsd
+http\://www.springframework.org/schema/tx/spring-tx.xsd=org/springframework/transaction/config/spring-tx.xsd
+http\://www.springmodules.org/schema/cache/springmodules-cache.xsd=org/springmodules/cache/config/springmodules-cache.xsd
