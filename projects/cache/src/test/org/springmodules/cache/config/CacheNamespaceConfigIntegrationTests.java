@@ -26,6 +26,8 @@ import org.apache.jcs.engine.control.CompositeCache;
 import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.jboss.cache.TreeCache;
 
+import com.opensymphony.oscache.general.GeneralCacheAdministrator;
+
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +36,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springmodules.cache.provider.PathUtils;
 import org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean;
 import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
+import org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean;
 
 /**
  * <p>
@@ -49,7 +52,8 @@ public class CacheNamespaceConfigIntegrationTests extends TestCase {
   private static final String DEFAULT_CACHE_MANAGER_ID = "cacheManager";
 
   private static final String THIS_PATH = "classpath:"
-      + PathUtils.getPackageNameAsPath(CacheNamespaceConfigIntegrationTests.class);
+      + PathUtils
+          .getPackageNameAsPath(CacheNamespaceConfigIntegrationTests.class);
 
   /**
    * Constructor.
@@ -175,6 +179,44 @@ public class CacheNamespaceConfigIntegrationTests extends TestCase {
   public void testCacheConfigWithJcsAndDefaultBeanId() throws Exception {
     assertCacheConfigRegistersCacheManagerFactoryUsingDefaultId(
         JcsManagerFactoryBean.class, "jcsConfigDefaultValues.xml");
+  }
+
+  /**
+   * Verifies that <code>{@link CacheNamespaceHandler}</code> creates a
+   * OSCache cache manager using a custom configuration file.
+   * 
+   * @throws Exception
+   *           any exception thrown when shutting down the cache manager
+   */
+  public void testCacheConfigWithOsCacheAndCustomConfigLocation()
+      throws Exception {
+    ApplicationContext applicationContext = getApplicationContext("osCacheConfigCustomValues.xml");
+
+    String cacheManagerBeanId = CUSTOM_LOCATION_CACHE_MANAGER_ID;
+    GeneralCacheAdministrator cacheManager = (GeneralCacheAdministrator) applicationContext
+        .getBean(cacheManagerBeanId);
+    assertNotNull("The application context should have "
+        + "a cache manager called '" + cacheManagerBeanId + "'", cacheManager);
+
+    assertEquals("<Cache capacity>", "5", cacheManager
+        .getProperty("cache.capacity"));
+
+    OsCacheManagerFactoryBean factoryBean = (OsCacheManagerFactoryBean) applicationContext
+        .getBean("&" + cacheManagerBeanId);
+    factoryBean.destroy();
+  }
+
+  /**
+   * Verifies that <code>{@link CacheNamespaceHandler}</code> creates a
+   * <code>{@link OsCacheManagerFactoryBean}</code> and registers it under the
+   * id "cacheManager".
+   * 
+   * @throws Exception
+   *           any exception thrown when shutting down the cache manager
+   */
+  public void testCacheConfigWithOsCacheAndDefaultBeanId() throws Exception {
+    assertCacheConfigRegistersCacheManagerFactoryUsingDefaultId(
+        OsCacheManagerFactoryBean.class, "osCacheConfigDefaultValues.xml");
   }
 
   private void assertCacheConfigRegistersCacheManagerFactoryUsingDefaultId(

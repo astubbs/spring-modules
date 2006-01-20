@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean;
 import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
+import org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean;
 
 /**
  * <p>
@@ -55,14 +56,9 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
 
   private static final String JCS = "JCS";
 
-  private static final String PROVIDER_NAME_ATTR = "provider";
+  private static final String OSCACHE = "OSCACHE";
 
-  /**
-   * Constructor.
-   */
-  public CacheConfigBeanDefinitionParser() {
-    super();
-  }
+  private static final String PROVIDER_NAME_ATTR = "provider";
 
   /**
    * Configures the cache manager to use. The "cache:config" tag provides the
@@ -81,39 +77,42 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
    * for the cache manager</b> </li>
    * </ul>
    * 
+   * @throws IllegalArgumentException
+   *           if the value of the XML attribute "provider" contains an invalid
+   *           value
    * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
    */
   public void parse(Element element, BeanDefinitionRegistry registry) {
-    RootBeanDefinition definition = null;
+    Class cacheManagerFactoryBeanClass = null;
 
     String providerName = element.getAttribute(PROVIDER_NAME_ATTR);
     if (EHCACHE.equalsIgnoreCase(providerName)) {
-      definition = getEhCacheManagerDefinition(element);
+      cacheManagerFactoryBeanClass = EhCacheManagerFactoryBean.class;
 
     } else if (JBOSS_CACHE.equalsIgnoreCase(providerName)) {
-      definition = getJbossCacheManagerDefinition(element);
+      cacheManagerFactoryBeanClass = JbossCacheManagerFactoryBean.class;
 
     } else if (JCS.equalsIgnoreCase(providerName)) {
-      definition = getJcsManagerDefinition(element);
+      cacheManagerFactoryBeanClass = JcsManagerFactoryBean.class;
+
+    } else if (OSCACHE.equalsIgnoreCase(providerName)) {
+      cacheManagerFactoryBeanClass = OsCacheManagerFactoryBean.class;
+
+    } else {
+      throw new IllegalStateException(StringUtils.quote(providerName)
+          + " is not a valid provider. Valid values include "
+          + StringUtils.quote(EHCACHE) + ", " + StringUtils.quote(JBOSS_CACHE)
+          + ", " + StringUtils.quote(JCS) + " and "
+          + StringUtils.quote(OSCACHE));
     }
 
+    RootBeanDefinition definition = new RootBeanDefinition(
+        cacheManagerFactoryBeanClass);
     definition.setPropertyValues(new MutablePropertyValues());
     setConfigLocation(element, definition);
 
     String id = element.getAttribute(ID_ATTR);
     registry.registerBeanDefinition(id, definition);
-  }
-
-  private RootBeanDefinition getEhCacheManagerDefinition(Element element) {
-    return new RootBeanDefinition(EhCacheManagerFactoryBean.class);
-  }
-
-  private RootBeanDefinition getJbossCacheManagerDefinition(Element element) {
-    return new RootBeanDefinition(JbossCacheManagerFactoryBean.class);
-  }
-
-  private RootBeanDefinition getJcsManagerDefinition(Element element) {
-    return new RootBeanDefinition(JcsManagerFactoryBean.class);
   }
 
   private void setConfigLocation(Element element, RootBeanDefinition definition) {
