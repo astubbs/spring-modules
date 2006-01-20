@@ -17,18 +17,23 @@
  */
 package org.springmodules.cache.config;
 
-import org.jboss.cache.TreeCache;
-
 import junit.framework.TestCase;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
+import org.apache.jcs.engine.behavior.ICompositeCacheAttributes;
+import org.apache.jcs.engine.control.CompositeCache;
+import org.apache.jcs.engine.control.CompositeCacheManager;
+import org.jboss.cache.TreeCache;
+
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import org.springmodules.cache.provider.PathUtils;
 import org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean;
+import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
 
 /**
  * <p>
@@ -84,19 +89,13 @@ public class CacheNamespaceHandlerTests extends TestCase {
    * Verifies that <code>{@link CacheNamespaceHandler}</code> creates a
    * <code>{@link EhCacheManagerFactoryBean}</code> and registers it under the
    * id "cacheManager".
+   * 
+   * @throws Exception
+   *           any exception thrown when shutting down the cache manager
    */
-  public void testCacheConfigWithEhCacheAndDefaultBeanId() {
-    ApplicationContext applicationContext = getApplicationContext("ehCacheConfigDefaultValues.xml");
-
-    String cacheManagerBeanId = DEFAULT_CACHE_MANAGER_ID;
-
-    EhCacheManagerFactoryBean factoryBean = (EhCacheManagerFactoryBean) applicationContext
-        .getBean("&" + cacheManagerBeanId);
-    assertNotNull("The application context should have "
-        + "a EhCacheManagerFactoryBean called '" + cacheManagerBeanId + "'",
-        factoryBean);
-
-    factoryBean.destroy();
+  public void testCacheConfigWithEhCacheAndDefaultBeanId() throws Exception {
+    assertCacheConfigRegistersCacheManagerFactoryUsingDefaultId(
+        EhCacheManagerFactoryBean.class, "ehCacheConfigDefaultValues.xml");
   }
 
   /**
@@ -133,15 +132,65 @@ public class CacheNamespaceHandlerTests extends TestCase {
    *           any exception thrown when shutting down the cache manager
    */
   public void testCacheConfigWithJbossCacheAndDefaultBeanId() throws Exception {
-    ApplicationContext applicationContext = getApplicationContext("jbossCacheConfigDefaultValues.xml");
+    assertCacheConfigRegistersCacheManagerFactoryUsingDefaultId(
+        JbossCacheManagerFactoryBean.class, "jbossCacheConfigDefaultValues.xml");
+  }
 
-    String cacheManagerBeanId = DEFAULT_CACHE_MANAGER_ID;
+  /**
+   * Verifies that <code>{@link CacheNamespaceHandler}</code> creates a JCS
+   * cache manager using a custom configuration file.
+   * 
+   * @throws Exception
+   *           any exception thrown when shutting down the cache manager
+   */
+  public void testCacheConfigWithJcsAndCustomConfigLocation() throws Exception {
+    ApplicationContext applicationContext = getApplicationContext("jcsConfigCustomValues.xml");
 
-    JbossCacheManagerFactoryBean factoryBean = (JbossCacheManagerFactoryBean) applicationContext
-        .getBean("&" + cacheManagerBeanId);
+    String cacheManagerBeanId = CUSTOM_LOCATION_CACHE_MANAGER_ID;
+    CompositeCacheManager cacheManager = (CompositeCacheManager) applicationContext
+        .getBean(cacheManagerBeanId);
     assertNotNull("The application context should have "
-        + "a JbossCacheManagerFactoryBean called '" + cacheManagerBeanId + "'",
-        factoryBean);
+        + "a cache manager called '" + cacheManagerBeanId + "'", cacheManager);
+
+    String cacheName = "testCache";
+    CompositeCache cache = cacheManager.getCache(cacheName);
+    assertNotNull("The cache manager should have a cache name '" + cacheName
+        + "'", cache);
+    ICompositeCacheAttributes cacheAttributes = cache.getCacheAttributes();
+    assertEquals("<Max. objects>", 20, cacheAttributes.getMaxObjects());
+
+    JcsManagerFactoryBean factoryBean = (JcsManagerFactoryBean) applicationContext
+        .getBean("&" + cacheManagerBeanId);
+    factoryBean.destroy();
+  }
+
+  /**
+   * Verifies that <code>{@link CacheNamespaceHandler}</code> creates a
+   * <code>{@link JcsManagerFactoryBean}</code> and registers it under the id
+   * "cacheManager".
+   * 
+   * @throws Exception
+   *           any exception thrown when shutting down the cache manager
+   */
+  public void testCacheConfigWithJcsAndDefaultBeanId() throws Exception {
+    assertCacheConfigRegistersCacheManagerFactoryUsingDefaultId(
+        JcsManagerFactoryBean.class, "jcsConfigDefaultValues.xml");
+  }
+
+  private void assertCacheConfigRegistersCacheManagerFactoryUsingDefaultId(
+      Class targetClass, String configLocation) throws Exception {
+
+    ApplicationContext applicationContext = getApplicationContext(configLocation);
+    String cacheManagerFactoryBeanId = "&" + DEFAULT_CACHE_MANAGER_ID;
+
+    DisposableBean factoryBean = (DisposableBean) applicationContext
+        .getBean(cacheManagerFactoryBeanId);
+
+    assertNotNull("The application context should have "
+        + "a JbossCacheManagerFactoryBean called '" + cacheManagerFactoryBeanId
+        + "'", factoryBean);
+    assertEquals("<Cache manager factory class>", targetClass, factoryBean
+        .getClass());
 
     factoryBean.destroy();
   }

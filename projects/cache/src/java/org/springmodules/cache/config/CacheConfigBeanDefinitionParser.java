@@ -29,6 +29,7 @@ import org.springframework.core.io.ResourceEditor;
 import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean;
+import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
 
 /**
  * <p>
@@ -51,6 +52,8 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
   private static final String ID_ATTR = "id";
 
   private static final String JBOSS_CACHE = "JBOSS_CACHE";
+
+  private static final String JCS = "JCS";
 
   private static final String PROVIDER_NAME_ATTR = "provider";
 
@@ -86,9 +89,12 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
     String providerName = element.getAttribute(PROVIDER_NAME_ATTR);
     if (EHCACHE.equalsIgnoreCase(providerName)) {
       definition = getEhCacheManagerDefinition(element);
-    }
-    if (JBOSS_CACHE.equalsIgnoreCase(providerName)) {
+
+    } else if (JBOSS_CACHE.equalsIgnoreCase(providerName)) {
       definition = getJbossCacheManagerDefinition(element);
+
+    } else if (JCS.equalsIgnoreCase(providerName)) {
+      definition = getJcsManagerDefinition(element);
     }
 
     definition.setPropertyValues(new MutablePropertyValues());
@@ -99,15 +105,15 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
   }
 
   private RootBeanDefinition getEhCacheManagerDefinition(Element element) {
-    RootBeanDefinition definition = new RootBeanDefinition(
-        EhCacheManagerFactoryBean.class);
-    return definition;
+    return new RootBeanDefinition(EhCacheManagerFactoryBean.class);
   }
 
   private RootBeanDefinition getJbossCacheManagerDefinition(Element element) {
-    RootBeanDefinition definition = new RootBeanDefinition(
-        JbossCacheManagerFactoryBean.class);
-    return definition;
+    return new RootBeanDefinition(JbossCacheManagerFactoryBean.class);
+  }
+
+  private RootBeanDefinition getJcsManagerDefinition(Element element) {
+    return new RootBeanDefinition(JcsManagerFactoryBean.class);
   }
 
   private void setConfigLocation(Element element, RootBeanDefinition definition) {
