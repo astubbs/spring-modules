@@ -42,14 +42,14 @@ import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
  * 
  * @author Alex Ruiz
  */
-public class CacheNamespaceHandlerTests extends TestCase {
+public class CacheNamespaceConfigIntegrationTests extends TestCase {
 
   private static final String CUSTOM_LOCATION_CACHE_MANAGER_ID = "customLocationCacheManager";
 
   private static final String DEFAULT_CACHE_MANAGER_ID = "cacheManager";
 
   private static final String THIS_PATH = "classpath:"
-      + PathUtils.getPackageNameAsPath(CacheNamespaceHandlerTests.class);
+      + PathUtils.getPackageNameAsPath(CacheNamespaceConfigIntegrationTests.class);
 
   /**
    * Constructor.
@@ -57,7 +57,7 @@ public class CacheNamespaceHandlerTests extends TestCase {
    * @param name
    *          the name of the test case
    */
-  public CacheNamespaceHandlerTests(String name) {
+  public CacheNamespaceConfigIntegrationTests(String name) {
     super(name);
   }
 
