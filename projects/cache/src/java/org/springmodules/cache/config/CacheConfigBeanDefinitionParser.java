@@ -28,30 +28,17 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceEditor;
 import org.springframework.util.StringUtils;
 
+import org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean;
+
 /**
  * <p>
  * Handles the parsing of a "cache:config" XML tag if present in the Spring
  * configuration file.
  * </p>
- * <p>
- * Configures the cache manager to use. The "cache:config" tag provides the
- * following attributes:
- * <ul>
- * <li><b>id:</b> identifies the cache manager in the Spring application
- * context. The default value is "cacheManager"</li>
- * <li> <b>provider (required):</b> the name of the cache provider to use.
- * Valid values are:
- * <ul>
- * <li><b>EHCACHE:</b> registers a
- * <code>{@link EhCacheManagerFactoryBean}</code> as the cache manager</li>
- * </ul>
- * </li>
- * <li> <b>configLocation (optional):</b> the path of the configuration file
- * for the cache manager</b> </li>
- * </ul>
- * </p>
  * 
  * @author Alex Ruiz
+ * 
+ * @see #parse(Element, BeanDefinitionRegistry)
  */
 public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
 
@@ -61,7 +48,11 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
 
   private static final String EHCACHE = "EHCACHE";
 
-  private static final String JBOSS_CACHE = "JBOSSCACHE";
+  private static final String ID_ATTR = "id";
+
+  private static final String JBOSS_CACHE = "JBOSS_CACHE";
+
+  private static final String PROVIDER_NAME_ATTR = "provider";
 
   /**
    * Constructor.
@@ -71,28 +62,55 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
   }
 
   /**
+   * Configures the cache manager to use. The "cache:config" tag provides the
+   * following attributes:
+   * <ul>
+   * <li><b>id:</b> identifies the cache manager in the Spring application
+   * context. The default value is "cacheManager"</li>
+   * <li> <b>provider (required):</b> the name of the cache provider to use.
+   * Valid values are:
+   * <ul>
+   * <li><b>EHCACHE:</b> registers a
+   * <code>{@link EhCacheManagerFactoryBean}</code> as the cache manager</li>
+   * </ul>
+   * </li>
+   * <li> <b>configLocation (optional):</b> the path of the configuration file
+   * for the cache manager</b> </li>
+   * </ul>
+   * 
    * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
    */
   public void parse(Element element, BeanDefinitionRegistry registry) {
     RootBeanDefinition definition = null;
 
-    String providerName = element.getAttribute("provider");
+    String providerName = element.getAttribute(PROVIDER_NAME_ATTR);
     if (EHCACHE.equalsIgnoreCase(providerName)) {
       definition = getEhCacheManagerDefinition(element);
     }
     if (JBOSS_CACHE.equalsIgnoreCase(providerName)) {
-
+      definition = getJbossCacheManagerDefinition(element);
     }
 
-    String id = element.getAttribute("id");
+    definition.setPropertyValues(new MutablePropertyValues());
+    setConfigLocation(element, definition);
+
+    String id = element.getAttribute(ID_ATTR);
     registry.registerBeanDefinition(id, definition);
   }
 
   private RootBeanDefinition getEhCacheManagerDefinition(Element element) {
     RootBeanDefinition definition = new RootBeanDefinition(
         EhCacheManagerFactoryBean.class);
-    definition.setPropertyValues(new MutablePropertyValues());
+    return definition;
+  }
 
+  private RootBeanDefinition getJbossCacheManagerDefinition(Element element) {
+    RootBeanDefinition definition = new RootBeanDefinition(
+        JbossCacheManagerFactoryBean.class);
+    return definition;
+  }
+
+  private void setConfigLocation(Element element, RootBeanDefinition definition) {
     String configLocationPath = element.getAttribute(CONFIG_LOCATION_ATTR);
 
     if (StringUtils.hasText(configLocationPath)) {
@@ -103,8 +121,5 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
       definition.getPropertyValues().addPropertyValue(CONFIG_LOCATION_PROPERTY,
           resource);
     }
-
-    return definition;
   }
-
 }

@@ -11,13 +11,14 @@
         <xsd:simpleType>
           <xsd:restriction base="xsd:string">
             <xsd:enumeration value="EHCACHE" />
-            <xsd:enumeration value="JBOSSCACHE" />
+            <xsd:enumeration value="JBOSS_CACHE" />
             <xsd:enumeration value="JCS" />
             <xsd:enumeration value="OSCACHE" />
           </xsd:restriction>
         </xsd:simpleType>
       </xsd:attribute>
-      <xsd:attribute name="configLocation" type="xsd:string" use="optional" />
+      <xsd:attribute name="configLocation" type="xsd:string"
+        use="optional" />
     </xsd:complexType>
   </xsd:element>
 
