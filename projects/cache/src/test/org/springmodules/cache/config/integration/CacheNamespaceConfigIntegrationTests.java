@@ -15,7 +15,7 @@
  *
  * Copyright @2006 the original author or authors.
  */
-package org.springmodules.cache.config;
+package org.springmodules.cache.config.integration;
 
 import junit.framework.TestCase;
 import net.sf.ehcache.Cache;
@@ -33,6 +33,7 @@ import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import org.springmodules.cache.config.CacheNamespaceHandler;
 import org.springmodules.cache.provider.PathUtils;
 import org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean;
 import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
