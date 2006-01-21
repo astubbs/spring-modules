@@ -21,7 +21,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import org.springmodules.AbstractEqualsHashCodeTestCase;
-import org.springmodules.ArrayAssert;
+import org.springmodules.AssertExt;
 
 /**
  * <p>
@@ -117,12 +117,12 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     String cacheName = "main";
     model.setCacheNames(cacheName + "," + cacheName);
     String[] expected = new String[] { cacheName };
-    ArrayAssert.assertEquals(expected, model.getCacheNames());
+    AssertExt.assertEquals(expected, model.getCacheNames());
   }
 
   public void testSetCacheNamesWithEmptyCsv() {
     model.setCacheNames("");
-    ArrayAssert.assertEquals(new String[0], model.getCacheNames());
+    AssertExt.assertEquals(new String[0], model.getCacheNames());
   }
 
   public void testSetCacheNamesWithNotEmptyCsv() {
@@ -130,13 +130,13 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     model.setCacheNames(cacheNames);
 
     String[] expected = StringUtils.commaDelimitedListToStringArray(cacheNames);
-    ArrayAssert.assertEquals(expected, model.getCacheNames());
+    AssertExt.assertEquals(expected, model.getCacheNames());
   }
 
   public void testSetCacheNamesWithNotEmptySet() {
     String[] cacheNames = { "main", "session" };
     model.setCacheNames(cacheNames);
-    ArrayAssert.assertEquals(cacheNames, model.getCacheNames());
+    AssertExt.assertEquals(cacheNames, model.getCacheNames());
   }
 
   public void testSetCacheNamesWithNullCsv() {
