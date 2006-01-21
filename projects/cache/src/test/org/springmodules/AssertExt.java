@@ -25,16 +25,25 @@ import org.springmodules.util.Objects;
 
 /**
  * <p>
- * Assert methods for arrays.
+ * Set of assert methods.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public abstract class ArrayAssert {
+public abstract class AssertExt {
 
   public static void assertEquals(Object[] expected, Object[] actual) {
     Assert.assertTrue("expected:<" + Objects.nullSafeToString(expected)
         + "> but was:<" + Objects.nullSafeToString(actual) + ">", Arrays
         .equals(expected, actual));
+  }
+
+  public static void assertInstanceOf(Class expected, Object obj) {
+    Assert.assertNotNull("the given object should not be null", obj);
+    Class current = obj.getClass();
+    if (!expected.isAssignableFrom(current)) {
+      Assert.fail("expected instanceof:<" + expected.getName()
+          + "> but was instanceof:" + current.getName());
+    }
   }
 }
