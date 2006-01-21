@@ -26,6 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FlushingModel;
+import org.springmodules.cache.serializable.SerializableFactory;
 
 /**
  * <p>
@@ -86,6 +87,11 @@ public interface CacheProviderFacade extends InitializingBean {
    */
   Object getFromCache(Serializable key, CachingModel model)
       throws CacheException;
+
+  /**
+   * @return the factory that forces objects to be serializable
+   */
+  SerializableFactory getSerializableFactory();
 
   /**
    * @return <code>true</code> if no exception should be thrown if an error
