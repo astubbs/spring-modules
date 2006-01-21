@@ -6,7 +6,8 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springmodules.org/schema/cache http://www.springmodules.org/schema/cache/springmodules-cache.xsd">
 
-  <cache:config id="customLocationCacheManager" provider="EHCACHE"
-    configLocation="classpath:org/springmodules/cache/config/ehcache-config.xml" />
+  <cache:config id="customCacheProvider" provider="EHCACHE"
+    configLocation="classpath:org/springmodules/cache/config/integration/ehcache/ehcache-config.xml"
+    serializableFactory="XSTREAM" failQuietly="true"/>
 
 </beans>

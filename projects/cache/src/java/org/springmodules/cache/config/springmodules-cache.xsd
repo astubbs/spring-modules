@@ -6,7 +6,9 @@
 
   <xsd:element name="config">
     <xsd:complexType>
-      <xsd:attribute name="id" type="xsd:string" default="cacheManager" />
+      <xsd:attribute name="id" type="xsd:string"
+        default="cacheProvider" />
+
       <xsd:attribute name="provider" use="required">
         <xsd:simpleType>
           <xsd:restriction base="xsd:string">
@@ -17,8 +19,21 @@
           </xsd:restriction>
         </xsd:simpleType>
       </xsd:attribute>
+
       <xsd:attribute name="configLocation" type="xsd:string"
         use="optional" />
+
+      <xsd:attribute name="failQuietly" type="xsd:boolean"
+        default="false" />
+
+      <xsd:attribute name="serializableFactory" default="NONE">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="NONE" />
+            <xsd:enumeration value="XSTREAM" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
     </xsd:complexType>
   </xsd:element>
 

@@ -6,7 +6,8 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springmodules.org/schema/cache http://www.springmodules.org/schema/cache/springmodules-cache.xsd">
 
-  <cache:config id="customLocationCacheManager" provider="JBOSS_CACHE"
-    configLocation="classpath:org/springmodules/cache/config/jbossCache-config.xml" />
+  <cache:config id="customCacheProvider" provider="JCS"
+    configLocation="classpath:org/springmodules/cache/config/integration/jcs/jcs-config.properties"
+    serializableFactory="XSTREAM" failQuietly="true" />
 
 </beans>

@@ -6,7 +6,8 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springmodules.org/schema/cache http://www.springmodules.org/schema/cache/springmodules-cache.xsd">
 
-  <cache:config id="customLocationCacheManager" provider="OSCACHE"
-    configLocation="classpath:org/springmodules/cache/config/osCache-config.properties" />
+  <cache:config id="customCacheProvider" provider="OSCACHE"
+    configLocation="classpath:org/springmodules/cache/config/integration/oscache/oscache-config.properties"
+    serializableFactory="XSTREAM" failQuietly="true" />
 
 </beans>

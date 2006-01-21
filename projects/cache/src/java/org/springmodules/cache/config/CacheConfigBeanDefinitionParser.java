@@ -17,9 +17,13 @@
  */
 package org.springmodules.cache.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.w3c.dom.Element;
 
 import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -28,9 +32,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceEditor;
 import org.springframework.util.StringUtils;
 
+import org.springmodules.cache.provider.ehcache.EhCacheFacade;
+import org.springmodules.cache.provider.jboss.JbossCacheFacade;
 import org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean;
+import org.springmodules.cache.provider.jcs.JcsFacade;
 import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
+import org.springmodules.cache.provider.oscache.OsCacheFacade;
 import org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean;
+import org.springmodules.cache.serializable.XStreamSerializableFactory;
 
 /**
  * <p>
@@ -44,21 +53,47 @@ import org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean;
  */
 public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
 
-  private static final String CONFIG_LOCATION_ATTR = "configLocation";
+  private abstract class CacheProvider {
 
-  private static final String CONFIG_LOCATION_PROPERTY = "configLocation";
+    static final String EHCACHE = "EHCACHE";
 
-  private static final String EHCACHE = "EHCACHE";
+    static final String JBOSS_CACHE = "JBOSS_CACHE";
 
-  private static final String ID_ATTR = "id";
+    static final String JCS = "JCS";
 
-  private static final String JBOSS_CACHE = "JBOSS_CACHE";
+    static final String OSCACHE = "OSCACHE";
+  }
 
-  private static final String JCS = "JCS";
+  private abstract class PropertyName {
 
-  private static final String OSCACHE = "OSCACHE";
+    static final String CACHE_MANAGER = "cacheManager";
 
-  private static final String PROVIDER_NAME_ATTR = "provider";
+    static final String CONFIG_LOCATION = "configLocation";
+
+    static final String FAIL_QUIETLY_ENABLED = "failQuietlyEnabled";
+
+    static final String SERIALIZABLE_FACTORY = "serializableFactory";
+  }
+
+  private abstract class SerializableFactory {
+
+    static final String NONE = "NONE";
+
+    static final String XSTREAM = "XSTREAM";
+  }
+
+  private abstract class XmlAttribute {
+
+    static final String CONFIG_LOCATION = "configLocation";
+
+    static final String FAIL_QUIETLY = "failQuietly";
+
+    static final String ID = "id";
+
+    static final String PROVIDER_NAME = "provider";
+
+    static final String SERIALIZABLE_FACTORY = "serializableFactory";
+  }
 
   /**
    * Configures the cache manager to use. The "cache:config" tag provides the
@@ -84,47 +119,88 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
    */
   public void parse(Element element, BeanDefinitionRegistry registry) {
     Class cacheManagerFactoryBeanClass = null;
+    Class cacheProviderFacadeBeanClass = null;
 
-    String providerName = element.getAttribute(PROVIDER_NAME_ATTR);
-    if (EHCACHE.equalsIgnoreCase(providerName)) {
+    String providerName = element.getAttribute(XmlAttribute.PROVIDER_NAME);
+    if (CacheProvider.EHCACHE.equalsIgnoreCase(providerName)) {
       cacheManagerFactoryBeanClass = EhCacheManagerFactoryBean.class;
+      cacheProviderFacadeBeanClass = EhCacheFacade.class;
 
-    } else if (JBOSS_CACHE.equalsIgnoreCase(providerName)) {
+    } else if (CacheProvider.JBOSS_CACHE.equalsIgnoreCase(providerName)) {
       cacheManagerFactoryBeanClass = JbossCacheManagerFactoryBean.class;
+      cacheProviderFacadeBeanClass = JbossCacheFacade.class;
 
-    } else if (JCS.equalsIgnoreCase(providerName)) {
+    } else if (CacheProvider.JCS.equalsIgnoreCase(providerName)) {
       cacheManagerFactoryBeanClass = JcsManagerFactoryBean.class;
+      cacheProviderFacadeBeanClass = JcsFacade.class;
 
-    } else if (OSCACHE.equalsIgnoreCase(providerName)) {
+    } else if (CacheProvider.OSCACHE.equalsIgnoreCase(providerName)) {
       cacheManagerFactoryBeanClass = OsCacheManagerFactoryBean.class;
+      cacheProviderFacadeBeanClass = OsCacheFacade.class;
 
     } else {
       throw new IllegalStateException(StringUtils.quote(providerName)
           + " is not a valid provider. Valid values include "
-          + StringUtils.quote(EHCACHE) + ", " + StringUtils.quote(JBOSS_CACHE)
-          + ", " + StringUtils.quote(JCS) + " and "
-          + StringUtils.quote(OSCACHE));
+          + StringUtils.quote(CacheProvider.EHCACHE) + ", "
+          + StringUtils.quote(CacheProvider.JBOSS_CACHE) + ", "
+          + StringUtils.quote(CacheProvider.JCS) + " and "
+          + StringUtils.quote(CacheProvider.OSCACHE));
     }
 
-    RootBeanDefinition definition = new RootBeanDefinition(
-        cacheManagerFactoryBeanClass);
-    definition.setPropertyValues(new MutablePropertyValues());
-    setConfigLocation(element, definition);
+    String cacheProviderId = element.getAttribute(XmlAttribute.ID);
+    String cacheManagerId = cacheProviderId + ".cacheManager";
 
-    String id = element.getAttribute(ID_ATTR);
-    registry.registerBeanDefinition(id, definition);
+    RootBeanDefinition cacheManager = new RootBeanDefinition(
+        cacheManagerFactoryBeanClass);
+    cacheManager.setPropertyValues(new MutablePropertyValues());
+    Map cacheManagerProperties = parseCacheManagerProperties(element);
+    cacheManager.getPropertyValues().addPropertyValues(cacheManagerProperties);
+    registry.registerBeanDefinition(cacheManagerId, cacheManager);
+
+    RootBeanDefinition cacheProviderFacade = new RootBeanDefinition(
+        cacheProviderFacadeBeanClass);
+    Map cacheProviderFacadeProperties = parseCacheProviderFacadeProperties(element);
+    cacheProviderFacade.getPropertyValues().addPropertyValues(
+        cacheProviderFacadeProperties);
+    cacheProviderFacade.getPropertyValues().addPropertyValue(
+        PropertyName.CACHE_MANAGER, new RuntimeBeanReference(cacheManagerId));
+    registry.registerBeanDefinition(cacheProviderId, cacheProviderFacade);
   }
 
-  private void setConfigLocation(Element element, RootBeanDefinition definition) {
-    String configLocationPath = element.getAttribute(CONFIG_LOCATION_ATTR);
+  private Map parseCacheManagerProperties(Element element) {
+    Map properties = new HashMap();
 
-    if (StringUtils.hasText(configLocationPath)) {
+    String configLocation = element.getAttribute(XmlAttribute.CONFIG_LOCATION);
+    if (StringUtils.hasText(configLocation)) {
       ResourceEditor resourceEditor = new ResourceEditor();
-      resourceEditor.setAsText(configLocationPath);
+      resourceEditor.setAsText(configLocation);
       Resource resource = (Resource) resourceEditor.getValue();
 
-      definition.getPropertyValues().addPropertyValue(CONFIG_LOCATION_PROPERTY,
-          resource);
+      properties.put(PropertyName.CONFIG_LOCATION, resource);
     }
+
+    return properties;
+  }
+
+  private Map parseCacheProviderFacadeProperties(Element element) {
+    Map properties = new HashMap();
+
+    String failQuietly = element.getAttribute(XmlAttribute.FAIL_QUIETLY);
+    if (StringUtils.hasText(failQuietly)) {
+      Boolean value = "true".equalsIgnoreCase(failQuietly) ? Boolean.TRUE
+          : Boolean.FALSE;
+      properties.put(PropertyName.FAIL_QUIETLY_ENABLED, value);
+    }
+
+    String serializableFactory = element
+        .getAttribute(XmlAttribute.SERIALIZABLE_FACTORY);
+    if (StringUtils.hasText(serializableFactory)) {
+      if (SerializableFactory.XSTREAM.equals(serializableFactory)) {
+        properties.put(PropertyName.SERIALIZABLE_FACTORY,
+            new XStreamSerializableFactory());
+      }
+    }
+
+    return properties;
   }
 }
