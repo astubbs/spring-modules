@@ -59,15 +59,15 @@ public class CacheAnnotationsBeanDefinitionParser extends
   }
 
   /**
-   * @see org.springmodules.cache.config.AbstractAttributesBeanDefinitionParser#doParseAttributeBeanDefinitions(
-   *      BeanDefinitionRegistry, AbstractBeanDefinition,
-   *      AbstractBeanDefinition)
+   * @see org.springmodules.cache.config.AbstractAttributesBeanDefinitionParser#registerInterceptorProperties(
+   *      AbstractBeanDefinition, AbstractBeanDefinition,
+   *      BeanDefinitionRegistry)
    */
   @Override
-  protected void doParseAttributeBeanDefinitions(
-      BeanDefinitionRegistry registry,
+  protected void registerInterceptorProperties(
       AbstractBeanDefinition cachingInterceptor,
-      AbstractBeanDefinition flushingInterceptor) {
+      AbstractBeanDefinition flushingInterceptor,
+      BeanDefinitionRegistry registry) {
 
     RootBeanDefinition cachingAttributeSource = new RootBeanDefinition(
         AnnotationCachingAttributeSource.class);

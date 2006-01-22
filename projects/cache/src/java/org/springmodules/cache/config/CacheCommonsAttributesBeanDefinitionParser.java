@@ -44,14 +44,14 @@ public class CacheCommonsAttributesBeanDefinitionParser extends
   }
 
   /**
-   * @see AbstractAttributesBeanDefinitionParser#doParseAttributeBeanDefinitions(
-   *      BeanDefinitionRegistry, AbstractBeanDefinition,
-   *      AbstractBeanDefinition)
+   * @see AbstractAttributesBeanDefinitionParser#registerInterceptorProperties(
+   *      AbstractBeanDefinition, AbstractBeanDefinition,
+   *      BeanDefinitionRegistry)
    */
-  protected void doParseAttributeBeanDefinitions(
-      BeanDefinitionRegistry registry,
+  protected void registerInterceptorProperties(
       AbstractBeanDefinition cachingInterceptor,
-      AbstractBeanDefinition flushingInterceptor) {
+      AbstractBeanDefinition flushingInterceptor,
+      BeanDefinitionRegistry registry) {
     RootBeanDefinition attributes = new RootBeanDefinition(
         CommonsAttributes.class);
     registry.registerBeanDefinition(BeanName.ATTRIBUTES, attributes);

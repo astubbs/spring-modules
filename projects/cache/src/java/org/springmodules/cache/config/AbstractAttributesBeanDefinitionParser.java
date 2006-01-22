@@ -89,8 +89,8 @@ public abstract class AbstractAttributesBeanDefinitionParser extends
         MetadataFlushingInterceptor.class);
     flushingInterceptor.setPropertyValues(new MutablePropertyValues());
 
-    doParseAttributeBeanDefinitions(registry, cachingInterceptor,
-        flushingInterceptor);
+    registerInterceptorProperties(cachingInterceptor, flushingInterceptor,
+        registry);
 
     setCacheProvider(cachingInterceptor, providerId);
     setCachingListeners(cachingInterceptor, cachingListeners);
@@ -118,8 +118,8 @@ public abstract class AbstractAttributesBeanDefinitionParser extends
         flushingAdvisor);
   }
 
-  protected abstract void doParseAttributeBeanDefinitions(
-      BeanDefinitionRegistry registry,
+  protected abstract void registerInterceptorProperties(
       AbstractBeanDefinition cachingInterceptor,
-      AbstractBeanDefinition flushingInterceptor);
+      AbstractBeanDefinition flushingInterceptor,
+      BeanDefinitionRegistry registry);
 }

@@ -25,6 +25,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.xml.DomUtils;
 
 import org.springmodules.cache.interceptor.caching.CachingListener;
@@ -53,7 +54,7 @@ public class CachingListenerParser {
 
     List listenerElements = DomUtils.getChildElementsByTagName(element,
         XmlElement.CACHING_LISTENER, true);
-    if (listenerElements != null && !listenerElements.isEmpty()) {
+    if (!CollectionUtils.isEmpty(listenerElements)) {
       int listenerCount = listenerElements.size();
       for (int i = 0; i < listenerCount; i++) {
         Element listenerElement = (Element) listenerElements.get(i);

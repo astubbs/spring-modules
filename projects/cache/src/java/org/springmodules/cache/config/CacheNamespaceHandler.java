@@ -55,13 +55,14 @@ public class CacheNamespaceHandler extends NamespaceHandlerSupport {
 
       } catch (Exception exception) {
         String errorMessage = "Unable to create instance of "
-            + "CacheAnnotationsBeanDefinitionParser";
+            + "CacheAnnotationsBeanDefinitionParser. "
+            + "Unable to load parser for namespace 'annotations'";
         logger.error(errorMessage, exception);
       }
 
     } catch (ClassNotFoundException exception) {
-      logger
-          .info("No support for JDK 1.5 Annotations. Unable to load parser for namespace 'annotations'");
+      logger.info("No support for JDK 1.5 Annotations. "
+          + "Unable to load parser for namespace 'annotations'");
     }
 
     registerBeanDefinitionParser("beanRef",

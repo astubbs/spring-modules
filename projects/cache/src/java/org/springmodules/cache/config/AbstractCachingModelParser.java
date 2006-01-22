@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.xml.DomUtils;
 
 import org.springmodules.cache.CachingModel;
@@ -65,7 +66,7 @@ public abstract class AbstractCachingModelParser implements CacheModelParser {
 
     List modelElements = DomUtils.getChildElementsByTagName(element,
         XmlElement.CACHING, true);
-    if (modelElements != null && !modelElements.isEmpty()) {
+    if (!CollectionUtils.isEmpty(modelElements)) {
       int modelElementCount = modelElements.size();
 
       for (int i = 0; i < modelElementCount; i++) {
@@ -88,7 +89,7 @@ public abstract class AbstractCachingModelParser implements CacheModelParser {
 
     List modelElements = DomUtils.getChildElementsByTagName(element,
         XmlElement.FLUSHING, true);
-    if (modelElements != null && !modelElements.isEmpty()) {
+    if (!CollectionUtils.isEmpty(modelElements)) {
       int modelElementCount = modelElements.size();
 
       for (int i = 0; i < modelElementCount; i++) {
