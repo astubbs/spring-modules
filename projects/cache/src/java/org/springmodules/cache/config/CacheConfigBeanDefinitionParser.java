@@ -54,7 +54,7 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory;
 public final class CacheConfigBeanDefinitionParser implements
     BeanDefinitionParser {
 
-  private abstract class CacheProvider {
+  private static abstract class CacheProvider {
 
     static final String EHCACHE = "EHCACHE";
 
@@ -65,7 +65,7 @@ public final class CacheConfigBeanDefinitionParser implements
     static final String OSCACHE = "OSCACHE";
   }
 
-  private abstract class PropertyName {
+  private static abstract class PropertyName {
 
     static final String CACHE_MANAGER = "cacheManager";
 
@@ -76,14 +76,14 @@ public final class CacheConfigBeanDefinitionParser implements
     static final String SERIALIZABLE_FACTORY = "serializableFactory";
   }
 
-  private abstract class SerializableFactory {
+  private static abstract class SerializableFactory {
 
     static final String NONE = "NONE";
 
     static final String XSTREAM = "XSTREAM";
   }
 
-  private abstract class XmlAttribute {
+  private static abstract class XmlAttribute {
 
     static final String CONFIG_LOCATION = "configLocation";
 

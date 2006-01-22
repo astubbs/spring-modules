@@ -37,12 +37,12 @@ import org.springmodules.cache.FlushingModel;
  */
 public abstract class AbstractCachingModelParser implements CacheModelParser {
 
-  private class XmlAttribute {
+  private static class XmlAttribute {
 
     static final String TARGET = "target";
   }
 
-  private class XmlElement {
+  private static class XmlElement {
 
     static final String CACHING = "caching";
 

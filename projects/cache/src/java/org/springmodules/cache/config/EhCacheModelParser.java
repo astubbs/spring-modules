@@ -33,7 +33,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheFlushingModel;
  */
 public class EhCacheModelParser extends AbstractCachingModelParser {
 
-  private class XmlAttribute {
+  private static class XmlAttribute {
 
     static final String CACHE_NAME = "cacheName";
 

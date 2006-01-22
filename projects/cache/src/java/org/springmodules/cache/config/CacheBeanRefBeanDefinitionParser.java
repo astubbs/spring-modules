@@ -43,7 +43,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheFacade;
 public final class CacheBeanRefBeanDefinitionParser implements
     BeanDefinitionParser {
 
-  private class PropertyName {
+  private static class PropertyName {
 
     static final String CACHE_PROVIDER_FACADE = "cacheProviderFacade";
 
@@ -56,7 +56,7 @@ public final class CacheBeanRefBeanDefinitionParser implements
     static final String TARGET = "target";
   }
 
-  private class XmlAttribute {
+  private static class XmlAttribute {
 
     static final String ID = "id";
 
@@ -65,7 +65,7 @@ public final class CacheBeanRefBeanDefinitionParser implements
     static final String REF = "ref";
   }
 
-  private class XmlElement {
+  private static class XmlElement {
 
     static final String CACHING_LISTENERS = "cachingListeners";
   }

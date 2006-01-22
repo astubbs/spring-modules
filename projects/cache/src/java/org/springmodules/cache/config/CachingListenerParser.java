@@ -38,11 +38,11 @@ import org.springmodules.cache.interceptor.caching.CachingListener;
  */
 public class CachingListenerParser {
 
-  private class XmlElement {
+  private static class XmlElement {
     static final String CACHING_LISTENER = "cachingListener";
   }
 
-  private class XmlAttribute {
+  private static class XmlAttribute {
     static final String REF = "ref";
   }
 
