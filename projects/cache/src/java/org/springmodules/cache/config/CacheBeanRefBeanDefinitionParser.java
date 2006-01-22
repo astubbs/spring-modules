@@ -88,7 +88,7 @@ public final class CacheBeanRefBeanDefinitionParser implements
    */
   public void parse(Element element, BeanDefinitionRegistry registry) {
     String providerId = element.getAttribute(XmlAttribute.PROVIDER_ID);
-    RootBeanDefinition cacheProviderFacadeBeanDefinition = (RootBeanDefinition) registry
+    RootBeanDefinition cacheProviderFacade = (RootBeanDefinition) registry
         .getBeanDefinition(providerId);
 
     String ref = element.getAttribute(XmlAttribute.REF);
@@ -99,9 +99,9 @@ public final class CacheBeanRefBeanDefinitionParser implements
 
     Map cachingModels = null;
     Map flushingModels = null;
-    
-    if (EhCacheFacade.class.isAssignableFrom(cacheProviderFacadeBeanDefinition
-        .getBeanClass())) {
+
+    if (EhCacheFacade.class
+        .isAssignableFrom(cacheProviderFacade.getBeanClass())) {
       cachingModels = ehCacheModelParser.parseCachingModels(element);
       flushingModels = ehCacheModelParser.parseFlushingModels(element);
     }
@@ -116,26 +116,25 @@ public final class CacheBeanRefBeanDefinitionParser implements
           cachingListenersElement, registry);
     }
 
-    RootBeanDefinition cacheProxyFactoryBeanDefinition = new RootBeanDefinition(
+    RootBeanDefinition cacheProxyFactory = new RootBeanDefinition(
         CacheProxyFactoryBean.class);
-    cacheProxyFactoryBeanDefinition
-        .setPropertyValues(new MutablePropertyValues());
-    cacheProxyFactoryBeanDefinition.getPropertyValues().addPropertyValue(
+    cacheProxyFactory.setPropertyValues(new MutablePropertyValues());
+    cacheProxyFactory.getPropertyValues().addPropertyValue(
         PropertyName.CACHE_PROVIDER_FACADE,
         new RuntimeBeanReference(providerId));
     if (cachingListeners != null && !cachingListeners.isEmpty()) {
-      cacheProxyFactoryBeanDefinition.getPropertyValues().addPropertyValue(
+      cacheProxyFactory.getPropertyValues().addPropertyValue(
           PropertyName.CACHING_LISTENERS, cachingListeners);
     }
-    cacheProxyFactoryBeanDefinition.getPropertyValues().addPropertyValue(
+    cacheProxyFactory.getPropertyValues().addPropertyValue(
         PropertyName.CACHING_MODELS, cachingModels);
-    cacheProxyFactoryBeanDefinition.getPropertyValues().addPropertyValue(
+    cacheProxyFactory.getPropertyValues().addPropertyValue(
         PropertyName.FLUSHING_MODELS, flushingModels);
-    cacheProxyFactoryBeanDefinition.getPropertyValues().addPropertyValue(
-        PropertyName.TARGET, new RuntimeBeanReference(ref));
+    cacheProxyFactory.getPropertyValues().addPropertyValue(PropertyName.TARGET,
+        new RuntimeBeanReference(ref));
 
     String id = element.getAttribute(XmlAttribute.ID);
 
-    registry.registerBeanDefinition(id, cacheProxyFactoryBeanDefinition);
+    registry.registerBeanDefinition(id, cacheProxyFactory);
   }
 }
