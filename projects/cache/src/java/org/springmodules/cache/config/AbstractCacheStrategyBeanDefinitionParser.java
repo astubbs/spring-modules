@@ -22,8 +22,9 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
 
@@ -79,7 +80,7 @@ public abstract class AbstractCacheStrategyBeanDefinitionParser implements
    */
   public final void parse(Element element, BeanDefinitionRegistry registry) {
     String providerId = element.getAttribute(XmlAttribute.PROVIDER_ID);
-    RootBeanDefinition cacheProviderFacade = (RootBeanDefinition) registry
+    AbstractBeanDefinition cacheProviderFacade = (AbstractBeanDefinition) registry
         .getBeanDefinition(providerId);
 
     Map cachingModels = null;
@@ -108,4 +109,31 @@ public abstract class AbstractCacheStrategyBeanDefinitionParser implements
   protected abstract void doParse(Element element,
       BeanDefinitionRegistry registry, String providerId, Map cachingModels,
       Map flushingModels, List cachingListeners);
+
+  protected final void setCacheProvider(AbstractBeanDefinition definition,
+      String providerId) {
+    definition.getPropertyValues().addPropertyValue(
+        CommonPropertyName.CACHE_PROVIDER_FACADE,
+        new RuntimeBeanReference(providerId));
+  }
+
+  protected final void setCachingListeners(AbstractBeanDefinition definition,
+      List cachingListeners) {
+    if (cachingListeners != null && !cachingListeners.isEmpty()) {
+      definition.getPropertyValues().addPropertyValue(
+          CommonPropertyName.CACHING_LISTENERS, cachingListeners);
+    }
+  }
+
+  protected final void setCachingModels(AbstractBeanDefinition definition,
+      Map cachingModels) {
+    definition.getPropertyValues().addPropertyValue(
+        CommonPropertyName.CACHING_MODELS, cachingModels);
+  }
+
+  protected final void setFlushingModels(AbstractBeanDefinition definition,
+      Map flushingModels) {
+    definition.getPropertyValues().addPropertyValue(
+        CommonPropertyName.FLUSHING_MODELS, flushingModels);
+  }
 }
