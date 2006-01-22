@@ -1,8 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
 <xsd:schema xmlns="http://www.springmodules.org/schema/cache"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   targetNamespace="http://www.springmodules.org/schema/cache"
   elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
 
   <xsd:element name="config">
     <xsd:complexType>
@@ -45,11 +48,33 @@
 
   <xsd:element name="beanRef">
     <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="cachingListeners" minOccurs="0" maxOccurs="1" />
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:any namespace="##other" processContents="strict" />
+        </xsd:choice>
+      </xsd:sequence>
+
       <xsd:attribute name="id" type="xsd:string" use="required" />
 
       <xsd:attribute name="providerId" type="xsd:string"
         default="cacheProvider" />
 
+      <xsd:attribute name="ref" type="xsd:string" use="required" />
+
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="cachingListeners">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="cachingListener" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="cachingListener">
+    <xsd:complexType>
       <xsd:attribute name="ref" type="xsd:string" use="required" />
     </xsd:complexType>
   </xsd:element>

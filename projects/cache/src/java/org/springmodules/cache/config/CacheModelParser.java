@@ -1,5 +1,5 @@
 /* 
- * Created on Jan 19, 2006
+ * Created on Jan 21, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,27 +17,20 @@
  */
 package org.springmodules.cache.config;
 
-import org.springframework.beans.factory.xml.NamespaceHandler;
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+import java.util.Map;
+
+import org.w3c.dom.Element;
 
 /**
  * <p>
- * {@link NamespaceHandler} for the <code>cache</code> namespace.
+ * TODO Document class.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public class CacheNamespaceHandler extends NamespaceHandlerSupport {
+public interface CacheModelParser {
 
-  /**
-   * Constructor.
-   */
-  public CacheNamespaceHandler() {
-    super();
-    registerBeanDefinitionParser("config",
-        new CacheConfigBeanDefinitionParser());
-    registerBeanDefinitionParser("beanRef",
-        new CacheBeanRefBeanDefinitionParser());
-  }
+  Map parseCachingModels(Element element);
 
+  Map parseFlushingModels(Element element);
 }

@@ -64,12 +64,16 @@ public abstract class AbstractEhCacheIntegrationTests extends
     assertEquals(expectedCachedObject, element.getValue());
   }
 
+  protected String getCacheManagerBeanId() {
+    return CACHE_MANAGER_BEAN_ID;
+  }
+
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
    */
   protected final void onSetUp() {
     cacheManager = (CacheManager) applicationContext
-        .getBean(CACHE_MANAGER_BEAN_ID);
+        .getBean(getCacheManagerBeanId());
   }
 
   private Element getCacheElement(int keyAndModelIndex) throws Exception {

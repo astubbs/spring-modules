@@ -4,3 +4,4 @@ http\://www.springframework.org/schema/aop/spring-aop.xsd=org/springframework/ao
 http\://www.springframework.org/schema/jndi/spring-jndi.xsd=org/springframework/jndi/config/spring-jndi.xsd
 http\://www.springframework.org/schema/tx/spring-tx.xsd=org/springframework/transaction/config/spring-tx.xsd
 http\://www.springmodules.org/schema/cache/springmodules-cache.xsd=org/springmodules/cache/config/springmodules-cache.xsd
+http\://www.springmodules.org/schema/ehcache/springmodules-ehcache.xsd=org/springmodules/cache/config/springmodules-ehcache.xsd
