@@ -16,8 +16,9 @@
  * Copyright @2004 the original author or authors.
  */
 
-package org.springmodules.cache.integration.ehcache;
+package org.springmodules.cache.integration.annotations;
 
+import org.springmodules.cache.integration.ehcache.AbstractEhCacheIntegrationTests;
 import org.springmodules.cache.provider.PathUtils;
 
 /**
@@ -29,21 +30,21 @@ import org.springmodules.cache.provider.PathUtils;
  * 
  * @author Alex Ruiz
  */
-public final class EhCacheCommonsAttributesIntegrationTests extends
+public final class EhCacheSimplifiedAnnotationIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  private static final String CONFIG_LOCATION = CLASSPATH
-      + PathUtils.getPackageNameAsPath(EhCacheCommonsAttributesIntegrationTests.class)
-      + "/ehCacheCommonsAttributesContext.xml";
+  private static final String METADATA_CONFIG = CLASSPATH
+      + PathUtils.getPackageNameAsPath(EhCacheSimplifiedAnnotationIntegrationTests.class)
+      + "/simplifiedAnnotationContext.xml";
 
   protected String getCacheManagerBeanId() {
-    return "cacheProvider.cacheManager";
+    return SIMPLIFIED_CACHE_MANAGER_BEAN_ID;
   }
   
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    return new String[] { CONFIG_LOCATION };
+    return new String[] { SIMPLIFIED_CACHE_CONFIG, METADATA_CONFIG };
   }
 }

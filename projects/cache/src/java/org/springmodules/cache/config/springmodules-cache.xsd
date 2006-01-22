@@ -46,7 +46,7 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="attributes">
+  <xsd:element name="annotations">
     <xsd:complexType>
       <xsd:sequence minOccurs="0" maxOccurs="unbounded">
         <xsd:element ref="cachingListeners" minOccurs="0" maxOccurs="1" />
@@ -54,15 +54,6 @@
           <xsd:any namespace="##other" processContents="strict" />
         </xsd:choice>
       </xsd:sequence>
-
-      <xsd:attribute name="type" default="JDK5_ANNOTATIONS">
-        <xsd:simpleType>
-          <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="COMMONS_ATTRIBUTES" />
-            <xsd:enumeration value="JDK5_ANNOTATIONS" />
-          </xsd:restriction>
-        </xsd:simpleType>
-      </xsd:attribute>
 
       <xsd:attribute name="providerId" type="xsd:string"
         default="cacheProvider" />
@@ -85,6 +76,21 @@
         default="cacheProvider" />
 
       <xsd:attribute name="ref" type="xsd:string" use="required" />
+
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="commons-attributes">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="cachingListeners" minOccurs="0" maxOccurs="1" />
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:any namespace="##other" processContents="strict" />
+        </xsd:choice>
+      </xsd:sequence>
+
+      <xsd:attribute name="providerId" type="xsd:string"
+        default="cacheProvider" />
 
     </xsd:complexType>
   </xsd:element>

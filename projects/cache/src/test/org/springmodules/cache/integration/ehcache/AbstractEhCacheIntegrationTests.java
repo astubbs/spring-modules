@@ -44,6 +44,14 @@ public abstract class AbstractEhCacheIntegrationTests extends
       + PathUtils.getPackageNameAsPath(AbstractEhCacheIntegrationTests.class)
       + "/ehCacheContext.xml";
 
+  /**
+   * Path of the Spring file specifying the configuration of the cache manager
+   * (simplified format).
+   */
+  protected static final String SIMPLIFIED_CACHE_CONFIG = CLASSPATH
+      + PathUtils.getPackageNameAsPath(AbstractEhCacheIntegrationTests.class)
+      + "/ehCacheSimplifiedContext.xml";
+
   private CacheManager cacheManager;
 
   /**
@@ -62,10 +70,6 @@ public abstract class AbstractEhCacheIntegrationTests extends
       int keyAndModelIndex) throws Exception {
     Element element = getCacheElement(keyAndModelIndex);
     assertEquals(expectedCachedObject, element.getValue());
-  }
-
-  protected String getCacheManagerBeanId() {
-    return CACHE_MANAGER_BEAN_ID;
   }
 
   /**

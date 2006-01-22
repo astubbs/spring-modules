@@ -7,24 +7,18 @@
        http://www.springmodules.org/schema/cache http://www.springmodules.org/schema/cache/springmodules-cache.xsd
        http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/ehcache/springmodules-ehcache.xsd">
 
-  <cache:config provider="EHCACHE" failQuietly="false" />
-
-  <bean id="cachingListener"
-    class="org.springmodules.cache.integration.KeyAndModelListCachingListener">
-  </bean>
-
-  <cache:attributes type="COMMONS_ATTRIBUTES">
+  <cache:annotations>
     <cache:cachingListeners>
       <cache:cachingListener ref="cachingListener"/>
     </cache:cachingListeners>
     
     <ehcache:caching target="test" cacheName="testCache" />
     <ehcache:flushing target="test" cacheNames="testCache" />
-  </cache:attributes>
+  </cache:annotations>
 
   <!-- Set up the objects to apply caching to -->
   <bean id="cacheableService"
-    class="org.springmodules.cache.integration.CacheableServiceImpl">
+    class="org.springmodules.cache.annotations.TigerCacheableService">
     <property name="names">
       <list>
         <value>Luke Skywalker</value>

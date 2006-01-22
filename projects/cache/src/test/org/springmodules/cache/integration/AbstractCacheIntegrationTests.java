@@ -52,6 +52,8 @@ public abstract class AbstractCacheIntegrationTests extends
    */
   protected static final String CLASSPATH = "classpath:";
 
+  protected static final String SIMPLIFIED_CACHE_MANAGER_BEAN_ID = "cacheProvider.cacheManager";
+
   protected static final String TARGET_BEAN_ID = "cacheableService";
 
   /**
@@ -135,6 +137,10 @@ public abstract class AbstractCacheIntegrationTests extends
    */
   protected abstract void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) throws Exception;
+
+  protected String getCacheManagerBeanId() {
+    return CACHE_MANAGER_BEAN_ID;
+  }
 
   protected final KeyAndModelListCachingListener getCachingListener() {
     return cachingListener;

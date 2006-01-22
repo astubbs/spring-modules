@@ -7,12 +7,6 @@
        http://www.springmodules.org/schema/cache http://www.springmodules.org/schema/cache/springmodules-cache.xsd
        http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/ehcache/springmodules-ehcache.xsd">
 
-  <cache:config provider="EHCACHE" failQuietly="false" />
-
-  <bean id="cachingListener"
-    class="org.springmodules.cache.integration.KeyAndModelListCachingListener">
-  </bean>
-
   <bean id="cacheableServiceTarget"
     class="org.springmodules.cache.integration.CacheableServiceImpl">
     <property name="names">

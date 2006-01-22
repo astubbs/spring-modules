@@ -7,9 +7,6 @@
   <bean id="autoproxy"
     class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
 
-  <bean id="attributes"
-    class="org.springframework.metadata.commons.CommonsAttributes" />
-
   <bean id="cachingAttributeSource"
     class="org.springmodules.cache.annotations.AnnotationCachingAttributeSource">
   </bean>

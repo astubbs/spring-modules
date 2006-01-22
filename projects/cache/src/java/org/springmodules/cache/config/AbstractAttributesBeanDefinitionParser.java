@@ -28,7 +28,6 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.metadata.commons.CommonsAttributes;
 
 import org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor;
 import org.springmodules.cache.interceptor.caching.MetadataCachingInterceptor;
@@ -42,19 +41,10 @@ import org.springmodules.cache.interceptor.flush.MetadataFlushingInterceptor;
  * 
  * @author Alex Ruiz
  */
-public class CacheAttributesBeanDefinitionParser extends
+public abstract class AbstractAttributesBeanDefinitionParser extends
     AbstractCacheStrategyBeanDefinitionParser {
 
-  private static class AttributeType {
-
-    static final String COMMONS_ATTRIBUTES = "COMMONS_ATTRIBUTES";
-
-    static final String JDK5_ANNOTATIONS = "JDK5_ANNOTATIONS";
-  }
-
-  private static class BeanName {
-
-    static final String ATTRIBUTES = CommonsAttributes.class.getName();
+  private static class CommonBeanName {
 
     static final String AUTOPROXY = DefaultAdvisorAutoProxyCreator.class
         .getName();
@@ -72,23 +62,24 @@ public class CacheAttributesBeanDefinitionParser extends
         .getName();
   }
 
-  private static class PropertyName {
-
-    static final String ATTRIBUTES = "attributes";
-
+  /**
+   * Constructor.
+   */
+  public AbstractAttributesBeanDefinitionParser() {
+    super();
   }
 
-  private static class XmlAttribute {
+  /**
+   * @see AbstractCacheStrategyBeanDefinitionParser#doParse(Element,
+   *      BeanDefinitionRegistry, String, Map, Map, List)
+   */
+  protected final void doParse(Element element,
+      BeanDefinitionRegistry registry, String providerId, Map cachingModels,
+      Map flushingModels, List cachingListeners) {
 
-    static final String TYPE = "type";
-  }
-
-  protected void doParse(Element element, BeanDefinitionRegistry registry,
-      String providerId, Map cachingModels, Map flushingModels,
-      List cachingListeners) {
     RootBeanDefinition autoproxy = new RootBeanDefinition(
         DefaultAdvisorAutoProxyCreator.class);
-    registry.registerBeanDefinition(BeanName.AUTOPROXY, autoproxy);
+    registry.registerBeanDefinition(CommonBeanName.AUTOPROXY, autoproxy);
 
     RootBeanDefinition cachingInterceptor = new RootBeanDefinition(
         MetadataCachingInterceptor.class);
@@ -98,50 +89,37 @@ public class CacheAttributesBeanDefinitionParser extends
         MetadataFlushingInterceptor.class);
     flushingInterceptor.setPropertyValues(new MutablePropertyValues());
 
-    String type = element.getAttribute(XmlAttribute.TYPE);
-    if (AttributeType.COMMONS_ATTRIBUTES.equalsIgnoreCase(type)) {
-      RootBeanDefinition attributes = new RootBeanDefinition(
-          CommonsAttributes.class);
-      registry.registerBeanDefinition(BeanName.ATTRIBUTES, attributes);
-
-      setAttributes(cachingInterceptor);
-      setAttributes(flushingInterceptor);
-
-    } else if (AttributeType.JDK5_ANNOTATIONS.equalsIgnoreCase(type)) {
-
-    } else {
-      // TODO throw exception
-    }
+    doParseAttributeBeanDefinitions(registry, cachingInterceptor,
+        flushingInterceptor);
 
     setCacheProvider(cachingInterceptor, providerId);
     setCachingListeners(cachingInterceptor, cachingListeners);
     setCachingModels(cachingInterceptor, cachingModels);
-    registry.registerBeanDefinition(BeanName.CACHING_INTERCEPTOR,
+    registry.registerBeanDefinition(CommonBeanName.CACHING_INTERCEPTOR,
         cachingInterceptor);
 
     RootBeanDefinition cachingAdvisor = new RootBeanDefinition(
         CachingAttributeSourceAdvisor.class);
     cachingAdvisor.getConstructorArgumentValues().addGenericArgumentValue(
-        new RuntimeBeanReference(BeanName.CACHING_INTERCEPTOR));
-    registry.registerBeanDefinition(BeanName.CACHING_ADVISOR, cachingAdvisor);
+        new RuntimeBeanReference(CommonBeanName.CACHING_INTERCEPTOR));
+    registry.registerBeanDefinition(CommonBeanName.CACHING_ADVISOR,
+        cachingAdvisor);
 
     setCacheProvider(flushingInterceptor, providerId);
     setFlushingModels(flushingInterceptor, flushingModels);
-    registry.registerBeanDefinition(BeanName.FLUSHING_INTERCEPTOR,
+    registry.registerBeanDefinition(CommonBeanName.FLUSHING_INTERCEPTOR,
         flushingInterceptor);
 
     RootBeanDefinition flushingAdvisor = new RootBeanDefinition(
         FlushingAttributeSourceAdvisor.class);
     flushingAdvisor.getConstructorArgumentValues().addGenericArgumentValue(
-        new RuntimeBeanReference(BeanName.FLUSHING_INTERCEPTOR));
-    registry.registerBeanDefinition(BeanName.FLUSHING_ADVISOR,
+        new RuntimeBeanReference(CommonBeanName.FLUSHING_INTERCEPTOR));
+    registry.registerBeanDefinition(CommonBeanName.FLUSHING_ADVISOR,
         flushingAdvisor);
-
   }
 
-  private void setAttributes(AbstractBeanDefinition definition) {
-    definition.getPropertyValues().addPropertyValue(PropertyName.ATTRIBUTES,
-        new RuntimeBeanReference(BeanName.ATTRIBUTES));
-  }
-
+  protected abstract void doParseAttributeBeanDefinitions(
+      BeanDefinitionRegistry registry,
+      AbstractBeanDefinition cachingInterceptor,
+      AbstractBeanDefinition flushingInterceptor);
 }
