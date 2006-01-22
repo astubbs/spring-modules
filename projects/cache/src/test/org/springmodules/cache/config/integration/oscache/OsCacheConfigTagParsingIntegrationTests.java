@@ -51,7 +51,7 @@ public class OsCacheConfigTagParsingIntegrationTests extends
     super(name);
   }
 
-  public void testCacheConfigTagParsingWithCustomValues() {
+  public void testConfigTagParsingWithCustomValues() {
     String[] configLocations = new String[] { getConfigLocationPath("osCacheCustomConfigContext.xml") };
 
     TestFixture fixture = assertCacheConfigTagParsingRegisteredCustomValues(configLocations);
@@ -64,7 +64,7 @@ public class OsCacheConfigTagParsingIntegrationTests extends
     shutdownCacheManager(fixture.cacheManagerFactoryBean);
   }
 
-  public void testCacheConfigTagParsingWithDefaultValues() {
+  public void testConfigTagParsingWithDefaultValues() {
     String[] configLocations = new String[] { getConfigLocationPath("OsCacheConfigContext.xml") };
 
     TestFixture fixture = assertCacheConfigTagParsingRegisteredDefaultValues(configLocations);

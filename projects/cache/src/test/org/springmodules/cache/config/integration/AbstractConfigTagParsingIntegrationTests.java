@@ -17,10 +17,10 @@
  */
 package org.springmodules.cache.config.integration;
 
+import junit.framework.TestCase;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import junit.framework.TestCase;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
@@ -38,8 +38,7 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractConfigTagParsingIntegrationTests extends
-    TestCase {
+public abstract class AbstractConfigTagParsingIntegrationTests extends TestCase {
 
   protected class TestFixture {
 
@@ -81,6 +80,10 @@ public abstract class AbstractConfigTagParsingIntegrationTests extends
   public AbstractConfigTagParsingIntegrationTests(String name) {
     super(name);
   }
+
+  public abstract void testConfigTagParsingWithCustomValues();
+
+  public abstract void testConfigTagParsingWithDefaultValues();
 
   protected final TestFixture assertCacheConfigTagParsingRegisteredCustomValues(
       String[] configLocations) {
