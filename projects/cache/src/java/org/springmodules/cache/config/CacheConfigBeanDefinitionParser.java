@@ -51,7 +51,8 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory;
  * 
  * @see #parse(Element, BeanDefinitionRegistry)
  */
-public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
+public final class CacheConfigBeanDefinitionParser implements
+    BeanDefinitionParser {
 
   private abstract class CacheProvider {
 
@@ -181,6 +182,7 @@ public class CacheConfigBeanDefinitionParser implements BeanDefinitionParser {
     // create the cache provider facade
     RootBeanDefinition cacheProviderFacade = new RootBeanDefinition(
         cacheProviderFacadeBeanClass);
+    cacheProviderFacade.setPropertyValues(new MutablePropertyValues());
     Map cacheProviderFacadeProperties = parseCacheProviderFacadeProperties(element);
     cacheProviderFacade.getPropertyValues().addPropertyValues(
         cacheProviderFacadeProperties);
