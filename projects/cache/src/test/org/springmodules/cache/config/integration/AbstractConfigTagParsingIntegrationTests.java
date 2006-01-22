@@ -38,7 +38,7 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractCacheNamespaceConfigIntegrationTests extends
+public abstract class AbstractConfigTagParsingIntegrationTests extends
     TestCase {
 
   protected class TestFixture {
@@ -68,7 +68,7 @@ public abstract class AbstractCacheNamespaceConfigIntegrationTests extends
   /**
    * Constructor.
    */
-  public AbstractCacheNamespaceConfigIntegrationTests() {
+  public AbstractConfigTagParsingIntegrationTests() {
     super();
   }
 
@@ -78,7 +78,7 @@ public abstract class AbstractCacheNamespaceConfigIntegrationTests extends
    * @param name
    *          the name of the test case.
    */
-  public AbstractCacheNamespaceConfigIntegrationTests(String name) {
+  public AbstractConfigTagParsingIntegrationTests(String name) {
     super(name);
   }
 

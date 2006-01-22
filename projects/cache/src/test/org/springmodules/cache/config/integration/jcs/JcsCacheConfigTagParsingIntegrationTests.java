@@ -15,14 +15,16 @@
  *
  * Copyright @2006 the original author or authors.
  */
-package org.springmodules.cache.config.integration.jboss;
+package org.springmodules.cache.config.integration.jcs;
 
-import org.jboss.cache.TreeCache;
+import org.apache.jcs.engine.behavior.ICompositeCacheAttributes;
+import org.apache.jcs.engine.control.CompositeCache;
+import org.apache.jcs.engine.control.CompositeCacheManager;
 
 import org.springmodules.AssertExt;
-import org.springmodules.cache.config.integration.AbstractCacheNamespaceConfigIntegrationTests;
-import org.springmodules.cache.provider.jboss.JbossCacheFacade;
-import org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean;
+import org.springmodules.cache.config.integration.AbstractConfigTagParsingIntegrationTests;
+import org.springmodules.cache.provider.jcs.JcsFacade;
+import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
 
 /**
  * <p>
@@ -31,13 +33,13 @@ import org.springmodules.cache.provider.jboss.JbossCacheManagerFactoryBean;
  * 
  * @author Alex Ruiz
  */
-public class JbossCacheCacheNamespaceConfigIntegrationTests extends
-    AbstractCacheNamespaceConfigIntegrationTests {
+public class JcsCacheConfigTagParsingIntegrationTests extends
+    AbstractConfigTagParsingIntegrationTests {
 
   /**
    * Constructor.
    */
-  public JbossCacheCacheNamespaceConfigIntegrationTests() {
+  public JcsCacheConfigTagParsingIntegrationTests() {
     super();
   }
 
@@ -47,25 +49,30 @@ public class JbossCacheCacheNamespaceConfigIntegrationTests extends
    * @param name
    *          the name of the test case
    */
-  public JbossCacheCacheNamespaceConfigIntegrationTests(String name) {
+  public JcsCacheConfigTagParsingIntegrationTests(String name) {
     super(name);
   }
 
   public void testCacheConfigTagParsingWithCustomValues() {
-    String[] configLocations = new String[] { getConfigLocationPath("jbossCacheCustomConfigContext.xml") };
+    String[] configLocations = new String[] { getConfigLocationPath("jcsCustomConfigContext.xml") };
 
     TestFixture fixture = assertCacheConfigTagParsingRegisteredCustomValues(configLocations);
     assertTestFixtureIsCorrect(fixture);
 
-    TreeCache treeCache = (TreeCache) fixture.cacheManager;
-    assertEquals(7000l, treeCache.getInitialStateRetrievalTimeout());
-    assertEquals(4554l, treeCache.getSyncReplTimeout());
+    CompositeCacheManager cacheManager = (CompositeCacheManager) fixture.cacheManager;
+
+    String cacheName = "testCache";
+    CompositeCache cache = cacheManager.getCache(cacheName);
+    assertNotNull("The cache manager should have a cache name '" + cacheName
+        + "'", cache);
+    ICompositeCacheAttributes cacheAttributes = cache.getCacheAttributes();
+    assertEquals("<Max. objects>", 20, cacheAttributes.getMaxObjects());
 
     shutdownCacheManager(fixture.cacheManagerFactoryBean);
   }
 
   public void testCacheConfigTagParsingWithDefaultValues() {
-    String[] configLocations = new String[] { getConfigLocationPath("jbossCacheConfigContext.xml") };
+    String[] configLocations = new String[] { getConfigLocationPath("jcsConfigContext.xml") };
 
     TestFixture fixture = assertCacheConfigTagParsingRegisteredDefaultValues(configLocations);
     assertTestFixtureIsCorrect(fixture);
@@ -74,9 +81,8 @@ public class JbossCacheCacheNamespaceConfigIntegrationTests extends
   }
 
   private void assertTestFixtureIsCorrect(TestFixture fixture) {
-    AssertExt.assertInstanceOf(JbossCacheManagerFactoryBean.class,
+    AssertExt.assertInstanceOf(JcsManagerFactoryBean.class,
         fixture.cacheManagerFactoryBean);
-    AssertExt.assertInstanceOf(JbossCacheFacade.class,
-        fixture.cacheProviderFacade);
+    AssertExt.assertInstanceOf(JcsFacade.class, fixture.cacheProviderFacade);
   }
 }

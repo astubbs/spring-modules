@@ -20,7 +20,7 @@ package org.springmodules.cache.config.integration.oscache;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
 import org.springmodules.AssertExt;
-import org.springmodules.cache.config.integration.AbstractCacheNamespaceConfigIntegrationTests;
+import org.springmodules.cache.config.integration.AbstractConfigTagParsingIntegrationTests;
 import org.springmodules.cache.provider.oscache.OsCacheFacade;
 import org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean;
 
@@ -31,13 +31,13 @@ import org.springmodules.cache.provider.oscache.OsCacheManagerFactoryBean;
  * 
  * @author Alex Ruiz
  */
-public class OsCacheCacheNamespaceConfigIntegrationTests extends
-    AbstractCacheNamespaceConfigIntegrationTests {
+public class OsCacheConfigTagParsingIntegrationTests extends
+    AbstractConfigTagParsingIntegrationTests {
 
   /**
    * Constructor.
    */
-  public OsCacheCacheNamespaceConfigIntegrationTests() {
+  public OsCacheConfigTagParsingIntegrationTests() {
     super();
   }
 
@@ -47,7 +47,7 @@ public class OsCacheCacheNamespaceConfigIntegrationTests extends
    * @param name
    *          the name of the test case
    */
-  public OsCacheCacheNamespaceConfigIntegrationTests(String name) {
+  public OsCacheConfigTagParsingIntegrationTests(String name) {
     super(name);
   }
 

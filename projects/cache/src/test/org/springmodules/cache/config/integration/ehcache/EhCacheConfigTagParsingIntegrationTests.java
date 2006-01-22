@@ -15,16 +15,16 @@
  *
  * Copyright @2006 the original author or authors.
  */
-package org.springmodules.cache.config.integration.jcs;
+package org.springmodules.cache.config.integration.ehcache;
 
-import org.apache.jcs.engine.behavior.ICompositeCacheAttributes;
-import org.apache.jcs.engine.control.CompositeCache;
-import org.apache.jcs.engine.control.CompositeCacheManager;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 
 import org.springmodules.AssertExt;
-import org.springmodules.cache.config.integration.AbstractCacheNamespaceConfigIntegrationTests;
-import org.springmodules.cache.provider.jcs.JcsFacade;
-import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
+import org.springmodules.cache.config.integration.AbstractConfigTagParsingIntegrationTests;
+import org.springmodules.cache.provider.ehcache.EhCacheFacade;
 
 /**
  * <p>
@@ -33,13 +33,13 @@ import org.springmodules.cache.provider.jcs.JcsManagerFactoryBean;
  * 
  * @author Alex Ruiz
  */
-public class JcsCacheCacheNamespaceConfigIntegrationTests extends
-    AbstractCacheNamespaceConfigIntegrationTests {
+public class EhCacheConfigTagParsingIntegrationTests extends
+    AbstractConfigTagParsingIntegrationTests {
 
   /**
    * Constructor.
    */
-  public JcsCacheCacheNamespaceConfigIntegrationTests() {
+  public EhCacheConfigTagParsingIntegrationTests() {
     super();
   }
 
@@ -49,30 +49,28 @@ public class JcsCacheCacheNamespaceConfigIntegrationTests extends
    * @param name
    *          the name of the test case
    */
-  public JcsCacheCacheNamespaceConfigIntegrationTests(String name) {
+  public EhCacheConfigTagParsingIntegrationTests(String name) {
     super(name);
   }
 
   public void testCacheConfigTagParsingWithCustomValues() {
-    String[] configLocations = new String[] { getConfigLocationPath("jcsCustomConfigContext.xml") };
+    String[] configLocations = new String[] { getConfigLocationPath("ehCacheCustomConfigContext.xml") };
 
     TestFixture fixture = assertCacheConfigTagParsingRegisteredCustomValues(configLocations);
     assertTestFixtureIsCorrect(fixture);
 
-    CompositeCacheManager cacheManager = (CompositeCacheManager) fixture.cacheManager;
-
-    String cacheName = "testCache";
-    CompositeCache cache = cacheManager.getCache(cacheName);
-    assertNotNull("The cache manager should have a cache name '" + cacheName
-        + "'", cache);
-    ICompositeCacheAttributes cacheAttributes = cache.getCacheAttributes();
-    assertEquals("<Max. objects>", 20, cacheAttributes.getMaxObjects());
+    CacheManager cacheManager = (CacheManager) fixture.cacheManager;
+    Cache cache = cacheManager.getCache("customCache");
+    assertNotNull("The cache manager should have a cache name 'customCache'",
+        cache);
+    assertEquals("<Max. elements in memory>", 75, cache
+        .getMaxElementsInMemory());
 
     shutdownCacheManager(fixture.cacheManagerFactoryBean);
   }
 
   public void testCacheConfigTagParsingWithDefaultValues() {
-    String[] configLocations = new String[] { getConfigLocationPath("jcsConfigContext.xml") };
+    String[] configLocations = new String[] { getConfigLocationPath("ehCacheConfigContext.xml") };
 
     TestFixture fixture = assertCacheConfigTagParsingRegisteredDefaultValues(configLocations);
     assertTestFixtureIsCorrect(fixture);
@@ -81,8 +79,10 @@ public class JcsCacheCacheNamespaceConfigIntegrationTests extends
   }
 
   private void assertTestFixtureIsCorrect(TestFixture fixture) {
-    AssertExt.assertInstanceOf(JcsManagerFactoryBean.class,
+    AssertExt.assertInstanceOf(EhCacheManagerFactoryBean.class,
         fixture.cacheManagerFactoryBean);
-    AssertExt.assertInstanceOf(JcsFacade.class, fixture.cacheProviderFacade);
+    AssertExt
+        .assertInstanceOf(EhCacheFacade.class, fixture.cacheProviderFacade);
   }
+
 }
