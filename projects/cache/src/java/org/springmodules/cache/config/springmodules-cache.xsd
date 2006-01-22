@@ -95,6 +95,27 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="interceptors">
+    <xsd:complexType>
+      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:element ref="cachingListeners" minOccurs="0" maxOccurs="1" />
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+          <xsd:any namespace="##other" processContents="strict" />
+        </xsd:choice>
+      </xsd:sequence>
+
+      <xsd:attribute name="providerId" type="xsd:string"
+        default="cacheProvider" />
+
+      <xsd:attribute name="cachingInterceptorId" type="xsd:string"
+        default="cachingInterceptor" />
+
+      <xsd:attribute name="flushingInterceptorId" type="xsd:string"
+        default="flushingInterceptor" />
+
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="cachingListeners">
     <xsd:complexType>
       <xsd:sequence minOccurs="0" maxOccurs="unbounded">

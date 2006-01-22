@@ -67,8 +67,12 @@ public class CacheNamespaceHandler extends NamespaceHandlerSupport {
 
     registerBeanDefinitionParser("beanRef",
         new CacheBeanRefBeanDefinitionParser());
+
     registerBeanDefinitionParser("commons-attributes",
         new CacheCommonsAttributesBeanDefinitionParser());
+
+    registerBeanDefinitionParser("interceptors",
+        new CacheInterceptorsBeanDefinitionParser());
   }
 
 }
