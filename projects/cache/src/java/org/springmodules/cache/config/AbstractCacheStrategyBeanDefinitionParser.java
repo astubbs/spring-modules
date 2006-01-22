@@ -36,7 +36,8 @@ import org.springmodules.cache.provider.ehcache.EhCacheFacade;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractCacheStrategyBeanDefinitionParser {
+public abstract class AbstractCacheStrategyBeanDefinitionParser implements
+    BeanDefinitionParser {
 
   protected static class CommonPropertyName {
 

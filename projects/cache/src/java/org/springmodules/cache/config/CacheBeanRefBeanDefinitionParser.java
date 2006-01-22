@@ -39,7 +39,7 @@ import org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean;
  * @author Alex Ruiz
  */
 public final class CacheBeanRefBeanDefinitionParser extends
-    AbstractCacheStrategyBeanDefinitionParser implements BeanDefinitionParser {
+    AbstractCacheStrategyBeanDefinitionParser {
 
   private static class PropertyName {
 
