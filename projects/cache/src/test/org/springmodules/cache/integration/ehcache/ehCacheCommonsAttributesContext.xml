@@ -13,7 +13,17 @@
     class="org.springmodules.cache.integration.KeyAndModelListCachingListener">
   </bean>
 
-  <bean id="cacheableServiceTarget"
+  <cache:attributes type="COMMONS_ATTRIBUTES">
+    <cache:cachingListeners>
+      <cache:cachingListener ref="cachingListener"/>
+    </cache:cachingListeners>
+    
+    <ehcache:caching target="test" cacheName="testCache" />
+    <ehcache:flushing target="test" cacheNames="testCache" />
+  </cache:attributes>
+
+  <!-- Set up the objects to apply caching to -->
+  <bean id="cacheableService"
     class="org.springmodules.cache.integration.CacheableServiceImpl">
     <property name="names">
       <list>
@@ -22,13 +32,4 @@
       </list>
     </property>
   </bean>
-
-  <cache:beanRef id="cacheableService" ref="cacheableServiceTarget">
-    <cache:cachingListeners>
-      <cache:cachingListener ref="cachingListener" />
-    </cache:cachingListeners>
-
-    <ehcache:caching target="get*" cacheName="testCache" />
-    <ehcache:flushing target="update*" cacheNames="testCache" />
-  </cache:beanRef>
 </beans>
