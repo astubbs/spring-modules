@@ -17,8 +17,13 @@
  */
 package org.springmodules.cache.config;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandler;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+import org.springframework.util.ClassUtils;
 
 /**
  * <p>
@@ -29,6 +34,8 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  */
 public class CacheNamespaceHandler extends NamespaceHandlerSupport {
 
+  private static Log logger = LogFactory.getLog(CacheNamespaceHandler.class);
+
   /**
    * Constructor.
    */
@@ -36,8 +43,27 @@ public class CacheNamespaceHandler extends NamespaceHandlerSupport {
     super();
     registerBeanDefinitionParser("config",
         new CacheConfigBeanDefinitionParser());
-    registerBeanDefinitionParser("annotations",
-        new CacheAnnotationsBeanDefinitionParser());
+
+    try {
+      ClassUtils.forName("java.lang.annotation.Annotation");
+      Class parserClass = ClassUtils
+          .forName("org.springmodules.cache.config.CacheAnnotationsBeanDefinitionParser");
+      try {
+        Object parser = parserClass.newInstance();
+        registerBeanDefinitionParser("annotations",
+            (BeanDefinitionParser) parser);
+
+      } catch (Exception exception) {
+        String errorMessage = "Unable to create instance of "
+            + "CacheAnnotationsBeanDefinitionParser";
+        logger.error(errorMessage, exception);
+      }
+
+    } catch (ClassNotFoundException exception) {
+      logger
+          .info("No support for JDK 1.5 Annotations. Unable to load parser for namespace 'annotations'");
+    }
+
     registerBeanDefinitionParser("beanRef",
         new CacheBeanRefBeanDefinitionParser());
     registerBeanDefinitionParser("commons-attributes",
