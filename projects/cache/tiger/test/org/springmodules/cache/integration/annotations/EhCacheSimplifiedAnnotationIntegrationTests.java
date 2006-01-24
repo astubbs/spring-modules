@@ -35,16 +35,16 @@ public final class EhCacheSimplifiedAnnotationIntegrationTests extends
 
   private static final String METADATA_CONFIG = CLASSPATH
       + PathUtils.getPackageNameAsPath(EhCacheSimplifiedAnnotationIntegrationTests.class)
-      + "/simplifiedAnnotationContext.xml";
+      + "/simpleConfigAnnotationContext.xml";
 
   protected String getCacheManagerBeanId() {
-    return SIMPLIFIED_CACHE_MANAGER_BEAN_ID;
+    return SIMPLE_CONFIG_CACHE_MANAGER_BEAN_ID;
   }
   
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    return new String[] { SIMPLIFIED_CACHE_CONFIG, METADATA_CONFIG };
+    return new String[] { SIMPLE_CACHE_CONFIG, METADATA_CONFIG };
   }
 }

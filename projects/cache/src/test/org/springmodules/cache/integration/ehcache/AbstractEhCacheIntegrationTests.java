@@ -48,9 +48,9 @@ public abstract class AbstractEhCacheIntegrationTests extends
    * Path of the Spring file specifying the configuration of the cache manager
    * (simplified format).
    */
-  protected static final String SIMPLIFIED_CACHE_CONFIG = CLASSPATH
+  protected static final String SIMPLE_CACHE_CONFIG = CLASSPATH
       + PathUtils.getPackageNameAsPath(AbstractEhCacheIntegrationTests.class)
-      + "/ehCacheSimplifiedContext.xml";
+      + "/ehCacheSimpleConfigContext.xml";
 
   private CacheManager cacheManager;
 

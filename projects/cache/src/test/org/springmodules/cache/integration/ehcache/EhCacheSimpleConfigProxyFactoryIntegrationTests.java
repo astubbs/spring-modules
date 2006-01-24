@@ -29,22 +29,22 @@ import org.springmodules.cache.provider.PathUtils;
  * 
  * @author Alex Ruiz
  */
-public final class EhCacheSimplifiedMethodMapIntegrationTests extends
+public final class EhCacheSimpleConfigProxyFactoryIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  private static final String METHOD_MAP_CONFIG = CLASSPATH
+  private static final String PROXY_FACTORY_CONFIG = CLASSPATH
       + PathUtils
-          .getPackageNameAsPath(EhCacheSimplifiedMethodMapIntegrationTests.class)
-      + "/ehCacheSimplifiedMethodMapContext.xml";
+          .getPackageNameAsPath(EhCacheSimpleConfigProxyFactoryIntegrationTests.class)
+      + "/ehCacheSimpleConfigProxyFactoryContext.xml";
 
   protected String getCacheManagerBeanId() {
-    return SIMPLIFIED_CACHE_MANAGER_BEAN_ID;
+    return SIMPLE_CONFIG_CACHE_MANAGER_BEAN_ID;
   }
 
   /**
    * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
    */
   protected String[] getConfigLocations() {
-    return new String[] { SIMPLIFIED_CACHE_CONFIG, METHOD_MAP_CONFIG };
+    return new String[] { SIMPLE_CACHE_CONFIG, PROXY_FACTORY_CONFIG };
   }
 }

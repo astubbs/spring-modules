@@ -52,7 +52,7 @@ public abstract class AbstractCacheIntegrationTests extends
    */
   protected static final String CLASSPATH = "classpath:";
 
-  protected static final String SIMPLIFIED_CACHE_MANAGER_BEAN_ID = "cacheProvider.cacheManager";
+  protected static final String SIMPLE_CONFIG_CACHE_MANAGER_BEAN_ID = "cacheProvider.cacheManager";
 
   protected static final String TARGET_BEAN_ID = "cacheableService";
 
