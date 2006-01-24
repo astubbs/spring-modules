@@ -46,9 +46,11 @@ public class CacheNamespaceHandler extends NamespaceHandlerSupport {
 
     try {
       ClassUtils.forName("java.lang.annotation.Annotation");
-      Class parserClass = ClassUtils
-          .forName("org.springmodules.cache.config.CacheAnnotationsBeanDefinitionParser");
+      
       try {
+        Class parserClass = ClassUtils
+            .forName("org.springmodules.cache.config.CacheAnnotationsBeanDefinitionParser");
+
         Object parser = parserClass.newInstance();
         registerBeanDefinitionParser("annotations",
             (BeanDefinitionParser) parser);
