@@ -19,7 +19,6 @@ package org.springmodules.cache.config;
 
 import junit.framework.TestCase;
 
-import org.easymock.MockControl;
 import org.w3c.dom.Element;
 
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -34,9 +33,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
  */
 public class CacheConfigBeanDefinitionParserTests extends TestCase {
 
-  private Element configElement;
-
-  private MockControl configElementControl;
+  private DomElementStub configElement;
 
   private CacheConfigBeanDefinitionParser parser;
 
@@ -70,44 +67,30 @@ public class CacheConfigBeanDefinitionParserTests extends TestCase {
    * contains an invalid value.
    */
   public void testParseWithSerializableFactoryAttributeHavingInvalidValue() {
-    expectReadXmlAttribute("provider", "EHCACHE");
-    expectReadXmlAttribute("id", "cacheProvider");
-    expectReadXmlAttribute("configLocation", "");
-    expectReadXmlAttribute("failQuietly", "true");
-
     assertParseThrowsExceptionIfAnyAttributeHasInvalidValue(
         "serializableFactory", "MY_OWN_FACTORY");
   }
 
   protected void setUp() {
+    configElement = new DomElementStub("config");
+    configElement.setAttribute("provider", "EHCACHE");
+    configElement.setAttribute("id", "cacheProvider");
+    configElement.setAttribute("configLocation", "");
+    configElement.setAttribute("failQuietly", "true");
+    configElement.setAttribute("serializableFactory", "");
+
     parser = new CacheConfigBeanDefinitionParser();
-
-    configElementControl = MockControl.createControl(Element.class);
-    configElement = (Element) configElementControl.getMock();
-
     registry = new DefaultListableBeanFactory();
-  }
-
-  protected void tearDown() {
-    configElementControl.verify();
   }
 
   private void assertParseThrowsExceptionIfAnyAttributeHasInvalidValue(
       String attributeName, String attributeValue) {
-    expectReadXmlAttribute(attributeName, attributeValue);
-
-    configElementControl.replay();
+    configElement.setAttribute(attributeName, attributeValue);
 
     try {
       parser.parse(configElement, registry);
     } catch (IllegalStateException exception) {
       // we are expecting this exception
     }
-  }
-
-  private void expectReadXmlAttribute(String attributeName,
-      String attributeValue) {
-    configElement.getAttribute(attributeName);
-    configElementControl.setReturnValue(attributeValue);
   }
 }
