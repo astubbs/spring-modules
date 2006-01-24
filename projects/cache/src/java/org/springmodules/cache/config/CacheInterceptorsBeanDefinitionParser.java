@@ -57,7 +57,6 @@ public class CacheInterceptorsBeanDefinitionParser extends
    * @see org.springmodules.cache.config.AbstractCacheStrategyBeanDefinitionParser#doParse(Element,
    *      BeanDefinitionRegistry, String, Map, Map, List)
    */
-  @Override
   protected void doParse(Element element, BeanDefinitionRegistry registry,
       String providerId, Map cachingModels, Map flushingModels,
       List cachingListeners) {
