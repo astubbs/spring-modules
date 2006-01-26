@@ -41,34 +41,6 @@ public abstract class Reflections {
 
   private static final int MULTIPLIER = 31;
 
-  private static int reflectionHashCode(Collection collection) {
-    int hash = INITIAL_HASH;
-
-    for (Iterator i = collection.iterator(); i.hasNext();) {
-      hash = MULTIPLIER * hash + reflectionHashCode(i.next());
-    }
-
-    return hash;
-  }
-
-  private static int reflectionHashCode(Map map) {
-    int hash = INITIAL_HASH;
-
-    for (Iterator i = map.entrySet().iterator(); i.hasNext();) {
-      Map.Entry entry = (Map.Entry) i.next();
-      hash = MULTIPLIER * hash + reflectionHashCode(entry);
-    }
-
-    return hash;
-  }
-
-  private static int reflectionHashCode(Map.Entry entry) {
-    int hash = INITIAL_HASH;
-    hash = MULTIPLIER * hash + reflectionHashCode(entry.getKey());
-    hash = MULTIPLIER * hash + reflectionHashCode(entry.getValue());
-    return hash;
-  }
-
   /**
    * <p>
    * This method uses reflection to build a valid hash code.
@@ -140,6 +112,34 @@ public abstract class Reflections {
       // ///CLOVER:ON
     }
 
+    return hash;
+  }
+
+  private static int reflectionHashCode(Collection collection) {
+    int hash = INITIAL_HASH;
+
+    for (Iterator i = collection.iterator(); i.hasNext();) {
+      hash = MULTIPLIER * hash + reflectionHashCode(i.next());
+    }
+
+    return hash;
+  }
+
+  private static int reflectionHashCode(Map map) {
+    int hash = INITIAL_HASH;
+
+    for (Iterator i = map.entrySet().iterator(); i.hasNext();) {
+      Map.Entry entry = (Map.Entry) i.next();
+      hash = MULTIPLIER * hash + reflectionHashCode(entry);
+    }
+
+    return hash;
+  }
+
+  private static int reflectionHashCode(Map.Entry entry) {
+    int hash = INITIAL_HASH;
+    hash = MULTIPLIER * hash + reflectionHashCode(entry.getKey());
+    hash = MULTIPLIER * hash + reflectionHashCode(entry.getValue());
     return hash;
   }
 
