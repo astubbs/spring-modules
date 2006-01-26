@@ -105,6 +105,24 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
   /**
    * Returns a EHCache cache from the cache manager.
    * 
+   * @param model
+   *          the model containing the name of the cache to retrieve
+   * @return the cache retrieved from the cache manager
+   * @throws CacheNotFoundException
+   *           if the cache does not exist
+   * @throws CacheAccessException
+   *           wrapping any unexpected exception thrown by the cache
+   */
+  protected Cache getCache(CachingModel model) throws CacheNotFoundException,
+      CacheAccessException {
+    EhCacheCachingModel ehCacheCachingModel = (EhCacheCachingModel) model;
+    String cacheName = ehCacheCachingModel.getCacheName();
+    return getCache(cacheName);
+  }
+
+  /**
+   * Returns a EHCache cache from the cache manager.
+   * 
    * @param name
    *          the name of the cache
    * @return the cache retrieved from the cache manager
@@ -113,7 +131,8 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
    * @throws CacheAccessException
    *           wrapping any unexpected exception thrown by the cache
    */
-  protected Cache getCache(String name) {
+  protected Cache getCache(String name) throws CacheNotFoundException,
+      CacheAccessException {
     Cache cache = null;
 
     try {
@@ -197,11 +216,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
    */
   protected Object onGetFromCache(Serializable key, CachingModel model)
       throws CacheException {
-
-    EhCacheCachingModel cachingModel = (EhCacheCachingModel) model;
-    String cacheName = cachingModel.getCacheName();
-
-    Cache cache = getCache(cacheName);
+    Cache cache = getCache(model);
     Object cachedObject = null;
 
     try {
@@ -242,11 +257,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
    */
   protected void onPutInCache(Serializable key, CachingModel model, Object obj)
       throws CacheException {
-
-    EhCacheCachingModel cachingModel = (EhCacheCachingModel) model;
-    String cacheName = cachingModel.getCacheName();
-
-    Cache cache = getCache(cacheName);
+    Cache cache = getCache(model);
     Element newCacheElement = new Element(key, (Serializable) obj);
 
     try {
@@ -276,11 +287,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
    */
   protected void onRemoveFromCache(Serializable key, CachingModel model)
       throws CacheException {
-
-    EhCacheCachingModel cachingModel = (EhCacheCachingModel) model;
-    String cacheName = cachingModel.getCacheName();
-
-    Cache cache = getCache(cacheName);
+    Cache cache = getCache(model);
 
     try {
       cache.remove(key);
