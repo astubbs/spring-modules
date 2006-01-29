@@ -54,7 +54,7 @@ public class NameMatchCachingModelSourceTests extends TestCase {
   }
 
   protected void setUp() throws Exception {
-    method = String.class.getDeclaredMethod("toUpperCase", null);
+    method = String.class.getDeclaredMethod("toUpperCase", new Class[0]);
     models = new HashMap();
 
     source = new NameMatchCachingModelSource();

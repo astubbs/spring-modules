@@ -37,7 +37,9 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 /**
  * <p>
- * Facade for OSCache.
+ * Implementation of
+ * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
+ * that uses OSCache as the underlying cache implementation
  * </p>
  * 
  * @author Alex Ruiz

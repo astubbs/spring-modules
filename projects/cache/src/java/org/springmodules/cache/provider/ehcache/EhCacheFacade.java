@@ -42,7 +42,7 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
  * <p>
  * Implementation of
  * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
- * that uses EHCache as the underlying cache implementation
+ * that uses EHCache as the underlying cache implementation.
  * </p>
  * 
  * @author Alex Ruiz

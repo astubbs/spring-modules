@@ -45,9 +45,8 @@ public class MethodMapCacheModelSourceTests extends TestCase {
     super(name);
   }
 
-  public void testAddCacheModel()
-      throws Exception {
-    Method length = String.class.getMethod("length", null);
+  public void testAddCacheModel() throws Exception {
+    Method length = String.class.getMethod("length", new Class[0]);
     Map modelMap = source.getCacheModels();
 
     CacheModel model1 = new MockCachingModel();
@@ -62,7 +61,7 @@ public class MethodMapCacheModelSourceTests extends TestCase {
 
   public void testAddCacheModelWithFirstMethodNameBeingMoreSpecificThanSecond()
       throws Exception {
-    Method toLowerCase = String.class.getMethod("toLowerCase", null);
+    Method toLowerCase = String.class.getMethod("toLowerCase", new Class[0]);
     Map modelMap = source.getCacheModels();
 
     CacheModel model1 = new MockCachingModel();

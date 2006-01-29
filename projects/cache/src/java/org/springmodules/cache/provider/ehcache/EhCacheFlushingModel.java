@@ -23,7 +23,6 @@ import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.provider.AbstractFlushingModel;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -52,8 +51,8 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
    * Constructor.
    * 
    * @param csvCacheNames
-   *          a comma-separated list containing the names of the EHCache caches to flush
-   *          separated by commas
+   *          a comma-separated list containing the names of the EHCache caches
+   *          to flush separated by commas
    */
   public EhCacheFlushingModel(String csvCacheNames) {
     this();
@@ -129,7 +128,7 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
    *          the names of the caches
    */
   public void setCacheNames(String[] newCacheNames) {
-    cacheNames = Strings.removeDuplicates(newCacheNames);
+    cacheNames = newCacheNames;
   }
 
   /**

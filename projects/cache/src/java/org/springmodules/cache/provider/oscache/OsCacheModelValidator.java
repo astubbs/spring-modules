@@ -22,7 +22,8 @@ import org.springmodules.cache.provider.AbstractCacheModelValidator;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link OsCacheCachingModel}</code>.
+ * Validates the properties of <code>{@link OsCacheCachingModel}</code>s and
+ * <code>{@link OsCacheFlushingModel}</code>.
  * </p>
  * 
  * @author Alex Ruiz

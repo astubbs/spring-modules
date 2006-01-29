@@ -442,7 +442,7 @@ public class EhCacheFacadeTests extends TestCase {
   }
 
   private Method getRemoveAllMethodFromCache() throws Exception {
-    return Cache.class.getMethod("removeAll", null);
+    return Cache.class.getMethod("removeAll", new Class[0]);
   }
 
   private void setUpCache() {

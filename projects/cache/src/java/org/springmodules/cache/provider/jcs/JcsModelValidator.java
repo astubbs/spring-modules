@@ -27,7 +27,8 @@ import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link JcsCachingModel}</code>.
+ * Validates the properties of <code>{@link JcsCachingModel}</code>s and
+ * <code>{@link JcsFlushingModel}</code>s.
  * </p>
  * 
  * @author Alex Ruiz

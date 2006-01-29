@@ -210,7 +210,7 @@ public final class JcsFacadeTests extends TestCase {
     updateCache();
 
     int expected = cache.getSize();
-    
+
     flushingModel.setCacheStructs(null);
     jcsFacade.onFlushCache(flushingModel);
 
@@ -222,7 +222,8 @@ public final class JcsFacadeTests extends TestCase {
     Method getCache = getGetCacheMethodFromCompositeCacheManagerClass();
     setUpCacheAdministratorAsMockObject(getCache);
 
-    Method removeAll = CompositeCache.class.getMethod("removeAll", null);
+    Method removeAll = CompositeCache.class
+        .getMethod("removeAll", new Class[0]);
     setUpCacheAsMockObject(removeAll);
 
     expectCacheIsFound();
@@ -298,7 +299,7 @@ public final class JcsFacadeTests extends TestCase {
     updateCache();
 
     int expected = cache.getSize();
-    
+
     flushingModel.setCacheStruct(null);
     jcsFacade.onFlushCache(flushingModel);
 
@@ -507,7 +508,7 @@ public final class JcsFacadeTests extends TestCase {
     }
     verifyMocks();
   }
-  
+
   /**
    * Verifies that the method
    * <code>{@link JcsFacade#validateCacheManager()}</code> throws an

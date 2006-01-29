@@ -47,7 +47,7 @@ public final class HashCodeCacheKeyGeneratorTests extends
    */
   public void testGenerateKeyWithoutMethodArguments() throws Exception {
     Class targetClass = String.class;
-    Method toStringMethod = targetClass.getMethod("toString", null);
+    Method toStringMethod = targetClass.getMethod("toString", new Class[0]);
 
     // get the expected key.
     HashCodeCalculator hashCodeCalculator = new HashCodeCalculator();
@@ -76,7 +76,7 @@ public final class HashCodeCacheKeyGeneratorTests extends
     bar.put("bar", "bar");
 
     Class targetClass = String.class;
-    Method toStringMethod = targetClass.getMethod("toString", null);
+    Method toStringMethod = targetClass.getMethod("toString", new Class[0]);
 
     Object fooKey = executeGenerateArgumentHashCode(toStringMethod,
         new Object[] { foo });

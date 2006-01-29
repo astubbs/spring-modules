@@ -26,7 +26,8 @@ import org.springmodules.cache.provider.InvalidCacheModelException;
 
 /**
  * <p>
- * Validates the property values of <code>{@link EhCacheCachingModel}</code>s.
+ * Validates the property values of <code>{@link EhCacheCachingModel}</code>s
+ * and <code>{@link EhCacheFlushingModel}</code>s.
  * </p>
  * 
  * @author Alex Ruiz

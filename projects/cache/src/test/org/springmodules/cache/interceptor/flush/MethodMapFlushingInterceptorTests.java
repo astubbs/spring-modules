@@ -63,7 +63,7 @@ public class MethodMapFlushingInterceptorTests extends TestCase {
 
     Class clazz = String.class;
     Method indexOf = clazz.getMethod("indexOf", new Class[] { int.class });
-    Method toUpperCase = clazz.getMethod("toUpperCase", null);
+    Method toUpperCase = clazz.getMethod("toUpperCase", new Class[0]);
 
     assertSame(model1, source.getFlushingModel(indexOf, clazz));
     assertSame(model2, source.getFlushingModel(toUpperCase, clazz));

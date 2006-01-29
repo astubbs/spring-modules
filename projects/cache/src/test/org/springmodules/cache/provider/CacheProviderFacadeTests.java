@@ -501,10 +501,10 @@ public final class CacheProviderFacadeTests extends TestCase {
     Class classToMock = AbstractCacheProviderFacade.class;
 
     Method isSerializableCacheElementRequired = classToMock.getDeclaredMethod(
-        "isSerializableCacheElementRequired", null);
+        "isSerializableCacheElementRequired", new Class[0]);
 
     Method onAfterPropertiesSet = classToMock.getDeclaredMethod(
-        "onAfterPropertiesSet", null);
+        "onAfterPropertiesSet", new Class[0]);
 
     Method onCancelCacheUpdate = classToMock.getDeclaredMethod(
         "onCancelCacheUpdate", new Class[] { Serializable.class });
@@ -523,7 +523,7 @@ public final class CacheProviderFacadeTests extends TestCase {
             CachingModel.class });
 
     Method validateCacheManager = classToMock.getDeclaredMethod(
-        "validateCacheManager", null);
+        "validateCacheManager", new Class[0]);
 
     Method[] methodsToMock = new Method[] { isSerializableCacheElementRequired,
         onAfterPropertiesSet, onCancelCacheUpdate, onFlushCache,

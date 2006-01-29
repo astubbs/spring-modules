@@ -54,7 +54,7 @@ public class NameMatchFlushingModelSourceTests extends TestCase {
   }
 
   protected void setUp() throws Exception {
-    method = String.class.getDeclaredMethod("toLowerCase", null);
+    method = String.class.getDeclaredMethod("toLowerCase", new Class[0]);
     models = new HashMap();
 
     source = new NameMatchFlushingModelSource();

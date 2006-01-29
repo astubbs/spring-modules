@@ -35,16 +35,12 @@ import org.springmodules.cache.provider.jboss.JbossCacheCachingModel;
 public abstract class AbstractJbossCacheIntegrationTestCases extends
     AbstractCacheIntegrationTests {
 
-  protected static final String CACHE_CONFIG = "classpath:org/springmodules/cache/integration/jboss/jbossCacheContext.xml";
+  protected static final String CACHE_CONFIG = "jbossCacheContext.xml";
 
   /**
    * JBossCache cache manager.
    */
   private TreeCache cacheManager;
-
-  public AbstractJbossCacheIntegrationTestCases() {
-    super();
-  }
 
   /**
    * @see AbstractCacheIntegrationTests#assertCacheWasFlushed()

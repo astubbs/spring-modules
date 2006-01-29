@@ -18,7 +18,6 @@
 
 package org.springmodules.cache.integration.jcs;
 
-
 /**
  * <p>
  * Verifies that the caching module works correctly when using JCS as the cache
@@ -31,16 +30,11 @@ package org.springmodules.cache.integration.jcs;
 public final class JcsMetadataIntegerationTests extends
     AbstractJcsIntegrationTests {
 
-  private static final String METADATA_CONFIG = "classpath:org/springmodules/cache/integration/jcs/jcsMetadataContext.xml";
-
-  public JcsMetadataIntegerationTests() {
-    super();
-  }
-
   /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
+   * @see org.springmodules.cache.integration.AbstractCacheIntegrationTests#getConfigFileNames()
    */
-  protected String[] getConfigLocations() {
-    return new String[] { CACHE_CONFIG, METADATA_CONFIG };
+  protected String[] getConfigFileNames() {
+    return new String[] { CACHE_CONFIG, "jcsMetadataContext.xml" };
   }
+
 }

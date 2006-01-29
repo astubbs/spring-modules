@@ -23,7 +23,6 @@ import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.provider.AbstractFlushingModel;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -127,7 +126,7 @@ public final class JbossCacheFlushingModel extends AbstractFlushingModel {
    *          the new names
    */
   public void setNodes(String[] newNodes) {
-    nodes = Strings.removeDuplicates(newNodes);
+    nodes = newNodes;
   }
 
   /**

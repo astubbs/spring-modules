@@ -25,7 +25,8 @@ import org.springmodules.cache.provider.InvalidCacheModelException;
 
 /**
  * <p>
- * Validates the properties of a <code>{@link JbossCacheCachingModel}</code>.
+ * Validates the properties of <code>{@link JbossCacheCachingModel}</code>s
+ * and <code>{@link JbossCacheFlushingModel}</code>s.
  * </p>
  * 
  * @author Alex Ruiz
@@ -69,7 +70,7 @@ public final class JbossCacheModelValidator extends AbstractCacheModelValidator 
       throws InvalidCacheModelException {
     JbossCacheFlushingModel model = (JbossCacheFlushingModel) flushingModel;
     String[] nodes = model.getNodes();
-    
+
     if (ObjectUtils.isEmpty(nodes)) {
       throw new InvalidCacheModelException(
           "There should be at least one node FQN");

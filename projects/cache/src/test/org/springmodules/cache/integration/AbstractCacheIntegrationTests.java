@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.interceptor.caching.AbstractCachingInterceptor;
+import org.springmodules.cache.provider.PathUtils;
 
 /**
  * <p>
@@ -47,9 +48,6 @@ public abstract class AbstractCacheIntegrationTests extends
 
   protected static final String CACHING_LISTENER_BEAN_ID = "cachingListener";
 
-  /**
-   * "classpath:" prefix for resources loaded from the class path.
-   */
   protected static final String CLASSPATH = "classpath:";
 
   protected static final String SIMPLE_CONFIG_CACHE_MANAGER_BEAN_ID = "cacheProvider.cacheManager";
@@ -146,9 +144,34 @@ public abstract class AbstractCacheIntegrationTests extends
     return cachingListener;
   }
 
+  protected abstract String[] getConfigFileNames();
+
+  /**
+   * @see AbstractDependencyInjectionSpringContextTests#getConfigLocations()
+   */
+  protected final String[] getConfigLocations() {
+    String[] configFileNames = getConfigFileNames();
+    int count = configFileNames.length;
+
+    String resourcePath = CLASSPATH
+        + PathUtils.getPackageNameAsPath(getClass());
+
+    String[] configLocations = new String[count];
+    for (int i = 0; i < count; i++) {
+      String configLocation = configFileNames[i];
+      if (!configLocation.startsWith(CLASSPATH)) {
+        configLocation = resourcePath + "/" + configLocation;
+      }
+      configLocations[i] = configLocation;
+    }
+
+    return configLocations;
+  }
+
   protected final KeyAndModel getKeyAndModel(int index) {
     List keyAndModelPairs = cachingListener.getKeyAndModelPairs();
     KeyAndModel keyModel = (KeyAndModel) keyAndModelPairs.get(index);
     return keyModel;
   }
+
 }

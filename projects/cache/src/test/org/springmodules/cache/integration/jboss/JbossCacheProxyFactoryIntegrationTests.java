@@ -30,16 +30,14 @@ package org.springmodules.cache.integration.jboss;
 public final class JbossCacheProxyFactoryIntegrationTests extends
     AbstractJbossCacheIntegrationTestCases {
 
-  private static final String PROXY_FACTORY_CONFIG = "classpath:org/springmodules/cache/integration/jboss/jbossCacheProxyFactoryContext.xml";
-
   public JbossCacheProxyFactoryIntegrationTests() {
     super();
   }
 
   /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
+   * @see org.springmodules.cache.integration.AbstractCacheIntegrationTests#getConfigFileNames()
    */
-  protected String[] getConfigLocations() {
-    return new String[] { CACHE_CONFIG, PROXY_FACTORY_CONFIG };
+  protected String[] getConfigFileNames() {
+    return new String[] { CACHE_CONFIG, "jbossCacheProxyFactoryContext.xml" };
   }
 }

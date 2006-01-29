@@ -33,7 +33,9 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
 /**
  * <p>
- * Facade for JBossCache.
+ * Implementation of
+ * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
+ * that uses JBoss Cache as the underlying cache implementation
  * </p>
  * 
  * @author Alex Ruiz

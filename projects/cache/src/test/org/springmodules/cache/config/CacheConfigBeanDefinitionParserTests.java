@@ -84,8 +84,8 @@ public class CacheConfigBeanDefinitionParserTests extends TestCase {
   }
 
   private void assertParseThrowsExceptionIfAnyAttributeHasInvalidValue(
-      String attributeName, String attributeValue) {
-    configElement.setAttribute(attributeName, attributeValue);
+      String attributeName, String invalidAttributeValue) {
+    configElement.setAttribute(attributeName, invalidAttributeValue);
 
     try {
       parser.parse(configElement, registry);

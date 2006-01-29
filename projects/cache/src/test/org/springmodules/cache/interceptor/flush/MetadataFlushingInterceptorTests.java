@@ -168,7 +168,7 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
   }
 
   private Method defaultMethod() throws Exception {
-    return String.class.getDeclaredMethod("toLowerCase", null);
+    return String.class.getDeclaredMethod("toLowerCase", new Class[0]);
   }
 
   private void replayMocks() {

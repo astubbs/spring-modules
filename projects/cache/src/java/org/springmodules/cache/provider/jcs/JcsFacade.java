@@ -46,7 +46,9 @@ import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
 
 /**
  * <p>
- * Facade for JCS.
+ * Implementation of
+ * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
+ * that uses JCS as the underlying cache implementation.
  * </p>
  * 
  * @author Alex Ruiz

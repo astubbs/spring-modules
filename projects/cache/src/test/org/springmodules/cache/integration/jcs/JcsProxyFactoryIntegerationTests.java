@@ -30,16 +30,10 @@ package org.springmodules.cache.integration.jcs;
 public final class JcsProxyFactoryIntegerationTests extends
     AbstractJcsIntegrationTests {
 
-  private static final String PROXY_FACTORY_CONFIG = "classpath:org/springmodules/cache/integration/jcs/jcsProxyFactoryContext.xml";
-
-  public JcsProxyFactoryIntegerationTests() {
-    super();
-  }
-
   /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
+   * @see org.springmodules.cache.integration.AbstractCacheIntegrationTests#getConfigFileNames()
    */
-  protected String[] getConfigLocations() {
-    return new String[] { CACHE_CONFIG, PROXY_FACTORY_CONFIG };
+  protected String[] getConfigFileNames() {
+    return new String[] { CACHE_CONFIG, "jcsProxyFactoryContext.xml" };
   }
 }

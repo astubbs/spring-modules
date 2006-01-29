@@ -23,7 +23,6 @@ import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.provider.AbstractFlushingModel;
 import org.springmodules.util.Objects;
-import org.springmodules.util.Strings;
 
 /**
  * <p>
@@ -125,7 +124,7 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
    *          the new groups to flush
    */
   public void setGroups(String[] newGroups) {
-    groups = Strings.removeDuplicates(newGroups);
+    groups = newGroups;
   }
 
   /**

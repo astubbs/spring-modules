@@ -113,13 +113,6 @@ public class EhCacheFlushingModelTests extends AbstractEqualsHashCodeTestCase {
     assertEqualsNullComparisonReturnsFalse(model);
   }
 
-  public void testSetCacheNamesWithCsvHavingRepeatedValues() {
-    String cacheName = "main";
-    model.setCacheNames(cacheName + "," + cacheName);
-    String[] expected = new String[] { cacheName };
-    AssertExt.assertEquals(expected, model.getCacheNames());
-  }
-
   public void testSetCacheNamesWithEmptyCsv() {
     model.setCacheNames("");
     AssertExt.assertEquals(new String[0], model.getCacheNames());

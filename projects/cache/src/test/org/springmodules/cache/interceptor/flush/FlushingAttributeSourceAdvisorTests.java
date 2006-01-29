@@ -116,6 +116,6 @@ public class FlushingAttributeSourceAdvisorTests extends TestCase {
 
   private void setUpTargetClassAndMethod() throws Exception {
     targetClass = String.class;
-    method = targetClass.getMethod("toUpperCase", null);
+    method = targetClass.getMethod("toUpperCase", new Class[0]);
   }
 }

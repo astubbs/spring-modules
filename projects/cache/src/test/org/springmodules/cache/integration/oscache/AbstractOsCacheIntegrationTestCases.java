@@ -39,16 +39,12 @@ import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAnd
 public abstract class AbstractOsCacheIntegrationTestCases extends
     AbstractCacheIntegrationTests {
 
-  protected static final String CACHE_CONFIG = "classpath:org/springmodules/cache/integration/oscache/osCacheContext.xml";
+  protected static final String CACHE_CONFIG = "osCacheContext.xml";
 
   /**
    * OSCache cache administrator.
    */
   private GeneralCacheAdministrator cacheAdministrator;
-
-  public AbstractOsCacheIntegrationTestCases() {
-    super();
-  }
 
   /**
    * @see AbstractCacheIntegrationTests#assertCacheWasFlushed()

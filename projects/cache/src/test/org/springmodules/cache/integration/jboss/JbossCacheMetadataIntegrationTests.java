@@ -30,16 +30,10 @@ package org.springmodules.cache.integration.jboss;
 public final class JbossCacheMetadataIntegrationTests extends
     AbstractJbossCacheIntegrationTestCases {
 
-  private static final String METADATA_CONFIG = "classpath:org/springmodules/cache/integration/jboss/jbossCacheMetadataContext.xml";
-
-  public JbossCacheMetadataIntegrationTests() {
-    super();
-  }
-
   /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
+   * @see org.springmodules.cache.integration.AbstractCacheIntegrationTests#getConfigFileNames()
    */
-  protected String[] getConfigLocations() {
-    return new String[] { CACHE_CONFIG, METADATA_CONFIG };
+  protected String[] getConfigFileNames() {
+    return new String[] { CACHE_CONFIG, "jbossCacheMetadataContext.xml" };
   }
 }

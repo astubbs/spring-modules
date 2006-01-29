@@ -79,7 +79,7 @@ public final class NameMatchCacheModelSourceTests extends TestCase {
   }
 
   protected void setUp() throws Exception {
-    method = String.class.getDeclaredMethod("toLowerCase", null);
+    method = String.class.getDeclaredMethod("toLowerCase", new Class[0]);
 
     cacheModels = new HashMap();
 

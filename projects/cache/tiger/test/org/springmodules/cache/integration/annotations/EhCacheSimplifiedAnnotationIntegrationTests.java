@@ -33,18 +33,18 @@ import org.springmodules.cache.provider.PathUtils;
 public final class EhCacheSimplifiedAnnotationIntegrationTests extends
     AbstractEhCacheIntegrationTests {
 
-  private static final String METADATA_CONFIG = CLASSPATH
-      + PathUtils.getPackageNameAsPath(EhCacheSimplifiedAnnotationIntegrationTests.class)
-      + "/simpleConfigAnnotationContext.xml";
-
   protected String getCacheManagerBeanId() {
     return SIMPLE_CONFIG_CACHE_MANAGER_BEAN_ID;
   }
-  
+
   /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
+   * @see org.springmodules.cache.integration.AbstractCacheIntegrationTests#getConfigFileNames()
    */
-  protected String[] getConfigLocations() {
-    return new String[] { SIMPLE_CACHE_CONFIG, METADATA_CONFIG };
+  @Override
+  protected String[] getConfigFileNames() {
+    String cacheConfig = CLASSPATH
+        + PathUtils.getPackageNameAsPath(AbstractEhCacheIntegrationTests.class)
+        + "/" + SIMPLE_CACHE_CONFIG;
+    return new String[] { cacheConfig, "simpleConfigAnnotationContext.xml" };
   }
 }

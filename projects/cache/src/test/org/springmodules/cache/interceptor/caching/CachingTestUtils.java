@@ -35,7 +35,7 @@ public abstract class CachingTestUtils {
 
   public static Method createNonCacheableMethod() throws Exception {
     Class targetClass = String.class;
-    return targetClass.getMethod("notify", null);
+    return targetClass.getMethod("notify", new Class[0]);
   }
 
 }
