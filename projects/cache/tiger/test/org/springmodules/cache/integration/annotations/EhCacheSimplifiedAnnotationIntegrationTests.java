@@ -19,7 +19,6 @@
 package org.springmodules.cache.integration.annotations;
 
 import org.springmodules.cache.integration.ehcache.AbstractEhCacheIntegrationTests;
-import org.springmodules.cache.provider.PathUtils;
 
 /**
  * <p>
@@ -42,9 +41,7 @@ public final class EhCacheSimplifiedAnnotationIntegrationTests extends
    */
   @Override
   protected String[] getConfigFileNames() {
-    String cacheConfig = CLASSPATH
-        + PathUtils.getPackageNameAsPath(AbstractEhCacheIntegrationTests.class)
-        + "/" + SIMPLE_CACHE_CONFIG;
-    return new String[] { cacheConfig, "simpleConfigAnnotationContext.xml" };
+    return new String[] { SIMPLE_CACHE_CONFIG,
+        "simpleConfigAnnotationContext.xml" };
   }
 }
