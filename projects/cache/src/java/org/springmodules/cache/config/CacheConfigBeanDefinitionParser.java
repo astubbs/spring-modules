@@ -213,6 +213,9 @@ public final class CacheConfigBeanDefinitionParser implements
   }
 
   /**
+   * Parses the given XML containing the properties of the cache provider
+   * configured by this parser.
+   * 
    * @param element
    *          the XML element containing the properties for the cache provider
    *          facade
