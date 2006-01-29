@@ -27,6 +27,7 @@ import org.w3c.dom.Element;
 
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -207,6 +208,12 @@ public class CacheConfigBeanDefinitionParserTests extends TestCase {
     parser.parse(config.toXml(), registry);
 
     assertEqualsBeanDefinitionClass(CACHE_PROVIDER_ID, cacheProviderClass);
+
+    RootBeanDefinition cacheProvider = getCacheProvider();
+    RuntimeBeanReference reference = (RuntimeBeanReference) getProperty(
+        cacheProvider, "cacheManager");
+    assertEquals(CACHE_MANAGER_ID, reference.getBeanName());
+
     assertEqualsBeanDefinitionClass(CACHE_MANAGER_ID, cacheManagerClass);
   }
 
