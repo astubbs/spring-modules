@@ -25,24 +25,43 @@
         </not>
     </condition>
 
-    <condition property="tiger.unavailable">
-        <or>
-            <equals arg1="${ant.java.version}" arg2="1.3" />
-            <equals arg1="${ant.java.version}" arg2="1.4" />
-        </or>
+    <condition property="merlin.available">
+        <not>
+            <or>
+                <equals arg1="${ant.java.version}" arg2="1.3" />
+            </or>
+        </not>
     </condition>
 
-    <target name="statics.post" if="tiger.available">
-        <copy todir="${target.classes.dir}">
-          <fileset dir="${tiger.src.dir}">
-            <exclude name="**/*.java" />
-          </fileset>
+    <target name="statics.post" depends="statics.merlin,statics.tiger" />
+
+    <target name="statics.merlin" if="merlin.available">
+        <echo>copying non-Java resources from '${merlin.src.dir}'</echo>
+        <copy todir="${merlin.classes.dir}">
+            <fileset dir="${merlin.src.dir}">
+                <exclude name="**/*.java" />
+            </fileset>
         </copy>
 
         <copy todir="${target.testclasses.dir}">
-          <fileset dir="${tiger.test.dir}">
-            <exclude name="**/*.java" />
-          </fileset>
+            <fileset dir="${merlin.test.dir}">
+                <exclude name="**/*.java" />
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="statics.tiger" if="tiger.available">
+        <echo>copying non-Java resources from '${tiger.src.dir}'</echo>
+        <copy todir="${target.classes.dir}">
+            <fileset dir="${tiger.src.dir}">
+                <exclude name="**/*.java" />
+            </fileset>
+        </copy>
+
+        <copy todir="${target.testclasses.dir}">
+            <fileset dir="${tiger.test.dir}">
+                <exclude name="**/*.java" />
+            </fileset>
         </copy>
     </target>
 
@@ -58,7 +77,38 @@
         </attribute-compiler>
     </target>
 
-    <target name="compile.post" if="tiger.available">
+    <target name="compile.post" depends="compile.merlin,compile.tiger" />
+
+    <target name="compile.merlin" if="merlin.available">
+        <echo>compiling JDK 1.4 sources</echo>
+        <javac destdir="${target.classes.dir}"
+               source="1.4"
+               target="1.4"
+               debug="${debug}"
+               deprecation="${deprecation}"
+               optimize="${optimize}"
+               failonerror="true">
+            <src path="${merlin.src.dir}" />
+            <classpath refid="compile.classpath" />
+        </javac>
+
+        <echo>compiling JDK 1.4 tests</echo>
+        <javac destdir="${target.testclasses.dir}"
+               source="1.4"
+               target="1.4"
+               debug="${debug}"
+               deprecation="${deprecation}"
+               optimize="${optimize}"
+               failonerror="true">
+            <src path="${merlin.test.dir}" />
+            <classpath>
+                <pathelement location="${target.classes.dir}" />
+                <path refid="test.classpath" />
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="compile.tiger" if="tiger.available">
         <echo>compiling JDK 5.0+ sources</echo>
         <javac destdir="${target.classes.dir}"
                source="1.5"
