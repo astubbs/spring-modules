@@ -54,11 +54,31 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory;
  */
 public class CacheConfigBeanDefinitionParserTests extends TestCase {
 
-  private class ConfigElement {
+  private static class BeanName {
+
+    static final String CACHE_MANAGER = "cacheProvider.cacheManager";
+
+    static final String CACHE_PROVIDER = "cacheProvider";
+  }
+
+  private static class CacheProvider {
+
+    static final String EHCACHE = "EHCACHE";
+
+    static final String INVALID = "INVALID";
+
+    static final String JBOSS_CACHE = "JBOSS_CACHE";
+
+    static final String JCS = "JCS";
+
+    static final String OSCACHE = "OSCACHE";
+  }
+
+  private class ConfigStruct {
 
     String configLocation = "";
 
-    boolean failQuietlyEnabled = false;
+    Boolean failQuietlyEnabled = null;
 
     String id = "";
 
@@ -71,25 +91,43 @@ public class CacheConfigBeanDefinitionParserTests extends TestCase {
       element.setAttribute("id", id);
       element.setAttribute("provider", provider);
       element.setAttribute("configLocation", configLocation);
-      element
-          .setAttribute("failQuietly", failQuietlyEnabled ? "true" : "false");
+      String failQuietlyProperty = "";
+      if (failQuietlyEnabled != null) {
+        failQuietlyProperty = failQuietlyEnabled.booleanValue() ? "true"
+            : "false";
+      }
+      element.setAttribute("failQuietly", failQuietlyProperty);
       element.setAttribute("serializableFactory", serializableFactory);
       return element;
     }
   }
 
-  private static final String CACHE_MANAGER_ID = "cacheProvider.cacheManager";
+  private static class PropertyName {
 
-  private static final String CACHE_PROVIDER_ID = "cacheProvider";
+    static final String CACHE_MANAGER = "cacheManager";
 
-  private static final String EHCACHE_PROVIDER = "EHCACHE";
+    static final String FAIL_QUIETLY = "failQuietlyEnabled";
 
-  private static final String FAKE_CONFIG_LOCATION = "classpath:"
+    static final String PROVIDER = "provider";
+
+    static final String SERIALIZABLE_FACTORY = "serializableFactory";
+  }
+
+  private static class SerializableFactory {
+
+    static final String INVALID = "INVALID";
+
+    static final String NONE = "NONE";
+
+    static final String XSTREAM = "XSTREAM";
+  }
+
+  private static final String CONFIG_LOCATION = "classpath:"
       + PathUtils
           .getPackageNameAsPath(CacheConfigBeanDefinitionParserTests.class)
       + "/fakeConfigLocation.xml";
 
-  private ConfigElement config;
+  private ConfigStruct config;
 
   private CacheConfigBeanDefinitionParser parser;
 
@@ -106,11 +144,60 @@ public class CacheConfigBeanDefinitionParserTests extends TestCase {
   }
 
   public void testParseWithFailQuietlyEnabledEqualToFalse() {
-    assertParseSetsFailQuietlyEnabled(false);
+    config.failQuietlyEnabled = Boolean.FALSE;
+    parser.parse(config.toXml(), registry);
+
+    assertFailQuietlyEnabledPropertyIsCorrect(Boolean.FALSE);
   }
 
   public void testParseWithFailQuietlyEnabledEqualToTrue() {
-    assertParseSetsFailQuietlyEnabled(true);
+    config.failQuietlyEnabled = Boolean.TRUE;
+    parser.parse(config.toXml(), registry);
+
+    assertFailQuietlyEnabledPropertyIsCorrect(Boolean.TRUE);
+  }
+
+  public void testParseWithFailQuietlyNotSet() {
+    config.failQuietlyEnabled = null;
+    parser.parse(config.toXml(), registry);
+
+    assertFailQuietlyEnabledPropertyIsCorrect(null);
+  }
+
+  public void testParseWithProviderEqualToEhCache() {
+    config.provider = CacheProvider.EHCACHE;
+    parser.parse(config.toXml(), registry);
+
+    assertCacheProviderClassIsCorrect(EhCacheFacade.class);
+    assertCacheProviderHasReferenceToCacheManager();
+    assertCacheManagerClassIsCorrect(EhCacheManagerFactoryBean.class);
+  }
+
+  public void testParseWithProviderEqualToJbossCache() {
+    config.provider = CacheProvider.JBOSS_CACHE;
+    parser.parse(config.toXml(), registry);
+
+    assertCacheProviderClassIsCorrect(JbossCacheFacade.class);
+    assertCacheProviderHasReferenceToCacheManager();
+    assertCacheManagerClassIsCorrect(JbossCacheManagerFactoryBean.class);
+  }
+
+  public void testParseWithProviderEqualToJcs() {
+    config.provider = CacheProvider.JCS;
+    parser.parse(config.toXml(), registry);
+
+    assertCacheProviderClassIsCorrect(JcsFacade.class);
+    assertCacheProviderHasReferenceToCacheManager();
+    assertCacheManagerClassIsCorrect(JcsManagerFactoryBean.class);
+  }
+
+  public void testParseWithProviderEqualToOsCache() {
+    config.provider = CacheProvider.OSCACHE;
+    parser.parse(config.toXml(), registry);
+
+    assertCacheProviderClassIsCorrect(OsCacheFacade.class);
+    assertCacheProviderHasReferenceToCacheManager();
+    assertCacheManagerClassIsCorrect(OsCacheManagerFactoryBean.class);
   }
 
   /**
@@ -119,39 +206,23 @@ public class CacheConfigBeanDefinitionParserTests extends TestCase {
    * throws an IllegalStateException if the XML attribute "provider" contains an
    * invalid value.
    */
-  public void testParseWithProviderAttributeHavingInvalidValue() {
-    config.provider = "MY_OWN{CACHE";
-    Element configElement = config.toXml();
-    assertParseThrowsExceptionIfAnyAttributeHasInvalidValue(configElement);
-  }
-
-  public void testParseWithProviderEqualToEhCache() {
-    assertParseCreatesCacheProviderAndCacheManager(EHCACHE_PROVIDER,
-        EhCacheFacade.class, EhCacheManagerFactoryBean.class);
-  }
-
-  public void testParseWithProviderEqualToJbossCache() {
-    assertParseCreatesCacheProviderAndCacheManager("JBOSS_CACHE",
-        JbossCacheFacade.class, JbossCacheManagerFactoryBean.class);
-  }
-
-  public void testParseWithProviderEqualToJcs() {
-    assertParseCreatesCacheProviderAndCacheManager("JCS", JcsFacade.class,
-        JcsManagerFactoryBean.class);
-  }
-
-  public void testParseWithProviderEqualToOsCache() {
-    assertParseCreatesCacheProviderAndCacheManager("OSCACHE",
-        OsCacheFacade.class, OsCacheManagerFactoryBean.class);
+  public void testParseWithProviderHavingInvalidValue() {
+    config.provider = CacheProvider.INVALID;
+    assertParseThrowsExceptionIfAnyAttributeHasInvalidValue();
   }
 
   public void testParseWithSerializableFactoryEqualToNone() {
-    assertParseSetsSerializableFactory("NONE", null);
+    config.serializableFactory = SerializableFactory.NONE;
+    parser.parse(config.toXml(), registry);
+
+    assertSerializableFactoryIsNull();
   }
 
   public void testParseWithSerializableFactoryEqualToXStream() {
-    assertParseSetsSerializableFactory("XSTREAM",
-        XStreamSerializableFactory.class);
+    config.serializableFactory = SerializableFactory.XSTREAM;
+    parser.parse(config.toXml(), registry);
+
+    assertSerializableFactoryIsCorrect(XStreamSerializableFactory.class);
   }
 
   /**
@@ -161,22 +232,25 @@ public class CacheConfigBeanDefinitionParserTests extends TestCase {
    * contains an invalid value.
    */
   public void testParseWithSerializableFactoryHavingInvalidValue() {
-    config.serializableFactory = "MY_OWN_FACTORY";
-    assertParseThrowsExceptionIfAnyAttributeHasInvalidValue(config.toXml());
+    config.serializableFactory = SerializableFactory.INVALID;
+    assertParseThrowsExceptionIfAnyAttributeHasInvalidValue();
   }
 
   public void testParseWithSerializableFactoryNotSet() {
-    assertParseSetsSerializableFactory("", null);
+    config.serializableFactory = null;
+    parser.parse(config.toXml(), registry);
+
+    assertSerializableFactoryIsNull();
   }
 
   public void testParseWithSpecifiedConfigLocation() throws Exception {
-    config.configLocation = FAKE_CONFIG_LOCATION;
+    config.configLocation = CONFIG_LOCATION;
     parser.parse(config.toXml(), registry);
 
-    RootBeanDefinition cacheManager = (RootBeanDefinition) registry
-        .getBeanDefinition(CACHE_MANAGER_ID);
+    RootBeanDefinition cacheManager = getCacheManagerFromRegistry();
 
-    Resource actual = (Resource) getProperty(cacheManager, "configLocation");
+    Resource actual = (Resource) getBeanDefinitionProperty(cacheManager,
+        "configLocation");
 
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     DocumentBuilder docBuilder = factory.newDocumentBuilder();
@@ -190,78 +264,74 @@ public class CacheConfigBeanDefinitionParserTests extends TestCase {
     parser = new CacheConfigBeanDefinitionParser();
     registry = new DefaultListableBeanFactory();
 
-    config = new ConfigElement();
-    config.id = CACHE_PROVIDER_ID;
-    config.provider = EHCACHE_PROVIDER;
+    config = new ConfigStruct();
+    config.id = BeanName.CACHE_PROVIDER;
+    config.provider = CacheProvider.EHCACHE;
   }
 
-  private void assertEqualsBeanDefinitionClass(String beanName, Class beanClass) {
-    RootBeanDefinition beanDefinition = (RootBeanDefinition) registry
-        .getBeanDefinition(beanName);
-    assertEquals("<Bean definition " + StringUtils.quote(beanName)
-        + " bean class>", beanClass, beanDefinition.getBeanClass());
+  private void assertCacheManagerClassIsCorrect(Class expected) {
+    RootBeanDefinition cacheManager = getCacheManagerFromRegistry();
+    assertEquals("<Cache manager class>", expected, cacheManager.getBeanClass());
   }
 
-  private void assertParseCreatesCacheProviderAndCacheManager(String provider,
-      Class cacheProviderClass, Class cacheManagerClass) {
-    config.provider = provider;
-    parser.parse(config.toXml(), registry);
-
-    assertEqualsBeanDefinitionClass(CACHE_PROVIDER_ID, cacheProviderClass);
-
-    RootBeanDefinition cacheProvider = getCacheProvider();
-    RuntimeBeanReference reference = (RuntimeBeanReference) getProperty(
-        cacheProvider, "cacheManager");
-    assertEquals(CACHE_MANAGER_ID, reference.getBeanName());
-
-    assertEqualsBeanDefinitionClass(CACHE_MANAGER_ID, cacheManagerClass);
+  private void assertCacheProviderClassIsCorrect(Class expected) {
+    RootBeanDefinition cacheProvider = getCacheProviderFromRegistry();
+    assertEquals("<Cache provider facade class>", expected, cacheProvider
+        .getBeanClass());
   }
 
-  private void assertParseSetsFailQuietlyEnabled(boolean failQuietlyEnabled) {
-    config.failQuietlyEnabled = failQuietlyEnabled;
-    parser.parse(config.toXml(), registry);
-
-    RootBeanDefinition cacheProvider = getCacheProvider();
-
-    Boolean actual = (Boolean) getProperty(cacheProvider, "failQuietlyEnabled");
-    assertEquals(failQuietlyEnabled, actual.booleanValue());
+  private void assertCacheProviderHasReferenceToCacheManager() {
+    RuntimeBeanReference reference = (RuntimeBeanReference) getCacheProviderProperty(PropertyName.CACHE_MANAGER);
+    assertEquals(BeanName.CACHE_MANAGER, reference.getBeanName());
   }
 
-  private void assertParseSetsSerializableFactory(String serializableFactory,
-      Class serializableFactoryClass) {
-    config.serializableFactory = serializableFactory;
-    parser.parse(config.toXml(), registry);
-
-    RootBeanDefinition cacheProvider = getCacheProvider();
-    PropertyValue propertyValue = cacheProvider.getPropertyValues()
-        .getPropertyValue("serializableFactory");
-
-    if (serializableFactoryClass != null) {
-      Object serializableFactoryBean = propertyValue.getValue();
-      assertEquals(serializableFactoryClass, serializableFactoryBean.getClass());
-
-    } else {
-      assertNull(propertyValue);
-    }
+  private void assertFailQuietlyEnabledPropertyIsCorrect(Boolean expected) {
+    Boolean failQuietlyEnabled = (Boolean) getCacheProviderProperty(PropertyName.FAIL_QUIETLY);
+    assertEquals("<Property " + StringUtils.quote(PropertyName.FAIL_QUIETLY)
+        + ">", expected, failQuietlyEnabled);
   }
 
-  private void assertParseThrowsExceptionIfAnyAttributeHasInvalidValue(
-      Element configElement) {
+  private void assertParseThrowsExceptionIfAnyAttributeHasInvalidValue() {
     try {
-      parser.parse(configElement, registry);
+      parser.parse(config.toXml(), registry);
     } catch (IllegalStateException exception) {
       // we are expecting this exception
     }
   }
 
-  private RootBeanDefinition getCacheProvider() {
-    RootBeanDefinition cacheProvider = (RootBeanDefinition) registry
-        .getBeanDefinition(CACHE_PROVIDER_ID);
-    return cacheProvider;
+  private void assertSerializableFactoryIsCorrect(Class expected) {
+    Object serializableFactory = getCacheProviderProperty(PropertyName.SERIALIZABLE_FACTORY);
+    assertEquals(expected, serializableFactory.getClass());
   }
 
-  private Object getProperty(BeanDefinition beanDefinition, String propertyName) {
-    return beanDefinition.getPropertyValues().getPropertyValue(propertyName)
-        .getValue();
+  private void assertSerializableFactoryIsNull() {
+    Object serializableFactory = getCacheProviderProperty(PropertyName.SERIALIZABLE_FACTORY);
+    assertNull(serializableFactory);
+  }
+
+  private RootBeanDefinition getBeanDefinitionFromRegistry(String beanName) {
+    RootBeanDefinition beanDefinition = (RootBeanDefinition) registry
+        .getBeanDefinition(beanName);
+    return beanDefinition;
+  }
+
+  private Object getBeanDefinitionProperty(BeanDefinition beanDefinition,
+      String propertyName) {
+    PropertyValue propertyValue = beanDefinition.getPropertyValues()
+        .getPropertyValue(propertyName);
+    return propertyValue != null ? propertyValue.getValue() : null;
+  }
+
+  private RootBeanDefinition getCacheManagerFromRegistry() {
+    return getBeanDefinitionFromRegistry(BeanName.CACHE_MANAGER);
+  }
+
+  private RootBeanDefinition getCacheProviderFromRegistry() {
+    return getBeanDefinitionFromRegistry(BeanName.CACHE_PROVIDER);
+  }
+
+  private Object getCacheProviderProperty(String propertyName) {
+    RootBeanDefinition cacheProvider = getCacheProviderFromRegistry();
+    return getBeanDefinitionProperty(cacheProvider, propertyName);
   }
 }
