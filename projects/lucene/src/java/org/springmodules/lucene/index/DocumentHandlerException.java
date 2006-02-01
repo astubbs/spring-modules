@@ -18,7 +18,6 @@ package org.springmodules.lucene.index;
 
 import java.io.IOException;
 
-import org.springframework.core.NestedRuntimeException;
 import org.springmodules.lucene.LuceneException;
 
 /**
@@ -27,13 +26,13 @@ import org.springmodules.lucene.LuceneException;
  * 
  * @author Thierry Templier
  */
-public class LuceneIndexingException extends LuceneException {
+public class DocumentHandlerException extends LuceneException {
 
 	/**
 	 * Constructor for LuceneIndexingException.
 	 * @param msg message
 	 */
-	public LuceneIndexingException(String msg) {
+	public DocumentHandlerException(String msg) {
 		super(msg);
 	}
 
@@ -42,7 +41,7 @@ public class LuceneIndexingException extends LuceneException {
 	 * @param msg message
 	 * @param ex root cause
 	 */
-	public LuceneIndexingException(String msg,Exception ex) {
+	public DocumentHandlerException(String msg,IOException ex) {
 		super(msg,ex);
 	}
 

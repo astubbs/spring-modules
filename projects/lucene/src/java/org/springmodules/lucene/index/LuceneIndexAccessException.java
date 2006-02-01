@@ -50,7 +50,7 @@ public class LuceneIndexAccessException extends LuceneException {
 	 * @param msg message
 	 * @param ex root cause
 	 */
-	public LuceneIndexAccessException(String msg,IOException ex) {
+	public LuceneIndexAccessException(String msg,Exception ex) {
 		super(msg,ex);
 	}
 
