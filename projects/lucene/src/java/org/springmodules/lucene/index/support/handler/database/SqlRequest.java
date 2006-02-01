@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.support.database;
+package org.springmodules.lucene.index.support.handler.database;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class which contains every informations about a sql request
@@ -29,9 +32,14 @@ package org.springmodules.lucene.index.support.database;
  * @see org.springmodules.lucene.index.support.database.SqlDocumentHandler
  */
 public class SqlRequest {
-	private final String sql;
-	private final Object[] params;
-	private final int[] types;
+
+	public static final Object SQL_REQUEST = "sql.request";
+	public static final Object REQUEST_PARAMETERS = "request.parameters";
+	public static final Object REQUEST_PARAMETER_TYPES = "request.parameter.types";
+
+	private String sql;
+	private Object[] params;
+	private int[] types;
 
 	public SqlRequest(String sql) {
 		this(sql,null,null);
@@ -43,6 +51,18 @@ public class SqlRequest {
 		this.types=types;
 	}
 
+	public SqlRequest(Map description) {
+		this.sql=(String)description.get(SqlRequest.SQL_REQUEST);
+		this.params=(Object[])description.get(SqlRequest.REQUEST_PARAMETERS);
+		if( this.params==null ) {
+			this.params=new Object[0];
+		}
+		this.types=(int[])description.get(SqlRequest.REQUEST_PARAMETER_TYPES);
+		if( this.types==null ) {
+			this.types=new int[0];
+		}
+	}
+	
 	public Object[] getParams() {
 		return params;
 	}
@@ -55,4 +75,12 @@ public class SqlRequest {
 		return types;
 	}
 
+	public Map getDescription() {
+		Map description=new HashMap();
+		description.put(SQL_REQUEST,sql);
+		description.put(REQUEST_PARAMETERS,params);
+		description.put(REQUEST_PARAMETER_TYPES,types);
+		return description;
+	}
+	
 }

@@ -22,7 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.lucene.index.core.DefaultLuceneIndexTemplate;
 import org.springmodules.lucene.index.core.LuceneIndexTemplate;
 import org.springmodules.lucene.index.factory.IndexFactory;
-import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
+import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
 
 /**
  * Convenient super class for objects using Lucene indexing

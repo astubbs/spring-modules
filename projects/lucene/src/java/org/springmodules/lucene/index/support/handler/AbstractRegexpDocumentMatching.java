@@ -14,49 +14,53 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.support.file;
+package org.springmodules.lucene.index.support.handler;
 
 /**
  * This implementation of the DocumentMatching interface determines
  * when a document handler must be used to index a document thanks
- * to its file extension.
+ * to a regular expression.
+ * 
  * @author Thierry Templier
  */
-public class DocumentExtensionMatching implements DocumentMatching {
-
-	private String extension;
+public abstract class AbstractRegexpDocumentMatching implements DocumentMatching {
 
 	/**
-	 * Construct a new DocumentExtensionMatching with the extension
-	 * to match.
+	 * Construct a new RegexpDocumentMatching with the regular
+	 * expression to match.
 	 */
-	public DocumentExtensionMatching(String extension) {
-		this.extension=extension;
+	public AbstractRegexpDocumentMatching(String regularExpression) {
+		initRegExpr(regularExpression);
 	}
 
 	/**
-	 * This method extracts the extension of the name parameter
+	 * This method can be overloaded to init a regular expression
+	 * according to its pattern.
+	 *  
+	 * @param regularExpression the regular expression
+	 */
+	protected void initRegExpr(String regularExpression) {
+	}
+
+	/**
+	 * This method delegates to regexp  the extension of the name parameter
 	 * which must be a filename and determines if it matches with
 	 * the internal extension property of the instance.
+	 * 
+	 * @param name the name to check
+	 * @return if the check to the regular expression
 	 * @see org.springmodules.lucene.index.object.DocumentMatching#match(java.lang.String)
 	 */
 	public boolean match(String name) {
-		int index=-1;
-		if( (index=name.lastIndexOf("."))!=-1 ) {
-			return matchExtension(name.substring(index+1));
-		} else {
-			return false;
-		}
+		return matchRegularExpression(name);
 	}
 
 	/**
-	 * This method determines if the extension parameter matchs
-	 * with the extension instance attribute.
-	 * @param extension the extension to test
-	 * @return if the extension matches or not
+	 * The method to implement using different strategies.
+	 * 
+	 * @param name the name to check
+	 * @return if the check to the regular expression
 	 */
-	public boolean matchExtension(String extension) {
-		return extension.equals(this.extension);
-	}
+	protected abstract boolean matchRegularExpression(String name);
 
 }

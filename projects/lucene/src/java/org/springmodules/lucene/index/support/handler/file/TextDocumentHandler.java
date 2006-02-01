@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.support.file.handler;
+package org.springmodules.lucene.index.support.handler.file;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.springmodules.lucene.index.support.file.DocumentHandler;
 
 /**
  * This class is the default DocumentHandler implementation to
@@ -43,7 +41,7 @@ import org.springmodules.lucene.index.support.file.DocumentHandler;
  * @see org.springmodules.lucene.index.support.file.DocumentHandler
  * @see org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManagerFactoryBean
  */
-public class TextDocumentHandler implements DocumentHandler {
+public class TextDocumentHandler extends AbstractInputStreamDocumentHandler {
 
 	/**
 	 * This method indexes an InputStream and specifies some additional
@@ -52,20 +50,20 @@ public class TextDocumentHandler implements DocumentHandler {
 	 * <p>This method indexes the text from the InputStream in the "contents"
 	 * property which is not stored in the index.
 	 * 
-	 * <p>If the DocumentHandler.FILENAME description property is specified
+	 * <p>If the FILENAME description property is specified
 	 * in the description map, the "type" keyword property is set with the "file"
 	 * value and the "filename" keyword property is set with the DocumentHandler.FILENAME
 	 * description property.
 	 * 
 	 * @see org.springmodules.lucene.index.object.FileDocumentHandler#getDocument(java.io.File,java.io.FileReader)
 	 */
-	public Document getDocument(Map description,InputStream inputStream) throws IOException {
+	protected Document doGetDocumentWithInputStream(Map description,InputStream inputStream) {
 		Document document = new Document();
 		//The text is analyzed and indexed but not stored
 		document.add(Field.Text("contents", new InputStreamReader(inputStream)));
-		if( description.get(DocumentHandler.FILENAME)!=null ) {
+		if( description.get(FILENAME)!=null ) {
 			document.add(Field.Keyword("type", "file"));
-			document.add(Field.Keyword("filename", (String)description.get(DocumentHandler.FILENAME)));
+			document.add(Field.Keyword("filename", (String)description.get(FILENAME)));
 		}
 		return document;
 	}

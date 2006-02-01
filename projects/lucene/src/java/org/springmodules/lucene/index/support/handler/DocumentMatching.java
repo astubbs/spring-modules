@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.support.file;
+package org.springmodules.lucene.index.support.handler;
 
 /**
  * This is the base interface to determine when a document

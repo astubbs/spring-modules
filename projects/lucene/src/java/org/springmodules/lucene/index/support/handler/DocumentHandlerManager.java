@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.support.file;
+package org.springmodules.lucene.index.support.handler;
 
 /**
  * This is the base interface of the document handler
@@ -43,7 +43,7 @@ public interface DocumentHandlerManager {
 	 * This method registers the default document handlers and
 	 * must be called by the implementation during the initialization.
 	 */
-	public void registerDefautHandlers();
+	public void registerDefaultHandlers();
 
 	/**
 	 * This method registers a document handler associated with a

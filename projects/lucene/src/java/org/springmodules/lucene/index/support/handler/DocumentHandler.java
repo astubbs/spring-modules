@@ -14,29 +14,37 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.support.file;
+package org.springmodules.lucene.index.support.handler;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.lucene.document.Document;
 
 /**
  * This is the base interface to define different implementations
- * in order to index different types of files.
+ * in order to index different objects or ressources.
  * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.support.handler.AbstractDocumentHandler
+ * @see org.springmodules.lucene.index.support.handler.file.TextDocumentHandler
+ * @see org.springmodules.lucene.index.support.handler.object.ReflectiveDocumentHandler
  */
 public interface DocumentHandler {
-	public final static String FILENAME="filename";
 
 	/**
-	 * This method indexes an InputStream and specifies some additional
+	 * Return whether or not this object can create a document from an
+	 * instance of the given class.
+	 */
+	boolean supports(Class clazz);
+	
+	/**
+	 * This method indexes an object and specifies some additional
 	 * properties on the Lucene document basing the description parameter.
+	 * 
+	 * The object to index can be either a POJO or a stream on a resource.
 	 * 
 	 * @param description the description of the resource to index
 	 * @param inputStream the input stream which will be used to index
 	 */
-	public Document getDocument(Map description,InputStream inputStream) throws IOException;
+	Document getDocument(Map description,Object object) throws Exception;
 }

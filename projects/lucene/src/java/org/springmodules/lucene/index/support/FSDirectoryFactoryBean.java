@@ -21,6 +21,7 @@ import java.io.File;
  * 
  * @author Brian McCallister
  * @author Thierry Templier
+ * @author Rob Moore
  * @see org.apache.lucene.store.FSDirectory
  */
 public class FSDirectoryFactoryBean implements FactoryBean, InitializingBean {
@@ -47,18 +48,21 @@ public class FSDirectoryFactoryBean implements FactoryBean, InitializingBean {
      * <p>The location property must be set, and be a directory
      */
     public void afterPropertiesSet() throws Exception {
-        if( location==null ) {
-        	throw new BeanInitializationException("Must specify a location property");
+        if (location == null) {
+            throw new BeanInitializationException(
+                    "Must specify a location property");
         }
 
-		File locationFile=location.getFile();
-		if( !locationFile.exists() ) {
-			throw new BeanInitializationException("location does not exist");
-		} 
-        if( !locationFile.isDirectory() ) {
-        	throw new BeanInitializationException("location must be a directory");
-        } 
-        this.directory=FSDirectory.getDirectory(locationFile,create);
+        File locationFile = location.getFile();
+        boolean locationExists = locationFile.exists();
+        if (!locationExists && !create) {
+            throw new BeanInitializationException("location does not exist");
+        } else if (locationExists && !locationFile.isDirectory()) {
+            throw new BeanInitializationException(
+                    "location must be a directory");
+        }
+
+        directory = FSDirectory.getDirectory(locationFile, create);
     }
 
     /**

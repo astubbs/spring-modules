@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.support.file;
+package org.springmodules.lucene.index.support.handler;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.springmodules.lucene.index.DocumentHandlerException;
 
 /**
  * This class is the default implementation of the DocumentHandlerManager
@@ -27,6 +29,8 @@ import java.util.Set;
  * unregistration, getting).
  * 
  * @author Thierry Templier
+ * @see org.springmodules.lucene.index.DocumentHandlerException
+ * @see org.springmodules.lucene.index.support.handler.DocumentMatching
  */
 public class DefaultDocumentHandlerManager implements DocumentHandlerManager {
 	private Map documentHandlers;
@@ -38,16 +42,16 @@ public class DefaultDocumentHandlerManager implements DocumentHandlerManager {
 	 */
 	public DefaultDocumentHandlerManager() {
 		this.documentHandlers=new HashMap();
-		registerDefautHandlers();
 	}
 
 	/**
 	 * This method is used to register the default document
 	 * handlers. In the context of the DefaultDocumentHandlerManager
 	 * class, there is non default handler registered.
+	 * 
 	 * @see org.springmodules.lucene.index.support.file.DocumentHandlerManager#registerDefautHandlers()
 	 */
-	public void registerDefautHandlers() {
+	public void registerDefaultHandlers() {
 	}
 
 	/**
@@ -55,20 +59,20 @@ public class DefaultDocumentHandlerManager implements DocumentHandlerManager {
 	 * for a name. It implicitely uses the document matching
 	 * associated with the document handlers.
 	 * 
-	 * @param name the name associated with a resource to index
+	 * @param name the name associated with an object or a resource to index
 	 * @return the document handler to use
 	 * @see DocumentMatching#match(String)
 	 * @see org.springmodules.lucene.index.object.file.DocumentHandlerManager#getDocumentHandler(java.lang.String)
 	 */
-	public DocumentHandler getDocumentHandler(String fileName) {
+	public DocumentHandler getDocumentHandler(String name) {
 		Set keys=documentHandlers.keySet();
 		for(Iterator i=keys.iterator();i.hasNext();) {
 			DocumentMatching matching=(DocumentMatching)i.next();
-			if( matching.match(fileName) ) {
+			if( matching.match(name) ) {
 				return (DocumentHandler)documentHandlers.get(matching);
 			}
 		}
-		return null;
+		throw new DocumentHandlerException("No document handler defined for the name "+name);
 	}
 
 	/**

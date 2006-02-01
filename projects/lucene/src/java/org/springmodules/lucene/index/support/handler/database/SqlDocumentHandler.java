@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene.index.support.database;
+package org.springmodules.lucene.index.support.handler.database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import org.apache.lucene.document.Document;
+import org.springmodules.lucene.index.DocumentHandlerException;
+import org.springmodules.lucene.index.support.handler.AbstractDocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
 
 /**
- * This is the interface which specifies the way to index a database
+ * This is the abstract class which specifies the way to index a database
  * row basing a JDBC ResultSet.
  * 
  * <p>These handlers must be registred on the DatabaseIndexer to be used.
@@ -35,7 +39,25 @@ import org.apache.lucene.document.Document;
  * @see org.springmodules.lucene.index.object.database.DatabaseIndexer#registerDocumentHandler(SqlRequest, SqlDocumentHandler)
  * @see org.springmodules.lucene.index.object.database.DatabaseIndexer#unregisterDocumentHandler(SqlRequest)
  */
-public interface SqlDocumentHandler {
+public abstract class SqlDocumentHandler extends AbstractDocumentHandler {
+
+	private void checkDescriptionParameters(Map description) {
+		if( description.get(SqlRequest.SQL_REQUEST)==null ) {
+			throw new DocumentHandlerException("The parameter "+SqlRequest.SQL_REQUEST+
+					" is required for this type of document handler");
+		}
+	}
+	
+	protected Document doGetDocument(Map description, Object object) throws Exception {
+		checkDescriptionParameters(description);
+
+		SqlRequest request=new SqlRequest(description);
+		return getDocument(request,(ResultSet)object);
+	}
+
+	public boolean supports(Class clazz) {
+		return (ResultSet.class).isAssignableFrom(clazz);
+	}
 
 	/**
 	 * This is a callback method which must implement to specify how to
@@ -54,5 +76,5 @@ public interface SqlDocumentHandler {
 	 * Subclasses can simply not catch SQLExceptions, relying on the
 	 * framework to clean up.
 	 */
-	public Document getDocument(SqlRequest request,ResultSet rs) throws SQLException;
+	public abstract Document getDocument(SqlRequest request,ResultSet rs) throws SQLException;
 }
