@@ -27,7 +27,7 @@ import org.apache.lucene.search.Searcher;
  * 
  * @author Thierry Templier
  * @see org.springmodules.samples.lucene.searching.console.Searcher
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate
  * @see org.springmodules.lucene.search.object.LuceneSearchQuery
  * @see org.springmodules.lucene.search.object.ParsedLuceneSearchQuery
  */

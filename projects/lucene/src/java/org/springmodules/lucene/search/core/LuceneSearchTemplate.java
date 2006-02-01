@@ -57,103 +57,7 @@ import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
  * @see org.springmodules.lucene.search.query.QueryCreator
  * @see org.springmodules.lucene.search.factory
  */
-public class LuceneSearchTemplate {
-
-	private SearcherFactory searcherFactory;
-	private Analyzer analyzer;
-
-	/**
-	 * Construct a new LuceneSearchTemplate for bean usage.
-	 * Note: The SearcherFactory has to be set before using the instance.
-	 * This constructor can be used to prepare a LuceneSearchTemplate via a BeanFactory,
-	 * typically setting the SearcherFactory via setSearcherFactory and the Analyzer
-	 * via setAnalyzer.
-	 * @see #setSearcherFactory
-	 * @see #setAnalyzer(Analyzer)
-	 */
-	public LuceneSearchTemplate() {
-	}
-
-	/**
-	 * Construct a new LuceneSearchTemplate, given an SearcherFactory and an
-	 * Analyzer to obtain a Searcher and an Analyzer to be used by the queries.
-	 * @param searcherFactory SearcherFactory to obtain Searcher
-	 * @param analyzer Lucene analyzer used by the queries
-	 */
-	public LuceneSearchTemplate(SearcherFactory searcherFactory,Analyzer analyzer) {
-		setSearcherFactory(searcherFactory);
-		setAnalyzer(analyzer);
-		afterPropertiesSet();
-	}
-
-	/**
-	 * Check if the searcherFactory is set. The analyzer could be not set.
-	 */
-	public void afterPropertiesSet() {
-		if (getSearcherFactory() == null) {
-			throw new IllegalArgumentException("searcherFactory is required");
-		}
-	}
-
-	/**
-	 * Set the SearcherFactory to obtain Searcher.
-	 */
-	public void setSearcherFactory(SearcherFactory factory) {
-		searcherFactory = factory;
-	}
-
-	/**
-	 * Return the SearcherFactory used by this template.
-	 */
-	public SearcherFactory getSearcherFactory() {
-		return searcherFactory;
-	}
-
-	/**
-	 * Set the default Lucene Analyzer used by the queries.
-	 */
-	public void setAnalyzer(Analyzer analyzer) {
-		this.analyzer = analyzer;
-	}
-
-	/**
-	 * Return the Lucene Analyzer used by this template.
-	 */
-	public Analyzer getAnalyzer() {
-		return analyzer;
-	}
-
-	/**
-	 * Method used to extract datas from hits. These datas are
-	 * the Lucene internal document identifier, the document
-	 * itself and the score.
-	 * 
-	 * @param hits the hits corresponding to the search
-	 * @param extractor the extractor specified in the search method
-	 * @return the search results extracted
-	 * @throws IOException exception occuring when accessing documents
-	 */
-	private List extractHits(Hits hits,HitExtractor extractor) throws IOException {
-		List list=new ArrayList();
-		for(int cpt=0;cpt<hits.length();cpt++) {
-			list.add(extractor.mapHit(hits.id(cpt),hits.doc(cpt),hits.score(cpt)));
-		}
-		return list;
-	}
-
-	/**
-	 * Invoke the given QueryCreator, constructing Lucene query.
-	 * @param queryCreator the QueryCreator to invoke
-	 * @return the constructed Query
-	 * @see QueryCreator#createQuery(Analyzer)
-	 */
-	protected Query createQuery(QueryCreator queryCreator) {
-		try {
-			return queryCreator.createQuery(getAnalyzer());
-		} catch (ParseException ex) {
-			throw new LuceneSearchException("Construction of the desired Query failed", ex);
-		}
-	}
+public interface LuceneSearchTemplate {
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -164,9 +68,7 @@ public class LuceneSearchTemplate {
 	 * @return the search results
 	 * @see QueryCreator#createQuery(Analyzer)
 	 */
-	public List search(QueryCreator queryCreator,HitExtractor extractor) {
-		return doSearch(createQuery(queryCreator),extractor,null,null);
-	}
+	List search(QueryCreator queryCreator,HitExtractor extractor);
 
 	/**
 	 * Search the index basing a Lucene query created outside the template.
@@ -175,9 +77,7 @@ public class LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	public List search(Query query,HitExtractor extractor) {
-		return doSearch(query,extractor,null,null);
-	}
+	List search(Query query,HitExtractor extractor);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -189,9 +89,7 @@ public class LuceneSearchTemplate {
 	 * @return the search results
 	 * @see QueryCreator#createQuery(Analyzer)
 	 */
-	public List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter) {
-		return doSearch(createQuery(queryCreator),extractor,filter,null);
-	}
+	List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter);
 
 	/**
 	 * Search the index basing a Lucene query created outside the template using
@@ -200,9 +98,7 @@ public class LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	public List search(Query query,HitExtractor extractor,Filter filter) {
-		return doSearch(query,extractor,filter,null);
-	}
+	List search(Query query,HitExtractor extractor,Filter filter);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -214,9 +110,7 @@ public class LuceneSearchTemplate {
 	 * @return the search results
 	 * @see QueryCreator#createQuery(Analyzer)
 	 */
-	public List search(QueryCreator queryCreator,HitExtractor extractor,Sort sort) {
-		return doSearch(createQuery(queryCreator),extractor,null,sort);
-	}
+	List search(QueryCreator queryCreator,HitExtractor extractor,Sort sort);
 
 	/**
 	 * Search the index basing a Lucene query created outside the template using
@@ -225,9 +119,7 @@ public class LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	public List search(Query query,HitExtractor extractor,Sort sort) {
-		return doSearch(query,extractor,null,sort);
-	}
+	List search(Query query,HitExtractor extractor,Sort sort);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -239,9 +131,7 @@ public class LuceneSearchTemplate {
 	 * @return the search results
 	 * @see QueryCreator#createQuery(Analyzer)
 	 */
-	public List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter,Sort sort) {
-		return doSearch(createQuery(queryCreator),extractor,filter,sort);
-	}
+	List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter,Sort sort);
 
 	/**
 	 * Search the index basing a Lucene query created outside the template using
@@ -251,43 +141,7 @@ public class LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	public List search(Query query,HitExtractor extractor,Filter filter,Sort sort) {
-		return doSearch(query,extractor,filter,sort);
-	}
-
-	/**
-	 * Internal method to search the index basing a Lucene query created
-	 * thanks to a callback method defined in the QueryCreator interface.
-	 * In this case, the exceptions during the query creation are managed
-	 * by the template.
-	 * This method uses sort and/or filter paramaters as Searcher search
-	 * method parameters if they are not null. 
-	 * @param query the query used
-	 * @param extractor the extractor of hit informations
-	 * @param filter the query filter
-	 * @param sort the query sorter
-	 * @return the search results
-	 */
-	private List doSearch(Query query,HitExtractor extractor,Filter filter,Sort sort) {
-		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
-		try {
-			Hits hits=null;
-			if( filter!=null && sort!=null ) {
-				hits=searcher.search(query,filter,sort);
-			} else if( filter!=null ) { 
-				hits=searcher.search(query,filter);
-			} else if( sort!=null ) { 
-				hits=searcher.search(query,sort);
-			} else { 
-				hits=searcher.search(query);
-			}
-			return extractHits(hits,extractor);
-		} catch (IOException ex) {
-			throw new LuceneSearchException("Error during the search",ex);
-		} finally {
-			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(),searcher);
-		}
-	}
+	List search(Query query,HitExtractor extractor,Filter filter,Sort sort);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -299,18 +153,7 @@ public class LuceneSearchTemplate {
 	 * @see QueryCreator#createQuery(Analyzer)
 	 * @see org.apache.lucene.search.HitCollector
 	 */
-	public void search(QueryCreator queryCreator,HitCollector results) {
-		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
-		try {
-			searcher.search(queryCreator.createQuery(getAnalyzer()),results);
-		} catch (IOException ex) {
-			throw new LuceneSearchException("Error during the search",ex);
-		} catch (ParseException ex) {
-			throw new LuceneSearchException("Error during the parse of the query",ex);
-		} finally {
-			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(),searcher);
-		}
-	}
+	void search(QueryCreator queryCreator,HitCollector results);
 
 	/**
 	 * Execute the action specified by the given action object within a
@@ -321,17 +164,6 @@ public class LuceneSearchTemplate {
 	 * @param callback the callback object that exposes the Searcher
 	 * @see SearcherCallback#doWithSearcher(Searcher)
 	 */
-	public Object search(SearcherCallback callback) {
-		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
-		try {
-			return callback.doWithSearcher(searcher);
-		} catch (IOException ex) {
-			throw new LuceneSearchException("Error during searching",ex);
-		} catch (ParseException ex) {
-			throw new LuceneSearchException("Error during parsing query",ex);
-		} finally {
-			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(),searcher);
-		}
-	}
+	Object search(SearcherCallback callback);
 
 }

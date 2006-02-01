@@ -19,6 +19,7 @@ package org.springmodules.lucene.search.support;
 import org.apache.lucene.analysis.Analyzer;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate;
 import org.springmodules.lucene.search.core.LuceneSearchTemplate;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 
@@ -93,7 +94,7 @@ public abstract class LuceneSearchSupport implements InitializingBean {
 			throw new BeanInitializationException("analyzer property required");        
 
 		if( this.template==null ) {
-			this.template=new LuceneSearchTemplate(searcherFactory,analyzer);
+			this.template=new DefaultLuceneSearchTemplate(searcherFactory,analyzer);
 		}
 	}
 

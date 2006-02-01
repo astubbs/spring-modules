@@ -19,7 +19,7 @@ package org.springmodules.lucene.search.object;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.springmodules.lucene.search.core.LuceneSearchTemplate;
+import org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 
 /**
@@ -35,7 +35,7 @@ import org.springmodules.lucene.search.factory.SearcherFactory;
  * @see #setAnalyzer(Analyzer)
  */
 public abstract class LuceneSearchQuery {
-	private LuceneSearchTemplate template = new LuceneSearchTemplate();
+	private DefaultLuceneSearchTemplate template = new DefaultLuceneSearchTemplate();
 
 	/**
 	 * Construct a new LuceneSearchQuery, given an SearcherFactory and an Analyzer
@@ -51,7 +51,7 @@ public abstract class LuceneSearchQuery {
 	/**
 	 * @return the LuceneSearchTemplate instance to use.
 	 */
-	public LuceneSearchTemplate getTemplate() {
+	public DefaultLuceneSearchTemplate getTemplate() {
 		return template;
 	}
 

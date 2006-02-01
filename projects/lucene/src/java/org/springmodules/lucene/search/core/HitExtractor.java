@@ -26,14 +26,14 @@ import org.apache.lucene.document.Document;
  * the Lucene HitCollector class can be used directly. 
  * 
  * @author Thierry Templier
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(Query, HitExtractor)
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(Query, HitExtractor, Filter)
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(Query, HitExtractor, Filter, Sort)
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(Query, HitExtractor, Sort)
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(QueryCreator, HitExtractor)
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(QueryCreator, HitExtractor, Filter)
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(QueryCreator, HitExtractor, Filter, Sort)
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate#search(QueryCreator, HitExtractor, Sort)
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate#search(Query, HitExtractor)
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate#search(Query, HitExtractor, Filter)
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate#search(Query, HitExtractor, Filter, Sort)
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate#search(Query, HitExtractor, Sort)
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate#search(QueryCreator, HitExtractor)
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate#search(QueryCreator, HitExtractor, Filter)
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate#search(QueryCreator, HitExtractor, Filter, Sort)
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate#search(QueryCreator, HitExtractor, Sort)
  */
 public interface HitExtractor {
 

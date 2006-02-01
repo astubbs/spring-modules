@@ -32,7 +32,7 @@ import org.apache.lucene.search.Searcher;
  *
  * @author Brian McCallister
  * @author Thierry Templier
- * @see org.springmodules.lucene.search.core.LuceneSearchTemplate
+ * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate
  */
 public interface SearcherCallback {
 
