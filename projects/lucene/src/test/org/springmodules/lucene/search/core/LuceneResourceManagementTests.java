@@ -92,7 +92,7 @@ public class LuceneResourceManagementTests extends TestCase {
 				assertTrue("Has thread indexFactory", ResourceBindingManager.hasResource(searcherFactory));
 
 				//Lucene template
-				LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
+				LuceneSearchTemplate template=new DefaultLuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
 
 				//First search
 				List results=template.search(new QueryCreator() {
@@ -138,7 +138,7 @@ public class LuceneResourceManagementTests extends TestCase {
 		ResourceTemplate rt = new ResourceTemplate(rm);
 
 		//Lucene template
-		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
+		LuceneSearchTemplate template=new DefaultLuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
 
 		//First search
 		List results=template.search(new QueryCreator() {

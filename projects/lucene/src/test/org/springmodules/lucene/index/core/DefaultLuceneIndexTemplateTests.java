@@ -38,10 +38,16 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.RAMDirectory;
-import org.springmodules.lucene.index.FileExtensionNotSupportedException;
+import org.springmodules.lucene.index.DocumentHandlerException;
+import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
-import org.springmodules.lucene.index.support.file.DocumentHandler;
-import org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManager;
+import org.springmodules.lucene.index.support.handler.AbstractDocumentHandler;
+import org.springmodules.lucene.index.support.handler.DefaultDocumentHandlerManager;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.IdentityDocumentMatching;
+import org.springmodules.lucene.index.support.handler.file.AbstractInputStreamDocumentHandler;
+import org.springmodules.lucene.index.support.handler.file.MimeTypeDocumentHandlerManager;
+import org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate;
 import org.springmodules.lucene.search.core.HitExtractor;
 import org.springmodules.lucene.search.core.LuceneSearchTemplate;
 import org.springmodules.lucene.search.factory.SearcherFactory;
@@ -308,7 +314,8 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 		SimpleAnalyzer analyzer=new SimpleAnalyzer();
 		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-		ExtensionDocumentHandlerManager manager=new ExtensionDocumentHandlerManager();
+		MimeTypeDocumentHandlerManager manager=new MimeTypeDocumentHandlerManager();
+		manager.registerDefaultHandlers();
 
 		//File to index
 		final File file=getFileFromClasspath("test.txt");
@@ -325,7 +332,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 			protected Map getResourceDescription() {
 				called[1]=true;
 				Map description=new HashMap();
-				description.put(DocumentHandler.FILENAME,file.getPath());
+				description.put(AbstractInputStreamDocumentHandler.FILENAME,file.getPath());
 				return description;
 			}
 
@@ -353,10 +360,11 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 		SimpleAnalyzer analyzer=new SimpleAnalyzer();
 		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
 		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-		ExtensionDocumentHandlerManager manager=new ExtensionDocumentHandlerManager();
+		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
+		manager.registerDefaultHandlers();
 
 		//File to index
-		final File file=getFileFromClasspath("test.properties");
+		final File file=getFileFromClasspath("test.bak");
 
 		//Lucene template
 		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
@@ -371,7 +379,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 				protected Map getResourceDescription() {
 					called[1]=true;
 					Map description=new HashMap();
-					description.put(DocumentHandler.FILENAME,file.getPath());
+					description.put(AbstractInputStreamDocumentHandler.FILENAME,file.getPath());
 					return description;
 				}
 
@@ -381,7 +389,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 				}
 			});
 			fail();
-		} catch(FileExtensionNotSupportedException ex) {
+		} catch(DocumentHandlerException ex) {
 			//Check if a writer has been opened
 			assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),0);
 			//Check if the writer calls the getResourceName, getResourceDescription and
@@ -395,6 +403,178 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 			assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),0);
 		}
 
+	}
+
+	final public void testAddDocumentWithManager() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
+
+		//Object to index
+		final String text="a text";
+
+		final boolean[] called = {false,false};
+		manager.registerDocumentHandler(new IdentityDocumentMatching("java.lang.String"),new AbstractDocumentHandler() {
+			public boolean supports(Class clazz) {
+				called[0]=true;
+				return true;
+			}
+
+			protected Document doGetDocument(Map description, Object object) throws Exception {
+				called[1]=true;
+				Document document=new Document();
+				document.add(Field.Text("text", (String)object));
+				return document;
+			}
+		});
+		
+		//Lucene template
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+		template.addDocument(new DocumentCreatorWithManager(manager,text));
+
+		//Check if a writer has been opened
+		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
+		//Check if the writer calls the getResourceName, getResourceDescription and
+		//createInputStream methods
+		assertTrue(called[0]);
+		assertTrue(called[1]);
+		//Check if the writer calls the addDocument method
+		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
+		//Check if the writer of the template is closed
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+	}
+
+	final public void testAddDocumentWithManagerError() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
+
+		//Object to index
+		final String text="a text";
+
+		final boolean[] called = {false,false};
+		manager.registerDocumentHandler(new IdentityDocumentMatching("text"),new AbstractDocumentHandler() {
+			public boolean supports(Class clazz) {
+				called[0]=true;
+				return true;
+			}
+
+			protected Document doGetDocument(Map description, Object object) throws Exception {
+				called[1]=true;
+				Document document=new Document();
+				document.add(Field.Text("text", (String)object));
+				return document;
+			}
+		});
+		
+		try {
+			//Lucene template
+			LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+			template.addDocument(new DocumentCreatorWithManager(manager,text));
+			fail();
+		} catch(LuceneIndexAccessException ex) {
+			//Check if a writer has been opened
+			assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),0);
+			//Check if the writer calls the getResourceName, getResourceDescription and
+			//createInputStream methods
+			assertFalse(called[0]);
+			assertFalse(called[1]);
+			//Check if the writer calls the addDocument method
+			assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),0);
+			//Check if the writer of the template is closed
+			assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),0);
+		}
+	}
+
+	final public void testAddDocumentWithManagerAndName() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
+
+		//Object to index
+		final String text="a text";
+
+		final boolean[] called = {false,false};
+		manager.registerDocumentHandler(new IdentityDocumentMatching("text"),new AbstractDocumentHandler() {
+			public boolean supports(Class clazz) {
+				called[0]=true;
+				return true;
+			}
+
+			protected Document doGetDocument(Map description, Object object) throws Exception {
+				called[1]=true;
+				Document document=new Document();
+				document.add(Field.Text("text", (String)object));
+				return document;
+			}
+		});
+		
+		//Lucene template
+		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+		template.addDocument(new DocumentCreatorWithManager(manager,"text",text));
+
+		//Check if a writer has been opened
+		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
+		//Check if the writer calls the getResourceName, getResourceDescription and
+		//createInputStream methods
+		assertTrue(called[0]);
+		assertTrue(called[1]);
+		//Check if the writer calls the addDocument method
+		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
+		//Check if the writer of the template is closed
+		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+
+		//fail();
+	}
+
+	final public void testAddDocumentWithManagerAndNameError() throws Exception {
+		//Initialization of the index
+		SimpleAnalyzer analyzer=new SimpleAnalyzer();
+		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
+		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
+
+		//Object to index
+		final String text="a text";
+
+		final boolean[] called = {false,false};
+		manager.registerDocumentHandler(new IdentityDocumentMatching("text1"),new AbstractDocumentHandler() {
+			public boolean supports(Class clazz) {
+				called[0]=true;
+				return true;
+			}
+
+			protected Document doGetDocument(Map description, Object object) throws Exception {
+				called[1]=true;
+				Document document=new Document();
+				document.add(Field.Text("text", (String)object));
+				return document;
+			}
+		});
+
+		try {
+			//Lucene template
+			LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+			template.addDocument(new DocumentCreatorWithManager(manager,"text",text));
+			fail();
+		} catch(LuceneIndexAccessException ex) {
+			//Check if a writer has been opened
+			assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),0);
+			//Check if the writer calls the getResourceName, getResourceDescription and
+			//createInputStream methods
+			assertFalse(called[0]);
+			assertFalse(called[1]);
+			//Check if the writer calls the addDocument method
+			assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),0);
+			//Check if the writer of the template is closed
+			assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),0);
+		}
 	}
 
 	final public void testAddDocuments() throws Exception {
@@ -486,7 +666,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),2);
 
 		SearcherFactory searcherFactory=new SimpleSearcherFactory(indexFactory);
-		LuceneSearchTemplate searchTemplate=new LuceneSearchTemplate(searcherFactory,analyzer);
+		LuceneSearchTemplate searchTemplate=new DefaultLuceneSearchTemplate(searcherFactory,analyzer);
 		List fields=searchTemplate.search(new TermQuery(new Term("id","2")),new HitExtractor() {
 			public Object mapHit(int id, Document document, float score) {
 				return document.get("field");
@@ -554,7 +734,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),2);
 
 		SearcherFactory searcherFactory=new SimpleSearcherFactory(indexFactory);
-		LuceneSearchTemplate searchTemplate=new LuceneSearchTemplate(searcherFactory,analyzer);
+		LuceneSearchTemplate searchTemplate=new DefaultLuceneSearchTemplate(searcherFactory,analyzer);
 		List fields=searchTemplate.search(new TermQuery(new Term("id","2")),new HitExtractor() {
 			public Object mapHit(int id, Document document, float score) {
 				return document.get("field");

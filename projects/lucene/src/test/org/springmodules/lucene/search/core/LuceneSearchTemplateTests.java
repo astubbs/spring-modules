@@ -90,7 +90,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
-		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
+		LuceneSearchTemplate template=new DefaultLuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
 
 		//First search
 		List results=template.search(new QueryCreator() {
@@ -136,7 +136,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
-		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
+		LuceneSearchTemplate template=new DefaultLuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
 
 		//First search
 		List results=template.search(new ParsedQueryCreator() {
@@ -185,7 +185,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
-		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
+		LuceneSearchTemplate template=new DefaultLuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
 
 		//Query
 		List results=template.search(new QueryCreator() {
@@ -216,7 +216,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
-		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
+		LuceneSearchTemplate template=new DefaultLuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
 
 		//Query
 		List results=template.search(new QueryCreator() {
@@ -250,7 +250,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
-		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
+		LuceneSearchTemplate template=new DefaultLuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
 
 		//Query
 		List results=template.search(new QueryCreator() {
@@ -279,7 +279,7 @@ public class LuceneSearchTemplateTests extends TestCase {
 		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
 
 		//Lucene template
-		LuceneSearchTemplate template=new LuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
+		LuceneSearchTemplate template=new DefaultLuceneSearchTemplate(searcherFactory,new SimpleAnalyzer());
 		String result=(String)template.search(new SearcherCallback() {
 			public Object doWithSearcher(Searcher searcher) throws IOException, ParseException {
 				assertNotNull(searcher);

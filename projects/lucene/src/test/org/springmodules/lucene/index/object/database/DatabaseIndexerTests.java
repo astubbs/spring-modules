@@ -30,8 +30,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springmodules.lucene.index.core.MockSimpleIndexFactory;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
-import org.springmodules.lucene.index.support.database.SqlDocumentHandler;
-import org.springmodules.lucene.index.support.database.SqlRequest;
+import org.springmodules.lucene.index.support.handler.database.SqlDocumentHandler;
+import org.springmodules.lucene.index.support.handler.database.SqlRequest;
 
 /**
  * @author Thierry Templier

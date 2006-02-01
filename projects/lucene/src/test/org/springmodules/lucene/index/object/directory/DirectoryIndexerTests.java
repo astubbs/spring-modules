@@ -18,7 +18,6 @@ package org.springmodules.lucene.index.object.directory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
@@ -31,10 +30,10 @@ import org.easymock.MockControl;
 import org.springmodules.lucene.index.LuceneIndexingException;
 import org.springmodules.lucene.index.core.MockSimpleIndexFactory;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
-import org.springmodules.lucene.index.support.file.DocumentExtensionMatching;
-import org.springmodules.lucene.index.support.file.DocumentHandler;
-import org.springmodules.lucene.index.support.file.DocumentMatching;
-import org.springmodules.lucene.index.support.file.handler.TextDocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentMatching;
+import org.springmodules.lucene.index.support.handler.file.ExtensionDocumentMatching;
+import org.springmodules.lucene.index.support.handler.file.TextDocumentHandler;
 
 /**
  * @author Thierry Templier
@@ -59,6 +58,7 @@ public class DirectoryIndexerTests extends TestCase {
 	}
 
 	final public void testRegisterDocumentHandler() {
+		System.out.println("> testRegisterDocumentHandler");
 		//Initialization of the index
 		SimpleAnalyzer analyzer=new SimpleAnalyzer();
 		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
@@ -73,14 +73,31 @@ public class DirectoryIndexerTests extends TestCase {
 				return name.equals("test");
 			}
 		};
-		assertNull(indexer.getDocumentHandler("test"));
 
+		//Check that the document handler test is not found
+		try {
+			assertNull(indexer.getDocumentHandler("test"));
+			fail();
+		} catch(Exception ex) {}
+
+		//Register a document handler
 		indexer.registerDocumentHandler(matching,new DocumentHandler() {
-			public Document getDocument(Map description, InputStream inputStream) throws IOException {
+			public Document getDocument(Map description, Object object) throws IOException {
 				return null;
 			}
+
+			public boolean supports(Class clazz) {
+				return true;
+			}
 		});
-		assertNotNull(indexer.getDocumentHandler("test"));
+
+		//Check that the document handler test is found now
+		try {
+			assertNotNull(indexer.getDocumentHandler("test"));
+		} catch(Exception ex) {
+			fail();
+		}
+		System.out.println("< testRegisterDocumentHandler");
 	}
 
 	final public void testUnregisterDocumentHandler() {
@@ -98,17 +115,33 @@ public class DirectoryIndexerTests extends TestCase {
 				return name.equals("test");
 			}
 		};
+
+		//Register a document handler
 		indexer.registerDocumentHandler(matching,new DocumentHandler() {
-			public Document getDocument(Map description, InputStream inputStream) throws IOException {
+			public Document getDocument(Map description, Object object) throws IOException {
 				return null;
 			}
+
+			public boolean supports(Class clazz) {
+				return true;
+			}
 		});
-		assertNotNull(indexer.getDocumentHandler("test"));
+
+		//Check that the document handler test is found
+		try {
+			assertNotNull(indexer.getDocumentHandler("test"));
+		} catch(Exception ex) {
+			fail();
+		}
 
 		//Unregister a document handler
 		indexer.unregisterDocumentHandler(matching);
-		assertNull(indexer.getDocumentHandler("test"));
 
+		//Check that the document handler test is not found now
+		try {
+			assertNull(indexer.getDocumentHandler("test"));
+			fail();
+		} catch(Exception ex) {}
 	}
 
 	final public void testAddListener() {
@@ -187,10 +220,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
-		listener.beforeIndexingFile(getFileFromClasspath("test.properties"));
+		listener.beforeIndexingFile(getFileFromClasspath("test.bak"));
 		listenerControl.setVoidCallable(1);
 
-		listener.onNotAvailableHandler(getFileFromClasspath("test.properties"));
+		listener.onNotAvailableHandler(getFileFromClasspath("test.bak"));
 		listenerControl.setVoidCallable(1);
 
 		listener.beforeIndexingFile(getFileFromClasspath("test.txt"));
@@ -231,10 +264,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
-		listener.beforeIndexingFile(getFileFromClasspath("test.properties"));
+		listener.beforeIndexingFile(getFileFromClasspath("test.bak"));
 		listenerControl.setVoidCallable(1);
 
-		listener.afterIndexingFile(getFileFromClasspath("test.properties"));
+		listener.afterIndexingFile(getFileFromClasspath("test.bak"));
 		listenerControl.setVoidCallable(1);
 
 		listener.beforeIndexingFile(getFileFromClasspath("test.txt"));
@@ -249,7 +282,7 @@ public class DirectoryIndexerTests extends TestCase {
 
 		//Indexer
 		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
-		indexer.registerDocumentHandler(new DocumentExtensionMatching("properties"),
+		indexer.registerDocumentHandler(new ExtensionDocumentMatching("bak"),
 		                                new TextDocumentHandler());
 		indexer.addListener(listener);
 		File baseDirectory=getBaseDirectoryToIndex();
@@ -275,10 +308,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener1.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listener1Control.setVoidCallable(1);
 
-		listener1.beforeIndexingFile(getFileFromClasspath("test.properties"));
+		listener1.beforeIndexingFile(getFileFromClasspath("test.bak"));
 		listener1Control.setVoidCallable(1);
 
-		listener1.onNotAvailableHandler(getFileFromClasspath("test.properties"));
+		listener1.onNotAvailableHandler(getFileFromClasspath("test.bak"));
 		listener1Control.setVoidCallable(1);
 
 		listener1.beforeIndexingFile(getFileFromClasspath("test.txt"));
@@ -297,10 +330,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener2.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listener2Control.setVoidCallable(1);
 
-		listener2.beforeIndexingFile(getFileFromClasspath("test.properties"));
+		listener2.beforeIndexingFile(getFileFromClasspath("test.bak"));
 		listener2Control.setVoidCallable(1);
 
-		listener2.onNotAvailableHandler(getFileFromClasspath("test.properties"));
+		listener2.onNotAvailableHandler(getFileFromClasspath("test.bak"));
 		listener2Control.setVoidCallable(1);
 
 		listener2.beforeIndexingFile(getFileFromClasspath("test.txt"));
@@ -342,10 +375,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
-		listener.beforeIndexingFile(getFileFromClasspath("test.properties"));
+		listener.beforeIndexingFile(getFileFromClasspath("test.bak"));
 		listenerControl.setVoidCallable(1);
 
-		listener.onNotAvailableHandler(getFileFromClasspath("test.properties"));
+		listener.onNotAvailableHandler(getFileFromClasspath("test.bak"));
 		listenerControl.setVoidCallable(1);
 
 		listener.beforeIndexingFile(getFileFromClasspath("test.txt"));
