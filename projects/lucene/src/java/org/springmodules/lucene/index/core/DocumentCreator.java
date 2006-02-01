@@ -46,5 +46,5 @@ public interface DocumentCreator {
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneManipulateIndexException
 	 */
-	Document createDocument() throws IOException;
+	Document createDocument() throws Exception;
 }

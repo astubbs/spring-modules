@@ -30,7 +30,9 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
+import org.springmodules.lucene.index.DocumentHandlerException;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
+import org.springmodules.lucene.index.LuceneIndexingException;
 import org.springmodules.lucene.index.core.DocumentCreator;
 import org.springmodules.lucene.index.core.DocumentIdentifier;
 import org.springmodules.lucene.index.core.DocumentModifier;
@@ -231,7 +233,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	protected Document createDocument(DocumentCreator documentCreator) {
 		try {
 			return documentCreator.createDocument();
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			throw new LuceneIndexAccessException("Construction of the desired Document failed", ex);
 		}
 	}
@@ -239,7 +241,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	protected List createDocuments(DocumentsCreator documentsCreator) {
 		try {
 			return documentsCreator.createDocuments();
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			throw new LuceneIndexAccessException("Construction of the desired Document failed", ex);
 		}
 	}
@@ -276,9 +278,10 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 		try {
 			inputStream=documentCreator.createInputStream();
 			addDocument(documentCreator.createDocumentFromInputStream(inputStream),analyzer);
-		} catch(IOException ex) {
-			//throw new LuceneInputStreamException("Error during adding a document.",ex);
-			throw new RuntimeException("Error during adding a document.",ex);
+		} catch(DocumentHandlerException ex) {
+			throw ex;
+		} catch(Exception ex) {
+			throw new LuceneIndexingException("Error during adding a document.",ex);
 		} finally {
 			IOUtils.closeInputStream(inputStream);
 		}

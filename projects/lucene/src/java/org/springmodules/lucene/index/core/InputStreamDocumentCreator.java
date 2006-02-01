@@ -60,5 +60,5 @@ public interface InputStreamDocumentCreator {
 	 * to a LuceneManipulateIndexException
 	 */
 	public Document createDocumentFromInputStream(
-								InputStream inputStream) throws IOException;
+								InputStream inputStream) throws Exception;
 }

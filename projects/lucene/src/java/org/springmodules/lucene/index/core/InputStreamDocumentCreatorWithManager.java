@@ -22,8 +22,8 @@ import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.springmodules.lucene.index.FileExtensionNotSupportedException;
-import org.springmodules.lucene.index.support.file.DocumentHandler;
-import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
 
 /**
  * Implementation of the DocumentCreator callback interface for creating a
@@ -105,7 +105,7 @@ public abstract class InputStreamDocumentCreatorWithManager implements InputStre
 	 * @see FileExtensionNotSupportedException
 	 */
 	public final Document createDocumentFromInputStream(
-	                          InputStream inputStream) throws IOException {
+	                          InputStream inputStream) throws Exception {
 		DocumentHandler documentHandler=documentHandlerManager.getDocumentHandler(getResourceName());
 		if( documentHandler!=null ) {
 			Document document=documentHandler.getDocument(getResourceDescription(),inputStream);
