@@ -34,11 +34,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.MappingSqlQuery;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
+import org.springmodules.lucene.index.LuceneIndexingException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 import org.springmodules.lucene.index.object.AbstractIndexer;
-import org.springmodules.lucene.index.support.database.SqlDocumentHandler;
-import org.springmodules.lucene.index.support.database.SqlRequest;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.database.SqlDocumentHandler;
+import org.springmodules.lucene.index.support.handler.database.SqlRequest;
 
 /**
  * <b>This is the central class in the lucene database indexing package.</b>
@@ -371,9 +373,9 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	private static class IndexingMappingQuery extends MappingSqlQuery {
 
 		private SqlRequest request;
-		private SqlDocumentHandler handler;
+		private DocumentHandler handler;
 
-		public IndexingMappingQuery(DataSource ds,SqlRequest request,SqlDocumentHandler handler) {
+		public IndexingMappingQuery(DataSource ds,SqlRequest request,DocumentHandler handler) {
 			super(ds, request.getSql());
 			this.request=request;
 			this.handler=handler;
@@ -387,7 +389,13 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 		}
 
 		public Object mapRow(ResultSet rs, int rowNumber) throws SQLException {
-			return handler.getDocument(request,rs);
+			try {
+				return handler.getDocument(request.getDescription(),rs);
+			} catch (SQLException ex) {
+				throw ex;
+			} catch (Exception ex) {
+				throw new LuceneIndexingException("Error during the indexing of the ResultSet.",ex);
+			}
 		} 
 	}
 }

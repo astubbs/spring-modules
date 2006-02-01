@@ -18,8 +18,8 @@ package org.springmodules.lucene.index.object.database;
 
 import javax.sql.DataSource;
 
-import org.springmodules.lucene.index.support.database.SqlDocumentHandler;
-import org.springmodules.lucene.index.support.database.SqlRequest;
+import org.springmodules.lucene.index.support.handler.database.SqlDocumentHandler;
+import org.springmodules.lucene.index.support.handler.database.SqlRequest;
 
 /**
  * @author Thierry Templier

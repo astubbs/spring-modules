@@ -32,8 +32,9 @@ import org.springmodules.lucene.index.LuceneIndexingException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 import org.springmodules.lucene.index.object.AbstractDocumentManagerIndexer;
-import org.springmodules.lucene.index.support.file.DocumentHandler;
-import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
+import org.springmodules.lucene.index.support.handler.file.AbstractInputStreamDocumentHandler;
 import org.springmodules.lucene.util.IOUtils;
 
 /**
@@ -278,9 +279,9 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneManipulateIndexException
 	 */
-	private Document doCallHandler(File file,FileInputStream inputStream,DocumentHandler handler) throws IOException {
+	private Document doCallHandler(File file,FileInputStream inputStream,DocumentHandler handler) throws Exception {
 		Map description=new HashMap();
-		description.put(DocumentHandler.FILENAME,file.getAbsolutePath());
+		description.put(AbstractInputStreamDocumentHandler.FILENAME,file.getAbsolutePath());
 		return handler.getDocument(description,inputStream);
 	}
 
@@ -305,7 +306,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 */
 	private void indexFile(IndexWriter writer,File file) throws IOException {
 		fireListenersOnBeforeFile(file);
-		DocumentHandler handler = getDocumentHandler(file.getPath());
+		DocumentHandler handler = doGetDocumentHandler(file);
 		if( handler!=null ) {
 			FileInputStream inputStream=null;
 			try {
@@ -326,6 +327,24 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 		} else {
 			fireListenersOnNoHandlerAvailable(file);
 		}
+	}
+
+	/**
+	 * This method is used to intercept the exception if the
+	 * handler corresponding to the file is not found.
+	 * 
+	 * The returned document handler in this case is null.
+	 * 
+	 * @param file the file to use
+	 * @return the corresponding document handler
+	 */
+	private DocumentHandler doGetDocumentHandler(File file) {
+		DocumentHandler handler = null;
+		try {
+			handler = getDocumentHandler(file.getPath());
+		} catch(Exception ex) {
+		}
+		return handler;
 	}
 
 	/**

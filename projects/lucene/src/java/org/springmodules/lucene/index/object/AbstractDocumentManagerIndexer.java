@@ -16,10 +16,10 @@
 
 package org.springmodules.lucene.index.object;
 
-import org.springmodules.lucene.index.support.file.DocumentHandler;
-import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
-import org.springmodules.lucene.index.support.file.DocumentMatching;
-import org.springmodules.lucene.index.support.file.ExtensionDocumentHandlerManager;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
+import org.springmodules.lucene.index.support.handler.DocumentMatching;
+import org.springmodules.lucene.index.support.handler.file.ExtensionDocumentHandlerManager;
 
 /**
  * This is the base abstract class for every indexers. It is used
@@ -34,7 +34,7 @@ public abstract class AbstractDocumentManagerIndexer extends AbstractIndexer {
 	protected void init(DocumentHandlerManager documentHandlerManager) {
 		if( documentHandlerManager==null ) {
 			this.documentHandlerManager=new ExtensionDocumentHandlerManager();
-			this.documentHandlerManager.registerDefautHandlers();
+			this.documentHandlerManager.registerDefaultHandlers();
 		} else {
 			this.documentHandlerManager=documentHandlerManager;
 		}

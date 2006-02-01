@@ -16,8 +16,8 @@
 
 package org.springmodules.lucene.index.object.directory;
 
-import org.springmodules.lucene.index.support.file.DocumentHandler;
-import org.springmodules.lucene.index.support.file.DocumentMatching;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentMatching;
 
 /**
  * @author Thierry Templier
