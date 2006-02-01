@@ -17,6 +17,9 @@
 package org.springmodules.lucene.util;
 
 import java.io.InputStream;
+import java.util.Properties;
+
+import org.springframework.core.io.Resource;
 
 /**
  * IO utilities class to manage IO resources.
@@ -36,5 +39,19 @@ public abstract class IOUtils {
 				inputStream.close();
 			}
 		} catch(Exception ex) { }
+	}
+
+	public static Properties loadPropertiesFromResource(Resource resource) {
+		Properties properties=new Properties();
+		InputStream inputStream=null;
+		try {
+			inputStream=resource.getInputStream();
+			properties.load(inputStream);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			IOUtils.closeInputStream(inputStream);
+		}
+		return properties;
 	}
 }
