@@ -1,0 +1,15 @@
+<!-- empty chain resolver -->
+<ivyconf>
+	<resolvers>
+		<chain name="custom">
+			<!-- useless
+				
+			<ivyrep name="opensymphony" ivyroot="http://ivyrep.opensymphony.com"/>
+
+			<url name="oswf">
+			    <artifact pattern="https://osworkflow.dev.java.net/files/documents/635/27139/[artifact]-[revision].[ext]" />
+			</url>
+				-->
+		</chain>
+	</resolvers>
+</ivyconf>
