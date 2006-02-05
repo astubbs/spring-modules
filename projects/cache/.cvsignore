@@ -6,3 +6,4 @@ target
 .project
 .springBeans
 build.ajproperties
+${merlin.classes.dir}
