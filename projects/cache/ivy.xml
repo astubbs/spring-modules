@@ -33,21 +33,22 @@
       <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>
 
-    <!-- cache dependencies -->
+    <!-- cache dependencies
     <dependency org="coherence" name="coherence" rev="3.10b321">
       <artifact name="coherence" type="jar" conf="global" />
       <artifact name="tangosol" type="jar" conf="global" />
     </dependency>
-    
-    <dependency org="commons-attributes" name="commons-attributes"
+    -->
+	  
+    <dependency org="apache" name="commons-attributes"
       rev="2.1">
       <artifact name="commons-attributes-api" type="jar" />
       <artifact name="commons-attributes-compiler" type="jar" />
     </dependency>
   
-    <dependency org="commons-lang" name="commons-lang" rev="2.1" />
+    <dependency org="apache" name="commons-lang" rev="2.1" />
   
-    <dependency org="commons-collections" name="commons-collections"
+    <dependency org="apache" name="commons-collections"
       rev="3.1" />
   
     <dependency org="concurrent" name="concurrent" rev="1.3.4" />
@@ -58,11 +59,12 @@
   
     <dependency org="ehcache" name="ehcache" rev="1.1" />
   
-    <dependency org="javassist" name="javassist" rev="3.0" />
+    <dependency org="jboss" name="javassist" rev="3.0" />
   
+	<!-- TODO: fix this -->
     <dependency org="jboss" name="jboss-cache" rev="1.2.4">
-      <artifact name="jboss-cache" type="jar" />
-    </dependency>
+		<artifact name="jboss-cache" type="jar"/>
+	</dependency>
   
     <dependency org="jboss" name="jboss" rev="4.0.3">
       <artifact name="jboss-common" type="jar" />
@@ -74,7 +76,9 @@
   
     <dependency org="jcs" name="jcs" rev="1.2.6.5" />
   
-    <dependency org="jgroups" name="jgroups" rev="2.2.8" />
+    <dependency org="jgroups" name="jgroups" rev="2.2.8">
+		<artifact name="jgroups-all" type="jar"/>
+	</dependency>
   
     <!-- use geronimo instead
       <dependency org="jta" name="jta" rev="1.0.1" />
@@ -88,7 +92,7 @@
       <artifact name="oscache" type="jar" />
     </dependency>
   
-    <dependency org="oro" name="oro" rev="2.0.8" />
+    <dependency org="apache" name="oro" rev="2.0.8" />
   
     <dependency org="xpp3" name="xpp3" rev="1.1.3.4.I">
       <artifact name="xpp3_min" type="jar" />
