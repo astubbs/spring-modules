@@ -1,12 +1,10 @@
 /**
  * Created on Sep 23, 2005
  *
- * $Id: RepositoryFactoryBean.java,v 1.2 2005/12/06 10:37:01 costin Exp $
- * $Revision: 1.2 $
+ * $Id: RepositoryFactoryBean.java,v 1.3 2006/02/05 19:24:40 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr;
-
-import java.util.Properties;
 
 import javax.jcr.Repository;
 

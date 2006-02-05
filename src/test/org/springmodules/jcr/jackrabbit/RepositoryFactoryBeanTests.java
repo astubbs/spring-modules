@@ -19,6 +19,7 @@ public class RepositoryFactoryBeanTests extends TestCase {
 
     protected void tearDown() throws Exception {
         super.tearDown();
+        factory.destroy();
     }
 
     /*
@@ -45,7 +46,5 @@ public class RepositoryFactoryBeanTests extends TestCase {
         assertEquals(true, factory.getObject() instanceof Repository);
         assertEquals(true, factory.isSingleton());
         assertEquals(Repository.class, factory.getObjectType());
-        factory.destroy();
-
     }
 }

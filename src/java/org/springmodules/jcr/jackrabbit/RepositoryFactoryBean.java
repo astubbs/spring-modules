@@ -1,8 +1,8 @@
 /**
  * Created on Aug 31, 2005
  *
- * $Id: RepositoryFactoryBean.java,v 1.1 2005/10/21 08:17:23 costin Exp $
- * $Revision: 1.1 $
+ * $Id: RepositoryFactoryBean.java,v 1.2 2006/02/05 19:24:43 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.jackrabbit;
 
@@ -85,7 +85,8 @@ public class RepositoryFactoryBean extends org.springmodules.jcr.RepositoryFacto
      */
     public void destroy() throws Exception {
         // force cast
-        ((RepositoryImpl) repository).shutdown();
+    	if (repository != null)
+    		((RepositoryImpl) repository).shutdown();
     }
 
     /**

@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrAccessor.java,v 1.3 2005/12/06 10:37:00 costin Exp $
- * $Revision: 1.3 $
+ * $Id: JcrAccessor.java,v 1.4 2006/02/05 19:24:40 costin Exp $
+ * $Revision: 1.4 $
  */
 package org.springmodules.jcr;
 
@@ -12,11 +12,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
+import org.springmodules.jcr.support.GenericSessionHolderProvider;
 
 /**
  * Base class for JcrTemplate and JcrInterceptor, defining common properties
  * like JcrSessionFactory.
- * The required properties are sessionFactory and sessionHolderProviderManager.
+ * The required property is sessionFactory.
  * 
  * <p>
  * Not intended to be used directly. See JcrTemplate and JcrInterceptor.
@@ -52,12 +53,16 @@ public abstract class JcrAccessor implements InitializingBean {
 			throw new IllegalArgumentException("sessionFactory is required");
 		}
 
-		if (getProviderManager() == null) {
-			throw new IllegalArgumentException("providerManager is required");
+		// check the provider manager
+		if (getProviderManager() != null) {
+			// use the injected provider manager
+			setSessionHolderProvider(providerManager.getSessionProvider(sessionFactory));
 		}
-
-		// use the provider manager
-		setSessionHolderProvider(providerManager.getSessionProvider(sessionFactory));
+		else {
+			if (logger.isDebugEnabled())
+				logger.debug("no provider manager set; using the default one");
+			setSessionHolderProvider(new GenericSessionHolderProvider());
+		}
 	}
 
 	/**
@@ -96,7 +101,7 @@ public abstract class JcrAccessor implements InitializingBean {
 	}
 
 	/**
-	 * By default ServiceSessionHolderProviderManager is used.
+	 * If it's null, the default session holder provider will be used.
 	 * 
 	 * @param providerManager The providerManager to set.
 	 */

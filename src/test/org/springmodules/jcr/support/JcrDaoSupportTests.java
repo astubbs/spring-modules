@@ -1,13 +1,10 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrDaoSupportTests.java,v 1.3 2005/12/06 10:37:03 costin Exp $
- * $Revision: 1.3 $
+ * $Id: JcrDaoSupportTests.java,v 1.4 2006/02/05 19:24:42 costin Exp $
+ * $Revision: 1.4 $
  */
 package org.springmodules.jcr.support;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -63,10 +60,10 @@ public class JcrDaoSupportTests extends TestCase {
 	public void testJcrDaoSupportWithSessionFactory() throws Exception {
 
 		// used for ServiceProvider
-
+/*
 		sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
 		sfCtrl.expectAndReturn(sf.getSession(), sess);
-		sfCtrl.replay();
+*/		sfCtrl.replay();
 		sessCtrl.replay();
 
 		JcrDaoSupport dao = new JcrDaoSupport() {
@@ -128,15 +125,17 @@ public class JcrDaoSupportTests extends TestCase {
 	public void testGetSession() throws RepositoryException {
 		JcrDaoSupport dao = new JcrDaoSupport() {
 		};
-		sfCtrl.expectAndReturn(sf.getSession(), sess);
+		// used for service provider
 
+		sfCtrl.expectAndReturn(sf.getSession(), sess);
+/*
 		sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
 		sfCtrl.expectAndReturn(sf.getSession(), sess);
-		sfCtrl.replay();
+*/		sfCtrl.replay();
 		sessCtrl.replay();
 
 		dao.setSessionFactory(sf);
-		dao.setProviderManager(providerManager);
+//		dao.setProviderManager(providerManager);
 		dao.afterPropertiesSet();
 		try {
 			dao.getSession();
@@ -154,14 +153,15 @@ public class JcrDaoSupportTests extends TestCase {
 
 		dao.releaseSession(null);
 
-		sfCtrl.expectAndReturn(sf.getSession(), sess);
 		sess.logout();
+		
+/*		sfCtrl.expectAndReturn(sf.getSession(), sess);
 		sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
-		sfCtrl.replay();
+*/		sfCtrl.replay();
 		sessCtrl.replay();
 
 		dao.setSessionFactory(sf);
-		dao.setProviderManager(providerManager);
+//		dao.setProviderManager(providerManager);
 		dao.afterPropertiesSet();
 		dao.releaseSession(sess);
 	}

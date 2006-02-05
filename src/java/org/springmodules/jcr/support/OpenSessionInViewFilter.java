@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: OpenSessionInViewFilter.java,v 1.2 2005/12/06 10:36:59 costin Exp $
- * $Revision: 1.2 $
+ * $Id: OpenSessionInViewFilter.java,v 1.3 2006/02/05 19:24:38 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr.support;
 
@@ -70,6 +70,7 @@ public class OpenSessionInViewFilter extends OncePerRequestFilter {
 
 	private String SessionFactoryBeanName = DEFAULT_JCR_SESSION_FACTORY_FACTORY_BEAN_NAME;
 	private String SessionHolderProviderManagerBeanName = DEFAULT_JCR_SESSION_HOLDER_PROVIDER_MANAGER_BEAN_NAME;
+	private SessionHolderProvider defaultProvider = new GenericSessionHolderProvider();
 
 	/**
 	 * Set the bean name of the SessionFactory to fetch from Spring's
@@ -176,17 +177,23 @@ public class OpenSessionInViewFilter extends OncePerRequestFilter {
 	}
 
 	protected SessionHolderProvider lookupSessionHolderProvider(SessionFactory sf) {
-	
-		if (logger.isDebugEnabled()) {
-			logger.debug("Using session holder provider manager '"
-					+ getSessionHolderProviderManagerBeanName()
-					+ "' for OpenSessionInViewFilter");
-		}
-		
-		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-		SessionHolderProviderManager manager = (SessionHolderProviderManager) wac.getBean(getSessionHolderProviderManagerBeanName(),
-				SessionHolderProviderManager.class);
 
-		return manager.getSessionProvider(sf);
+		WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+		SessionHolderProviderManager manager = null;
+
+		if (wac.containsBean(getSessionHolderProviderManagerBeanName())) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Using session holder provider manager '"
+						+ getSessionHolderProviderManagerBeanName()
+						+ "' for OpenSessionInViewFilter");
+			}
+			manager = (SessionHolderProviderManager) wac.getBean(getSessionHolderProviderManagerBeanName(),
+					SessionHolderProviderManager.class);
+			return manager.getSessionProvider(sf);
+		}
+		if (logger.isDebugEnabled())
+			logger.debug("session holder provider not found - using the generic one");
+		
+		return defaultProvider; 
 	}
 }

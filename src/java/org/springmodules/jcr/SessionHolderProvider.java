@@ -1,18 +1,19 @@
 /**
  * Created on Oct 4, 2005
  *
- * $Id: SessionHolderProvider.java,v 1.2 2005/11/11 15:47:11 costin Exp $
- * $Revision: 1.2 $
+ * $Id: SessionHolderProvider.java,v 1.3 2006/02/05 19:24:40 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr;
 
 import javax.jcr.Session;
 
 /**
- * SessionHolderProvider returns a session holder for classes which require collaboration with 
+ * SessionHolderProvider is a factory that creates a session holder for classes which require collaboration with 
  * TransactionSynchronizationManager. Because there is no standard on how to a Jcr repository
  * participates inside transactions, each implementation has it's own support (XAResource,Transaction)
  * which has to be wrapped in the approapriate holder.
+ * 
  * 
  * @author Costin Leau
  *

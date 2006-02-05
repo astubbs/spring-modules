@@ -1,15 +1,11 @@
 package org.springmodules.jcr;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +27,6 @@ import org.springframework.core.CollectionFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.xml.sax.ContentHandler;
-
-import sun.net.www.MimeTable;
 
 /**
  * Helper class that simplifies JCR data access code.
@@ -60,9 +54,8 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
 
 	/**
 	 */
-	public JcrTemplate(SessionFactory sessionFactory, SessionHolderProviderManager providerManager) {
+	public JcrTemplate(SessionFactory sessionFactory) {
 		setSessionFactory(sessionFactory);
-		setProviderManager(providerManager);
 		afterPropertiesSet();
 	}
 

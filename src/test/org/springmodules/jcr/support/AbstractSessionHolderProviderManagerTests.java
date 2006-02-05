@@ -1,8 +1,8 @@
 /**
  * Created on Nov 10, 2005
  *
- * $Id: AbstractSessionHolderProviderManagerTests.java,v 1.1 2005/11/11 15:47:13 costin Exp $
- * $Revision: 1.1 $
+ * $Id: AbstractSessionHolderProviderManagerTests.java,v 1.2 2006/02/05 19:24:42 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -102,7 +102,7 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 		repoCtrl.replay();
 
 		SessionHolderProvider provider = providerManager.getSessionProvider(sf);
-		assertSame(DefaultSessionHolderProvider.class, provider.getClass());
+		assertSame(GenericSessionHolderProvider.class, provider.getClass());
 	}
 
 	/*
@@ -154,6 +154,6 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 		sessCtrl.replay();
 		repoCtrl.replay();
 
-		assertSame(DefaultSessionHolderProvider.class, providerManager.getSessionProvider(sf).getClass());
+		assertSame(GenericSessionHolderProvider.class, providerManager.getSessionProvider(sf).getClass());
 	}	
 }

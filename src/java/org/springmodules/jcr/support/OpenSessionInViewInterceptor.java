@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: OpenSessionInViewInterceptor.java,v 1.2 2005/12/06 10:36:59 costin Exp $
- * $Revision: 1.2 $
+ * $Id: OpenSessionInViewInterceptor.java,v 1.3 2006/02/05 19:24:39 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr.support;
 
@@ -43,104 +43,107 @@ import org.springmodules.jcr.SessionHolderProviderManager;
  * 
  * @author Costin Leau
  */
-public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter implements InitializingBean
-{
-    /**
-     * Suffix that gets appended to the SessionFactory toString
-     * representation for the "participate in existing persistence manager
-     * handling" request attribute.
-     * 
-     * @see #getParticipateAttributeName
-     */
-    public static final String PARTICIPATE_SUFFIX = ".PARTICIPATE";
+public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter implements InitializingBean {
+	/**
+	 * Suffix that gets appended to the SessionFactory toString
+	 * representation for the "participate in existing persistence manager
+	 * handling" request attribute.
+	 * 
+	 * @see #getParticipateAttributeName
+	 */
+	public static final String PARTICIPATE_SUFFIX = ".PARTICIPATE";
 
-    protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log logger = LogFactory.getLog(getClass());
 
-    private SessionFactory sessionFactory;
-    
-    private SessionHolderProvider sessionHolderProvider;
-    
-    private SessionHolderProviderManager providerManager;
+	private SessionFactory sessionFactory;
 
-    /**
-     * Set the JCR JcrSessionFactory that should be used to create
-     * Sessions.
-     */
-    public void setSessionFactory(SessionFactory sf) {
-        this.sessionFactory = sf;
-    }
+	private SessionHolderProvider sessionHolderProvider;
 
-    /**
-     * Return the JCR JcrSessionFactory that should be used to create
-     * Sessions.
-     */
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
+	private SessionHolderProviderManager providerManager;
 
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws DataAccessException {
+	/**
+	 * Set the JCR JcrSessionFactory that should be used to create
+	 * Sessions.
+	 */
+	public void setSessionFactory(SessionFactory sf) {
+		this.sessionFactory = sf;
+	}
 
-        if (TransactionSynchronizationManager.hasResource(getSessionFactory())) {
-            // do not modify the Session: just mark the request
-            // accordingly
-            String participateAttributeName = getParticipateAttributeName();
-            Integer count = (Integer) request.getAttribute(participateAttributeName);
-            int newCount = (count != null) ? count.intValue() + 1 : 1;
-            request.setAttribute(getParticipateAttributeName(), new Integer(newCount));
-        }
+	/**
+	 * Return the JCR JcrSessionFactory that should be used to create
+	 * Sessions.
+	 */
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
 
-        else {
-            logger.debug("Opening JCR session in OpenSessionInViewInterceptor");
-            Session s = SessionFactoryUtils.getSession(getSessionFactory(), true);
-            TransactionSynchronizationManager.bindResource(getSessionFactory(), sessionHolderProvider.createSessionHolder(s));
-        }
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+			throws DataAccessException {
 
-        return true;
-    }
+		if (TransactionSynchronizationManager.hasResource(getSessionFactory())) {
+			// do not modify the Session: just mark the request
+			// accordingly
+			String participateAttributeName = getParticipateAttributeName();
+			Integer count = (Integer) request.getAttribute(participateAttributeName);
+			int newCount = (count != null) ? count.intValue() + 1 : 1;
+			request.setAttribute(getParticipateAttributeName(), new Integer(newCount));
+		}
 
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws DataAccessException {
+		else {
+			logger.debug("Opening JCR session in OpenSessionInViewInterceptor");
+			Session s = SessionFactoryUtils.getSession(getSessionFactory(), true);
+			TransactionSynchronizationManager.bindResource(getSessionFactory(),
+					sessionHolderProvider.createSessionHolder(s));
+		}
 
-        String participateAttributeName = getParticipateAttributeName();
-        Integer count = (Integer) request.getAttribute(participateAttributeName);
-        if (count != null) {
-            // do not modify the Session: just clear the marker
-            if (count.intValue() > 1) {
-                request.setAttribute(participateAttributeName, new Integer(count.intValue() - 1));
-            } else {
-                request.removeAttribute(participateAttributeName);
-            }
-        }
+		return true;
+	}
 
-        else {
-            SessionHolder sesHolder = (SessionHolder) TransactionSynchronizationManager.unbindResource(getSessionFactory());
-            logger.debug("Closing JCR session in OpenSessionInViewInterceptor");
-            SessionFactoryUtils.releaseSession(sesHolder.getSession(), getSessionFactory());
-        }
-    }
+	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
+			Exception ex) throws DataAccessException {
 
-    /**
-     * Return the name of the request attribute that identifies that a request
-     * is already filtered. Default implementation takes the toString
-     * representation of the JcrSessionFactory instance and appends
-     * ".FILTERED".
-     * 
-     * @see #PARTICIPATE_SUFFIX
-     */
-    protected String getParticipateAttributeName() {
-        return getSessionFactory().toString() + PARTICIPATE_SUFFIX;
-    }
+		String participateAttributeName = getParticipateAttributeName();
+		Integer count = (Integer) request.getAttribute(participateAttributeName);
+		if (count != null) {
+			// do not modify the Session: just clear the marker
+			if (count.intValue() > 1) {
+				request.setAttribute(participateAttributeName, new Integer(count.intValue() - 1));
+			}
+			else {
+				request.removeAttribute(participateAttributeName);
+			}
+		}
 
-    /**
-     * @return Returns the sessionHolderProvider.
-     */
-    public SessionHolderProvider getSessionHolderProvider() {
-        return sessionHolderProvider;
-    }
+		else {
+			SessionHolder sesHolder = (SessionHolder) TransactionSynchronizationManager.unbindResource(getSessionFactory());
+			logger.debug("Closing JCR session in OpenSessionInViewInterceptor");
+			SessionFactoryUtils.releaseSession(sesHolder.getSession(), getSessionFactory());
+		}
+	}
+
+	/**
+	 * Return the name of the request attribute that identifies that a request
+	 * is already filtered. Default implementation takes the toString
+	 * representation of the JcrSessionFactory instance and appends
+	 * ".FILTERED".
+	 * 
+	 * @see #PARTICIPATE_SUFFIX
+	 */
+	protected String getParticipateAttributeName() {
+		return getSessionFactory().toString() + PARTICIPATE_SUFFIX;
+	}
+
+	/**
+	 * @return Returns the sessionHolderProvider.
+	 */
+	public SessionHolderProvider getSessionHolderProvider() {
+		return sessionHolderProvider;
+	}
 
 	/**
 	 * @return Returns the sessionHolderProviderManager.
 	 */
-	public SessionHolderProviderManager getProviderManager() {
+	protected SessionHolderProviderManager getProviderManager() {
 		return providerManager;
 	}
 
@@ -160,14 +163,18 @@ public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter impl
 	public void afterPropertiesSet() throws Exception {
 		if (sessionFactory == null)
 			throw new IllegalArgumentException("sessionFactory is required");
-		if (providerManager == null)
-			throw new IllegalArgumentException("providerManager is required");
-		
-		this.sessionHolderProvider = providerManager.getSessionProvider(sessionFactory);
+
+		if (providerManager != null) {
+			if (logger.isDebugEnabled())
+				logger.debug("using given provider manager");
+			this.sessionHolderProvider = providerManager.getSessionProvider(sessionFactory);
+		}
+		else {
+			if (logger.isDebugEnabled())
+				logger.debug("no specific provider manager was set; using the generic one");
+
+			this.sessionHolderProvider = new GenericSessionHolderProvider();
+		}
 	}
-	
-	
-    
-    
 
 }

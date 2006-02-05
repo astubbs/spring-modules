@@ -45,13 +45,15 @@ public class LocalTransactionManagerTests extends TestCase {
         session.save();
         session.logout();
 
-        // used for ServiceProvider
+/*
         MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
         Repository repository = (Repository) repositoryControl.getMock();
         repositoryControl.replay();
 
         sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
         final SessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
+       
+       */
 
         Xid xidMock = new XidMock();
 
@@ -80,7 +82,7 @@ public class LocalTransactionManagerTests extends TestCase {
         tt.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                JcrTemplate template = new JcrTemplate(sf, providerManager);
+                JcrTemplate template = new JcrTemplate(sf);
                 template.save();
             }
         });
@@ -107,14 +109,14 @@ public class LocalTransactionManagerTests extends TestCase {
         sessionControl.expectAndReturn(session.getXAResource(), xaRes);
         session.save();
         session.logout();
-
+/*
         // used for ServiceProvider
         MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
         Repository repository = (Repository) repositoryControl.getMock();
         repositoryControl.replay();
 
         sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
-        
+  */      
         
         Xid xidMock = new XidMock();
 
@@ -141,7 +143,7 @@ public class LocalTransactionManagerTests extends TestCase {
             tt.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                    JcrTemplate template = new JcrTemplate(sf, providerManager);
+                    JcrTemplate template = new JcrTemplate(sf);
                     template.execute(new JcrCallback() {
                         public Object doInJcr(Session se) throws RepositoryException {
                             se.save();
@@ -187,13 +189,13 @@ public class LocalTransactionManagerTests extends TestCase {
         xaRes.rollback(xidMock);
         xaResControl.setMatcher(MockControl.ALWAYS_MATCHER);
 
-        // used for ServiceProvider
+/*        // used for ServiceProvider
         MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
         Repository repository = (Repository) repositoryControl.getMock();
         repositoryControl.replay();
 
         sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
-        
+*/        
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
@@ -211,7 +213,7 @@ public class LocalTransactionManagerTests extends TestCase {
             tt.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                    JcrTemplate template = new JcrTemplate(sf, providerManager);
+                    JcrTemplate template = new JcrTemplate(sf);
                     template.execute(new JcrCallback() {
                         public Object doInJcr(Session se) throws RepositoryException {
                             se.save();
@@ -240,7 +242,6 @@ public class LocalTransactionManagerTests extends TestCase {
         final SessionFactory sf = (SessionFactory) sfControl.getMock();
         
         sfControl.replay();
-        final SessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
         
         PlatformTransactionManager tm = new LocalTransactionManager(sf);
         TransactionTemplate tt = new TransactionTemplate(tm);
@@ -253,7 +254,7 @@ public class LocalTransactionManagerTests extends TestCase {
             tt.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                    JcrTemplate template = new JcrTemplate(sf, providerManager);
+                    JcrTemplate template = new JcrTemplate(sf);
                     template.execute(new JcrCallback() {
                         public Object doInJcr(Session session) throws RepositoryException {
                             return null;
@@ -285,13 +286,13 @@ public class LocalTransactionManagerTests extends TestCase {
         sessionControl.expectAndReturn(session.getXAResource(), xaRes);
         session.save();
 
-        // used for ServiceProvider
+/*        // used for ServiceProvider
         MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
         Repository repository = (Repository) repositoryControl.getMock();
         repositoryControl.replay();
 
         sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
-        
+*/        
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
@@ -307,7 +308,7 @@ public class LocalTransactionManagerTests extends TestCase {
         tt.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                JcrTemplate template = new JcrTemplate(sf, providerManager);
+                JcrTemplate template = new JcrTemplate(sf);
                 template.save();
             }
         });
@@ -333,13 +334,13 @@ public class LocalTransactionManagerTests extends TestCase {
         sessionControl.expectAndReturn(session.getXAResource(), xaRes);
         session.save();
         
-        // used for ServiceProvider
+/*        // used for ServiceProvider
         MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
         Repository repository = (Repository) repositoryControl.getMock();
         repositoryControl.replay();
 
         sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
-
+*/
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
@@ -357,7 +358,7 @@ public class LocalTransactionManagerTests extends TestCase {
             tt.execute(new TransactionCallbackWithoutResult() {
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     assertTrue("Has thread session", TransactionSynchronizationManager.hasResource(sf));
-                    JcrTemplate template = new JcrTemplate(sf, providerManager);
+                    JcrTemplate template = new JcrTemplate(sf);
                     template.save();
                 }
             });

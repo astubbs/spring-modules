@@ -15,7 +15,7 @@ import javax.jcr.observation.ObservationManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springmodules.util.ArrayUtils;
+import org.springmodules.util.Objects;
 
 /**
  * Jcr Session Factory. This class is just a simple wrapper around the
@@ -109,7 +109,7 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 			ObservationManager manager = ws.getObservationManager();
 			if (log.isDebugEnabled())
 				log.debug("adding listeners "
-						+ ArrayUtils.toString(eventListeners)
+						+ Objects.toString(eventListeners)
 						+ " for session "
 						+ session);
 

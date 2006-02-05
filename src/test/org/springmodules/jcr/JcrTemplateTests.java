@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrTemplateTests.java,v 1.5 2005/12/06 10:37:05 costin Exp $
- * $Revision: 1.5 $
+ * $Id: JcrTemplateTests.java,v 1.6 2006/02/05 19:24:43 costin Exp $
+ * $Revision: 1.6 $
  */
 package org.springmodules.jcr;
 
@@ -88,7 +88,7 @@ public class JcrTemplateTests extends TestCase {
 
     	providerManager = new ListSessionHolderProviderManager();
     	
-        jt = new JcrTemplate(sf, providerManager);
+        jt = new JcrTemplate(sf);
         jt.setAllowCreate(true);
         
     	sfControl.reset();
@@ -381,7 +381,7 @@ public class JcrTemplateTests extends TestCase {
         sfControl.replay();
         sessionControl.replay();
 
-        JcrTemplate template = new JcrTemplate(sf, providerManager);
+        JcrTemplate template = new JcrTemplate(sf);
         template.setAllowCreate(true);
         return template;
     }

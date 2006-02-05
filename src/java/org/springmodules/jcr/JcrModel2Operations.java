@@ -1,9 +1,6 @@
 package org.springmodules.jcr;
 
-import java.io.File;
 import java.io.InputStream;
-
-import javax.jcr.Node;
 
 
 /**

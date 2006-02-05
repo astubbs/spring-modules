@@ -41,13 +41,11 @@ public abstract class JcrDaoSupport extends DaoSupport {
 	 * with different configuration, or a custom JcrTemplate subclass.
 	 * 
 	 * @param sessionFactory the JCR SessionFactory to create a JcrTemplate for
-	 * @param providerManager the JCR SessionHolderProviderManager 
 	 * @return the new JcrTemplate instance
 	 * @see #setSessionFactory
 	 */
-	protected JcrTemplate createJcrTemplate(SessionFactory sessionFactory,
-			SessionHolderProviderManager providerManager) {
-		return new JcrTemplate(sessionFactory, providerManager);
+	protected JcrTemplate createJcrTemplate(SessionFactory sessionFactory) {
+		return new JcrTemplate(sessionFactory);
 	}
 
 	/**
@@ -75,9 +73,9 @@ public abstract class JcrDaoSupport extends DaoSupport {
 	}
 
 	protected final void checkDaoConfig() {
-		if (this.jcrTemplate == null && (this.providerManager == null || this.sessionFactory == null)) {
+		if (this.jcrTemplate == null && this.sessionFactory == null) {
 			throw new IllegalArgumentException(
-					"sessionFactory and providerManager or jcrTemplate is required");
+					"sessionFactory or jcrTemplate is required");
 		}
 	}
 
@@ -152,7 +150,7 @@ public abstract class JcrDaoSupport extends DaoSupport {
 	 */
 	protected final void initDao() throws Exception {
 		if (this.jcrTemplate == null)
-			this.jcrTemplate = createJcrTemplate(sessionFactory, providerManager);
+			this.jcrTemplate = createJcrTemplate(sessionFactory);
 	}
 
 }

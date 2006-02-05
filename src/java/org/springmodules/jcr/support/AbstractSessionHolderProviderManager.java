@@ -1,8 +1,8 @@
 /**
  * Created on Nov 10, 2005
  *
- * $Id: AbstractSessionHolderProviderManager.java,v 1.2 2005/12/06 10:36:59 costin Exp $
- * $Revision: 1.2 $
+ * $Id: AbstractSessionHolderProviderManager.java,v 1.3 2006/02/05 19:24:38 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr.support;
 
@@ -28,7 +28,7 @@ public abstract class AbstractSessionHolderProviderManager implements SessionHol
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	protected SessionHolderProvider defaultProvider = new DefaultSessionHolderProvider();
+	protected SessionHolderProvider defaultProvider = new GenericSessionHolderProvider();
 	
 	/**
 	 * Returns all the providers for this class. Subclasses have to implement this method.
