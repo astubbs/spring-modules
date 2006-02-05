@@ -1,5 +1,9 @@
 <ivyconf>
-  <properties file="${ivy.conf.dir}/ivyconf.properties"/>
+  <!-- hook up initial file -->
+  <include file="${ivy.custom.resolver}"/>	
+	
+  <properties file="${ivy.conf.properties}"/>
+	
   <conf defaultResolver="libs"/>
   <resolvers>
     <chain name="libs">
@@ -12,8 +16,19 @@
         <ivy pattern="${repository.dir}/[organisation]/[module]/ivy-[revision].xml" />
         <artifact pattern="${repository.dir}/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
       </filesystem>
-     
-      <ivyrep name="ivyrep" />
+		
+      <ivyrep name="ivyrep"/>
+		
+	  <!-- ibiblio maven 2 compatible resolver -->
+	  <!-- solve some of the problem when a jar breaks the pattern, i.e. jboss-cache is
+		  under jboss folder which means forces the user to use the name of the module
+		  jboss when in fact it is jboss-cache. With maven2 namings this problem does
+		  not occur -->
+	  <ibiblio name="ibiblio-maven2" m2compatible="true" root="http://www.ibiblio.org/maven2"/>					
+		
+	  <!-- custom per-project resolvers -->
+	  <resolver ref="custom"/>
+
     </chain>
   </resolvers>
 </ivyconf>

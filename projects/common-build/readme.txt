@@ -34,3 +34,11 @@ This build.xml imports the "common-targets.xml" fragment containing
 core targets for compilation, distribution unit creation, and junit 
 testing.  It also imports "clover-targets.xml" to facilitate the 
 generation of test coverage reports with clover.
+
+* Custom resolver update (costin)
+
+It is likely that each project will want to have its own dependencies that may
+not be available on the main resolvers (ibiblio). In this case one can use
+custom-resolver.xml file (by copying inside the the project root) and define her own resolver; there are no restriction
+on the type (ibiblio, chain, etc...) but the name has to be "custom". The resolver will be appended
+to the default list of resolvers.
