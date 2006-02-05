@@ -1,0 +1,13 @@
+<ivyconf>
+	<resolvers>
+		<chain name="custom">
+			<!-- day software public maven repository -->
+			<ibiblio name="day" root="http://www.day.com/maven"/>
+			<!-- aparzev/jeceira -->
+			<url name="jeceira">
+				<!-- url pattern for jeceira wiki -->
+		        <artifact pattern="http://www.jeceira.com/confluence/download/attachments/3200/[artifact]-[revision].[ext]?version=1" />
+			</url>
+		</chain>
+	</resolvers>
+</ivyconf>

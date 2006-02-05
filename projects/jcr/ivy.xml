@@ -1,8 +1,4 @@
-<?xml-stylesheet type="text/xsl" href="http://www.jayasoft.fr/org/ivyrep/ivy-doc.xsl"?>
-<ivy-module version="1.1"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:noNamespaceSchemaLocation="http://www.jayasoft.fr/org/modules/ivy/samples/ivy.xsd">
-
+<ivy-module version="1.1">
   <info organisation="springmodules" module="jcr"/>
 
   <configurations>
@@ -17,6 +13,7 @@ xsi:noNamespaceSchemaLocation="http://www.jayasoft.fr/org/modules/ivy/samples/iv
 
     <!-- additional dependencies needed only at test-time -->
     <conf name="test" visibility="private" />
+
   </configurations>
 
   <dependencies defaultconf="global->default">
@@ -30,7 +27,9 @@ xsi:noNamespaceSchemaLocation="http://www.jayasoft.fr/org/modules/ivy/samples/iv
     </dependency>
 
     <!-- common dependencies -->
-    <dependency org="jcr" name="jcr" rev="1.0"/>
+    <dependency org="jsr170" name="jsr170" rev="1.0">
+    	<include name="jcr" type="jar"/>
+    </dependency>
 	<dependency org="springmodules" name="util" rev="latest.integration"/>
 	  
     <dependency org="apache" name="commons-lang" rev="2.1" />
