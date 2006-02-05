@@ -6,3 +6,4 @@ build.properties
 *.jpx.local*
 *.iws
 *.tws
+mem
