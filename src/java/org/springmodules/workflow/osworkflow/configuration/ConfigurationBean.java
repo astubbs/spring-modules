@@ -63,8 +63,9 @@ public class ConfigurationBean extends DefaultConfiguration {
 
 	/**
 	 * Spring <code>ResourceLoader</code> used to load workflow <code>Resource</code>s.
+	 * 
 	 */
-	protected ResourceLoader resourceLoader = new DefaultResourceLoader(getClass().getClassLoader());
+	protected ResourceLoader resourceLoader = new DefaultResourceLoader(); 
 
 	/**
 	 * Stores any arguments that are to be passed to
