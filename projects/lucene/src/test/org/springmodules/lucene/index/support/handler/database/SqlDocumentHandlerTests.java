@@ -62,7 +62,7 @@ public class SqlDocumentHandlerTests extends TestCase {
 
 	public void testGetDocument() throws Exception {
 		String sql="sql";
-		Object[] params=new Object[] { "param1",12};
+		Object[] params=new Object[] { "param1",new Integer(12)};
 		int[] paramTypes=new int[] { Types.VARCHAR,Types.INTEGER};
 
 		final boolean[] called={false};
