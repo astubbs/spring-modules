@@ -1,5 +1,6 @@
 package org.springmodules.jcr;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -112,13 +113,12 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 			ObservationManager manager = ws.getObservationManager();
 			if (log.isDebugEnabled())
 				log.debug("adding listeners "
-						//+ Objects.nullSafeToString(eventListeners)
+						+ Arrays.asList(eventListeners).toString()
 						+ " for session "
 						+ session);
 
 			for (int i = 0; i < eventListeners.length; i++) {
-				manager.addEventListener(eventListeners[i].getListener(),
-						eventListeners[i].getEventTypes(),
+				manager.addEventListener(eventListeners[i].getListener(), eventListeners[i].getEventTypes(),
 						eventListeners[i].getAbsPath(), eventListeners[i].isDeep(),
 						eventListeners[i].getUuid(), eventListeners[i].getNodeTypeName(),
 						eventListeners[i].isNoLocal());
