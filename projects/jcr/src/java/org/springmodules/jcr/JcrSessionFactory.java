@@ -19,7 +19,6 @@ import org.springmodules.jcr.EventListenerDefinition;
 import org.springmodules.jcr.JcrUtils;
 import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
-import org.springmodules.util.Objects;
 
 /**
  * Jcr Session Factory. This class is just a simple wrapper around the
@@ -113,7 +112,7 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 			ObservationManager manager = ws.getObservationManager();
 			if (log.isDebugEnabled())
 				log.debug("adding listeners "
-						+ Objects.nullSafeToString(eventListeners)
+						//+ Objects.nullSafeToString(eventListeners)
 						+ " for session "
 						+ session);
 

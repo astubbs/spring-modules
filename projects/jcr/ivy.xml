@@ -30,7 +30,9 @@
     <dependency org="jsr170" name="jsr170" rev="1.0">
     	<include name="jcr" type="jar"/>
     </dependency>
+    <!--
 	<dependency org="springmodules" name="util" rev="latest.integration"/>
+	-->
 	  
     <dependency org="apache" name="commons-lang" rev="2.1" />
     <dependency org="apache" name="commons-collections"
@@ -59,7 +61,7 @@
     </dependency>
 	  
     <!-- jeceira deps -->
-	<dependency org="jeceira" name="jeceira" rev="0.1.4">
+	<dependency org="jeceira" name="jeceira" rev="0.1.3">
 		<artifact name="jeceira" type="jar"/>			
 	</dependency>
 	  
