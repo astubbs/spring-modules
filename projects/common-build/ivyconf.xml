@@ -2,7 +2,7 @@
   <!-- hook up initial file -->
   <include file="${ivy.custom.resolver}"/>	
 	
-  <properties file="${ivy.conf.properties}"/>
+  <properties file="${ivy.conf.dir}/ivyconf.properties"/>
 	
   <conf defaultResolver="libs"/>
   <resolvers>
