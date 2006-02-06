@@ -8,6 +8,11 @@
 				<!-- url pattern for jeceira wiki -->
 		        <artifact pattern="http://www.jeceira.com/confluence/download/attachments/3200/[artifact]-[revision].[ext]?version=1" />
 			</url>
+			<!-- jug -->
+			<url name="jug">
+				<!-- url pattern for jug -->
+		        <artifact pattern="http://jug.safehaus.org/curr/[artifact]-[revision].[ext]" />
+			</url>
 		</chain>
 	</resolvers>
 </ivyconf>
