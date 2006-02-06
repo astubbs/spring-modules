@@ -1,6 +1,11 @@
 <!-- empty chain resolver -->
 <ivyconf>
 	<resolvers>
-		<chain name="custom"/>
+		<chain name="custom">
+			<!-- webmacro url from sourceforge -->
+			<url name="blojsom-sourceforge">
+			    <artifact pattern="http://cvs.sourceforge.net/viewcvs.py/*checkout*/blojsom/blojsom-2.0/addon-lib/[artifact]-[revision].[ext]" />
+			</url>
+		</chain>
 	</resolvers>
 </ivyconf>

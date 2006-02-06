@@ -1,5 +1,7 @@
 <ivyconf>
 	<resolvers>
-		<chain name="custom"/>
+		<chain name="custom">
+			<ibiblio name="osafoundation" root="http://builds.osafoundation.org/maven"/>
+		</chain>
 	</resolvers>
 </ivyconf>
