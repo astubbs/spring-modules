@@ -1,18 +1,18 @@
 /*
-* Copyright 2002-2005 the original author or authors.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2002-2005 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.springmodules.workflow.osworkflow;
 
@@ -22,7 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.FatalBeanException;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.StringUtils;
+
 import com.opensymphony.module.propertyset.PropertySet;
+import com.opensymphony.workflow.TypeResolver;
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
 import com.opensymphony.workflow.basic.BasicWorkflow;
@@ -31,10 +36,6 @@ import com.opensymphony.workflow.config.DefaultConfiguration;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.query.WorkflowExpressionQuery;
 import com.opensymphony.workflow.spi.Step;
-
-import org.springframework.beans.FatalBeanException;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.StringUtils;
 
 /**
  * Template class that simplifies interaction with the <a href="http://www.opensymphony.com/osworkflow">OSWorkflow</a>
@@ -59,7 +60,10 @@ import org.springframework.util.StringUtils;
  * to be managed transparently in a web environment.
  * <p/>
  * Both the <code>workflowName</code> and <code>contextManager</code> parameters are required.
- *
+ * <p/>
+ * It is recommended to use SpringTypeResolver, available inside the official OsWorkflow 2.8 distribution, which allows osworkflow 
+ * to obtain business logic components (conditions, functions, and so on) from the ApplicationContext. 
+ * 
  * @author Rob Harrop
  * @see WorkflowException
  * @see org.springmodules.workflow.WorkflowException
@@ -87,6 +91,25 @@ public class OsWorkflowTemplate implements InitializingBean {
 	 * The name of the workflow definition to use.
 	 */
 	private String workflowName;
+
+	/**
+	 * OsWorkflow Type typeResolver.
+	 */
+	private TypeResolver typeResolver;
+
+	/**
+	 * @return Returns the typeResolver.
+	 */
+	public TypeResolver getTypeResolver() {
+		return typeResolver;
+	}
+
+	/**
+	 * @param typeResolver The typeResolver to set.
+	 */
+	public void setTypeResolver(TypeResolver resolver) {
+		this.typeResolver = resolver;
+	}
 
 	/**
 	 * Sets the <code>Configuration<code> used to load workflow definitions.
@@ -323,10 +346,10 @@ public class OsWorkflowTemplate implements InitializingBean {
 	 */
 	public int getEntryState() {
 		Integer state = (Integer) this.execute(new OsWorkflowCallback() {
-					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-						return new Integer(workflow.getEntryState(getInstanceId()));
-					}
-				});
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				return new Integer(workflow.getEntryState(getInstanceId()));
+			}
+		});
 
 		return state.intValue();
 	}
@@ -362,11 +385,12 @@ public class OsWorkflowTemplate implements InitializingBean {
 	 */
 	public boolean canInitialize(final int initialStep, final Map inputs) {
 		Boolean returnValue = (Boolean) this.execute(new OsWorkflowCallback() {
-					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-						boolean canInit = workflow.canInitialize(OsWorkflowTemplate.this.workflowName, initialStep, inputs);
-						return (canInit) ? Boolean.TRUE : Boolean.FALSE;
-					}
-				});
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				boolean canInit = workflow.canInitialize(OsWorkflowTemplate.this.workflowName, initialStep,
+						inputs);
+				return (canInit) ? Boolean.TRUE : Boolean.FALSE;
+			}
+		});
 		return returnValue.booleanValue();
 	}
 
@@ -377,11 +401,11 @@ public class OsWorkflowTemplate implements InitializingBean {
 	 */
 	public boolean canModifyEntryState(final int newState) {
 		Boolean returnValue = (Boolean) this.execute(new OsWorkflowCallback() {
-					public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
-						boolean canModify = workflow.canModifyEntryState(getInstanceId(), newState);
-						return (canModify) ? Boolean.TRUE : Boolean.FALSE;
-					}
-				});
+			public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+				boolean canModify = workflow.canModifyEntryState(getInstanceId(), newState);
+				return (canModify) ? Boolean.TRUE : Boolean.FALSE;
+			}
+		});
 
 		return returnValue.booleanValue();
 	}
@@ -435,7 +459,11 @@ public class OsWorkflowTemplate implements InitializingBean {
 	 * Creates a <code>Workflow</code> for the supplied caller.
 	 */
 	protected Workflow createWorkflow(String caller) throws WorkflowException {
-		return new BasicWorkflow(caller);
+		BasicWorkflow workflow = new BasicWorkflow(caller);
+		// inject the type resolver if there is such a case
+		if (typeResolver != null)
+			workflow.setResolver(typeResolver);
+		return workflow;
 	}
 
 	/**

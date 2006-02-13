@@ -1,18 +1,18 @@
 /*
-* Copyright 2002-2005 the original author or authors.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2002-2005 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.springmodules.workflow.osworkflow.configuration;
 
@@ -31,6 +31,8 @@ import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.loader.WorkflowLoader;
 import com.opensymphony.workflow.spi.WorkflowStore;
 import com.opensymphony.workflow.spi.memory.MemoryWorkflowStore;
+import com.opensymphony.workflow.util.VariableResolver;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
@@ -65,7 +67,7 @@ public class ConfigurationBean extends DefaultConfiguration {
 	 * Spring <code>ResourceLoader</code> used to load workflow <code>Resource</code>s.
 	 * 
 	 */
-	protected ResourceLoader resourceLoader = new DefaultResourceLoader(); 
+	protected ResourceLoader resourceLoader = new DefaultResourceLoader();
 
 	/**
 	 * Stores any arguments that are to be passed to
@@ -81,20 +83,24 @@ public class ConfigurationBean extends DefaultConfiguration {
 	 * Indicates whether this instance is initialized or not
 	 */
 	private boolean initialized;
-    
-    /**
-     * User defined store - can be null.
-     */
-    private WorkflowStore workflowStore;
 
-    /**
-     * Creates a new <code>ConfigurationBean</code> with <code>MemoryWorkflowStore</code>
-     * as the persistence class.
-     */
-    public ConfigurationBean() {
-        setPersistence(MemoryWorkflowStore.class.getName());
-    }
-    
+	/**
+	 * User defined store - can be null.
+	 */
+	private WorkflowStore workflowStore;
+
+	/**
+	 * User defined resolver - if null the default one will be used.
+	 */
+	private VariableResolver variableResolver;
+	/**
+	 * Creates a new <code>ConfigurationBean</code> with <code>MemoryWorkflowStore</code>
+	 * as the persistence class.
+	 */
+	public ConfigurationBean() {
+		setPersistence(MemoryWorkflowStore.class.getName());
+	}
+
 	/**
 	 * Gets the <code>Map</code> of arguments to be passed to the persistence object
 	 */
@@ -178,35 +184,57 @@ public class ConfigurationBean extends DefaultConfiguration {
 		Resource resource = this.resourceLoader.getResource(resourceLocation);
 		WorkflowDescriptor workflowDescriptor = null;
 		try {
-			workflowDescriptor = WorkflowLoader.load(resource.getURL());
+			//workflowDescriptor = WorkflowLoader.load(resource.getURL(), true);
+			workflowDescriptor = WorkflowLoader.load(resource.getURL(), false);
 		}
 		catch (IOException ex) {
 			throw new FatalBeanException("Unable to load workflow resource [" + resourceLocation + "].", ex);
 		}
 		catch (InvalidWorkflowDescriptorException ex) {
-			throw new FatalBeanException("Descriptor for workflow [" + name + "] in [" + resourceLocation + "] is invalid.", ex);
+			throw new FatalBeanException("Descriptor for workflow ["
+					+ name
+					+ "] in ["
+					+ resourceLocation
+					+ "] is invalid.", ex);
 		}
 		catch (SAXException ex) {
-			throw new FatalBeanException("XML in descriptorfor workflow [" + name + "] in [" + resourceLocation + "] is invalid.", ex);
+			throw new FatalBeanException("XML in descriptorfor workflow ["
+					+ name
+					+ "] in ["
+					+ resourceLocation
+					+ "] is invalid.", ex);
 		}
 		return workflowDescriptor;
 	}
 
-    /**
-     * @see com.opensymphony.workflow.config.DefaultConfiguration#getWorkflowStore()
-     */
-    public WorkflowStore getWorkflowStore() throws StoreException {
-        // default behavior
-        if (workflowStore == null)
-            return super.getWorkflowStore();
-        return workflowStore;
-    }
+	/**
+	 * @see com.opensymphony.workflow.config.DefaultConfiguration#getWorkflowStore()
+	 */
+	public WorkflowStore getWorkflowStore() throws StoreException {
+		// default behavior
+		if (workflowStore == null)
+			return super.getWorkflowStore();
+		return workflowStore;
+	}
 
-    /**
-     * @param workflowStore The workflowStore to set.
-     */
-    public void setWorkflowStore(WorkflowStore workflowStore) {
-        this.workflowStore = workflowStore;
-    }
+	/**
+	 * @param workflowStore The workflowStore to set.
+	 */
+	public void setWorkflowStore(WorkflowStore workflowStore) {
+		this.workflowStore = workflowStore;
+	}
 
+	/**
+	 * @see com.opensymphony.workflow.config.DefaultConfiguration#getVariableResolver()
+	 */
+	public VariableResolver getVariableResolver() {
+		return (this.variableResolver == null) ? super.getVariableResolver() : this.variableResolver;
+	}
+
+	/**
+	 * @param variableResolver The variableResolver to set.
+	 */
+	public void setVariableResolver(VariableResolver variableResolver) {
+		this.variableResolver = variableResolver;
+	}
 }

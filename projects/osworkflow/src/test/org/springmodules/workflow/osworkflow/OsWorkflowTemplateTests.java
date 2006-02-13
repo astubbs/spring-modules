@@ -277,7 +277,7 @@ public class OsWorkflowTemplateTests extends TestCase {
 		historyStepDescriptors = template.getHistoryStepDescriptors();
 
 		assertEquals(2, historyStepDescriptors.size());
-		assertEquals("Spruce Up", ((StepDescriptor) historyStepDescriptors.get(1)).getName());
+		assertEquals("Spruce Up", ((StepDescriptor) historyStepDescriptors.get(0)).getName());
 
 	}
 

@@ -37,7 +37,7 @@
 		  <artifact name="servlet-api" type="jar"/>
 	  </dependency>
 
-	  <dependency org="opensymphony" name="osworkflow" rev="2.7.0"/>
+	  <dependency org="opensymphony" name="osworkflow" rev="2.8.0"/>
 	  <dependency org="opensymphony" name="oscore" rev="2.2.4"/>            
 	  <dependency org="opensymphony" name="propertyset" rev="1.3"/>            		
 		

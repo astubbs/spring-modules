@@ -1,4 +1,3 @@
-
 package org.springmodules.workflow.osworkflow.configuration;
 
 import java.util.Arrays;
@@ -15,7 +14,6 @@ import org.springframework.util.ClassUtils;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.FactoryException;
 import com.opensymphony.workflow.StoreException;
-import com.opensymphony.workflow.config.DefaultConfiguration;
 import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.query.WorkflowExpressionQuery;
 import com.opensymphony.workflow.query.WorkflowQuery;
@@ -23,6 +21,8 @@ import com.opensymphony.workflow.spi.Step;
 import com.opensymphony.workflow.spi.WorkflowEntry;
 import com.opensymphony.workflow.spi.WorkflowStore;
 import com.opensymphony.workflow.spi.memory.MemoryWorkflowStore;
+import com.opensymphony.workflow.util.DefaultVariableResolver;
+import com.opensymphony.workflow.util.VariableResolver;
 
 /**
  * @author robh
@@ -75,7 +75,7 @@ public class ConfigurationBeanTests extends TestCase {
 			new ConfigurationBean().setPersistenceArgs(null);
 			fail("Should not be able to set persistenceArgs to null");
 		}
-		catch(IllegalArgumentException ex) {
+		catch (IllegalArgumentException ex) {
 			// success
 		}
 
@@ -83,7 +83,7 @@ public class ConfigurationBeanTests extends TestCase {
 			new ConfigurationBean().setPersistenceArgs(new HashMap());
 			fail("Should not be able to set persistenceArgs to an empty Map");
 		}
-		catch(IllegalArgumentException ex) {
+		catch (IllegalArgumentException ex) {
 			// success
 		}
 	}
@@ -110,7 +110,8 @@ public class ConfigurationBeanTests extends TestCase {
 		try {
 			new ConfigurationBean().getWorkflow("foo");
 			fail("Accessing a non-existent workflow should throw FactoryException");
-		} catch(FactoryException ex) {
+		}
+		catch (FactoryException ex) {
 			// success
 		}
 	}
@@ -119,26 +120,37 @@ public class ConfigurationBeanTests extends TestCase {
 		try {
 			new ConfigurationBean().removeWorkflow("foo");
 			fail("removeWorkflow should throw UnsupportedOperationException");
-		} catch(UnsupportedOperationException ex){
+		}
+		catch (UnsupportedOperationException ex) {
 			// success
 		}
 	}
-    
-    public void testUserDefinedWorkflowStore() throws Exception
-    {
-        MockWorkflowStore mockStore = new MockWorkflowStore();
-        // do smth on the store to make sure it's our and not overwritten
-        Map marker = new HashMap();
-        marker.put("foo", "bar");
-        mockStore.init(marker);
-        
-        ConfigurationBean cfg = new ConfigurationBean();
-        cfg.setWorkflowStore(mockStore);
-        
-        MockWorkflowStore store = (MockWorkflowStore) cfg.getWorkflowStore();
-        assertSame("Stores are not the same", mockStore, store);
-        assertSame("Persistence args not carried to WorkflowStore", marker, store.getArgs());
-    }
+	
+	public void testVariableResolver() throws Exception {
+		ConfigurationBean cfg = new ConfigurationBean();
+		VariableResolver defaultResolver = cfg.getVariableResolver();
+		assertNotNull(defaultResolver);
+		VariableResolver userResolver = new DefaultVariableResolver();
+		cfg.setVariableResolver(userResolver);
+		assertSame(userResolver, cfg.getVariableResolver());
+		cfg.setVariableResolver(null);
+		assertSame(defaultResolver, cfg.getVariableResolver());
+	}
+	
+	public void testUserDefinedWorkflowStore() throws Exception {
+		MockWorkflowStore mockStore = new MockWorkflowStore();
+		// do smth on the store to make sure it's our and not overwritten
+		Map marker = new HashMap();
+		marker.put("foo", "bar");
+		mockStore.init(marker);
+
+		ConfigurationBean cfg = new ConfigurationBean();
+		cfg.setWorkflowStore(mockStore);
+
+		MockWorkflowStore store = (MockWorkflowStore) cfg.getWorkflowStore();
+		assertSame("Stores are not the same", mockStore, store);
+		assertSame("Persistence args not carried to WorkflowStore", marker, store.getArgs());
+	}
 
 	public static class MockWorkflowStore implements WorkflowStore {
 
@@ -151,7 +163,8 @@ public class ConfigurationBeanTests extends TestCase {
 			return null;
 		}
 
-		public Step createCurrentStep(long entryId, int stepId, String owner, Date startDate, Date dueDate, String status, long[] previousIds) throws StoreException {
+		public Step createCurrentStep(long entryId, int stepId, String owner, Date startDate, Date dueDate,
+				String status, long[] previousIds) throws StoreException {
 			return null;
 		}
 
@@ -179,7 +192,8 @@ public class ConfigurationBeanTests extends TestCase {
 			return this.args;
 		}
 
-		public Step markFinished(Step step, int actionId, Date finishDate, String status, String caller) throws StoreException {
+		public Step markFinished(Step step, int actionId, Date finishDate, String status, String caller)
+				throws StoreException {
 			return null;
 		}
 
