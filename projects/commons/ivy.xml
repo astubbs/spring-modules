@@ -22,7 +22,7 @@
     <dependency org="apache" name="log4j" rev="1.2.12" />
 	<dependency org="apache" name="commons-lang" rev="2.1" />
 	<dependency org="apache" name="commons-validator" rev="1.1.4" />	  
-
+	<dependency org="apache" name="commons-configuration" rev="1.2" />	  
 	  
     <dependency org="springframework" name="springframework" rev="1.2.6" conf="global,test->default">
       <artifact name="spring-support" type="jar" conf="global"/>
