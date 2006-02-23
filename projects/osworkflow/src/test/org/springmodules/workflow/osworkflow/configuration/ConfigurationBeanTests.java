@@ -21,8 +21,6 @@ import com.opensymphony.workflow.spi.Step;
 import com.opensymphony.workflow.spi.WorkflowEntry;
 import com.opensymphony.workflow.spi.WorkflowStore;
 import com.opensymphony.workflow.spi.memory.MemoryWorkflowStore;
-import com.opensymphony.workflow.util.DefaultVariableResolver;
-import com.opensymphony.workflow.util.VariableResolver;
 
 /**
  * @author robh
@@ -125,18 +123,9 @@ public class ConfigurationBeanTests extends TestCase {
 			// success
 		}
 	}
-	
-	public void testVariableResolver() throws Exception {
-		ConfigurationBean cfg = new ConfigurationBean();
-		VariableResolver defaultResolver = cfg.getVariableResolver();
-		assertNotNull(defaultResolver);
-		VariableResolver userResolver = new DefaultVariableResolver();
-		cfg.setVariableResolver(userResolver);
-		assertSame(userResolver, cfg.getVariableResolver());
-		cfg.setVariableResolver(null);
-		assertSame(defaultResolver, cfg.getVariableResolver());
-	}
-	
+
+
+
 	public void testUserDefinedWorkflowStore() throws Exception {
 		MockWorkflowStore mockStore = new MockWorkflowStore();
 		// do smth on the store to make sure it's our and not overwritten

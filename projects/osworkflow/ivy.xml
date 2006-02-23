@@ -28,6 +28,7 @@
        <artifact name="spring-dao" type="jar" conf="global" />    		
        <artifact name="spring-support" type="jar" conf="global" />
        <artifact name="spring-webmvc" type="jar" conf="global" />
+       <artifact name="spring-web" type="jar" conf="global" />
        <artifact name="spring-mock" type="jar" conf="global" />		  
       </dependency>
 		

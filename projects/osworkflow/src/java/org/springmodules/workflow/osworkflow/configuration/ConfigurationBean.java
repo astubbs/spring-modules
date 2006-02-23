@@ -23,6 +23,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.FatalBeanException;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
+import org.xml.sax.SAXException;
+
 import com.opensymphony.workflow.FactoryException;
 import com.opensymphony.workflow.InvalidWorkflowDescriptorException;
 import com.opensymphony.workflow.StoreException;
@@ -31,17 +40,6 @@ import com.opensymphony.workflow.loader.WorkflowDescriptor;
 import com.opensymphony.workflow.loader.WorkflowLoader;
 import com.opensymphony.workflow.spi.WorkflowStore;
 import com.opensymphony.workflow.spi.memory.MemoryWorkflowStore;
-import com.opensymphony.workflow.util.VariableResolver;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
-
-import org.springframework.beans.FatalBeanException;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.Assert;
 
 /**
  * Supports Spring-style configuration of OSWorkflow resources.
@@ -89,10 +87,6 @@ public class ConfigurationBean extends DefaultConfiguration {
 	 */
 	private WorkflowStore workflowStore;
 
-	/**
-	 * User defined resolver - if null the default one will be used.
-	 */
-	private VariableResolver variableResolver;
 	/**
 	 * Creates a new <code>ConfigurationBean</code> with <code>MemoryWorkflowStore</code>
 	 * as the persistence class.
@@ -184,8 +178,7 @@ public class ConfigurationBean extends DefaultConfiguration {
 		Resource resource = this.resourceLoader.getResource(resourceLocation);
 		WorkflowDescriptor workflowDescriptor = null;
 		try {
-			//workflowDescriptor = WorkflowLoader.load(resource.getURL(), true);
-			workflowDescriptor = WorkflowLoader.load(resource.getURL(), false);
+			workflowDescriptor = this.invokeLoader(resource);
 		}
 		catch (IOException ex) {
 			throw new FatalBeanException("Unable to load workflow resource [" + resourceLocation + "].", ex);
@@ -208,6 +201,24 @@ public class ConfigurationBean extends DefaultConfiguration {
 	}
 
 	/**
+	 * Hook which allows subclasses to invoke the approapriate/available method on the WorkflowLoader since between 2.7 and 2.8
+	 * the method signatures changed.
+	 * 
+	 * @see com.opensymphony.workflow.loader.WorkflowLoader#load(java.io.InputStream)
+	 * 
+	 * @param resource resource to load
+	 * @throws WorkflowLoader.load exceptions
+	 * @return loaded workflow descriptor
+	 */
+	protected WorkflowDescriptor invokeLoader(Resource resource) throws IOException, SAXException, InvalidWorkflowDescriptorException {
+		// oswf 2.8 version
+		//return WorkflowLoader.load(resource.getURL(), true);
+
+		// the method exists in both 2.7 and 2.8(deprecated)
+		return WorkflowLoader.load(resource.getInputStream());
+	}
+
+	/**
 	 * @see com.opensymphony.workflow.config.DefaultConfiguration#getWorkflowStore()
 	 */
 	public WorkflowStore getWorkflowStore() throws StoreException {
@@ -224,17 +235,4 @@ public class ConfigurationBean extends DefaultConfiguration {
 		this.workflowStore = workflowStore;
 	}
 
-	/**
-	 * @see com.opensymphony.workflow.config.DefaultConfiguration#getVariableResolver()
-	 */
-	public VariableResolver getVariableResolver() {
-		return (this.variableResolver == null) ? super.getVariableResolver() : this.variableResolver;
-	}
-
-	/**
-	 * @param variableResolver The variableResolver to set.
-	 */
-	public void setVariableResolver(VariableResolver variableResolver) {
-		this.variableResolver = variableResolver;
-	}
 }

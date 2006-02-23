@@ -2,14 +2,46 @@
 
 <project name="osworkflow" default="dist">
 
-  <property file="build.properties"/>
-  <property file="project.properties"/>
-  <property file="${common.build.dir}/build.properties"/>
-  <property file="${common.build.dir}/project.properties"/>
-  <property file="${user.home}/build.properties"/>
+	<property file="build.properties" />
+	<property file="project.properties" />
+	<property file="${common.build.dir}/build.properties" />
+	<property file="${common.build.dir}/project.properties" />
+	<property file="${user.home}/build.properties" />
 
-  <import file="${common.build.dir}/common-targets.xml"/>
-  <import file="${common.build.dir}/clover-targets.xml"/>
-  <import file="${common.build.dir}/doc-targets.xml" />
-  
+	<property name="project.title" value="Spring Modules OsWorkflow" />
+	<property name="project.package" value="org.springmodules.workflow.osworkflow" />
+
+
+	<import file="${common.build.dir}/common-targets.xml" />
+	<import file="${common.build.dir}/clover-targets.xml" />
+	<import file="${common.build.dir}/doc-targets.xml" />
+
+
+	<!-- main jar target -->
+	<target name="jar.main">
+		<!-- main jar -->
+		<jar jarfile="${target.lib.dir}/${project.name}.jar">
+			<manifest>
+				<attribute name="Implementation-Vendor" value="${org.name}" />
+				<attribute name="Implementation-Title" value="${project.title}" />
+				<attribute name="Implementation-Version" value="${project.version}" />
+			</manifest>
+			<fileset dir="${target.classes.dir}">
+				<!-- todo, make this more selective, we don't neccessarily want to include everything here -->
+			</fileset>
+		</jar>
+
+		<!-- os28 support jar -->
+		<jar jarfile="${target.lib.dir}/${project.name}-v27.jar">
+			<manifest>
+				<attribute name="Implementation-Vendor" value="${org.name}" />
+				<attribute name="Implementation-Title" value="${project.title}" />
+				<attribute name="Implementation-Version" value="${project.version}" />
+			</manifest>
+			<fileset dir="${target.classes.dir}" excludes="**/v28/**/*">
+				<!-- todo, make this more selective, we don't neccessarily want to include everything here -->
+			</fileset>
+		</jar>
+	</target>
+
 </project>

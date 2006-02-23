@@ -27,7 +27,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
 import com.opensymphony.module.propertyset.PropertySet;
-import com.opensymphony.workflow.TypeResolver;
+
 import com.opensymphony.workflow.Workflow;
 import com.opensymphony.workflow.WorkflowException;
 import com.opensymphony.workflow.basic.BasicWorkflow;
@@ -61,8 +61,6 @@ import com.opensymphony.workflow.spi.Step;
  * <p/>
  * Both the <code>workflowName</code> and <code>contextManager</code> parameters are required.
  * <p/>
- * It is recommended to use SpringTypeResolver, available inside the official OsWorkflow 2.8 distribution, which allows osworkflow 
- * to obtain business logic components (conditions, functions, and so on) from the ApplicationContext. 
  * 
  * @author Rob Harrop
  * @see WorkflowException
@@ -91,25 +89,6 @@ public class OsWorkflowTemplate implements InitializingBean {
 	 * The name of the workflow definition to use.
 	 */
 	private String workflowName;
-
-	/**
-	 * OsWorkflow Type typeResolver.
-	 */
-	private TypeResolver typeResolver;
-
-	/**
-	 * @return Returns the typeResolver.
-	 */
-	public TypeResolver getTypeResolver() {
-		return typeResolver;
-	}
-
-	/**
-	 * @param typeResolver The typeResolver to set.
-	 */
-	public void setTypeResolver(TypeResolver resolver) {
-		this.typeResolver = resolver;
-	}
 
 	/**
 	 * Sets the <code>Configuration<code> used to load workflow definitions.
@@ -456,14 +435,11 @@ public class OsWorkflowTemplate implements InitializingBean {
 	}
 
 	/**
-	 * Creates a <code>Workflow</code> for the supplied caller.
+	 * Creates a <code>Workflow</code> for the supplied caller. The method acts as a hook
+	 * for subclasses that want to change the way the workflow is created.
 	 */
 	protected Workflow createWorkflow(String caller) throws WorkflowException {
-		BasicWorkflow workflow = new BasicWorkflow(caller);
-		// inject the type resolver if there is such a case
-		if (typeResolver != null)
-			workflow.setResolver(typeResolver);
-		return workflow;
+		return new BasicWorkflow(caller);
 	}
 
 	/**
