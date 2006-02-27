@@ -37,7 +37,7 @@
 
     <target name="statics.merlin" if="merlin.available">
         <echo>copying non-Java resources from '${merlin.src.dir}'</echo>
-        <copy todir="${merlin.classes.dir}">
+        <copy todir="${target.classes.dir}">
             <fileset dir="${merlin.src.dir}">
                 <exclude name="**/*.java" />
             </fileset>
