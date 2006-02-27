@@ -1,20 +1,22 @@
 <ivyconf>
-	<resolvers>
-		<chain name="custom">
-			<!-- some sf repository which contains JBoss jars -->
-			<ibiblio name="moria-maven" root="http://moria.sourceforge.net/maven/" pattern="[module]/[type]s/[artifact]-[revision].[ext]"/>
-			<!-- jcs official url -->
-			<url name="jcs">
-				<!-- url pattern for jcs svn repository -->
-		        <artifact pattern="http://svn.apache.org/viewcvs.cgi/*checkout*/jakarta/jcs/trunk/tempbuild/[artifact]-[revision].[ext]" />
-			</url>
-			<!-- xpp3_min official url -->
-			<url name="xpp3">
-				<!-- url pattern for jcs svn repository -->
-		        <artifact pattern="http://www.extreme.indiana.edu/dist/java-repository/xpp3/jars/[artifact]-[revision].[ext]" />
-			</url>
-			
-			
-		</chain>
-	</resolvers>
+  <resolvers>
+    <chain name="custom">
+      <!-- some sf repository which contains JBoss jars -->
+      <ibiblio name="moria-maven"
+        root="http://moria.sourceforge.net/maven/"
+        pattern="[module]/[type]s/[artifact]-[revision].[ext]" />
+      <!-- jcs official url -->
+      <url name="jcs">
+        <!-- url pattern for jcs svn repository -->
+        <artifact
+          pattern="http://svn.apache.org/viewcvs.cgi/*checkout*/jakarta/jcs/trunk/tempbuild/[artifact]-[revision].[ext]" />
+      </url>
+      <!-- xpp3_min official url -->
+      <url name="xpp3">
+        <!-- url pattern for jcs svn repository -->
+        <artifact
+          pattern="http://www.extreme.indiana.edu/dist/java-repository/xpp3/jars/[artifact]-[revision].[ext]" />
+      </url>
+    </chain>
+  </resolvers>
 </ivyconf>
