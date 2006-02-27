@@ -17,9 +17,9 @@
  */
 package org.springmodules.util;
 
-import junit.framework.TestCase;
+import java.util.Arrays;
 
-import org.springmodules.AssertExt;
+import junit.framework.TestCase;
 
 /**
  * <p>
@@ -41,17 +41,18 @@ public class StringsTests extends TestCase {
   public void testRemoveDuplicatesWithDuplicatedValues() {
     String[] array = { "str1", "str2", "str1" };
     String[] expected = { "str1", "str2" };
-    AssertExt.assertEquals(expected, Strings.removeDuplicates(array));
+    assertTrue(Arrays.equals(expected, Strings.removeDuplicates(array)));
   }
 
   public void testRemoveDuplicatesWithEmptyArray() {
     String[] expected = new String[0];
-    AssertExt.assertEquals(expected, Strings.removeDuplicates(expected));
+    assertTrue(Arrays.equals(expected, Strings.removeDuplicates(new String[0])));
   }
 
   public void testRemoveDuplicatesWithoutDuplicatedValues() {
     String[] expected = { "str1", "str2", "str3" };
-    AssertExt.assertEquals(expected, Strings.removeDuplicates(expected));
+    assertTrue(Arrays.equals(expected, Strings.removeDuplicates(new String[] {
+        "str1", "str2", "str3" })));
   }
-  
+
 }

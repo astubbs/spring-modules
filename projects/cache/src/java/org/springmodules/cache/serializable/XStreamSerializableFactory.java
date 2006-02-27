@@ -133,6 +133,19 @@ public class XStreamSerializableFactory implements SerializableFactory {
   }
 
   /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof XStreamSerializableFactory)) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * @see SerializableFactory#getOriginalValue(Object)
    */
   public Object getOriginalValue(Object obj) {
@@ -142,6 +155,13 @@ public class XStreamSerializableFactory implements SerializableFactory {
 
     ObjectWrapper wrapper = (ObjectWrapper) obj;
     return wrapper.getValue();
+  }
+
+  /**
+   * @see java.lang.Object#hashCode()
+   */
+  public int hashCode() {
+    return 3982;
   }
 
   /**

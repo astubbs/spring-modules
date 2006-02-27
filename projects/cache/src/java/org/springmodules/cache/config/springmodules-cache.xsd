@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
 <xsd:schema xmlns="http://www.springmodules.org/schema/cache"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   targetNamespace="http://www.springmodules.org/schema/cache"
@@ -7,127 +5,63 @@
 
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
 
-  <xsd:element name="config">
-    <xsd:complexType>
-      <xsd:attribute name="id" type="xsd:string"
-        default="cacheProvider" />
+  <xsd:complexType name="config">
+    <xsd:attribute name="id" type="xsd:string" default="cacheProvider" />
+    <xsd:attribute name="failQuietly" default="false">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="true" />
+          <xsd:enumeration value="false" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="serializableFactory" default="none">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="none" />
+          <xsd:enumeration value="XSTREAM" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
 
-      <xsd:attribute name="provider" use="required">
-        <xsd:simpleType>
-          <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="EHCACHE" />
-            <xsd:enumeration value="JBOSS_CACHE" />
-            <xsd:enumeration value="JCS" />
-            <xsd:enumeration value="OSCACHE" />
-          </xsd:restriction>
-        </xsd:simpleType>
-      </xsd:attribute>
+  <xsd:complexType name="config-with-file-support">
+    <xsd:complexContent>
+      <xsd:extension base="config">
+        <xsd:attribute name="configLocation" type="xsd:string"
+          use="optional" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
 
-      <xsd:attribute name="configLocation" type="xsd:string"
-        use="optional" />
+  <xsd:complexType name="base-config-strategy">
+    <xsd:attribute name="providerId" type="xsd:string"
+      default="cacheProvider" />
+  </xsd:complexType>
 
-      <xsd:attribute name="failQuietly" default="false">
-        <xsd:simpleType>
-          <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="true" />
-            <xsd:enumeration value="false" />
-          </xsd:restriction>
-        </xsd:simpleType>
-      </xsd:attribute>
+  <xsd:complexType name="beanRef">
+    <xsd:complexContent>
+      <xsd:extension base="base-config-strategy">
+        <xsd:attribute name="id" type="xsd:string" use="required" />
+        <xsd:attribute name="refId" type="xsd:string" use="required" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
 
-      <xsd:attribute name="serializableFactory" default="none">
-        <xsd:simpleType>
-          <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="none" />
-            <xsd:enumeration value="XSTREAM" />
-          </xsd:restriction>
-        </xsd:simpleType>
-      </xsd:attribute>
-    </xsd:complexType>
-  </xsd:element>
+  <xsd:complexType name="interceptors">
+    <xsd:complexContent>
+      <xsd:extension base="base-config-strategy">
+        <xsd:attribute name="cachingInterceptorId" type="xsd:string"
+          default="cachingInterceptor" />
+        <xsd:attribute name="flushingInterceptorId" type="xsd:string"
+          default="flushingInterceptor" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
 
-  <xsd:element name="annotations">
-    <xsd:complexType>
-      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-        <xsd:element ref="cachingListeners" minOccurs="0" maxOccurs="1" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:any namespace="##other" processContents="strict" />
-        </xsd:choice>
-      </xsd:sequence>
 
-      <xsd:attribute name="providerId" type="xsd:string"
-        default="cacheProvider" />
-
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="beanRef">
-    <xsd:complexType>
-      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-        <xsd:element ref="cachingListeners" minOccurs="0" maxOccurs="1" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:any namespace="##other" processContents="strict" />
-        </xsd:choice>
-      </xsd:sequence>
-
-      <xsd:attribute name="id" type="xsd:string" use="required" />
-
-      <xsd:attribute name="providerId" type="xsd:string"
-        default="cacheProvider" />
-
-      <xsd:attribute name="ref" type="xsd:string" use="required" />
-
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="commons-attributes">
-    <xsd:complexType>
-      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-        <xsd:element ref="cachingListeners" minOccurs="0" maxOccurs="1" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:any namespace="##other" processContents="strict" />
-        </xsd:choice>
-      </xsd:sequence>
-
-      <xsd:attribute name="providerId" type="xsd:string"
-        default="cacheProvider" />
-
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="interceptors">
-    <xsd:complexType>
-      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-        <xsd:element ref="cachingListeners" minOccurs="0" maxOccurs="1" />
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:any namespace="##other" processContents="strict" />
-        </xsd:choice>
-      </xsd:sequence>
-
-      <xsd:attribute name="providerId" type="xsd:string"
-        default="cacheProvider" />
-
-      <xsd:attribute name="cachingInterceptorId" type="xsd:string"
-        default="cachingInterceptor" />
-
-      <xsd:attribute name="flushingInterceptorId" type="xsd:string"
-        default="flushingInterceptor" />
-
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="cachingListeners">
-    <xsd:complexType>
-      <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-        <xsd:element ref="cachingListener" />
-      </xsd:sequence>
-    </xsd:complexType>
-  </xsd:element>
-
-  <xsd:element name="cachingListener">
-    <xsd:complexType>
-      <xsd:attribute name="ref" type="xsd:string" use="required" />
-    </xsd:complexType>
-  </xsd:element>
+  <xsd:complexType name="cachingListener">
+    <xsd:attribute name="refId" type="xsd:string" use="required" />
+  </xsd:complexType>
 
 </xsd:schema>

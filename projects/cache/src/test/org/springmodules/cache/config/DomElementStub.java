@@ -162,7 +162,7 @@ public class DomElementStub implements Element {
    * @see Node#getLocalName()
    */
   public String getLocalName() {
-    throw new UnsupportedOperationException();
+    return nodeName;
   }
 
   /**

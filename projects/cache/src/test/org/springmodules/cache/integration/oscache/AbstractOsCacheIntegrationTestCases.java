@@ -25,7 +25,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
 import org.springframework.util.StringUtils;
 
-import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
+import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 
 /**
@@ -37,7 +37,7 @@ import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAnd
  * @author Alex Ruiz
  */
 public abstract class AbstractOsCacheIntegrationTestCases extends
-    AbstractCacheIntegrationTests {
+    AbstractIntegrationTests {
 
   protected static final String CACHE_CONFIG = "osCacheContext.xml";
 
@@ -47,7 +47,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
   private GeneralCacheAdministrator cacheAdministrator;
 
   /**
-   * @see AbstractCacheIntegrationTests#assertCacheWasFlushed()
+   * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected void assertCacheWasFlushed() {
     KeyAndModel keyAndModel = getKeyAndModel(0);
@@ -64,7 +64,7 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
   }
 
   /**
-   * @see AbstractCacheIntegrationTests#assertObjectWasCached(Object, int)
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
   protected void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) throws Exception {

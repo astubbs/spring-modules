@@ -31,7 +31,7 @@ public final class CoherenceProxyFactoryIntegrationTests extends
     AbstractCoherenceIntegrationTests {
 
   /**
-   * @see org.springmodules.cache.integration.AbstractCacheIntegrationTests#getConfigFileNames()
+   * @see org.springmodules.cache.integration.AbstractIntegrationTests#getConfigFileNames()
    */
   protected String[] getConfigFileNames() {
     return new String[] { CACHE_CONFIG, "coherenceProxyFactoryContext.xml" };

@@ -15,39 +15,43 @@
  * 
  * Copyright @2004 the original author or authors.
  */
-package org.springmodules.cache.integration.tangosol;
+package org.springmodules.cache.integration.ehcache;
 
-import com.tangosol.net.CacheFactory;
-import com.tangosol.net.NamedCache;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
-import org.springmodules.cache.provider.tangosol.CoherenceCachingModel;
+import org.springmodules.cache.provider.PathUtils;
+import org.springmodules.cache.provider.ehcache.EhCacheCachingModel;
 
 /**
  * <p>
  * Template for test cases that verify that the caching module works correctly
- * inside a Spring bean context when using Tangosol Coherence as the cache
- * provider.
+ * inside a Spring bean context when using EHCache as the cache provider.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractCoherenceIntegrationTests extends
+public abstract class AbstractEhCacheTests extends
     AbstractIntegrationTests {
 
   /**
-   * Path of the Spring file specifying the configuration of the cache provider.
+   * Spring file specifying the configuration of the cache manager.
    */
-  protected static final String CACHE_CONFIG = "coherenceContext.xml";
+  protected final String CACHE_CONFIG = "classpath:"
+      + PathUtils.getPackageNameAsPath(getClass()) + "/ehCacheContext.xml";
+
+  private CacheManager cacheManager;
 
   /**
    * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected final void assertCacheWasFlushed() throws Exception {
     int index = 0;
-    Object entry = getCacheElement(index);
-    assertCacheEntryFromCacheIsNull(entry, getKeyAndModel(index).key);
+    Element element = getCacheElement(index);
+    assertCacheEntryFromCacheIsNull(element, getKeyAndModel(index).key);
   }
 
   /**
@@ -55,14 +59,22 @@ public abstract class AbstractCoherenceIntegrationTests extends
    */
   protected final void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) throws Exception {
-    Object entry = getCacheElement(keyAndModelIndex);
-    assertEquals(expectedCachedObject, entry);
+    Element element = getCacheElement(keyAndModelIndex);
+    assertEquals(expectedCachedObject, element.getValue());
   }
 
-  private Object getCacheElement(int keyAndModelIndex) throws Exception {
+  /**
+   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
+   */
+  protected final void onSetUp() {
+    cacheManager = (CacheManager) applicationContext
+        .getBean(getCacheManagerBeanId());
+  }
+
+  private Element getCacheElement(int keyAndModelIndex) throws Exception {
     KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
-    CoherenceCachingModel model = (CoherenceCachingModel) keyAndModel.model;
-    NamedCache cache = CacheFactory.getCache(model.getCacheName());
+    EhCacheCachingModel model = (EhCacheCachingModel) keyAndModel.model;
+    Cache cache = cacheManager.getCache(model.getCacheName());
     return cache.get(keyAndModel.key);
   }
 }

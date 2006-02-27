@@ -1,5 +1,5 @@
 /* 
- * Created on Sep 1, 2005
+ * Created on Oct 31, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -12,32 +12,29 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- *
- * Copyright @2005 the original author or authors.
+ * 
+ * Copyright @2004 the original author or authors.
  */
 
-package org.springmodules.cache.integration.jboss;
+package org.springmodules.cache.integration.ehcache;
 
 /**
  * <p>
- * Verifies that the caching module works correctly when using JBossCache as the
+ * Verifies that the caching module works correctly when using EHCache as the
  * cache provider and the caching services are declared using a
  * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public final class JbossCacheProxyFactoryIntegrationTests extends
-    AbstractJbossCacheIntegrationTestCases {
-
-  public JbossCacheProxyFactoryIntegrationTests() {
-    super();
-  }
+public class EhCacheCacheProxyFactoryBeanTests extends
+    AbstractEhCacheTests {
 
   /**
    * @see org.springmodules.cache.integration.AbstractIntegrationTests#getConfigFileNames()
    */
-  protected String[] getConfigFileNames() {
-    return new String[] { CACHE_CONFIG, "jbossCacheProxyFactoryContext.xml" };
+  protected final String[] getConfigFileNames() {
+    return new String[] { CACHE_CONFIG,
+        "ehCacheCacheProxyFactoryBeanContext.xml" };
   }
 }

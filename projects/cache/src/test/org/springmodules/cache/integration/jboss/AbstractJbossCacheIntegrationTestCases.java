@@ -20,7 +20,7 @@ package org.springmodules.cache.integration.jboss;
 
 import org.jboss.cache.TreeCache;
 
-import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
+import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.provider.jboss.JbossCacheCachingModel;
 
@@ -33,7 +33,7 @@ import org.springmodules.cache.provider.jboss.JbossCacheCachingModel;
  * @author Alex Ruiz
  */
 public abstract class AbstractJbossCacheIntegrationTestCases extends
-    AbstractCacheIntegrationTests {
+    AbstractIntegrationTests {
 
   protected static final String CACHE_CONFIG = "jbossCacheContext.xml";
 
@@ -43,7 +43,7 @@ public abstract class AbstractJbossCacheIntegrationTestCases extends
   private TreeCache cacheManager;
 
   /**
-   * @see AbstractCacheIntegrationTests#assertCacheWasFlushed()
+   * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected void assertCacheWasFlushed() throws Exception {
     int index = 0;
@@ -52,7 +52,7 @@ public abstract class AbstractJbossCacheIntegrationTestCases extends
   }
 
   /**
-   * @see AbstractCacheIntegrationTests#assertObjectWasCached(Object, int)
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
   protected void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) throws Exception {

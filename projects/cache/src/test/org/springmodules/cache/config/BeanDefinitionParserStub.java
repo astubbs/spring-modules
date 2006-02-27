@@ -1,5 +1,5 @@
 /* 
- * Created on Jan 21, 2006
+ * Created on Feb 26, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,20 +19,31 @@ package org.springmodules.cache.config;
 
 import org.w3c.dom.Element;
 
-import org.springmodules.cache.CachingModel;
-import org.springmodules.cache.FlushingModel;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
 /**
  * <p>
- * TODO Document class.
+ * Implementation of <code>{@link BeanDefinitionParser}</code> to be used as
+ * stub.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public interface CacheModelParser {
+public class BeanDefinitionParserStub implements BeanDefinitionParser {
 
-  CachingModel parseCachingModel(Element element);
+  /**
+   * Constructor.
+   */
+  public BeanDefinitionParserStub() {
+    super();
+  }
 
-  FlushingModel parseFlushingModel(Element flushingModel);
+  /**
+   * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
+   */
+  public void parse(Element element, BeanDefinitionRegistry registry) {
+    // do nothing.
+  }
 
 }

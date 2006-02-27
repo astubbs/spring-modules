@@ -24,7 +24,7 @@ import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 
-import org.springmodules.cache.integration.AbstractCacheIntegrationTests;
+import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.provider.jcs.JcsCachingModel;
 
@@ -37,7 +37,7 @@ import org.springmodules.cache.provider.jcs.JcsCachingModel;
  * @author Alex Ruiz
  */
 public abstract class AbstractJcsIntegrationTests extends
-    AbstractCacheIntegrationTests {
+    AbstractIntegrationTests {
 
   protected static final String CACHE_CONFIG = "jcsContext.xml";
 
@@ -47,7 +47,7 @@ public abstract class AbstractJcsIntegrationTests extends
   private CompositeCacheManager cacheManager;
 
   /**
-   * @see AbstractCacheIntegrationTests#assertCacheWasFlushed()
+   * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected final void assertCacheWasFlushed() {
     int index = 0;
@@ -56,7 +56,7 @@ public abstract class AbstractJcsIntegrationTests extends
   }
 
   /**
-   * @see AbstractCacheIntegrationTests#assertObjectWasCached(Object, int)
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
   protected final void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) {
