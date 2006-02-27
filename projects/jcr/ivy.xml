@@ -50,7 +50,7 @@
 		<artifact name="jackrabbit" type="jar"/>		
 	</dependency>
 	
-	<dependency org="apache" name="jackrabbit-jca" rev="1.0-snapshot"/>
+	<dependency org="apache" name="jackrabbit-jca" rev="1.0-SNAPSHOT"/>
 	  
     <dependency org="concurrent" name="concurrent" rev="1.3.4" conf="test->default" />
 		
