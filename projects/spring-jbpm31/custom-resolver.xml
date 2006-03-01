@@ -1,0 +1,12 @@
+<!-- empty chain resolver -->
+<ivyconf>
+	<resolvers>
+		<chain name="custom">
+			<!-- hack to get around org.hibernate naming -->
+			<url name="ibiblio-m2-org">			
+				<artifact pattern="http://www.ibiblio.org/maven2/org/[artifact]/[artifact]/[revision]/[artifact]-[revision].[ext]" />				
+			</url>
+
+		</chain>
+	</resolvers>
+</ivyconf>
