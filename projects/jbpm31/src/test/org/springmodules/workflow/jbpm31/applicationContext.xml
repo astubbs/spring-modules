@@ -21,7 +21,7 @@
                 <prop key="hibernate.show_sql">true</prop>
             </props>
         </property>
-        <property name="schemaUpdate" value="false"/>
+        <property name="schemaUpdate" value="true"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">

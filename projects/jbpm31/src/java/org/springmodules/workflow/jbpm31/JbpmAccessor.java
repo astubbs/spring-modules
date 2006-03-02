@@ -1,16 +1,19 @@
 /**
  * Created on Feb 21, 2006
  *
- * $Id: JbpmAccessor.java,v 1.1 2006/03/02 14:56:00 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JbpmAccessor.java,v 1.2 2006/03/02 16:01:13 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.workflow.jbpm31;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.jbpm.JbpmConfiguration;
 import org.jbpm.JbpmException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.dao.DataAccessException;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 
 /**
  * @author Costin Leau
@@ -34,15 +37,20 @@ public class JbpmAccessor implements InitializingBean{
 	}
 	
 	/**
-	 * Utility method for converting the jbpm exceptions.
-	 * 
-	 * @param exception
+	 * Converts Jbpm RuntimeExceptions into Spring specific ones (if possible).
+	 * @param ex
 	 * @return
 	 */
-	public RuntimeException convertJbpmException(JbpmException exception) {
-		return JbpmConfigurationUtils.convertJbpmException(exception);
+	public static RuntimeException convertJbpmException(JbpmException ex) {
+		// decode nested exceptions
+		if (ex.getCause() instanceof HibernateException) {
+			DataAccessException rootCause = SessionFactoryUtils.convertHibernateAccessException((HibernateException) ex.getCause());
+			return rootCause;
+		}
+
+		// cannot convert the exception in any meaningful way
+		return ex;
 	}
-	
 
 	/**
 	 * @return Returns the jbpmConfiguration.
