@@ -28,7 +28,10 @@ import org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean;
 
 /**
  * <p>
- * TODO Document class.
+ * Template that handles the parsing of the XML tag "beanRef". Creates,
+ * configures and registers and implementation of
+ * <code>{@link CacheProxyFactoryBean}</code> in the provided registry of bean
+ * definitions.
  * </p>
  * 
  * @author Alex Ruiz
@@ -37,12 +40,28 @@ public abstract class AbstractCacheProxyFactoryBeanParser extends
     AbstractCacheSetupStrategyParser {
 
   /**
+   * Creates and registers a <code>{@link CacheProxyFactoryBean}</code> by
+   * parsing the given XML element.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @param registry
+   *          the registry of bean definitions
+   * @param propertySource
+   *          contains common properties for the different cache setup
+   *          strategies
+   * @throws IllegalStateException
+   *           if the bean to be referenced by the
+   *           <code>CacheProxyFactoryBean</code> does not exist in the
+   *           registry
+   *           
    * @see AbstractCacheSetupStrategyParser#parseCacheSetupStrategy(Element,
    *      BeanDefinitionRegistry, CacheSetupStrategyPropertySource)
    */
-  protected void parseCacheSetupStrategy(Element element,
+  protected final void parseCacheSetupStrategy(Element element,
       BeanDefinitionRegistry registry,
-      CacheSetupStrategyPropertySource propertySource) {
+      CacheSetupStrategyPropertySource propertySource)
+      throws IllegalStateException {
 
     String beanRefId = element.getAttribute("refId");
     if (!registry.containsBeanDefinition(beanRefId)) {

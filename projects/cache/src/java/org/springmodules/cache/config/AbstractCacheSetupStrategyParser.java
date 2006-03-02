@@ -40,7 +40,8 @@ import org.springmodules.cache.interceptor.caching.CachingListener;
 
 /**
  * <p>
- * TODO Document class.
+ * Template that handles the parsing of setup strategy for declarative caching
+ * services.
  * </p>
  * 
  * @author Alex Ruiz
@@ -48,26 +49,33 @@ import org.springmodules.cache.interceptor.caching.CachingListener;
 public abstract class AbstractCacheSetupStrategyParser implements
     BeanDefinitionParser {
 
+  /**
+   * Contains the names of the XML attributes used in this parser.
+   */
   private static class XmlAttribute {
 
     static final String TARGET = "target";
   }
 
   /**
-   * Constructor.
-   */
-  public AbstractCacheSetupStrategyParser() {
-    super();
-  }
-
-  /**
+   * Parses the given XML element containing the properties and/or sub-elements
+   * necessary to configure a strategy for setting up declarative caching
+   * services.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @param registry
+   *          the registry of bean definitions
    * @throws IllegalStateException
    *           if the cache provider facade is <code>null</code>
    * @throws IllegalStateException
-   *           if the cache provider facade is not valid
+   *           if the cache provider facade is in invalid state
+   * @throws IllegalStateException
+   *           if any of the caching listeners does not exist in the registry
    * @throws IllegalStateException
    *           if any of the caching listeners is not an instance of
    *           <code>CachingListener</code>
+   * 
    * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
    * @see CacheProviderFacadeValidator#validate(AbstractBeanDefinition)
    */
@@ -97,37 +105,65 @@ public abstract class AbstractCacheSetupStrategyParser implements
     parseCacheSetupStrategy(element, registry, propertySource);
   }
 
+  /**
+   * @return the parser for caching and flushing models
+   */
   protected abstract CacheModelParser getCacheModelParser();
 
+  /**
+   * @return the validator of the properties of the
+   *         <code>CacheProviderFacade</code>
+   */
   protected abstract CacheProviderFacadeValidator getCacheProviderFacadeValidator();
 
   /**
-   * Parses the strategy for setting up caching services.
+   * Parses the given XML element to create the strategy for setting up
+   * declarative caching services.
    * 
    * @param element
-   *          the XML element containing the configuration settings for the
-   *          strategy
+   *          the XML element to parse
    * @param registry
-   *          the Spring beans registry
-   * @param newPropertySource
+   *          the registry of bean definitions
+   * @param propertySource
    *          contains common properties for the different cache setup
    *          strategies
    */
   protected abstract void parseCacheSetupStrategy(Element element,
       BeanDefinitionRegistry registry,
-      CacheSetupStrategyPropertySource newPropertySource);
+      CacheSetupStrategyPropertySource propertySource);
 
+  /**
+   * Parses the given XML element containing a caching listener to be added to
+   * the caching setup strategy.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @param registry
+   *          the registry of bean definitions
+   * @return a reference to a caching listener already registered in the given
+   *         registry
+   * @throws IllegalStateException
+   *           if the given id references a caching listener that does not exist
+   *           in the registry
+   * @throws IllegalStateException
+   *           if the given id references a caching listener that is not an
+   *           instance of <code>CachingListener</code>
+   */
   private RuntimeBeanReference parseCachingListener(Element element,
       BeanDefinitionRegistry registry) throws IllegalStateException {
 
     String refId = element.getAttribute("refId");
+
+    if (!registry.containsBeanDefinition(refId)) {
+      throw new IllegalStateException("The caching listener with id "
+          + StringUtils.quote(refId)
+          + " does not exist in the registry of bean definitions");
+    }
+
     RootBeanDefinition listenerBeanDefinition = (RootBeanDefinition) registry
         .getBeanDefinition(refId);
 
     Class listenerClass = CachingListener.class;
-
-    System.out.println("listenerBeanDefinition: "
-        + listenerBeanDefinition.getBeanClass());
 
     if (!listenerClass.isAssignableFrom(listenerBeanDefinition.getBeanClass())) {
       throw new IllegalStateException("The caching listener with id "
@@ -137,6 +173,23 @@ public abstract class AbstractCacheSetupStrategyParser implements
     return new RuntimeBeanReference(refId);
   }
 
+  /**
+   * Parses the given XML element containing references to the caching listeners
+   * to be added to the caching setup strategy.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @param registry
+   *          the registry of bean definitions
+   * @return a list containing references to caching listeners already
+   *         registered in the given register
+   * @throws IllegalStateException
+   *           if any of the given ids reference a caching listener that does
+   *           not exist in the registry
+   * @throws IllegalStateException
+   *           if the given id references a caching listener that is not an
+   *           instance of <code>CachingListener</code>
+   */
   private List parseCachingListeners(Element element,
       BeanDefinitionRegistry registry) throws IllegalStateException {
 
@@ -166,6 +219,17 @@ public abstract class AbstractCacheSetupStrategyParser implements
     return listeners;
   }
 
+  /**
+   * Parses the given XML element which sub-elements containing the properties
+   * of the caching models to create.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @return a map containing the parsed caching models.The key of each element
+   *         is the value of the XML attribute <code>target</code> (a String)
+   *         and the value is the caching model (an instance of
+   *         <code>CachingModel</code>)
+   */
   private Map parseCachingModels(Element element) {
     List modelElements = DomUtils.getChildElementsByTagName(element, "caching",
         true);
@@ -188,6 +252,17 @@ public abstract class AbstractCacheSetupStrategyParser implements
     return models;
   }
 
+  /**
+   * Parses the given XML element which sub-elements containing the properties
+   * of the flushing models to create.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @return a map containing the parsed flushing models.The key of each element
+   *         is the value of the XML attribute <code>target</code> (a String)
+   *         and the value is the flushing model (an instance of
+   *         <code>FlushingModel</code>)
+   */
   private Map parseFlushingModels(Element element) {
     List modelElements = DomUtils.getChildElementsByTagName(element,
         "flushing", true);

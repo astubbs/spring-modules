@@ -30,21 +30,29 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory;
 
 /**
  * <p>
- * TODO Document class.
+ * Template that handles the parsing of the XML tag "config". Creates and
+ * registers and implementation of
+ * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
+ * in the provided registry of bean definitions.
  * </p>
  * 
  * @author Alex Ruiz
- * 
- * @see #parse(Element, BeanDefinitionRegistry)
  */
 public abstract class AbstractCacheProviderFacadeParser implements
     BeanDefinitionParser {
 
+  /**
+   * Contains the names of the bean properties used in this parser.
+   */
   private static abstract class PropertyName {
 
     static final String SERIALIZABLE_FACTORY = "serializableFactory";
   }
 
+  /**
+   * Contains the valid values for the XML element
+   * <code>serializableFactory</code>.
+   */
   private static abstract class SerializableFactory {
 
     static final String NONE = "NONE";
@@ -52,6 +60,21 @@ public abstract class AbstractCacheProviderFacadeParser implements
     static final String XSTREAM = "XSTREAM";
   }
 
+  /**
+   * Parses the specified XML element which contains the properties of the
+   * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
+   * to register in the given registry of bean definitions.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @param registry
+   *          the registry of bean definitions
+   * @throws IllegalStateException
+   *           if the value of the property <code>serializableFactory</code>
+   *           is not equal to "NONE" or "XSTREAM"
+   * 
+   * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
+   */
   public final void parse(Element element, BeanDefinitionRegistry registry)
       throws IllegalStateException {
     String id = element.getAttribute("id");
@@ -69,7 +92,8 @@ public abstract class AbstractCacheProviderFacadeParser implements
   }
 
   /**
-   * Gives subclasses the opportunity to parse their own bean definitions.
+   * Gives subclasses (of this class) the opportunity to parse their own bean
+   * definitions.
    * 
    * @param cacheProviderFacadeId
    *          the id of the already registered <code>CacheProviderFacade</code>
@@ -77,7 +101,7 @@ public abstract class AbstractCacheProviderFacadeParser implements
    *          the XML element containing the values needed to parse bean
    *          definitions
    * @param registry
-   *          the registry where bean definitions get registered
+   *          the registry of bean definitions
    */
   protected void doParse(String cacheProviderFacadeId, Element element,
       BeanDefinitionRegistry registry) {
@@ -85,10 +109,20 @@ public abstract class AbstractCacheProviderFacadeParser implements
   }
 
   /**
-   * @return the class of the cache provider facade to register.
+   * @return the class of the <code>CacheProviderFacade</code> to register.
    */
   protected abstract Class getCacheProviderFacadeClass();
 
+  /**
+   * Parses the given XML element to obtain the value of the property
+   * <code>failQuietly</code>. This property specifies if any exception
+   * thrown at run-time by the cache should be propagated (<code>false</code>)
+   * to the application or not (<code>true</code>.)
+   * 
+   * @param element
+   *          the XML element to parse
+   * @return the value of the property <code>failQuietly</code>
+   */
   private PropertyValue parseFailQuietlyEnabledProperty(Element element) {
     String failQuietlyAttr = element.getAttribute("failQuietly");
     Boolean value = Boolean.FALSE;
@@ -100,6 +134,18 @@ public abstract class AbstractCacheProviderFacadeParser implements
     return new PropertyValue("failQuietlyEnabled", value);
   }
 
+  /**
+   * Parses the given XML element to obtain the value of the property
+   * <code>serializableFactory</code>. This property specify the factory that
+   * forces cache entries to implement the interface <code>Serializable</code>.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @return the value of the property <code>serializableFactory</code>
+   * @throws IllegalStateException
+   *           if the value of the property <code>serializableFactory</code>
+   *           is not equal to "NONE" or "XSTREAM"
+   */
   private PropertyValue parseSerializableFactoryProperty(Element element)
       throws IllegalStateException {
     String serializableFactoryAttr = element

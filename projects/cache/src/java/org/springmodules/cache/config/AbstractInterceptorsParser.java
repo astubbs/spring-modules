@@ -28,7 +28,10 @@ import org.springmodules.cache.interceptor.flush.MethodMapFlushingInterceptor;
 
 /**
  * <p>
- * TODO Document class.
+ * Template that handles the parsing of the XML tag "interceptors". Creates and
+ * registers instances of <code>{@link MethodMapCachingInterceptor}</code> and
+ * <code>{@link MethodMapFlushingInterceptor}</code> which can be used with
+ * <code>{@link org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator}</code>
  * </p>
  * 
  * @author Alex Ruiz
@@ -37,6 +40,19 @@ public abstract class AbstractInterceptorsParser extends
     AbstractCacheSetupStrategyParser {
 
   /**
+   * Creates and registers instances
+   * <code>{@link MethodMapCachingInterceptor}</code> and
+   * <code>{@link MethodMapFlushingInterceptor}</code> by parsing the given
+   * XML element.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @param registry
+   *          the registry of bean definitions
+   * @param propertySource
+   *          contains common properties for the different cache setup
+   *          strategies
+   * 
    * @see AbstractCacheSetupStrategyParser#parseCacheSetupStrategy(Element,
    *      BeanDefinitionRegistry, CacheSetupStrategyPropertySource)
    */

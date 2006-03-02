@@ -26,7 +26,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
 
 /**
  * <p>
- * TODO Document class.
+ * Stores properties that are common to all configuration strategies.
  * </p>
  * 
  * @author Alex Ruiz
@@ -41,6 +41,18 @@ public final class CacheSetupStrategyPropertySource {
 
   private Map flushingModels;
 
+  /**
+   * Constructor.
+   * 
+   * @param newCacheProviderFacade
+   *          a reference to the cache provider facade
+   * @param newCachingListeners
+   *          a list of caching listeners
+   * @param newCachingModels
+   *          a list of caching models
+   * @param newFlushingModels
+   *          a list of flushing models
+   */
   public CacheSetupStrategyPropertySource(
       RuntimeBeanReference newCacheProviderFacade, List newCachingListeners,
       Map newCachingModels, Map newFlushingModels) {
@@ -51,6 +63,17 @@ public final class CacheSetupStrategyPropertySource {
     flushingModels = newFlushingModels;
   }
 
+  /**
+   * Returns the properties specified by:
+   * <ul>
+   * <li><code>{@link #getCacheProviderFacade()}</code></li>
+   * <li><code>{@link #getCachingListeners()}</code></li>
+   * <li><code>{@link #getCachingModels()}</code></li>
+   * <li><code>{@link #getFlushingModels()}</code></li>
+   * </ul>
+   * 
+   * @return all the properties stored in this object.
+   */
   public MutablePropertyValues getAllProperties() {
     MutablePropertyValues allPropertyValues = new MutablePropertyValues();
     allPropertyValues.addPropertyValue(getCacheProviderFacade());

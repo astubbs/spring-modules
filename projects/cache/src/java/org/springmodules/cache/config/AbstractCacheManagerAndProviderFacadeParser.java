@@ -31,7 +31,10 @@ import org.springframework.util.StringUtils;
 
 /**
  * <p>
- * TODO Document class.
+ * Template that handles the parsing of the XML tag "config". Creates and
+ * registers and implementation of
+ * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
+ * and a cache manager in the provided registry of bean definitions.
  * </p>
  * 
  * @author Alex Ruiz
@@ -40,17 +43,18 @@ public abstract class AbstractCacheManagerAndProviderFacadeParser extends
     AbstractCacheProviderFacadeParser {
 
   /**
-   * Constructor.
-   */
-  public AbstractCacheManagerAndProviderFacadeParser() {
-    super();
-  }
-
-  /**
+   * Parses the given XML element containing the properties of the cache manager
+   * to register in the given registry of bean definitions.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @param registry
+   *          the registry of bean definitions
+   * 
    * @see AbstractCacheProviderFacadeParser#doParse(String, Element,
    *      BeanDefinitionRegistry)
    */
-  protected void doParse(String cacheProviderFacadeId, Element element,
+  protected final void doParse(String cacheProviderFacadeId, Element element,
       BeanDefinitionRegistry registry) {
     String id = cacheProviderFacadeId + ".cacheManager";
     Class clazz = getCacheManagerClass();
@@ -74,10 +78,13 @@ public abstract class AbstractCacheManagerAndProviderFacadeParser extends
   protected abstract Class getCacheManagerClass();
 
   /**
+   * Parses the given XML element to obtain the value of the property
+   * <code>configLocation</code>. This property specifies the location of the
+   * configuration file to use to configure the cache manager.
+   * 
    * @param element
-   *          the XML element containing the properties for the cache manager
-   *          factory bean
-   * @returns a map containing the properties for the cache manager factory bean
+   *          the XML element to parse
+   * @return the value of the property <code>configLocation</code>
    */
   private PropertyValue parseConfigLocationProperty(Element element) {
     Resource resource = null;

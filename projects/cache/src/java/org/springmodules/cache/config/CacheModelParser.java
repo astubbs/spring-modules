@@ -24,15 +24,31 @@ import org.springmodules.cache.FlushingModel;
 
 /**
  * <p>
- * TODO Document class.
+ * Creates cache models by parsing an XML element.
  * </p>
  * 
  * @author Alex Ruiz
  */
 public interface CacheModelParser {
 
+  /**
+   * Creates a new <code>{@link CachingModel}</code> by parsing the given XML
+   * element.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @return the created caching model
+   */
   CachingModel parseCachingModel(Element element);
 
-  FlushingModel parseFlushingModel(Element flushingModel);
+  /**
+   * Creates a new <code>{@link FlushingModel}</code> by parsing the given XML
+   * element.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @return the created flushing model
+   */
+  FlushingModel parseFlushingModel(Element element);
 
 }

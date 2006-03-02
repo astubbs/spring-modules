@@ -32,7 +32,8 @@ import org.springmodules.cache.interceptor.flush.MetadataFlushingInterceptor;
 
 /**
  * <p>
- * TODO Document class.
+ * Template that handles the parsing of the XML tags related to source-level
+ * metadata attributes.
  * </p>
  * 
  * @author Alex Ruiz
@@ -40,75 +41,134 @@ import org.springmodules.cache.interceptor.flush.MetadataFlushingInterceptor;
 public abstract class AbstractMetadataAttributesParser extends
     AbstractCacheSetupStrategyParser {
 
-  protected abstract void configureInterceptors(
-      MutablePropertyValues cachingInterceptorPropertyValues,
-      MutablePropertyValues flushingInterceptorPropertyValues,
-      BeanDefinitionRegistry registry);
+  /**
+   * Contains the names of beans to register.
+   */
+  private static class BeanName {
+
+    static final String CACHING_INTERCEPTOR = MetadataCachingInterceptor.class
+        .getName();
+
+    static final String FLUSHING_INTERCEPTOR = MetadataFlushingInterceptor.class
+        .getName();
+  }
 
   /**
+   * Adds extra properties to the caching interceptor.
+   * 
+   * @param propertyValues
+   *          the set of properties of the caching interceptor
+   * @param registry
+   *          the registry of bean definitions
+   */
+  protected abstract void configureCachingInterceptor(
+      MutablePropertyValues propertyValues, BeanDefinitionRegistry registry);
+
+  /**
+   * Adds extra properties to the flushing interceptor.
+   * 
+   * @param propertyValues
+   *          the set of properties of the flushing interceptor
+   * @param registry
+   *          the registry of bean definitions
+   */
+  protected abstract void configureFlushingInterceptor(
+      MutablePropertyValues propertyValues, BeanDefinitionRegistry registry);
+
+  /**
+   * Creates and registers the necessary bean definitions to set up
+   * configuration of caching services using source-level metadata attributes.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @param registry
+   *          the registry of bean definitions
+   * @param propertySource
+   *          contains common properties for the different cache setup
+   *          strategies
+   * 
    * @see AbstractCacheSetupStrategyParser#parseCacheSetupStrategy(Element,
    *      BeanDefinitionRegistry, CacheSetupStrategyPropertySource)
    */
-  protected void parseCacheSetupStrategy(Element element,
+  protected final void parseCacheSetupStrategy(Element element,
       BeanDefinitionRegistry registry,
       CacheSetupStrategyPropertySource propertySource) {
 
-    // register "autoproxy"
+    registerAutoproxy(registry);
+    registerCustomBeans(registry);
+    registerCachingInterceptor(registry, propertySource);
+    registerFlushingInterceptor(registry, propertySource);
+    registerCachingAdvisor(registry);
+    registerFlushingAdvisor(registry);
+  }
+
+  /**
+   * Gives subclasses the opportunity to register custom bean definitions in the
+   * given registry.
+   * 
+   * @param registry
+   *          the registry of bean definitions
+   */
+  protected void registerCustomBeans(BeanDefinitionRegistry registry) {
+    // no implementation
+  }
+
+  private void registerAutoproxy(BeanDefinitionRegistry registry) {
     RootBeanDefinition autoproxy = new RootBeanDefinition(
         DefaultAdvisorAutoProxyCreator.class);
     registry.registerBeanDefinition("autoproxy", autoproxy);
+  }
 
-    // create "caching method interceptor"
-    MutablePropertyValues cachingInterceptorProperties = new MutablePropertyValues();
-    cachingInterceptorProperties.addPropertyValue(propertySource
-        .getCacheProviderFacade());
-    cachingInterceptorProperties.addPropertyValue(propertySource
-        .getCachingListeners());
-    cachingInterceptorProperties.addPropertyValue(propertySource
-        .getCachingModels());
-
-    Class cachingInterceptorClass = MetadataCachingInterceptor.class;
-    RootBeanDefinition cachingInterceptor = new RootBeanDefinition(
-        cachingInterceptorClass, cachingInterceptorProperties);
-
-    // create "flushing method interceptor"
-    MutablePropertyValues flushingInterceptorProperties = new MutablePropertyValues();
-    flushingInterceptorProperties.addPropertyValue(propertySource
-        .getCacheProviderFacade());
-    flushingInterceptorProperties.addPropertyValue(propertySource
-        .getFlushingModels());
-
-    Class flushingInterceptorClass = MetadataFlushingInterceptor.class;
-    RootBeanDefinition flushingInterceptor = new RootBeanDefinition(
-        flushingInterceptorClass, flushingInterceptorProperties);
-
-    // add extra properties to the interceptors.
-    configureInterceptors(cachingInterceptorProperties,
-        flushingInterceptorProperties, registry);
-
-    // register interceptors
-    String cachingInterceptorName = cachingInterceptorClass.getName();
-    registry.registerBeanDefinition(cachingInterceptorName, cachingInterceptor);
-
-    String flushingInterceptorName = flushingInterceptorClass.getName();
-    registry.registerBeanDefinition(flushingInterceptorName,
-        flushingInterceptor);
-
-    // create and register advisors
+  private void registerCachingAdvisor(BeanDefinitionRegistry registry) {
     Class cachingAdvisorClass = CachingAttributeSourceAdvisor.class;
     RootBeanDefinition cachingAdvisor = new RootBeanDefinition(
         cachingAdvisorClass);
     cachingAdvisor.getConstructorArgumentValues().addGenericArgumentValue(
-        new RuntimeBeanReference(cachingInterceptorName));
+        new RuntimeBeanReference(BeanName.CACHING_INTERCEPTOR));
     registry.registerBeanDefinition(cachingAdvisorClass.getName(),
         cachingAdvisor);
+  }
 
+  private void registerCachingInterceptor(BeanDefinitionRegistry registry,
+      CacheSetupStrategyPropertySource propertySource) {
+
+    MutablePropertyValues propertyValues = new MutablePropertyValues();
+    propertyValues.addPropertyValue(propertySource.getCacheProviderFacade());
+    propertyValues.addPropertyValue(propertySource.getCachingListeners());
+    propertyValues.addPropertyValue(propertySource.getCachingModels());
+
+    RootBeanDefinition cachingInterceptor = new RootBeanDefinition(
+        MetadataCachingInterceptor.class, propertyValues);
+
+    configureCachingInterceptor(propertyValues, registry);
+
+    String beanName = BeanName.CACHING_INTERCEPTOR;
+    registry.registerBeanDefinition(beanName, cachingInterceptor);
+  }
+
+  private void registerFlushingAdvisor(BeanDefinitionRegistry registry) {
     Class flushingAdvisorClass = FlushingAttributeSourceAdvisor.class;
     RootBeanDefinition flushingAdvisor = new RootBeanDefinition(
         flushingAdvisorClass);
     flushingAdvisor.getConstructorArgumentValues().addGenericArgumentValue(
-        new RuntimeBeanReference(flushingInterceptorName));
+        new RuntimeBeanReference(BeanName.FLUSHING_INTERCEPTOR));
     registry.registerBeanDefinition(flushingAdvisorClass.getName(),
         flushingAdvisor);
+  }
+
+  private void registerFlushingInterceptor(BeanDefinitionRegistry registry,
+      CacheSetupStrategyPropertySource propertySource) {
+
+    MutablePropertyValues propertyValues = new MutablePropertyValues();
+    propertyValues.addPropertyValue(propertySource.getCacheProviderFacade());
+    propertyValues.addPropertyValue(propertySource.getFlushingModels());
+
+    RootBeanDefinition flushingInterceptor = new RootBeanDefinition(
+        MetadataFlushingInterceptor.class, propertyValues);
+
+    configureFlushingInterceptor(propertyValues, registry);
+
+    String beanName = BeanName.FLUSHING_INTERCEPTOR;
+    registry.registerBeanDefinition(beanName, flushingInterceptor);
   }
 }

@@ -21,13 +21,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
-import org.springframework.beans.factory.xml.NamespaceHandler;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.util.ClassUtils;
 
 /**
  * <p>
- * {@link NamespaceHandler} for the <code>cache</code> namespace.
+ * Template for handler of caching-related namespaces.
  * </p>
  * 
  * @author Alex Ruiz
@@ -35,10 +34,20 @@ import org.springframework.util.ClassUtils;
 public abstract class AbstractCacheNamespaceHandler extends
     NamespaceHandlerSupport {
 
+  /**
+   * Logger available to subclasses.
+   */
   protected Log logger = LogFactory.getLog(getClass());
 
   /**
-   * Constructor.
+   * Constructor that registers parsers for the elements:
+   * <ul>
+   * <li>annotations</li>
+   * <li>beanRef</li>
+   * <li>commons-attributes</li>
+   * <li>config</li>
+   * <li>interceptors</li>
+   * </ul>
    */
   public AbstractCacheNamespaceHandler() {
     super();
@@ -75,13 +84,30 @@ public abstract class AbstractCacheNamespaceHandler extends
     registerBeanDefinitionParser("interceptors", getInterceptorsParser());
   }
 
+  /**
+   * @return the class name of the parser for the element "annotations". A
+   *         string is used instead of a class because annotations are part of
+   *         J2SE 5.0 and this handler is compiled against J2SE 1.3.
+   */
   protected abstract String getAnnotationsParserClassName();
 
+  /**
+   * @return the parser for the element "config".
+   */
   protected abstract BeanDefinitionParser getCacheProviderFacadeParser();
 
+  /**
+   * @return the parser for the element "beanRef".
+   */
   protected abstract BeanDefinitionParser getCacheProxyFactoryBeanParser();
 
+  /**
+   * @return the parser for the element "commons-attributes".
+   */
   protected abstract BeanDefinitionParser getCommonsAttributeParser();
 
+  /**
+   * @return the parser for the element "interceptors".
+   */
   protected abstract BeanDefinitionParser getInterceptorsParser();
 }

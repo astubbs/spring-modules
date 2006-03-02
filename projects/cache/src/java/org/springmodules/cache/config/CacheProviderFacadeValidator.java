@@ -21,9 +21,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 
 /**
  * <p>
- * Validator for
- * <code>{@link org.springframework.beans.factory.config.BeanDefinition}</code>s
- * that describe instances of
+ * Validator for bean definitions that describe instances of
  * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>.
  * </p>
  * 
@@ -32,8 +30,8 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 public interface CacheProviderFacadeValidator {
 
   /**
-   * Validates that the given bean definition describes a valid cache provider
-   * facade.
+   * Validates that the given bean definition describes a valid
+   * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>.
    * 
    * @param cacheProviderFacade
    *          the bean definition describing a cache provider facade

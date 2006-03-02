@@ -25,7 +25,9 @@ import org.springframework.metadata.commons.CommonsAttributes;
 
 /**
  * <p>
- * TODO Document class.
+ * Template that handles the parsing of the XML tag "commons-attributes".
+ * Creates and registers the necessary bean definitions to configure caching
+ * services using Commons-Attributes.
  * </p>
  * 
  * @author Alex Ruiz
@@ -33,26 +35,61 @@ import org.springframework.metadata.commons.CommonsAttributes;
 public abstract class AbstractCommonsAttributesParser extends
     AbstractMetadataAttributesParser {
 
+  /**
+   * Contains the names of beans to register.
+   */
   private static class BeanName {
 
     static final String ATTRIBUTES = CommonsAttributes.class.getName();
   }
 
   /**
-   * @see AbstractMetadataAttributesParser#configureInterceptors(MutablePropertyValues,
-   *      MutablePropertyValues, BeanDefinitionRegistry)
+   * Adds a reference to a <code>{@link CommonsAttributes}</code> as a
+   * property of the caching interceptor.
+   * 
+   * @param propertyValues
+   *          the set of properties of the caching interceptor
+   * @param registry
+   *          the registry of bean definitions
+   * 
+   * @see AbstractMetadataAttributesParser#configureCachingInterceptor(MutablePropertyValues,
+   *      BeanDefinitionRegistry)
    */
-  protected void configureInterceptors(
-      MutablePropertyValues cachingInterceptorPropertyValues,
-      MutablePropertyValues flushingInterceptorPropertyValues,
-      BeanDefinitionRegistry registry) {
+  protected final void configureCachingInterceptor(
+      MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
+    addAttributesProperty(propertyValues);
+  }
 
+  /**
+   * Adds a reference to a <code>{@link CommonsAttributes}</code> as a
+   * property of the flushing interceptor.
+   * 
+   * @param propertyValues
+   *          the set of properties of the flushing interceptor
+   * @param registry
+   *          the registry of bean definitions
+   * 
+   * @see AbstractMetadataAttributesParser#configureFlushingInterceptor(MutablePropertyValues,
+   *      BeanDefinitionRegistry)
+   */
+  protected final void configureFlushingInterceptor(
+      MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
+    addAttributesProperty(propertyValues);
+  }
+
+  /**
+   * Registers a <code>{@link CommonsAttributes}</code> in the given registry
+   * of bean definitions.
+   * 
+   * @param registry
+   *          the registry of bean definitions
+   * 
+   * @see AbstractMetadataAttributesParser#registerCustomBeans(BeanDefinitionRegistry)
+   */
+  protected final void registerCustomBeans(BeanDefinitionRegistry registry) {
     RootBeanDefinition attributes = new RootBeanDefinition(
         CommonsAttributes.class);
     registry.registerBeanDefinition(BeanName.ATTRIBUTES, attributes);
-
-    addAttributesProperty(cachingInterceptorPropertyValues);
-    addAttributesProperty(flushingInterceptorPropertyValues);
   }
 
   private void addAttributesProperty(MutablePropertyValues propertyValues) {
