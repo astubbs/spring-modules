@@ -27,7 +27,9 @@ import org.springmodules.cache.annotations.AnnotationFlushingAttributeSource;
 
 /**
  * <p>
- * TODO Document class.
+ * Template that handles the parsing of the XML tag "annotations". Creates and
+ * registers the necessary bean definitions to configure caching services using
+ * J2SE 5.0 Annotations.
  * </p>
  * 
  * @author Alex Ruiz
@@ -35,37 +37,53 @@ import org.springmodules.cache.annotations.AnnotationFlushingAttributeSource;
 public abstract class AbstractAnnotationsParser extends
     AbstractMetadataAttributesParser {
 
-  private static class BeanName {
+  /**
+   * Registers a <code>{@link AnnotationCachingAttributeSource}</code> and
+   * adds it as a property of the caching interceptor.
+   * 
+   * @param propertyValues
+   *          the set of properties of the caching interceptor
+   * @param registry
+   *          the registry of bean definitions
+   * 
+   * @see AbstractMetadataAttributesParser#configureCachingInterceptor(MutablePropertyValues,
+   *      BeanDefinitionRegistry)
+   */
+  @Override
+  protected void configureCachingInterceptor(
+      MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
 
-    static final String CACHING_ATTRIBUTE_SOURCE = AnnotationCachingAttributeSource.class
-        .getName();
+    String beanName = AnnotationCachingAttributeSource.class.getName();
 
-    static final String FLUSHING_ATTRIBUTE_SOURCE = AnnotationFlushingAttributeSource.class
-        .getName();
+    registry.registerBeanDefinition(beanName, new RootBeanDefinition(
+        AnnotationCachingAttributeSource.class));
+
+    propertyValues.addPropertyValue("cachingAttributeSource",
+        new RuntimeBeanReference(beanName));
   }
 
   /**
-   * @see AbstractMetadataAttributesParser#configureInterceptors(MutablePropertyValues,
-   *      MutablePropertyValues, BeanDefinitionRegistry)
+   * Registers a <code>{@link AnnotationFlushingAttributeSource}</code> and
+   * adds it as a property of the flushing interceptor.
+   * 
+   * @param propertyValues
+   *          the set of properties of the caching interceptor
+   * @param registry
+   *          the registry of bean definitions
+   * 
+   * @see AbstractMetadataAttributesParser#configureFlushingInterceptor(MutablePropertyValues,
+   *      BeanDefinitionRegistry)
    */
   @Override
-  protected void configureInterceptors(
-      MutablePropertyValues cachingInterceptorPropertyValues,
-      MutablePropertyValues flushingInterceptorPropertyValues,
-      BeanDefinitionRegistry registry) {
+  protected void configureFlushingInterceptor(
+      MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
 
-    registry.registerBeanDefinition(BeanName.CACHING_ATTRIBUTE_SOURCE,
-        new RootBeanDefinition(AnnotationCachingAttributeSource.class));
+    String beanName = AnnotationFlushingAttributeSource.class.getName();
 
-    registry.registerBeanDefinition(BeanName.FLUSHING_ATTRIBUTE_SOURCE,
-        new RootBeanDefinition(AnnotationFlushingAttributeSource.class));
+    registry.registerBeanDefinition(beanName, new RootBeanDefinition(
+        AnnotationFlushingAttributeSource.class));
 
-    cachingInterceptorPropertyValues.addPropertyValue("cachingAttributeSource",
-        new RuntimeBeanReference(BeanName.CACHING_ATTRIBUTE_SOURCE));
-
-    flushingInterceptorPropertyValues.addPropertyValue(
-        "flushingAttributeSource", new RuntimeBeanReference(
-            BeanName.FLUSHING_ATTRIBUTE_SOURCE));
+    propertyValues.addPropertyValue("flushingAttributeSource",
+        new RuntimeBeanReference(beanName));
   }
-
 }

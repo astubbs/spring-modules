@@ -23,7 +23,9 @@ import org.springmodules.cache.config.CacheProviderFacadeValidator;
 
 /**
  * <p>
- * TODO Document class.
+ * Parses of the XML tag "annotations" when using the XML namespace
+ * "ehcache". Creates and registers the necessary bean definitions to configure
+ * caching services using J2SE 5.0 Annotations.
  * </p>
  * 
  * @author Alex Ruiz
