@@ -21,6 +21,9 @@ import junit.framework.TestCase;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
+import org.springmodules.cache.CachingModel;
+import org.springmodules.cache.FatalCacheException;
+
 /**
  * <p>
  * Unit Tests for <code>{@link AbstractCacheNamespaceHandler}</code>.
@@ -83,27 +86,25 @@ public class CacheNamespaceHandlerTests extends TestCase {
     super(name);
   }
 
-  public void testAbstractCacheNamespaceHandler() {
+  public void testConstructorWithAnnotationsParserClassNameEqualToNull() {
+    executeConstructorWithInvalidAnnotationsParserClassName(null);
+  }
+
+  public void testConstructorWithEmptyAnnotionsParserClassName() {
+    executeConstructorWithInvalidAnnotationsParserClassName("");
+  }
+
+  public void testConstructorWithAnnotationsParserClassNameNotBelongingToParser() {
+    executeConstructorWithInvalidAnnotationsParserClassName(CachingModel.class
+        .getName());
+  }
+
+  public void testContructor() {
     handler = new CacheNamespaceHandler();
 
     BeanDefinitionParser annotationsParser = handler
         .findParserForElement(new DomElementStub("annotations"));
     assertTrue(annotationsParser instanceof BeanDefinitionParserStub);
-
-    assertStaticallyDefinedParsersAreCorrect();
-  }
-
-  public void testAbstractCacheNamespaceHandlerWithoutAnnotationsParserClass() {
-    CacheNamespaceHandler.annotationsParserClassName = null;
-    handler = new CacheNamespaceHandler();
-
-    try {
-      handler.findParserForElement(new DomElementStub("annotations"));
-      fail();
-
-    } catch (IllegalArgumentException exception) {
-      // expecting this exception.
-    }
 
     assertStaticallyDefinedParsersAreCorrect();
   }
@@ -136,5 +137,17 @@ public class CacheNamespaceHandlerTests extends TestCase {
     BeanDefinitionParser interceptorsParser = handler
         .findParserForElement(new DomElementStub("interceptors"));
     assertSame(CacheNamespaceHandler.interceptorsParser, interceptorsParser);
+  }
+
+  private void executeConstructorWithInvalidAnnotationsParserClassName(
+      String annotationsParserClassName) {
+    CacheNamespaceHandler.annotationsParserClassName = annotationsParserClassName;
+
+    try {
+      handler = new CacheNamespaceHandler();
+      fail();
+    } catch (FatalCacheException exception) {
+      // expecting this exception.
+    }
   }
 }

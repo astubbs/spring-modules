@@ -24,6 +24,8 @@ import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.util.ClassUtils;
 
+import org.springmodules.cache.FatalCacheException;
+
 /**
  * <p>
  * Template for handler of caching-related namespaces.
@@ -68,7 +70,7 @@ public abstract class AbstractCacheNamespaceHandler extends
         String errorMessage = "Unable to create instance of "
             + annotationsParserClassName
             + ". Unable to load parser for namespace 'annotations'";
-        logger.error(errorMessage, exception);
+        throw new FatalCacheException(errorMessage, exception);
       }
 
     } catch (ClassNotFoundException exception) {
