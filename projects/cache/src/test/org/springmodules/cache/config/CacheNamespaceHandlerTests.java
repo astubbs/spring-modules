@@ -95,15 +95,19 @@ public class CacheNamespaceHandlerTests extends TestCase {
 
   public void testAbstractCacheNamespaceHandlerWithoutAnnotationsParserClass() {
     CacheNamespaceHandler.annotationsParserClassName = null;
+    handler = new CacheNamespaceHandler();
 
-    BeanDefinitionParser annotationsParser = handler
-    .findParserForElement(new DomElementStub("annotations"));
+    try {
+      handler.findParserForElement(new DomElementStub("annotations"));
+      fail();
 
-    assertNull(annotationsParser);
-    
+    } catch (IllegalArgumentException exception) {
+      // expecting this exception.
+    }
+
     assertStaticallyDefinedParsersAreCorrect();
   }
-  
+
   protected void setUp() {
     CacheNamespaceHandler.annotationsParserClassName = BeanDefinitionParserStub.class
         .getName();
