@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:mem:jbpm;sql.enforce_strict_size=true"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+
+    <bean id="hibernateSessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mappingLocations">
+            <value>classpath*:/org/jbpm/**/*.hbm.xml</value>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+            </props>
+        </property>
+        <property name="schemaUpdate" value="true"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory">
+            <ref local="hibernateSessionFactory"/>
+        </property>
+    </bean>
+
+    <bean id="hibernateConfiguration" factory-bean="&amp;hibernateSessionFactory" factory-method="getConfiguration"/>
+
+    <bean id="jbpmSessionFactory" class="org.springmodules.workflow.jbpm30.LocalJbpmSessionFactoryBean">
+        <property name="hibernateSessionFactory" ref="hibernateSessionFactory"/>
+        <property name="hibernateConfiguration" ref="hibernateConfiguration"/>
+		<property name="processDefinitions">
+			<list>
+				<ref local="processDefinition"/>
+			</list>
+		</property>
+    </bean>
+	
+	<bean id="processDefinition" class="org.springmodules.workflow.jbpm30.definition.ProcessDefinitionFactoryBean">
+	    <property name="definitionLocation" value="classpath:org/springmodules/workflow/jbpm30/simpleWorkflow.xml"/>
+    </bean>
+	
+	<bean id="jbpmTemplate" class="org.springmodules.workflow.jbpm30.JbpmTemplate">
+		<constructor-arg index="0" ref="jbpmSessionFactory"/>
+		<constructor-arg index="1" ref="processDefinition"/>
+	</bean>
+	
+	<bean id="jbpmAction" class="org.springmodules.workflow.jbpm30.DummyActionHandler"/>
+</beans>

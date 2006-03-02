@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<process-definition name="simple">
+	
+	<start-state>
+		<transition to="myState">
+		</transition>
+	</start-state>
+	
+	<state name="myState">
+		<transition to="end">
+			<action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm30.JbpmHandler">
+				<beanName>jbpmAction</beanName>
+				<factoryKey>jbpmSessionFactory</factoryKey>
+			</action>
+		</transition>
+	</state>
+	
+	<end-state name="end"/>
+	
+</process-definition>
