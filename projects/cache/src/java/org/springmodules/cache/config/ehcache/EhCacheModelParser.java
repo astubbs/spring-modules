@@ -27,7 +27,8 @@ import org.springmodules.cache.provider.ehcache.EhCacheFlushingModel;
 
 /**
  * <p>
- * TODO Document class.
+ * Creates instances of <code>{@link EhCacheCachingModel}</code> and
+ * <code>{@link EhCacheFlushingModel}</code> from a given XML element.
  * </p>
  * 
  * @author Alex Ruiz
@@ -35,6 +36,13 @@ import org.springmodules.cache.provider.ehcache.EhCacheFlushingModel;
 public final class EhCacheModelParser implements CacheModelParser {
 
   /**
+   * Creates a <code>{@link EhCacheCachingModel}</code> from the given XML
+   * element.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @return the created caching model
+   * 
    * @see CacheModelParser#parseCachingModel(Element)
    */
   public CachingModel parseCachingModel(Element element) {
@@ -44,6 +52,13 @@ public final class EhCacheModelParser implements CacheModelParser {
   }
 
   /**
+   * Creates a <code>{@link EhCacheFlushingModel}</code> from the given XML
+   * element.
+   * 
+   * @param element
+   *          the XML element to parse
+   * @return the created flushing model
+   * 
    * @see CacheModelParser#parseFlushingModel(Element)
    */
   public FlushingModel parseFlushingModel(Element element) {

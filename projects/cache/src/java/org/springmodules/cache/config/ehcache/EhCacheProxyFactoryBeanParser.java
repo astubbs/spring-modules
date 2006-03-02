@@ -20,10 +20,14 @@ package org.springmodules.cache.config.ehcache;
 import org.springmodules.cache.config.AbstractCacheProxyFactoryBeanParser;
 import org.springmodules.cache.config.CacheModelParser;
 import org.springmodules.cache.config.CacheProviderFacadeValidator;
+import org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean;
 
 /**
  * <p>
- * TODO Document class.
+ * Parses the XML tag "beanRef" when using the XML namespace "ehcache". Creates,
+ * configures and registers and implementation of
+ * <code>{@link CacheProxyFactoryBean}</code> in the provided registry of bean
+ * definitions.
  * </p>
  * 
  * @author Alex Ruiz

@@ -23,7 +23,13 @@ import org.springmodules.cache.config.CacheProviderFacadeValidator;
 
 /**
  * <p>
- * TODO Document class.
+ * Parsing of the XML tag "interceptors" when using the XML namespace "ehcache".
+ * Creates and registers instances of
+ * <code>{@link org.springmodules.cache.interceptor.caching.MethodMapCachingInterceptor}</code>
+ * and
+ * <code>{@link org.springmodules.cache.interceptor.flush.MethodMapFlushingInterceptor}</code>
+ * which can be used with
+ * <code>{@link org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator}</code>
  * </p>
  * 
  * @author Alex Ruiz

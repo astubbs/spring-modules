@@ -17,20 +17,19 @@
  */
 package org.springmodules.cache.config.ehcache;
 
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+
 import org.springmodules.cache.config.AbstractCacheNamespaceHandler;
-import org.springmodules.cache.config.AbstractCacheProviderFacadeParser;
-import org.springmodules.cache.config.AbstractCacheProxyFactoryBeanParser;
-import org.springmodules.cache.config.AbstractCommonsAttributesParser;
-import org.springmodules.cache.config.AbstractInterceptorsParser;
 
 /**
  * <p>
- * TODO Document class.
+ * Registers the parsers of the XML elements in the namespace "ehcache".
  * </p>
  * 
  * @author Alex Ruiz
  */
-public final class EhCacheNamespaceHandler extends AbstractCacheNamespaceHandler {
+public final class EhCacheNamespaceHandler extends
+    AbstractCacheNamespaceHandler {
 
   /**
    * @see AbstractCacheNamespaceHandler#getAnnotationsParserClassName()
@@ -39,31 +38,19 @@ public final class EhCacheNamespaceHandler extends AbstractCacheNamespaceHandler
     return getClass().getPackage().getName() + ".EhCacheAnnotationsParser";
   }
 
-  /**
-   * @see AbstractCacheNamespaceHandler#getCacheProviderFacadeParser()
-   */
-  protected AbstractCacheProviderFacadeParser getCacheProviderFacadeParser() {
+  protected BeanDefinitionParser getCacheProviderFacadeParser() {
     return new EhCacheFacadeParser();
   }
 
-  /**
-   * @see AbstractCacheNamespaceHandler#getCacheProxyFactoryBeanParser()
-   */
-  protected AbstractCacheProxyFactoryBeanParser getCacheProxyFactoryBeanParser() {
+  protected BeanDefinitionParser getCacheProxyFactoryBeanParser() {
     return new EhCacheProxyFactoryBeanParser();
   }
 
-  /**
-   * @see AbstractCacheNamespaceHandler#getCommonsAttributeParser()
-   */
-  protected AbstractCommonsAttributesParser getCommonsAttributeParser() {
+  protected BeanDefinitionParser getCommonsAttributeParser() {
     return new EhCacheCommonsAttributesParser();
   }
 
-  /**
-   * @see AbstractCacheNamespaceHandler#getInterceptorsParser()
-   */
-  protected AbstractInterceptorsParser getInterceptorsParser() {
+  protected BeanDefinitionParser getInterceptorsParser() {
     return new EhCacheInterceptorsParser();
   }
 

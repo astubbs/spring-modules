@@ -24,7 +24,10 @@ import org.springmodules.cache.provider.ehcache.EhCacheFacade;
 
 /**
  * <p>
- * TODO Document class.
+ * Parses the XML tag "config" when using the XML namespace "ehcache". Creates
+ * and registers and implementation of
+ * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
+ * and a cache manager in the provided registry of bean definitions.
  * </p>
  * 
  * @author Alex Ruiz

@@ -24,8 +24,8 @@ import org.springmodules.cache.provider.ehcache.EhCacheFacade;
 
 /**
  * <p>
- * Validates that a bean definition describes a
- * <code>{@link EhCacheFacade}</code>..
+ * Validates that a bean definition describing a
+ * <code>{@link EhCacheFacade}</code>.
  * </p>
  * 
  * @author Alex Ruiz

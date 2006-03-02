@@ -23,7 +23,9 @@ import org.springmodules.cache.config.CacheProviderFacadeValidator;
 
 /**
  * <p>
- * TODO Document class.
+ * Parses of the XML tag "commons-attributes" when using the XML namespace
+ * "ehcache". Creates and registers the necessary bean definitions to configure
+ * caching services using Commons-Attributes.
  * </p>
  * 
  * @author Alex Ruiz
