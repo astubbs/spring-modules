@@ -32,6 +32,10 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.TypeInfo;
 import org.w3c.dom.UserDataHandler;
 
+import org.springframework.util.ObjectUtils;
+
+import org.springmodules.util.Objects;
+
 /**
  * <p>
  * Stub that simulates a DOM XML element.
@@ -43,9 +47,9 @@ public class DomElementStub implements Element {
 
   private Map attributes;
 
-  private String nodeName;
-
   private List children;
+
+  private String nodeName;
 
   /**
    * Constructor.
@@ -77,6 +81,32 @@ public class DomElementStub implements Element {
    */
   public short compareDocumentPosition(Node other) {
     throw new UnsupportedOperationException();
+  }
+
+  /**
+   * @see java.lang.Object#equals(java.lang.Object)
+   */
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!(obj instanceof DomElementStub)) {
+      return false;
+    }
+
+    DomElementStub other = (DomElementStub) obj;
+
+    if (!ObjectUtils.nullSafeEquals(nodeName, other.nodeName)) {
+      return false;
+    }
+    if (!ObjectUtils.nullSafeEquals(attributes, other.attributes)) {
+      return false;
+    }
+    if (!ObjectUtils.nullSafeEquals(children, other.children)) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -288,6 +318,18 @@ public class DomElementStub implements Element {
    */
   public boolean hasChildNodes() {
     throw new UnsupportedOperationException();
+  }
+
+  /**
+   * @see java.lang.Object#hashCode()
+   */
+  public int hashCode() {
+    int multiplier = 31;
+    int hash = 7;
+    hash = multiplier * hash + (Objects.nullSafeHashCode(attributes));
+    hash = multiplier * hash + (Objects.nullSafeHashCode(children));
+    hash = multiplier * hash + (Objects.nullSafeHashCode(nodeName));
+    return hash;
   }
 
   /**
