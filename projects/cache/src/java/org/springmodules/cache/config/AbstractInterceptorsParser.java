@@ -56,7 +56,7 @@ public abstract class AbstractInterceptorsParser extends
    * @see AbstractCacheSetupStrategyParser#parseCacheSetupStrategy(Element,
    *      BeanDefinitionRegistry, CacheSetupStrategyPropertySource)
    */
-  protected void parseCacheSetupStrategy(Element element,
+  protected final void parseCacheSetupStrategy(Element element,
       BeanDefinitionRegistry registry,
       CacheSetupStrategyPropertySource propertySource) {
 
