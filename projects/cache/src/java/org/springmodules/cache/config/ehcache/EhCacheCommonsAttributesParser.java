@@ -19,7 +19,7 @@ package org.springmodules.cache.config.ehcache;
 
 import org.springmodules.cache.config.AbstractCommonsAttributesParser;
 import org.springmodules.cache.config.CacheModelParser;
-import org.springmodules.cache.config.CacheProviderFacadeValidator;
+import org.springmodules.cache.config.CacheProviderFacadeDefinitionValidator;
 
 /**
  * <p>
@@ -35,7 +35,7 @@ public final class EhCacheCommonsAttributesParser extends
 
   private CacheModelParser modelParser;
 
-  private CacheProviderFacadeValidator validator;
+  private CacheProviderFacadeDefinitionValidator validator;
 
   /**
    * Constructor.
@@ -43,7 +43,7 @@ public final class EhCacheCommonsAttributesParser extends
   public EhCacheCommonsAttributesParser() {
     super();
     modelParser = new EhCacheModelParser();
-    validator = new EhCacheFacadeValidator();
+    validator = new EhCacheFacadeDefinitionValidator();
   }
 
   /**
@@ -56,7 +56,7 @@ public final class EhCacheCommonsAttributesParser extends
   /**
    * @see org.springmodules.cache.config.AbstractCacheSetupStrategyParser#getCacheProviderFacadeValidator()
    */
-  protected CacheProviderFacadeValidator getCacheProviderFacadeValidator() {
+  protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeValidator() {
     return validator;
   }
 

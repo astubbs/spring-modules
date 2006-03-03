@@ -19,7 +19,7 @@ package org.springmodules.cache.config.ehcache;
 
 import org.springmodules.cache.config.AbstractCacheProxyFactoryBeanParser;
 import org.springmodules.cache.config.CacheModelParser;
-import org.springmodules.cache.config.CacheProviderFacadeValidator;
+import org.springmodules.cache.config.CacheProviderFacadeDefinitionValidator;
 import org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean;
 
 /**
@@ -37,7 +37,7 @@ public final class EhCacheProxyFactoryBeanParser extends
 
   private CacheModelParser modelParser;
 
-  private CacheProviderFacadeValidator validator;
+  private CacheProviderFacadeDefinitionValidator validator;
 
   /**
    * Constructor.
@@ -45,7 +45,7 @@ public final class EhCacheProxyFactoryBeanParser extends
   public EhCacheProxyFactoryBeanParser() {
     super();
     modelParser = new EhCacheModelParser();
-    validator = new EhCacheFacadeValidator();
+    validator = new EhCacheFacadeDefinitionValidator();
   }
 
   /**
@@ -58,7 +58,7 @@ public final class EhCacheProxyFactoryBeanParser extends
   /**
    * @see org.springmodules.cache.config.AbstractCacheSetupStrategyParser#getCacheProviderFacadeValidator()
    */
-  protected CacheProviderFacadeValidator getCacheProviderFacadeValidator() {
+  protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeValidator() {
     return validator;
   }
 

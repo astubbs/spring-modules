@@ -19,7 +19,7 @@ package org.springmodules.cache.config.ehcache;
 
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 
-import org.springmodules.cache.config.CacheProviderFacadeValidator;
+import org.springmodules.cache.config.CacheProviderFacadeDefinitionValidator;
 import org.springmodules.cache.provider.ehcache.EhCacheFacade;
 
 /**
@@ -30,11 +30,11 @@ import org.springmodules.cache.provider.ehcache.EhCacheFacade;
  * 
  * @author Alex Ruiz
  */
-public final class EhCacheFacadeValidator implements
-    CacheProviderFacadeValidator {
+public final class EhCacheFacadeDefinitionValidator implements
+    CacheProviderFacadeDefinitionValidator {
 
   /**
-   * @see CacheProviderFacadeValidator#validate(AbstractBeanDefinition)
+   * @see CacheProviderFacadeDefinitionValidator#validate(AbstractBeanDefinition)
    */
   public void validate(AbstractBeanDefinition cacheProviderFacade)
       throws IllegalStateException {

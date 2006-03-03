@@ -71,14 +71,14 @@ public abstract class AbstractCacheSetupStrategyParser implements
    *           if the cache provider facade is <code>null</code>
    * @throws IllegalStateException
    *           if the cache provider facade is in invalid state
-   * @throws NoSuchBeanDefinitionException 
+   * @throws NoSuchBeanDefinitionException
    *           if any of the caching listeners does not exist in the registry
    * @throws IllegalStateException
    *           if any of the caching listeners is not an instance of
    *           <code>CachingListener</code>
    * 
    * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
-   * @see CacheProviderFacadeValidator#validate(AbstractBeanDefinition)
+   * @see CacheProviderFacadeDefinitionValidator#validate(AbstractBeanDefinition)
    */
   public final void parse(Element element, BeanDefinitionRegistry registry)
       throws NoSuchBeanDefinitionException, IllegalStateException {
@@ -112,7 +112,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
    * @return the validator of the properties of the
    *         <code>CacheProviderFacade</code>
    */
-  protected abstract CacheProviderFacadeValidator getCacheProviderFacadeValidator();
+  protected abstract CacheProviderFacadeDefinitionValidator getCacheProviderFacadeValidator();
 
   /**
    * Parses the given XML element to create the strategy for setting up
@@ -197,15 +197,13 @@ public abstract class AbstractCacheSetupStrategyParser implements
         listenersElement, "cachingListener", true);
 
     ManagedList listeners = new ManagedList();
-    if (!CollectionUtils.isEmpty(listenerElements)) {
-      int listenerCount = listenerElements.size();
+    int listenerCount = listenerElements.size();
 
-      for (int i = 0; i < listenerCount; i++) {
-        Element listenerElement = (Element) listenerElements.get(i);
-        RuntimeBeanReference listener = parseCachingListener(listenerElement,
-            registry);
-        listeners.add(listener);
-      }
+    for (int i = 0; i < listenerCount; i++) {
+      Element listenerElement = (Element) listenerElements.get(i);
+      RuntimeBeanReference listener = parseCachingListener(listenerElement,
+          registry);
+      listeners.add(listener);
     }
 
     return listeners;
