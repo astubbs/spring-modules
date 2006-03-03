@@ -17,7 +17,9 @@
  */
 package org.springmodules.cache.config;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.Attr;
@@ -43,12 +45,15 @@ public class DomElementStub implements Element {
 
   private String nodeName;
 
+  private List children;
+
   /**
    * Constructor.
    */
   public DomElementStub(String newNodeName) {
     super();
     attributes = new HashMap();
+    children = new ArrayList();
     nodeName = newNodeName;
   }
 
@@ -56,7 +61,8 @@ public class DomElementStub implements Element {
    * @see Node#appendChild(Node)
    */
   public Node appendChild(Node child) throws DOMException {
-    throw new UnsupportedOperationException();
+    children.add(child);
+    return child;
   }
 
   /**
@@ -120,7 +126,7 @@ public class DomElementStub implements Element {
    * @see Node#getChildNodes()
    */
   public NodeList getChildNodes() {
-    throw new UnsupportedOperationException();
+    return new DomNodeListStub(children);
   }
 
   /**
