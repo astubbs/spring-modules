@@ -58,7 +58,7 @@ public class CacheSetupStrategyParserTests extends TestCase {
       return getModelParser();
     }
 
-    protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeValidator() {
+    protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeDefinitionValidator() {
       return getValidator();
     }
 

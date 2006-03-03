@@ -86,7 +86,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
 
     BeanDefinition cacheProviderFacade = registry
         .getBeanDefinition(cacheProviderFacadeId);
-    getCacheProviderFacadeValidator().validate(
+    getCacheProviderFacadeDefinitionValidator().validate(
         (AbstractBeanDefinition) cacheProviderFacade);
 
     RuntimeBeanReference cacheProviderFacadeReference = new RuntimeBeanReference(
@@ -112,7 +112,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
    * @return the validator of the properties of the
    *         <code>CacheProviderFacade</code>
    */
-  protected abstract CacheProviderFacadeDefinitionValidator getCacheProviderFacadeValidator();
+  protected abstract CacheProviderFacadeDefinitionValidator getCacheProviderFacadeDefinitionValidator();
 
   /**
    * Parses the given XML element to create the strategy for setting up

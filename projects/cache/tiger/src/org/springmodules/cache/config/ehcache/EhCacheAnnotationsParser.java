@@ -54,10 +54,10 @@ public final class EhCacheAnnotationsParser extends AbstractAnnotationsParser {
   }
 
   /**
-   * @see org.springmodules.cache.config.AbstractCacheSetupStrategyParser#getCacheProviderFacadeValidator()
+   * @see org.springmodules.cache.config.AbstractCacheSetupStrategyParser#getCacheProviderFacadeDefinitionValidator()
    */
   @Override
-  protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeValidator() {
+  protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeDefinitionValidator() {
     return validator;
   }
 

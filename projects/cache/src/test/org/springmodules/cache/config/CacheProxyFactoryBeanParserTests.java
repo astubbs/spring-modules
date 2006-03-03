@@ -49,7 +49,7 @@ public class CacheProxyFactoryBeanParserTests extends TestCase {
       return null;
     }
 
-    protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeValidator() {
+    protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeDefinitionValidator() {
       return null;
     }
   }

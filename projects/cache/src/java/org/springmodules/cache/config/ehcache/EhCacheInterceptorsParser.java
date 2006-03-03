@@ -57,9 +57,9 @@ public final class EhCacheInterceptorsParser extends AbstractInterceptorsParser 
   }
 
   /**
-   * @see org.springmodules.cache.config.AbstractCacheSetupStrategyParser#getCacheProviderFacadeValidator()
+   * @see org.springmodules.cache.config.AbstractCacheSetupStrategyParser#getCacheProviderFacadeDefinitionValidator()
    */
-  protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeValidator() {
+  protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeDefinitionValidator() {
     return validator;
   }
 
