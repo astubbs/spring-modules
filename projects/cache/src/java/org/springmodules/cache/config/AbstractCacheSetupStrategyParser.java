@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -66,11 +67,11 @@ public abstract class AbstractCacheSetupStrategyParser implements
    *          the XML element to parse
    * @param registry
    *          the registry of bean definitions
-   * @throws IllegalStateException
+   * @throws NoSuchBeanDefinitionException
    *           if the cache provider facade is <code>null</code>
    * @throws IllegalStateException
    *           if the cache provider facade is in invalid state
-   * @throws IllegalStateException
+   * @throws NoSuchBeanDefinitionException 
    *           if any of the caching listeners does not exist in the registry
    * @throws IllegalStateException
    *           if any of the caching listeners is not an instance of
@@ -79,15 +80,12 @@ public abstract class AbstractCacheSetupStrategyParser implements
    * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
    * @see CacheProviderFacadeValidator#validate(AbstractBeanDefinition)
    */
-  public final void parse(Element element, BeanDefinitionRegistry registry) {
+  public final void parse(Element element, BeanDefinitionRegistry registry)
+      throws NoSuchBeanDefinitionException, IllegalStateException {
     String cacheProviderFacadeId = element.getAttribute("providerId");
 
     BeanDefinition cacheProviderFacade = registry
         .getBeanDefinition(cacheProviderFacadeId);
-    if (cacheProviderFacade == null) {
-      throw new IllegalStateException(
-          "The cache provider facade should not be null");
-    }
     getCacheProviderFacadeValidator().validate(
         (AbstractBeanDefinition) cacheProviderFacade);
 
@@ -142,7 +140,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
    *          the registry of bean definitions
    * @return a reference to a caching listener already registered in the given
    *         registry
-   * @throws IllegalStateException
+   * @throws NoSuchBeanDefinitionException
    *           if the given id references a caching listener that does not exist
    *           in the registry
    * @throws IllegalStateException
@@ -150,16 +148,10 @@ public abstract class AbstractCacheSetupStrategyParser implements
    *           instance of <code>CachingListener</code>
    */
   private RuntimeBeanReference parseCachingListener(Element element,
-      BeanDefinitionRegistry registry) throws IllegalStateException {
+      BeanDefinitionRegistry registry) throws NoSuchBeanDefinitionException,
+      IllegalStateException {
 
     String refId = element.getAttribute("refId");
-
-    if (!registry.containsBeanDefinition(refId)) {
-      throw new IllegalStateException("The caching listener with id "
-          + StringUtils.quote(refId)
-          + " does not exist in the registry of bean definitions");
-    }
-
     RootBeanDefinition listenerBeanDefinition = (RootBeanDefinition) registry
         .getBeanDefinition(refId);
 
