@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrAccessor.java,v 1.3 2006/03/07 13:17:19 costin Exp $
- * $Revision: 1.3 $
+ * $Id: JcrAccessor.java,v 1.4 2006/03/07 14:40:50 costin Exp $
+ * $Revision: 1.4 $
  */
 package org.springmodules.jcr;
 
@@ -72,6 +72,18 @@ public abstract class JcrAccessor implements InitializingBean {
 		return SessionFactoryUtils.translateException(ex);
 	}
 
+	/**
+	 * Convert the given RuntimeException to an appropriate exception from
+	 * the <code>org.springframework.dao</code> hierarchy.
+	 * <p>
+	 * May be overridden in subclasses.
+
+	 * @param ex
+	 * @return
+	 */
+	public RuntimeException convertJcrAccessException(RuntimeException ex) {
+		return ex;
+	}
 	/**
 	 * @return Returns the sessionFactory.
 	 */
