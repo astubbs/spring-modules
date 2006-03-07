@@ -1,8 +1,8 @@
 /**
  * Created on Nov 10, 2005
  *
- * $Id: AbstractSessionHolderProviderManager.java,v 1.2 2006/03/07 13:09:30 costin Exp $
- * $Revision: 1.2 $
+ * $Id: AbstractSessionHolderProviderManager.java,v 1.3 2006/03/07 13:41:07 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr.support;
 
@@ -12,7 +12,6 @@ import javax.jcr.Repository;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.jcr.SessionFactoryUtils;
 import org.springmodules.jcr.SessionHolderProvider;
 import org.springmodules.jcr.SessionHolderProviderManager;
 

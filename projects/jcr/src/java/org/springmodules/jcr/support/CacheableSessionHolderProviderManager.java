@@ -1,8 +1,8 @@
 /**
  * Created on Nov 10, 2005
  *
- * $Id: CacheableSessionHolderProviderManager.java,v 1.2 2006/03/07 13:09:30 costin Exp $
- * $Revision: 1.2 $
+ * $Id: CacheableSessionHolderProviderManager.java,v 1.3 2006/03/07 13:41:07 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr.support;
 
@@ -11,7 +11,6 @@ import java.util.Map;
 import javax.jcr.Repository;
 
 import org.springframework.util.CachingMapDecorator;
-import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionHolderProvider;
 
 /**
