@@ -25,7 +25,6 @@ import javax.jcr.query.QueryResult;
 
 import org.springframework.core.CollectionFactory;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.xml.sax.ContentHandler;
 
 /**
@@ -81,11 +80,11 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
 		}
 		catch (RepositoryException ex) {
 			throw convertJcrAccessException(ex);
-			// IOException are not converted (they don't belong to the JCR in the end).
+			// IOException are not converted here
 		}
 		catch (IOException ex) {
-			throw new DataAccessResourceFailureException("I/O failure", ex);
-
+			// use method to decouple the static call
+			throw convertJcrAccessException(ex);
 		}
 		catch (RuntimeException ex) {
 			// Callback code threw application exception...
@@ -100,6 +99,7 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
 			}
 		}
 	}
+
 
 	/**
 	 * @see org.springmodules.jcr.JcrOperations#execute(org.springmodules.jcr.JcrCallback)

@@ -1,5 +1,7 @@
 package org.springmodules.jcr;
 
+import java.io.IOException;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
@@ -32,7 +34,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
-import org.springmodules.jcr.support.GenericSessionHolderProvider;
 
 /**
  * FactoryBean for instantiating a Java Content Repository. This abstract class adds
@@ -60,7 +61,8 @@ public abstract class SessionFactoryUtils {
 	 * @throws RepositoryException
 	 * @return
 	 */
-	public static Session doGetSession(SessionFactory sessionFactory, boolean allowCreate) throws RepositoryException {
+	public static Session doGetSession(SessionFactory sessionFactory, boolean allowCreate)
+			throws RepositoryException {
 		Assert.notNull(sessionFactory, "No sessionFactory specified");
 
 		// check if there is any transaction going on
@@ -111,7 +113,8 @@ public abstract class SessionFactoryUtils {
 	 * @throws DataAccessException         
 	 * @return
 	 */
-	public static Session getSession(SessionFactory sessionFactory, boolean allowCreate) throws DataAccessException {
+	public static Session getSession(SessionFactory sessionFactory, boolean allowCreate)
+			throws DataAccessException {
 		try {
 			return doGetSession(sessionFactory, allowCreate);
 		}
@@ -231,6 +234,17 @@ public abstract class SessionFactoryUtils {
 	}
 
 	/**
+	 * Jcr exception translator - it converts specific JSR-170 checked exceptions into 
+	 * unchecked Spring DA exception.
+	 * 
+	 * @param ex
+	 * @return
+	 */
+	public static DataAccessException translateException(IOException ex) {
+		return new DataAccessResourceFailureException("I/O failure", ex);
+	}
+
+	/**
 	 * Callback for resource cleanup at the end of a non-JCR transaction (e.g.
 	 * when participating in a JtaTransactionManager transaction).
 	 * 
@@ -271,4 +285,5 @@ public abstract class SessionFactoryUtils {
 			releaseSession(this.sessionHolder.getSession(), this.sessionFactory);
 		}
 	}
+
 }

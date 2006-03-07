@@ -1,10 +1,12 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrAccessor.java,v 1.2 2006/03/07 13:09:29 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JcrAccessor.java,v 1.3 2006/03/07 13:17:19 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr;
+
+import java.io.IOException;
 
 import javax.jcr.RepositoryException;
 
@@ -53,6 +55,20 @@ public abstract class JcrAccessor implements InitializingBean {
 	 * @return the corresponding DataAccessException instance
 	 */
 	public DataAccessException convertJcrAccessException(RepositoryException ex) {
+		return SessionFactoryUtils.translateException(ex);
+	}
+	
+	/**
+	 * Convert the given IOException to an appropriate exception from
+	 * the <code>org.springframework.dao</code> hierarchy.
+	 * <p>
+	 * May be overridden in subclasses.
+	 * 
+	 * @param ex
+	 *            IOException that occured
+	 * @return the corresponding DataAccessException instance	 
+	 */
+	public DataAccessException convertJcrAccessException(IOException ex) {
 		return SessionFactoryUtils.translateException(ex);
 	}
 
