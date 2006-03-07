@@ -1,16 +1,13 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: OpenSessionInViewTests.java,v 1.1 2005/12/20 17:38:24 costin Exp $
- * $Revision: 1.1 $
+ * $Id: OpenSessionInViewTests.java,v 1.2 2006/03/07 13:09:31 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -29,9 +26,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.StaticWebApplicationContext;
 import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionHolder;
-import org.springmodules.jcr.SessionHolderProvider;
-import org.springmodules.jcr.SessionHolderProviderManager;
-import org.springmodules.jcr.jackrabbit.support.JackRabbitSessionHolderProvider;
 /**
  * @author Costin Leau
  *
@@ -44,30 +38,24 @@ public class OpenSessionInViewTests extends TestCase {
         MockControl sessionControl = MockControl.createControl(Session.class);
         Session session = (Session) sessionControl.getMock();
 
-        MockControl repoCtrl = MockControl.createNiceControl(Repository.class);
-        Repository repo = (Repository) repoCtrl.getMock();
-        
-        SessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
         OpenSessionInViewInterceptor interceptor = new OpenSessionInViewInterceptor();
         
         MockServletContext sc = new MockServletContext();
         MockHttpServletRequest request = new MockHttpServletRequest(sc);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        sessionControl.expectAndReturn(session.getRepository(), repo);
-        
-        sf.getSession();
-        sfControl.setReturnValue(session, 2);
+        sfControl.expectAndReturn(sf.getSession(), session);
+        SessionHolder holder = new SessionHolder(session);
+        sfControl.expectAndReturn(sf.getSessionHolder(session), holder);
         sfControl.replay();
         sessionControl.replay();
-        repoCtrl.replay();
         
         interceptor.setSessionFactory(sf);
-        interceptor.setProviderManager(providerManager);
         interceptor.afterPropertiesSet();
 
         interceptor.preHandle(request, response, "handler");
         assertTrue(TransactionSynchronizationManager.hasResource(sf));
+        assertSame(holder, TransactionSynchronizationManager.getResource(sf));
 
         // check that further invocations simply participate
         interceptor.preHandle(request, response, "handler");
@@ -92,6 +80,8 @@ public class OpenSessionInViewTests extends TestCase {
         sessionControl.replay();
         interceptor.postHandle(request, response, "handler", null);
         assertTrue(TransactionSynchronizationManager.hasResource(sf));
+        assertSame(holder, TransactionSynchronizationManager.getResource(sf));
+        
         sfControl.verify();
         sessionControl.verify();
 
@@ -112,60 +102,47 @@ public class OpenSessionInViewTests extends TestCase {
         final SessionFactory sf = (SessionFactory) sfControl.getMock();
         MockControl sessionControl = MockControl.createControl(Session.class);
         final Session session = (Session) sessionControl.getMock();
-        MockControl repoCtrl = MockControl.createControl(Repository.class);
-        Repository repo = (Repository) repoCtrl.getMock();
 
-        SessionHolderProvider jrProvider = new JackRabbitSessionHolderProvider();
-        List list = new ArrayList();
-        list.add(jrProvider);
+        // set up the session factory
+        sfControl.expectAndReturn(sf.getSession(), session);
+        final SessionHolder holder = new SessionHolder(session);
+        sfControl.expectAndReturn(sf.getSessionHolder(session), holder);
         
-        final ListSessionHolderProviderManager providerManager = new ListSessionHolderProviderManager();
-        providerManager.setProviders(list);
-        
-        sf.getSession();
-        sfControl.setReturnValue(session, 2);
         session.logout();
         sessionControl.setVoidCallable(1);
-        // return bogus info
-        repoCtrl.expectAndReturn(repo.getDescriptor(Repository.REP_NAME_DESC), "hocus-pocus");
-        
-        sessionControl.expectAndReturn(session.getRepository(), repo);
         
         sfControl.replay();
         sessionControl.replay();
         
 
+        // set up the second session factory
         MockControl sf2Control = MockControl.createControl(SessionFactory.class);
         final SessionFactory sf2 = (SessionFactory) sf2Control.getMock();
         MockControl session2Control = MockControl.createControl(Session.class);
         final Session session2 = (Session) session2Control.getMock();
         
 
-        sf2.getSession();
-        sf2Control.setReturnValue(session2, 2);
+        sf2Control.expectAndReturn(sf2.getSession(), session2);
+        final SessionHolder holder2 = new SessionHolder(session2);
+        sf2Control.expectAndReturn(sf2.getSessionHolder(session2), holder2);
         session2.logout();
         session2Control.setVoidCallable(1);
-        // return bogus info
-        repoCtrl.expectAndReturn(repo.getDescriptor(Repository.REP_NAME_DESC), "blabla");
         
-        session2Control.expectAndReturn(session2.getRepository(), repo);
+        //session2Control.expectAndReturn(session2.getRepository(), repo);
         sf2Control.replay();
         session2Control.replay();
-        repoCtrl.replay();
 
         MockServletContext sc = new MockServletContext();
         StaticWebApplicationContext wac = new StaticWebApplicationContext();
         wac.setServletContext(sc);
         wac.getDefaultListableBeanFactory().registerSingleton("sessionFactory", sf);
         wac.getDefaultListableBeanFactory().registerSingleton("mySessionFactory", sf2);
-        wac.getDefaultListableBeanFactory().registerSingleton("providerManager", providerManager);
         wac.refresh();
         sc.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, wac);
         MockHttpServletRequest request = new MockHttpServletRequest(sc);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         MockFilterConfig filterConfig = new MockFilterConfig(wac.getServletContext(), "filter");
-        filterConfig.addInitParameter("sessionHolderProviderManagerBeanName", "providerManager");
         MockFilterConfig filterConfig2 = new MockFilterConfig(wac.getServletContext(), "filter2");
         filterConfig2.addInitParameter("sessionFactoryBeanName", "mySessionFactory");
 
@@ -183,9 +160,8 @@ public class OpenSessionInViewTests extends TestCase {
                 throws IOException, ServletException {
                 assertTrue(TransactionSynchronizationManager.hasResource(sf));
                 // check sf-related things
-                Object obj = TransactionSynchronizationManager.getResource(sf);
-                assertTrue(obj instanceof SessionHolder);
-                assertSame(session, ((SessionHolder)obj).getSession());
+                assertSame(holder, TransactionSynchronizationManager.getResource(sf));
+                assertSame(session, holder.getSession());
                 
                 servletRequest.setAttribute("invoked", Boolean.TRUE);
             }
@@ -196,9 +172,8 @@ public class OpenSessionInViewTests extends TestCase {
                 throws IOException, ServletException {
                 assertTrue(TransactionSynchronizationManager.hasResource(sf));
                 // check sf-related things
-                Object obj = TransactionSynchronizationManager.getResource(sf);
-                assertTrue(obj instanceof SessionHolder);
-                assertSame(session, ((SessionHolder)obj).getSession());
+                assertSame(holder, TransactionSynchronizationManager.getResource(sf));
+                assertSame(session, holder.getSession());
                 
                 filter3.doFilter(servletRequest, servletResponse, filterChain);
             }
@@ -209,9 +184,8 @@ public class OpenSessionInViewTests extends TestCase {
                 throws IOException, ServletException {
                 assertTrue(TransactionSynchronizationManager.hasResource(sf2));
                 // check sf2-related things
-                Object obj = TransactionSynchronizationManager.getResource(sf2);
-                assertTrue(obj instanceof SessionHolder);
-                assertSame(session2, ((SessionHolder)obj).getSession());
+                assertSame(holder2, TransactionSynchronizationManager.getResource(sf2));
+                assertSame(session2, holder2.getSession());
                 
                 filter.doFilter(servletRequest, servletResponse, filterChain2);
             }
@@ -233,9 +207,8 @@ public class OpenSessionInViewTests extends TestCase {
 
         sfControl.verify();
         sessionControl.verify();
-        sfControl.verify();
-        sessionControl.verify();
-        //providerManagerCtrl.verify();
+        sf2Control.verify();
+        session2Control.verify();
 
         wac.close();
     }

@@ -26,4 +26,13 @@ public interface SessionFactory {
      * @throws RepositoryException
      */
     public Session getSession() throws RepositoryException;
+    
+    /**
+     * Returns a specific SessionHolder for the given Session. The holder provider is used
+     * internally by the framework in components such as transaction managers to provide 
+     * implementation specific information such as transactional support (if it is available).
+     * 
+     * @return specific sessionHolder.
+     */
+    public SessionHolder getSessionHolder(Session session);
 }

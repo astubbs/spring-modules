@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrDaoSupportTests.java,v 1.1 2005/12/20 17:38:26 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrDaoSupportTests.java,v 1.2 2006/03/07 13:09:31 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -16,7 +16,6 @@ import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
 import org.springmodules.jcr.JcrTemplate;
 import org.springmodules.jcr.SessionFactory;
-import org.springmodules.jcr.SessionHolderProviderManager;
 
 /**
  * @author Costin Leau
@@ -27,8 +26,6 @@ public class JcrDaoSupportTests extends TestCase {
 	private MockControl sfCtrl, sessCtrl, repositoryCtrl;
 	private SessionFactory sf;
 	private Session sess;
-	private Repository repository;
-	private SessionHolderProviderManager providerManager;
 
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -38,9 +35,6 @@ public class JcrDaoSupportTests extends TestCase {
 		sessCtrl = MockControl.createControl(Session.class);
 		sess = (Session) sessCtrl.getMock();
 		repositoryCtrl = MockControl.createNiceControl(Repository.class);
-		repository = (Repository) repositoryCtrl.getMock();
-		repositoryCtrl.replay();
-		providerManager = new ListSessionHolderProviderManager();
 
 	}
 
@@ -72,10 +66,8 @@ public class JcrDaoSupportTests extends TestCase {
 		};
 
 		dao.setSessionFactory(sf);
-		dao.setProviderManager(providerManager);
 		dao.afterPropertiesSet();
 		assertEquals("Correct SessionFactory", sf, dao.getSessionFactory());
-		System.out.println("dao template is " + dao.getJcrTemplate());
 		//assertEquals("Correct JcrTemplate", sf, dao.getJcrTemplate().getSessionFactory());
 		sfCtrl.verify();
 	}
@@ -89,7 +81,6 @@ public class JcrDaoSupportTests extends TestCase {
 		};
 
 		dao.setJcrTemplate(template);
-		dao.setProviderManager(providerManager);
 		dao.afterPropertiesSet();
 		assertEquals("Correct JcrTemplate", template, dao.getJcrTemplate());
 	}
@@ -117,7 +108,6 @@ public class JcrDaoSupportTests extends TestCase {
 		};
 
 		dao.setSessionFactory(sf);
-		dao.setProviderManager(providerManager);
 		
 		assertEquals(dao.getSessionFactory(), sf);
 	}
@@ -128,14 +118,10 @@ public class JcrDaoSupportTests extends TestCase {
 		// used for service provider
 
 		sfCtrl.expectAndReturn(sf.getSession(), sess);
-/*
-		sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
-		sfCtrl.expectAndReturn(sf.getSession(), sess);
-*/		sfCtrl.replay();
+		sfCtrl.replay();
 		sessCtrl.replay();
 
 		dao.setSessionFactory(sf);
-//		dao.setProviderManager(providerManager);
 		dao.afterPropertiesSet();
 		try {
 			dao.getSession();
@@ -147,7 +133,7 @@ public class JcrDaoSupportTests extends TestCase {
 		assertEquals(dao.getSession(true), sess);
 	}
 
-	public void testReleaseSession() throws RepositoryException {
+	public void testReleaseSession(){
 		JcrDaoSupport dao = new JcrDaoSupport() {
 		};
 
@@ -155,13 +141,10 @@ public class JcrDaoSupportTests extends TestCase {
 
 		sess.logout();
 		
-/*		sfCtrl.expectAndReturn(sf.getSession(), sess);
-		sessCtrl.expectAndReturn(sess.getRepository(), repository, MockControl.ONE_OR_MORE);
-*/		sfCtrl.replay();
+		sfCtrl.replay();
 		sessCtrl.replay();
 
 		dao.setSessionFactory(sf);
-//		dao.setProviderManager(providerManager);
 		dao.afterPropertiesSet();
 		dao.releaseSession(sess);
 	}

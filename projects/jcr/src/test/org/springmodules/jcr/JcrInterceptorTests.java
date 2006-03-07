@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrInterceptorTests.java,v 1.1 2005/12/20 17:38:28 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrInterceptorTests.java,v 1.2 2006/03/07 13:09:31 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
@@ -20,7 +20,6 @@ import org.aopalliance.intercept.Invocation;
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springmodules.jcr.support.ListSessionHolderProviderManager;
 
 /**
  * @author Costin Leau
@@ -33,22 +32,16 @@ public class JcrInterceptorTests extends TestCase {
         SessionFactory sf = (SessionFactory) sfControl.getMock();
         MockControl sessionControl = MockControl.createControl(Session.class);
         Session session = (Session) sessionControl.getMock();
-        MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
-        Repository repo = (Repository) repositoryControl.getMock();
-
-        repositoryControl.replay();
-        
-        sf.getSession();
-        sfControl.setReturnValue(session, 2);
+       
+        sfControl.expectAndReturn(sf.getSession(), session);
         session.logout();
         sessionControl.setVoidCallable(1);
-        sessionControl.expectAndReturn(session.getRepository(), repo);
+        sfControl.expectAndReturn(sf.getSessionHolder(session), new SessionHolder(session));
         sfControl.replay();
         sessionControl.replay();
 
         JcrInterceptor interceptor = new JcrInterceptor();
         interceptor.setSessionFactory(sf);
-        interceptor.setProviderManager(new ListSessionHolderProviderManager());
         interceptor.afterPropertiesSet();
         try {
             interceptor.invoke(new TestInvocation(sf));
@@ -66,9 +59,7 @@ public class JcrInterceptorTests extends TestCase {
         MockControl sessionControl = MockControl.createControl(Session.class);
         Session session = (Session) sessionControl.getMock();
         MockControl repoControl = MockControl.createNiceControl(Repository.class);
-        Repository repo = (Repository) repoControl.getMock();
         
-        sessionControl.expectAndReturn(session.getRepository(), repo);
         
         sfControl.replay();
         sessionControl.replay();
@@ -77,7 +68,6 @@ public class JcrInterceptorTests extends TestCase {
         TransactionSynchronizationManager.bindResource(sf, new SessionHolder(session));
         JcrInterceptor interceptor = new JcrInterceptor();
         interceptor.setSessionFactory(sf);
-        interceptor.setProviderManager(new ListSessionHolderProviderManager());
         interceptor.afterPropertiesSet();
         try {
             interceptor.invoke(new TestInvocation(sf));

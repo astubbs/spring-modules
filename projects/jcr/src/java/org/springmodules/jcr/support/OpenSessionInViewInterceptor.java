@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: OpenSessionInViewInterceptor.java,v 1.1 2005/12/20 17:38:17 costin Exp $
- * $Revision: 1.1 $
+ * $Id: OpenSessionInViewInterceptor.java,v 1.2 2006/03/07 13:09:30 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -19,8 +19,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
 import org.springmodules.jcr.SessionHolder;
-import org.springmodules.jcr.SessionHolderProvider;
-import org.springmodules.jcr.SessionHolderProviderManager;
 
 /**
  * Spring web HandlerInterceptor that binds a JCR Session to the
@@ -57,10 +55,6 @@ public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter impl
 
 	private SessionFactory sessionFactory;
 
-	private SessionHolderProvider sessionHolderProvider;
-
-	private SessionHolderProviderManager providerManager;
-
 	/**
 	 * Set the JCR JcrSessionFactory that should be used to create
 	 * Sessions.
@@ -93,7 +87,7 @@ public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter impl
 			logger.debug("Opening JCR session in OpenSessionInViewInterceptor");
 			Session s = SessionFactoryUtils.getSession(getSessionFactory(), true);
 			TransactionSynchronizationManager.bindResource(getSessionFactory(),
-					sessionHolderProvider.createSessionHolder(s));
+					getSessionFactory().getSessionHolder(s));
 		}
 
 		return true;
@@ -134,47 +128,10 @@ public class OpenSessionInViewInterceptor extends HandlerInterceptorAdapter impl
 	}
 
 	/**
-	 * @return Returns the sessionHolderProvider.
-	 */
-	public SessionHolderProvider getSessionHolderProvider() {
-		return sessionHolderProvider;
-	}
-
-	/**
-	 * @return Returns the sessionHolderProviderManager.
-	 */
-	protected SessionHolderProviderManager getProviderManager() {
-		return providerManager;
-	}
-
-	/**
-	 * Sets the sessionHolderProviderManager which will determine the approapriate sessionHolderProvider
-	 * for the underlying repository/sessionFactory.
-	 * 
-	 * @param sessionHolderProviderManager The sessionHolderProviderManager to set.
-	 */
-	public void setProviderManager(SessionHolderProviderManager sessionHolderProviderManager) {
-		this.providerManager = sessionHolderProviderManager;
-	}
-
-	/**
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
 		if (sessionFactory == null)
 			throw new IllegalArgumentException("sessionFactory is required");
-
-		if (providerManager != null) {
-			if (logger.isDebugEnabled())
-				logger.debug("using given provider manager");
-			this.sessionHolderProvider = providerManager.getSessionProvider(sessionFactory);
-		}
-		else {
-			if (logger.isDebugEnabled())
-				logger.debug("no specific provider manager was set; using the generic one");
-
-			this.sessionHolderProvider = new GenericSessionHolderProvider();
-		}
 	}
-
 }

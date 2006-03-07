@@ -1,11 +1,10 @@
 package org.springmodules.jcr;
 
+import javax.jcr.Repository;
+
 
 /**
- * This manager returns the approapriate sessionHolderProvider for the given sessionFactory.
- * Usually implementations will rely on the wrapped Repository name inside the sessionFactory
- * to retrieve the sessionHolderProvider.
- * 
+ * This manager returns the approapriate sessionHolderProvider for the given repository.
  * See the implementations of the interface for more details.
  * 
  * <strong>NOTE</strong> one of the reason for this interface was to allow dynamical discovery
@@ -17,10 +16,10 @@ package org.springmodules.jcr;
 public interface SessionHolderProviderManager {
 
 	/**
-	 * Returns the SessionHolderProvider suitable for the given Jcr SessionFactory.
-	 * @param sessionFactory
+	 * Returns the SessionHolderProvider suitable for the given Jcr Repository.
+	 * @param repository
 	 * @return
 	 */
-	public SessionHolderProvider getSessionProvider(SessionFactory sessionFactory);
+	public SessionHolderProvider getSessionProvider(Repository repository);
 
 }

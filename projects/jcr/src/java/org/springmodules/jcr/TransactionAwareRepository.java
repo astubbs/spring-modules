@@ -1,8 +1,8 @@
 /**
  * Created on Nov 11, 2005
  *
- * $Id: TransactionAwareRepository.java,v 1.2 2006/01/09 15:17:39 costin Exp $
- * $Revision: 1.2 $
+ * $Id: TransactionAwareRepository.java,v 1.3 2006/03/07 13:09:29 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr;
 
@@ -64,6 +64,7 @@ public class TransactionAwareRepository implements InitializingBean, FactoryBean
 
 	private JcrSessionFactory sessionFactory;
 	private Repository proxy;
+	private SessionHolderProviderManager sessionHolderProviderManager;
 
 	/**
 	 * allow creation of sessions if none is found on the current thread. 

@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrAccessor.java,v 1.1 2005/12/20 17:38:11 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JcrAccessor.java,v 1.2 2006/03/07 13:09:29 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
@@ -12,7 +12,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
-import org.springmodules.jcr.support.GenericSessionHolderProvider;
 
 /**
  * Base class for JcrTemplate and JcrInterceptor, defining common properties
@@ -24,7 +23,6 @@ import org.springmodules.jcr.support.GenericSessionHolderProvider;
  * 
  * @see JcrTemplate
  * @see JcrInterceptor
- * @see org.springmodules.jcr.support.ServiceSessionHolderProviderManager
  * 
  * @author Costin Leau
  */
@@ -35,33 +33,12 @@ public abstract class JcrAccessor implements InitializingBean {
 	private SessionFactory sessionFactory;
 
 	/**
-	 * sessionHolder Factory.
-	 */
-	private SessionHolderProvider sessionHolderProvider;
-
-	/**
-	 * 'Detector' for sessionHolderProvider.
-	 */
-	private SessionHolderProviderManager providerManager;
-
-	/**
 	 * Eagerly initialize the session holder provider, creating a default one
 	 * if one is not set.
 	 */
 	public void afterPropertiesSet() {
 		if (getSessionFactory() == null) {
 			throw new IllegalArgumentException("sessionFactory is required");
-		}
-
-		// check the provider manager
-		if (getProviderManager() != null) {
-			// use the injected provider manager
-			setSessionHolderProvider(providerManager.getSessionProvider(sessionFactory));
-		}
-		else {
-			if (logger.isDebugEnabled())
-				logger.debug("no provider manager set; using the default one");
-			setSessionHolderProvider(new GenericSessionHolderProvider());
 		}
 	}
 
@@ -91,39 +68,5 @@ public abstract class JcrAccessor implements InitializingBean {
 	 */
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-	}
-
-	/**
-	 * @return Returns the providerManager.
-	 */
-	public SessionHolderProviderManager getProviderManager() {
-		return providerManager;
-	}
-
-	/**
-	 * If it's null, the default session holder provider will be used.
-	 * 
-	 * @param providerManager The providerManager to set.
-	 */
-	public void setProviderManager(SessionHolderProviderManager providerManager) {
-		this.providerManager = providerManager;
-	}
-
-	/**
-	 * SessionHolderProvider (used internally by TransactionManager).
-	 * 
-	 * @return Returns the sessionHolderProvider.
-	 */
-	public SessionHolderProvider getSessionHolderProvider() {
-		return sessionHolderProvider;
-	}
-
-	/**
-	 * Only subclasses should work with it (we minimize the method for this classes). 
-	 * 
-	 * @param sessionHolderProvider The sessionHolderProvider to set.
-	 */
-	protected void setSessionHolderProvider(SessionHolderProvider sessionHolderProvider) {
-		this.sessionHolderProvider = sessionHolderProvider;
 	}
 }

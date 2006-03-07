@@ -1,8 +1,8 @@
 /**
  * Created on Nov 10, 2005
  *
- * $Id: AbstractSessionHolderProviderManagerTests.java,v 1.1 2005/12/20 17:38:25 costin Exp $
- * $Revision: 1.1 $
+ * $Id: AbstractSessionHolderProviderManagerTests.java,v 1.2 2006/03/07 13:09:31 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -58,8 +58,8 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 		repoCtrl = MockControl.createControl(Repository.class);
 		repo = (Repository) repoCtrl.getMock();
 
-		sfCtrl.expectAndReturn(sf.getSession(), sess);
-		sessCtrl.expectAndReturn(sess.getRepository(), repo);
+		//sfCtrl.expectAndReturn(sf.getSession(), sess);
+		//sessCtrl.expectAndReturn(sess.getRepository(), repo);
 		repoCtrl.expectAndReturn(repo.getDescriptor(Repository.REP_NAME_DESC), repositoryName);
 		
 		customProvider = new SessionHolderProvider() {
@@ -82,10 +82,11 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 	}
 
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		sfCtrl.verify();
 		sessCtrl.verify();
 		repoCtrl.verify();
+		
+		super.tearDown();
 	}
 
 	/*
@@ -101,7 +102,7 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 		sessCtrl.replay();
 		repoCtrl.replay();
 
-		SessionHolderProvider provider = providerManager.getSessionProvider(sf);
+		SessionHolderProvider provider = providerManager.getSessionProvider(repo);
 		assertSame(GenericSessionHolderProvider.class, provider.getClass());
 	}
 
@@ -119,7 +120,7 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 		sessCtrl.replay();
 		repoCtrl.replay();
 
-		assertSame(customProvider, providerManager.getSessionProvider(sf));
+		assertSame(customProvider, providerManager.getSessionProvider(repo));
 	}
 	
 	/*
@@ -154,6 +155,6 @@ public class AbstractSessionHolderProviderManagerTests extends TestCase {
 		sessCtrl.replay();
 		repoCtrl.replay();
 
-		assertSame(GenericSessionHolderProvider.class, providerManager.getSessionProvider(sf).getClass());
+		assertSame(GenericSessionHolderProvider.class, providerManager.getSessionProvider(repo).getClass());
 	}	
 }

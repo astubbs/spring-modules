@@ -9,7 +9,6 @@ import org.springframework.dao.support.DaoSupport;
 import org.springmodules.jcr.JcrTemplate;
 import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
-import org.springmodules.jcr.SessionHolderProviderManager;
 
 /**
  * Convenient class for accessing Jcr objects.
@@ -21,7 +20,6 @@ import org.springmodules.jcr.SessionHolderProviderManager;
 public abstract class JcrDaoSupport extends DaoSupport {
 
 	private JcrTemplate jcrTemplate;
-	private SessionHolderProviderManager providerManager;
 	private SessionFactory sessionFactory;
 
 	/**
@@ -74,8 +72,7 @@ public abstract class JcrDaoSupport extends DaoSupport {
 
 	protected final void checkDaoConfig() {
 		if (this.jcrTemplate == null && this.sessionFactory == null) {
-			throw new IllegalArgumentException(
-					"sessionFactory or jcrTemplate is required");
+			throw new IllegalArgumentException("sessionFactory or jcrTemplate is required");
 		}
 	}
 
@@ -104,7 +101,6 @@ public abstract class JcrDaoSupport extends DaoSupport {
 	 */
 	protected final Session getSession(boolean allowCreate) throws DataAccessResourceFailureException,
 			IllegalStateException {
-
 		return SessionFactoryUtils.getSession(getSessionFactory(), allowCreate);
 	}
 
@@ -132,25 +128,14 @@ public abstract class JcrDaoSupport extends DaoSupport {
 	}
 
 	/**
-	 * @return Returns the providerManager.
-	 */
-	public SessionHolderProviderManager getProviderManager() {
-		return providerManager;
-	}
-
-	/**
-	 * @param providerManager The providerManager to set.
-	 */
-	public void setProviderManager(SessionHolderProviderManager providerManager) {
-		this.providerManager = providerManager;
-	}
-
-	/**
 	 * @see org.springframework.dao.support.DaoSupport#initDao()
 	 */
 	protected final void initDao() throws Exception {
-		if (this.jcrTemplate == null)
+		// the template is null - we at least have the sessionFactory
+		if (this.jcrTemplate == null) {
 			this.jcrTemplate = createJcrTemplate(sessionFactory);
+		}
+		if (this.sessionFactory == null)
+			setSessionFactory(this.jcrTemplate.getSessionFactory());
 	}
-
 }

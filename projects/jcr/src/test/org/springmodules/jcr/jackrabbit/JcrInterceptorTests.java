@@ -3,7 +3,6 @@ package org.springmodules.jcr.jackrabbit;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.transaction.xa.XAResource;
 
@@ -27,9 +26,6 @@ public class JcrInterceptorTests extends TestCase {
     	MockControl sfCtrl = MockControl.createControl(SessionFactory.class);
     	SessionFactory sf = (SessionFactory) sfCtrl.getMock();
         MockControl sessionControl = MockControl.createControl(Session.class);
-        Session session = (Session)sessionControl.getMock();
-        MockControl repoCtrl = MockControl.createControl(Repository.class);
-        Repository repo = (Repository) repoCtrl.getMock();
 
         MockControl xaSessionControl = MockControl.createControl(XASession.class);
         XASession xaSession = (XASession)xaSessionControl.getMock();
@@ -40,15 +36,11 @@ public class JcrInterceptorTests extends TestCase {
         xaSessionControl.expectAndReturn(xaSession.getXAResource(), xaRes);
         xaSessionControl.replay();
         
-        sfCtrl.expectAndReturn(sf.getSession(), session);
-        sessionControl.expectAndReturn(session.getRepository(), repo);
-        repoCtrl.expectAndReturn(repo.getDescriptor(Repository.REP_NAME_DESC), "Jackrabbit");
         
         
         sfCtrl.replay();
         sessionControl.replay();
         xaResCtrl.replay();
-        repoCtrl.replay();
         
         JcrInterceptor interceptor = new JcrInterceptor();
         ListSessionHolderProviderManager manager = new ListSessionHolderProviderManager();
@@ -56,13 +48,11 @@ public class JcrInterceptorTests extends TestCase {
         SessionHolderProvider provider = new JackRabbitSessionHolderProvider();
         providers.add(provider);
         manager.setProviders(providers);
-        interceptor.setProviderManager(manager);
         interceptor.setSessionFactory(sf);
         interceptor.afterPropertiesSet();
         
         SessionHolder holder = null;
         
-        assertSame(provider, interceptor.getSessionHolderProvider());
         holder = provider.createSessionHolder(xaSession);
         
         assertSame(xaSession, holder.getSession());
@@ -71,7 +61,5 @@ public class JcrInterceptorTests extends TestCase {
         sessionControl.verify();
         xaResCtrl.verify();
         sfCtrl.verify();
-        repoCtrl.verify();
-
     }
 }

@@ -32,6 +32,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.Assert;
+import org.springmodules.jcr.support.GenericSessionHolderProvider;
 
 /**
  * FactoryBean for instantiating a Java Content Repository. This abstract class adds
@@ -55,11 +56,11 @@ public abstract class SessionFactoryUtils {
 	 * @param allowCreate
 	 *            if a non-transactional Session should be created when no
 	 *            transactional Session can be found for the current thread
+	 * 
 	 * @throws RepositoryException
 	 * @return
 	 */
-	public static Session doGetSession(SessionFactory sessionFactory, boolean allowCreate)
-			throws RepositoryException {
+	public static Session doGetSession(SessionFactory sessionFactory, boolean allowCreate) throws RepositoryException {
 		Assert.notNull(sessionFactory, "No sessionFactory specified");
 
 		// check if there is any transaction going on
@@ -80,7 +81,7 @@ public abstract class SessionFactoryUtils {
 			// Use same session for further JCR actions within the transaction
 			// thread object will get removed by synchronization at transaction
 			// completion.
-			sessionHolder = new SessionHolder(session);
+			sessionHolder = sessionFactory.getSessionHolder(session);
 			sessionHolder.setSynchronizedWithTransaction(true);
 			TransactionSynchronizationManager.registerSynchronization(new JcrSessionSynchronization(
 					sessionHolder, sessionFactory));
@@ -106,11 +107,11 @@ public abstract class SessionFactoryUtils {
 	 * @param allowCreate
 	 *            if a non-transactional Session should be created when no
 	 *            transactional Session can be found for the current thread
+	 * 
 	 * @throws DataAccessException         
 	 * @return
 	 */
-	public static Session getSession(SessionFactory sessionFactory, boolean allowCreate)
-			throws DataAccessException {
+	public static Session getSession(SessionFactory sessionFactory, boolean allowCreate) throws DataAccessException {
 		try {
 			return doGetSession(sessionFactory, allowCreate);
 		}

@@ -1,12 +1,14 @@
 /**
  * Created on Nov 10, 2005
  *
- * $Id: CacheableSessionHolderProviderManager.java,v 1.1 2005/12/20 17:38:14 costin Exp $
- * $Revision: 1.1 $
+ * $Id: CacheableSessionHolderProviderManager.java,v 1.2 2006/03/07 13:09:30 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
 import java.util.Map;
+
+import javax.jcr.Repository;
 
 import org.springframework.util.CachingMapDecorator;
 import org.springmodules.jcr.SessionFactory;
@@ -35,7 +37,7 @@ public abstract class CacheableSessionHolderProviderManager extends AbstractSess
 		 * @see org.springframework.util.CachingMapDecorator#create(java.lang.Object)
 		 */
 		protected Object create(Object key) {
-			return parentLookup((SessionFactory) key);
+			return parentLookup((Repository) key);
 		}
 
 	}
@@ -51,17 +53,17 @@ public abstract class CacheableSessionHolderProviderManager extends AbstractSess
 	 * @param sf
 	 * @return
 	 */
-	private SessionHolderProvider parentLookup(SessionFactory sf) {
-		return super.getSessionProvider(sf);
+	private SessionHolderProvider parentLookup(Repository repository) {
+		return super.getSessionProvider(repository);
 	}
 
 	/**
 	 * Overwrite the method to provide caching.
 	 * 
-	 * @see org.springmodules.jcr.support.AbstractSessionHolderProviderManager#getSessionProvider(org.springmodules.jcr.SessionFactory)
+	 * @see org.springmodules.jcr.support.AbstractSessionHolderProviderManager#getSessionProvider(Repository)
 	 */
-	public SessionHolderProvider getSessionProvider(SessionFactory sessionFactory) {
-		return (SessionHolderProvider) providersCache.get(sessionFactory);
+	public SessionHolderProvider getSessionProvider(Repository repository) {
+		return (SessionHolderProvider) providersCache.get(repository);
 	}
 
 }

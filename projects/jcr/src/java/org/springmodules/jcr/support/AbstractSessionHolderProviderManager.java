@@ -1,8 +1,8 @@
 /**
  * Created on Nov 10, 2005
  *
- * $Id: AbstractSessionHolderProviderManager.java,v 1.1 2005/12/20 17:38:17 costin Exp $
- * $Revision: 1.1 $
+ * $Id: AbstractSessionHolderProviderManager.java,v 1.2 2006/03/07 13:09:30 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.support;
 
@@ -12,7 +12,6 @@ import javax.jcr.Repository;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
 import org.springmodules.jcr.SessionHolderProvider;
 import org.springmodules.jcr.SessionHolderProviderManager;
@@ -38,14 +37,14 @@ public abstract class AbstractSessionHolderProviderManager implements SessionHol
 	public abstract List getProviders();
 
 	/**
-	 * @see org.springmodules.jcr.SessionHolderProviderManager#getSessionProvider(org.springmodules.jcr.SessionFactory)
+	 * @see org.springmodules.jcr.SessionHolderProviderManager#getSessionProvider(Repository)
 	 */
-	public SessionHolderProvider getSessionProvider(SessionFactory sessionFactory) {
+	public SessionHolderProvider getSessionProvider(Repository repository) {
 		// graceful fallback
-		if (sessionFactory == null)
+		if (repository == null)
 			return defaultProvider;
 		
-		String key = SessionFactoryUtils.getSession(sessionFactory, true).getRepository().getDescriptor(Repository.REP_NAME_DESC);
+		String key = repository.getDescriptor(Repository.REP_NAME_DESC);
 		List providers = getProviders();
 
 		// search the provider

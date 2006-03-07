@@ -20,6 +20,7 @@ import org.springmodules.jcr.EventListenerDefinition;
 import org.springmodules.jcr.JcrUtils;
 import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
+import org.springmodules.jcr.support.GenericSessionHolderProvider;
 
 /**
  * Jcr Session Factory. This class is just a simple wrapper around the
@@ -45,18 +46,46 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 
 	private Credentials credentials;
 
-	private EventListenerDefinition eventListeners[];
+	private EventListenerDefinition eventListeners[] = new EventListenerDefinition[] {};
 
 	private Properties namespaces;
 
 	/**
+	 * session holder provider manager - optional.
+	 */
+	private SessionHolderProviderManager sessionHolderProviderManager;
+
+	/**
+	 * session holder provider - determined and used internally.
+	 */
+	private SessionHolderProvider sessionHolderProvider;
+
+	/**
+	 * Constructor with all the required fields.
+	 * 
 	 * @param repository
 	 * @param workspaceName
+	 * @param credentials
 	 */
 	public JcrSessionFactory(Repository repository, String workspaceName, Credentials credentials) {
+		this(repository, workspaceName, credentials, null);
+	}
+
+	/**
+	 * Constructor containing all the fields available.
+	 * 
+	 * @param repository
+	 * @param workspaceName
+	 * @param credentials
+	 * @param sessionHolderProviderManager
+	 */
+	public JcrSessionFactory(Repository repository, String workspaceName, Credentials credentials,
+			SessionHolderProviderManager sessionHolderProviderManager) {
 		this.repository = repository;
 		this.workspaceName = workspaceName;
 		this.credentials = credentials;
+		this.sessionHolderProviderManager = sessionHolderProviderManager;
+
 		try {
 			afterPropertiesSet();
 		}
@@ -66,6 +95,9 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 		}
 	}
 
+	/**
+	 * Empty constructor.
+	 */
 	public JcrSessionFactory() {
 	}
 
@@ -73,7 +105,7 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 		if (getRepository() == null)
 			throw new IllegalArgumentException("repository is required");
 		if (eventListeners != null
-				&& (eventListeners.length > 0)
+				&& eventListeners.length > 0
 				&& !JcrUtils.supportsObservation(getRepository()))
 			throw new IllegalArgumentException("repository "
 					+ getRepositoryInfo()
@@ -91,6 +123,15 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 				registry.registerNamespace((String) namespace.getKey(), (String) namespace.getValue());
 			}
 		}
+
+		// determine the session holder provider
+		if (sessionHolderProviderManager == null) {
+			if (log.isDebugEnabled())
+				log.debug("no session holder provider manager set; using the default one");
+			sessionHolderProvider = new GenericSessionHolderProvider();
+		}
+		else
+			sessionHolderProvider = sessionHolderProviderManager.getSessionProvider(getRepository());
 	}
 
 	/**
@@ -98,6 +139,13 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 	 */
 	public Session getSession() throws RepositoryException {
 		return addListeners(repository.login(credentials, workspaceName));
+	}
+	
+	/**
+	 * @see org.springmodules.jcr.SessionFactory#getSessionHolder(javax.jcr.Session)
+	 */
+	public SessionHolder getSessionHolder(Session session) {
+		return sessionHolderProvider.createSessionHolder(session);
 	}
 
 	/**
@@ -237,6 +285,7 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 		buffer.append(getRepository().getDescriptor(Repository.REP_VERSION_DESC));
 		return buffer.toString();
 	}
+	
 
 	/**
 	 * @return Returns the namespaces.
@@ -250,6 +299,38 @@ public class JcrSessionFactory implements InitializingBean, SessionFactory {
 	 */
 	public void setNamespaces(Properties namespaces) {
 		this.namespaces = namespaces;
+	}
+
+	/**
+	 * Used internally.
+	 * 
+	 * @return Returns the sessionHolderProvider.
+	 */
+	protected SessionHolderProvider getSessionHolderProvider() {
+		return sessionHolderProvider;
+	}
+
+	/**
+	 * Used internally.
+	 * 
+	 * @param sessionHolderProvider The sessionHolderProvider to set.
+	 */
+	protected void setSessionHolderProvider(SessionHolderProvider sessionHolderProvider) {
+		this.sessionHolderProvider = sessionHolderProvider;
+	}
+
+	/**
+	 * @return Returns the sessionHolderProviderManager.
+	 */
+	public SessionHolderProviderManager getSessionHolderProviderManager() {
+		return sessionHolderProviderManager;
+	}
+
+	/**
+	 * @param sessionHolderProviderManager The sessionHolderProviderManager to set.
+	 */
+	public void setSessionHolderProviderManager(SessionHolderProviderManager sessionHolderProviderManager) {
+		this.sessionHolderProviderManager = sessionHolderProviderManager;
 	}
 
 }

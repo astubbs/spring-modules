@@ -3,7 +3,6 @@ package org.springmodules.jcr.jackrabbit;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.transaction.xa.XAResource;
