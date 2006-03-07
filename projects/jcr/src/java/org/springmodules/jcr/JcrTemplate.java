@@ -88,7 +88,7 @@ public class JcrTemplate extends JcrAccessor implements JcrOperations {
 		}
 		catch (RuntimeException ex) {
 			// Callback code threw application exception...
-			throw ex;
+			throw convertJcrAccessException(ex);
 		}
 		finally {
 			if (existingTransaction) {
