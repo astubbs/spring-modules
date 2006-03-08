@@ -1,0 +1,4 @@
+# properties for hooking custom resolvers
+
+resolver.file = custom-resolver.xml
+ivy.custom.resolver=${basedir}/${resolver.file}

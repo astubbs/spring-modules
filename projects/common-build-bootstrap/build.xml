@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="bootstrap-common-build" default="common-build.mod">
+	
+	<property file="bootstrap.properties"/>
+	
+	<target name="check-cvs" description="Verify if ant CVS task works">
+		<cvsversion cvsRoot="${cvsroot}"
+		       clientversionproperty="cvs.present" passfile="${pass.file}"/>
+	</target>
+
+	<target name="determineOS" description="Determine the running Operating System">
+		  <condition property="isWindows">
+		  	<or>
+			    <os family="windows"/>
+		  		<os family="win9x"/>
+			</or>		  		
+		  </condition>
+	</target>
+	
+	<target name="download-wincvs" depends="check-cvs, determineOS" unless="cvs.present" description="Download CVS for Windows or fails under Linux">
+		<fail message="cvs is required. please install it before moving on" unless="isWindows"/>
+		<echo>cvs not present and Windows detected - trying to download it...</echo>
+		<get src="${cvs.server}/${cvs.archive}" verbose="off" dest="${cvs.archive}"/>
+		<unzip src="${cvs.archive}" dest="."/>
+	</target>
+	
+	<target name="download-common-build" depends="download-wincvs" description="Download/Update Spring Common-Build">
+		 <echo>Downloading/Updating Spring Common-Build</echo>
+		
+		 <touch file="${pass.file}"/>
+		 <!-- login -->
+		 <cvspass cvsroot="${cvsroot}" password=""/>
+		 
+		 <cvs cvsroot="${cvsroot}" port="${port}"
+		   compression = "${compression}"
+		   compressionlevel = "${compression.level}"
+	       package="${package}" passfile="${pass.file}" quiet="${quiet}"
+	       dest="${basedir}/../" command="${cvs.cmd}"/>
+	</target>
+	
+	<target name="common-build.mod" depends="download-common-build" description="Modify Spring Common-Build">
+		<echo>Copy modified files </echo>
+		<copy toDir="${final.dir}">
+			<fileset dir="${extensions.dir}" excludes="${exclude.files}"/>
+		</copy>
+		<echo>Adding custom resolver support</echo>
+		<concat append="yes" force="off" destfile="${final.dir}/project.properties">
+			<filelist dir="${extensions.dir}" files="project.props.addon"/>
+		</concat>
+		
+	</target>
+	
+</project>
