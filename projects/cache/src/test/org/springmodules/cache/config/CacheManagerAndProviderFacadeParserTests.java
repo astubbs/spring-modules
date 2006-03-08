@@ -40,7 +40,8 @@ import org.springmodules.cache.provider.PathUtils;
 
 /**
  * <p>
- * Unit Tests for <code>{@link AbstractCacheManagerAndProviderFacadeParser}</code>.
+ * Unit Tests for
+ * <code>{@link AbstractCacheManagerAndProviderFacadeParser}</code>.
  * </p>
  * 
  * @author Alex Ruiz
@@ -54,33 +55,21 @@ public class CacheManagerAndProviderFacadeParserTests extends TestCase {
     private static final String CACHE_PROVIDER_FACADE = "cacheProvider";
   }
 
-  private class ConfigStruct {
+  private class ConfigElementBuilder implements XmlElementBuilder {
     String configLocation = "";
 
-    Element toXml() {
+    public Element toXml() {
       Element element = new DomElementStub("config");
       element.setAttribute("configLocation", configLocation);
       return element;
     }
   }
 
-  private static abstract class PropertyName {
-
-    static final String CACHE_MANAGER = "cacheManager";
-
-    static final String CONFIG_LOCATION = "configLocation";
-  }
-
-  private static final String CACHE_CONFIG_LOCATION = "classpath:"
-      + PathUtils
-          .getPackageNameAsPath(CacheManagerAndProviderFacadeParserTests.class)
-      + "/fakeConfigLocation.xml";
-
   private Class cacheManagerClass;
 
   private RootBeanDefinition cacheProviderFacade;
 
-  private ConfigStruct config;
+  private ConfigElementBuilder configElementBuilder;
 
   private AbstractCacheManagerAndProviderFacadeParser parser;
 
@@ -98,33 +87,51 @@ public class CacheManagerAndProviderFacadeParserTests extends TestCase {
     super(name);
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheManagerAndProviderFacadeParser#doParse(String, Element, BeanDefinitionRegistry)}</code>
+   * does not set any value to the property "configLocation" of the cache
+   * manager factory definition if the XML attribute "configLocation" does not
+   * contain any value.
+   */
   public void testDoParseWithEmptyConfigLocation() {
-    config.configLocation = "";
-    Element element = config.toXml();
+    configElementBuilder.configLocation = "";
+    Element element = configElementBuilder.toXml();
 
     expectGetCacheManagerClass();
     parserControl.replay();
 
     parser.doParse(BeanName.CACHE_PROVIDER_FACADE, element, registry);
-    assertNull(
-        "Property '" + PropertyName.CONFIG_LOCATION + "' should be null",
-        getCacheManagerProperty(PropertyName.CONFIG_LOCATION));
+    assertNull("Property 'configLocation' should be null",
+        getConfigLocationFromCacheManager());
 
     assertCacheProviderFacadeHasCacheManagerAsProperty();
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheManagerAndProviderFacadeParser#doParse(String, Element, BeanDefinitionRegistry)}</code>
+   * creates a <code>{@link Resource}</code> from the path specified in the
+   * XML attribute "configLocation" and sets such resource as the value of the
+   * property "configLocation" of the cache manager factory definition.
+   * 
+   * @throws Exception
+   *           any exception thrown when reading the contents of the specified
+   *           configuration file
+   */
   public void testDoParseWithExistingConfigLocation() throws Exception {
-    config.configLocation = CACHE_CONFIG_LOCATION;
-    Element element = config.toXml();
+    configElementBuilder.configLocation = ("classpath:"
+        + PathUtils.getPackageNameAsPath(getClass()) + "/fakeConfigLocation.xml");
+    Element element = configElementBuilder.toXml();
 
     expectGetCacheManagerClass();
     parserControl.replay();
 
     parser.doParse(BeanName.CACHE_PROVIDER_FACADE, element, registry);
-    Resource configLocation = (Resource) getCacheManagerProperty(PropertyName.CONFIG_LOCATION);
+    Resource configLocation = getConfigLocationFromCacheManager();
 
     ResourceEditor editor = new ResourceEditor();
-    editor.setAsText(CACHE_CONFIG_LOCATION);
+    editor.setAsText(configElementBuilder.configLocation);
     String expectedContent = getResourceContent((Resource) editor.getValue());
     String actualContent = getResourceContent(configLocation);
     assertEquals("<Config resource content>", expectedContent, actualContent);
@@ -133,7 +140,7 @@ public class CacheManagerAndProviderFacadeParserTests extends TestCase {
   }
 
   protected void setUp() throws Exception {
-    config = new ConfigStruct();
+    configElementBuilder = new ConfigElementBuilder();
     cacheManagerClass = AbstractCacheManagerFactoryBean.class;
 
     Class targetClass = AbstractCacheManagerAndProviderFacadeParser.class;
@@ -145,7 +152,8 @@ public class CacheManagerAndProviderFacadeParserTests extends TestCase {
 
     parserControl = MockClassControl.createControl(targetClass, null, null,
         methodsToMock);
-    parser = (AbstractCacheManagerAndProviderFacadeParser) parserControl.getMock();
+    parser = (AbstractCacheManagerAndProviderFacadeParser) parserControl
+        .getMock();
     registry = new DefaultListableBeanFactory();
 
     cacheProviderFacade = new RootBeanDefinition(CacheProviderFacade.class);
@@ -158,12 +166,15 @@ public class CacheManagerAndProviderFacadeParserTests extends TestCase {
     parserControl.verify();
   }
 
+  /**
+   * Asserts that the cache provider facade definition has a reference to the
+   * definition of a cache manager factory.
+   */
   private void assertCacheProviderFacadeHasCacheManagerAsProperty() {
-    MutablePropertyValues propertyValues = cacheProviderFacade
-        .getPropertyValues();
-    PropertyValue propertyValue = propertyValues
-        .getPropertyValue(PropertyName.CACHE_MANAGER);
-    RuntimeBeanReference cacheManager = (RuntimeBeanReference) propertyValue
+    PropertyValue cacheManagerProperty = cacheProviderFacade
+        .getPropertyValues().getPropertyValue("cacheManager");
+
+    RuntimeBeanReference cacheManager = (RuntimeBeanReference) cacheManagerProperty
         .getValue();
     assertEquals(BeanName.CACHE_MANAGER, cacheManager.getBeanName());
   }
@@ -173,18 +184,16 @@ public class CacheManagerAndProviderFacadeParserTests extends TestCase {
     parserControl.setReturnValue(cacheManagerClass);
   }
 
-  private RootBeanDefinition getCacheManager() {
+  private RootBeanDefinition getCacheManagerFromRegistry() {
     RootBeanDefinition cacheManager = (RootBeanDefinition) registry
         .getBeanDefinition(BeanName.CACHE_MANAGER);
     return cacheManager;
   }
 
-  private Object getCacheManagerProperty(String propertyName) {
-    RootBeanDefinition cacheManager = getCacheManager();
-    MutablePropertyValues propertyValues = cacheManager.getPropertyValues();
-    PropertyValue property = propertyValues.getPropertyValue(propertyName);
-    assertNotNull("Property '" + propertyName + "' not found", property);
-    return property.getValue();
+  private Resource getConfigLocationFromCacheManager() {
+    RootBeanDefinition cacheManager = getCacheManagerFromRegistry();
+    return (Resource) cacheManager.getPropertyValues().getPropertyValue(
+        "configLocation").getValue();
   }
 
   private String getResourceContent(Resource resource) throws Exception {

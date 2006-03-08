@@ -17,13 +17,10 @@
  */
 package org.springmodules.cache.config;
 
-import junit.framework.TestCase;
-
 import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.metadata.commons.CommonsAttributes;
 
 /**
@@ -33,25 +30,13 @@ import org.springframework.metadata.commons.CommonsAttributes;
  * 
  * @author Alex Ruiz
  */
-public class CommonsAttributesParserTests extends TestCase {
-
-  private class CommonsAttributesParser extends AbstractCommonsAttributesParser {
-
-    protected CacheModelParser getCacheModelParser() {
-      return null;
-    }
-
-    protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeDefinitionValidator() {
-      return null;
-    }
-  }
+public class CommonsAttributesParserTests extends
+    AbstractCacheSetupStrategyParserImplTestCase {
 
   private static final String ATTRIBUTES_BEAN_NAME = CommonsAttributes.class
       .getName();
 
-  private CommonsAttributesParser parser;
-
-  private BeanDefinitionRegistry registry;
+  private AbstractCommonsAttributesParser parser;
 
   /**
    * Constructor.
@@ -63,6 +48,14 @@ public class CommonsAttributesParserTests extends TestCase {
     super(name);
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCommonsAttributesParser}</code> adds a new property
+   * with name "attributes" to the given set of property values. The
+   * "attributes" properties should have a
+   * <code>{@link RuntimeBeanReference}</code> to the bean declaration
+   * describing an instance of <code>{@link CommonsAttributes}</code>.
+   */
   public void testConfigureCachingInterceptor() {
     MutablePropertyValues propertyValues = new MutablePropertyValues();
     parser.configureCachingInterceptor(propertyValues, registry);
@@ -77,22 +70,24 @@ public class CommonsAttributesParserTests extends TestCase {
 
   public void testRegisterCustomBeans() {
     parser.registerCustomBeans(registry);
+
     AbstractBeanDefinition attributesDefinition = (AbstractBeanDefinition) registry
         .getBeanDefinition(ATTRIBUTES_BEAN_NAME);
-    assertEquals(CommonsAttributes.class, attributesDefinition.getBeanClass());
+    ConfigAssert.assertBeanDefinitionWrapsClass(attributesDefinition,
+        CommonsAttributes.class);
   }
 
-  protected void setUp() {
-    parser = new CommonsAttributesParser();
-    registry = new DefaultListableBeanFactory();
+  protected void onSetUp() throws Exception {
+    Class targetClass = AbstractCommonsAttributesParser.class;
+    parser = (AbstractCommonsAttributesParser) createMockParser(targetClass);
   }
 
   private void assertAttributesPropertyIsPresent(
       MutablePropertyValues propertyValues) {
-    RuntimeBeanReference attributesReference = (RuntimeBeanReference) propertyValues
-        .getPropertyValue("attributes").getValue();
 
-    assertEquals(ATTRIBUTES_BEAN_NAME, attributesReference.getBeanName());
+    PropertyValue expected = new PropertyValue("attributes",
+        new RuntimeBeanReference(ATTRIBUTES_BEAN_NAME));
+    ConfigAssert.assertPropertyIsPresent(propertyValues, expected);
   }
 
 }

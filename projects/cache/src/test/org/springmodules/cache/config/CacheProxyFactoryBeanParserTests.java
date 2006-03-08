@@ -17,20 +17,11 @@
  */
 package org.springmodules.cache.config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import junit.framework.TestCase;
-
 import org.w3c.dom.Element;
 
-import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
-import org.springframework.beans.TestBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 /**
@@ -40,26 +31,15 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
  * 
  * @author Alex Ruiz
  */
-public class CacheProxyFactoryBeanParserTests extends TestCase {
+public class CacheProxyFactoryBeanParserTests extends
+    AbstractCacheSetupStrategyParserImplTestCase {
 
-  private class CacheProxyFactoryBeanParser extends
-      AbstractCacheProxyFactoryBeanParser {
-
-    protected CacheModelParser getCacheModelParser() {
-      return null;
-    }
-
-    protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeDefinitionValidator() {
-      return null;
-    }
-  }
-
-  private class ConfigStruct {
+  private class BeanRefElementBuilder implements XmlElementBuilder {
     String id = "";
 
     String refId = "";
 
-    Element toXml() {
+    public Element toXml() {
       Element element = new DomElementStub("beanRef");
       element.setAttribute("id", id);
       element.setAttribute("refId", refId);
@@ -67,13 +47,9 @@ public class CacheProxyFactoryBeanParserTests extends TestCase {
     }
   }
 
-  private ConfigStruct config;
+  private BeanRefElementBuilder beanRefElementBuilder;
 
-  private CacheProxyFactoryBeanParser parser;
-
-  private CacheSetupStrategyPropertySource propertySource;
-
-  private BeanDefinitionRegistry registry;
+  private AbstractCacheProxyFactoryBeanParser parser;
 
   /**
    * Constructor.
@@ -86,71 +62,60 @@ public class CacheProxyFactoryBeanParserTests extends TestCase {
   }
 
   public void testParseCacheSetupStrategy() {
-    registry.registerBeanDefinition(config.refId, new RootBeanDefinition(
-        TestBean.class));
+    // register bean to reference to.
+    registry.registerBeanDefinition(beanRefElementBuilder.refId,
+        new RootBeanDefinition(String.class));
 
-    parser.parseCacheSetupStrategy(config.toXml(), registry, propertySource);
+    // method to test.
+    parser.parseCacheSetupStrategy(beanRefElementBuilder.toXml(), registry,
+        propertySource);
 
-    BeanDefinition proxyCacheFactoryBean = registry
-        .getBeanDefinition(config.id);
-    MutablePropertyValues actualProperties = proxyCacheFactoryBean
-        .getPropertyValues();
+    BeanDefinition cacheProxyFactoryBeanDefinition = registry
+        .getBeanDefinition(beanRefElementBuilder.id);
 
     // verify property "target" is correct.
-    PropertyValue targetProperty = actualProperties.getPropertyValue("target");
-    RuntimeBeanReference targetReference = (RuntimeBeanReference) targetProperty
-        .getValue();
-    assertEquals(config.refId, targetReference.getBeanName());
+    PropertyValue expected = new PropertyValue("target",
+        new RuntimeBeanReference(beanRefElementBuilder.refId));
+    ConfigAssert.assertBeanDefinitionHasProperty(
+        cacheProxyFactoryBeanDefinition, expected);
 
     // verify property "cacheProviderFacade" is correct.
-    PropertyValue cacheProviderFacade = propertySource.getCacheProviderFacade();
-    RuntimeBeanReference expected = (RuntimeBeanReference) cacheProviderFacade
-        .getValue();
-    String propertyName = cacheProviderFacade.getName();
-    RuntimeBeanReference actual = (RuntimeBeanReference) actualProperties
-        .getPropertyValue(propertyName).getValue();
-    assertEquals("<Property '" + propertyName + "'>", expected.getBeanName(),
-        actual.getBeanName());
+    expected = new PropertyValue("cacheProviderFacade",
+        new RuntimeBeanReference("cacheProvider"));
+    ConfigAssert.assertBeanDefinitionHasProperty(
+        cacheProxyFactoryBeanDefinition, expected);
 
     // verify rest of properties.
-    PropertyValue cachingListeners = propertySource.getCachingListeners();
-    assertEquals(cachingListeners, actualProperties
-        .getPropertyValue(cachingListeners.getName()));
+    expected = propertySource.getCachingListenersProperty();
+    ConfigAssert.assertBeanDefinitionHasProperty(
+        cacheProxyFactoryBeanDefinition, expected);
 
-    PropertyValue cachingModels = propertySource.getCachingModels();
-    assertEquals(cachingModels, actualProperties.getPropertyValue(cachingModels
-        .getName()));
+    expected = propertySource.getCachingModelsProperty();
+    ConfigAssert.assertBeanDefinitionHasProperty(
+        cacheProxyFactoryBeanDefinition, expected);
 
-    PropertyValue flushingModels = propertySource.getFlushingModels();
-    assertEquals(flushingModels, actualProperties
-        .getPropertyValue(flushingModels.getName()));
+    expected = propertySource.getFlushingModelsProperty();
+    ConfigAssert.assertBeanDefinitionHasProperty(
+        cacheProxyFactoryBeanDefinition, expected);
   }
 
   public void testParseCacheSetupStrategyWithNonExistingRefBean() {
     try {
-      parser.parseCacheSetupStrategy(config.toXml(), registry, null);
+      parser.parseCacheSetupStrategy(beanRefElementBuilder.toXml(), registry,
+          null);
       fail();
     } catch (IllegalStateException exception) {
       // expecting this exception
     }
   }
 
-  protected void setUp() {
-    parser = new CacheProxyFactoryBeanParser();
-    registry = new DefaultListableBeanFactory();
+  protected void onSetUp() throws Exception {
+    Class targetClass = AbstractCacheProxyFactoryBeanParser.class;
+    parser = (AbstractCacheProxyFactoryBeanParser) createMockParser(targetClass);
 
-    config = new ConfigStruct();
-    config.id = "myBean";
-    config.refId = "myBeanTarget";
-
-    propertySource = new CacheSetupStrategyPropertySource(
-        new RuntimeBeanReference("cacheProvider"), new ArrayList(),
-        new HashMap(), new HashMap());
-  }
-
-  private void assertEquals(PropertyValue expected, PropertyValue actual) {
-    assertEquals("<Property '" + expected.getName() + "'>",
-        expected.getValue(), actual.getValue());
+    beanRefElementBuilder = new BeanRefElementBuilder();
+    beanRefElementBuilder.id = "myBean";
+    beanRefElementBuilder.refId = "myBeanTarget";
   }
 
 }

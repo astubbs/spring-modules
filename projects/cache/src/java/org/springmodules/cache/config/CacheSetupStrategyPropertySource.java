@@ -33,13 +33,13 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
  */
 public final class CacheSetupStrategyPropertySource {
 
-  private RuntimeBeanReference cacheProviderFacade;
+  public final RuntimeBeanReference cacheProviderFacade;
 
-  private List cachingListeners;
+  public final List cachingListeners;
 
-  private Map cachingModels;
+  public final Map cachingModelMap;
 
-  private Map flushingModels;
+  public final Map flushingModelMap;
 
   /**
    * Constructor.
@@ -48,55 +48,55 @@ public final class CacheSetupStrategyPropertySource {
    *          a reference to the cache provider facade
    * @param newCachingListeners
    *          a list of caching listeners
-   * @param newCachingModels
+   * @param newCachingModelMap
    *          a list of caching models
-   * @param newFlushingModels
+   * @param newFlushingModelMap
    *          a list of flushing models
    */
   public CacheSetupStrategyPropertySource(
       RuntimeBeanReference newCacheProviderFacade, List newCachingListeners,
-      Map newCachingModels, Map newFlushingModels) {
+      Map newCachingModelMap, Map newFlushingModelMap) {
     super();
     cacheProviderFacade = newCacheProviderFacade;
     cachingListeners = newCachingListeners;
-    cachingModels = newCachingModels;
-    flushingModels = newFlushingModels;
+    cachingModelMap = newCachingModelMap;
+    flushingModelMap = newFlushingModelMap;
   }
 
   /**
    * Returns the properties specified by:
    * <ul>
-   * <li><code>{@link #getCacheProviderFacade()}</code></li>
-   * <li><code>{@link #getCachingListeners()}</code></li>
-   * <li><code>{@link #getCachingModels()}</code></li>
-   * <li><code>{@link #getFlushingModels()}</code></li>
+   * <li><code>{@link #getCacheProviderFacadeProperty()}</code></li>
+   * <li><code>{@link #getCachingListenersProperty()}</code></li>
+   * <li><code>{@link #getCachingModelsProperty()}</code></li>
+   * <li><code>{@link #getFlushingModelsProperty()}</code></li>
    * </ul>
    * 
    * @return all the properties stored in this object.
    */
   public MutablePropertyValues getAllProperties() {
     MutablePropertyValues allPropertyValues = new MutablePropertyValues();
-    allPropertyValues.addPropertyValue(getCacheProviderFacade());
-    allPropertyValues.addPropertyValue(getCachingListeners());
-    allPropertyValues.addPropertyValue(getCachingModels());
-    allPropertyValues.addPropertyValue(getFlushingModels());
+    allPropertyValues.addPropertyValue(getCacheProviderFacadeProperty());
+    allPropertyValues.addPropertyValue(getCachingListenersProperty());
+    allPropertyValues.addPropertyValue(getCachingModelsProperty());
+    allPropertyValues.addPropertyValue(getFlushingModelsProperty());
 
     return allPropertyValues;
   }
 
-  public PropertyValue getCacheProviderFacade() {
+  public PropertyValue getCacheProviderFacadeProperty() {
     return new PropertyValue("cacheProviderFacade", cacheProviderFacade);
   }
 
-  public PropertyValue getCachingListeners() {
+  public PropertyValue getCachingListenersProperty() {
     return new PropertyValue("cachingListeners", cachingListeners);
   }
 
-  public PropertyValue getCachingModels() {
-    return new PropertyValue("cachingModels", cachingModels);
+  public PropertyValue getCachingModelsProperty() {
+    return new PropertyValue("cachingModels", cachingModelMap);
   }
 
-  public PropertyValue getFlushingModels() {
-    return new PropertyValue("flushingModels", flushingModels);
+  public PropertyValue getFlushingModelsProperty() {
+    return new PropertyValue("flushingModels", flushingModelMap);
   }
 }

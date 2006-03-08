@@ -81,7 +81,7 @@ public abstract class AbstractCacheNamespaceHandler extends
     registerBeanDefinitionParser("beanRef", getCacheProxyFactoryBeanParser());
 
     registerBeanDefinitionParser("commons-attributes",
-        getCommonsAttributeParser());
+        getCommonsAttributesParser());
 
     registerBeanDefinitionParser("interceptors", getInterceptorsParser());
   }
@@ -96,20 +96,20 @@ public abstract class AbstractCacheNamespaceHandler extends
   /**
    * @return the parser for the element "config".
    */
-  protected abstract BeanDefinitionParser getCacheProviderFacadeParser();
+  protected abstract AbstractCacheProviderFacadeParser getCacheProviderFacadeParser();
 
   /**
    * @return the parser for the element "beanRef".
    */
-  protected abstract BeanDefinitionParser getCacheProxyFactoryBeanParser();
+  protected abstract AbstractCacheProxyFactoryBeanParser getCacheProxyFactoryBeanParser();
 
   /**
    * @return the parser for the element "commons-attributes".
    */
-  protected abstract BeanDefinitionParser getCommonsAttributeParser();
+  protected abstract AbstractCommonsAttributesParser getCommonsAttributesParser();
 
   /**
    * @return the parser for the element "interceptors".
    */
-  protected abstract BeanDefinitionParser getInterceptorsParser();
+  protected abstract AbstractInterceptorsParser getInterceptorsParser();
 }

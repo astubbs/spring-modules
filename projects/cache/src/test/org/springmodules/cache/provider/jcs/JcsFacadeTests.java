@@ -36,6 +36,7 @@ import org.apache.jcs.engine.control.group.GroupId;
 import org.easymock.AbstractMatcher;
 import org.easymock.classextension.MockClassControl;
 
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.FatalCacheException;
@@ -71,24 +72,21 @@ public final class JcsFacadeTests extends TestCase {
       CacheElement actualElement = (CacheElement) actual;
 
       Serializable expectedKey = expectedElement.getKey();
-      Object expectedValue = expectedElement.getVal();
-
       Serializable actualKey = actualElement.getKey();
-      Object actualValue = actualElement.getVal();
 
-      if (expectedKey != null ? !expectedKey.equals(actualKey)
-          : actualKey != null) {
+      if (!ObjectUtils.nullSafeEquals(expectedKey, actualKey)) {
         return false;
       }
 
-      if (expectedValue != null ? !expectedValue.equals(actualValue)
-          : actualValue != null) {
+      Object expectedValue = expectedElement.getVal();
+      Object actualValue = actualElement.getVal();
+      
+      if (!ObjectUtils.nullSafeEquals(expectedValue, actualValue)) {
         return false;
       }
 
       return true;
     }
-
   }
 
   private class CacheEntry {

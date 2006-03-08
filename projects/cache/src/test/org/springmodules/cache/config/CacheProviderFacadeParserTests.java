@@ -24,27 +24,25 @@ import junit.framework.TestCase;
 import org.easymock.classextension.MockClassControl;
 import org.w3c.dom.Element;
 
-import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import org.springmodules.cache.provider.CacheProviderFacade;
+import org.springmodules.cache.serializable.SerializableFactory;
 import org.springmodules.cache.serializable.XStreamSerializableFactory;
 
 /**
  * <p>
- * Unit Tests for
- * <code>{@link AbstractCacheProviderFacadeParser}</code>.
+ * Unit Tests for <code>{@link AbstractCacheProviderFacadeParser}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public class CacheProviderFacadeParserTests extends
-    TestCase {
+public class CacheProviderFacadeParserTests extends TestCase {
 
-  private class ConfigStruct {
+  private class ConfigElementBuilder implements XmlElementBuilder {
 
     boolean failQuietlyEnabled = false;
 
@@ -52,7 +50,7 @@ public class CacheProviderFacadeParserTests extends
 
     String serializableFactory = "";
 
-    Element toXml() {
+    public Element toXml() {
       Element element = new DomElementStub("config");
       element.setAttribute("id", id);
       String failQuietlyProperty = failQuietlyEnabled ? "true" : "false";
@@ -62,25 +60,9 @@ public class CacheProviderFacadeParserTests extends
     }
   }
 
-  private static class PropertyName {
-
-    static final String FAIL_QUIETLY = "failQuietlyEnabled";
-
-    static final String SERIALIZABLE_FACTORY = "serializableFactory";
-  }
-
-  private static class SerializableFactory {
-
-    static final String INVALID = "INVALID";
-
-    static final String NONE = "NONE";
-
-    static final String XSTREAM = "XSTREAM";
-  }
-
   private Class cacheProviderFacadeClass;
 
-  private ConfigStruct config;
+  private ConfigElementBuilder configElementBuilder;
 
   private AbstractCacheProviderFacadeParser parser;
 
@@ -98,74 +80,121 @@ public class CacheProviderFacadeParserTests extends
     super(name);
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * creates sets <code>null</code> as the value of the property
+   * "serializableFactory" of the cache provider facade if the value of the XML
+   * attribute "serializableFactory" is an empty String.
+   */
   public void testParseWithEmptySerializableFactory() {
-    config.serializableFactory = "";
-    Element element = config.toXml();
+    configElementBuilder.serializableFactory = "";
+    Element element = configElementBuilder.toXml();
 
     expectGetCacheProviderFacadeClass();
-    expectDoParse(element);
+    parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
     parser.parse(element, registry);
-    assertCacheProviderFacadeIsCorrect();
-    assertSerializableFactoryIsNull();
+    ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
+        cacheProviderFacadeClass);
+    assertSerializableFactoryPropertyIsNull();
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * creates sets <code>false</code> as the value of the property
+   * "failQuietlyEnabled" of the cache provider facade if the value of the XML
+   * attribute "failQuietly" is equal to "false".
+   */
   public void testParseWithFailQuietlyEqualToFalse() {
-    config.failQuietlyEnabled = false;
-    Element element = config.toXml();
+    configElementBuilder.failQuietlyEnabled = false;
+    Element element = configElementBuilder.toXml();
 
     expectGetCacheProviderFacadeClass();
-    expectDoParse(element);
+    parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
     parser.parse(element, registry);
-    assertCacheProviderFacadeIsCorrect();
+    ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
+        cacheProviderFacadeClass);
     assertFailQuietlyEnabledIsFalse();
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * creates sets <code>true</code> as the value of the property
+   * "failQuietlyEnabled" of the cache provider facade if the value of the XML
+   * attribute "failQuietly" is equal to "true".
+   */
   public void testParseWithFailQuietlyEqualToTrue() {
-    config.failQuietlyEnabled = true;
-    Element element = config.toXml();
+    configElementBuilder.failQuietlyEnabled = true;
+    Element element = configElementBuilder.toXml();
 
     expectGetCacheProviderFacadeClass();
-    expectDoParse(element);
+    parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
     parser.parse(element, registry);
-    assertCacheProviderFacadeIsCorrect();
+    ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
+        cacheProviderFacadeClass);
     assertFailQuietlyEnabledIsTrue();
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * creates sets <code>null</code> as the value of the property
+   * "serializableFactory" of the cache provider facade if the value of the XML
+   * attribute "serializableFactory" is equal to "none".
+   */
   public void testParseWithSerializableFactoryEqualToNone() {
-    config.serializableFactory = SerializableFactory.NONE;
-    Element element = config.toXml();
+    configElementBuilder.serializableFactory = "none";
+    Element element = configElementBuilder.toXml();
 
     expectGetCacheProviderFacadeClass();
-    expectDoParse(element);
+    parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
     parser.parse(element, registry);
-    assertCacheProviderFacadeIsCorrect();
-    assertSerializableFactoryIsNull();
+    ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
+        cacheProviderFacadeClass);
+    assertSerializableFactoryPropertyIsNull();
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * creates sets a new instance of
+   * <code>{@link XStreamSerializableFactory}</code> as the value of the
+   * property "serializableFactory" of the cache provider facade if the value of
+   * the XML attribute "serializableFactory" is equal to "XSTREAM".
+   */
   public void testParseWithSerializableFactoryEqualToXstream() {
-    config.serializableFactory = SerializableFactory.XSTREAM;
-    Element element = config.toXml();
+    configElementBuilder.serializableFactory = "XSTREAM";
+    Element element = configElementBuilder.toXml();
 
     expectGetCacheProviderFacadeClass();
-    expectDoParse(element);
+    parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
     parser.parse(element, registry);
-    assertCacheProviderFacadeIsCorrect();
-    assertSerializableFactoryIsCorrect(new XStreamSerializableFactory());
+    ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
+        cacheProviderFacadeClass);
+    assertSerializableFactoryPropertyIsCorrect(new XStreamSerializableFactory());
   }
 
+  /**
+   * Verifies that the method
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * throws a <code>{@link IllegalStateException}</code> if the XML attribute
+   * "serializableFactory" contains an invalid value.
+   */
   public void testParseWithSerializableFactoryHavingInvalidValue() {
-    config.serializableFactory = SerializableFactory.INVALID;
-    Element element = config.toXml();
+    configElementBuilder.serializableFactory = "INVALID";
+    Element element = configElementBuilder.toXml();
 
     expectGetCacheProviderFacadeClass();
     parserControl.replay();
@@ -180,9 +209,56 @@ public class CacheProviderFacadeParserTests extends
 
   protected void setUp() throws Exception {
     cacheProviderFacadeClass = CacheProviderFacade.class;
-    config = new ConfigStruct();
-    config.id = "cacheProviderFacade";
+    configElementBuilder = new ConfigElementBuilder();
+    configElementBuilder.id = "cacheProviderFacade";
 
+    setUpParser();
+    registry = new DefaultListableBeanFactory();
+  }
+
+  protected void tearDown() {
+    parserControl.verify();
+  }
+
+  private void assertFailQuietlyEnabledIsCorrect(Boolean expected) {
+    PropertyValue expectedPropertyValue = new PropertyValue(
+        "failQuietlyEnabled", expected);
+    ConfigAssert.assertBeanDefinitionHasProperty(getCacheProviderFacade(),
+        expectedPropertyValue);
+  }
+
+  private void assertFailQuietlyEnabledIsFalse() {
+    assertFailQuietlyEnabledIsCorrect(Boolean.FALSE);
+  }
+
+  private void assertFailQuietlyEnabledIsTrue() {
+    assertFailQuietlyEnabledIsCorrect(Boolean.TRUE);
+  }
+
+  private void assertSerializableFactoryPropertyIsCorrect(
+      SerializableFactory expected) {
+    PropertyValue expectedPropertyValue = new PropertyValue(
+        "serializableFactory", expected);
+    ConfigAssert.assertBeanDefinitionHasProperty(getCacheProviderFacade(),
+        expectedPropertyValue);
+  }
+
+  private void assertSerializableFactoryPropertyIsNull() {
+    assertSerializableFactoryPropertyIsCorrect(null);
+  }
+
+  private void expectGetCacheProviderFacadeClass() {
+    parser.getCacheProviderFacadeClass();
+    parserControl.setReturnValue(cacheProviderFacadeClass);
+  }
+
+  private RootBeanDefinition getCacheProviderFacade() {
+    RootBeanDefinition cacheProviderFacade = (RootBeanDefinition) registry
+        .getBeanDefinition(configElementBuilder.id);
+    return cacheProviderFacade;
+  }
+
+  private void setUpParser() throws Exception {
     Class targetClass = AbstractCacheProviderFacadeParser.class;
 
     Method doParseMethod = targetClass
@@ -197,70 +273,7 @@ public class CacheProviderFacadeParserTests extends
 
     parserControl = MockClassControl.createControl(targetClass, null, null,
         methodsToMock);
-    parser = (AbstractCacheProviderFacadeParser) parserControl
-        .getMock();
-    registry = new DefaultListableBeanFactory();
-  }
-
-  protected void tearDown() {
-    parserControl.verify();
-  }
-
-  private void assertCacheProviderFacadeIsCorrect() {
-    RootBeanDefinition cacheProviderFacade = getCacheProviderFacade();
-    assertEquals("<Bean definition class>", cacheProviderFacadeClass,
-        cacheProviderFacade.getBeanClass());
-  }
-
-  private void assertFailQuietlyEnabledIsCorrect(Boolean expected) {
-    PropertyValue propertyValue = new PropertyValue(PropertyName.FAIL_QUIETLY,
-        expected);
-    assertPropertyValueIsCorrect(propertyValue);
-  }
-
-  private void assertFailQuietlyEnabledIsFalse() {
-    assertFailQuietlyEnabledIsCorrect(Boolean.FALSE);
-  }
-
-  private void assertFailQuietlyEnabledIsTrue() {
-    assertFailQuietlyEnabledIsCorrect(Boolean.TRUE);
-  }
-
-  private void assertPropertyValueIsCorrect(PropertyValue expected) {
-    RootBeanDefinition cacheProviderFacade = getCacheProviderFacade();
-    MutablePropertyValues propertyValues = cacheProviderFacade
-        .getPropertyValues();
-    String propertyName = expected.getName();
-    PropertyValue actual = propertyValues.getPropertyValue(propertyName);
-    assertNotNull("Property '" + propertyName + "' not found", actual);
-    assertEquals("<Property '" + propertyName + "'>", expected.getValue(),
-        actual.getValue());
-  }
-
-  private void assertSerializableFactoryIsCorrect(
-      org.springmodules.cache.serializable.SerializableFactory expected) {
-    PropertyValue propertyValue = new PropertyValue(
-        PropertyName.SERIALIZABLE_FACTORY, expected);
-    assertPropertyValueIsCorrect(propertyValue);
-  }
-
-  private void assertSerializableFactoryIsNull() {
-    assertSerializableFactoryIsCorrect(null);
-  }
-
-  private void expectDoParse(Element element) {
-    parser.doParse(config.id, element, registry);
-  }
-
-  private void expectGetCacheProviderFacadeClass() {
-    parser.getCacheProviderFacadeClass();
-    parserControl.setReturnValue(cacheProviderFacadeClass);
-  }
-
-  private RootBeanDefinition getCacheProviderFacade() {
-    RootBeanDefinition cacheProviderFacade = (RootBeanDefinition) registry
-        .getBeanDefinition(config.id);
-    return cacheProviderFacade;
+    parser = (AbstractCacheProviderFacadeParser) parserControl.getMock();
   }
 
 }

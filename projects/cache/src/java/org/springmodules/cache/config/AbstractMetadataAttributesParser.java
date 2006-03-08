@@ -133,9 +133,9 @@ public abstract class AbstractMetadataAttributesParser extends
       CacheSetupStrategyPropertySource propertySource) {
 
     MutablePropertyValues propertyValues = new MutablePropertyValues();
-    propertyValues.addPropertyValue(propertySource.getCacheProviderFacade());
-    propertyValues.addPropertyValue(propertySource.getCachingListeners());
-    propertyValues.addPropertyValue(propertySource.getCachingModels());
+    propertyValues.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
+    propertyValues.addPropertyValue(propertySource.getCachingListenersProperty());
+    propertyValues.addPropertyValue(propertySource.getCachingModelsProperty());
 
     RootBeanDefinition cachingInterceptor = new RootBeanDefinition(
         MetadataCachingInterceptor.class, propertyValues);
@@ -160,8 +160,8 @@ public abstract class AbstractMetadataAttributesParser extends
       CacheSetupStrategyPropertySource propertySource) {
 
     MutablePropertyValues propertyValues = new MutablePropertyValues();
-    propertyValues.addPropertyValue(propertySource.getCacheProviderFacade());
-    propertyValues.addPropertyValue(propertySource.getFlushingModels());
+    propertyValues.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
+    propertyValues.addPropertyValue(propertySource.getFlushingModelsProperty());
 
     RootBeanDefinition flushingInterceptor = new RootBeanDefinition(
         MetadataFlushingInterceptor.class, propertyValues);

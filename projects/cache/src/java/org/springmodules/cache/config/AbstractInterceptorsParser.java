@@ -77,9 +77,9 @@ public abstract class AbstractInterceptorsParser extends
     RootBeanDefinition cachingInterceptor = new RootBeanDefinition(
         MethodMapCachingInterceptor.class, propertyValues);
 
-    propertyValues.addPropertyValue(propertySource.getCacheProviderFacade());
-    propertyValues.addPropertyValue(propertySource.getCachingListeners());
-    propertyValues.addPropertyValue(propertySource.getCachingModels());
+    propertyValues.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
+    propertyValues.addPropertyValue(propertySource.getCachingListenersProperty());
+    propertyValues.addPropertyValue(propertySource.getCachingModelsProperty());
 
     registry.registerBeanDefinition(cachingInterceptorId, cachingInterceptor);
   }
@@ -93,8 +93,8 @@ public abstract class AbstractInterceptorsParser extends
     RootBeanDefinition flushingInterceptor = new RootBeanDefinition(
         MethodMapFlushingInterceptor.class, propertyValues);
 
-    propertyValues.addPropertyValue(propertySource.getCacheProviderFacade());
-    propertyValues.addPropertyValue(propertySource.getFlushingModels());
+    propertyValues.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
+    propertyValues.addPropertyValue(propertySource.getFlushingModelsProperty());
 
     registry.registerBeanDefinition(flushingInterceptorId, flushingInterceptor);
   }
