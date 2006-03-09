@@ -22,7 +22,9 @@ import junit.framework.Assert;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.config.ConstructorArgumentValues.ValueHolder;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.util.StringUtils;
 
@@ -35,6 +37,18 @@ import org.springframework.util.StringUtils;
  * @author Alex Ruiz
  */
 public abstract class ConfigAssert {
+
+  public static void assertBeanDefinitionHasConstructorArgument(
+      Object expectedArgument, ConstructorArgumentValues argumentValues,
+      int index, Class argumentType) {
+
+    String message = "<Constructor argument with index [" + index + "]";
+
+    ValueHolder argumentValue = argumentValues.getArgumentValue(index,
+        argumentType);
+
+    assertEquals(message, expectedArgument, argumentValue.getValue());
+  }
 
   /**
    * Asserts that the given bean definition contains a property value equal to
@@ -104,15 +118,21 @@ public abstract class ConfigAssert {
 
     Object expectedValue = expectedPropertyValue.getValue();
     Object actualValue = actualPropertyValue.getValue();
-    String message = "<Property '" + StringUtils.quote(propertyName) + "'>";
+    String message = "<Property " + StringUtils.quote(propertyName) + ">";
 
-    if (expectedValue instanceof RuntimeBeanReference) {
-      assertEqualBeanNames(message, (RuntimeBeanReference) expectedValue,
-          (RuntimeBeanReference) actualValue);
+    assertEquals(message, expectedValue, actualValue);
+  }
+
+  private static void assertEquals(String message, Object expected,
+      Object actual) {
+    if (expected instanceof RuntimeBeanReference) {
+      assertEqualBeanNames(message, (RuntimeBeanReference) expected,
+          (RuntimeBeanReference) actual);
 
     } else {
-      Assert.assertEquals(message, expectedValue, actualValue);
+      Assert.assertEquals(message, expected, actual);
     }
+
   }
 
 }

@@ -19,7 +19,9 @@ package org.springmodules.cache.config;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -28,6 +30,7 @@ import org.easymock.classextension.MockClassControl;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.util.ObjectUtils;
 
 /**
  * <p>
@@ -61,9 +64,8 @@ public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
     super(name);
   }
 
-  protected final AbstractCacheSetupStrategyParser createMockParser(
-      Class targetClass) throws Exception {
-
+  protected final MockClassControl createMockControl(Class targetClass,
+      Method[] targetMethodsToMock) throws Exception {
     Class superClass = AbstractCacheSetupStrategyParser.class;
 
     Method getCacheModelParserMethod = superClass.getDeclaredMethod(
@@ -73,12 +75,25 @@ public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
         .getDeclaredMethod("getCacheProviderFacadeDefinitionValidator",
             new Class[0]);
 
-    Method[] methodsToMock = { getCacheModelParserMethod,
-        getCacheProviderFacadeDefinitionValidatorMethod };
+    List methodList = new ArrayList();
+    methodList.add(getCacheModelParserMethod);
+    methodList.add(getCacheProviderFacadeDefinitionValidatorMethod);
 
-    MockClassControl control = MockClassControl.createControl(targetClass,
-        null, null, methodsToMock);
+    if (!ObjectUtils.isEmpty(targetMethodsToMock)) {
+      methodList.addAll(Arrays.asList(targetMethodsToMock));
+    }
 
+    Method[] methodsToMock = (Method[]) methodList
+        .toArray(new Method[methodList.size()]);
+
+    return MockClassControl.createControl(targetClass, null, null,
+        methodsToMock);
+  }
+
+  protected final AbstractCacheSetupStrategyParser createMockParser(
+      Class targetClass) throws Exception {
+
+    MockClassControl control = createMockControl(targetClass, null);
     return (AbstractCacheSetupStrategyParser) control.getMock();
   }
 
