@@ -30,7 +30,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheFacade;
  * 
  * @author Alex Ruiz
  */
-public class EhCacheConfigBeanDefinitionParserTest extends TestCase {
+public class EhCacheFacadeParserTests extends TestCase {
 
   private EhCacheFacadeParser parser;
 
