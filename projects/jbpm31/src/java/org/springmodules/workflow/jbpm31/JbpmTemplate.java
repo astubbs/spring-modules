@@ -1,8 +1,8 @@
 /**
  * Created on Feb 20, 2006
  *
- * $Id: JbpmTemplate.java,v 1.1 2006/03/02 14:56:00 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JbpmTemplate.java,v 1.2 2006/03/10 08:27:04 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -36,7 +36,6 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
  */
 public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 	// TODO: persistence is not always required
-
 
 
 	/**
@@ -130,8 +129,8 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 		// secured in try/finally block
 		JbpmContext dummy = getContext();
 		try {
-			Services services = dummy.getServices();
-			if (services.hasService(Services.SERVICENAME_PERSISTENCE)) {
+				
+			if (dummy.getServiceFactory(Services.SERVICENAME_PERSISTENCE) != null) {
 				hasPersistenceService = true;
 				logger.debug("jBPM persistence service present");
 			}
