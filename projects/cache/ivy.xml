@@ -23,7 +23,7 @@
     <dependency org="apache" name="log4j" rev="1.2.9" />
 
     <dependency org="springframework" name="org.springframework"
-      rev="2.0-m1" conf="global,test->default">
+      rev="2.0-m3" conf="global,test->default">
       <artifact name="spring-aop" type="jar" conf="global" />
       <artifact name="spring-aspects" type="jar" conf="global" />
       <artifact name="spring-beans" type="jar" conf="global" />

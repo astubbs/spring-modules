@@ -39,7 +39,17 @@ import org.springmodules.cache.mock.MockCachingModel;
  */
 public class CacheNamespaceHandlerTests extends TestCase {
 
-  private class CacheNamespaceHandler extends AbstractCacheNamespaceHandler {
+  private static class Handler extends AbstractCacheNamespaceHandler {
+
+    static String annotationsParserClassName;
+
+    static AbstractCacheProviderFacadeParser cacheProviderFacadeParser;
+
+    static AbstractCacheProxyFactoryBeanParser cacheProxyFactoryBeanParser;
+
+    static AbstractCommonsAttributesParser commonsAttributesParser;
+
+    static AbstractInterceptorsParser interceptorsParser;
 
     protected String getAnnotationsParserClassName() {
       return annotationsParserClassName;
@@ -62,17 +72,7 @@ public class CacheNamespaceHandlerTests extends TestCase {
     }
   }
 
-  protected String annotationsParserClassName;
-
-  protected AbstractCacheProviderFacadeParser cacheProviderFacadeParser;
-
-  protected AbstractCacheProxyFactoryBeanParser cacheProxyFactoryBeanParser;
-
-  protected AbstractCommonsAttributesParser commonsAttributesParser;
-
-  protected AbstractInterceptorsParser interceptorsParser;
-
-  private CacheNamespaceHandler handler;
+  private Handler handler;
 
   /**
    * Constructor.
@@ -85,67 +85,45 @@ public class CacheNamespaceHandlerTests extends TestCase {
   }
 
   public void testConstructorWithAnnotationsParserClassNameEqualToNull() {
-    annotationsParserClassName = null;
+    Handler.annotationsParserClassName = null;
     executeConstructorWithInvalidAnnotationsParserClassName();
   }
 
   public void testConstructorWithAnnotationsParserClassNameNotBelongingToClassHierarchy() {
-    annotationsParserClassName = MockCachingModel.class.getName();
+    Handler.annotationsParserClassName = MockCachingModel.class.getName();
     executeConstructorWithInvalidAnnotationsParserClassName();
   }
 
   public void testConstructorWithEmptyAnnotionsParserClassName() {
-    annotationsParserClassName = "";
+    Handler.annotationsParserClassName = "";
     executeConstructorWithInvalidAnnotationsParserClassName();
   }
 
   public void testContructor() throws Exception {
     Class annotationsParserClass = BeanDefinitionParserStub.class;
-    annotationsParserClassName = annotationsParserClass.getName();
+    Handler.annotationsParserClassName = annotationsParserClass.getName();
 
-    cacheProviderFacadeParser = createCacheProviderFacadeParser();
+    Handler.cacheProviderFacadeParser = createCacheProviderFacadeParser();
+    Handler.cacheProxyFactoryBeanParser = createCacheProxyFactoryBeanParser();
+    Handler.commonsAttributesParser = createCommonsAttributeParser();
+    Handler.interceptorsParser = createInterceptorsParser();
 
-    Class parserClass = AbstractCacheProxyFactoryBeanParser.class;
-    cacheProxyFactoryBeanParser = (AbstractCacheProxyFactoryBeanParser) createCacheSetupStrategyParser(parserClass);
-
-    parserClass = AbstractCommonsAttributesParser.class;
-    commonsAttributesParser = (AbstractCommonsAttributesParser) createCacheSetupStrategyParser(parserClass);
-
-    parserClass = AbstractInterceptorsParser.class;
-    interceptorsParser = (AbstractInterceptorsParser) createCacheSetupStrategyParser(parserClass);
-
-    handler = new CacheNamespaceHandler();
+    handler = new Handler();
 
     BeanDefinitionParser annotationsParser = findParserForElement("annotations");
     assertEquals(annotationsParserClass, annotationsParser.getClass());
 
-    assertIsCorrectParser(cacheProviderFacadeParser, "config");
-    assertIsCorrectParser(cacheProxyFactoryBeanParser, "beanRef");
-    assertIsCorrectParser(commonsAttributesParser, "commons-attributes");
-    assertIsCorrectParser(interceptorsParser, "interceptors");
+    assertIsCorrectParser(Handler.cacheProviderFacadeParser, "config");
+    assertIsCorrectParser(Handler.cacheProxyFactoryBeanParser, "beanRef");
+    assertIsCorrectParser(Handler.commonsAttributesParser, "commons-attributes");
+    assertIsCorrectParser(Handler.interceptorsParser, "interceptors");
   }
 
   private void assertIsCorrectParser(Object parser, String elementName) {
     assertSame(parser, findParserForElement(elementName));
   }
 
-  private AbstractCacheProviderFacadeParser createCacheProviderFacadeParser()
-      throws Exception {
-    Class target = AbstractCacheProviderFacadeParser.class;
-
-    Method getCacheProviderFacadeClassMethod = target.getDeclaredMethod(
-        "getCacheProviderFacadeClass", new Class[0]);
-
-    Method[] methodsToMock = { getCacheProviderFacadeClassMethod };
-
-    MockClassControl control = MockClassControl.createControl(target, null,
-        null, methodsToMock);
-
-    return (AbstractCacheProviderFacadeParser) control.getMock();
-  }
-
-  private Object createCacheSetupStrategyParser(Class parserClass)
-      throws Exception {
+  private Object createBaseParser(Class parserClass) throws Exception {
 
     Class target = AbstractCacheSetupStrategyParser.class;
 
@@ -171,9 +149,42 @@ public class CacheNamespaceHandlerTests extends TestCase {
     return control.getMock();
   }
 
+  private AbstractCacheProviderFacadeParser createCacheProviderFacadeParser()
+      throws Exception {
+    Class target = AbstractCacheProviderFacadeParser.class;
+
+    Method getCacheProviderFacadeClassMethod = target.getDeclaredMethod(
+        "getCacheProviderFacadeClass", new Class[0]);
+
+    Method[] methodsToMock = { getCacheProviderFacadeClassMethod };
+
+    MockClassControl control = MockClassControl.createControl(target, null,
+        null, methodsToMock);
+
+    return (AbstractCacheProviderFacadeParser) control.getMock();
+  }
+
+  private AbstractCacheProxyFactoryBeanParser createCacheProxyFactoryBeanParser()
+      throws Exception {
+    Class targetClass = AbstractCacheProxyFactoryBeanParser.class;
+    return (AbstractCacheProxyFactoryBeanParser) createBaseParser(targetClass);
+  }
+
+  private AbstractCommonsAttributesParser createCommonsAttributeParser()
+      throws Exception {
+    Class targetClass = AbstractCommonsAttributesParser.class;
+    return (AbstractCommonsAttributesParser) createBaseParser(targetClass);
+  }
+
+  private AbstractInterceptorsParser createInterceptorsParser()
+      throws Exception {
+    Class targetClass = AbstractInterceptorsParser.class;
+    return (AbstractInterceptorsParser) createBaseParser(targetClass);
+  }
+
   private void executeConstructorWithInvalidAnnotationsParserClassName() {
     try {
-      handler = new CacheNamespaceHandler();
+      handler = new Handler();
       fail();
     } catch (FatalCacheException exception) {
       // expecting this exception.

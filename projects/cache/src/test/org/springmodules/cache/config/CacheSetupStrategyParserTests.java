@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.easymock.AbstractMatcher;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
@@ -32,7 +30,6 @@ import org.w3c.dom.Element;
 
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -52,7 +49,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  */
-public class CacheSetupStrategyParserTests extends TestCase {
+public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserTestCase {
 
   private class CacheSetupStrategyPropertySourceMatcher extends AbstractMatcher {
     /**
@@ -188,14 +185,14 @@ public class CacheSetupStrategyParserTests extends TestCase {
     replay();
 
     // method to test
-    strategyParser.parse(element, registry);
+    strategyParser.parse(element, parserContext);
 
     verify();
   }
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheSetupStrategyParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * <code>{@link AbstractCacheSetupStrategyParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
    * throws an <code>{@link IllegalStateException}</code> if any of the bean
    * definitions referenced by the XML element "cachingListener" does not
    * describe an instance of <code>{@link CachingListener}</code>.
@@ -214,7 +211,7 @@ public class CacheSetupStrategyParserTests extends TestCase {
     elementBuilder.cachingListenerElementBuilders = builders;
 
     try {
-      strategyParser.parse(elementBuilder.toXml(), registry);
+      strategyParser.parse(elementBuilder.toXml(), parserContext);
       fail();
     } catch (IllegalStateException exception) {
       // expecting this exception
@@ -225,7 +222,7 @@ public class CacheSetupStrategyParserTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheSetupStrategyParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * <code>{@link AbstractCacheSetupStrategyParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
    * does not create a list of caching models if the XML element to parse does
    * not include any "cachingListener" subelement.
    */
@@ -252,7 +249,7 @@ public class CacheSetupStrategyParserTests extends TestCase {
     replay();
 
     // method to test
-    strategyParser.parse(element, registry);
+    strategyParser.parse(element, parserContext);
 
     verify();
   }
@@ -278,7 +275,7 @@ public class CacheSetupStrategyParserTests extends TestCase {
     replay();
 
     // method to test
-    strategyParser.parse(element, registry);
+    strategyParser.parse(element, parserContext);
 
     verify();
   }
@@ -304,17 +301,17 @@ public class CacheSetupStrategyParserTests extends TestCase {
     replay();
 
     // method to test
-    strategyParser.parse(element, registry);
+    strategyParser.parse(element, parserContext);
 
     verify();
   }
 
-  protected void setUp() throws Exception {
+  protected void onSetUp() throws Exception {
     setUpModelParser();
     setUpStrategyParser();
     setUpValidator();
 
-    registry = new DefaultListableBeanFactory();
+    registry = parserContext.getRegistry();
 
     elementBuilder = new CacheSetupStrategyElementBuilder();
     elementBuilder.cacheProviderId = "cacheProvider";

@@ -21,9 +21,11 @@ import org.w3c.dom.Element;
 
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValue;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.serializable.XStreamSerializableFactory;
@@ -67,15 +69,15 @@ public abstract class AbstractCacheProviderFacadeParser implements
    * 
    * @param element
    *          the XML element to parse
-   * @param registry
-   *          the registry of bean definitions
+   * @param parserContext
+   *          the parser context
    * @throws IllegalStateException
    *           if the value of the property <code>serializableFactory</code>
    *           is not equal to "NONE" or "XSTREAM"
    * 
-   * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
+   * @see BeanDefinitionParser#parse(Element, ParserContext)
    */
-  public final void parse(Element element, BeanDefinitionRegistry registry)
+  public final BeanDefinition parse(Element element, ParserContext parserContext)
       throws IllegalStateException {
     String id = element.getAttribute("id");
 
@@ -86,9 +88,12 @@ public abstract class AbstractCacheProviderFacadeParser implements
         propertyValues);
     propertyValues.addPropertyValue(parseFailQuietlyEnabledProperty(element));
     propertyValues.addPropertyValue(parseSerializableFactoryProperty(element));
+
+    BeanDefinitionRegistry registry = parserContext.getRegistry();
     registry.registerBeanDefinition(id, cacheProviderFacade);
 
     doParse(id, element, registry);
+    return null;
   }
 
   /**

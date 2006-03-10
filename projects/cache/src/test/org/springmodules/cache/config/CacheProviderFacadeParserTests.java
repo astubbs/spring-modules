@@ -19,14 +19,11 @@ package org.springmodules.cache.config;
 
 import java.lang.reflect.Method;
 
-import junit.framework.TestCase;
-
 import org.easymock.classextension.MockClassControl;
 import org.w3c.dom.Element;
 
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import org.springmodules.cache.provider.CacheProviderFacade;
@@ -40,7 +37,8 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory;
  * 
  * @author Alex Ruiz
  */
-public class CacheProviderFacadeParserTests extends TestCase {
+public class CacheProviderFacadeParserTests extends
+    AbstractBeanDefinitionParserTestCase {
 
   private class ConfigElementBuilder implements XmlElementBuilder {
 
@@ -82,7 +80,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
    * creates sets <code>null</code> as the value of the property
    * "serializableFactory" of the cache provider facade if the value of the XML
    * attribute "serializableFactory" is an empty String.
@@ -95,7 +93,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
     parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
-    parser.parse(element, registry);
+    parser.parse(element, parserContext);
     ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
         cacheProviderFacadeClass);
     assertSerializableFactoryPropertyIsNull();
@@ -103,7 +101,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
    * creates sets <code>false</code> as the value of the property
    * "failQuietlyEnabled" of the cache provider facade if the value of the XML
    * attribute "failQuietly" is equal to "false".
@@ -116,7 +114,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
     parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
-    parser.parse(element, registry);
+    parser.parse(element, parserContext);
     ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
         cacheProviderFacadeClass);
     assertFailQuietlyEnabledIsFalse();
@@ -124,7 +122,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
    * creates sets <code>true</code> as the value of the property
    * "failQuietlyEnabled" of the cache provider facade if the value of the XML
    * attribute "failQuietly" is equal to "true".
@@ -137,7 +135,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
     parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
-    parser.parse(element, registry);
+    parser.parse(element, parserContext);
     ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
         cacheProviderFacadeClass);
     assertFailQuietlyEnabledIsTrue();
@@ -145,7 +143,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
    * creates sets <code>null</code> as the value of the property
    * "serializableFactory" of the cache provider facade if the value of the XML
    * attribute "serializableFactory" is equal to "none".
@@ -158,7 +156,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
     parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
-    parser.parse(element, registry);
+    parser.parse(element, parserContext);
     ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
         cacheProviderFacadeClass);
     assertSerializableFactoryPropertyIsNull();
@@ -166,7 +164,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
    * creates sets a new instance of
    * <code>{@link XStreamSerializableFactory}</code> as the value of the
    * property "serializableFactory" of the cache provider facade if the value of
@@ -180,7 +178,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
     parser.doParse(configElementBuilder.id, element, registry);
     parserControl.replay();
 
-    parser.parse(element, registry);
+    parser.parse(element, parserContext);
     ConfigAssert.assertBeanDefinitionWrapsClass(getCacheProviderFacade(),
         cacheProviderFacadeClass);
     assertSerializableFactoryPropertyIsCorrect(new XStreamSerializableFactory());
@@ -188,7 +186,7 @@ public class CacheProviderFacadeParserTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, BeanDefinitionRegistry)}</code>
+   * <code>{@link AbstractCacheProviderFacadeParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
    * throws a <code>{@link IllegalStateException}</code> if the XML attribute
    * "serializableFactory" contains an invalid value.
    */
@@ -200,20 +198,20 @@ public class CacheProviderFacadeParserTests extends TestCase {
     parserControl.replay();
 
     try {
-      parser.parse(element, registry);
+      parser.parse(element, parserContext);
       fail();
     } catch (IllegalStateException exception) {
       // expecting this exception.
     }
   }
 
-  protected void setUp() throws Exception {
+  protected void onSetUp() throws Exception {
     cacheProviderFacadeClass = CacheProviderFacade.class;
     configElementBuilder = new ConfigElementBuilder();
     configElementBuilder.id = "cacheProviderFacade";
 
     setUpParser();
-    registry = new DefaultListableBeanFactory();
+    registry = parserContext.getRegistry();
   }
 
   protected void tearDown() {

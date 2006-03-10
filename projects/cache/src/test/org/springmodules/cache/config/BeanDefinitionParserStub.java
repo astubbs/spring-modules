@@ -19,8 +19,9 @@ package org.springmodules.cache.config;
 
 import org.w3c.dom.Element;
 
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 
 /**
  * <p>
@@ -40,10 +41,10 @@ public class BeanDefinitionParserStub implements BeanDefinitionParser {
   }
 
   /**
-   * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
+   * @see BeanDefinitionParser#parse(Element, ParserContext)
    */
-  public void parse(Element element, BeanDefinitionRegistry registry) {
-    // do nothing.
+  public BeanDefinition parse(Element element, ParserContext parserContext) {
+    return null;
   }
 
 }

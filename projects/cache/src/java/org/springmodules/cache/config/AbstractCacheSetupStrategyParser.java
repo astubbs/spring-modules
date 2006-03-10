@@ -31,6 +31,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
@@ -65,8 +66,8 @@ public abstract class AbstractCacheSetupStrategyParser implements
    * 
    * @param element
    *          the XML element to parse
-   * @param registry
-   *          the registry of bean definitions
+   * @param parserContext
+   *          the parser context
    * @throws NoSuchBeanDefinitionException
    *           if the cache provider facade is <code>null</code>
    * @throws IllegalStateException
@@ -77,12 +78,14 @@ public abstract class AbstractCacheSetupStrategyParser implements
    *           if any of the caching listeners is not an instance of
    *           <code>CachingListener</code>
    * 
-   * @see BeanDefinitionParser#parse(Element, BeanDefinitionRegistry)
+   * @see BeanDefinitionParser#parse(Element, ParserContext)
    * @see CacheProviderFacadeDefinitionValidator#validate(AbstractBeanDefinition)
    */
-  public final void parse(Element element, BeanDefinitionRegistry registry)
+  public final BeanDefinition parse(Element element, ParserContext parserContext)
       throws NoSuchBeanDefinitionException, IllegalStateException {
     String cacheProviderFacadeId = element.getAttribute("providerId");
+
+    BeanDefinitionRegistry registry = parserContext.getRegistry();
 
     BeanDefinition cacheProviderFacade = registry
         .getBeanDefinition(cacheProviderFacadeId);
@@ -101,6 +104,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
         flushingModels);
 
     parseCacheSetupStrategy(element, registry, propertySource);
+    return null;
   }
 
   /**
