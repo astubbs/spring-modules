@@ -72,6 +72,9 @@ public class CacheSetupStrategyParserTests extends
 
     private boolean equals(CacheSetupStrategyPropertySource expected,
         CacheSetupStrategyPropertySource actual) {
+      if (expected == actual) {
+        return true;
+      }
       if (!equals(expected.cacheProviderFacadeReference,
           actual.cacheProviderFacadeReference)) {
         return false;
@@ -110,6 +113,9 @@ public class CacheSetupStrategyParserTests extends
 
     private boolean equals(RuntimeBeanReference expected,
         RuntimeBeanReference actual) {
+      if (expected == actual) {
+        return true;
+      }
       if (!ObjectUtils.nullSafeEquals(expected.getBeanName(), actual
           .getBeanName())) {
         return false;
