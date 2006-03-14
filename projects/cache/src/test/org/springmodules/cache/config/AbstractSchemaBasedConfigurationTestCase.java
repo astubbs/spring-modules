@@ -17,19 +17,10 @@
  */
 package org.springmodules.cache.config;
 
-import java.lang.reflect.Method;
-
 import junit.framework.TestCase;
 
-import org.easymock.classextension.MockClassControl;
-import org.w3c.dom.Element;
-
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.support.ReaderContext;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionParserHelper;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 
 /**
  * <p>
@@ -39,10 +30,6 @@ import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
  * @author Alex Ruiz
  */
 public abstract class AbstractSchemaBasedConfigurationTestCase extends TestCase {
-
-  protected XmlBeanDefinitionParserHelper helper;
-
-  protected MockClassControl helperControl;
 
   protected ParserContext parserContext;
 
@@ -70,31 +57,9 @@ public abstract class AbstractSchemaBasedConfigurationTestCase extends TestCase 
   }
 
   protected final void setUp() throws Exception {
-    DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
-    XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
-    ReaderContext readerContext = new ReaderContext(reader, null, null, null,
-        null);
-
-    setUpMockHelper();
-
-    parserContext = new ParserContext(readerContext, helper);
+    parserContext = ParserContextFactory.create();
     registry = parserContext.getRegistry();
 
     onSetUp();
-  }
-
-  private void setUpMockHelper() throws Exception {
-    Class targetClass = XmlBeanDefinitionParserHelper.class;
-
-    Method parseBeanDefinitionElementMethod = targetClass.getDeclaredMethod(
-        "parseBeanDefinitionElement", new Class[] { Element.class,
-            boolean.class });
-
-    Method[] methodsToMock = { parseBeanDefinitionElementMethod };
-
-    helperControl = MockClassControl.createControl(targetClass, null, null,
-        methodsToMock);
-
-    helper = (XmlBeanDefinitionParserHelper) helperControl.getMock();
   }
 }

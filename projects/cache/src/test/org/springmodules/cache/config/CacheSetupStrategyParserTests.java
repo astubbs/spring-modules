@@ -72,7 +72,8 @@ public class CacheSetupStrategyParserTests extends
 
     private boolean equals(CacheSetupStrategyPropertySource expected,
         CacheSetupStrategyPropertySource actual) {
-      if (!equals(expected.cacheProviderFacadeReference, actual.cacheProviderFacadeReference)) {
+      if (!equals(expected.cacheProviderFacadeReference,
+          actual.cacheProviderFacadeReference)) {
         return false;
       }
       if (!equals(expected.cachingListeners, actual.cachingListeners)) {
@@ -117,6 +118,10 @@ public class CacheSetupStrategyParserTests extends
     }
   }
 
+  protected BeanReferenceParser beanReferenceParser;
+
+  protected MockControl beanReferenceParserControl;
+
   private CacheSetupStrategyElementBuilder elementBuilder;
 
   private CacheModelParser modelParser;
@@ -145,20 +150,30 @@ public class CacheSetupStrategyParserTests extends
     int listenerCount = 5;
     int modelCount = 2;
 
-    List cachingListeners = new ArrayList();
     elementBuilder.setDefaultCachingListenerElementBuilders(listenerCount);
+
+    // set expectations for parsing caching listeners.
+    List cachingListeners = new ArrayList();
     for (int i = 0; i < listenerCount; i++) {
       String refId = elementBuilder.cachingListenerElementBuilders[i].refId;
       registry.registerBeanDefinition(refId, new RootBeanDefinition(
           CachingListener.class));
 
-      cachingListeners.add(new RuntimeBeanReference(refId));
+      Element cachingListenerElement = elementBuilder.cachingListenerElementBuilders[i]
+          .toXml();
+      beanReferenceParser.parse(cachingListenerElement, parserContext, true);
+      RuntimeBeanReference cachingListenerReference = new RuntimeBeanReference(
+          refId);
+      beanReferenceParserControl.setReturnValue(cachingListenerReference);
+
+      cachingListeners.add(cachingListenerReference);
     }
 
+    expectCacheProviderFacadeReferenceValidation();
+
+    // expectations for parsing cache models.
     elementBuilder.setDefaultCachingModelElementBuilders(modelCount);
     elementBuilder.setDefaultFlushingModelElementBuilders(modelCount);
-
-    expectCacheProviderFacadeReferenceValidation();
     Map cachingModelMap = expectCachingModelParsing();
     Map flushingModelMap = expectFlushingModelParsing();
 
@@ -189,7 +204,6 @@ public class CacheSetupStrategyParserTests extends
    */
   public void testParseWithInvalidCachingListener() {
     expectCacheProviderFacadeReferenceValidation();
-    replay();
 
     // register invalid listener.
     CachingListenerElementBuilder builder = new CachingListenerElementBuilder();
@@ -199,6 +213,12 @@ public class CacheSetupStrategyParserTests extends
 
     CachingListenerElementBuilder[] builders = { builder };
     elementBuilder.cachingListenerElementBuilders = builders;
+
+    beanReferenceParser.parse(builder.toXml(), parserContext, true);
+    beanReferenceParserControl.setReturnValue(new RuntimeBeanReference(
+        builder.refId));
+
+    replay();
 
     try {
       strategyParser.parse(elementBuilder.toXml(), parserContext);
@@ -300,6 +320,11 @@ public class CacheSetupStrategyParserTests extends
   }
 
   protected void onSetUp() throws Exception {
+    beanReferenceParserControl = MockControl
+        .createControl(BeanReferenceParser.class);
+    beanReferenceParser = (BeanReferenceParser) beanReferenceParserControl
+        .getMock();
+
     setUpModelParser();
     setUpStrategyParser();
     setUpValidator();
@@ -358,6 +383,7 @@ public class CacheSetupStrategyParserTests extends
   }
 
   private void replay() {
+    beanReferenceParserControl.replay();
     modelParserControl.replay();
     strategyParserControl.replay();
     validatorControl.replay();
@@ -391,6 +417,7 @@ public class CacheSetupStrategyParserTests extends
 
     strategyParser = (AbstractCacheSetupStrategyParser) strategyParserControl
         .getMock();
+    strategyParser.setBeanReferenceParser(beanReferenceParser);
   }
 
   private void setUpValidator() {
@@ -401,6 +428,7 @@ public class CacheSetupStrategyParserTests extends
   }
 
   private void verify() {
+    beanReferenceParserControl.verify();
     modelParserControl.verify();
     strategyParserControl.verify();
     validatorControl.verify();

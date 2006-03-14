@@ -62,37 +62,14 @@ public class CacheProxyFactoryBeanParserTests extends
     super(name);
   }
 
-  public void testParseCacheSetupStrategyWithEmptyRefBeanAndWithoutBeanElement() {
-    helperControl.replay();
-
-    proxyElementBuilder.refId = "";
-    try {
-      parser.parseCacheSetupStrategy(proxyElementBuilder.toXml(),
-          parserContext, null);
-      fail();
-    } catch (IllegalStateException exception) {
-      // expecting this exception
-    }
-
-    helperControl.verify();
-  }
-
-  public void testParseCacheSetupStrategyWithInnerBeanDefinition() {
-    proxyElementBuilder.refId = "";
-
-    Class beanClass = String.class;
-    Element beanElement = new DomElementStub("bean");
-    beanElement.setAttribute("class", beanClass.getName());
-
+  public void testParseCacheSetupStrategy() {
     Element proxyElement = proxyElementBuilder.toXml();
-    proxyElement.appendChild(beanElement);
 
-    RootBeanDefinition beanDefinition = new RootBeanDefinition(beanClass);
+    RootBeanDefinition beanDefinition = new RootBeanDefinition(String.class);
     BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition, null);
-    helper.parseBeanDefinitionElement(beanElement, true);
-    helperControl.setReturnValue(holder);
-
-    helperControl.replay();
+    beanReferenceParser.parse(proxyElement, parserContext);
+    beanReferenceParserControl.setReturnValue(holder);
+    beanReferenceParserControl.replay();
 
     // method to test.
     parser.parseCacheSetupStrategy(proxyElement, parserContext, propertySource);
@@ -104,43 +81,22 @@ public class CacheProxyFactoryBeanParserTests extends
     PropertyValue target = proxyDefinition.getPropertyValues()
         .getPropertyValue("target");
     assertEquals(holder, target.getValue());
-
     assertCacheProxyFactoryBeanDefinitionIsCorrect(proxyDefinition);
-
-    helperControl.verify();
-  }
-
-  public void testParseCacheSetupStrategyWithRefIdPointingToExistingBean() {
-    // register bean to reference to.
-    registry.registerBeanDefinition(proxyElementBuilder.refId,
-        new RootBeanDefinition(String.class));
-
-    helperControl.replay();
-
-    // method to test.
-    parser.parseCacheSetupStrategy(proxyElementBuilder.toXml(), parserContext,
-        propertySource);
-
-    BeanDefinition proxyDefinition = registry
-        .getBeanDefinition(proxyElementBuilder.id);
-
-    // verify property "target" is correct.
-    PropertyValue expected = new PropertyValue("target",
-        new RuntimeBeanReference(proxyElementBuilder.refId));
-    ConfigAssert.assertBeanDefinitionHasProperty(proxyDefinition, expected);
-
-    assertCacheProxyFactoryBeanDefinitionIsCorrect(proxyDefinition);
-
-    helperControl.verify();
+    
+    beanReferenceParserControl.verify();
   }
 
   protected void afterSetUp() throws Exception {
+    setUpBeanReferenceParser();
+    
     Class targetClass = AbstractCacheProxyFactoryBeanParser.class;
     parser = (AbstractCacheProxyFactoryBeanParser) createMockParser(targetClass);
+    parser.setBeanReferenceParser(beanReferenceParser);
 
     proxyElementBuilder = new ProxyElementBuilder();
     proxyElementBuilder.id = "myBean";
     proxyElementBuilder.refId = "myBeanTarget";
+    
   }
 
   private void assertCacheProxyFactoryBeanDefinitionIsCorrect(

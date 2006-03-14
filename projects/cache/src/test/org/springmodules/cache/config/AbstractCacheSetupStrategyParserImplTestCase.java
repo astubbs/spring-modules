@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
 
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -38,6 +39,10 @@ import org.springframework.util.ObjectUtils;
  */
 public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
     AbstractSchemaBasedConfigurationTestCase {
+
+  protected BeanReferenceParser beanReferenceParser;
+
+  protected MockControl beanReferenceParserControl;
 
   protected CacheSetupStrategyPropertySource propertySource;
 
@@ -56,6 +61,10 @@ public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
    */
   public AbstractCacheSetupStrategyParserImplTestCase(String name) {
     super(name);
+  }
+
+  protected void afterSetUp() throws Exception {
+    // no implementation.
   }
 
   protected final MockClassControl createMockControl(Class targetClass,
@@ -91,10 +100,6 @@ public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
     return (AbstractCacheSetupStrategyParser) control.getMock();
   }
 
-  protected void afterSetUp() throws Exception {
-    // no implementation.
-  }
-
   protected final void onSetUp() throws Exception {
     propertySource = new CacheSetupStrategyPropertySource(
         new RuntimeBeanReference("cacheProvider"), new ArrayList(),
@@ -103,4 +108,10 @@ public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
     afterSetUp();
   }
 
+  protected final void setUpBeanReferenceParser() {
+    beanReferenceParserControl = MockControl
+        .createControl(BeanReferenceParser.class);
+    beanReferenceParser = (BeanReferenceParser) beanReferenceParserControl
+        .getMock();
+  }
 }

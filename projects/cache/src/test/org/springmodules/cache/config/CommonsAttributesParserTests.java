@@ -89,5 +89,4 @@ public class CommonsAttributesParserTests extends
         new RuntimeBeanReference(ATTRIBUTES_BEAN_NAME));
     ConfigAssert.assertPropertyIsPresent(propertyValues, expected);
   }
-
 }

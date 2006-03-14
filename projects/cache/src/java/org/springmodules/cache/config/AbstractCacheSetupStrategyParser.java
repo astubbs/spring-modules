@@ -64,18 +64,8 @@ public abstract class AbstractCacheSetupStrategyParser implements
    * Constructor.
    */
   public AbstractCacheSetupStrategyParser() {
-    this(new BeanReferenceParserImpl());
-  }
-
-  /**
-   * Constructor.
-   * 
-   * @param parser
-   *          a parser of XML tags that reference a bean definition
-   */
-  public AbstractCacheSetupStrategyParser(BeanReferenceParser parser) {
     super();
-    beanReferenceParser = parser;
+    beanReferenceParser = new BeanReferenceParserImpl();
   }
 
   /**
@@ -156,6 +146,11 @@ public abstract class AbstractCacheSetupStrategyParser implements
   protected abstract void parseCacheSetupStrategy(Element element,
       ParserContext parserContext,
       CacheSetupStrategyPropertySource propertySource);
+
+  protected final void setBeanReferenceParser(
+      BeanReferenceParser newBeanReferenceParser) {
+    beanReferenceParser = newBeanReferenceParser;
+  }
 
   /**
    * Parses the given XML element containing a caching listener to be added to
