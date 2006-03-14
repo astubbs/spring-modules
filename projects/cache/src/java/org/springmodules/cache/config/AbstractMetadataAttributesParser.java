@@ -24,6 +24,7 @@ import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.beans.factory.xml.ParserContext;
 
 import org.springmodules.cache.interceptor.caching.CachingAttributeSourceAdvisor;
 import org.springmodules.cache.interceptor.caching.MetadataCachingInterceptor;
@@ -81,18 +82,20 @@ public abstract class AbstractMetadataAttributesParser extends
    * 
    * @param element
    *          the XML element to parse
-   * @param registry
+   * @param parserContext
    *          the registry of bean definitions
    * @param propertySource
    *          contains common properties for the different cache setup
    *          strategies
    * 
    * @see AbstractCacheSetupStrategyParser#parseCacheSetupStrategy(Element,
-   *      BeanDefinitionRegistry, CacheSetupStrategyPropertySource)
+   *      ParserContext, CacheSetupStrategyPropertySource)
    */
   protected final void parseCacheSetupStrategy(Element element,
-      BeanDefinitionRegistry registry,
+      ParserContext parserContext,
       CacheSetupStrategyPropertySource propertySource) {
+
+    BeanDefinitionRegistry registry = parserContext.getRegistry();
 
     registerAutoproxy(registry);
     registerCustomBeans(registry);
@@ -133,8 +136,10 @@ public abstract class AbstractMetadataAttributesParser extends
       CacheSetupStrategyPropertySource propertySource) {
 
     MutablePropertyValues propertyValues = new MutablePropertyValues();
-    propertyValues.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
-    propertyValues.addPropertyValue(propertySource.getCachingListenersProperty());
+    propertyValues.addPropertyValue(propertySource
+        .getCacheProviderFacadeProperty());
+    propertyValues.addPropertyValue(propertySource
+        .getCachingListenersProperty());
     propertyValues.addPropertyValue(propertySource.getCachingModelsProperty());
 
     RootBeanDefinition cachingInterceptor = new RootBeanDefinition(
@@ -160,7 +165,8 @@ public abstract class AbstractMetadataAttributesParser extends
       CacheSetupStrategyPropertySource propertySource) {
 
     MutablePropertyValues propertyValues = new MutablePropertyValues();
-    propertyValues.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
+    propertyValues.addPropertyValue(propertySource
+        .getCacheProviderFacadeProperty());
     propertyValues.addPropertyValue(propertySource.getFlushingModelsProperty());
 
     RootBeanDefinition flushingInterceptor = new RootBeanDefinition(

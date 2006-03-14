@@ -19,17 +19,16 @@ package org.springmodules.cache.config;
 
 import org.w3c.dom.Element;
 
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
-import org.springframework.util.StringUtils;
+import org.springframework.beans.factory.xml.ParserContext;
 
 import org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean;
 
 /**
  * <p>
- * Template that handles the parsing of the XML tag "beanRef". Creates,
- * configures and registers and implementation of
+ * Template that handles the parsing of the XML tag "proxy". Creates, configures
+ * and registers and implementation of
  * <code>{@link CacheProxyFactoryBean}</code> in the provided registry of bean
  * definitions.
  * </p>
@@ -45,37 +44,32 @@ public abstract class AbstractCacheProxyFactoryBeanParser extends
    * 
    * @param element
    *          the XML element to parse
-   * @param registry
+   * @param parserContext
    *          the registry of bean definitions
    * @param propertySource
    *          contains common properties for the different cache setup
    *          strategies
    * @throws IllegalStateException
-   *           if the bean to be referenced by the
-   *           <code>CacheProxyFactoryBean</code> does not exist in the
-   *           registry
-   *           
+   *           if the "proxy" tag does not contain any reference to an existing
+   *           bean or if it does not contain a bean definition
+   * 
    * @see AbstractCacheSetupStrategyParser#parseCacheSetupStrategy(Element,
-   *      BeanDefinitionRegistry, CacheSetupStrategyPropertySource)
+   *      ParserContext, CacheSetupStrategyPropertySource)
    */
   protected final void parseCacheSetupStrategy(Element element,
-      BeanDefinitionRegistry registry,
-      CacheSetupStrategyPropertySource propertySource)
-      throws IllegalStateException {
+      ParserContext parserContext,
+      CacheSetupStrategyPropertySource propertySource) {
 
-    String beanRefId = element.getAttribute("refId");
-    if (!registry.containsBeanDefinition(beanRefId)) {
-      throw new IllegalStateException("Unable to find bean definition with id "
-          + StringUtils.quote(beanRefId));
-    }
+    Object target = getBeanReferenceParser().parse(element, parserContext);
 
     RootBeanDefinition cacheProxyFactoryBean = new RootBeanDefinition(
         CacheProxyFactoryBean.class, propertySource.getAllProperties());
 
-    cacheProxyFactoryBean.getPropertyValues().addPropertyValue("target",
-        new RuntimeBeanReference(beanRefId));
+    cacheProxyFactoryBean.getPropertyValues()
+        .addPropertyValue("target", target);
 
     String id = element.getAttribute("id");
+    BeanDefinitionRegistry registry = parserContext.getRegistry();
     registry.registerBeanDefinition(id, cacheProxyFactoryBean);
   }
 }

@@ -24,8 +24,8 @@ import junit.framework.TestCase;
 import org.easymock.classextension.MockClassControl;
 import org.w3c.dom.Element;
 
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
 
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.mock.MockCachingModel;
@@ -114,9 +114,9 @@ public class CacheNamespaceHandlerTests extends TestCase {
     assertEquals(annotationsParserClass, annotationsParser.getClass());
 
     assertIsCorrectParser(Handler.cacheProviderFacadeParser, "config");
-    assertIsCorrectParser(Handler.cacheProxyFactoryBeanParser, "beanRef");
     assertIsCorrectParser(Handler.commonsAttributesParser, "commons-attributes");
     assertIsCorrectParser(Handler.interceptorsParser, "interceptors");
+    assertIsCorrectParser(Handler.cacheProxyFactoryBeanParser, "proxy");
   }
 
   private void assertIsCorrectParser(Object parser, String elementName) {
@@ -136,7 +136,7 @@ public class CacheNamespaceHandlerTests extends TestCase {
 
     Method parseCacheSetupStrategyMethod = target.getDeclaredMethod(
         "parseCacheSetupStrategy", new Class[] { Element.class,
-            BeanDefinitionRegistry.class,
+            ParserContext.class,
             CacheSetupStrategyPropertySource.class });
 
     Method[] methodsToMock = new Method[] { getCacheModelParserMethod,

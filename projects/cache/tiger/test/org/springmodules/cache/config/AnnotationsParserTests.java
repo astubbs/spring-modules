@@ -82,7 +82,7 @@ public class AnnotationsParserTests extends
   }
 
   @Override
-  protected void onSetUp() throws Exception {
+  protected void afterSetUp() throws Exception {
     parser = genericCreateMockParser(AbstractAnnotationsParser.class);
   }
 

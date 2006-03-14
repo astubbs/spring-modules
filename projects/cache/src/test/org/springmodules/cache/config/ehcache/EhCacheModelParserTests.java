@@ -48,6 +48,21 @@ public class EhCacheModelParserTests extends TestCase {
     super(name);
   }
 
+  public void testDoParseFlushingModel() {
+    String cacheNames = "testCache";
+    boolean flushBeforeMethodExecution = true;
+
+    Element element = new DomElementStub("flushing");
+    element.setAttribute("cacheNames", cacheNames);
+
+    FlushingModel actual = parser.doParseFlushingModel(element,
+        flushBeforeMethodExecution);
+    EhCacheFlushingModel expected = new EhCacheFlushingModel(cacheNames);
+    expected.setFlushBeforeMethodExecution(flushBeforeMethodExecution);
+
+    assertEquals(expected, actual);
+  }
+
   public void testParseCachingModel() {
     String cacheName = "testCache";
 
@@ -56,18 +71,6 @@ public class EhCacheModelParserTests extends TestCase {
 
     CachingModel actual = parser.parseCachingModel(element);
     CachingModel expected = new EhCacheCachingModel(cacheName);
-
-    assertEquals(expected, actual);
-  }
-
-  public void testParseFlushingModel() {
-    String cacheNames = "testCache";
-
-    Element element = new DomElementStub("flushing");
-    element.setAttribute("cacheNames", cacheNames);
-
-    FlushingModel actual = parser.parseFlushingModel(element);
-    FlushingModel expected = new EhCacheFlushingModel(cacheNames);
 
     assertEquals(expected, actual);
   }

@@ -23,13 +23,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.easymock.classextension.MockClassControl;
 
 import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.util.ObjectUtils;
 
 /**
@@ -41,11 +37,9 @@ import org.springframework.util.ObjectUtils;
  * @author Alex Ruiz
  */
 public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
-    TestCase {
+    AbstractSchemaBasedConfigurationTestCase {
 
   protected CacheSetupStrategyPropertySource propertySource;
-
-  protected BeanDefinitionRegistry registry;
 
   /**
    * Constructor.
@@ -97,18 +91,16 @@ public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
     return (AbstractCacheSetupStrategyParser) control.getMock();
   }
 
-  protected void onSetUp() throws Exception {
+  protected void afterSetUp() throws Exception {
     // no implementation.
   }
 
-  protected final void setUp() throws Exception {
-    registry = new DefaultListableBeanFactory();
-
+  protected final void onSetUp() throws Exception {
     propertySource = new CacheSetupStrategyPropertySource(
         new RuntimeBeanReference("cacheProvider"), new ArrayList(),
         new HashMap(), new HashMap());
 
-    onSetUp();
+    afterSetUp();
   }
 
 }

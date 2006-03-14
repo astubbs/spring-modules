@@ -24,7 +24,7 @@ import org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean;
 
 /**
  * <p>
- * Parses the XML tag "beanRef" when using the XML namespace "ehcache". Creates,
+ * Parses the XML tag "proxy" when using the XML namespace "ehcache". Creates,
  * configures and registers and implementation of
  * <code>{@link CacheProxyFactoryBean}</code> in the provided registry of bean
  * definitions.

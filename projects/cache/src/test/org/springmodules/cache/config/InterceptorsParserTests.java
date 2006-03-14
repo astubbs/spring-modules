@@ -17,20 +17,10 @@
  */
 package org.springmodules.cache.config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import junit.framework.TestCase;
-
 import org.w3c.dom.Element;
 
 import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 /**
  * <p>
@@ -39,17 +29,8 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
  * 
  * @author Alex Ruiz
  */
-public class InterceptorsParserTests extends TestCase {
-
-  private class InterceptorsParser extends AbstractInterceptorsParser {
-    protected CacheModelParser getCacheModelParser() {
-      return null;
-    }
-
-    protected CacheProviderFacadeDefinitionValidator getCacheProviderFacadeDefinitionValidator() {
-      return null;
-    }
-  }
+public class InterceptorsParserTests extends
+    AbstractCacheSetupStrategyParserImplTestCase {
 
   private class InterceptorsConfigStruct {
     String cachingInterceptorId = "";
@@ -64,11 +45,9 @@ public class InterceptorsParserTests extends TestCase {
     }
   }
 
-  private InterceptorsParser parser;
-
-  private BeanDefinitionRegistry registry;
-
   private InterceptorsConfigStruct config;
+
+  private AbstractInterceptorsParser parser;
 
   /**
    * Constructor.
@@ -80,28 +59,9 @@ public class InterceptorsParserTests extends TestCase {
     super(name);
   }
 
-  protected void setUp() {
-    parser = new InterceptorsParser();
-    registry = new DefaultListableBeanFactory();
-
-    config = new InterceptorsConfigStruct();
-    config.cachingInterceptorId = "cachingInterceptor";
-    config.flushingInterceptorId = "flushingInterceptor";
-  }
-
   public void testParseCacheSetupStrategy() {
-
-    RuntimeBeanReference cacheProviderFacadeReference = new RuntimeBeanReference(
-        "cacheProvider");
-    List cachingListeners = new ArrayList();
-    Map cachingModels = new HashMap();
-    Map flushingModels = new HashMap();
-
-    CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        cacheProviderFacadeReference, cachingListeners, cachingModels,
-        flushingModels);
-
-    parser.parseCacheSetupStrategy(config.toXml(), registry, propertySource);
+    parser.parseCacheSetupStrategy(config.toXml(), parserContext,
+        propertySource);
 
     // verify the properties of the caching interceptor.
     AbstractBeanDefinition cachingInterceptor = (AbstractBeanDefinition) registry
@@ -109,12 +69,12 @@ public class InterceptorsParserTests extends TestCase {
     MutablePropertyValues cachingProperties = cachingInterceptor
         .getPropertyValues();
 
-    assertSame(cacheProviderFacadeReference, cachingProperties
+    assertSame(propertySource.cacheProviderFacadeReference, cachingProperties
         .getPropertyValue("cacheProviderFacade").getValue());
-    assertSame(cachingListeners, cachingProperties.getPropertyValue(
-        "cachingListeners").getValue());
-    assertSame(cachingModels, cachingProperties.getPropertyValue(
-        "cachingModels").getValue());
+    assertSame(propertySource.cachingListeners, cachingProperties
+        .getPropertyValue("cachingListeners").getValue());
+    assertSame(propertySource.cachingModelMap, cachingProperties
+        .getPropertyValue("cachingModels").getValue());
 
     // verify the properties of the flushing interceptor.
     AbstractBeanDefinition flushingInterceptor = (AbstractBeanDefinition) registry
@@ -122,10 +82,19 @@ public class InterceptorsParserTests extends TestCase {
     MutablePropertyValues flushingProperties = flushingInterceptor
         .getPropertyValues();
 
-    assertSame(cacheProviderFacadeReference, flushingProperties
+    assertSame(propertySource.cacheProviderFacadeReference, flushingProperties
         .getPropertyValue("cacheProviderFacade").getValue());
-    assertSame(flushingModels, flushingProperties.getPropertyValue(
-        "flushingModels").getValue());
+    assertSame(propertySource.flushingModelMap, flushingProperties
+        .getPropertyValue("flushingModels").getValue());
+  }
+
+  protected void afterSetUp() throws Exception {
+    Class targetClass = AbstractInterceptorsParser.class;
+    parser = (AbstractInterceptorsParser) createMockParser(targetClass);
+
+    config = new InterceptorsConfigStruct();
+    config.cachingInterceptorId = "cachingInterceptor";
+    config.flushingInterceptorId = "flushingInterceptor";
   }
 
 }

@@ -45,10 +45,10 @@ public abstract class AbstractCacheNamespaceHandler extends
    * Constructor that registers parsers for the elements:
    * <ul>
    * <li>annotations</li>
-   * <li>beanRef</li>
    * <li>commons-attributes</li>
    * <li>config</li>
    * <li>interceptors</li>
+   * <li>proxy</li>
    * </ul>
    */
   public AbstractCacheNamespaceHandler() {
@@ -78,7 +78,7 @@ public abstract class AbstractCacheNamespaceHandler extends
           + "Unable to load parser for namespace 'annotations'");
     }
 
-    registerBeanDefinitionParser("beanRef", getCacheProxyFactoryBeanParser());
+    registerBeanDefinitionParser("proxy", getCacheProxyFactoryBeanParser());
 
     registerBeanDefinitionParser("commons-attributes",
         getCommonsAttributesParser());
@@ -99,7 +99,7 @@ public abstract class AbstractCacheNamespaceHandler extends
   protected abstract AbstractCacheProviderFacadeParser getCacheProviderFacadeParser();
 
   /**
-   * @return the parser for the element "beanRef".
+   * @return the parser for the element "proxy".
    */
   protected abstract AbstractCacheProxyFactoryBeanParser getCacheProxyFactoryBeanParser();
 

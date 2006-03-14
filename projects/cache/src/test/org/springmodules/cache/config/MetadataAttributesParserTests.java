@@ -186,7 +186,7 @@ public class MetadataAttributesParserTests extends
     expectations();
     parserControl.replay();
 
-    parser.parseCacheSetupStrategy(new DomElementStub(""), registry,
+    parser.parseCacheSetupStrategy(new DomElementStub(""), parserContext,
         propertySource);
 
     assertAutoProxyIsRegistered();
@@ -198,7 +198,7 @@ public class MetadataAttributesParserTests extends
     parserControl.verify();
   }
 
-  protected void onSetUp() throws Exception {
+  protected void afterSetUp() throws Exception {
     Class targetClass = AbstractMetadataAttributesParser.class;
 
     Method registerCustomBeansMethod = targetClass.getDeclaredMethod(

@@ -2,10 +2,13 @@
   targetNamespace="http://www.springmodules.org/schema/ehcache"
   elementFormDefault="qualified" attributeFormDefault="unqualified"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:beans="http://www.springframework.org/schema/beans"
   xmlns:cache="http://www.springmodules.org/schema/cache"
   xmlns="http://www.springmodules.org/schema/ehcache">
 
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:import namespace="http://www.springframework.org/schema/beans"
+    schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd" />
   <xsd:import namespace="http://www.springmodules.org/schema/cache"
     schemaLocation="http://www.springmodules.org/schema/cache/springmodules-cache.xsd" />
 
@@ -14,15 +17,14 @@
   <xsd:complexType name="metadata">
     <xsd:complexContent>
       <xsd:extension base="cache:base-config-strategy">
-        <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+        <xsd:sequence>
+          <xsd:element ref="keyGenerator" minOccurs="0" maxOccurs="1" />
           <xsd:element ref="cachingListeners" minOccurs="0"
             maxOccurs="1" />
-          <xsd:choice minOccurs="0" maxOccurs="unbounded">
-            <xsd:element ref="caching" minOccurs="1"
-              maxOccurs="unbounded" />
-            <xsd:element ref="flushing" minOccurs="0"
-              maxOccurs="unbounded" />
-          </xsd:choice>
+          <xsd:element ref="caching" minOccurs="1"
+            maxOccurs="unbounded" />
+          <xsd:element ref="flushing" minOccurs="0"
+            maxOccurs="unbounded" />
         </xsd:sequence>
       </xsd:extension>
     </xsd:complexContent>
@@ -30,46 +32,45 @@
 
   <xsd:element name="annotations" type="metadata" />
 
-  <xsd:element name="beanRef">
-    <xsd:complexType>
-      <xsd:complexContent>
-        <xsd:extension base="cache:beanRef">
-          <xsd:sequence minOccurs="0" maxOccurs="unbounded">
-            <xsd:element ref="cachingListeners" minOccurs="0"
-              maxOccurs="1" />
-            <xsd:choice minOccurs="0" maxOccurs="unbounded">
-              <xsd:element ref="caching" minOccurs="1"
-                maxOccurs="unbounded" />
-              <xsd:element ref="flushing" minOccurs="0"
-                maxOccurs="unbounded" />
-            </xsd:choice>
-          </xsd:sequence>
-        </xsd:extension>
-      </xsd:complexContent>
-    </xsd:complexType>
-  </xsd:element>
-
   <xsd:element name="commons-attributes" type="metadata" />
 
   <xsd:element name="interceptors">
     <xsd:complexType>
       <xsd:complexContent>
         <xsd:extension base="cache:interceptors">
-          <xsd:sequence minOccurs="0" maxOccurs="unbounded">
+          <xsd:sequence>
+            <xsd:element ref="keyGenerator" minOccurs="0" maxOccurs="1" />
             <xsd:element ref="cachingListeners" minOccurs="0"
               maxOccurs="1" />
-            <xsd:choice minOccurs="0" maxOccurs="unbounded">
-              <xsd:element ref="caching" minOccurs="1"
-                maxOccurs="unbounded" />
-              <xsd:element ref="flushing" minOccurs="0"
-                maxOccurs="unbounded" />
-            </xsd:choice>
+            <xsd:element ref="caching" minOccurs="1"
+              maxOccurs="unbounded" />
+            <xsd:element ref="flushing" minOccurs="0"
+              maxOccurs="unbounded" />
           </xsd:sequence>
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
-  
+
+  <xsd:element name="proxy">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="cache:proxy">
+          <xsd:sequence>
+            <xsd:element ref="keyGenerator" minOccurs="0" maxOccurs="1" />
+            <xsd:element ref="cachingListeners" minOccurs="0"
+              maxOccurs="1" />
+            <xsd:element ref="beans:bean" minOccurs="0" maxOccurs="1" />
+            <xsd:element ref="caching" minOccurs="1"
+              maxOccurs="unbounded" />
+            <xsd:element ref="flushing" minOccurs="0"
+              maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="cachingListeners">
     <xsd:complexType>
       <xsd:sequence minOccurs="0" maxOccurs="unbounded">
@@ -78,7 +79,17 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="cachingListener" type="cache:cachingListener" />
+  <xsd:element name="cachingListener">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="cache:cachingListener">
+          <xsd:sequence>
+            <xsd:element ref="beans:bean" minOccurs="0" maxOccurs="1" />
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
 
   <xsd:element name="caching">
     <xsd:complexType>
@@ -89,9 +100,16 @@
 
   <xsd:element name="flushing">
     <xsd:complexType>
-      <xsd:attribute name="target" type="xsd:string" use="required" />
-      <xsd:attribute name="cacheNames" type="xsd:string" use="required" />
+      <xsd:complexContent>
+        <xsd:extension base="cache:flushing">
+          <xsd:attribute name="target" type="xsd:string" use="required" />
+          <xsd:attribute name="cacheNames" type="xsd:string"
+            use="required" />
+        </xsd:extension>
+      </xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
+
+  <xsd:element name="keyGenerator" type="cache:keyGenerator" />
 
 </xsd:schema>

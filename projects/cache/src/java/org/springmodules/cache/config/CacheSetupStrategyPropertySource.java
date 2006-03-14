@@ -33,7 +33,7 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
  */
 public final class CacheSetupStrategyPropertySource {
 
-  public final RuntimeBeanReference cacheProviderFacade;
+  public final RuntimeBeanReference cacheProviderFacadeReference;
 
   public final List cachingListeners;
 
@@ -57,7 +57,7 @@ public final class CacheSetupStrategyPropertySource {
       RuntimeBeanReference newCacheProviderFacade, List newCachingListeners,
       Map newCachingModelMap, Map newFlushingModelMap) {
     super();
-    cacheProviderFacade = newCacheProviderFacade;
+    cacheProviderFacadeReference = newCacheProviderFacade;
     cachingListeners = newCachingListeners;
     cachingModelMap = newCachingModelMap;
     flushingModelMap = newFlushingModelMap;
@@ -85,7 +85,7 @@ public final class CacheSetupStrategyPropertySource {
   }
 
   public PropertyValue getCacheProviderFacadeProperty() {
-    return new PropertyValue("cacheProviderFacade", cacheProviderFacade);
+    return new PropertyValue("cacheProviderFacade", cacheProviderFacadeReference);
   }
 
   public PropertyValue getCachingListenersProperty() {

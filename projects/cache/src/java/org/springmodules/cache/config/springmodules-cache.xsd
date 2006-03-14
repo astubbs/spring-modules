@@ -1,9 +1,12 @@
 <xsd:schema xmlns="http://www.springmodules.org/schema/cache"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:beans="http://www.springframework.org/schema/beans"
   targetNamespace="http://www.springmodules.org/schema/cache"
   elementFormDefault="qualified" attributeFormDefault="unqualified">
 
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:import namespace="http://www.springframework.org/schema/beans"
+    schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd" />
 
   <xsd:complexType name="config">
     <xsd:attribute name="id" type="xsd:string" default="cacheProvider" />
@@ -39,15 +42,6 @@
       default="cacheProvider" />
   </xsd:complexType>
 
-  <xsd:complexType name="beanRef">
-    <xsd:complexContent>
-      <xsd:extension base="base-config-strategy">
-        <xsd:attribute name="id" type="xsd:string" use="required" />
-        <xsd:attribute name="refId" type="xsd:string" use="required" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
   <xsd:complexType name="interceptors">
     <xsd:complexContent>
       <xsd:extension base="base-config-strategy">
@@ -59,9 +53,35 @@
     </xsd:complexContent>
   </xsd:complexType>
 
+  <xsd:complexType name="proxy">
+    <xsd:complexContent>
+      <xsd:extension base="base-config-strategy">
+        <xsd:attribute name="id" type="xsd:string" use="required" />
+        <xsd:attribute name="refId" type="xsd:string" use="optional" />
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
 
   <xsd:complexType name="cachingListener">
-    <xsd:attribute name="refId" type="xsd:string" use="required" />
+    <xsd:attribute name="refId" type="xsd:string" use="optional" />
+  </xsd:complexType>
+
+  <xsd:complexType name="flushing">
+    <xsd:attribute name="when" default="after">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="before" />
+          <xsd:enumeration value="after" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="keyGenerator">
+    <xsd:sequence>
+      <xsd:element ref="beans:bean" minOccurs="0" maxOccurs="1" />
+    </xsd:sequence>
+    <xsd:attribute name="refId" type="xsd:string" use="optional" />
   </xsd:complexType>
 
 </xsd:schema>

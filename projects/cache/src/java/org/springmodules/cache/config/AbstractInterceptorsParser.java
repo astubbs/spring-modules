@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.beans.factory.xml.ParserContext;
 
 import org.springmodules.cache.interceptor.caching.MethodMapCachingInterceptor;
 import org.springmodules.cache.interceptor.flush.MethodMapFlushingInterceptor;
@@ -47,18 +48,20 @@ public abstract class AbstractInterceptorsParser extends
    * 
    * @param element
    *          the XML element to parse
-   * @param registry
+   * @param parserContext
    *          the registry of bean definitions
    * @param propertySource
    *          contains common properties for the different cache setup
    *          strategies
    * 
    * @see AbstractCacheSetupStrategyParser#parseCacheSetupStrategy(Element,
-   *      BeanDefinitionRegistry, CacheSetupStrategyPropertySource)
+   *      ParserContext, CacheSetupStrategyPropertySource)
    */
   protected final void parseCacheSetupStrategy(Element element,
-      BeanDefinitionRegistry registry,
+      ParserContext parserContext,
       CacheSetupStrategyPropertySource propertySource) {
+
+    BeanDefinitionRegistry registry = parserContext.getRegistry();
 
     String cachingInterceptorId = element.getAttribute("cachingInterceptorId");
     registerCachingInterceptor(cachingInterceptorId, registry, propertySource);
@@ -77,8 +80,10 @@ public abstract class AbstractInterceptorsParser extends
     RootBeanDefinition cachingInterceptor = new RootBeanDefinition(
         MethodMapCachingInterceptor.class, propertyValues);
 
-    propertyValues.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
-    propertyValues.addPropertyValue(propertySource.getCachingListenersProperty());
+    propertyValues.addPropertyValue(propertySource
+        .getCacheProviderFacadeProperty());
+    propertyValues.addPropertyValue(propertySource
+        .getCachingListenersProperty());
     propertyValues.addPropertyValue(propertySource.getCachingModelsProperty());
 
     registry.registerBeanDefinition(cachingInterceptorId, cachingInterceptor);
@@ -93,7 +98,8 @@ public abstract class AbstractInterceptorsParser extends
     RootBeanDefinition flushingInterceptor = new RootBeanDefinition(
         MethodMapFlushingInterceptor.class, propertyValues);
 
-    propertyValues.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
+    propertyValues.addPropertyValue(propertySource
+        .getCacheProviderFacadeProperty());
     propertyValues.addPropertyValue(propertySource.getFlushingModelsProperty());
 
     registry.registerBeanDefinition(flushingInterceptorId, flushingInterceptor);

@@ -29,8 +29,8 @@ import org.easymock.classextension.MockClassControl;
 import org.w3c.dom.Element;
 
 import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -49,7 +49,8 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * 
  * @author Alex Ruiz
  */
-public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserTestCase {
+public class CacheSetupStrategyParserTests extends
+    AbstractSchemaBasedConfigurationTestCase {
 
   private class CacheSetupStrategyPropertySourceMatcher extends AbstractMatcher {
     /**
@@ -62,57 +63,47 @@ public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserT
       if (!(actual instanceof CacheSetupStrategyPropertySource)) {
         return false;
       }
-
       if (!equals((CacheSetupStrategyPropertySource) expected,
           (CacheSetupStrategyPropertySource) actual)) {
         return false;
       }
-
       return true;
     }
 
     private boolean equals(CacheSetupStrategyPropertySource expected,
         CacheSetupStrategyPropertySource actual) {
-      if (!equals(expected.cacheProviderFacade, actual.cacheProviderFacade)) {
+      if (!equals(expected.cacheProviderFacadeReference, actual.cacheProviderFacadeReference)) {
         return false;
       }
-
       if (!equals(expected.cachingListeners, actual.cachingListeners)) {
         return false;
       }
-
       if (!ObjectUtils.nullSafeEquals(expected.cachingModelMap,
           actual.cachingModelMap)) {
         return false;
       }
-
       if (!ObjectUtils.nullSafeEquals(expected.flushingModelMap,
           actual.flushingModelMap)) {
         return false;
       }
-
       return true;
     }
 
     private boolean equals(List expected, List actual) {
       if (!CollectionUtils.isEmpty(expected)) {
         int count = expected.size();
-
         if (actual.size() != count) {
           return false;
         }
-
         for (int i = 0; i < count; i++) {
           if (!equals((RuntimeBeanReference) expected.get(i),
               (RuntimeBeanReference) actual.get(i))) {
             return false;
           }
         }
-
       } else if (!CollectionUtils.isEmpty(actual)) {
         return false;
       }
-
       return true;
     }
 
@@ -131,8 +122,6 @@ public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserT
   private CacheModelParser modelParser;
 
   private MockControl modelParserControl;
-
-  private BeanDefinitionRegistry registry;
 
   private AbstractCacheSetupStrategyParser strategyParser;
 
@@ -178,7 +167,8 @@ public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserT
         new RuntimeBeanReference(elementBuilder.cacheProviderId),
         cachingListeners, cachingModelMap, flushingModelMap);
 
-    strategyParser.parseCacheSetupStrategy(element, registry, propertySource);
+    strategyParser.parseCacheSetupStrategy(element, parserContext,
+        propertySource);
     strategyParserControl
         .setMatcher(new CacheSetupStrategyPropertySourceMatcher());
 
@@ -242,7 +232,8 @@ public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserT
         new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
         cachingModelMap, flushingModelMap);
 
-    strategyParser.parseCacheSetupStrategy(element, registry, propertySource);
+    strategyParser.parseCacheSetupStrategy(element, parserContext,
+        propertySource);
     strategyParserControl
         .setMatcher(new CacheSetupStrategyPropertySourceMatcher());
 
@@ -265,10 +256,11 @@ public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserT
 
     Element element = elementBuilder.toXml();
     CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
-        null, flushingModelMap);
+        new RuntimeBeanReference(elementBuilder.cacheProviderId), null, null,
+        flushingModelMap);
 
-    strategyParser.parseCacheSetupStrategy(element, registry, propertySource);
+    strategyParser.parseCacheSetupStrategy(element, parserContext,
+        propertySource);
     strategyParserControl
         .setMatcher(new CacheSetupStrategyPropertySourceMatcher());
 
@@ -294,7 +286,8 @@ public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserT
         new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
         cachingModelMap, null);
 
-    strategyParser.parseCacheSetupStrategy(element, registry, propertySource);
+    strategyParser.parseCacheSetupStrategy(element, parserContext,
+        propertySource);
     strategyParserControl
         .setMatcher(new CacheSetupStrategyPropertySourceMatcher());
 
@@ -310,8 +303,6 @@ public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserT
     setUpModelParser();
     setUpStrategyParser();
     setUpValidator();
-
-    registry = parserContext.getRegistry();
 
     elementBuilder = new CacheSetupStrategyElementBuilder();
     elementBuilder.cacheProviderId = "cacheProvider";
@@ -389,8 +380,7 @@ public class CacheSetupStrategyParserTests extends AbstractBeanDefinitionParserT
 
     Method parseCacheSetupStrategyMethod = targetClass.getDeclaredMethod(
         "parseCacheSetupStrategy", new Class[] { Element.class,
-            BeanDefinitionRegistry.class,
-            CacheSetupStrategyPropertySource.class });
+            ParserContext.class, CacheSetupStrategyPropertySource.class });
 
     Method[] methodsToMock = { getCacheModelParserMethod,
         getCacheProviderFacadeDefinitionValidatorMethod,

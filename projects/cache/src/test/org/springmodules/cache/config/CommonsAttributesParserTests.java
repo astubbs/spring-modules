@@ -77,7 +77,7 @@ public class CommonsAttributesParserTests extends
         CommonsAttributes.class);
   }
 
-  protected void onSetUp() throws Exception {
+  protected void afterSetUp() throws Exception {
     Class targetClass = AbstractCommonsAttributesParser.class;
     parser = (AbstractCommonsAttributesParser) createMockParser(targetClass);
   }

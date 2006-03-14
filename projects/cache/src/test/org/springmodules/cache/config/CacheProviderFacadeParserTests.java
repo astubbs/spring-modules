@@ -38,7 +38,7 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory;
  * @author Alex Ruiz
  */
 public class CacheProviderFacadeParserTests extends
-    AbstractBeanDefinitionParserTestCase {
+    AbstractSchemaBasedConfigurationTestCase {
 
   private class ConfigElementBuilder implements XmlElementBuilder {
 
@@ -65,8 +65,6 @@ public class CacheProviderFacadeParserTests extends
   private AbstractCacheProviderFacadeParser parser;
 
   private MockClassControl parserControl;
-
-  private BeanDefinitionRegistry registry;
 
   /**
    * Constructor.
@@ -211,7 +209,6 @@ public class CacheProviderFacadeParserTests extends
     configElementBuilder.id = "cacheProviderFacade";
 
     setUpParser();
-    registry = parserContext.getRegistry();
   }
 
   protected void tearDown() {

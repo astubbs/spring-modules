@@ -21,6 +21,7 @@ import org.w3c.dom.Element;
 
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FlushingModel;
+import org.springmodules.cache.config.AbstractCacheModelParser;
 import org.springmodules.cache.config.CacheModelParser;
 import org.springmodules.cache.provider.ehcache.EhCacheCachingModel;
 import org.springmodules.cache.provider.ehcache.EhCacheFlushingModel;
@@ -33,7 +34,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheFlushingModel;
  * 
  * @author Alex Ruiz
  */
-public final class EhCacheModelParser implements CacheModelParser {
+public final class EhCacheModelParser extends AbstractCacheModelParser {
 
   /**
    * Creates a <code>{@link EhCacheCachingModel}</code> from the given XML
@@ -57,13 +58,18 @@ public final class EhCacheModelParser implements CacheModelParser {
    * 
    * @param element
    *          the XML element to parse
+   * @param flushBeforeMethodExecution
+   *          indicates if the cache should be flushed before or after the
+   *          execution of the intercepted method
    * @return the created flushing model
    * 
-   * @see CacheModelParser#parseFlushingModel(Element)
+   * @see AbstractCacheModelParser#doParseFlushingModel(Element, boolean)
    */
-  public FlushingModel parseFlushingModel(Element element) {
+  protected FlushingModel doParseFlushingModel(Element element,
+      boolean flushBeforeMethodExecution) {
     String csvCacheNames = element.getAttribute("cacheNames");
     EhCacheFlushingModel model = new EhCacheFlushingModel(csvCacheNames);
+    model.setFlushBeforeMethodExecution(flushBeforeMethodExecution);
     return model;
   }
 }
