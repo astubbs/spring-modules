@@ -20,8 +20,6 @@ package org.springmodules.cache.config.ehcache;
 import org.springmodules.cache.config.CacheModelParser;
 import org.springmodules.cache.config.CacheProviderFacadeDefinitionValidator;
 
-import junit.framework.TestCase;
-
 /**
  * <p>
  * Unit Tests for <code>{@link EhCacheAnnotationsParser}</code>.
@@ -29,7 +27,8 @@ import junit.framework.TestCase;
  * 
  * @author Alex Ruiz
  */
-public class EhCacheAnnotationsParserTests extends TestCase {
+public class EhCacheAnnotationsParserTests extends
+    AbstractEhCacheSetupStrategyTestCase {
 
   private EhCacheAnnotationsParser parser;
 
@@ -43,16 +42,17 @@ public class EhCacheAnnotationsParserTests extends TestCase {
     super(name);
   }
 
+  @Override
   public void testGetCacheModelParser() {
     CacheModelParser cacheModelParser = parser.getCacheModelParser();
-    EhCacheConfigAssert.assertCacheModelParserIsCorrect(cacheModelParser);
+    assertCacheModelParserIsCorrect(cacheModelParser);
   }
 
+  @Override
   public void testGetCacheProviderFacadeDefinitionValidator() {
     CacheProviderFacadeDefinitionValidator validator = parser
         .getCacheProviderFacadeDefinitionValidator();
-    EhCacheConfigAssert
-        .assertCacheProviderFacadeDefinitionValidatorIsCorrect(validator);
+    assertCacheProviderFacadeDefinitionValidatorIsCorrect(validator);
   }
 
   @Override

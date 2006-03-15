@@ -1,5 +1,5 @@
 /* 
- * Created on Mar 8, 2006
+ * Created on Mar 15, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,21 +17,43 @@
  */
 package org.springmodules.cache.config.ehcache;
 
-import junit.framework.Assert;
-
 import org.springmodules.cache.config.CacheModelParser;
 import org.springmodules.cache.config.CacheProviderFacadeDefinitionValidator;
 
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
 /**
  * <p>
- * Assert methods related EHCACHE schema-based configuration.
+ * Test Cases for cache setup strategies for EHCache.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public abstract class EhCacheConfigAssert {
+public abstract class AbstractEhCacheSetupStrategyTestCase extends TestCase {
 
-  public static void assertCacheModelParserIsCorrect(CacheModelParser parser) {
+  /**
+   * Constructor.
+   */
+  public AbstractEhCacheSetupStrategyTestCase() {
+    super();
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param name
+   *          the name of the test case
+   */
+  public AbstractEhCacheSetupStrategyTestCase(String name) {
+    super(name);
+  }
+
+  public abstract void testGetCacheModelParser();
+
+  public abstract void testGetCacheProviderFacadeDefinitionValidator();
+
+  protected void assertCacheModelParserIsCorrect(CacheModelParser parser) {
     Assert.assertNotNull(parser);
 
     String message = "CacheModelParser should be an instance of <"
@@ -41,7 +63,7 @@ public abstract class EhCacheConfigAssert {
     Assert.assertTrue(message, parser instanceof EhCacheModelParser);
   }
 
-  public static void assertCacheProviderFacadeDefinitionValidatorIsCorrect(
+  protected void assertCacheProviderFacadeDefinitionValidatorIsCorrect(
       CacheProviderFacadeDefinitionValidator validator) {
     Assert.assertNotNull(validator);
 
@@ -52,4 +74,5 @@ public abstract class EhCacheConfigAssert {
     Assert.assertTrue(message,
         validator instanceof EhCacheFacadeDefinitionValidator);
   }
+
 }
