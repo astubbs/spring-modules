@@ -1,0 +1,7 @@
+<!-- empty chain resolver -->
+<ivyconf>
+  <resolvers>
+    <chain name="custom">
+    </chain>
+  </resolvers>
+</ivyconf>

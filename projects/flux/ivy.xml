@@ -1,0 +1,24 @@
+<ivy-module version="1.1">
+
+  <info organisation="springmodules" module="flux"/>
+
+  <configurations>
+    <!-- default configuration that 'by default' pulls in the global configuration -->
+    <conf name="default" extends="global"/>
+
+    <!-- core dependencies needed at compile-time, test-time, and runtime -->
+    <conf name="global" visibility="private"/>
+
+    <!-- additional dependencies needed only at build-time -->
+    <conf name="buildtime" visibility="private"/>
+
+    <!-- additional dependencies needed only at test-time -->
+    <conf name="test" visibility="private"/>
+  </configurations>
+
+
+  <dependencies>
+    <dependency org="flux" name="flux-for-spring" rev="7.1"/>
+  </dependencies>
+  
+</ivy-module>
