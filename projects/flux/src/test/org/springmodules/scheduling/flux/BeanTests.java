@@ -1,10 +1,12 @@
 package org.springmodules.scheduling.flux;
 
 import junit.framework.TestCase;
+/*
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springmodules.scheduling.flux.EngineBean;
+*/
 
 public class BeanTests extends TestCase {
 
