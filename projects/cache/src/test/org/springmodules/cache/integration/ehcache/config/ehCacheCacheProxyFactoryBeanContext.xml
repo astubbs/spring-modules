@@ -8,10 +8,10 @@
        http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/ehcache/springmodules-ehcache.xsd">
 
   <ehcache:proxy id="cacheableService">
-    <ehcache:keyGenerator>
+    <ehcache:cacheKeyGenerator>
       <bean 
         class="org.springmodules.cache.key.HashCodeCacheKeyGenerator" />
-    </ehcache:keyGenerator>
+    </ehcache:cacheKeyGenerator>
 
     <ehcache:cachingListeners>
       <ehcache:cachingListener refId="cachingListener" />

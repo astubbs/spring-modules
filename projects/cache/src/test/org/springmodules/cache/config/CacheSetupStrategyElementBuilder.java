@@ -30,6 +30,12 @@ import org.springframework.util.ObjectUtils;
  */
 public class CacheSetupStrategyElementBuilder implements XmlElementBuilder {
 
+  static class CacheKeyGeneratorElementBuilder implements XmlElementBuilder {
+    public Element toXml() {
+      return new DomElementStub("cacheKeyGenerator");
+    }
+  }
+
   static class CachingListenerElementBuilder implements XmlElementBuilder {
     public String refId = "";
 
@@ -60,6 +66,8 @@ public class CacheSetupStrategyElementBuilder implements XmlElementBuilder {
     }
   }
 
+  CacheKeyGeneratorElementBuilder cacheKeyGeneratorElementBuilder;
+
   String cacheProviderId = "";
 
   CachingListenerElementBuilder[] cachingListenerElementBuilders;
@@ -82,19 +90,13 @@ public class CacheSetupStrategyElementBuilder implements XmlElementBuilder {
       root.appendChild(listeners);
     }
 
+    if (cacheKeyGeneratorElementBuilder != null) {
+      root.appendChild(cacheKeyGeneratorElementBuilder.toXml());
+    }
     appendChildren(root, cachingModelElementBuilders);
     appendChildren(root, flushingModelElementBuilders);
 
     return root;
-  }
-
-  private void appendChildren(Element parent, XmlElementBuilder[] children) {
-    if (!ObjectUtils.isEmpty(children)) {
-      int size = children.length;
-      for (int i = 0; i < size; i++) {
-        parent.appendChild(children[i].toXml());
-      }
-    }
   }
 
   void setDefaultCachingListenerElementBuilders(int count) {
@@ -134,5 +136,14 @@ public class CacheSetupStrategyElementBuilder implements XmlElementBuilder {
     }
 
     flushingModelElementBuilders = builders;
+  }
+
+  private void appendChildren(Element parent, XmlElementBuilder[] children) {
+    if (!ObjectUtils.isEmpty(children)) {
+      int size = children.length;
+      for (int i = 0; i < size; i++) {
+        parent.appendChild(children[i].toXml());
+      }
+    }
   }
 }

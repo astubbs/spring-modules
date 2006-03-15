@@ -69,6 +69,8 @@ public class InterceptorsParserTests extends
     MutablePropertyValues cachingProperties = cachingInterceptor
         .getPropertyValues();
 
+    assertSame(propertySource.cacheKeyGenerator, cachingProperties
+        .getPropertyValue("cacheKeyGenerator").getValue());
     assertSame(propertySource.cacheProviderFacadeReference, cachingProperties
         .getPropertyValue("cacheProviderFacade").getValue());
     assertSame(propertySource.cachingListeners, cachingProperties

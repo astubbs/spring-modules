@@ -18,7 +18,7 @@
     <xsd:complexContent>
       <xsd:extension base="cache:base-config-strategy">
         <xsd:sequence>
-          <xsd:element ref="keyGenerator" minOccurs="0" maxOccurs="1" />
+          <xsd:element ref="cacheKeyGenerator" minOccurs="0" maxOccurs="1" />
           <xsd:element ref="cachingListeners" minOccurs="0"
             maxOccurs="1" />
           <xsd:element ref="caching" minOccurs="1"
@@ -39,7 +39,7 @@
       <xsd:complexContent>
         <xsd:extension base="cache:interceptors">
           <xsd:sequence>
-            <xsd:element ref="keyGenerator" minOccurs="0" maxOccurs="1" />
+            <xsd:element ref="cacheKeyGenerator" minOccurs="0" maxOccurs="1" />
             <xsd:element ref="cachingListeners" minOccurs="0"
               maxOccurs="1" />
             <xsd:element ref="caching" minOccurs="1"
@@ -57,7 +57,7 @@
       <xsd:complexContent>
         <xsd:extension base="cache:proxy">
           <xsd:sequence>
-            <xsd:element ref="keyGenerator" minOccurs="0" maxOccurs="1" />
+            <xsd:element ref="cacheKeyGenerator" minOccurs="0" maxOccurs="1" />
             <xsd:element ref="cachingListeners" minOccurs="0"
               maxOccurs="1" />
             <xsd:element ref="beans:bean" minOccurs="0" maxOccurs="1" />
@@ -110,6 +110,6 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="keyGenerator" type="cache:keyGenerator" />
+  <xsd:element name="cacheKeyGenerator" type="cache:cacheKeyGenerator" />
 
 </xsd:schema>

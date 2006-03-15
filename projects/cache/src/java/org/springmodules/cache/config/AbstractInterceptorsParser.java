@@ -81,6 +81,8 @@ public abstract class AbstractInterceptorsParser extends
         MethodMapCachingInterceptor.class, propertyValues);
 
     propertyValues.addPropertyValue(propertySource
+        .getCacheKeyGeneratorProperty());
+    propertyValues.addPropertyValue(propertySource
         .getCacheProviderFacadeProperty());
     propertyValues.addPropertyValue(propertySource
         .getCachingListenersProperty());

@@ -104,13 +104,14 @@ public abstract class AbstractCacheSetupStrategyParser implements
     RuntimeBeanReference cacheProviderFacadeReference = new RuntimeBeanReference(
         cacheProviderFacadeId);
 
+    Object cacheKeyGenerator = parseCacheKeyGenerator(element, parserContext);
     List cachingListeners = parseCachingListeners(element, parserContext);
     Map cachingModels = parseCachingModels(element);
     Map flushingModels = parseFlushingModels(element);
 
     CacheSetupStrategyPropertySource ps = new CacheSetupStrategyPropertySource(
-        cacheProviderFacadeReference, cachingListeners, cachingModels,
-        flushingModels);
+        cacheKeyGenerator, cacheProviderFacadeReference, cachingListeners,
+        cachingModels, flushingModels);
 
     parseCacheSetupStrategy(element, parserContext, ps);
     return null;
@@ -152,6 +153,22 @@ public abstract class AbstractCacheSetupStrategyParser implements
     beanReferenceParser = newBeanReferenceParser;
   }
 
+  private Object parseCacheKeyGenerator(Element element,
+      ParserContext parserContext) {
+    Object keyGenerator = null;
+
+    List cacheKeyGeneratorElements = DomUtils.getChildElementsByTagName(
+        element, "cacheKeyGenerator", true);
+    if (!CollectionUtils.isEmpty(cacheKeyGeneratorElements)) {
+      Element cacheKeyGeneratorElement = (Element) cacheKeyGeneratorElements
+          .get(0);
+      keyGenerator = beanReferenceParser.parse(cacheKeyGeneratorElement,
+          parserContext);
+    }
+
+    return keyGenerator;
+  }
+
   /**
    * Parses the given XML element containing a caching listener to be added to
    * the caching setup strategy.
@@ -172,6 +189,8 @@ public abstract class AbstractCacheSetupStrategyParser implements
    *           if the given element does not contain a reference to an existing
    *           caching listener and does not contain an inner definition of a
    *           caching listener
+   * 
+   * @see BeanReferenceParser#parse(Element, ParserContext, boolean)
    */
   private Object parseCachingListener(Element element,
       ParserContext parserContext, int index) throws IllegalStateException {

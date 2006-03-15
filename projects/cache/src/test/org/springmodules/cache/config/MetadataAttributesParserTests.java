@@ -247,6 +247,8 @@ public class MetadataAttributesParserTests extends
         .getBeanDefinition(MetadataCachingInterceptor.class.getName());
 
     ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
+        .getCacheKeyGeneratorProperty());
+    ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
         .getCacheProviderFacadeProperty());
     ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
         .getCachingListenersProperty());

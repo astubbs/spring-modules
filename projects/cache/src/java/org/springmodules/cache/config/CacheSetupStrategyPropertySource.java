@@ -33,6 +33,8 @@ import org.springframework.beans.factory.config.RuntimeBeanReference;
  */
 public final class CacheSetupStrategyPropertySource {
 
+  public final Object cacheKeyGenerator;
+
   public final RuntimeBeanReference cacheProviderFacadeReference;
 
   public final List cachingListeners;
@@ -44,6 +46,8 @@ public final class CacheSetupStrategyPropertySource {
   /**
    * Constructor.
    * 
+   * @param newCacheKeyGenerator
+   *          a cache key generator or a reference to an already existing one
    * @param newCacheProviderFacade
    *          a reference to the cache provider facade
    * @param newCachingListeners
@@ -53,10 +57,11 @@ public final class CacheSetupStrategyPropertySource {
    * @param newFlushingModelMap
    *          a list of flushing models
    */
-  public CacheSetupStrategyPropertySource(
+  public CacheSetupStrategyPropertySource(Object newCacheKeyGenerator,
       RuntimeBeanReference newCacheProviderFacade, List newCachingListeners,
       Map newCachingModelMap, Map newFlushingModelMap) {
     super();
+    cacheKeyGenerator = newCacheKeyGenerator;
     cacheProviderFacadeReference = newCacheProviderFacade;
     cachingListeners = newCachingListeners;
     cachingModelMap = newCachingModelMap;
@@ -76,6 +81,7 @@ public final class CacheSetupStrategyPropertySource {
    */
   public MutablePropertyValues getAllProperties() {
     MutablePropertyValues allPropertyValues = new MutablePropertyValues();
+    allPropertyValues.addPropertyValue(getCacheKeyGeneratorProperty());
     allPropertyValues.addPropertyValue(getCacheProviderFacadeProperty());
     allPropertyValues.addPropertyValue(getCachingListenersProperty());
     allPropertyValues.addPropertyValue(getCachingModelsProperty());
@@ -84,8 +90,13 @@ public final class CacheSetupStrategyPropertySource {
     return allPropertyValues;
   }
 
+  public PropertyValue getCacheKeyGeneratorProperty() {
+    return new PropertyValue("cacheKeyGenerator", cacheKeyGenerator);
+  }
+  
   public PropertyValue getCacheProviderFacadeProperty() {
-    return new PropertyValue("cacheProviderFacade", cacheProviderFacadeReference);
+    return new PropertyValue("cacheProviderFacade",
+        cacheProviderFacadeReference);
   }
 
   public PropertyValue getCachingListenersProperty() {

@@ -77,7 +77,7 @@
     </xsd:attribute>
   </xsd:complexType>
 
-  <xsd:complexType name="keyGenerator">
+  <xsd:complexType name="cacheKeyGenerator">
     <xsd:sequence>
       <xsd:element ref="beans:bean" minOccurs="0" maxOccurs="1" />
     </xsd:sequence>

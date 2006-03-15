@@ -82,13 +82,13 @@ public class CacheProxyFactoryBeanParserTests extends
         .getPropertyValue("target");
     assertEquals(holder, target.getValue());
     assertCacheProxyFactoryBeanDefinitionIsCorrect(proxyDefinition);
-    
+
     beanReferenceParserControl.verify();
   }
 
   protected void afterSetUp() throws Exception {
     setUpBeanReferenceParser();
-    
+
     Class targetClass = AbstractCacheProxyFactoryBeanParser.class;
     parser = (AbstractCacheProxyFactoryBeanParser) createMockParser(targetClass);
     parser.setBeanReferenceParser(beanReferenceParser);
@@ -96,14 +96,19 @@ public class CacheProxyFactoryBeanParserTests extends
     proxyElementBuilder = new ProxyElementBuilder();
     proxyElementBuilder.id = "myBean";
     proxyElementBuilder.refId = "myBeanTarget";
-    
+
   }
 
   private void assertCacheProxyFactoryBeanDefinitionIsCorrect(
       BeanDefinition cacheProxyFactoryBeanDefinition) {
 
+    // verify cache proxy factory bean.
+    PropertyValue expected = propertySource.getCacheKeyGeneratorProperty();
+    ConfigAssert.assertBeanDefinitionHasProperty(
+        cacheProxyFactoryBeanDefinition, expected);
+
     // verify property "cacheProviderFacade" is correct.
-    PropertyValue expected = new PropertyValue("cacheProviderFacade",
+    expected = new PropertyValue("cacheProviderFacade",
         new RuntimeBeanReference("cacheProvider"));
     ConfigAssert.assertBeanDefinitionHasProperty(
         cacheProxyFactoryBeanDefinition, expected);
@@ -121,5 +126,4 @@ public class CacheProxyFactoryBeanParserTests extends
     ConfigAssert.assertBeanDefinitionHasProperty(
         cacheProxyFactoryBeanDefinition, expected);
   }
-
 }

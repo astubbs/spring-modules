@@ -102,6 +102,7 @@ public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
 
   protected final void onSetUp() throws Exception {
     propertySource = new CacheSetupStrategyPropertySource(
+        new RuntimeBeanReference("cacheKeyGenerator"),
         new RuntimeBeanReference("cacheProvider"), new ArrayList(),
         new HashMap(), new HashMap());
 

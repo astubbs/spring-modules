@@ -18,6 +18,7 @@
 package org.springmodules.cache.config;
 
 import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -57,7 +58,7 @@ public abstract class AbstractCommonsAttributesParser extends
    */
   protected final void configureCachingInterceptor(
       MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
-    addAttributesProperty(propertyValues);
+    propertyValues.addPropertyValue(getAttributesProperty());
   }
 
   /**
@@ -74,7 +75,7 @@ public abstract class AbstractCommonsAttributesParser extends
    */
   protected final void configureFlushingInterceptor(
       MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
-    addAttributesProperty(propertyValues);
+    propertyValues.addPropertyValue(getAttributesProperty());
   }
 
   /**
@@ -92,8 +93,8 @@ public abstract class AbstractCommonsAttributesParser extends
     registry.registerBeanDefinition(BeanName.ATTRIBUTES, attributes);
   }
 
-  private void addAttributesProperty(MutablePropertyValues propertyValues) {
-    propertyValues.addPropertyValue("attributes", new RuntimeBeanReference(
+  private PropertyValue getAttributesProperty() {
+    return new PropertyValue("attributes", new RuntimeBeanReference(
         BeanName.ATTRIBUTES));
   }
 }

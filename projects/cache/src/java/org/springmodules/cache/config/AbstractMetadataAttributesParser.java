@@ -137,6 +137,8 @@ public abstract class AbstractMetadataAttributesParser extends
 
     MutablePropertyValues propertyValues = new MutablePropertyValues();
     propertyValues.addPropertyValue(propertySource
+        .getCacheKeyGeneratorProperty());
+    propertyValues.addPropertyValue(propertySource
         .getCacheProviderFacadeProperty());
     propertyValues.addPropertyValue(propertySource
         .getCachingListenersProperty());

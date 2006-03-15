@@ -34,6 +34,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import org.springmodules.cache.config.CacheSetupStrategyElementBuilder.CacheKeyGeneratorElementBuilder;
 import org.springmodules.cache.config.CacheSetupStrategyElementBuilder.CachingListenerElementBuilder;
 import org.springmodules.cache.config.CacheSetupStrategyElementBuilder.CachingModelElementBuilder;
 import org.springmodules.cache.config.CacheSetupStrategyElementBuilder.FlushingModelElementBuilder;
@@ -75,6 +76,10 @@ public class CacheSetupStrategyParserTests extends
       if (expected == actual) {
         return true;
       }
+      if (!equals((RuntimeBeanReference) expected.cacheKeyGenerator,
+          (RuntimeBeanReference) actual.cacheKeyGenerator)) {
+        return false;
+      }
       if (!equals(expected.cacheProviderFacadeReference,
           actual.cacheProviderFacadeReference)) {
         return false;
@@ -93,6 +98,16 @@ public class CacheSetupStrategyParserTests extends
       return true;
     }
 
+    /**
+     * Verifies that the given lists of
+     * <code>{@link RuntimeBeanReference}</code> are equal.
+     * 
+     * @param expected
+     *          the expected list of <code>RuntimeBeanReference</code>
+     * @param actual
+     *          the actual list of <code>RuntimeBeanReference</code>
+     * @return <code>true</code> if the given lists are equal
+     */
     private boolean equals(List expected, List actual) {
       if (!CollectionUtils.isEmpty(expected)) {
         int count = expected.size();
@@ -158,7 +173,10 @@ public class CacheSetupStrategyParserTests extends
 
     elementBuilder.setDefaultCachingListenerElementBuilders(listenerCount);
 
-    // set expectations for parsing caching listeners.
+    // expectations for cache key generator.
+    RuntimeBeanReference cacheKeyGenerator = expectCacheKeyGeneratorParsing();
+
+    // expectations for parsing caching listeners.
     List cachingListeners = new ArrayList();
     for (int i = 0; i < listenerCount; i++) {
       String refId = elementBuilder.cachingListenerElementBuilders[i].refId;
@@ -185,8 +203,9 @@ public class CacheSetupStrategyParserTests extends
 
     Element element = elementBuilder.toXml();
     CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        new RuntimeBeanReference(elementBuilder.cacheProviderId),
-        cachingListeners, cachingModelMap, flushingModelMap);
+        cacheKeyGenerator, new RuntimeBeanReference(
+            elementBuilder.cacheProviderId), cachingListeners, cachingModelMap,
+        flushingModelMap);
 
     strategyParser.parseCacheSetupStrategy(element, parserContext,
         propertySource);
@@ -255,7 +274,7 @@ public class CacheSetupStrategyParserTests extends
 
     Element element = elementBuilder.toXml();
     CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
+        null, new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
         cachingModelMap, flushingModelMap);
 
     strategyParser.parseCacheSetupStrategy(element, parserContext,
@@ -282,8 +301,8 @@ public class CacheSetupStrategyParserTests extends
 
     Element element = elementBuilder.toXml();
     CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        new RuntimeBeanReference(elementBuilder.cacheProviderId), null, null,
-        flushingModelMap);
+        null, new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
+        null, flushingModelMap);
 
     strategyParser.parseCacheSetupStrategy(element, parserContext,
         propertySource);
@@ -309,7 +328,7 @@ public class CacheSetupStrategyParserTests extends
 
     Element element = elementBuilder.toXml();
     CacheSetupStrategyPropertySource propertySource = new CacheSetupStrategyPropertySource(
-        new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
+        null, new RuntimeBeanReference(elementBuilder.cacheProviderId), null,
         cachingModelMap, null);
 
     strategyParser.parseCacheSetupStrategy(element, parserContext,
@@ -337,6 +356,19 @@ public class CacheSetupStrategyParserTests extends
 
     elementBuilder = new CacheSetupStrategyElementBuilder();
     elementBuilder.cacheProviderId = "cacheProvider";
+  }
+
+  private RuntimeBeanReference expectCacheKeyGeneratorParsing() {
+    CacheKeyGeneratorElementBuilder builder = new CacheKeyGeneratorElementBuilder();
+    elementBuilder.cacheKeyGeneratorElementBuilder = builder;
+
+    RuntimeBeanReference cacheKeyGenerator = new RuntimeBeanReference(
+        "cacheKeyGenerator");
+
+    beanReferenceParser.parse(builder.toXml(), parserContext);
+    beanReferenceParserControl.setReturnValue(cacheKeyGenerator);
+
+    return cacheKeyGenerator;
   }
 
   private void expectCacheProviderFacadeReferenceValidation() {
