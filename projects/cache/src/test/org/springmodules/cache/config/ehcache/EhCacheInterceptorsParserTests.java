@@ -17,9 +17,6 @@
  */
 package org.springmodules.cache.config.ehcache;
 
-import org.springmodules.cache.config.CacheModelParser;
-import org.springmodules.cache.config.CacheProviderFacadeDefinitionValidator;
-
 /**
  * <p>
  * Unit Tests for <code>{@link EhCacheInterceptorsParser}</code>.
@@ -42,15 +39,12 @@ public class EhCacheInterceptorsParserTests extends
     super(name);
   }
 
-  public void testGetCacheModelParser() {
-    CacheModelParser cacheModelParser = parser.getCacheModelParser();
-    assertCacheModelParserIsCorrect(cacheModelParser);
+  protected Object getCacheModelParser() {
+    return parser.getCacheModelParser();
   }
 
-  public void testGetCacheProviderFacadeDefinitionValidator() {
-    CacheProviderFacadeDefinitionValidator validator = parser
-        .getCacheProviderFacadeDefinitionValidator();
-    assertCacheProviderFacadeDefinitionValidatorIsCorrect(validator);
+  protected Object getCacheProviderFacadeDefinitionValidator() {
+    return parser.getCacheProviderFacadeDefinitionValidator();
   }
 
   protected void setUp() {

@@ -17,11 +17,9 @@
  */
 package org.springmodules.cache.config.ehcache;
 
-import org.springmodules.cache.config.CacheModelParser;
-import org.springmodules.cache.config.CacheProviderFacadeDefinitionValidator;
-
-import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.springmodules.AssertExt;
 
 /**
  * <p>
@@ -49,30 +47,17 @@ public abstract class AbstractEhCacheSetupStrategyTestCase extends TestCase {
     super(name);
   }
 
-  public abstract void testGetCacheModelParser();
-
-  public abstract void testGetCacheProviderFacadeDefinitionValidator();
-
-  protected void assertCacheModelParserIsCorrect(CacheModelParser parser) {
-    Assert.assertNotNull(parser);
-
-    String message = "CacheModelParser should be an instance of <"
-        + EhCacheModelParser.class.getName() + ">, not an instance of <"
-        + parser.getClass().getName() + ">";
-
-    Assert.assertTrue(message, parser instanceof EhCacheModelParser);
+  public final void testCacheModelParserClass() {
+    AssertExt.assertInstanceOf(EhCacheModelParser.class, getCacheModelParser());
   }
 
-  protected void assertCacheProviderFacadeDefinitionValidatorIsCorrect(
-      CacheProviderFacadeDefinitionValidator validator) {
-    Assert.assertNotNull(validator);
-
-    String message = "CacheProviderFacadeDefinitionValidator should be an "
-        + "instance of <" + EhCacheFacadeDefinitionValidator.class.getName()
-        + ">, not an instance of <" + validator.getClass().getName() + ">";
-
-    Assert.assertTrue(message,
-        validator instanceof EhCacheFacadeDefinitionValidator);
+  public final void testCacheProviderFacadeDefinitionValidatorClass() {
+    AssertExt.assertInstanceOf(EhCacheFacadeDefinitionValidator.class,
+        getCacheProviderFacadeDefinitionValidator());
   }
+
+  protected abstract Object getCacheModelParser();
+  
+  protected abstract Object getCacheProviderFacadeDefinitionValidator();
 
 }
