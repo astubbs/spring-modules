@@ -153,7 +153,7 @@ public class CacheSetupStrategyParserTests extends
 
   private MockClassControl strategyParserControl;
 
-  private CacheProviderFacadeDefinitionValidator validator;
+  private CacheProviderFacadeValidator validator;
 
   private MockControl validatorControl;
 
@@ -351,8 +351,8 @@ public class CacheSetupStrategyParserTests extends
         .getMock();
 
     setUpModelParser();
-    setUpStrategyParser();
     setUpValidator();
+    setUpStrategyParser();
 
     elementBuilder = new CacheSetupStrategyElementBuilder();
     elementBuilder.cacheProviderId = "cacheProvider";
@@ -372,9 +372,6 @@ public class CacheSetupStrategyParserTests extends
   }
 
   private void expectCacheProviderFacadeReferenceValidation() {
-    strategyParser.getCacheProviderFacadeDefinitionValidator();
-    strategyParserControl.setReturnValue(validator);
-
     RootBeanDefinition cacheProviderFacade = new RootBeanDefinition(
         CacheProviderFacade.class);
     registry.registerBeanDefinition(elementBuilder.cacheProviderId,
@@ -385,9 +382,6 @@ public class CacheSetupStrategyParserTests extends
   private Map expectCachingModelParsing() {
     Map cachingModelMap = new HashMap();
     int cachingModelCount = elementBuilder.cachingModelElementBuilders.length;
-
-    strategyParser.getCacheModelParser();
-    strategyParserControl.setReturnValue(modelParser);
 
     for (int i = 0; i < cachingModelCount; i++) {
       MockCachingModel model = new MockCachingModel();
@@ -404,9 +398,6 @@ public class CacheSetupStrategyParserTests extends
   private Map expectFlushingModelParsing() {
     Map flushingModelMap = new HashMap();
     int flushingModelCount = elementBuilder.flushingModelElementBuilders.length;
-
-    strategyParser.getCacheModelParser();
-    strategyParserControl.setReturnValue(modelParser);
 
     for (int i = 0; i < flushingModelCount; i++) {
       FlushingModelElementBuilder builder = elementBuilder.flushingModelElementBuilders[i];
@@ -435,20 +426,11 @@ public class CacheSetupStrategyParserTests extends
   private void setUpStrategyParser() throws Exception {
     Class targetClass = AbstractCacheSetupStrategyParser.class;
 
-    Method getCacheModelParserMethod = targetClass.getDeclaredMethod(
-        "getCacheModelParser", new Class[0]);
-
-    Method getCacheProviderFacadeDefinitionValidatorMethod = targetClass
-        .getDeclaredMethod("getCacheProviderFacadeDefinitionValidator",
-            new Class[0]);
-
     Method parseCacheSetupStrategyMethod = targetClass.getDeclaredMethod(
         "parseCacheSetupStrategy", new Class[] { Element.class,
             ParserContext.class, CacheSetupStrategyPropertySource.class });
 
-    Method[] methodsToMock = { getCacheModelParserMethod,
-        getCacheProviderFacadeDefinitionValidatorMethod,
-        parseCacheSetupStrategyMethod };
+    Method[] methodsToMock = { parseCacheSetupStrategyMethod };
 
     strategyParserControl = MockClassControl.createControl(targetClass, null,
         null, methodsToMock);
@@ -456,12 +438,14 @@ public class CacheSetupStrategyParserTests extends
     strategyParser = (AbstractCacheSetupStrategyParser) strategyParserControl
         .getMock();
     strategyParser.setBeanReferenceParser(beanReferenceParser);
+    strategyParser.setCacheModelParser(modelParser);
+    strategyParser.setCacheProviderFacadeValidator(validator);
   }
 
   private void setUpValidator() {
     validatorControl = MockControl
-        .createControl(CacheProviderFacadeDefinitionValidator.class);
-    validator = (CacheProviderFacadeDefinitionValidator) validatorControl
+        .createControl(CacheProviderFacadeValidator.class);
+    validator = (CacheProviderFacadeValidator) validatorControl
         .getMock();
   }
 

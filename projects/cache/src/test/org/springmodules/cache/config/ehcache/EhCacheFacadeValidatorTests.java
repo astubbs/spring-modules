@@ -25,14 +25,14 @@ import junit.framework.TestCase;
 
 /**
  * <p>
- * Unit Tests for <code>{@link EhCacheFacadeDefinitionValidator}</code>.
+ * Unit Tests for <code>{@link EhCacheFacadeValidator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public class EhCacheFacadeDefinitionValidatorTests extends TestCase {
+public class EhCacheFacadeValidatorTests extends TestCase {
 
-  private EhCacheFacadeDefinitionValidator validator;
+  private EhCacheFacadeValidator validator;
 
   /**
    * Constructor.
@@ -40,7 +40,7 @@ public class EhCacheFacadeDefinitionValidatorTests extends TestCase {
    * @param name
    *          the name of the test case
    */
-  public EhCacheFacadeDefinitionValidatorTests(String name) {
+  public EhCacheFacadeValidatorTests(String name) {
     super(name);
   }
 
@@ -60,6 +60,6 @@ public class EhCacheFacadeDefinitionValidatorTests extends TestCase {
   }
 
   protected void setUp() {
-    validator = new EhCacheFacadeDefinitionValidator();
+    validator = new EhCacheFacadeValidator();
   }
 }

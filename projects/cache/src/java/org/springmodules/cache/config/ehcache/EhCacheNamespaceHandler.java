@@ -19,9 +19,8 @@ package org.springmodules.cache.config.ehcache;
 
 import org.springmodules.cache.config.AbstractCacheNamespaceHandler;
 import org.springmodules.cache.config.AbstractCacheProviderFacadeParser;
-import org.springmodules.cache.config.AbstractCacheProxyFactoryBeanParser;
-import org.springmodules.cache.config.AbstractCommonsAttributesParser;
-import org.springmodules.cache.config.AbstractInterceptorsParser;
+import org.springmodules.cache.config.CacheModelParser;
+import org.springmodules.cache.config.CacheProviderFacadeValidator;
 
 /**
  * <p>
@@ -33,27 +32,16 @@ import org.springmodules.cache.config.AbstractInterceptorsParser;
 public final class EhCacheNamespaceHandler extends
     AbstractCacheNamespaceHandler {
 
-  /**
-   * @see AbstractCacheNamespaceHandler#getAnnotationsParserClassName()
-   */
-  protected String getAnnotationsParserClassName() {
-    return getClass().getPackage().getName() + ".EhCacheAnnotationsParser";
-  }
-
   protected AbstractCacheProviderFacadeParser getCacheProviderFacadeParser() {
     return new EhCacheFacadeParser();
   }
 
-  protected AbstractCacheProxyFactoryBeanParser getCacheProxyFactoryBeanParser() {
-    return new EhCacheProxyFactoryBeanParser();
+  protected CacheModelParser getCacheModelParser() {
+    return new EhCacheModelParser();
   }
 
-  protected AbstractCommonsAttributesParser getCommonsAttributesParser() {
-    return new EhCacheCommonsAttributesParser();
-  }
-
-  protected AbstractInterceptorsParser getInterceptorsParser() {
-    return new EhCacheInterceptorsParser();
+  protected CacheProviderFacadeValidator getCacheProviderFacadeValidator() {
+    return new EhCacheFacadeValidator();
   }
 
 }

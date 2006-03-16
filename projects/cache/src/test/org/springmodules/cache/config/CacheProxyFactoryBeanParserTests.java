@@ -27,7 +27,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 
 /**
  * <p>
- * Unit Tests for <code>{@link AbstractCacheProxyFactoryBeanParser}</code>.
+ * Unit Tests for <code>{@link CacheProxyFactoryBeanParser}</code>.
  * </p>
  * 
  * @author Alex Ruiz
@@ -48,7 +48,7 @@ public class CacheProxyFactoryBeanParserTests extends
     }
   }
 
-  private AbstractCacheProxyFactoryBeanParser parser;
+  private CacheProxyFactoryBeanParser parser;
 
   private ProxyElementBuilder proxyElementBuilder;
 
@@ -89,8 +89,7 @@ public class CacheProxyFactoryBeanParserTests extends
   protected void afterSetUp() throws Exception {
     setUpBeanReferenceParser();
 
-    Class targetClass = AbstractCacheProxyFactoryBeanParser.class;
-    parser = (AbstractCacheProxyFactoryBeanParser) createMockParser(targetClass);
+    parser = new CacheProxyFactoryBeanParser();
     parser.setBeanReferenceParser(beanReferenceParser);
 
     proxyElementBuilder = new ProxyElementBuilder();

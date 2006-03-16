@@ -27,7 +27,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
  * 
  * @author Alex Ruiz
  */
-public interface CacheProviderFacadeDefinitionValidator {
+public interface CacheProviderFacadeValidator {
 
   /**
    * Validates that the given bean definition describes a valid

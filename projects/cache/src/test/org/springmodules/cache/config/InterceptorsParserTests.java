@@ -24,7 +24,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 
 /**
  * <p>
- * Unit Tests for <code>{@link AbstractInterceptorsParser}</code>.
+ * Unit Tests for <code>{@link InterceptorsParser}</code>.
  * </p>
  * 
  * @author Alex Ruiz
@@ -47,7 +47,7 @@ public class InterceptorsParserTests extends
 
   private InterceptorsConfigStruct config;
 
-  private AbstractInterceptorsParser parser;
+  private InterceptorsParser parser;
 
   /**
    * Constructor.
@@ -91,8 +91,7 @@ public class InterceptorsParserTests extends
   }
 
   protected void afterSetUp() throws Exception {
-    Class targetClass = AbstractInterceptorsParser.class;
-    parser = (AbstractInterceptorsParser) createMockParser(targetClass);
+    parser = new InterceptorsParser();
 
     config = new InterceptorsConfigStruct();
     config.cachingInterceptorId = "cachingInterceptor";

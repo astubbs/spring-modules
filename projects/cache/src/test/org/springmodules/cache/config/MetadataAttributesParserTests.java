@@ -215,7 +215,8 @@ public class MetadataAttributesParserTests extends
     Method[] methodsToMock = new Method[] { configureCachingInterceptorMethod,
         configureFlushingInterceptorMethod, registerCustomBeansMethod };
 
-    parserControl = createMockControl(targetClass, methodsToMock);
+    parserControl = MockClassControl.createControl(targetClass, null, null,
+        methodsToMock);
     parser = (AbstractMetadataAttributesParser) parserControl.getMock();
   }
 

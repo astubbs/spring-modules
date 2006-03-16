@@ -60,6 +60,10 @@ public abstract class AbstractCacheSetupStrategyParser implements
 
   private BeanReferenceParser beanReferenceParser;
 
+  private CacheModelParser cacheModelParser;
+
+  private CacheProviderFacadeValidator cacheProviderFacadeValidator;
+
   /**
    * Constructor.
    */
@@ -88,7 +92,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
    *           <code>CachingListener</code>
    * 
    * @see BeanDefinitionParser#parse(Element, ParserContext)
-   * @see CacheProviderFacadeDefinitionValidator#validate(AbstractBeanDefinition)
+   * @see CacheProviderFacadeValidator#validate(AbstractBeanDefinition)
    */
   public final BeanDefinition parse(Element element, ParserContext parserContext)
       throws NoSuchBeanDefinitionException, IllegalStateException {
@@ -98,8 +102,8 @@ public abstract class AbstractCacheSetupStrategyParser implements
 
     BeanDefinition cacheProviderFacade = registry
         .getBeanDefinition(cacheProviderFacadeId);
-    getCacheProviderFacadeDefinitionValidator().validate(
-        (AbstractBeanDefinition) cacheProviderFacade);
+    cacheProviderFacadeValidator
+        .validate((AbstractBeanDefinition) cacheProviderFacade);
 
     RuntimeBeanReference cacheProviderFacadeReference = new RuntimeBeanReference(
         cacheProviderFacadeId);
@@ -117,20 +121,26 @@ public abstract class AbstractCacheSetupStrategyParser implements
     return null;
   }
 
+  public final void setCacheModelParser(CacheModelParser newCacheModelParser) {
+    cacheModelParser = newCacheModelParser;
+  }
+
+  public final void setCacheProviderFacadeValidator(
+      CacheProviderFacadeValidator newCacheProviderFacadeValidator) {
+    cacheProviderFacadeValidator = newCacheProviderFacadeValidator;
+  }
+
   protected final BeanReferenceParser getBeanReferenceParser() {
     return beanReferenceParser;
   }
 
-  /**
-   * @return the parser for caching and flushing models
-   */
-  protected abstract CacheModelParser getCacheModelParser();
+  protected final CacheModelParser getCacheModelParser() {
+    return cacheModelParser;
+  }
 
-  /**
-   * @return the validator of the properties of the
-   *         <code>CacheProviderFacade</code>
-   */
-  protected abstract CacheProviderFacadeDefinitionValidator getCacheProviderFacadeDefinitionValidator();
+  protected final CacheProviderFacadeValidator getCacheProviderFacadeValidator() {
+    return cacheProviderFacadeValidator;
+  }
 
   /**
    * Parses the given XML element to create the strategy for setting up
@@ -279,15 +289,13 @@ public abstract class AbstractCacheSetupStrategyParser implements
       return null;
     }
 
-    int modelElementCount = modelElements.size();
-    CacheModelParser modelParser = getCacheModelParser();
-
     Map models = new HashMap();
+    int modelElementCount = modelElements.size();
     for (int i = 0; i < modelElementCount; i++) {
       Element modelElement = (Element) modelElements.get(i);
       String key = modelElement.getAttribute(XmlAttribute.TARGET);
 
-      CachingModel model = modelParser.parseCachingModel(modelElement);
+      CachingModel model = cacheModelParser.parseCachingModel(modelElement);
       models.put(key, model);
     }
 
@@ -312,15 +320,13 @@ public abstract class AbstractCacheSetupStrategyParser implements
       return null;
     }
 
-    int modelElementCount = modelElements.size();
-    CacheModelParser modelParser = getCacheModelParser();
-
     Map models = new HashMap();
+    int modelElementCount = modelElements.size();
     for (int i = 0; i < modelElementCount; i++) {
       Element modelElement = (Element) modelElements.get(i);
       String key = modelElement.getAttribute(XmlAttribute.TARGET);
 
-      FlushingModel model = modelParser.parseFlushingModel(modelElement);
+      FlushingModel model = cacheModelParser.parseFlushingModel(modelElement);
       models.put(key, model);
     }
 

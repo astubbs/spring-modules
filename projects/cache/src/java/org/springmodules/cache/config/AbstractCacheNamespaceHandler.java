@@ -20,7 +20,6 @@ package org.springmodules.cache.config;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.util.ClassUtils;
 
@@ -54,17 +53,35 @@ public abstract class AbstractCacheNamespaceHandler extends
   public AbstractCacheNamespaceHandler() {
     super();
     registerBeanDefinitionParser("config", getCacheProviderFacadeParser());
+    registerAnnotationsElementParser();
+    registerCommonsAttributesElementParser();
+    registerProxyElementParser();
+    registerInterceptorsElementParser();
+  }
 
+  protected abstract CacheModelParser getCacheModelParser();
+
+  /**
+   * @return the parser for the XML elements with name "config"
+   */
+  protected abstract AbstractCacheProviderFacadeParser getCacheProviderFacadeParser();
+
+  protected abstract CacheProviderFacadeValidator getCacheProviderFacadeValidator();
+
+  private void registerAnnotationsElementParser() {
     try {
       ClassUtils.forName("java.lang.annotation.Annotation");
 
-      String annotationsParserClassName = getAnnotationsParserClassName();
+      String thisPackage = AbstractCacheNamespaceHandler.class.getPackage()
+          .getName();
+      String annotationsParserClassName = thisPackage + ".AnnotationsParser";
+      
       try {
         Class parserClass = ClassUtils.forName(annotationsParserClassName);
 
         Object parser = parserClass.newInstance();
-        registerBeanDefinitionParser("annotations",
-            (BeanDefinitionParser) parser);
+        registerCacheSetupStrategyParser("annotations",
+            (AbstractCacheSetupStrategyParser) parser);
 
       } catch (Exception exception) {
         String errorMessage = "Unable to create instance of "
@@ -77,39 +94,27 @@ public abstract class AbstractCacheNamespaceHandler extends
       logger.info("No support for JDK 1.5 Annotations. "
           + "Unable to load parser for namespace 'annotations'");
     }
-
-    registerBeanDefinitionParser("proxy", getCacheProxyFactoryBeanParser());
-
-    registerBeanDefinitionParser("commons-attributes",
-        getCommonsAttributesParser());
-
-    registerBeanDefinitionParser("interceptors", getInterceptorsParser());
   }
 
-  /**
-   * @return the class name of the parser for the element "annotations". A
-   *         string is used instead of a class because annotations are part of
-   *         J2SE 5.0 and this handler is compiled against J2SE 1.3.
-   */
-  protected abstract String getAnnotationsParserClassName();
+  private void registerCacheSetupStrategyParser(String elementName,
+      AbstractCacheSetupStrategyParser parser) {
+    parser.setCacheModelParser(getCacheModelParser());
+    parser.setCacheProviderFacadeValidator(getCacheProviderFacadeValidator());
+    registerBeanDefinitionParser(elementName, parser);
+  }
 
-  /**
-   * @return the parser for the element "config".
-   */
-  protected abstract AbstractCacheProviderFacadeParser getCacheProviderFacadeParser();
+  private void registerCommonsAttributesElementParser() {
+    CommonsAttributesParser parser = new CommonsAttributesParser();
+    registerCacheSetupStrategyParser("commons-attributes", parser);
+  }
 
-  /**
-   * @return the parser for the element "proxy".
-   */
-  protected abstract AbstractCacheProxyFactoryBeanParser getCacheProxyFactoryBeanParser();
+  private void registerInterceptorsElementParser() {
+    InterceptorsParser parser = new InterceptorsParser();
+    registerCacheSetupStrategyParser("interceptors", parser);
+  }
 
-  /**
-   * @return the parser for the element "commons-attributes".
-   */
-  protected abstract AbstractCommonsAttributesParser getCommonsAttributesParser();
-
-  /**
-   * @return the parser for the element "interceptors".
-   */
-  protected abstract AbstractInterceptorsParser getInterceptorsParser();
+  private void registerProxyElementParser() {
+    CacheProxyFactoryBeanParser parser = new CacheProxyFactoryBeanParser();
+    registerCacheSetupStrategyParser("proxy", parser);
+  }
 }

@@ -25,7 +25,7 @@ import org.springframework.metadata.commons.CommonsAttributes;
 
 /**
  * <p>
- * Unit Tests for <code>{@link AbstractCommonsAttributesParser}</code>.
+ * Unit Tests for <code>{@link CommonsAttributesParser}</code>.
  * </p>
  * 
  * @author Alex Ruiz
@@ -36,7 +36,7 @@ public class CommonsAttributesParserTests extends
   private static final String ATTRIBUTES_BEAN_NAME = CommonsAttributes.class
       .getName();
 
-  private AbstractCommonsAttributesParser parser;
+  private CommonsAttributesParser parser;
 
   /**
    * Constructor.
@@ -50,7 +50,7 @@ public class CommonsAttributesParserTests extends
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractCommonsAttributesParser}</code> adds a new property
+   * <code>{@link CommonsAttributesParser}</code> adds a new property
    * with name "attributes" to the given set of property values. The
    * "attributes" properties should have a
    * <code>{@link RuntimeBeanReference}</code> to the bean declaration
@@ -78,8 +78,7 @@ public class CommonsAttributesParserTests extends
   }
 
   protected void afterSetUp() throws Exception {
-    Class targetClass = AbstractCommonsAttributesParser.class;
-    parser = (AbstractCommonsAttributesParser) createMockParser(targetClass);
+    parser = new CommonsAttributesParser();
   }
 
   private void assertAttributesPropertyIsPresent(

@@ -52,7 +52,7 @@ public abstract class AbstractEhCacheSetupStrategyTestCase extends TestCase {
   }
 
   public final void testCacheProviderFacadeDefinitionValidatorClass() {
-    AssertExt.assertInstanceOf(EhCacheFacadeDefinitionValidator.class,
+    AssertExt.assertInstanceOf(EhCacheFacadeValidator.class,
         getCacheProviderFacadeDefinitionValidator());
   }
 

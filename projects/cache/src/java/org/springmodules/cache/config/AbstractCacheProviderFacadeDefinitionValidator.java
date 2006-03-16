@@ -1,5 +1,5 @@
 /* 
- * Created on Feb 20, 2006
+ * Created on Mar 15, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,30 +15,27 @@
  *
  * Copyright @2006 the original author or authors.
  */
-package org.springmodules.cache.config.ehcache;
+package org.springmodules.cache.config;
 
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 
-import org.springmodules.cache.config.CacheProviderFacadeDefinitionValidator;
-import org.springmodules.cache.provider.ehcache.EhCacheFacade;
-
 /**
  * <p>
- * Validates that a bean definition describing a
- * <code>{@link EhCacheFacade}</code>.
+ * Template for implementations of
+ * <code>{@link CacheProviderFacadeValidator}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public final class EhCacheFacadeDefinitionValidator implements
-    CacheProviderFacadeDefinitionValidator {
+public abstract class AbstractCacheProviderFacadeDefinitionValidator implements
+    CacheProviderFacadeValidator {
 
   /**
-   * @see CacheProviderFacadeDefinitionValidator#validate(AbstractBeanDefinition)
+   * @see CacheProviderFacadeValidator#validate(AbstractBeanDefinition)
    */
-  public void validate(AbstractBeanDefinition cacheProviderFacade)
+  public final void validate(AbstractBeanDefinition cacheProviderFacade)
       throws IllegalStateException {
-    Class expectedClass = EhCacheFacade.class;
+    Class expectedClass = getExpectedClass();
     Class actualClass = cacheProviderFacade.getBeanClass();
 
     if (!(expectedClass.isAssignableFrom(actualClass))) {
@@ -48,4 +45,9 @@ public final class EhCacheFacadeDefinitionValidator implements
     }
   }
 
+  protected void doValidate(AbstractBeanDefinition cacheProviderFacade) {
+    // no implementation.
+  }
+
+  protected abstract Class getExpectedClass();
 }

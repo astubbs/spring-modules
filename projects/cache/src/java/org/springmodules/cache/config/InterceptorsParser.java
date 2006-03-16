@@ -37,8 +37,7 @@ import org.springmodules.cache.interceptor.flush.MethodMapFlushingInterceptor;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractInterceptorsParser extends
-    AbstractCacheSetupStrategyParser {
+public final class InterceptorsParser extends AbstractCacheSetupStrategyParser {
 
   /**
    * Creates and registers instances
@@ -57,7 +56,7 @@ public abstract class AbstractInterceptorsParser extends
    * @see AbstractCacheSetupStrategyParser#parseCacheSetupStrategy(Element,
    *      ParserContext, CacheSetupStrategyPropertySource)
    */
-  protected final void parseCacheSetupStrategy(Element element,
+  protected void parseCacheSetupStrategy(Element element,
       ParserContext parserContext,
       CacheSetupStrategyPropertySource propertySource) {
 

@@ -67,39 +67,6 @@ public abstract class AbstractCacheSetupStrategyParserImplTestCase extends
     // no implementation.
   }
 
-  protected final MockClassControl createMockControl(Class targetClass,
-      Method[] targetMethodsToMock) throws Exception {
-    Class superClass = AbstractCacheSetupStrategyParser.class;
-
-    Method getCacheModelParserMethod = superClass.getDeclaredMethod(
-        "getCacheModelParser", new Class[0]);
-
-    Method getCacheProviderFacadeDefinitionValidatorMethod = superClass
-        .getDeclaredMethod("getCacheProviderFacadeDefinitionValidator",
-            new Class[0]);
-
-    List methodList = new ArrayList();
-    methodList.add(getCacheModelParserMethod);
-    methodList.add(getCacheProviderFacadeDefinitionValidatorMethod);
-
-    if (!ObjectUtils.isEmpty(targetMethodsToMock)) {
-      methodList.addAll(Arrays.asList(targetMethodsToMock));
-    }
-
-    Method[] methodsToMock = (Method[]) methodList
-        .toArray(new Method[methodList.size()]);
-
-    return MockClassControl.createControl(targetClass, null, null,
-        methodsToMock);
-  }
-
-  protected final AbstractCacheSetupStrategyParser createMockParser(
-      Class targetClass) throws Exception {
-
-    MockClassControl control = createMockControl(targetClass, null);
-    return (AbstractCacheSetupStrategyParser) control.getMock();
-  }
-
   protected final void onSetUp() throws Exception {
     propertySource = new CacheSetupStrategyPropertySource(
         new RuntimeBeanReference("cacheKeyGenerator"),

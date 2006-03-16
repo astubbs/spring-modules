@@ -34,8 +34,7 @@ import org.springmodules.cache.annotations.AnnotationFlushingAttributeSource;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractAnnotationsParser extends
-    AbstractMetadataAttributesParser {
+public class AnnotationsParser extends AbstractMetadataAttributesParser {
 
   /**
    * Registers a <code>{@link AnnotationCachingAttributeSource}</code> and

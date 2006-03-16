@@ -35,7 +35,7 @@ import org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractCacheProxyFactoryBeanParser extends
+public final class CacheProxyFactoryBeanParser extends
     AbstractCacheSetupStrategyParser {
 
   /**
@@ -56,7 +56,7 @@ public abstract class AbstractCacheProxyFactoryBeanParser extends
    * @see AbstractCacheSetupStrategyParser#parseCacheSetupStrategy(Element,
    *      ParserContext, CacheSetupStrategyPropertySource)
    */
-  protected final void parseCacheSetupStrategy(Element element,
+  protected void parseCacheSetupStrategy(Element element,
       ParserContext parserContext,
       CacheSetupStrategyPropertySource propertySource) {
 

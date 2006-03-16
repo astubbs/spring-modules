@@ -1,5 +1,5 @@
 /* 
- * Created on Mar 8, 2006
+ * Created on Feb 20, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,41 +17,24 @@
  */
 package org.springmodules.cache.config.ehcache;
 
+import org.springmodules.cache.config.AbstractCacheProviderFacadeDefinitionValidator;
+import org.springmodules.cache.provider.ehcache.EhCacheFacade;
+
 /**
  * <p>
- * Unit Tests for <code>{@link EhCacheAnnotationsParser}</code>.
+ * Validates that a bean definition describing a
+ * <code>{@link EhCacheFacade}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public class EhCacheAnnotationsParserTests extends
-    AbstractEhCacheSetupStrategyTestCase {
-
-  private EhCacheAnnotationsParser parser;
+public final class EhCacheFacadeValidator extends
+    AbstractCacheProviderFacadeDefinitionValidator {
 
   /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case
+   * @see AbstractCacheProviderFacadeDefinitionValidator#getExpectedClass()
    */
-  public EhCacheAnnotationsParserTests(String name) {
-    super(name);
+  protected Class getExpectedClass() {
+    return EhCacheFacade.class;
   }
-
-  @Override
-  protected Object getCacheModelParser() {
-    return parser.getCacheModelParser();
-  }
-
-  @Override
-  protected Object getCacheProviderFacadeDefinitionValidator() {
-    return parser.getCacheProviderFacadeDefinitionValidator();
-  }
-
-  @Override
-  protected void setUp() {
-    parser = new EhCacheAnnotationsParser();
-  }
-
 }

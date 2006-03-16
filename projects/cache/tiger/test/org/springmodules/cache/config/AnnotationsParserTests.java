@@ -27,7 +27,7 @@ import org.springmodules.cache.annotations.AnnotationFlushingAttributeSource;
 
 /**
  * <p>
- * Unit Tests for <code>{@link AbstractAnnotationsParser}</code>.
+ * Unit Tests for <code>{@link AnnotationsParser}</code>.
  * </p>
  * 
  * @author Alex Ruiz
@@ -35,7 +35,7 @@ import org.springmodules.cache.annotations.AnnotationFlushingAttributeSource;
 public class AnnotationsParserTests extends
     AbstractCacheSetupStrategyParserImplTestCase {
 
-  private AbstractAnnotationsParser parser;
+  private AnnotationsParser parser;
 
   /**
    * Constructor.
@@ -83,11 +83,6 @@ public class AnnotationsParserTests extends
 
   @Override
   protected void afterSetUp() throws Exception {
-    parser = genericCreateMockParser(AbstractAnnotationsParser.class);
+    parser = new AnnotationsParser();
   }
-
-  private <T> T genericCreateMockParser(Class<T> targetClass) throws Exception {
-    return (T) createMockParser(targetClass);
-  }
-
 }

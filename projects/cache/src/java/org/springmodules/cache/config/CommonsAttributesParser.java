@@ -33,7 +33,7 @@ import org.springframework.metadata.commons.CommonsAttributes;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractCommonsAttributesParser extends
+public final class CommonsAttributesParser extends
     AbstractMetadataAttributesParser {
 
   /**
@@ -56,7 +56,7 @@ public abstract class AbstractCommonsAttributesParser extends
    * @see AbstractMetadataAttributesParser#configureCachingInterceptor(MutablePropertyValues,
    *      BeanDefinitionRegistry)
    */
-  protected final void configureCachingInterceptor(
+  protected void configureCachingInterceptor(
       MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
     propertyValues.addPropertyValue(getAttributesProperty());
   }
@@ -73,7 +73,7 @@ public abstract class AbstractCommonsAttributesParser extends
    * @see AbstractMetadataAttributesParser#configureFlushingInterceptor(MutablePropertyValues,
    *      BeanDefinitionRegistry)
    */
-  protected final void configureFlushingInterceptor(
+  protected void configureFlushingInterceptor(
       MutablePropertyValues propertyValues, BeanDefinitionRegistry registry) {
     propertyValues.addPropertyValue(getAttributesProperty());
   }
@@ -87,7 +87,7 @@ public abstract class AbstractCommonsAttributesParser extends
    * 
    * @see AbstractMetadataAttributesParser#registerCustomBeans(BeanDefinitionRegistry)
    */
-  protected final void registerCustomBeans(BeanDefinitionRegistry registry) {
+  protected void registerCustomBeans(BeanDefinitionRegistry registry) {
     RootBeanDefinition attributes = new RootBeanDefinition(
         CommonsAttributes.class);
     registry.registerBeanDefinition(BeanName.ATTRIBUTES, attributes);
