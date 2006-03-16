@@ -17,17 +17,12 @@
  */
 package org.springmodules.cache.config;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
 
 import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.util.ObjectUtils;
 
 /**
  * <p>
