@@ -22,7 +22,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheFacade;
 
 /**
  * <p>
- * Validates that a bean definition describing a
+ * Validates that a bean definition describes a
  * <code>{@link EhCacheFacade}</code>.
  * </p>
  * 
