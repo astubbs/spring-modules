@@ -17,11 +17,9 @@
  */
 package org.springmodules.cache.config.ehcache;
 
-import org.springframework.beans.factory.support.RootBeanDefinition;
+import junit.framework.TestCase;
 
 import org.springmodules.cache.provider.ehcache.EhCacheFacade;
-
-import junit.framework.TestCase;
 
 /**
  * <p>
@@ -44,19 +42,8 @@ public class EhCacheFacadeValidatorTests extends TestCase {
     super(name);
   }
 
-  public void testValidate() {
-    RootBeanDefinition definition = new RootBeanDefinition(EhCacheFacade.class);
-    validator.validate(definition);
-  }
-
-  public void testValidateWithInvalidCacheProviderFacadeClass() {
-    RootBeanDefinition definition = new RootBeanDefinition(String.class);
-    try {
-      validator.validate(definition);
-      fail();
-    } catch (IllegalStateException exception) {
-      // expecting exception
-    }
+  public void testGetCacheProviderFacadeClass() {
+    assertEquals(EhCacheFacade.class, validator.getCacheProviderFacadeClass());
   }
 
   protected void setUp() {

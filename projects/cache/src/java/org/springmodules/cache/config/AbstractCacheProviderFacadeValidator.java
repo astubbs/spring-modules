@@ -27,7 +27,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractCacheProviderFacadeDefinitionValidator implements
+public abstract class AbstractCacheProviderFacadeValidator implements
     CacheProviderFacadeValidator {
 
   /**
@@ -35,7 +35,7 @@ public abstract class AbstractCacheProviderFacadeDefinitionValidator implements
    */
   public final void validate(AbstractBeanDefinition cacheProviderFacade)
       throws IllegalStateException {
-    Class expectedClass = getExpectedClass();
+    Class expectedClass = getCacheProviderFacadeClass();
     Class actualClass = cacheProviderFacade.getBeanClass();
 
     if (!(expectedClass.isAssignableFrom(actualClass))) {
@@ -43,11 +43,13 @@ public abstract class AbstractCacheProviderFacadeDefinitionValidator implements
           "The cache provider facade should be an instance of "
               + expectedClass.getName());
     }
+    
+    doValidate(cacheProviderFacade);
   }
 
   protected void doValidate(AbstractBeanDefinition cacheProviderFacade) {
     // no implementation.
   }
 
-  protected abstract Class getExpectedClass();
+  protected abstract Class getCacheProviderFacadeClass();
 }

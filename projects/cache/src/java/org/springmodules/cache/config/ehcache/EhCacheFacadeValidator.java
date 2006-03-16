@@ -17,7 +17,7 @@
  */
 package org.springmodules.cache.config.ehcache;
 
-import org.springmodules.cache.config.AbstractCacheProviderFacadeDefinitionValidator;
+import org.springmodules.cache.config.AbstractCacheProviderFacadeValidator;
 import org.springmodules.cache.provider.ehcache.EhCacheFacade;
 
 /**
@@ -29,12 +29,12 @@ import org.springmodules.cache.provider.ehcache.EhCacheFacade;
  * @author Alex Ruiz
  */
 public final class EhCacheFacadeValidator extends
-    AbstractCacheProviderFacadeDefinitionValidator {
+    AbstractCacheProviderFacadeValidator {
 
   /**
-   * @see AbstractCacheProviderFacadeDefinitionValidator#getExpectedClass()
+   * @see AbstractCacheProviderFacadeValidator#getCacheProviderFacadeClass()
    */
-  protected Class getExpectedClass() {
+  protected Class getCacheProviderFacadeClass() {
     return EhCacheFacade.class;
   }
 }
