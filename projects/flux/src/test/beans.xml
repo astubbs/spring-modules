@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+  <bean id="fluxEngineBean" class="org.springmodules.scheduling.flux.EngineBean" destroy-method="dispose">
+  </bean>
+
+  <bean id="fluxEngineBeanFromConfigurationFile" class="org.springmodules.scheduling.flux.EngineBean" destroy-method="dispose">
+    <constructor-arg type="java.lang.String"><value>fluxconfig.properties</value></constructor-arg>
+  </bean>
+</beans>

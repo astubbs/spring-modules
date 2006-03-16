@@ -94,11 +94,16 @@ public class EngineBean implements Engine {
   // note: there is no constructor for a properties input stream, an XML input stream, an XML config file, or a literal XML configuration
 
   /**
-   * @param host
-   * @param port
-   * @throws flux.EngineException
-   * @throws java.rmi.RemoteException
-   * @throws java.rmi.NotBoundException
+   * Looks up an RMI engine at the specified host and RMI registry port
+   * using the default RMI registry bind name. This engine bean acts as
+   * a proxy to the remote RMI engine.
+   *
+   * @param host The host where the remote RMI engine is located.
+   * @param port The RMI registry port on the specified host.
+   * @throws flux.EngineException If a system error occurs.
+   * @throws java.rmi.RemoteException If a networking error occurs.
+   * @throws java.rmi.NotBoundException If there is no object in the RMI
+   * registry under the default bind name.
    * @see flux.Factory#lookupRmiEngine(String, int)
    */
   public EngineBean(String host, int port) throws EngineException, RemoteException, NotBoundException {
@@ -106,12 +111,18 @@ public class EngineBean implements Engine {
   } // constructor
 
   /**
-   * @param host
-   * @param port
-   * @param bindName
-   * @throws flux.EngineException
-   * @throws java.rmi.RemoteException
-   * @throws java.rmi.NotBoundException
+   * Looks up an RMI engine at the specified host and RMI registry port
+   * using the specified RMI registry bind name. This engine bean acts as
+   * a proxy to the remote RMI engine.
+   *
+   * @param host The host where the remote RMI engine is located.
+   * @param port The RMI registry port on the specified host.
+   * @param bindName The name under which the remote engine is registered
+   * in the RMI registry.
+   * @throws flux.EngineException If a system error occurs.
+   * @throws java.rmi.RemoteException If a networking error occurs.
+   * @throws java.rmi.NotBoundException If there is no object in the RMI
+   * registry under the specified bind name.
    * @see flux.Factory#lookupRmiEngine(String, int, String)
    */
   public EngineBean(String host, int port, String bindName) throws EngineException, RemoteException, NotBoundException {

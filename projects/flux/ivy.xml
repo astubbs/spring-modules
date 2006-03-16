@@ -19,6 +19,15 @@
 
   <dependencies>
     <dependency org="flux" name="flux-for-spring" rev="7.1"/>
+    
+    <dependency org="springframework" name="springframework" rev="1.2.6">
+      <artifact name="spring-beans" type="jar" conf="global" />
+    </dependency>
+
+
+    <!-- test time only dependencies -->
+    <dependency org="apache" name="commons-logging" rev="1.0.4" conf="test->default"/>
+    <dependency org="hsqldb" name="hsqldb" rev="1.7.1" conf="test->default"/>
   </dependencies>
   
 </ivy-module>
