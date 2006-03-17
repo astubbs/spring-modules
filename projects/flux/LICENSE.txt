@@ -1,0 +1,12 @@
+All files in and underneath this "springmodules/projects/flux" 
+directory are:
+
+1) Copyright 2006 by Flux Corporation
+2) Licensed under the Apache License, Version 2.0
+
+By downloading, copying, or otherwise using these files, you agree to 
+these terms and conditions.
+
+The Apache License, Version 2.0, is available at:
+
+http://www.apache.org/licenses/LICENSE-2.0
