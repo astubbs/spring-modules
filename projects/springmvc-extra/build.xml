@@ -2,15 +2,35 @@
 
 <project name="springmvc-extra" default="dist">
 
-  <!-- you may override default properties for the build by using entries
-       in a build.properties file, or by just adding 'property' elements
-	   here, before the following properties files are loaded -->
-  <property file="build.properties"/>
-  <property file="project.properties"/>
-  <property file="${common.build.dir}/build.properties"/>
-  <property file="${common.build.dir}/project.properties"/>
-  <property file="${user.home}/build.properties"/>
-
-  <import file="${common.build.dir}/common-targets.xml"/>
+  	<property file="build.properties" />
+  	<property file="project.properties" />
+  	<property file="${common.build.dir}/build.properties" />
+  	<property file="${common.build.dir}/project.properties" />
+  	<property file="${user.home}/build.properties" />
+  
+  	<property name="project.title" value="Extra classes for Spring MVC for Spring" />
+  	<property name="project.package" value="org.springmodules.web" />
+  
+  
+  	<import file="${common.build.dir}/common-targets.xml" />
+  	<import file="${common.build.dir}/clover-targets.xml" />
+  	<import file="${common.build.dir}/doc-targets.xml" />
+  
+  
+  	<!-- main jar target -->
+  	<target name="jar.main">
+  		<!-- main jar -->
+  		<jar jarfile="${target.lib.dir}/${project.name}.jar">
+  			<manifest>
+  				<attribute name="Implementation-Vendor" value="${org.name}" />
+  				<attribute name="Implementation-Title" value="${project.title}" />
+  				<attribute name="Implementation-Version" value="${project.version}" />
+  			</manifest>
+  			<fileset dir="${target.classes.dir}">
+  				<!-- todo, make this more selective, we don't neccessarily want to include everything here -->
+  			</fileset>
+  		</jar>
+  
+	</target>
 
 </project>
