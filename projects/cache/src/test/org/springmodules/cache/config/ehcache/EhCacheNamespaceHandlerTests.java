@@ -52,11 +52,6 @@ public class EhCacheNamespaceHandlerTests extends TestCase {
         .getCacheProviderFacadeParser());
   }
 
-  public void testGetCacheProviderFacadeValidator() {
-    AssertExt.assertInstanceOf(EhCacheFacadeValidator.class, handler
-        .getCacheProviderFacadeValidator());
-  }
-
   protected void setUp() {
     handler = new EhCacheNamespaceHandler();
   }

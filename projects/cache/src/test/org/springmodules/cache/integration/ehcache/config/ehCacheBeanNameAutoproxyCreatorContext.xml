@@ -3,18 +3,19 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/ehcache/springmodules-ehcache.xsd">
+    http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
 
   <ehcache:interceptors cachingInterceptorId="cachingInterceptor"
     flushingInterceptorId="flushingInterceptor">
     <ehcache:cachingListeners>
       <ehcache:cachingListener refId="cachingListener" />
     </ehcache:cachingListeners>
+
     <ehcache:caching
-      target="org.springmodules.cache.integration.CacheableService.get*"
+      methodFQN="org.springmodules.cache.integration.CacheableService.get*"
       cacheName="testCache" />
     <ehcache:flushing
-      target="org.springmodules.cache.integration.CacheableService.update*"
+      methodFQN="org.springmodules.cache.integration.CacheableService.update*"
       cacheNames="testCache" />
   </ehcache:interceptors>
 

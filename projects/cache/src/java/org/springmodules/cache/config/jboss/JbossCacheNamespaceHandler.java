@@ -20,7 +20,6 @@ package org.springmodules.cache.config.jboss;
 import org.springmodules.cache.config.AbstractCacheNamespaceHandler;
 import org.springmodules.cache.config.AbstractCacheProviderFacadeParser;
 import org.springmodules.cache.config.CacheModelParser;
-import org.springmodules.cache.config.CacheProviderFacadeValidator;
 
 /**
  * <p>
@@ -36,8 +35,6 @@ public final class JbossCacheNamespaceHandler extends
 
   private final JbossCacheFacadeParser cacheProviderFacadeParser;
 
-  private final JbossCacheFacadeValidator cacheProviderFacadeValidator;
-
   /**
    * Constructor.
    */
@@ -45,7 +42,6 @@ public final class JbossCacheNamespaceHandler extends
     super();
     cacheProviderFacadeParser = new JbossCacheFacadeParser();
     cacheModelParser = new JbossCacheModelParser();
-    cacheProviderFacadeValidator = new JbossCacheFacadeValidator();
   }
 
   protected CacheModelParser getCacheModelParser() {
@@ -55,9 +51,4 @@ public final class JbossCacheNamespaceHandler extends
   protected AbstractCacheProviderFacadeParser getCacheProviderFacadeParser() {
     return cacheProviderFacadeParser;
   }
-
-  protected CacheProviderFacadeValidator getCacheProviderFacadeValidator() {
-    return cacheProviderFacadeValidator;
-  }
-
 }

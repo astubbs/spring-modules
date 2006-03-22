@@ -3,15 +3,15 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/ehcache/springmodules-ehcache.xsd">
+       http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
 
   <ehcache:annotations>
     <ehcache:cachingListeners>
-      <ehcache:cachingListener refId="cachingListener"/>
+      <ehcache:cachingListener refId="cachingListener" />
     </ehcache:cachingListeners>
-    
-    <ehcache:caching target="test" cacheName="testCache" />
-    <ehcache:flushing target="test" cacheNames="testCache" />
+
+    <ehcache:caching id="test" cacheName="testCache" />
+    <ehcache:flushing id="test" cacheNames="testCache" />
   </ehcache:annotations>
 
   <!-- Set up the objects to apply caching to -->

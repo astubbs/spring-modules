@@ -38,6 +38,15 @@ import org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean;
 public final class CacheProxyFactoryBeanParser extends
     AbstractCacheSetupStrategyParser {
 
+  private static final String CACHE_MODEL_KEY = "methodName";
+  
+  /**
+   * @see AbstractCacheSetupStrategyParser#getCacheModelKey()
+   */
+  protected String getCacheModelKey() {
+    return CACHE_MODEL_KEY;
+  }
+
   /**
    * Creates and registers a <code>{@link CacheProxyFactoryBean}</code> by
    * parsing the given XML element.

@@ -36,13 +36,6 @@ public final class EhCacheFacadeParser extends
     AbstractCacheManagerAndProviderFacadeParser {
 
   /**
-   * Constructor.
-   */
-  public EhCacheFacadeParser() {
-    super();
-  }
-
-  /**
    * @see AbstractCacheManagerAndProviderFacadeParser#getCacheManagerClass()
    */
   protected Class getCacheManagerClass() {

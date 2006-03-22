@@ -66,7 +66,7 @@
     <xsd:attribute name="refId" type="xsd:string" use="optional" />
   </xsd:complexType>
 
-  <xsd:complexType name="flushing">
+  <xsd:complexType name="flushingModel">
     <xsd:attribute name="when" default="after">
       <xsd:simpleType>
         <xsd:restriction base="xsd:string">

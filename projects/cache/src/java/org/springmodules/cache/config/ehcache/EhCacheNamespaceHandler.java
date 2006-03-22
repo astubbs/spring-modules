@@ -20,7 +20,6 @@ package org.springmodules.cache.config.ehcache;
 import org.springmodules.cache.config.AbstractCacheNamespaceHandler;
 import org.springmodules.cache.config.AbstractCacheProviderFacadeParser;
 import org.springmodules.cache.config.CacheModelParser;
-import org.springmodules.cache.config.CacheProviderFacadeValidator;
 
 /**
  * <p>
@@ -32,21 +31,9 @@ import org.springmodules.cache.config.CacheProviderFacadeValidator;
 public final class EhCacheNamespaceHandler extends
     AbstractCacheNamespaceHandler {
 
-  private final EhCacheModelParser cacheModelParser;
+  private EhCacheModelParser cacheModelParser;
 
-  private final EhCacheFacadeParser cacheProviderFacadeParser;
-
-  private final EhCacheFacadeValidator cacheProviderFacadeValidator;
-
-  /**
-   * Constructor.
-   */
-  public EhCacheNamespaceHandler() {
-    super();
-    cacheProviderFacadeParser = new EhCacheFacadeParser();
-    cacheModelParser = new EhCacheModelParser();
-    cacheProviderFacadeValidator = new EhCacheFacadeValidator();
-  }
+  private EhCacheFacadeParser cacheProviderFacadeParser;
 
   protected CacheModelParser getCacheModelParser() {
     return cacheModelParser;
@@ -56,8 +43,11 @@ public final class EhCacheNamespaceHandler extends
     return cacheProviderFacadeParser;
   }
 
-  protected CacheProviderFacadeValidator getCacheProviderFacadeValidator() {
-    return cacheProviderFacadeValidator;
+  /**
+   * @see org.springmodules.cache.config.AbstractCacheNamespaceHandler#init()
+   */
+  protected void init() {
+    cacheProviderFacadeParser = new EhCacheFacadeParser();
+    cacheModelParser = new EhCacheModelParser();
   }
-
 }

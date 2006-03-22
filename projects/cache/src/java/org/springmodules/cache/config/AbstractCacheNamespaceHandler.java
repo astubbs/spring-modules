@@ -52,11 +52,8 @@ public abstract class AbstractCacheNamespaceHandler extends
    */
   public AbstractCacheNamespaceHandler() {
     super();
-    registerBeanDefinitionParser("config", getCacheProviderFacadeParser());
-    registerAnnotationsElementParser();
-    registerCommonsAttributesElementParser();
-    registerProxyElementParser();
-    registerInterceptorsElementParser();
+    init();
+    registerAllParsers();
   }
 
   protected abstract CacheModelParser getCacheModelParser();
@@ -66,7 +63,17 @@ public abstract class AbstractCacheNamespaceHandler extends
    */
   protected abstract AbstractCacheProviderFacadeParser getCacheProviderFacadeParser();
 
-  protected abstract CacheProviderFacadeValidator getCacheProviderFacadeValidator();
+  protected void init() {
+    // no implementation.
+  }
+
+  private void registerAllParsers() {
+    registerBeanDefinitionParser("config", getCacheProviderFacadeParser());
+    registerAnnotationsElementParser();
+    registerCommonsAttributesElementParser();
+    registerProxyElementParser();
+    registerInterceptorsElementParser();
+  }
 
   private void registerAnnotationsElementParser() {
     try {
@@ -75,7 +82,7 @@ public abstract class AbstractCacheNamespaceHandler extends
       String thisPackage = AbstractCacheNamespaceHandler.class.getPackage()
           .getName();
       String annotationsParserClassName = thisPackage + ".AnnotationsParser";
-      
+
       try {
         Class parserClass = ClassUtils.forName(annotationsParserClassName);
 
@@ -99,7 +106,6 @@ public abstract class AbstractCacheNamespaceHandler extends
   private void registerCacheSetupStrategyParser(String elementName,
       AbstractCacheSetupStrategyParser parser) {
     parser.setCacheModelParser(getCacheModelParser());
-    parser.setCacheProviderFacadeValidator(getCacheProviderFacadeValidator());
     registerBeanDefinitionParser(elementName, parser);
   }
 

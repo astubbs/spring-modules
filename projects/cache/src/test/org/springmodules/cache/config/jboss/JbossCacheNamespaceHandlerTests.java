@@ -52,11 +52,6 @@ public class JbossCacheNamespaceHandlerTests extends TestCase {
         .getCacheProviderFacadeParser());
   }
 
-  public void testGetCacheProviderFacadeValidator() {
-    AssertExt.assertInstanceOf(JbossCacheFacadeValidator.class, handler
-        .getCacheProviderFacadeValidator());
-  }
-
   protected void setUp() {
     handler = new JbossCacheNamespaceHandler();
   }

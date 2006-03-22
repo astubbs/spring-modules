@@ -35,13 +35,6 @@ public final class JbossCacheFacadeParser extends
     AbstractCacheManagerAndProviderFacadeParser {
 
   /**
-   * Constructor.
-   */
-  public JbossCacheFacadeParser() {
-    super();
-  }
-
-  /**
    * @see AbstractCacheManagerAndProviderFacadeParser#getCacheManagerClass()
    */
   protected Class getCacheManagerClass() {

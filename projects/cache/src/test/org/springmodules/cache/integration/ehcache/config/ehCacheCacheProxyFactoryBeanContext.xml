@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:cache="http://www.springmodules.org/schema/cache"
   xmlns:ehcache="http://www.springmodules.org/schema/ehcache"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springmodules.org/schema/cache http://www.springmodules.org/schema/cache/springmodules-cache.xsd
-       http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/ehcache/springmodules-ehcache.xsd">
+       http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
 
   <ehcache:proxy id="cacheableService">
     <ehcache:cacheKeyGenerator>
@@ -27,8 +25,8 @@
       </property>
     </bean>
 
-    <ehcache:caching target="get*" cacheName="testCache" />
-    <ehcache:flushing target="update*" cacheNames="testCache" />
+    <ehcache:caching methodName="get*" cacheName="testCache" />
+    <ehcache:flushing methodName="update*" cacheNames="testCache" />
   </ehcache:proxy>
 
 </beans>

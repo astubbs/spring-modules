@@ -53,6 +53,8 @@ public abstract class AbstractMetadataAttributesParser extends
     static final String FLUSHING_INTERCEPTOR = MetadataFlushingInterceptor.class
         .getName();
   }
+  
+  private static final String CACHE_MODEL_KEY = "id";
 
   /**
    * Adds extra properties to the caching interceptor.
@@ -75,6 +77,13 @@ public abstract class AbstractMetadataAttributesParser extends
    */
   protected abstract void configureFlushingInterceptor(
       MutablePropertyValues propertyValues, BeanDefinitionRegistry registry);
+
+  /**
+   * @see AbstractCacheSetupStrategyParser#getCacheModelKey()
+   */
+  protected String getCacheModelKey() {
+    return CACHE_MODEL_KEY;
+  }
 
   /**
    * Creates and registers the necessary bean definitions to set up

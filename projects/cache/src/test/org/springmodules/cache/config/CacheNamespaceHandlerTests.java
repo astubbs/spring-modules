@@ -43,8 +43,6 @@ public class CacheNamespaceHandlerTests extends TestCase {
 
     static AbstractCacheProviderFacadeParser cacheProviderFacadeParser;
 
-    static CacheProviderFacadeValidator cacheProviderFacadeValidator;
-
     /**
      * @see AbstractCacheNamespaceHandler#getCacheModelParser()
      */
@@ -58,14 +56,6 @@ public class CacheNamespaceHandlerTests extends TestCase {
     protected AbstractCacheProviderFacadeParser getCacheProviderFacadeParser() {
       return cacheProviderFacadeParser;
     }
-
-    /**
-     * @see AbstractCacheNamespaceHandler#getCacheProviderFacadeValidator()
-     */
-    protected CacheProviderFacadeValidator getCacheProviderFacadeValidator() {
-      return cacheProviderFacadeValidator;
-    }
-
   }
 
   private Handler handler;
@@ -83,7 +73,6 @@ public class CacheNamespaceHandlerTests extends TestCase {
   public void testContructor() throws Exception {
     Handler.cacheModelParser = createCacheModelParser();
     Handler.cacheProviderFacadeParser = createCacheProviderFacadeParser();
-    Handler.cacheProviderFacadeValidator = createCacheProviderFacadeValidator();
 
     handler = new Handler();
 
@@ -102,8 +91,6 @@ public class CacheNamespaceHandlerTests extends TestCase {
     AbstractCacheSetupStrategyParser parser = (AbstractCacheSetupStrategyParser) findParserForElement(elementName);
     AssertExt.assertInstanceOf(expectedClass, parser);
     assertSame(parser.getCacheModelParser(), Handler.cacheModelParser);
-    assertSame(parser.getCacheProviderFacadeValidator(),
-        Handler.cacheProviderFacadeValidator);
   }
 
   private CacheModelParser createCacheModelParser() {
@@ -124,12 +111,6 @@ public class CacheNamespaceHandlerTests extends TestCase {
         null, methodsToMock);
 
     return (AbstractCacheProviderFacadeParser) control.getMock();
-  }
-
-  private CacheProviderFacadeValidator createCacheProviderFacadeValidator() {
-    MockControl control = MockControl
-        .createControl(CacheProviderFacadeValidator.class);
-    return (CacheProviderFacadeValidator) control.getMock();
   }
 
   private BeanDefinitionParser findParserForElement(String elementName) {

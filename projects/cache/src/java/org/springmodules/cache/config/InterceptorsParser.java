@@ -39,6 +39,15 @@ import org.springmodules.cache.interceptor.flush.MethodMapFlushingInterceptor;
  */
 public final class InterceptorsParser extends AbstractCacheSetupStrategyParser {
 
+  private static final String CACHE_MODEL_KEY = "methodFQN";
+  
+  /**
+   * @see AbstractCacheSetupStrategyParser#getCacheModelKey()
+   */
+  protected String getCacheModelKey() {
+    return CACHE_MODEL_KEY;
+  }
+
   /**
    * Creates and registers instances
    * <code>{@link MethodMapCachingInterceptor}</code> and

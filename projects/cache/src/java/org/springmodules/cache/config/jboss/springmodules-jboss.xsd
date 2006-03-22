@@ -1,5 +1,5 @@
 <xsd:schema
-  targetNamespace="http://www.springmodules.org/schema/ehcache"
+  targetNamespace="http://www.springmodules.org/schema/jboss"
   elementFormDefault="qualified" attributeFormDefault="unqualified"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:beans="http://www.springframework.org/schema/beans"

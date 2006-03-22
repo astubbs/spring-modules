@@ -51,11 +51,6 @@ public abstract class AbstractJbossCacheSetupStrategyTestCase extends TestCase {
     AssertExt.assertInstanceOf(JbossCacheModelParser.class, getCacheModelParser());
   }
 
-  public final void testCacheProviderFacadeDefinitionValidatorClass() {
-    AssertExt.assertInstanceOf(JbossCacheFacadeValidator.class,
-        getCacheProviderFacadeDefinitionValidator());
-  }
-
   protected abstract Object getCacheModelParser();
   
   protected abstract Object getCacheProviderFacadeDefinitionValidator();
