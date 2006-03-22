@@ -16,8 +16,8 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * A JavaBean for configuring the Flux job scheduler, workflow engine, and
- * business process management (BPM) engine.
+ * A JavaBean for configuring the Flux job scheduler. Flux is also a 
+ * workflow engine and a business process management (BPM) engine.
  *
  * @author Copyright 2000-2006 Flux Corporation. All rights reserved.
  */
