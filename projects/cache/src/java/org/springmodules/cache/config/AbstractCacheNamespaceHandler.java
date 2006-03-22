@@ -20,6 +20,7 @@ package org.springmodules.cache.config;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.util.ClassUtils;
 
@@ -61,7 +62,7 @@ public abstract class AbstractCacheNamespaceHandler extends
   /**
    * @return the parser for the XML elements with name "config"
    */
-  protected abstract AbstractCacheProviderFacadeParser getCacheProviderFacadeParser();
+  protected abstract BeanDefinitionParser getCacheProviderFacadeParser();
 
   protected void init() {
     // no implementation.

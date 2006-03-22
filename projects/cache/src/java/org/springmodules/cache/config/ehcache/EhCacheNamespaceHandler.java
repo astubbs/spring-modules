@@ -17,8 +17,9 @@
  */
 package org.springmodules.cache.config.ehcache;
 
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+
 import org.springmodules.cache.config.AbstractCacheNamespaceHandler;
-import org.springmodules.cache.config.AbstractCacheProviderFacadeParser;
 import org.springmodules.cache.config.CacheModelParser;
 
 /**
@@ -31,15 +32,15 @@ import org.springmodules.cache.config.CacheModelParser;
 public final class EhCacheNamespaceHandler extends
     AbstractCacheNamespaceHandler {
 
-  private EhCacheModelParser cacheModelParser;
+  private CacheModelParser cacheModelParser;
 
-  private EhCacheFacadeParser cacheProviderFacadeParser;
+  private BeanDefinitionParser cacheProviderFacadeParser;
 
   protected CacheModelParser getCacheModelParser() {
     return cacheModelParser;
   }
 
-  protected AbstractCacheProviderFacadeParser getCacheProviderFacadeParser() {
+  protected BeanDefinitionParser getCacheProviderFacadeParser() {
     return cacheProviderFacadeParser;
   }
 

@@ -17,12 +17,9 @@
  */
 package org.springmodules.cache.config;
 
-import java.lang.reflect.Method;
-
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
-import org.easymock.classextension.MockClassControl;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
@@ -41,7 +38,7 @@ public class CacheNamespaceHandlerTests extends TestCase {
 
     static CacheModelParser cacheModelParser;
 
-    static AbstractCacheProviderFacadeParser cacheProviderFacadeParser;
+    static BeanDefinitionParser cacheProviderFacadeParser;
 
     /**
      * @see AbstractCacheNamespaceHandler#getCacheModelParser()
@@ -53,7 +50,7 @@ public class CacheNamespaceHandlerTests extends TestCase {
     /**
      * @see AbstractCacheNamespaceHandler#getCacheProviderFacadeParser()
      */
-    protected AbstractCacheProviderFacadeParser getCacheProviderFacadeParser() {
+    protected BeanDefinitionParser getCacheProviderFacadeParser() {
       return cacheProviderFacadeParser;
     }
   }
@@ -98,19 +95,10 @@ public class CacheNamespaceHandlerTests extends TestCase {
     return (CacheModelParser) control.getMock();
   }
 
-  private AbstractCacheProviderFacadeParser createCacheProviderFacadeParser()
+  private BeanDefinitionParser createCacheProviderFacadeParser()
       throws Exception {
-    Class target = AbstractCacheProviderFacadeParser.class;
-
-    Method getCacheProviderFacadeClassMethod = target.getDeclaredMethod(
-        "getCacheProviderFacadeClass", new Class[0]);
-
-    Method[] methodsToMock = { getCacheProviderFacadeClassMethod };
-
-    MockClassControl control = MockClassControl.createControl(target, null,
-        null, methodsToMock);
-
-    return (AbstractCacheProviderFacadeParser) control.getMock();
+    MockControl control = MockControl.createControl(BeanDefinitionParser.class);
+    return (BeanDefinitionParser) control.getMock();
   }
 
   private BeanDefinitionParser findParserForElement(String elementName) {
