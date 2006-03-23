@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-    <info organisation="springmodules" module="lucene"/>
+    <info organisation="springmodules" module="springmodules-lucene"/>
 
     <configurations>
 		<!-- default configuration that 'by default' pulls in the global configuration -->
@@ -23,9 +23,14 @@
     	<dependency org="apache" name="log4j" rev="1.2.9"/>
 		
         <dependency org="springframework" name="springframework" rev="1.2.6" conf="global,test->default">
-            <artifact name="spring-beans" type="jar" conf="global"/>
-			<artifact name="spring-support" type="jar" conf="global"/>            
-            <artifact name="spring-mock" type="jar" conf="test"/>
+			<artifact name="spring-support" type="jar" conf="global"/>
+			<artifact name="spring-beans" type="jar" conf="global"/>
+			<artifact name="spring-aop" type="jar" conf="global"/>					
+			<artifact name="spring-context" type="jar" conf="global"/>		
+			<artifact name="spring-core" type="jar" conf="global"/>						
+			<artifact name="spring-mock" type="jar" conf="test" />
+			<artifact name="spring-dao" type="jar" conf="global"/>	
+			<artifact name="spring-jdbc" type="jar" conf="global"/>	
         </dependency>
 		
         <dependency org="apache" name="lucene" rev="1.4.3"/>

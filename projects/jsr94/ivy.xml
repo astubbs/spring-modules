@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-    <info organisation="springmodules" module="jsr94"/>
+    <info organisation="springmodules" module="springmodules-jsr94"/>
 
     <configurations>
 		<!-- default configuration that 'by default' pulls in the global configuration -->
@@ -21,7 +21,7 @@
 	<!-- global dependencies -->
 	<dependency org="apache" name="commons-logging" rev="1.0.4"/>
 
-    <dependency org="springframework" name="org.springframework" rev="1.2.6">
+    <dependency org="springframework" name="springframework" rev="1.2.6">
       <artifact name="spring-aop" type="jar" conf="global" />    
       <artifact name="spring-beans" type="jar" conf="global" />
       <artifact name="spring-context" type="jar" conf="global" />

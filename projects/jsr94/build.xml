@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="jsr94" default="dist">
+<project name="springmodules-jsr94" default="dist">
 
   <property file="build.properties"/>
   <property file="project.properties"/>
