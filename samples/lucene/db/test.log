@@ -1,3 +1,0 @@
-/*C2*/CONNECT USER SA
-create table DOCUMENT_ID\u000d\u000a(\u000d\u000a    NEXT_DOCUMENT_ID INT not null,\u000d\u000a    constraint PK_DOCUMENT_ID primary key (NEXT_DOCUMENT_ID)\u000d\u000a)
-DISCONNECT

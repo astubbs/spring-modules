@@ -1,9 +1,9 @@
 // $ANTLR 2.7.5 (20050128): "ValidWhenParser.g" -> "ValidWhenParser.java"$
 
 /*
- * $Header: /cvs/springmodules/samples/validator/src/org/springmodules/commons/validator/validwhen/Attic/ValidWhenParser.java,v 1.1 2005/12/02 08:22:36 templth Exp $
- * $Revision: 1.1 $
- * $Date: 2005/12/02 08:22:36 $
+ * $Header$
+ * $Revision$
+ * $Date$
  *
  * Copyright 2003-2004 The Apache Software Foundation.
  *
