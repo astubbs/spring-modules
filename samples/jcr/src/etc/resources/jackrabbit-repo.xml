@@ -14,9 +14,11 @@
             <param name="path" value="${wsp.home}"/>
         </FileSystem>
         <PersistenceManager class="org.apache.jackrabbit.core.state.xml.XMLPersistenceManager" />
+        <!-- 
         <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
             <param name="path" value="${wsp.home}/index"/>
         </SearchIndex>
+        -->
     </Workspace>
     <Versioning rootPath="${rep.home}/versions">
         <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">

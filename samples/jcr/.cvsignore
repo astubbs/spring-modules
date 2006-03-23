@@ -1,3 +1,5 @@
 .classes
 dist
 repo
+lib
+target

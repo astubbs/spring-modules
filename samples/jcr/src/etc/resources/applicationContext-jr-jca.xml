@@ -4,7 +4,7 @@
 <!--
 	JCA configuration only for JackRabbit. This examples uses Jenks.
 	    
-    $Id: applicationContext-jr-jca.xml,v 1.3 2005/12/06 10:37:04 costin Exp $
+    $Id$
     -->    
 <beans>
 	
@@ -99,15 +99,13 @@
 	</bean>
 
 	<bean id="configResource" class="org.springframework.core.io.FileSystemResource">
-		<constructor-arg index="0" value=".classes/jackrabbit-repo.xml"/>
+		<constructor-arg index="0" value="./target/classes/jackrabbit-repo.xml"/>
 	</bean>
 	
 	<!-- JackRabbit JCA specific configuration -->	
 	<bean id="repositoryManagedConnectionFactory"
 		class="org.apache.jackrabbit.jca.JCAManagedConnectionFactory">
-		<property name="homeDir">
-			<value>./xa-rep</value>
-		</property>
+		<property name="homeDir" value="/target/xa-repo"/>
 
 		<property name="configFile">
 			<bean factory-bean="configResource" factory-method="getPath"/>

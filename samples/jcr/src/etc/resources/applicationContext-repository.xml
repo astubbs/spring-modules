@@ -5,17 +5,10 @@
 	JSR-170 configuration support. Note that the transaction managers are defined
 	in separate files.
 	    
-    $Id: applicationContext-repository.xml,v 1.6 2006/03/07 13:10:01 costin Exp $
+    $Id$
     -->    
 <beans default-lazy-init="true">
-	<import resource="applicationContext-jr-local.xml"/>
-	
-
-	<bean id="jeceira-repository" class="org.springmodules.jcr.jeceira.RepositoryFactoryBean">
-		<!-- normal factory beans params -->
-		<property name="configuration" value="classpath:jeceira-repo.xml"/>
-		<property name="repositoryName" value="jeceira-repo"/>
-	</bean>
+	<import resource="applicationContext-jr-jca.xml"/>
 	
 	<bean id="jcrSessionFactory" class="org.springmodules.jcr.JcrSessionFactory">
 		<property name="repository" ref="repository"/>
@@ -30,13 +23,16 @@
 			</bean>
 		</property>
 		<!-- register some bogus namespaces -->
+		<!-- 
 		<property name="namespaces">
 			<props>
 				<prop key="foo">http://bar.com/jcr</prop>
 				<prop key="hocus">http://pocus.com/jcr</prop>
 			</props>
 		</property>
-		<!-- register a simple listener -->
+		-->
+		<property name="keepNamespaces" value="true"/>
+		<!-- register a simple listener 
 		<property name="eventListeners">
 			<list>
 				<bean class="org.springmodules.jcr.EventListenerDefinition">
@@ -46,6 +42,7 @@
 				</bean>
 			</list>
 		</property>
+		-->
 		<!-- optional setting - used for discovery of transaction support for various repositories -->
 		<property name="sessionHolderProviderManager">
 			<bean class="org.springmodules.jcr.support.ServiceSessionHolderProviderManager"/>
@@ -65,9 +62,7 @@
 	<!-- transaction proxy for Jcr services/facades -->
 	<bean id="txProxyTemplate" abstract="true" 
         class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-        <property name="proxyTargetClass">
-            <value>true</value>
-        </property>
+        <property name="proxyTargetClass" value="true"/>
         <property name="transactionManager" ref="jcrTransactionManager"/>
         <property name="transactionAttributes">
 			<props>

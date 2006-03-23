@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+	Jeceira Repository configuration.
+		    
+    $Id$
+    -->    
+<beans default-lazy-init="true">
+	<bean id="repository" class="org.springmodules.jcr.jeceira.RepositoryFactoryBean">
+		<!-- normal factory beans params -->
+		<property name="configuration" value="classpath:jeceira-repo.xml"/>
+		<property name="repositoryName" value="jeceira-repo"/>
+	</bean>
+</beans>

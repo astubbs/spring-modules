@@ -4,7 +4,7 @@
 <!--
 	Local transaction manager only for JackRabbit
 	    
-    $Id: applicationContext-jr-local.xml,v 1.3 2005/12/06 10:37:04 costin Exp $
+    $Id$
     -->    
 <beans>
 	<bean id="jcrTransactionManager"
@@ -14,7 +14,8 @@
 	
 	<bean id="repository" class="org.springmodules.jcr.jackrabbit.RepositoryFactoryBean">
 		<!-- normal factory beans params -->
-		<property name="configuration" value="file:./src/jackrabbit-repo.xml"/>
-		<property name="homeDir" value="./repo"/>
+		<property name="configuration" value="jackrabbit-repo.xml"/>
+		<!-- use the target folder which will be cleaned  -->
+		<property name="homeDir" value="file:./target/repo"/>
 	</bean>
 </beans>
