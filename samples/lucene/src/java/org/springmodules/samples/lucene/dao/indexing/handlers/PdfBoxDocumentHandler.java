@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.pdfbox.searchengine.lucene.LucenePDFDocument;
-import org.springmodules.lucene.index.support.file.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
 
 /**
  * @author Thierry Templier

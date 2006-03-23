@@ -28,7 +28,7 @@ import org.apache.lucene.index.Term;
 import org.springmodules.lucene.index.core.DocumentCreator;
 import org.springmodules.lucene.index.core.InputStreamDocumentCreatorWithManager;
 import org.springmodules.lucene.index.support.LuceneIndexSupport;
-import org.springmodules.lucene.index.support.file.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
 import org.springmodules.samples.lucene.bean.indexing.IndexInformations;
 import org.springmodules.samples.lucene.ui.web.indexing.FileDocumentHolder;
 

@@ -18,27 +18,23 @@ package org.springmodules.samples.lucene.dao.indexing.handlers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.rtf.RTFEditorKit;
-
-import org.springmodules.lucene.index.support.file.DocumentHandler;
+import org.apache.poi.hdf.extractor.WordDocument;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
 
 /**
  * @author Thierry Templier
  */
-public class DefaultRtfDocumentHandler extends AbstractDocumentHandler implements DocumentHandler {
+public class PoiWordDocumentHandler extends AbstractDocumentHandler implements DocumentHandler {
 
 	protected String extractText(InputStream inputStream) throws IOException {
-		DefaultStyledDocument styledDoc = new DefaultStyledDocument();
-		try {
-			new RTFEditorKit().read(inputStream, styledDoc, 0);
-			return styledDoc.getText(0, styledDoc.getLength());
-		} catch(BadLocationException ex) {
-			ex.printStackTrace();
-		}
-		return null;
+		WordDocument wordDocument=new WordDocument(inputStream);
+		StringWriter textWriter=new StringWriter();
+		wordDocument.writeAllText(new PrintWriter(textWriter));
+		textWriter.close();
+		return textWriter.toString();
 	}
 
 }

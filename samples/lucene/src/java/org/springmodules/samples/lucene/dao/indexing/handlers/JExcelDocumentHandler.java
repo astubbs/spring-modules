@@ -20,24 +20,58 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.springmodules.lucene.index.support.file.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
 
 /**
  * @author Thierry Templier
  */
-public abstract class AbstractDocumentHandler {
+public class JExcelDocumentHandler implements DocumentHandler {
 
-	protected abstract String extractText(InputStream inputStream) throws IOException;
+	protected String extractText(InputStream inputStream) throws IOException {
+		StringBuffer text=new StringBuffer();
+		try {
+			Workbook workbook=Workbook.getWorkbook(inputStream);
+			for(int cpt=0;cpt<workbook.getNumberOfSheets();cpt++) {
+				Sheet sheet=workbook.getSheet(cpt);
+				extractTextFromSheet(sheet,text);
+			}
+		} catch(BiffException ex) {
+			ex.printStackTrace();
+		}
+		return text.toString();
+	}
+
+	private void appendText(StringBuffer text,String textToAppend) {
+		text.append(" ");
+		text.append(textToAppend);
+	}
+
+	protected void extractTextFromSheet(Sheet sheet,StringBuffer text) throws IOException {
+		for(int cptRow=0;cptRow<sheet.getRows();cptRow++) {
+			for(int cptColumn=0;cptColumn<sheet.getColumns();cptColumn++) {
+				Cell cell=sheet.getCell(cptColumn,cptRow);
+				String cellText=cell.getContents();
+				if( cellText!=null && cellText.length()>0 ) {
+					appendText(text,cellText);
+				}
+			}
+		}
+	}
 
 	/**
 	 * @see org.springmodules.lucene.index.object.file.FileDocumentHandler#getDocument(java.io.File, java.io.FileReader)
 	 */
-	public final Document getDocument(Map description, InputStream inputStream) throws IOException {
+	public Document getDocument(Map description, InputStream inputStream) throws IOException {
 		Document document=new Document();
 		String text=extractText(inputStream);
-		if( text!=null && text.length()>0 ) {
+		if( text!=null || text.length()>0 ) {
 			//The text is analyzed and indexed but not stored
 			document.add(Field.UnStored("contents",text));
 		}
@@ -47,5 +81,7 @@ public abstract class AbstractDocumentHandler {
 		}
 		return document;
 	}
+
+	//private 
 
 }
