@@ -1,0 +1,13 @@
+<!-- empty chain resolver -->
+<ivyconf>
+	<resolvers>
+		<chain name="custom">
+			<!-- codehaus public maven repository -->
+			<ibiblio name="codehaus" root="http://dist.codehaus.org"/>
+
+			<url name="some jsr94 link">
+		        <artifact pattern="http://www.bath.ac.uk/~cs1tjc/agent_jars/[artifact]-[revision].[ext]" />
+			</url>
+		</chain>
+	</resolvers>
+</ivyconf>

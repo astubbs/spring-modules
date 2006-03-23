@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<rule-set name="State Example"
+          xmlns="http://drools.org/rules"
+          xmlns:java="http://drools.org/semantics/java"
+          xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+          xs:schemaLocation="http://drools.org/rules rules.xsd
+                             http://drools.org/semantics/java java.xsd">
+
+    <java:import>org.springmodules.samples.jsr94.model.Car</java:import>
+
+    <rule name="prices_rules.car_volkswagen1">
+        <parameter identifier="car"><class>Car</class></parameter>
+
+        <java:condition><![CDATA[
+          (car.getMark().equals("Volkswagen"))
+             && (car.getPrice()<=100.0f)
+        ]]></java:condition>
+
+        <java:consequence><![CDATA[
+		  drools.retractObject(car);
+		  car.setGoodBargain(true);
+		  System.out.println("-> " + car.isGoodBargain());
+		  System.out.println(car.getId() + " - "+car.getName()+" : " + "Good bargain!");
+        ]]></java:consequence>
+    </rule>
+
+    <rule name="prices_rules.car_volkswagen2">
+        <parameter identifier="car"><class>Car</class></parameter>
+
+        <java:condition><![CDATA[
+          (car.getMark().equals("Volkswagen"))
+             && (car.getPrice()<=1000.0f)
+        ]]></java:condition>
+
+        <java:consequence><![CDATA[
+		  drools.retractObject(car);
+		  car.setGoodBargain(true);
+		  System.out.println("-> " + car.isGoodBargain());
+		  System.out.println(car.getId() + " - "+car.getName()+" : " + "Good bargain!");
+        ]]></java:consequence>
+    </rule>
+
+    <rule name="prices_rules.car_peugeot">
+        <parameter identifier="car"><class>Car</class></parameter>
+
+        <java:condition><![CDATA[
+          (car.getMark().equals("Peugeot"))
+             && (car.getPrice()<=1000.0f)
+        ]]></java:condition>
+
+        <java:consequence><![CDATA[
+		  drools.retractObject(car);
+		  car.setGoodBargain(true);
+		  System.out.println("-> " + car.isGoodBargain());
+		  System.out.println(car.getId() + " - "+car.getName()+" : " + "Good bargain!");
+        ]]></java:consequence>
+    </rule>
+
+</rule-set>

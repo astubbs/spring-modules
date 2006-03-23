@@ -7,9 +7,11 @@
 		<property name="driverClassName">
 			<value>org.hsqldb.jdbcDriver</value>
 		</property>
-		<property name="url">
+		<property name="url" value="jdbc:hsqldb:file:target/classes/db/test"/>
+		<!--
 			<value>jdbc:hsqldb:hsql://localhost:9001</value>
 		</property>
+		-->
 		<property name="username">
 			<value>sa</value>
 		</property>
@@ -21,10 +23,10 @@
 	<!-- The `local' ruleServiceProvider; we can have as many different ruleProviders as we want -->
 	<bean id="ruleServiceProvider" class="org.springmodules.jsr94.factory.DefaultRuleServiceProviderFactoryBean">
 		<property name="provider">
-			<value>http://drools.org/</value>
+			<value>http://www.ilog.com</value>
 		</property>
 		<property name="providerClass">
-			<value>org.drools.jsr94.rules.RuleServiceProviderImpl</value>
+			<value>ilog.rules.server.jsr94.IlrRuleServiceProvider</value>
 		</property>
 	</bean>
 
@@ -51,10 +53,20 @@
 			<ref local="ruleAdministrator"/>
 		</property>
 		<property name="source">
-			<value>/rules/cars_rules.drl</value>
+			<value>/rules/cars_rules_without_ruleflow.irl</value>
 		</property>
 		<property name="bindUri">
 			<value>cars</value>
+		</property>
+		<property name="rulesetProperties">
+			<map>
+				<entry key="IlrName">
+					<value>cars_rules</value>
+				</entry>
+				<entry key="IlrRulesInILR">
+					<value>true</value>
+				</entry>
+			</map>
 		</property>
 	</bean>
 
