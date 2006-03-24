@@ -52,7 +52,7 @@
 	</target>
 	
 	<target name="download-doc-lib" description="Download DocBook libraries">
-		<echo>Downloading DocBook libraries"</echo>
+		<echo>Downloading DocBook libraries</echo>
 		<get src="${doc.book.server}/${doc.book.archive}" verbose="on" dest="${doc.book.archive}" usetimestamp="true"/>
 		<mkdir dir="${doc.book.folder}"/>
 		<unzip src="${doc.book.archive}" dest="${doc.book.folder}"/>
