@@ -1,0 +1,21 @@
+	<bookinfo>
+		<title>Spring Modules - Modules, add-ons and integration tools for Spring</title>
+		<subtitle>
+			Reference Documentation
+		</subtitle>
+		<releaseinfo>Version 0.3</releaseinfo>
+		<pubdate>(Work in progress)</pubdate>
+
+		<authorgroup>
+			&authors;
+		</authorgroup>
+		
+		<legalnotice>Copies of this document may be made for your own use and for distribution to others, provided that you
+			do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether
+			distributed in print or electronically.
+		</legalnotice>
+
+	</bookinfo>
+	
+	&preface;
+	<toc/>

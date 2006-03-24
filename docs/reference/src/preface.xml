@@ -5,9 +5,12 @@
   <para> This document provides a reference guide to Spring Modules' features.
   Spring Modules contains various add-ons for the core Spring Framework and as
   such this document assumes that you are already familiar with Spring itself.
-  Since this document is still a work-in-progress, if you have any requests or
-  comments, please post them on the user mailing list or on the forum at the
-  java.net project page: <ulink url="https://springmodules.dev.java.net/" />
+  Since this document is still a work-in-progress, if you have any requests, or
+  comments, please post them on the user mailing list or on the Spring Modules 
+  <ulink url="http://forum.springframework.org/forumdisplay.php?f=37">forum</ulink>.
+  If you want to report a bug please use the Spring Modules 
+  <ulink url="http://opensource2.atlassian.com/projects/spring/browse/MOD">issue tracking
+  </ulink>.
   </para>
 
   <para> Before we go on, a few words of gratitude: Chris Bauer (of the
