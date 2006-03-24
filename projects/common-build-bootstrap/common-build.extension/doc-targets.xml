@@ -30,7 +30,7 @@
 	</target>
 
 	<target name="doc.prepare" description="Prepare the documentation for generation">
-		<fail message="Supporting libraries needed to generate documentation not found in: ${docs.global.lib.dir}, please see docs/reference/readme.txt for instructions.">
+		<fail message="Supporting libraries needed to generate documentation not found in: ${docs.global.lib.dir}, please see projects/common-build-bootstrap/docs/using_sbc.txt for instructions.">
 			<condition>
 				<not>
 					<available file="${docs.global.lib.dir}" />
