@@ -2,3 +2,23 @@
 
 resolver.file = custom-resolver.xml
 ivy.custom.resolver=${basedir}/${resolver.file}
+
+#
+# overwrite doc book properties
+#
+
+
+# where all project documentation resides (per module)
+docs.dir=${basedir}/docs
+
+# where all project reference documentation resides (per module)
+docs.ref.dir=${docs.dir}/reference
+
+# where all project reference documentation sources reside (per module)
+docs.ref.src.dir=${docs.dir}/reference/src
+
+# where all DocBook libraries reside (one for all modules)
+docs.ref.lib.dir=${common.build.dir}/docs/lib
+
+# where the project reference documentation is built
+docs.ref.target.dir=${docs.dir}/reference/target
