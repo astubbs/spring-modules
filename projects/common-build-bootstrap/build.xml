@@ -21,7 +21,7 @@
 	<target name="download-wincvs" depends="check-cvs, determineOS" unless="cvs.present" description="Download CVS for Windows or fails under Linux">
 		<fail message="cvs is required. please install it before moving on" unless="isWindows"/>
 		<echo>cvs not present and Windows detected - trying to download it...</echo>
-		<get src="${cvs.server}/${cvs.archive}" verbose="off" dest="${cvs.archive}"/>
+		<get src="${cvs.server}/${cvs.archive}" verbose="off" dest="${cvs.archive}" usetimestamp="true"/>
 		<unzip src="${cvs.archive}" dest="."/>
 	</target>
 	
@@ -49,6 +49,13 @@
 			<filelist dir="${extensions.dir}" files="project.props.addon"/>
 		</concat>
 		
+	</target>
+	
+	<target name="download-doc-lib" description="Download DocBook libraries">
+		<echo>Downloading DocBook libraries"</echo>
+		<get src="${doc.book.server}/${doc.book.archive}" verbose="on" dest="${doc.book.archive}" usetimestamp="true"/>
+		<mkdir dir="${doc.book.folder}"/>
+		<unzip src="${doc.book.archive}" dest="${doc.book.folder}"/>
 	</target>
 	
 </project>

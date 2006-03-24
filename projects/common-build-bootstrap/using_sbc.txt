@@ -1,0 +1,31 @@
+Spring Modules uses Spring common build (SCB) for its infrastructure. For a newly checked out project, one must download
+the SCB from the CVS and add Spring Modules specific extensions. 
+
+1. Download Spring Common Build
+
+The ant script inside this directory does this already for you.
+Note that at the moment it uses CVS and the cvs command is required. Under windows the cvs.exe is downloaded automatically, for
+Linux there is no specific solution. If you have problems or the automatic procedure doesn't work for you, checkout spring common build and place it under projects/ folder (i.e. you'll end up with projects/common-build aka $SCB_HOME).
+
+2. Apply Spring Modules modifications
+
+just run the common-build.mod target. It will copy the required files to SCB folder and modify the necessary files.
+
+3. Download the documentation libraries
+
+if you want to generate the documentation files then you will need the DocBoo libraries and styles. Run the "download-doc-lib" which
+will download the zip and extract it into the required folder.
+
+4. Starting a new project
+
+When converting or starting a new project, you'll need to follow the SCB structure. You can find project templates inside $SCB_HOME/templates/projects, in most cases the basic one will suffice.
+
+5. Documentation template
+
+You can find the documentation template in common-build-bootstrap/template. Copy the folder structure into your module folder.
+Once you have created the documentation xml, modify the index.xml to include it and put your name in the authors.xml file.
+Make sure you include doc-targets.xml in your build.xml file:
+
+    <import file="${common.build.dir}/doc-targets.xml" />
+    
+To generate the documentation, run ant doc-all. Use ant -p to find the other doc specific targets.
