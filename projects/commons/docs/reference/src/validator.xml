@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="validator">
+  <title>Commons Validator</title>
+
+  <sect1>
+    <title>Introduction</title>
+
+    <para>The Commons Validator is a library that allows you to perform
+    validation based on rules specified in XML configuration files.</para>
+
+    <para>TODO: Describe the concepts of Commons Validator in more
+    details.</para>
+  </sect1>
+
+  <sect1>
+    <title>Configure an Validator Factory</title>
+
+    <para>Firstly you need to configure the Validator Factory which is the
+    factory to get Validator instances. To do so, the support provides the
+    class DefaultValidatorFactory in the package
+    org.springmodules.commons.validator.</para>
+
+    <para>You need to specify with the property validationConfigLocations the
+    file containing the Commons Validator rules and the file containing the
+    validation rules specific to the application.</para>
+
+    <para>The following code shows how to configure this factory.</para>
+
+    <programlisting>&lt;bean id="validatorFactory"
+      class="org.springmodules.commons.validator.DefaultValidatorFactory"&gt;
+  &lt;property name="validationConfigLocations"&gt;
+    &lt;list&gt;
+      &lt;value&gt;/WEB-INF/validator-rules.xml&lt;/value&gt;
+      &lt;value&gt;/WEB-INF/validation.xml&lt;/value&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+  </sect1>
+
+  <sect1>
+    <title>Use a dedicated validation-rules.xml</title>
+
+    <para>The file <emphasis>validation-rules.xml</emphasis> must contain
+    Commons Validator elements based on classes provided by the support of
+    this framework in Spring Modules.</para>
+
+    <para>For example, the configuration of the entities "required" and
+    "requiredif" must be now in the <emphasis>validation-rules.xml</emphasis>
+    file.</para>
+
+    <programlisting>&lt;validator name="required"
+          classname="org.springmodules.commons.validator.FieldChecks"
+          method="validateRequired"
+          methodParams="java.lang.Object,
+                        org.apache.commons.validator.ValidatorAction,
+                        org.apache.commons.validator.Field,
+                        org.springframework.validation.Errors"
+          msg="errors.required"&gt;
+
+  &lt;javascript&gt;&lt;![CDATA[
+    (...)
+  ]]&gt;&lt;/javascript&gt;
+&lt;/validator&gt;
+
+&lt;validator name="requiredif"
+           classname="org.springmodules.commons.validator.FieldChecks"
+           method="validateRequiredIf"
+           methodParams="java.lang.Object,
+                         org.apache.commons.validator.ValidatorAction,
+                         org.apache.commons.validator.Field,
+                         org.springframework.validation.Errors,
+                         org.apache.commons.validator.Validator"
+          msg="errors.required"&gt;
+&lt;/validator&gt;</programlisting>
+
+    <para>The validation sample of the distribution provides a complete
+    <emphasis>validation-rules.xml</emphasis> based on the classes of the
+    support.</para>
+
+    <para>You must note that the support of <emphasis>validwhen</emphasis> is
+    not provided at the moment in the support. However, some codes are
+    provides in JIRA. For more informations, see the issues <ulink
+    href="http://opensource2.atlassian.com/projects/spring/browse/MOD-38">MOD-38</ulink>
+    and <ulink
+    href="http://opensource2.atlassian.com/projects/spring/browse/MOD-49">MOD-49</ulink>.</para>
+  </sect1>
+
+  <sect1>
+    <title>Configure a Commons Validator</title>
+
+    <para>Then you need to configure the Validator itself basing the previous
+    Validator Factory. It corresponds to an adapter in order to hide Commons
+    Validator behind a Spring Validator.</para>
+
+    <para>The following code shows how to configure this validator.</para>
+
+    <programlisting>&lt;bean id="beanValidator" class="org.springmodules.commons.validator.DefaultBeanValidator"&gt;
+  &lt;property name="validatorFactory" ref="validatorFactory"/&gt;
+&lt;/bean&gt;</programlisting>
+  </sect1>
+
+  <sect1>
+    <title>Server side validation</title>
+
+    <para>Spring MVC provides the implementation
+    <emphasis>SimpleFormController</emphasis> of the interface
+    <emphasis>Controller</emphasis> in order to process HTML forms. It allows
+    a validation of informations processing by the controller by using the
+    property v<emphasis>alidator</emphasis> of the controller. In the case of
+    Commons Validator, this property must be set with the bean
+    <emphasis>beanValidator</emphasis> previously configured.</para>
+
+    <para>The following code shows how to configure a controller which
+    validates a form on the server side using the support of Commons
+    Validator.</para>
+
+    <programlisting>&lt;bean id="myFormController" class="org.springmodules.sample.MyFormController"&gt;
+  (...)
+  &lt;property name="validator" ref="beanValidator"/&gt;
+  &lt;property name="commandName" value="myForm"/&gt;
+  &lt;property name="commandClass" value="org.springmodules.sample.MyForm"/&gt;
+  (...)
+&lt;/bean&gt;</programlisting>
+
+    <para>The <emphasis>beanValidator</emphasis> bean uses the value of the
+    property <emphasis>commandClass</emphasis> of the controller to select the
+    name of the form tag in the <emphasis>validation.xml</emphasis> file. The
+    configuration is not based on the <emphasis>commandName</emphasis>
+    property. For example, with the class name
+    <emphasis>org.springmodules.sample.MyForm</emphasis>, Commons Validator
+    must contain a form tag with <emphasis>myForm</emphasis> as value of the
+    name property. The following code shows the contents of this file.</para>
+
+    <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE form-validation PUBLIC 
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN" 
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd"&gt;
+
+&lt;form-validation&gt;
+  &lt;formset&gt;
+    &lt;form name="myForm"&gt;
+      &lt;field property="field1" depends="required"&gt;
+        &lt;arg0 key="error.field1" /&gt;
+      &lt;/field&gt;
+      &lt;field property="field2" depends="email"&gt;
+        &lt;arg0 key="error.field2" /&gt;
+      &lt;/field&gt;
+    &lt;/form&gt;
+  &lt;/formset&gt;
+&lt;/form-validation&gt;</programlisting>
+  </sect1>
+
+  <sect1>
+    <title>Client side validation</title>
+
+    <para>The support of Commons Validator in Spring Modules provides too the
+    possibility to use a client side validation. It provides a dedicated
+    taglib to generate the validation javascript code. To use this taglib, we
+    firstly need to declare it at the beginnig of JSP files as
+    following.</para>
+
+    <programlisting>&lt;%@ tglib uri="http://www.springmodules.org/tags/commons-validator" prefix="validator" %&gt;</programlisting>
+
+    <para>You need then to include the generated javascript code in the JSP
+    file as following by using the <emphasis>javascript</emphasis> tag.</para>
+
+    <programlisting>&lt;validator:javascript formName="account" 
+    staticJavascript="false" xhtml="true" cdata="false"/&gt;</programlisting>
+
+    <para>At last, you need to set the <emphasis>onSubmit</emphasis> attribute
+    on the <emphasis>form</emphasis> tag in order to trigger the validation on
+    the submission of the form.</para>
+
+    <programlisting>&lt;form method="post" action="(...)" onsubmit="return validateMyForm(this)"&gt;</programlisting>
+  </sect1>
+</chapter>
