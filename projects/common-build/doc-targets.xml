@@ -30,10 +30,10 @@
 	</target>
 
 	<target name="doc.prepare" description="Prepare the documentation for generation">
-		<fail message="Supporting libraries needed to generate documentation not found in: ${docs.ref.lib.dir}, please see docs/reference/readme.txt for instructions.">
+		<fail message="Supporting libraries needed to generate documentation not found in: ${docs.global.lib.dir}, please see docs/reference/readme.txt for instructions.">
 			<condition>
 				<not>
-					<available file="${docs.ref.lib.dir}" />
+					<available file="${docs.global.lib.dir}" />
 				</not>
 			</condition>
 		</fail>
@@ -42,28 +42,36 @@
 	<target name="doc-pdf" depends="doc.prepare" description="Generate PDF reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/pdf/images" />
 		<copy todir="${docs.ref.target.dir}/pdf/images">
+			<!-- global settings -->
+			<fileset dir="${docs.global.images.dir}">
+				<include name="*.gif" />
+				<include name="*.svg" />
+				<include name="*.jpg" />
+			</fileset>
+			<!-- per project settings -->
 			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
 				<include name="*.svg" />
 				<include name="*.jpg" />
 			</fileset>
+			
 		</copy>
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
 			<classpath>
-				<fileset dir="${docs.ref.lib.dir}">
+				<fileset dir="${docs.global.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
 			<arg value="-o" />
 			<arg value="${docs.ref.target.dir}/pdf/docbook_fop.tmp" />
 			<arg value="${docs.ref.src.dir}/index.xml" />
-			<arg value="${docs.ref.dir}/styles/fopdf.xsl" />
+			<arg value="${docs.global.styles.dir}/fopdf.xsl" />
 		</java>
 
 		<java classname="org.apache.fop.apps.Fop" fork="true" maxmemory="256m" dir="${docs.ref.dir}">
 			<classpath>
-				<fileset dir="${docs.ref.lib.dir}">
+				<fileset dir="${docs.global.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
@@ -76,6 +84,13 @@
 	<target name="doc-html" depends="doc.prepare" description="Generate multi-page HTML reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/html/images" />
 		<copy todir="${docs.ref.target.dir}/html/images">
+			<!-- global settings -->
+			<fileset dir="${docs.global.images.dir}">
+				<include name="*.gif" />
+				<include name="*.svg" />
+				<include name="*.jpg" />
+			</fileset>
+			<!-- per project settings -->			
 			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
 				<include name="*.svg" />
@@ -83,20 +98,27 @@
 			</fileset>
 		</copy>
 
-		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}/html/">
+		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html/">
 			<classpath>
-				<fileset dir="${docs.ref.lib.dir}">
+				<fileset dir="${docs.global.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
 			<arg value="${docs.ref.src.dir}/index.xml" />
-			<arg value="${docs.ref.dir}/styles/html_chunk.xsl" />
+			<arg value="${docs.global.styles.dir}/html_chunk.xsl" />
 		</java>
 	</target>
 
 	<target name="doc-htmlsingle" description="Generate single-page HTML reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/html_single/images" />
 		<copy todir="${docs.ref.target.dir}/html_single/images">
+			<!-- global settings -->
+			<fileset dir="${docs.global.images.dir}">
+				<include name="*.gif" />
+				<include name="*.svg" />
+				<include name="*.jpg" />
+			</fileset>
+			<!-- per project settings -->				
 			<fileset dir="${docs.ref.src.dir}/images">
 				<include name="*.gif" />
 				<include name="*.svg" />
@@ -106,14 +128,14 @@
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
 			<classpath>
-				<fileset dir="${docs.ref.lib.dir}">
+				<fileset dir="${docs.global.lib.dir}">
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
 			<arg value="-o" />
 			<arg value="${docs.ref.target.dir}/html_single/index.html" />
 			<arg value="${docs.ref.src.dir}/index.xml" />
-			<arg value="${docs.ref.dir}/styles/html.xsl" />
+			<arg value="${docs.global.styles.dir}/html.xsl" />
 		</java>
 	</target>
 
