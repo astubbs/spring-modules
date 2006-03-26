@@ -25,6 +25,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.util.ClassUtils;
 
 import org.springmodules.cache.FatalCacheException;
+import org.springmodules.cache.util.SystemUtils;
 
 /**
  * <p>
@@ -64,6 +65,10 @@ public abstract class AbstractCacheNamespaceHandler extends
    */
   protected abstract BeanDefinitionParser getCacheProviderFacadeParser();
 
+  /**
+   * Gives subclasses the opportunity to initialize their own infrastructure
+   * such as custom bean definition parsers, helpers, etc.
+   */
   protected void init() {
     // no implementation.
   }
@@ -77,9 +82,7 @@ public abstract class AbstractCacheNamespaceHandler extends
   }
 
   private void registerAnnotationsElementParser() {
-    try {
-      ClassUtils.forName("java.lang.annotation.Annotation");
-
+    if (SystemUtils.annotationsSupport()) {
       String thisPackage = AbstractCacheNamespaceHandler.class.getPackage()
           .getName();
       String annotationsParserClassName = thisPackage + ".AnnotationsParser";
@@ -98,7 +101,7 @@ public abstract class AbstractCacheNamespaceHandler extends
         throw new FatalCacheException(errorMessage, exception);
       }
 
-    } catch (ClassNotFoundException exception) {
+    } else {
       logger.info("No support for JDK 1.5 Annotations. "
           + "Unable to load parser for namespace 'annotations'");
     }

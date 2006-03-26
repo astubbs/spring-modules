@@ -21,12 +21,19 @@ package org.springmodules.cache.integration;
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import junit.framework.TestCase;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.util.StringUtils;
 
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.interceptor.caching.AbstractCachingInterceptor;
 import org.springmodules.cache.provider.PathUtils;
+import org.springmodules.cache.util.SystemUtils;
 
 /**
  * <p>
@@ -38,19 +45,25 @@ import org.springmodules.cache.provider.PathUtils;
  * 
  * @version $Revision$ $Date$
  */
-public abstract class AbstractIntegrationTests extends
-    AbstractDependencyInjectionSpringContextTests {
+public abstract class AbstractIntegrationTests extends TestCase {
 
-  /**
-   * Id used to reference the cache manager in the Spring application context.
-   */
-  protected static final String CACHE_MANAGER_BEAN_ID = "cacheManager";
+  protected static final String CACHE_MANAGER_BEAN_NAME = "cacheManager";
 
-  protected static final String CACHING_LISTENER_BEAN_ID = "cachingListener";
+  private static final String ANNOTATIONS_CONTEXT = "annotationsContext.xml";
 
-  protected static final String SIMPLE_CONFIG_CACHE_MANAGER_BEAN_ID = "cacheProvider.cacheManager";
+  private static final String BEAN_NAME_AUTOPROXY_CREATOR_CONTEXT = "beanNameAutoproxyCreatorContext.xml";
 
-  protected static final String TARGET_BEAN_ID = "cacheableService";
+  private static final String CACHE_PROXY_FACTORY_BEAN_CONTEXT = "cacheProxyFactoryBeanContext.xml";
+
+  private static final String COMMONS_ATTRIBUTES_CONTEXT = "commonsAttributesContext.xml";
+
+  private static final String DTD_FOLDER = "/dtd/";
+
+  private static final String SCHEMA_FOLDER = "/schema/";
+
+  protected final Log logger = LogFactory.getLog(getClass());
+
+  private ApplicationContext applicationContext;
 
   /**
    * Listener that stores the keys used to store objects in the cache. This
@@ -68,14 +81,91 @@ public abstract class AbstractIntegrationTests extends
     super();
   }
 
+  public AbstractIntegrationTests(String name) {
+    super(name);
+  }
+
+  public final void testAnnotationsWithDtd() throws Exception {
+    performCachingAndFlushingWithAnnotations(DTD_FOLDER);
+  }
+
+  public final void testAnnotationsWithSchema() throws Exception {
+    performCachingAndFlushingWithAnnotations(SCHEMA_FOLDER);
+  }
+
+  public final void testBeanNameAutoProxyCreatorWithDtd() throws Exception {
+    performCachingAndFlushingWithBeanNameAutoProxyCreator(DTD_FOLDER);
+  }
+
+  public final void testBeanNameAutoProxyCreatorWithSchema() throws Exception {
+    performCachingAndFlushingWithBeanNameAutoProxyCreator(SCHEMA_FOLDER);
+  }
+
+  public final void testCacheProxyFactoryBeanWithDtd() throws Exception {
+    performCachingAndFlushingWithCacheProxyFactoryBean(DTD_FOLDER);
+  }
+
+  public final void testCacheProxyFactoryBeanWithSchema() throws Exception {
+    performCachingAndFlushingWithCacheProxyFactoryBean(SCHEMA_FOLDER);
+  }
+
+  public final void testCommonsAttributesWithDtd() throws Exception {
+    performCachingAndFlushingWithCommonsAttributes(DTD_FOLDER);
+  }
+
+  public final void testCommonsAttributesWithSchema() throws Exception {
+    performCachingAndFlushingWithCommonsAttributes(SCHEMA_FOLDER);
+  }
+
+  protected final void assertCacheEntryFromCacheIsNull(Object cacheEntry,
+      Serializable key) {
+    assertNull("There should not be any object stored under the key <"
+        + StringUtils.quoteIfString(key) + ">", cacheEntry);
+  }
+
+  protected abstract void assertCacheWasFlushed() throws Exception;
+
+  /**
+   * Asserts that the given object was cached.
+   * 
+   * @param expectedCachedObject
+   *          the object that should have been cached.
+   * @param keyAndModelIndex
+   *          the index of the key/model stored in <code>cachingListener</code>.
+   * @see KeyAndModelListCachingListener
+   */
+  protected abstract void assertObjectWasCached(Object expectedCachedObject,
+      int keyAndModelIndex) throws Exception;
+
+  protected final ApplicationContext getApplicationContext() {
+    return applicationContext;
+  }
+
+  protected final Object getCacheManagerFromContext() {
+    return applicationContext.getBean(CACHE_MANAGER_BEAN_NAME);
+  }
+
+  protected final KeyAndModelListCachingListener getCachingListener() {
+    return cachingListener;
+  }
+
+  protected final KeyAndModel getKeyAndModel(int index) {
+    List keyAndModelPairs = cachingListener.getKeyAndModelPairs();
+    KeyAndModel keyModel = (KeyAndModel) keyAndModelPairs.get(index);
+    return keyModel;
+  }
+
   /**
    * Verifies that the caching and the cache-flushing are working correctly.
    */
-  public final void testCachingAndCacheFlushing() throws Exception {
-    cachingListener = (KeyAndModelListCachingListener) applicationContext
-        .getBean(CACHING_LISTENER_BEAN_ID);
+  private void performCachingAndFlushing(String configStrategyConfig)
+      throws Exception {
+    setUpApplicationContext(configStrategyConfig);
 
-    target = (CacheableService) applicationContext.getBean(TARGET_BEAN_ID);
+    cachingListener = (KeyAndModelListCachingListener) applicationContext
+        .getBean("cachingListener");
+
+    target = (CacheableService) applicationContext.getBean("cacheableService");
 
     logger.debug("Storing in the cache...");
     int nameIndex = 0;
@@ -102,7 +192,7 @@ public abstract class AbstractIntegrationTests extends
     // call the method 'updateName(int, String)'. When executed, the cache
     // should be flushed.
     logger.debug("Flushing the cache ...");
-    target.updateName(nameIndex, "Rod Johnson");
+    target.updateName(nameIndex, "Darth Maul");
 
     assertCacheWasFlushed();
 
@@ -114,62 +204,42 @@ public abstract class AbstractIntegrationTests extends
     assertNull(cachedObject);
   }
 
-  protected final void assertCacheEntryFromCacheIsNull(Object cacheEntry,
-      Serializable key) {
-    assertNull("There should not be any object stored under the key <"
-        + StringUtils.quoteIfString(key) + ">", cacheEntry);
-  }
-
-  protected abstract void assertCacheWasFlushed() throws Exception;
-
-  /**
-   * Asserts that the given object was cached.
-   * 
-   * @param expectedCachedObject
-   *          the object that should have been cached.
-   * @param keyAndModelIndex
-   *          the index of the key/model stored in <code>cachingListener</code>.
-   * @see KeyAndModelListCachingListener
-   */
-  protected abstract void assertObjectWasCached(Object expectedCachedObject,
-      int keyAndModelIndex) throws Exception;
-
-  protected String getCacheManagerBeanId() {
-    return CACHE_MANAGER_BEAN_ID;
-  }
-
-  protected final KeyAndModelListCachingListener getCachingListener() {
-    return cachingListener;
-  }
-
-  protected abstract String[] getConfigFileNames();
-
-  /**
-   * @see AbstractDependencyInjectionSpringContextTests#getConfigLocations()
-   */
-  protected final String[] getConfigLocations() {
-    String[] configFileNames = getConfigFileNames();
-    int count = configFileNames.length;
-
-    String resourcePath = "classpath:"
-        + PathUtils.getPackageNameAsPath(getClass());
-
-    String[] configLocations = new String[count];
-    for (int i = 0; i < count; i++) {
-      String configLocation = configFileNames[i];
-      if (!configLocation.startsWith("classpath:")) {
-        configLocation = resourcePath + "/" + configLocation;
-      }
-      configLocations[i] = configLocation;
+  private void performCachingAndFlushingWithAnnotations(String configFolder)
+      throws Exception {
+    if (SystemUtils.annotationsSupport()) {
+      String configLocation = configFolder + ANNOTATIONS_CONTEXT;
+      performCachingAndFlushing(configLocation);
+    } else {
+      logger.info("Unable to run tests using file \"" + ANNOTATIONS_CONTEXT
+          + ".\" Annotations are not supported by this version of Java");
     }
-
-    return configLocations;
+  }
+  
+  private void performCachingAndFlushingWithBeanNameAutoProxyCreator(
+      String configFolder) throws Exception {
+    String configLocation = configFolder + BEAN_NAME_AUTOPROXY_CREATOR_CONTEXT;
+    performCachingAndFlushing(configLocation);
   }
 
-  protected final KeyAndModel getKeyAndModel(int index) {
-    List keyAndModelPairs = cachingListener.getKeyAndModelPairs();
-    KeyAndModel keyModel = (KeyAndModel) keyAndModelPairs.get(index);
-    return keyModel;
+  private void performCachingAndFlushingWithCacheProxyFactoryBean(
+      String configFolder) throws Exception {
+    String configLocation = configFolder + CACHE_PROXY_FACTORY_BEAN_CONTEXT;
+    performCachingAndFlushing(configLocation);
   }
 
+  private void performCachingAndFlushingWithCommonsAttributes(
+      String configFolder) throws Exception {
+    String configLocation = configFolder + COMMONS_ATTRIBUTES_CONTEXT;
+    performCachingAndFlushing(configLocation);
+  }
+
+  private void setUpApplicationContext(String configStrategyConfig) {
+    String folder = configStrategyConfig.startsWith(DTD_FOLDER) ? DTD_FOLDER
+        : SCHEMA_FOLDER;
+
+    String root = "classpath:" + PathUtils.getPackageNameAsPath(getClass());
+    String[] configLocations = { root + folder + "cacheContext.xml",
+        root + configStrategyConfig };
+    applicationContext = new ClassPathXmlApplicationContext(configLocations);
+  }
 }

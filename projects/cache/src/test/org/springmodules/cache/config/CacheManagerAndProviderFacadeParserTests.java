@@ -50,7 +50,7 @@ public class CacheManagerAndProviderFacadeParserTests extends TestCase {
 
   private static abstract class BeanName {
 
-    private static final String CACHE_MANAGER = "cacheProvider.cacheManager";
+    private static final String CACHE_MANAGER = "cacheManager";
 
     private static final String CACHE_PROVIDER_FACADE = "cacheProvider";
   }

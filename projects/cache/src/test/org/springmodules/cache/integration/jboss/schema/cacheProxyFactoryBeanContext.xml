@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jboss="http://www.springmodules.org/schema/jboss"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springmodules.org/schema/jboss http://www.springmodules.org/schema/cache/springmodules-jboss.xsd">
+
+  <jboss:proxy id="cacheableService">
+    <jboss:cacheKeyGenerator>
+      <bean 
+        class="org.springmodules.cache.key.HashCodeCacheKeyGenerator" />
+    </jboss:cacheKeyGenerator>
+
+    <jboss:cachingListeners>
+      <jboss:cachingListener refId="cachingListener" />
+    </jboss:cachingListeners>
+
+    <bean
+      class="org.springmodules.cache.integration.CacheableServiceImpl">
+      <property name="names">
+        <list>
+          <value>Luke Skywalker</value>
+          <value>Leia Organa</value>
+        </list>
+      </property>
+    </bean>
+
+    <jboss:caching methodName="get*" node="a/b/c" />
+    <jboss:flushing methodName="update*" nodes="a/b/c" />
+  </jboss:proxy>
+
+</beans>

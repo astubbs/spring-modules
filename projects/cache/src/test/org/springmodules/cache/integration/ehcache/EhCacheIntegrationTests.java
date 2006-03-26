@@ -23,7 +23,6 @@ import net.sf.ehcache.Element;
 
 import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
-import org.springmodules.cache.provider.PathUtils;
 import org.springmodules.cache.provider.ehcache.EhCacheCachingModel;
 
 /**
@@ -34,14 +33,7 @@ import org.springmodules.cache.provider.ehcache.EhCacheCachingModel;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractEhCacheTests extends
-    AbstractIntegrationTests {
-
-  /**
-   * Spring file specifying the configuration of the cache manager.
-   */
-  protected final String CACHE_CONFIG = "classpath:"
-      + PathUtils.getPackageNameAsPath(getClass()) + "/ehCacheContext.xml";
+public class EhCacheIntegrationTests extends AbstractIntegrationTests {
 
   private CacheManager cacheManager;
 
@@ -49,6 +41,8 @@ public abstract class AbstractEhCacheTests extends
    * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected final void assertCacheWasFlushed() throws Exception {
+    setUpCacheManager();
+
     int index = 0;
     Element element = getCacheElement(index);
     assertCacheEntryFromCacheIsNull(element, getKeyAndModel(index).key);
@@ -59,16 +53,10 @@ public abstract class AbstractEhCacheTests extends
    */
   protected final void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) throws Exception {
+    setUpCacheManager();
+
     Element element = getCacheElement(keyAndModelIndex);
     assertEquals(expectedCachedObject, element.getValue());
-  }
-
-  /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
-   */
-  protected final void onSetUp() {
-    cacheManager = (CacheManager) applicationContext
-        .getBean(getCacheManagerBeanId());
   }
 
   private Element getCacheElement(int keyAndModelIndex) throws Exception {
@@ -76,5 +64,9 @@ public abstract class AbstractEhCacheTests extends
     EhCacheCachingModel model = (EhCacheCachingModel) keyAndModel.model;
     Cache cache = cacheManager.getCache(model.getCacheName());
     return cache.get(keyAndModel.key);
+  }
+
+  private void setUpCacheManager() {
+    cacheManager = (CacheManager) getCacheManagerFromContext();
   }
 }

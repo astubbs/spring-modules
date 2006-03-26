@@ -1,5 +1,5 @@
 /* 
- * Created on Oct 31, 2004
+ * Created on Mar 25, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -12,25 +12,33 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
- * 
- * Copyright @2004 the original author or authors.
+ *
+ * Copyright @2006 the original author or authors.
  */
+package org.springmodules.cache.util;
 
-package org.springmodules.cache.integration.ehcache.config;
+import org.springframework.util.ClassUtils;
 
 /**
  * <p>
- * Verifies that the caching module works correctly when using EHCache as the
- * cache provider and the caching services are declared using a
- * <code>{@link org.springmodules.cache.interceptor.proxy.CacheProxyFactoryBean}</code>.
+ * System utilities.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public final class EhCacheAnnotationTests extends
-    org.springmodules.cache.integration.ehcache.EhCacheAnnotationTests {
+public abstract class SystemUtils {
 
-  protected String getCacheManagerBeanId() {
-    return SIMPLE_CONFIG_CACHE_MANAGER_BEAN_ID;
+  /**
+   * @return <code>true</code> if the current version of Java supports JDK 1.5
+   *         Annotations
+   */
+  public static boolean annotationsSupport() {
+    try {
+      ClassUtils.forName("java.lang.annotation.Annotation");
+      return true;
+
+    } catch (ClassNotFoundException exception) {
+      return false;
+    }
   }
 }

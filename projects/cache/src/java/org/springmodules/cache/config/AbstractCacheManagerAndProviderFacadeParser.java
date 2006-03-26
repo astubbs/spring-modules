@@ -56,7 +56,7 @@ public abstract class AbstractCacheManagerAndProviderFacadeParser extends
    */
   protected final void doParse(String cacheProviderFacadeId, Element element,
       BeanDefinitionRegistry registry) {
-    String id = cacheProviderFacadeId + ".cacheManager";
+    String id = "cacheManager";
     Class clazz = getCacheManagerClass();
     RootBeanDefinition cacheManager = new RootBeanDefinition(clazz);
     MutablePropertyValues cacheManagerProperties = new MutablePropertyValues();

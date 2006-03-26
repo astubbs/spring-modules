@@ -15,7 +15,6 @@
  * 
  * Copyright @2004 the original author or authors.
  */
-
 package org.springmodules.cache.integration.jboss;
 
 import org.jboss.cache.TreeCache;
@@ -32,13 +31,10 @@ import org.springmodules.cache.provider.jboss.JbossCacheCachingModel;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractJbossCacheIntegrationTestCases extends
-    AbstractIntegrationTests {
-
-  protected static final String CACHE_CONFIG = "jbossCacheContext.xml";
+public class JbossCacheIntegrationTests extends AbstractIntegrationTests {
 
   /**
-   * JBossCache cache manager.
+   * JBoss Cache cache manager.
    */
   private TreeCache cacheManager;
 
@@ -46,6 +42,8 @@ public abstract class AbstractJbossCacheIntegrationTestCases extends
    * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected void assertCacheWasFlushed() throws Exception {
+    setUpCacheManager();
+
     int index = 0;
     Object cachedObject = getCachedObject(index);
     assertCacheEntryFromCacheIsNull(cachedObject, getKeyAndModel(index).key);
@@ -56,22 +54,19 @@ public abstract class AbstractJbossCacheIntegrationTestCases extends
    */
   protected void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) throws Exception {
+    setUpCacheManager();
+
     Object actual = getCachedObject(keyAndModelIndex);
     assertEquals(expectedCachedObject, actual);
-  }
-
-  /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
-   */
-  protected final void onSetUp() throws Exception {
-    // get the cache administrator from the Spring bean context.
-    cacheManager = (TreeCache) applicationContext
-        .getBean(CACHE_MANAGER_BEAN_ID);
   }
 
   private Object getCachedObject(int keyAndModelIndex) throws Exception {
     KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
     JbossCacheCachingModel model = (JbossCacheCachingModel) keyAndModel.model;
     return cacheManager.get(model.getNode(), keyAndModel.key);
+  }
+
+  private void setUpCacheManager() {
+    cacheManager = (TreeCache) getCacheManagerFromContext();
   }
 }
