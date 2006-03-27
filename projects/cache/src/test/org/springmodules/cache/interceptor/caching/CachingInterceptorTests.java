@@ -97,12 +97,11 @@ public class CachingInterceptorTests extends TestCase {
   }
 
   public void testAfterPropertiesSetWhenCacheModelValidatorThrowsException() {
+    expectGetCacheModelValidator();
+
     CachingModel model = new MockCachingModel();
     Map models = new HashMap();
     models.put("key", model);
-
-    setUpValidator();
-    expectGetCacheModelValidator();
 
     InvalidCacheModelException expected = new InvalidCacheModelException("");
     validator.validateCachingModel(model);
@@ -124,13 +123,10 @@ public class CachingInterceptorTests extends TestCase {
   }
 
   public void testAfterPropertiesSetWhenCachingModelEditorThrowsException() {
-    Properties models = createModelsAsProperties(1);
-
-    setUpValidator();
     expectGetCacheModelValidator();
-
-    setUpCachingModelEditor();
     expectGetCachingModelEditor();
+
+    Properties models = createModelsAsProperties(1);
 
     // create a Map of CachingModels from each of the properties.
     RuntimeException expected = new RuntimeException();
@@ -162,13 +158,10 @@ public class CachingInterceptorTests extends TestCase {
   }
 
   public void testAfterPropertiesSetWithCachingModelMapBeingProperties() {
-    Properties models = createModelsAsProperties(2);
-
-    setUpValidator();
     expectGetCacheModelValidator();
-
-    setUpCachingModelEditor();
     expectGetCachingModelEditor();
+
+    Properties models = createModelsAsProperties(2);
 
     // create a Map of CachingModels from each of the properties.
     Map expected = new HashMap();
@@ -207,15 +200,14 @@ public class CachingInterceptorTests extends TestCase {
   }
 
   public void testAfterPropertiesSetWithNotEmptyCachingModelMapAndKeyGeneratorEqualToNull() {
-    setUpValidator();
+    expectGetCacheModelValidator();
+
     interceptor.setCacheKeyGenerator(null);
 
     Map models = new HashMap();
     for (int i = 0; i < 2; i++) {
       models.put(Integer.toString(i), new MockCachingModel());
     }
-
-    expectGetCacheModelValidator();
 
     for (Iterator i = models.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
@@ -387,11 +379,17 @@ public class CachingInterceptorTests extends TestCase {
   }
 
   private void expectGetCacheModelValidator() {
+    validatorControl = MockControl.createControl(CacheModelValidator.class);
+    validator = (CacheModelValidator) validatorControl.getMock();
+
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
         .getCacheModelValidator(), validator);
   }
 
   private void expectGetCachingModelEditor() {
+    editorControl = MockControl.createControl(PropertyEditor.class);
+    editor = (PropertyEditor) editorControl.getMock();
+
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
         .getCachingModelEditor(), editor);
   }
@@ -443,19 +441,9 @@ public class CachingInterceptorTests extends TestCase {
     interceptor.setCachingListeners(new CachingListener[] { listener });
   }
 
-  private void setUpCachingModelEditor() {
-    editorControl = MockControl.createControl(PropertyEditor.class);
-    editor = (PropertyEditor) editorControl.getMock();
-  }
-
   private void setUpMethodInvocation() {
     invocationControl = MockControl.createControl(MethodInvocation.class);
     invocation = (MethodInvocation) invocationControl.getMock();
-  }
-
-  private void setUpValidator() {
-    validatorControl = MockControl.createControl(CacheModelValidator.class);
-    validator = (CacheModelValidator) validatorControl.getMock();
   }
 
   private void verify() {
