@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
 
+import org.springmodules.AssertExt;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.key.CacheKeyGenerator;
@@ -62,6 +63,8 @@ public class CachingInterceptorTests extends TestCase {
       onAfterPropertiesSetCalled = true;
     }
   }
+
+  private static final String CACHE_ENTRY_KEY = "C-3PO";
 
   private CacheProviderFacade cacheProviderFacade;
 
@@ -99,14 +102,13 @@ public class CachingInterceptorTests extends TestCase {
     models.put("key", model);
 
     setUpValidator();
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+    expectGetCacheModelValidator();
 
     InvalidCacheModelException expected = new InvalidCacheModelException("");
     validator.validateCachingModel(model);
     validatorControl.setThrowable(expected);
 
-    replayMocks();
+    replay();
 
     interceptor.setCachingModels(models);
 
@@ -117,7 +119,7 @@ public class CachingInterceptorTests extends TestCase {
       assertSame(expected, exception.getCause());
     }
 
-    verifyMocks();
+    verify();
     assertFalse(interceptor.onAfterPropertiesSetCalled);
   }
 
@@ -125,12 +127,10 @@ public class CachingInterceptorTests extends TestCase {
     Properties models = createModelsAsProperties(1);
 
     setUpValidator();
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+    expectGetCacheModelValidator();
 
     setUpCachingModelEditor();
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCachingModelEditor(), editor);
+    expectGetCachingModelEditor();
 
     // create a Map of CachingModels from each of the properties.
     RuntimeException expected = new RuntimeException();
@@ -142,7 +142,7 @@ public class CachingInterceptorTests extends TestCase {
       editorControl.expectAndThrow(editor.getValue(), expected);
     }
 
-    replayMocks();
+    replay();
 
     interceptor.setCachingModels(models);
     try {
@@ -152,7 +152,7 @@ public class CachingInterceptorTests extends TestCase {
       assertSame(expected, exception.getCause());
     }
 
-    verifyMocks();
+    verify();
     assertFalse(interceptor.onAfterPropertiesSetCalled);
   }
 
@@ -165,12 +165,10 @@ public class CachingInterceptorTests extends TestCase {
     Properties models = createModelsAsProperties(2);
 
     setUpValidator();
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+    expectGetCacheModelValidator();
 
     setUpCachingModelEditor();
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCachingModelEditor(), editor);
+    expectGetCachingModelEditor();
 
     // create a Map of CachingModels from each of the properties.
     Map expected = new HashMap();
@@ -188,13 +186,13 @@ public class CachingInterceptorTests extends TestCase {
       expected.put(key, model);
     }
 
-    replayMocks();
+    replay();
 
     interceptor.setCachingModels(models);
     interceptor.afterPropertiesSet();
     assertEquals(expected, interceptor.getCachingModels());
 
-    verifyMocks();
+    verify();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
   }
 
@@ -217,8 +215,7 @@ public class CachingInterceptorTests extends TestCase {
       models.put(Integer.toString(i), new MockCachingModel());
     }
 
-    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+    expectGetCacheModelValidator();
 
     for (Iterator i = models.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
@@ -226,15 +223,15 @@ public class CachingInterceptorTests extends TestCase {
       validator.validateCachingModel(model);
     }
 
-    replayMocks();
+    replay();
 
     interceptor.setCachingModels(models);
     interceptor.afterPropertiesSet();
 
-    assertEquals(HashCodeCacheKeyGenerator.class, interceptor
-        .getCacheKeyGenerator().getClass());
+    AssertExt.assertInstanceOf(HashCodeCacheKeyGenerator.class, interceptor
+        .getCacheKeyGenerator());
 
-    verifyMocks();
+    verify();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
   }
 
@@ -252,10 +249,10 @@ public class CachingInterceptorTests extends TestCase {
         AbstractCachingInterceptor.NULL_ENTRY);
 
     listener.onCaching(key, null, model);
-    replayMocks();
+    replay();
 
     assertNull(interceptor.invoke(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testInvokeWhenCacheReturnsNullAndProceedReturnsObjectNotEqualToNull()
@@ -272,24 +269,23 @@ public class CachingInterceptorTests extends TestCase {
     cacheProviderFacade.putInCache(key, model, expected);
 
     listener.onCaching(key, expected, model);
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testInvokeWhenCacheReturnsNullAndProceedThrowsException()
       throws Throwable {
     expectMethodInvocationReturnsCacheableMethod();
 
-    Serializable key = "C3-PO";
-    expectGetFromCache(key, null);
+    expectGetFromCache(CACHE_ENTRY_KEY, null);
 
     Exception expected = new Exception();
     invocationControl.expectAndThrow(invocation.proceed(), expected);
 
-    cacheProviderFacade.cancelCacheUpdate(key);
-    replayMocks();
+    cacheProviderFacade.cancelCacheUpdate(CACHE_ENTRY_KEY);
+    replay();
 
     try {
       interceptor.invoke(invocation);
@@ -298,18 +294,17 @@ public class CachingInterceptorTests extends TestCase {
       assertSame(expected, exception);
     }
 
-    verifyMocks();
+    verify();
   }
 
   public void testInvokeWhenCacheReturnsNullEntryObject() throws Throwable {
     expectMethodInvocationReturnsCacheableMethod();
 
-    Serializable key = "C3-PO";
-    expectGetFromCache(key, AbstractCachingInterceptor.NULL_ENTRY);
-    replayMocks();
+    expectGetFromCache(CACHE_ENTRY_KEY, AbstractCachingInterceptor.NULL_ENTRY);
+    replay();
 
     assertNull(interceptor.invoke(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testInvokeWhenCacheReturnsNullWithoutCachingListeners()
@@ -324,10 +319,10 @@ public class CachingInterceptorTests extends TestCase {
 
     cacheProviderFacade.putInCache(key, model, expected);
 
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testInvokeWhenCacheReturnsStoredObject() throws Throwable {
@@ -336,10 +331,10 @@ public class CachingInterceptorTests extends TestCase {
     Serializable key = "R2-D2";
     Object expected = new Object();
     expectGetFromCache(key, expected);
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testInvokeWithReturnedCachingModelEqualToNull() throws Throwable {
@@ -349,10 +344,10 @@ public class CachingInterceptorTests extends TestCase {
     Object expected = new Object();
     invocationControl.expectAndReturn(invocation.proceed(), expected);
 
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyMocks();
+    verify();
   }
 
   protected void setUp() {
@@ -391,6 +386,16 @@ public class CachingInterceptorTests extends TestCase {
     return models;
   }
 
+  private void expectGetCacheModelValidator() {
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCacheModelValidator(), validator);
+  }
+
+  private void expectGetCachingModelEditor() {
+    cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
+        .getCachingModelEditor(), editor);
+  }
+
   private CachingModel expectGetFromCache(Serializable key, Object expected) {
     MockCachingModel model = new MockCachingModel();
     interceptor.model = model;
@@ -409,7 +414,7 @@ public class CachingInterceptorTests extends TestCase {
     invocationControl.expectAndReturn(invocation.getMethod(), method);
   }
 
-  private void replayMocks() {
+  private void replay() {
     cacheProviderFacadeControl.replay();
 
     if (editorControl != null) {
@@ -453,7 +458,7 @@ public class CachingInterceptorTests extends TestCase {
     validator = (CacheModelValidator) validatorControl.getMock();
   }
 
-  private void verifyMocks() {
+  private void verify() {
     cacheProviderFacadeControl.verify();
 
     if (editorControl != null) {
