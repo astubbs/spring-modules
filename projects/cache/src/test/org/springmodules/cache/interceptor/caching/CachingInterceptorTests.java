@@ -408,7 +408,7 @@ public class CachingInterceptorTests extends TestCase {
 
   private void expectMethodInvocationReturnsCacheableMethod() throws Exception {
     setUpMethodInvocation();
-    Method method = CachingTestUtils.createCacheableMethod();
+    Method method = MethodFactory.createCacheableMethod();
     invocationControl.expectAndReturn(invocation.getMethod(), method);
   }
 

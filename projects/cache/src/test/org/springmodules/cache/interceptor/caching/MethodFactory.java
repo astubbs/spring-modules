@@ -21,12 +21,12 @@ import java.lang.reflect.Method;
 
 /**
  * <p>
- * Utility methods related to the tests in this package.
+ * Factory of <code>{@link Method}s</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public abstract class CachingTestUtils {
+public abstract class MethodFactory {
 
   public static Method createCacheableMethod() throws Exception {
     Class targetClass = String.class;

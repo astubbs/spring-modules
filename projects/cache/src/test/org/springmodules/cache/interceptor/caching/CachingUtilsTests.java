@@ -35,12 +35,12 @@ public class CachingUtilsTests extends TestCase {
   }
 
   public void testIsCacheableWithCacheableMethod() throws Exception {
-    Method method = CachingTestUtils.createCacheableMethod();
+    Method method = MethodFactory.createCacheableMethod();
     assertTrue(CachingUtils.isCacheable(method));
   }
 
   public void testIsCacheableWithNotCacheableMethod() throws Exception {
-    Method method = CachingTestUtils.createNonCacheableMethod();
+    Method method = MethodFactory.createNonCacheableMethod();
     assertFalse(CachingUtils.isCacheable(method));
   }
 

@@ -161,12 +161,12 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
   }
 
   private void setUpTargetClassAndCacheableMethod() throws Exception {
-    method = CachingTestUtils.createCacheableMethod();
+    method = MethodFactory.createCacheableMethod();
     targetClass = method.getDeclaringClass();
   }
 
   private void setUpTargetClassAndNonCacheableMethod() throws Exception {
-    method = CachingTestUtils.createNonCacheableMethod();
+    method = MethodFactory.createNonCacheableMethod();
     targetClass = method.getDeclaringClass();
   }
 }
