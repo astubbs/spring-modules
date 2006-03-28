@@ -39,9 +39,7 @@
 	
 	<!--  jta free spec -->
     <dependency org="apache" name="geronimo-spec" rev="rc4">
-    <!-- 
 		<artifact name="geronimo-spec-jta-1.0.1B" type="jar"/>
-		-->
 		<artifact name="geronimo-spec-j2ee-connector-1.5" type="jar"/>
 	</dependency>
 	
@@ -84,7 +82,7 @@
 	  
     <dependency org="hsqldb" name="hsqldb" rev="1.8.0.1" conf="test->default"/>
 
-	<!--  jcra stuff  -->
+	<!--  jca stuff  -->
 	<dependency org="apache" name="geronimo" rev="1.0">
 		<artifact type="jar" name="geronimo-connector"/>
 		<artifact type="jar" name="geronimo-transaction"/>

@@ -28,9 +28,10 @@
 	<dependency org="jdom" name="jdom" rev="1.0"/>
         
 	<!-- build time only dependencies -->
-        <dependency org="javax.servlet" name="javax.servlet" rev="2.4" conf="buildtime->default">
-            <artifact name="servlet-api" type="jar"/> 
-        </dependency>
+	  <dependency org="sun" name="javax.servlet" rev="2.4">
+		  <artifact name="servlet-api" type="jar"/>
+	  </dependency>
+
         
         <!-- test time only dependencies -->
         <dependency org="easymock" name="easymock" rev="1.1" conf="test->default"/>

@@ -19,8 +19,8 @@
   <dependencies defaultconf="global->default">
     <!-- global (compile, test, runtime) dependencies -->
     <dependency org="apache" name="commons-logging" rev="1.0.4" />
-    <dependency org="apache" name="log4j" rev="1.2.12" />
-    <dependency org="springframework" name="springframework" rev="1.2.6"
+    <dependency org="apache" name="log4j" rev="1.2.13" />
+    <dependency org="springframework" name="springframework" rev="1.2.+"
       conf="global,test->default">
       <artifact name="spring" type="jar" conf="global" />
       <artifact name="spring-mock" type="jar" conf="test" />

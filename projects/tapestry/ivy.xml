@@ -19,8 +19,8 @@
     <dependencies defaultconf="global->default">
         <!-- global (compile, test, runtime) dependencies -->
         <dependency org="apache" name="commons-logging" rev="1.0.4"/>
-        <dependency org="apache" name="log4j" rev="1.2.9"/>
-        <dependency org="springframework" name="springframework" rev="1.2.5" conf="global,test->default">
+        <dependency org="apache" name="log4j" rev="1.2.13"/>
+        <dependency org="springframework" name="springframework" rev="1.2.+" conf="global,test->default">
             <artifact name="spring" type="jar" conf="global"/>
             <artifact name="spring-mock" type="jar" conf="test"/>
         </dependency>
@@ -39,9 +39,10 @@
         <dependency org="bsf" name="bsf" rev="2.3.0"/>
 
         <!-- build time only dependencies -->
-        <dependency org="java" name="servlet" rev="2.4" conf="buildtime->default">
-            <artifact name="servlet-api" type="jar"/>
-        </dependency>
+ 	  <dependency org="sun" name="javax.servlet" rev="2.3">
+		  <artifact name="servlet-api" type="jar"/>
+	  </dependency>
+
 
         <!-- test time only dependencies -->
         <dependency org="easymock" name="easymock" rev="1.1" conf="test->default"/>

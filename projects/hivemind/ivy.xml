@@ -22,7 +22,7 @@
     <dependency org="apache" name="log4j" rev="1.2.12" />
 	<dependency org="apache" name="hivemind" rev="1.0" />
 	  
-    <dependency org="springframework" name="springframework" rev="1.2.6" conf="global,test->default">
+    <dependency org="springframework" name="springframework" rev="1.2.7" conf="global,test->default">
       <artifact name="spring-support" type="jar" conf="global"/>
       <artifact name="spring-beans" type="jar" conf="global"/>				
       <artifact name="spring-context" type="jar" conf="global"/>		

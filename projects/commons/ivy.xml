@@ -19,12 +19,12 @@
   <dependencies>
     <!-- global (compile, test, runtime) dependencies -->
     <dependency org="apache" name="commons-logging" rev="1.0.4" />
-    <dependency org="apache" name="log4j" rev="1.2.12" />
+    <dependency org="apache" name="log4j" rev="1.2.13" />
 	<dependency org="apache" name="commons-lang" rev="2.1" />
 	<dependency org="apache" name="commons-validator" rev="1.1.4" />	  
 	<dependency org="apache" name="commons-configuration" rev="1.2" />	  
 	  
-    <dependency org="springframework" name="springframework" rev="1.2.6" conf="global,test->default">
+    <dependency org="springframework" name="springframework" rev="1.2.7" conf="global,test->default">
       <artifact name="spring-support" type="jar" conf="global"/>
       <artifact name="spring-beans" type="jar" conf="global"/>				
       <artifact name="spring-context" type="jar" conf="global"/>		
