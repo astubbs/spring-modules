@@ -1,15 +1,17 @@
 <?xml version="1.0"?>
 <!--
-  =======================================================================
-  A master build file for creating a release of Spring Web Flow
-  =======================================================================
+  ==========================================================================
+  A master build file for creating a release of Spring Modules (customised after Spring WebFlow)
+  ==========================================================================
 -->
-<project name="build-spring-webflow" default="release" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+<project name="build-spring-modules" default="release" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
 
 	<!-- Load local and user build preferences -->
 	<property file="build.properties" />
 	<property file="project.properties" />
 	<property file="${user.home}/build.properties" />
+	<property file="${common.build.dir}/build.properties" />
+    <property file="${common.build.dir}/project.properties" />
 
 	<!-- try to load ivy here from local lib dir, in case the user has not already dropped
 		 it into ant's lib dir (note that the latter copy will always take precedence).
@@ -85,13 +87,14 @@
 				<exclude name="projects/common-build-bootstrap/build.xml" />
 				<include name="projects/*/build.xml" />
 				
-				<!-- not building -->
+				<!-- not building 
 				<exclude name="projects/cache/build.xml" />
 				<exclude name="projects/jbpm30/build.xml" />
 				<exclude name="projects/jbpm31/build.xml" />
 				<exclude name="projects/jsr94/build.xml" />
 				<exclude name="projects/lucene/build.xml" />
 				<exclude name="projects/tapestry/build.xml" />
+				-->
 			</fileset>
 		</ivy:buildlist>
 
@@ -112,8 +115,8 @@
 		<property name="target.release.dir" value="${target.dir}/release" />
 
 		<!-- directory for release zips -->
-		<property name="zip.toplevel.dir" value="spring-webflow-${release.version}" />
-		<property name="release.zip" value="spring-webflow-${release.version}.zip" />
+		<property name="zip.toplevel.dir" value="spring-modules-${release.version}" />
+		<property name="release.zip" value="spring-modules-${release.version}.zip" />
 
 		<echo message='user.dir = "${user.dir}"' />
 		<echo message='ant.file = "${ant.file}"' />
@@ -154,7 +157,7 @@
 
 	<target name="dist" depends="init" description="Calls dist targets on each project">
 		<echo>projects=${projects}</echo>
-		<subant target="dist" inheritall="false">
+		<subant target="dist" inheritall="false" failonerror="false">
 			<buildpath refid="${projects}" />
 		</subant>
 	</target>
@@ -174,7 +177,7 @@
 
 	<target name="tests" depends="init" description="Calls test targets on each project">
 		<echo>projects=${projects}</echo>
-		<subant target="tests" inheritall="false">
+		<subant target="tests" inheritall="false" failonerror="false">
 			<buildpath refid="${projects}" />
 		</subant>
 	</target>
@@ -189,7 +192,11 @@
 	<target name="doc" depends="init" description="Calls doc targets on applicable projects">
 		<echo>projects=${projects}</echo>
 		<subant target="doc-all" inheritall="false" failonerror="false">
-			<buildpathelement location="../spring-webflow" />
+			<buildpath refid="${projects}" />
+		</subant>
+		<!-- generate documentation for the entire project -->
+		<subant target="doc-all" inheritall="false" failonerror="false">
+		   	<buildpath refid="${docs.folder}/build.xml" />   
 		</subant>
 	</target>
 
