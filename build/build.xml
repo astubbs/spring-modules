@@ -71,7 +71,7 @@
 	<!--
         init:  initializes some common settings
   -->
-	<target name="init" unless="init.done" depends="init.pre, init.post" />
+	<target name="init" unless="init.done" depends="init.pre, init.post, get.scb" />
 
 	<target name="init.pre">
 
@@ -196,10 +196,14 @@
 		</subant>
 		<!-- generate documentation for the entire project -->
 		<subant target="doc-all" inheritall="false" failonerror="false">
-		   	<buildpath refid="${docs.folder}/build.xml" />   
+		   	<buildpath refid="${docs.dir}/build.xml" />   
 		</subant>
 	</target>
 
+   <target name="get.scb" description="Retrieve spring common build">
+        <ant antfile="${bootstrap.dir}/build.xml" dir="${bootstrap.dir}"/>
+   </target>
+   
 	<target name="tomcat-copy-war" depends="init" description="Copies all war to tomcat webapp dir">
 		<echo>projects=${projects}</echo>
 		<subant target="tomcat-copy-war" inheritall="false" failonerror="no">
