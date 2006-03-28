@@ -195,9 +195,7 @@
 			<buildpath refid="${projects}" />
 		</subant>
 		<!-- generate documentation for the entire project -->
-		<subant target="doc-all" inheritall="false" failonerror="false">
-		   	<buildpath refid="${docs.dir}/build.xml" />   
-		</subant>
+		<ant antfile="${docs.dir}/build.xml" dir="${docs.dir}"/>
 	</target>
 
    <target name="get.scb" description="Retrieve spring common build">
