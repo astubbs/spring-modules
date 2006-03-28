@@ -71,7 +71,7 @@
 	<!--
         init:  initializes some common settings
   -->
-	<target name="init" unless="init.done" depends="init.pre, init.post, get.scb" />
+	<target name="init" unless="init.done" depends="init.pre, init.post" />
 
 	<target name="init.pre">
 
@@ -210,8 +210,10 @@
 			<buildpath refid="${projects}" />
 		</subant>
 	</target>
-
+<!--
 	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
+	-->
+	<target name="release" depends="get.scb, dist, javadoc, doc, gen.release.zip"
 	              description="Generate the spring-webflow release archive" />
 
 	<target name="gen.release.zip" depends="init">
