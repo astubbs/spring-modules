@@ -5,6 +5,12 @@
       <ibiblio name="moria-maven"
         root="http://moria.sourceforge.net/maven/"
         pattern="[module]/[type]s/[artifact]-[revision].[ext]" />
+        
+	  <url name="jboss-cache-moria">
+        <!-- url pattern for moria maven | used to maintain the correct naming system -->
+        <artifact
+          pattern="http://moria.sourceforge.net/maven/jboss/[type]s/[artifact]-[revision].[ext]" />
+      </url>        
       <!-- jcs official url -->
       <url name="jcs">
         <!-- url pattern for jcs svn repository -->

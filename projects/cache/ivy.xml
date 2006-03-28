@@ -59,11 +59,8 @@
 
     <dependency org="jboss" name="javassist" rev="3.0" />
 
-    <!-- TODO: fix this -->
-    <dependency org="jboss" name="jboss-cache" rev="1.2.4">
-      <artifact name="jboss-cache" type="jar" />
-    </dependency>
-
+    <dependency org="jboss" name="jboss-cache" rev="1.2.4"/>
+	
     <dependency org="jboss" name="jboss" rev="4.0.3">
       <artifact name="jboss-common" type="jar" />
       <artifact name="jboss-jmx" type="jar" />
