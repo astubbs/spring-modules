@@ -13,7 +13,7 @@ just run the common-build.mod target. It will copy the required files to SCB fol
 
 3. Download the documentation libraries
 
-if you want to generate the documentation files then you will need the DocBoo libraries and styles. Run the "download-doc-lib" which
+if you want to generate the documentation files then you will need the DocBook libraries and styles. Run the "download-doc-lib" which
 will download the zip and extract it into the required folder.
 
 4. Starting a new project
