@@ -20,9 +20,12 @@
       <ivyrep name="ivyrep"/>
 		
 	  <!-- ibiblio maven 2 compatible resolver -->
-	  <ibiblio name="ibiblio-maven2" m2compatible="true" root="http://www.ibiblio.org/maven2"/>
-	  <!-- ibiblio maven 2 org resolver -->
-	  <ibiblio name="org-ibiblio-maven2" m2compatible="false" root="http://www.ibiblio.org/maven2/org/" pattern="[module]/[artifact]/[revision]/[artifact]-[revision].[ext]" />								
+	  <!-- solve some of the problem when a jar breaks the pattern, i.e. jboss-cache is
+		  under jboss folder which means forces the user to use the name of the module
+		  jboss when in fact it is jboss-cache. With maven2 namings this problem does
+		  not occur -->
+	  <ibiblio name="ibiblio-maven2" m2compatible="true" root="http://www.ibiblio.org/maven2"/>					
+	  <ibiblio name="org-ibiblio" m2compatible="false" root="http://www.ibiblio.org/maven2/org/" pattern="[module]/[artifact]/[revision]/[artifact]-[revision].[ext]" />				
 		
 	  <!-- custom per-project resolvers -->
 	  <resolver ref="custom"/>
