@@ -3,7 +3,7 @@
 
   <configurations>
     <!-- default configuration that 'by default' pulls in the global configuration -->
-    <conf name="default" extends="jackrabbit; jeceira" />
+    <conf name="default" extends="jackrabbit, jeceira" />
 
     <!-- core dependencies needed at compile-time, test-time, and runtime -->
     <conf name="global" visibility="private"/>
