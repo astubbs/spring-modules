@@ -17,8 +17,8 @@ docs.ref.dir=${docs.dir}/reference
 # where all project reference documentation sources reside (per module)
 docs.ref.src.dir=${docs.dir}/reference/src
 
-# where all DocBook libraries reside (one for all modules)
-docs.ref.lib.dir=${common.build.dir}/../docs/reference/lib
+# where all DocBook libraries reside (one for all modules) - same as docs.global.dir
+docs.ref.lib.dir=${common.build.dir}/../../docs/reference/lib
 
 # where the project reference documentation is built
 docs.ref.target.dir=${basedir}/target/docs/reference
