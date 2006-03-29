@@ -19,10 +19,12 @@ package org.springmodules.cache.serializable;
 
 import java.io.Serializable;
 
-import junit.framework.TestCase;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.thoughtworks.xstream.XStream;
 
+import org.springmodules.AbstractEqualsHashCodeTestCase;
 import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWrapper;
 
 /**
@@ -32,7 +34,11 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory.ObjectWra
  * 
  * @author Alex Ruiz
  */
-public class XStreamSerializableFactoryTests extends TestCase {
+public class XStreamSerializableFactoryTests extends
+    AbstractEqualsHashCodeTestCase {
+
+  private static Log logger = LogFactory
+      .getLog(XStreamSerializableFactoryTests.class);
 
   /**
    * Non-serializable object.
@@ -43,6 +49,53 @@ public class XStreamSerializableFactoryTests extends TestCase {
 
   public XStreamSerializableFactoryTests(String name) {
     super(name);
+  }
+
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   */
+  public void testEqualsHashCodeRelationship() {
+    XStreamSerializableFactory factory2 = new XStreamSerializableFactory();
+    assertEqualsHashCodeRelationshipIsCorrect(serializableFactory, factory2);
+  }
+
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
+   */
+  public void testEqualsIsConsistent() {
+    logger.info("Test 'testEqualsIsConsistent' is not necessary "
+        + "since equality is not based on state");
+  }
+
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
+   */
+  public void testEqualsIsReflexive() {
+    assertEqualsIsReflexive(serializableFactory);
+  }
+
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   */
+  public void testEqualsIsSymmetric() {
+    XStreamSerializableFactory factory2 = new XStreamSerializableFactory();
+    assertEqualsIsSymmetric(serializableFactory, factory2);
+  }
+
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
+   */
+  public void testEqualsIsTransitive() {
+    XStreamSerializableFactory factory2 = new XStreamSerializableFactory();
+    XStreamSerializableFactory factory3 = new XStreamSerializableFactory();
+    assertEqualsIsTransitive(serializableFactory, factory2, factory3);
+  }
+
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
+   */
+  public void testEqualsNullComparison() {
+    assertEqualsNullComparisonReturnsFalse(serializableFactory);
   }
 
   public void testGetOriginalValueWithArgumentBeingObjectWrapper() {

@@ -128,13 +128,6 @@ public abstract class AbstractCacheProviderFacade implements
   }
 
   /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#getSerializableFactory()
-   */
-  public final SerializableFactory getSerializableFactory() {
-    return serializableFactory;
-  }
-
-  /**
    * @see CacheProviderFacade#isFailQuietlyEnabled()
    */
   public final boolean isFailQuietlyEnabled() {

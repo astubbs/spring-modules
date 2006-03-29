@@ -21,6 +21,8 @@ import junit.framework.TestCase;
 
 import org.w3c.dom.Element;
 
+import org.springframework.util.StringUtils;
+
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.config.DomElementStub;
@@ -85,10 +87,20 @@ public class OsCacheModelParserTests extends TestCase {
     String groups = "pojos,web";
     String refreshPeriod = "three";
 
-    Element element = new DomElementStub("caching");
-    element.setAttribute("cronExpression", cronExpression);
-    element.setAttribute("groups", groups);
-    element.setAttribute("refreshPeriod", refreshPeriod);
+    Element element = createCachingElement(cronExpression, groups,
+        refreshPeriod);
+
+    CachingModel actual = parser.parseCachingModel(element);
+    CachingModel expected = new OsCacheCachingModel(groups, cronExpression);
+
+    assertEquals(expected, actual);
+  }
+
+  public void testParseCachingModelWithoutRefreshPeriod() {
+    String cronExpression = "* 0 * * *";
+    String groups = "pojos,web";
+
+    Element element = createCachingElement(cronExpression, groups);
 
     CachingModel actual = parser.parseCachingModel(element);
     CachingModel expected = new OsCacheCachingModel(groups, cronExpression);
@@ -100,4 +112,20 @@ public class OsCacheModelParserTests extends TestCase {
     parser = new OsCacheModelParser();
   }
 
+  private Element createCachingElement(String cronExpression, String groups) {
+    return createCachingElement(cronExpression, groups, null);
+  }
+
+  private Element createCachingElement(String cronExpression, String groups,
+      String refreshPeriod) {
+    Element element = new DomElementStub("caching");
+    element.setAttribute("cronExpression", cronExpression);
+    element.setAttribute("groups", groups);
+
+    if (StringUtils.hasText(refreshPeriod)) {
+      element.setAttribute("refreshPeriod", refreshPeriod);
+    }
+
+    return element;
+  }
 }
