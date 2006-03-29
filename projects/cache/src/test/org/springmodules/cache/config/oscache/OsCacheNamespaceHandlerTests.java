@@ -15,7 +15,7 @@
  *
  * Copyright @2006 the original author or authors.
  */
-package org.springmodules.cache.config.ehcache;
+package org.springmodules.cache.config.oscache;
 
 import junit.framework.TestCase;
 
@@ -23,19 +23,14 @@ import org.springmodules.AssertExt;
 
 /**
  * <p>
- * Test Cases for cache setup strategies for EHCache.
+ * Unit Tests for <code>{@link OsCacheNamespaceHandler}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractEhCacheSetupStrategyTestCase extends TestCase {
+public class OsCacheNamespaceHandlerTests extends TestCase {
 
-  /**
-   * Constructor.
-   */
-  public AbstractEhCacheSetupStrategyTestCase() {
-    super();
-  }
+  private OsCacheNamespaceHandler handler;
 
   /**
    * Constructor.
@@ -43,16 +38,22 @@ public abstract class AbstractEhCacheSetupStrategyTestCase extends TestCase {
    * @param name
    *          the name of the test case
    */
-  public AbstractEhCacheSetupStrategyTestCase(String name) {
+  public OsCacheNamespaceHandlerTests(String name) {
     super(name);
   }
 
-  public final void testCacheModelParserClass() {
-    AssertExt.assertInstanceOf(EhCacheModelParser.class, getCacheModelParser());
+  public void testGetCacheModelParser() {
+    AssertExt.assertInstanceOf(OsCacheModelParser.class, handler
+        .getCacheModelParser());
   }
 
-  protected abstract Object getCacheModelParser();
-  
-  protected abstract Object getCacheProviderFacadeDefinitionValidator();
+  public void testGetCacheProviderFacadeParser() {
+    AssertExt.assertInstanceOf(OsCacheFacadeParser.class, handler
+        .getCacheProviderFacadeParser());
+  }
+
+  protected void setUp() {
+    handler = new OsCacheNamespaceHandler();
+  }
 
 }

@@ -42,7 +42,7 @@
       default="cacheProvider" />
   </xsd:complexType>
 
-  <xsd:complexType name="interceptors">
+  <xsd:complexType name="methodMapInterceptors">
     <xsd:complexContent>
       <xsd:extension base="base-config-strategy">
         <xsd:attribute name="cachingInterceptorId" type="xsd:string"

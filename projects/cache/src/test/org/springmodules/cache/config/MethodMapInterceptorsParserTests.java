@@ -24,12 +24,12 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 
 /**
  * <p>
- * Unit Tests for <code>{@link InterceptorsParser}</code>.
+ * Unit Tests for <code>{@link MethodMapInterceptorsParser}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public class InterceptorsParserTests extends
+public class MethodMapInterceptorsParserTests extends
     AbstractCacheSetupStrategyParserImplTestCase {
 
   private class InterceptorsConfigStruct {
@@ -38,7 +38,7 @@ public class InterceptorsParserTests extends
     String flushingInterceptorId = "";
 
     Element toXml() {
-      Element element = new DomElementStub("interceptors");
+      Element element = new DomElementStub("methodMapInterceptors");
       element.setAttribute("cachingInterceptorId", cachingInterceptorId);
       element.setAttribute("flushingInterceptorId", flushingInterceptorId);
       return element;
@@ -47,7 +47,7 @@ public class InterceptorsParserTests extends
 
   private InterceptorsConfigStruct config;
 
-  private InterceptorsParser parser;
+  private MethodMapInterceptorsParser parser;
 
   /**
    * Constructor.
@@ -55,7 +55,7 @@ public class InterceptorsParserTests extends
    * @param name
    *          the name of the test case
    */
-  public InterceptorsParserTests(String name) {
+  public MethodMapInterceptorsParserTests(String name) {
     super(name);
   }
 
@@ -91,7 +91,7 @@ public class InterceptorsParserTests extends
   }
 
   protected void afterSetUp() throws Exception {
-    parser = new InterceptorsParser();
+    parser = new MethodMapInterceptorsParser();
 
     config = new InterceptorsConfigStruct();
     config.cachingInterceptorId = "cachingInterceptor";

@@ -1,5 +1,5 @@
 /* 
- * Created on Mar 15, 2006
+ * Created on Mar 28, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,27 +15,22 @@
  *
  * Copyright @2006 the original author or authors.
  */
-package org.springmodules.cache.config.jboss;
-
-import junit.framework.TestCase;
+package org.springmodules.cache.config.jcs;
 
 import org.springmodules.AssertExt;
 
+import junit.framework.TestCase;
+
 /**
  * <p>
- * Test Cases for cache setup strategies for JBoss Cache.
+ * Unit Tests for <code>{@link JcsNamespaceHandler}</code>.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractJbossCacheSetupStrategyTestCase extends TestCase {
+public class JcsNamespaceHandlerTests extends TestCase {
 
-  /**
-   * Constructor.
-   */
-  public AbstractJbossCacheSetupStrategyTestCase() {
-    super();
-  }
+  private JcsNamespaceHandler handler;
 
   /**
    * Constructor.
@@ -43,16 +38,22 @@ public abstract class AbstractJbossCacheSetupStrategyTestCase extends TestCase {
    * @param name
    *          the name of the test case
    */
-  public AbstractJbossCacheSetupStrategyTestCase(String name) {
+  public JcsNamespaceHandlerTests(String name) {
     super(name);
   }
 
-  public final void testCacheModelParserClass() {
-    AssertExt.assertInstanceOf(JbossCacheModelParser.class, getCacheModelParser());
+  public void testGetCacheModelParser() {
+    AssertExt.assertInstanceOf(JcsModelParser.class, handler
+        .getCacheModelParser());
   }
 
-  protected abstract Object getCacheModelParser();
-  
-  protected abstract Object getCacheProviderFacadeDefinitionValidator();
+  public void testGetCacheProviderFacadeParser() {
+    AssertExt.assertInstanceOf(JcsFacadeParser.class, handler
+        .getCacheProviderFacadeParser());
+  }
+
+  protected void setUp() {
+    handler = new JcsNamespaceHandler();
+  }
 
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:oscache="http://www.springmodules.org/schema/oscache"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springmodules.org/schema/oscache http://www.springmodules.org/schema/cache/springmodules-oscache.xsd">
+
+  <oscache:annotations>
+    <oscache:cachingListeners>
+      <oscache:cachingListener refId="cachingListener" />
+    </oscache:cachingListeners>
+
+    <oscache:caching id="test" groups="testGroup" refreshPeriod="4" />
+    <oscache:flushing id="test" groups="testGroup" />
+  </oscache:annotations>
+
+  <!-- Set up the objects to apply caching to -->
+  <bean id="cacheableService"
+    class="org.springmodules.cache.annotations.TigerCacheableService">
+    <property name="names">
+      <list>
+        <value>Luke Skywalker</value>
+        <value>Leia Organa</value>
+      </list>
+    </property>
+  </bean>
+</beans>

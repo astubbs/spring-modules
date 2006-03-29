@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:jcs="http://www.springmodules.org/schema/jcs"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springmodules.org/schema/jcs http://www.springmodules.org/schema/cache/springmodules-jcs.xsd">
+
+  <jcs:annotations>
+    <jcs:cachingListeners>
+      <jcs:cachingListener refId="cachingListener" />
+    </jcs:cachingListeners>
+
+    <jcs:caching id="test" cacheName="testCache" group="testGroup" />
+    <jcs:flushing id="test">
+      <jcs:cache name="testCache" groups="testGroup" />
+    </jcs:flushing>
+  </jcs:annotations>
+
+  <!-- Set up the objects to apply caching to -->
+  <bean id="cacheableService"
+    class="org.springmodules.cache.annotations.TigerCacheableService">
+    <property name="names">
+      <list>
+        <value>Luke Skywalker</value>
+        <value>Leia Organa</value>
+      </list>
+    </property>
+  </bean>
+</beans>

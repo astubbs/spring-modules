@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springmodules.org/schema/ehcache http://www.springmodules.org/schema/cache/springmodules-ehcache.xsd">
 
-  <ehcache:interceptors cachingInterceptorId="cachingInterceptor"
+  <ehcache:methodMapInterceptors cachingInterceptorId="cachingInterceptor"
     flushingInterceptorId="flushingInterceptor">
     <ehcache:cachingListeners>
       <ehcache:cachingListener refId="cachingListener" />
@@ -17,7 +17,7 @@
     <ehcache:flushing
       methodFQN="org.springmodules.cache.integration.CacheableService.update*"
       cacheNames="testCache" />
-  </ehcache:interceptors>
+  </ehcache:methodMapInterceptors>
 
   <bean
     class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">

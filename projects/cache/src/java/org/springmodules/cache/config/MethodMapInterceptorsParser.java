@@ -29,18 +29,20 @@ import org.springmodules.cache.interceptor.flush.MethodMapFlushingInterceptor;
 
 /**
  * <p>
- * Template that handles the parsing of the XML tag "interceptors". Creates and
- * registers instances of <code>{@link MethodMapCachingInterceptor}</code> and
+ * Template that handles the parsing of the XML tag "methodMapInterceptors".
+ * Creates and registers instances of
+ * <code>{@link MethodMapCachingInterceptor}</code> and
  * <code>{@link MethodMapFlushingInterceptor}</code> which can be used with
  * <code>{@link org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator}</code>
  * </p>
  * 
  * @author Alex Ruiz
  */
-public final class InterceptorsParser extends AbstractCacheSetupStrategyParser {
+public final class MethodMapInterceptorsParser extends
+    AbstractCacheSetupStrategyParser {
 
   private static final String CACHE_MODEL_KEY = "methodFQN";
-  
+
   /**
    * @see AbstractCacheSetupStrategyParser#getCacheModelKey()
    */

@@ -1,5 +1,5 @@
 /* 
- * Created on Sep 22, 2004
+ * Created on Mar 28, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -25,7 +25,7 @@ import com.opensymphony.oscache.general.GeneralCacheAdministrator;
 
 import org.springframework.util.StringUtils;
 
-import org.springmodules.cache.integration.AbstractIntegrationTestsOld;
+import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 
 /**
@@ -36,10 +36,7 @@ import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAnd
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractOsCacheIntegrationTestCases extends
-    AbstractIntegrationTestsOld {
-
-  protected static final String CACHE_CONFIG = "osCacheContext.xml";
+public class OsCacheIntegrationTests extends AbstractIntegrationTests {
 
   /**
    * OSCache cache administrator.
@@ -47,9 +44,11 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
   private GeneralCacheAdministrator cacheAdministrator;
 
   /**
-   * @see AbstractIntegrationTestsOld#assertCacheWasFlushed()
+   * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected void assertCacheWasFlushed() {
+    setUpCacheManager();
+
     KeyAndModel keyAndModel = getKeyAndModel(0);
     Serializable key = keyAndModel.key;
 
@@ -64,20 +63,18 @@ public abstract class AbstractOsCacheIntegrationTestCases extends
   }
 
   /**
-   * @see AbstractIntegrationTestsOld#assertObjectWasCached(Object, int)
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
   protected void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) throws Exception {
+    setUpCacheManager();
+
     KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
     Object actual = cacheAdministrator.getFromCache(keyAndModel.key.toString());
     assertEquals(expectedCachedObject, actual);
   }
 
-  /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
-   */
-  protected final void onSetUp() throws Exception {
-    cacheAdministrator = (GeneralCacheAdministrator) applicationContext
-        .getBean(CACHE_MANAGER_BEAN_ID);
+  private void setUpCacheManager() {
+    cacheAdministrator = (GeneralCacheAdministrator) getCacheManagerFromContext();
   }
 }

@@ -1,5 +1,5 @@
 /* 
- * Created on Oct 22, 2004
+ * Created on Mar 28, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,7 +24,7 @@ import org.apache.jcs.engine.control.CompositeCacheManager;
 import org.apache.jcs.engine.control.group.GroupAttrName;
 import org.apache.jcs.engine.control.group.GroupId;
 
-import org.springmodules.cache.integration.AbstractIntegrationTestsOld;
+import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.provider.jcs.JcsCachingModel;
 
@@ -36,10 +36,7 @@ import org.springmodules.cache.provider.jcs.JcsCachingModel;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractJcsIntegrationTests extends
-    AbstractIntegrationTestsOld {
-
-  protected static final String CACHE_CONFIG = "jcsContext.xml";
+public class JcsIntegrationTests extends AbstractIntegrationTests {
 
   /**
    * JCS cache manager.
@@ -47,29 +44,25 @@ public abstract class AbstractJcsIntegrationTests extends
   private CompositeCacheManager cacheManager;
 
   /**
-   * @see AbstractIntegrationTestsOld#assertCacheWasFlushed()
+   * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected final void assertCacheWasFlushed() {
+    setUpCacheManager();
+
     int index = 0;
     ICacheElement cacheElement = getCacheElement(0);
     assertCacheEntryFromCacheIsNull(cacheElement, getCacheElement(index));
   }
 
   /**
-   * @see AbstractIntegrationTestsOld#assertObjectWasCached(Object, int)
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
   protected final void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) {
+    setUpCacheManager();
+
     ICacheElement cacheElement = getCacheElement(keyAndModelIndex);
     assertEquals(expectedCachedObject, cacheElement.getVal());
-  }
-
-  /**
-   * @see org.springframework.test.AbstractDependencyInjectionSpringContextTests#onSetUp()
-   */
-  protected final void onSetUp() throws Exception {
-    cacheManager = (CompositeCacheManager) applicationContext
-        .getBean(CACHE_MANAGER_BEAN_ID);
   }
 
   private ICacheElement getCacheElement(int keyAndModelIndex) {
@@ -81,6 +74,10 @@ public abstract class AbstractJcsIntegrationTests extends
     GroupId groupId = new GroupId(cacheName, model.getGroup());
     GroupAttrName groupAttrName = new GroupAttrName(groupId, keyAndModel.key);
     return cache.get(groupAttrName);
+  }
+
+  private void setUpCacheManager() {
+    cacheManager = (CompositeCacheManager) getCacheManagerFromContext();
   }
 
 }

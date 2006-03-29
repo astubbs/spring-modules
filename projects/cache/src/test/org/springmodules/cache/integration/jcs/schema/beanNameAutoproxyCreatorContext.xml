@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:jboss="http://www.springmodules.org/schema/jboss"
+  xmlns:jcs="http://www.springmodules.org/schema/jcs"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springmodules.org/schema/jboss http://www.springmodules.org/schema/cache/springmodules-jboss.xsd">
+    http://www.springmodules.org/schema/jcs http://www.springmodules.org/schema/cache/springmodules-jcs.xsd">
 
-  <jboss:methodMapInterceptors cachingInterceptorId="cachingInterceptor"
+  <jcs:methodMapInterceptors cachingInterceptorId="cachingInterceptor"
     flushingInterceptorId="flushingInterceptor">
-    <jboss:cachingListeners>
-      <jboss:cachingListener refId="cachingListener" />
-    </jboss:cachingListeners>
+    <jcs:cachingListeners>
+      <jcs:cachingListener refId="cachingListener" />
+    </jcs:cachingListeners>
 
-    <jboss:caching
+    <jcs:caching
       methodFQN="org.springmodules.cache.integration.CacheableService.get*"
-      node="a/b/c" />
-    <jboss:flushing
-      methodFQN="org.springmodules.cache.integration.CacheableService.update*"
-      nodes="a/b/c" />
-  </jboss:methodMapInterceptors>
+      cacheName="testCache" group="testGroup" />
+    <jcs:flushing
+      methodFQN="org.springmodules.cache.integration.CacheableService.update*">
+      <jcs:cache name="testCache" groups="testGroup" />
+    </jcs:flushing>
+  </jcs:methodMapInterceptors>
 
   <bean
     class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">

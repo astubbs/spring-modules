@@ -53,10 +53,10 @@
 
   <xsd:element name="commons-attributes" type="metadata" />
 
-  <xsd:element name="interceptors">
+  <xsd:element name="methodMapInterceptors">
     <xsd:complexType>
       <xsd:complexContent>
-        <xsd:extension base="cache:interceptors">
+        <xsd:extension base="cache:methodMapInterceptors">
           <xsd:sequence>
             <xsd:element ref="cacheKeyGenerator" minOccurs="0"
               maxOccurs="1" />

@@ -77,8 +77,8 @@ public class CacheNamespaceHandlerTests extends TestCase {
         findParserForElement("config"));
     assertCacheSetupStrategyParserIsCorrect(CommonsAttributesParser.class,
         "commons-attributes");
-    assertCacheSetupStrategyParserIsCorrect(InterceptorsParser.class,
-        "interceptors");
+    assertCacheSetupStrategyParserIsCorrect(MethodMapInterceptorsParser.class,
+        "methodMapInterceptors");
     assertCacheSetupStrategyParserIsCorrect(CacheProxyFactoryBeanParser.class,
         "proxy");
   }

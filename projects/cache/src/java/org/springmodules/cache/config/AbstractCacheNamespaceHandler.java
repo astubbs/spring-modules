@@ -119,8 +119,8 @@ public abstract class AbstractCacheNamespaceHandler extends
   }
 
   private void registerInterceptorsElementParser() {
-    InterceptorsParser parser = new InterceptorsParser();
-    registerCacheSetupStrategyParser("interceptors", parser);
+    MethodMapInterceptorsParser parser = new MethodMapInterceptorsParser();
+    registerCacheSetupStrategyParser("methodMapInterceptors", parser);
   }
 
   private void registerProxyElementParser() {

@@ -4,3 +4,5 @@ http\://www.springframework.org/schema/jndi=org.springframework.jndi.config.Jndi
 http\://www.springframework.org/schema/tx=org.springframework.transaction.config.TxNamespaceHandler
 http\://www.springmodules.org/schema/ehcache=org.springmodules.cache.config.ehcache.EhCacheNamespaceHandler
 http\://www.springmodules.org/schema/jboss=org.springmodules.cache.config.jboss.JbossCacheNamespaceHandler
+http\://www.springmodules.org/schema/jcs=org.springmodules.cache.config.jcs.JcsNamespaceHandler
+http\://www.springmodules.org/schema/oscache=org.springmodules.cache.config.oscache.OsCacheNamespaceHandler

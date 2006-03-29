@@ -1,5 +1,5 @@
 /* 
- * Created on Feb 26, 2006
+ * Created on Mar 28, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,7 +15,7 @@
  *
  * Copyright @2006 the original author or authors.
  */
-package org.springmodules.cache.config.jcs;
+package org.springmodules.cache.config.oscache;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
@@ -24,12 +24,12 @@ import org.springmodules.cache.config.CacheModelParser;
 
 /**
  * <p>
- * Registers the parsers of the XML elements in the namespace "ehcache".
+ * Registers the parsers of the XML elements in the namespace "oscache".
  * </p>
  * 
  * @author Alex Ruiz
  */
-public final class EhCacheNamespaceHandler extends
+public final class OsCacheNamespaceHandler extends
     AbstractCacheNamespaceHandler {
 
   private CacheModelParser cacheModelParser;
@@ -48,7 +48,7 @@ public final class EhCacheNamespaceHandler extends
    * @see org.springmodules.cache.config.AbstractCacheNamespaceHandler#init()
    */
   protected void init() {
-    cacheProviderFacadeParser = new JcsFacadeParser();
-    cacheModelParser = new JcsModelParser();
+    cacheProviderFacadeParser = new OsCacheFacadeParser();
+    cacheModelParser = new OsCacheModelParser();
   }
 }
