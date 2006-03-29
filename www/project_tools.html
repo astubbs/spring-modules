@@ -11,7 +11,8 @@ function replaceLinks() {
             }
 
             if (links[i].getAttribute("href").indexOf("ProjectForumView") > -1) {
-                links[i].parentNode.style.display = "none";
+                links[i].setAttribute("href", "http://forum.springframework.org/forumdisplay.php?f=37");
+                links[i].innerHTML="Spring Modules Forum";
             }
         }
     } catch (e) {}
