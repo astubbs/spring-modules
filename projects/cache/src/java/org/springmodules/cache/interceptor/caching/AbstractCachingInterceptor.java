@@ -53,15 +53,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
 public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     InitializingBean {
 
-  public static interface NullObject extends Serializable {
-    // marker interface.
-  }
-
-  /**
-   * Canonical value held in cache to indicate that the return value of the
-   * method to apply caching to is <code>null</code>.
-   */
-  public static final NullObject NULL_ENTRY = new NullObject() {
+  public static class NullObject implements Serializable {
 
     private static final long serialVersionUID = 3257007674280522803L;
 
@@ -80,12 +72,26 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     }
 
     /**
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+      return 80992;
+    }
+
+    /**
      * @see java.lang.Object#toString()
      */
     public String toString() {
-      return "NULL_ENTRY@" + ObjectUtils.getIdentityHexString(this);
+      String identity = ObjectUtils.getIdentityHexString(this);
+      return getClass().getName() + "@" + identity;
     }
-  };
+  }
+
+  /**
+   * Canonical value held in cache to indicate that the return value of the
+   * method to apply caching to is <code>null</code>.
+   */
+  public static final NullObject NULL_ENTRY = new NullObject();
 
   /** Logger available to subclasses */
   protected final Log logger = LogFactory.getLog(getClass());
