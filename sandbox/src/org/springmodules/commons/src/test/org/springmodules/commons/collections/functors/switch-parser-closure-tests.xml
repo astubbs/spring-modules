@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="switch" class="org.springmodules.commons.collections.functors.SwitchParserClosureFactoryBean" abstract="true"/>
+	<bean id="applyPriorityClosure" class="org.springmodules.commons.collections.functors.ApplyPriorityClosure" abstract="true"/>
+	
+	<!-- Rules -->
+	<bean id="applyPriority" parent="switch">
+		<property name="rulesAndClosures">
+			<map>
+				<entry key="totalAmount &lt; 1000 and lower(customer.qualification) not in 'silver', 'gold'">
+					<ref bean="applyLowPriority"/>
+				</entry>
+				<entry key="(totalAmount &gt;= 1000 and totalAmount &lt; 5000 and lower(customer.qualification) not in 'gold') or (totalAmount &lt; 1000 and lower(customer.qualification) in 'silver')">
+					<ref bean="applyMediumPriority"/>
+				</entry>
+				<entry key="totalAmount &gt;= 5000 or lower(customer.qualification) in 'gold'">
+					<ref bean="applyHighPriority"/>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<!-- Closures -->
+	<bean id="applyLowPriority" parent="applyPriorityClosure">
+		<description>Apply low priority to order.</description>
+		<property name="priority"><value>low</value></property>
+	</bean>
+
+	<bean id="applyMediumPriority" parent="applyPriorityClosure">
+		<description>Apply medium priority to order.</description>
+		<property name="priority"><value>medium</value></property>
+	</bean>
+
+	<bean id="applyHighPriority" parent="applyPriorityClosure">
+		<description>Apply high priority to order.</description>
+		<property name="priority"><value>high</value></property>
+	</bean>
+	
+</beans>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="rule" class="org.springmodules.commons.collections.functors.IfParserClosureFactoryBean" abstract="true"/>
+	<bean id="chain" class="org.springmodules.commons.collections.functors.ChainedClosureFactoryBean" abstract="true"/>
+	<bean id="applyPriorityClosure" class="org.springmodules.commons.collections.functors.ApplyPriorityClosure" abstract="true"/>
+	<bean id="map" class="java.util.HashMap" abstract="true"/>
+
+	<!-- Rules -->
+	<bean id="applyPriority" parent="chain">
+		<description>apply priority to order</description>
+		<property name="closures">
+			<list>
+				<ref bean="lowPriorityRule"/>			
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="lowPriorityRule" parent="rule">
+		<description>handle order with low priority if total amount is lower than 1000
+       and customer is not silver or gold.</description>
+		<property name="syntax"><value><![CDATA[
+		totalAmount < 1000 and lower(customer.qualification) not in 'silver', 'gold'
+		]]></value></property>
+		<property name="trueClosure"><ref bean="applyLowPriority"/></property>
+		<property name="falseClosure"><ref bean="mediumPriorityRule"/></property>
+	</bean>
+	
+	<bean id="mediumPriorityRule" parent="rule">
+		<description>handle order with medium priority if total amount is lower than 5000
+       and customer is not gold.</description>
+		<property name="syntax"><value><![CDATA[
+		totalAmount < 5000 and lower(customer.qualification) not in 'gold'
+		]]></value></property>
+		<property name="trueClosure"><ref bean="applyMediumPriority"/></property>
+		<property name="falseClosure"><ref bean="highPriorityRule"/></property>
+	</bean>
+	
+	<bean id="highPriorityRule" parent="chain">
+		<description>handle order with high priority if total amount is 5000 or more or
+       customer is gold.</description>
+		<property name="closures">
+			<list>
+				<ref bean="applyHighPriority"/>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- Closures -->
+	<bean id="applyLowPriority" parent="applyPriorityClosure">
+		<description>Apply low priority to order.</description>
+		<property name="priority"><value>low</value></property>
+	</bean>
+
+	<bean id="applyMediumPriority" parent="applyPriorityClosure">
+		<description>Apply medium priority to order.</description>
+		<property name="priority"><value>medium</value></property>
+	</bean>
+
+	<bean id="applyHighPriority" parent="applyPriorityClosure">
+		<description>Apply high priority to order.</description>
+		<property name="priority"><value>high</value></property>
+	</bean>
+
+</beans>

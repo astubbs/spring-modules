@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<graffito-jcr>
+    <class-descriptor
+		className="org.springmodules.jcr.mapping.B" jcrNodeType="nt:unstructured">
+
+		<field-descriptor fieldName="name" jcrName="name" />
+		<field-descriptor fieldName="birthday" jcrName="birthday" />
+		<field-descriptor fieldName="age" jcrName="age" />
+		<field-descriptor fieldName="weight" jcrName="weight" />
+	</class-descriptor>
+</graffito-jcr>
