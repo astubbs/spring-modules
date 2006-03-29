@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-docs" default="dist">
+<project name="springmodules-docs" default="doc-all">
     <property file="build.properties" />
     <property file="project.properties" />
     <property file="${common.build.dir}/build.properties" />
     <property file="${common.build.dir}/project.properties" />
     <property file="${user.home}/build.properties" />
 
+	
     <import file="${common.build.dir}/doc-targets.xml" />
-
+	
 </project>
