@@ -1,0 +1,21 @@
+<script type="text/javascript">
+
+function replaceLinks() {
+    try {
+        var tools = document.getElementById("projecttools");
+        var links = tools.getElementsByTagName("a");
+        for (i=0; i < links.length; i++) {
+            if (links[i].getAttribute("href").indexOf("ProjectIssues") > -1) {
+                links[i].setAttribute("href", "http://opensource.atlassian.com/projects/spring/browse/MOD");
+                links[i].innerHTML="JIRA Issue Tracker";
+            }
+
+            if (links[i].getAttribute("href").indexOf("ProjectForumView") > -1) {
+                links[i].parentNode.style.display = "none";
+            }
+        }
+    } catch (e) {}
+}
+
+window.onload=replaceLinks;
+</script>
