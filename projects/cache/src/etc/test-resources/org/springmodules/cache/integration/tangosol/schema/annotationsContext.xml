@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:coherence="http://www.springmodules.org/schema/coherence"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springmodules.org/schema/coherence http://www.springmodules.org/schema/cache/springmodules-tangosol.xsd">
+
+  <coherence:annotations>
+    <coherence:cachingListeners>
+      <coherence:cachingListener refId="cachingListener" />
+    </coherence:cachingListeners>
+
+    <coherence:caching id="test" cacheName="testCache" />
+    <coherence:flushing id="test" cacheNames="testCache" />
+  </coherence:annotations>
+
+  <!-- Set up the objects to apply caching to -->
+  <bean id="cacheableService"
+    class="org.springmodules.cache.annotations.TigerCacheableService">
+    <property name="names">
+      <list>
+        <value>Luke Skywalker</value>
+        <value>Leia Organa</value>
+      </list>
+    </property>
+  </bean>
+</beans>

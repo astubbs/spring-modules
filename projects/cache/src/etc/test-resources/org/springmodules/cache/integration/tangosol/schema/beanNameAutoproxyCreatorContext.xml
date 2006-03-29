@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:coherence="http://www.springmodules.org/schema/coherence"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springmodules.org/schema/coherence http://www.springmodules.org/schema/cache/springmodules-tangosol.xsd">
+
+  <coherence:methodMapInterceptors cachingInterceptorId="cachingInterceptor"
+    flushingInterceptorId="flushingInterceptor">
+    <coherence:cachingListeners>
+      <coherence:cachingListener refId="cachingListener" />
+    </coherence:cachingListeners>
+
+    <coherence:caching
+      methodFQN="org.springmodules.cache.integration.CacheableService.get*"
+      cacheName="testCache" />
+    <coherence:flushing
+      methodFQN="org.springmodules.cache.integration.CacheableService.update*"
+      cacheNames="testCache" />
+  </coherence:methodMapInterceptors>
+
+  <bean
+    class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+    <property name="beanNames">
+      <list>
+        <idref local="cacheableService" />
+      </list>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <value>cachingInterceptor</value>
+        <value>flushingInterceptor</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="cacheableService"
+    class="org.springmodules.cache.integration.CacheableServiceImpl">
+    <property name="names">
+      <list>
+        <value>Luke Skywalker</value>
+        <value>Leia Organa</value>
+      </list>
+    </property>
+  </bean>
+</beans>
