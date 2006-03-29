@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"
+>
+
+<beans>
+  <bean id="cachingInterceptor"
+    class="org.springmodules.cache.interceptor.caching.MethodMapCachingInterceptor">
+    <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+    <property name="cachingListeners">
+      <list>
+        <ref bean="cachingListener" />
+      </list>
+    </property>
+    <property name="cachingModels">
+      <props>
+        <prop key="org.springmodules.cache.integration.CacheableService.get*">cacheName=testCache</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="flushingInterceptor"
+    class="org.springmodules.cache.interceptor.flush.MethodMapFlushingInterceptor">
+    <property name="cacheProviderFacade" ref="cacheProviderFacade" />
+    <property name="flushingModels">
+      <props>
+        <prop key="org.springmodules.cache.integration.CacheableService.update*">cacheNames=testCache</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean
+    class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+    <property name="beanNames">
+      <list>
+        <idref local="cacheableService"/>
+      </list>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <value>cachingInterceptor</value>
+        <value>flushingInterceptor</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="cacheableService"
+    class="org.springmodules.cache.integration.CacheableServiceImpl">
+    <property name="names">
+      <list>
+        <value>Luke Skywalker</value>
+        <value>Leia Organa</value>
+      </list>
+    </property>
+  </bean>
+</beans>

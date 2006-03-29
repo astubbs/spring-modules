@@ -20,7 +20,7 @@ package org.springmodules.cache.integration.tangosol;
 import com.tangosol.net.CacheFactory;
 import com.tangosol.net.NamedCache;
 
-import org.springmodules.cache.integration.AbstractIntegrationTestsOld;
+import org.springmodules.cache.integration.AbstractIntegrationTests;
 import org.springmodules.cache.integration.KeyAndModelListCachingListener.KeyAndModel;
 import org.springmodules.cache.provider.tangosol.CoherenceCachingModel;
 
@@ -33,16 +33,11 @@ import org.springmodules.cache.provider.tangosol.CoherenceCachingModel;
  * 
  * @author Alex Ruiz
  */
-public abstract class AbstractCoherenceIntegrationTests extends
-    AbstractIntegrationTestsOld {
+public class CoherenceIntegrationTests extends
+    AbstractIntegrationTests {
 
   /**
-   * Path of the Spring file specifying the configuration of the cache provider.
-   */
-  protected static final String CACHE_CONFIG = "coherenceContext.xml";
-
-  /**
-   * @see AbstractIntegrationTestsOld#assertCacheWasFlushed()
+   * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
   protected final void assertCacheWasFlushed() throws Exception {
     int index = 0;
@@ -51,7 +46,7 @@ public abstract class AbstractCoherenceIntegrationTests extends
   }
 
   /**
-   * @see AbstractIntegrationTestsOld#assertObjectWasCached(Object, int)
+   * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
   protected final void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) throws Exception {
