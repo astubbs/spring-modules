@@ -194,6 +194,7 @@
 		<subant target="doc-all" inheritall="false" failonerror="false">
 			<buildpath refid="${projects}" />
 		</subant>
+		
 		<!-- generate documentation for the entire project -->
 		<ant antfile="${docs.dir}/build.xml" dir="${docs.dir}"/>
 	</target>
