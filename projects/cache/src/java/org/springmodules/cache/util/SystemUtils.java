@@ -29,10 +29,9 @@ import org.springframework.util.ClassUtils;
 public abstract class SystemUtils {
 
   /**
-   * @return <code>true</code> if the current version of Java supports JDK 1.5
-   *         Annotations
+   * @return <code>true</code> if the current version of Java is 5 or later
    */
-  public static boolean annotationsSupport() {
+  public static boolean atLeastJ2SE5() {
     try {
       ClassUtils.forName("java.lang.annotation.Annotation");
       return true;

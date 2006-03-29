@@ -82,7 +82,7 @@ public abstract class AbstractCacheNamespaceHandler extends
   }
 
   private void registerAnnotationsElementParser() {
-    if (SystemUtils.annotationsSupport()) {
+    if (SystemUtils.atLeastJ2SE5()) {
       String thisPackage = AbstractCacheNamespaceHandler.class.getPackage()
           .getName();
       String annotationsParserClassName = thisPackage + ".AnnotationsParser";

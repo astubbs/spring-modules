@@ -206,7 +206,7 @@ public abstract class AbstractIntegrationTests extends TestCase {
 
   private void performCachingAndFlushingWithAnnotations(String configFolder)
       throws Exception {
-    if (SystemUtils.annotationsSupport()) {
+    if (SystemUtils.atLeastJ2SE5()) {
       String configLocation = configFolder + ANNOTATIONS_CONTEXT;
       performCachingAndFlushing(configLocation);
     } else {
