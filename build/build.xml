@@ -58,7 +58,7 @@
 	<target name="targets">
 		<echo>
 
-    Master build for Spring Web Flow and Spring Web Flow samples.
+    Master build for Spring Modules.
 
     Please execute
       ant -p
@@ -83,11 +83,12 @@
 
 		<ivy:buildlist reference="modules">
 			<fileset dir="..">
+				
 				<exclude name="projects/common-build/build.xml" />
 				<exclude name="projects/common-build-bootstrap/build.xml" />
 				<include name="projects/*/build.xml" />
 				
-				<!-- not building 
+				<!--  not building 
 				<exclude name="projects/cache/build.xml" />
 				<exclude name="projects/jbpm30/build.xml" />
 				<exclude name="projects/jbpm31/build.xml" />
@@ -95,9 +96,14 @@
 				<exclude name="projects/lucene/build.xml" />
 				<exclude name="projects/tapestry/build.xml" />
 				-->
+				
+				<!-- sandbox -->
+				<include name="sandbox/*/build.xml" if="include.sandbox"/>
+				<!-- exclude from sandbox -->
+			
 			</fileset>
 		</ivy:buildlist>
-
+		
 		<tstamp>
 			<format property="build.timestamp" pattern="yyyyMMddHHmmss" />
 		</tstamp>
@@ -138,6 +144,8 @@
 		<subant target="clean" inheritall="false">
 			<buildpath refid="${projects}" />
 		</subant>
+
+		
 	</target>
 
 	<target name="clean-all" depends="init" description="Cleans all build output files from all projects, and also retrieved libs">
