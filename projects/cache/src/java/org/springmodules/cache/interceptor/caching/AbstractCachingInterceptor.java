@@ -53,7 +53,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
 public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     InitializingBean {
 
-  public static class NullObject implements Serializable {
+  public static final class NullObject implements Serializable {
 
     private static final long serialVersionUID = 3257007674280522803L;
 
