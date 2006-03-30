@@ -1,7 +1,0 @@
-<ivyconf>
-	<resolvers>
-		<chain name="custom">
-				<ibiblio name="double-hibernate" pattern="[module]/jars/[artifact].[ext]"/>
-		</chain>
-	</resolvers>
-</ivyconf>
