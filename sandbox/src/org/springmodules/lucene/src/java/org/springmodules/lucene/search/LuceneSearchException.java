@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package org.springmodules.lucene;
+package org.springmodules.lucene.search;
 
 import java.io.IOException;
 
+import org.apache.lucene.queryParser.ParseException;
 import org.springframework.core.NestedRuntimeException;
+import org.springmodules.lucene.LuceneException;
 
 /**
- * Root of the hierarchy of Lucene exceptions.
+ * Root of the hierarchy of Lucene search exceptions. It extends
+ * the Lucene exception.
  *
  * <p>This exception hierarchy aims to let user code find and handle the
  * kind of error encountered without knowing the details of the particular
@@ -33,22 +36,32 @@ import org.springframework.core.NestedRuntimeException;
  *
  * @author Thierry Templier
  */
-public abstract class LuceneException extends NestedRuntimeException {
+public class LuceneSearchException extends LuceneException {
 
 	/**
-	 * Constructor for LuceneException.
+	 * Constructor for LuceneSearchException.
 	 * @param msg message
 	 */
-	public LuceneException(String msg) {
+	public LuceneSearchException(String msg) {
 		super(msg);
 	}
 
 	/**
-	 * Constructor for LuceneException.
+	 * Constructor for LuceneSearchException.
 	 * @param msg message
 	 * @param ex root cause
 	 */
-	public LuceneException(String msg,Throwable ex) {
+	public LuceneSearchException(String msg,IOException ex) {
 		super(msg,ex);
 	}
+
+	/**
+	 * Constructor for LuceneSearchException.
+	 * @param msg message
+	 * @param ex root cause
+	 */
+	public LuceneSearchException(String msg,ParseException ex) {
+		super(msg,ex);
+	}
+
 }
