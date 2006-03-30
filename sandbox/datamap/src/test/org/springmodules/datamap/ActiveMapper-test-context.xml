@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <!-- HSQL Database Instance -->
+    <bean id="dataBase" class="org.springmodules.db.hsqldb.ServerBean" singleton="true" lazy-init="false">
+       <property name="dataSource"><ref local="dataSource"/></property>
+       <property name="serverProperties">
+            <props>
+                <prop key="server.port">9101</prop>
+                <prop key="server.database.0">sandbox/test/org/springmodules/datamap/db/test</prop>
+                <prop key="server.dbname.0">test</prop>
+             </props>
+        </property>
+    </bean>
+    <!-- Local DataSource -->
+    <bean id="dataSource"
+       class="org.apache.commons.dbcp.BasicDataSource"
+       destroy-method="close"
+       depends-on="dataBase">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:hsql://localhost:9101/test"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+    <!-- Local TransactionManager -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource"><ref local="dataSource"/></property>
+    </bean>
+
+</beans>

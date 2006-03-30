@@ -1,0 +1,31 @@
+<ivy-module version="1.1">
+  <info organisation="springmodules" module="springmodules-sandbox-jcr"/>
+
+  <configurations>
+    <!-- default configuration that 'by default' pulls in the global configuration -->
+    <conf name="default" extends="global" />
+
+    <!-- core dependencies needed at compile-time, test-time, and runtime -->
+    <conf name="global" visibility="private" />
+
+    <!-- additional dependencies needed only at build-time -->
+    <conf name="buildtime" visibility="private" />
+
+    <!-- additional dependencies needed only at test-time -->
+    <conf name="test" visibility="private" />
+
+  </configurations>
+
+  <dependencies defaultconf="global->default">
+    <!-- global (compile, test, runtime) dependencies -->
+    <dependency org="springmodules" name="springmodules-jcr" rev="latest.integration" conf="jsr-170"/>
+    
+    <dependency org="apache" name="graffito" rev="1.0-a1-dev">
+       <artifact name="graffito-commons" type="jar"/>
+       <artifact name="graffito-jcr-mapping" type="jar"/>
+    </dependency>
+    
+    <dependency org="apache" name="commons-digester" rev="1.7" conf="test -> *"/>
+
+  </dependencies>
+</ivy-module>
