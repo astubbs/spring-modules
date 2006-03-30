@@ -24,6 +24,8 @@
        <artifact name="graffito-commons" type="jar"/>
        <artifact name="graffito-jcr-mapping" type="jar"/>
     </dependency>
+    
+    <dependency org="apache" name="commons-digester" rev="1.7" conf="test -> *"/>
 
   </dependencies>
 </ivy-module>
