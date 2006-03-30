@@ -1,0 +1,31 @@
+<ivy-module version="1.1">
+  <info organisation="springmodules" module="springmodules-sandbox-jdbi"/>
+
+  <configurations>
+    <!-- default configuration that 'by default' pulls in the global configuration -->
+    <conf name="default" extends="global" />
+
+    <!-- core dependencies needed at compile-time, test-time, and runtime -->
+    <conf name="global" visibility="private" />
+
+    <!-- additional dependencies needed only at build-time -->
+    <conf name="buildtime" visibility="private" />
+
+    <!-- additional dependencies needed only at test-time -->
+    <conf name="test" visibility="private" />
+
+  </configurations>
+
+  <dependencies defaultconf="global->default">
+    <!-- global (compile, test, runtime) dependencies -->
+    <dependency org="springframework" name="springframework" rev="1.2.7"
+      conf="global,test->default">
+      <artifact name="spring" type="jar" conf="global" />
+      <artifact name="spring-mock" type="jar" conf="test" />
+    </dependency>
+    
+    <dependency org="codehaus" name="jdbi" rev="1.4.3"/>
+    
+    
+  </dependencies>
+</ivy-module>

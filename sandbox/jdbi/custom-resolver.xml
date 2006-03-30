@@ -1,0 +1,11 @@
+<ivyconf>
+	<resolvers>
+		<chain name="custom">
+			<!-- jdbi url -->
+			<url name="jdbi-url">
+		        <artifact pattern="http://jdbi.codehaus.org/[artifact]-[revision].[ext]" />
+			</url>			
+			
+		</chain>
+	</resolvers>
+</ivyconf>
