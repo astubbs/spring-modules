@@ -35,7 +35,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import org.springmodules.cache.config.CacheSetupStrategyElementBuilder.CacheKeyGeneratorElementBuilder;
-import org.springmodules.cache.config.CacheSetupStrategyElementBuilder.CachingListenerElementBuilder;
 import org.springmodules.cache.config.CacheSetupStrategyElementBuilder.CachingModelElementBuilder;
 import org.springmodules.cache.config.CacheSetupStrategyElementBuilder.FlushingModelElementBuilder;
 import org.springmodules.cache.interceptor.caching.CachingListener;
@@ -153,6 +152,10 @@ public class CacheSetupStrategyParserTests extends
 
   private MockClassControl strategyParserControl;
 
+  private CachingListenerValidator validator;
+
+  private MockControl validatorControl;
+
   /**
    * Constructor.
    * 
@@ -181,10 +184,15 @@ public class CacheSetupStrategyParserTests extends
 
       Element cachingListenerElement = elementBuilder.cachingListenerElementBuilders[i]
           .toXml();
+
+      // parse caching listener element
       beanReferenceParser.parse(cachingListenerElement, parserContext, true);
       RuntimeBeanReference cachingListenerReference = new RuntimeBeanReference(
           refId);
       beanReferenceParserControl.setReturnValue(cachingListenerReference);
+
+      // validate the caching listener
+      validator.validate(cachingListenerReference, i, parserContext);
 
       cachingListeners.add(cachingListenerReference);
     }
@@ -212,41 +220,6 @@ public class CacheSetupStrategyParserTests extends
 
     // method to test
     strategyParser.parse(element, parserContext);
-
-    verify();
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link AbstractCacheSetupStrategyParser#parse(Element, org.springframework.beans.factory.xml.ParserContext)}</code>
-   * throws an <code>{@link IllegalStateException}</code> if any of the bean
-   * definitions referenced by the XML element "cachingListener" does not
-   * describe an instance of <code>{@link CachingListener}</code>.
-   */
-  public void testParseWithInvalidCachingListener() {
-    registerCacheProviderFacadeDefinition();
-
-    // register invalid listener.
-    CachingListenerElementBuilder builder = new CachingListenerElementBuilder();
-    builder.refId = "listener";
-    registry.registerBeanDefinition(builder.refId, new RootBeanDefinition(
-        String.class));
-
-    CachingListenerElementBuilder[] builders = { builder };
-    elementBuilder.cachingListenerElementBuilders = builders;
-
-    beanReferenceParser.parse(builder.toXml(), parserContext, true);
-    beanReferenceParserControl.setReturnValue(new RuntimeBeanReference(
-        builder.refId));
-
-    replay();
-
-    try {
-      strategyParser.parse(elementBuilder.toXml(), parserContext);
-      fail();
-    } catch (IllegalStateException exception) {
-      // expecting this exception
-    }
 
     verify();
   }
@@ -340,6 +313,19 @@ public class CacheSetupStrategyParserTests extends
     verify();
   }
 
+  public void testParseWithRegistryNotHavingCacheProviderFacade() {
+    replay();
+
+    try {
+      strategyParser.parse(new DomElementStub("someElement"), parserContext);
+      fail();
+    } catch (IllegalStateException exception) {
+      // expecting exception
+    }
+
+    verify();
+  }
+
   protected void onSetUp() throws Exception {
     beanReferenceParserControl = MockControl
         .createControl(BeanReferenceParser.class);
@@ -347,6 +333,7 @@ public class CacheSetupStrategyParserTests extends
         .getMock();
 
     setUpModelParser();
+    setUpValidator();
     setUpStrategyParser();
 
     elementBuilder = new CacheSetupStrategyElementBuilder();
@@ -418,6 +405,7 @@ public class CacheSetupStrategyParserTests extends
     beanReferenceParserControl.replay();
     modelParserControl.replay();
     strategyParserControl.replay();
+    validatorControl.replay();
   }
 
   private void setUpModelParser() {
@@ -445,11 +433,19 @@ public class CacheSetupStrategyParserTests extends
         .getMock();
     strategyParser.setBeanReferenceParser(beanReferenceParser);
     strategyParser.setCacheModelParser(modelParser);
+    strategyParser.setCachingListenerValidator(validator);
+  }
+
+  private void setUpValidator() {
+    Class targetClass = CachingListenerValidator.class;
+    validatorControl = MockControl.createControl(targetClass);
+    validator = (CachingListenerValidator) validatorControl.getMock();
   }
 
   private void verify() {
     beanReferenceParserControl.verify();
     modelParserControl.verify();
     strategyParserControl.verify();
+    validatorControl.verify();
   }
 }

@@ -130,12 +130,8 @@ public abstract class AbstractCacheProviderFacadeParser implements
    */
   private PropertyValue parseFailQuietlyEnabledProperty(Element element) {
     String failQuietlyAttr = element.getAttribute("failQuietly");
-    Boolean value = Boolean.FALSE;
-
-    if (StringUtils.hasText(failQuietlyAttr)) {
-      value = "true".equalsIgnoreCase(failQuietlyAttr) ? Boolean.TRUE
-          : Boolean.FALSE;
-    }
+    Boolean value = "true".equalsIgnoreCase(failQuietlyAttr) ? Boolean.TRUE
+        : Boolean.FALSE;
     return new PropertyValue("failQuietlyEnabled", value);
   }
 

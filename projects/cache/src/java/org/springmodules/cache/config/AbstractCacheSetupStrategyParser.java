@@ -25,9 +25,7 @@ import org.w3c.dom.Element;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -38,7 +36,6 @@ import org.springframework.util.xml.DomUtils;
 
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FlushingModel;
-import org.springmodules.cache.interceptor.caching.CachingListener;
 
 /**
  * <p>
@@ -55,12 +52,15 @@ public abstract class AbstractCacheSetupStrategyParser implements
 
   private CacheModelParser cacheModelParser;
 
+  private CachingListenerValidator cachingListenerValidator;
+
   /**
    * Constructor.
    */
   public AbstractCacheSetupStrategyParser() {
     super();
     beanReferenceParser = new BeanReferenceParserImpl();
+    cachingListenerValidator = new CachingListenerValidatorImpl();
   }
 
   /**
@@ -155,6 +155,11 @@ public abstract class AbstractCacheSetupStrategyParser implements
     beanReferenceParser = newBeanReferenceParser;
   }
 
+  protected final void setCachingListenerValidator(
+      CachingListenerValidator newCachingListenerValidator) {
+    cachingListenerValidator = newCachingListenerValidator;
+  }
+
   private Object parseCacheKeyGenerator(Element element,
       ParserContext parserContext) {
     Object keyGenerator = null;
@@ -215,7 +220,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
 
       Object cachingListener = beanReferenceParser.parse(listenerElement,
           parserContext, registerCachingListener);
-      validateCachingListener(cachingListener, i, parserContext);
+      cachingListenerValidator.validate(cachingListener, i, parserContext);
       listeners.add(cachingListener);
     }
 
@@ -286,29 +291,5 @@ public abstract class AbstractCacheSetupStrategyParser implements
     }
 
     return models;
-  }
-
-  private void validateCachingListener(Object cachingListener, int index,
-      ParserContext parserContext) {
-    BeanDefinitionRegistry registry = parserContext.getRegistry();
-    BeanDefinition beanDefinition = null;
-
-    if (cachingListener instanceof RuntimeBeanReference) {
-      String beanName = ((RuntimeBeanReference) cachingListener).getBeanName();
-      beanDefinition = registry.getBeanDefinition(beanName);
-
-    } else if (cachingListener instanceof BeanDefinitionHolder) {
-      beanDefinition = ((BeanDefinitionHolder) cachingListener)
-          .getBeanDefinition();
-    }
-
-    Class expectedClass = CachingListener.class;
-    Class actualClass = ((AbstractBeanDefinition) beanDefinition)
-        .getBeanClass();
-
-    if (beanDefinition == null || !expectedClass.isAssignableFrom(actualClass)) {
-      throw new IllegalStateException("The caching listener [" + index
-          + "] should be an instance of <" + expectedClass.getName() + ">");
-    }
   }
 }
