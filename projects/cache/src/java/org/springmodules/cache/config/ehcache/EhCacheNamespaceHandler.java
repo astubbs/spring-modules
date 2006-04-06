@@ -36,19 +36,20 @@ public final class EhCacheNamespaceHandler extends
 
   private BeanDefinitionParser cacheProviderFacadeParser;
 
+  /**
+   * Constructor.
+   */
+  public EhCacheNamespaceHandler() {
+    super();
+    cacheProviderFacadeParser = new EhCacheFacadeParser();
+    cacheModelParser = new EhCacheModelParser();
+  }
+
   protected CacheModelParser getCacheModelParser() {
     return cacheModelParser;
   }
 
   protected BeanDefinitionParser getCacheProviderFacadeParser() {
     return cacheProviderFacadeParser;
-  }
-
-  /**
-   * @see org.springmodules.cache.config.AbstractCacheNamespaceHandler#init()
-   */
-  protected void init() {
-    cacheProviderFacadeParser = new EhCacheFacadeParser();
-    cacheModelParser = new EhCacheModelParser();
   }
 }

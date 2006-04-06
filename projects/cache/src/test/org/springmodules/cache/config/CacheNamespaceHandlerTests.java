@@ -17,9 +17,12 @@
  */
 package org.springmodules.cache.config;
 
+import java.lang.reflect.Method;
+
 import junit.framework.TestCase;
 
 import org.easymock.MockControl;
+import org.easymock.classextension.MockClassControl;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
@@ -34,28 +37,9 @@ import org.springmodules.AssertExt;
  */
 public class CacheNamespaceHandlerTests extends TestCase {
 
-  private static class Handler extends AbstractCacheNamespaceHandler {
+  private AbstractCacheNamespaceHandler handler;
 
-    static CacheModelParser cacheModelParser;
-
-    static BeanDefinitionParser cacheProviderFacadeParser;
-
-    /**
-     * @see AbstractCacheNamespaceHandler#getCacheModelParser()
-     */
-    protected CacheModelParser getCacheModelParser() {
-      return cacheModelParser;
-    }
-
-    /**
-     * @see AbstractCacheNamespaceHandler#getCacheProviderFacadeParser()
-     */
-    protected BeanDefinitionParser getCacheProviderFacadeParser() {
-      return cacheProviderFacadeParser;
-    }
-  }
-
-  private Handler handler;
+  private MockClassControl handlerControl;
 
   /**
    * Constructor.
@@ -67,27 +51,61 @@ public class CacheNamespaceHandlerTests extends TestCase {
     super(name);
   }
 
-  public void testContructor() throws Exception {
-    Handler.cacheModelParser = createCacheModelParser();
-    Handler.cacheProviderFacadeParser = createCacheProviderFacadeParser();
+  public void testInit() throws Exception {
+    CacheModelParser modelParser = createCacheModelParser();
+    BeanDefinitionParser facadeParser = createCacheProviderFacadeParser();
 
-    handler = new Handler();
+    handler.getCacheModelParser();
+    handlerControl.setReturnValue(modelParser);
 
-    assertSame(Handler.cacheProviderFacadeParser,
-        findParserForElement("config"));
+    handler.getCacheProviderFacadeParser();
+    handlerControl.setReturnValue(facadeParser);
+
+    handlerControl.replay();
+
+    handler.init();
+
+    assertSame(facadeParser, findParserForElement("config"));
+
     assertCacheSetupStrategyParserIsCorrect(CommonsAttributesParser.class,
-        "commons-attributes");
+        "commons-attributes", modelParser);
+
     assertCacheSetupStrategyParserIsCorrect(MethodMapInterceptorsParser.class,
-        "methodMapInterceptors");
+        "methodMapInterceptors", modelParser);
+
     assertCacheSetupStrategyParserIsCorrect(CacheProxyFactoryBeanParser.class,
-        "proxy");
+        "proxy", modelParser);
+
+    handlerControl.verify();
+  }
+
+  protected void setUp() throws Exception {
+    Class target = AbstractCacheNamespaceHandler.class;
+
+    Method getCacheModelParserMethod = target.getDeclaredMethod(
+        "getCacheModelParser", new Class[0]);
+
+    Method getCacheProviderFacadeParserMethod = target.getDeclaredMethod(
+        "getCacheProviderFacadeParser", new Class[0]);
+
+    Method[] methodsToMock = { getCacheModelParserMethod,
+        getCacheProviderFacadeParserMethod };
+
+    handlerControl = MockClassControl.createControl(target, null, null,
+        methodsToMock);
+
+    handler = (AbstractCacheNamespaceHandler) handlerControl.getMock();
   }
 
   private void assertCacheSetupStrategyParserIsCorrect(Class expectedClass,
-      String elementName) {
-    AbstractCacheSetupStrategyParser parser = (AbstractCacheSetupStrategyParser) findParserForElement(elementName);
+      String elementName, CacheModelParser modelParser) {
+
+    BeanDefinitionParser parser = findParserForElement(elementName);
     AssertExt.assertInstanceOf(expectedClass, parser);
-    assertSame(parser.getCacheModelParser(), Handler.cacheModelParser);
+    
+    CacheModelParser actual = ((AbstractCacheSetupStrategyParser) parser)
+        .getCacheModelParser();
+    assertSame(modelParser, actual);
   }
 
   private CacheModelParser createCacheModelParser() {
@@ -95,8 +113,7 @@ public class CacheNamespaceHandlerTests extends TestCase {
     return (CacheModelParser) control.getMock();
   }
 
-  private BeanDefinitionParser createCacheProviderFacadeParser()
-      throws Exception {
+  private BeanDefinitionParser createCacheProviderFacadeParser() {
     MockControl control = MockControl.createControl(BeanDefinitionParser.class);
     return (BeanDefinitionParser) control.getMock();
   }

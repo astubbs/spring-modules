@@ -36,19 +36,20 @@ public final class CoherenceNamespaceHandler extends
 
   private BeanDefinitionParser cacheProviderFacadeParser;
 
+  /**
+   * Constructor.
+   */
+  public CoherenceNamespaceHandler() {
+    super();
+    cacheProviderFacadeParser = new CoherenceFacadeParser();
+    cacheModelParser = new CoherenceModelParser();
+  }
+
   protected CacheModelParser getCacheModelParser() {
     return cacheModelParser;
   }
 
   protected BeanDefinitionParser getCacheProviderFacadeParser() {
     return cacheProviderFacadeParser;
-  }
-
-  /**
-   * @see org.springmodules.cache.config.AbstractCacheNamespaceHandler#init()
-   */
-  protected void init() {
-    cacheProviderFacadeParser = new CoherenceFacadeParser();
-    cacheModelParser = new CoherenceModelParser();
   }
 }

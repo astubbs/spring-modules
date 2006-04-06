@@ -36,19 +36,20 @@ public final class JcsNamespaceHandler extends
 
   private BeanDefinitionParser cacheProviderFacadeParser;
 
+  /**
+   * Constructor.
+   */
+  public JcsNamespaceHandler() {
+    super();
+    cacheProviderFacadeParser = new JcsFacadeParser();
+    cacheModelParser = new JcsModelParser();
+  }
+
   protected CacheModelParser getCacheModelParser() {
     return cacheModelParser;
   }
 
   protected BeanDefinitionParser getCacheProviderFacadeParser() {
     return cacheProviderFacadeParser;
-  }
-
-  /**
-   * @see org.springmodules.cache.config.AbstractCacheNamespaceHandler#init()
-   */
-  protected void init() {
-    cacheProviderFacadeParser = new JcsFacadeParser();
-    cacheModelParser = new JcsModelParser();
   }
 }

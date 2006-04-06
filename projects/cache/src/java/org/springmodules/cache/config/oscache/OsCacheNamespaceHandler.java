@@ -36,19 +36,20 @@ public final class OsCacheNamespaceHandler extends
 
   private BeanDefinitionParser cacheProviderFacadeParser;
 
+  /**
+   * Constructor.
+   */
+  public OsCacheNamespaceHandler() {
+    super();
+    cacheProviderFacadeParser = new OsCacheFacadeParser();
+    cacheModelParser = new OsCacheModelParser();
+  }
+
   protected CacheModelParser getCacheModelParser() {
     return cacheModelParser;
   }
 
   protected BeanDefinitionParser getCacheProviderFacadeParser() {
     return cacheProviderFacadeParser;
-  }
-
-  /**
-   * @see org.springmodules.cache.config.AbstractCacheNamespaceHandler#init()
-   */
-  protected void init() {
-    cacheProviderFacadeParser = new OsCacheFacadeParser();
-    cacheModelParser = new OsCacheModelParser();
   }
 }

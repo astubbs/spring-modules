@@ -43,7 +43,7 @@ public abstract class AbstractCacheNamespaceHandler extends
   protected Log logger = LogFactory.getLog(getClass());
 
   /**
-   * Constructor that registers parsers for the elements:
+   * Registers parsers for the elements:
    * <ul>
    * <li>annotations</li>
    * <li>commons-attributes</li>
@@ -51,11 +51,17 @@ public abstract class AbstractCacheNamespaceHandler extends
    * <li>interceptors</li>
    * <li>proxy</li>
    * </ul>
+   * 
+   * @see org.springframework.beans.factory.xml.NamespaceHandler#init()
    */
-  public AbstractCacheNamespaceHandler() {
-    super();
-    init();
-    registerAllParsers();
+  public final void init() {
+    registerBeanDefinitionParser("config", getCacheProviderFacadeParser());
+
+    CacheModelParser cacheModelParser = getCacheModelParser();
+    registerAnnotationsElementParser(cacheModelParser);
+    registerCommonsAttributesElementParser(cacheModelParser);
+    registerProxyElementParser(cacheModelParser);
+    registerInterceptorsElementParser(cacheModelParser);
   }
 
   protected abstract CacheModelParser getCacheModelParser();
@@ -65,23 +71,8 @@ public abstract class AbstractCacheNamespaceHandler extends
    */
   protected abstract BeanDefinitionParser getCacheProviderFacadeParser();
 
-  /**
-   * Gives subclasses the opportunity to initialize their own infrastructure
-   * such as custom bean definition parsers, helpers, etc.
-   */
-  protected void init() {
-    // no implementation.
-  }
-
-  private void registerAllParsers() {
-    registerBeanDefinitionParser("config", getCacheProviderFacadeParser());
-    registerAnnotationsElementParser();
-    registerCommonsAttributesElementParser();
-    registerProxyElementParser();
-    registerInterceptorsElementParser();
-  }
-
-  private void registerAnnotationsElementParser() {
+  private void registerAnnotationsElementParser(
+      CacheModelParser cacheModelParser) {
     if (SystemUtils.atLeastJ2SE5()) {
       String thisPackage = AbstractCacheNamespaceHandler.class.getPackage()
           .getName();
@@ -92,7 +83,7 @@ public abstract class AbstractCacheNamespaceHandler extends
 
         Object parser = parserClass.newInstance();
         registerCacheSetupStrategyParser("annotations",
-            (AbstractCacheSetupStrategyParser) parser);
+            (AbstractCacheSetupStrategyParser) parser, cacheModelParser);
 
       } catch (Exception exception) {
         String errorMessage = "Unable to create instance of "
@@ -108,23 +99,27 @@ public abstract class AbstractCacheNamespaceHandler extends
   }
 
   private void registerCacheSetupStrategyParser(String elementName,
-      AbstractCacheSetupStrategyParser parser) {
-    parser.setCacheModelParser(getCacheModelParser());
+      AbstractCacheSetupStrategyParser parser, CacheModelParser cacheModelParser) {
+    parser.setCacheModelParser(cacheModelParser);
     registerBeanDefinitionParser(elementName, parser);
   }
 
-  private void registerCommonsAttributesElementParser() {
+  private void registerCommonsAttributesElementParser(
+      CacheModelParser cacheModelParser) {
     CommonsAttributesParser parser = new CommonsAttributesParser();
-    registerCacheSetupStrategyParser("commons-attributes", parser);
+    registerCacheSetupStrategyParser("commons-attributes", parser,
+        cacheModelParser);
   }
 
-  private void registerInterceptorsElementParser() {
+  private void registerInterceptorsElementParser(
+      CacheModelParser cacheModelParser) {
     MethodMapInterceptorsParser parser = new MethodMapInterceptorsParser();
-    registerCacheSetupStrategyParser("methodMapInterceptors", parser);
+    registerCacheSetupStrategyParser("methodMapInterceptors", parser,
+        cacheModelParser);
   }
 
-  private void registerProxyElementParser() {
+  private void registerProxyElementParser(CacheModelParser cacheModelParser) {
     CacheProxyFactoryBeanParser parser = new CacheProxyFactoryBeanParser();
-    registerCacheSetupStrategyParser("proxy", parser);
+    registerCacheSetupStrategyParser("proxy", parser, cacheModelParser);
   }
 }

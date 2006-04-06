@@ -124,15 +124,13 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
     assertEqualsNullComparisonReturnsFalse(element);
   }
 
+  public void testIsAliveWithAliveElement() {
+    createAliveElement();
+    assertTrue(element.isAlive());
+  }
+
   public void testIsAliveWithExpiredElement() {
-    element = new Element("myKey", "myElement", 50);
-
-    try {
-      Thread.sleep(100);
-    } catch (InterruptedException exception) {
-      exception.printStackTrace();
-    }
-
+    createExpiredElement();
     assertFalse(element.isAlive());
   }
 
@@ -140,16 +138,18 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
     assertTrue(element.isAlive());
   }
 
-  public void testIsAliveWithNotExpiredElement() {
-    element = new Element("myKey", "myElement", Long.MAX_VALUE);
+  public void testIsExpiredWithAliveElement() {
+    createAliveElement();
+    assertFalse(element.isExpired());
+  }
 
-    try {
-      Thread.sleep(5);
-    } catch (InterruptedException exception) {
-      exception.printStackTrace();
-    }
+  public void testIsExpiredWithExpiredElement() {
+    createExpiredElement();
+    assertTrue(element.isExpired());
+  }
 
-    assertTrue(element.isAlive());
+  public void testIsExpiredWithNeverExpiringElement() {
+    assertFalse(element.isExpired());
   }
 
   protected void setUp() throws Exception {
@@ -157,10 +157,27 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
   }
 
   private void assertCloneIsCorrect(Element clone) {
-    assertNotNull("The cloned element should not be null", clone);
     assertTrue("The cloned element should be a copy of the original",
         clone != element);
     assertEquals(element, clone);
     assertEquals(element.getCreationTime(), clone.getCreationTime());
+  }
+
+  private void createAliveElement() {
+    element = new Element("myKey", "myElement", Long.MAX_VALUE);
+    try {
+      Thread.sleep(5);
+    } catch (InterruptedException exception) {
+      exception.printStackTrace();
+    }
+  }
+
+  private void createExpiredElement() {
+    element = new Element("myKey", "myElement", 50);
+    try {
+      Thread.sleep(100);
+    } catch (InterruptedException exception) {
+      exception.printStackTrace();
+    }
   }
 }
