@@ -102,7 +102,7 @@ public class Element implements Serializable, Cloneable {
   }
 
   /**
-   * @see java.lang.Object#clone()
+   * @see Object#clone()
    */
   public Object clone() {
     Element newElement = new Element(key, value, creationTime, timeToLive);
@@ -110,7 +110,7 @@ public class Element implements Serializable, Cloneable {
   }
 
   /**
-   * @see java.lang.Object#equals(java.lang.Object)
+   * @see Object#equals(Object)
    */
   public boolean equals(Object obj) {
     if (this == obj)
@@ -145,7 +145,7 @@ public class Element implements Serializable, Cloneable {
   }
 
   /**
-   * @see java.lang.Object#hashCode()
+   * @see Object#hashCode()
    */
   public int hashCode() {
     int prime = 31;
@@ -175,7 +175,7 @@ public class Element implements Serializable, Cloneable {
   }
 
   /**
-   * @see java.lang.Object#toString()
+   * @see Object#toString()
    */
   public String toString() {
     StringBuffer buffer = Objects.identityToString(this);
