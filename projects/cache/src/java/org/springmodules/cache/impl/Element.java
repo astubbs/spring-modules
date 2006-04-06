@@ -19,6 +19,7 @@ package org.springmodules.cache.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -47,16 +48,21 @@ public class Element implements Serializable, Cloneable {
 
   private static final long serialVersionUID = -935757449385127201L;
 
-  private long creationTime;
+  private final long creationTime;
 
   private final Serializable key;
 
-  private long timeToLive;
+  private final long timeToLive;
 
   private Serializable value;
 
   /**
-   * Constructor.
+   * Constructor. Entries created with this constructor never expire.
+   * 
+   * <p>
+   * The key and value stored in this element are copies of the ones passed as
+   * arguments.
+   * </p>
    * 
    * @param newKey
    *          the new key for this entry
@@ -70,6 +76,11 @@ public class Element implements Serializable, Cloneable {
   /**
    * Constructor.
    * 
+   * <p>
+   * The key and value stored in this element are copies of the ones passed as
+   * arguments.
+   * </p>
+   * 
    * @param newKey
    *          the new key for this entry
    * @param newValue
@@ -77,8 +88,7 @@ public class Element implements Serializable, Cloneable {
    * @param newTimeToLive
    *          the number of milliseconds until the cache entry will expire
    */
-  public Element(final Serializable newKey, Serializable newValue,
-      long newTimeToLive) {
+  public Element(Serializable newKey, Serializable newValue, long newTimeToLive) {
     super();
     key = copy(newKey);
     setValue(newValue);
@@ -90,9 +100,7 @@ public class Element implements Serializable, Cloneable {
    * @see java.lang.Object#clone()
    */
   public Object clone() {
-    Element newElement = new Element(key, value);
-    newElement.creationTime = creationTime;
-
+    Element newElement = new Element(key, value, timeToLive);
     return newElement;
   }
 
@@ -142,7 +150,7 @@ public class Element implements Serializable, Cloneable {
     return hash;
   }
 
-  public boolean isAlive() {
+  public final boolean isAlive() {
     if (timeToLive == EXPIRY_NEVER) {
       return true;
     }
@@ -151,6 +159,10 @@ public class Element implements Serializable, Cloneable {
     long delta = currentTime - creationTime;
 
     return delta < timeToLive;
+  }
+
+  public final boolean isExpired() {
+    return !isAlive();
   }
 
   public final void setValue(Serializable newValue) {
@@ -169,38 +181,45 @@ public class Element implements Serializable, Cloneable {
     return buffer.toString();
   }
 
+  private void close(Closeable closeable) {
+    if (closeable != null) {
+      try {
+        closeable.close();
+      } catch (Exception exception) {
+        logger.error("Unable to close " + closeable.getClass().getName(),
+            exception);
+      }
+    }
+  }
+
   private Serializable copy(Serializable oldValue) {
     Serializable newValue = null;
 
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ObjectOutputStream oos = null;
-    ObjectInputStream ois = null;
+    ByteArrayInputStream oldValueInputStream = null;
+    ByteArrayOutputStream oldValueOutputStream = new ByteArrayOutputStream();
+
+    ObjectInputStream newValueInputStream = null;
+    ObjectOutputStream newValueOutputStream = null;
 
     try {
-      oos = new ObjectOutputStream(baos);
-      oos.writeObject(oldValue);
+      newValueOutputStream = new ObjectOutputStream(oldValueOutputStream);
+      newValueOutputStream.writeObject(oldValue);
 
-      ByteArrayInputStream bin = new ByteArrayInputStream(baos.toByteArray());
+      byte[] oldValueAsByteArray = oldValueOutputStream.toByteArray();
+      oldValueInputStream = new ByteArrayInputStream(oldValueAsByteArray);
 
-      ois = new ObjectInputStream(bin);
-      newValue = (Serializable) ois.readObject();
+      newValueInputStream = new ObjectInputStream(oldValueInputStream);
+      newValue = (Serializable) newValueInputStream.readObject();
 
     } catch (Exception exception) {
-      logger.error("Error cloning element " + toString(), exception);
+      logger.error("Unable to copy value " + oldValue, exception);
 
     } finally {
-      try {
-        if (oos != null) {
-          oos.close();
-        }
-        if (ois != null) {
-          ois.close();
-        }
-      } catch (Exception exception) {
-        logger.error("Error closing input/output streams", exception);
-      }
+      close(newValueInputStream);
+      close(newValueOutputStream);
+      close(oldValueInputStream);
+      close(oldValueOutputStream);
     }
     return newValue;
   }
-
 }
