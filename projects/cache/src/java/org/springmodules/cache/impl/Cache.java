@@ -26,7 +26,7 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  */
-public interface Cache {
+public interface Cache extends Serializable {
 
   /**
    * Returns <code>true</code> if this cache contains a mapping for the

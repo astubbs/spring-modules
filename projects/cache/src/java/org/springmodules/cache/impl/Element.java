@@ -89,10 +89,15 @@ public class Element implements Serializable, Cloneable {
    *          the number of milliseconds until the cache entry will expire
    */
   public Element(Serializable newKey, Serializable newValue, long newTimeToLive) {
+    this(newKey, newValue, System.currentTimeMillis(), newTimeToLive);
+  }
+
+  private Element(Serializable newKey, Serializable newValue,
+      long newCreationTime, long newTimeToLive) {
     super();
     key = copy(newKey);
     setValue(newValue);
-    creationTime = System.currentTimeMillis();
+    creationTime = newCreationTime;
     timeToLive = newTimeToLive;
   }
 
@@ -100,7 +105,7 @@ public class Element implements Serializable, Cloneable {
    * @see java.lang.Object#clone()
    */
   public Object clone() {
-    Element newElement = new Element(key, value, timeToLive);
+    Element newElement = new Element(key, value, creationTime, timeToLive);
     return newElement;
   }
 
@@ -182,13 +187,15 @@ public class Element implements Serializable, Cloneable {
   }
 
   private void close(Closeable closeable) {
-    if (closeable != null) {
-      try {
-        closeable.close();
-      } catch (Exception exception) {
-        logger.error("Unable to close " + closeable.getClass().getName(),
-            exception);
-      }
+    if (closeable == null) {
+      return;
+    }
+
+    try {
+      closeable.close();
+    } catch (Exception exception) {
+      String clazz = closeable.getClass().getName();
+      logger.error("Unable to close " + clazz, exception);
     }
   }
 
