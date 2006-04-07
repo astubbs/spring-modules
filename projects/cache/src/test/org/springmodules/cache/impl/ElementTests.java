@@ -19,6 +19,8 @@ package org.springmodules.cache.impl;
 
 import java.io.Serializable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -29,6 +31,8 @@ import org.springmodules.AbstractEqualsHashCodeTestCase;
  * @author Alex Ruiz
  */
 public class ElementTests extends AbstractEqualsHashCodeTestCase {
+
+	private static Log logger = LogFactory.getLog(ElementTests.class);
 
 	private Element element;
 
@@ -88,8 +92,9 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
 	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
 	 */
 	public void testEqualsIsConsistent() {
-		Element element2 = new Element(element.getKey(), element.getValue());
-		assertEquals(element, element2);
+		logger.info("It is not necessary to test consistency of method 'equals.' "
+				+ "The state of a <" + Element.class.getName()
+				+ "> only depends on an inmutable value: the field 'key.'");
 	}
 
 	/**
