@@ -40,7 +40,7 @@ import org.springmodules.cache.serializable.XStreamSerializableFactory;
 public class CacheProviderFacadeParserTests extends
     AbstractSchemaBasedConfigurationTestCase {
 
-  private class ConfigElementBuilder implements XmlElementBuilder {
+  protected class ConfigElementBuilder implements XmlElementBuilder {
 
     boolean failQuietlyEnabled = false;
 

@@ -44,7 +44,7 @@ import org.springmodules.cache.provider.InvalidCacheModelException;
  */
 public class FlushingInterceptorTests extends TestCase {
 
-  private class MockFlushingInterceptor extends AbstractFlushingInterceptor {
+  protected class MockFlushingInterceptor extends AbstractFlushingInterceptor {
 
     FlushingModel model;
 

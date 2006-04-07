@@ -1,4 +1,4 @@
-s/* 
+/* 
  * Created on Oct 13, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -31,7 +31,7 @@ import org.springmodules.cache.mock.MockFlushingModel;
  */
 public class CacheModelValidatorTests extends TestCase {
 
-  private class CacheModelValidator extends AbstractCacheModelValidator {
+  protected class CacheModelValidator extends AbstractCacheModelValidator {
 
     boolean cachingModelPropertiesValidated;
 

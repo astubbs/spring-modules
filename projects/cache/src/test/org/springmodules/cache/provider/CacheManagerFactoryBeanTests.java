@@ -32,7 +32,7 @@ import org.springframework.core.io.ClassPathResource;
  */
 public class CacheManagerFactoryBeanTests extends TestCase {
 
-  private class MockCacheManagerFactoryBean extends
+  protected class MockCacheManagerFactoryBean extends
       AbstractCacheManagerFactoryBean {
 
     Object cacheManager;

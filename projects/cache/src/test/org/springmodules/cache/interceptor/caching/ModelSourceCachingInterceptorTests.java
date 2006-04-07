@@ -36,7 +36,7 @@ import org.springmodules.cache.mock.MockCachingModel;
  */
 public class ModelSourceCachingInterceptorTests extends TestCase {
 
-  private class ModelSourceCachingInterceptor extends
+  protected class ModelSourceCachingInterceptor extends
       AbstractModelSourceCachingInterceptor {
     // no extra implementation
   }

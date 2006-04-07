@@ -36,7 +36,7 @@ import org.springmodules.cache.mock.MockFlushingModel;
  */
 public class ModelSourceFlushingInterceptorTests extends TestCase {
 
-  private class ModelSourceFlushingInterceptor extends
+  protected class ModelSourceFlushingInterceptor extends
       AbstractModelSourceFlushingInterceptor {
     // no extra implementation
   }

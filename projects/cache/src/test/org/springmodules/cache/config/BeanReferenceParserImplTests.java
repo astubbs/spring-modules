@@ -43,7 +43,7 @@ import junit.framework.TestCase;
  */
 public class BeanReferenceParserImplTests extends TestCase {
 
-  private class BeanElementBuilder implements XmlElementBuilder {
+  protected class BeanElementBuilder implements XmlElementBuilder {
 
     String beanName = "";
 
@@ -56,7 +56,7 @@ public class BeanReferenceParserImplTests extends TestCase {
     }
   }
 
-  private class ReferenceElementBuilder implements XmlElementBuilder {
+  protected class ReferenceElementBuilder implements XmlElementBuilder {
 
     String refId = "";
 

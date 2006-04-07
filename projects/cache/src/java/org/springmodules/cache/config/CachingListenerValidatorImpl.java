@@ -61,7 +61,7 @@ public class CachingListenerValidatorImpl implements CachingListenerValidator {
     Class actualClass = ((AbstractBeanDefinition) beanDefinition)
         .getBeanClass();
 
-    if (beanDefinition == null || !expectedClass.isAssignableFrom(actualClass)) {
+    if (!expectedClass.isAssignableFrom(actualClass)) {
       throw new IllegalStateException("The caching listener [" + index
           + "] should be an instance of <" + expectedClass.getName() + ">");
     }

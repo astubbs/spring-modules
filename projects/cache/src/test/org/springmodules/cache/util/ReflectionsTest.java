@@ -35,7 +35,7 @@ import org.springmodules.util.Objects;
  */
 public class ReflectionsTest extends TestCase {
 
-  private static class TestBean {
+  protected static class TestBean {
 
     private static String field4;
 

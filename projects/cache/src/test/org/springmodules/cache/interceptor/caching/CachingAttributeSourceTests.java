@@ -33,7 +33,7 @@ import junit.framework.TestCase;
  */
 public class CachingAttributeSourceTests extends TestCase {
 
-  private class CachingAttributeSource extends AbstractCachingAttributeSource {
+  protected class CachingAttributeSource extends AbstractCachingAttributeSource {
     protected Collection findAllAttributes(Method newMethod) {
       return null;
     }

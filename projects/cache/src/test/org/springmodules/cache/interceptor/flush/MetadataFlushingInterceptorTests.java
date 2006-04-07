@@ -41,7 +41,7 @@ import org.springmodules.cache.mock.MockFlushingModel;
  */
 public final class MetadataFlushingInterceptorTests extends TestCase {
 
-  private class MockMetadataFlushingInterceptor extends
+  protected class MockMetadataFlushingInterceptor extends
       MetadataFlushingInterceptor {
     FlushCache flushingAttribute;
 

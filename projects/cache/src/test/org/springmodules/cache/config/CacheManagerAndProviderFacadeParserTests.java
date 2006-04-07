@@ -55,7 +55,7 @@ public class CacheManagerAndProviderFacadeParserTests extends TestCase {
     private static final String CACHE_PROVIDER_FACADE = "cacheProvider";
   }
 
-  private class ConfigElementBuilder implements XmlElementBuilder {
+  protected class ConfigElementBuilder implements XmlElementBuilder {
     String configLocation = "";
 
     public Element toXml() {

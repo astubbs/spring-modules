@@ -35,7 +35,7 @@ import org.springframework.beans.factory.support.RootBeanDefinition;
 public class CacheProxyFactoryBeanParserTests extends
     AbstractCacheSetupStrategyParserImplTestCase {
 
-  private class ProxyElementBuilder implements XmlElementBuilder {
+  protected class ProxyElementBuilder implements XmlElementBuilder {
     String id = "";
 
     String refId = "";

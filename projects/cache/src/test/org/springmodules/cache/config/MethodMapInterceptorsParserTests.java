@@ -32,7 +32,7 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 public class MethodMapInterceptorsParserTests extends
     AbstractCacheSetupStrategyParserImplTestCase {
 
-  private class InterceptorsConfigStruct {
+  protected class InterceptorsConfigStruct {
     String cachingInterceptorId = "";
 
     String flushingInterceptorId = "";

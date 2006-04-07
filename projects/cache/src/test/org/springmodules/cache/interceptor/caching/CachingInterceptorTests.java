@@ -49,7 +49,7 @@ import org.springmodules.cache.provider.InvalidCacheModelException;
  */
 public class CachingInterceptorTests extends TestCase {
 
-  private class MockCachingInterceptor extends AbstractCachingInterceptor {
+  protected class MockCachingInterceptor extends AbstractCachingInterceptor {
 
     CachingModel model;
 

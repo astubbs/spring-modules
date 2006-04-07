@@ -55,7 +55,7 @@ import org.springmodules.cache.provider.jcs.JcsFlushingModel.CacheStruct;
  */
 public final class JcsFacadeTests extends TestCase {
 
-  private class CacheElementMatcher extends AbstractMatcher {
+  protected class CacheElementMatcher extends AbstractMatcher {
     /**
      * @see AbstractMatcher#argumentMatches(Object, Object)
      */

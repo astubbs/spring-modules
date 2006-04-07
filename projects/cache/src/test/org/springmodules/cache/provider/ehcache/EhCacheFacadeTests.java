@@ -45,7 +45,7 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
  */
 public class EhCacheFacadeTests extends TestCase {
 
-  private class ElementMatcher extends AbstractMatcher {
+  protected class ElementMatcher extends AbstractMatcher {
     /**
      * @see AbstractMatcher#argumentMatches(Object, Object)
      */

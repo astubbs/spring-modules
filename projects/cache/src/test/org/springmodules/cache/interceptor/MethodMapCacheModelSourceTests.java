@@ -34,7 +34,7 @@ import org.springmodules.cache.mock.MockCachingModel;
  */
 public class MethodMapCacheModelSourceTests extends TestCase {
 
-  private class MethodMapCacheModelSource extends
+  protected class MethodMapCacheModelSource extends
       AbstractMethodMapCacheModelSource {
     // no extra implementation.
   }

@@ -77,7 +77,7 @@ public class ReflectionCacheModelEditorTests extends TestCase {
     }
   }
 
-  private class OnPropertyEditor extends PropertyEditorSupport {
+  protected class OnPropertyEditor extends PropertyEditorSupport {
     public void setAsText(String newText) throws IllegalArgumentException {
       if ("yes".equals(newText)) {
         setValue(Boolean.TRUE);
