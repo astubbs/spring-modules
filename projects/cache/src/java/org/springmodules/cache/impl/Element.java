@@ -42,191 +42,187 @@ import org.springmodules.util.Objects;
  */
 public class Element implements Serializable, Cloneable {
 
-  private static final long EXPIRY_NEVER = -1l;
+	private static final long EXPIRY_NEVER = -1l;
 
-  private static Log logger = LogFactory.getLog(Element.class);
+	private static Log logger = LogFactory.getLog(Element.class);
 
-  private static final long serialVersionUID = -935757449385127201L;
+	private static final long serialVersionUID = -935757449385127201L;
 
-  private final long creationTime;
+	private final long creationTime;
 
-  private final Serializable key;
+	private final Serializable key;
 
-  private final long timeToLive;
+	private final long timeToLive;
 
-  private Serializable value;
+	private Serializable value;
 
-  /**
-   * Constructor. Entries created with this constructor never expire.
-   * 
-   * <p>
-   * The key and value stored in this element are copies of the ones passed as
-   * arguments.
-   * </p>
-   * 
-   * @param newKey
-   *          the new key for this entry
-   * @param newValue
-   *          the new value for this entry
-   */
-  public Element(Serializable newKey, Serializable newValue) {
-    this(newKey, newValue, EXPIRY_NEVER);
-  }
+	/**
+	 * Constructor. Entries created with this constructor never expire.
+	 * 
+	 * <p>
+	 * The key and value stored in this element are copies of the ones passed as
+	 * arguments.
+	 * </p>
+	 * 
+	 * @param newKey
+	 *          the new key for this entry
+	 * @param newValue
+	 *          the new value for this entry
+	 */
+	public Element(Serializable newKey, Serializable newValue) {
+		this(newKey, newValue, EXPIRY_NEVER);
+	}
 
-  /**
-   * Constructor.
-   * 
-   * <p>
-   * The key and value stored in this element are copies of the ones passed as
-   * arguments.
-   * </p>
-   * 
-   * @param newKey
-   *          the new key for this entry
-   * @param newValue
-   *          the new value for this entry
-   * @param newTimeToLive
-   *          the number of milliseconds until the cache entry will expire
-   */
-  public Element(Serializable newKey, Serializable newValue, long newTimeToLive) {
-    this(newKey, newValue, System.currentTimeMillis(), newTimeToLive);
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * <p>
+	 * The key and value stored in this element are copies of the ones passed as
+	 * arguments.
+	 * </p>
+	 * 
+	 * @param newKey
+	 *          the new key for this entry
+	 * @param newValue
+	 *          the new value for this entry
+	 * @param newTimeToLive
+	 *          the number of milliseconds until the cache entry will expire
+	 */
+	public Element(Serializable newKey, Serializable newValue, long newTimeToLive) {
+		this(newKey, newValue, System.currentTimeMillis(), newTimeToLive);
+	}
 
-  private Element(Serializable newKey, Serializable newValue,
-      long newCreationTime, long newTimeToLive) {
-    super();
-    key = copy(newKey);
-    setValue(newValue);
-    creationTime = newCreationTime;
-    timeToLive = newTimeToLive;
-  }
+	private Element(Serializable newKey, Serializable newValue,
+			long newCreationTime, long newTimeToLive) {
+		super();
+		key = copy(newKey);
+		setValue(newValue);
+		creationTime = newCreationTime;
+		timeToLive = newTimeToLive;
+	}
 
-  /**
-   * @see Object#clone()
-   */
-  public Object clone() {
-    Element newElement = new Element(key, value, creationTime, timeToLive);
-    return newElement;
-  }
+	/**
+	 * @see Object#clone()
+	 */
+	public Object clone() {
+		Element newElement = new Element(key, value, creationTime, timeToLive);
+		return newElement;
+	}
 
-  /**
-   * @see Object#equals(Object)
-   */
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (!(obj instanceof Element)) {
-      return false;
-    }
-    Element other = (Element) obj;
-    if (!ObjectUtils.nullSafeEquals(key, other.key)) {
-      return false;
-    }
-    if (!ObjectUtils.nullSafeEquals(value, other.value)) {
-      return false;
-    }
-    return true;
-  }
+	/**
+	 * @see Object#equals(Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof Element)) {
+			return false;
+		}
+		Element other = (Element) obj;
+		if (!ObjectUtils.nullSafeEquals(key, other.key)) {
+			return false;
+		}
+		return true;
+	}
 
-  public final long getCreationTime() {
-    return creationTime;
-  }
+	public final long getCreationTime() {
+		return creationTime;
+	}
 
-  public final Serializable getKey() {
-    return key;
-  }
+	public final Serializable getKey() {
+		return key;
+	}
 
-  public final long getTimeToLive() {
-    return timeToLive;
-  }
+	public final long getTimeToLive() {
+		return timeToLive;
+	}
 
-  public final Serializable getValue() {
-    return value;
-  }
+	public final Serializable getValue() {
+		return value;
+	}
 
-  /**
-   * @see Object#hashCode()
-   */
-  public int hashCode() {
-    int prime = 31;
-    int hash = 17;
-    hash = prime * hash + Objects.nullSafeHashCode(key);
-    hash = prime * hash + Objects.nullSafeHashCode(value);
-    return hash;
-  }
+	/**
+	 * @see Object#hashCode()
+	 */
+	public int hashCode() {
+		int prime = 31;
+		int hash = 17;
+		hash = prime * hash + Objects.nullSafeHashCode(key);
+		return hash;
+	}
 
-  public final boolean isAlive() {
-    if (timeToLive == EXPIRY_NEVER) {
-      return true;
-    }
+	public final boolean isAlive() {
+		if (timeToLive == EXPIRY_NEVER) {
+			return true;
+		}
 
-    long currentTime = System.currentTimeMillis();
-    long delta = currentTime - creationTime;
+		long currentTime = System.currentTimeMillis();
+		long delta = currentTime - creationTime;
 
-    return delta < timeToLive;
-  }
+		return delta < timeToLive;
+	}
 
-  public final boolean isExpired() {
-    return !isAlive();
-  }
+	public final boolean isExpired() {
+		return !isAlive();
+	}
 
-  public final void setValue(Serializable newValue) {
-    value = copy(newValue);
-  }
+	public final void setValue(Serializable newValue) {
+		value = copy(newValue);
+	}
 
-  /**
-   * @see Object#toString()
-   */
-  public String toString() {
-    StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[key=" + StringUtils.quoteIfString(key) + ", ");
-    buffer.append("value=" + StringUtils.quoteIfString(value) + ", ");
-    buffer.append("creationTime=" + new Date(creationTime) + ", ");
-    buffer.append("timeToLive=" + timeToLive + "]");
-    return buffer.toString();
-  }
+	/**
+	 * @see Object#toString()
+	 */
+	public String toString() {
+		StringBuffer buffer = Objects.identityToString(this);
+		buffer.append("[key=" + StringUtils.quoteIfString(key) + ", ");
+		buffer.append("value=" + StringUtils.quoteIfString(value) + ", ");
+		buffer.append("creationTime=" + new Date(creationTime) + ", ");
+		buffer.append("timeToLive=" + timeToLive + "]");
+		return buffer.toString();
+	}
 
-  private void close(Closeable closeable) {
-    if (closeable == null) {
-      return;
-    }
+	private void close(Closeable closeable) {
+		if (closeable == null) {
+			return;
+		}
 
-    try {
-      closeable.close();
-    } catch (Exception exception) {
-      String clazz = closeable.getClass().getName();
-      logger.error("Unable to close " + clazz, exception);
-    }
-  }
+		try {
+			closeable.close();
+		} catch (Exception exception) {
+			String clazz = closeable.getClass().getName();
+			logger.error("Unable to close " + clazz, exception);
+		}
+	}
 
-  private Serializable copy(Serializable oldValue) {
-    Serializable newValue = null;
+	private Serializable copy(Serializable oldValue) {
+		Serializable newValue = null;
 
-    ByteArrayInputStream oldValueInputStream = null;
-    ByteArrayOutputStream oldValueOutputStream = new ByteArrayOutputStream();
+		ByteArrayInputStream oldValueInputStream = null;
+		ByteArrayOutputStream oldValueOutputStream = new ByteArrayOutputStream();
 
-    ObjectInputStream newValueInputStream = null;
-    ObjectOutputStream newValueOutputStream = null;
+		ObjectInputStream newValueInputStream = null;
+		ObjectOutputStream newValueOutputStream = null;
 
-    try {
-      newValueOutputStream = new ObjectOutputStream(oldValueOutputStream);
-      newValueOutputStream.writeObject(oldValue);
+		try {
+			newValueOutputStream = new ObjectOutputStream(oldValueOutputStream);
+			newValueOutputStream.writeObject(oldValue);
 
-      byte[] oldValueAsByteArray = oldValueOutputStream.toByteArray();
-      oldValueInputStream = new ByteArrayInputStream(oldValueAsByteArray);
+			byte[] oldValueAsByteArray = oldValueOutputStream.toByteArray();
+			oldValueInputStream = new ByteArrayInputStream(oldValueAsByteArray);
 
-      newValueInputStream = new ObjectInputStream(oldValueInputStream);
-      newValue = (Serializable) newValueInputStream.readObject();
+			newValueInputStream = new ObjectInputStream(oldValueInputStream);
+			newValue = (Serializable) newValueInputStream.readObject();
 
-    } catch (Exception exception) {
-      logger.error("Unable to copy value " + oldValue, exception);
+		} catch (Exception exception) {
+			logger.error("Unable to copy value " + oldValue, exception);
 
-    } finally {
-      close(newValueInputStream);
-      close(newValueOutputStream);
-      close(oldValueInputStream);
-      close(oldValueOutputStream);
-    }
-    return newValue;
-  }
+		} finally {
+			close(newValueInputStream);
+			close(newValueOutputStream);
+			close(oldValueInputStream);
+			close(oldValueOutputStream);
+		}
+		return newValue;
+	}
 }

@@ -17,6 +17,8 @@
  */
 package org.springmodules.cache.impl;
 
+import java.io.Serializable;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -28,156 +30,163 @@ import org.springmodules.AbstractEqualsHashCodeTestCase;
  */
 public class ElementTests extends AbstractEqualsHashCodeTestCase {
 
-  private Element element;
+	private Element element;
 
-  /**
-   * Constructor.
-   * 
-   * @param name
-   *          the name of the test case
-   */
-  public ElementTests(String name) {
-    super(name);
-  }
+	/**
+	 * Constructor.
+	 * 
+	 * @param name
+	 *          the name of the test case
+	 */
+	public ElementTests(String name) {
+		super(name);
+	}
 
-  public void testClone() {
-    Element clone = (Element) element.clone();
-    assertCloneIsCorrect(clone);
-  }
+	public void testClone() {
+		Element clone = (Element) element.clone();
+		assertCloneIsCorrect(element, clone);
+	}
 
-  public void testCloneWithElementHavingValueEqualToNull() {
-    element.setValue(null);
-    Element clone = (Element) element.clone();
-    assertCloneIsCorrect(clone);
-  }
+	public void testCloneWithElementHavingValueEqualToNull() {
+		element.setValue(null);
+		Element clone = (Element) element.clone();
+		assertCloneIsCorrect(element, clone);
+	}
 
-  public void testConstructorCreatesCopyOfKeyAndValueAndInitializesCreationTime() {
-    String key = "myKey";
-    String value = "myValue";
-    long currentTime = System.currentTimeMillis();
+	public void testConstructorCreatesCopyOfKeyAndValueAndInitializesCreationTime() {
+		String key = "myKey";
+		String value = "myValue";
+		long currentTime = System.currentTimeMillis();
 
-    element = new Element(key, value);
-    assertEquals("<key>", key, element.getKey());
-    assertEquals("<value>", value, element.getValue());
+		element = new Element(key, value);
+		assertEquals("<key>", key, element.getKey());
+		assertEquals("<value>", value, element.getValue());
 
-    assertTrue("the key should be a copy of the original key", key != element
-        .getKey());
-    assertTrue("the value should be a copy of the original value",
-        value != element.getValue());
+		assertTrue("the key should be a copy of the original key", key != element
+				.getKey());
+		assertTrue("the value should be a copy of the original value",
+				value != element.getValue());
 
-    assertTrue("the creation time has not been set",
-        element.getCreationTime() >= currentTime);
-  }
+		assertTrue("the creation time has not been set",
+				element.getCreationTime() >= currentTime);
+	}
 
-  /**
-   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
-   */
-  public void testEqualsHashCodeRelationship() {
-    Element element2 = new Element(element.getKey(), element.getValue());
-    assertEqualsHashCodeRelationshipIsCorrect(element, element2);
+	/**
+	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+	 */
+	public void testEqualsHashCodeRelationship() {
+		Element element2 = new Element(element.getKey(), element.getValue());
+		assertEqualsHashCodeRelationshipIsCorrect(element, element2);
 
-    String newValue = "newValue";
-    element.setValue(newValue);
-    element2.setValue(newValue);
-    assertEqualsHashCodeRelationshipIsCorrect(element, element2);
-  }
+		String newValue = "newValue";
+		element.setValue(newValue);
+		element2.setValue(newValue);
+		assertEqualsHashCodeRelationshipIsCorrect(element, element2);
+	}
 
-  /**
-   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
-   */
-  public void testEqualsIsConsistent() {
-    Element element2 = new Element(element.getKey(), element.getValue());
-    assertEquals(element, element2);
+	/**
+	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
+	 */
+	public void testEqualsIsConsistent() {
+		Element element2 = new Element(element.getKey(), element.getValue());
+		assertEquals(element, element2);
+	}
 
-    element2.setValue("myOwnValue");
-    assertFalse(element.equals(element2));
-  }
+	/**
+	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
+	 */
+	public void testEqualsIsReflexive() {
+		assertEqualsIsReflexive(element);
+	}
 
-  /**
-   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
-   */
-  public void testEqualsIsReflexive() {
-    assertEqualsIsReflexive(element);
-  }
+	/**
+	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
+	 */
+	public void testEqualsIsSymmetric() {
+		Element element2 = new Element(element.getKey(), element.getValue());
+		assertEqualsIsSymmetric(element, element2);
+	}
 
-  /**
-   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
-   */
-  public void testEqualsIsSymmetric() {
-    Element element2 = new Element(element.getKey(), element.getValue());
-    assertEqualsIsSymmetric(element, element2);
-  }
+	/**
+	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
+	 */
+	public void testEqualsIsTransitive() {
+		Element element2 = new Element(element.getKey(), element.getValue());
+		Element element3 = new Element(element.getKey(), element.getValue());
+		assertEqualsIsTransitive(element, element2, element3);
+	}
 
-  /**
-   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
-   */
-  public void testEqualsIsTransitive() {
-    Element element2 = new Element(element.getKey(), element.getValue());
-    Element element3 = new Element(element.getKey(), element.getValue());
-    assertEqualsIsTransitive(element, element2, element3);
-  }
+	/**
+	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
+	 */
+	public void testEqualsNullComparison() {
+		assertEqualsNullComparisonReturnsFalse(element);
+	}
 
-  /**
-   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
-   */
-  public void testEqualsNullComparison() {
-    assertEqualsNullComparisonReturnsFalse(element);
-  }
+	public void testIsAliveWithAliveElement() {
+		createAliveElement();
+		assertTrue(element.isAlive());
+	}
 
-  public void testIsAliveWithAliveElement() {
-    createAliveElement();
-    assertTrue(element.isAlive());
-  }
+	public void testIsAliveWithExpiredElement() {
+		createExpiredElement();
+		assertFalse(element.isAlive());
+	}
 
-  public void testIsAliveWithExpiredElement() {
-    createExpiredElement();
-    assertFalse(element.isAlive());
-  }
+	public void testIsAliveWithNeverExpiringElement() {
+		assertTrue(element.isAlive());
+	}
 
-  public void testIsAliveWithNeverExpiringElement() {
-    assertTrue(element.isAlive());
-  }
+	public void testIsExpiredWithAliveElement() {
+		createAliveElement();
+		assertFalse(element.isExpired());
+	}
 
-  public void testIsExpiredWithAliveElement() {
-    createAliveElement();
-    assertFalse(element.isExpired());
-  }
+	public void testIsExpiredWithExpiredElement() {
+		createExpiredElement();
+		assertTrue(element.isExpired());
+	}
 
-  public void testIsExpiredWithExpiredElement() {
-    createExpiredElement();
-    assertTrue(element.isExpired());
-  }
+	public void testIsExpiredWithNeverExpiringElement() {
+		assertFalse(element.isExpired());
+	}
 
-  public void testIsExpiredWithNeverExpiringElement() {
-    assertFalse(element.isExpired());
-  }
+	protected void setUp() throws Exception {
+		element = new Element("key", "value");
+	}
 
-  protected void setUp() throws Exception {
-    element = new Element("key", "value");
-  }
+	private void assertCloneIsCorrect(Element original, Element clone) {
+		Serializable originalKey = original.getKey();
+		Serializable originalValue = original.getValue();
+		Serializable clonedKey = clone.getKey();
+		Serializable clonedValue = clone.getValue();
 
-  private void assertCloneIsCorrect(Element clone) {
-    assertTrue("The cloned element should be a copy of the original",
-        clone != element);
-    assertEquals(element, clone);
-    assertEquals(element.getCreationTime(), clone.getCreationTime());
-  }
+		assertEquals(originalKey, clonedKey);
+		assertEquals(originalValue, clonedValue);
+		assertEquals(original.getCreationTime(), clone.getCreationTime());
 
-  private void createAliveElement() {
-    element = new Element("myKey", "myElement", Long.MAX_VALUE);
-    try {
-      Thread.sleep(5);
-    } catch (InterruptedException exception) {
-      exception.printStackTrace();
-    }
-  }
+		boolean sameKeys = originalKey == clonedKey && originalKey != null;
+		assertFalse("Keys should not be same", sameKeys);
 
-  private void createExpiredElement() {
-    element = new Element("myKey", "myElement", 50);
-    try {
-      Thread.sleep(100);
-    } catch (InterruptedException exception) {
-      exception.printStackTrace();
-    }
-  }
+		boolean sameValues = originalValue == clonedValue && originalValue != null;
+		assertFalse("Values should not be same", sameValues);
+	}
+
+	private void createAliveElement() {
+		element = new Element("myKey", "myElement", Long.MAX_VALUE);
+		try {
+			Thread.sleep(5);
+		} catch (InterruptedException exception) {
+			exception.printStackTrace();
+		}
+	}
+
+	private void createExpiredElement() {
+		element = new Element("myKey", "myElement", 50);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException exception) {
+			exception.printStackTrace();
+		}
+	}
 }
