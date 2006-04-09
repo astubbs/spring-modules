@@ -21,6 +21,7 @@ import java.io.Serializable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springmodules.AbstractEqualsHashCodeTestCase;
 
 /**
@@ -31,6 +32,10 @@ import org.springmodules.AbstractEqualsHashCodeTestCase;
  * @author Alex Ruiz
  */
 public class ElementTests extends AbstractEqualsHashCodeTestCase {
+
+	private static final String ELEMENT_KEY = "myKey";
+
+	private static final String ELEMENT_VALUE = "myValue";
 
 	private static Log logger = LogFactory.getLog(ElementTests.class);
 
@@ -58,21 +63,45 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
 	}
 
 	public void testConstructorCreatesCopyOfKeyAndValueAndInitializesCreationTime() {
-		String key = "myKey";
-		String value = "myValue";
+		String key = ELEMENT_KEY;
+		String value = ELEMENT_VALUE;
 		long currentTime = System.currentTimeMillis();
 
 		element = new Element(key, value);
-		assertEquals("<key>", key, element.getKey());
-		assertEquals("<value>", value, element.getValue());
+		Serializable copiedKey = element.getKey();
+		Serializable copiedValue = element.getValue();
 
-		assertTrue("the key should be a copy of the original key", key != element
-				.getKey());
-		assertTrue("the value should be a copy of the original value",
-				value != element.getValue());
+		assertEquals("<key>", key, copiedKey);
+		assertEquals("<value>", value, copiedValue);
+
+		assertTrue("the key should be a copy of the original, not the same",
+				key != copiedKey);
+		assertTrue("the value should be a copy of the original, not the same",
+				value != copiedValue);
 
 		assertTrue("the creation time has not been set",
 				element.getCreationTime() >= currentTime);
+	}
+
+	public void testConstructorWithNegativeTimeToLiveNotEqualToExpiryNever() {
+		assertDefaultTimeToLiveIsSet(-3l);
+	}
+
+	public void testConstructorWithTimeToLiveEqualToExpiryNever() {
+		long expiryNever = -1l;
+		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, expiryNever);
+		assertEquals("time to live should be equal to 'EXPIRY_NEVER'", expiryNever,
+				element.getTimeToLive());
+	}
+
+	public void testConstructorWithTimeToLiveEqualToZero() {
+		assertDefaultTimeToLiveIsSet(0l);
+	}
+
+	public void testConstructorWithTimeToPositiveLive() {
+		long timeToLive = 45000l;
+		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, timeToLive);
+		assertEquals("<time to live>", timeToLive, element.getTimeToLive());
 	}
 
 	/**
@@ -80,11 +109,6 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
 	 */
 	public void testEqualsHashCodeRelationship() {
 		Element element2 = new Element(element.getKey(), element.getValue());
-		assertEqualsHashCodeRelationshipIsCorrect(element, element2);
-
-		String newValue = "newValue";
-		element.setValue(newValue);
-		element2.setValue(newValue);
 		assertEqualsHashCodeRelationshipIsCorrect(element, element2);
 	}
 
@@ -157,7 +181,7 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
 	}
 
 	protected void setUp() throws Exception {
-		element = new Element("key", "value");
+		element = new Element(ELEMENT_KEY, ELEMENT_VALUE);
 	}
 
 	private void assertCloneIsCorrect(Element original, Element clone) {
@@ -171,14 +195,19 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
 		assertEquals(original.getCreationTime(), clone.getCreationTime());
 
 		boolean sameKeys = originalKey == clonedKey && originalKey != null;
-		assertFalse("Keys should not be same", sameKeys);
+		assertFalse("keys should not be same", sameKeys);
 
 		boolean sameValues = originalValue == clonedValue && originalValue != null;
-		assertFalse("Values should not be same", sameValues);
+		assertFalse("values should not be same", sameValues);
+	}
+
+	private void assertDefaultTimeToLiveIsSet(long specifiedTimeToLive) {
+		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, specifiedTimeToLive);
+		assertEquals("<timeToLive>", 120000l, element.getTimeToLive());
 	}
 
 	private void createAliveElement() {
-		element = new Element("myKey", "myElement", Long.MAX_VALUE);
+		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, Long.MAX_VALUE);
 		try {
 			Thread.sleep(5);
 		} catch (InterruptedException exception) {
@@ -187,7 +216,7 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
 	}
 
 	private void createExpiredElement() {
-		element = new Element("myKey", "myElement", 50);
+		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, 50);
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException exception) {

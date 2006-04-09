@@ -28,14 +28,14 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springmodules.util.Objects;
+
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import org.springmodules.util.Objects;
-
 /**
  * <p>
- * A cache element.
+ * A cache element that stores <em>copies</em> of the given key and value.
  * </p>
  * 
  * @author Alex Ruiz
@@ -43,6 +43,8 @@ import org.springmodules.util.Objects;
 public class Element implements Serializable, Cloneable {
 
 	private static final long EXPIRY_NEVER = -1l;
+
+	private static final long DEFAULT_TIME_TO_LIVE_MS = 120000;
 
 	private static Log logger = LogFactory.getLog(Element.class);
 
@@ -98,7 +100,10 @@ public class Element implements Serializable, Cloneable {
 		key = copy(newKey);
 		setValue(newValue);
 		creationTime = newCreationTime;
-		timeToLive = newTimeToLive;
+
+		boolean invalidTimeToLive = newTimeToLive <= 0
+				&& newTimeToLive != EXPIRY_NEVER;
+		timeToLive = invalidTimeToLive ? DEFAULT_TIME_TO_LIVE_MS : newTimeToLive;
 	}
 
 	/**
@@ -125,18 +130,30 @@ public class Element implements Serializable, Cloneable {
 		return true;
 	}
 
+	/**
+	 * @return the creation time (in milliseconds) of this cache element
+	 */
 	public final long getCreationTime() {
 		return creationTime;
 	}
 
+	/**
+	 * @return the key of this cache element
+	 */
 	public final Serializable getKey() {
 		return key;
 	}
 
+	/**
+	 * @return the number of milliseconds until the cache entry will expire
+	 */
 	public final long getTimeToLive() {
 		return timeToLive;
 	}
 
+	/**
+	 * @return the value of this cache element
+	 */
 	public final Serializable getValue() {
 		return value;
 	}
@@ -151,6 +168,11 @@ public class Element implements Serializable, Cloneable {
 		return hash;
 	}
 
+	/**
+	 * @return <code>true</code> if this cache element has not expired yet. This
+	 *         method always returns <code>true</code> for eternal entries.
+	 * @see #Element(Serializable, Serializable)
+	 */
 	public final boolean isAlive() {
 		if (timeToLive == EXPIRY_NEVER) {
 			return true;
@@ -162,10 +184,20 @@ public class Element implements Serializable, Cloneable {
 		return delta < timeToLive;
 	}
 
+	/**
+	 * @return <code>true</code> if this cache element has expired
+	 * @see #isAlive()
+	 */
 	public final boolean isExpired() {
 		return !isAlive();
 	}
 
+	/**
+	 * Sets the value for this cache element.
+	 * 
+	 * @param newValue
+	 *          the new value for this cache element
+	 */
 	public final void setValue(Serializable newValue) {
 		value = copy(newValue);
 	}
