@@ -125,7 +125,7 @@ public class XStreamSerializableFactoryTests extends
     Object actual = serializableFactory.makeSerializableIfNecessary(puppy);
 
     assertEquals(expected, actual);
-    SerializationAssert.assertObjectIsSerializable(actual);
+    SerializationAssert.assertIsSerializable(actual);
   }
 
   public void testMakeSerializableIfNecessaryWithSerializableArgument() {

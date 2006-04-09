@@ -19,8 +19,12 @@ package org.springmodules.cache.serializable;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+import org.springmodules.AssertExt;
 
 import junit.framework.Assert;
 
@@ -33,21 +37,50 @@ import junit.framework.Assert;
  */
 public class SerializationAssert {
 
-  public static void assertObjectIsSerializable(Object obj) throws Exception {
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    ObjectOutputStream objectOutputStream = new ObjectOutputStream(
-        byteArrayOutputStream);
-    objectOutputStream.writeObject(obj);
-    objectOutputStream.close();
-    byte[] serialized = byteArrayOutputStream.toByteArray();
+  public static void assertIsSerializable(Object obj) throws Exception {
+    AssertExt.assertInstanceOf(Serializable.class, obj);
+    Object copy = copy((Serializable) obj);
+    Assert.assertEquals(obj, copy);
+  }
 
-    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-        serialized);
-    ObjectInputStream objectInputStream = new ObjectInputStream(
-        byteArrayInputStream);
-    Object deserialized = objectInputStream.readObject();
+  private static void close(Closeable closeable) {
+    if (closeable == null) {
+      return;
+    }
 
-    Assert.assertEquals(obj, deserialized);
+    try {
+      closeable.close();
+    } catch (Exception exception) {
+      exception.printStackTrace();
+    }
+  }
+
+  private static Serializable copy(Serializable oldValue) throws Exception {
+    Serializable newValue = null;
+
+    ByteArrayInputStream oldValueInputStream = null;
+    ByteArrayOutputStream oldValueOutputStream = new ByteArrayOutputStream();
+
+    ObjectInputStream newValueInputStream = null;
+    ObjectOutputStream newValueOutputStream = null;
+
+    try {
+      newValueOutputStream = new ObjectOutputStream(oldValueOutputStream);
+      newValueOutputStream.writeObject(oldValue);
+
+      byte[] oldValueAsByteArray = oldValueOutputStream.toByteArray();
+      oldValueInputStream = new ByteArrayInputStream(oldValueAsByteArray);
+
+      newValueInputStream = new ObjectInputStream(oldValueInputStream);
+      newValue = (Serializable) newValueInputStream.readObject();
+
+    } finally {
+      close(newValueInputStream);
+      close(newValueOutputStream);
+      close(oldValueInputStream);
+      close(oldValueOutputStream);
+    }
+    return newValue;
   }
 
 }

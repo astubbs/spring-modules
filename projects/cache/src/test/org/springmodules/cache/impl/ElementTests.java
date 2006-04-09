@@ -182,7 +182,7 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
   }
 
   public void testSerialization() throws Exception {
-    SerializationAssert.assertObjectIsSerializable(element);
+    SerializationAssert.assertIsSerializable(element);
   }
 
   protected void setUp() throws Exception {
