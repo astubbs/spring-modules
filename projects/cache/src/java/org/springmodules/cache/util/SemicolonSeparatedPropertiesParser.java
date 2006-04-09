@@ -36,74 +36,74 @@ import org.springmodules.cache.regex.Regex;
  */
 public abstract class SemicolonSeparatedPropertiesParser {
 
-	/**
-	 * Compiled representation of the regular expression pattern used to parse a
-	 * String of form "key=value".
-	 */
-	private static final Regex KEY_VALUE_REGEX = new Perl5Regex(
-			"([\\w]+)=([\\w /,\\*]+)");
+  /**
+   * Compiled representation of the regular expression pattern used to parse a
+   * String of form "key=value".
+   */
+  private static final Regex KEY_VALUE_REGEX = new Perl5Regex(
+      "([\\w]+)=([\\w /,\\*]+)");
 
-	private static final String PROPERTY_DELIMITER = ";";
+  private static final String PROPERTY_DELIMITER = ";";
 
-	/**
-	 * Creates a <code>java.util.Properties</code> from the specified String.
-	 * 
-	 * @param text
-	 *          the String to parse.
-	 * @throws IllegalArgumentException
-	 *           if the specified property does not match the regular expression
-	 *           pattern defined in <code>KEY_VALUE_REGEX</code>.
-	 * @throws IllegalArgumentException
-	 *           if the set of properties already contains the property specified
-	 *           by the given String.
-	 * @return a new instance of <code>java.util.Properties</code> created from
-	 *         the given text.
-	 */
-	public static Properties parseProperties(String text)
-			throws IllegalArgumentException {
-		String newText = text;
+  /**
+   * Creates a <code>java.util.Properties</code> from the specified String.
+   * 
+   * @param text
+   *          the String to parse.
+   * @throws IllegalArgumentException
+   *           if the specified property does not match the regular expression
+   *           pattern defined in <code>KEY_VALUE_REGEX</code>.
+   * @throws IllegalArgumentException
+   *           if the set of properties already contains the property specified
+   *           by the given String.
+   * @return a new instance of <code>java.util.Properties</code> created from
+   *         the given text.
+   */
+  public static Properties parseProperties(String text)
+      throws IllegalArgumentException {
+    String newText = text;
 
-		if (!StringUtils.hasText(newText)) {
-			return null;
-		}
+    if (!StringUtils.hasText(newText)) {
+      return null;
+    }
 
-		if (newText.endsWith(PROPERTY_DELIMITER)) {
-			// remove ';' at the end of the text (if applicable)
-			newText = newText.substring(0, newText.length()
-					- PROPERTY_DELIMITER.length());
+    if (newText.endsWith(PROPERTY_DELIMITER)) {
+      // remove ';' at the end of the text (if applicable)
+      newText = newText.substring(0, newText.length()
+          - PROPERTY_DELIMITER.length());
 
-			if (!StringUtils.hasText(newText)) {
-				return null;
-			}
-		}
+      if (!StringUtils.hasText(newText)) {
+        return null;
+      }
+    }
 
-		Properties properties = new Properties();
-		String[] propertiesAsText = StringUtils.delimitedListToStringArray(newText,
-				PROPERTY_DELIMITER);
+    Properties properties = new Properties();
+    String[] propertiesAsText = StringUtils.delimitedListToStringArray(newText,
+        PROPERTY_DELIMITER);
 
-		int propertyCount = propertiesAsText.length;
-		for (int i = 0; i < propertyCount; i++) {
-			String property = propertiesAsText[i];
-			Match match = KEY_VALUE_REGEX.match(property);
+    int propertyCount = propertiesAsText.length;
+    for (int i = 0; i < propertyCount; i++) {
+      String property = propertiesAsText[i];
+      Match match = KEY_VALUE_REGEX.match(property);
 
-			if (!match.isSuccessful()) {
-				String message = "The String " + StringUtils.quote(property)
-						+ " should match the regular expression pattern "
-						+ StringUtils.quote(KEY_VALUE_REGEX.getPattern());
-				throw new IllegalArgumentException(message);
-			}
+      if (!match.isSuccessful()) {
+        String message = "The String " + StringUtils.quote(property)
+            + " should match the regular expression pattern "
+            + StringUtils.quote(KEY_VALUE_REGEX.getPattern());
+        throw new IllegalArgumentException(message);
+      }
 
-			String[] groups = match.getGroups();
-			String key = groups[1].trim();
-			String value = groups[2].trim();
+      String[] groups = match.getGroups();
+      String key = groups[1].trim();
+      String value = groups[2].trim();
 
-			if (properties.containsKey(key)) {
-				throw new IllegalArgumentException("The property "
-						+ StringUtils.quote(key) + " is specified more than once");
-			}
-			properties.setProperty(key, value);
-		}
-		return properties;
-	}
+      if (properties.containsKey(key)) {
+        throw new IllegalArgumentException("The property "
+            + StringUtils.quote(key) + " is specified more than once");
+      }
+      properties.setProperty(key, value);
+    }
+    return properties;
+  }
 
 }

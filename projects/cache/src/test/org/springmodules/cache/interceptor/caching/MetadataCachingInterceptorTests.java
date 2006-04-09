@@ -41,123 +41,123 @@ import org.springmodules.cache.mock.MockCachingModel;
  */
 public final class MetadataCachingInterceptorTests extends TestCase {
 
-	protected class MockMetadataCachingInterceptor extends
-			MetadataCachingInterceptor {
-		Cached cachingAttribute;
+  protected class MockMetadataCachingInterceptor extends
+      MetadataCachingInterceptor {
+    Cached cachingAttribute;
 
-		protected Cached getCachingAttribute(MethodInvocation methodInvocation) {
-			return cachingAttribute;
-		}
-	}
+    protected Cached getCachingAttribute(MethodInvocation methodInvocation) {
+      return cachingAttribute;
+    }
+  }
 
-	private MetadataCachingInterceptor interceptor;
+  private MetadataCachingInterceptor interceptor;
 
-	private MethodInvocation invocation;
+  private MethodInvocation invocation;
 
-	private MockControl invocationControl;
+  private MockControl invocationControl;
 
-	private CachingAttributeSource source;
+  private CachingAttributeSource source;
 
-	private MockControl sourceControl;
+  private MockControl sourceControl;
 
-	public MetadataCachingInterceptorTests(String name) {
-		super(name);
-	}
+  public MetadataCachingInterceptorTests(String name) {
+    super(name);
+  }
 
-	public void testGetCachingAttribute() throws Exception {
-		Object thisObject = "Anakin";
-		invocationControl.expectAndReturn(invocation.getThis(), thisObject);
+  public void testGetCachingAttribute() throws Exception {
+    Object thisObject = "Anakin";
+    invocationControl.expectAndReturn(invocation.getThis(), thisObject);
 
-		Method method = defaultMethod();
-		invocationControl.expectAndReturn(invocation.getMethod(), method);
+    Method method = defaultMethod();
+    invocationControl.expectAndReturn(invocation.getMethod(), method);
 
-		Cached expected = new Cached();
-		sourceControl.expectAndReturn(source.getCachingAttribute(method, thisObject
-				.getClass()), expected);
+    Cached expected = new Cached();
+    sourceControl.expectAndReturn(source.getCachingAttribute(method, thisObject
+        .getClass()), expected);
 
-		replayMocks();
+    replay();
 
-		assertSame(expected, interceptor.getCachingAttribute(invocation));
-		verifyMocks();
-	}
+    assertSame(expected, interceptor.getCachingAttribute(invocation));
+    verify();
+  }
 
-	public void testGetCachingAttributeWhenThisObjectIsNull() throws Exception {
-		invocationControl.expectAndReturn(invocation.getThis(), null);
+  public void testGetCachingAttributeWhenThisObjectIsNull() throws Exception {
+    invocationControl.expectAndReturn(invocation.getThis(), null);
 
-		Method method = defaultMethod();
-		invocationControl.expectAndReturn(invocation.getMethod(), method);
+    Method method = defaultMethod();
+    invocationControl.expectAndReturn(invocation.getMethod(), method);
 
-		Cached expected = new Cached();
-		sourceControl.expectAndReturn(source.getCachingAttribute(method, null),
-				expected);
+    Cached expected = new Cached();
+    sourceControl.expectAndReturn(source.getCachingAttribute(method, null),
+        expected);
 
-		replayMocks();
+    replay();
 
-		assertSame(expected, interceptor.getCachingAttribute(invocation));
-		verifyMocks();
-	}
+    assertSame(expected, interceptor.getCachingAttribute(invocation));
+    verify();
+  }
 
-	public void testGetModel() {
-		MockMetadataCachingInterceptor mockInterceptor = new MockMetadataCachingInterceptor();
+  public void testGetModel() {
+    MockMetadataCachingInterceptor mockInterceptor = new MockMetadataCachingInterceptor();
 
-		String modelId = "Han";
-		Cached cachingAttribute = new Cached(modelId);
-		mockInterceptor.cachingAttribute = cachingAttribute;
+    String modelId = "Han";
+    Cached cachingAttribute = new Cached(modelId);
+    mockInterceptor.cachingAttribute = cachingAttribute;
 
-		CachingModel expected = new MockCachingModel();
-		Map models = new HashMap();
-		models.put(modelId, expected);
-		mockInterceptor.setCachingModels(models);
+    CachingModel expected = new MockCachingModel();
+    Map models = new HashMap();
+    models.put(modelId, expected);
+    mockInterceptor.setCachingModels(models);
 
-		assertSame(expected, mockInterceptor.getModel(invocation));
-	}
+    assertSame(expected, mockInterceptor.getModel(invocation));
+  }
 
-	public void testGetModelWhenCachingAttributeDoesNotHaveModelId() {
-		MockMetadataCachingInterceptor mockInterceptor = new MockMetadataCachingInterceptor();
-		mockInterceptor.cachingAttribute = new Cached();
-		assertNull(mockInterceptor.getModel(invocation));
-	}
+  public void testGetModelWhenCachingAttributeDoesNotHaveModelId() {
+    MockMetadataCachingInterceptor mockInterceptor = new MockMetadataCachingInterceptor();
+    mockInterceptor.cachingAttribute = new Cached();
+    assertNull(mockInterceptor.getModel(invocation));
+  }
 
-	public void testGetModelWhenCachingAttributeIsNull() {
-		MockMetadataCachingInterceptor mockInterceptor = new MockMetadataCachingInterceptor();
-		mockInterceptor.cachingAttribute = null;
-		assertNull(mockInterceptor.getModel(invocation));
-	}
+  public void testGetModelWhenCachingAttributeIsNull() {
+    MockMetadataCachingInterceptor mockInterceptor = new MockMetadataCachingInterceptor();
+    mockInterceptor.cachingAttribute = null;
+    assertNull(mockInterceptor.getModel(invocation));
+  }
 
-	public void testSetAttributes() {
-		MockControl attributesControl = MockControl.createControl(Attributes.class);
-		Attributes attributes = (Attributes) attributesControl.getMock();
+  public void testSetAttributes() {
+    MockControl attributesControl = MockControl.createControl(Attributes.class);
+    Attributes attributes = (Attributes) attributesControl.getMock();
 
-		interceptor.setAttributes(attributes);
-		CachingAttributeSource newSource = interceptor.getCachingAttributeSource();
-		assertEquals(MetadataCachingAttributeSource.class, newSource.getClass());
-		assertSame(attributes, ((MetadataCachingAttributeSource) newSource)
-				.getAttributes());
-	}
+    interceptor.setAttributes(attributes);
+    CachingAttributeSource newSource = interceptor.getCachingAttributeSource();
+    assertEquals(MetadataCachingAttributeSource.class, newSource.getClass());
+    assertSame(attributes, ((MetadataCachingAttributeSource) newSource)
+        .getAttributes());
+  }
 
-	protected void setUp() {
-		sourceControl = MockControl
-				.createStrictControl(CachingAttributeSource.class);
-		source = (CachingAttributeSource) sourceControl.getMock();
+  protected void setUp() {
+    sourceControl = MockControl
+        .createStrictControl(CachingAttributeSource.class);
+    source = (CachingAttributeSource) sourceControl.getMock();
 
-		invocationControl = MockControl.createStrictControl(MethodInvocation.class);
-		invocation = (MethodInvocation) invocationControl.getMock();
+    invocationControl = MockControl.createStrictControl(MethodInvocation.class);
+    invocation = (MethodInvocation) invocationControl.getMock();
 
-		interceptor = new MetadataCachingInterceptor();
-		interceptor.setCachingAttributeSource(source);
-	}
+    interceptor = new MetadataCachingInterceptor();
+    interceptor.setCachingAttributeSource(source);
+  }
 
-	private Method defaultMethod() throws Exception {
-		return String.class.getDeclaredMethod("toLowerCase", new Class[0]);
-	}
+  private Method defaultMethod() throws Exception {
+    return String.class.getDeclaredMethod("toLowerCase", new Class[0]);
+  }
 
-	private void replayMocks() {
-		invocationControl.replay();
-		sourceControl.replay();
-	}
+  private void replay() {
+    invocationControl.replay();
+    sourceControl.replay();
+  }
 
-	private void verifyMocks() {
-		invocationControl.verify();
-		sourceControl.verify();
-	}
+  private void verify() {
+    invocationControl.verify();
+    sourceControl.verify();
+  }
 }

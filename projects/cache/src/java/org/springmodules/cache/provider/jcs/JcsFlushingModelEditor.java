@@ -42,47 +42,47 @@ import org.springmodules.cache.util.SemicolonSeparatedPropertiesParser;
  */
 public class JcsFlushingModelEditor extends PropertyEditorSupport {
 
-	private static final String CACHE_STRUCT_DELIMETER = "|";
+  private static final String CACHE_STRUCT_DELIMETER = "|";
 
-	/**
-	 * @see PropertyEditorSupport#setAsText(String)
-	 */
-	public void setAsText(String text) throws IllegalArgumentException {
-		String newText = text;
-		JcsFlushingModel model = new JcsFlushingModel();
+  /**
+   * @see PropertyEditorSupport#setAsText(String)
+   */
+  public void setAsText(String text) throws IllegalArgumentException {
+    String newText = text;
+    JcsFlushingModel model = new JcsFlushingModel();
 
-		if (!StringUtils.hasText(newText)) {
-			setValue(model);
-			return;
-		}
+    if (!StringUtils.hasText(newText)) {
+      setValue(model);
+      return;
+    }
 
-		if (newText.endsWith(CACHE_STRUCT_DELIMETER)) {
-			newText = newText.substring(0, newText.length()
-					- CACHE_STRUCT_DELIMETER.length());
+    if (newText.endsWith(CACHE_STRUCT_DELIMETER)) {
+      newText = newText.substring(0, newText.length()
+          - CACHE_STRUCT_DELIMETER.length());
 
-			if (!StringUtils.hasText(newText)) {
-				setValue(model);
-				return;
-			}
-		}
+      if (!StringUtils.hasText(newText)) {
+        setValue(model);
+        return;
+      }
+    }
 
-		List cacheStructList = new ArrayList();
-		String[] structs = StringUtils.delimitedListToStringArray(newText,
-				CACHE_STRUCT_DELIMETER);
-		int structCount = structs.length;
-		for (int i = 0; i < structCount; i++) {
-			Properties properties = SemicolonSeparatedPropertiesParser
-					.parseProperties(structs[i]);
-			CacheStruct struct = new CacheStruct();
-			struct.setCacheName(properties.getProperty("cacheName"));
-			struct.setGroups(properties.getProperty("groups"));
-			cacheStructList.add(struct);
-		}
+    List cacheStructList = new ArrayList();
+    String[] structs = StringUtils.delimitedListToStringArray(newText,
+        CACHE_STRUCT_DELIMETER);
+    int structCount = structs.length;
+    for (int i = 0; i < structCount; i++) {
+      Properties properties = SemicolonSeparatedPropertiesParser
+          .parseProperties(structs[i]);
+      CacheStruct struct = new CacheStruct();
+      struct.setCacheName(properties.getProperty("cacheName"));
+      struct.setGroups(properties.getProperty("groups"));
+      cacheStructList.add(struct);
+    }
 
-		CacheStruct[] cacheStructs = (CacheStruct[]) cacheStructList
-				.toArray(new CacheStruct[cacheStructList.size()]);
-		model.setCacheStructs(cacheStructs);
+    CacheStruct[] cacheStructs = (CacheStruct[]) cacheStructList
+        .toArray(new CacheStruct[cacheStructList.size()]);
+    model.setCacheStructs(cacheStructs);
 
-		setValue(model);
-	}
+    setValue(model);
+  }
 }

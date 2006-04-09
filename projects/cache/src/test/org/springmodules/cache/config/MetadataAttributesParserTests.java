@@ -46,271 +46,271 @@ import org.springmodules.cache.interceptor.flush.MetadataFlushingInterceptor;
  * @author Alex Ruiz
  */
 public class MetadataAttributesParserTests extends
-		AbstractCacheSetupStrategyParserImplTestCase {
+    AbstractCacheSetupStrategyParserImplTestCase {
 
-	protected abstract class AbstractInterceptorPropertyValuesMatcher extends
-			AbstractMatcher {
-		/**
-		 * @see AbstractMatcher#argumentMatches(Object, Object)
-		 */
-		protected boolean argumentMatches(Object expected, Object actual) {
-			if (!(expected instanceof MutablePropertyValues)) {
-				return expected.equals(actual);
-			}
-			if (!(actual instanceof MutablePropertyValues)) {
-				return false;
-			}
+  protected abstract class AbstractInterceptorPropertyValuesMatcher extends
+      AbstractMatcher {
+    /**
+     * @see AbstractMatcher#argumentMatches(Object, Object)
+     */
+    protected boolean argumentMatches(Object expected, Object actual) {
+      if (!(expected instanceof MutablePropertyValues)) {
+        return expected.equals(actual);
+      }
+      if (!(actual instanceof MutablePropertyValues)) {
+        return false;
+      }
 
-			if (!equals((MutablePropertyValues) expected,
-					(MutablePropertyValues) actual)) {
-				return false;
-			}
+      if (!equals((MutablePropertyValues) expected,
+          (MutablePropertyValues) actual)) {
+        return false;
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		protected boolean equals(List expected, List actual) {
-			if (!CollectionUtils.isEmpty(expected)) {
-				int count = expected.size();
+    protected boolean equals(List expected, List actual) {
+      if (!CollectionUtils.isEmpty(expected)) {
+        int count = expected.size();
 
-				if (actual.size() != count) {
-					return false;
-				}
+        if (actual.size() != count) {
+          return false;
+        }
 
-				for (int i = 0; i < count; i++) {
-					if (!equals((RuntimeBeanReference) expected.get(i),
-							(RuntimeBeanReference) actual.get(i))) {
-						return false;
-					}
-				}
+        for (int i = 0; i < count; i++) {
+          if (!equals((RuntimeBeanReference) expected.get(i),
+              (RuntimeBeanReference) actual.get(i))) {
+            return false;
+          }
+        }
 
-			} else if (!CollectionUtils.isEmpty(actual)) {
-				return false;
-			}
+      } else if (!CollectionUtils.isEmpty(actual)) {
+        return false;
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		protected abstract boolean equals(MutablePropertyValues expected,
-				MutablePropertyValues actual);
+    protected abstract boolean equals(MutablePropertyValues expected,
+        MutablePropertyValues actual);
 
-		protected boolean equals(RuntimeBeanReference expected,
-				RuntimeBeanReference actual) {
-			if (!ObjectUtils.nullSafeEquals(expected.getBeanName(), actual
-					.getBeanName())) {
-				return false;
-			}
-			return true;
-		}
+    protected boolean equals(RuntimeBeanReference expected,
+        RuntimeBeanReference actual) {
+      if (!ObjectUtils.nullSafeEquals(expected.getBeanName(), actual
+          .getBeanName())) {
+        return false;
+      }
+      return true;
+    }
 
-		protected RuntimeBeanReference getCacheProviderFacadeReference(
-				MutablePropertyValues propertyValues) {
+    protected RuntimeBeanReference getCacheProviderFacadeReference(
+        MutablePropertyValues propertyValues) {
 
-			return (RuntimeBeanReference) propertyValues.getPropertyValue(
-					"cacheProviderFacade").getValue();
-		}
-	}
+      return (RuntimeBeanReference) propertyValues.getPropertyValue(
+          "cacheProviderFacade").getValue();
+    }
+  }
 
-	protected class CachingInterceptorPropertyValuesMatcher extends
-			AbstractInterceptorPropertyValuesMatcher {
+  protected class CachingInterceptorPropertyValuesMatcher extends
+      AbstractInterceptorPropertyValuesMatcher {
 
-		protected boolean equals(MutablePropertyValues expected,
-				MutablePropertyValues actual) {
+    protected boolean equals(MutablePropertyValues expected,
+        MutablePropertyValues actual) {
 
-			if (!equals(getCacheProviderFacadeReference(expected),
-					getCacheProviderFacadeReference(actual))) {
-				return false;
-			}
+      if (!equals(getCacheProviderFacadeReference(expected),
+          getCacheProviderFacadeReference(actual))) {
+        return false;
+      }
 
-			if (!equals(getCachingListeners(expected), getCachingListeners(actual))) {
-				return false;
-			}
+      if (!equals(getCachingListeners(expected), getCachingListeners(actual))) {
+        return false;
+      }
 
-			if (!ObjectUtils.nullSafeEquals(getCachingModels(expected),
-					getCachingModels(actual))) {
-				return false;
-			}
+      if (!ObjectUtils.nullSafeEquals(getCachingModels(expected),
+          getCachingModels(actual))) {
+        return false;
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		private List getCachingListeners(MutablePropertyValues propertyValues) {
-			return (List) propertyValues.getPropertyValue("cachingListeners")
-					.getValue();
-		}
+    private List getCachingListeners(MutablePropertyValues propertyValues) {
+      return (List) propertyValues.getPropertyValue("cachingListeners")
+          .getValue();
+    }
 
-		private Map getCachingModels(MutablePropertyValues propertyValues) {
-			return (Map) propertyValues.getPropertyValue("cachingModels").getValue();
-		}
-	}
+    private Map getCachingModels(MutablePropertyValues propertyValues) {
+      return (Map) propertyValues.getPropertyValue("cachingModels").getValue();
+    }
+  }
 
-	protected class FlushingInterceptorPropertyValuesMatcher extends
-			AbstractInterceptorPropertyValuesMatcher {
+  protected class FlushingInterceptorPropertyValuesMatcher extends
+      AbstractInterceptorPropertyValuesMatcher {
 
-		protected boolean equals(MutablePropertyValues expected,
-				MutablePropertyValues actual) {
+    protected boolean equals(MutablePropertyValues expected,
+        MutablePropertyValues actual) {
 
-			if (!equals(getCacheProviderFacadeReference(expected),
-					getCacheProviderFacadeReference(actual))) {
-				return false;
-			}
+      if (!equals(getCacheProviderFacadeReference(expected),
+          getCacheProviderFacadeReference(actual))) {
+        return false;
+      }
 
-			if (!ObjectUtils.nullSafeEquals(getFlushingModels(expected),
-					getFlushingModels(actual))) {
-				return false;
-			}
+      if (!ObjectUtils.nullSafeEquals(getFlushingModels(expected),
+          getFlushingModels(actual))) {
+        return false;
+      }
 
-			return true;
-		}
+      return true;
+    }
 
-		private Map getFlushingModels(MutablePropertyValues propertyValues) {
-			return (Map) propertyValues.getPropertyValue("flushingModels").getValue();
-		}
-	}
+    private Map getFlushingModels(MutablePropertyValues propertyValues) {
+      return (Map) propertyValues.getPropertyValue("flushingModels").getValue();
+    }
+  }
 
-	private AbstractMetadataAttributesParser parser;
+  private AbstractMetadataAttributesParser parser;
 
-	private MockClassControl parserControl;
+  private MockClassControl parserControl;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param name
-	 *          the name of the test case
-	 */
-	public MetadataAttributesParserTests(String name) {
-		super(name);
-	}
+  /**
+   * Constructor.
+   * 
+   * @param name
+   *          the name of the test case
+   */
+  public MetadataAttributesParserTests(String name) {
+    super(name);
+  }
 
-	public void testParseCacheSetupStrategy() {
-		expectations();
-		parserControl.replay();
+  public void testParseCacheSetupStrategy() {
+    expectations();
+    parserControl.replay();
 
-		parser.parseCacheSetupStrategy(new DomElementStub(""), parserContext,
-				propertySource);
+    parser.parseCacheSetupStrategy(new DomElementStub(""), parserContext,
+        propertySource);
 
-		assertAutoProxyIsRegistered();
-		assertCachingInterceptorIsRegistered();
-		assertCachingAdvisorIsRegistered();
-		assertFlushingInterceptorIsRegistered();
-		assertFlushingAdvisorIsRegistered();
+    assertAutoProxyIsRegistered();
+    assertCachingInterceptorIsRegistered();
+    assertCachingAdvisorIsRegistered();
+    assertFlushingInterceptorIsRegistered();
+    assertFlushingAdvisorIsRegistered();
 
-		parserControl.verify();
-	}
+    parserControl.verify();
+  }
 
-	protected void afterSetUp() throws Exception {
-		Class targetClass = AbstractMetadataAttributesParser.class;
+  protected void afterSetUp() throws Exception {
+    Class targetClass = AbstractMetadataAttributesParser.class;
 
-		Method registerCustomBeansMethod = targetClass.getDeclaredMethod(
-				"registerCustomBeans", new Class[] { BeanDefinitionRegistry.class });
+    Method registerCustomBeansMethod = targetClass.getDeclaredMethod(
+        "registerCustomBeans", new Class[] { BeanDefinitionRegistry.class });
 
-		Method configureCachingInterceptorMethod = targetClass.getDeclaredMethod(
-				"configureCachingInterceptor", new Class[] {
-						MutablePropertyValues.class, BeanDefinitionRegistry.class });
+    Method configureCachingInterceptorMethod = targetClass.getDeclaredMethod(
+        "configureCachingInterceptor", new Class[] {
+            MutablePropertyValues.class, BeanDefinitionRegistry.class });
 
-		Method configureFlushingInterceptorMethod = targetClass.getDeclaredMethod(
-				"configureFlushingInterceptor", new Class[] {
-						MutablePropertyValues.class, BeanDefinitionRegistry.class });
+    Method configureFlushingInterceptorMethod = targetClass.getDeclaredMethod(
+        "configureFlushingInterceptor", new Class[] {
+            MutablePropertyValues.class, BeanDefinitionRegistry.class });
 
-		Method[] methodsToMock = new Method[] { configureCachingInterceptorMethod,
-				configureFlushingInterceptorMethod, registerCustomBeansMethod };
+    Method[] methodsToMock = new Method[] { configureCachingInterceptorMethod,
+        configureFlushingInterceptorMethod, registerCustomBeansMethod };
 
-		parserControl = MockClassControl.createControl(targetClass, null, null,
-				methodsToMock);
-		parser = (AbstractMetadataAttributesParser) parserControl.getMock();
-	}
+    parserControl = MockClassControl.createControl(targetClass, null, null,
+        methodsToMock);
+    parser = (AbstractMetadataAttributesParser) parserControl.getMock();
+  }
 
-	private void assertAutoProxyIsRegistered() {
-		AbstractBeanDefinition definition = (AbstractBeanDefinition) registry
-				.getBeanDefinition("autoproxy");
+  private void assertAutoProxyIsRegistered() {
+    AbstractBeanDefinition definition = (AbstractBeanDefinition) registry
+        .getBeanDefinition("autoproxy");
 
-		ConfigAssert.assertBeanDefinitionWrapsClass(definition,
-				DefaultAdvisorAutoProxyCreator.class);
-	}
+    ConfigAssert.assertBeanDefinitionWrapsClass(definition,
+        DefaultAdvisorAutoProxyCreator.class);
+  }
 
-	private void assertCachingAdvisorIsRegistered() {
-		Class advisorClass = CachingAttributeSourceAdvisor.class;
-		AbstractBeanDefinition definition = (AbstractBeanDefinition) registry
-				.getBeanDefinition(advisorClass.getName());
+  private void assertCachingAdvisorIsRegistered() {
+    Class advisorClass = CachingAttributeSourceAdvisor.class;
+    AbstractBeanDefinition definition = (AbstractBeanDefinition) registry
+        .getBeanDefinition(advisorClass.getName());
 
-		ConfigAssert.assertBeanDefinitionWrapsClass(definition, advisorClass);
+    ConfigAssert.assertBeanDefinitionWrapsClass(definition, advisorClass);
 
-		RuntimeBeanReference expectedReference = new RuntimeBeanReference(
-				MetadataCachingInterceptor.class.getName());
+    RuntimeBeanReference expectedReference = new RuntimeBeanReference(
+        MetadataCachingInterceptor.class.getName());
 
-		ConfigAssert.assertBeanDefinitionHasConstructorArgument(expectedReference,
-				definition.getConstructorArgumentValues(), 0,
-				RuntimeBeanReference.class);
-	}
+    ConfigAssert.assertBeanDefinitionHasConstructorArgument(expectedReference,
+        definition.getConstructorArgumentValues(), 0,
+        RuntimeBeanReference.class);
+  }
 
-	private void assertCachingInterceptorIsRegistered() {
-		BeanDefinition definition = registry
-				.getBeanDefinition(MetadataCachingInterceptor.class.getName());
+  private void assertCachingInterceptorIsRegistered() {
+    BeanDefinition definition = registry
+        .getBeanDefinition(MetadataCachingInterceptor.class.getName());
 
-		ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
-				.getCacheKeyGeneratorProperty());
-		ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
-				.getCacheProviderFacadeProperty());
-		ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
-				.getCachingListenersProperty());
-		ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
-				.getCachingModelsProperty());
-	}
+    ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
+        .getCacheKeyGeneratorProperty());
+    ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
+        .getCacheProviderFacadeProperty());
+    ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
+        .getCachingListenersProperty());
+    ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
+        .getCachingModelsProperty());
+  }
 
-	private void assertFlushingAdvisorIsRegistered() {
-		Class advisorClass = FlushingAttributeSourceAdvisor.class;
-		AbstractBeanDefinition definition = (AbstractBeanDefinition) registry
-				.getBeanDefinition(advisorClass.getName());
+  private void assertFlushingAdvisorIsRegistered() {
+    Class advisorClass = FlushingAttributeSourceAdvisor.class;
+    AbstractBeanDefinition definition = (AbstractBeanDefinition) registry
+        .getBeanDefinition(advisorClass.getName());
 
-		ConfigAssert.assertBeanDefinitionWrapsClass(definition, advisorClass);
+    ConfigAssert.assertBeanDefinitionWrapsClass(definition, advisorClass);
 
-		RuntimeBeanReference expectedReference = new RuntimeBeanReference(
-				MetadataFlushingInterceptor.class.getName());
+    RuntimeBeanReference expectedReference = new RuntimeBeanReference(
+        MetadataFlushingInterceptor.class.getName());
 
-		ConfigAssert.assertBeanDefinitionHasConstructorArgument(expectedReference,
-				definition.getConstructorArgumentValues(), 0,
-				RuntimeBeanReference.class);
-	}
+    ConfigAssert.assertBeanDefinitionHasConstructorArgument(expectedReference,
+        definition.getConstructorArgumentValues(), 0,
+        RuntimeBeanReference.class);
+  }
 
-	private void assertFlushingInterceptorIsRegistered() {
-		BeanDefinition definition = registry
-				.getBeanDefinition(MetadataFlushingInterceptor.class.getName());
+  private void assertFlushingInterceptorIsRegistered() {
+    BeanDefinition definition = registry
+        .getBeanDefinition(MetadataFlushingInterceptor.class.getName());
 
-		ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
-				.getCacheProviderFacadeProperty());
-		ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
-				.getFlushingModelsProperty());
-	}
+    ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
+        .getCacheProviderFacadeProperty());
+    ConfigAssert.assertBeanDefinitionHasProperty(definition, propertySource
+        .getFlushingModelsProperty());
+  }
 
-	private MutablePropertyValues cachingInterceptorPropertyValues() {
-		MutablePropertyValues pv = new MutablePropertyValues();
+  private MutablePropertyValues cachingInterceptorPropertyValues() {
+    MutablePropertyValues pv = new MutablePropertyValues();
 
-		pv.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
-		pv.addPropertyValue(propertySource.getCachingListenersProperty());
-		pv.addPropertyValue(propertySource.getCachingModelsProperty());
+    pv.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
+    pv.addPropertyValue(propertySource.getCachingListenersProperty());
+    pv.addPropertyValue(propertySource.getCachingModelsProperty());
 
-		return pv;
-	}
+    return pv;
+  }
 
-	private void expectations() {
-		parser.configureCachingInterceptor(cachingInterceptorPropertyValues(),
-				registry);
-		parserControl.setMatcher(new CachingInterceptorPropertyValuesMatcher());
+  private void expectations() {
+    parser.configureCachingInterceptor(cachingInterceptorPropertyValues(),
+        registry);
+    parserControl.setMatcher(new CachingInterceptorPropertyValuesMatcher());
 
-		parser.configureFlushingInterceptor(flushingInterceptorPropertyValues(),
-				registry);
-		parserControl.setMatcher(new FlushingInterceptorPropertyValuesMatcher());
+    parser.configureFlushingInterceptor(flushingInterceptorPropertyValues(),
+        registry);
+    parserControl.setMatcher(new FlushingInterceptorPropertyValuesMatcher());
 
-		parser.registerCustomBeans(registry);
-	}
+    parser.registerCustomBeans(registry);
+  }
 
-	private MutablePropertyValues flushingInterceptorPropertyValues() {
-		MutablePropertyValues pv = new MutablePropertyValues();
+  private MutablePropertyValues flushingInterceptorPropertyValues() {
+    MutablePropertyValues pv = new MutablePropertyValues();
 
-		pv.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
-		pv.addPropertyValue(propertySource.getFlushingModelsProperty());
+    pv.addPropertyValue(propertySource.getCacheProviderFacadeProperty());
+    pv.addPropertyValue(propertySource.getFlushingModelsProperty());
 
-		return pv;
-	}
+    return pv;
+  }
 
 }
