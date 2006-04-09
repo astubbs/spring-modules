@@ -25,31 +25,31 @@ package org.springmodules.cache.impl;
  */
 public interface CacheManager {
 
-	/**
-	 * Adds a new cache to this manager.
-	 * 
-	 * @param cacheName
-	 *          the name of the cache to add
-	 * @param cache
-	 *          the cache to add
-	 * @throws CacheAlreadyExistsException
-	 *           if there is already a cache stored under the given name
-	 */
-	void addCache(String cacheName, Cache cache)
-			throws CacheAlreadyExistsException;
+  /**
+   * Adds a new cache to this manager.
+   * 
+   * @param cacheName
+   *          the name of the cache to add
+   * @param cache
+   *          the cache to add
+   * @throws CacheAlreadyExistsException
+   *           if there is already a cache stored under the given name
+   */
+  void addCache(String cacheName, Cache cache)
+      throws CacheAlreadyExistsException;
 
-	/**
-	 * Retrieves a reference to a cache.
-	 * 
-	 * @param cacheName
-	 *          the name of the cache to retrieve
-	 * @return the cache which name matches the specified String or
-	 *         <code>null</code> if there is none
-	 */
-	Cache getCache(String cacheName);
+  /**
+   * Retrieves a reference to a cache.
+   * 
+   * @param cacheName
+   *          the name of the cache to retrieve
+   * @return the cache which name matches the specified String or
+   *         <code>null</code> if there is none
+   */
+  Cache getCache(String cacheName);
 
-	/**
-	 * Shuts down the cache manager and destroys its cache(s).
-	 */
-	void shutDown();
+  /**
+   * Shuts down the cache manager and destroys its cache(s).
+   */
+  void shutDown();
 }

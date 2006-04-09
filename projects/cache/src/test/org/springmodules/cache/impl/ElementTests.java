@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springmodules.AbstractEqualsHashCodeTestCase;
+import org.springmodules.cache.serializable.SerializationAssert;
 
 /**
  * <p>
@@ -33,194 +34,198 @@ import org.springmodules.AbstractEqualsHashCodeTestCase;
  */
 public class ElementTests extends AbstractEqualsHashCodeTestCase {
 
-	private static final String ELEMENT_KEY = "myKey";
+  private static final String ELEMENT_KEY = "myKey";
 
-	private static final String ELEMENT_VALUE = "myValue";
+  private static final String ELEMENT_VALUE = "myValue";
 
-	private static Log logger = LogFactory.getLog(ElementTests.class);
+  private static Log logger = LogFactory.getLog(ElementTests.class);
 
-	private Element element;
+  private Element element;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param name
-	 *          the name of the test case
-	 */
-	public ElementTests(String name) {
-		super(name);
-	}
+  /**
+   * Constructor.
+   * 
+   * @param name
+   *          the name of the test case
+   */
+  public ElementTests(String name) {
+    super(name);
+  }
 
-	public void testClone() {
-		Element clone = (Element) element.clone();
-		assertCloneIsCorrect(element, clone);
-	}
+  public void testClone() {
+    Element clone = (Element) element.clone();
+    assertCloneIsCorrect(element, clone);
+  }
 
-	public void testCloneWithElementHavingValueEqualToNull() {
-		element.setValue(null);
-		Element clone = (Element) element.clone();
-		assertCloneIsCorrect(element, clone);
-	}
+  public void testCloneWithElementHavingValueEqualToNull() {
+    element.setValue(null);
+    Element clone = (Element) element.clone();
+    assertCloneIsCorrect(element, clone);
+  }
+  
+  public void testConstructorCreatesCopyOfKeyAndValueAndInitializesCreationTime() {
+    String key = ELEMENT_KEY;
+    String value = ELEMENT_VALUE;
+    long currentTime = System.currentTimeMillis();
 
-	public void testConstructorCreatesCopyOfKeyAndValueAndInitializesCreationTime() {
-		String key = ELEMENT_KEY;
-		String value = ELEMENT_VALUE;
-		long currentTime = System.currentTimeMillis();
+    element = new Element(key, value);
+    Serializable copiedKey = element.getKey();
+    Serializable copiedValue = element.getValue();
 
-		element = new Element(key, value);
-		Serializable copiedKey = element.getKey();
-		Serializable copiedValue = element.getValue();
+    assertEquals("<key>", key, copiedKey);
+    assertEquals("<value>", value, copiedValue);
 
-		assertEquals("<key>", key, copiedKey);
-		assertEquals("<value>", value, copiedValue);
+    assertTrue("the key should be a copy of the original, not the same",
+        key != copiedKey);
+    assertTrue("the value should be a copy of the original, not the same",
+        value != copiedValue);
 
-		assertTrue("the key should be a copy of the original, not the same",
-				key != copiedKey);
-		assertTrue("the value should be a copy of the original, not the same",
-				value != copiedValue);
+    assertTrue("the creation time has not been set",
+        element.getCreationTime() >= currentTime);
+  }
 
-		assertTrue("the creation time has not been set",
-				element.getCreationTime() >= currentTime);
-	}
+  public void testConstructorWithNegativeTimeToLiveNotEqualToExpiryNever() {
+    assertDefaultTimeToLiveIsSet(-3l);
+  }
 
-	public void testConstructorWithNegativeTimeToLiveNotEqualToExpiryNever() {
-		assertDefaultTimeToLiveIsSet(-3l);
-	}
+  public void testConstructorWithTimeToLiveEqualToExpiryNever() {
+    long expiryNever = -1l;
+    element = new Element(ELEMENT_KEY, ELEMENT_VALUE, expiryNever);
+    assertEquals("time to live should be equal to 'EXPIRY_NEVER'", expiryNever,
+        element.getTimeToLive());
+  }
 
-	public void testConstructorWithTimeToLiveEqualToExpiryNever() {
-		long expiryNever = -1l;
-		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, expiryNever);
-		assertEquals("time to live should be equal to 'EXPIRY_NEVER'", expiryNever,
-				element.getTimeToLive());
-	}
+  public void testConstructorWithTimeToLiveEqualToZero() {
+    assertDefaultTimeToLiveIsSet(0l);
+  }
 
-	public void testConstructorWithTimeToLiveEqualToZero() {
-		assertDefaultTimeToLiveIsSet(0l);
-	}
+  public void testConstructorWithTimeToPositiveLive() {
+    long timeToLive = 45000l;
+    element = new Element(ELEMENT_KEY, ELEMENT_VALUE, timeToLive);
+    assertEquals("<time to live>", timeToLive, element.getTimeToLive());
+  }
 
-	public void testConstructorWithTimeToPositiveLive() {
-		long timeToLive = 45000l;
-		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, timeToLive);
-		assertEquals("<time to live>", timeToLive, element.getTimeToLive());
-	}
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
+   */
+  public void testEqualsHashCodeRelationship() {
+    Element element2 = new Element(element.getKey(), element.getValue());
+    assertEqualsHashCodeRelationshipIsCorrect(element, element2);
+  }
 
-	/**
-	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsHashCodeRelationship()
-	 */
-	public void testEqualsHashCodeRelationship() {
-		Element element2 = new Element(element.getKey(), element.getValue());
-		assertEqualsHashCodeRelationshipIsCorrect(element, element2);
-	}
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
+   */
+  public void testEqualsIsConsistent() {
+    logger.info("It is not necessary to test consistency of method 'equals.' "
+        + "The state of a <" + Element.class.getName()
+        + "> only depends on an inmutable value: the field 'key.'");
+  }
 
-	/**
-	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsConsistent()
-	 */
-	public void testEqualsIsConsistent() {
-		logger.info("It is not necessary to test consistency of method 'equals.' "
-				+ "The state of a <" + Element.class.getName()
-				+ "> only depends on an inmutable value: the field 'key.'");
-	}
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
+   */
+  public void testEqualsIsReflexive() {
+    assertEqualsIsReflexive(element);
+  }
 
-	/**
-	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsReflexive()
-	 */
-	public void testEqualsIsReflexive() {
-		assertEqualsIsReflexive(element);
-	}
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
+   */
+  public void testEqualsIsSymmetric() {
+    Element element2 = new Element(element.getKey(), element.getValue());
+    assertEqualsIsSymmetric(element, element2);
+  }
 
-	/**
-	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsSymmetric()
-	 */
-	public void testEqualsIsSymmetric() {
-		Element element2 = new Element(element.getKey(), element.getValue());
-		assertEqualsIsSymmetric(element, element2);
-	}
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
+   */
+  public void testEqualsIsTransitive() {
+    Element element2 = new Element(element.getKey(), element.getValue());
+    Element element3 = new Element(element.getKey(), element.getValue());
+    assertEqualsIsTransitive(element, element2, element3);
+  }
 
-	/**
-	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsIsTransitive()
-	 */
-	public void testEqualsIsTransitive() {
-		Element element2 = new Element(element.getKey(), element.getValue());
-		Element element3 = new Element(element.getKey(), element.getValue());
-		assertEqualsIsTransitive(element, element2, element3);
-	}
+  /**
+   * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
+   */
+  public void testEqualsNullComparison() {
+    assertEqualsNullComparisonReturnsFalse(element);
+  }
 
-	/**
-	 * @see org.springmodules.EqualsHashCodeTestCase#testEqualsNullComparison()
-	 */
-	public void testEqualsNullComparison() {
-		assertEqualsNullComparisonReturnsFalse(element);
-	}
+  public void testIsAliveWithAliveElement() {
+    createAliveElement();
+    assertTrue(element.isAlive());
+  }
 
-	public void testIsAliveWithAliveElement() {
-		createAliveElement();
-		assertTrue(element.isAlive());
-	}
+  public void testIsAliveWithExpiredElement() {
+    createExpiredElement();
+    assertFalse(element.isAlive());
+  }
 
-	public void testIsAliveWithExpiredElement() {
-		createExpiredElement();
-		assertFalse(element.isAlive());
-	}
+  public void testIsAliveWithNeverExpiringElement() {
+    assertTrue(element.isAlive());
+  }
 
-	public void testIsAliveWithNeverExpiringElement() {
-		assertTrue(element.isAlive());
-	}
+  public void testIsExpiredWithAliveElement() {
+    createAliveElement();
+    assertFalse(element.isExpired());
+  }
 
-	public void testIsExpiredWithAliveElement() {
-		createAliveElement();
-		assertFalse(element.isExpired());
-	}
+  public void testIsExpiredWithExpiredElement() {
+    createExpiredElement();
+    assertTrue(element.isExpired());
+  }
 
-	public void testIsExpiredWithExpiredElement() {
-		createExpiredElement();
-		assertTrue(element.isExpired());
-	}
+  public void testIsExpiredWithNeverExpiringElement() {
+    assertFalse(element.isExpired());
+  }
 
-	public void testIsExpiredWithNeverExpiringElement() {
-		assertFalse(element.isExpired());
-	}
+  public void testSerialization() throws Exception {
+    SerializationAssert.assertObjectIsSerializable(element);
+  }
 
-	protected void setUp() throws Exception {
-		element = new Element(ELEMENT_KEY, ELEMENT_VALUE);
-	}
+  protected void setUp() throws Exception {
+    element = new Element(ELEMENT_KEY, ELEMENT_VALUE);
+  }
 
-	private void assertCloneIsCorrect(Element original, Element clone) {
-		Serializable originalKey = original.getKey();
-		Serializable originalValue = original.getValue();
-		Serializable clonedKey = clone.getKey();
-		Serializable clonedValue = clone.getValue();
+  private void assertCloneIsCorrect(Element original, Element clone) {
+    Serializable originalKey = original.getKey();
+    Serializable originalValue = original.getValue();
+    Serializable clonedKey = clone.getKey();
+    Serializable clonedValue = clone.getValue();
 
-		assertEquals(originalKey, clonedKey);
-		assertEquals(originalValue, clonedValue);
-		assertEquals(original.getCreationTime(), clone.getCreationTime());
+    assertEquals(originalKey, clonedKey);
+    assertEquals(originalValue, clonedValue);
+    assertEquals(original.getCreationTime(), clone.getCreationTime());
 
-		boolean sameKeys = originalKey == clonedKey && originalKey != null;
-		assertFalse("keys should not be same", sameKeys);
+    boolean sameKeys = originalKey == clonedKey && originalKey != null;
+    assertFalse("keys should not be same", sameKeys);
 
-		boolean sameValues = originalValue == clonedValue && originalValue != null;
-		assertFalse("values should not be same", sameValues);
-	}
+    boolean sameValues = originalValue == clonedValue && originalValue != null;
+    assertFalse("values should not be same", sameValues);
+  }
 
-	private void assertDefaultTimeToLiveIsSet(long specifiedTimeToLive) {
-		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, specifiedTimeToLive);
-		assertEquals("<timeToLive>", 120000l, element.getTimeToLive());
-	}
+  private void assertDefaultTimeToLiveIsSet(long specifiedTimeToLive) {
+    element = new Element(ELEMENT_KEY, ELEMENT_VALUE, specifiedTimeToLive);
+    assertEquals("<timeToLive>", 120000l, element.getTimeToLive());
+  }
 
-	private void createAliveElement() {
-		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, Long.MAX_VALUE);
-		try {
-			Thread.sleep(5);
-		} catch (InterruptedException exception) {
-			exception.printStackTrace();
-		}
-	}
+  private void createAliveElement() {
+    element = new Element(ELEMENT_KEY, ELEMENT_VALUE, Long.MAX_VALUE);
+    try {
+      Thread.sleep(5);
+    } catch (InterruptedException exception) {
+      exception.printStackTrace();
+    }
+  }
 
-	private void createExpiredElement() {
-		element = new Element(ELEMENT_KEY, ELEMENT_VALUE, 50);
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException exception) {
-			exception.printStackTrace();
-		}
-	}
+  private void createExpiredElement() {
+    element = new Element(ELEMENT_KEY, ELEMENT_VALUE, 50);
+    try {
+      Thread.sleep(100);
+    } catch (InterruptedException exception) {
+      exception.printStackTrace();
+    }
+  }
 }

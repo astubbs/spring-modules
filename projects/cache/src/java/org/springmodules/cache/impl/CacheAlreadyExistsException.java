@@ -28,15 +28,15 @@ import org.springframework.util.StringUtils;
  */
 public class CacheAlreadyExistsException extends RuntimeException {
 
-	private static final long serialVersionUID = -6479571399378243183L;
+  private static final long serialVersionUID = -6479571399378243183L;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param cacheName
-	 *          the name of the cache that already exists in the cache manager
-	 */
-	public CacheAlreadyExistsException(String cacheName) {
-		super("The cache " + StringUtils.quote(cacheName) + " already exists");
-	}
+  /**
+   * Constructor.
+   * 
+   * @param cacheName
+   *          the name of the cache that already exists in the cache manager
+   */
+  public CacheAlreadyExistsException(String cacheName) {
+    super("The cache " + StringUtils.quote(cacheName) + " already exists");
+  }
 }
