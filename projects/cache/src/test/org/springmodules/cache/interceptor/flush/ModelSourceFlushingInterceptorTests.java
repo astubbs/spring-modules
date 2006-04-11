@@ -66,10 +66,10 @@ public class ModelSourceFlushingInterceptorTests extends TestCase {
     sourceControl.expectAndReturn(source.getFlushingModel(method, thisObject
         .getClass()), expected);
 
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.getModel(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testGetModelWhenThisObjectIsNull() throws Exception {
@@ -82,10 +82,10 @@ public class ModelSourceFlushingInterceptorTests extends TestCase {
     sourceControl.expectAndReturn(source.getFlushingModel(method, null),
         expected);
 
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.getModel(invocation));
-    verifyMocks();
+    verify();
   }
 
   protected void setUp() {
@@ -103,12 +103,12 @@ public class ModelSourceFlushingInterceptorTests extends TestCase {
     return String.class.getDeclaredMethod("toLowerCase", new Class[0]);
   }
 
-  private void replayMocks() {
+  private void replay() {
     invocationControl.replay();
     sourceControl.replay();
   }
 
-  private void verifyMocks() {
+  private void verify() {
     invocationControl.verify();
     sourceControl.verify();
   }

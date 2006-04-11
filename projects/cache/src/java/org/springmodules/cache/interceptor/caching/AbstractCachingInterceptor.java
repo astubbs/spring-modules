@@ -171,10 +171,11 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
    * <ol>
    * <li>Generates a unique key from the description of the invocation to the
    * intercepted method</li>
-   * <li>Verifies if the cache already has an entry under the generated key, if
-   * it does returns the cached value</li>
-   * <li>Otherwise executes the intercepted method, stores its return value in
-   * the cache under the generated key and returns the new cached value</li>
+   * <li>Verifies that the cache already has an entry under the generated key,
+   * if it does, returns the cached value</li>
+   * <li>If there is not any value stored in the cache, executes the
+   * intercepted method, stores its return value in the cache under the
+   * generated key and returns the new cached value</li>
    * </ol>
    * </p>
    * <p>
@@ -192,7 +193,7 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     Method method = methodInvocation.getMethod();
     if (!CachingUtils.isCacheable(method)) {
       logger.debug("Unable to perform caching. Intercepted method <"
-          + method.getName() + "> does not return a value");
+          + method.toString() + "> does not return a value");
       return methodInvocation.proceed();
     }
 
@@ -206,15 +207,17 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     }
 
     Serializable key = cacheKeyGenerator.generateKey(methodInvocation);
-
     Object cachedObject = cacheProviderFacade.getFromCache(key, model);
 
     if (null == cachedObject) {
+      /*
+       * There is not any entry in the cache under the given key. Retrieve value
+       * from original source and store it in the cache.
+       */
       Throwable exceptionThrownByProceed = null;
 
       try {
         cachedObject = methodInvocation.proceed();
-
       } catch (Throwable throwable) {
         logger.error("Unable to proceed to the next interceptor in the chain",
             throwable);
@@ -222,26 +225,16 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
       }
 
       if (null == exceptionThrownByProceed) {
-        if (null == cachedObject) {
-          cacheProviderFacade.putInCache(key, model, NULL_ENTRY);
-        } else {
-          cacheProviderFacade.putInCache(key, model, cachedObject);
-        }
+        cacheProviderFacade.putInCache(key, model, maskNull(cachedObject));
+        notifyListeners(key, cachedObject, model);
 
-        // notify the listeners a new entry was stored in the cache.
-        if (!ObjectUtils.isEmpty(cachingListeners)) {
-          int listenerCount = cachingListeners.length;
-          for (int i = 0; i < listenerCount; i++) {
-            cachingListeners[i].onCaching(key, cachedObject, model);
-          }
-        }
       } else {
         cacheProviderFacade.cancelCacheUpdate(key);
         throw exceptionThrownByProceed;
       }
 
-    } else if (NULL_ENTRY == cachedObject) {
-      cachedObject = null;
+    } else {
+      cachedObject = unmaskNull(cachedObject);
     }
 
     return cachedObject;
@@ -317,6 +310,21 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     // no implementation.
   }
 
+  private Object maskNull(Object obj) {
+    return obj != null ? obj : NULL_ENTRY;
+  }
+
+  private void notifyListeners(Serializable key, Object cachedObject,
+      CachingModel model) {
+    if (ObjectUtils.isEmpty(cachingListeners)) {
+      return;
+    }
+    int listenerCount = cachingListeners.length;
+    for (int i = 0; i < listenerCount; i++) {
+      cachingListeners[i].onCaching(key, cachedObject, model);
+    }
+  }
+
   /**
    * <p>
    * <ol>
@@ -369,6 +377,10 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     }
 
     setCachingModels(newCachingModels);
+  }
+
+  private Object unmaskNull(Object obj) {
+    return NULL_ENTRY.equals(obj) ? null : obj;
   }
 
   /**

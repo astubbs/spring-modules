@@ -75,10 +75,10 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
     sourceControl.expectAndReturn(source.getFlushingAttribute(method,
         thisObject.getClass()), expected);
 
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.getFlushingAttribute(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testGetFlushingAttributeWhenThisObjectIsNull() throws Exception {
@@ -91,10 +91,10 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
     sourceControl.expectAndReturn(source.getFlushingAttribute(method, null),
         expected);
 
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.getFlushingAttribute(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testGetModel() {
@@ -171,12 +171,12 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
     return String.class.getDeclaredMethod("toLowerCase", new Class[0]);
   }
 
-  private void replayMocks() {
+  private void replay() {
     invocationControl.replay();
     sourceControl.replay();
   }
 
-  private void verifyMocks() {
+  private void verify() {
     invocationControl.verify();
     sourceControl.verify();
   }

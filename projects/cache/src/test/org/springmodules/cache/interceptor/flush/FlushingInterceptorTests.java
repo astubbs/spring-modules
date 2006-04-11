@@ -94,7 +94,7 @@ public class FlushingInterceptorTests extends TestCase {
     validator.validateFlushingModel(model);
     validatorControl.setThrowable(expected);
 
-    replayMocks();
+    replay();
 
     interceptor.setFlushingModels(models);
 
@@ -105,7 +105,7 @@ public class FlushingInterceptorTests extends TestCase {
       assertSame(expected, exception.getCause());
     }
 
-    verifyMocks();
+    verify();
     assertFalse(interceptor.onAfterPropertiesSetCalled);
   }
 
@@ -130,7 +130,7 @@ public class FlushingInterceptorTests extends TestCase {
       editorControl.expectAndThrow(editor.getValue(), expected);
     }
 
-    replayMocks();
+    replay();
 
     interceptor.setFlushingModels(models);
     try {
@@ -140,7 +140,7 @@ public class FlushingInterceptorTests extends TestCase {
       assertSame(expected, exception.getCause());
     }
 
-    verifyMocks();
+    verify();
     assertFalse(interceptor.onAfterPropertiesSetCalled);
   }
 
@@ -178,13 +178,13 @@ public class FlushingInterceptorTests extends TestCase {
       expected.put(key, model);
     }
 
-    replayMocks();
+    replay();
 
     interceptor.setFlushingModels(models);
     interceptor.afterPropertiesSet();
     assertEquals(expected, interceptor.getFlushingModels());
 
-    verifyMocks();
+    verify();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
   }
 
@@ -205,12 +205,12 @@ public class FlushingInterceptorTests extends TestCase {
       validator.validateFlushingModel(model);
     }
 
-    replayMocks();
+    replay();
 
     interceptor.setFlushingModels(models);
     interceptor.afterPropertiesSet();
 
-    verifyMocks();
+    verify();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
   }
 
@@ -222,10 +222,10 @@ public class FlushingInterceptorTests extends TestCase {
     Object expected = expectMethodInvocationCallsProceed();
     cacheProviderFacade.flushCache(model);
 
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testInvokeWhenFlushingBeforeMethodExecution() throws Throwable {
@@ -236,20 +236,20 @@ public class FlushingInterceptorTests extends TestCase {
     cacheProviderFacade.flushCache(model);
     Object expected = expectMethodInvocationCallsProceed();
 
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyMocks();
+    verify();
   }
 
   public void testInvokeWithReturnedCachingModelEqualToNull() throws Throwable {
     interceptor.model = null;
 
     Object expected = expectMethodInvocationCallsProceed();
-    replayMocks();
+    replay();
 
     assertSame(expected, interceptor.invoke(invocation));
-    verifyMocks();
+    verify();
   }
 
   protected void setUp() {
@@ -291,21 +291,19 @@ public class FlushingInterceptorTests extends TestCase {
     return expected;
   }
 
-  private void replayMocks() {
+  private void replay() {
     cacheProviderFacadeControl.replay();
-
-    if (editorControl != null) {
-      editorControl.replay();
-    }
-
-    if (invocationControl != null) {
-      invocationControl.replay();
-    }
-
-    if (validatorControl != null) {
-      validatorControl.replay();
-    }
+    replay(editorControl);
+    replay(invocationControl);
+    replay(validatorControl);
   }
+
+  private void replay(MockControl mockControl) {
+    if (mockControl == null) {
+      return;
+    }
+    mockControl.replay();
+   }
 
   private void setUpFlushingModelEditor() {
     editorControl = MockControl.createControl(PropertyEditor.class);
@@ -323,19 +321,18 @@ public class FlushingInterceptorTests extends TestCase {
     validator = (CacheModelValidator) validatorControl.getMock();
   }
 
-  private void verifyMocks() {
+  private void verify() {
     cacheProviderFacadeControl.verify();
-
-    if (editorControl != null) {
-      editorControl.verify();
-    }
-
-    if (invocationControl != null) {
-      invocationControl.verify();
-    }
-
-    if (validatorControl != null) {
-      validatorControl.verify();
-    }
+    verify(editorControl);
+    verify(invocationControl);
+    verify(validatorControl);
   }
+
+  private void verify(MockControl mockControl) {
+    if (mockControl == null) {
+      return;
+    }
+    mockControl.verify();
+   }
+
 }

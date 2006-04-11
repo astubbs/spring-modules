@@ -37,25 +37,30 @@ import junit.framework.Assert;
  */
 public class SerializationAssert {
 
+  /**
+   * Asserts that the given object is serializable.
+   * 
+   * @param obj
+   *          the object to verify
+   * @throws Exception
+   *           any exception thrown when serializing the given object
+   */
   public static void assertIsSerializable(Object obj) throws Exception {
     AssertExt.assertInstanceOf(Serializable.class, obj);
     Object copy = copy((Serializable) obj);
     Assert.assertEquals(obj, copy);
   }
 
-  private static void close(Closeable closeable) {
-    if (closeable == null) {
-      return;
-    }
-
-    try {
-      closeable.close();
-    } catch (Exception exception) {
-      exception.printStackTrace();
-    }
-  }
-
-  private static Serializable copy(Serializable oldValue) throws Exception {
+  /**
+   * Makes a copy of the given object using Java serialization
+   * 
+   * @param oldValue
+   *          the value to copy
+   * @return the copy of the given value
+   * @throws Exception
+   *           any exception thrown when serializing the given object
+   */
+  public static Serializable copy(Serializable oldValue) throws Exception {
     Serializable newValue = null;
 
     ByteArrayInputStream oldValueInputStream = null;
@@ -81,6 +86,18 @@ public class SerializationAssert {
       close(oldValueOutputStream);
     }
     return newValue;
+  }
+
+  private static void close(Closeable closeable) {
+    if (closeable == null) {
+      return;
+    }
+
+    try {
+      closeable.close();
+    } catch (Exception exception) {
+      exception.printStackTrace();
+    }
   }
 
 }
