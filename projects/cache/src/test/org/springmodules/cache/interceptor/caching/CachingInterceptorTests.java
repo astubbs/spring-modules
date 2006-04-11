@@ -316,7 +316,7 @@ public class CachingInterceptorTests extends TestCase {
     assertSame(expected, interceptor.invoke(invocation));
     verify();
   }
-
+  
   public void testInvokeWhenCacheReturnsStoredObject() throws Throwable {
     expectMethodInvocationReturnsCacheableMethod();
 
@@ -329,13 +329,25 @@ public class CachingInterceptorTests extends TestCase {
     verify();
   }
 
+  public void testInvokeWithNotCacheableMethod() throws Throwable {
+    setUpMethodInvocation();
+    Method method = MethodFactory.createNonCacheableMethod();
+    invocationControl.expectAndReturn(invocation.getMethod(), method);
+    
+    Object expected = new Object();
+    invocationControl.expectAndReturn(invocation.proceed(), expected);
+    replay();
+
+    assertSame(expected, interceptor.invoke(invocation));
+    verify();
+  }
+
   public void testInvokeWithReturnedCachingModelEqualToNull() throws Throwable {
     interceptor.model = null;
     expectMethodInvocationReturnsCacheableMethod();
 
     Object expected = new Object();
     invocationControl.expectAndReturn(invocation.proceed(), expected);
-
     replay();
 
     assertSame(expected, interceptor.invoke(invocation));
@@ -411,27 +423,21 @@ public class CachingInterceptorTests extends TestCase {
     Method method = MethodFactory.createCacheableMethod();
     invocationControl.expectAndReturn(invocation.getMethod(), method);
   }
-
+  
   private void replay() {
     cacheProviderFacadeControl.replay();
-
-    if (editorControl != null) {
-      editorControl.replay();
-    }
-
-    if (invocationControl != null) {
-      invocationControl.replay();
-    }
-
-    if (listenerControl != null) {
-      listenerControl.replay();
-    }
-
+    replay(editorControl);
+    replay(invocationControl);
+    replay(listenerControl);
     keyGeneratorControl.replay();
+    replay(validatorControl);
+  }
 
-    if (validatorControl != null) {
-      validatorControl.replay();
-    }
+  private void replay(MockControl mockControl) {
+   if (mockControl == null) {
+     return;
+   }
+   mockControl.replay();
   }
 
   private void setUpCachingListener() {
@@ -448,23 +454,17 @@ public class CachingInterceptorTests extends TestCase {
 
   private void verify() {
     cacheProviderFacadeControl.verify();
-
-    if (editorControl != null) {
-      editorControl.verify();
-    }
-
-    if (invocationControl != null) {
-      invocationControl.verify();
-    }
-
-    if (listenerControl != null) {
-      listenerControl.verify();
-    }
-
+    verify(editorControl);
+    verify(invocationControl);
+    verify(listenerControl);
     keyGeneratorControl.verify();
-
-    if (validatorControl != null) {
-      validatorControl.verify();
+    verify(validatorControl);
+  }
+  
+  private void verify(MockControl mockControl) {
+    if (mockControl == null) {
+      return;
     }
+    mockControl.verify();
   }
 }
