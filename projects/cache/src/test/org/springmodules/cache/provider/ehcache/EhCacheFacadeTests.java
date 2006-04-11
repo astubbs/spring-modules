@@ -36,6 +36,8 @@ import org.springmodules.cache.provider.CacheModelValidator;
 import org.springmodules.cache.provider.CacheNotFoundException;
 import org.springmodules.cache.provider.ReflectionCacheModelEditor;
 
+import org.springframework.util.ObjectUtils;
+
 /**
  * <p>
  * Unit Tests for <code>{@link EhCacheFacade}</code>.
@@ -58,25 +60,19 @@ public class EhCacheFacadeTests extends TestCase {
       if (!(actual instanceof Element)) {
         return false;
       }
-      Element expectedElement = (Element) expected;
-      Element actualElement = (Element) actual;
+      return equals((Element) expected, (Element) actual);
+    }
 
-      Serializable expectedKey = expectedElement.getKey();
-      Object expectedValue = expectedElement.getValue();
-
-      Serializable actualKey = actualElement.getKey();
-      Object actualValue = actualElement.getValue();
-
-      if (expectedKey != null ? !expectedKey.equals(actualKey)
-          : actualKey != null) {
+    private boolean equals(Element expected, Element actual) {
+      if (expected == actual) {
+        return true;
+      }
+      if (!ObjectUtils.nullSafeEquals(expected.getKey(), actual.getKey())) {
         return false;
       }
-
-      if (expectedValue != null ? !expectedValue.equals(actualValue)
-          : actualValue != null) {
+      if (!ObjectUtils.nullSafeEquals(expected.getValue(), actual.getValue())) {
         return false;
       }
-
       return true;
     }
 
@@ -348,9 +344,9 @@ public class EhCacheFacadeTests extends TestCase {
 
   public void testOnRemoveFromCacheWhenCacheAccessThrowsIllegalStateException()
       throws Exception {
-    Method remove = Cache.class.getDeclaredMethod("remove",
+    Method removeMethod = Cache.class.getDeclaredMethod("remove",
         new Class[] { Serializable.class });
-    setUpCacheAsMockObject(remove);
+    setUpCacheAsMockObject(removeMethod);
 
     IllegalStateException expected = new IllegalStateException();
     cacheControl.expectAndThrow(cache.remove(KEY), expected);

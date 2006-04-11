@@ -60,16 +60,14 @@ public class MetadataAttributesParserTests extends
       if (!(actual instanceof MutablePropertyValues)) {
         return false;
       }
-
-      if (!equals((MutablePropertyValues) expected,
-          (MutablePropertyValues) actual)) {
-        return false;
-      }
-
-      return true;
+      return equals((MutablePropertyValues) expected,
+          (MutablePropertyValues) actual);
     }
 
     protected boolean equals(List expected, List actual) {
+      if (expected == actual) {
+        return true;
+      }
       if (!CollectionUtils.isEmpty(expected)) {
         int count = expected.size();
 
@@ -87,7 +85,6 @@ public class MetadataAttributesParserTests extends
       } else if (!CollectionUtils.isEmpty(actual)) {
         return false;
       }
-
       return true;
     }
 
@@ -96,16 +93,15 @@ public class MetadataAttributesParserTests extends
 
     protected boolean equals(RuntimeBeanReference expected,
         RuntimeBeanReference actual) {
-      if (!ObjectUtils.nullSafeEquals(expected.getBeanName(), actual
-          .getBeanName())) {
-        return false;
+      if (expected == actual) {
+        return true;
       }
-      return true;
+      return ObjectUtils.nullSafeEquals(expected.getBeanName(), actual
+          .getBeanName());
     }
 
     protected RuntimeBeanReference getCacheProviderFacadeReference(
         MutablePropertyValues propertyValues) {
-
       return (RuntimeBeanReference) propertyValues.getPropertyValue(
           "cacheProviderFacade").getValue();
     }
@@ -116,21 +112,20 @@ public class MetadataAttributesParserTests extends
 
     protected boolean equals(MutablePropertyValues expected,
         MutablePropertyValues actual) {
-
+      if (expected == actual) {
+        return true;
+      }
       if (!equals(getCacheProviderFacadeReference(expected),
           getCacheProviderFacadeReference(actual))) {
         return false;
       }
-
       if (!equals(getCachingListeners(expected), getCachingListeners(actual))) {
         return false;
       }
-
       if (!ObjectUtils.nullSafeEquals(getCachingModels(expected),
           getCachingModels(actual))) {
         return false;
       }
-
       return true;
     }
 
@@ -149,17 +144,17 @@ public class MetadataAttributesParserTests extends
 
     protected boolean equals(MutablePropertyValues expected,
         MutablePropertyValues actual) {
-
+      if (expected == actual) {
+        return true;
+      }
       if (!equals(getCacheProviderFacadeReference(expected),
           getCacheProviderFacadeReference(actual))) {
         return false;
       }
-
       if (!ObjectUtils.nullSafeEquals(getFlushingModels(expected),
           getFlushingModels(actual))) {
         return false;
       }
-
       return true;
     }
 

@@ -63,11 +63,8 @@ public class CacheSetupStrategyParserTests extends
       if (!(actual instanceof CacheSetupStrategyPropertySource)) {
         return false;
       }
-      if (!equals((CacheSetupStrategyPropertySource) expected,
-          (CacheSetupStrategyPropertySource) actual)) {
-        return false;
-      }
-      return true;
+      return equals((CacheSetupStrategyPropertySource) expected,
+          (CacheSetupStrategyPropertySource) actual);
     }
 
     private boolean equals(CacheSetupStrategyPropertySource expected,
