@@ -25,6 +25,8 @@ import junit.framework.TestCase;
 
 import org.springmodules.cache.impl.Element;
 
+import org.springframework.util.ObjectUtils;
+
 /**
  * Unit Tests for <code>{@link LruCacheSegment}</code>.
  * 
@@ -32,11 +34,13 @@ import org.springmodules.cache.impl.Element;
  */
 public class LruCacheSegmentTests extends TestCase {
 
+  private static final Element ELEMENT_1 = new Element("key_1", "value_1");
+
+  private static final Element ELEMENT_2 = new Element("key_2", "value_2");
+
+  private static final Element ELEMENT_3 = new Element("key_3", "value_3");
+  
   private static final int HASH = 10;
-
-  private static final String KEY = "key";
-
-  private static final String VALUE = "value";
 
   private LruCache cache;
 
@@ -58,7 +62,7 @@ public class LruCacheSegmentTests extends TestCase {
 
   public void testClearWithSegmentHavingOneEntry() {
     int hash = HASH;
-    Element element = defaultElement();
+    Element element = ELEMENT_1;
     Serializable oldValue = null;
     assertPutInsertsElement(element, hash, oldValue);
 
@@ -67,10 +71,10 @@ public class LruCacheSegmentTests extends TestCase {
 
   public void testGetInsertsAccessedEntryBeforeHeaderInLruList() {
     int hash = HASH;
-    Element element1 = defaultElement();
+    Element element1 = ELEMENT_1;
     segment.put(element1, hash, cache);
 
-    Element element2 = new Element("newKey", "newValue");
+    Element element2 = ELEMENT_2;
     segment.put(element2, hash, cache);
 
     Serializable actualValue = segment.get(element1.getKey(), hash, cache);
@@ -83,47 +87,27 @@ public class LruCacheSegmentTests extends TestCase {
   }
 
   public void testInitialCapacity() {
-    assertEquals("<initial capacity>", 2, segment.getTable().length);
+    assertEquals("<initial capacity>", 4, segment.getTableSize());
   }
 
   public void testPutInsertsNewEntryAsFirstInBucket() {
     int hash = HASH;
-    Element element1 = defaultElement();
+    Element element1 = ELEMENT_1;
     segment.put(element1, hash, cache);
 
-    Element element2 = new Element("newKey", "newValue");
+    Element element2 = ELEMENT_2;
     segment.put(element2, hash, cache);
 
-    LruCacheEntry[] entriesInBucket = getEntriesAsOrderedInBucket();
-    assertEquals("<entry count>", 2, entriesInBucket.length);
-
-    assertSame(element2, entriesInBucket[0].element);
-    assertSame(element1, entriesInBucket[1].element);
-
-    assertSame(entriesInBucket[1], entriesInBucket[0].next);
-    assertNull(entriesInBucket[1].next);
-  }
-
-  private LruCacheEntry[] getEntriesAsOrderedInBucket() {
-    List entryList = new ArrayList();
-
-    LruCacheEntry current = cache.getHeader().before;
-    while (current != null) {
-      entryList.add(current);
-      current = current.next();
-    }
-
-    LruCacheEntry[] entries = (LruCacheEntry[]) entryList
-        .toArray(new LruCacheEntry[entryList.size()]);
-    return entries;
+    Element[] expectedElementsInBucket = { element2, element1 };
+    assertBucketEntriesAreCorrect(expectedElementsInBucket);
   }
 
   public void testPutInsertsNewEntryBeforeHeaderInLruList() {
     int hash = HASH;
-    Element element1 = defaultElement();
+    Element element1 = ELEMENT_1;
     segment.put(element1, hash, cache);
 
-    Element element2 = new Element("newKey", "newValue");
+    Element element2 = ELEMENT_2;
     segment.put(element2, hash, cache);
 
     LruCacheEntry[] expectedEntries = {
@@ -134,69 +118,124 @@ public class LruCacheSegmentTests extends TestCase {
 
   public void testPutWithOneNewEntry() {
     int hash = HASH;
-    Element element = defaultElement();
+    Element element = ELEMENT_1;
     Serializable oldValue = null;
     assertPutInsertsElement(element, hash, oldValue);
   }
 
   public void testPutWithTwoNewEntriesHavingSameKeyAndDifferentValues() {
     int hash = HASH;
-    Element element1 = defaultElement();
+    Element element1 = ELEMENT_1;
     Serializable oldValue = null;
     assertPutInsertsElement(element1, hash, oldValue);
 
-    Element element2 = new Element(element1.getKey(), "newValue");
+    Element element2 = new Element(element1.getKey(), "someOtherValue");
     oldValue = element1.getValue();
     assertPutReplacesElement(element2, hash, oldValue);
   }
 
   public void testPutWithTwoNewEntriesWithDifferentKeys() {
     int hash = HASH;
-    Element element1 = defaultElement();
+    Element element1 = ELEMENT_1;
     Serializable oldValue = null;
     assertPutInsertsElement(element1, hash, oldValue);
 
-    Element element2 = new Element("newKey", "newValue");
+    Element element2 = ELEMENT_2;
     assertPutInsertsElement(element2, hash, oldValue);
   }
 
-  public void testRemoveWithEmptySegment() {
-    segment.remove(KEY, HASH);
-    assertEmptySegment();
-    assertEmptyCache();
-  }
-
-  public void testRemoveEntryInMiddlePositionInBucket() {
+  public void testRemoveEntryInFirstPosition() {
     int hash = HASH;
-    Element element1 = defaultElement();
+    Element element1 = ELEMENT_1;
     segment.put(element1, hash, cache);
 
-    Element element2 = new Element("key2", "value2");
+    Element element2 = ELEMENT_2;
     segment.put(element2, hash, cache);
 
-    Element element3 = new Element("key3", "value3");
+    Element element3 = ELEMENT_3;
     segment.put(element3, hash, cache);
 
-    Serializable removedValue = segment.remove(element2.getKey(), hash);
-    assertEquals("<removed value>", element2.getValue(), removedValue);
+    LruCacheEntry[] expectedEntriesInLruList = {
+        new LruCacheEntry(element2, hash, null),
+        new LruCacheEntry(element1, hash, null) };
+
+    Element[] expectedElementsInBucket = { element2, element1 };
+
+    assertRemoveIsCorrect(element3, hash, expectedEntriesInLruList,
+        expectedElementsInBucket);
+  }
+
+  public void testRemoveEntryInLastPosition() {
+    int hash = HASH;
+    Element element1 = ELEMENT_1;
+    segment.put(element1, hash, cache);
+
+    Element element2 = ELEMENT_2;
+    segment.put(element2, hash, cache);
+
+    Element element3 = ELEMENT_3;
+    segment.put(element3, hash, cache);
+
+    LruCacheEntry[] expectedEntriesInLruList = {
+        new LruCacheEntry(element3, hash, null),
+        new LruCacheEntry(element2, hash, null) };
+
+    Element[] expectedElementsInBucket = { element3, element2 };
+
+    assertRemoveIsCorrect(element1, hash, expectedEntriesInLruList,
+        expectedElementsInBucket);
+  }
+
+  public void testRemoveEntryInMiddlePosition() {
+    int hash = HASH;
+    Element element1 = ELEMENT_1;
+    segment.put(element1, hash, cache);
+
+    Element element2 = ELEMENT_2;
+    segment.put(element2, hash, cache);
+
+    Element element3 = ELEMENT_3;
+    segment.put(element3, hash, cache);
+
+    LruCacheEntry[] expectedEntriesInLruList = {
+        new LruCacheEntry(element3, hash, null),
+        new LruCacheEntry(element1, hash, null) };
+
+    Element[] expectedElementsInBucket = { element3, element1 };
+
+    assertRemoveIsCorrect(element2, hash, expectedEntriesInLruList,
+        expectedElementsInBucket);
+  }
+
+  public void testRemoveWithEmptySegment() {
+    segment.remove(ELEMENT_1.getKey(), HASH);
+    assertEmptySegment();
+    assertEmptyCache();
   }
 
   public void testRemoveWithSegmentHavingOneEntry() {
     int hash = HASH;
-    Element element = defaultElement();
+    Element element = ELEMENT_1;
     Serializable oldValue = null;
     assertPutInsertsElement(element, hash, oldValue);
 
-    Serializable removedValue = segment.remove(element.getKey(), hash);
-    assertEquals("<removed value>", element.getValue(), removedValue);
-
-    assertEmptySegment();
-    assertEmptyCache();
+    assertRemoveIsCorrect(element, hash);
   }
 
   protected void setUp() {
     cache = new LruCache();
-    segment = new LruCacheSegment(2, 2);
+    segment = new LruCacheSegment(4, 2);
+  }
+
+  private void assertBucketEntriesAreCorrect(Element[] expectedElements) {
+    int expectedEntryCount = expectedElements.length;
+
+    LruCacheEntry[] actualEntries = getEntriesAsOrderedInBucket();
+    assertEquals("<entry count>", expectedEntryCount, actualEntries.length);
+
+    for (int i = 0; i < expectedEntryCount; i++) {
+      assertSame(expectedElements[i], actualEntries[i].element);
+    }
   }
 
   private void assertClearRemovesAllSegmentEntries() {
@@ -259,7 +298,42 @@ public class LruCacheSegmentTests extends TestCase {
     assertPutAddsGivenElement(element, hash, expectedOldValue, false);
   }
 
-  private Element defaultElement() {
-    return new Element(KEY, VALUE);
+  private void assertRemoveIsCorrect(Element elementToRemove, int hash) {
+    assertRemoveIsCorrect(elementToRemove, hash, null, null);
+  }
+
+  private void assertRemoveIsCorrect(Element elementToRemove, int hash,
+      LruCacheEntry[] expectedEntriesInLruList,
+      Element[] expectedElementInBucket) {
+    Serializable removedValue = segment.remove(elementToRemove.getKey(), hash);
+    assertEquals("<removed value>", elementToRemove.getValue(), removedValue);
+
+    // verify LRU linked list.
+    if (ObjectUtils.isEmpty(expectedEntriesInLruList)) {
+      assertEmptySegment();
+    } else {
+      assertLruListIsCorrect(expectedEntriesInLruList);
+    }
+
+    // verify bucket.
+    if (ObjectUtils.isEmpty(expectedElementInBucket)) {
+      assertEmptyCache();
+    } else {
+      assertBucketEntriesAreCorrect(expectedElementInBucket);
+    }
+  }
+
+  private LruCacheEntry[] getEntriesAsOrderedInBucket() {
+    List entryList = new ArrayList();
+
+    LruCacheEntry current = cache.getHeader().before;
+    while (current != null) {
+      entryList.add(current);
+      current = current.next();
+    }
+
+    LruCacheEntry[] entries = (LruCacheEntry[]) entryList
+        .toArray(new LruCacheEntry[entryList.size()]);
+    return entries;
   }
 }

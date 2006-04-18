@@ -242,14 +242,21 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
       Serializable oldValue = entryValue;
       modCount++;
 
+      // remove entry from bucket
       if (first == entryToRemove) {
         tableRef[firstEntryIndex] = entryToRemove.next();
       } else {
-        for (LruCacheEntry prev = first; prev != entryToRemove; prev = prev
-            .next()) {
-          prev.next = entryToRemove.next;
+        LruCacheEntry prev = first;
+        while (prev != null) {
+          if (prev.next == entryToRemove) {
+            prev.next = entryToRemove.next;
+            break;
+          }
+          prev = prev.next();
         }
       }
+      
+      // remove entry from LRU linked list
       entryToRemove.next = null;
       entryToRemove.recordRemoval();
 
@@ -261,8 +268,8 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
     }
   }
 
-  protected LruCacheEntry[] getTable() {
-    return table;
+  protected int getTableSize() {
+    return table.length;
   }
 
   private int calculateThreshold(LruCacheEntry[] tableRef) {
