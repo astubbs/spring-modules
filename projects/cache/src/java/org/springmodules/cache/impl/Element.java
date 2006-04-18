@@ -52,8 +52,6 @@ public class Element implements Serializable, Cloneable {
 
   private final long creationTime;
 
-  private transient final int hashCode;
-
   private final Serializable key;
 
   private final long timeToLive;
@@ -72,8 +70,11 @@ public class Element implements Serializable, Cloneable {
    *          the new key for this entry
    * @param newValue
    *          the new value for this entry
+   * @throws ObjectCannotBeCopiedException
+   *           if the key or the value cannot be copied using serialization
    */
-  public Element(Serializable newKey, Serializable newValue) {
+  public Element(Serializable newKey, Serializable newValue)
+      throws ObjectCannotBeCopiedException {
     this(newKey, newValue, EXPIRY_NEVER);
   }
 
@@ -91,16 +92,19 @@ public class Element implements Serializable, Cloneable {
    *          the new value for this entry
    * @param newTimeToLive
    *          the number of milliseconds until the cache entry will expire
+   * @throws ObjectCannotBeCopiedException
+   *           if the key or the value cannot be copied using serialization
    */
-  public Element(Serializable newKey, Serializable newValue, long newTimeToLive) {
+  public Element(Serializable newKey, Serializable newValue, long newTimeToLive)
+      throws ObjectCannotBeCopiedException {
     this(newKey, newValue, System.currentTimeMillis(), newTimeToLive);
   }
 
   private Element(Serializable newKey, Serializable newValue,
-      long newCreationTime, long newTimeToLive) {
+      long newCreationTime, long newTimeToLive)
+      throws ObjectCannotBeCopiedException {
     super();
     key = copy(newKey);
-    hashCode = hash(key);
 
     setValue(newValue);
     creationTime = newCreationTime;
@@ -117,7 +121,7 @@ public class Element implements Serializable, Cloneable {
     Element newElement = new Element(key, value, creationTime, timeToLive);
     return newElement;
   }
-
+  
   /**
    * @see Object#equals(Object)
    */
@@ -129,6 +133,9 @@ public class Element implements Serializable, Cloneable {
     }
     Element other = (Element) obj;
     if (!ObjectUtils.nullSafeEquals(key, other.key)) {
+      return false;
+    }
+    if (!ObjectUtils.nullSafeEquals(value, other.value)) {
       return false;
     }
     return true;
@@ -166,7 +173,11 @@ public class Element implements Serializable, Cloneable {
    * @see Object#hashCode()
    */
   public int hashCode() {
-    return hashCode;
+    int multiplier = 31;
+    int hash = 7;
+    hash = multiplier * hash + key.hashCode();
+    hash = multiplier * hash + Objects.nullSafeHashCode(value);
+    return hash;
   }
 
   /**
@@ -198,8 +209,11 @@ public class Element implements Serializable, Cloneable {
    * 
    * @param newValue
    *          the new value for this cache element
+   * @throws ObjectCannotBeCopiedException
+   *           if the key or the value cannot be copied using serialization
    */
-  public final void setValue(Serializable newValue) {
+  public final void setValue(Serializable newValue)
+      throws ObjectCannotBeCopiedException {
     value = copy(newValue);
   }
 
@@ -228,7 +242,8 @@ public class Element implements Serializable, Cloneable {
     }
   }
 
-  private Serializable copy(Serializable oldValue) {
+  private Serializable copy(Serializable oldValue)
+      throws ObjectCannotBeCopiedException {
     Serializable newValue = null;
 
     ByteArrayInputStream oldValueInputStream = null;
@@ -248,7 +263,8 @@ public class Element implements Serializable, Cloneable {
       newValue = (Serializable) newValueInputStream.readObject();
 
     } catch (Exception exception) {
-      logger.error("Unable to copy value " + oldValue, exception);
+      String errMsg = "Unable to copy value " + oldValue;
+      throw new ObjectCannotBeCopiedException(errMsg, exception);
 
     } finally {
       close(newValueInputStream);
@@ -257,12 +273,5 @@ public class Element implements Serializable, Cloneable {
       close(oldValueOutputStream);
     }
     return newValue;
-  }
-
-  private int hash(Object obj) {
-    int prime = 31;
-    int hash = 17;
-    hash = prime * hash + Objects.nullSafeHashCode(obj);
-    return hash;
   }
 }

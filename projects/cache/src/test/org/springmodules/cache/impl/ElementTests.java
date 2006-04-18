@@ -1,3 +1,4 @@
+
 /* 
  * Created on Apr 5, 2006
  *
@@ -23,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springmodules.AbstractEqualsHashCodeTestCase;
+import org.springmodules.AssertExt;
 import org.springmodules.cache.serializable.SerializationAssert;
 
 /**
@@ -54,13 +56,13 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
 
   public void testClone() {
     Element clone = (Element) element.clone();
-    assertCloneIsCorrect(element, clone);
+    assertEqualsButNotSame(element, clone);
   }
 
   public void testCloneWithElementHavingValueEqualToNull() {
     element.setValue(null);
     Element clone = (Element) element.clone();
-    assertCloneIsCorrect(element, clone);
+    assertEqualsButNotSame(element, clone);
   }
   
   public void testConstructorCreatesCopyOfKeyAndValueAndInitializesCreationTime() {
@@ -182,14 +184,23 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
   }
 
   public void testSerialization() throws Exception {
-    SerializationAssert.assertIsSerializable(element);
+    Serializable deserialized = SerializationAssert.copy(element);
+    AssertExt.assertInstanceOf(Element.class, deserialized);
+    assertEqualsButNotSame(element, (Element) deserialized);
   }
 
   protected void setUp() throws Exception {
     element = new Element(ELEMENT_KEY, ELEMENT_VALUE);
   }
 
-  private void assertCloneIsCorrect(Element original, Element clone) {
+  private void assertDefaultTimeToLiveIsSet(long specifiedTimeToLive) {
+    element = new Element(ELEMENT_KEY, ELEMENT_VALUE, specifiedTimeToLive);
+    assertEquals("<timeToLive>", 120000l, element.getTimeToLive());
+  }
+
+  private void assertEqualsButNotSame(Element original, Element clone) {
+    assertTrue("given elements should not be the same", original != clone);
+    
     Serializable originalKey = original.getKey();
     Serializable originalValue = original.getValue();
     Serializable clonedKey = clone.getKey();
@@ -198,17 +209,13 @@ public class ElementTests extends AbstractEqualsHashCodeTestCase {
     assertEquals(originalKey, clonedKey);
     assertEquals(originalValue, clonedValue);
     assertEquals(original.getCreationTime(), clone.getCreationTime());
+    assertEquals(original.getTimeToLive(), clone.getTimeToLive());
 
     boolean sameKeys = originalKey == clonedKey && originalKey != null;
     assertFalse("keys should not be same", sameKeys);
 
     boolean sameValues = originalValue == clonedValue && originalValue != null;
     assertFalse("values should not be same", sameValues);
-  }
-
-  private void assertDefaultTimeToLiveIsSet(long specifiedTimeToLive) {
-    element = new Element(ELEMENT_KEY, ELEMENT_VALUE, specifiedTimeToLive);
-    assertEquals("<timeToLive>", 120000l, element.getTimeToLive());
   }
 
   private void createAliveElement() {

@@ -1,5 +1,5 @@
 /* 
- * Created on Apr 7, 2006
+ * Created on Apr 13, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,26 +17,35 @@
  */
 package org.springmodules.cache.impl;
 
-import org.springframework.util.StringUtils;
-
 /**
- * Exception thrown when trying to add a cache to the cache manager using an
- * already existing name.
+ * Exception thrown if an object cannot be copied using serialization.
  * 
  * @author Alex Ruiz
- * 
  */
-public class CacheAlreadyExistsException extends CachingException {
+public class ObjectCannotBeCopiedException extends CachingException {
 
-  private static final long serialVersionUID = -6479571399378243183L;
+  private static final long serialVersionUID = 8361559127636476834L;
 
   /**
    * Constructor.
    * 
-   * @param cacheName
-   *          the name of the cache that already exists in the cache manager
+   * @param detailMessage
+   *          the detail message
    */
-  public CacheAlreadyExistsException(String cacheName) {
-    super("The cache " + StringUtils.quote(cacheName) + " already exists");
+  public ObjectCannotBeCopiedException(String detailMessage) {
+    super(detailMessage);
   }
+
+  /**
+   * Constructor.
+   * 
+   * @param detailMessage
+   *          the detail message
+   * @param nested
+   *          the nested exception
+   */
+  public ObjectCannotBeCopiedException(String detailMessage, Throwable nested) {
+    super(detailMessage, nested);
+  }
+
 }

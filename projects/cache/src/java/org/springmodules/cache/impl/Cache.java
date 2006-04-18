@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * A representation of a cache.
+ * Representation of a cache.
  * </p>
  * 
  * @author Alex Ruiz
@@ -33,7 +33,7 @@ public interface Cache extends Serializable {
    * specified key.
    * 
    * @param key
-   *          key whose presence in this map is to be tested
+   *          key whose presence in this cache is to be tested
    * @return <code>true</code> if this map contains a mapping for the
    *         specified key
    * 
@@ -54,7 +54,7 @@ public interface Cache extends Serializable {
    * @param key
    *          key whose associated value is to be returned
    * @return the value to which this cache maps the specified key, or
-   *         <code>null</code> if the map contains no mapping for this key
+   *         <code>null</code> if this cache contains no mapping for this key
    * 
    * @throws IllegalArgumentException
    *           if the key is <code>null</code>
@@ -80,9 +80,8 @@ public interface Cache extends Serializable {
    *          value to be associated with the specified key
    * @return previous value associated with specified key, or <code>null</code>
    *         if there was no mapping for key. A <code>null</code> return can
-   *         also indicate that the map previously associated <code>null</code>
-   *         with the specified key, if the implementation supports
-   *         <code>null</code> values
+   *         also indicate that this cache previously associated
+   *         <code>null</code> with the specified key
    * 
    * @throws IllegalArgumentException
    *           if the specified key is <code>null</code>

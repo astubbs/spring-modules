@@ -1,5 +1,5 @@
 /* 
- * Created on Apr 7, 2006
+ * Created on Apr 13, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -17,26 +17,35 @@
  */
 package org.springmodules.cache.impl;
 
-import org.springframework.util.StringUtils;
+import org.springframework.core.NestedRuntimeException;
 
 /**
- * Exception thrown when trying to add a cache to the cache manager using an
- * already existing name.
+ * Thrown if an unexpected error occurs when working with the cache.
  * 
  * @author Alex Ruiz
- * 
  */
-public class CacheAlreadyExistsException extends CachingException {
-
-  private static final long serialVersionUID = -6479571399378243183L;
+public abstract class CachingException extends NestedRuntimeException {
 
   /**
    * Constructor.
    * 
-   * @param cacheName
-   *          the name of the cache that already exists in the cache manager
+   * @param detailMessage
+   *          the detail message
    */
-  public CacheAlreadyExistsException(String cacheName) {
-    super("The cache " + StringUtils.quote(cacheName) + " already exists");
+  public CachingException(String detailMessage) {
+    super(detailMessage);
   }
+
+  /**
+   * Constructor.
+   * 
+   * @param detailMessage
+   *          the detail message
+   * @param nested
+   *          the nested exception
+   */
+  public CachingException(String detailMessage, Throwable nested) {
+    super(detailMessage, nested);
+  }
+
 }
