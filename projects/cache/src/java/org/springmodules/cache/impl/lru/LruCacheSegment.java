@@ -323,31 +323,6 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
       // LruCacheEntry next = entry.next();
       int idx = entry.hash & sizeMask;
       newTable[idx] = entry;
-
-      // // Single node on list
-      // if (next == null) {
-      // newTable[idx] = entry;
-      // continue;
-      // }
-      //
-      // // Reuse trailing consecutive sequence at same slot
-      // LruCacheEntry lastRun = entry;
-      // int lastIdx = idx;
-      // for (LruCacheEntry last = next; last != null; last = last.next()) {
-      // int k = last.hash & sizeMask;
-      // if (k != lastIdx) {
-      // lastIdx = k;
-      // lastRun = last;
-      // }
-      // }
-      // newTable[lastIdx] = lastRun;
-      //
-      // // Clone all remaining nodes
-      // for (HashEntry<K, V> p = entry; p != lastRun; p = p.next) {
-      // int k = p.hash & sizeMask;
-      // HashEntry<K, V> n = (HashEntry<K, V>) newTable[k];
-      // newTable[k] = new HashEntry<K, V>(p.key, p.hash, n, p.value);
-      // }
     }
     table = newTable;
   }
