@@ -123,7 +123,7 @@ public class LruCache implements Cache {
     return 0;
   }
 
-  protected final LruCacheEntry getHeader() {
+  final LruCacheEntry getHeader() {
     return header;
   }
 

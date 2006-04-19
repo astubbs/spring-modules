@@ -32,17 +32,17 @@ class LruCacheEntry extends CacheEntry {
   /**
    * Points to the next element in the linked list.
    */
-  public LruCacheEntry after;
+  LruCacheEntry after;
 
   /**
    * Points to the previous element in the linked list.
    */
-  public LruCacheEntry before;
+  LruCacheEntry before;
 
   /**
    * Constructor.
    */
-  public LruCacheEntry() {
+  LruCacheEntry() {
     super(null, DEFAULT_HASH);
   }
 
@@ -56,7 +56,7 @@ class LruCacheEntry extends CacheEntry {
    * @param newNext
    *          the next entry in this bucket
    */
-  public LruCacheEntry(Element newElement, int newHash, LruCacheEntry newNext) {
+  LruCacheEntry(Element newElement, int newHash, LruCacheEntry newNext) {
     super(newElement, newHash, newNext);
   }
 
@@ -66,30 +66,30 @@ class LruCacheEntry extends CacheEntry {
    * @param existingEntry
    *          the given entry to be the this entry's "next"
    */
-  public void addBefore(LruCacheEntry existingEntry) {
+  void addBefore(LruCacheEntry existingEntry) {
     after = existingEntry;
     before = existingEntry.before;
     before.after = this;
     after.before = this;
   }
 
-  public LruCacheEntry next() {
+  LruCacheEntry next() {
     return (LruCacheEntry) next;
   }
 
-  public void recordAccess(LruCache cache) {
+  void recordAccess(LruCache cache) {
     remove();
     addBefore(cache.getHeader());
   }
 
-  public void recordRemoval() {
+  void recordRemoval() {
     remove();
   }
 
   /**
    * Removes this entry from the linked list.
    */
-  private void remove() {
+  void remove() {
     before.after = after;
     after.before = before;
   }

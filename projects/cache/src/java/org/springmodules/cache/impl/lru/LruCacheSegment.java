@@ -28,7 +28,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.locks.ReentrantLock;
  * 
  * @author Alex Ruiz
  */
-public class LruCacheSegment extends ReentrantLock implements Serializable {
+class LruCacheSegment extends ReentrantLock implements Serializable {
 
   /**
    * The maximum capacity.
@@ -73,7 +73,7 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
    * @param newLoadFactor
    *          the load factor for this segment
    */
-  public LruCacheSegment(int initialCapacity, float newLoadFactor) {
+  LruCacheSegment(int initialCapacity, float newLoadFactor) {
     loadFactor = newLoadFactor;
     setTable(new LruCacheEntry[initialCapacity]);
   }
@@ -81,7 +81,7 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
   /**
    * Removes the entries in this segment.
    */
-  public void clear() {
+  void clear() {
     if (empty()) {
       return;
     }
@@ -114,7 +114,7 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
    * @return <code>true</code> if this segment contains a mapping for the
    *         specified key
    */
-  public boolean containsKey(Serializable key, int hash) {
+  boolean containsKey(Serializable key, int hash) {
     if (empty()) {
       return false;
     }
@@ -124,7 +124,7 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
     return entry != null;
   }
 
-  public final int count() {
+  final int count() {
     return count;
   }
 
@@ -147,7 +147,7 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
    *         <code>null</code> if this segment contains no mapping for this
    *         key
    */
-  public Serializable get(Serializable key, int hash, LruCache cache) {
+  Serializable get(Serializable key, int hash, LruCache cache) {
     if (empty()) {
       return null;
     }
@@ -162,6 +162,10 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
       entry = entry.next();
     }
     return null;
+  }
+
+  int getTableSize() {
+    return table.length;
   }
 
   /**
@@ -180,7 +184,7 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
    *         also indicate that this segment previously associated
    *         <code>null</code> with the specified key
    */
-  public Serializable put(Element element, int hash, LruCache cache) {
+  Serializable put(Element element, int hash, LruCache cache) {
     lock();
 
     try {
@@ -224,7 +228,7 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
    * @return previous value associated with specified key, or <code>null</code>
    *         if there was no mapping for key
    */
-  public Serializable remove(Serializable key, int hash) {
+  Serializable remove(Serializable key, int hash) {
     lock();
     try {
       int newCount = count - 1;
@@ -266,10 +270,6 @@ public class LruCacheSegment extends ReentrantLock implements Serializable {
     } finally {
       unlock();
     }
-  }
-
-  protected int getTableSize() {
-    return table.length;
   }
 
   private int calculateThreshold(LruCacheEntry[] tableRef) {
