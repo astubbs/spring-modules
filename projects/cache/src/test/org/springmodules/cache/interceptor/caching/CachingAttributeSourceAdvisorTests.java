@@ -85,7 +85,7 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
 
     // a caching attribute should not be found for the specified method and
     // class.
-    sourceControl.expectAndReturn(source.getCachingAttribute(method,
+    sourceControl.expectAndReturn(source.get(method,
         targetClass), null);
 
     sourceControl.replay();
@@ -100,7 +100,7 @@ public final class CachingAttributeSourceAdvisorTests extends TestCase {
     setUpTargetClassAndMethod();
 
     // a caching attribute should be found for the specified method and class.
-    sourceControl.expectAndReturn(source.getCachingAttribute(method,
+    sourceControl.expectAndReturn(source.get(method,
         targetClass), new Cached());
 
     sourceControl.replay();

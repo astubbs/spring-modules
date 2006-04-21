@@ -129,12 +129,12 @@ public final class JcsFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JcsFacade#getCacheModelValidator()}</code> returns an an
+   * <code>{@link JcsFacade#modelValidator()}</code> returns an an
    * instance of <code>{@link JcsModelValidator}</code> not equal to
    * <code>null</code>.
    */
   public void testGetCacheModelValidator() {
-    CacheModelValidator validator = jcsFacade.getCacheModelValidator();
+    CacheModelValidator validator = jcsFacade.modelValidator();
     assertNotNull(validator);
     assertEquals(JcsModelValidator.class, validator.getClass());
   }

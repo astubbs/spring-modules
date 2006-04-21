@@ -55,7 +55,7 @@ public class CachingInterceptorTests extends TestCase {
 
     boolean onAfterPropertiesSetCalled;
 
-    protected CachingModel getModel(MethodInvocation newMethodInvocation) {
+    protected CachingModel model(MethodInvocation newMethodInvocation) {
       return model;
     }
 
@@ -183,7 +183,7 @@ public class CachingInterceptorTests extends TestCase {
 
     interceptor.setCachingModels(models);
     interceptor.afterPropertiesSet();
-    assertEquals(expected, interceptor.getCachingModels());
+    assertEquals(expected, interceptor.models());
 
     verify();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
@@ -221,7 +221,7 @@ public class CachingInterceptorTests extends TestCase {
     interceptor.afterPropertiesSet();
 
     AssertExt.assertInstanceOf(HashCodeCacheKeyGenerator.class, interceptor
-        .getCacheKeyGenerator());
+        .cacheKeyGenerator());
 
     verify();
     assertTrue(interceptor.onAfterPropertiesSetCalled);
@@ -395,7 +395,7 @@ public class CachingInterceptorTests extends TestCase {
     validator = (CacheModelValidator) validatorControl.getMock();
 
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+        .modelValidator(), validator);
   }
 
   private void expectGetCachingModelEditor() {

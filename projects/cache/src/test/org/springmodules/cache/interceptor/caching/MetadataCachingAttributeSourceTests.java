@@ -59,7 +59,7 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link MetadataCachingAttributeSource#getCachingAttribute(Method, Class)}</code>
+   * <code>{@link MetadataCachingAttributeSource#get(Method, Class)}</code>
    * returns an instance of <code>{@link Cached}</code> if the return value of
    * the specified method is not <code>void</code>.
    */
@@ -75,7 +75,7 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
         attributeList);
     attributesControl.replay();
 
-    assertSame(expected, source.getCachingAttribute(method, targetClass));
+    assertSame(expected, source.get(method, targetClass));
 
     attributesControl.verify();
 
@@ -83,13 +83,13 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link MetadataCachingAttributeSource#getCachingAttribute(Method, Class)}</code>
+   * <code>{@link MetadataCachingAttributeSource#get(Method, Class)}</code>
    * returns <code>null</code> if the return value of the specified method is
    * <code>void</code>.
    */
   public void testGetCachingAttributeWithNotCacheableMethod() throws Exception {
     setUpTargetClassAndNonCacheableMethod();
-    assertNull(source.getCachingAttribute(method, targetClass));
+    assertNull(source.get(method, targetClass));
   }
 
   protected void setUp() {

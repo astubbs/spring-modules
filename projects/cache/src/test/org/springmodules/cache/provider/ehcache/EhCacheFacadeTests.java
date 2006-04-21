@@ -100,12 +100,12 @@ public class EhCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link EhCacheFacade#getCacheModelValidator()}</code> returns an an
+   * <code>{@link EhCacheFacade#modelValidator()}</code> returns an an
    * instance of <code>{@link EhCacheModelValidator}</code> not equal to
    * <code>null</code>.
    */
   public void testGetCacheModelValidator() {
-    CacheModelValidator validator = cacheFacade.getCacheModelValidator();
+    CacheModelValidator validator = cacheFacade.modelValidator();
     assertNotNull(validator);
     assertEquals(EhCacheModelValidator.class, validator.getClass());
   }

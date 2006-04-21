@@ -48,7 +48,7 @@ public final class MethodMapCachingInterceptor extends
     if (cachingModelSource == null) {
       MethodMapCachingModelSource newSource = new MethodMapCachingModelSource();
 
-      Map models = getCachingModels();
+      Map models = models();
       String key = null;
       try {
         for (Iterator i = models.entrySet().iterator(); i.hasNext();) {

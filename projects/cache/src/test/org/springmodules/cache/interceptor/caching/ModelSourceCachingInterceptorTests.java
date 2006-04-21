@@ -68,7 +68,7 @@ public class ModelSourceCachingInterceptorTests extends TestCase {
 
     replayMocks();
 
-    assertSame(expected, interceptor.getModel(invocation));
+    assertSame(expected, interceptor.model(invocation));
     verifyMocks();
   }
 
@@ -84,7 +84,7 @@ public class ModelSourceCachingInterceptorTests extends TestCase {
 
     replayMocks();
 
-    assertSame(expected, interceptor.getModel(invocation));
+    assertSame(expected, interceptor.model(invocation));
     verifyMocks();
   }
 

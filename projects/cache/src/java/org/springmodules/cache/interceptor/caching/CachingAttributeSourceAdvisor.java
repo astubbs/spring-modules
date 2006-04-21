@@ -73,7 +73,7 @@ public class CachingAttributeSourceAdvisor extends
    *         should be cached.
    */
   public final boolean matches(Method method, Class targetClass) {
-    Cached attribute = cachingAttributeSource.getCachingAttribute(method,
+    Cached attribute = cachingAttributeSource.get(method,
         targetClass);
 
     boolean matches = (attribute != null);

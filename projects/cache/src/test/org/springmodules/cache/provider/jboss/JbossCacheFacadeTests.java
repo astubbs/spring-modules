@@ -60,12 +60,12 @@ public class JbossCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link JbossCacheFacade#getCacheModelValidator()}</code> returns an
+   * <code>{@link JbossCacheFacade#modelValidator()}</code> returns an
    * an instance of <code>{@link JbossCacheModelValidator}</code> not equal to
    * <code>null</code>.
    */
   public void testGetCacheModelValidator() {
-    CacheModelValidator validator = cacheFacade.getCacheModelValidator();
+    CacheModelValidator validator = cacheFacade.modelValidator();
     assertNotNull(validator);
     assertEquals(JbossCacheModelValidator.class, validator.getClass());
   }

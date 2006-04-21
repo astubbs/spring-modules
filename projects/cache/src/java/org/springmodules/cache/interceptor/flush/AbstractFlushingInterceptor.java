@@ -77,7 +77,7 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
     }
 
     CacheModelValidator validator = cacheProviderFacade
-        .getCacheModelValidator();
+        .modelValidator();
 
     if (flushingModels instanceof Properties) {
       PropertyEditor editor = cacheProviderFacade.getFlushingModelEditor();

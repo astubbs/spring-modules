@@ -329,7 +329,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
     factoryBean.setCacheKeyGenerator(keyGenerator);
 
     assertSame(keyGenerator, factoryBean.getCachingInterceptor()
-        .getCacheKeyGenerator());
+        .cacheKeyGenerator());
   }
 
   public void testSetFlushingModelsWithEmptyModelMap() {
@@ -373,7 +373,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
 
   private void expectAfterPropertiesSetOnCachingInterceptor() {
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+        .modelValidator(), validator);
     for (Iterator i = cachingModels.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
       CachingModel model = (CachingModel) entry.getValue();
@@ -389,7 +389,7 @@ public final class CacheProxyFactoryBeanTests extends TestCase {
 
   private void expectAfterPropertiesSetOnFlushingInterceptor() {
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+        .modelValidator(), validator);
     for (Iterator i = flushingModels.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();
       FlushingModel model = (FlushingModel) entry.getValue();

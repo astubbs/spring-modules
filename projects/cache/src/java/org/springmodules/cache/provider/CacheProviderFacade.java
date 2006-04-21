@@ -60,7 +60,7 @@ public interface CacheProviderFacade extends InitializingBean {
   /**
    * @return the validator for both caching and flushing models
    */
-  CacheModelValidator getCacheModelValidator();
+  CacheModelValidator modelValidator();
 
   /**
    * @return the <code>PropertyEditor</code> for caching models

@@ -18,16 +18,12 @@
 package org.springmodules.cache.interceptor;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.springmodules.cache.CacheAttribute;
 
 import org.springframework.aop.support.AopUtils;
-import org.springframework.metadata.Attributes;
-import org.springframework.util.CollectionUtils;
 
 /**
  * TODO Describe this class
@@ -37,44 +33,28 @@ import org.springframework.util.CollectionUtils;
  */
 public class MetadataCacheAttributeSource {
 
-  public interface TypeMatcher {
-    boolean matches(Object o);
+  public interface MetadataFinder {
+    CacheAttribute find(Method m);
   }
-
+  
   public static final Object NULL_ATTRIBUTE = new Object();
 
   private final Map attributeMap;
 
-  private Attributes attributes;
+  private final MetadataFinder finder;
 
-  public MetadataCacheAttributeSource() {
+  public MetadataCacheAttributeSource(MetadataFinder f) {
     attributeMap = new HashMap();
+    finder = f;
   }
 
-  public CacheAttribute get(Method m, Class t, TypeMatcher tm) {
+  public CacheAttribute get(Method m, Class t) {
     String key = key(m, t);
     Object cached = attributeMap.get(key);
     if (cached != null) return unmaskNull(cached);
-    CacheAttribute attribute = retrieve(m, t, tm);
+    CacheAttribute attribute = retrieve(m, t);
     attributeMap.put(key, maskNull(attribute));
     return attribute;
-  }
-
-  public void setAttributes(Attributes newAttributes) {
-    attributes = newAttributes;
-  }
-
-  private Collection allAttributes(Method m) {
-    return attributes.getAttributes(m);
-  }
-
-  private CacheAttribute find(Collection methodAttributes, TypeMatcher tm) {
-    if (CollectionUtils.isEmpty(methodAttributes)) return null;
-    for (Iterator i = methodAttributes.iterator(); i.hasNext();) {
-      Object attribute = i.next();
-      if (tm.matches(attribute)) return (CacheAttribute) attribute;
-    }
-    return null;
   }
 
   private String key(Method m, Class t) {
@@ -85,11 +65,11 @@ public class MetadataCacheAttributeSource {
     return c == null ? NULL_ATTRIBUTE : c;
   }
 
-  private CacheAttribute retrieve(Method m, Class t, TypeMatcher tm) {
+  private CacheAttribute retrieve(Method m, Class t) {
     Method specificMethod = AopUtils.getMostSpecificMethod(m, t);
-    CacheAttribute attribute = find(allAttributes(specificMethod), tm);
+    CacheAttribute attribute = finder.find(specificMethod); 
     if (attribute != null) return attribute;
-    if (specificMethod != m) return find(allAttributes(m), tm);
+    if (specificMethod != m) return finder.find(m); 
     return null;
   }
 

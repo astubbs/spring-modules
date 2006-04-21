@@ -55,9 +55,9 @@ public abstract class AbstractModelSourceCachingInterceptor extends
   }
 
   /**
-   * @see AbstractCachingInterceptor#getModel(MethodInvocation)
+   * @see AbstractCachingInterceptor#model(MethodInvocation)
    */
-  protected final CachingModel getModel(MethodInvocation methodInvocation) {
+  protected final CachingModel model(MethodInvocation methodInvocation) {
     Object thisObject = methodInvocation.getThis();
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
     Method method = methodInvocation.getMethod();

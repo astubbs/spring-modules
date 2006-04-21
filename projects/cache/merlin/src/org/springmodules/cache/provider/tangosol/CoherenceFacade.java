@@ -55,9 +55,9 @@ public class CoherenceFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * @see org.springmodules.cache.provider.CacheProviderFacade#getCacheModelValidator()
+   * @see org.springmodules.cache.provider.CacheProviderFacade#modelValidator()
    */
-  public CacheModelValidator getCacheModelValidator() {
+  public CacheModelValidator modelValidator() {
     return cacheModelValidator;
   }
 

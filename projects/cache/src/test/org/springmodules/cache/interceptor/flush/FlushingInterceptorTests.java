@@ -88,7 +88,7 @@ public class FlushingInterceptorTests extends TestCase {
 
     setUpValidator();
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+        .modelValidator(), validator);
 
     InvalidCacheModelException expected = new InvalidCacheModelException("");
     validator.validateFlushingModel(model);
@@ -114,7 +114,7 @@ public class FlushingInterceptorTests extends TestCase {
 
     setUpValidator();
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+        .modelValidator(), validator);
 
     setUpFlushingModelEditor();
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
@@ -155,7 +155,7 @@ public class FlushingInterceptorTests extends TestCase {
     Properties models = createModelsAsProperties(2);
 
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+        .modelValidator(), validator);
 
     setUpFlushingModelEditor();
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
@@ -197,7 +197,7 @@ public class FlushingInterceptorTests extends TestCase {
     }
 
     cacheProviderFacadeControl.expectAndReturn(cacheProviderFacade
-        .getCacheModelValidator(), validator);
+        .modelValidator(), validator);
 
     for (Iterator i = models.entrySet().iterator(); i.hasNext();) {
       Map.Entry entry = (Map.Entry) i.next();

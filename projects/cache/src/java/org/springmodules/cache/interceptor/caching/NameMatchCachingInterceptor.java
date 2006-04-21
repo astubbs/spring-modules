@@ -40,7 +40,7 @@ public final class NameMatchCachingInterceptor extends
     CachingModelSource cachingModelSource = getCachingModelSource();
     if (cachingModelSource == null) {
       NameMatchCachingModelSource newSource = new NameMatchCachingModelSource();
-      newSource.setCachingModels(getCachingModels());
+      newSource.setCachingModels(models());
       setCachingModelSource(newSource);
     }
   }

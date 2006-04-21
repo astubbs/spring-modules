@@ -19,15 +19,19 @@
 package org.springmodules.cache.interceptor.caching;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Iterator;
 
+import org.springmodules.cache.CacheAttribute;
 import org.springmodules.cache.interceptor.MetadataCacheAttributeSource;
-import org.springmodules.cache.interceptor.MetadataCacheAttributeSource.TypeMatcher;
+import org.springmodules.cache.interceptor.MetadataCacheAttributeSource.MetadataFinder;
 
 import org.springframework.metadata.Attributes;
+import org.springframework.util.CollectionUtils;
 
 /**
  * <p>
- * Binds caching metadata atttributes to methods.
+ * Binds caching metadata attributes to methods.
  * </p>
  * 
  * @author Alex Ruiz
@@ -35,25 +39,42 @@ import org.springframework.metadata.Attributes;
 public final class MetadataCachingAttributeSource implements
     CachingAttributeSource {
 
-  static final TypeMatcher CACHING_ATTRIBUTE_MATCHER = new TypeMatcher() {
-    public boolean matches(Object o) {
-      return o instanceof Cached;
+  class CachingAttributeFinder implements MetadataFinder {
+    private Attributes attributes;
+
+    public CacheAttribute find(Method m) {
+      return find(attributes.getAttributes(m));
     }
-  };
+
+    void setAttributes(Attributes a) {
+      attributes = a;
+    }
+
+    private CacheAttribute find(Collection methodAttributes) {
+      if (CollectionUtils.isEmpty(methodAttributes)) return null;
+      for (Iterator i = methodAttributes.iterator(); i.hasNext();) {
+        Object attribute = i.next();
+        if (attribute instanceof Cached) return (CacheAttribute) attribute;
+      }
+      return null;
+    }
+  }
+
+  private final CachingAttributeFinder finder;
 
   private final MetadataCacheAttributeSource source;
 
   public MetadataCachingAttributeSource() {
-    source = new MetadataCacheAttributeSource();
+    finder = new CachingAttributeFinder();
+    source = new MetadataCacheAttributeSource(finder);
   }
 
-  public Cached getCachingAttribute(Method m, Class t) {
-    if (CachingUtils.isCacheable(m))
-      return (Cached) source.get(m, t, CACHING_ATTRIBUTE_MATCHER);
+  public Cached get(Method m, Class t) {
+    if (CachingUtils.isCacheable(m)) return (Cached) source.get(m, t);
     return null;
   }
 
-  public void setAttributes(Attributes newAttributes) {
-    source.setAttributes(newAttributes);
+  public void setAttributes(Attributes a) {
+    finder.setAttributes(a);
   }
 }

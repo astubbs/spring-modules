@@ -50,12 +50,12 @@ public class CoherenceFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link CoherenceFacade#getCacheModelValidator()}</code> returns an
+   * <code>{@link CoherenceFacade#modelValidator()}</code> returns an
    * an instance of <code>{@link CoherenceModelValidator}</code> not equal to
    * <code>null</code>.
    */
   public void testGetCacheModelValidator() {
-    CacheModelValidator validator = facade.getCacheModelValidator();
+    CacheModelValidator validator = facade.modelValidator();
     assertNotNull(validator);
     assertEquals(CoherenceModelValidator.class, validator.getClass());
   }

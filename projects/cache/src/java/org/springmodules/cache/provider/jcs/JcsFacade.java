@@ -76,7 +76,7 @@ public final class JcsFacade extends AbstractCacheProviderFacade {
    * 
    * @return the validator of cache models
    */
-  public CacheModelValidator getCacheModelValidator() {
+  public CacheModelValidator modelValidator() {
     return cacheModelValidator;
   }
 

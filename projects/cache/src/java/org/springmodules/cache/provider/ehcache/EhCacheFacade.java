@@ -70,7 +70,7 @@ public final class EhCacheFacade extends AbstractCacheProviderFacade {
    * 
    * @return the validator of cache models
    */
-  public CacheModelValidator getCacheModelValidator() {
+  public CacheModelValidator modelValidator() {
     return cacheModelValidator;
   }
 

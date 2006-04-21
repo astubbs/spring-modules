@@ -30,7 +30,6 @@ import org.springframework.util.ClassUtils;
  * TODO Describe this class
  * 
  * @author Alex Ruiz
- * 
  */
 final class MethodMatcher {
 

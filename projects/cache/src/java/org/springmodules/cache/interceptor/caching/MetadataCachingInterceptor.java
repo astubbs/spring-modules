@@ -87,21 +87,21 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
     Object thisObject = methodInvocation.getThis();
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
     Method method = methodInvocation.getMethod();
-    Cached attribute = cachingAttributeSource.getCachingAttribute(method,
+    Cached attribute = cachingAttributeSource.get(method,
         targetClass);
     return attribute;
   }
 
   /**
-   * @see AbstractCachingInterceptor#getModel(MethodInvocation)
+   * @see AbstractCachingInterceptor#model(MethodInvocation)
    */
-  protected final CachingModel getModel(MethodInvocation methodInvocation) {
+  protected final CachingModel model(MethodInvocation methodInvocation) {
     CachingModel model = null;
     Cached attribute = getCachingAttribute(methodInvocation);
     if (attribute != null) {
       String modelId = attribute.getModelId();
       if (StringUtils.hasText(modelId)) {
-        Map cachingModels = getCachingModels();
+        Map cachingModels = models();
         model = (CachingModel) cachingModels.get(modelId);
       }
     }

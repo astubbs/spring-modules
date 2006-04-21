@@ -70,7 +70,7 @@ public final class MetadataCachingInterceptorTests extends TestCase {
     invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     Cached expected = new Cached();
-    sourceControl.expectAndReturn(source.getCachingAttribute(method, thisObject
+    sourceControl.expectAndReturn(source.get(method, thisObject
         .getClass()), expected);
 
     replay();
@@ -86,7 +86,7 @@ public final class MetadataCachingInterceptorTests extends TestCase {
     invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     Cached expected = new Cached();
-    sourceControl.expectAndReturn(source.getCachingAttribute(method, null),
+    sourceControl.expectAndReturn(source.get(method, null),
         expected);
 
     replay();
@@ -107,19 +107,19 @@ public final class MetadataCachingInterceptorTests extends TestCase {
     models.put(modelId, expected);
     mockInterceptor.setCachingModels(models);
 
-    assertSame(expected, mockInterceptor.getModel(invocation));
+    assertSame(expected, mockInterceptor.model(invocation));
   }
 
   public void testGetModelWhenCachingAttributeDoesNotHaveModelId() {
     MockMetadataCachingInterceptor mockInterceptor = new MockMetadataCachingInterceptor();
     mockInterceptor.cachingAttribute = new Cached();
-    assertNull(mockInterceptor.getModel(invocation));
+    assertNull(mockInterceptor.model(invocation));
   }
 
   public void testGetModelWhenCachingAttributeIsNull() {
     MockMetadataCachingInterceptor mockInterceptor = new MockMetadataCachingInterceptor();
     mockInterceptor.cachingAttribute = null;
-    assertNull(mockInterceptor.getModel(invocation));
+    assertNull(mockInterceptor.model(invocation));
   }
 
   protected void setUp() {

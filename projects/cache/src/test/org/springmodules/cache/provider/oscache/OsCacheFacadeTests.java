@@ -88,12 +88,12 @@ public class OsCacheFacadeTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link OsCacheFacade#getCacheModelValidator()}</code> returns an an
+   * <code>{@link OsCacheFacade#modelValidator()}</code> returns an an
    * instance of <code>{@link OsCacheModelValidator}</code> not equal to
    * <code>null</code>.
    */
   public void testGetCacheModelValidator() {
-    CacheModelValidator validator = osCacheFacade.getCacheModelValidator();
+    CacheModelValidator validator = osCacheFacade.modelValidator();
 
     assertNotNull(validator);
 
