@@ -65,7 +65,7 @@ public class AnnotationCachingAttributeSource implements CachingAttributeSource 
     source = new MetadataCacheAttributeSource(finder);
   }
 
-  public Cached get(Method m, Class t) {
+  public Cached attribute(Method m, Class t) {
     if (isCacheable(m)) return (Cached) source.get(m, t);
     return null;
   }

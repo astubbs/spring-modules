@@ -50,7 +50,7 @@ public class NameMatchCachingModelSourceTests extends TestCase {
     CachingModel expected = new MockCachingModel();
     models.put(method.getName(), expected);
 
-    assertSame(expected, source.getModel(method, null));
+    assertSame(expected, source.model(method, null));
   }
 
   protected void setUp() throws Exception {

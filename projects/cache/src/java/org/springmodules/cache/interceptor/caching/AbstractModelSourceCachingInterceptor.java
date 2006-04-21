@@ -61,7 +61,7 @@ public abstract class AbstractModelSourceCachingInterceptor extends
     Object thisObject = methodInvocation.getThis();
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
     Method method = methodInvocation.getMethod();
-    return cachingModelSource.getModel(method, targetClass);
+    return cachingModelSource.model(method, targetClass);
   }
 
 }

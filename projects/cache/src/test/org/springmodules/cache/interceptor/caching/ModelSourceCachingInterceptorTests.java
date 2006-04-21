@@ -63,7 +63,7 @@ public class ModelSourceCachingInterceptorTests extends TestCase {
     invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     CachingModel expected = new MockCachingModel();
-    sourceControl.expectAndReturn(source.getModel(method, thisObject
+    sourceControl.expectAndReturn(source.model(method, thisObject
         .getClass()), expected);
 
     replayMocks();
@@ -79,7 +79,7 @@ public class ModelSourceCachingInterceptorTests extends TestCase {
     invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     CachingModel expected = new MockCachingModel();
-    sourceControl.expectAndReturn(source.getModel(method, null),
+    sourceControl.expectAndReturn(source.model(method, null),
         expected);
 
     replayMocks();

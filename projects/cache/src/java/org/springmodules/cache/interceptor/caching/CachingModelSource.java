@@ -40,5 +40,5 @@ public interface CachingModelSource {
    *          declaring class of the method must be used.
    * @return a caching model bound to the intercepted method.
    */
-  CachingModel getModel(Method m, Class c);
+  CachingModel model(Method m, Class c);
 }

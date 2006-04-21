@@ -125,7 +125,6 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
       Object value = mi.proceed();
       putInCache(key, m, value);
       return value;
-
     } catch (Throwable t) {
       logger.error("Unable to proceed to the next interceptor in the chain", t);
       throw t;
@@ -138,21 +137,25 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     return new HashCodeCacheKeyGenerator(true);
   }
 
+  private Object logAndProceed(String message, MethodInvocation mi)
+      throws Throwable {
+    logger.debug(message);
+    return mi.proceed();
+  }
+
   private Object maskNull(Object o) {
     return o != null ? o : NULL_ENTRY;
   }
 
   private Object methodNotCacheable(MethodInvocation mi, Method m)
       throws Throwable {
-    logger.debug("Unable to perform caching. Intercepted method <"
-        + m.toString() + "> does not return a value");
-    return mi.proceed();
+    return logAndProceed("Unable to perform caching. Intercepted method <"
+        + m.toString() + "> does not return a value", mi);
   }
 
   private Object noModelFound(MethodInvocation mi, Method m) throws Throwable {
-    logger.debug("Unable to perform caching. "
-        + "No model is associated to the method <" + m.getName() + ">");
-    return mi.proceed();
+    return logAndProceed("Unable to perform caching. "
+        + "No model is associated to the method <" + m.getName() + ">", mi);
   }
 
   private void notifyListeners(Serializable key, Object cachedObject,

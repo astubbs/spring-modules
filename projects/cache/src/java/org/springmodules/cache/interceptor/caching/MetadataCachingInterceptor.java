@@ -19,14 +19,13 @@
 package org.springmodules.cache.interceptor.caching;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 import org.aopalliance.intercept.MethodInvocation;
 
+import org.springmodules.cache.CachingModel;
+
 import org.springframework.metadata.Attributes;
 import org.springframework.util.StringUtils;
-
-import org.springmodules.cache.CachingModel;
 
 /**
  * <p>
@@ -65,15 +64,8 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
     setCachingAttributeSource(source);
   }
 
-  /**
-   * Sets the source of caching metadata attributes for class methods.
-   * 
-   * @param newCachingAttributeSource
-   *          the new source of caching metadata attributes
-   */
-  public final void setCachingAttributeSource(
-      CachingAttributeSource newCachingAttributeSource) {
-    cachingAttributeSource = newCachingAttributeSource;
+  public final void setCachingAttributeSource(CachingAttributeSource s) {
+    cachingAttributeSource = s;
   }
 
   /**
@@ -87,8 +79,7 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
     Object thisObject = methodInvocation.getThis();
     Class targetClass = (thisObject != null) ? thisObject.getClass() : null;
     Method method = methodInvocation.getMethod();
-    Cached attribute = cachingAttributeSource.get(method,
-        targetClass);
+    Cached attribute = cachingAttributeSource.attribute(method, targetClass);
     return attribute;
   }
 
@@ -96,16 +87,10 @@ public class MetadataCachingInterceptor extends AbstractCachingInterceptor {
    * @see AbstractCachingInterceptor#model(MethodInvocation)
    */
   protected final CachingModel model(MethodInvocation methodInvocation) {
-    CachingModel model = null;
     Cached attribute = getCachingAttribute(methodInvocation);
-    if (attribute != null) {
-      String modelId = attribute.getModelId();
-      if (StringUtils.hasText(modelId)) {
-        Map cachingModels = models();
-        model = (CachingModel) cachingModels.get(modelId);
-      }
-    }
-
-    return model;
+    if (attribute == null) return null;
+    String modelId = attribute.getModelId();
+    if (!StringUtils.hasText(modelId)) return null;
+    return (CachingModel) models().get(modelId);
   }
 }

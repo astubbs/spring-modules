@@ -70,7 +70,7 @@ public final class MetadataCachingInterceptorTests extends TestCase {
     invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     Cached expected = new Cached();
-    sourceControl.expectAndReturn(source.get(method, thisObject
+    sourceControl.expectAndReturn(source.attribute(method, thisObject
         .getClass()), expected);
 
     replay();
@@ -86,7 +86,7 @@ public final class MetadataCachingInterceptorTests extends TestCase {
     invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     Cached expected = new Cached();
-    sourceControl.expectAndReturn(source.get(method, null),
+    sourceControl.expectAndReturn(source.attribute(method, null),
         expected);
 
     replay();

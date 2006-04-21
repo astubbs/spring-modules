@@ -42,7 +42,7 @@ public final class MethodMapCachingModelSource implements CachingModelSource {
     source.addModel(m, fullyQualifiedMethodName);
   }
 
-  public CachingModel getModel(Method m, Class c) {
+  public CachingModel model(Method m, Class c) {
     return (CachingModel) source.model(m);
   }
 }

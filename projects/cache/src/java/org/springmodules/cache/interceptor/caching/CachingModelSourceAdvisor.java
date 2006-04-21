@@ -80,7 +80,7 @@ public class CachingModelSourceAdvisor extends
    */
   public final boolean matches(Method method, Class targetClass) {
     CachingModel model = cachingModelSource
-        .getModel(method, targetClass);
+        .model(method, targetClass);
 
     boolean matches = (model != null);
     return matches;

@@ -41,5 +41,5 @@ public interface CachingAttributeSource {
    *          declaring class of the method must be used.
    * @return a metadata attribute from the intercepted method.
    */
-  Cached get(Method method, Class targetClass);
+  Cached attribute(Method method, Class targetClass);
 }

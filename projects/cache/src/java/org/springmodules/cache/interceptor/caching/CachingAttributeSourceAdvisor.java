@@ -43,40 +43,17 @@ public class CachingAttributeSourceAdvisor extends
    */
   private CachingAttributeSource cachingAttributeSource;
 
-  /**
-   * @param interceptor
-   *          Advice that caches the returned value of intercepted methods.
-   * @throws AopConfigException
-   *           if the <code>CachingAttributeSource</code> of
-   *           <code>cacheInterceptor</code> is <code>null</code>.
-   */
-  public CachingAttributeSourceAdvisor(MetadataCachingInterceptor interceptor) {
-    super(interceptor);
-
-    CachingAttributeSource tempSource = interceptor.getCachingAttributeSource();
-
-    if (tempSource == null) {
-      throw new AopConfigException("<" + interceptor.getClass().getName()
-          + "> has no <" + CachingAttributeSource.class.getName()
-          + "> configured");
-    }
-
-    cachingAttributeSource = tempSource;
+  public CachingAttributeSourceAdvisor(MetadataCachingInterceptor i) {
+    super(i);
+    CachingAttributeSource source = i.getCachingAttributeSource();
+    if (source == null)
+      throw new AopConfigException("<" + i.getClass().getName() + "> has no <"
+          + CachingAttributeSource.class.getName() + "> configured");
+    cachingAttributeSource = source;
   }
 
-  /**
-   * @param method
-   *          the intercepted method to verify.
-   * @param targetClass
-   *          the class declaring the method.
-   * @return <code>true</code> if the return value of the intercepted method
-   *         should be cached.
-   */
   public final boolean matches(Method method, Class targetClass) {
-    Cached attribute = cachingAttributeSource.get(method,
-        targetClass);
-
-    boolean matches = (attribute != null);
-    return matches;
+    Cached attribute = cachingAttributeSource.attribute(method, targetClass);
+    return (attribute != null);
   }
 }

@@ -69,7 +69,7 @@ public final class MetadataCachingAttributeSource implements
     source = new MetadataCacheAttributeSource(finder);
   }
 
-  public Cached get(Method m, Class t) {
+  public Cached attribute(Method m, Class t) {
     if (CachingUtils.isCacheable(m)) return (Cached) source.get(m, t);
     return null;
   }

@@ -64,7 +64,7 @@ public class CachingModelSourceAdvisorTests extends TestCase {
 
     Method method = defaultMethod();
     Class targetClass = method.getDeclaringClass();
-    modelSourceControl.expectAndReturn(modelSource.getModel(method,
+    modelSourceControl.expectAndReturn(modelSource.model(method,
         targetClass), new MockCachingModel());
 
     modelSourceControl.replay();
@@ -79,7 +79,7 @@ public class CachingModelSourceAdvisorTests extends TestCase {
 
     Method method = defaultMethod();
     Class targetClass = method.getDeclaringClass();
-    modelSourceControl.expectAndReturn(modelSource.getModel(method,
+    modelSourceControl.expectAndReturn(modelSource.model(method,
         targetClass), null);
 
     modelSourceControl.replay();
