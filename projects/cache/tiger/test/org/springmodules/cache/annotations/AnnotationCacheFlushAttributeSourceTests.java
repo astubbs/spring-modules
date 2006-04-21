@@ -49,7 +49,7 @@ public class AnnotationCacheFlushAttributeSourceTests extends TestCase {
   public void testFindAllAttributes() throws Exception {
     Collection expected = Arrays.asList(annotatedMethod.getAnnotations());
     Collection actual = cacheFlushAttributeSource
-        .findAllAttributes(annotatedMethod);
+        .allAttributes(annotatedMethod);
 
     assertEquals(expected, actual);
   }

@@ -17,6 +17,8 @@
  */
 package org.springmodules.cache.impl.lru;
 
+import java.io.Serializable;
+
 import org.springmodules.cache.impl.CacheEntry;
 import org.springmodules.cache.impl.Element;
 
@@ -25,7 +27,7 @@ import org.springmodules.cache.impl.Element;
  * 
  * @author Alex Ruiz
  */
-class LruCacheEntry extends CacheEntry {
+final class LruCacheEntry extends CacheEntry {
 
   private static final int DEFAULT_HASH = -1;
 
@@ -73,13 +75,17 @@ class LruCacheEntry extends CacheEntry {
     after.before = this;
   }
 
+  boolean matches(Serializable key, int h) {
+    return (key.equals(element.getKey()) && h == hash);
+  }
+
   LruCacheEntry next() {
     return (LruCacheEntry) next;
   }
-
+  
   void recordAccess(LruCache cache) {
     remove();
-    addBefore(cache.getHeader());
+    addBefore(cache.header());
   }
 
   void recordRemoval() {
@@ -92,5 +98,11 @@ class LruCacheEntry extends CacheEntry {
   void remove() {
     before.after = after;
     after.before = before;
+  }
+  
+  Serializable replace(Element newElement) {
+    Serializable oldValue = element.getValue();
+    element = newElement;
+    return oldValue;
   }
 }

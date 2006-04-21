@@ -20,7 +20,6 @@ package org.springmodules.cache.interceptor.caching;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -28,8 +27,6 @@ import junit.framework.TestCase;
 import org.easymock.MockControl;
 
 import org.springframework.metadata.Attributes;
-
-import org.springmodules.cache.CacheAttribute;
 
 /**
  * <p>
@@ -58,63 +55,6 @@ public final class MetadataCachingAttributeSourceTests extends TestCase {
 
   public MetadataCachingAttributeSourceTests(String name) {
     super(name);
-  }
-
-  public void testFindAllAttributesMethod() throws Exception {
-    setUpTargetClassAndCacheableMethod();
-
-    List attributeList = new ArrayList();
-    attributesControl.expectAndReturn(attributes.getAttributes(method),
-        attributeList);
-    attributesControl.replay();
-
-    Collection returnedAttributes = source.findAllAttributes(method);
-
-    assertSame(attributeList, returnedAttributes);
-
-    attributesControl.verify();
-  }
-
-  public void testFindAttribute() {
-    Cached expected = new Cached();
-    Collection allAttributes = new ArrayList();
-    allAttributes.add(expected);
-
-    assertSame(expected, source.findAttribute(allAttributes));
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link MetadataCachingAttributeSource#findAttribute(Collection)}</code>
-   * does not return any <code>{@link CacheAttribute}</code> if the given
-   * collection of metadata attributes is equal to <code>null</code>.
-   */
-  public void testFindAttributeWithCollectionEqualToNull() {
-    CacheAttribute foundCacheAttribute = source.findAttribute(null);
-    assertNull(foundCacheAttribute);
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link MetadataCachingAttributeSource#findAttribute(Collection)}</code>
-   * returns <code>null</code> if the given collection of metadata attributes
-   * is not empty but does not contain any instance of
-   * <code>{@link Cached}</code>.
-   */
-  public void testFindAttributeWithCollectionNotHavingCacheAttributes() {
-    Collection allAttributes = new ArrayList();
-    allAttributes.add("A String!");
-    assertNull(source.findAttribute(allAttributes));
-  }
-
-  /**
-   * Verifies that the method
-   * <code>{@link MetadataCachingAttributeSource#findAttribute(Collection)}</code>
-   * does not return any <code>{@link CacheAttribute}</code> if the given
-   * collection of metadata attributes is empty.
-   */
-  public void testFindAttributeWithEmptyCollection() {
-    assertNull(source.findAttribute(new ArrayList()));
   }
 
   /**

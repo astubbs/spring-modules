@@ -32,5 +32,5 @@ public interface FlushingModel extends CacheModel {
    *         the cache should be flushed <b>after</b> the intercepted method is
    *         executed. Used only with declarative caching services
    */
-  boolean isFlushBeforeMethodExecution();
+  boolean flushBeforeMethodExecution();
 }

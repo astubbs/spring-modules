@@ -20,52 +20,29 @@ package org.springmodules.cache.interceptor.caching;
 import java.lang.reflect.Method;
 
 import org.springmodules.cache.CachingModel;
-import org.springmodules.cache.interceptor.AbstractMethodMapCacheModelSource;
+import org.springmodules.cache.interceptor.MethodMapCacheModelSource;
 
 /**
  * <p>
- * Simple implementation of <code>{@link CachingModelSource}</code> that
- * allows caching models to be stored per method in a map.
+ * Binds a <code>{@link CachingModel}</code> to a method.
  * </p>
  * 
  * @author Xavier Dury
  * @author Alex Ruiz
  */
-public class MethodMapCachingModelSource extends
-    AbstractMethodMapCacheModelSource implements CachingModelSource {
+public final class MethodMapCachingModelSource implements CachingModelSource {
 
-  /**
-   * <p>
-   * Adds a new entry to map of caching attributes using the methods which name
-   * that match the given fully qualified name as the entry key and the given
-   * caching attribute as the entry value.
-   * </p>
-   * <p>
-   * Fully qualified names can end or start with "*" for matching multiple
-   * methods.
-   * </p>
-   * 
-   * @param fullyQualifiedMethodName
-   *          the fully qualified name of the methods to attach the caching
-   *          attribute to. class and method name, separated by a dot
-   * @param model
-   *          the caching model.
-   * 
-   * @throws IllegalArgumentException
-   *           if the given method name is not a fully qualified name.
-   * @throws IllegalArgumentException
-   *           if the class specified in the fully qualified method name cannot
-   *           be found.
-   */
-  public final void addCachingModel(String fullyQualifiedMethodName,
-      CachingModel model) {
-    addCacheModel(fullyQualifiedMethodName, model);
+  private final MethodMapCacheModelSource source;
+
+  public MethodMapCachingModelSource() {
+    source = new MethodMapCacheModelSource();
   }
 
-  /**
-   * @see CachingModelSource#getCachingModel(Method, Class)
-   */
-  public CachingModel getCachingModel(Method method, Class targetClass) {
-    return (CachingModel) getCacheModels().get(method);
+  public void addModel(CachingModel m, String fullyQualifiedMethodName) {
+    source.addModel(m, fullyQualifiedMethodName);
+  }
+
+  public CachingModel getModel(Method m, Class c) {
+    return (CachingModel) source.model(m);
   }
 }

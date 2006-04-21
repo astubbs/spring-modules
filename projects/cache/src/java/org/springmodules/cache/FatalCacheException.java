@@ -29,28 +29,12 @@ public class FatalCacheException extends CacheException {
 
   private static final long serialVersionUID = -5778844057206602130L;
 
-  /**
-   * Construct a <code>FatalCacheException</code> with the specified detail
-   * message.
-   * 
-   * @param msg
-   *          the detail message
-   */
   public FatalCacheException(String msg) {
     super(msg);
   }
 
-  /**
-   * Construct a <code>FatalCacheException</code> with the specified detail
-   * message and nested exception.
-   * 
-   * @param msg
-   *          the detail message
-   * @param ex
-   *          the nested exception
-   */
-  public FatalCacheException(String msg, Throwable ex) {
-    super(msg, ex);
+  public FatalCacheException(String msg, Throwable nested) {
+    super(msg, nested);
   }
 
 }

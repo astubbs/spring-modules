@@ -289,7 +289,7 @@ public final class JcsFlushingModel extends AbstractFlushingModel {
     buffer.append("[cacheStructs=" + Objects.nullSafeToString(cacheStructs)
         + ", ");
     buffer.append("flushBeforeMethodExecution="
-        + isFlushBeforeMethodExecution() + "]");
+        + flushBeforeMethodExecution() + "]");
     return buffer.toString();
   }
 

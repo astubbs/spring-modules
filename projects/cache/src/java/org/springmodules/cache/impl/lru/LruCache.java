@@ -38,6 +38,8 @@ public class LruCache implements Cache {
 
   private final int maxCapacity;
 
+  private LruCacheSegment[] segments;
+
   /**
    * Constructor.
    */
@@ -123,7 +125,7 @@ public class LruCache implements Cache {
     return 0;
   }
 
-  final LruCacheEntry getHeader() {
+  final LruCacheEntry header() {
     return header;
   }
 

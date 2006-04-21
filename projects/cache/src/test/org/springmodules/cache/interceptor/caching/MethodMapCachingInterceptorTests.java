@@ -65,8 +65,8 @@ public class MethodMapCachingInterceptorTests extends TestCase {
     Method indexOf = clazz.getMethod("indexOf", new Class[] { int.class });
     Method toUpperCase = clazz.getMethod("toUpperCase", new Class[0]);
 
-    assertSame(model1, source.getCachingModel(indexOf, clazz));
-    assertSame(model2, source.getCachingModel(toUpperCase, clazz));
+    assertSame(model1, source.getModel(indexOf, clazz));
+    assertSame(model2, source.getModel(toUpperCase, clazz));
   }
 
   public void testOnAfterPropertiesSetWithCachingModelSourceEqualToNullAndNewModelSourceThrowingException() {
@@ -86,7 +86,7 @@ public class MethodMapCachingInterceptorTests extends TestCase {
 
   public void testOnAfterPropertiesSetWithCachingModelSourceNotNull() {
     CachingModelSource modelSource = new CachingModelSource() {
-      public CachingModel getCachingModel(Method method, Class targetClass) {
+      public CachingModel getModel(Method method, Class targetClass) {
         return null;
       }
     };

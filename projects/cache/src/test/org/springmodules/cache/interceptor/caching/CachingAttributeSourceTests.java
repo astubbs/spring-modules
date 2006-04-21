@@ -34,7 +34,7 @@ import junit.framework.TestCase;
 public class CachingAttributeSourceTests extends TestCase {
 
   protected class CachingAttributeSource extends AbstractCachingAttributeSource {
-    protected Collection findAllAttributes(Method newMethod) {
+    protected Collection allAttributes(Method newMethod) {
       return null;
     }
   }

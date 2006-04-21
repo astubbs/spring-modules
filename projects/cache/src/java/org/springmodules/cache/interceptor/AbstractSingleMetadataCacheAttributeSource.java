@@ -60,10 +60,10 @@ public abstract class AbstractSingleMetadataCacheAttributeSource extends
    * @return a <code>CachingAttribute</code> for the specified method.
    */
   protected final CacheAttribute getAttribute(Method method, Class targetClass) {
-    Map attributeMap = getAttributeMap();
+    Map attributeMap = attributeMap();
 
     // First, see if we have a cached value
-    Object attributeEntryKey = getAttributeEntryKey(method, targetClass);
+    Object attributeEntryKey = key(method, targetClass);
     Object cachedAttribute = attributeMap.get(attributeEntryKey);
 
     if (cachedAttribute != null) {
@@ -113,12 +113,12 @@ public abstract class AbstractSingleMetadataCacheAttributeSource extends
     Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
 
     // First try is the method in the target class
-    Collection allAttributes = findAllAttributes(specificMethod);
+    Collection allAttributes = allAttributes(specificMethod);
     attribute = findAttribute(allAttributes);
 
     if (null == attribute && specificMethod != method) {
       // Fallback is to look at the original method
-      allAttributes = findAllAttributes(method);
+      allAttributes = allAttributes(method);
       attribute = findAttribute(allAttributes);
     }
 

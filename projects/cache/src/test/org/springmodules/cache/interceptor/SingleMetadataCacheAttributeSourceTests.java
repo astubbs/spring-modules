@@ -43,7 +43,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
 
   /**
    * Collection to be used as return value for the method
-   * <code>{@link AbstractMetadataCacheAttributeSource#findAllAttributes(Method)}</code>.
+   * <code>{@link AbstractMetadataCacheAttributeSource#allAttributes(Method)}</code>.
    * This collection is supposed to contain all the metadata attributes for a
    * given <code>Method</code>.
    */
@@ -86,7 +86,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     for (int i = 0; i < 2; i++) {
       // get all the metadata attributes.
       attributeSourceControl.expectAndReturn(attributeSource
-          .findAllAttributes(method), allAttributes);
+          .allAttributes(method), allAttributes);
 
       // should not be able to find a CacheAttribute from the collection
       // containing all the metadata attributes.
@@ -117,7 +117,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    */
   public void testGetAttributeWhenCacheAttributeFoundIsNotEqualToNull() {
     attributeSourceControl.expectAndReturn(attributeSource
-        .findAllAttributes(method), allAttributes);
+        .allAttributes(method), allAttributes);
 
     attributeSourceControl.expectAndReturn(attributeSource
         .findAttribute(allAttributes), cacheAttribute);
@@ -142,7 +142,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    */
   public void testGetAttributeWhenCacheAttributeFoundIsNullAttribute() {
     // add NULL_ATTRIBUTE to the map of cached attributes.
-    Map attributeMap = attributeSource.getAttributeMap();
+    Map attributeMap = attributeSource.attributeMap();
 
     StringBuffer keyBuffer = new StringBuffer(targetClass.toString());
     keyBuffer.append(System.identityHashCode(method));
@@ -167,7 +167,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    */
   public void testRetrieveAttributeFromMostSpecificMethod() {
     attributeSourceControl.expectAndReturn(attributeSource
-        .findAllAttributes(method), allAttributes);
+        .allAttributes(method), allAttributes);
 
     attributeSourceControl.expectAndReturn(attributeSource
         .findAttribute(allAttributes), cacheAttribute);
@@ -192,7 +192,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    */
   public void testRetrieveAttributeFromMostSpecificMethodWhenMostSpecificMethodAndOriginalMethodAreTheSame() {
     attributeSourceControl.expectAndReturn(attributeSource
-        .findAllAttributes(method), allAttributes);
+        .allAttributes(method), allAttributes);
 
     attributeSourceControl.expectAndReturn(attributeSource
         .findAttribute(allAttributes), null);
@@ -221,13 +221,13 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    */
   public void testRetrieveAttributeFromOriginalMethod() {
     attributeSourceControl.expectAndReturn(attributeSource
-        .findAllAttributes(method), allAttributes);
+        .allAttributes(method), allAttributes);
 
     attributeSourceControl.expectAndReturn(attributeSource
         .findAttribute(allAttributes), null);
 
     attributeSourceControl.expectAndReturn(attributeSource
-        .findAllAttributes(method), allAttributes);
+        .allAttributes(method), allAttributes);
 
     attributeSourceControl.expectAndReturn(attributeSource
         .findAttribute(allAttributes), cacheAttribute);
@@ -258,7 +258,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
     for (int i = 0; i < 2; i++) {
       // get all the metadata attributes.
       attributeSourceControl.expectAndReturn(attributeSource
-          .findAllAttributes(method), allAttributes);
+          .allAttributes(method), allAttributes);
 
       attributeSourceControl.expectAndReturn(attributeSource
           .findAttribute(allAttributes), null);
@@ -294,7 +294,7 @@ public final class SingleMetadataCacheAttributeSourceTests extends TestCase {
    *          the attribute that is expected to be cached.
    */
   private void assertCacheAttributeIsCached(Object expectedCachedAttribute) {
-    Map attributeMap = attributeSource.getAttributeMap();
+    Map attributeMap = attributeSource.attributeMap();
     assertFalse(attributeMap.isEmpty());
 
     boolean found = false;

@@ -134,7 +134,7 @@ public final class OsCacheFlushingModel extends AbstractFlushingModel {
     StringBuffer buffer = Objects.identityToString(this);
     buffer.append("[groups=" + Objects.nullSafeToString(groups) + ", ");
     buffer.append("flushBeforeMethodExecution="
-        + isFlushBeforeMethodExecution() + "]");
+        + flushBeforeMethodExecution() + "]");
     return buffer.toString();
   }
 }

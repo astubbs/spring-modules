@@ -40,7 +40,7 @@ public class MetadataCacheAttributeSourceTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link AbstractMetadataCacheAttributeSource#getAttributeEntryKey(Method, Class)}</code>
+   * <code>{@link AbstractMetadataCacheAttributeSource#key(Method, Class)}</code>
    * creates a key by concatenating the name of the given class and the hash
    * code of the given method.
    */
@@ -52,14 +52,14 @@ public class MetadataCacheAttributeSourceTests extends TestCase {
     buffer.append(System.identityHashCode(method));
 
     String expected = buffer.toString();
-    Object actual = attributeSource.getAttributeEntryKey(method, targetClass);
+    Object actual = attributeSource.key(method, targetClass);
 
     assertEquals(expected, actual);
   }
 
   protected void setUp() {
     attributeSource = new AbstractMetadataCacheAttributeSource() {
-      protected Collection findAllAttributes(Method method) {
+      protected Collection allAttributes(Method method) {
         return null;
       }
     };

@@ -63,9 +63,9 @@ public final class MetadataFlushingAttributeSource extends
   }
 
   /**
-   * @see org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource#findAllAttributes(Method)
+   * @see org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource#allAttributes(Method)
    */
-  protected Collection findAllAttributes(Method method) {
+  protected Collection allAttributes(Method method) {
     Collection allAttributes = attributes.getAttributes(method);
     return allAttributes;
   }

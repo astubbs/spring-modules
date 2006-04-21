@@ -19,66 +19,41 @@
 package org.springmodules.cache.interceptor.caching;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Iterator;
+
+import org.springmodules.cache.interceptor.MetadataCacheAttributeSource;
+import org.springmodules.cache.interceptor.MetadataCacheAttributeSource.TypeMatcher;
 
 import org.springframework.metadata.Attributes;
 
-import org.springmodules.cache.CacheAttribute;
-import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource;
-
 /**
  * <p>
- * Implementation of <code>{@link CachingAttributeSource}</code> that uses
- * source-level metadata attributes.
+ * Binds caching metadata atttributes to methods.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public final class MetadataCachingAttributeSource extends
-    AbstractCachingAttributeSource {
+public final class MetadataCachingAttributeSource implements
+    CachingAttributeSource {
 
-  private Attributes attributes;
-
-  /**
-   * Sets the underlying metadata attributes to use.
-   * 
-   * @param newAttributes
-   *          the new underlying metadata attributes
-   */
-  public void setAttributes(Attributes newAttributes) {
-    attributes = newAttributes;
-  }
-
-  /**
-   * @see org.springmodules.cache.interceptor.AbstractMetadataCacheAttributeSource#findAllAttributes(Method)
-   */
-  protected Collection findAllAttributes(Method method) {
-    Collection allAttributes = attributes.getAttributes(method);
-    return allAttributes;
-  }
-
-  /**
-   * @see AbstractSingleMetadataCacheAttributeSource#findAttribute(Collection)
-   */
-  protected CacheAttribute findAttribute(Collection methodAttributes) {
-    CacheAttribute attribute = null;
-    if (methodAttributes != null && !methodAttributes.isEmpty()) {
-      for (Iterator i = methodAttributes.iterator(); i.hasNext();) {
-        Object object = i.next();
-        if (object instanceof Cached) {
-          attribute = (CacheAttribute) object;
-        }
-      }
+  static final TypeMatcher CACHING_ATTRIBUTE_MATCHER = new TypeMatcher() {
+    public boolean matches(Object o) {
+      return o instanceof Cached;
     }
-    return attribute;
+  };
+
+  private final MetadataCacheAttributeSource source;
+
+  public MetadataCachingAttributeSource() {
+    source = new MetadataCacheAttributeSource();
   }
 
-  /**
-   * @return the underlying metadata attributes we are using
-   */
-  protected Attributes getAttributes() {
-    return attributes;
+  public Cached getCachingAttribute(Method m, Class t) {
+    if (CachingUtils.isCacheable(m))
+      return (Cached) source.get(m, t, CACHING_ATTRIBUTE_MATCHER);
+    return null;
   }
 
+  public void setAttributes(Attributes newAttributes) {
+    source.setAttributes(newAttributes);
+  }
 }

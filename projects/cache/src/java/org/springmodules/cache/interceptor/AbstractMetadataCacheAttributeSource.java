@@ -45,7 +45,6 @@ public abstract class AbstractMetadataCacheAttributeSource {
    * Construct a <code>AbstractMetadataCacheAttributeSource</code>.
    */
   public AbstractMetadataCacheAttributeSource() {
-    super();
     attributeMap = new HashMap();
   }
 
@@ -57,7 +56,15 @@ public abstract class AbstractMetadataCacheAttributeSource {
    *          the method to retrieve attributes for
    * @return all the metadata attributes associated with the specified method
    */
-  protected abstract Collection findAllAttributes(Method method);
+  protected abstract Collection allAttributes(Method method);
+
+  /**
+   * @return the map that stores the source-level metadata attributes bound to
+   *         previously processed methods
+   */
+  protected final Map attributeMap() {
+    return attributeMap;
+  }
 
   /**
    * Returns the key of an entry of <code>{@link #attributeMap}</code>.
@@ -68,18 +75,8 @@ public abstract class AbstractMetadataCacheAttributeSource {
    *          the target class declaring the method
    * @return the key to access the attribute cache
    */
-  protected final Object getAttributeEntryKey(Method method, Class targetClass) {
-    StringBuffer keyBuffer = new StringBuffer(targetClass.toString());
-    keyBuffer.append(System.identityHashCode(method));
-    return keyBuffer.toString();
-  }
-
-  /**
-   * @return the map that stores the source-level metadata attributes bound to
-   *         previously processed methods
-   */
-  protected final Map getAttributeMap() {
-    return attributeMap;
+  protected final Object key(Method method, Class targetClass) {
+    return targetClass.toString() + System.identityHashCode(method);
   }
 
 }

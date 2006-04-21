@@ -35,9 +35,9 @@ public class NameMatchCachingModelSource extends
     AbstractNameMatchCacheModelSource implements CachingModelSource {
 
   /**
-   * @see CachingModelSource#getCachingModel(Method, Class)
+   * @see CachingModelSource#getModel(Method, Class)
    */
-  public CachingModel getCachingModel(Method method, Class targetClass) {
+  public CachingModel getModel(Method method, Class targetClass) {
     return (CachingModel) getCacheModel(method);
   }
 

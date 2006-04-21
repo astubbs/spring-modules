@@ -49,7 +49,7 @@ public class NameMatchCachingInterceptorTests extends TestCase {
 
   public void testOnAfterPropertiesSetWithCachingModelSourceNotNull() {
     CachingModelSource modelSource = new CachingModelSource() {
-      public CachingModel getCachingModel(Method method, Class targetClass) {
+      public CachingModel getModel(Method method, Class targetClass) {
         return null;
       }
     };

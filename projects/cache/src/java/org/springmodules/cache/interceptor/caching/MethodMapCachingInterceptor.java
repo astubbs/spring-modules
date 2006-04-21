@@ -54,7 +54,7 @@ public final class MethodMapCachingInterceptor extends
         for (Iterator i = models.entrySet().iterator(); i.hasNext();) {
           Map.Entry entry = (Map.Entry) i.next();
           key = (String) entry.getKey();
-          newSource.addCachingModel(key, (CachingModel) entry.getValue());
+          newSource.addModel((CachingModel) entry.getValue(), key);
         }
 
       } catch (Exception exception) {

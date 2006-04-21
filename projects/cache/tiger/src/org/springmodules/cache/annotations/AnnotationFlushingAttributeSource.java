@@ -57,7 +57,7 @@ public class AnnotationFlushingAttributeSource extends
    * @return all JDK 1.5+ annotations found for the given method.
    */
   @Override
-  protected Collection findAllAttributes(Method method) {
+  protected Collection allAttributes(Method method) {
     return Arrays.asList(method.getAnnotations());
   }
 

@@ -37,9 +37,9 @@ public class MockFlushingModel implements FlushingModel {
   }
 
   /**
-   * @see FlushingModel#isFlushBeforeMethodExecution()
+   * @see FlushingModel#flushBeforeMethodExecution()
    */
-  public boolean isFlushBeforeMethodExecution() {
+  public boolean flushBeforeMethodExecution() {
     return flushBeforeMethodExecution;
   }
 

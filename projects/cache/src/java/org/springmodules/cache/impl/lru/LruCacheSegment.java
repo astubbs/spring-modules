@@ -28,11 +28,8 @@ import edu.emory.mathcs.backport.java.util.concurrent.locks.ReentrantLock;
  * 
  * @author Alex Ruiz
  */
-class LruCacheSegment extends ReentrantLock implements Serializable {
+final class LruCacheSegment extends ReentrantLock implements Serializable {
 
-  /**
-   * The maximum capacity.
-   */
   private static final int MAXIMUM_CAPACITY = 1 << 30;
 
   private static final long serialVersionUID = 6068479672867699708L;
@@ -42,18 +39,14 @@ class LruCacheSegment extends ReentrantLock implements Serializable {
    */
   private transient volatile int count;
 
-  /**
-   * The load factor for the hash table. Even though this value is same for all
-   * segments, it is replicated to avoid needing links to outer object.
-   */
   private final float loadFactor;
 
   /**
    * Number of updates that alter the size of the table. This is used during
-   * bulk-read methods to make sure they see a consistent snapshot: If modCounts
-   * change during a traversal of segments computing size or checking
-   * containsValue, then we might have an inconsistent view of state so
-   * (usually) must retry.
+   * bulk-read methods to make sure they see a consistent snapshot: If
+   * <code>modCount</code> change during a traversal of segments computing
+   * size or checking containsValue, then we might have an inconsistent view of
+   * state so (usually) must retry.
    */
   private transient int modCount;
 
@@ -65,37 +58,23 @@ class LruCacheSegment extends ReentrantLock implements Serializable {
    */
   private transient int threshold;
 
-  /**
-   * Constructor.
-   * 
-   * @param initialCapacity
-   *          the initial capacity for this segment
-   * @param newLoadFactor
-   *          the load factor for this segment
-   */
   LruCacheSegment(int initialCapacity, float newLoadFactor) {
     loadFactor = newLoadFactor;
     setTable(new LruCacheEntry[initialCapacity]);
   }
 
-  /**
-   * Removes the entries in this segment.
-   */
   void clear() {
-    if (empty()) {
-      return;
-    }
+    if (empty()) return;
 
     lock();
     try {
       LruCacheEntry[] tableRef = table;
       for (int i = 0; i < tableRef.length; i++) {
-        if (tableRef[i] != null) {
-          tableRef[i].recordRemoval();
-          tableRef[i] = null;
-        }
+        if (tableRef[i] == null) continue;
+        tableRef[i].recordRemoval();
+        tableRef[i] = null;
       }
-      modCount++;
+      segmentModified();
       count = 0;
 
     } finally {
@@ -103,113 +82,41 @@ class LruCacheSegment extends ReentrantLock implements Serializable {
     }
   }
 
-  /**
-   * Returns <code>true</code> if this segment contains a mapping for the
-   * specified key.
-   * 
-   * @param key
-   *          key whose presence in this segment is to be tested
-   * @param hash
-   *          the hash needed to locate the mapping containing the key
-   * @return <code>true</code> if this segment contains a mapping for the
-   *         specified key
-   */
   boolean containsKey(Serializable key, int hash) {
-    if (empty()) {
-      return false;
-    }
-
-    LruCacheEntry first = getFirst(hash);
-    LruCacheEntry entry = find(key, hash, first);
+    if (empty()) return false;
+    LruCacheEntry entry = find(key, hash, first(hash));
     return entry != null;
   }
 
-  final int count() {
+  int count() {
     return count;
   }
 
-  /**
-   * Returns the value to which this segment maps the specified key. Returns
-   * <code>null</code> if the segment contains no mapping for this key. A
-   * return value of <code>null</code> does not <i>necessarily</i> indicate
-   * that the segment contains no mapping for the key; it's also possible that
-   * the segment explicitly maps the key to <code>null</code> or the cache
-   * entry has expired. The <code>containsKey</code> operation may be used to
-   * distinguish these two cases.
-   * 
-   * @param key
-   *          key whose associated value is to be returned
-   * @param hash
-   *          the hash needed to locate the mapping containing the key
-   * @param cache
-   *          the cache this segment belongs to
-   * @return the value to which this segment maps the specified key, or
-   *         <code>null</code> if this segment contains no mapping for this
-   *         key
-   */
   Serializable get(Serializable key, int hash, LruCache cache) {
-    if (empty()) {
-      return null;
-    }
+    if (empty()) return null;
 
-    LruCacheEntry entry = getFirst(hash);
-    while (entry != null) {
-      if (entry.hash == hash && key.equals(entry.element.getKey())) {
+    for (LruCacheEntry entry = first(hash); entry != null; entry = entry.next()) {
+      if (entry.matches(key, hash)) {
         entry.recordAccess(cache);
-        Serializable value = entry.element.getValue();
-        return value;
+        return entry.element.getValue();
       }
-      entry = entry.next();
     }
     return null;
   }
 
-  int getTableSize() {
-    return table.length;
-  }
-
-  /**
-   * Stores the given cache element in this segment. If the cache previously
-   * contained a mapping for this key, the old value is replaced by the
-   * specified value.
-   * 
-   * @param element
-   *          the key/value mapping to store in this segment
-   * @param hash
-   *          the hash necessary to locate the bucket for the new entry
-   * @param cache
-   *          the cache this segment belongs to
-   * @return previous value associated with specified key, or <code>null</code>
-   *         if there was no mapping for key. A <code>null</code> return can
-   *         also indicate that this segment previously associated
-   *         <code>null</code> with the specified key
-   */
   Serializable put(Element element, int hash, LruCache cache) {
     lock();
 
     try {
       int countRef = count;
-      if (countRef++ > threshold) {
-        rehash();
-      }
+      if (countRef++ > threshold) rehash();
 
-      LruCacheEntry[] tableRef = table;
-      int firstIndex = firstEntryIndex(hash, tableRef);
-      LruCacheEntry first = tableRef[firstIndex];
+      LruCacheEntry first = first(hash);
+      LruCacheEntry entry = find(element, hash, first);
 
-      LruCacheEntry entry = find(element.getKey(), hash, first);
-      if (entry != null) {
-        Serializable oldValue = entry.element.getValue();
-        entry.element = element;
-        return oldValue;
-      }
+      if (entry != null) return entry.replace(element);
 
-      modCount++;
-
-      LruCacheEntry newEntry = new LruCacheEntry(element, hash, first);
-      newEntry.addBefore(cache.getHeader());
-      tableRef[firstIndex] = newEntry;
-
+      putNew(new LruCacheEntry(element, hash, first), cache);
       count = countRef;
       return null;
 
@@ -218,53 +125,36 @@ class LruCacheSegment extends ReentrantLock implements Serializable {
     }
   }
 
-  /**
-   * Removes the mapping for this key from this cache if it is present.
-   * 
-   * @param key
-   *          key whose mapping is to be removed from the cache
-   * @param hash
-   *          the hash needed to locate the mapping containing the key
-   * @return previous value associated with specified key, or <code>null</code>
-   *         if there was no mapping for key
-   */
   Serializable remove(Serializable key, int hash) {
     lock();
     try {
-      int newCount = count - 1;
+      int countAfterRemoving = count - 1;
 
       LruCacheEntry[] tableRef = table;
       int firstEntryIndex = firstEntryIndex(hash, tableRef);
       LruCacheEntry first = tableRef[firstEntryIndex];
 
-      LruCacheEntry entryToRemove = find(key, hash, first);
-      if (entryToRemove == null) {
-        return null;
-      }
+      LruCacheEntry toRemove = find(key, hash, first);
+      if (toRemove == null) return null;
 
-      Serializable entryValue = entryToRemove.element.getValue();
-      Serializable oldValue = entryValue;
-      modCount++;
+      Serializable oldValue = toRemove.element.getValue();
+      segmentModified();
 
       // remove entry from bucket
-      if (first == entryToRemove) {
-        tableRef[firstEntryIndex] = entryToRemove.next();
+      if (first == toRemove) {
+        tableRef[firstEntryIndex] = toRemove.next();
       } else {
-        LruCacheEntry prev = first;
-        while (prev != null) {
-          if (prev.next == entryToRemove) {
-            prev.next = entryToRemove.next;
-            break;
-          }
-          prev = prev.next();
+        LruCacheEntry previous = previousInBucket(first, toRemove);
+        if (previous != null) {
+          previous.next = toRemove.next;
         }
       }
-      
-      // remove entry from LRU linked list
-      entryToRemove.next = null;
-      entryToRemove.recordRemoval();
 
-      count = newCount;
+      // remove entry from LRU linked list
+      toRemove.next = null;
+      toRemove.recordRemoval();
+
+      count = countAfterRemoving;
       return oldValue;
 
     } finally {
@@ -272,59 +162,77 @@ class LruCacheSegment extends ReentrantLock implements Serializable {
     }
   }
 
-  private int calculateThreshold(LruCacheEntry[] tableRef) {
-    return (int) (tableRef.length * loadFactor);
+  int size() {
+    return table.length;
+  }
+
+  private void addToTable(LruCacheEntry e) {
+    LruCacheEntry[] t = table;
+    int i = firstEntryIndex(e.hash, t);
+    t[i] = e;
   }
 
   private boolean empty() {
     return count == 0;
   }
 
-  private LruCacheEntry find(Serializable key, int hash, LruCacheEntry first) {
-    LruCacheEntry entry = first;
-    while (entry != null
-        && (entry.hash != hash || !key.equals(entry.element.getKey()))) {
+  private LruCacheEntry find(Element element, int hash, LruCacheEntry start) {
+    return find(element.getKey(), hash, start);
+  }
+
+  private LruCacheEntry find(Serializable key, int hash, LruCacheEntry start) {
+    LruCacheEntry entry = start;
+    while (entry != null && !entry.matches(key, hash))
       entry = entry.next();
-    }
+
     return entry;
+  }
+
+  /**
+   * @return first entry of bin for given hash
+   */
+  private LruCacheEntry first(int hash) {
+    return table[firstEntryIndex(hash, table)];
   }
 
   private int firstEntryIndex(int hash, LruCacheEntry[] tableRef) {
     return hash & (tableRef.length - 1);
   }
 
-  /**
-   * @return first entry of bin for given hash
-   */
-  private LruCacheEntry getFirst(int hash) {
-    LruCacheEntry[] tableRef = table;
-    return tableRef[firstEntryIndex(hash, tableRef)];
+  private LruCacheEntry previousInBucket(LruCacheEntry first,
+      LruCacheEntry target) {
+    for (LruCacheEntry prev = first; prev != null; prev = prev.next()) {
+      if (prev.next() == target) return prev;
+    }
+    return null;
+  }
+
+  private void putNew(LruCacheEntry e, LruCache cache) {
+    segmentModified();
+    e.addBefore(cache.header());
+    addToTable(e);
   }
 
   private void rehash() {
     LruCacheEntry[] oldTable = table;
     int oldCapacity = oldTable.length;
-    if (oldCapacity >= MAXIMUM_CAPACITY)
-      return;
+    if (oldCapacity >= MAXIMUM_CAPACITY) return;
 
     LruCacheEntry[] newTable = new LruCacheEntry[oldCapacity << 1];
-    threshold = calculateThreshold(newTable);
+    threshold = threshold(newTable);
 
     int sizeMask = newTable.length - 1;
     for (int i = 0; i < oldCapacity; i++) {
-      // We need to guarantee that any existing reads of old Map can proceed. So
-      // we cannot yet null out each bin.
       LruCacheEntry entry = oldTable[i];
-
-      if (entry == null) {
-        continue;
-      }
-
-      // LruCacheEntry next = entry.next();
+      if (entry == null) continue;
       int idx = entry.hash & sizeMask;
       newTable[idx] = entry;
     }
     table = newTable;
+  }
+
+  private void segmentModified() {
+    modCount++;
   }
 
   /**
@@ -335,7 +243,11 @@ class LruCacheSegment extends ReentrantLock implements Serializable {
    *          the new entry table for this segment
    */
   private void setTable(LruCacheEntry[] newTable) {
-    threshold = calculateThreshold(newTable);
+    threshold = threshold(newTable);
     table = newTable;
+  }
+
+  private int threshold(LruCacheEntry[] tableRef) {
+    return (int) (tableRef.length * loadFactor);
   }
 }

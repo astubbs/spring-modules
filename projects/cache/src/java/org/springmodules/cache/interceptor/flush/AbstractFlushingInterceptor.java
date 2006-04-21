@@ -145,7 +145,7 @@ public abstract class AbstractFlushingInterceptor implements MethodInterceptor,
 
     Object proceedReturnValue = null;
 
-    if (model.isFlushBeforeMethodExecution()) {
+    if (model.flushBeforeMethodExecution()) {
       cacheProviderFacade.flushCache(model);
       proceedReturnValue = methodInvocation.proceed();
 

@@ -20,51 +20,29 @@ package org.springmodules.cache.interceptor.flush;
 import java.lang.reflect.Method;
 
 import org.springmodules.cache.FlushingModel;
-import org.springmodules.cache.interceptor.AbstractMethodMapCacheModelSource;
+import org.springmodules.cache.interceptor.MethodMapCacheModelSource;
 
 /**
  * <p>
- * Simple implementation of <code>{@link FlushingModelSource}</code> that
- * allows flushing models to be stored per method in a map.
+ * Binds a <code>{@link FlushingModel}</code> to a method.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public class MethodMapFlushingModelSource extends
-    AbstractMethodMapCacheModelSource implements FlushingModelSource {
+public final class MethodMapFlushingModelSource implements FlushingModelSource {
 
-  /**
-   * <p>
-   * Adds a new entry to map of flushing models using the methods which name
-   * that match the given fully qualified name as the entry key and the given
-   * model as the entry value.
-   * </p>
-   * <p>
-   * Fully qualified names can end or start with "*" for matching multiple
-   * methods.
-   * </p>
-   * 
-   * @param fullyQualifiedMethodName
-   *          the fully qualified name of the methods to attach the caching
-   *          attribute to. class and method name, separated by a dot
-   * @param model
-   *          the flushing model.
-   * 
-   * @throws IllegalArgumentException
-   *           if the given method name is not a fully qualified name.
-   * @throws IllegalArgumentException
-   *           if the class specified in the fully qualified method name cannot
-   *           be found.
-   */
-  public final void addFlushingModel(String fullyQualifiedMethodName,
-      FlushingModel model) {
-    addCacheModel(fullyQualifiedMethodName, model);
+  private MethodMapCacheModelSource source;
+
+  public MethodMapFlushingModelSource() {
+    source = new MethodMapCacheModelSource();
   }
 
-  /**
-   * @see FlushingModelSource#getFlushingModel(Method, Class)
-   */
-  public FlushingModel getFlushingModel(Method method, Class targetClass) {
-    return (FlushingModel) getCacheModels().get(method);
+  public void addModel(FlushingModel m, String fullyQualifiedMethodName)
+      throws IllegalArgumentException {
+    source.addModel(m, fullyQualifiedMethodName);
+  }
+
+  public FlushingModel getFlushingModel(Method m, Class c) {
+    return (FlushingModel) source.model(m);
   }
 }

@@ -34,7 +34,7 @@ import junit.framework.TestCase;
 public class FlushingAttributeSourceTests extends TestCase {
 
   protected class FlushingAttributeSource extends AbstractFlushingAttributeSource {
-    protected Collection findAllAttributes(Method newMethod) {
+    protected Collection allAttributes(Method newMethod) {
       return null;
     }
   }

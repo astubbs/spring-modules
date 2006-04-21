@@ -52,7 +52,7 @@ public final class MethodMapFlushingInterceptor extends
         for (Iterator i = flushingModels.keySet().iterator(); i.hasNext();) {
           key = (String) i.next();
           FlushingModel model = (FlushingModel) flushingModels.get(key);
-          newSource.addFlushingModel(key, model);
+          newSource.addModel(model, key);
         }
       } catch (Exception exception) {
         throw new FatalCacheException(

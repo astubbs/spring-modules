@@ -27,8 +27,6 @@ import junit.framework.TestCase;
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
 
-import org.springframework.metadata.Attributes;
-
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.mock.MockCachingModel;
 
@@ -122,17 +120,6 @@ public final class MetadataCachingInterceptorTests extends TestCase {
     MockMetadataCachingInterceptor mockInterceptor = new MockMetadataCachingInterceptor();
     mockInterceptor.cachingAttribute = null;
     assertNull(mockInterceptor.getModel(invocation));
-  }
-
-  public void testSetAttributes() {
-    MockControl attributesControl = MockControl.createControl(Attributes.class);
-    Attributes attributes = (Attributes) attributesControl.getMock();
-
-    interceptor.setAttributes(attributes);
-    CachingAttributeSource newSource = interceptor.getCachingAttributeSource();
-    assertEquals(MetadataCachingAttributeSource.class, newSource.getClass());
-    assertSame(attributes, ((MetadataCachingAttributeSource) newSource)
-        .getAttributes());
   }
 
   protected void setUp() {

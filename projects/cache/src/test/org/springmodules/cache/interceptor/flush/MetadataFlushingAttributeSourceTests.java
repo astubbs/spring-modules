@@ -50,7 +50,7 @@ public final class MetadataFlushingAttributeSourceTests extends TestCase {
 
   /**
    * Verifies that the method
-   * <code>{@link MetadataFlushingAttributeSource#findAllAttributes(Method)}</code>.
+   * <code>{@link MetadataFlushingAttributeSource#allAttributes(Method)}</code>.
    * retrieves the attributes for the specified method using
    * <code>{@link #attributes}</code>.
    */
@@ -63,7 +63,7 @@ public final class MetadataFlushingAttributeSourceTests extends TestCase {
         attributeList);
     attributesControl.replay();
 
-    Collection returnedAttributes = source.findAllAttributes(method);
+    Collection returnedAttributes = source.allAttributes(method);
 
     attributesControl.verify();
     assertSame(attributeList, returnedAttributes);

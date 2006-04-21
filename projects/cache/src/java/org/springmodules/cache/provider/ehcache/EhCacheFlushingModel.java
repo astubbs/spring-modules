@@ -138,7 +138,7 @@ public final class EhCacheFlushingModel extends AbstractFlushingModel {
     StringBuffer buffer = Objects.identityToString(this);
     buffer.append("[cacheNames=" + Objects.nullSafeToString(cacheNames) + ", ");
     buffer.append("flushBeforeMethodExecution="
-        + isFlushBeforeMethodExecution() + "]");
+        + flushBeforeMethodExecution() + "]");
     return buffer.toString();
   }
 }

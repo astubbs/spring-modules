@@ -59,9 +59,9 @@ public abstract class AbstractFlushingModel implements FlushingModel {
   }
 
   /**
-   * @see FlushingModel#isFlushBeforeMethodExecution()
+   * @see FlushingModel#flushBeforeMethodExecution()
    */
-  public final boolean isFlushBeforeMethodExecution() {
+  public final boolean flushBeforeMethodExecution() {
     return flushBeforeMethodExecution;
   }
 

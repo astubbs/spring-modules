@@ -87,7 +87,7 @@ public class LruCacheSegmentTests extends TestCase {
   }
 
   public void testInitialCapacity() {
-    assertEquals("<initial capacity>", 4, segment.getTableSize());
+    assertEquals("<initial capacity>", 4, segment.size());
   }
 
   public void testPutInsertsNewEntryAsFirstInBucket() {
@@ -245,7 +245,7 @@ public class LruCacheSegmentTests extends TestCase {
   }
 
   private void assertEmptyCache() {
-    LruCacheEntry header = cache.getHeader();
+    LruCacheEntry header = cache.header();
     assertSame("<header.after>", header, header.after);
     assertSame("<header.before>", header, header.before);
   }
@@ -259,7 +259,7 @@ public class LruCacheSegmentTests extends TestCase {
   }
 
   private void assertLruListIsCorrect(LruCacheEntry[] expectedEntries) {
-    LruCacheEntry header = cache.getHeader();
+    LruCacheEntry header = cache.header();
     LruCacheEntry actualEntry = header.before;
 
     int entryCount = expectedEntries.length;
@@ -326,7 +326,7 @@ public class LruCacheSegmentTests extends TestCase {
   private LruCacheEntry[] getEntriesAsOrderedInBucket() {
     List entryList = new ArrayList();
 
-    LruCacheEntry current = cache.getHeader().before;
+    LruCacheEntry current = cache.header().before;
     while (current != null) {
       entryList.add(current);
       current = current.next();
