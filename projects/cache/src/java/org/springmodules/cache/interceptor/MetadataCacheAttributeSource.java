@@ -48,7 +48,7 @@ public class MetadataCacheAttributeSource {
     finder = f;
   }
 
-  public CacheAttribute get(Method m, Class t) {
+  public CacheAttribute attribute(Method m, Class t) {
     String key = key(m, t);
     Object cached = attributeMap.get(key);
     if (cached != null) return unmaskNull(cached);

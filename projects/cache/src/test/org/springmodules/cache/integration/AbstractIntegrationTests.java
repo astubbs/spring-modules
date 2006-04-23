@@ -141,7 +141,7 @@ public abstract class AbstractIntegrationTests extends TestCase {
     return applicationContext;
   }
 
-  protected final Object getCacheManagerFromContext() {
+  protected final Object cacheManager() {
     return applicationContext.getBean(CACHE_MANAGER_BEAN_NAME);
   }
 
@@ -151,7 +151,7 @@ public abstract class AbstractIntegrationTests extends TestCase {
 
   protected final KeyAndModel getKeyAndModel(int index) {
     List keyAndModelPairs = cachingListener.getKeyAndModelPairs();
-    KeyAndModel keyModel = (KeyAndModel) keyAndModelPairs.get(index);
+    KeyAndModel keyModel = (KeyAndModel)keyAndModelPairs.get(index);
     return keyModel;
   }
 
@@ -162,10 +162,10 @@ public abstract class AbstractIntegrationTests extends TestCase {
       throws Exception {
     setUpApplicationContext(configStrategyConfig);
 
-    cachingListener = (KeyAndModelListCachingListener) applicationContext
+    cachingListener = (KeyAndModelListCachingListener)applicationContext
         .getBean("cachingListener");
 
-    target = (CacheableService) applicationContext.getBean("cacheableService");
+    target = (CacheableService)applicationContext.getBean("cacheableService");
 
     logger.debug("Storing in the cache...");
     int nameIndex = 0;
@@ -207,14 +207,13 @@ public abstract class AbstractIntegrationTests extends TestCase {
   private void performCachingAndFlushingWithAnnotations(String configFolder)
       throws Exception {
     if (SystemUtils.atLeastJ2SE5()) {
-      String configLocation = configFolder + ANNOTATIONS_CONTEXT;
-      performCachingAndFlushing(configLocation);
-    } else {
-      logger.info("Unable to run tests using file \"" + ANNOTATIONS_CONTEXT
-          + ".\" Annotations are not supported by this version of Java");
+      performCachingAndFlushing(configFolder + ANNOTATIONS_CONTEXT);
+      return;
     }
+    logger.info("Unable to run tests using file \"" + ANNOTATIONS_CONTEXT
+        + ".\" Annotations are not supported by this version of Java");
   }
-  
+
   private void performCachingAndFlushingWithBeanNameAutoProxyCreator(
       String configFolder) throws Exception {
     String configLocation = configFolder + BEAN_NAME_AUTOPROXY_CREATOR_CONTEXT;

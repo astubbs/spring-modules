@@ -87,7 +87,7 @@ public class MetadataFlushingInterceptor extends AbstractFlushingInterceptor {
     Method method = methodInvocation.getMethod();
 
     FlushingAttributeSource attributeSource = getFlushingAttributeSource();
-    FlushCache attribute = attributeSource.getFlushingAttribute(method,
+    FlushCache attribute = attributeSource.attribute(method,
         targetClass);
     return attribute;
   }

@@ -34,50 +34,55 @@ import org.springmodules.cache.CacheModel;
  */
 public final class MethodMapCacheModelSource {
 
-  final Map cacheModels;
+  private final MethodMatcher matcher;
 
-  final Map registeredMethodMap;
+  private final Map methodMap;
 
-  private final MethodMatcher methodMatcher;
+  private final Map models;
 
   public MethodMapCacheModelSource() {
-    cacheModels = new HashMap();
-    methodMatcher = new MethodMatcher();
-    registeredMethodMap = new HashMap();
+    models = new HashMap();
+    matcher = new MethodMatcher();
+    methodMap = new HashMap();
   }
 
   public void addModel(CacheModel model, String fullyQualifiedMethodName)
       throws IllegalArgumentException {
-    String target = fullyQualifiedMethodName;
-    Collection matches = methodMatcher.matchingMethods(target);
-    notEmpty(matches, target);
+    Collection matches = matcher.matchingMethods(fullyQualifiedMethodName);
+    notEmpty(matches, fullyQualifiedMethodName);
+    registerMostSpecificMethod(matches, model, fullyQualifiedMethodName);
+  }
+
+  private void registerMostSpecificMethod(Collection matches, CacheModel model,
+      String fullyQualifiedMethodName) {
     for (Iterator i = matches.iterator(); i.hasNext();) {
-      Method method = (Method) i.next();
-      if (methodNotRegisteredOrMoreSpecificMethodFound(method, target))
-        addModel(model, method, target);
+      Method method = (Method)i.next();
+      if (methodNotRegisteredOrMoreSpecificMethodFound(method,
+          fullyQualifiedMethodName))
+        addModel(model, method, fullyQualifiedMethodName);
     }
   }
 
   public CacheModel model(Method m) {
-    return (CacheModel) cacheModels.get(m);
+    return (CacheModel)models.get(m);
   }
 
   private void addModel(CacheModel c, Method m, String fullyQualifiedMethodName) {
-    registeredMethodMap.put(m, fullyQualifiedMethodName);
-    cacheModels.put(m, c);
+    methodMap.put(m, fullyQualifiedMethodName);
+    models.put(m, c);
   }
 
   private boolean methodNotRegisteredOrMoreSpecificMethodFound(Method m,
       String target) {
-    String registered = (String) registeredMethodMap.get(m);
+    String registered = (String)methodMap.get(m);
     if (registered == null) return true;
     return !target.equals(registered) && target.length() <= registered.length();
   }
 
   private void notEmpty(Collection matchingMethods, String targetMethodName)
       throws IllegalArgumentException {
-    if (matchingMethods.isEmpty())
-      throw new IllegalArgumentException("Couldn't find any method matching '"
-          + targetMethodName + "'");
+    if (!matchingMethods.isEmpty()) return;
+    throw new IllegalArgumentException("Couldn't find any method matching '"
+        + targetMethodName + "'");
   }
 }

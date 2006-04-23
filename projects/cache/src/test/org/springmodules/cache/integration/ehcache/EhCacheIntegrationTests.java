@@ -33,16 +33,15 @@ import org.springmodules.cache.provider.ehcache.EhCacheCachingModel;
  * 
  * @author Alex Ruiz
  */
-public class EhCacheIntegrationTests extends AbstractIntegrationTests {
+public final class EhCacheIntegrationTests extends AbstractIntegrationTests {
 
   private CacheManager cacheManager;
 
   /**
    * @see AbstractIntegrationTests#assertCacheWasFlushed()
    */
-  protected final void assertCacheWasFlushed() throws Exception {
+  protected void assertCacheWasFlushed() throws Exception {
     setUpCacheManager();
-
     int index = 0;
     Element element = getCacheElement(index);
     assertCacheEntryFromCacheIsNull(element, getKeyAndModel(index).key);
@@ -51,22 +50,26 @@ public class EhCacheIntegrationTests extends AbstractIntegrationTests {
   /**
    * @see AbstractIntegrationTests#assertObjectWasCached(Object, int)
    */
-  protected final void assertObjectWasCached(Object expectedCachedObject,
+  protected void assertObjectWasCached(Object expectedCachedObject,
       int keyAndModelIndex) throws Exception {
     setUpCacheManager();
-
     Element element = getCacheElement(keyAndModelIndex);
     assertEquals(expectedCachedObject, element.getValue());
   }
 
+  protected void tearDown() {
+    if (cacheManager == null) setUpCacheManager();
+    if (cacheManager != null) cacheManager.shutdown();
+  }
+
   private Element getCacheElement(int keyAndModelIndex) throws Exception {
     KeyAndModel keyAndModel = getKeyAndModel(keyAndModelIndex);
-    EhCacheCachingModel model = (EhCacheCachingModel) keyAndModel.model;
+    EhCacheCachingModel model = (EhCacheCachingModel)keyAndModel.model;
     Cache cache = cacheManager.getCache(model.getCacheName());
     return cache.get(keyAndModel.key);
   }
 
   private void setUpCacheManager() {
-    cacheManager = (CacheManager) getCacheManagerFromContext();
+    cacheManager = (CacheManager)cacheManager();
   }
 }

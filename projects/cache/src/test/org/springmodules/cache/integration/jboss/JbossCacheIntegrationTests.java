@@ -67,6 +67,6 @@ public class JbossCacheIntegrationTests extends AbstractIntegrationTests {
   }
 
   private void setUpCacheManager() {
-    cacheManager = (TreeCache) getCacheManagerFromContext();
+    cacheManager = (TreeCache) cacheManager();
   }
 }

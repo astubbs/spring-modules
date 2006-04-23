@@ -79,7 +79,7 @@ public class FlushingAttributeSourceAdvisor extends
    */
   public final boolean matches(Method method, Class targetClass) {
 
-    FlushCache attribute = cacheFlushAttributeSource.getFlushingAttribute(
+    FlushCache attribute = cacheFlushAttributeSource.attribute(
         method, targetClass);
 
     boolean matches = (attribute != null);

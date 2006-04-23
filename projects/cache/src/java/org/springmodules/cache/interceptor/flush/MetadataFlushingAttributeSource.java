@@ -22,77 +22,51 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.springframework.metadata.Attributes;
-
 import org.springmodules.cache.CacheAttribute;
-import org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource;
+import org.springmodules.cache.interceptor.MetadataCacheAttributeSource;
+import org.springmodules.cache.interceptor.MetadataCacheAttributeSource.MetadataFinder;
+
+import org.springframework.metadata.Attributes;
+import org.springframework.util.CollectionUtils;
 
 /**
  * <p>
- * Implementation of <code>{@link FlushingAttributeSource}</code> that uses
- * source-level metadata attributes.
+ * Binds cache-flushing metadata attributes to methods.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public final class MetadataFlushingAttributeSource extends
-    AbstractSingleMetadataCacheAttributeSource implements
+public final class MetadataFlushingAttributeSource implements
     FlushingAttributeSource {
 
-  /**
-   * Underlying Attributes implementation we're using.
-   */
-  private Attributes attributes;
+  Attributes attributes;
 
-  /**
-   * @see FlushingAttributeSource#getFlushingAttribute(Method, Class)
-   */
-  public FlushCache getFlushingAttribute(Method method, Class targetClass) {
-    FlushCache attribute = (FlushCache) getAttribute(method, targetClass);
-    return attribute;
-  }
-
-  /**
-   * Sets the underlying metadata attributes to use.
-   * 
-   * @param newAttributes
-   *          the new underlying metadata attributes
-   */
-  public final void setAttributes(Attributes newAttributes) {
-    attributes = newAttributes;
-  }
-
-  /**
-   * @see org.springmodules.cache.interceptor.AbstractSingleMetadataCacheAttributeSource#allAttributes(Method)
-   */
-  protected Collection allAttributes(Method method) {
-    Collection allAttributes = attributes.getAttributes(method);
-    return allAttributes;
-  }
-
-  /**
-   * @see AbstractSingleMetadataCacheAttributeSource#findAttribute(Collection)
-   */
-  protected CacheAttribute findAttribute(Collection methodAttributes) {
-    CacheAttribute attribute = null;
-
-    if (methodAttributes != null && !methodAttributes.isEmpty()) {
-      for (Iterator i = methodAttributes.iterator(); i.hasNext();) {
-        Object object = i.next();
-        if (object instanceof FlushCache) {
-          attribute = (CacheAttribute) object;
-        }
-      }
+  private final MetadataFinder finder = new MetadataFinder() {
+    public CacheAttribute find(Method m) {
+      return find(attributes.getAttributes(m));
     }
 
-    return attribute;
+    private CacheAttribute find(Collection methodAttributes) {
+      if (CollectionUtils.isEmpty(methodAttributes)) return null;
+      for (Iterator i = methodAttributes.iterator(); i.hasNext();) {
+        Object attribute = i.next();
+        if (attribute instanceof FlushCache) return (FlushCache)attribute;
+      }
+      return null;
+    }
+  };
+
+  private final MetadataCacheAttributeSource source;
+
+  public MetadataFlushingAttributeSource() {
+    source = new MetadataCacheAttributeSource(finder);
   }
 
-  /**
-   * @return the underlying metadata attributes we are using
-   */
-  protected Attributes getAttributes() {
-    return attributes;
+  public FlushCache attribute(Method m, Class t) {
+    return (FlushCache)source.attribute(m, t);
   }
 
+  public void setAttributes(Attributes a) {
+    attributes = a;
+  }
 }

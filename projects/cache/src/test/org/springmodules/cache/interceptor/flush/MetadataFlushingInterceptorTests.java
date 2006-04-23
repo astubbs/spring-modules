@@ -27,8 +27,6 @@ import junit.framework.TestCase;
 import org.aopalliance.intercept.MethodInvocation;
 import org.easymock.MockControl;
 
-import org.springframework.metadata.Attributes;
-
 import org.springmodules.cache.FlushingModel;
 import org.springmodules.cache.mock.MockFlushingModel;
 
@@ -72,7 +70,7 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
     invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     FlushCache expected = new FlushCache();
-    sourceControl.expectAndReturn(source.getFlushingAttribute(method,
+    sourceControl.expectAndReturn(source.attribute(method,
         thisObject.getClass()), expected);
 
     replay();
@@ -88,7 +86,7 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
     invocationControl.expectAndReturn(invocation.getMethod(), method);
 
     FlushCache expected = new FlushCache();
-    sourceControl.expectAndReturn(source.getFlushingAttribute(method, null),
+    sourceControl.expectAndReturn(source.attribute(method, null),
         expected);
 
     replay();
@@ -134,18 +132,6 @@ public final class MetadataFlushingInterceptorTests extends TestCase {
   public void testGetModelWhenFlushingAttributeMapIsNull() {
     interceptor.setFlushingModels(null);
     assertNull(interceptor.getModel(invocation));
-  }
-
-  public void testSetAttributes() {
-    MockControl attributesControl = MockControl.createControl(Attributes.class);
-    Attributes attributes = (Attributes) attributesControl.getMock();
-
-    interceptor.setAttributes(attributes);
-    FlushingAttributeSource newSource = interceptor
-        .getFlushingAttributeSource();
-    assertEquals(MetadataFlushingAttributeSource.class, newSource.getClass());
-    assertSame(attributes, ((MetadataFlushingAttributeSource) newSource)
-        .getAttributes());
   }
 
   protected void setUp() {

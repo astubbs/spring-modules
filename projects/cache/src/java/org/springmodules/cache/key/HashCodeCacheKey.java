@@ -66,21 +66,12 @@ public final class HashCodeCacheKey implements Serializable {
    * @see Object#equals(Object)
    */
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!(obj instanceof HashCodeCacheKey)) {
-      return false;
-    }
+    if (this == obj) return true;
+    if (!(obj instanceof HashCodeCacheKey)) return false;
 
-    final HashCodeCacheKey hashCodeCacheKey = (HashCodeCacheKey) obj;
-
-    if (checkSum != hashCodeCacheKey.checkSum) {
-      return false;
-    }
-    if (hashCode != hashCodeCacheKey.hashCode) {
-      return false;
-    }
+    HashCodeCacheKey other = (HashCodeCacheKey) obj;
+    if (checkSum != other.checkSum) return false;
+    if (hashCode != other.hashCode) return false;
 
     return true;
   }

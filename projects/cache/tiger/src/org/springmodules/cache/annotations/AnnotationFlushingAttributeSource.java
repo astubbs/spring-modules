@@ -17,68 +17,49 @@
  */
 package org.springmodules.cache.annotations;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
 
 import org.springmodules.cache.CacheAttribute;
-import org.springmodules.cache.interceptor.flush.AbstractFlushingAttributeSource;
+import org.springmodules.cache.interceptor.MetadataCacheAttributeSource;
+import org.springmodules.cache.interceptor.MetadataCacheAttributeSource.MetadataFinder;
 import org.springmodules.cache.interceptor.flush.FlushCache;
+import org.springmodules.cache.interceptor.flush.FlushingAttributeSource;
 
 /**
- * <p>
- * Implementation of
- * <code>{@link org.springmodules.cache.interceptor.flush.FlushingAttributeSource}</code>
- * for working with caching metadata in JDK 1.5+ annotation format.
- * </p>
- * 
- * <p>
- * This class reads the JDK 1.5+ <code>{@link CacheFlush}</code> annotation
- * and exposes corresponding cache-flush attributes to our caching
- * infrastructure.
- * </p>
- * 
- * <p>
- * This is a direct alternative to
- * <code>{@link org.springmodules.cache.interceptor.flush.MetadataFlushingAttributeSource}</code>,
- * which is able to read in source-level attributes via Commons Attributes.
- * </p>
+ * Binds cache-flushing metadata annotations to methods.
  * 
  * @author Alex Ruiz
  */
-public class AnnotationFlushingAttributeSource extends
-    AbstractFlushingAttributeSource {
+public class AnnotationFlushingAttributeSource implements
+    FlushingAttributeSource {
 
-  public AnnotationFlushingAttributeSource() {
-    super();
-  }
-
-  /**
-   * @return all JDK 1.5+ annotations found for the given method.
-   */
-  @Override
-  protected Collection allAttributes(Method method) {
-    return Arrays.asList(method.getAnnotations());
-  }
-
-  /**
-   * @see AbstractFlushingAttributeSource#findAttribute(java.util.Collection)
-   */
-  @Override
-  protected CacheAttribute findAttribute(Collection attributes) {
-    FlushCache flushCache = null;
-
-    if (attributes != null) {
-      for (Object attribute : attributes) {
-        if (attribute instanceof CacheFlush) {
-          CacheFlush cacheFlush = (CacheFlush) attribute;
-          flushCache = new FlushCache(cacheFlush.modelId());
-          break;
-        }
-      }
+  private final MetadataFinder finder = new MetadataFinder() {
+    public CacheAttribute find(Method m) {
+      return find(m.getAnnotations());
     }
 
-    return flushCache;
+    private CacheAttribute find(Annotation[] annotations) {
+      if (isEmpty(annotations)) return null;
+      for (Annotation a : annotations)
+        if (a instanceof CacheFlush) return attribute((CacheFlush)a);
+      return null;
+    }
+
+    private CacheAttribute attribute(CacheFlush a) {
+      return new FlushCache(a.modelId());
+    }
+  };
+
+  private final MetadataCacheAttributeSource source;
+
+  public AnnotationFlushingAttributeSource() {
+    source = new MetadataCacheAttributeSource(finder);
   }
 
+  public FlushCache attribute(Method m, Class t) {
+    return (FlushCache)source.attribute(m, t);
+  }
 }

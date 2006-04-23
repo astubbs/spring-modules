@@ -75,7 +75,7 @@ public class FlushingAttributeSourceAdvisorTests extends TestCase {
     setUpTargetClassAndMethod();
 
     // metadata attributes not be found for the specified method and class.
-    sourceControl.expectAndReturn(source.getFlushingAttribute(method,
+    sourceControl.expectAndReturn(source.attribute(method,
         targetClass), null);
     sourceControl.replay();
 
@@ -94,7 +94,7 @@ public class FlushingAttributeSourceAdvisorTests extends TestCase {
     setUpTargetClassAndMethod();
 
     // metadata attributes not be found for the specified method and class.
-    sourceControl.expectAndReturn(source.getFlushingAttribute(method,
+    sourceControl.expectAndReturn(source.attribute(method,
         targetClass), new FlushCache());
     sourceControl.replay();
 

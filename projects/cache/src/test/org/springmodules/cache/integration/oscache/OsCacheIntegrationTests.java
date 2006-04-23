@@ -75,6 +75,6 @@ public class OsCacheIntegrationTests extends AbstractIntegrationTests {
   }
 
   private void setUpCacheManager() {
-    cacheAdministrator = (GeneralCacheAdministrator) getCacheManagerFromContext();
+    cacheAdministrator = (GeneralCacheAdministrator) cacheManager();
   }
 }

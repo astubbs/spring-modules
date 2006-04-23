@@ -77,7 +77,7 @@ public class JcsIntegrationTests extends AbstractIntegrationTests {
   }
 
   private void setUpCacheManager() {
-    cacheManager = (CompositeCacheManager) getCacheManagerFromContext();
+    cacheManager = (CompositeCacheManager) cacheManager();
   }
 
 }

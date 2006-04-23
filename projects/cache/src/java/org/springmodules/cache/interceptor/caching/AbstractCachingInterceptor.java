@@ -93,12 +93,12 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     return unmaskNull(cached);
   }
 
-  public final void setCacheKeyGenerator(CacheKeyGenerator g) {
-    keyGenerator = g;
+  public final void setCacheKeyGenerator(CacheKeyGenerator k) {
+    keyGenerator = k;
   }
 
-  public final void setCacheProviderFacade(CacheProviderFacade f) {
-    cache = f;
+  public final void setCacheProviderFacade(CacheProviderFacade c) {
+    cache = c;
   }
 
   public final void setCachingListeners(CachingListener[] l) {
@@ -121,15 +121,17 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 
   private Object cachedValueFromSource(MethodInvocation mi, Serializable key,
       CachingModel m) throws Throwable {
+    boolean successful = true;
     try {
       Object value = mi.proceed();
       putInCache(key, m, value);
       return value;
     } catch (Throwable t) {
+      successful = false;
       logger.error("Unable to proceed to the next interceptor in the chain", t);
       throw t;
     } finally {
-      cache.cancelCacheUpdate(key);
+      if (!successful) cache.cancelCacheUpdate(key);
     }
   }
 
@@ -167,11 +169,11 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
 
   private Map propertiesToModels() {
     PropertyEditor editor = cache.getCachingModelEditor();
-    Properties properties = (Properties) modelMap;
+    Properties properties = (Properties)modelMap;
 
     Map m = new HashMap();
     for (Iterator i = properties.keySet().iterator(); i.hasNext();) {
-      String id = (String) i.next();
+      String id = (String)i.next();
       editor.setAsText(properties.getProperty(id));
       m.put(id, editor.getValue());
     }
@@ -202,7 +204,7 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
     String id = null;
     try {
       for (Iterator i = modelMap.keySet().iterator(); i.hasNext();) {
-        id = (String) i.next();
+        id = (String)i.next();
         validator.validateCachingModel(modelMap.get(id));
       }
     } catch (Exception exception) {

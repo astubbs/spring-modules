@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import org.springmodules.cache.CachingModel;
-import org.springmodules.cache.interceptor.AbstractNameMatchCacheModelSource;
+import org.springmodules.cache.interceptor.NameMatchCacheModelSource;
 
 /**
  * <p>
@@ -31,24 +31,22 @@ import org.springmodules.cache.interceptor.AbstractNameMatchCacheModelSource;
  * 
  * @author Alex Ruiz
  */
-public class NameMatchCachingModelSource extends
-    AbstractNameMatchCacheModelSource implements CachingModelSource {
+public class NameMatchCachingModelSource implements CachingModelSource {
+
+  private final NameMatchCacheModelSource source;
+
+  public NameMatchCachingModelSource() {
+    source = new NameMatchCacheModelSource();
+  }
 
   /**
    * @see CachingModelSource#model(Method, Class)
    */
-  public CachingModel model(Method method, Class targetClass) {
-    return (CachingModel) getCacheModel(method);
+  public CachingModel model(Method m, Class t) {
+    return (CachingModel)source.model(m);
   }
 
-  /**
-   * Sets the map of caching models to use. Each map entry uses the name of the
-   * method to advise as key (a String) and the caching model to bind as value.
-   * 
-   * @param models
-   *          the new map of caching models
-   */
   public void setCachingModels(Map models) {
-    setCacheModels(models);
+    source.setModels(models);
   }
 }

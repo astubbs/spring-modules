@@ -30,43 +30,37 @@ import org.springmodules.cache.interceptor.caching.Cached;
 import org.springmodules.cache.interceptor.caching.CachingAttributeSource;
 
 /**
- * <p>
  * Binds caching metadata annotations to methods.
- * </p>
  * 
  * @author Alex Ruiz
  */
 public class AnnotationCachingAttributeSource implements CachingAttributeSource {
 
-  class CachingAnnotationFinder implements MetadataFinder {
-
+  private final MetadataFinder finder = new MetadataFinder() {
     public CacheAttribute find(Method m) {
       return find(m.getAnnotations());
     }
 
+    private CacheAttribute attribute(Cacheable a) {
+      return new Cached(a.modelId());
+    }
+
     private CacheAttribute find(Annotation[] annotations) {
       if (isEmpty(annotations)) return null;
-      for (Annotation a : annotations) {
-        if (a instanceof Cacheable) {
-          Cacheable cacheable = (Cacheable) a;
-          return new Cached(cacheable.modelId());
-        }
-      }
+      for (Annotation a : annotations)
+        if (a instanceof Cacheable) return attribute((Cacheable)a);
       return null;
     }
-  }
-
-  private final CachingAnnotationFinder finder;
+  };
 
   private final MetadataCacheAttributeSource source;
 
   public AnnotationCachingAttributeSource() {
-    finder = new CachingAnnotationFinder();
     source = new MetadataCacheAttributeSource(finder);
   }
 
   public Cached attribute(Method m, Class t) {
-    if (isCacheable(m)) return (Cached) source.get(m, t);
+    if (isCacheable(m)) return (Cached)source.attribute(m, t);
     return null;
   }
 }

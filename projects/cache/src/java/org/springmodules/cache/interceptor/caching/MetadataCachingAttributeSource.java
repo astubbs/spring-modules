@@ -39,42 +39,35 @@ import org.springframework.util.CollectionUtils;
 public final class MetadataCachingAttributeSource implements
     CachingAttributeSource {
 
-  class CachingAttributeFinder implements MetadataFinder {
-    private Attributes attributes;
+  Attributes attributes;
 
+  private final MetadataFinder finder = new MetadataFinder() {
     public CacheAttribute find(Method m) {
       return find(attributes.getAttributes(m));
-    }
-
-    void setAttributes(Attributes a) {
-      attributes = a;
     }
 
     private CacheAttribute find(Collection methodAttributes) {
       if (CollectionUtils.isEmpty(methodAttributes)) return null;
       for (Iterator i = methodAttributes.iterator(); i.hasNext();) {
         Object attribute = i.next();
-        if (attribute instanceof Cached) return (CacheAttribute) attribute;
+        if (attribute instanceof Cached) return (Cached)attribute;
       }
       return null;
     }
-  }
-
-  private final CachingAttributeFinder finder;
+  };
 
   private final MetadataCacheAttributeSource source;
 
   public MetadataCachingAttributeSource() {
-    finder = new CachingAttributeFinder();
     source = new MetadataCacheAttributeSource(finder);
   }
 
   public Cached attribute(Method m, Class t) {
-    if (CachingUtils.isCacheable(m)) return (Cached) source.get(m, t);
-    return null;
+    if (!CachingUtils.isCacheable(m)) return null;
+    return (Cached)source.attribute(m, t);
   }
 
   public void setAttributes(Attributes a) {
-    finder.setAttributes(a);
+    attributes = a;
   }
 }

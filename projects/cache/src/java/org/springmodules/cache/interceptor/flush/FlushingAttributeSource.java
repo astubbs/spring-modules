@@ -33,12 +33,12 @@ public interface FlushingAttributeSource {
   /**
    * Returns the flushing metadata attribute bound to the intercepted method.
    * 
-   * @param method
+   * @param m
    *          the intercepted method
-   * @param targetClass
+   * @param c
    *          the target class. May be <code>null</code>, in which case the
    *          declaring class of the method must be used
    * @return the flushing metadata attribute bound the intercepted method.
    */
-  FlushCache getFlushingAttribute(Method method, Class targetClass);
+  FlushCache attribute(Method m, Class c);
 }
