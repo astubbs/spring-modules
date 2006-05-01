@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2005 the original author or authors.
+ * Copyright @2004-2005 the original author or authors.
  */
 package org.springmodules.cache;
 
@@ -21,11 +21,9 @@ import java.io.Serializable;
 
 /**
  * <p>
- * Configuration options that specify how to access a cache provider.
+ * Configuration options that specify how to access a cache.
  * </p>
  * 
  * @author Alex Ruiz
  */
-public interface CacheModel extends Serializable {
-  // Marker interface.
-}
+public interface CacheModel extends Serializable {}

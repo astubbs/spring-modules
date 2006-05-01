@@ -15,21 +15,12 @@
  *
  * Copyright @2004 the original author or authors.
  */
-
 package org.springmodules.cache;
 
 /**
- * <p>
- * Configuration options for:
- * <ul>
- * <li>Retrieving an entry from the cache</li>
- * <li>Storing an object in the cache</li>
- * <li>Removing an object from the cache</li>
- * </ul>
- * </p>
+ * Understands configuration options for retrieving, storing and removing
+ * objects from a cache.
  * 
  * @author Alex Ruiz
  */
-public interface CachingModel extends CacheModel {
-  // Marker interface.
-}
+public interface CachingModel extends CacheModel {}

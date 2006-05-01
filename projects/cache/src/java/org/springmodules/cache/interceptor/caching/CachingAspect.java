@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2006 the original author or authors.
+ * Copyright @2004-2006 the original author or authors.
  */
 package org.springmodules.cache.interceptor.caching;
 
@@ -25,51 +25,83 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.springmodules.cache.CachingModel;
+import org.springmodules.cache.ConfigurationError;
+import org.springmodules.cache.FatalCacheException;
 import org.springmodules.cache.key.CacheKeyGenerator;
+import org.springmodules.cache.key.HashCodeCacheKeyGenerator;
 import org.springmodules.cache.provider.CacheProviderFacade;
 
 import org.springframework.util.ObjectUtils;
 
 /**
- * TODO Describe this class
+ * Understands caching of the return value of an advised method.
  * 
  * @author Alex Ruiz
  */
-final class CachingAspect {
+public final class CachingAspect {
 
   public static final NullObject NULL_ENTRY = new NullObject();
 
   private static Log logger = LogFactory.getLog(CachingAspect.class);
 
-  private CacheProviderFacade cache;
+  private final CacheProviderFacade cache;
 
-  private CacheKeyGenerator keyGenerator;
+  private final CacheKeyGenerator keyGenerator;
 
-  private CachingListener[] listeners;
+  private final CachingObserver[] observers;
 
-  Object doCaching(MethodInvocation mi, CachingModel m) throws Throwable {
-    Method adviced = mi.getMethod();
-    if (!CachingUtils.isCacheable(adviced)) return methodNotCacheable(mi);
-    if (m == null) return modelNotFound(mi);
+  public CachingAspect(CacheProviderFacade c) {
+    this(c, (CachingObserver[]) null);
+  }
+  
+  public CachingAspect(CacheProviderFacade c, CachingObserver[] o) {
+    this(c, null, o);
+  }
+
+  public CachingAspect(CacheProviderFacade c, CacheKeyGenerator k) {
+    this(c, k, null);
+  }
+  
+  public CachingAspect(CacheProviderFacade c, CacheKeyGenerator k,
+      CachingObserver[] o) {
+    cache = validate(c);
+    keyGenerator = k != null ? k : defaultKeyGenerator();
+    observers = o;
+  }
+
+  private CacheProviderFacade validate(CacheProviderFacade c) {
+    if (c == null) ConfigurationError.missingRequiredProperty("cache");
+    return c;
+  }
+
+  private CacheKeyGenerator defaultKeyGenerator() {
+    return new HashCodeCacheKeyGenerator(true);
+  }
+
+  protected Object doCaching(MethodInvocation mi, CachingModel model)
+      throws Throwable {
+    Method advised = mi.getMethod();
+    if (!CachingUtils.isCacheable(advised)) return methodNotCacheable(mi);
+    if (model == null) return modelNotFound(mi);
     Serializable key = keyGenerator.generateKey(mi);
-    return cachedValue(mi, key, m);
+    return cachedValue(mi, key, model);
   }
 
   private Object cachedValue(MethodInvocation mi, Serializable key,
       CachingModel m) throws Throwable {
-    Object cached = cache.getFromCache(key, m);
+    Object cached = cache.get(key, m);
     if (cached != null) return unmaskNull(cached);
     boolean successful = true;
     try {
-      cached = maskNull(mi.proceed());
+      cached = mi.proceed();
+      cache.put(key, m, maskNull(cached));
+      notifyListeners(key, cached, m);
     } catch (Throwable t) {
       successful = false;
       logger.error("Unable to proceed to the next interceptor in the chain", t);
       throw t;
     } finally {
-      if (!successful) cache.cancelCacheUpdate(key);
-      cache.putInCache(key, m, cached);
-      notifyListeners(key, cached, m);
+      if (!successful) cache.cancelUpdate(key);
     }
     return cached;
   }
@@ -86,20 +118,20 @@ final class CachingAspect {
     return cannotCache(reason, mi);
   }
 
+  private String methodName(MethodInvocation mi) {
+    return mi.getMethod().getName();
+  }
+
   private Object cannotCache(String reason, MethodInvocation mi)
       throws Throwable {
     logger.debug("Unable to perform caching. " + reason);
     return mi.proceed();
   }
 
-  private String methodName(MethodInvocation mi) {
-    return mi.getMethod().getName();
-  }
-
   private void notifyListeners(Serializable key, Object cached, CachingModel m) {
-    if (ObjectUtils.isEmpty(listeners)) return;
-    for (int i = 0; i < listeners.length; i++)
-      listeners[i].onCaching(key, cached, m);
+    if (ObjectUtils.isEmpty(observers)) return;
+    for (int i = 0; i < observers.length; i++)
+      observers[i].onCaching(key, cached, m);
   }
 
   private Object maskNull(Object o) {
@@ -110,15 +142,7 @@ final class CachingAspect {
     return NULL_ENTRY.equals(obj) ? null : obj;
   }
 
-  void setCacheProviderFacade(CacheProviderFacade c) {
-    cache = c;
-  }
-
-  void setCacheKeyGenerator(CacheKeyGenerator k) {
-    keyGenerator = k;
-  }
-
-  void setCachingListeners(CachingListener[] l) {
-    listeners = l;
+  Class keyGeneratorType() {
+    return keyGenerator.getClass();
   }
 }
