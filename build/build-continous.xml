@@ -37,7 +37,7 @@
             <format property="tstamp" pattern="yyyyMMdd"/>
         </tstamp>
         <move file="${target.release.dir}/${release.zip}"
-            tofile="${upload.tmp.dir}/spring-webflow-${release.version}-${label}-${tstamp}.zip"/>
+            tofile="${upload.tmp.dir}/springmodules-${release.version}-${label}-${tstamp}.zip"/>
     </target>
     
     <target name="upload" depends="upload-log, upload-binaries"/>
