@@ -141,7 +141,7 @@
         <delete dir="${target.dir}" />
 		<echo>projects=${projects}</echo>
 		<echo>projects.names=${projects.names}</echo>
-		<subant target="clean" inheritall="false">
+		<subant target="clean" inheritall="false" failonerror="false">
 			<buildpath refid="${projects}" />
 		</subant>
 
@@ -151,14 +151,14 @@
 	<target name="clean-all" depends="init" description="Cleans all build output files from all projects, and also retrieved libs">
         <delete dir="${target.dir}" />
 		<echo>projects=${projects}</echo>
-		<subant target="clean-all" inheritall="false">
+		<subant target="clean-all" inheritall="false" failonerror="false">
 			<buildpath refid="${projects}" />
 		</subant>
 	</target>
 
 	<target name="publish" depends="init" description="Calls publish targets on each project">
 		<echo>projects=${projects}</echo>
-		<subant target="publish" inheritall="false">
+		<subant target="publish" inheritall="false" failonerror="false">
 			<buildpath refid="${projects}" />
 		</subant>
 	</target>
@@ -192,7 +192,7 @@
 
 	<target name="javadoc" depends="init" description="Calls javadoc targets on each project">
 		<echo>projects=${projects}</echo>
-		<subant target="javadoc" inheritall="false">
+		<subant target="javadoc" inheritall="false" failonerror="false">
 			<buildpath refid="${projects}" />
 		</subant>
 	</target>
@@ -220,8 +220,8 @@
 <!--
 	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
 	-->
-	<target name="release" depends="get.scb, dist, javadoc, doc, gen.release.zip"
-	              description="Generate the spring-webflow release archive" />
+	<target name="release" depends="get.scb, dist, javadoc, doc, dist"
+	              description="Generate the springmodules release archive" />
 
 	<target name="gen.release.zip" depends="init">
 		<mkdir dir="${target.release.dir}" />
@@ -229,13 +229,12 @@
 
 		<zip zipfile="${target.release.dir}/${release.zip}">
 			<!-- important readme, license, and other text files -->
-			<zipfileset file="../spring-webflow/*.txt" prefix="${zip.toplevel.dir}" />
+			<zipfileset file="../springmodules/*.txt" prefix="${zip.toplevel.dir}" />
 			<!-- binary files -->
-			<zipfileset dir="../spring-webflow/target/dist/jars" prefix="${zip.toplevel.dir}" />
-			<zipfileset dir="../spring-binding/target/dist/jars" prefix="${zip.toplevel.dir}" />
-			<zipfileset dir="../spring-webflow/target/javadocs" 
+			<zipfileset dir="../springmodules/target/dist/jars" prefix="${zip.toplevel.dir}" />
+			<zipfileset dir="../springmodules/target/javadocs" 
 			            prefix="${zip.toplevel.dir}/docs/api" />
-			<zipfileset dir="../spring-webflow/docs/reference/target" 
+			<zipfileset dir="../springmodules/docs/reference/target" 
 			            prefix="${zip.toplevel.dir}/docs/reference">
 				<exclude name="**/html_single/**" />
 			</zipfileset>
