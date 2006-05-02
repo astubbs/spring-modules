@@ -217,34 +217,54 @@
 			<buildpath refid="${projects}" />
 		</subant>
 	</target>
-<!--
+	<!--
 	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
 	-->
-	<target name="release" depends="get.scb, dist, javadoc, doc, dist"
+	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
 	              description="Generate the springmodules release archive" />
 
 	<target name="gen.release.zip" depends="init">
 		<mkdir dir="${target.release.dir}" />
 		<delete file="${target.release.dir}/${release.zip}" />
 
+		<copy todir="${target.release.dir}/tmp">
+			<fileset dir="../projects/" includes="**/target/artifacts/lib/*"/>
+			<mapper type="flatten"/>
+		</copy>
+	<!--
+		<copy todir="${target.release.dir}/tmp">
+			<fileset dir="../projects/" includes="**/target/javadocs"/>
+			<regexpmapper from="^(.*)/target/javadocs/*" to="\1"/>
+		</copy>
+-->
 		<zip zipfile="${target.release.dir}/${release.zip}">
 			<!-- important readme, license, and other text files -->
-			<zipfileset file="../springmodules/*.txt" prefix="${zip.toplevel.dir}" />
+			<zipfileset file="../*.txt" prefix="${zip.toplevel.dir}" />
 			<!-- binary files -->
-			<zipfileset dir="../springmodules/target/dist/jars" prefix="${zip.toplevel.dir}" />
-			<zipfileset dir="../springmodules/target/javadocs" 
+			<zipfileset dir="${target.release.dir}/tmp" includes="*" prefix="${zip.toplevel.dir}" />
+			<!--
+			<zipfileset dir="../projects/**/target/dist/ivys" prefix="${zip.toplevel.dir}" />			
+	
+			<zipfileset dir="../projects/" includes="**/target/javadocs/**/*"
 			            prefix="${zip.toplevel.dir}/docs/api" />
-			<zipfileset dir="../springmodules/docs/reference/target" 
+			     -->
+			<zipfileset dir="./target/docs/reference" 
 			            prefix="${zip.toplevel.dir}/docs/reference">
+				<!--
 				<exclude name="**/html_single/**" />
+				-->
 			</zipfileset>
-			<zipfileset dir="${target.dir}/repo" 
-			            prefix="${zip.toplevel.dir}/projects/repository" />
-			<!-- project sources -->
+			
+			<zipfileset dir="../projects/repository" 
+			            prefix="${zip.toplevel.dir}/repository" />
+			            
+			<!-- project sources
 			<zipfileset dir=".." prefix="${zip.toplevel.dir}/projects">
 				<selector refid="project.source.zip.includes" />
 			</zipfileset>
+			-->
 		</zip>
+		<delete dir="${target.release.dir}/tmp" failonerror="false" />
 	</target>
 	
 </project>
