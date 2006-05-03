@@ -1,6 +1,6 @@
 <ivy-module version="1.0">
 
-    <info organisation="springframework" module="jbpm30"/>
+    <info organisation="springframework" module="springmodules-jbpm30"/>
 
     <configurations>
 

@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-    <info organisation="springmodules" module="aop"/>
+    <info organisation="springmodules" module="springmodules-aop"/>
 
     <configurations>
 		<!-- default configuration that 'by default' pulls in the global configuration -->
@@ -22,7 +22,7 @@
 	<dependency org="apache" name="commons-logging" rev="1.0.4"/>
 
     <dependency org="springframework" name="springframework"
-          rev="2.0-m3" conf="global,test->default">
+          rev="2.0-m4" conf="global,test->default">
           <artifact name="spring-aop" type="jar" conf="global" />
           <artifact name="spring-aspects" type="jar" conf="global" />
           <artifact name="spring-beans" type="jar" conf="global" />
