@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jackrabbit="http://springmodules.dev.java.net/schema/jcr/jackrabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://springmodules.dev.java.net/schema/jcr/jackrabbit ./org/springmodules/jcr/jackrabbit/config/springmodules-jackrabbit.xsd">
+
+	<jackrabbit:repository id="minimal"
+		configuration="classpath:config.xml" />
+
+	<jackrabbit:repository id="extended" configuration="file:config.xml"
+		homeDir="file:///homeDir" />
+
+	<jackrabbit:repository id="full"
+		configuration="classpath:config.xml" homeDir="file:///homeDir"
+		repositoryConfig="repoCfg" />
+
+	<jackrabbit:transaction-manager id="transactionManager" sessionFactory="jcrSessionFactory" />
+</beans>

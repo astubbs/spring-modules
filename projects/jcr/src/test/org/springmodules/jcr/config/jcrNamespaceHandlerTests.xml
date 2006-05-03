@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jcr="http://springmodules.dev.java.net/schema/jcr"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://springmodules.dev.java.net/schema/jcr ./org/springmodules/jcr/config/springmodules-jcr.xsd">
+
+	<jcr:eventListenerDefinition id="eventListenerFull" absPath="/somePath" isDeep="true" noLocal="false">
+		<jcr:listener>some bean</jcr:listener>
+		<jcr:uuid>123</jcr:uuid>
+		<jcr:nodeTypeName>foo</jcr:nodeTypeName>
+		<jcr:nodeTypeName>bar</jcr:nodeTypeName>
+		<jcr:eventType>NODE_ADDED</jcr:eventType>
+		<jcr:eventType>PROPERTY_CHANGED</jcr:eventType>
+	</jcr:eventListenerDefinition>
+	
+	<jcr:sessionFactory id="sessionFactory" repository="myRepo" keepNamespaces="true">
+		<jcr:namespace name="foo">http://bar.com/jcr</jcr:namespace>
+		<jcr:namespace name="hocus">http://pocus.com/jcr</jcr:namespace>
+	</jcr:sessionFactory>
+</beans>
