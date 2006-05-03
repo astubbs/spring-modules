@@ -2,15 +2,18 @@
 	<resolvers>
 		<chain name="custom">
 			<!-- day software public maven repository -->
-			<ibiblio name="day" root="http://www.day.com/maven"/>
+			<ibiblio name="day" root="http://www.day.com/maven/jsr170" pattern="jars/[artifact]-[revision].[ext]"/>
 			<!-- apache incubator maven / made an url to respect the naming
 			<ibiblio name="apache-incubator" root="http://cvs.apache.org/dist/incubator/"/>
 			-->
-			<!---->
-			<url name="apache-incubator">			
-				<artifact pattern="http://cvs.apache.org/repository/org.apache.jackrabbit/jars/[artifact]-[revision]-incubating.[ext]" />				
+			<!--
+			<url name="jackrabbit-maven">			
+				<artifact pattern="http://ibiblio.org/maven/org.apache.jackrabbit/jars/[artifact]-[revision].[ext]" />				
 			</url>
-			
+			-->
+			<!-- 
+			<ibiblio name="jackrabbit-maven" m2compatible="true" root="http://ibiblio.org/maven/org/"/>
+			-->
 			<!-- aparzev/jeceira -->
 			<url name="jeceira">
 				<!-- url pattern for jeceira wiki -->
