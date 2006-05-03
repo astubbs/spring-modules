@@ -1,0 +1,3 @@
+http\://springmodules.dev.java.net/schema/jcr/springmodules-jcr.xsd=org/springmodules/jcr/config/springmodules-jcr.xsd
+springmodules-jcr.xsd=org/springmodules/jcr/config/springmodules-jcr.xsd
+http\://springmodules.dev.java.net/schema/jcr/springmodules-jackrabbit.xsd=org/springmodules/jcr/jackrabbit/config/springmodules-jackrabbit.xsd

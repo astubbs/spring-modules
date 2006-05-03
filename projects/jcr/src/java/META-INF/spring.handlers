@@ -1,0 +1,2 @@
+http\://springmodules.dev.java.net/schema/jcr=org.springmodules.jcr.config.JcrNamespaceHandler
+http\://springmodules.dev.java.net/schema/jcr/jackrabbit=org.springmodules.jcr.jackrabbit.config.JackrabbitNamespaceHandler

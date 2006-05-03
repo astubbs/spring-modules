@@ -1,13 +1,15 @@
 /**
  * Created on Sep 1, 2005
  *
- * $Id: EventListenerDefinition.java,v 1.1 2005/12/20 17:38:11 costin Exp $
- * $Revision: 1.1 $
+ * $Id: EventListenerDefinition.java,v 1.2 2006/05/03 12:11:06 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr;
 
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventListener;
+
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * Transport class used for registering event types inside a workspace. It contains defaults for
@@ -25,7 +27,7 @@ import javax.jcr.observation.EventListener;
  * @author Costin Leau
  *
  */
-public class EventListenerDefinition {
+public class EventListenerDefinition implements InitializingBean {
     
     private EventListener listener;
     private int eventTypes = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
@@ -120,5 +122,12 @@ public class EventListenerDefinition {
     public void setUuid(String[] uuid) {
         this.uuid = uuid;
     }
+	/* (non-Javadoc)
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	public void afterPropertiesSet() throws Exception {
+		if (listener == null)
+			throw new IllegalArgumentException("listener is required");
+	}
 
 }
