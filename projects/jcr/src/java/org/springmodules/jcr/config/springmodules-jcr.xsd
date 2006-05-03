@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+
+<xsd:schema xmlns="http://springmodules.dev.java.net/schema/jcr"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://springmodules.dev.java.net/schema/jcr"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xsd:element name="repository">
+		<xsd:complexType>
+			<xsd:attribute name="configuration" type="xsd:string"
+				use="required" />
+			<xsd:attribute name="id" type="xsd:ID" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>
