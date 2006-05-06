@@ -63,17 +63,17 @@
     <target name="email" depends="email-success, email-failure"/>
     
     <target name="email-failure" depends="guard.smtp.host">
-    	<mail mailhost="${smtp.host}" subject="Spring WebFlow ${label} FAILED" tolist="bram@interface21.com" from="bram@interface21.com">
-    		<message>Errors and a list of modifications can be found in the build log (http://static.springframework.org/spring-webflow/build/index.html).</message>
+    	<mail mailhost="${smtp.host}" subject="Spring Modules ${label} FAILED" tolist="bram@interface21.com, costin@interface21.com" from="bram@interface21.com">
+    		<message>Errors and a list of modifications can be found in the build log (http://static.springframework.org/spring-modules/build/index.html).</message>
     	</mail>
     </target>
     
     <target name="email-success" depends="guard.smtp.host">
-    	<mail mailhost="${smtp.host}" subject="Spring WebFlow ${label} SUCCEEDED" tolist="bram@interface21.com" from="bram@interface21.com">
+    	<mail mailhost="${smtp.host}" subject="Spring Modules ${label} SUCCEEDED" tolist="bram@interface21.com, costin@interface21.com" from="bram@interface21.com">
     		<message>
-    			Snapshot has been uploaded to http://static.springframework.org/downloads/nightly/spring-webflow
+    			Snapshot has been uploaded to http://static.springframework.org/downloads/nightly/spring-modules
     			
-    			The list of modifications for this build can be found in the build log (http://static.springframework.org/spring-webflow/build/index.html).    			
+    			The list of modifications for this build can be found in the build log (http://static.springframework.org/spring-modules/build/index.html).    			
 			</message>
     	</mail>
 	</target>
