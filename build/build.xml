@@ -173,6 +173,7 @@
 	<target name="build-release-repo" depends="init"
 	        description="Builds repo of all dependencies for all projects">
 		<echo>projects=${projects}</echo>
+		<!--
 		<subant target="retrieve-to-repo" inheritall="false">
             <property name="retrieve.to.repo.dir" value="${target.dir}/repo" />
             <property name="retrieve.to.repo.pattern"
@@ -181,6 +182,7 @@
                       value="${release.repo.ivy.retrieve.ivy.pattern}" />
 			<buildpath refid="${projects}" />
 		</subant>
+		-->
 	</target>
 
 	<target name="tests" depends="init" description="Calls test targets on each project">
