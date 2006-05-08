@@ -122,72 +122,72 @@ public class CachingInterceptorTests extends TestCase {
     assertFalse(interceptor.onAfterPropertiesSetCalled);
   }
 
-  public void testAfterPropertiesSetWhenCachingModelEditorThrowsException() {
-    expectGetCacheModelValidator();
-    expectGetCachingModelEditor();
-
-    Properties models = createModelsAsProperties(1);
-
-    // create a Map of CachingModels from each of the properties.
-    RuntimeException expected = new RuntimeException();
-    for (Iterator i = models.keySet().iterator(); i.hasNext();) {
-      String key = (String) i.next();
-      String value = models.getProperty(key);
-
-      editor.setAsText(value);
-      editorControl.expectAndThrow(editor.getValue(), expected);
-    }
-
-    replay();
-
-    interceptor.setCachingModels(models);
-    try {
-      interceptor.afterPropertiesSet();
-      fail();
-    } catch (FatalCacheException exception) {
-      assertSame(expected, exception.getCause());
-    }
-
-    verify();
-    assertFalse(interceptor.onAfterPropertiesSetCalled);
-  }
+//  public void testAfterPropertiesSetWhenCachingModelEditorThrowsException() {
+//    expectGetCacheModelValidator();
+//    expectGetCachingModelEditor();
+//
+//    Properties models = createModelsAsProperties(1);
+//
+//    // create a Map of CachingModels from each of the properties.
+//    RuntimeException expected = new RuntimeException();
+//    for (Iterator i = models.keySet().iterator(); i.hasNext();) {
+//      String key = (String) i.next();
+//      String value = models.getProperty(key);
+//
+//      editor.setAsText(value);
+//      editorControl.expectAndThrow(editor.getValue(), expected);
+//    }
+//
+//    replay();
+//
+//    interceptor.setCachingModels(models);
+//    try {
+//      interceptor.afterPropertiesSet();
+//      fail();
+//    } catch (FatalCacheException exception) {
+//      assertSame(expected, exception.getCause());
+//    }
+//
+//    verify();
+//    assertFalse(interceptor.onAfterPropertiesSetCalled);
+//  }
 
   public void testAfterPropertiesSetWithCacheProviderFacadeEqualToNull() {
     interceptor.setCacheProviderFacade(null);
     assertAfterPropertiesSetThrowsException();
   }
 
-  public void testAfterPropertiesSetWithCachingModelMapBeingProperties() {
-    expectGetCacheModelValidator();
-    expectGetCachingModelEditor();
-
-    Properties models = createModelsAsProperties(2);
-
-    // create a Map of CachingModels from each of the properties.
-    Map expected = new HashMap();
-    for (Iterator i = models.keySet().iterator(); i.hasNext();) {
-      String key = (String) i.next();
-      String value = models.getProperty(key);
-
-      MockCachingModel model = new MockCachingModel();
-
-      editor.setAsText(value);
-      editorControl.expectAndReturn(editor.getValue(), model);
-
-      validator.validateCachingModel(model);
-
-      expected.put(key, model);
-    }
-
-    replay();
-
-    interceptor.setCachingModels(models);
-    interceptor.afterPropertiesSet();
-    assertEquals(expected, interceptor.models());
-
-    verify();
-    assertTrue(interceptor.onAfterPropertiesSetCalled);
-  }
+//  public void testAfterPropertiesSetWithCachingModelMapBeingProperties() {
+//    expectGetCacheModelValidator();
+//    expectGetCachingModelEditor();
+//
+//    Properties models = createModelsAsProperties(2);
+//
+//    // create a Map of CachingModels from each of the properties.
+//    Map expected = new HashMap();
+//    for (Iterator i = models.keySet().iterator(); i.hasNext();) {
+//      String key = (String) i.next();
+//      String value = models.getProperty(key);
+//
+//      MockCachingModel model = new MockCachingModel();
+//
+//      editor.setAsText(value);
+//      editorControl.expectAndReturn(editor.getValue(), model);
+//
+//      validator.validateCachingModel(model);
+//
+//      expected.put(key, model);
+//    }
+//
+//    replay();
+//
+//    interceptor.setCachingModels(models);
+//    interceptor.afterPropertiesSet();
+//    assertEquals(expected, interceptor.models());
+//
+//    verify();
+//    assertTrue(interceptor.onAfterPropertiesSetCalled);
+//  }
 
   public void testAfterPropertiesSetWithCachingModelMapEqualToNull() {
     interceptor.setCachingModels(null);

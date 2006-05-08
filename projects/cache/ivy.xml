@@ -33,12 +33,11 @@
       <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>
 
-    <!-- cache dependencies
-    <dependency org="tangosol" name="coherence" rev="3.10b321">
+    <!-- cache dependencies -->
+    <dependency org="tangosol" name="coherence" rev="3.2-b351">
       <artifact name="coherence" type="jar" conf="global" />
       <artifact name="tangosol" type="jar" conf="global" />
     </dependency>
-     -->
 
     <dependency org="apache" name="commons-attributes" rev="2.1">
       <artifact name="commons-attributes-api" type="jar" />
