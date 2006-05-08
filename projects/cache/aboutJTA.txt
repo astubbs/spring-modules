@@ -1,5 +1,0 @@
-The cache module depends on JTA. It cannot be distributed with the project or
-uploaded to Ibiblio (more details at 
-http://maven.apache.org/project/sun-licensing-journey.html .) You will need to
-download it from http://java.sun.com/products/jta/ and stored in the 
-'repository' directory.

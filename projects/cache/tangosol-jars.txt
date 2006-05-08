@@ -1,0 +1,3 @@
+The cache module depends on Tangosol Coherence which jars cannot be distributed with the project
+You will need to download them from http://www.tangosol.com and store them in the 
+'repository' directory.
