@@ -224,7 +224,35 @@
 	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
 	              description="Generate the springmodules release archive" />
 
-	<target name="gen.release.zip" depends="init">
+    <target name="gen.release.jar" depends="init">
+    	<!-- create jar -->
+       	<copy todir="${target.release.dir}/tmp/jar">
+			<fileset dir="../projects/" includes="**/target/classes/**/*" excludes="**/*.html"/>
+			<mapper type="regexp" from="^(.*)classes(.*)$$" to="\2"/>
+		</copy>
+    	<jar destfile="${target.release.dir}/tmp/${zip.toplevel.dir}-all.jar" basedir="${target.release.dir}/tmp/jar" includes="**/*"/>
+    	<delete dir="${target.release.dir}/tmp/jar" failonerror="false" />
+    </target>
+    
+    <target name="gen.release.javadoc" depends="init">
+    	<!-- copy sources under one folder -->
+       	<copy todir="${target.release.dir}/tmp/sources">
+			<fileset dir="../projects/" includes="**/src/java/**/*.java"/>
+			<mapper type="regexp" from="^(.*)org(.*)$$" to="org\\\2"/>
+		</copy>
+
+        <javadoc destdir="${target.release.dir}/tmp/javadocs" author="true" version="true" windowtitle="${project.name} API" doctitle="${project.name}" bottom="${copyright}">
+          <sourcepath>
+            <pathelement location="${target.release.dir}/tmp/sources" />
+          </sourcepath>
+          <packageset dir="${target.release.dir}/tmp/sources">
+            <include name="**/*" />
+          </packageset>
+        </javadoc>
+    </target>
+
+	
+	<target name="gen.release.zip" depends="init"> <!-- , gen.release.jar, gen.release.javadoc -->
 		<mkdir dir="${target.release.dir}" />
 		<delete file="${target.release.dir}/${release.zip}" />
 
@@ -232,40 +260,37 @@
 			<fileset dir="../projects/" includes="**/target/artifacts/lib/*"/>
 			<mapper type="flatten"/>
 		</copy>
-	<!--
-		<copy todir="${target.release.dir}/tmp">
-			<fileset dir="../projects/" includes="**/target/javadocs"/>
-			<regexpmapper from="^(.*)/target/javadocs/*" to="\1"/>
-		</copy>
--->
+		
 		<zip zipfile="${target.release.dir}/${release.zip}">
 			<!-- important readme, license, and other text files -->
-			<zipfileset file="../*.txt" prefix="${zip.toplevel.dir}" />
+			<zipfileset file="../changelog.txt" prefix="${zip.toplevel.dir}" />
 			<!-- binary files -->
-			<zipfileset dir="${target.release.dir}/tmp" includes="*" prefix="${zip.toplevel.dir}" />
+			<zipfileset dir="${target.release.dir}/tmp" includes="**/*.jar" prefix="${zip.toplevel.dir}" />
+			
+			<!-- sources -->
+			<zipfileset dir="${target.release.dir}/tmp" includes="**/*-src.zip" prefix="${zip.toplevel.dir}/sources" />
+
+			<!-- javadocs -->
+			<zipfileset dir="${target.release.dir}/tmp/javadocs" includes="**/*" prefix="${zip.toplevel.dir}/docs/javadoc" />
+			
 			<!--
 			<zipfileset dir="../projects/**/target/dist/ivys" prefix="${zip.toplevel.dir}" />			
-	
+			
 			<zipfileset dir="../projects/" includes="**/target/javadocs/**/*"
 			            prefix="${zip.toplevel.dir}/docs/api" />
-			     -->
+			-->    
+			<!-- docs -->
 			<zipfileset dir="./target/docs/reference" 
 			            prefix="${zip.toplevel.dir}/docs/reference">
-				<!--
-				<exclude name="**/html_single/**" />
-				-->
 			</zipfileset>
 			
 			<zipfileset dir="../projects/repository" 
 			            prefix="${zip.toplevel.dir}/repository" />
 			            
-			<!-- project sources
-			<zipfileset dir=".." prefix="${zip.toplevel.dir}/projects">
-				<selector refid="project.source.zip.includes" />
-			</zipfileset>
-			-->
 		</zip>
+		<!--
 		<delete dir="${target.release.dir}/tmp" failonerror="false" />
+		-->
 	</target>
 	
 </project>
