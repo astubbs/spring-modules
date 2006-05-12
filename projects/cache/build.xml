@@ -87,8 +87,9 @@
                debug="${debug}"
                deprecation="${deprecation}"
                optimize="${optimize}"
-               failonerror="true">
-            <src path="${merlin.src.dir}" />
+               failonerror="true"
+       		   excludes="**/tangosol/**">
+            <src path="${merlin.src.dir}"/>
             <classpath refid="compile.classpath" />
         </javac>
 
@@ -99,7 +100,8 @@
                debug="${debug}"
                deprecation="${deprecation}"
                optimize="${optimize}"
-               failonerror="true">
+               failonerror="true"
+    		   excludes="**/tangosol/**">
             <src path="${merlin.test.dir}" />
             <classpath>
                 <pathelement location="${target.classes.dir}" />
@@ -116,7 +118,8 @@
                debug="${debug}"
                deprecation="${deprecation}"
                optimize="${optimize}"
-               failonerror="true">
+               failonerror="true"
+        	   excludes="**/tangosol/**">
             <src path="${tiger.src.dir}" />
             <classpath refid="compile.classpath" />
         </javac>
@@ -128,7 +131,8 @@
                debug="${debug}"
                deprecation="${deprecation}"
                optimize="${optimize}"
-               failonerror="true">
+               failonerror="true"
+         	   excludes="**/tangosol/**">
             <src path="${tiger.test.dir}" />
             <classpath>
                 <pathelement location="${target.classes.dir}" />

@@ -58,7 +58,7 @@ public final class EhCacheIntegrationTests extends AbstractIntegrationTests {
   }
 
   protected void tearDown() {
-    if (cacheManager == null) setUpCacheManager();
+    //if (cacheManager == null) setUpCacheManager();
     if (cacheManager != null) cacheManager.shutdown();
   }
 

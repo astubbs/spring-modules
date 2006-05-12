@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-  <info organisation="springmodules" module="cache" />
+  <info organisation="springmodules" module="springmodules-cache" />
 
   <configurations>
     <!-- default configuration that 'by default' pulls in the global configuration -->
@@ -23,7 +23,7 @@
     <dependency org="apache" name="log4j" rev="1.2.13" />
 
     <dependency org="springframework" name="org.springframework"
-      rev="2.0-m4" conf="global,test->default">
+      rev="2.0-m3" conf="global,test->default">
       <artifact name="spring-aop" type="jar" conf="global" />
       <artifact name="spring-aspects" type="jar" conf="global" />
       <artifact name="spring-beans" type="jar" conf="global" />
@@ -33,12 +33,13 @@
       <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>
 
-    <!-- cache dependencies -->
+    <!-- cache dependencies
     <dependency org="tangosol" name="coherence" rev="3.2-b351">
       <artifact name="coherence" type="jar" conf="global" />
       <artifact name="tangosol" type="jar" conf="global" />
     </dependency>
-
+	 -->
+	 
     <dependency org="apache" name="commons-attributes" rev="2.1">
       <artifact name="commons-attributes-api" type="jar" />
       <artifact name="commons-attributes-compiler" type="jar" />
