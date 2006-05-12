@@ -252,7 +252,7 @@
     </target>
 
 	
-	<target name="gen.release.zip" depends="init"> <!-- , gen.release.jar, gen.release.javadoc -->
+	<target name="gen.release.zip, gen.release.jar, gen.release.javadoc" depends="init"> <!--  -->
 		<mkdir dir="${target.release.dir}" />
 		<delete file="${target.release.dir}/${release.zip}" />
 
