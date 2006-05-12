@@ -21,10 +21,12 @@ public class JdkRegexpDocumentMatching extends AbstractRegexpDocumentMatching {
 	}
 
 	protected void initRegExpr(String regularExpression) {
+		System.out.println("regularExpression = "+regularExpression);
 		this.compiledRegularExpression=Pattern.compile(regularExpression);
 	}
 
 	protected boolean matchRegularExpression(String name) {
+		System.out.println("name = "+name);
 		Matcher matcher = this.compiledRegularExpression.matcher(name);
 		return matcher.matches();
 	}

@@ -40,6 +40,7 @@ public class DatabaseIndexerTests extends TestCase {
 
 	private RAMDirectory directory;
 	private DriverManagerDataSource dataSource;
+	private JdbcTemplate template;
 
 	/**
 	 * @see junit.framework.TestCase#setUp()
@@ -50,21 +51,23 @@ public class DatabaseIndexerTests extends TestCase {
 		//Initialization of the datasource
 		this.dataSource=new DriverManagerDataSource();
 		this.dataSource.setDriverClassName("org.hsqldb.jdbcDriver");
-		this.dataSource.setUrl("jdbc:hsqldb:mem:.");
+		this.dataSource.setUrl("jdbc:hsqldb:test");
 		this.dataSource.setUsername("sa");
 		this.dataSource.setPassword("");
+		this.template=new JdbcTemplate(this.dataSource);
+
 		//Creation of the schema
 		StringBuffer requestCreate=new StringBuffer();
 		requestCreate.append("create table TEST ( TEST_ID INT not null,");
 		requestCreate.append(" TEST_NAME VARCHAR(255) not null,");
-		requestCreate.append(" constraint PK_TEST primary key (TEST_ID) );");
-		JdbcTemplate template=new JdbcTemplate(this.dataSource);
-		template.execute(requestCreate.toString());
+		requestCreate.append(" constraint PK_TEST primary key (TEST_ID) )");
+		this.template.execute(requestCreate.toString());
+
 		//Insertion of tuples
 		StringBuffer requestInsertion=new StringBuffer();
 		requestInsertion.append("insert into TEST (TEST_ID,TEST_NAME)");
 		requestInsertion.append(" values(1,'this is a test')");
-		template.execute(requestInsertion.toString());
+		this.template.execute(requestInsertion.toString());
 	}
 
 	/**
@@ -74,10 +77,10 @@ public class DatabaseIndexerTests extends TestCase {
 		//Finalization of the index
 		this.directory=null;
 		//Destoy the schema
-		JdbcTemplate template=new JdbcTemplate(this.dataSource);
-		template.execute("drop table TEST");
+		this.template.execute("drop table TEST");
 		//Finalization of the datasource
 		this.dataSource=null;
+		this.template=null;
 	}
 
 	final public void testRegisterDocumentHandler() {

@@ -54,4 +54,28 @@ public class IdentityDocumentMatching implements DocumentMatching {
 		}
 	}
 
+	
+	/**
+	 * This method returns the name to match.
+	 * 
+	 * @return the name to match
+	 */
+	public String getName() {
+		return name;
+	}
+
+	public boolean equals(Object obj) {
+		if( !(obj instanceof IdentityDocumentMatching) ) {
+			return false;
+		}
+		
+		IdentityDocumentMatching matching = (IdentityDocumentMatching)obj;
+		return name.equals(matching.getName());
+	}
+
+	public int hashCode() {
+		int result = 17;
+		result = 37*result + name.hashCode();
+		return result;
+	}
 }
