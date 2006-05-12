@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmvc-extra" default="dist">
+<project name="springmodules-springmvc-extra" default="dist">
 
   	<property file="build.properties" />
   	<property file="project.properties" />

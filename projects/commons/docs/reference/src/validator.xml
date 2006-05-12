@@ -80,9 +80,9 @@
     <para>You must note that the support of <emphasis>validwhen</emphasis> is
     not provided at the moment in the support. However, some codes are
     provides in JIRA. For more informations, see the issues <ulink
-    href="http://opensource2.atlassian.com/projects/spring/browse/MOD-38">MOD-38</ulink>
+    url="http://opensource2.atlassian.com/projects/spring/browse/MOD-38">MOD-38</ulink>
     and <ulink
-    href="http://opensource2.atlassian.com/projects/spring/browse/MOD-49">MOD-49</ulink>.</para>
+    url="http://opensource2.atlassian.com/projects/spring/browse/MOD-49">MOD-49</ulink>.</para>
   </sect1>
 
   <sect1>
