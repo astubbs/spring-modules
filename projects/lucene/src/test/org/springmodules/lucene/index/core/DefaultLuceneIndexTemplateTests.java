@@ -364,7 +364,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 		manager.registerDefaultHandlers();
 
 		//File to index
-		final File file=getFileFromClasspath("test.bak");
+		final File file=getFileFromClasspath("test.foo");
 
 		//Lucene template
 		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);

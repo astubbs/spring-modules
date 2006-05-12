@@ -220,10 +220,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
-		listener.beforeIndexingFile(getFileFromClasspath("test.bak"));
+		listener.beforeIndexingFile(getFileFromClasspath("test.foo"));
 		listenerControl.setVoidCallable(1);
 
-		listener.onNotAvailableHandler(getFileFromClasspath("test.bak"));
+		listener.onNotAvailableHandler(getFileFromClasspath("test.foo"));
 		listenerControl.setVoidCallable(1);
 
 		listener.beforeIndexingFile(getFileFromClasspath("test.txt"));
@@ -264,10 +264,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
-		listener.beforeIndexingFile(getFileFromClasspath("test.bak"));
+		listener.beforeIndexingFile(getFileFromClasspath("test.foo"));
 		listenerControl.setVoidCallable(1);
 
-		listener.afterIndexingFile(getFileFromClasspath("test.bak"));
+		listener.afterIndexingFile(getFileFromClasspath("test.foo"));
 		listenerControl.setVoidCallable(1);
 
 		listener.beforeIndexingFile(getFileFromClasspath("test.txt"));
@@ -282,7 +282,7 @@ public class DirectoryIndexerTests extends TestCase {
 
 		//Indexer
 		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
-		indexer.registerDocumentHandler(new ExtensionDocumentMatching("bak"),
+		indexer.registerDocumentHandler(new ExtensionDocumentMatching("foo"),
 		                                new TextDocumentHandler());
 		indexer.addListener(listener);
 		File baseDirectory=getBaseDirectoryToIndex();
@@ -308,10 +308,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener1.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listener1Control.setVoidCallable(1);
 
-		listener1.beforeIndexingFile(getFileFromClasspath("test.bak"));
+		listener1.beforeIndexingFile(getFileFromClasspath("test.foo"));
 		listener1Control.setVoidCallable(1);
 
-		listener1.onNotAvailableHandler(getFileFromClasspath("test.bak"));
+		listener1.onNotAvailableHandler(getFileFromClasspath("test.foo"));
 		listener1Control.setVoidCallable(1);
 
 		listener1.beforeIndexingFile(getFileFromClasspath("test.txt"));
@@ -330,10 +330,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener2.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listener2Control.setVoidCallable(1);
 
-		listener2.beforeIndexingFile(getFileFromClasspath("test.bak"));
+		listener2.beforeIndexingFile(getFileFromClasspath("test.foo"));
 		listener2Control.setVoidCallable(1);
 
-		listener2.onNotAvailableHandler(getFileFromClasspath("test.bak"));
+		listener2.onNotAvailableHandler(getFileFromClasspath("test.foo"));
 		listener2Control.setVoidCallable(1);
 
 		listener2.beforeIndexingFile(getFileFromClasspath("test.txt"));
@@ -375,10 +375,10 @@ public class DirectoryIndexerTests extends TestCase {
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
-		listener.beforeIndexingFile(getFileFromClasspath("test.bak"));
+		listener.beforeIndexingFile(getFileFromClasspath("test.foo"));
 		listenerControl.setVoidCallable(1);
 
-		listener.onNotAvailableHandler(getFileFromClasspath("test.bak"));
+		listener.onNotAvailableHandler(getFileFromClasspath("test.foo"));
 		listenerControl.setVoidCallable(1);
 
 		listener.beforeIndexingFile(getFileFromClasspath("test.txt"));
