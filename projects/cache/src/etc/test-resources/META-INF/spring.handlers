@@ -1,0 +1,9 @@
+http\://www.springframework.org/schema/util=org.springframework.beans.factory.xml.UtilNamespaceHandler
+http\://www.springframework.org/schema/aop=org.springframework.aop.config.AopNamespaceHandler
+http\://www.springframework.org/schema/jndi=org.springframework.jndi.config.JndiNamespaceHandler
+http\://www.springframework.org/schema/tx=org.springframework.transaction.config.TxNamespaceHandler
+http\://www.springmodules.org/schema/ehcache=org.springmodules.cache.config.ehcache.EhCacheNamespaceHandler
+http\://www.springmodules.org/schema/jboss=org.springmodules.cache.config.jboss.JbossCacheNamespaceHandler
+http\://www.springmodules.org/schema/jcs=org.springmodules.cache.config.jcs.JcsNamespaceHandler
+http\://www.springmodules.org/schema/oscache=org.springmodules.cache.config.oscache.OsCacheNamespaceHandler
+http\://www.springmodules.org/schema/coherence=org.springmodules.cache.config.tangosol.CoherenceNamespaceHandler

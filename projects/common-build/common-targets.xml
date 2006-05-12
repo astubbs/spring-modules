@@ -872,6 +872,19 @@
     </junit>
   </target>
 
+	  <target name="retrieve-to-repo" depends="resolve">
+	    <property name="retrieve.to.repo.conf" value="*" />
+	    <property name="retrieve.to.repo.dir" value="${target.dir}/repo" />
+	    <property name="retrieve.to.repo.pattern"
+	                  value="[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
+	    <property name="retrieve.to.repo.pattern.ivy"
+	                  value="[organisation]/[module]/ivy-[revision].xml" />
+	    <retrieve.conf conf="${retrieve.to.repo.conf}"
+	                       pattern="${retrieve.to.repo.dir}/${retrieve.to.repo.pattern}"
+	                                   ivypattern="${retrieve.to.repo.dir}/${retrieve.to.repo.pattern.ivy}"/>
+	  </target>
+
+
   <target name="guard.testclass" unless="test.class">
     <fail message="The target you are attempting to run requires the ${test.class} property to be set, which doesn't appear to be" />
   </target>
