@@ -2,14 +2,35 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
-Changes in version 0.3 (TBD)
+Changes in version 0.3 (12.05.2006)
 ---------------------------
+
+Package org.springmodules.cache.provider.jboss
+* Added support for JBossCache
+
+Package org.springmodules.cache.annotations
+* Added JDK 1.5 annotations
 
 Package org.springmodules.commons.lang
 * Introduced commons-lang enums property editor
 
 Package org.springmodules.commons.validator
 * Made rejectValue method on FieldChecks public for better integration with legacy code
+
+Package org.springmodules.flux
+* New Flux module added
+
+Package org.springmodules.jcr
+* New JSR 170 module added
+
+Package org.springmodules.workflow.jbpm30
+* New jBPM 3.0.x module added
+
+Package org.springmodules.workflow.jbpm31
+* New jBPM 3.1.x module added
+
+Package org.springmodules.workflow.osworkflow.v28
+* Support for OsWorkflow 2.8
 
 Changes in version 0.2 (21.05.2005)
 -----------------------------------
