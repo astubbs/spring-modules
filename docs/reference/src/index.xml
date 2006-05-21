@@ -2,16 +2,17 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
 	"../lib/docbook-dtd/docbookx.dtd"
 	[
-	<!ENTITY index-modules		SYSTEM "index-module.xml">
+	<!ENTITY index-modules	SYSTEM "index-module.xml">
 	<!ENTITY authors	    SYSTEM "authors.xml">	
 	<!ENTITY preface		SYSTEM "preface.xml">
 	<!ENTITY overview		SYSTEM "overview.xml">
 	<!ENTITY hivemind		SYSTEM "../../../projects/hivemind/docs/reference/src/hivemind.xml">
 	<!ENTITY jsr94			SYSTEM "../../../projects/jsr94/docs/reference/src/jsr94.xml">
 	<!ENTITY validator		SYSTEM "../../../projects/commons/docs/reference/src/validator.xml">
-	<!ENTITY osworkflow SYSTEM "../../../projects/osworkflow/docs/reference/src/osworkflow.xml">
+	<!ENTITY osworkflow 	SYSTEM "../../../projects/osworkflow/docs/reference/src/osworkflow.xml">
 	<!ENTITY cache 			SYSTEM "../../../projects/cache/docs/reference/src/cache.xml">
-	<!ENTITY jcr 			    SYSTEM "../../../projects/jcr/docs/reference/src/jcr.xml">
+	<!ENTITY jcr 			SYSTEM "../../../projects/jcr/docs/reference/src/jcr.xml">
+	<!ENTITY lucene 		SYSTEM "../../../projects/lucene/docs/reference/src/lucene.xml">
 	]>
 
 
@@ -30,7 +31,8 @@
 	&cache;
 
 	&jcr;
-	
-	&osworkflow;
 
+	&lucene;
+		
+	&osworkflow;
 </book>
