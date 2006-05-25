@@ -15,23 +15,37 @@
  */ 
 package org.springmodules.validation.functions;
 
-
+import java.lang.reflect.Array;
+import java.util.Collection;
 
 /**
  * <p>Gets the length of a string.
  * 
  * @author Steven Devijver
+ * @author Uri Boness
+ *
  * @since Apr 23, 2005
  */
 public class LengthOfFunction extends AbstractFunction {
 
-	public LengthOfFunction(Function[] arguments, int line, int column) {
-		super(arguments, line, column);
-		definedExactNumberOfArguments(1);
-	}
-	
-	protected Object doGetResult(Object target) {
-		return new Integer(getArguments()[0].getResult(target).toString().length());
-	}
+    public LengthOfFunction(Function[] arguments, int line, int column) {
+        super(arguments, line, column);
+        definedExactNumberOfArguments(1);
+    }
+
+    protected Object doGetResult(Object target) {
+
+        Object result = getArguments()[0].getResult(target);
+
+        if (Collection.class.isAssignableFrom(result.getClass())) {
+            return new Integer(((Collection)result).size());
+        }
+
+        if (result.getClass().isArray()) {
+            return new Integer(Array.getLength(result));
+        }
+
+        return new Integer(result.toString().length());
+    }
 
 }

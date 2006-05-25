@@ -17,36 +17,42 @@
   </configurations>
 
   <dependencies defaultconf="global->default">
+    
+    
     <!-- global (compile, test, runtime) dependencies -->
+    
     <dependency org="apache" name="commons-logging" rev="1.0.4" />
-    <dependency org="apache" name="log4j" rev="1.2.13" />
-    <dependency org="springframework" name="springframework" rev="1.2.7"
-      conf="global,test->default">
+    <dependency org="apache" name="commons-lang" rev="2.1" />
+    <dependency org="apache" name="commons-collections" rev="3.1" />
+    
+    <dependency org="springframework" name="springframework" rev="1.2.7">
       <artifact name="spring" type="jar" conf="global" />
       <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>
 
-    <dependency org="apache" name="commons-lang" rev="2.1" conf="test->default" />
-    <dependency org="apache" name="commons-collections" rev="3.1" />
-    
     <dependency org="springmodules" name="springmodules-sandbox-util" rev="latest.integration"/>
     
-    <dependency org="sun" name="javax.servlet" rev="2.3">
-		<artifact name="servlet-api" type="jar"/> 		
-	</dependency>
-	  
-	 <dependency org="mozilla" name="rhino" rev="1.6+">
+    <dependency org="mozilla" name="rhino" rev="1.6+">
 		<artifact name="js" type="jar"/>
-	 </dependency>
-	 
-	 
+	</dependency>
+    
+	
+	<!-- build time dependencies -->
+	
+	<dependency org="org.acegisecurity" name="acegi-security" rev="1.0.0-RC2" transitive="false" conf="buildtime->default"/>
+	
+	
+	
     <!-- test time only dependencies -->
-    <dependency org="clover" name="clover" rev="1.3.9"
-      conf="test->default" />
-    <dependency org="easymock" name="easymock" rev="1.1"
-      conf="test->default">
-    </dependency>
-    <dependency org="junit" name="junit" rev="3.8.1"
-      conf="test->default" />
+    
+    <dependency org="sun" name="javax.servlet" rev="2.3">
+		<artifact name="servlet-api" type="jar" conf="test" />
+	</dependency>
+    
+    <dependency org="clover" name="clover" rev="1.3.9" conf="test->default" />
+    <dependency org="easymock" name="easymock" rev="1.1" conf="test->default" />
+    <dependency org="junit" name="junit" rev="3.8.1" conf="test->default" />
+    
+    
   </dependencies>
 </ivy-module>

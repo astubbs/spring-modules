@@ -37,6 +37,7 @@ import org.springmodules.util.dateparser.DefaultDateParser;
 import org.springmodules.validation.ValangException;
 import org.springmodules.validation.functions.AbstractFunction;
 import org.springmodules.validation.functions.Function;
+import org.springmodules.validation.functions.InRoleFunction;
 import org.springmodules.validation.functions.LengthOfFunction;
 import org.springmodules.validation.functions.LowerCaseFunction;
 import org.springmodules.validation.functions.NotFunction;
@@ -98,6 +99,8 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
 			return new LengthOfFunction(arguments, line, column);
 		} else if ("size".equals(name)) {
 			return new LengthOfFunction(arguments, line, column);
+		} else if ("count".equals(name)) {
+			return new LengthOfFunction(arguments, line, column);
 		} else if ("upper".equals(name)) {
 			return new UpperCaseFunction(arguments, line, column);
 		} else if ("lower".equals(name)) {
@@ -110,7 +113,9 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
 			return new RegExFunction(arguments, line, column);
 		} else if ("matches".equals(name)) {
 			return new RegExFunction(arguments, line, column);
-		}
+		} else if ("inRole".equals(name)) {
+            return new InRoleFunction(arguments, line, column);
+        }
 
 		throw new ValangException("Could not find function [" + name + "]", line, column);
 	}

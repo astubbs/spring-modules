@@ -15,11 +15,12 @@
  */ 
 package org.springmodules.validation.functions;
 
-import org.springframework.util.Assert;
-import org.springmodules.beans.factory.drivers.LiteralValue;
-import org.springmodules.validation.ValangException;
+import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
+import org.springframework.util.Assert;
+import org.springmodules.validation.ValangException;
 
 public class FunctionTests extends TestCase {
 
@@ -52,13 +53,28 @@ public class FunctionTests extends TestCase {
 	}
 	
 	public void testLengthOfFunctionSuccess() {
-		Integer result = (Integer)getLengthOfFunction("test").getResult(null);
-		assertEquals(result.intValue(), 4);
-	}
+
+        // testing the length function on a string object
+        Integer result = (Integer)getLengthOfFunction("test").getResult(null);
+		assertEquals("length of stringt 'test' is 4", result.intValue(), 4);
+        
+        // testing the length function on a collection
+        List list = new ArrayList();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        result = (Integer)getLengthOfFunction(list).getResult(null);
+        assertEquals("length of the collection should be 3", result.intValue(), 3);
+
+        // testing the length function on an array
+        Object[] array = new Object[] { "1", "2", "3", "4", "5" };
+        result = (Integer)getLengthOfFunction(array).getResult(null);
+        assertEquals("length of the array should be 5", result.intValue(), 5);
+    }
 	
 	public void testLengthOfFunctionFail() {
 		try {
-			Integer result = (Integer)getLengthOfFunction(null).getResult(null);
+			getLengthOfFunction(null).getResult(null);
 			fail("LengthOfFunction should throw ValangException!");
 		} catch (ValangException e) {
 			Assert.isInstanceOf(NullPointerException.class, e.getCause(), "Cause is not NullPointerException!");

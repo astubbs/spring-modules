@@ -91,10 +91,10 @@ TOKEN [IGNORE_CASE] :
 	< AND : "AND" >
 |	< OR : "OR" >
 |	< NOT : "NOT" >
-|	< BETWEEN : "BETWEEN" >
-|	< NOT_BETWEEN: "NOT BETWEEN" >
-|	< IN : "IN" >
-|	< NOT_IN : "NOT IN" >
+|	< BETWEEN : "BETWEEN" | "IS BETWEEN" >
+|	< NOT_BETWEEN: "NOT BETWEEN" | "IS NOT BETWEEN" >
+|	< IN : "IN" | "IS IN">
+|	< NOT_IN : "NOT IN" | "IS NOT IN">
 |	< IS_NULL : "IS NULL" | "NULL" >
 |	< IS_NOT_NULL : "IS NOT NULL" | "NOT NULL" >
 |	< HAS_TEXT : "HAS TEXT" >
@@ -111,12 +111,12 @@ TOKEN [IGNORE_CASE] :
 |	< IS_NOT_WORD : "IS NOT WORD" >
 |	< TRUE : "TRUE" | "YES" >
 |	< FALSE : "FALSE" | "NO" >
-|	< MORE_THAN_OR_EQUAL : ">=" | "=>" >
-|	< MORE_THAN : ">" >
-|	< LESS_THAN_OR_EQUAL : "<=" | "=<" >
-|	< LESS_THAN : "<" >
-|	< NOT_EQUAL : "!=" | "<>" | "><" >
-|	< EQUALS : "=" | "==" >
+|	< MORE_THAN_OR_EQUAL : ">=" | "=>" | "IS GREATER THAN OR EQUALS" | "GREATER THAN OR EQUALS">
+|	< MORE_THAN : ">" | "IS GREATER THAN" | "GREATER THAN">
+|	< LESS_THAN_OR_EQUAL : "<=" | "=<" | "IS LESS THAN OR EQUALS" | "LESS THAN OR EQUALS" >
+|	< LESS_THAN : "<" | "IS LESS THAN" | "LESS THAN">
+|	< NOT_EQUAL : "!=" | "<>" | "><" | "IS NOT" | "NOT EQUALS" >
+|	< EQUALS : "=" | "==" | "IS" | "EQUALS" >
 |	< ADD : "+" >
 |	< SUBTRACT : "-" >
 |	< MULTIPLY : "*" >
