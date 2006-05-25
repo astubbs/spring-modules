@@ -3,11 +3,9 @@ package org.springmodules.validation.functions;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springmodules.validation.functions.BeanPropertyFunction;
-
-import junit.framework.TestCase;
 
 /**
  * @author Steven Devijver
@@ -26,7 +24,7 @@ public class BeanPropertyFunctionTests extends TestCase {
 	public class Customer {
 		private String name = null;
 		
-		public Customer() { super(); };
+		public Customer() { super(); }
 		public Customer(String name) { this(); setName(name); }
 		
 		public String getName() { return this.name; }

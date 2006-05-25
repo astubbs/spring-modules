@@ -3,15 +3,12 @@ package org.springmodules.validation;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import sun.security.krb5.internal.ccache.ap;
-
-import junit.framework.TestCase;
 
 public class ValangValidatorTests extends TestCase {
 
@@ -27,7 +24,8 @@ public class ValangValidatorTests extends TestCase {
 	
 	public void testCustomFunctions() {
 		Validator validator = (Validator)appCtx.getBean("testCustomFunctions");
-	}
+        
+    }
 	
 	public void testPersonValidator() {
 		class Person {

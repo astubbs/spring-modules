@@ -88,7 +88,7 @@ public class ValangCodebaseTag extends RequestContextAwareTag {
         Assert.notNull(out, "No Writer specified");
         try {
             char[] buffer = new char[1024];
-            int bytesRead = -1;
+            int bytesRead;
             while ((bytesRead = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesRead);
             }

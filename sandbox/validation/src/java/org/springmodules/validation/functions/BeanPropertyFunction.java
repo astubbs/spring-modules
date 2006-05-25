@@ -39,27 +39,18 @@ public class BeanPropertyFunction implements Function {
 		this.field = field;
 	}
 	
-	private void setField(String field) {
-		if (field == null) {
-			throw new IllegalArgumentException("Field parameter should not be null!");
-		}
-		this.field = field;
-	}
-
 	public String getField() {
 		return this.field;
 	}
 	
 	public Object getResult(Object target) {
-		BeanWrapper beanWrapper = null;
-		if (target instanceof BeanWrapper) {
-			beanWrapper = (BeanWrapper)target;
-		} else if (target instanceof Map) {
+        if (target instanceof Map) {
 			return getValue((Map)target, split(getField()));
-		} else {
-			beanWrapper = new BeanWrapperImpl(target);
 		}
-		return beanWrapper.getPropertyValue(getField());
+        if (target instanceof BeanWrapper) {
+			return ((BeanWrapper)target).getPropertyValue(getField());
+		}
+		return new BeanWrapperImpl(target).getPropertyValue(getField());
 	}
 	
 	private String[] split(String path) {

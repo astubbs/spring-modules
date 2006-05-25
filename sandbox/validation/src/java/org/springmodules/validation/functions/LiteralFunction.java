@@ -25,15 +25,14 @@ package org.springmodules.validation.functions;
  */
 public class LiteralFunction implements Function {
 
-	private Object literal = null;
+	private Object literal;
 	
 	public LiteralFunction(Object literal) {
-		super();
 		this.literal = literal;
 	}
 
 	public Object getResult(Object target) {
-		return this.literal;
+		return literal;
 	}
 
 }

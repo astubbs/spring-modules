@@ -61,8 +61,7 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
     }
 
     private ValangParser getParser(String text) {
-        ValangParser parser = new ValangParser(new StringReader(text));
-        return parser;
+        return new ValangParser(new StringReader(text));
     }
 
     protected Collection parseRules(String text) {
@@ -92,9 +91,9 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
         catch (IOException e) {
             throw new IllegalStateException(e.getMessage());
         }
-        finally {
-            //System.out.println(Context.toString(ScriptableObject.getProperty(scope, "logMessages")));
-        }
+//        finally {
+//            System.out.println(Context.toString(ScriptableObject.getProperty(scope, "logMessages")));
+//        }
 
     }
 
@@ -242,8 +241,8 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
             }
         };
         String text = "{ age : age >= minAge : 'Customers must be older than {0}.' : 'not_old_enough' : minAge }";
-        assertTrue(validate(new Person(33, "Steven"), text));
-        assertFalse(validate(new Person(7, "Benjamin"), text));
+        assertTrue(validate(new Person(33, "Steven"), text, mockAccessor));
+        assertFalse(validate(new Person(7, "Benjamin"), text, mockAccessor));
     }
 
     //

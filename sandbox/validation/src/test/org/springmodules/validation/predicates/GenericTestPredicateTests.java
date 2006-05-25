@@ -5,13 +5,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import junit.framework.TestCase;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
 import org.springmodules.util.dateparser.DateParseException;
 import org.springmodules.util.dateparser.DefaultDateParser;
 import org.springmodules.validation.functions.BeanPropertyFunction;
 import org.springmodules.validation.functions.LiteralFunction;
-
-import junit.framework.TestCase;
 
 /**
  * @author Steven Devijver

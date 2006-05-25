@@ -1,7 +1,19 @@
 package org.springmodules.validation.predicates;
 
-import java.math.BigDecimal;import java.util.ArrayList;import java.util.Collection;import java.util.Date;import java.util.Iterator;import org.apache.commons.collections.Predicate;import org.apache.commons.collections.functors.AndPredicate;import org.apache.commons.collections.functors.AnyPredicate;import org.apache.commons.collections.functors.FalsePredicate;import org.springframework.util.StringUtils;import org.springmodules.validation.ValangException;
-import org.springmodules.validation.functions.Function;import org.springmodules.validation.functions.LiteralFunction;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.functors.AndPredicate;
+import org.apache.commons.collections.functors.AnyPredicate;
+import org.apache.commons.collections.functors.FalsePredicate;
+import org.springframework.util.StringUtils;
+import org.springmodules.validation.ValangException;
+import org.springmodules.validation.functions.Function;
+import org.springmodules.validation.functions.LiteralFunction;
 
 /**
  * <p>GenericTestPredicate can test if a property value is null or not null.
@@ -102,21 +114,35 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 			}
 		} else if (getOperator() instanceof Operator.InOperator) {
 			Collection predicates = new ArrayList();
-			for (Iterator iter = getIterator(rightValue); iter.hasNext();) {				Object o = iter.next();				if (o instanceof Function) {
-					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)o, getLine(), getColumn()));				} else {					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, new LiteralFunction(o), getLine(), getColumn()));				}
+			for (Iterator iter = getIterator(rightValue); iter.hasNext();) {
+				Object o = iter.next();
+				if (o instanceof Function) {
+					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)o, getLine(), getColumn()));
+				} else {
+					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, new LiteralFunction(o), getLine(), getColumn()));
+				}
 			}
 			if (predicates.isEmpty()) {
 				throw new IllegalStateException("IN expression contains no elements!");
-			} else if (predicates.size() == 1) {				predicates.add(FalsePredicate.getInstance());			}
+			} else if (predicates.size() == 1) {
+				predicates.add(FalsePredicate.getInstance());
+			}
 			return AnyPredicate.getInstance(predicates).evaluate(target);
 		} else if (getOperator() instanceof Operator.NotInOperator) {
 			Collection predicates = new ArrayList();
-			for (Iterator iter = getIterator(rightValue); iter.hasNext();) {				Object o = iter.next();				if (o instanceof Function) {
-					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)o, getLine(), getColumn()));				} else {					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, new LiteralFunction(o), getLine(), getColumn()));				}
+			for (Iterator iter = getIterator(rightValue); iter.hasNext();) {
+				Object o = iter.next();
+				if (o instanceof Function) {
+					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)o, getLine(), getColumn()));
+				} else {
+					predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, new LiteralFunction(o), getLine(), getColumn()));
+				}
 			}
 			if (predicates.isEmpty()) {
 				throw new IllegalStateException("NOT IN expression contains no elements!");
-			} else if (predicates.size() == 1) {				predicates.add(FalsePredicate.getInstance());			}
+			} else if (predicates.size() == 1) {
+				predicates.add(FalsePredicate.getInstance());
+			}
 			return !AnyPredicate.getInstance(predicates).evaluate(target);
 		} else if (getOperator() instanceof Operator.BetweenOperator) {
 			Object[] array = getArray(rightValue);
@@ -136,13 +162,51 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
 			return StringUtils.hasText(leftValue != null ? leftValue.toString() : null);
 		} else if (getOperator() instanceof Operator.HasNoTextOperator) {
 			return !StringUtils.hasText(leftValue != null ? leftValue.toString() : null);
-		} else if (getOperator() instanceof Operator.IsBlankOperator) {			return isBlank(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsNotBlankOperator) {			return !isBlank(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsWordOperator) {			return isWord(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsNotWordOperator) {			return !isWord(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsLowerCaseOperator) {			return isLowerCase(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsNotLowerCaseOperator) {			return !isLowerCase(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsUpperCaseOperator) {			return isUpperCase(leftValue != null ? leftValue.toString() : null);		} else if (getOperator() instanceof Operator.IsNotUpperCaseOperator) {			return !isUpperCase(leftValue != null ? leftValue.toString() : null);		}
+		} else if (getOperator() instanceof Operator.IsBlankOperator) {
+			return isBlank(leftValue != null ? leftValue.toString() : null);
+		} else if (getOperator() instanceof Operator.IsNotBlankOperator) {
+			return !isBlank(leftValue != null ? leftValue.toString() : null);
+		} else if (getOperator() instanceof Operator.IsWordOperator) {
+			return isWord(leftValue != null ? leftValue.toString() : null);
+		} else if (getOperator() instanceof Operator.IsNotWordOperator) {
+			return !isWord(leftValue != null ? leftValue.toString() : null);
+		} else if (getOperator() instanceof Operator.IsLowerCaseOperator) {
+			return isLowerCase(leftValue != null ? leftValue.toString() : null);
+		} else if (getOperator() instanceof Operator.IsNotLowerCaseOperator) {
+			return !isLowerCase(leftValue != null ? leftValue.toString() : null);
+		} else if (getOperator() instanceof Operator.IsUpperCaseOperator) {
+			return isUpperCase(leftValue != null ? leftValue.toString() : null);
+		} else if (getOperator() instanceof Operator.IsNotUpperCaseOperator) {
+			return !isUpperCase(leftValue != null ? leftValue.toString() : null);
+		}
 		
 		throw new IllegalStateException("Operator class [" + getOperator().getClass().getName() + "] not supported!");
 	}
 
 	protected Predicate getPredicate(Function leftFunction, Operator operator, Function rightFunction, int line, int column) {
 		return new GenericTestPredicate(leftFunction, operator, rightFunction, line, column);
-	}	private boolean isWord(String s) {		return s != null && s.length() > 0 &&			deleteWhitespace(s).equals(s);	}
-	private boolean isLowerCase(String s) {		return s.length() > 0 &&			s.toLowerCase().equals(s);	}	private boolean isUpperCase(String s) {		return s.length() > 0 &&			s.toUpperCase().equals(s);	}		private boolean isBlank(String s) {		return s == null || s.length() == 0;	}		private String deleteWhitespace(String s) {		return StringUtils.deleteAny(s, " \t\r\n\b");	}
+	}
+
+	private boolean isWord(String s) {
+		return s != null && s.length() > 0 &&
+			deleteWhitespace(s).equals(s);
+	}
+
+	private boolean isLowerCase(String s) {
+		return s.length() > 0 &&
+			s.toLowerCase().equals(s);
+	}
+
+	private boolean isUpperCase(String s) {
+		return s.length() > 0 &&
+			s.toUpperCase().equals(s);
+	}
+	
+	private boolean isBlank(String s) {
+		return s == null || s.length() == 0;
+	}
+	
+	private String deleteWhitespace(String s) {
+		return StringUtils.deleteAny(s, " \t\r\n\b");
+	}
 }

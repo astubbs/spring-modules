@@ -27,65 +27,65 @@ import java.beans.PropertyEditor;
  */
 public class CustomPropertyEditor {
 
-	private Class requiredType = null;
-	private PropertyEditor propertyEditor = null;
-	private String propertyPath = null;
-	
-	public CustomPropertyEditor() {
-		super();
-	}
+    private Class requiredType = null;
+    private PropertyEditor propertyEditor = null;
+    private String propertyPath = null;
 
-	/**
-	 * <p>Get custom property editor.
-	 * 
-	 * @return custom property editor
-	 */
-	public PropertyEditor getPropertyEditor() {
-		return propertyEditor;
-	}
-	
-	/**
-	 * <p>Sets custom property editor.
-	 * 
-	 * @param propertyEditor custom property editor
-	 */
-	public void setPropertyEditor(PropertyEditor propertyEditor) {
-		this.propertyEditor = propertyEditor;
-	}
-	
-	/**
-	 * <p>Gets the property path (optional).
-	 * 
-	 * @return property path
-	 */
-	public String getPropertyPath() {
-		return propertyPath;
-	}
-	
-	/**
-	 * <p>Sets the property path (optional).
-	 * 
-	 * @param propery path
-	 */
-	public void setPropertyPath(String propertyPath) {
-		this.propertyPath = propertyPath;
-	}
-	
-	/**
-	 * <p>Gets the required type.
-	 * 
-	 * @return required type
-	 */
-	public Class getRequiredType() {
-		return requiredType;
-	}
-	
-	/**
-	 * <p>Sets the required type.
-	 * 
-	 * @param requiredType the required type
-	 */
-	public void setRequiredType(Class requiredType) {
-		this.requiredType = requiredType;
-	}
+    public CustomPropertyEditor() {
+        super();
+    }
+
+    /**
+     * <p>Get custom property editor.
+     *
+     * @return custom property editor
+     */
+    public PropertyEditor getPropertyEditor() {
+        return propertyEditor;
+    }
+
+    /**
+     * <p>Sets custom property editor.
+     *
+     * @param propertyEditor custom property editor
+     */
+    public void setPropertyEditor(PropertyEditor propertyEditor) {
+        this.propertyEditor = propertyEditor;
+    }
+
+    /**
+     * <p>Gets the property path (optional).
+     *
+     * @return property path
+     */
+    public String getPropertyPath() {
+        return propertyPath;
+    }
+
+    /**
+     * <p>Sets the property path (optional).
+     *
+     * @param propertyPath
+     */
+    public void setPropertyPath(String propertyPath) {
+        this.propertyPath = propertyPath;
+    }
+
+    /**
+     * <p>Gets the required type.
+     *
+     * @return required type
+     */
+    public Class getRequiredType() {
+        return requiredType;
+    }
+
+    /**
+     * <p>Sets the required type.
+     *
+     * @param requiredType the required type
+     */
+    public void setRequiredType(Class requiredType) {
+        this.requiredType = requiredType;
+    }
 }

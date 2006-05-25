@@ -49,7 +49,7 @@ public class RegExFunction extends AbstractFunction {
 				patternCache.put(value, pattern);
 			}
 			String str = getArguments()[1].getResult(target).toString();
-			return pattern.matcher(str.subSequence(0, str.length())).matches() ? Boolean.TRUE : Boolean.FALSE; 
+			return pattern.matcher(str).matches() ? Boolean.TRUE : Boolean.FALSE;
 		} else {
 			throw new Exception("No String value for regular expression");
 		}

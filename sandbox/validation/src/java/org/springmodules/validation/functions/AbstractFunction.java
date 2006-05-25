@@ -15,7 +15,6 @@
  */ 
 package org.springmodules.validation.functions;
 
-import org.springframework.util.Assert;
 import org.springmodules.validation.ValangException;
 
 /**

@@ -17,7 +17,9 @@ public class MapEntryFunction implements Function {
 		super();
 		setMapFunction(mapFunction);
 		setKeyFunction(keyFunction);
-	}
+        setBeginLine(beginLine);
+        setBeginColumn(beginColumn);
+    }
 
 	private void setMapFunction(Function mapFunction) {
 		this.mapFunction = mapFunction;

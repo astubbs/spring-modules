@@ -98,8 +98,6 @@ public class ValangValidator implements Validator, InitializingBean, Application
 
     private String valang = null;
 
-    private Validator validator = null;
-
     private ValangVisitor visitor = null;
 
     private Collection customPropertyEditors = null;
