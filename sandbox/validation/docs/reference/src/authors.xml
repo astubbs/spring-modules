@@ -1,0 +1,14 @@
+	<!--
+	   file used for inclusion inside index-module. for multiple authors use
+	   multiple tags.
+	 -->
+
+			<author>
+				<firstname>Uri</firstname>
+				<surname>Boness</surname>
+			</author>
+
+			<author>
+				<firstname>Steven</firstname>
+				<surname>Devijver</surname>
+			</author>

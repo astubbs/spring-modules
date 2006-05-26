@@ -92,6 +92,8 @@ import org.springmodules.validation.valang.predicates.ValidationRule;
  * @since 23-04-2005
  * @see org.springmodules.util.dateparser.DefaultDateParser
  * @see org.springframework.validation.Validator
+ *
+ * @deprecated use {@link ValangValidator} instead
  */
 
 public class ValangValidatorFactoryBean implements FactoryBean,
