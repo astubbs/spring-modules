@@ -44,6 +44,7 @@ import org.springmodules.validation.valang.functions.NotFunction;
 import org.springmodules.validation.valang.functions.RegExFunction;
 import org.springmodules.validation.valang.functions.ResolveFunction;
 import org.springmodules.validation.valang.functions.UpperCaseFunction;
+import org.springmodules.validation.valang.functions.EmailFunction;
 import org.springmodules.validation.valang.predicates.GenericTestPredicate;
 import org.springmodules.validation.valang.predicates.Operator;
 
@@ -115,6 +116,8 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
             return new RegExFunction(arguments, line, column);
         } else if ("inRole".equals(name)) {
             return new InRoleFunction(arguments, line, column);
+        } else if ("email".equals(name)) {
+            return new EmailFunction(arguments, line, column);
         }
 
         throw new ValangException("Could not find function [" + name + "]", line, column);

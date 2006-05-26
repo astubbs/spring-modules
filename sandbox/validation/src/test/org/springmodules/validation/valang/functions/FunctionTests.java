@@ -52,6 +52,10 @@ public class FunctionTests extends TestCase {
         return new RegExFunction(new Function[] { new LiteralFunction(pattern), new LiteralFunction(str) }, 1, 1);
     }
 
+    private Function getEmailFunction(String email) {
+        return new EmailFunction(new Function[] { new LiteralFunction(email) }, 1, 1);
+    }
+
     public void testLengthOfFunctionSuccess() {
 
         // testing the length function on a string object
@@ -117,5 +121,15 @@ public class FunctionTests extends TestCase {
     public void testRegExpFunctionSuccess() {
         Boolean result = (Boolean)getRegExpFunction("foo|bar", "bar").getResult(null);
         assertEquals(Boolean.TRUE, result);
+    }
+
+    public void testEmailFunctionSuccess() {
+        Boolean result = (Boolean)getEmailFunction("hello@world.com").getResult(null);
+        assertEquals(Boolean.TRUE, result);
+    }
+
+    public void testEmailFunctionFail() {
+        Boolean result = (Boolean)getEmailFunction("hello@world").getResult(null);
+        assertEquals(Boolean.FALSE, result);
     }
 }

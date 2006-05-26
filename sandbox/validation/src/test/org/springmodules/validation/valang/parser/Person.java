@@ -1,7 +1,7 @@
 /*
  * Copyright 13/09/2005 (C) Our Community Pty. Ltd. All Rights Reserved.
  *
- * $Id: Person.java,v 1.1 2006/05/25 23:02:17 hueboness Exp $
+ * $Id: Person.java,v 1.2 2006/05/26 20:14:59 hueboness Exp $
  */
 package org.springmodules.validation.valang.parser;
 

@@ -468,4 +468,8 @@ public class ValangParserTests extends TestCase {
         assertFalse(validate(new Person(3, "Uri"), text));
     }
 
+    public void testParser52EmailRule() {
+        String text = "{age: email(firstName) == true : 'first name is hello@world.com and it is a valid email'}";
+        assertTrue(validate(new Person(10, "hello@world.com"), text));
+    }
 }
