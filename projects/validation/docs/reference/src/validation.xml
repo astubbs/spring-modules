@@ -1,0 +1,700 @@
+<chapter id="validation">
+  
+	<title>Validation</title>
+
+    <sect1 id="valang">
+
+ 		<title>Valang</title>
+		
+			<para>
+			      Valang (<emphasis>Va</emphasis>-lidation <emphasis>Lang</emphasis>-uage), provides a simple and
+			      intuitive way for creating spring validators. It was initially create with three goals in mind:
+				<itemizedlist>
+					<listitem>
+						<para>
+						  Enables writing validation rules quickly, without the need of writing classes or even any java code.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+						  Ease the use of Spring validation tools.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+						  Make validation rules compact, readable and easily maintainable.
+						</para>
+					</listitem>
+				</itemizedlist>
+    		</para>
+
+    		<para>
+				Valang is built upon two major constructs - The valang expression language and valang validators. The former
+				is a generic boolean expression language that enables expressing boolean rule in a "natural language"-like fashion. The later
+				is a concrete implementation of the Spring <emphasis>Validator</emphasis> interface that is built around the expression
+				language.
+    		</para>
+
+    		<para>
+    			Before getting down to the small details, lets first have a look at a small example, just to have
+    			an idea of what valang is and how it can be used. For this example, we'll assume a <emphasis>Person</emphasis> class
+    			with two properties - firstName and lastName. In addition, there are two main validation rules that
+    			need to be applied:
+    			<itemizedlist>
+					<listitem>
+						<para>
+							The first name of the person must be shorter than 30 characters.
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							The last name of the person must be shorter than 50 characters.
+						</para>
+					</listitem>
+    			</itemizedlist>
+    		</para>
+
+    		<para>
+				One way of applying these validation rules (and currently the most common one) is to implement the <emphasis>Validator</emphasis>
+				interface specifically for the <emphasis>Person</emphasis> class:
+    		</para>
+
+    		<programlisting>public class PersonValidator implements Validator {
+
+  public boolean supports(Class aClass) {
+    return Person.class.equals(aClass);
+  }
+
+  public void validate(Object person, Errors errors) {
+    String firstName = ((Person)person).getFirstNam();
+    String lastName = ((Person)person).getLastName();
+    if (firstName == null || firstName.length() &gt;= 30) {
+      errors.reject("first_name_length", new Object[] { new Integer(30) },
+        "First name must be shorter than 30");
+    }
+    if (lastName == null || lastName.length() &gt;= 50) {
+      errors.reject("last_name_length", new Object[] { new Integer(50) },
+        "Last name must be shorter than 50");
+    }
+  }
+}</programlisting>
+
+			<para>
+				While this is a perfectly valid approach, it has its downsides. First, it is quite verbose and time consuming - quite a lot of code
+				to write just for two very simple validation rules. Second, it required an additional class which clutters the code (in case it is
+				an inner-class) or the design - just imagine having a validator class for each of the domain model objects in the application.
+    		</para>
+
+			<para>
+				The following code snippet shows how to create a valang validator to apply the same rules as above:
+    		</para>
+
+    		<programlisting>&lt;bean id="personValidator" class="org.springmodules.validation.valang.ValangValidator"&gt;
+  &lt;property name="valang"&gt;
+    &lt;value&gt;
+    &lt;![CDATA[
+      { firstName : length(?) &lt; 30 : 'First name too long' : 'first_name_length' : 30}
+      { lastName : length(?) &lt; 50 : 'Last name too long' : 'last_name_length' : 50 }
+    ]]&gt;
+    &lt;/value&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+			<para>
+				There are a few things to notice here. First, no new class is created - with valang, one can reuse a predefined validator class
+				(as shown here). Second, This validator is not part of the java code, but put in the application
+				context instead - In the above case, the <emphasis>ValangValidator</emphasis> is instantiated and can be injected to other objects
+                in the system. Last but not least, The validation rules are defined using the valang expression language which is very simple and
+                quick to define.
+    		</para>
+
+			<para>
+				The following two sections will elaborate on the expression language and the use of the Valang validator in greater details.
+    		</para>
+
+		<!--</sect2>-->
+
+		<sect2 id="valangSyntax">
+
+			<title>Valang Syntax</title>
+
+			<para>
+				The valang syntax is based on the valang expression language and the valang validation rule configuration. As mentioned above, the former
+				is a boolean expression language by which the validation rules predicates (conditions) are expressed. The later binds the rule predicates
+				to a key (usually a bean property), error message, and optionally error code and arguments.
+    		</para>
+
+			<sect3 id="valangRuleConfiguration">
+
+				<title>Rule Configuration</title>
+
+				<para>
+					Here is the basic structure of the valang rule configuration:
+				</para>
+
+				<programlisting>{ &lt;key&gt; : &lt;predicate_expression&gt; : &lt;message&gt; [: &lt;error_code&gt; [: &lt;args&gt; ]] }</programlisting>
+
+				<itemizedlist>
+					<listitem><para>&lt;key&gt; - The key to which the validation error will be bound to. <emphasis>(mandatory)</emphasis></para></listitem>
+					<listitem><para>&lt;predicate_expression&gt; - A valang expression that defines the predicate (condition) of the validation rule. <emphasis>(mandatory)</emphasis></para></listitem>
+					<listitem>
+						<para>
+							&lt;message&gt; - The error message of the validation rule. The message is mandatory but can be an empty string if not used. This message is
+							also used as the default message in case the error code could not be resolved. <emphasis>(mandatory)</emphasis>
+						</para>
+					</listitem>
+					<listitem><para>&lt;error_code&gt; - An error code that represents the validation error. Used to support <emphasis>i18n</emphasis>. <emphasis>(optional)</emphasis></para></listitem>
+					<listitem>
+						<para>
+							&lt;args&gt; - A comma separated list of arguments to associate with the error code. When error codes are resolved, this arguments may be used
+							in the resolved message. <emphasis>(optional)</emphasis>
+						</para>
+					</listitem>
+				</itemizedlist>
+
+			</sect3>
+
+			<sect3 id="valangExpressionLanguage">
+
+				<title>Expression Language</title>
+
+				<para>
+					As mentioned, the valang expression language is used to define the predicate to be associated
+					with the validation rule. The expression is always evaluated against a context bean. The expression can be defined as follows:
+				</para>
+
+				<programlisting>&lt;expression&gt; ::= &lt;expression&gt; ( ( "AND" | "OR" ) &lt;expression&gt; )+ | &lt;predicate&gt;</programlisting>
+
+				<para>
+					The &lt;predicate&gt; in an evaluation that is composed of operators, literals, bean properties, functions, and mathematical expressions.
+				</para>
+
+
+				<simplesect id="valangPredicateOperators">
+
+					<title>Operators</title>
+
+					<para>
+						The following are the supported operators:
+					</para>
+
+					<itemizedlist mark="disc" spacing="compact">
+						<listitem>
+							<para>Binary Operators:</para>
+							<itemizedlist mark="opencircle" spacing="compact">
+								<listitem>
+									<para>String, boolean, date and number operators:</para>
+									<itemizedlist spacing="compact">
+										<listitem><para>= | == | IS | EQUALS</para></listitem>
+										<listitem><para>!= | &lt;&gt; | &gt;&lt; | IS NOT | NOT EQUALS</para></listitem>
+									</itemizedlist>
+									<para> </para>
+								</listitem>
+								<listitem>
+									<para>Number and date operators:</para>
+									<itemizedlist spacing="compact">
+										<listitem><para>&gt; | GREATER THAN | IS GREATER THAN</para></listitem>
+										<listitem><para>&lt; | LESS THAN | IS LESS THAN</para></listitem>
+										<listitem><para>&gt;= | =&gt; | GREATER THAN OR EQUALS | IS GREATER THAN OR EQUALS</para></listitem>
+										<listitem><para>&lt;= | =&lt; | LESS THAN OR EQUALS | IS LESS THAN OR EQUALS</para></listitem>
+									</itemizedlist>
+									<para> </para>
+								</listitem>
+							</itemizedlist>
+						</listitem>
+						<listitem>
+							<para>Unary Operators:</para>
+							<itemizedlist mark="opencircle" spacing="compact">
+								<listitem>
+									<para>Object operators:</para>
+									<itemizedlist spacing="compact">
+										<listitem><para>NULL | IS NULL</para></listitem>
+										<listitem><para>NOT NULL | IS NOT NULL</para></listitem>
+									</itemizedlist>
+									<para> </para>
+								</listitem>
+								<listitem>
+									<para>String operators:</para>
+									<itemizedlist spacing="compact">
+										<listitem><para>HAS TEXT</para></listitem>
+										<listitem><para>HAS NO TEXT</para></listitem>
+										<listitem><para>HAS LENGTH</para></listitem>
+										<listitem><para>HAS NO LENGTH</para></listitem>
+										<listitem><para>IS BLANK</para></listitem>
+										<listitem><para>IS NOT BLANK</para></listitem>
+										<listitem><para>IS UPPERCASE | IS UPPER CASE | IS UPPER</para></listitem>
+										<listitem><para>IS NOT UPPERCASE | IS NOT UPPER CASE | IS NOT UPPER</para></listitem>
+										<listitem><para>IS LOWERCASE | IS LOWER CASE | IS LOWER</para></listitem>
+										<listitem><para>IS NOT LOWERCASE | IS NOT LOWER CASE | IS NOT LOWER</para></listitem>
+										<listitem><para>IS WORD</para></listitem>
+										<listitem><para>IS NOT WORD</para></listitem>
+									</itemizedlist>
+									<para> </para>
+								</listitem>
+							</itemizedlist>
+						</listitem>
+						<listitem>
+							<para>Special Operators:</para>
+							<itemizedlist mark="opencircle" spacing="compact">
+								<listitem><para>BETWEEN</para></listitem>
+								<listitem><para>NOT BETWEEN</para></listitem>
+								<listitem><para>IN</para></listitem>
+								<listitem><para>NOT IN</para></listitem>
+								<listitem><para>NOT</para></listitem>
+							</itemizedlist>
+							<para> </para>
+						</listitem>
+					</itemizedlist>
+
+					<para>
+						These operators are case insensitive. Binary operators have a left and a right side.
+						Unary operators only have a left side.
+					</para>
+
+					<para>
+						Value types on both sides of the binary operators must always match. The following expressions will
+						throw an exception:
+					</para>
+						<programlisting>name &gt; 0
+age == 'some string'</programlisting>
+
+				</simplesect>
+
+
+
+				<simplesect id="valangBetweemOperators">
+
+					<title>BETWEEN / NOT BETWEEN Operators</title>
+
+					<para>
+						The BETWEEN and NOT BETWEEN operators have the following special syntax:
+					</para>
+
+					<programlisting>&lt;between_operator&gt; ::= &lt;left_side&gt; BETWEEN &lt;value&gt; AND &lt;value&gt;
+&lt;not_between_operator&gt; ::= &lt;left_side&gt; NOT BETWEEN &lt;value&gt; AND &lt;value&gt;</programlisting>
+
+					<para>
+						Both the left side and the values can be any valid combination of literals, bean properties,
+						functions and mathematical operations.
+					</para>
+
+					<para>Examples:</para>
+					<programlisting>width between 10 and 90
+length(name) between minLength and maxLength</programlisting>
+
+				</simplesect>
+
+
+
+				<simplesect id="valangInOperators">
+
+					<title>IN / NOT IN Operators</title>
+
+					<para>
+						The IN and NOT IN operators have the following special syntax:
+					</para>
+
+					<programlisting>&lt;in_operator&gt; ::= &lt;left_side&gt; IN &lt;value&gt; ( "," &lt;value&gt; )*
+&lt;not_in_operator&gt; ::= &lt;left_side&gt; NOT IN &lt;value&gt; ( "," &lt;value&gt; )*</programlisting>
+
+					<para>
+						Both the left side and the values can be any valid combination of literals, bean properties,
+						functions and mathematical operations.
+					</para>
+
+					<para>
+						There's another special syntax where a <emphasis>java.util.Collection</emphasis>, <emphasis>java.util.Enumeration</emphasis>,
+						<emphasis>java.util.Iterator</emphasis> or object array instance can be retrieved from a bean property. These values are then used
+						as right side of the operator. This feature enables to create dynamic sets of values based on other properties of the bean.
+					</para>
+
+					<programlisting>&lt;special_in_operator&gt; ::= &lt;left_side&gt; IN "@"&lt;bean_property&gt;
+&lt;special_not_in_operator&gt; ::= &lt;left_side&gt; NOT IN "@"&lt;bean_property&gt;</programlisting>
+
+					<para>Examples:</para>
+					<programlisting>size in 'S', 'M', 'L', 'XL'
+size in @sizes</programlisting>
+
+				</simplesect>
+
+
+
+				<simplesect id="valangNotOperator">
+
+					<title>NOT Operator</title>
+
+					<para>
+						The not operator has the following special syntax:
+					</para>
+
+					<programlisting>&lt;not_operator&gt; ::= "NOT" &lt;expression&gt;</programlisting>
+
+					<para>
+						This operator inverses the result of one or a set of predicates.
+					</para>
+
+				</simplesect>
+
+
+				<simplesect id="valangPredicateLiterals">
+
+					<title>Literals</title>
+
+					<para>
+						Four type of literals are supported by valang: <emphasis>string</emphasis>,
+						<emphasis>number</emphasis>, <emphasis>date</emphasis>, and <emphasis>boolean</emphasis>.
+					</para>
+
+					<para>
+						Strings are quoted with single quotes:
+                        <programlisting>'Bill', 'George', 'Junior'</programlisting>
+                    </para>
+
+					<para>
+						Number literals are unquoted and are parsed by <emphasis>java.math.BigDecimal</emphasis>:
+                        <programlisting>0.70, 1, 2000, -3.14</programlisting>
+                    </para>
+
+					<para>
+						Date literals are delimited with square brackets and are parsed upon each evaluation by a special date parser.
+                        [TODO: write documentation for date parser]
+                        <programlisting>[T&lt;d], [2005-05-28]</programlisting>
+                    </para>
+
+                    <para>
+						Boolean literals are not quoted and have the following form:
+					    <programlisting>&lt;boolean&gt; ::= ( "TRUE" | "YES" | "FALSE" | "NO" )</programlisting>
+                    </para>
+
+                </simplesect>
+
+
+				<simplesect id="valangPredicateBeanProperties">
+
+					<title>Bean Properties</title>
+
+                    <para>
+                        As mentioned above, the valang always evaluates the expressions against a context bean. Once can
+                        access this bean's properties directly within the expression. To better understand how this works
+                        lets assume a Person class with the following properties:
+                        <itemizedlist spacing="compact">
+                            <listitem><para>name (String)</para></listitem>
+                            <listitem><para>address (Address)</para></listitem>
+                            <listitem><para>specialFriends (Map&lt;String, Object&gt;)</para></listitem>
+                            <listitem><para>friends (Person[])</para></listitem>
+                            <listitem><para>enemies (List&lt;Person&gt;)</para></listitem>
+                        </itemizedlist>
+                        <para></para>
+                        The Address class has the following properties:
+                        <itemizedlist spacing="compact">
+                            <listitem><para>street (String)</para></listitem>
+                            <listitem><para>city (String)</para></listitem>
+                            <listitem><para>Country (String)</para></listitem>
+                        </itemizedlist>
+                    </para>
+
+                    <para>
+                        The context bean properties can be accessed directly by using their names:
+                        <programlisting>name, address, attributes</programlisting>
+                    </para>
+
+                    <para>
+                        Accessing nested properties is also supported by using a dot-separated expression. For example,
+                        accessing the street of the person can be done as follows:
+                        <programlisting>address.street</programlisting>
+                    </para>
+
+                    <para>
+                        List and/or array elements can be access by their index number as follows:
+                        <programlisting>friends[1].name
+enemies[0].address.city</programlisting>
+                    </para>
+
+                    <para>
+                        Map entries can also be accessed by their keys:
+                        <programlisting>specialFriends[bestFriend].name</programlisting>
+                    </para>
+
+                </simplesect>
+
+
+				<simplesect id="valangPredicateFunctions">
+
+					<title>Functions</title>
+
+                    <para>
+                        Valang expressions can contain functions. A function is basically an operation which accepts arguments
+                        and returns a result. Functions can accept one or more arguments where each may be either a literal, bean property,
+                        or a function as described in the following definition:
+                        <programlisting>function ::= &lt;function_name&gt; "(" &lt;arg&gt; [ "," &lt;arg&gt; ]* ")"
+&lt;arg&gt; ::= &lt;literal&gt; | &lt;bean_property&gt; | &lt;function&gt;</programlisting>
+                    </para>
+
+                    <para>
+                        Valang ships with the following predefined functions:
+
+                        <table frame="all">
+                            <title>Sample Table</title>
+                            <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                                <colspec colname="Name" colwidth="20pt"/>
+                                <colspec colname="Description" colwidth="100pt"/>
+                                <thead>
+                                    <row>
+                                      <entry>Name</entry>
+                                      <entry>Description</entry>
+                                    </row>
+                                </thead>
+                                <tbody>
+                                    <row>
+                                        <entry>length</entry>
+                                        <entry>
+                                            Returns the size of the passed in collection or array. If the passed in argument
+                                            is neither, the length of the string returned from the <emphasis>toString()</emphasis> call on
+                                            the passed in argument.
+                                        </entry>
+                                    </row>
+                                    <row>
+                                        <entry>len</entry>
+                                        <entry>See <emphasis>length</emphasis> above</entry>
+                                    </row>
+                                    <row>
+                                        <entry>size</entry>
+                                        <entry>See <emphasis>length</emphasis> above</entry>
+                                    </row>
+                                    <row>
+                                        <entry>count</entry>
+                                        <entry>See <emphasis>length</emphasis> above</entry>
+                                    </row>
+                                    <row>
+                                        <entry>match</entry>
+                                        <entry>
+                                            Matches the given regular expression (first argument) to the
+                                            string returned from the <emphasis>toString()</emphasis> call on the passed
+                                            in value (second argument).
+                                        </entry>
+                                    </row>
+                                    <row>
+                                        <entry>matches</entry>
+                                        <entry>See <emphasis>match</emphasis> above.</entry>
+                                    </row>
+                                    <row>
+                                        <entry>email</entry>
+                                        <entry>
+                                            Returns <emphasis>true</emphasis> if the string returned from the
+                                            <emphasis>toString()</emphasis> call on the passed in argument represents
+                                            a valid email
+                                        </entry>
+                                    </row>
+                                    <row>
+                                      <entry>upper</entry>
+                                      <entry>
+                                          Converts the string returned from the <emphasis>toString()</emphasis> call on the argument
+                                          to upper case.
+                                      </entry>
+                                    </row>
+                                    <row>
+                                        <entry>lower</entry>
+                                        <entry>
+                                            Converts the string returned from the <emphasis>toString()</emphasis> call on the argument
+                                            to lower case.
+                                        </entry>
+                                    </row>
+                                    <row>
+                                        <entry>!</entry>
+                                        <entry>Not operation on a boolean value.</entry>
+                                    </row>
+                                    <row>
+                                        <entry>resolve</entry>
+                                        <entry>Wrap string in <emphasis>org.springframework.context.support.DefaultMessageSourceResolvable</emphasis>.</entry>
+                                    </row>
+                                    <row>
+                                        <entry>inRole</entry>
+                                        <entry>
+                                            Accepts a role name as an argument and returns <emphasis>true</emphasis> if the current user has this role.
+                                            This function uses <emphasis>Acegi</emphasis> to fetch the current user.
+                                        </entry>
+                                    </row>
+                                </tbody>
+                            </tgroup>
+                        </table>
+                    </para>
+
+                    <para>
+                        Examples:
+                        <programlisting>length(?)
+size(upper('test'))
+upper(address.city)</programlisting>
+                    </para>
+
+                    <para>
+                        One of the more powerful features in Valang expression language is that it is extensible with custom
+                        functions. To add a custom function one first needs to implement the
+                        <emphasis>org.springmodules.validation.valang.functions.Function</emphasis> interface or extend the
+                        <emphasis>org.springmodules.validation.valang.functions.AbstractFunction</emphasis>. Then, when using
+                        the <emphasis>ValangValidatorFactoryBean</emphasis> or <emphasis>ValangValidator</emphasis>,
+                        register the new function with the <emphasis>customFunctions</emphasis> property using the
+                        function name as the key.
+                        [TODO: show an example of a custom function]
+                    </para>
+
+                </simplesect>
+
+				<simplesect id="valangPredicateMathExpressions">
+
+					<title>Mathematical Expressions</title>
+
+                    <para>
+                        The following mathematical operators are supported:
+                        <itemizedlist spacing="compact">
+                            <listitem><para>+</para></listitem>
+                            <listitem><para>-</para></listitem>
+                            <listitem><para>*</para></listitem>
+                            <listitem><para>/ | div</para></listitem>
+                            <listitem><para>% | mod</para></listitem>
+                        </itemizedlist>
+                        <para></para>
+                        Parentheses are supported and expression are parsed left to right so that
+                        <programlisting>2 - 3 + 5 = 4</programlisting>
+                        Values in the mathematical expression can be literals, bean properties, and functions.
+                    </para>
+
+                    <para>
+                        Examples:
+                        <programlisting>(2 * (15 - 3) + ( 20 / 5 ) ) * -1
+(22 / 7) - (22 div 7)
+10 % 3
+length(?) mod 4</programlisting>
+                    </para>
+
+                </simplesect>
+
+			</sect3>
+
+		</sect2>
+
+		<sect2 id="valangValidatorSupport">
+
+			<title>Valang Validator Support</title>
+
+            <para>
+                As we saw in the previous chapter, Valang offers quite a reach and powerful expression language to
+                represent the validation rules. Language that for most cases relieves the user from creating custom
+                Validator classes.
+            </para>
+
+            <para>
+                The only missing piece of the puzzle now is to see how this expression language and the validation rule
+                configuration integrate with Spring validation support.
+            </para>
+
+            <para>
+                The 2 most important constructs of Spring validation are the
+                <emphasis>org.springframework.validation.Validator</emphasis> and <emphasis>org.springframework.validation.Errors</emphasis>
+                classes. The <emphasis>Errors</emphasis> class serves as a registry for validation errors that are associated with
+                an object (a.k.a the target object). The <emphasis>Validator</emphasis> interface provides a mechanism validate objects
+                and register the various validation error within the passed in <emphasis>Errors</emphasis>.
+            </para>
+
+            <para>
+                Valang ships with some support classes that leverage the power of the Valang expression language and validation
+                rule configuration, and integrates nicely with Spring validation. The most important of them all is the
+                <emphasis>org.springmodules.validation.valang.ValangValidator</emphasis> class.
+            </para>
+
+            <sect3>
+
+                <title>ValangValidator</title>
+
+                <para>
+                    The <emphasis>org.springmodules.validation.valang.ValangValidator</emphasis> class is a concrete
+                    implementation of Spring's <emphasis>Validator</emphasis> interface. The most important property of
+                    this validator is the <emphasis>valang</emphasis> property.
+                </para>
+
+                <para>
+                    The <emphasis>valang</emphasis> property is of type <emphasis>java.lang.String</emphasis> and holds a
+                    textual representation of the validation rules that are applied by the validator. We saw in the previous
+                    section that a single validation rule is represented in valang using the following format:
+
+                    <programlisting>{ &lt;key&gt; : &lt;predicate_expression&gt; : &lt;message&gt; [: &lt;error_code&gt; [: &lt;args&gt; ]] }</programlisting>
+
+                    Since, a validator may apply more then just one rule, the <emphasis>valang</emphasis> property accepts
+                    a set of such rule definitions.
+                </para>
+
+                <para>
+                    Example:
+                    <programlisting>{ firstName : length(?) &lt; 30 : 'First name too long' : 'first_name_length' : 30}
+{ lastName : length(?) &lt; 50 : 'Last name too long' : 'last_name_length' : 50 }</programlisting>
+                </para>
+
+                <para>
+                    There are two ways to use the valang validator. It can be explicitly instantiated and initialized with
+                    the rule definitions by calling the <emphasis>setValang(String)</emphasis> method on it. But the recommended
+                    way is actually to let the Spring IoC container do this job for you. The valang validator was design
+                    as a POJO specifically for that reason - to easily define it within Spring application context and inject
+                    it to all other dependent objects in the application.
+                </para>
+
+                <para>
+                    Here is an example of how to define a simple valang validator within the application context:
+                    <programlisting>&lt;bean id="personValidator" class="org.springmodules.validation.valang.ValangValidator"&gt;
+  &lt;property name="valang"&gt;
+    &lt;value&gt;
+    &lt;![CDATA[
+      { firstName : length(?) &lt; 30 : 'First name too long' : 'first_name_length' : 30}
+      { lastName : length(?) &lt; 50 : 'Last name too long' : 'last_name_length' : 50 }
+    ]]&gt;
+    &lt;/value&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+                    This validator defines two validation rules - one for the maximum size of the first name of the person and
+                    the other for the maximum size of the last name of the person.
+                </para>
+
+                <para>
+                    Also notice that the above validator is unaware of the object type it validates. The valag validator is
+                    not restricted to a specific class to be validated. It will always apply the defined validation rules as
+                    long as the validated object has the validated properties (firstName and lastName in this case).
+                </para>
+
+                <para>
+                    This configuration should be enough for most cases. But there are some cases in which you need to apply extra
+                    configuration. With <emphasis>ValangValidator</emphasis> it is possible to register custom
+                    function (thus, extend the valang expression language). This can be done by registering the functions within
+                    the <emphasis>customFunctions</emphasis> property, where the function name serves as the registration key.
+                </para>
+
+
+                <para>
+                    Here is an example of a valang validator configuration with a custom function:
+
+                    <programlisting>&lt;bean id="personValidator" class="org.springmodules.validation.valang.ValangValidator"&gt;
+  &lt;property name="customFunctions"&gt;
+    &lt;map&gt;
+        &lt;entry key="doIt"&gt;
+            &lt;value&gt;org.springmodules.validation.valang.functions.DoItFunction&lt;/value&gt;
+        &lt;/entry&gt;
+    &lt;/map&gt;
+  &lt;/property&gt;
+  &lt;property name="valang"&gt;
+    &lt;value&gt;
+    &lt;![CDATA[
+      { firstName : doIt(?) and length(?) &lt; 30 : 'First name too long' : 'first_name_length' : 30}
+      { lastName : length(?) &lt; 50 : 'Last name too long' : 'last_name_length' : 50 }
+    ]]&gt;
+    &lt;/value&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+                    It is also possible to register extra property editors and custom date parsers for valang to use. For
+                    more details about valang validator configuration options, please refer to the class javadoc.
+                </para>
+
+            </sect3>
+
+        </sect2>
+
+	</sect1>
+		
+</chapter>
