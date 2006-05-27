@@ -2,8 +2,31 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
+Changes in version 0.4 (in progress)
+------------------------------------
+
+Added docbook documentation for validation module
+
+Package org.springmodules.validation
+* Created a new package org.springmodules.validation.parser
+* Moved all the content of org.springmodules.validation.valang to org.springmodules.validation.parser
+* Moved all the content of org.springmodules.validation to org.springmodules.validation.valang
+* Deprecated ValangValidatorFactoryBean - use ValangValidator instead
+
+Package org.springmodules.validation.valang
+* Moved out from the sandbox and was put in the project folder
+
+Package org.springmodules.validation.valang.functions
+* Added the InRoleFunction to validate the current user against a given role
+* Added the EmailFunction to validate well formatted emails
+* Updated the LengthOfFunction to support collections and arrays
+
+Package org.springmodules.validation.valang.parser
+* Updated valang.jj and introduced new token aliasses (JIRA MOD-125)
+
+
 Changes in version 0.3 (12.05.2006)
----------------------------
+------------------------------------
 
 Package org.springmodules.cache.provider.jboss
 * Added support for JBossCache
