@@ -335,7 +335,6 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
 
     public void testTranslator36EscapedString() {
         String text = "{firstName : 'Steven\\'' = firstName and matches('(Steven|Hans|Erwin)\\'', firstName) = true and length('\\\\') = 1 : ''}";
-        System.out.println(text);
         assertTrue(validate(new Person(30, "Steven'"), text));
     }
 }
