@@ -434,7 +434,7 @@ enemies[0].address.city</programlisting>
                         Valang ships with the following predefined functions:
 
                         <table frame="all">
-                            <title>Sample Table</title>
+                            <title>Functions</title>
                             <tgroup cols="2" align="left" colsep="1" rowsep="1">
                                 <colspec colname="Name" colwidth="20pt"/>
                                 <colspec colname="Description" colwidth="100pt"/>
