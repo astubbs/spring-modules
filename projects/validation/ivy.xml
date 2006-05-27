@@ -30,8 +30,6 @@
       <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>
 
-    <dependency org="springmodules" name="springmodules-sandbox-util" rev="latest.integration"/>
-    
     <dependency org="mozilla" name="rhino" rev="1.6+">
         <artifact name="js" type="jar"/>
     </dependency>

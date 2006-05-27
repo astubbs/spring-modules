@@ -7,8 +7,8 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 import org.apache.commons.collections.iterators.IteratorEnumeration;
-import org.springmodules.util.dateparser.DateParseException;
-import org.springmodules.util.dateparser.DefaultDateParser;
+import org.springmodules.validation.util.date.DateParseException;
+import org.springmodules.validation.util.date.DefaultDateParser;
 import org.springmodules.validation.valang.functions.BeanPropertyFunction;
 import org.springmodules.validation.valang.functions.LiteralFunction;
 

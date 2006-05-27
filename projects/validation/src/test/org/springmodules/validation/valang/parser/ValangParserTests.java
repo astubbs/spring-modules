@@ -16,8 +16,8 @@ import org.acegisecurity.providers.TestingAuthenticationToken;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
-import org.springmodules.util.dateparser.DateParseException;
-import org.springmodules.util.dateparser.DefaultDateParser;
+import org.springmodules.validation.util.date.DateParseException;
+import org.springmodules.validation.util.date.DefaultDateParser;
 import org.springmodules.validation.valang.predicates.ValidationRule;
 
 /**

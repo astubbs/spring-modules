@@ -12,7 +12,7 @@ import org.apache.commons.collections.functors.OrPredicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StringUtils;
-import org.springmodules.util.dateparser.DateParseException;
+import org.springmodules.validation.util.date.DateParseException;
 import org.springmodules.validation.valang.functions.AddFunction;
 import org.springmodules.validation.valang.functions.BeanPropertyFunction;
 import org.springmodules.validation.valang.functions.DateLiteralFunction;

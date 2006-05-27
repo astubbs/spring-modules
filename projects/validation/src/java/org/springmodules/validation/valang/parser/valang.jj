@@ -4,7 +4,7 @@ options {
 }
 PARSER_BEGIN(ValangParser)
 
-package org.springmodules.validation.valang;
+package org.springmodules.validation.valang.parser;
 
 import org.springmodules.validation.valang.predicates.Operator;
 import org.springmodules.validation.valang.predicates.OperatorConstants;
@@ -32,7 +32,7 @@ import org.apache.commons.collections.functors.AndPredicate;
 import org.apache.commons.collections.functors.OrPredicate;
 import org.apache.commons.collections.functors.NotPredicate;
 
-import org.springmodules.util.dateparser.DateParseException;
+import org.springmodules.validation.util.date.DateParseException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

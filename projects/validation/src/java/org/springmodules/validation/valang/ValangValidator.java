@@ -28,8 +28,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.context.ServletContextAware;
-import org.springmodules.util.dateparser.DefaultDateParser;
-import org.springmodules.util.dateparser.DefaultDateParser.DateModifier;
+import org.springmodules.validation.util.date.DefaultDateParser;
+import org.springmodules.validation.util.date.DefaultDateParser.DateModifier;
 import org.springmodules.validation.valang.functions.Function;
 import org.springmodules.validation.valang.parser.ParseException;
 import org.springmodules.validation.valang.parser.ValangParser;
@@ -89,7 +89,7 @@ import org.springmodules.validation.valang.predicates.ValidationRule;
  * 
  * @author Steven Devijver
  * @since 23-04-2005
- * @see org.springmodules.util.dateparser.DefaultDateParser
+ * @see org.springmodules.validation.util.date.DefaultDateParser
  * @see org.springframework.validation.Validator
  */
 
@@ -174,9 +174,9 @@ public class ValangValidator implements Validator, InitializingBean, Application
      * 
      * @param dateParserRegistrations
      *            the date parser registrations
-     * @see org.springmodules.util.dateparser.DefaultDateParser#register(String,
+     * @see DefaultDateParser#register(String,
      *      String)
-     * @see org.springmodules.util.dateparser.DefaultDateParser#register(String,
+     * @see DefaultDateParser#register(String,
      *      DateModifier)
      */
     public void setDateParserRegistrations(Map dateParserRegistrations) {

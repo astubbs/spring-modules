@@ -1,11 +1,14 @@
 package org.springmodules.validation.valang;
+
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.servlet.ServletContext;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -26,12 +29,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.web.context.ServletContextAware;
-import org.springmodules.util.dateparser.DefaultDateParser;
+import org.springmodules.validation.util.date.DefaultDateParser;
 import org.springmodules.validation.valang.functions.Function;
 import org.springmodules.validation.valang.parser.ParseException;
 import org.springmodules.validation.valang.parser.ValangParser;
 import org.springmodules.validation.valang.parser.ValangVisitor;
 import org.springmodules.validation.valang.predicates.ValidationRule;
+
 /**
  * <p>
  * ValangValidatorFactoryBean takes a Valang syntax and returns a
@@ -86,28 +90,40 @@ import org.springmodules.validation.valang.predicates.ValidationRule;
  * 
  * @author Steven Devijver
  * @since 23-04-2005
- * @see org.springmodules.util.dateparser.DefaultDateParser
+ * @see DefaultDateParser
  * @see org.springframework.validation.Validator
  *
  * @deprecated use {@link ValangValidator} instead
  */
+
 public class ValangValidatorFactoryBean implements FactoryBean,
         InitializingBean, ApplicationContextAware, BeanFactoryAware, ResourceLoaderAware, MessageSourceAware, ServletContextAware, ApplicationEventPublisherAware {
+
     private String valang = null;
+
     private Validator validator = null;
+
     private ValangVisitor visitor = null;
+
     private Collection customPropertyEditors = null;
+
     private Map dateParserRegistrations = null;
+
     private Map customFunctions = null;
+
     private ApplicationContext applicationContext = null;
     private BeanFactory beanFactory = null;
     private ResourceLoader resourceLoader = null;
     private MessageSource messageSource = null;
     private ServletContext servletContext = null;
     private ApplicationEventPublisher applicationEventPublisher = null;
+
     public ValangValidatorFactoryBean() {
+
         super();
+
     }
+
     /**
      * <p>
      * This property sets the Valang syntax.
@@ -115,9 +131,13 @@ public class ValangValidatorFactoryBean implements FactoryBean,
      * @param valang
      *            the Valang syntax
      */
+
     public void setValang(String valang) {
+
         this.valang = valang;
+
     }
+
     /**
      * <p>
      * This property takes a custom visitor with custom functions.
@@ -126,12 +146,17 @@ public class ValangValidatorFactoryBean implements FactoryBean,
      *            the custom visitor;
      * @see org.springmodules.validation.valang.parser.DefaultVisitor#setVisitor(org.springmodules.validation.valang.parser.ValangVisitor)
      */
+
     public void setVisitor(ValangVisitor visitor) {
+
         this.visitor = visitor;
+
     }
+
     private ValangVisitor getVisitor() {
         return this.visitor;
     }
+
     /**
      * <p>
      * Sets custom property editors on BeanWrapper instances (optional).
@@ -143,9 +168,13 @@ public class ValangValidatorFactoryBean implements FactoryBean,
      * @see BeanWrapper#registerCustomEditor(java.lang.Class,
      *      java.beans.PropertyEditor)
      */
+
     public void setCustomPropertyEditors(Collection customPropertyEditors) {
+
         this.customPropertyEditors = customPropertyEditors;
+
     }
+
     /**
      * <p>
      * Sets date parser registrations (formats and modifiers) on
@@ -153,16 +182,18 @@ public class ValangValidatorFactoryBean implements FactoryBean,
      *
      * @param dateParserRegistrations
      *            the date parser registrations
-     * @see org.springmodules.util.dateparser.DefaultDateParser#register(String,
+     * @see DefaultDateParser#register(String,
      *      String)
-     * @see org.springmodules.util.dateparser.DefaultDateParser#register(String, org.springmodules.util.dateparser.DefaultDateParser.DateModifier)
+     * @see DefaultDateParser#register(String, DefaultDateParser.DateModifier)
      */
     public void setDateParserRegistrations(Map dateParserRegistrations) {
         this.dateParserRegistrations = dateParserRegistrations;
     }
+
     private Map getDateParserRegistrations() {
         return this.dateParserRegistrations;
     }
+
     /**
      * <p>
      * Takes a map with function names and function class names. Function classes
@@ -178,46 +209,74 @@ public class ValangValidatorFactoryBean implements FactoryBean,
     public void setCustomFunctions(Map customFunctions) {
         this.customFunctions = customFunctions;
     }
+
     private Map getCustomFunctions() {
         return this.customFunctions;
     }
+
     private Collection getCustomPropertyEditors() {
+
         return this.customPropertyEditors;
+
     }
+
     private String getValang() {
+
         return this.valang;
+
     }
+
     public Object getObject() throws Exception {
+
         return this.validator;
+
     }
+
     public Class getObjectType() {
+
         return Validator.class;
+
     }
+
     public boolean isSingleton() {
+
         return true;
+
     }
+
     public void afterPropertiesSet() throws Exception {
+
         if (!StringUtils.hasLength(getValang())) {
+
             throw new IllegalArgumentException("[valang] property must be set!");
+
         }
+
         this.validator = new Validator() {
+
             private Collection rules = null;
+
             {
+
                 try {
+
                     ValangParser parser = new ValangParser(new StringReader(
                             getValang()));
+
                     parser.getVisitor().setApplicationContext(applicationContext);
                     parser.getVisitor().setBeanFactory(beanFactory);
                     parser.getVisitor().setApplicationEventPublisher(applicationEventPublisher);
                     parser.getVisitor().setMessageSource(messageSource);
                     parser.getVisitor().setResourceLoader(resourceLoader);
                     parser.getVisitor().setServletContext(servletContext);
+
                     if (getDateParserRegistrations() != null) {
                         for (Iterator iter = getDateParserRegistrations()
                                 .keySet().iterator(); iter.hasNext();) {
                             String regexp = (String) iter.next();
                             Object value = getDateParserRegistrations().get(
                                     regexp);
+
                             if (value instanceof String) {
                                 parser.getVisitor().getDateParser().register(
                                         regexp, (String) value);
@@ -232,6 +291,7 @@ public class ValangValidatorFactoryBean implements FactoryBean,
                             }
                         }
                     }
+
                     if (getCustomFunctions() != null) {
                         final Map constructorMap = new HashMap();
                         for (Iterator iter = getCustomFunctions().keySet().iterator(); iter.hasNext();) {
@@ -271,69 +331,113 @@ public class ValangValidatorFactoryBean implements FactoryBean,
                     } else {
                         parser.getVisitor().setVisitor(visitor);
                     }
+
                     rules = parser.parseValidation();
+
                 } catch (ParseException e) {
+
                     throw new RuntimeException(e);
+
                 }
+
             }
+
             public boolean supports(Class clazz) {
+
                 return true;
+
             }
+
             public void validate(Object target, Errors errors) {
+
                 BeanWrapper beanWrapper = null;
+
                 if (target instanceof BeanWrapper) {
+
                     beanWrapper = (BeanWrapper) target;
+
                 } else {
+
                     beanWrapper = new BeanWrapperImpl(target);
+
                 }
+
                 if (getCustomPropertyEditors() != null) {
+
                     for (Iterator iter = getCustomPropertyEditors().iterator(); iter
                             .hasNext();) {
+
                         CustomPropertyEditor customPropertyEditor = (CustomPropertyEditor) iter
                                 .next();
+
                         if (customPropertyEditor.getRequiredType() == null) {
+
                             throw new IllegalArgumentException(
                                     "[requiredType] is required on CustomPropertyEditor instances!");
+
                         } else if (customPropertyEditor.getPropertyEditor() == null) {
+
                             throw new IllegalArgumentException(
                                     "[propertyEditor] is required on CustomPropertyEditor instances!");
+
                         }
+
                         if (StringUtils.hasLength(customPropertyEditor
                                 .getPropertyPath())) {
+
                             beanWrapper.registerCustomEditor(
                                     customPropertyEditor.getRequiredType(),
                                     customPropertyEditor.getPropertyPath(),
                                     customPropertyEditor.getPropertyEditor());
+
                         } else {
+
                             beanWrapper.registerCustomEditor(
                                     customPropertyEditor.getRequiredType(),
                                     customPropertyEditor.getPropertyEditor());
+
                         }
+
                     }
+
                 }
+
                 for (Iterator iter = rules.iterator(); iter.hasNext();) {
+
                     ValidationRule rule = (ValidationRule) iter.next();
+
                     rule.validate(beanWrapper, errors);
+
                 }
+
             }
+
         };
+
     }
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
+
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = beanFactory;
     }
+
     public void setResourceLoader(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
     }
+
     public void setMessageSource(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
+
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
     }
+
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
+
 }
