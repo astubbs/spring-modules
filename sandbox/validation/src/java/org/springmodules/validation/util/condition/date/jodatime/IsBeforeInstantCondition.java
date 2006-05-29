@@ -71,4 +71,16 @@ public class IsBeforeInstantCondition extends AbstractInstantCondition {
         return later.isAfter(instant);
     }
 
+
+    //=============================================== Setter/Getter ====================================================
+
+    /**
+     * Returns the instant associated with this condition.
+     *
+     * @return The instant associated with this condition.
+     */
+    public ReadableInstant getLater() {
+        return later;
+    }
+
 }

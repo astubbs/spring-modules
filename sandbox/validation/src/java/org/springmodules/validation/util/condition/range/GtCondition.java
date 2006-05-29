@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util.condition.comparable;
+package org.springmodules.validation.util.condition.range;
+
+import java.util.Comparator;
 
 /**
- * An {@link AbstractComparableCondition} implementation that checkCalendar whether the checked value is greater than a
+ * An {@link AbstractSingleBoundCondition} implementation that checkCalendar whether the checked value is greater than a
  * specific loweer bound.
  *
  * @author Uri Boness
  */
-public class GtCondition extends AbstractComparableCondition {
-
-    private Comparable lowerBound;
+public class GtCondition extends AbstractSingleBoundCondition {
 
     /**
      * Constructs a new GtCondition with a given lower bound.
@@ -32,17 +32,28 @@ public class GtCondition extends AbstractComparableCondition {
      * @param lowerBound The lower bound.
      */
     public GtCondition(Comparable lowerBound) {
-        this.lowerBound = lowerBound;
+        super(lowerBound);
+    }
+
+    /**
+     * Constructs a new GtCondition with given lower bound and the comparator to be used to compare the checked value.
+     *
+     * @param lowerBound The lower bound.
+     * @param comparator The comparator.
+     */
+    public GtCondition(Object lowerBound, Comparator comparator) {
+        super(lowerBound, comparator);
     }
 
     /**
      * Checks whether the given value is greater than the lower bound associated with this instantCondition.
      *
      * @param value The value to be checked.
+     * @param comparator The comparator to be used to compare the checked value.
      * @return <code>true</code> if the given value is greater than the lower bound, <code>false</code> otherwise.
      */
-    protected boolean check(Comparable value) {
-        return value.compareTo(lowerBound) > 0;
+    protected boolean checkRange(Object value, Comparator comparator) {
+        return comparator.compare(value, bound) > 0;
     }
 
 }

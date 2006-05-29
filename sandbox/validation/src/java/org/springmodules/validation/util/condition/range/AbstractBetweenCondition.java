@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util.condition.comparable;
+package org.springmodules.validation.util.condition.range;
+
+import java.util.Comparator;
+
+import org.springframework.util.comparator.ComparableComparator;
+import org.springframework.util.Assert;
 
 /**
- * An {@link AbstractComparableCondition} implementation that serves as a base class for all between conditions.
+ * An {@link AbstractRangeCondition} implementation that serves as a base class for all between conditions.
  *
  * @author Uri Boness
  */
-public abstract class AbstractBetweenCondition extends AbstractComparableCondition {
+public abstract class AbstractBetweenCondition extends AbstractRangeCondition {
 
-    private Comparable lowerBound;
-    private Comparable upperBound;
+    private Object lowerBound;
+    private Object upperBound;
 
     /**
      * Constructs a new BetweenCondition with the given bounds (upper and lower) the checked value will be
@@ -34,6 +39,13 @@ public abstract class AbstractBetweenCondition extends AbstractComparableConditi
      * @param upperBound The upper bound the checked object will be compared with.
      */
     public AbstractBetweenCondition(Comparable lowerBound, Comparable upperBound) {
+        this(lowerBound, upperBound, new ComparableComparator());
+    }
+
+    public AbstractBetweenCondition(Object lowerBound, Object upperBound, Comparator comparator) {
+        super(comparator);
+        Assert.notNull(lowerBound, "Lower bound cannot be null");
+        Assert.notNull(upperBound, "Upper bound cannot be null");
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
     }
@@ -45,7 +57,7 @@ public abstract class AbstractBetweenCondition extends AbstractComparableConditi
      *
      * @return The lower bound that is associated with this instantCondition.
      */
-    public Comparable getLowerBound() {
+    public Object getLowerBound() {
         return lowerBound;
     }
 
@@ -54,7 +66,7 @@ public abstract class AbstractBetweenCondition extends AbstractComparableConditi
      *
      * @return The upper bound that is associated with this instantCondition.
      */
-    public Comparable getUpperBound() {
+    public Object getUpperBound() {
         return upperBound;
     }
 

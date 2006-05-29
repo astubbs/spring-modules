@@ -32,14 +32,14 @@ import org.springmodules.validation.util.condition.common.IsNullCondition;
 import org.springmodules.validation.util.condition.common.IsTrueCondition;
 import org.springmodules.validation.util.condition.common.NotCondition;
 import org.springmodules.validation.util.condition.common.OrCondition;
-import org.springmodules.validation.util.condition.comparable.BetweenCondition;
-import org.springmodules.validation.util.condition.comparable.BetweenIncludingCondition;
-import org.springmodules.validation.util.condition.comparable.BetweenIncludingLowerBoundCondition;
-import org.springmodules.validation.util.condition.comparable.BetweenIncludingUpperBoundCondition;
-import org.springmodules.validation.util.condition.comparable.GtCondition;
-import org.springmodules.validation.util.condition.comparable.GteCondition;
-import org.springmodules.validation.util.condition.comparable.LtCondition;
-import org.springmodules.validation.util.condition.comparable.LteCondition;
+import org.springmodules.validation.util.condition.range.BetweenCondition;
+import org.springmodules.validation.util.condition.range.BetweenIncludingCondition;
+import org.springmodules.validation.util.condition.range.BetweenIncludingLowerBoundCondition;
+import org.springmodules.validation.util.condition.range.BetweenIncludingUpperBoundCondition;
+import org.springmodules.validation.util.condition.range.GtCondition;
+import org.springmodules.validation.util.condition.range.GteCondition;
+import org.springmodules.validation.util.condition.range.LtCondition;
+import org.springmodules.validation.util.condition.range.LteCondition;
 import org.springmodules.validation.util.condition.date.IsAfterDateCondition;
 import org.springmodules.validation.util.condition.date.IsBeforeDateCondition;
 import org.springmodules.validation.util.condition.date.IsInTheFutureDateCondition;
@@ -227,7 +227,7 @@ public final class Conditions {
         return property(propertyName, maxSize(maxSize));
     }
 
-    // comparable conditions
+    // range conditions
 
     public static Condition isGt(Comparable min) {
         return new GtCondition(min);

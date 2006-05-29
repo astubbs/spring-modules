@@ -25,6 +25,7 @@ import junit.framework.TestCase;
  */
 public abstract class AbstractInstantConditionTests extends TestCase {
 
+    // an instant condition that is co
     protected AbstractInstantCondition instantCondition;
     protected AbstractInstantCondition dateCondition;
     protected AbstractInstantCondition calendarCondition;

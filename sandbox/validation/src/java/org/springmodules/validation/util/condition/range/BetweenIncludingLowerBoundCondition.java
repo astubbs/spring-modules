@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util.condition.comparable;
+package org.springmodules.validation.util.condition.range;
+
+import java.util.Comparator;
 
 /**
  * An {@link AbstractBetweenCondition} implementation that checks whether the checked value is greater than or equals
@@ -35,13 +37,26 @@ public class BetweenIncludingLowerBoundCondition extends AbstractBetweenConditio
     }
 
     /**
+     * Constructs a new BetweenIncludingLowerBoundCondition with given lower and upper bounds and the comparator that
+     * will be used to compared the checked object.
+     *
+     * @param lowerBound The lower bound.
+     * @param upperBound The upper bound.
+     * @param comparator The comparator.
+     */
+    public BetweenIncludingLowerBoundCondition(Object lowerBound, Object upperBound, Comparator comparator) {
+        super(lowerBound, upperBound, comparator);
+    }
+
+    /**
      * Checks whether the given value is greater than or equals the lower bound and smaller than the upper bound.
      *
      * @param value The value to be compared.
+     * @param comparator The comparator to be used to compare the checked value.
      * @return <code>true</code> if the value is within the range, <code>false</code> otherwise.
      */
-    protected boolean check(Comparable value) {
-        return value.compareTo(getLowerBound()) >= 0 && value.compareTo(getUpperBound()) < 0;
+    protected boolean checkRange(Object value, Comparator comparator) {
+        return comparator.compare(value, getLowerBound()) >= 0 && comparator.compare(value, getUpperBound()) < 0;
     }
 
 }

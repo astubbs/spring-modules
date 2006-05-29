@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util.condition.comparable;
+package org.springmodules.validation.util.condition.range;
+
+import java.util.Comparator;
 
 /**
- * An {@link AbstractComparableCondition} implementation that checks whether the checked value is less than or equals
+ * An {@link AbstractSingleBoundCondition} implementation that checks whether the checked value is less than or equals
  * as specific upper bound.
  *
  * @author Uri Boness
  */
-public class LteCondition extends AbstractComparableCondition {
-
-    private Comparable upperBound;
+public class LteCondition extends AbstractSingleBoundCondition {
 
     /**
      * Constructs a new LtCondition with a given upper bound.
@@ -32,17 +32,28 @@ public class LteCondition extends AbstractComparableCondition {
      * @param upperBound The upper bound.
      */
     public LteCondition(Comparable upperBound) {
-        this.upperBound = upperBound;
+        super(upperBound);
+    }
+
+    /**
+     * Constructs a new LteCondition with given upper bound and the comparator to be used to compare the checked value.
+     *
+     * @param upperBound The upper bound.
+     * @param comparator The comparator.
+     */
+    public LteCondition(Object upperBound, Comparator comparator) {
+        super(upperBound, comparator);
     }
 
     /**
      * Checks whether the given value is less than or equals the upper bound associated with this instantCondition.
      *
      * @param value The value to be checked.
+     * @param comparator The comparator to be used to compare the checked value.
      * @return <code>true</code> if the given value is less than or equals the upper bound, <code>false</code> otherwise.
      */
-    protected boolean check(Comparable value) {
-        return value.compareTo(upperBound) <= 0;
+    protected boolean checkRange(Object value, Comparator comparator) {
+        return comparator.compare(value, bound) <= 0;
     }
 
 }
