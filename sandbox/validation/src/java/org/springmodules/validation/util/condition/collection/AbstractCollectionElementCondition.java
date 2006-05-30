@@ -16,6 +16,7 @@
 
 package org.springmodules.validation.util.condition.collection;
 
+import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.Condition;
 
 /**
@@ -33,6 +34,7 @@ public abstract class AbstractCollectionElementCondition extends AbstractCollect
      * @param elementCondition The element elementCondition.
      */
     protected AbstractCollectionElementCondition(Condition elementCondition) {
+        Assert.notNull(elementCondition, "Element condition cannot be null");
         this.elementCondition = elementCondition;
     }
 

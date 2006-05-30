@@ -18,8 +18,8 @@ package org.springmodules.validation.util.condition.range;
 
 import java.util.Comparator;
 
-import org.springframework.util.comparator.ComparableComparator;
 import org.springframework.util.Assert;
+import org.springframework.util.comparator.ComparableComparator;
 
 /**
  * An {@link AbstractRangeCondition} implementation that serves as a base class for all between conditions.

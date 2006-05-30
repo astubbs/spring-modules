@@ -18,6 +18,7 @@ package org.springmodules.validation.util.condition.common;
 
 import java.util.Collection;
 
+import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.AbstractCondition;
 import org.springmodules.validation.util.condition.Condition;
 
@@ -36,6 +37,7 @@ public abstract class AbstractCompoundCondition extends AbstractCondition {
      * @param conditions The conditions this instantCondition is compound from.
      */
     public AbstractCompoundCondition(Condition[] conditions) {
+        Assert.notNull(conditions, "Compound condition cannot accept null as conditions");
         this.conditions = conditions;
     }
 
@@ -45,6 +47,7 @@ public abstract class AbstractCompoundCondition extends AbstractCondition {
      * @param conditions The conditions this instantCondition is compound from.
      */
     public AbstractCompoundCondition(Collection conditions) {
+        Assert.notNull(conditions, "Compound condition cannot accept null as conditions");
         this.conditions = (Condition[])conditions.toArray(new Condition[conditions.size()]);
     }
 

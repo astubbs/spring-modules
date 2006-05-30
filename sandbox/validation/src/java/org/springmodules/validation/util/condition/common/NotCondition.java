@@ -16,6 +16,7 @@
 
 package org.springmodules.validation.util.condition.common;
 
+import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.AbstractCondition;
 import org.springmodules.validation.util.condition.Condition;
 
@@ -34,6 +35,7 @@ public class NotCondition extends AbstractCondition {
      * @param condition The instantCondition to reverse.
      */
     public NotCondition(Condition condition) {
+        Assert.notNull(condition, "Condition cannot be null");
         this.condition = condition;
     }
 

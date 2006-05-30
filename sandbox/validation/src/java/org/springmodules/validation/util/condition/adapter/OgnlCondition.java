@@ -19,6 +19,7 @@ package org.springmodules.validation.util.condition.adapter;
 import ognl.Ognl;
 import ognl.OgnlException;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.AbstractCondition;
 
 /**
@@ -38,6 +39,7 @@ public class OgnlCondition extends AbstractCondition {
      * @param expression The OGNL expression.
      */
     public OgnlCondition(String expression) {
+        Assert.notNull(expression, "Expression cannot be null");
         try {
             compiledExpression = Ognl.parseExpression(expression);
             this.expression = expression;

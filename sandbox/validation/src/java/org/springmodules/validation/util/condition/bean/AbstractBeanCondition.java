@@ -16,9 +16,9 @@
 
 package org.springmodules.validation.util.condition.bean;
 
-import org.springmodules.validation.util.condition.NonNullAcceptingCondition;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springmodules.validation.util.condition.NonNullAcceptingCondition;
 
 /**
  * A parent class to all bean related conditions. Such instantCondition may perform checks on beans
@@ -31,14 +31,14 @@ public abstract class AbstractBeanCondition extends NonNullAcceptingCondition {
     /**
      * See {@link org.springmodules.validation.util.condition.Condition#check(Object)}. This method creates a
      * {@link BeanWrapper} instance of the checked object and delegates the call to
-     * {@link #check(org.springframework.beans.BeanWrapper)};
+     * {@link #checkBean(org.springframework.beans.BeanWrapper)};
      *
      * @throws IllegalArgumentException when the passed in object is <code>null</code>.
      */
     public final boolean doCheck(Object object) {
-        return check(new BeanWrapperImpl(object));
+        return checkBean(new BeanWrapperImpl(object));
     }
 
-    protected abstract boolean check(BeanWrapper beanWrapper);
+    protected abstract boolean checkBean(BeanWrapper beanWrapper);
 
 }

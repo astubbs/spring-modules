@@ -18,9 +18,9 @@ package org.springmodules.validation.util.condition.range;
 
 import java.util.Comparator;
 
+import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.NonNullAcceptingCondition;
 import org.springmodules.validation.util.condition.NonNullAcceptingTypeSpecificCondition;
-import org.springframework.util.Assert;
 
 /**
  * A base class for all range conditions.

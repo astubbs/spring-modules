@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.util.condition.date;
 
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Tests for {@link IsBeforeDateCondition}.

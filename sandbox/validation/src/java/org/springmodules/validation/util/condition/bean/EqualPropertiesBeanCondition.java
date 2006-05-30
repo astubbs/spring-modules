@@ -37,7 +37,11 @@ public class EqualPropertiesBeanCondition extends AbstractBeanCondition {
      * @throws IllegalArgumentException when the given property names array contains zero or one names.
      */
     public EqualPropertiesBeanCondition(String[] propertyNames) {
-        Assert.notEmpty(propertyNames, getClass().getName() + " must cannot be initialized with less then 2 property names");
+        Assert.notNull(propertyNames, getClass().getName() + " cannot be initialized with null array of property names");
+        Assert.notEmpty(propertyNames, getClass().getName() + " cannot be initialized with less then 2 property names");
+        for (int i=0; i<propertyNames.length; i++) {
+            Assert.notNull(propertyNames[i], getClass().getName() + " cannot be initialized with null property name");
+        }
         this.propertyNames = propertyNames;
     }
 
@@ -58,7 +62,7 @@ public class EqualPropertiesBeanCondition extends AbstractBeanCondition {
      * @param bean The bean to be checked.
      * @return <code>true</code> if all the compared properties are equal, <code>false</code> otherwise.
      */
-    protected boolean check(BeanWrapper bean) {
+    protected boolean checkBean(BeanWrapper bean) {
         Object value = bean.getPropertyValue(propertyNames[0]);
         for (int i=1; i<propertyNames.length; i++) {
             Object currentValue = bean.getPropertyValue(propertyNames[i]);

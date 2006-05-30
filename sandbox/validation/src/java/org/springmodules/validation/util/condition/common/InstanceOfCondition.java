@@ -16,6 +16,7 @@
 
 package org.springmodules.validation.util.condition.common;
 
+import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.AbstractCondition;
 
 /**
@@ -33,6 +34,7 @@ public class InstanceOfCondition extends AbstractCondition {
      * @param clazz The class the checked object will be checked against.
      */
     public InstanceOfCondition(Class clazz) {
+        Assert.notNull(clazz, "Class cannot be null");
         this.clazz = clazz;
     }
 

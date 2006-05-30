@@ -30,12 +30,12 @@ public abstract class AbstractCollectionCondition extends NonNullAcceptingCondit
     /**
      * See {@link NonNullAcceptingCondition#beforeObjectChecked(Object)}.
      *
-     * Also verifies the given object is of a {@link Collection} type or an array.
+     * Also verifies the given object is of a {@link Collection} or an array.
      */
     protected void beforeObjectChecked(Object object) {
         super.beforeObjectChecked(object);
         if (!(object instanceof Collection) && !object.getClass().isArray()) {
-            throw new IllegalArgumentException(getClass().getName() + " can only checkCalendar collection or arrays");
+            throw new IllegalArgumentException(getClass().getName() + " can only checkCalendar collection, iterators, or arrays");
         }
     }
 
@@ -50,13 +50,12 @@ public abstract class AbstractCollectionCondition extends NonNullAcceptingCondit
     public final boolean doCheck(Object object) {
         if (object.getClass().isArray()) {
             return checkArray(object);
-        } else {
-            return checkCollection((Collection)object);
         }
+        return checkCollection((Collection)object);
     }
 
     /**
-     * Checks whether the given array adheres to this instantCondition.
+     * Checks whether the given array adheres to this Condition.
      *
      * @param array The array to be checked.
      * @return <code>true</code> if the given array adheres to this instantCondition, <code>false</code> otherwise.
@@ -64,7 +63,7 @@ public abstract class AbstractCollectionCondition extends NonNullAcceptingCondit
     protected abstract boolean checkArray(Object array);
 
     /**
-     * Checks whether the given collection adheres to this instantCondition.
+     * Checks whether the given collection adheres to this Condition.
      *
      * @param collection The collection to be checked.
      * @return <code>true</code> if the given collection adheres to this instantCondition, <code>false</code> otherwise.

@@ -16,8 +16,9 @@
 
 package org.springmodules.validation.util.condition.bean;
 
-import org.springmodules.validation.util.condition.Condition;
 import org.springframework.beans.BeanWrapper;
+import org.springframework.util.Assert;
+import org.springmodules.validation.util.condition.Condition;
 
 /**
  * An {@link AbstractBeanCondition} implementation that checks the value of a specific property of the checked bean
@@ -37,6 +38,8 @@ public class PropertyBeanCondition extends AbstractBeanCondition {
      * @param propertyCondition The instantCondition that will be used to checkCalendar the property value.
      */
     public PropertyBeanCondition(String propertyName, Condition propertyCondition) {
+        Assert.notNull(propertyName, "Property name cannot be null");
+        Assert.notNull(propertyCondition, "Property condition cannot be null");
         this.propertyName = propertyName;
         this.propertyCondition = propertyCondition;
     }
@@ -49,7 +52,7 @@ public class PropertyBeanCondition extends AbstractBeanCondition {
      * @return <code>true</code> if the property instantCondition associated with this instantCondition returns <code>true</code> when
      *         checking the bean's property, <code>false</code> otherwise.
      */
-    protected boolean check(BeanWrapper bean) {
+    protected boolean checkBean(BeanWrapper bean) {
         Object value = bean.getPropertyValue(propertyName);
         return propertyCondition.check(value);
     }

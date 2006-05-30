@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.util.condition.date.jodatime;
 
-import org.joda.time.ReadableInstant;
 import org.joda.time.Instant;
+import org.joda.time.ReadableInstant;
 
 /**
  * Tests for {@link IsInThePastInstantCondition}.

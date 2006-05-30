@@ -16,9 +16,9 @@
 
 package org.springmodules.validation.util.condition.date.jodatime;
 
+import org.joda.time.ReadableInstant;
 import org.springmodules.validation.util.condition.NonNullAcceptingTypeSpecificCondition;
 import org.springmodules.validation.util.condition.TypeSpecificCondition;
-import org.joda.time.ReadableInstant;
 
 /**
  * A base class for all joda-time date related conditions.

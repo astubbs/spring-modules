@@ -23,27 +23,27 @@ import java.util.Iterator;
 import org.springmodules.validation.util.condition.Condition;
 
 /**
- * An {@link AbstractCollectionCondition} implementation that checks whether any of the elements in a collection
- * or array adhere to a specific instantCondition.
+ * An {@link AbstractCollectionCondition} implementation that checks whether some of the elements in a collection
+ * or array adhere to a specific condition.
  *
  * @author Uri Boness
  */
-public class AnyCollectionCondition extends AbstractCollectionElementCondition {
+public class SomeCollectionCondition extends AbstractCollectionElementCondition {
 
     /**
-     * Constructs a new AnyCollectionCondition with a given instantCondition.
+     * Constructs a new SomeCollectionCondition with a given condition.
      *
-     * @param elementCondition The instantCondition to be checked on the collection elements.
+     * @param elementCondition The condition to be checked on the collection elements.
      */
-    public AnyCollectionCondition(Condition elementCondition) {
+    public SomeCollectionCondition(Condition elementCondition) {
         super(elementCondition);
     }
 
     /**
-     * Checks whether any of the objects in the given array adhere to the associated instantCondition.
+     * Checks whether any of the objects in the given array adhere to the associated condition.
      *
      * @param array The array to be checked.
-     * @return <code>true</code> any of the objects in the given array adhere to the associated instantCondition,
+     * @return <code>true</code> any of the objects in the given array adhere to the associated condition,
      *         <code>false</code> otherwise.
      */
     protected boolean checkArray(Object array) {
@@ -56,10 +56,10 @@ public class AnyCollectionCondition extends AbstractCollectionElementCondition {
     }
 
     /**
-     * Checks whether any of the elements in the given collection adhere to the associated instantCondition.
+     * Checks whether any of the elements in the given collection adhere to the associated condition.
      *
      * @param collection The collection to be checked.
-     * @return <code>true</code> if any of the elements in the given collection adhere to the associated instantCondition,
+     * @return <code>true</code> if any of the elements in the given collection adhere to the associated condition,
      *         <code>false</code> otherwise.
      */
     protected boolean checkCollection(Collection collection) {

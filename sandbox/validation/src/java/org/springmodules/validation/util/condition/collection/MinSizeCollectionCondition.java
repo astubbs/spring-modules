@@ -19,6 +19,8 @@ package org.springmodules.validation.util.condition.collection;
 import java.lang.reflect.Array;
 import java.util.Collection;
 
+import org.springframework.util.Assert;
+
 /**
  * An {@link AbstractCollectionCondition} implementation that checks whether the given collection or array
  * is longer then a specific minimum size.
@@ -35,6 +37,7 @@ public class MinSizeCollectionCondition extends AbstractCollectionCondition {
      * @param minSize The minimum size.
      */
     public MinSizeCollectionCondition(int minSize) {
+        Assert.isTrue(minSize >= 0, "Min size cannot be negative");
         this.minSize = minSize;
     }
 

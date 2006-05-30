@@ -16,8 +16,9 @@
 
 package org.springmodules.validation.util.condition.adapter;
 
-import org.springmodules.validation.util.condition.AbstractCondition;
 import org.apache.commons.collections.Predicate;
+import org.springframework.util.Assert;
+import org.springmodules.validation.util.condition.AbstractCondition;
 
 /**
  * A Jakarta Commmons Predicate instantCondition adapter. This instantCondition deligates the call to an associated {@link Predicate).
@@ -34,6 +35,7 @@ public class CommonsPredicateCondition extends AbstractCondition {
      * @param predicate The given predicate.
      */
     public CommonsPredicateCondition(Predicate predicate) {
+        Assert.notNull(predicate, "Predicate cannot be null");
         this.predicate = predicate;
     }
 

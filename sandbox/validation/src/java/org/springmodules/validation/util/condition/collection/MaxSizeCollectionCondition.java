@@ -19,6 +19,8 @@ package org.springmodules.validation.util.condition.collection;
 import java.lang.reflect.Array;
 import java.util.Collection;
 
+import org.springframework.util.Assert;
+
 /**
  * An {@link AbstractCollectionCondition} implementation that checks whether the given collection or array
  * is longer then a specific maximum size.
@@ -35,6 +37,7 @@ public class MaxSizeCollectionCondition extends AbstractCollectionCondition {
      * @param maxSize The maximum size.
      */
     public MaxSizeCollectionCondition(int maxSize) {
+        Assert.isTrue(maxSize >= 0, "Max size cannot be negative");
         this.maxSize = maxSize;
     }
 
