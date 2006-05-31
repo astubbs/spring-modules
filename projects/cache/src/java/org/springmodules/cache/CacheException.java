@@ -20,10 +20,7 @@ package org.springmodules.cache;
 import org.springframework.core.NestedRuntimeException;
 
 /**
- * <p>
- * Superclass of all exceptions thrown when an unexpected error takes place
- * while working with a cache provider.
- * </p>
+ * Understands an unexpected error that ocurred while accessing a cache.
  * 
  * @author Alex Ruiz
  */
@@ -33,8 +30,8 @@ public abstract class CacheException extends NestedRuntimeException {
     super(msg);
   }
 
-  public CacheException(String msg, Throwable nested) {
-    super(msg, nested);
+  public CacheException(String msg, Throwable cause) {
+    super(msg, cause);
   }
 
 }

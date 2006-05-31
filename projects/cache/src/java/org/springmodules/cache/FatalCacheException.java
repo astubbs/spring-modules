@@ -19,9 +19,7 @@
 package org.springmodules.cache;
 
 /**
- * <p>
- * Thrown on an unrecoverable problem encountered in the cache package.
- * </p>
+ * Understands an unrecoverable error encountered in the cache package.
  * 
  * @author Alex Ruiz
  */
@@ -33,8 +31,8 @@ public class FatalCacheException extends CacheException {
     super(msg);
   }
 
-  public FatalCacheException(String msg, Throwable nested) {
-    super(msg, nested);
+  public FatalCacheException(String msg, Throwable cause) {
+    super(msg, cause);
   }
 
 }

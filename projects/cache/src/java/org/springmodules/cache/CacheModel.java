@@ -20,9 +20,7 @@ package org.springmodules.cache;
 import java.io.Serializable;
 
 /**
- * <p>
- * Configuration options that specify how to access a cache.
- * </p>
+ * Understands configuration options that specify how to access a cache.
  * 
  * @author Alex Ruiz
  */

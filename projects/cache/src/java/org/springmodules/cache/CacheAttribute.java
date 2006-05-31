@@ -27,6 +27,4 @@ import java.io.Serializable;
  * 
  * @author Alex Ruiz
  */
-public interface CacheAttribute extends Serializable {
-  // Marker interface.
-}
+public interface CacheAttribute extends Serializable {}

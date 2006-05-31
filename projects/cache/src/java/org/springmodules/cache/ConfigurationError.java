@@ -1,5 +1,5 @@
 /* 
- * Created on Sep 29, 2005
+ * Created on Apr 26, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,16 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  *
- * Copyright @2005 the original author or authors.
+ * Copyright @2004-2006 the original author or authors.
  */
 package org.springmodules.cache;
 
 /**
- * Understands configuration options for flushing a cache.
+ * Understands configuration errors on any resource of the caching module.
  * 
  * @author Alex Ruiz
  */
-public interface FlushingModel extends CacheModel {
+public abstract class ConfigurationError {
 
-  boolean flushBeforeMethodExecution();
+  public static FatalCacheException missingRequiredProperty(String property) {
+    throw new FatalCacheException("Missing property <" + property + ">");
+  }  
+  
+  private ConfigurationError() {}
 }

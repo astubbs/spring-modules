@@ -18,8 +18,7 @@
 package org.springmodules.cache;
 
 /**
- * Understands configuration options for retrieving, storing and removing
- * objects from a cache.
+ * Understands configuration options for retrieving, storing and removing objects from a cache.
  * 
  * @author Alex Ruiz
  */
