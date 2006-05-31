@@ -221,7 +221,7 @@
 	<!--
 	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
 	-->
-	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
+	<target name="release" depends="dist, javadoc, doc, gen.release.zip"
 	              description="Generate the springmodules release archive" />
 
     <target name="gen.release.jar" depends="init">
