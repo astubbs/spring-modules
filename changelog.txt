@@ -7,6 +7,9 @@ Changes in version 0.4 (in progress)
 
 Added docbook documentation for validation module
 
+Package org.springmodules.javaspace
+* New Javaspace module
+
 Package org.springmodules.validation
 * Created a new package org.springmodules.validation.parser
 * Moved all the content of org.springmodules.validation.valang to org.springmodules.validation.parser
