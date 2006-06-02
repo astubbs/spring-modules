@@ -26,10 +26,9 @@ public abstract class AbstractBeanValidator implements Validator {
      * or <code>false</code> if not
      */
     public boolean supports(Class clazz) {
-        boolean canSupport = validatorFactory.hasRulesForBean(
-                getFormName(clazz), getLocale());
-        if (AbstractBeanValidator.log.isDebugEnabled()) {
-            AbstractBeanValidator.log.debug("validatorFactory " + (canSupport ? "does" : "does not")
+        boolean canSupport = validatorFactory.hasRulesForBean(getFormName(clazz), getLocale());
+        if (log.isDebugEnabled()) {
+            log.debug("validatorFactory " + (canSupport ? "does" : "does not")
                     + " support class " + clazz + " with form name " + getFormName(clazz));
         }
         return canSupport;

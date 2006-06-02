@@ -4,7 +4,7 @@
     <tlib-version>1.1.1</tlib-version>
     <jsp-version>1.2</jsp-version>
     <short-name>Valang</short-name>
-    <uri>???</uri>
+    <uri>http://www.springmodules.org/tags/valang</uri>
     <description> A set of tags that enable the translation of Valang 
         validators into JavaScript. </description>
     <tag>

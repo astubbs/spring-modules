@@ -11,7 +11,7 @@
 	
 	<tag>
 		<name>javascript</name>
-		<tagclass>org.springmodules.commons.validator.taglib.JavascriptValidatorTag</tagclass>
+		<tagclass>org.springmodules.validation.commons.taglib.JavascriptValidatorTag</tagclass>
 		<bodycontent>empty</bodycontent>
 		<attribute>
 			<name>cdata</name>

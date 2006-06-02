@@ -3,7 +3,12 @@
 	   multiple tags.
 	 -->
 
-			<author>
+            <author>
+				<firstname>Rob</firstname>
+				<surname>Harrop</surname>
+			</author>
+
+            <author>
 				<firstname>Uri</firstname>
 				<surname>Boness</surname>
 			</author>
