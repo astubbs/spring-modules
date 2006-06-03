@@ -2,6 +2,18 @@
 <chapter id="validator">
   <title>Commons Validator</title>
 
+  <warning>
+  	<para>
+  		This module is deprecated. Starting from version 0.4 this module is integrated with the validation
+  		module. All classes in this module where deprecated and in version 0.5 this module will be removed 
+  		as a whole.
+  	</para>  	
+  	<para>
+		Please refer to the documentation of the validation module (Chapter 9) for information of how to use
+		the commons validator. Not much has changed in general, only the packages names and some bug fixes.
+  	</para>
+  </warning>
+
   <sect1>
     <title>Introduction</title>
 
