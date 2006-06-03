@@ -27,17 +27,19 @@ import org.springframework.validation.Errors;
 
 /**
  * @author Rob Harrop
+ *
+ * @deprecated Moved to spring-modules validation module. please refer to org.springmodules.validation.commons package.
  */
 public abstract class AbstractBeanValidator implements Validator {
 
 	private ValidatorFactory validatorFactory;
-	
+
 	private static final Log log = LogFactory.getLog(AbstractBeanValidator.class);
 
 	/**
 	 * Checks if the validatorFactory is configured to handle this class.  Will
 	 * convert the class into a form name, suitable for commons validator.
-	 * 
+	 *
 	 * @see #getFormName(Class)
 	 * @return <code>true</code> if the validatorFactory supports the class,
 	 * or <code>false</code> if not
@@ -46,7 +48,7 @@ public abstract class AbstractBeanValidator implements Validator {
 		boolean canSupport = validatorFactory.hasRulesForBean(
 				getFormName(clazz), getLocale());
 		if (log.isDebugEnabled()) {
-			log.debug("validatorFactory " + (canSupport ? "does" : "does not") 
+			log.debug("validatorFactory " + (canSupport ? "does" : "does not")
 					+ " support class " + clazz + " with form name " + getFormName(clazz));
 		}
 		return canSupport;

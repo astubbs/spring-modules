@@ -40,6 +40,8 @@ import org.springframework.validation.Errors;
  * @author Rob Leland
  * @author Daniel Miller
  * @author Rob Harrop
+ *
+ * @deprecated Moved to spring-modules validation module. please refer to org.springmodules.validation.commons package.
  */
 public class FieldChecks implements Serializable {
 
@@ -68,7 +70,7 @@ public class FieldChecks implements Serializable {
 
 		String value = extractValue(bean, field);
 
-		if (GenericValidator.isBlankOrNull(value)) {
+        if (GenericValidator.isBlankOrNull(value)) {
 			rejectValue(errors, field, va);
 			return false;
 		}
@@ -755,7 +757,7 @@ public class FieldChecks implements Serializable {
 
 	/**
 	 * Convinience method to perform the work of rejecting a field's value.
-	 * 
+	 *
 	 * @param errors the errors
 	 * @param field the field that was rejected
 	 * @param va the validator action

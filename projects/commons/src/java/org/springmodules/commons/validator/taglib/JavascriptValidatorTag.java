@@ -1,7 +1,7 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
  * Copyright 2002-2004 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -57,6 +57,8 @@ import org.springmodules.commons.validator.ValidatorFactory;
  *
  * @author David Winterfeldt.
  * @author Daniel Miller
+ *
+ * @deprecated Moved to spring-modules validation module. please refer to org.springmodules.validation.commons package.
  */
 public class JavascriptValidatorTag extends BodyTagSupport {
 

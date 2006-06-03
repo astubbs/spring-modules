@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.commons.validator;
+package org.springmodules.validation.commons.validator;
 
 import java.util.Collections;
 import java.util.EmptyStackException;
@@ -41,6 +41,8 @@ import org.springframework.validation.ObjectError;
  * @author Thomas Risberg
  * @see #getModel
  * @see org.springframework.validation.BindException
+ *
+ * @deprecated Moved to spring-modules validation module. please refer to org.springmodules.validation.commons package.
  */
 public class MapException extends Exception implements Errors {
 
