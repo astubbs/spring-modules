@@ -8,12 +8,12 @@
 	<!ENTITY overview		SYSTEM "overview.xml">
 	<!ENTITY hivemind		SYSTEM "../../../projects/hivemind/docs/reference/src/hivemind.xml">
 	<!ENTITY jsr94			SYSTEM "../../../projects/jsr94/docs/reference/src/jsr94.xml">
-	<!ENTITY validator		SYSTEM "../../../projects/commons/docs/reference/src/validator.xml">
 	<!ENTITY osworkflow 	SYSTEM "../../../projects/osworkflow/docs/reference/src/osworkflow.xml">
 	<!ENTITY cache 			SYSTEM "../../../projects/cache/docs/reference/src/cache.xml">
 	<!ENTITY jcr 			SYSTEM "../../../projects/jcr/docs/reference/src/jcr.xml">
 	<!ENTITY lucene 		SYSTEM "../../../projects/lucene/docs/reference/src/lucene.xml">
 	<!ENTITY javaspace		SYSTEM "../../../projects/javaspace/docs/reference/src/javaspace.xml">
+	<!ENTITY validation		SYSTEM "../../../projects/validation/docs/reference/src/validation.xml">
 	]>
 
 
@@ -36,5 +36,6 @@
 		
 	&osworkflow;
 
-	&validator;
+	&validation;
+	
 </book>
