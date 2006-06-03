@@ -1,7 +1,7 @@
 package org.springmodules.validation.util.date;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import junit.framework.TestCase;
 

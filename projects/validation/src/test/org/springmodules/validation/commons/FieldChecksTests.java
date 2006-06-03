@@ -1,7 +1,7 @@
 package org.springmodules.validation.commons;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 import org.apache.commons.validator.Field;

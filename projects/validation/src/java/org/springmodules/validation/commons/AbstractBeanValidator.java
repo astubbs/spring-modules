@@ -13,9 +13,9 @@ import org.springframework.validation.Validator;
  */
 public abstract class AbstractBeanValidator implements Validator {
 
-    private ValidatorFactory validatorFactory;
-
     private static final Log log = LogFactory.getLog(AbstractBeanValidator.class);
+
+    private ValidatorFactory validatorFactory;
 
     /**
      * Checks if the validatorFactory is configured to handle this class.  Will
@@ -42,11 +42,14 @@ public abstract class AbstractBeanValidator implements Validator {
      */
     public void validate(Object obj, Errors errors) {
         org.apache.commons.validator.Validator commonsValidator = getValidator(obj, errors);
+        initValidator(commonsValidator);
         try {
             commonsValidator.validate();
         }
         catch (ValidatorException e) {
-            AbstractBeanValidator.log.error("Exception while validating object " + obj, e);
+            log.error("Exception while validating object " + obj, e);
+        } finally {
+            cleanupValidator(commonsValidator);
         }
     }
 
@@ -73,6 +76,25 @@ public abstract class AbstractBeanValidator implements Validator {
      */
     private org.apache.commons.validator.Validator getValidator(Object obj, Errors errors) {
         return this.validatorFactory.getValidator(getFormName(obj.getClass()), obj, errors);
+    }
+
+    /**
+     * A callback method that is called just before the validate() method is called on the given validator.
+     * This can be used to further configure the validator.
+     *
+     * @param validator
+     */
+    protected void initValidator(org.apache.commons.validator.Validator validator) {
+    }
+
+    /**
+     * A callback method that is called just after the validate() method is called on the given validator.
+     * This method can be used to clean up all the extra configuration added in the {@link #initValidator(org.apache.commons.validator.Validator)}
+     * method.
+     *
+     * @param validator
+     */
+    protected void cleanupValidator(org.apache.commons.validator.Validator validator) {
     }
 
     /**

@@ -1,25 +1,40 @@
 <!DOCTYPE form-validation PUBLIC
-     "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
-     "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.1//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_1.dtd">
 
 <form-validation>
-   <global>
-     <validator name="required"
-                 classname="org.apache.commons.validator.TestValidator"
-                 method="validateRequired"
-                 methodParams="java.lang.Object,org.apache.commons.validator.Field"
-                 msg="errors.required"/>
-   </global>
-   <formset>
-      <form name="fooBean">
-        <field property="name"  depends="required">
-         	   <arg key="nameForm.firstname.displayname"/>
-         </field>
-      </form>
-		 <form name="org.springmodules.validation.commons.FooBarBean">
-			 <field property="emailAddress" depends="required">
-				 <arg key="foo"/>
-			 </field>
-		 </form>
-   </formset>
+
+    <global>
+        <validator name="required"
+                   classname="org.apache.commons.validator.TestValidator"
+                   method="validateRequired"
+                   methodParams="java.lang.Object,org.apache.commons.validator.Field"
+                   msg="errors.required"/>
+    </global>
+
+    <formset>
+
+        <form name="fooBean">
+            <field property="name" depends="required">
+                <arg key="nameForm.firstname.displayname"/>
+            </field>
+        </form>
+
+        <form name="org.springmodules.validation.commons.FooBarBean">
+            <field property="emailAddress" depends="required">
+                <arg key="foo"/>
+            </field>
+        </form>
+
+        <form name="pagedFooBean">
+            <field property="name" depends="required" page="0">
+                <arg key="nameForm.firstname.displayname"/>
+            </field>
+            <field property="emailAddress" depends="required" page="1">
+                <arg key="nameForm.email"/>
+            </field>
+        </form>
+
+    </formset>
+
 </form-validation>

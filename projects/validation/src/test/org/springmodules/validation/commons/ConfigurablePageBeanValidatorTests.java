@@ -8,23 +8,44 @@ import org.apache.commons.validator.ValidatorResources;
 import org.easymock.MockControl;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 
 /**
  *
  * @author robh
+ * @author Uri Boness
  */
-public class ConfigurableBeanValidatorTests extends TestCase {
+public class ConfigurablePageBeanValidatorTests extends TestCase {
 
      public void testSupports() {
-        ConfigurableBeanValidator validator = getValidator();
+        ConfigurablePageBeanValidator validator = getValidator(0);
 
         assertTrue("Should support FooBean", validator.supports(FooBean.class));
         assertTrue("Should support String", validator.supports(String.class));
     }
 
     public void testGetLocale() {
-        ConfigurableBeanValidator validator = getValidator();
+        ConfigurablePageBeanValidator validator = getValidator(0);
         assertEquals(validator.getLocale(), Locale.getDefault());
+    }
+
+    public void testValidate_WithPageSetting() {
+        ConfigurablePageBeanValidator validator = getValidator(0);
+
+        FooBean bean = new FooBean();
+        BindException errors = new BindException(bean, "pagedFooBean");
+
+        validator.validate(bean, errors);
+        assertTrue(errors.hasFieldErrors("name"));
+        assertTrue(errors.hasFieldErrors("name"));
+        assertEquals(1, errors.getErrorCount());
+        assertEquals("name", ((FieldError)errors.getAllErrors().iterator().next()).getField());
+
+        errors = new BindException(bean, "pagedFooBean");
+        bean.setName("name");
+        validator.validate(bean, errors);
+        assertFalse(errors.hasFieldErrors("name"));
     }
 
     public void testValidate() {
@@ -40,20 +61,25 @@ public class ConfigurableBeanValidatorTests extends TestCase {
 
         ctl.replay();
 
-        ConfigurableBeanValidator validator = new ConfigurableBeanValidator();
+        ConfigurablePageBeanValidator validator = new ConfigurablePageBeanValidator();
         validator.setValidatorFactory(factory);
         validator.setFormName(formName);
+        validator.setPage(0);
+
         validator.validate(bean, null);
 
         ctl.verify();
     }
 
-    private ConfigurableBeanValidator getValidator() {
-        ConfigurableBeanValidator validator = new ConfigurableBeanValidator();
-        validator.setFormName("fooBean");
-
+    private ConfigurablePageBeanValidator getValidator(int page) {
+        ConfigurablePageBeanValidator validator = new ConfigurablePageBeanValidator();
+        validator.setFormName("pagedFooBean");
+        validator.setPage(page);
         DefaultValidatorFactory factory = new DefaultValidatorFactory();
-        factory.setValidationConfigLocations(new Resource[]{new ClassPathResource("testValidation.xml", getClass())});
+        factory.setValidationConfigLocations(new Resource[]{
+            new ClassPathResource("testValidation.xml", getClass()),
+            new ClassPathResource("validation-rules.xml", getClass())
+        });
 
         validator.setValidatorFactory(factory);
         return validator;

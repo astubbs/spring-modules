@@ -3,12 +3,12 @@ package org.springmodules.validation.commons;
 import java.util.Locale;
 
 import junit.framework.TestCase;
-import org.springframework.beans.FatalBeanException;
-import org.springframework.validation.Errors;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ClassPathResource;
-import org.easymock.MockControl;
 import org.apache.commons.validator.Validator;
+import org.easymock.MockControl;
+import org.springframework.beans.FatalBeanException;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.validation.Errors;
 
 /**
  * @author robh

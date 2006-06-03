@@ -194,6 +194,167 @@
 
         <sect2>
 
+            <title>Partial Bean Validation Support</title>
+
+            <para>
+                Partial validation support enables partial validation of beans where not all properties are validated
+                but only selected ones.
+            </para>
+
+            <para>
+                Commons validator enables partial validation by specifying the <emphasis>page</emphasis> attribute
+                for each field in the form configuration:
+            </para>
+
+            <programlisting>&lt;form name="personDataWizard"&gt;
+    &lt;field property="firstName" depends="required" page="0"&gt;
+	    &lt;arg0 key="person.first.name" /&gt;
+    &lt;/field&gt;
+    &lt;field property="lastName" depends="required" page="0"&gt;
+        &lt;arg0 key="person.last.name" /&gt;
+    &lt;/field&gt;
+    &lt;field property="email" depends="required,email" page="0"&gt;
+        &lt;arg0 key="person.email" /&gt;
+    &lt;/field&gt;
+    &lt;field property="password" depends="required" page="1"&gt;
+        &lt;arg0 key="person.password" /&gt;
+    &lt;/field&gt;
+    &lt;field property="verifyPassword" depends="validwhen" page="1"&gt;
+        &lt;arg0 key="person.password.not.matching" /&gt;
+        &lt;var&gt;
+            &lt;var-name&gt;test&lt;/var-name&gt;
+            &lt;var-value&gt;(*this* == password)&lt;/var-value&gt;
+        &lt;/var&gt;
+    &lt;/field&gt;
+&lt;/form&gt;</programlisting>
+
+            <para>
+                The <emphasis>org.springmodules.validation.commons.ConfigurablePageBeanValidator</emphasis> and
+                <emphasis>org.springmodules.validation.commons.DefaultPageBeanValidator</emphasis> classes support
+                partial validation by setting their <emphasis>page</emphasis> property. The value of this property will
+                be matched with the page attribute in the form configuration, and only the fields with the appropriate
+                page configured will be validated.
+            </para>
+
+            <para>
+                The following is an example of a partial validation support usage within a wizard controller:
+            </para>
+
+            <programlisting>&lt;bean id="personWizardController" class="PersonWizardController"&gt;
+    &lt;property name="pages"&gt;
+        &lt;list&gt;
+            &lt;value&gt;personPage0&lt;/value&gt;
+            &lt;value&gt;personPage1&lt;/value&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
+    &lt;property name="allowDirtyForward" value="false"/&gt;
+    &lt;property name="validator" ref="pageValidator"/&gt;
+    &lt;property name="commandName" value="person"/&gt;
+    &lt;property name="commandClass" value="PersonData"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="pageValidator" class="org.springmodules.validation.commons.ConfigurablePageBeanValidator"&gt;
+    &lt;property name="formName" value="personDataWizard"/&gt;
+    &lt;property name="validatorFactory" ref="validatorFactory"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="validatorFactory" class="org.springmodules.validation.commons.DefaultValidatorFactory"&gt;
+    &lt;property name="validationConfigLocations"&gt;
+        &lt;list&gt;
+            &lt;value&gt;/WEB-INF/validator-rules.xml&lt;/value&gt;
+            &lt;value&gt;/WEB-INF/validator.xml&lt;/value&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+            <para>
+                For this configuration the controller will look like this:
+            </para>
+
+            <programlisting>public class PersonWizardController extends AbstractWizardFormController {
+    ...
+
+    protected void validatePage(Object command, Errors errors, int page) {
+        Validator[] validators = getValidators();
+        for (int i=0; i&lt;validators.length; i++) {
+            Validator validator = validators[i];
+            if (validator instanceof PageAware) {
+                ((PageAware)validator).setPage(page);
+                validator.validate(command, errors);
+            }
+        }
+    }
+
+}</programlisting>
+
+            Another configuration can be as follows:
+
+            <programlisting>&lt;bean id="personWizardController" class="PersonWizardController"&gt;
+    &lt;property name="pages"&gt;
+        &lt;list&gt;
+            &lt;value&gt;personPage0&lt;/value&gt;
+            &lt;value&gt;personPage1&lt;/value&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
+    &lt;property name="allowDirtyForward" value="false"/&gt;
+    &lt;property name="validators"&gt;
+        &lt;list&gt;
+            &lt;ref bean="pageValidator0"/&gt;
+            &lt;ref bean="pageValidator1"/&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
+    &lt;property name="commandName" value="person"/&gt;
+    &lt;property name="commandClass" value="PersonData"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="pageValidator0" class="ConfigurablePageBeanValidator" parent="pageValidator"&gt;
+    &lt;property name="page" value="0"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="pageValidator1" class="ConfigurablePageBeanValidator" parent="pageValidator"&gt;
+    &lt;property name="page" value="1"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="pageValidator" abstract="true"&gt;
+    &lt;property name="formName" value="personDataWizard"/&gt;
+    &lt;property name="validatorFactory" ref="validatorFactory"/&gt;
+&lt;/bean&gt;
+
+...
+
+            </programlisting>
+
+            <para>
+                In this case the code will look like this:
+            </para>
+
+            <programlisting>public class PersonWizardController extends AbstractWizardFormController {
+
+    ...
+
+    protected void validatePage(Object command, Errors errors, int page) {
+        Validator[] validators = getValidators();
+        for (int i=0; i&lt;validators.length; i++) {
+            Validator validator = validators[i];
+            if (validator instanceof PageAware) {
+                if (((PageAware)validator).getPage() == page) {
+                    validator.validate(command, errors);
+                }
+            }
+        }
+    }
+}</programlisting>
+
+            <para>
+                Both approaches are acceptable and have their pros and cons. The first makes the application context
+                configuration less verbose but at the same time changes the runtime state of the validators in each request.
+                The second involves a bit more configuration but the runtime state of the validator remains unchanged.
+            </para>
+
+        </sect2>
+
+        <sect2>
+
             <title>Client side validation</title>
 
             <para>
@@ -224,8 +385,6 @@
         </sect2>
 
     </sect1>
-
-
 
     <sect1 id="valang">
 

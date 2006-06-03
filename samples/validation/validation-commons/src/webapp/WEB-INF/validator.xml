@@ -8,16 +8,6 @@
     <formset>
 
         <form name="personData">
-			<field property="password" depends="required">
-				<arg0 key="person.password" />
-			</field>
-			<field property="verifyPassword" depends="validwhen">
-				<arg0 key="person.password.not.matching" />
-				<var>
-					<var-name>test</var-name>
-					<var-value>(*this* == password)</var-value>
-				</var>
-			</field>
 			<field property="firstName" depends="required">
 				<arg0 key="person.first.name" />
 			</field>
@@ -27,7 +17,39 @@
 			<field property="email" depends="required,email">
 				<arg0 key="person.email" />
 			</field>
-		</form>
+            <field property="password" depends="required">
+				<arg0 key="person.password" />
+			</field>
+			<field property="verifyPassword" depends="validwhen">
+				<arg0 key="person.password.not.matching" />
+				<var>
+					<var-name>test</var-name>
+					<var-value>(*this* == password)</var-value>
+				</var>
+			</field>
+        </form>
+
+        <form name="personDataWizard">
+			<field property="firstName" depends="required" page="0">
+				<arg0 key="person.first.name" />
+			</field>
+			<field property="lastName" depends="required" page="0">
+				<arg0 key="person.last.name" />
+			</field>
+			<field property="email" depends="required,email" page="0">
+				<arg0 key="person.email" />
+			</field>
+            <field property="password" depends="required" page="1">
+				<arg0 key="person.password" />
+			</field>
+			<field property="verifyPassword" depends="validwhen" page="1">
+				<arg0 key="person.password.not.matching" />
+				<var>
+					<var-name>test</var-name>
+					<var-value>(*this* == password)</var-value>
+				</var>
+			</field>
+        </form>
 
     </formset>
 

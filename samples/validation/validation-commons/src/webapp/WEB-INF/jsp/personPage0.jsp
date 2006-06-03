@@ -12,19 +12,14 @@
 
 <body>
 
-<h3>Personal informations</h3>
+    <h3>Contact Informations</h3>
 
-<spring:bind path="person.*">
-    <font color="red">
-        <b><c:out value="${status.value}"/></b>
-        <b><c:out value="${status.errorMessage}"/></b>
-    </font>
-</spring:bind>
+    <form action="personWizard.html?_target1" method="post" onsubmit="return validatePersonData(this);">
 
-<form action="" method="post" onsubmit="return validatePersonData(this);">
+        <input type="hidden" name="_page" value="0" />
 
         <table>
-        
+
             <tr>
                 <td><fmt:message key="person.first.name"/></td>
                 <td>
@@ -52,30 +47,12 @@
                     </spring:bind>
                 </td>
             </tr>
-            <tr>
-                <td><fmt:message key="person.password"/></td>
-                <td>
-                    <spring:bind path="person.password">
-                        <input type="password" name="password" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
-                        <font color="red"><c:out value="${status.errorMessage}"/></font>
-                    </spring:bind>
-                </td>
-            </tr>
-            <tr>
-                <td><fmt:message key="person.verify.password"/></td>
-                <td>
-                    <spring:bind path="person.verifyPassword">
-                        <input type="password" name="verifyPassword" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
-                        <font color="red"><c:out value="${status.errorMessage}"/></font>
-                    </spring:bind>
-                </td>
-            </tr>
 
         </table>
 
         <br/>
 
-        <input type="submit" value="<fmt:message key="form.submit"/>"/>
+        <input type="submit" value="<fmt:message key="wizard.next"/>"/>
 
     </form>
 

@@ -8,21 +8,23 @@ import org.apache.commons.validator.ValidatorResources;
 import org.easymock.MockControl;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 
 /**
  * @author robh
  */
-public class DefaultBeanValidatorTests extends TestCase {
+public class DefaultPageBeanValidatorTests extends TestCase {
 
     public void testSupports() {
-        DefaultBeanValidator validator = getValidator();
+        DefaultPageBeanValidator validator = getValidator(0);
 
         assertTrue(validator.supports(FooBean.class));
         assertFalse(validator.supports(String.class));
     }
 
     public void testSupportsWithFullyQualifiedName() {
-        DefaultBeanValidator validator = getValidator();
+        DefaultPageBeanValidator validator = getValidator(0);
         validator.setUseFullyQualifiedClassName(true);
 
         assertTrue(validator.supports(FooBarBean.class));
@@ -30,8 +32,25 @@ public class DefaultBeanValidatorTests extends TestCase {
     }
 
     public void testGetLocale() {
-        DefaultBeanValidator validator = getValidator();
+        DefaultPageBeanValidator validator = getValidator(0);
         assertEquals(validator.getLocale(), Locale.getDefault());
+    }
+
+    public void testValidate_WithPageSettings() {
+        DefaultPageBeanValidator validator = getValidator(0);
+
+        FooBean bean = new FooBean();
+        BindException errors = new BindException(bean, "pagedFooBean");
+
+        validator.validate(bean, errors);
+        assertTrue(errors.hasFieldErrors("name"));
+        assertEquals(1, errors.getErrorCount());
+        assertEquals("name", ((FieldError)errors.getAllErrors().iterator().next()).getField());
+
+        errors = new BindException(bean, "pagedFooBean");
+        bean.setName("name");
+        validator.validate(bean, errors);
+        assertFalse(errors.hasFieldErrors("name"));
     }
 
     public void testValidate() {
@@ -53,10 +72,13 @@ public class DefaultBeanValidatorTests extends TestCase {
         ctl.verify();
     }
 
-    private DefaultBeanValidator getValidator() {
-        DefaultBeanValidator validator = new DefaultBeanValidator();
+    private DefaultPageBeanValidator getValidator(int page) {
+        DefaultPageBeanValidator validator = new DefaultPageBeanValidator(page);
         DefaultValidatorFactory factory = new DefaultValidatorFactory();
-        factory.setValidationConfigLocations(new Resource[]{new ClassPathResource("testValidation.xml", getClass())});
+        factory.setValidationConfigLocations(new Resource[]{
+            new ClassPathResource("testValidation.xml", getClass()),
+            new ClassPathResource("validation-rules.xml", getClass())
+        });
         validator.setValidatorFactory(factory);
         return validator;
     }

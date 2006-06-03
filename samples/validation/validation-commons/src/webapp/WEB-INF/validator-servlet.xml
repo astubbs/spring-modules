@@ -28,6 +28,7 @@
 		<property name="mappings">
 			<props>
 				<prop key="/person.html">personController</prop>
+				<prop key="/personWizard.html">personWizardController</prop>
 				<prop key="/validator.js">jsValidatorController</prop>
 			</props>
 		</property>
@@ -46,11 +47,41 @@
         <property name="commandClass" value="org.springmodules.samples.validation.commons.web.PersonData"/>
     </bean>
 
+    <bean id="personWizardController" class="org.springmodules.samples.validation.commons.web.PersonWizardController">
+        <property name="pages">
+            <list>
+                <value>personPage0</value>
+                <value>personPage1</value>
+            </list>
+        </property>
+        <property name="allowDirtyForward" value="false"/>
+        <property name="validators">
+            <list>
+                <ref bean="pageValidator0"/>
+                <ref bean="pageValidator1"/>
+            </list>
+        </property>
+        <property name="commandName" value="person"/>
+        <property name="commandClass" value="org.springmodules.samples.validation.commons.web.PersonData"/>
+    </bean>
 
 
     <!--=================================== Commons Validator =====================================-->
 
-	<bean id="beanValidator" class="org.springmodules.validation.commons.DefaultBeanValidator">
+    <bean id="pageValidator0" class="org.springmodules.validation.commons.ConfigurablePageBeanValidator" parent="pageValidator">
+        <property name="page" value="0"/>
+    </bean>
+
+    <bean id="pageValidator1" class="org.springmodules.validation.commons.ConfigurablePageBeanValidator" parent="pageValidator">
+        <property name="page" value="1"/>
+    </bean>
+
+    <bean id="pageValidator" abstract="true">
+        <property name="formName" value="personDataWizard"/>
+        <property name="validatorFactory" ref="validatorFactory"/>
+    </bean>
+
+    <bean id="beanValidator" class="org.springmodules.validation.commons.DefaultBeanValidator">
 		<property name="validatorFactory" ref="validatorFactory"/>
 	</bean>
 
