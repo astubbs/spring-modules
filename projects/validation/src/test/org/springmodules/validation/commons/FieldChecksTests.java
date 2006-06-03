@@ -6,6 +6,8 @@ import java.util.Map;
 import junit.framework.TestCase;
 import org.apache.commons.validator.Field;
 import org.apache.commons.validator.ValidatorAction;
+import org.apache.commons.validator.Validator;
+import org.apache.commons.validator.ValidatorResources;
 import org.easymock.MockControl;
 import org.springframework.validation.Errors;
 
@@ -86,6 +88,43 @@ public class FieldChecksTests extends TestCase {
         assertFalse(result);
     }
 
+    public void testValidateWhenValid_Success() throws Exception {
+        MockValidationBean bean = new MockValidationBean();
+        bean.setAge(5);
+        Field field = createFieldForProperty("age");
+        field.addVar("test", "(*this* < 10)", "");
+
+        MockControl control = MockControl.createControl(Errors.class);
+
+        ValidatorAction validatorAction = new ValidatorAction();
+        Errors errors = (Errors) control.getMock();
+
+        ValidatorResources vr = new ValidatorResources();
+        vr.process();
+        Validator validator = new Validator(vr);
+
+        boolean result = FieldChecks.validateValidWhen(bean, validatorAction, field, errors, validator);
+        assertTrue(result);
+    }
+
+    public void testValidateWhenValid_Failure() throws Exception {
+        MockValidationBean bean = new MockValidationBean();
+        Field field = createFieldForProperty("name");
+        field.addVar("test", "(*this* != null)", "");
+
+        MockControl control = MockControl.createControl(Errors.class);
+
+        ValidatorAction validatorAction = new ValidatorAction();
+        Errors errors = (Errors) control.getMock();
+
+        ValidatorResources vr = new ValidatorResources();
+        vr.process();
+        Validator validator = new Validator(vr);
+
+        boolean result = FieldChecks.validateValidWhen(bean, validatorAction, field, errors, validator);
+        assertFalse(result);
+    }
+
     private Field createFieldForProperty(String property) {
         Field field = new Field();
         field.setProperty(property);
@@ -93,7 +132,6 @@ public class FieldChecksTests extends TestCase {
     }
 
     public static class MockValidationBean {
-
 
         private String name;
 

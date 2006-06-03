@@ -1,6 +1,7 @@
 package org.springmodules.validation.commons;
 
 import java.io.Serializable;
+import java.io.StringReader;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
@@ -8,9 +9,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.Field;
 import org.apache.commons.validator.GenericTypeValidator;
 import org.apache.commons.validator.GenericValidator;
+import org.apache.commons.validator.Validator;
 import org.apache.commons.validator.ValidatorAction;
 import org.apache.commons.validator.util.ValidatorUtils;
 import org.springframework.validation.Errors;
+import org.springmodules.validation.commons.validwhen.ValidWhenLexer;
+import org.springmodules.validation.commons.validwhen.ValidWhenParser;
 
 /**
  * This class contains the default validations that are used in the validator-rules.xml file.
@@ -705,6 +709,112 @@ public class FieldChecks implements Serializable {
     }
 
     /**
+     * Checks if the field matches the boolean expression specified in
+     * <code>test</code> parameter.
+     *
+     * @param bean The bean validation is being performed on.
+     *
+     * @param va The <code>ValidatorAction</code> that is currently being
+     *      performed.
+     *
+     * @param field The <code>Field</code> object associated with the current
+     *      field being validated.
+     *
+     * @param errors The <code>Errors</code> object to add errors to if any
+     *      validation errors occur.
+     *
+     * @return <code>true</code> if meets stated requirements,
+     *      <code>false</code> otherwise.
+     */
+    public static boolean validateValidWhen(
+        Object bean,
+        ValidatorAction va,
+        Field field,
+        Errors errors,
+        Validator validator) {
+
+        Object form = validator.getParameterValue(Validator.BEAN_PARAM);
+        String value = null;
+        boolean valid = false;
+        int index = -1;
+
+        if (field.isIndexed()) {
+            String key = field.getKey();
+
+            final int leftBracket = key.indexOf("[");
+            final int rightBracket = key.indexOf("]");
+
+            if ((leftBracket > -1) && (rightBracket > -1)) {
+                index =
+                    Integer.parseInt(key.substring(leftBracket + 1, rightBracket));
+            }
+        }
+
+        if (isString(bean)) {
+            value = (String) bean;
+        } else {
+            value = ValidatorUtils.getValueAsString(bean, field.getProperty());
+        }
+
+        String test = field.getVarValue("test");
+        if (test == null) {
+            String msg = "ValidWhen Error 'test' parameter is missing for field ' " + field.getKey() + "'";
+            errors.rejectValue(field.getKey(), msg);
+            log.error(msg);
+            return false;
+        }
+
+        // Create the Lexer
+        ValidWhenLexer lexer= null;
+        try {
+            lexer = new ValidWhenLexer(new StringReader(test));
+        } catch (Exception ex) {
+            String msg = "ValidWhenLexer Error for field ' " + field.getKey() + "' - " + ex;
+            errors.rejectValue(field.getKey(), msg);
+            log.error(msg);
+            log.debug(msg, ex);
+            return false;
+        }
+
+        // Create the Parser
+        ValidWhenParser parser = null;
+        try {
+            parser = new ValidWhenParser(lexer);
+        } catch (Exception ex) {
+            String msg = "ValidWhenParser Error for field ' " + field.getKey() + "' - " + ex;
+            errors.rejectValue(field.getKey(), msg);
+            log.error(msg);
+            log.debug(msg, ex);
+            return false;
+        }
+
+
+        parser.setForm(form);
+        parser.setIndex(index);
+        parser.setValue(value);
+
+        try {
+            parser.expression();
+            valid = parser.getResult();
+
+        } catch (Exception ex) {
+            String msg = "ValidWhen Error for field ' " + field.getKey() + "' - " + ex;
+            errors.rejectValue(field.getKey(), msg);
+            log.error(msg);
+            log.debug(msg, ex);
+
+            return false;
+        }
+
+        if (!valid) {
+            rejectValue(errors, field, va);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Extracts the value of the given bean. If the bean is <code>null</code>, the returned value is also <code>null</code>.
      * If the bean is a <code>String</code> then the bean itself is returned. In all other cases, the <code>ValidatorUtils</code>
      * class is used to extract the bean value using the <code>Field</code> object supplied.
@@ -746,5 +856,12 @@ public class FieldChecks implements Serializable {
         }
 
         errors.rejectValue(fieldCode, errorCode, args, errorCode);
+    }
+
+    /**
+     * Returns true if <code>obj</code> is null or a String.
+     */
+    private static boolean isString(Object obj) {
+        return (obj == null) ? true : String.class.isInstance(obj);
     }
 }

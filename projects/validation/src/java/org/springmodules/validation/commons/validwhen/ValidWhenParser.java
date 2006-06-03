@@ -1,9 +1,9 @@
 // $ANTLR 2.7.5 (20050128): "ValidWhenParser.g" -> "ValidWhenParser.java"$
 
 /*
- * $Header: /cvs/springmodules/samples/validation/validation-commons/src/java/org/springmodules/validation/commons/Attic/ValidWhenParser.java,v 1.1 2006/06/02 00:52:07 hueboness Exp $
+ * $Header: /cvs/springmodules/projects/validation/src/java/org/springmodules/validation/commons/validwhen/ValidWhenParser.java,v 1.1 2006/06/03 22:15:43 hueboness Exp $
  * $Revision: 1.1 $
- * $Date: 2006/06/02 00:52:07 $
+ * $Date: 2006/06/03 22:15:43 $
  *
  * Copyright 2003-2004 The Apache Software Foundation.
  *
@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.commons;
+package org.springmodules.validation.commons.validwhen;
 
 import java.util.Stack;
 
@@ -34,16 +34,16 @@ import antlr.TokenStreamException;
 import antlr.collections.impl.BitSet;
 import org.apache.commons.validator.util.ValidatorUtils;
 
-public class ValidWhenParser extends antlr.LLkParser       implements ValidWhenParserTokenTypes
+public class ValidWhenParser extends antlr.LLkParser implements ValidWhenParserTokenTypes
  {
 Stack argStack = new Stack();
 Object form;
 int index;
 String value;
 
-    public void setForm(Object f) { form = f; };
-    public void setIndex (int i) { index = i; };
-    public void setValue (String v) { value = v; };
+    public void setForm(Object f) { form = f; }
+    public void setIndex (int i) { index = i; }
+    public void setValue (String v) { value = v; }
 
     public boolean getResult() {
        return ((Boolean)argStack.peek()).booleanValue();
@@ -123,7 +123,7 @@ String value;
 		case NOT_EQUAL:
 		    return (v1i != v2i);
 		}
-	    } catch (NumberFormatException ex) {};
+	    } catch (NumberFormatException ex) {}
 	}
 	String v1s = "", v2s = "";
 

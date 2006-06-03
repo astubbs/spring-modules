@@ -1,9 +1,9 @@
 // $ANTLR 2.7.5 (20050128): "ValidWhenParser.g" -> "ValidWhenParser.java"$
 
 /*
- * $Header: /cvs/springmodules/samples/validation/validation-commons/src/java/org/springmodules/validation/commons/Attic/ValidWhenParserTokenTypes.java,v 1.1 2006/06/02 00:52:07 hueboness Exp $
+ * $Header: /cvs/springmodules/projects/validation/src/java/org/springmodules/validation/commons/validwhen/ValidWhenParserTokenTypes.java,v 1.1 2006/06/03 22:15:43 hueboness Exp $
  * $Revision: 1.1 $
- * $Date: 2006/06/02 00:52:07 $
+ * $Date: 2006/06/03 22:15:43 $
  *
  * Copyright 2003-2004 The Apache Software Foundation.
  *
@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.commons;
+package org.springmodules.validation.commons.validwhen;
 
 public interface ValidWhenParserTokenTypes {
     int EOF = 1;

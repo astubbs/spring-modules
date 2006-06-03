@@ -120,14 +120,13 @@
       </validator>
 
       <validator name="validwhen"
-                 classname="org.springmodules.validation.commons.ValidWhen"
+                 classname="org.springmodules.validation.commons.FieldChecks"
                  method="validateValidWhen"
                  methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors,
-                       org.apache.commons.validator.Validator,
-                       javax.servlet.http.HttpServletRequest"
+                       org.apache.commons.validator.Validator"
                  msg="errors.required"/>
 
       <validator name="minlength"

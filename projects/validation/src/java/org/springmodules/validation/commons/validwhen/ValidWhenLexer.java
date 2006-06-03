@@ -1,9 +1,9 @@
 // $ANTLR 2.7.5 (20050128): "ValidWhenParser.g" -> "ValidWhenLexer.java"$
 
 /*
- * $Header: /cvs/springmodules/samples/validation/validation-commons/src/java/org/springmodules/validation/commons/Attic/ValidWhenLexer.java,v 1.1 2006/06/02 00:52:07 hueboness Exp $
+ * $Header: /cvs/springmodules/projects/validation/src/java/org/springmodules/validation/commons/validwhen/ValidWhenLexer.java,v 1.1 2006/06/03 22:15:42 hueboness Exp $
  * $Revision: 1.1 $
- * $Date: 2006/06/02 00:52:07 $
+ * $Date: 2006/06/03 22:15:42 $
  *
  * Copyright 2003-2004 The Apache Software Foundation.
  *
@@ -20,7 +20,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.commons;
+package org.springmodules.validation.commons.validwhen;
 
 import java.io.InputStream;
 import java.io.Reader;
