@@ -6,6 +6,18 @@
 
         <title>Commons Validator</title>
 
+		<important>
+			<para>
+				In version 0.4, the commons validator support was moved from the commons module to the validation module. As a
+				consequence, all related classes in the commons module were deprecated and will be removed in version 0.5.
+			</para>
+		  	<para>
+		  		Please note that due to this change, the packages were renamed. Apart from that, the functionality stayed more
+		  		or less the same with the exception of some bug fixes and small improvements. Also note that all bug fixes and
+                maintenance will be done on the validation module solely.
+              </para>
+  		</important>
+
         <para>
             The Commons Validator is a library that allows you to perform
             validation based on rules specified in XML configuration files.
