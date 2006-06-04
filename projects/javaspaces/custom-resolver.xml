@@ -1,0 +1,13 @@
+<ivyconf>
+	<resolvers>
+		<chain name="custom">
+		<url name="ibiblio-jini">
+			<!-- url pattern for ibiblio/ivy is not used since the poms have cyclic dependencies -->
+	        <artifact pattern="http://ibiblio.org/maven2/net/jini/[artifact]/[revision]/[artifact]-[revision].[ext]" />
+		</url>		
+		<!-- 
+		<ibiblio name="objectstyle-maven" root="http://www.objectstyle.org/maven/"/>
+		 -->
+		</chain>
+	</resolvers>
+</ivyconf>
