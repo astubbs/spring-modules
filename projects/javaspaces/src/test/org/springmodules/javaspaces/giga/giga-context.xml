@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Root application context -->
+
+<beans>
+
+	<!--
+		GigaSpaceFactoryBean - using java protocol a space is created ad-hoc.
+	-->
+	 <bean id="gigaSpace" 
+		class="org.springmodules.javaspaces.giga.GigaSpacesFactoryBean" >
+		<property name="urls">
+			<list>
+				<value>/./myCache?properties=gs&amp;groups="gigaspaces-1384"</value>
+			</list>
+		</property>
+	</bean>
+	
+</beans>
