@@ -16,6 +16,13 @@ Package org.springmodules.validation
 * Moved all the content of org.springmodules.validation to org.springmodules.validation.valang
 * Deprecated ValangValidatorFactoryBean - use ValangValidator instead
 
+Package org.springmodules.validation.commons
+* Added support for partial bean validation by on top of the "page" attributes in the commons validation configuration
+* Updated FieldChecks to correctly handle map attributes
+
+Package org.springmodules.validation.commons.validwhen
+* Added struts validwhen validation to the commons validator support
+
 Package org.springmodules.validation.valang
 * Moved out from the sandbox and was put in the project folder
 
