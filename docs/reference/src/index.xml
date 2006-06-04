@@ -12,7 +12,7 @@
 	<!ENTITY cache 			SYSTEM "../../../projects/cache/docs/reference/src/cache.xml">
 	<!ENTITY jcr 			SYSTEM "../../../projects/jcr/docs/reference/src/jcr.xml">
 	<!ENTITY lucene 		SYSTEM "../../../projects/lucene/docs/reference/src/lucene.xml">
-	<!ENTITY javaspace		SYSTEM "../../../projects/javaspace/docs/reference/src/javaspace.xml">
+	<!ENTITY javaspaces		SYSTEM "../../../projects/javaspaces/docs/reference/src/javaspaces.xml">
 	<!ENTITY validation		SYSTEM "../../../projects/validation/docs/reference/src/validation.xml">
 	]>
 
@@ -26,7 +26,7 @@
 
 	&hivemind;
 
-	&javaspace;
+	&javaspaces;
 	
 	&jcr;
 
