@@ -62,11 +62,11 @@ public class GenericTestPredicateTests extends TestCase {
 
     public void testStringInNotInOperatorSuccess() {
         Collection coll = new ArrayList();
-        coll.add(new LiteralFunction(new BigDecimal(1)));
-        coll.add(new LiteralFunction(new BigDecimal(2)));
-        coll.add(new LiteralFunction(new BigDecimal(3)));
-        coll.add(new LiteralFunction(new BigDecimal(4)));
-        coll.add(new LiteralFunction(new BigDecimal(5)));
+        coll.add(new LiteralFunction(new BigDecimal("1")));
+        coll.add(new LiteralFunction(new BigDecimal("2")));
+        coll.add(new LiteralFunction(new BigDecimal("3")));
+        coll.add(new LiteralFunction(new BigDecimal("4")));
+        coll.add(new LiteralFunction(new BigDecimal("5")));
 
         assertTrue(5, OperatorConstants.IN_OPERATOR, coll);
         assertFalse(6, OperatorConstants.IN_OPERATOR, coll);
@@ -89,8 +89,8 @@ public class GenericTestPredicateTests extends TestCase {
 
     public void testBetweenNotBetweenOperatorSuccess() {
         Collection coll = new ArrayList();
-        coll.add(new LiteralFunction(new BigDecimal(1)));
-        coll.add(new LiteralFunction(new BigDecimal(5)));
+        coll.add(new LiteralFunction(new BigDecimal("1")));
+        coll.add(new LiteralFunction(new BigDecimal("5")));
 
         assertTrue(5, OperatorConstants.BETWEEN_OPERATOR, coll);
         assertFalse(6, OperatorConstants.BETWEEN_OPERATOR, coll);

@@ -1,6 +1,8 @@
 package org.springmodules.validation.commons;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
 import org.apache.commons.validator.Validator;
@@ -8,6 +10,7 @@ import org.apache.commons.validator.ValidatorResources;
 import org.easymock.MockControl;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.validation.BindException;
 
 /**
  *
@@ -16,14 +19,14 @@ import org.springframework.core.io.Resource;
 public class ConfigurableBeanValidatorTests extends TestCase {
 
      public void testSupports() {
-        ConfigurableBeanValidator validator = getValidator();
+        ConfigurableBeanValidator validator = getValidator("fooBean");
 
         assertTrue("Should support FooBean", validator.supports(FooBean.class));
         assertTrue("Should support String", validator.supports(String.class));
     }
 
     public void testGetLocale() {
-        ConfigurableBeanValidator validator = getValidator();
+        ConfigurableBeanValidator validator = getValidator("fooBean");
         assertEquals(validator.getLocale(), Locale.getDefault());
     }
 
@@ -48,12 +51,44 @@ public class ConfigurableBeanValidatorTests extends TestCase {
         ctl.verify();
     }
 
-    private ConfigurableBeanValidator getValidator() {
+     public void testValidate_WithMappedProperty_Failure() throws Exception {
+        FooBean bean = new FooBean();
+        Map attributes = new HashMap();
+        bean.setAttributes(attributes);
+
+        BindException errors = new BindException(bean, "fooBeanWithMappedProperty");
+
+        ConfigurableBeanValidator validator = getValidator("fooBeanWithMappedProperty");
+        validator.validate(bean, errors);
+
+        assertTrue(errors.hasFieldErrors("attributes[name1]"));
+    }
+
+    public void testValidate_WithMappedProperty_Success() throws Exception {
+        FooBean bean = new FooBean();
+        Map attributes = new HashMap();
+        attributes.put("name1", "value1");
+        bean.setAttributes(attributes);
+
+        BindException errors = new BindException(bean, "fooBeanWithMappedProperty");
+
+        ConfigurableBeanValidator validator = getValidator("fooBeanWithMappedProperty");
+        validator.validate(bean, errors);
+
+        assertFalse(errors.hasFieldErrors("attributes[name1]"));
+    }
+
+    private ConfigurableBeanValidator getValidator(String formName) {
         ConfigurableBeanValidator validator = new ConfigurableBeanValidator();
-        validator.setFormName("fooBean");
+        validator.setFormName(formName);
 
         DefaultValidatorFactory factory = new DefaultValidatorFactory();
-        factory.setValidationConfigLocations(new Resource[]{new ClassPathResource("testValidation.xml", getClass())});
+        factory.setValidationConfigLocations(
+            new Resource[]{
+                new ClassPathResource("testValidation.xml", getClass()),
+                new ClassPathResource("validation-rules.xml", getClass())
+            }
+        );
 
         validator.setValidatorFactory(factory);
         return validator;

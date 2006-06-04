@@ -20,6 +20,12 @@
             </field>
         </form>
 
+        <form name="fooBeanWithMappedProperty">
+            <field property="attributes(name1)" depends="required">
+                <arg key="nameForm.attributes.names1"/>
+            </field>
+        </form>
+
         <form name="org.springmodules.validation.commons.FooBarBean">
             <field property="emailAddress" depends="required">
                 <arg key="foo"/>

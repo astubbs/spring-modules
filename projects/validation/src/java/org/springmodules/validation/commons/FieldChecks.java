@@ -844,9 +844,14 @@ public class FieldChecks implements Serializable {
      * @param field the field that was rejected
      * @param va the validator action
      */
-    public static void rejectValue(Errors errors, Field field,
-                                   ValidatorAction va) {
+    public static void rejectValue(Errors errors, Field field, ValidatorAction va) {
         String fieldCode = field.getKey();
+
+        // this is required to translate the mapping access used by commons validator (delegated to commons beanutils)
+        // which uses '(' and ')' to the notation used by spring validator (delegated to PropertyAccessor) which
+        // uses '[' and ']'.
+        fieldCode = fieldCode.replace('(', '[').replace(')', ']');
+
         String errorCode = MessageUtils.getMessageKey(va, field);
         Object[] args = MessageUtils.getArgs(va, field);
 
