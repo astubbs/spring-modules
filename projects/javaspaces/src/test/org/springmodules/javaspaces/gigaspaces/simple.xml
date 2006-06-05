@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="simpleDAO" class="com.gigaspaces.spring.tests.app.SimpleDao">
+		 <!--
+		<property name="space" ref="gigaSpace"/>
+
+		<property name="pojoToEntryConverter" ref="converter"/>
+		-->
+		<property name="gigaSpaceTemplate" ref="gigaSpacesTemplate" />
+	</bean>
+</beans>
+

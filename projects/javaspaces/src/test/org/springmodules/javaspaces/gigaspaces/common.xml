@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- Declaration of GigaSpace factory bean -->
+
+	<bean id="gigaSpace"
+		class="com.gigaspaces.spring.GigaSpacesFactoryBean">
+		<property name="urls">
+			<list>
+				  <value>/./myCache</value>
+			</list>
+		</property>
+	</bean>
+	<!-- Declaration of GigaSpace template-->
+	<bean id="gigaSpacesTemplate"
+		class="com.gigaspaces.spring.GigaSpacesTemplate" >
+		<property name="space" ref="gigaSpace" />
+	</bean>
+	<!-- Declaration of GigaSpace template-->
+<!--
+	<bean id="converter"
+		class="com.gigaspaces.spring.converter.SpringPojo2ExternalEntryConverter">
+		<property name="mappingResources">
+			<list>
+				<value>SimpleDaoBean.gs.xml</value>
+			</list>
+		</property>
+		<property name="space" ref="gigaSpace" />
+	</bean>
+ -->
+</beans>
+

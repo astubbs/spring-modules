@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<!-- Declaration of GigaSpace factory bean -->
+
+	<bean id="gigaSpace"
+		class="com.gigaspaces.spring.GigaSpacesFactoryBean">
+		<property name="urls">
+			<list>
+				<value>rmi://localhost:10098/./myCache</value>
+			</list>
+		</property>
+	</bean>
+	<!-- Declaration of GigaSpace jdbc driver-->
+	<bean id="gigaspaceDataSource"
+		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+		singleton="false">
+		<property name="driverClassName"
+			value="com.j_spaces.jdbc.driver.GDriver" />
+		<property name="url"
+			value="jdbc:gigaspaces:url:rmi://localhost:10098/./myCache" />
+		<property name="username" value="" />
+		<property name="password" value="" />
+	</bean>
+	<bean id="jdbcTemplate"
+		class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="gigaspaceDataSource" />
+		</property>
+	</bean>
+
+	<!-- Declaration of GigaSpace template-->
+	<!--
+	<bean id="converter"
+		class="com.gigaspaces.spring.converter.SpringPojo2ExternalEntryConverter">
+		<property name="mappingResources">
+			<list>
+				<value>SimpleDaoBean.gs.xml</value>
+			</list>
+		</property>
+		<property name="space" ref="gigaSpace" />
+	</bean>
+ -->
+</beans>
+

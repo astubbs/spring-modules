@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="jndiTemplate"
+		class="org.springframework.jndi.JndiTemplate">
+		<property name="environment">
+			<props>
+				<prop key="java.naming.factory.initial">com.sun.jndi.rmi.registry.RegistryContextFactory</prop>
+				<prop key="java.naming.provider.url">rmi://localhost:10098</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- JMS Queue Template -->
+	<bean id="jmsQueueTemplate"
+		class="org.springframework.jms.core.JmsTemplate102">
+		<property name="connectionFactory">
+			<ref bean="jmsQueueConnectionFactory" />
+		</property>
+		<property name="defaultDestination">
+			<ref bean="destination" />
+		</property>
+		<property name="pubSubDomain">
+			<value>false</value>
+		</property>
+		<property name="receiveTimeout">
+			<value>20000</value>
+		</property>
+	</bean>
+
+
+	<!-- JMS Queue Connection Factory -->
+	<bean id="jmsQueueConnectionFactory"
+		class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiTemplate">
+			<ref bean="jndiTemplate" />
+		</property>
+		<property name="jndiName">
+			<value>GigaSpaces;myJMS_container;myJMS;GSQueueConnectionFactoryImpl</value>
+		</property>
+	</bean>
+	<bean id="destination"
+		class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiTemplate">
+			<ref bean="jndiTemplate" />
+		</property>
+		<property name="jndiName">
+			<value>GigaSpaces;myJMS_container;myJMS;jms;destinations;MyQueue</value>
+		</property>
+	</bean>
+	<bean id="jmsSender"
+		class="com.gigaspaces.spring.tests.app.JMSSender">
+		<property name="jmsTemplate102">
+			<ref bean="jmsQueueTemplate" />
+		</property>
+
+	</bean>
+
+	<bean id="jmsReceiver"
+		class="com.gigaspaces.spring.tests.app.JMSReceiver">
+		<property name="jmsTemplate102">
+			<ref bean="jmsQueueTemplate" />
+		</property>
+
+	</bean>
+
+</beans>
+

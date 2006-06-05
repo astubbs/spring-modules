@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!-- Root application context -->
+
+<beans>
+
+	<!--
+		Server side. We start these guys as threads.
+		Note the singleton=false setting. This means that each one of these we obtain from
+		Spring will be a distinct instance.
+	-->
+	<bean id="testBeanWorker"
+		class="org.springframework.spaces.DelegatingWorker"
+		singleton="false" >
+		<property name="javaSpaceTemplate" ref="gigaSpacesTemplate"/>
+		<property name="delegate"><ref local="testBean"/></property>
+		<property name="businessInterface"><value>org.springframework.beans.ITestBean</value></property>
+	</bean>
+
+<bean id="gigaSpacesUidFactory"
+		class="com.gigaspaces.spring.remote.support.GigaSpacesUidFactory">
+		<property name="space" ref="gigaSpace"/>
+	</bean>
+<!--
+		Only need one of these, whatever the interface.
+
+		class="org.springframework.spaces.JavaSpaceInterceptor">
+
+	-->
+	<bean id="javaSpaceInterceptor"
+		class="com.gigaspaces.spring.GigaSpacesInterceptor">
+		<property name="javaSpaceTemplate" ref="gigaSpacesTemplate"/>
+		<property name="timeoutMillis"><value>50000</value></property>
+		<property name="uidFactory" ref="gigaSpacesUidFactory"/>
+
+
+		<!--
+			Causes this target to be passed to space in a RunnableMethodEntry.
+			Comment out this property for "service seeking" behaviour where the endpoint is
+			assumed to host a service to invoke.
+		-->
+		<!--
+		<property name="serializableTarget">
+			<bean class="org.springframework.spaces.SerializableTestBean" />
+		</property>
+		-->
+
+	</bean>
+<!--
+		This is the client-side proxy.
+		TODO normally we would add a FactoryBean that would simplify this.
+		In Spring 1.3 we will also allow extended XML, so it would be possible
+		to define a "spaces" or "gigaspaces" namespace and reduce the volume of
+		configuration required.
+	-->
+	<bean id="proxy"
+		class="org.springframework.aop.framework.ProxyFactoryBean">
+
+		<!--
+			Definition of the Spring AOP interceptor chain. The spaceInterceptor
+			must be the last interceptor as there is no local target to invoke.
+			Any number of other interceptors can be added, e.g. to monitor performance,
+			add security or other functionality.
+		-->
+		<property name="interceptorNames">
+			<list>
+				<value>javaSpaceInterceptor</value>
+				<!--
+				<value>PerformanceMonitorInterceptor</value>
+				 -->
+			</list>
+		</property>
+		<property name="proxyInterfaces">
+			<list>
+				<value>org.springframework.beans.ITestBean</value>
+				<!--
+				<value>org.springframework.core.Ordered</value>
+				 -->
+			</list>
+		</property>
+	</bean>
+
+	<!--
+		Simple test target
+	-->
+	<bean id="testBean" class="org.springframework.beans.TestBean" >
+		<property name="name"><value>rod</value></property>
+		<property name="age"><value>34</value></property>
+		<property name="spouse" ref="spouse"/>
+	</bean>
+    <bean id="spouse" class="org.springframework.spaces.SerializableTestBean">
+		<property name="name" value="kerry"/>
+	</bean>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!--
+		Another work definition.
+	-->
+	<!--
+	<bean id="orderedWorker"
+		class="org.springframework.spaces.DelegatingWorker"
+		singleton="false" >
+		<property name="javaSpaceTemplate" ref ="gigaspacesTemplate"/>
+		<property name="delegate">
+			<bean class="org.springframework.spaces.FactoryTests$TestOrdered" />
+		</property>
+		<property name="businessInterface"><value>org.springframework.core.Ordered</value></property>
+	</bean>
+	-->
+
+	<!--
+		This is an optional, experimental interceptor to optimize calls based on whether a local
+		service is available. Not necessary for the integration prototype.
+	<bean id="locationInterceptor"
+		class="org.springframework.location.LocationInterceptor">
+		<property name="beanNames">
+			<list>
+				<value>testBean</value>
+			</list>
+		</property>
+	</bean>
+	-->
+
+</beans>
