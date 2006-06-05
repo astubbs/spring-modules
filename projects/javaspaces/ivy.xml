@@ -18,16 +18,17 @@
 
 
   <dependencies>
-    
+
+   	<dependency org="apache" name="commons-logging" rev="1.1"/>
+    <dependency org="apache" name="log4j" rev="1.2.13" />
+       	
     <dependency org="springframework" name="springframework" rev="2.0-m4">
-      <artifact name="spring-core" type="jar" conf="global" />
-      <artifact name="spring-beans" type="jar" conf="global" />
+      <artifact name="spring" type="jar" conf="global" />
     </dependency>
 
     <dependency org="cglib" name="cglib" rev="2.1_3">
       <artifact name="cglib-nodep" type="jar"/>
     </dependency>
-    <dependency org="apache" name="commons-logging" rev="1.1"/>
 
 	<dependency org="jini" name="jsk-lib" rev="2.1"/>
 	<dependency org="jini" name="jsk-platform" rev="2.1"/>
