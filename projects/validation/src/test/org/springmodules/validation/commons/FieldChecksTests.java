@@ -13,6 +13,7 @@ import org.springframework.validation.Errors;
 
 /**
  * @author robh
+ * @author Uri Boness
  */
 public class FieldChecksTests extends TestCase {
 
@@ -107,6 +108,25 @@ public class FieldChecksTests extends TestCase {
         assertTrue(result);
     }
 
+    public void testValidateWhenValid_SuccessWithDouble() throws Exception {
+        MockValidationBean bean = new MockValidationBean();
+        bean.setValue(-0.45);
+        Field field = createFieldForProperty("value");
+        field.addVar("test", "(*this* > -10.43)", "");
+
+        MockControl control = MockControl.createControl(Errors.class);
+
+        ValidatorAction validatorAction = new ValidatorAction();
+        Errors errors = (Errors) control.getMock();
+
+        ValidatorResources vr = new ValidatorResources();
+        vr.process();
+        Validator validator = new Validator(vr);
+
+        boolean result = FieldChecks.validateValidWhen(bean, validatorAction, field, errors, validator);
+        assertTrue(result);
+    }
+
     public void testValidateWhenValid_Failure() throws Exception {
         MockValidationBean bean = new MockValidationBean();
         Field field = createFieldForProperty("name");
@@ -125,6 +145,25 @@ public class FieldChecksTests extends TestCase {
         assertFalse(result);
     }
 
+    public void testValidateWhenValid_SuccessWithString() throws Exception {
+        MockValidationBean bean = new MockValidationBean();
+        bean.setName("uri");
+        Field field = createFieldForProperty("name");
+        field.addVar("test", "(*this* == 'uri')", "");
+
+        MockControl control = MockControl.createControl(Errors.class);
+
+        ValidatorAction validatorAction = new ValidatorAction();
+        Errors errors = (Errors) control.getMock();
+
+        ValidatorResources vr = new ValidatorResources();
+        vr.process();
+        Validator validator = new Validator(vr);
+
+        boolean result = FieldChecks.validateValidWhen(bean, validatorAction, field, errors, validator);
+        assertTrue(result);
+    }
+
     private Field createFieldForProperty(String property) {
         Field field = new Field();
         field.setProperty(property);
@@ -134,8 +173,8 @@ public class FieldChecksTests extends TestCase {
     public static class MockValidationBean {
 
         private String name;
-
         private int age;
+        private double value;
 
         public String getName() {
             return name;
@@ -151,6 +190,14 @@ public class FieldChecksTests extends TestCase {
 
         public void setAge(int age) {
             this.age = age;
+        }
+
+        public double getValue() {
+            return value;
+        }
+
+        public void setValue(double value) {
+            this.value = value;
         }
     }
 }
