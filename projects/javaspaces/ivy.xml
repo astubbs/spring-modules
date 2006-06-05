@@ -24,6 +24,7 @@
        	
     <dependency org="springframework" name="springframework" rev="2.0-m4">
       <artifact name="spring" type="jar" conf="global" />
+      <artifact name="spring-mock" type="jar" conf="global" />
     </dependency>
 
     <dependency org="cglib" name="cglib" rev="2.1_3">
