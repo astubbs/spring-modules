@@ -2,12 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-	<bean id="simpleDAO" class="com.gigaspaces.spring.tests.app.SimpleDao">
-		 <!--
-		<property name="space" ref="gigaSpace"/>
-
-		<property name="pojoToEntryConverter" ref="converter"/>
-		-->
+	<bean id="simpleDAO" class="org.springmodules.javaspaces.gigaspaces.app.SimpleDao">
 		<property name="gigaSpaceTemplate" ref="gigaSpacesTemplate" />
 	</bean>
 </beans>

@@ -3,7 +3,23 @@
 
 <beans>
 	<!-- include javaspace factory bean -->
-	
+
+<!-- declaration of GigaSpaces local transaction -->
+	<bean id="gigaSpaceTransactionManager"
+		class="org.springmodules.javaspaces.gigaspaces.transaction.GigaSpacesLocalTransactionManagerFactoryBean">
+		<property name="javaSpace" ref="gigaSpace" />
+	</bean>
+	<!-- declaration of jini transaction manager -->
+	<bean id="transactionManager"
+		class="org.springmodules.transaction.jini.JiniTransactionManager">
+		<property name="transactionManager" ref="gigaSpaceTransactionManager" />
+		<property name="transactionalContext" ref="gigaSpace" />
+		<property name="nestedTransactionAllowed" value="true" />
+
+	</bean>
+
+
+
 	<!-- txManager -->
 	<bean id="securitySetter" class="org.springmodules.jini.JiniSecuritySetter" lazy-init="false">
 		<property name="securityManager">
@@ -11,35 +27,35 @@
 		</property>
 		<property name="policy" value="classpath:policy"/>
 	</bean>
-	
-	<!--	 
+
+	<!--
 	<bean id="transactionManager" class="org.springmodules.jini.JiniServiceFactoryBean">
 		<property name="serviceClass" value="net.jini.core.transaction.server.TransactionManager"/>
 		<property name="timeout" value="10000"/>
 	</bean>
 	-->
-	<bean id="gigaSpace" 
-		class="org.springmodules.javaspaces.giga.GigaSpacesFactoryBean" >
+	<bean id="gigaSpace"
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean" >
 		<property name="urls">
 			<list>
-				<value>/./myCache?properties=gs&amp;groups="gigaspaces-1384"</value>
+				<value>/./myCacheTx?schema=cache&amp;properties=gs</value>
 			</list>
 		</property>
 	</bean>
-	
+<!--
 	<bean id="jiniTM" class="org.springmodules.transaction.jini.JiniTransactionManagerFactoryBean"/>
-	
+
 	<bean id="transactionManager" class="org.springmodules.transaction.jini.JiniTransactionManager">
 		<property name="transactionManager" ref="jiniTM"/>
 		<property name="transactionalContext" ref="gigaSpace"/>
 	</bean>
-	
+-->
 	<bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
 		<property name="transactionManager" ref="transactionManager"/>
 	</bean>
-	
+
 	<bean id="spaceTemplate" class="org.springmodules.javaspaces.JavaSpaceTemplate">
 		<property name="space" ref="gigaSpace"/>
 	</bean>
-	
+
 </beans>

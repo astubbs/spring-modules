@@ -2,7 +2,14 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-
+<bean id="gigaSpace"
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean">
+		<property name="urls">
+			<list>
+				  <value>/./myJMS?schema=cache&amp;properties=gs-jms</value>
+			</list>
+		</property>
+	</bean>
 	<bean id="jndiTemplate"
 		class="org.springframework.jndi.JndiTemplate">
 		<property name="environment">
@@ -50,7 +57,7 @@
 		</property>
 	</bean>
 	<bean id="jmsSender"
-		class="com.gigaspaces.spring.tests.app.JMSSender">
+		class="org.springmodules.javaspaces.gigaspaces.app.JMSSender">
 		<property name="jmsTemplate102">
 			<ref bean="jmsQueueTemplate" />
 		</property>
@@ -58,7 +65,7 @@
 	</bean>
 
 	<bean id="jmsReceiver"
-		class="com.gigaspaces.spring.tests.app.JMSReceiver">
+		class="org.springmodules.javaspaces.gigaspaces.app.JMSReceiver">
 		<property name="jmsTemplate102">
 			<ref bean="jmsQueueTemplate" />
 		</property>

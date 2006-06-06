@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gigaspaces-mapping>
+	<class-descriptor name="org.springmodules.javaspaces.gigaspaces.app.SimpleBean"
+		persistent="true" replicatable="false" fifo="true" timetolive="100">
+		<field-descriptor name="name" indexed="false"
+			primary-key="true" auto-generate-pk="false" />
+		<field-descriptor name="testLongObject" indexed="true" />
+		<field-descriptor name="testDoubleObject" indexed="false" />
+		<field-descriptor name="age" indexed="false" />
+		<field-descriptor name="testFloatObject" indexed="false" />
+		<field-descriptor name="testBooleanObject" indexed="false" />
+		<reference-descriptor
+			class-ref="org.springmodules.javaspaces.gigaspaces.app.BaseSimpleBean" />
+	</class-descriptor>
+	<class-descriptor
+		name="org.springmodules.javaspaces.gigaspaces.app.BaseSimpleBean"
+		persistent="true" replicatable="false" fifo="true" timetolive="100">
+		<field-descriptor name="teststring" indexed="true"
+			primary-key="false" auto-generate-pk="false" />
+		<field-descriptor name="testboolean" indexed="true" />
+		<field-descriptor name="testlong" indexed="true" />
+		<field-descriptor name="testfloat" indexed="false" />
+		<field-descriptor name="testint" indexed="false" />
+		<field-descriptor name="testdouble" indexed="false" />
+	</class-descriptor>
+</gigaspaces-mapping>

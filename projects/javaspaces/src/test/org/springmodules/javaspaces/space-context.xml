@@ -7,43 +7,43 @@
 
 	<!--
 		Helper object that conceals GigaSpaces lookup.
-	
-	 <bean id="javaSpaceTemplate" 
-		class="org.springmodules.javaspaces.giga.GigaSpacesFactoryBean" >
+
+	 <bean id="javaSpaceTemplate"
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean" >
 		<property name="lookupHost"><value>rmi://localhost/rj-t42/JavaSpaces</value></property>
-		<property name="lookupGroups"><value>public</value></property>		
+		<property name="lookupGroups"><value>public</value></property>
 	</bean>
 	-->
-	<bean id="javaSpaceTemplate" 
+	<bean id="javaSpaceTemplate"
 		class="org.springmodules.javaspaces.JavaSpaceTemplate">
-		<property name="space" ref="gigaSpace"/>	
+		<property name="space" ref="gigaSpace"/>
 	</bean>
-	
+
 	<!--
 		GigaSpaceFactoryBean - using java protocol a space is created ad-hoc.
 	-->
-	 <bean id="gigaSpace" 
-		class="org.springmodules.javaspaces.giga.GigaSpacesFactoryBean" >
+	 <bean id="gigaSpace"
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean" >
 		<property name="urls">
 			<list>
-				<value>/./myCache?properties=gs&amp;groups="gigaspaces-1384"</value>
+				<value>/./myCache?properties=gs&amp;</value>
 			</list>
 		</property>
 	</bean>
-			
+
 	<!--
 		Simple test target
-	-->	
+	-->
 	<bean id="testBean" class="org.springmodules.beans.TestBean" >
 		<property name="name"><value>rod</value></property>
 		<property name="age"><value>34</value></property>
 		<property name="spouse" ref="spouse"/>
 	</bean>
-	
+
 	<bean id="spouse" class="org.springmodules.javaspaces.SerializableTestBean">
 		<property name="name" value="kerry"/>
 	</bean>
-	
+
 	<!--
 		Server side. We start these guys as threads.
 		Note the singleton=false setting. This means that each one of these we obtain from
@@ -56,7 +56,7 @@
 		<property name="delegate"><ref local="testBean"/></property>
 		<property name="businessInterface"><value>org.springmodules.beans.ITestBean</value></property>
 	</bean>
-	
+
 	<!--
 		Another work definition.
 	-->
@@ -69,8 +69,8 @@
 		</property>
 		<property name="businessInterface"><value>org.springframework.core.Ordered</value></property>
 	</bean>
-	
-	
+
+
 	<!--
 		This is an optional, experimental interceptor to optimize calls based on whether a local
 		service is available. Not necessary for the integration prototype.
@@ -83,28 +83,28 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<!--
-		Only need one of these, whatever the interface.		
+		Only need one of these, whatever the interface.
 		-->
-	
+
 	<bean id="spaceInterceptor"
 		class="org.springmodules.javaspaces.JavaSpaceInterceptor">
 		<property name="javaSpaceTemplate"><ref local="javaSpaceTemplate"/></property>
 		<property name="timeoutMillis"><value>500</value></property>
-	
-		<!-- 
+
+		<!--
 			Causes this target to be passed to space in a RunnableMethodEntry.
 			Comment out this property for "service seeking" behaviour where the endpoint is
 			assumed to host a service to invoke.
 		<property name="serializableTarget">
 			<bean class="org.springmodules.javaspaces.SerializableTestBean" />
 		</property>
-		-->	
+		-->
 	</bean>
-	
+
 	<!--
-		This is the client-side proxy. 
+		This is the client-side proxy.
 		TODO normally we would add a FactoryBean that would simplify this.
 		In Spring 1.3 we will also allow extended XML, so it would be possible
 		to define a "spaces" or "gigaspaces" namespace and reduce the volume of
@@ -112,7 +112,7 @@
 	-->
 	<bean id="proxy"
 		class="org.springframework.aop.framework.ProxyFactoryBean">
-		
+
 		<!--
 			Definition of the Spring AOP interceptor chain. The spaceInterceptor
 			must be the last interceptor as there is no local target to invoke.

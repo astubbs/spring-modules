@@ -4,22 +4,34 @@
 <!-- Root application context -->
 
 <beans>
-
+	<bean id="gigaSpace"
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean">
+		<property name="urls">
+			<list>
+				  <value>/./myCacheRemote?properties=gs</value>
+			</list>
+		</property>
+	</bean>
+	<!-- Declaration of GigaSpace template-->
+	<bean id="gigaSpacesTemplate"
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesTemplate" >
+		<property name="space" ref="gigaSpace" />
+	</bean>
 	<!--
 		Server side. We start these guys as threads.
 		Note the singleton=false setting. This means that each one of these we obtain from
 		Spring will be a distinct instance.
 	-->
 	<bean id="testBeanWorker"
-		class="org.springframework.spaces.DelegatingWorker"
+		class="org.springmodules.javaspaces.DelegatingWorker"
 		singleton="false" >
 		<property name="javaSpaceTemplate" ref="gigaSpacesTemplate"/>
 		<property name="delegate"><ref local="testBean"/></property>
-		<property name="businessInterface"><value>org.springframework.beans.ITestBean</value></property>
+		<property name="businessInterface"><value>org.springmodules.beans.ITestBean</value></property>
 	</bean>
 
 <bean id="gigaSpacesUidFactory"
-		class="com.gigaspaces.spring.remote.support.GigaSpacesUidFactory">
+		class="org.springmodules.javaspaces.gigaspaces.remote.support.GigaSpacesUidFactory">
 		<property name="space" ref="gigaSpace"/>
 	</bean>
 <!--
@@ -29,9 +41,9 @@
 
 	-->
 	<bean id="javaSpaceInterceptor"
-		class="com.gigaspaces.spring.GigaSpacesInterceptor">
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesInterceptor">
 		<property name="javaSpaceTemplate" ref="gigaSpacesTemplate"/>
-		<property name="timeoutMillis"><value>50000</value></property>
+		<property name="timeoutMillis"><value>5000</value></property>
 		<property name="uidFactory" ref="gigaSpacesUidFactory"/>
 
 
@@ -73,7 +85,7 @@
 		</property>
 		<property name="proxyInterfaces">
 			<list>
-				<value>org.springframework.beans.ITestBean</value>
+				<value>org.springmodules.beans.ITestBean</value>
 				<!--
 				<value>org.springframework.core.Ordered</value>
 				 -->
@@ -84,12 +96,12 @@
 	<!--
 		Simple test target
 	-->
-	<bean id="testBean" class="org.springframework.beans.TestBean" >
-		<property name="name"><value>rod</value></property>
+	<bean id="testBean" class="org.springmodules.beans.TestBean" >
+		<property name="name"><value>Dan</value></property>
 		<property name="age"><value>34</value></property>
 		<property name="spouse" ref="spouse"/>
 	</bean>
-    <bean id="spouse" class="org.springframework.spaces.SerializableTestBean">
+    <bean id="spouse" class="org.springmodules.javaspaces.SerializableTestBean">
 		<property name="name" value="kerry"/>
 	</bean>
 

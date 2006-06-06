@@ -8,13 +8,13 @@
 	<!--
 		GigaSpaceFactoryBean - using java protocol a space is created ad-hoc.
 	-->
-	 <bean id="gigaSpace" 
-		class="org.springmodules.javaspaces.giga.GigaSpacesFactoryBean" >
+	 <bean id="gigaSpace"
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean" >
 		<property name="urls">
 			<list>
-				<value>/./myCache?properties=gs&amp;groups="gigaspaces-1384"</value>
+				<value>/./myCache?schema=cache&amp;properties=gs</value>
 			</list>
 		</property>
 	</bean>
-	
+
 </beans>

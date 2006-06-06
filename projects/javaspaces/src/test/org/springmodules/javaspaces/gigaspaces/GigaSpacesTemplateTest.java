@@ -1,4 +1,3 @@
-
 /*
  * Title: Short descriptive title Description: A broad description of the
  * intention Copyright 2005 GigaSpaces Technologies Ltd. All rights reserved.
@@ -29,17 +28,8 @@ import com.j_spaces.core.client.EntryArrivedRemoteEvent;
 import com.j_spaces.core.client.ExternalEntry;
 import com.j_spaces.core.client.NotifyModifiers;
 import com.j_spaces.core.client.UpdateModifiers;
+import com.j_spaces.core.IJSpace;
 
-
-/**
- * Title: Description:
- * <p>
- * Copyright: Copyright 2006 GigaSpaces Technologies Ltd. All rights reserved.
- * Company: Gigaspaces Technologies
- *
- * @author Lior Ben Yizhak
- * @version 5.0
- */
 public class GigaSpacesTemplateTest
 		extends AbstractDependencyInjectionSpringContextTests
 {
@@ -48,11 +38,12 @@ public class GigaSpacesTemplateTest
 
 	protected String[] getConfigLocations()
 	{
-		return new String[] { "common.xml", "simple.xml" };
+		return new String[] { "/config/simple.xml","/config/common.xml" };
 	}
 
 	protected void onSetUp() throws Exception
 	{
+
 		template = (GigaSpacesTemplate) applicationContext.getBean("gigaSpacesTemplate");
 	}
 
@@ -114,7 +105,7 @@ public class GigaSpacesTemplateTest
 	{
 		SimpleBean templateBean = new SimpleBean("lior_Snapshot", 1);
 		ExternalEntry taken = (ExternalEntry) template.snapshot(templateBean);
-		assertNotNull("Taken object is null!", taken);
+		assertNull("Taken object is not null!", taken);
 	}
 
 	public void testCount() throws Exception
@@ -302,7 +293,7 @@ public class GigaSpacesTemplateTest
 	public void testIsEmbedded() throws Throwable
 	{
 		boolean isEmbedded = template.isEmbedded();
-		assertFalse("The isEmbedded is true!", isEmbedded);
+		assertTrue("The isEmbedded is true!", isEmbedded);
 	}
 
 	public void testSetOptimisticLocking()
@@ -413,6 +404,4 @@ public class GigaSpacesTemplateTest
 		template.notify(templateBean, listener, Lease.FOREVER, null, null);
 		template.write(bean, -1);
 	}
-
-
 }

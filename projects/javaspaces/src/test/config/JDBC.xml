@@ -5,16 +5,16 @@
 	<!-- Declaration of GigaSpace factory bean -->
 
 	<bean id="gigaSpace"
-		class="com.gigaspaces.spring.GigaSpacesFactoryBean">
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean">
 		<property name="urls">
 			<list>
-				<value>rmi://localhost:10098/./myCache</value>
+				<value>/./myCache</value>
 			</list>
 		</property>
 	</bean>
 	<!-- Declaration of GigaSpace jdbc driver-->
 	<bean id="gigaspaceDataSource"
-		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"
+		class="org.springframework.jdbc.datasource.SingleConnectionDataSource" destroy-method="close"
 		singleton="false">
 		<property name="driverClassName"
 			value="com.j_spaces.jdbc.driver.GDriver" />
@@ -29,18 +29,5 @@
 			<ref bean="gigaspaceDataSource" />
 		</property>
 	</bean>
-
-	<!-- Declaration of GigaSpace template-->
-	<!--
-	<bean id="converter"
-		class="com.gigaspaces.spring.converter.SpringPojo2ExternalEntryConverter">
-		<property name="mappingResources">
-			<list>
-				<value>SimpleDaoBean.gs.xml</value>
-			</list>
-		</property>
-		<property name="space" ref="gigaSpace" />
-	</bean>
- -->
 </beans>
 

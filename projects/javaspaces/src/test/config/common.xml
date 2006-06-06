@@ -5,29 +5,19 @@
 	<!-- Declaration of GigaSpace factory bean -->
 
 	<bean id="gigaSpace"
-		class="com.gigaspaces.spring.GigaSpacesFactoryBean">
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean">
 		<property name="urls">
 			<list>
-				  <value>/./myCache</value>
+				  <value>/./myCache?schema=cache&amp;properties=gs</value>
 			</list>
 		</property>
 	</bean>
 	<!-- Declaration of GigaSpace template-->
 	<bean id="gigaSpacesTemplate"
-		class="com.gigaspaces.spring.GigaSpacesTemplate" >
+		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesTemplate" >
 		<property name="space" ref="gigaSpace" />
 	</bean>
 	<!-- Declaration of GigaSpace template-->
-<!--
-	<bean id="converter"
-		class="com.gigaspaces.spring.converter.SpringPojo2ExternalEntryConverter">
-		<property name="mappingResources">
-			<list>
-				<value>SimpleDaoBean.gs.xml</value>
-			</list>
-		</property>
-		<property name="space" ref="gigaSpace" />
-	</bean>
- -->
+
 </beans>
 

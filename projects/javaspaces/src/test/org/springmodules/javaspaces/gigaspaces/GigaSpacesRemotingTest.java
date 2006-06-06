@@ -1,3 +1,12 @@
+/*
+ * Copyright 2005 GigaSpaces Technologies Ltd. All rights reserved.
+ *
+ * THIS SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED INCLUDING BUT NOT LIMITED TO WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE OR
+ * NON-INFRINGEMENT. GIGASPACES WILL NOT BE LIABLE FOR ANY DAMAGE OR
+ * LOSS IN CONNECTION WITH THE SOFTWARE.
+ */
 package org.springmodules.javaspaces.gigaspaces;
 
 import java.io.Serializable;
@@ -15,6 +24,7 @@ import org.springmodules.javaspaces.PutTests.PerformanceMonitorInterceptor;
 import org.springmodules.javaspaces.entry.MethodResultEntry;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springframework.util.StopWatch;
+import com.j_spaces.core.IJSpace;
 
 import org.springmodules.javaspaces.gigaspaces.GigaSpacesInterceptor;
 import org.springmodules.javaspaces.gigaspaces.GigaSpacesTemplate;
@@ -50,21 +60,11 @@ public class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringCon
 	}
 
 	protected void onTearDown() throws Exception {
-
 		killWorkerThreads();
-
-		Entry entry = new Entry() {};
-
-		Entry e = null;
-		do  {
-//			e = template.takeIfExists(entry, 5);
-			System.out.println("Cleanup: " + e);
-		}
-		while (e != null);
 	}
 
 	public void testSuccessfulInvocations() throws Exception {
-		//template.clean();
+		template.clean();
 		ITestBean proxy =  (ITestBean)applicationContext.getBean("proxy");
 		for (int i = 0; i < 2; i++) {
 			String name = "john" + i;
@@ -73,54 +73,17 @@ public class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringCon
 		}
 	}
 
-//	public void testCheckedException() throws Throwable {
-//		testThrowable(new NumberFormatException());
-//	}
-//
-//	public void testUncheckedException() throws Throwable {
-//		// TODO why does this get no such class exception?
-//		//testThrowable(new NoSuchBeanDefinitionException("", ""));
-//		testThrowable(new RuntimeException(""));
-//	}
 
-	private void testThrowable(Throwable t) throws Throwable {
-
-		ITestBean proxy =  (ITestBean)applicationContext.getBean("proxy");
-		try {
-			proxy.exceptional(t);
-			fail("Should have aborted with exception");
-		}
-		catch (Throwable got) {
-			if (got.getClass().equals(t.getClass())) {
-				// Ok
-				System.out.println("Expected exception, " + got);
-			}
-			else {
-				throw got;
-			}
-		}
-	}
 	protected String[] getConfigLocations() {
-		return new String[] {"common.xml", "gigaspaces_remoting.xml" };
-//		return new String[] {"common.xml"};
+		return new String[] {/*"/config/common.xml",*/ "/config/gigaspaces_remoting.xml" };
+//		return new String[] {"/config/common.xml"};
 	}
 
 	public void testLazyTest() throws Throwable {
-		///template.clean();
+		template.clean();
 				ITestBean proxy =  (ITestBean)applicationContext.getBean("proxy");
 		GigaSpacesInterceptor gigaSpacesInterceptor = (GigaSpacesInterceptor)applicationContext.getBean("javaSpaceInterceptor");
-		//JavaSpaceInterceptor gigaSpacesInterceptor = (JavaSpaceInterceptor)applicationContext.getBean("javaSpaceInterceptor");
 		gigaSpacesInterceptor.setSynchronous(false);
-
-
-//		JavaSpaceInterceptor si = new JavaSpaceInterceptor(template);
-//		si.setSynchronous(false);
-//		ProxyFactory pf = new ProxyFactory(new Class[] { ITestBean.class });
-//		pf.addAdvice(new PerformanceMonitorInterceptor());
-//		pf.addAdvice(si);
-//		ITestBean proxy = (ITestBean) pf.getProxy();
-
-
 		ITestBean lazyResult = proxy.getSpouse();
 		assertTrue(AopUtils.isCglibProxy(lazyResult));
 		System.out.println("should not be initialized");
@@ -165,5 +128,8 @@ public class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringCon
 			}
 		}
 
+
 	}
+	
+
 }

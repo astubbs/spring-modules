@@ -1,14 +1,15 @@
 /**
  * Created on Mar 14, 2006
  *
- * $Id: GigaSpaceTests.java,v 1.1 2006/06/05 19:30:04 gershond Exp $
- * $Revision: 1.1 $
+ * $Id: GigaSpaceTests.java,v 1.2 2006/06/06 16:34:08 liorbeny Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.javaspaces.gigaspaces;
-        
+
 
 import net.jini.core.transaction.server.TransactionManager;
 import net.jini.space.JavaSpace;
+import com.j_spaces.core.IJSpace;
 
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springmodules.jini.JiniServiceFactoryBean;
@@ -24,7 +25,7 @@ public class GigaSpaceTests extends AbstractDependencyInjectionSpringContextTest
 	 * @see org.springmodules.test.AbstractDependencyInjectionSpringContextTests#getConfigLocations()
 	 */
 	protected String[] getConfigLocations() {
-		return new String[] { "/org/springmodules/javaspaces/giga/giga-context.xml" };
+		return new String[] { "/config/giga-context.xml" };
 	}
 
 	private JavaSpace space;

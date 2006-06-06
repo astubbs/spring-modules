@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
+import com.j_spaces.core.IJSpace;
 
 import net.jini.core.event.RemoteEvent;
 import net.jini.core.event.RemoteEventListener;
@@ -38,15 +39,6 @@ import com.j_spaces.core.client.NotifyModifiers;
 import com.j_spaces.core.client.UpdateModifiers;
 
 
-/**
- * Title: Description:
- * <p>
- * Copyright: Copyright 2006 GigaSpaces Technologies Ltd. All rights reserved.
- * Company: Gigaspaces Technologies
- *
- * @author Lior Ben Yizhak
- * @version 5.0
- */
 public class GigaSpacesJMSTest
 extends AbstractDependencyInjectionSpringContextTests
 {
@@ -57,7 +49,7 @@ extends AbstractDependencyInjectionSpringContextTests
 
 	protected String[] getConfigLocations()
 	{
-		return new String[] { "JMS.xml"};
+		return new String[] { "/config/JMS.xml"};
 	}
 
 	protected void onSetUp() throws Exception
@@ -85,9 +77,8 @@ extends AbstractDependencyInjectionSpringContextTests
 		jmsReceiver.stop();
 	}
 
-	protected void onTearDown() throws Exception {
 
+	protected void onTearDown() throws Exception {
 		killWorkerThreads();
 	}
-
 }
