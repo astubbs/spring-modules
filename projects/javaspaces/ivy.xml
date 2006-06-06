@@ -31,16 +31,27 @@
       <artifact name="cglib-nodep" type="jar"/>
     </dependency>
 
+
+	<!--
+	downloading from http repository
 	<dependency org="jini" name="jsk-lib" rev="2.1"/>
 	<dependency org="jini" name="jsk-platform" rev="2.1"/>
-
+	-->
 
 	<dependency org="blitz" name="blitz" rev="1.24"/>
 
 	<dependency org="gigaspaces" name="commons-beanutils-gs" rev="1.6"/>
 	<dependency org="gigaspaces" name="commons-digester-gs" rev="1.7"/>
 	<dependency org="gigaspaces" name="gigaspaces-ce" rev="5.0"/>
+	
 
+	<dependency org="jini" name="jsk" rev="2.1">
+		<artifact name="jsk-lib" type="jar"/>
+		<artifact name="jsk-platform" type="jar"/>
+		<artifact name="mahalo" type="jar"/>
+		<artifact name="reggie" type="jar"/>
+		<artifact name="start" type="jar"/>
+	</dependency>
 
 
     <dependency org="apache" name="geronimo-spec" rev="rc4">
