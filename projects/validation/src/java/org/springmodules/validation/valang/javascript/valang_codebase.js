@@ -446,7 +446,7 @@ ValangValidator.Rule.prototype = {
 
     // Unary Operators
     lengthOf: function(value) {
-        return value.length
+        return value ? value.length : 0;
     },     
     lowerCase: function(value) {
         return value ? value.toLowerCase(): null
@@ -542,5 +542,9 @@ ValangValidator.Rule.prototype = {
             throw 'don\'t know how to apply regexp to value \'' + value + '\''
         }
         return value.match(pattern)[0] == value
+    },
+    EmailFunction: function(value) {
+        var filter=/^(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}$/;
+        return filter.test(value);
     }
 }

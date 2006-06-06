@@ -1,7 +1,7 @@
 /*
  * Copyright 13/09/2005 (C) Our Community Pty. Ltd. All Rights Reserved.
  *
- * $Id: Person.java,v 1.1 2006/05/27 02:23:10 hueboness Exp $
+ * $Id: Person.java,v 1.2 2006/06/06 20:41:32 hueboness Exp $
  */
 package org.springmodules.validation.valang.parser;
 
@@ -17,6 +17,7 @@ public class Person {
     String firstName = null;
     String size = null;
     Date dateOfBirth = null;
+    String email = null;
 
     int minAge = 18;
 
@@ -67,6 +68,14 @@ public class Person {
 
     public int getMinAge() {
         return this.minAge;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Object[] getSizes() {

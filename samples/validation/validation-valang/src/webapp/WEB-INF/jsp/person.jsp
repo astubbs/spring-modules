@@ -83,8 +83,6 @@
 
         </form>
 
-        <div id="valangLogDiv"></div>
-
     </body>
 
 </html>

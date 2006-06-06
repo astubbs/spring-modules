@@ -337,4 +337,29 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
         String text = "{firstName : 'Steven\\'' = firstName and matches('(Steven|Hans|Erwin)\\'', firstName) = true and length('\\\\') = 1 : ''}";
         assertTrue(validate(new Person(30, "Steven'"), text));
     }
+
+    public void testTranslator37LengthWithNullValue() {
+        String text = "{firstName : length(?) > 2: ''}";
+        assertFalse(validate(new Person("Size'"), text));
+    }
+
+    public void testTranslator37Email() {
+        Person person = new Person("size");
+        person.setEmail("a@b.com");
+        String text = "{email : email(?) == true: ''}";
+        assertTrue(validate(person, text));
+    }
+
+    public void testTranslator37EmailWithNull() {
+        Person person = new Person("size");
+        String text = "{email : email(?) == true: ''}";
+        assertFalse(validate(person, text));
+    }
+
+    public void testTranslator37InvalidEmail() {
+        Person person = new Person("size");
+        person.setEmail("-@b.com");
+        String text = "{email : email(?) == true: ''}";
+        assertFalse(validate(person, text));
+    }
 }
