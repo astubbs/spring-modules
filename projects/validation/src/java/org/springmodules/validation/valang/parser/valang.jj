@@ -193,7 +193,7 @@ Collection parseValidation() :
 			"}"
 		)
 		{
-			/* JIRA-MOD-20: take into account error key and error args for localization, kudos to Cèsar Ordiñana. */
+			/* JIRA-MOD-20: take into account error key and error args for localization, kudos to Cesar Ordinana. */
 			rules.add(new BasicValidationRule(field, predicate, errorKey, message, errorArgs));
 		}
 	)+

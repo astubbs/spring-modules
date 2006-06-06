@@ -93,7 +93,7 @@ public class ValangParser implements ValangParserConstants {
                                 field = token.image;
                                 fieldFunction = new BeanPropertyFunction(field);
                                 /* MOD-26: re-initiliaze error key and arguments to null for every rule.
-				   kudos to Cèsar Ordiñana for reporting this bug. */
+				   kudos to Cesar Ordinana for reporting this bug. */
                                 errorKey = null;
                                 errorArgs = new ArrayList();
       jj_consume_token(52);
