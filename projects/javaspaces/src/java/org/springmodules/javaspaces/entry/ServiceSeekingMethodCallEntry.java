@@ -1,5 +1,6 @@
 package org.springmodules.javaspaces.entry;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -11,21 +12,24 @@ import java.lang.reflect.Method;
  * @author Rod Johnson
  */
 public class ServiceSeekingMethodCallEntry extends AbstractMethodCallEntry {
-    
-	
+
+
 	public ServiceSeekingMethodCallEntry(Method method, Object[] args) {
 		super(method, args);
 	}
-	
+
 	// TODO forced by spaces
 	public ServiceSeekingMethodCallEntry() {
 		this(null, null);
 	}
 
+	public ServiceSeekingMethodCallEntry(Method method, Object[] args, Serializable uid) {
+		super(method, args , uid);
+	}
 
 	/**
 	 * Invoke the method using the given delegate (target).
-	 * 
+	 *
 	 * @see org.springmodules.javaspaces.entry.AbstractMethodCallEntry#doInvocation(java.lang.Object)
 	 */
 	protected MethodResultEntry doInvocation(Object delegate) throws InvocationTargetException, IllegalAccessException {

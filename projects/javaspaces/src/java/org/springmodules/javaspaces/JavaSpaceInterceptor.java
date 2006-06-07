@@ -41,7 +41,7 @@ import org.springmodules.javaspaces.entry.support.DefaultUidFactory;
  * <p>
  * This interceptor is generic. One interceptor instance can serve multiple
  * methods.
- * 
+ *
  * @author Rod Johnson
  * @author Costin Leau
  */
@@ -94,7 +94,7 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 	 * serialized target as well as the method and arguments. If this property
 	 * is not set, the endpoint will be assumed to have a service on which the
 	 * method invocation should be made.
-	 * 
+	 *
 	 * @param serializableTarget
 	 */
 	public void setSerializableTarget(Object serializableTarget) {
@@ -108,7 +108,7 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 	/**
 	 * Set the JavaSpaceTemplate Spring helper used to simplify working with the
 	 * JavaSpace API.
-	 * 
+	 *
 	 * @param jsTemplate
 	 */
 	public void setJavaSpaceTemplate(JavaSpaceTemplate jsTemplate) {
@@ -156,7 +156,7 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 	 * @return ServiceSeekingMethodCallEntry
 	 */
 	protected ServiceSeekingMethodCallEntry createServiceSeekingMethodCallEntry(Method method, Object[] args){
-		return new ServiceSeekingMethodCallEntry(method, args);
+		return new ServiceSeekingMethodCallEntry(method, args, getUidFactory().generateUid());
 	}
 
 	/**
@@ -167,12 +167,12 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 	 * @return RunnableMethodCallEntry
 	 */
 	protected RunnableMethodCallEntry createRunnableMethodCallEntry(Method method, Object[] args, Object target){
-		return new RunnableMethodCallEntry(method, args, target);
+		return new RunnableMethodCallEntry(method, args, target, getUidFactory().generateUid());
 	}
-	
+
 	/**
 	 * Create a lazy proxy through CGLib.
-	 * 
+	 *
 	 * @param call
 	 * @return
 	 */
@@ -235,7 +235,7 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 	 * different way, potentially based on the method to be invoked. This
 	 * implementation simply returns the value of the serializableTarget bean
 	 * property.
-	 * 
+	 *
 	 * @return the target to include in a RunnableMethodCallEntry. If the return
 	 *         value is null, a ServiceSeekingMethodCallEntry will be created,
 	 *         which requires endpoints to host the necessary service.
@@ -269,7 +269,7 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 	/**
 	 * Sets the uid factory to use for generating Entry uids. By default,
 	 * DefaultUidFactory is used.
-	 * 
+	 *
 	 * @param uidFactory
 	 *            The uidFactory to set.
 	 */

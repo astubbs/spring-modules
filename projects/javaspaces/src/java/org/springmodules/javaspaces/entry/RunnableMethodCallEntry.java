@@ -1,12 +1,13 @@
 package org.springmodules.javaspaces.entry;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
  * JINI entry representing a method call that includes the necessary code in a
  * target object. Moves code around the network as well as invocation.
- * 
+ *
  * @author Rod Johnson
  * @author Costin Leau
  */
@@ -27,6 +28,10 @@ public class RunnableMethodCallEntry extends AbstractMethodCallEntry {
 		this(null, null, null);
 	}
 
+	public RunnableMethodCallEntry(Method method, Object[] args, Object target, Serializable uid) {
+		super(method, args,uid);
+		this.target = target;
+	}
 
 	/**
 	 * Invoke the method ignoring the given delegate by using the internal target object.
