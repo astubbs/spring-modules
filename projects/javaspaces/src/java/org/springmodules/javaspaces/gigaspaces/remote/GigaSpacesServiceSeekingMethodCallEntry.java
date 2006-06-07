@@ -57,11 +57,11 @@ public class GigaSpacesServiceSeekingMethodCallEntry extends ServiceSeekingMetho
 	}
 
 	/**
-	 * Make an index for hash-based load balancing. 
+	 * Make an index for hash-based load balancing.
 	 * @return the cache id
 	 */
 	public static String[] __getSpaceIndexedFields() {
-        String[] indexedFields = {GigaSpacesRunnableMethodCallEntry.METHOD_STRING};
+        String[] indexedFields = {GigaSpacesRunnableMethodCallEntry.UID};
         return indexedFields;
     }
 }

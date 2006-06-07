@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 import org.springmodules.javaspaces.entry.RunnableMethodCallEntry;
 
 /**
- * Description:  
+ * Description:
  * <p>
  * This class extends RunnableMethodCallEntry
  * representing a method call that includes the necessary code in a
@@ -63,10 +63,11 @@ public class GigaSpacesRunnableMethodCallEntry extends RunnableMethodCallEntry{
 	 * @return the cache id
 	 */
 	public static String[] __getSpaceIndexedFields() {
-        String[] indexedFields = {METHOD_STRING};
+        String[] indexedFields = {UID};
         return indexedFields;
     }
 
 	protected static String METHOD_STRING ="methodString";
+	protected static String UID ="uid";
 
 }
