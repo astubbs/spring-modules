@@ -64,7 +64,7 @@ public class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringCon
 	}
 
 	public void testSuccessfulInvocations() throws Exception {
-		template.clean();
+		//template.clean();
 		ITestBean proxy =  (ITestBean)applicationContext.getBean("proxy");
 		for (int i = 0; i < 2; i++) {
 			String name = "john" + i;
@@ -80,7 +80,7 @@ public class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringCon
 	}
 
 	public void testLazyTest() throws Throwable {
-		template.clean();
+		//template.clean();
 				ITestBean proxy =  (ITestBean)applicationContext.getBean("proxy");
 		GigaSpacesInterceptor gigaSpacesInterceptor = (GigaSpacesInterceptor)applicationContext.getBean("javaSpaceInterceptor");
 		gigaSpacesInterceptor.setSynchronous(false);
@@ -130,6 +130,6 @@ public class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringCon
 
 
 	}
-	
+
 
 }
