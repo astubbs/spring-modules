@@ -5,8 +5,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 import org.apache.commons.validator.Field;
-import org.apache.commons.validator.ValidatorAction;
 import org.apache.commons.validator.Validator;
+import org.apache.commons.validator.ValidatorAction;
 import org.apache.commons.validator.ValidatorResources;
 import org.easymock.MockControl;
 import org.springframework.validation.Errors;

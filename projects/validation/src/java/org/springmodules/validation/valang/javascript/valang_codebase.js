@@ -446,13 +446,13 @@ ValangValidator.Rule.prototype = {
 
     // Unary Operators
     lengthOf: function(value) {
-        return value ? value.length : 0;
+        return (value != null) ? value.length : 0;
     },     
     lowerCase: function(value) {
-        return value ? value.toLowerCase(): null
+        return (value != null) ? value.toLowerCase(): null
     }, 
     upperCase: function(value) {
-        return value ? value.toUpperCase(): null
+        return (value != null) ? value.toUpperCase(): null
     }, 
     
     // Binary Operators
