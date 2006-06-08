@@ -57,7 +57,7 @@ public class EqualPropertiesBeanCondition extends AbstractBeanCondition {
 
     /**
      * Checks whether a set of properties of the given bean have the same value. The properties are resolved based on
-     * the property names associated with this instantCondition.
+     * the property names associated with this condition.
      *
      * @param bean The bean to be checked.
      * @return <code>true</code> if all the compared properties are equal, <code>false</code> otherwise.
@@ -76,9 +76,9 @@ public class EqualPropertiesBeanCondition extends AbstractBeanCondition {
     //=============================================== Setter/Getter ====================================================
 
     /**
-     * Returns the property names associated with this instantCondition.
+     * Returns the property names associated with this condition.
      *
-     * @return The property names associated with this instantCondition.
+     * @return The property names associated with this condition.
      */
     public String[] getPropertyNames() {
         return propertyNames;

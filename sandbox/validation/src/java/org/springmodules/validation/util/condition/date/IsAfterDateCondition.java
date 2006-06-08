@@ -53,10 +53,10 @@ public class IsAfterDateCondition extends AbstractDateCondition {
     }
 
     /**
-     * Checks whether the given calendar is chornologically after the calendar associated with this instantCondition.
+     * Checks whether the given calendar is chornologically after the calendar associated with this condition.
      *
      * @param calendar The calendar to be checked.
-     * @return <code>true</code> if the given calender comes after the calendar associated with this instantCondition,
+     * @return <code>true</code> if the given calender comes after the calendar associated with this condition,
      *         <code>false</code> otherwise.
      */
     protected boolean checkCalendar(Calendar calendar) {
@@ -67,9 +67,9 @@ public class IsAfterDateCondition extends AbstractDateCondition {
     //=============================================== Setter/Getter ====================================================
 
     /**
-     * Returns the calendar associated with this instantCondition.
+     * Returns the calendar associated with this condition.
      *
-     * @return The calendar associated with this instantCondition.
+     * @return The calendar associated with this condition.
      */
     public Calendar getEarlier() {
         return earlier;

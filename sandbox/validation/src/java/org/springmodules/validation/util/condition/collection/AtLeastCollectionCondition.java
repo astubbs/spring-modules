@@ -25,7 +25,7 @@ import org.springmodules.validation.util.condition.Condition;
 
 /**
  * An {@link AbstractCollectionCondition} implementation that checks whether at least X elements in a collection
- * or array adhere to a specific instantCondition.
+ * or array adhere to a specific condition.
  *
  * @author Uri Boness
  */
@@ -36,7 +36,7 @@ public class AtLeastCollectionCondition extends AbstractCollectionElementConditi
     /**
      * Constructs a new AtLeastCollectionCondition with a given element condition.
      *
-     * @param elementCondition The instantCondition to be checked on the collection elements.
+     * @param elementCondition The condition to be checked on the collection elements.
      */
     public AtLeastCollectionCondition(Condition elementCondition, int count) {
         super(elementCondition);
@@ -45,7 +45,7 @@ public class AtLeastCollectionCondition extends AbstractCollectionElementConditi
     }
 
     /**
-     * Checks whether at least X objects in the given array adhere to the associated instantCondition. X is determined
+     * Checks whether at least X objects in the given array adhere to the associated condition. X is determined
      * by the <code>getCount()</code> method call.
      *
      * @param array The array to be checked.
@@ -63,7 +63,7 @@ public class AtLeastCollectionCondition extends AbstractCollectionElementConditi
     }
 
     /**
-     * Checks whether at least X elements in the given collection adhere to the associated instantCondition. X is
+     * Checks whether at least X elements in the given collection adhere to the associated condition. X is
      * determined by the <code>getCount()</code> method call.
      *
      * @param collection The collection to be checked.

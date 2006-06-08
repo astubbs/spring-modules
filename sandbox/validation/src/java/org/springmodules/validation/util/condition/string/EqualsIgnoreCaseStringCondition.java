@@ -36,11 +36,11 @@ public class EqualsIgnoreCaseStringCondition extends AbstractStringCondition {
     }
 
     /**
-     * Checks whether the given text equals the text that is associated with this instantCondition while ignoring the letter
+     * Checks whether the given text equals the text that is associated with this condition while ignoring the letter
      * casing.
      *
      * @param text The text to be checed.
-     * @return <code>true</code> if the given text equals the text that is associated with this instantCondition,
+     * @return <code>true</code> if the given text equals the text that is associated with this condition,
      *        <code>false</code> otherwise.
      */
     protected boolean checkString(String text) {

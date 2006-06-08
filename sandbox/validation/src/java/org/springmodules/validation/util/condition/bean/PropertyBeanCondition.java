@@ -22,7 +22,7 @@ import org.springmodules.validation.util.condition.Condition;
 
 /**
  * An {@link AbstractBeanCondition} implementation that checks the value of a specific property of the checked bean
- * using a specific instantCondition.
+ * using a specific condition.
  *
  * @author Uri Boness
  */
@@ -32,10 +32,10 @@ public class PropertyBeanCondition extends AbstractBeanCondition {
     private Condition propertyCondition;
 
     /**
-     * Constructs a new PropertyBeanCondition with a given name of the property to be checked by the given instantCondition.
+     * Constructs a new PropertyBeanCondition with a given name of the property to be checked by the given condition.
      *
      * @param propertyName The name of the property to be checked.
-     * @param propertyCondition The instantCondition that will be used to checkCalendar the property value.
+     * @param propertyCondition The condition that will be used to checkCalendar the property value.
      */
     public PropertyBeanCondition(String propertyName, Condition propertyCondition) {
         Assert.notNull(propertyName, "Property name cannot be null");
@@ -45,11 +45,11 @@ public class PropertyBeanCondition extends AbstractBeanCondition {
     }
 
     /**
-     * Checks the value of the property of the given bean using the property instantCondition associated with this instantCondition. The
-     * property to be checked is resolved by the property name associated with this instantCondition.
+     * Checks the value of the property of the given bean using the property condition associated with this condition. The
+     * property to be checked is resolved by the property name associated with this condition.
      *
      * @param bean The bean to be checked.
-     * @return <code>true</code> if the property instantCondition associated with this instantCondition returns <code>true</code> when
+     * @return <code>true</code> if the property condition associated with this condition returns <code>true</code> when
      *         checking the bean's property, <code>false</code> otherwise.
      */
     protected boolean checkBean(BeanWrapper bean) {
@@ -60,18 +60,18 @@ public class PropertyBeanCondition extends AbstractBeanCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Return the property name associated with this instantCondition.
+     * Return the property name associated with this condition.
      *
-     * @return The property name associated with this instantCondition.
+     * @return The property name associated with this condition.
      */
     public String getPropertyName() {
         return propertyName;
     }
 
     /**
-     * Returns the instantCondition that is used to checkCalendar the property of the checked bean.
+     * Returns the condition that is used to checkCalendar the property of the checked bean.
      *
-     * @return The instantCondition that is used to checkCalendar the property of the checked bean.
+     * @return The condition that is used to checkCalendar the property of the checked bean.
      */
     public Condition getPropertyCondition() {
         return propertyCondition;

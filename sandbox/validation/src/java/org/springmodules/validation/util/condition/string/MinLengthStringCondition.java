@@ -39,11 +39,11 @@ public class MinLengthStringCondition extends AbstractStringCondition {
     }
 
     /**
-     * Checks whether the given text is not shorter then the minimum length that is associated with this instantCondition.
+     * Checks whether the given text is not shorter then the minimum length that is associated with this condition.
      *
      * @param text The checked text.
      * @return <code>true</code> if the given text is not shorter then the minimum length that is associated with this
-     *         instantCondition, <code>false</code> otherwise.
+     *         condition, <code>false</code> otherwise.
      */
     protected boolean checkString(String text) {
         return text.length() >= minLength;
@@ -53,9 +53,9 @@ public class MinLengthStringCondition extends AbstractStringCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Returns the minimum length that is associated with this instantCondition.
+     * Returns the minimum length that is associated with this condition.
      *
-     * @return The minimum length that is associated with this instantCondition.
+     * @return The minimum length that is associated with this condition.
      */
     public int getMinLength() {
         return minLength;

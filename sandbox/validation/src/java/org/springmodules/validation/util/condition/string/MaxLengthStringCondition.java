@@ -39,10 +39,10 @@ public class MaxLengthStringCondition extends AbstractStringCondition {
     }
 
     /**
-     * Checks whether the given text is not longer than the maximum length that is associated with this instantCondition.
+     * Checks whether the given text is not longer than the maximum length that is associated with this condition.
      *
      * @param text The checked text.
-     * @return <code>true</code> if the given text is not longer than the maximum length associated with this instantCondition,
+     * @return <code>true</code> if the given text is not longer than the maximum length associated with this condition,
      *         <code>false</code> otherwise.
      */
     protected boolean checkString(String text) {
@@ -52,9 +52,9 @@ public class MaxLengthStringCondition extends AbstractStringCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Returns the maximum length that is associated with this instantCondition.
+     * Returns the maximum length that is associated with this condition.
      *
-     * @return The maximum length that is associated with this instantCondition.
+     * @return The maximum length that is associated with this condition.
      */
     public int getMaxLength() {
         return maxLength;

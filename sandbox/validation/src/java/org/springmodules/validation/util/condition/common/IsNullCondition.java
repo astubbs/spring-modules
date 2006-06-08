@@ -19,7 +19,7 @@ package org.springmodules.validation.util.condition.common;
 import org.springmodules.validation.util.condition.AbstractCondition;
 
 /**
- * A instantCondition that checks whether the checked object is <code>null</code>.
+ * A condition that checks whether the checked object is <code>null</code>.
  *
  * @author Uri Boness
  */

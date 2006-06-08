@@ -46,7 +46,7 @@ public class LtCondition extends AbstractSingleBoundCondition {
     }
 
     /**
-     * Checks whether the given value is lower than the upper bound associated with this instantCondition.
+     * Checks whether the given value is lower than the upper bound associated with this condition.
      *
      * @param value The value to be checked.
      * @param comparator The comparator to be used to compare the checked value.

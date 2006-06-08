@@ -49,11 +49,11 @@ public abstract class AbstractRangeCondition extends NonNullAcceptingCondition {
     }
 
     /**
-     * Checks the instantCondition upon the given range object.
+     * Checks the condition upon the given range object.
      *
      * @param value The value to be checked
      * @param comparator The comparator to be used for the checked value.
-     * @return <code>true</code> if the given range adheres to this instantCondition, <code>false</code> otherwise.
+     * @return <code>true</code> if the given range adheres to this condition, <code>false</code> otherwise.
      */
     protected abstract boolean checkRange(Object value, Comparator comparator);
 

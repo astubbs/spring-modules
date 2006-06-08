@@ -19,7 +19,7 @@ package org.springmodules.validation.util.condition.common;
 import org.springmodules.validation.util.condition.NonNullAcceptingTypeSpecificCondition;
 
 /**
- * A boolean instantCondition that checks whether the checked boolean is <code>true</code>.
+ * A boolean condition that checks whether the checked boolean is <code>true</code>.
  *
  * @author Uri Boness
  */

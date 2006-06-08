@@ -54,7 +54,7 @@ public abstract class AbstractDateCondition extends NonNullAcceptingTypeSpecific
     }
 
     /**
-     * Checks this instantCondition on the given calendar.
+     * Checks this condition on the given calendar.
      *
      * @param calendar The calendar to be checks.
      * @return <code>true</code> if checkCalendar passed, <code>false</code> if the checkCalendar failed.

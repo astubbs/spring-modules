@@ -24,27 +24,27 @@ package org.springmodules.validation.util.condition;
 public interface Condition {
 
     /**
-     * Returns whether the given object adheres to this instantCondition.
+     * Returns whether the given object adheres to this condition.
      *
      * @param object The checked object.
-     * @return <code>true</code> if the object adheres to this instantCondition, <code>false</code> otherwise.
+     * @return <code>true</code> if the object adheres to this condition, <code>false</code> otherwise.
      */
-    public boolean check(Object object);
+    boolean check(Object object);
 
     /**
-     * Creates and returns a new instantCondition that represents the logical AND of this instantCondition and the given one.
+     * Creates and returns a new condition that represents the logical AND of this condition and the given one.
      *
-     * @param condition The instantCondition to intersect with this instantCondition.
-     * @return A new instantCondition that represents the logical AND of this instantCondition and the given one.
+     * @param condition The condition to intersect with this condition.
+     * @return A new condition that represents the logical AND of this condition and the given one.
      */
-    public Condition and(Condition condition);
+    Condition and(Condition condition);
 
     /**
-     * Creates and returns a new instantCondition that represents the logical OR of this instantCondition and the given one.
+     * Creates and returns a new condition that represents the logical OR of this condition and the given one.
      *
-     * @param condition The instantCondition to unite with this instantCondition.
-     * @return A new instantCondition that represents the logical OR of this instantCondition and the given one.
+     * @param condition The condition to unite with this condition.
+     * @return A new condition that represents the logical OR of this condition and the given one.
      */
-    public Condition or(Condition condition);
+    Condition or(Condition condition);
 
 }

@@ -21,7 +21,7 @@ import org.springmodules.validation.util.condition.AbstractCondition;
 import org.springmodules.validation.util.condition.Condition;
 
 /**
- * A instantCondition that represents a logical <code>NOT</code> of another instantCondition.
+ * A condition that represents a logical <code>NOT</code> of another condition.
  *
  * @author Uri Boness
  */
@@ -30,9 +30,9 @@ public class NotCondition extends AbstractCondition {
     private Condition condition;
 
     /**
-     * Constructs a new NotCondition with the instantCondition to reverse.
+     * Constructs a new NotCondition with the condition to reverse.
      *
-     * @param condition The instantCondition to reverse.
+     * @param condition The condition to reverse.
      */
     public NotCondition(Condition condition) {
         Assert.notNull(condition, "Condition cannot be null");
@@ -40,10 +40,10 @@ public class NotCondition extends AbstractCondition {
     }
 
     /**
-     * Checks and reverses the associated instantCondition on the given object.
+     * Checks and reverses the associated condition on the given object.
      *
      * @param object The object to be checked.
-     * @return <code>true</code> if the associated instantCondition returns <code>false</code>, <code>false</code> otherwise.
+     * @return <code>true</code> if the associated condition returns <code>false</code>, <code>false</code> otherwise.
      */
     public boolean doCheck(Object object) {
         return !condition.check(object);
@@ -52,9 +52,9 @@ public class NotCondition extends AbstractCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Returns the reverse instantCondition associated with this instantCondition.
+     * Returns the reverse condition associated with this condition.
      *
-     * @return The reverse instantCondition associated with this instantCondition.
+     * @return The reverse condition associated with this condition.
      */
     public Condition getCondition() {
         return condition;

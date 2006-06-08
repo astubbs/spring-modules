@@ -24,26 +24,26 @@ import org.springmodules.validation.util.condition.Condition;
 
 /**
  * An {@link AbstractCollectionCondition} implementation that checks whether all elements in a collection or array
- * adhere to a specific instantCondition.
+ * adhere to a specific condition.
  *
  * @author Uri Boness
  */
 public class AllCollectionCondition extends AbstractCollectionElementCondition {
 
     /**
-     * Constructs a new AllCollectionCondition with a given instantCondition.
+     * Constructs a new AllCollectionCondition with a given condition.
      *
-     * @param elementCondition The instantCondition to be checked on the collection elements.
+     * @param elementCondition The condition to be checked on the collection elements.
      */
     public AllCollectionCondition(Condition elementCondition) {
         super(elementCondition);
     }
 
     /**
-     * Checks whether all the object in the given array adhere to the associated instantCondition.
+     * Checks whether all the object in the given array adhere to the associated condition.
      *
      * @param array The array to be checked.
-     * @return <code>true</code> all the objects in the given array adhere to the associated instantCondition,
+     * @return <code>true</code> all the objects in the given array adhere to the associated condition,
      *         <code>false</code> otherwise.
      */
     protected boolean checkArray(Object array) {
@@ -56,10 +56,10 @@ public class AllCollectionCondition extends AbstractCollectionElementCondition {
     }
 
     /**
-     * Checks whether all the elements in the given collection adhere to the associated instantCondition.
+     * Checks whether all the elements in the given collection adhere to the associated condition.
      *
      * @param collection The collection to be checked.
-     * @return <code>true</code> if all the elements in the given collection adhere to the associated instantCondition,
+     * @return <code>true</code> if all the elements in the given collection adhere to the associated condition,
      *         <code>false</code> otherwise.
      */
     protected boolean checkCollection(Collection collection) {

@@ -42,9 +42,9 @@ public abstract class AbstractCollectionElementCondition extends AbstractCollect
     //=============================================== Setter/Getter ====================================================
 
     /**
-     * Returns the element instantCondition associated with this elementCondition.
+     * Returns the element condition associated with this elementCondition.
      *
-     * @return The element instantCondition associated with this elementCondition.
+     * @return The element condition associated with this elementCondition.
      */
     public Condition getElementCondition() {
         return elementCondition;

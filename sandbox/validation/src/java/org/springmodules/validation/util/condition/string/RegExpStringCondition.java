@@ -53,11 +53,11 @@ public class RegExpStringCondition extends AbstractStringCondition {
     }
 
     /**
-     * Checks whether the given text matches the regular expression that is associated with this instantCondition.
+     * Checks whether the given text matches the regular expression that is associated with this condition.
      *
      * @param text The text to be checked.
      * @return <code>true</code> if the given text matches the regular expression that is associated with this
-     *         instantCondition, <code>false</code> otherwise.
+     *         condition, <code>false</code> otherwise.
      */
     protected boolean checkString(String text) {
         return pattern.matcher(text).matches();
@@ -66,18 +66,18 @@ public class RegExpStringCondition extends AbstractStringCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Returns the pattern that is associated with this instantCondition.
+     * Returns the pattern that is associated with this condition.
      *
-     * @return The pattern that is associated with this instantCondition.
+     * @return The pattern that is associated with this condition.
      */
     public Pattern getPattern() {
         return pattern;
     }
 
     /**
-     * Returns the regular expression that is associated with this instantCondition.
+     * Returns the regular expression that is associated with this condition.
      *
-     * @return The regular expression that is associated with this instantCondition.
+     * @return The regular expression that is associated with this condition.
      */
     public String getRegExp() {
         return pattern.pattern();

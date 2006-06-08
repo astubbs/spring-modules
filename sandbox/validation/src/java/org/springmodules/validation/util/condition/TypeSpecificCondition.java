@@ -29,7 +29,7 @@ public abstract class TypeSpecificCondition extends AbstractCondition {
      * Construts a new TypeSpecificCondition with the given supported type. Sub classes should call this constructor
      * if they only support on object type.
      *
-     * @param type The object type this instantCondition supports.
+     * @param type The object type this condition supports.
      */
     public TypeSpecificCondition(Class type) {
         this(new Class[] { type });
@@ -39,17 +39,17 @@ public abstract class TypeSpecificCondition extends AbstractCondition {
      * Constructs a new TypeSpecificCondition with a the give list of supported types. Sub-classes should call this
      * constructor if they support more then one object type.
      *
-     * @param types The object types this instantCondition supports.
+     * @param types The object types this condition supports.
      */
     public TypeSpecificCondition(Class[] types) {
         this.types = types;
     }
 
     /**
-     * Checks whether the checked object is of one of the types supported by this instantCondition.
+     * Checks whether the checked object is of one of the types supported by this condition.
      *
      * @param object The object to be checked.
-     * @throws IllegalArgumentException if the checked object type is not supported by this instantCondition.
+     * @throws IllegalArgumentException if the checked object type is not supported by this condition.
      */
     protected void beforeObjectChecked(Object object) {
 

@@ -34,7 +34,7 @@ public abstract class AbstractCompoundCondition extends AbstractCondition {
     /**
      * Constructs a new AbstractCompoundCondition with the given array of conditions.
      *
-     * @param conditions The conditions this instantCondition is compound from.
+     * @param conditions The conditions this condition is compound from.
      */
     public AbstractCompoundCondition(Condition[] conditions) {
         Assert.notNull(conditions, "Compound condition cannot accept null as conditions");
@@ -44,7 +44,7 @@ public abstract class AbstractCompoundCondition extends AbstractCondition {
     /**
      * Constructs a new AbstractCompoundCondition with the given collection of conditions.
      *
-     * @param conditions The conditions this instantCondition is compound from.
+     * @param conditions The conditions this condition is compound from.
      */
     public AbstractCompoundCondition(Collection conditions) {
         Assert.notNull(conditions, "Compound condition cannot accept null as conditions");
@@ -55,9 +55,9 @@ public abstract class AbstractCompoundCondition extends AbstractCondition {
     //=============================================== Setter/Getter ====================================================
 
     /**
-     * Returns the conditions this instantCondition is compound from.
+     * Returns the conditions this condition is compound from.
      *
-     * @return The conditions this instantCondition is compound from.
+     * @return The conditions this condition is compound from.
      */
     public Condition[] getConditions() {
         return conditions;

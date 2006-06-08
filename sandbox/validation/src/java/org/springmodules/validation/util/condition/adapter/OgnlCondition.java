@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.AbstractCondition;
 
 /**
- * A instantCondition that checks the checked object against a boolean OGNL expression.
+ * A condition that checks the checked object against a boolean OGNL expression.
  *
  * @author Uri Boness
  */
@@ -50,7 +50,7 @@ public class OgnlCondition extends AbstractCondition {
     }
 
     /**
-     * Checks the given object against the OGNL expression associated with this instantCondition.
+     * Checks the given object against the OGNL expression associated with this condition.
      *
      * @param object The object to be validated.
      * @return The evaluation result of the associated OGNL expression upon the given object returns.
@@ -68,18 +68,18 @@ public class OgnlCondition extends AbstractCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Returns the OGNL expression assoicated with this instantCondition.
+     * Returns the OGNL expression assoicated with this condition.
      *
-     * @return The OGNL expression assoicated with this instantCondition.
+     * @return The OGNL expression assoicated with this condition.
      */
     public String getExpression() {
         return expression;
     }
 
     /**
-     * Returns the compiled OGNL expression associated with this instantCondition.
+     * Returns the compiled OGNL expression associated with this condition.
      *
-     * @return The compiled OGNL expression associated with this instantCondition.
+     * @return The compiled OGNL expression associated with this condition.
      */
     public Object getCompiledExpression() {
         return compiledExpression;

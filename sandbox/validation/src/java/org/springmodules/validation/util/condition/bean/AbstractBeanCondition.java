@@ -21,7 +21,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springmodules.validation.util.condition.NonNullAcceptingCondition;
 
 /**
- * A parent class to all bean related conditions. Such instantCondition may perform checks on beans
+ * A parent class to all bean related conditions. Such condition may perform checks on beans
  * properties.
  *
  * @author Uri Boness

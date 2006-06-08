@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.AbstractCondition;
 
 /**
- * A instantCondition that checks whether the checked object is of a specific type.
+ * A condition that checks whether the checked object is of a specific type.
  *
  * @author Uri Boness
  */
@@ -39,10 +39,10 @@ public class InstanceOfCondition extends AbstractCondition {
     }
 
     /**
-     * Checks whether the given object is an instance of the class associated with this instantCondition.
+     * Checks whether the given object is an instance of the class associated with this condition.
      *
      * @param object The object to be checked.
-     * @return <code>true</code> if the given object is an instance of the class associated with this instantCondition,
+     * @return <code>true</code> if the given object is an instance of the class associated with this condition,
      *         <code>false</code> otherwise. Note: if the given object is <code>null</code>, <code>false</code>
      *         will be returned.
      */
@@ -56,9 +56,9 @@ public class InstanceOfCondition extends AbstractCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Returns the class associated with this instantCondition.
+     * Returns the class associated with this condition.
      *
-     * @return The class associated with this instantCondition.
+     * @return The class associated with this condition.
      */
     public Class getClazz() {
         return clazz;

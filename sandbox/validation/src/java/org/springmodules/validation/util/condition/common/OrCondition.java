@@ -21,32 +21,32 @@ import java.util.Collection;
 import org.springmodules.validation.util.condition.Condition;
 
 /**
- * A compound instantCondition that represent a logical <code>OR</code> of all its associated conditions.
+ * A compound condition that represent a logical <code>OR</code> of all its associated conditions.
  *
  * @author Uri Boness
  */
 public class OrCondition extends AbstractCompoundCondition {
 
     /**
-     * Constructs a new OrCondition with the given instantCondition array.
+     * Constructs a new OrCondition with the given condition array.
      *
-     * @param conditions The conditions this instantCondition is compound from.
+     * @param conditions The conditions this condition is compound from.
      */
     public OrCondition(Condition[] conditions) {
         super(conditions);
     }
 
     /**
-     * Constructs a new OrCondition with the given instantCondition collection.
+     * Constructs a new OrCondition with the given condition collection.
      *
-     * @param conditions The conditions this instantCondition is compound from.
+     * @param conditions The conditions this condition is compound from.
      */
     public OrCondition(Collection conditions) {
         super(conditions);
     }
 
     /**
-     * Checks whether at least one of the associated conditions of this instantCondition returns <code>true</code>.
+     * Checks whether at least one of the associated conditions of this condition returns <code>true</code>.
      *
      * @param object The object to be checked.
      * @return <code>true</code> if at least one of the associated conditions returns <code>true</code>,

@@ -13,7 +13,7 @@ public abstract class NonNullAcceptingTypeSpecificCondition extends TypeSpecific
      * Constructs a new NonNullAcceptingTypeSpecificCondition with a given support type. Sub-classes should call this
      * constructor if they support only a single object type.
      *
-     * @param type The object type this instantCondition supports.
+     * @param type The object type this condition supports.
      */
     public NonNullAcceptingTypeSpecificCondition(Class type) {
         super(type);
@@ -23,7 +23,7 @@ public abstract class NonNullAcceptingTypeSpecificCondition extends TypeSpecific
      * Constructs a new NonNullAcceptingTypeSpecificCondition with given supported types. Sub-classes should call this
      * constructor if they support more than one object type.
      *
-     * @param types The object types supported by this instantCondition.
+     * @param types The object types supported by this condition.
      */
     public NonNullAcceptingTypeSpecificCondition(Class[] types) {
         super(types);
@@ -36,7 +36,7 @@ public abstract class NonNullAcceptingTypeSpecificCondition extends TypeSpecific
      *
      * @param object The checked object.
      * @throws IllegalArgumentException if the object is either <code>null</code> or is not of the types supported
-     *         by this instantCondition.
+     *         by this condition.
      */
     protected void beforeObjectChecked(Object object) {
         Assert.notNull(object, getClass().getName() + " cannot checkCalendar 'null' values");

@@ -53,18 +53,18 @@ public abstract class AbstractBetweenCondition extends AbstractRangeCondition {
     //=============================================== Setter/Getter ====================================================
 
     /**
-     * Returns the lower bound that is associated with this instantCondition.
+     * Returns the lower bound that is associated with this condition.
      *
-     * @return The lower bound that is associated with this instantCondition.
+     * @return The lower bound that is associated with this condition.
      */
     public Object getLowerBound() {
         return lowerBound;
     }
 
     /**
-     * Returns the upper bound that is associated with this instantCondition.
+     * Returns the upper bound that is associated with this condition.
      *
-     * @return The upper bound that is associated with this instantCondition.
+     * @return The upper bound that is associated with this condition.
      */
     public Object getUpperBound() {
         return upperBound;

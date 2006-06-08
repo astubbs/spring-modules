@@ -20,7 +20,7 @@ import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.NonNullAcceptingTypeSpecificCondition;
 
 /**
- * An abstract instantCondition that can be applied on objects of type {@link java.lang.String}.
+ * An abstract condition that can be applied on objects of type {@link java.lang.String}.
  *
  * @author Uri Boness
  */
@@ -46,10 +46,10 @@ public abstract class AbstractStringCondition extends NonNullAcceptingTypeSpecif
     }
 
     /**
-     * Checks whether the given string adheres to this instantCondition.
+     * Checks whether the given string adheres to this condition.
      *
      * @param text The string to be checked.
-     * @return <code>true</code> if the given string adheres to this instantCondition, <code>false</code> otherwise.
+     * @return <code>true</code> if the given string adheres to this condition, <code>false</code> otherwise.
      */
     protected abstract boolean checkString(String text);
 

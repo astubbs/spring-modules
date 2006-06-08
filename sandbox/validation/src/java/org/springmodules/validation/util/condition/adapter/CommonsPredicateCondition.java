@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.AbstractCondition;
 
 /**
- * A Jakarta Commmons Predicate instantCondition adapter. This instantCondition deligates the call to an associated {@link Predicate).
+ * A Jakarta Commmons Predicate condition adapter. This condition deligates the call to an associated {@link Predicate).
  *
  * @author Uri Boness
  */
@@ -40,7 +40,7 @@ public class CommonsPredicateCondition extends AbstractCondition {
     }
 
     /**
-     * Checks the given object against the predicate associated with this instantCondition.
+     * Checks the given object against the predicate associated with this condition.
      *
      * @param object The object to be checked.
      * @return The result returned by the associated predicate when evaluting the given object.
@@ -54,9 +54,9 @@ public class CommonsPredicateCondition extends AbstractCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Returns the predicate associated with this instantCondition.
+     * Returns the predicate associated with this condition.
      *
-     * @return The predicate associated with this instantCondition.
+     * @return The predicate associated with this condition.
      */
     public Predicate getPredicate() {
         return predicate;

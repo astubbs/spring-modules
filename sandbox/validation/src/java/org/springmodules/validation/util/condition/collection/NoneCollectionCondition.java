@@ -24,26 +24,26 @@ import org.springmodules.validation.util.condition.Condition;
 
 /**
  * An {@link AbstractCollectionCondition} implementation that checks whether none of the elements in a collection
- * or array adhere to a specific instantCondition.
+ * or array adhere to a specific condition.
  *
  * @author Uri Boness
  */
 public class NoneCollectionCondition extends AbstractCollectionElementCondition {
 
     /**
-     * Constructs a new NoneCollectionCondition with a given instantCondition.
+     * Constructs a new NoneCollectionCondition with a given condition.
      *
-     * @param elementCondition The instantCondition to be checked on the collection/array elements.
+     * @param elementCondition The condition to be checked on the collection/array elements.
      */
     public NoneCollectionCondition(Condition elementCondition) {
         super(elementCondition);
     }
 
     /**
-     * Checks whether none of the object in the given array adheres to the associated instantCondition.
+     * Checks whether none of the object in the given array adheres to the associated condition.
      *
      * @param array The array to be checked.
-     * @return <code>true</code> none of the objects in the given array adheres to the associated instantCondition,
+     * @return <code>true</code> none of the objects in the given array adheres to the associated condition,
      *         <code>false</code> otherwise.
      */
     protected boolean checkArray(Object array) {
@@ -56,10 +56,10 @@ public class NoneCollectionCondition extends AbstractCollectionElementCondition 
     }
 
     /**
-     * Checks whether none of the elements in the given collection adheres to the associated instantCondition.
+     * Checks whether none of the elements in the given collection adheres to the associated condition.
      *
      * @param collection The collection to be checked.
-     * @return <code>true</code> if none of the elements in the given collection adheres to the associated instantCondition,
+     * @return <code>true</code> if none of the elements in the given collection adheres to the associated condition,
      *         <code>false</code> otherwise.
      */
     protected boolean checkCollection(Collection collection) {

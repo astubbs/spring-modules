@@ -30,7 +30,7 @@ public class GteCondition extends AbstractSingleBoundCondition {
     }
 
     /**
-     * Checks whether the given value is greater than or equals the lower bound associated with this instantCondition.
+     * Checks whether the given value is greater than or equals the lower bound associated with this condition.
      *
      * @param value The value to be checked.
      * @param comparator The comparator used to compare the checked value.

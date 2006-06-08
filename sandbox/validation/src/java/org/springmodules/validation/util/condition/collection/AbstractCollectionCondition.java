@@ -58,7 +58,7 @@ public abstract class AbstractCollectionCondition extends NonNullAcceptingCondit
      * Checks whether the given array adheres to this Condition.
      *
      * @param array The array to be checked.
-     * @return <code>true</code> if the given array adheres to this instantCondition, <code>false</code> otherwise.
+     * @return <code>true</code> if the given array adheres to this condition, <code>false</code> otherwise.
      */
     protected abstract boolean checkArray(Object array);
 
@@ -66,7 +66,7 @@ public abstract class AbstractCollectionCondition extends NonNullAcceptingCondit
      * Checks whether the given collection adheres to this Condition.
      *
      * @param collection The collection to be checked.
-     * @return <code>true</code> if the given collection adheres to this instantCondition, <code>false</code> otherwise.
+     * @return <code>true</code> if the given collection adheres to this condition, <code>false</code> otherwise.
      */
     protected abstract boolean checkCollection(Collection collection);
 

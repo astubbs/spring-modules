@@ -43,11 +43,11 @@ public class MinSizeCollectionCondition extends AbstractCollectionCondition {
 
     /**
      * Checks whether the length of the given array is greater than or equals the minimum size associated
-     * with this instantCondition.
+     * with this condition.
      *
      * @param array The array to be checked.
      * @return <code>true</code> if the length of the given array is greater than or equals the minimum size
-     *         associated with this instantCondition, <code>false</code> otherwise.
+     *         associated with this condition, <code>false</code> otherwise.
      */
     protected boolean checkArray(Object array) {
         return Array.getLength(array) >= minSize;
@@ -55,11 +55,11 @@ public class MinSizeCollectionCondition extends AbstractCollectionCondition {
 
     /**
      * Checks whether the size of the given collection is greater than or equals the minimum size associated
-     * with this instantCondition.
+     * with this condition.
      *
      * @param collection The collection to be checked.
      * @return <code>true</code> if the size of the given collection is greater than or equals the minimum size
-     *         associated with this instantCondition, <code>false</code> otherwise.
+     *         associated with this condition, <code>false</code> otherwise.
      */
     protected boolean checkCollection(Collection collection) {
         return collection.size() >= minSize;
@@ -69,9 +69,9 @@ public class MinSizeCollectionCondition extends AbstractCollectionCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Returns the minimum size associated with this instantCondition.
+     * Returns the minimum size associated with this condition.
      *
-     * @return The minimum size associated with this instantCondition.
+     * @return The minimum size associated with this condition.
      */
     public int getMinSize() {
         return minSize;

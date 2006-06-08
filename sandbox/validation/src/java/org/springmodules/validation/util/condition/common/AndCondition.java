@@ -21,32 +21,32 @@ import java.util.Collection;
 import org.springmodules.validation.util.condition.Condition;
 
 /**
- * A compound instantCondition that represent a logical and of all its associated conditions.
+ * A compound condition that represent a logical and of all its associated conditions.
  *
  * @author Uri Boness
  */
 public class AndCondition extends AbstractCompoundCondition {
 
     /**
-     * Constructs a new AndCondition with the given instantCondition array.
+     * Constructs a new AndCondition with the given condition array.
      *
-     * @param conditions The conditions this instantCondition is compound from.
+     * @param conditions The conditions this condition is compound from.
      */
     public AndCondition(Condition[] conditions) {
         super(conditions);
     }
 
     /**
-     * Constructs a new AndCondition with the given instantCondition collection.
+     * Constructs a new AndCondition with the given condition collection.
      *
-     * @param conditions The conditions this instantCondition is compound from.
+     * @param conditions The conditions this condition is compound from.
      */
     public AndCondition(Collection conditions) {
         super(conditions);
     }
 
     /**
-     * Checks whether all the associated conditions of this instantCondition return <code>true</code>.
+     * Checks whether all the associated conditions of this condition return <code>true</code>.
      *
      * @param object The object to be checked.
      * @return <code>true</code> if all the associated conditions return <code>true</code>, <code>false</code> otherwise.

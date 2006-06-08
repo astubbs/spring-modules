@@ -43,11 +43,11 @@ public class MaxSizeCollectionCondition extends AbstractCollectionCondition {
 
     /**
      * Checks whether the length of the given array is smaller than or equals the maximum size associated
-     * with this instantCondition.
+     * with this condition.
      *
      * @param array The array to be checked.
      * @return <code>true</code> if the length of the given array is smaller than or equals the maximum size
-     *         associated with this instantCondition, <code>false</code> otherwise.
+     *         associated with this condition, <code>false</code> otherwise.
      */
     protected boolean checkArray(Object array) {
         return Array.getLength(array) <= maxSize;
@@ -55,11 +55,11 @@ public class MaxSizeCollectionCondition extends AbstractCollectionCondition {
 
     /**
      * Checks whether the size of the given collection is smaller than or equals the maximum size associated
-     * with this instantCondition.
+     * with this condition.
      *
      * @param collection The collection to be checked.
      * @return <code>true</code> if the size of the given collection is smaller than or equals the maximum size
-     *         associated with this instantCondition, <code>false</code> otherwise.
+     *         associated with this condition, <code>false</code> otherwise.
      */
     protected boolean checkCollection(Collection collection) {
         return collection.size() <= maxSize;
@@ -69,9 +69,9 @@ public class MaxSizeCollectionCondition extends AbstractCollectionCondition {
     //============================================= Setter/Getter ===================================================
 
     /**
-     * Returns the maximum size associated with this instantCondition.
+     * Returns the maximum size associated with this condition.
      *
-     * @return The maximum size associated with this instantCondition.
+     * @return The maximum size associated with this condition.
      */
     public int getMaxSize() {
         return maxSize;
