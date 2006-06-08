@@ -5,12 +5,13 @@
 	<!ENTITY index		SYSTEM "../../../../../docs/reference/src/index-module.xml">
 	<!ENTITY preface	SYSTEM "../../../../../docs/reference/src/preface.xml">
 	<!ENTITY authors	SYSTEM "authors.xml">
-	<!ENTITY javaspace 	SYSTEM "javaspace.xml">
+	<!ENTITY javaspaces	SYSTEM "javaspaces.xml">
+	<!ENTITY gigaspaces	SYSTEM "GigaSpaces_Spring_Integration_ShortVersion.xml">
 	]>
 
 <book>
 
 	&index;
-	&javaspace;
-	
+	&javaspaces;
+	&gigaspaces;
 </book>

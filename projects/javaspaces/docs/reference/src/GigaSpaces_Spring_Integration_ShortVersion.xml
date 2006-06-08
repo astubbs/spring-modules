@@ -1,0 +1,3200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML">
+  <title>GigaSpaces Spring Integration</title>
+  <articleinfo>
+    <author>
+      <firstname>Shay</firstname>
+      <surname>Hassidim</surname>
+      </author>
+          <author>
+      <firstname>Gershon</firstname>
+      <surname>Diner</surname>
+      </author>
+          <author>
+      <firstname>Lior</firstname>
+      <surname>Ben Yizhak</surname>
+    </author>
+    <corpname>GigaSpaces Technologies</corpname>
+    <date>2006-06-08T12:28:00Z</date>
+  </articleinfo>
+  <para>
+  </para>
+  <section>
+    <para> </para>
+    <para> </para>
+    <para>
+      <anchor id="_Toc137536410" />GigaSpaces Spring Integration</para>
+    <section>
+      <title> </title>
+    </section>
+  </section>
+  <para>
+  </para>
+  <section>
+    <para>
+      <link linkend="_Toc137536410">GigaSpaces Spring Integration...........................................................................................................................
+ 1</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536411">1.                
+  Introduction – Give Spring Some Space...............................................................
+ 4</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536412">1.1.          
+  Simplify business logic abstraction using Spring/POJO support...................................
+ 4</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536413">1.1.1.          
+  Middleware Abstraction........................................................................................................
+ 4</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536414">1.1.1.1                
+  Data Grid Abstraction............................................................................................
+ 5</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536415">1.1.1.1.1           
+  JavaSpace and GigaSpace Templates......................................................................
+ 5</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536416">1.1.1.1.2           
+  JDBC Template......................................................................................................
+ 5</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536417">1.1.1.2                
+  Messaging Abstraction...........................................................................................
+ 5</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536418">1.1.1.2.1           
+  JMS template..........................................................................................................
+ 5</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536419">1.1.1.2.2           
+  Remoting.................................................................................................................
+ 5</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536420">1.1.1.3                
+  Parallel Processing Abstraction...............................................................................
+ 6</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536421">1.1.2.          
+  Service Abstraction -Turns POJO's into distributed services using the Service Grid............
+ 7</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536422">2.                
+  Integration Components............................................................................................
+ 7</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536423">2.1.          
+  Common Services.....................................................................................................................
+ 7</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536424">2.1.1.          
+  Automatic POJO to Entry Translation..................................................................................
+ 7</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536425">2.1.2.          
+  Transaction Support..............................................................................................................
+ 8</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536426">2.2.          
+  Data-Grid...................................................................................................................................
+ 8</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536427">2.2.1.          
+  JavaSpaces Template Example...............................................................................................
+ 8</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536428">2.2.1.1                
+  The BaseSimpleBean POJO...................................................................................
+ 8</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536429">2.2.1.2                
+  The SimpleBean POJO...........................................................................................
+ 8</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536430">2.2.1.3                
+  Simple DAO Object used by the application.........................................................
+ 9</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536431">2.2.2.          
+  JDBC Template Example.......................................................................................................
+ 9</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536432">2.2.2.1                
+  Application Context xml - jdbc_gigaspaces.xml...................................................
+ 11</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536433">2.3.          
+  Messaging Grid......................................................................................................................
+ 11</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536434">2.3.1.          
+  The JMS Spring application Example..................................................................................
+ 11</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536435">2.3.1.1                
+  Application Context xml - jms_gigaspaces.xml....................................................
+ 12</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536436">2.4.          
+  Parallel Processing – Business logic Remote invocation..............................................
+ 14</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536437">2.4.1.          
+  Remoting Example................................................................................................................
+ 14</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536438">2.4.1.1                
+  The Master...........................................................................................................
+ 14</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536439">2.4.1.2                
+  The Worker...........................................................................................................
+ 14</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536440">2.4.1.3                
+  The ITask..............................................................................................................
+ 15</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536441">2.4.1.4                
+  The Task...............................................................................................................
+ 15</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536442">2.4.1.5                
+  The Result.............................................................................................................
+ 15</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536443">2.4.1.6                
+  gigaspaces_master_remoting.xml..........................................................................
+ 16</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536444">2.4.1.7                
+  GigaSpacesUidFactory.........................................................................................
+ 16</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536445">2.4.1.7.1           
+  DelegatingWorker..................................................................................................
+ 16</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536446">2.4.1.7.2           
+  GigaSpacesInterceptor..........................................................................................
+ 16</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536447">2.4.1.7.3           
+  ProxyFactoryBean................................................................................................
+ 17</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536448">2.4.1.7.4           
+  Application context file........................................................................................
+ 17</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536449">2.5.          
+  Service Grid............................................................................................................................
+ 19</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536450">2.5.1.          
+  Hello Interface......................................................................................................................
+ 19</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536451">2.5.2.          
+  Hello implementation...........................................................................................................
+ 19</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536452">2.5.3.          
+  The Deployment File...........................................................................................................
+ 19</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536453">2.5.4.          
+  The build file........................................................................................................................
+ 20</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536454">2.5.5.          
+  Deploying the Pojo..............................................................................................................
+ 21</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536455">3.                
+  Integration Implementation Classes..............................................................
+ 22</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536456">3.1.          
+  org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean.........................
+ 22</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536457">3.2.          
+  org.springmodules.javaspaces.gigaspaces.GigaSpacesDaoSupport..........................
+ 22</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536458">3.3.          
+  org.springmodules.javaspaces.JavaSpaceTemplate.......................................................
+ 23</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536459">3.4.          
+  org.springmodules.javaspaces.gigaspaces.GigaSpacesTemplate................................
+ 24</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536460">3.5.          
+  org.springmodules.javaspaces.gigaspaces.GigaSpacesLocalTransactionManagerFactoryBean   
+  27</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536461">4.                
+  Spring Configuration Files.......................................................................................
+ 27</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536462">4.1.          
+  Application Context xml.......................................................................................................
+ 27</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536463">4.2.          
+  The Dao xml............................................................................................................................
+ 28</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536464">4.2.1.          
+  &lt;class-descriptor&gt;................................................................................................................
+ 28</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536465">4.2.2.          
+  &lt;field descriptor&gt;.................................................................................................................
+ 28</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536466">4.2.3.          
+  &lt;reference-descriptor&gt;.........................................................................................................
+ 29</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536467">4.2.4.          
+  &lt;class-ref&gt;............................................................................................................................
+ 29</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536468">4.3.          
+  transaction.xml.......................................................................................................................
+ 29</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536469">4.4.          
+  Pojo Primary Key setting......................................................................................................
+ 30</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536470">4.4.1.          
+  Example................................................................................................................................
+ 31</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536471">5.                
+  3rd party packages........................................................................................................
+ 32</link>
+    </para>
+    <para>
+      <link linkend="_Toc137536472">6.                
+  References...........................................................................................................................
+ 32</link>
+    </para>
+    <para>
+    </para>
+  </section>
+  <para>
+  </para>
+  <section>
+    <para> </para>
+    <para> </para>
+  </section>
+  <para>
+  </para>
+  <section>
+    <section>
+      <title>
+        <anchor id="_Toc137536411" />1.   
+ Introduction – Give Spring Some Space</title>
+      <para>This chapter describes the integration between GigaSpaces and the Spring Framework (<ulink url="http://www.springframework.org/">www.springframework.org</ulink>).</para>
+      <section>
+        <title>
+          <anchor id="_Toc137536412" />1.1.          
+ Simplify business logic abstraction using Spring/POJO support </title>
+        <para>GigaSpaces Spring integration plays a major part in GigaSpaces "Write Once Scale Anywhere" roadmap. It allows you to write your POJO once using Spring and Scale it Anywhere using the GigaSpaces middleware - Spring provides a framework for implementing the application business logic and GigaSpaces implements the middleware and service framework for executing this business logic efficiently in a scalable fashion.</para>
+        <para> </para>
+        <para>GigaSpaces Spring integration contains two main parts:</para>
+        <para>Middleware abstraction – DAO, JavaSpace , Transaction, , JDBC, Remoting, Parallel processing , JMS – Enabling a relatively none intrusive approach for implementing the business logic on top of GigaSpaces. With this approach GigaSpaces users can leverage the rich functionality and simplification of the Spring framework and the scalability of GigaSpaces.</para>
+        <para>Service Abstraction – Enable dynamic deployment of Spring beans into the Grid</para>
+        <para> </para>
+        <para>The goal of this architecture is to enable end-to-end dynamic scalability of stateful applications across the grid.</para>
+        <para> </para>
+        <para>The following diagram illustrates the different components the integration includes.</para>
+        <para> </para>
+        <para>
+          <figure>
+            <title></title>
+            <graphic fileref="images/image002.jpg" />
+          </figure>
+        </para>
+        <para> </para>
+        <section>
+          <title>
+            <anchor id="_Toc137536413" />1.1.1.                 
+ Middleware Abstraction</title>
+          <para>The middleware abstraction maps specific Spring interfaces into the relevant GigaSpaces middleware component i.e. the Data-Grid, Messaging Grid and Parallel Processing. This allows Spring based application to benefit from the performance, dynamic scalability and clustering capabilities of the GigaSpaces middleware without going through any complex development phase.</para>
+          <para> </para>
+          <para>The middleware abstraction includes the following common components – these are shared across the different GigaSpaces components:</para>
+          <para>POJO2Entry Converter – The POJO to entry model is common to all middleware components and is used map an existing POJO into the data grid. The approach taken here is very similar to the O/R mapping approach. Class metadata such as indexes, update mode, serialization mode, persistency mode can be added at the class level or attribute level using Java annotation or using the gs.xml files and Spring XML configuration file.</para>
+          <para> </para>
+          <para>The
+ POJO-Space support is an enhancement of to the existing JavaSpaces interface. This enhancement adds capabilities to write and read POJO's directly through the Space API. It adds additional behavior required to address specific requirements in the Messaging or Data-Grid world such as oneway operations (aka send and forget), update semantics etc.</para>
+          <para> </para>
+          <para>Transaction support – Spring provides a transaction abstraction layer that can be used to plug-in different transaction implementation without changing application code. The GigaSpaces transaction provides support through that interface to the Jini Transaction and Local Transaction managers.</para>
+          <section>
+            <title>
+              <anchor id="_Toc137536414" />1.1.1.1                         
+ Data Grid Abstraction</title>
+            <section>
+              <title>
+              </title>
+              <anchor id="_Toc137536415" />1.1.1.1.1                   
+ JavaSpace and GigaSpace Templates<para>The JavaSpacesTM technology designed to help you solve two related problems: distributed persistence and the design of distributed algorithms. JavaSpaces services use
+ RMI and the serialization feature of the Java programming language to accomplish these goals.</para><para>See:</para><para><ulink url="http://www.jini.org/nonav/standards/davis/doc/specs/html/js-spec.html">http://www.jini.org/nonav/standards/davis/doc/specs/html/js-spec.html</ulink></para><para> </para><para>The Spring JavaSpace template used to map existing objects into the space and allow JavaSpace operations to use the Spring transaction abstraction behavior.</para><para> </para><para>The GigaSpace template provides extensions to the JavaSpace template and support batch operations , enhanced notifications options , Pojo support , optimistic locking , update semantics , count , clean , fifo , security and more.</para><para> </para><para>The advantages using this approach are:</para><para><emphasis>Performance
+ </emphasis>– Object can be written into the local space memory and synchronized on the background with a backend Data Base.</para><para><emphasis>Built-In clustering</emphasis> – Data written into the space becomes immediately available to all instances holding DOA reference to this cluster.</para><para><emphasis>Advanced data distribution</emphasis> - Data written into the space can leverage the existing data distribution topologies i.e. partitioning, replication, master/local without changing the code and use choose the appropriate model at deployment.</para><para><emphasis>OO
+ Support</emphasis> – Since the space provide built-in POJO support object can be written directly into the space without going through any O/R mapping. The same objects can be queried using the SQL syntax since the space implements a built-in indexing mechanism. Through the hibernate CacheStore plug-in those object can be stored in any DB with a user defined custom O/R mapping capabilities. With this approach users can benefit from the performance and simplicity of the space model and still use hibernate O/R mapping support to map those objects into an existing database.</para></section>
+            <section>
+              <title>
+              </title>
+              <anchor id="_Toc137536416" />1.1.1.1.2                   
+ JDBC Template<para>Since GigaSpaces provides JDBC support users can write their code using the standard SQL syntax and that code will work with other JDBC compliant implementation (NOTE the opposite direction i.e. taking an existing JDBC implementation into this model is not fully supported yet and will require additional manual migration effort).</para></section>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536417" />1.1.1.2                         
+ Messaging Abstraction</title>
+            <para>GigaSpaces Spring integration provides messaging abstraction in two forms:</para>
+            <section>
+              <title>
+              </title>
+              <anchor id="_Toc137536418" />1.1.1.2.1                   
+ JMS template<para>In this case GigaSpaces behaves just like a standard JMS provider through the JMS implementation. Users that are already using JMS in their implementation could benefit from the data-virtualization capabilities GigaSpaces provides and the ability to scalae JMS based application using the partitioned GigaSpaces cluster.</para></section>
+            <section>
+              <title>
+              </title>
+              <anchor id="_Toc137536419" />1.1.1.2.2                   
+ Remoting<para>The remoting interface is used to invoke a bean using variety pluggable transport implementation.  Spring support Remote Method Invocation (RMI) , Spring's HTTP invoker ,Hessian, Burlap or JAX RPC to be used as the transport implementation in addition to the space based remoting. A space based remoting implementation takes advantage of the space high availability and implicit content based routing semantics to enable scalable communication between different services.
+     </para><para>The benefits of this approach are:</para><para><emphasis>Transparency</emphasis> - A call to a space based remoting looks exactly the same to the any other remoting. Moving an implementation from one implementation to a space based approach can be made in a completely seamless manner.</para><para> </para><para><emphasis>Reliability</emphasis> - The space can ensure the execution of a method in several ways:</para><para>Retries</para><para>Durability – the request can be sent even if the service is not available.</para><para>Transactions – ensures consistency recoverability in case the service failed during the execution of a certain operation.</para><para>Fail-over – A request is replicated to a backup space which takes over if the space fails and ensures continues high availability of the system.</para><para> </para><para><emphasis>Transparent collocation optimization</emphasis> - Through the embedded space topology the service can be co-located or run as remote process. In case of local communication the request goes through local references. When the service is distributed it will go through the network. Since the space is a shared entity both models can co-exist without changing the configuration. i.e. some service instance can be collocated and other can be remote. All this is done transparent to the client application.</para><para> </para><para><emphasis>Scalability</emphasis> - The same request can be targeted to the multiple services that will compete on serving that request and through that share the load amongst themselves.  </para><para>The services can scale across the network dynamically by monitoring the backlog (the amount of pending requests).</para><para>Partitioning – Request's can be portioned based on class-name, method argument and in this way ensure that requests that have dependency between themselves in terms of execution order will be routed to the same space instance where the order of execution can be guaranteed. In this way parallelism can be achieved on stateful operations and not just stateless ones.</para></section>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536420" />1.1.1.3                         
+ Parallel Processing Abstraction</title>
+            <para>A private case for using the remoting interface mentioned above is for parallel processing in a similar way to the master/worker pattern used with the space.</para>
+            <para> </para>
+            <para> </para>
+            <para> </para>
+            <para>
+              <figure>
+                <title></title>
+                <graphic fileref="images/image004.jpg" />
+              </figure>
+              <figure>
+                <title></title>
+                <graphic fileref="images/image005.gif" />
+              </figure>
+            </para>
+            <para> </para>
+            <para>In this case each method call is a task and each return value is a return on the task. Tasks can be executed by multiple service instances each can be running on a different machine and thus leverage its CPU power to increase the processing capacity of the for serving that service. From the end user perspective it looks like he's interacting with a single service. The execution balancing achieved through the space pull-model. i.e. the services blocks for requests, if a worker is under load it will simply pull less requests, otherwise it will pull more requests the same is true if the worker is running on a more powerful machine.</para>
+            <para> </para>
+          </section>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536421" />1.1.2.                 
+ Service Abstraction -Turns POJO's into distributed services using the Service Grid. </title>
+          <para>You can select a bean from a Spring bean descriptor file and deploy it onto the grid, scale it dynamically by adding more instances of that service and manage fail-over scenarios i.e. if one instance fails, the Service Grid will automatically detect that and re-deploy it on another Container running at a different machine. It will also automate the deployment procedure and will select the appropriate machine instance that has the appropriate spring support built into it out of the pool of the available machine. If such machine is not available it will postpone that deployment and re-deploy it as soon as it will become available.</para>
+          <para> </para>
+          <para>
+            <figure>
+              <title></title>
+              <graphic fileref="images/image007.jpg" />
+            </figure>
+          </para>
+          <para> </para>
+        </section>
+      </section>
+    </section>
+    <section>
+      <title>
+        <anchor id="_Toc137536422" />
+        <anchor id="_Requirement" />2.   
+ Integration Components</title>
+      <para>The GigaSpaces Spring integration includes the following Components:</para>
+      <section>
+        <title>
+          <anchor id="_Toc137536423" />
+          <anchor id="_Automatic_POJO_to_Entry Translation" />2.1.          
+ Common Services</title>
+        <section>
+          <title>
+            <anchor id="_Toc137536424" />2.1.1.                 
+ Automatic POJO to Entry Translation</title>
+          <para>Currently, the Jini/JavaSpace specification dictates that all Space operation should be conducted using Java classes that implement the marker interface
+ <ulink url="http://www.gigaspaces.com/docs/JiniApi/net/jini/core/entry/Entry.html">net.jini.core.entry.Entry</ulink>.</para>
+          <para>In order to users will be able to use GigaSpaces capabilities without modifying existing POJOs and alleviate migration from existing object stores or caching facilities (Hibernate, OJB, etc.) to GigaSpaces, the API exposed to client allows writing and reading ordinary POJO objects which do not implement the Entry interface. All relevant conversions done internally in transparent manner.</para>
+          <para> </para>
+          <para>In order to support the conversion, additional meta-data should be supplied via configuration files named *.gs.xml (similar to Hibernate’s *.hbm.xml descriptors) or via using Java annotations. These files describe the POJO’s properties which are related to GigaSpaces’ behavioral aspects of storing and looking objects in the space, for example, indexing, fifo enabled , timetolive , replicatable , persistent , etc.</para>
+          <para> </para>
+          <para>Client developers are given the option to use a base/support class which is used for writing applicative DAO or service objects which need to access a Space. The DAO support class maintains a 1:1 relationship with the injected template object, which, in turn, accesses the space to which it is holding a reference.</para>
+          <para> </para>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536425" />
+            <anchor id="_Transaction_Support" />2.1.2.                 
+ Transaction
+ Support</title>
+          <para>GigaSpaces supports 3 types of transactions: Jini transactions (using Jini “Mahalo” Transaction manager), local transactions and JTA/XA transactions. The GigaSpaces Spring integration provides support for the local transaction as well as the Jini distributed transactions. Configuration of the transaction management done via Spring’s configuration file (declaratively), or via coding/annotation (programmatically).</para>
+          <para>That primarily means that when switching from one transactional model to another, no code changes needed, only configuration modification via the standard Spring beans configuration file.</para>
+          <para> </para>
+          <para>The Transaction manager is responsible for creating, starting, suspending, resuming, committing and rolling back the transactions which encompass Space resource(s).</para>
+          <para>The Transaction Manager is injected to Spring’s generic
+ Transaction<emphasis>  </emphasis>Interceptor, which intercepts calls to services available on the application context using a proxy, and maintains transactional contexts for these calls, based on configuration details including propagation, isolation, etc. These configuration details may be defined as configuration data in the bean descriptor xml file, using Java 5 annotations in the code, or via any other valid implementation of Spring's
+ TransactionAttributeSource interface.</para>
+        </section>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536426" />2.2.          
+ Data-Grid</title>
+        <para>In order to utilize GigaSpaces Data-Grid you can use either the JavaSpace Spring template and the JDBC Spring template. See below examples:</para>
+        <section>
+          <title>
+            <anchor id="_Toc137536427" />2.2.1.                 
+ JavaSpaces Template Example</title>
+          <para>See below Pojo based JavaSpaces based application code example.
+ </para>
+          <section>
+            <title>
+              <anchor id="_Toc137536428" />2.2.1.1                         
+ The BaseSimpleBean POJO</title>
+            <para>This is a base class we will use as part of the example.</para>
+            <para>public class BaseSimpleBean {</para>
+            <para>              
+  private String firstName = null;</para>
+            <para>              
+  public BaseSimpleBean() {}</para>
+            <para>              
+  public BaseSimpleBean(String test) {</para>
+            <para>                              
+  this.firstName = test;</para>
+            <para>              
+  }</para>
+            <para> </para>
+            <para>              
+  public boolean equals(Object other) {</para>
+            <para>                              
+  if(other == null || !(other instanceof SimpleBean))</para>
+            <para>                                              
+  return false;</para>
+            <para>                              
+  else {</para>
+            <para>                                              
+  SimpleBean otherBean = (SimpleBean)other;</para>
+            <para>                                              
+  return (otherBean.getFirstName().equals(firstName));</para>
+            <para>                              
+  }</para>
+            <para>              
+  }</para>
+            <para>              
+  public String getFirstName(){return firstName;}</para>
+            <para>              
+  public void setFirstName(String test) {this.firstName = test; }</para>
+            <para>              
+  public String toString(){return "firstName: "+firstName;}</para>
+            <para>}</para>
+            <para> </para>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536429" />2.2.1.2                         
+ The SimpleBean POJO</title>
+            <para>This Pojo extends the BaseSimpleBean.</para>
+            <para>public class SimpleBean extends BaseSimpleBean{</para>
+            <para>              
+  private String secondName;</para>
+            <para>              
+  private Integer age;</para>
+            <para> </para>
+            <para>              
+  public SimpleBean() {}</para>
+            <para> </para>
+            <para>              
+  public SimpleBean(String name, Integer age) {</para>
+            <para>                              
+  this.secondName = name;</para>
+            <para>                              
+  this.age = age;</para>
+            <para>              
+  }</para>
+            <para> </para>
+            <para>              
+  private Integer getAge()
+                                   
+  { return age; }</para>
+            <para>              
+  private void setAge(Integer age)
+    
+  { this.age = age; }</para>
+            <para>              
+  private String getSecondName()
+                                     
+  { return secondName; }</para>
+            <para>              
+  private void setSecondName(String name)
+   
+  { this.secondName = name; }</para>
+            <para> </para>
+            <para>              
+  public boolean equals(Object other) {</para>
+            <para>                              
+  if(other == null || !(other instanceof SimpleBean))</para>
+            <para>                                              
+  return false;</para>
+            <para>                              
+  else {</para>
+            <para>                                              
+  SimpleBean otherBean = (SimpleBean)other;</para>
+            <para>                                              
+  return ((otherBean.secondName != null &amp;&amp; otherBean.secondName.equals(secondName) || otherBean.secondName == secondName )) &amp;&amp; (otherBean.age == age)</para>
+            <para>                                              
+  &amp;&amp; (otherBean.age == age)</para>
+            <para>                                              
+  &amp;&amp; ((otherBean.getFirstName() != null &amp;&amp; otherBean.getFirstName().equals(getFirstName()) || otherBean.getFirstName() ==getFirstName()));</para>
+            <para>                              
+  }</para>
+            <para>              
+  }</para>
+            <para> </para>
+            <para>              
+  public String toString()</para>
+            <para>              
+  {</para>
+            <para>                              
+  return super.toString()+ ", secondName: "+secondName+", age: "+age;</para>
+            <para>              
+  }</para>
+            <para>}</para>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536430" />2.2.1.3                         
+ Simple DAO Object used by the application</title>
+            <para>The following code example demonstrate JavaSpace write and read operations using Spring:</para>
+            <para>public class myMain</para>
+            <para>{</para>
+            <para>              
+  public static void main(String[] args) {</para>
+            <para>                              
+  ApplicationContext context = new ClassPathXmlApplicationContext("gigaspaces.xml");</para>
+            <para>                              
+  GigaSpacesTemplate template =  (GigaSpacesTemplate)context.getBean("gigaspacesTemplate");</para>
+            <para>                              
+  template.<emphasis>clear</emphasis>(null);</para>
+            <para>                              
+  SimpleBean pojo = new SimpleBean("second name", new Integer(32));</para>
+            <para>                              
+  pojo.setFirstName("first name");</para>
+            <para>      
+  template.<emphasis>write</emphasis>(pojo, Lease.FOREVER);</para>
+            <para>       
+ System.out.println("Writing pojo to space...Done!");</para>
+            <para>      
+  SimpleBean templatePojo = new SimpleBean();</para>
+            <para>      
+  SimpleBean pojoResult = (SimpleBean)template.<emphasis>read</emphasis>(templatePojo, Long.MAX_VALUE);</para>
+            <para>              
+  }</para>
+            <para> </para>
+            <para>}</para>
+            <para> </para>
+          </section>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536431" />2.2.2.                 
+ JDBC Template Example</title>
+          <para>The following application code using standard Spring JdbcTemplate to create table , insert , delete and query data from GigaSpaces Data-Grid.</para>
+          <para> </para>
+          <para>public class HelloJdbc</para>
+          <para>{</para>
+          <para>              
+  public static void main(String[] args) {</para>
+          <para>                              
+  {</para>
+          <para> </para>
+          <para>                                              
+  System.out.println("\nWelcome to GigaSpaces Spring JDBC HelloWorld example.");</para>
+          <para>                                              
+  System.out.println("This example uses Spring JDBCTemplate to write, read and "+</para>
+          <para>                                              
+  "delete entries to space...\n" );</para>
+          <para>                                              
+  ApplicationContext context = new ClassPathXmlApplicationContext("jdbc_gigaspaces.xml");</para>
+          <para> </para>
+          <para>                                              
+  JdbcTemplate template = (JdbcTemplate) context.getBean("jdbcTemplate");</para>
+          <para> </para>
+          <para> </para>
+          <para>                                              
+  /* SQL CREATE TABLE statement</para>
+          <para>                                              
+   *</para>
+          <para>                                              
+   */</para>
+          <para>                                              
+  String createSQL = "CREATE TABLE Person(FirstName varchar2 INDEX, " +</para>
+          <para>                                              
+  "LastName varchar2)";</para>
+          <para>                                              
+  System.out.println("Create table...");</para>
+          <para>                                              
+  try {</para>
+          <para>                                                              
+  template.execute( createSQL );</para>
+          <para>                                                              
+  System.out.println("Create table... Done!");</para>
+          <para> </para>
+          <para>                                              
+  } catch (Exception e) {</para>
+          <para>                                                              
+  System.out.println("\nTable may exist already... ");</para>
+          <para>                                                              
+  System.out.println("Restart or clean (space-browser) space !");</para>
+          <para>                                              
+  }</para>
+          <para> </para>
+          <para>                                              
+  /* SQL INSERT statement</para>
+          <para>                                              
+   *</para>
+          <para>                                              
+   */</para>
+          <para>                                              
+  int maxRows = 10;</para>
+          <para>                                              
+  String insertSQL = "INSERT INTO Person VALUES(?,?)";</para>
+          <para>                                              
+  System.out.println("Insert into table...");</para>
+          <para>                                              
+  for (int i = 1; i &lt; maxRows; i++) {</para>
+          <para>                                                              
+  Object[] params = new Object[] {"FirstName" + i,"LastName" + i};</para>
+          <para>                                                              
+  template.update(insertSQL, params);</para>
+          <para>                                                              
+  System.out.println("Insert into table... Done!");</para>
+          <para>                                              
+  }</para>
+          <para>                                              
+  /* SQL DELETE statement</para>
+          <para>                                              
+   *</para>
+          <para>                                              
+   */</para>
+          <para>                                              
+  String deleteSQL="DELETE FROM Person WHERE FirstName='FirstName3'";</para>
+          <para>                                              
+  System.out.println("Delete from table...");</para>
+          <para>                                              
+  template.execute( deleteSQL );</para>
+          <para>                                              
+  System.out.print("Delete from table...Done!");</para>
+          <para> </para>
+          <para>                                              
+  /* SQL SELECT statement</para>
+          <para>                                              
+   *</para>
+          <para>                                              
+   */</para>
+          <para>                                              
+  String selectSQL="SELECT * FROM Person ORDER BY Person.FirstName";</para>
+          <para>                                              
+  System.out.println("Select from table...");</para>
+          <para>                                              
+  template.query( selectSQL, new RowCallbackHandler() {</para>
+          <para>                                                              
+  public void processRow(ResultSet rs) throws SQLException</para>
+          <para>                                                              
+  {</para>
+          <para>                                                                              
+  System.out.println("FirstName : " + rs.getString("FirstName"));</para>
+          <para>                                                                              
+  System.out.println("LastName : "+rs.getString("LastName"));</para>
+          <para>                                                              
+  }</para>
+          <para>                                              
+  });</para>
+          <para>                                              
+  System.out.println("Select from table... Done!");</para>
+          <para>                              
+  }</para>
+          <para>              
+  }</para>
+          <para>}</para>
+          <section>
+            <title>
+              <anchor id="_Toc137536432" />2.2.2.1                         
+ Application Context xml - jdbc_gigaspaces.xml</title>
+            <para>The following file includes the properties to inject into  org.springframework.jdbc.datasource.SingleConnectionDataSource and org.springframework.jdbc.core.JdbcTemplate:</para>
+            <para> </para>
+            <para>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</para>
+            <para>&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;</para>
+            <para> </para>
+            <para>&lt;beans&gt;</para>
+            <para>              
+  &lt;!-- Declaration of GigaSpace jdbc driver--&gt;</para>
+            <para>                              
+  &lt;bean id="gigaspaceDataSource"</para>
+            <para>                              
+  class="org.springframework.jdbc.datasource.SingleConnectionDataSource" destroy-method="destroy"</para>
+            <para>                              
+  singleton="false"&gt;</para>
+            <para>                              
+  &lt;property name="driverClassName"</para>
+            <para>                                              
+  value="com.j_spaces.jdbc.driver.GDriver" /&gt;</para>
+            <para>                              
+  &lt;property name="url"</para>
+            <para>                                              
+  value="jdbc:gigaspaces:url:rmi://localhost:10098/./helloJDBCTemplate" /&gt;</para>
+            <para>                              
+  &lt;property name="username" value="" /&gt;</para>
+            <para>                              
+  &lt;property name="password" value="" /&gt;</para>
+            <para>              
+  &lt;/bean&gt;</para>
+            <para>              
+  &lt;bean id="jdbcTemplate"</para>
+            <para>                              
+  class="org.springframework.jdbc.core.JdbcTemplate"&gt;</para>
+            <para>                              
+  &lt;property name="dataSource"&gt;</para>
+            <para>                                              
+  &lt;ref bean="gigaspaceDataSource" /&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>              
+  &lt;/bean&gt;</para>
+            <para>&lt;/beans&gt;</para>
+            <para> </para>
+          </section>
+        </section>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536433" />2.3.          
+ Messaging Grid</title>
+        <para>GigaSpaces JMS Spring Integration allows users to use GigaSpaces middleware with existing JMS based applications.</para>
+        <section>
+          <title>
+            <anchor id="_Toc137536434" />2.3.1.                 
+ The JMS Spring application Example</title>
+          <para>Below is are standard JMS Spring based applications - Sender and Receiver using GigaSpaces:</para>
+          <para>public class SenderToQueue</para>
+          <para>{</para>
+          <para>              
+  public static void main(String[] args) {</para>
+          <para> </para>
+          <para>                              
+  final int             
+  NUM_MSGS;</para>
+          <para>                              
+  final String          
+  MSG_TEXT = new String("This is a simple message");</para>
+          <para> </para>
+          <para>                              
+  if ( (args.length &lt; 1)) {</para>
+          <para>                                              
+  System.out.println("Usage: java SenderToQueue  [&lt;number_of_messages&gt;]");</para>
+          <para>                                              
+  System.exit(1);</para>
+          <para>                              
+  }</para>
+          <para> </para>
+          <para>                              
+  ApplicationContext context = new ClassPathXmlApplicationContext("jms_gigaspaces.xml");</para>
+          <para> </para>
+          <para>                              
+  //get the Spring JMSTemplate (here we use the JMS 102 template</para>
+          <para>                              
+  JmsTemplate102 jmsTemplate102 = (JmsTemplate102) context.getBean("jmsQueueTemplate");</para>
+          <para> </para>
+          <para>                              
+  if (args.length == 1){</para>
+          <para>                                              
+  NUM_MSGS = (new Integer(args[0])).intValue();</para>
+          <para>                              
+  } else {</para>
+          <para>                                              
+  NUM_MSGS = 1;</para>
+          <para>                              
+  }</para>
+          <para>                              
+  for (int i = 0; i &lt; NUM_MSGS; i++)</para>
+          <para>                              
+  {</para>
+          <para>                                              
+  final String theMessage = MSG_TEXT + " " + (i + 1);</para>
+          <para>                                              
+  System.out.println("Sending message: " + theMessage);</para>
+          <para>                                              
+  jmsTemplate102.send(new MessageCreator() {</para>
+          <para>                                                              
+  public Message createMessage(Session session)</para>
+          <para>                                                              
+  throws JMSException {</para>
+          <para>                                                                              
+  return session.createTextMessage(theMessage);</para>
+          <para>                                                              
+  }</para>
+          <para>                                              
+  });</para>
+          <para>                              
+  }</para>
+          <para>              
+  }</para>
+          <para>}</para>
+          <para> </para>
+          <para> </para>
+          <para>public class SynchQueueReceiver</para>
+          <para>{</para>
+          <para>              
+  public static void main(String[] args) {</para>
+          <para>                              
+  ApplicationContext context = new ClassPathXmlApplicationContext("jms_gigaspaces.xml");</para>
+          <para>                              
+  //get the Spring JMSTemplate (here we use the JMS 102 template</para>
+          <para>                              
+  JmsTemplate102 jmsTemplate102 = (JmsTemplate102) context.getBean("jmsQueueTemplate");</para>
+          <para>                              
+  while (true)</para>
+          <para>                              
+  {</para>
+          <para>                                              
+  try{</para>
+          <para>                                                              
+  Message msg = jmsTemplate102.receive();</para>
+          <para> </para>
+          <para>                                                              
+  if (msg instanceof TextMessage) {</para>
+          <para>                                                                              
+  TextMessage textMessage = (TextMessage) msg;</para>
+          <para>                                                                              
+  System.out.println("Reading message: " + textMessage.getText() );</para>
+          <para>                                                              
+  } else {</para>
+          <para>                                                                              
+  // Non-text control message indicates end of messages.</para>
+          <para>                                              
+                                
+  break;</para>
+          <para>                                                              
+  }</para>
+          <para>                                              
+  }catch(Exception e){</para>
+          <para>                                                              
+  e.printStackTrace();</para>
+          <para>                                              
+  }</para>
+          <para>                              
+  }</para>
+          <para>              
+  }</para>
+          <para>}</para>
+          <para> </para>
+          <section>
+            <title>
+              <anchor id="_Toc137536435" />2.3.1.1                         
+ Application Context xml - jms_gigaspaces.xml</title>
+            <para>This file includes the GigaSpaces JMS properties to inject into org.springframework.jndi.JndiTemplate , org.springframework.jms.core.JmsTemplate102 and org.springframework.jndi.JndiObjectFactoryBean:</para>
+            <para> </para>
+            <para> </para>
+            <para>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</para>
+            <para>&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;</para>
+            <para> </para>
+            <para>&lt;beans&gt;</para>
+            <para> </para>
+            <para>              
+  &lt;bean id="jndiTemplate"</para>
+            <para>                              
+  class="org.springframework.jndi.JndiTemplate"&gt;</para>
+            <para>                              
+  &lt;property name="environment"&gt;</para>
+            <para>                                              
+  &lt;props&gt;</para>
+            <para>                                                              
+  &lt;prop key="java.naming.factory.initial"&gt;com.sun.jndi.rmi.registry.RegistryContextFactory&lt;/prop&gt;</para>
+            <para>                                                              
+  &lt;prop key="java.naming.provider.url"&gt;rmi://localhost:10098&lt;/prop&gt;</para>
+            <para>                              
+                
+  &lt;/props&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>              
+  &lt;/bean&gt;</para>
+            <para>              
+  &lt;!-- JMS Queue Template --&gt;</para>
+            <para>              
+  &lt;bean id="jmsQueueTemplate"</para>
+            <para>                              
+  class="org.springframework.jms.core.JmsTemplate102"&gt;</para>
+            <para>                              
+  &lt;property name="connectionFactory"&gt;</para>
+            <para>                                              
+  &lt;ref bean="jmsQueueConnectionFactory" /&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>                              
+  &lt;property name="defaultDestination"&gt;</para>
+            <para>                                              
+  &lt;ref bean="destination" /&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>                              
+  &lt;property name="pubSubDomain"&gt;</para>
+            <para>                                              
+  &lt;value&gt;false&lt;/value&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>                              
+  &lt;property name="receiveTimeout"&gt;</para>
+            <para>                                              
+  &lt;value&gt;20000&lt;/value&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>              
+  &lt;/bean&gt;</para>
+            <para> </para>
+            <para> </para>
+            <para>              
+  &lt;!-- JMS Queue Connection Factory --&gt;</para>
+            <para>              
+  &lt;bean id="jmsQueueConnectionFactory"</para>
+            <para>                              
+  class="org.springframework.jndi.JndiObjectFactoryBean"&gt;</para>
+            <para>                              
+  &lt;property name="jndiTemplate"&gt;</para>
+            <para>                                              
+  &lt;ref bean="jndiTemplate" /&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>                              
+  &lt;property name="jndiName"&gt;</para>
+            <para>                                              
+  &lt;value&gt;GigaSpaces;helloJMSTemplate_container;helloJMSTemplate;GSQueueConnectionFactoryImpl&lt;/value&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>              
+  &lt;/bean&gt;</para>
+            <para>              
+  &lt;bean id="destination"</para>
+            <para>                              
+  class="org.springframework.jndi.JndiObjectFactoryBean"&gt;</para>
+            <para>                              
+  &lt;property name="jndiTemplate"&gt;</para>
+            <para>                                              
+  &lt;ref bean="jndiTemplate" /&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>                              
+  &lt;property name="jndiName"&gt;</para>
+            <para>                                              
+  &lt;value&gt;GigaSpaces;helloJMSTemplate_container;helloJMSTemplate;jms;destinations;MyQueue&lt;/value&gt;</para>
+            <para>                              
+  &lt;/property&gt;</para>
+            <para>              
+  &lt;/bean&gt;</para>
+            <para>&lt;/beans&gt;</para>
+            <para> </para>
+          </section>
+        </section>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536436" />
+          <anchor id="_Remote_invocation_of_space objects" />2.4.          
+ Parallel Processing – Business logic Remote invocation </title>
+        <para>In order to allow users to utilize GigaSpaces Grid, you can invoke your business logic on remote processes. Proxies to the remote objects are generated automatically. Remoting implemented using JavaSpaces as the transport layer similar to existing Spring remoting technologiessuch as RMI or Web Services.</para>
+        <para> </para>
+        <para>The Remoting support composed from the following 3 logical units: Taker, worker and delegate. The taker is responsible for accessing the delegate, which, in turn, executes code located on the worker. These 3 units may be co-located within the same VM, or separately deployed on three different nodes/jvm’s. The different parties communicate via Task and Result objects.</para>
+        <section>
+          <title>
+            <anchor id="_Toc137536437" />2.4.1.                 
+ Remoting Example</title>
+          <para>This section illustrate remoting example. It describe Master , Worker , Task and Result classes implementation and their related classes.</para>
+          <section>
+            <title>
+              <anchor id="_Toc137536438" />2.4.1.1                         
+ The Master</title>
+            <para>The Master executes remote business logic running at the Worker. The ITask implementation is the actual business logic executed at the worker.</para>
+            <para> </para>
+            <para>The remote worker returns Result object.</para>
+            <para>ITask proxy =  (ITask)applicationContext.getBean("proxy");</para>
+            <para>Result res = proxy.execute("data");</para>
+            <para> </para>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536439" />2.4.1.2                         
+ The Worker</title>
+            <para>The Worker implementation. It is using the generic DelegatingWorker.</para>
+            <para>public class Worker
+ </para>
+            <para>{</para>
+            <para>              
+  //member for gigaspaces template</para>
+            <para>              
+  private GigaSpacesTemplate template;</para>
+            <para>              
+  //The delegator worker</para>
+            <para>              
+  private DelegatingWorker iTestBeanWorker;</para>
+            <para>              
+  private ApplicationContext              
+  applicationContext;</para>
+            <para> </para>
+            <para>              
+  private Thread itbThread;</para>
+            <para>              
+  protected void init() throws Exception {</para>
+            <para>                              
+  applicationContext = new ClassPathXmlApplicationContext("gigaspaces_master_remoting.xml");</para>
+            <para>                              
+  template = (GigaSpacesTemplate)applicationContext.getBean("gigaspacesTemplate");</para>
+            <para>                              
+  iTestBeanWorker = (DelegatingWorker)applicationContext.getBean("testBeanWorker");</para>
+            <para>              
+  }</para>
+            <para> </para>
+            <para>              
+  protected void start() {</para>
+            <para>                              
+  itbThread = new Thread(iTestBeanWorker);</para>
+            <para>                              
+  itbThread.start();</para>
+            <para>              
+  }</para>
+            <para> </para>
+            <para>              
+  public static void main(String[] args) {</para>
+            <para>                              
+  try {</para>
+            <para>                                              
+  System.out.println("\nWelcome to Spring GigaSpaces Worker remote Example!\n");</para>
+            <para>                                              
+  Worker worker = new Worker();</para>
+            <para>                                              
+  worker.init();</para>
+            <para>                                              
+  worker.start();</para>
+            <para>                              
+  } catch (Exception ux) {</para>
+            <para>                                              
+  ux.printStackTrace();</para>
+            <para>                                              
+  System.err.println("transError problem..." + ux.getMessage());</para>
+            <para>                              
+  }</para>
+            <para>              
+  }</para>
+            <para>}</para>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536440" />2.4.1.3                         
+ The ITask</title>
+            <para>The task interface.</para>
+            <para>public interface ITask extends Serializable{</para>
+            <para>              
+  public Result execute(String data);</para>
+            <para>}</para>
+            <para> </para>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536441" />2.4.1.4                         
+ The Task</title>
+            <para>This is the ITask interface implementation used by the worker:</para>
+            <para>public class Task implements ITask{</para>
+            <para>              
+  private long counter = 0;</para>
+            <para>  
+  public Task() {</para>
+            <para>  
+  }</para>
+            <para> </para>
+            <para>  
+  /**</para>
+            <para>   
+  * Execute the task</para>
+            <para>   
+  */</para>
+            <para>              
+  public Result execute(String data)</para>
+            <para>              
+  {</para>
+            <para>                              
+  counter++;</para>
+            <para>                              
+  System.out.println("I am doing the task id = "+counter+" with data : "+data);</para>
+            <para>                              
+  Result result = new Result();</para>
+            <para>                              
+  result.setTaskID(counter);</para>
+            <para>                              
+  // do the calc</para>
+            <para>                              
+  result.setAnswer(data);</para>
+            <para>                              
+  return result ;</para>
+            <para>              
+  }</para>
+            <para>}</para>
+            <para> </para>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536442" />2.4.1.5                         
+ The Result</title>
+            <para>The Result object used to transport the Answer back to the client caller:</para>
+            <para>public class Result implements Serializable</para>
+            <para>{</para>
+            <para>              
+  private long taskID; // task id</para>
+            <para>              
+  private String answer = null; // result</para>
+            <para>              
+  public Result() {}</para>
+            <para>              
+  public String getAnswer()  {return answer;  
+  }</para>
+            <para>              
+  public void setAnswer(String answer){this.answer = answer;}</para>
+            <para>              
+  public long getTaskID(){  
+  return taskID;}</para>
+            <para>              
+  public void setTaskID(long taskID){this.taskID = taskID;}</para>
+            <para>}</para>
+            <para> </para>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536443" />2.4.1.6                         
+ gigaspaces_master_remoting.xml</title>
+            <para>The gigaspaces_master_remoting.xml includes properties injected into the following classes:</para>
+            <table>
+              <title>
+              </title>
+              <tgroup cols="3">
+                <colspec colname="c1" />
+                <colspec colname="c2" />
+                <colspec colname="c3" />
+                <tbody>
+                  <row>
+                    <entry>
+                      <para>Class</para>
+                    </entry>
+                    <entry>
+                      <para>Description</para>
+                    </entry>
+                    <entry>
+                      <para>Bean Name</para>
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>
+                      <para>org.springmodules.javaspaces.gigaspaces.GigaSpacesUidFactory</para>
+                    </entry>
+                    <entry>
+                      <para>Used the generate unique UID for tasks. When using partitioned space the uid hashcode determines the target space of the entry</para>
+                    </entry>
+                    <entry>
+                      <para>gigaSpacesUidFactory</para>
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>
+                      <para>org.springframework.spaces.DelegatingWorker</para>
+                    </entry>
+                    <entry>
+                      <para>The Generic worker invoking the Task business logic</para>
+                    </entry>
+                    <entry>
+                      <para>testBeanWorker</para>
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>
+                      <para>com.gigaspaces.spring.GigaSpacesInterceptor</para>
+                    </entry>
+                    <entry>
+                      <para>The Interceptor that pass the task from the client into the worker via the space</para>
+                    </entry>
+                    <entry>
+                      <para>javaSpaceInterceptor</para>
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>
+                      <para>org.springframework.aop.framework.ProxyFactoryBean</para>
+                    </entry>
+                    <entry>
+                      <para>FactoryBean implementation for use to source AOP proxies from a Spring BeanFactory</para>
+                    </entry>
+                    <entry>
+                      <para>proxy</para>
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>
+                      <para>com.gigaspaces.spring.examples.remote.Task</para>
+                    </entry>
+                    <entry>
+                      <para>The Remote Task implementation</para>
+                    </entry>
+                    <entry>
+                      <para>taskBean</para>
+                    </entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </table>
+            <para> </para>
+          </section>
+          <section>
+            <title>
+              <anchor id="_Toc137536444" />2.4.1.7                         
+ GigaSpacesUidFactory</title>
+            <para>To ensure each client will get the relevant result object back from the worker the task and result injected with unique uid generated at the client side.  </para>
+            <table>
+              <title>
+              </title>
+              <tgroup cols="3">
+                <colspec colname="c1" />
+                <colspec colname="c2" />
+                <colspec colname="c3" />
+                <tbody>
+                  <row>
+                    <entry>
+                      <para>Property</para>
+                    </entry>
+                    <entry>
+                      <para>Description</para>
+                    </entry>
+                    <entry>
+                      <para>Type</para>
+                    </entry>
+                  </row>
+                  <row>
+                    <entry>
+                      <para>Space</para>
+                    </entry>
+                    <entry>
+                      <para>The space template</para>
+                    </entry>
+                    <entry>
+                      <para>Reference</para>
+                    </entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </table>
+            <para> </para>
+            <section>
+              <title>
+              </title>
+              <anchor id="_Toc137536445" />2.4.1.7.1                   
+ DelegatingWorker<para>The org.springmodules.javaspaces.gigaspaces.DelegatingWorker configure the worker. This is not a singleton class. The The DelegatingWorker includes the following properties:</para><table><title></title><tgroup cols="2"><colspec colname="c1" /><colspec colname="c2" /><tbody><row><entry><para>Property</para></entry><entry><para>Description</para></entry></row><row><entry><para>javaSpaceTemplate</para></entry><entry><para>The GigaSpaces Spring template</para></entry></row><row><entry><para>delegate</para></entry><entry><para>The "Task" bean to be injected into the worker</para></entry></row><row><entry><para>businessInterface</para></entry><entry><para>The
+ "Task" class interface</para></entry></row></tbody></tgroup></table><para> </para></section>
+            <section>
+              <title>
+              </title>
+              <anchor id="_Toc137536446" />2.4.1.7.2                   
+ GigaSpacesInterceptor<para>The com.gigaspaces.spring.GigaSpacesInterceptor controls the client side Interceptor that submits the task into the space and getting the result back. Getting the result back can be done is synchronous or asynchronous manner allowing the client to wait or continue with its activity before the actual result has been sent back from the worker. The GigaSpacesInterceptor extends the JavaSpaceInterceptor that support UID injection to the task and result objects allowing client to retrieve back the related result for specific task.</para><para> </para><table><title></title><tgroup cols="4"><colspec colname="c1" /><colspec colname="c2" /><colspec colname="c3" /><colspec colname="c4" /><tbody><row><entry><para>Property</para></entry><entry><para>Description</para></entry><entry><para>Type</para></entry><entry><para>Value</para></entry></row><row><entry><para>javaSpaceTemplate</para></entry><entry><para>The JavaSpace template
+ </para></entry><entry><para>Reference</para></entry><entry><para> </para></entry></row><row><entry><para>uidFactory</para></entry><entry><para>The task includes unique identifier. This ensures that each client will get correct result object in return.</para></entry><entry><para>Reference</para></entry><entry><para> </para></entry></row><row><entry><para>synchronous</para></entry><entry><para>Should client wait until master returns result before continues. When running in asynchronous mode the and result has not been sent back from the worker the client will wait specified time as defined as part of the timeoutMillis parameter in case matching result does not exists within the space.
+ </para></entry><entry><para>boolean</para></entry><entry><para>false/true</para></entry></row><row><entry><para>timeoutMillis</para></entry><entry><para>Time in millisecond to wait for matching result to be found within the space (take timeout times).
+ </para></entry><entry><para>long</para></entry><entry><para> </para></entry></row><row><entry><para>serializableTarget</para></entry><entry><para>Causes this target to be passed to space in a RunnableMethodEntry</para></entry><entry><para>Reference</para></entry><entry><para> </para></entry></row></tbody></tgroup></table><para> </para></section>
+            <section>
+              <title>
+              </title>
+              <anchor id="_Toc137536447" />2.4.1.7.3                   
+ ProxyFactoryBean<para>org.springframework.aop.framework.ProxyFactoryBean – the
+ client-side proxy.</para><table><title></title><tgroup cols="4"><colspec colname="c1" /><colspec colname="c2" /><colspec colname="c3" /><colspec colname="c4" /><tbody><row><entry><para>Property</para></entry><entry><para>Description</para></entry><entry><para>Type</para></entry><entry><para>Values</para></entry></row><row><entry><para>interceptorNames</para></entry><entry><para>Definition of the Spring AOP interceptor chain. The spaceInterceptor must be the last interceptor as there is no local target to invoke.</para><para>Any number of other interceptors can be added, e.g. to monitor performance ,add security or other functionality</para></entry><entry><para>list</para></entry><entry><para>javaSpaceInterceptor</para><para>PerformanceMonitorInterceptor</para></entry></row><row><entry><para>proxyInterfaces</para></entry><entry><para> </para></entry><entry><para>list</para></entry><entry><para>com.gigaspaces.spring.examples.remote.ITask</para></entry></row></tbody></tgroup></table><para> </para></section>
+            <section>
+              <title>
+              </title>
+              <anchor id="_Toc137536448" />2.4.1.7.4                   
+ Application context file<para>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</para><para>&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;</para><para> </para><para>&lt;!-- Root application context --&gt;</para><para> </para><para>&lt;beans&gt;</para><para>              
+  &lt;!-- Declaration of GigaSpace factory bean --&gt;</para><para>              
+  &lt;bean id="gigaspace"</para><para>                              
+  class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean"&gt;</para><para>                              
+  &lt;property name="urls"&gt;</para><para>                                              
+  &lt;list&gt;</para><para>                                                              
+  &lt;value&gt;jini://*/*/remotingSpace&lt;/value&gt;</para><para>                                              
+  &lt;/list&gt;</para><para>                              
+  &lt;/property&gt;</para><para>              
+  &lt;/bean&gt;</para><para> </para><para>              
+  &lt;!--  Declaration of GigaSpaces uid factory --&gt;</para><para>              
+  &lt;bean id="gigaSpacesUidFactory"</para><para>                              
+  class="org.springmodules.javaspaces.gigaspaces.GigaSpacesUidFactory"&gt;</para><para>                              
+  &lt;property name="space" ref="gigaspace"/&gt;</para><para>              
+  &lt;/bean&gt;</para><para> </para><para>              
+  &lt;!-- Declaration of GigaSpace template--&gt;</para><para>              
+  &lt;bean id="gigaspacesTemplate"</para><para>                              
+  class="org.springmodules.javaspaces.gigaspaces.GigaSpacesTemplate"&gt;</para><para>                              
+  &lt;property name="space" ref="gigaspace" /&gt;</para><para>              
+  &lt;/bean&gt;</para><para>              
+  </para><para>              
+  &lt;bean id="testBeanWorker"</para><para>                              
+  class=" org.springmodules.javaspaces.DelegatingWorker"</para><para>                              
+  singleton="false" &gt;</para><para>                              
+  &lt;property name="javaSpaceTemplate" ref="gigaspacesTemplate"/&gt;</para><para>                              
+  &lt;property name="delegate"&gt;&lt;ref local="taskBean"/&gt;&lt;/property&gt;</para><para>                              
+  &lt;property name="businessInterface"&gt;&lt;value&gt;com.gigaspaces.spring.examples.remote.ITask&lt;/value&gt;&lt;/property&gt;</para><para>              
+  &lt;/bean&gt;</para><para>              
+  &lt;bean id="javaSpaceInterceptor"</para><para>                              
+  class=" org.springmodules.javaspaces.gigaspaces.GigaSpacesInterceptor"&gt;</para><para>                              
+  &lt;property name="javaSpaceTemplate" ref="gigaspacesTemplate"/&gt;</para><para>                              
+  &lt;property name="uidFactory" ref="gigaSpacesUidFactory"/&gt;</para><para>                              
+  &lt;property name="synchronous"&gt;&lt;value&gt;true&lt;/value&gt;&lt;/property&gt;</para><para>                              
+  &lt;!--</para><para>                              
+  The Time for waiting to take the result from the space by the master</para><para>                              
+   --&gt;</para><para>                              
+  &lt;property name="timeoutMillis"&gt;&lt;value&gt;3000&lt;/value&gt;&lt;/property&gt;</para><para> </para><para>                              
+  &lt;!--</para><para>                                              
+  Comment out this property for "service seeking" behavior where the endpoint is assumed to host a service to invoke.</para><para>                              
+  --&gt;</para><para>                              
+  &lt;!--</para><para>                              
+  &lt;property name="serializableTarget" ref="taskBean"&gt;</para><para>                              
+  &lt;/property&gt;</para><para>                              
+  --&gt;</para><para>              
+  &lt;/bean&gt;</para><para>              
+  &lt;!--</para><para>                              
+  This is the client-side proxy.</para><para>              
+  --&gt;</para><para>              
+  &lt;bean id="proxy"</para><para>                              
+  class="org.springframework.aop.framework.ProxyFactoryBean"&gt;</para><para>                              
+  &lt;property name="interceptorNames"&gt;</para><para>                                              
+  &lt;list&gt;</para><para>                                                              
+  &lt;value&gt;javaSpaceInterceptor&lt;/value&gt;</para><para>                                                              
+  &lt;!--</para><para>                                                              
+  &lt;value&gt;PerformanceMonitorInterceptor&lt;/value&gt;</para><para>                                                              
+   --&gt;</para><para>                                              
+  &lt;/list&gt;</para><para>                              
+  &lt;/property&gt;</para><para>                              
+  &lt;property name="proxyInterfaces"&gt;</para><para>                                              
+  &lt;list&gt;</para><para>                                                              
+  &lt;value&gt;com.gigaspaces.spring.examples.remote.ITask&lt;/value&gt;</para><para>                                              
+  &lt;/list&gt;</para><para>                              
+  &lt;/property&gt;</para><para>              
+  &lt;/bean&gt;</para><para>              
+  &lt;!--</para><para>                              
+  Simple test target</para><para>              
+  --&gt;</para><para>              
+  &lt;bean id="taskBean" class="com.gigaspaces.spring.examples.remote.Task" &gt;</para><para>              
+  &lt;/bean&gt;</para><para>&lt;/beans&gt;</para><para> </para></section>
+          </section>
+        </section>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536449" />2.5.          
+ Service Grid</title>
+        <para>The Service Grid allows users to build Pojo or Spring based application as usual and deploy these into the Grid as Services. The Service Grid managing the life cycle of the deployed Service by provisioning , starting and managing it when running at the Service Grid container.</para>
+        <para> </para>
+        <para>See below simple Hello class implementation and the required steps to deploy it into the Service Grid.</para>
+        <section>
+          <title>
+            <anchor id="_Toc137536450" />2.5.1.                 
+ Hello Interface</title>
+          <para>Your Pojo should implement an interface:</para>
+          <para>package example;</para>
+          <para> </para>
+          <para>import java.rmi.RemoteException;</para>
+          <para> </para>
+          <para>public interface Hello {</para>
+          <para>  
+  /**</para>
+          <para>   
+  * Say hello!</para>
+          <para>   
+  */</para>
+          <para>  
+  String sayHello(String greetings) throws RemoteException;</para>
+          <para>}</para>
+          <para> </para>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536451" />2.5.2.                 
+ Hello implementation</title>
+          <para>Here is the Hello class implementation:</para>
+          <para>package example;</para>
+          <para> </para>
+          <para>public class HelloImpl implements Hello {</para>
+          <para>              
+  </para>
+          <para>   
+  public String sayHello(String greetings) {</para>
+          <para>      
+  System.out.println("**** Greeter says : "+greetings);</para>
+          <para>      
+  return("Hello!");</para>
+          <para>  
+  }</para>
+          <para> </para>
+          <para>  
+  public HelloImpl()</para>
+          <para>              
+  {</para>
+          <para>              
+      
+ System.out.println("**** Hello Service Started! ****");</para>
+          <para>              
+  }</para>
+          <para>}</para>
+          <para> </para>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536452" />2.5.3.                 
+ The Deployment File</title>
+          <para>This is the Service Grid deployment file. This should include the example.Hello interface , the Implementation Class and the relevant libraries information:</para>
+          <para>&lt;?xml version="1.0" encoding="ISO-8859-1" standalone="no"?&gt;</para>
+          <para>&lt;!DOCTYPE gs-deployment SYSTEM "java://gs-deploy-desc.dtd" [</para>
+          <para>  
+  &lt;!ENTITY CodeServer.IP SYSTEM</para>
+          <para>      
+  "java://java.net.InetAddress.getLocalHost().getHostAddress()"&gt;</para>
+          <para>  
+  &lt;!ENTITY CodeServer.Port "9010" &gt;</para>
+          <para>  
+  &lt;!ENTITY CodeServerURL "http://&amp;CodeServer.IP;:&amp;CodeServer.Port;/" &gt;</para>
+          <para>  
+  &lt;!ENTITY Group SYSTEM</para>
+          <para>       
+ "java://java.lang.System.getProperty(com.gs.jini_lus.groups)"&gt;</para>
+          <para>]&gt;</para>
+          <para> </para>
+          <para>&lt;gs-deployment Name="Hello World Example"&gt;</para>
+          <para> </para>
+          <para>  
+  &lt;!-- Declare global attributes for the Deployment Descriptor  --&gt;</para>
+          <para>   
+ &lt;Codebase&gt;&amp;CodeServerURL;&lt;/Codebase&gt;</para>
+          <para> </para>
+          <para>  
+  &lt;Groups&gt;</para>
+          <para>      
+  &lt;Group&gt;&amp;Group;&lt;/Group&gt;</para>
+          <para>  
+  &lt;/Groups&gt;</para>
+          <para> </para>
+          <para>  
+  &lt;!-- Declare attributes for the Hello example --&gt;</para>
+          <para>   
+ &lt;ServiceBean Name="Hello"&gt;</para>
+          <para>      
+  &lt;Interfaces&gt;</para>
+          <para>          
+  &lt;Interface&gt;example.Hello&lt;/Interface&gt;</para>
+          <para>          
+  &lt;Resources&gt;</para>
+          <para>              
+  &lt;!--</para>
+          <para>               
+ &lt;JAR&gt;gs-dl.jar&lt;/JAR&gt;</para>
+          <para>              
+  --&gt;</para>
+          <para>              
+  &lt;JAR&gt;hello-dl.jar&lt;/JAR&gt;</para>
+          <para>&lt;JAR&gt;JSpaces.jar&lt;/JAR&gt;</para>
+          <para>          
+  &lt;/Resources&gt;</para>
+          <para>      
+  &lt;/Interfaces&gt;</para>
+          <para> </para>
+          <para>      
+  &lt;ImplementationClass&gt;example.HelloImpl</para>
+          <para>          
+  &lt;Resources&gt;</para>
+          <para>              
+  &lt;JAR&gt;hello.jar&lt;/JAR&gt;</para>
+          <para>              
+  &lt;JAR&gt;JSpaces.jar&lt;/JAR&gt;</para>
+          <para>          
+  &lt;/Resources&gt;</para>
+          <para>      
+  &lt;/ImplementationClass&gt;</para>
+          <para> </para>
+          <para>      
+  &lt;Configuration&gt;</para>
+          <para>          
+  &lt;Component Name="service.load"&gt;</para>
+          <para>              
+  &lt;Parameter</para>
+          <para>                   
+ Name="serviceBeanFactory"</para>
+          <para>                  
+  Value="new com.gigaspaces.grid.bean.BeanFactory()"/&gt;</para>
+          <para>          
+  &lt;/Component&gt;</para>
+          <para>      
+  &lt;/Configuration&gt;</para>
+          <para> </para>
+          <para>       
+ &lt;!--</para>
+          <para>      
+  &lt;Associations&gt;</para>
+          <para>          
+  &lt;Association Type="uses"</para>
+          <para>                        
+ Name="GigaSpace"</para>
+          <para>                        
+ Property="space"</para>
+          <para>                        
+ OperationalString="GigaSpace Service Deployment"/&gt;</para>
+          <para>      
+  &lt;/Associations&gt;</para>
+          <para>      
+  --&gt;</para>
+          <para>      
+  &lt;Maintain&gt;1&lt;/Maintain&gt;</para>
+          <para> </para>
+          <para>  
+  &lt;/ServiceBean&gt;</para>
+          <para>&lt;/gs-deployment&gt;</para>
+          <para> </para>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536453" />2.5.4.                 
+ The build file</title>
+          <para>Here is the any bbuild.xml you should have to build the hello library:</para>
+          <para>&lt;?xml version='1.0' encoding='ISO-8859-1' standalone='yes'?&gt;</para>
+          <para>&lt;!--</para>
+          <para>The build script will build the GigaSpaces Prime Number example</para>
+          <para>--&gt;</para>
+          <para>&lt;project name="Bean Example" default="all" &gt;</para>
+          <para>  
+  &lt;property name="example.name" value="bean-example" /&gt;</para>
+          <para>  
+  &lt;property environment="env."/&gt;</para>
+          <para>  
+  &lt;property name="examples.home" value="${basedir}/.."/&gt;</para>
+          <para>  
+  &lt;!-- import the common elements --&gt;</para>
+          <para>  
+  &lt;import file="../build_properties.xml"/&gt;</para>
+          <para>  
+  &lt;property name="example.lib" value="${examples.home}/bean/lib"/&gt;</para>
+          <para>  
+  &lt;property name="example.build" value="${examples.home}/bean/build"/&gt;</para>
+          <para>  
+  &lt;property name="example.classes" value="${example.build}/classes" /&gt;</para>
+          <para>  
+  &lt;property name="example.src" value="${examples.home}/bean/src" /&gt;</para>
+          <para>  
+  &lt;property name="example.space-prop" value="${examples.home}/bean/space-prop" /&gt;</para>
+          <para> </para>
+          <para>  
+  &lt;fileset dir="${example.src}"&gt;</para>
+          <para>      
+  &lt;patternset id="java.source"&gt;</para>
+          <para>          
+  &lt;include name="example/**/*.java"/&gt;</para>
+          <para>      
+  &lt;/patternset&gt;</para>
+          <para>  
+  &lt;/fileset&gt;</para>
+          <para>   
+  </para>
+          <para>  
+  &lt;fileset dir="${example.classes}" &gt;</para>
+          <para>      
+  &lt;patternset id="project.classes" &gt;</para>
+          <para>          
+  &lt;include name="example/*.class" /&gt;</para>
+          <para>      
+  &lt;/patternset&gt;</para>
+          <para>  
+  &lt;/fileset&gt;</para>
+          <para> </para>
+          <para>              
+  &lt;fileset dir="${example.classes}" &gt;</para>
+          <para>      
+  &lt;patternset id="project.classes" &gt;</para>
+          <para>          
+  &lt;include name="example/*.class" /&gt;</para>
+          <para>      
+  &lt;/patternset&gt;</para>
+          <para>  
+  &lt;/fileset&gt;</para>
+          <para> </para>
+          <para>              
+  &lt;fileset dir="${example.lib}"&gt;</para>
+          <para>      
+  &lt;patternset id="jar.files"&gt;</para>
+          <para>          
+  &lt;include name="hello.jar" /&gt;</para>
+          <para>     
+  &lt;/patternset&gt;</para>
+          <para>  
+  &lt;/fileset&gt;</para>
+          <para>  
+  </para>
+          <para>  
+  &lt;target name="jars" depends="hello.jar, hello-dl.jar" /&gt;</para>
+          <para> </para>
+          <para>  
+  &lt;target name="hello.jar" depends="compile"&gt;</para>
+          <para>      
+  &lt;jar destfile="${example.lib}/hello.jar"</para>
+          <para>           
+  basedir="${example.classes}"/&gt;          
+  </para>
+          <para>  
+  &lt;/target&gt;</para>
+          <para> </para>
+          <para>  
+  &lt;target name="hello-dl.jar" depends="compile"&gt;</para>
+          <para>      
+  &lt;jar destfile="${example.lib}/hello-dl.jar"</para>
+          <para>              
+     
+ basedir="${example.classes}"</para>
+          <para>              
+     
+ excludes="**/HelloImpl.class"/&gt;          
+  </para>
+          <para>  
+  &lt;/target&gt;</para>
+          <para> </para>
+          <para>&lt;/project&gt;</para>
+          <para> </para>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536454" />2.5.5.                 
+ Deploying the Pojo</title>
+          <para>Start the \GigaSpacesEE5.0\ServiceGrid\bin\gsc.cmd – this will start Service Grid container</para>
+          <para>Start the \GigaSpacesEE5.0\ServiceGrid\bin\gsm.cmd – this will start Service Grid Manager</para>
+          <para>Start \GigaSpacesEE5.0\ServiceGrid\bin\gs.cmd – this will start the Service Grid command interactive line shell.</para>
+          <para> </para>
+          <para>gs&gt; deploy hello.xml</para>
+          <para>total 1</para>
+          <para>Deploying [Hello World Example], total services [1] ...</para>
+          <para>      
+  [1] Hello provisioned to      
+  10.0.0.13</para>
+          <para>Deployment notification time 1062 millis, Command completed</para>
+          <para> </para>
+          <para>The Service Grid container should Display:</para>
+          <para>Jun 8, 2006 1:35:21 PM com.gigaspaces.grid.gsc.GSCImpl$InitialServicesLoadTask loadInitialServices</para>
+          <para>CONFIG: Loading [0] initialServices</para>
+          <para>**** Hello Service Started! ****</para>
+          <para> </para>
+          <para>The Service Grid manager should display:</para>
+          <para>Jun 8, 2006 1:36:19 PM org.jini.rio.monitor.ServiceElementManager verify</para>
+          <para>FINE: ServiceElementManager.verify(): [Hello] actual [0], pending [0], maintain [1]</para>
+          <para>Jun 8, 2006 1:36:19 PM org.jini.rio.monitor.ServiceResourceSelector selectServiceResource</para>
+          <para>FINER: Grid Service Container at [10.0.0.13] has [0] instance(s), planned [1] of [Hello]</para>
+          <para>Jun 8, 2006 1:36:19 PM org.jini.rio.monitor.InstantiatorResource canProvision</para>
+          <para>FINER: Grid Service Container at [10.0.0.13] meets qualitative requirements for [Hello]</para>
+          <para>Jun 8, 2006 1:36:19 PM org.jini.rio.monitor.ServiceProvisioner$ProvisionTask doProvision</para>
+          <para>FINER: Allocating [Hello] ...</para>
+          <para>Jun 8, 2006 1:36:20 PM org.jini.rio.monitor.ServiceProvisioner$ProvisionTask doProvision</para>
+          <para>FINER: Allocated [Hello]</para>
+          <para>Jun 8, 2006 1:36:20 PM org.jini.rio.monitor.ServiceElementManager$JSBProvisionListener serviceProvisioned</para>
+          <para>FINE: [Hello] service provisioned, instance=Instance=[1] Proxy=[$Proxy15] ID=[863469f1-8974-4dbc-80d9-307148547b65] Host</para>
+          <para>Address=[10.0.0.13]</para>
+          <para> </para>
+        </section>
+      </section>
+    </section>
+    <section>
+      <title>
+        <anchor id="_Toc137536455" />3.   
+ Integration Implementation Classes</title>
+      <para>The architecture of the GigaSpaces integration with Spring is very similar to Hibernate implementation on spring. The implementation is based on the Spring standards, including dependency injection, transaction attributes sources, configurable proxies/exportes for remote services, etc.</para>
+      <para> </para>
+      <para>Basic support for accessing a Space is provided via a GigaSpacesFactoryBean which is configured in Spring's xml definition file. Configuration primarily includes the String array of space URLs. The Factory creates a singleton Space proxy or running an embedded space when using embedded space URL.</para>
+      <para> </para>
+      <para>The factory extends AbstarctJavaSpaceFactoryBean which has createSpace() template method and add listeners implementation if specified.
+ </para>
+      <section>
+        <title>
+          <anchor id="_Toc137536456" />3.1.          
+ org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean</title>
+        <para>An entry point for the GigaSpaces Spring support. This is a standard Spring factory bean.
+ </para>
+        <para>The following properties are injected:
+ </para>
+        <para> </para>
+        <para>To ensure each client will get the relevant result object back from the worker the task and result injected with unique uid generated at the client side.  </para>
+        <table>
+          <title>
+          </title>
+          <tgroup cols="3">
+            <colspec colname="c1" />
+            <colspec colname="c2" />
+            <colspec colname="c3" />
+            <tbody>
+              <row>
+                <entry>
+                  <para>Property</para>
+                </entry>
+                <entry>
+                  <para>Description</para>
+                </entry>
+                <entry>
+                  <para>Type</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>urls</para>
+                </entry>
+                <entry>
+                  <para>list of GigaSpaces space URL. When the URL represents remote URL these will be accessed one by one until a connection will be established. When using embedded space URL it will start a new space instance at the running application memory address</para>
+                </entry>
+                <entry>
+                  <para> </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>listeners</para>
+                </entry>
+                <entry>
+                  <para>notify templates allowing notifications when matching entries are written to the space</para>
+                </entry>
+                <entry>
+                  <para> </para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+        <para> </para>
+        <para>The standard
+ GigaSpacesFactoryBean.getObject() method creates or accesses IJSpace object according to the provided url’s that used by the the
+ GigaSpacesTemplate,
+ GigaSpacesDaoSupport, or  GigaSpacesLocalTransactionManagerFactoryBean.</para>
+        <para> </para>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536457" />3.2.          
+ org.springmodules.javaspaces.gigaspaces.GigaSpacesDaoSupport</title>
+        <para>The
+ <emphasis>GigaSpacesDaoSupport</emphasis> extends the org.springframework.dao.support.DaoSupport.</para>
+        <para>This is a support class, intended for extension by the application developer for writing Data Access Objects which perform domain-level operations on the supplied space. In order to operate, the Dao object should be injected either with a pre instantiated GigaspacesTemplate, or with an IJSpace. Extending classes will typically use the getGigaSpaceTemplate() method for performing space operations, but direct access to the space via the IJSpace is also possible.
+ </para>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536458" />3.3.          
+ org.springmodules.javaspaces.JavaSpaceTemplate</title>
+        <para>Implementation of the Spring "template" concept for JavaSpaces. Translates exceptions into Spring exception hierarchy. Simplifies the performance of several operations in a single method.</para>
+        <para> </para>
+        <para>The
+ JavaSpaceTemplate provides the following methods:</para>
+        <para> </para>
+        <table>
+          <title>
+          </title>
+          <tgroup cols="2">
+            <colspec colname="c1" />
+            <colspec colname="c2" />
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    <emphasis>Return value</emphasis>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    <emphasis>Method</emphasis>
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>afterPropertiesSet()            </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>execute(JavaSpaceCallback jsc)</para>
+                  <para>        
+  Perform multiple JavaSpaces tasks in the one transaction.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.space.JavaSpae</para>
+                </entry>
+                <entry>
+                  <para>getSpace()</para>
+                  <para>        
+  Return the Javaspace this template operates on</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>boolean</para>
+                </entry>
+                <entry>
+                  <para>isUseTransaction()      </para>
+                  <para>return true if transaction used.  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.event.EvntRegistration</para>
+                </entry>
+                <entry>
+                  <para>notify(net.jini.core.entry.Entry template, net.jini.core.event.RemoteEventListener listener, long millis, java.rmi.MarshalledObject handback)      </para>
+                  <para>When entries are written that match this template notify the given listener with a RemoteEvent that includes the handback object.           </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.entry.Enry</para>
+                </entry>
+                <entry>
+                  <para>read(net.jini.core.entry.Entry template, long millis)</para>
+                  <para>Read using the current transaction any matching entry from the space, blocking until one exists.         
+  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.entry.Entry</para>
+                </entry>
+                <entry>
+                  <para>readIfExists(net.jini.core.entry.Entry template, long millis) Read using the current transaction any matching entry from the space, returning null if there is currently is none</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>setSpace(net.jini.space.JavaSpace space)            </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>setUseTransaction(Boolean useTransaction)      </para>
+                  <para>set to true to use transactions with space operation.           </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.entry.Enry</para>
+                </entry>
+                <entry>
+                  <para>snapshot(net.jini.core.entry.Entry entry)      </para>
+                  <para>return formatted entry. The snapshot method gives the JavaSpaces service implementor a way to reduce the impact of repeated use of the same entry           </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.entry.Enry</para>
+                </entry>
+                <entry>
+                  <para>take(net.jini.core.entry.Entry template, long millis) Take using the current transaction a matching entry from the space, waiting until one exists</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.entry.Enry</para>
+                </entry>
+                <entry>
+                  <para>takeIfExists(net.jini.core.entry.Entry template, long millis)</para>
+                  <para>Take using the current transaction a matching entry from the space, returning null if there is currently is none  
+  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.lease.Lease</para>
+                </entry>
+                <entry>
+                  <para>write(net.jini.core.entry.Entry entry, long millis)</para>
+                  <para>        
+  Write using the current transaction a new entry into the space.</para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+        <para> </para>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536459" />3.4.          
+ org.springmodules.javaspaces.gigaspaces.GigaSpacesTemplate</title>
+        <para>The GigaSpacesTemplate extends the JavaSpaceTemplate and provides GigaSpaces enhanced JavaSpaces operations.</para>
+        <para> </para>
+        <para>Responsible for supplying application developers with a collection of helper methods for accessing the space, while wrapping specific checked exceptions thrown due to Space operations with Spring's generic runtime exceptions. The template also exposes one general-purpose method, which accepts a
+ <emphasis>JavaSpaceCallback</emphasis> object from the client application. This callback is where application logic code may be implemented, directly working with the space. The callback mechanism allows exception conversion to take place even when writing low-level code.</para>
+        <para> </para>
+        <para>The GigaSpacesTemplate method's accept not only objects implementing the
+ Entry
+ interface (as defined by JavaSpaces specification) but every type of object which has a void constructor and exposes its meaningful data members via accessor / mutator methods - in other words, a POJO.
+ </para>
+        <para> </para>
+        <para>The template object exposes a general purpose method, execute(), that accepts a JavaSpaceCallback object, where application logic is implemented. The method invokes the callback object, wrapping the applicative logic with exception conversion mechanism.</para>
+        <para> </para>
+        <para>The GigaSpacesTemplate includes the following methods:</para>
+        <table>
+          <title>
+          </title>
+          <tgroup cols="2">
+            <colspec colname="c1" />
+            <colspec colname="c2" />
+            <tbody>
+              <row>
+                <entry>
+                  <para>
+                    <emphasis>Return value</emphasis>
+                  </para>
+                </entry>
+                <entry>
+                  <para>
+                    <emphasis>method</emphasis>
+                  </para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>com.j_spaces.core.client.NotifyDelegator</para>
+                </entry>
+                <entry>
+                  <para>addNotifyDelegatorListener(org.springframework.spaces.JavaSpaceListener javaSpaceListener, boolean fifoEnabled, int notifyMask)</para>
+                  <para>        
+  When entries are written that match this template notify the given listener with a RemoteEvent that includes the handback object.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>com.j_spaces.core.client.NotifyDelegator</para>
+                </entry>
+                <entry>
+                  <para>addNotifyDelegatorListener(net.jini.core.event.RemoteEventListener listener, java.lang.Object templatePojo, java.rmi.MarshalledObject handback, boolean fifoEnabled, long lease, int notifyMask)</para>
+                  <para>        
+  When Pojo's are written that match this template notify the given listener with a RemoteEvent that includes the handback object.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>afterPropertiesSet()</para>
+                  <para>        
+  Override the method in JavaSpaceTemplate not, throw exception if space is null</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>clean()</para>
+                  <para>        
+  Cleans this space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>clear(net.jini.core.entry.Entry entry)</para>
+                  <para>        
+  Removes the entries that match the specified template and the specified</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>clear(java.lang.Object pojo)</para>
+                  <para>        
+  Removes the entries that match the specified template and the specified transaction from this space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>int</para>
+                </entry>
+                <entry>
+                  <para>count(net.jini.core.entry.Entry entry)</para>
+                  <para>        
+  Counts the number of entries that match the specified template and the specified transaction..</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>int</para>
+                </entry>
+                <entry>
+                  <para>count(java.lang.Object pojo)</para>
+                  <para>        
+  Counts the number of entries that match the specified template and the specified transaction..</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>dropClass(java.lang.String className)</para>
+                  <para>        
+  Drops all Class's entries and all its templates from the space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>execute(org.springframework.spaces.JavaSpaceCallback jsc)</para>
+                  <para>        
+  Checks if the space is null before execute</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>getAdmin()</para>
+                  <para>        
+  Returns the admin object to the remote part of this space</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.String</para>
+                </entry>
+                <entry>
+                  <para>getName()</para>
+                  <para>         
+ Returns the name of this space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>int</para>
+                </entry>
+                <entry>
+                  <para>getReadTakeModifiers()</para>
+                  <para>        
+  Gets the proxyReadTakeModifiers.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>int</para>
+                </entry>
+                <entry>
+                  <para>getUpdateModifiers()</para>
+                  <para>        
+  Gets the proxyUpdateModifiers.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>boolean</para>
+                </entry>
+                <entry>
+                  <para>isEmbedded()</para>
+                  <para>        
+  Checks whether proxy is connected to embedded or remote space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>boolean</para>
+                </entry>
+                <entry>
+                  <para>isFifo()</para>
+                  <para>        
+  Returns true if this proxy FIFO enabled, otherwise false.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>boolean</para>
+                </entry>
+                <entry>
+                  <para>isNOWriteLeaseMode()</para>
+                  <para>        
+  Checks the write mode.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>boolean</para>
+                </entry>
+                <entry>
+                  <para>isOptimisticLockingEnabled()</para>
+                  <para>        
+  Returns status of Optimistic Lock protocol.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>boolean</para>
+                </entry>
+                <entry>
+                  <para>isSecured()</para>
+                  <para>        
+  Returns an indication : is this space secured.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.event.EventRegistration</para>
+                </entry>
+                <entry>
+                  <para>notify(net.jini.core.entry.Entry template, net.jini.core.event.RemoteEventListener listener, long millis, java.rmi.MarshalledObject handback, net.jini.core.transaction.Transaction tx)</para>
+                  <para>        
+  When entries are written that match this template notify the given listener with a RemoteEvent that includes the handback object.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.event.EventRegistration</para>
+                </entry>
+                <entry>
+                  <para>notify(java.lang.Object templatePojo, net.jini.core.event.RemoteEventListener listener, long millis, java.rmi.MarshalledObject handback, net.jini.core.transaction.Transaction tx)</para>
+                  <para>        
+  When Pojo's are written that match this template notify the given listener with a RemoteEvent that includes the handback object.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>ping()</para>
+                  <para>        
+  Checks whether the space is alive and accessible.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>read(java.lang.Object pojo, long lease)</para>
+                  <para>        
+  Read the pojo from the space</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>readIfExists(java.lang.Object pojo, long lease)</para>
+                  <para>        
+  Read the pojo from the space if exist</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.entry.Entry[]</para>
+                </entry>
+                <entry>
+                  <para>readMultiple(net.jini.core.entry.Entry entry, int maxEntries)</para>
+                  <para>        
+  Reads all the entries matching the specified template from this space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>Object[]</para>
+                </entry>
+                <entry>
+                  <para>readMultiple(java.lang.Object pojo, int maxEntries)</para>
+                  <para>        
+  Reads all the entries matching the specified template from this space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>setFifo(boolean enable)</para>
+                  <para>        
+  Sets FIFO mode for proxy.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>setNOWriteLeaseMode(boolean enable)</para>
+                  <para>        
+  Set noWriteLease mode enabled</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>void</para>
+                </entry>
+                <entry>
+                  <para>setOptimisticLocking(boolean enable)</para>
+                  <para>         
+  Enable/Disable Optimistic Lock protocol.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>int</para>
+                </entry>
+                <entry>
+                  <para>setReadTakeModifiers(int newModifiers)</para>
+                  <para>        
+  Sets the read-take mode modifiers for proxy level.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para> int</para>
+                </entry>
+                <entry>
+                  <para>setUpdateModifiers(int newModifiers)</para>
+                  <para>        
+  Sets the update mode modifiers for proxy level.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>snapshot(java.lang.Object obj)</para>
+                  <para>        
+  Snapshot the pojo</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>take(java.lang.Object template, long millis)</para>
+                  <para>        
+  Take the pojo form the space</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>takeIfExists(java.lang.Object template, long millis)</para>
+                  <para>        
+  Take the pojo form the space if exists</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object[]</para>
+                </entry>
+                <entry>
+                  <para>takeMultiple(net.jini.core.entry.Entry entry, int maxEntries)</para>
+                  <para>        
+  Takes all the entries matching the specified template from this space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object[]</para>
+                </entry>
+                <entry>
+                  <para>takeMultiple(java.lang.Object pojo, int maxEntries)</para>
+                  <para>        
+  Takes all the entries matching the specified template from this space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.entry.Entry</para>
+                </entry>
+                <entry>
+                  <para>update(net.jini.core.entry.Entry newEntry, long lease, long timeout)</para>
+                  <para>        
+  Updates the first entry matching the specified template, if found and there is no transaction conflict.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.entry.Entry</para>
+                </entry>
+                <entry>
+                  <para>update(net.jini.core.entry.Entry newEntry, long lease, long timeout, int updateModifiers)</para>
+                  <para>         
+ Updates the first entry matching the specified template, if found and there is no transaction conflict.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>update(java.lang.Object newPojo, long lease, long timeout)</para>
+                  <para>        
+  Updates the first entry matching the specified template, if found and there is no transaction conflict.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object</para>
+                </entry>
+                <entry>
+                  <para>update(java.lang.Object newPojo, long lease, long timeout, int updateModifiers)</para>
+                  <para>        
+  Updates the first entry matching the specified template, if found and there is no transaction conflict.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object[]</para>
+                </entry>
+                <entry>
+                  <para>updateMultiple(net.jini.core.entry.Entry[] entries, long[] leases)</para>
+                  <para>        
+  Updates a group of entries.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object[]</para>
+                </entry>
+                <entry>
+                  <para>updateMultiple(net.jini.core.entry.Entry[] entries, long[] leases, int updateModifiers)</para>
+                  <para>        
+  Updates a group of entries.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object[]</para>
+                </entry>
+                <entry>
+                  <para>updateMultiple(java.lang.Object[] pojos, long[] leases)</para>
+                  <para>        
+  Updates a group of pojo's.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>java.lang.Object[]</para>
+                </entry>
+                <entry>
+                  <para>updateMultiple(java.lang.Object[] pojos, long[] leases, int updateModifiers)</para>
+                  <para>        
+  Updates a group of pojo's.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.lease.Lease</para>
+                </entry>
+                <entry>
+                  <para>write(java.lang.Object pojo)</para>
+                  <para>        
+  Write the pojo to the space with lealse long.MAX_VALUE</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.lease.Lease</para>
+                </entry>
+                <entry>
+                  <para>write(java.lang.Object pojo, long lease)</para>
+                  <para>        
+  Write the pojo to the space</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.lease.Lease[]</para>
+                </entry>
+                <entry>
+                  <para>writeMultiple(net.jini.core.entry.Entry[] entries, long lease)</para>
+                  <para>        
+  Writes the specified entries to this space.</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>net.jini.core.lease.Lease[]</para>
+                </entry>
+                <entry>
+                  <para>writeMultiple(java.lang.Object[] pojos, long lease)</para>
+                  <para>        
+  Writes the specified entries to this space.</para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+        <para> </para>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536460" />3.5.          
+ org.springmodules.javaspaces.gigaspaces.GigaSpacesLocalTransactionManagerFactoryBean</title>
+        <para>Extends the org.springframework.transaction.jini.<emphasis>AbstarctTransactionManagerFactoryBean</emphasis> class defined in Spring, which integrates with Spring's existing transaction management mechanism.
+ </para>
+        <para>The class implements the template method createTransactionManager() which create the local transaction manager using the GigaSpaces LocalTransactionManager.</para>
+        <para> </para>
+        <para>The GigaSpaces Spring Transaction is responsible for creating, starting, suspending, resuming, committing and rolling back the transactions which encompass Space resource(s).
+  The Transaction Manager is injected to Spring's generic Transaction Interceptor, which intercepts calls to services available on the application context using a proxy, and maintains transactional contexts for these calls, based on configuration details including propagation, isolation, etc. These configuration details may be defined as configuration data in the bean descriptor xml file, using Java 5 annotations in the code, or via any other valid implementation of Spring's TransactionAttributeSource interface.</para>
+        <para> </para>
+        <para>The following transaction propagation behaviors are supported:</para>
+        <itemizedlist>
+          <listitem>
+            <para>·        
+ RequiredNew</para>
+          </listitem>
+          <listitem>
+            <para>·        
+ Never</para>
+          </listitem>
+          <listitem>
+            <para>·        
+ Required</para>
+          </listitem>
+          <listitem>
+            <para>·        
+ Mandatory</para>
+          </listitem>
+          <listitem>
+            <para>·        
+ Supports</para>
+          </listitem>
+          <listitem>
+            <para>·        
+ NotSupported</para>
+          </listitem>
+        </itemizedlist>
+        <para> </para>
+      </section>
+    </section>
+    <section>
+      <title>
+        <anchor id="_Toc137536461" />4.   
+ Spring Configuration Files</title>
+      <section>
+        <title>
+          <anchor id="_Toc137536462" />4.1.          
+ Application Context xml </title>
+        <para>Includes the GigaSpacesFactoryBean:</para>
+        <para> </para>
+        <para>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</para>
+        <para>&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;</para>
+        <para>&lt;beans&gt;</para>
+        <para>              
+  &lt;!-- Declaration of GigaSpace factory bean --&gt;</para>
+        <para>              
+  &lt;bean id="<emphasis>gigaspace</emphasis>"</para>
+        <para>                              
+  class=" org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean"&gt;</para>
+        <para>                              
+  &lt;property name="urls"&gt;</para>
+        <para>                                              
+  &lt;list&gt;</para>
+        <para>                                                              
+  &lt;value&gt;<emphasis>jini://*/*/myCache</emphasis>&lt;/value&gt;</para>
+        <para>                                              
+  &lt;/list&gt;</para>
+        <para>                              
+  &lt;/property&gt;</para>
+        <para>              
+  &lt;/bean&gt;</para>
+        <para>&lt;/beans&gt;</para>
+        <para> </para>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536463" />4.2.          
+ The Dao xml</title>
+        <para>Defines client’s Pojo DAO. For each field will be indicator if its PK and whether it needs to be calculated.</para>
+        <para> </para>
+        <para>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</para>
+        <para>&lt;!--</para>
+        <para>&lt;!DOCTYPE gigaspaces-mapping SYSTEM "jar:file:.\..\..\..\..\lib\JSpaces.jar!\gigaspaces-spring.dtd"&gt;</para>
+        <para>--&gt;</para>
+        <para>&lt;gigaspaces-mapping&gt;</para>
+        <para>              
+  &lt;class-descriptor name="com.gigaspaces.spring.examples.SimpleBean"</para>
+        <para>                              
+  persistent="true" replicatable="false" fifo="true" timetolive="Long.MAX_VALUE"&gt;</para>
+        <para>                              
+  &lt;field-descriptor name="secondName" indexed="false"</para>
+        <para>                                              
+  primary-key="false" auto-generate-pk="false" /&gt;</para>
+        <para>                              
+  &lt;field-descriptor name="age" indexed="false" /&gt;</para>
+        <para>                              
+  &lt;reference-descriptor</para>
+        <para>                                              
+  class-ref="com.gigaspaces.spring.examples.BaseSimpleBean" /&gt;</para>
+        <para>              
+  &lt;/class-descriptor&gt;</para>
+        <para>              
+  &lt;class-descriptor</para>
+        <para>                              
+  name="com.gigaspaces.spring.examples.BaseSimpleBean"</para>
+        <para>                              
+  persistent="true" replicatable="false" fifo="true" timetolive="Long.MAX_VALUE"&gt;</para>
+        <para>                              
+  &lt;field-descriptor name="firstName" indexed="true"</para>
+        <para>                                              
+  primary-key="false" auto-generate-pk="false" /&gt;</para>
+        <para>              
+  &lt;/class-descriptor&gt;</para>
+        <para>&lt;/gigaspaces-mapping&gt;</para>
+        <para> </para>
+        <section>
+          <title>
+            <anchor id="_Toc137536464" />4.2.1.                 
+ &lt;class-descriptor&gt;</title>
+          <para>A
+ <emphasis>class-descriptor</emphasis> and the associated java class
+ <ulink url="http://db.apache.org/ojb/api/org/apache/ojb/broker/metadata/ClassDescriptor.html">ClassDescriptor</ulink> encapsulate metadata information of concrete class.</para>
+          <table>
+            <title>
+            </title>
+            <tgroup cols="2">
+              <colspec colname="c1" />
+              <colspec colname="c2" />
+              <tbody>
+                <row>
+                  <entry>
+                    <para>Attribute</para>
+                  </entry>
+                  <entry>
+                    <para>Description</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>name</para>
+                  </entry>
+                  <entry>
+                    <para>contains the full qualified name of the specified class. As this attribute is of the XML type ID there can only be one
+ class-descriptor
+ per class.</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>persistent</para>
+                  </entry>
+                  <entry>
+                    <para>indicates of the transient field in the ExternalEntry.</para>
+                    <para> </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>fifo</para>
+                  </entry>
+                  <entry>
+                    <para>indicates if the Pojo will be save in a Fifo order in the space.</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>Timetolive</para>
+                  </entry>
+                  <entry>
+                    <para>time (in milliseconds) left for this entry to live. This value is correct for the operation time</para>
+                  </entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>
+          <para> </para>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536465" />4.2.2.                 
+ &lt;field descriptor&gt;</title>
+          <para>A
+ <emphasis>field descriptor</emphasis> contains mapping info for a primitive typed attribute of a persistent class.
+ </para>
+          <table>
+            <title>
+            </title>
+            <tgroup cols="2">
+              <colspec colname="c1" />
+              <colspec colname="c2" />
+              <tbody>
+                <row>
+                  <entry>
+                    <para>Attribute</para>
+                  </entry>
+                  <entry>
+                    <para>Description</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>Name</para>
+                  </entry>
+                  <entry>
+                    <para>holds the name of the persistent classes attribute.</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <emphasis>Index</emphasis>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>indicates which fields are indexed in the space. Takes the first member indexed for hashing</para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <emphasis>Primarykey</emphasis>
+                    </para>
+                  </entry>
+                  <entry>
+                    <para>specifies if the field is marked as a primary key, default value is
+ false. It's possible to auto assign primary key fields (see more details below). Field must to have toString() method that can’t be changed in runtime</para>
+                    <para> </para>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <para>
+                      <emphasis>auto-generate-p</emphasis>k</para>
+                  </entry>
+                  <entry>
+                    <para>specifies if the values for the persistent attribute should be automatically generated by the space. The filed must be from type java.lang.String</para>
+                  </entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>
+          <para> </para>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536466" />4.2.3.                 
+ &lt;reference-descriptor&gt;</title>
+          <para>A
+ <emphasis>reference-descriptor</emphasis> contains mapping info for an attribute of a class that is not primitive but references another entity Object.<emphasis></emphasis></para>
+        </section>
+        <section>
+          <title>
+            <anchor id="_Toc137536467" />4.2.4.                 
+ &lt;class-ref&gt;</title>
+          <para>The
+ <emphasis>class-ref</emphasis> attribute contains the full qualified name of the specified class.</para>
+        </section>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536468" />4.3.          
+ transaction.xml</title>
+        <para>This xml includes gigaspacesTransactionAttributeSource and the TransactionInterceptor settings:</para>
+        <para>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</para>
+        <para>&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;</para>
+        <para> </para>
+        <para>&lt;beans&gt;</para>
+        <para>              
+  &lt;!-- Declaration of GigaSpace factory bean --&gt;</para>
+        <para>              
+  &lt;bean id="gigaspaces"</para>
+        <para>                              
+  class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean"&gt;</para>
+        <para>                              
+  &lt;property name="urls"&gt;</para>
+        <para>                                              
+  &lt;list&gt;</para>
+        <para>                                                              
+  &lt;value&gt;rmi://localhost:10098/./myCache&lt;/value&gt;</para>
+        <para>                                              
+  &lt;/list&gt;</para>
+        <para>                              
+  &lt;/property&gt;</para>
+        <para>              
+  &lt;/bean&gt;</para>
+        <para>              
+  &lt;!-- declaration of GigaSpaces local transaction --&gt;</para>
+        <para>              
+  &lt;bean id="gigaspacesTransactionManager"</para>
+        <para>                              
+  class="org.springmodules.javaspaces.gigaspaces.transaction.GigaSpacesLocalTransactionManagerFactoryBean"&gt;</para>
+        <para>                              
+  &lt;property name="javaSpace" ref="gigaspaces" /&gt;</para>
+        <para>              
+  &lt;/bean&gt;</para>
+        <para>              
+  &lt;!-- declaration of jini transaction manager --&gt;</para>
+        <para>              
+  &lt;bean id="transactionManager"</para>
+        <para>                              
+  class="org.springmodules.javaspaces.transaction.jini.JiniTransactionManager "&gt;</para>
+        <para>                              
+  &lt;property name="transactionManager" ref="gigaspacesTransactionManager" /&gt;</para>
+        <para>                              
+  &lt;property name="transactionalContext" ref="gigaspaces" /&gt;</para>
+        <para>              
+  &lt;/bean&gt;</para>
+        <para>              
+  &lt;bean id="gigaspacesTransactionAttributeSource"</para>
+        <para>                              
+  class="org.springframework.transaction.interceptor.NameMatchTransactionAttributeSource"&gt;</para>
+        <para>                              
+  &lt;property name="properties"&gt;</para>
+        <para>                                              
+  &lt;props&gt;</para>
+        <para>                                                              
+  &lt;prop key="writeMandatory*"&gt;</para>
+        <para>                                                                              
+  PROPAGATION_MANDATORY</para>
+        <para>                                                              
+  &lt;/prop&gt;</para>
+        <para>                                                              
+  &lt;prop key="writeNever*"&gt;</para>
+        <para>                                                                              
+  PROPAGATION_NEVER</para>
+        <para>                                                              
+  &lt;/prop&gt;</para>
+        <para>                                                              
+  &lt;prop key="writeRequired*"&gt;</para>
+        <para>                                                                              
+  PROPAGATION_REQUIRED</para>
+        <para>                                                              
+  &lt;/prop&gt;</para>
+        <para>                                                              
+  &lt;prop key="writeRequiredNew*"&gt;</para>
+        <para>                                                                              
+  PROPAGATION_REQUIRES_NEW</para>
+        <para>                                                              
+  &lt;/prop&gt;</para>
+        <para>                                                              
+  &lt;prop key="writeSupports*"&gt;</para>
+        <para>                                                                              
+  PROPAGATION_SUPPORTS</para>
+        <para>                                                              
+  &lt;/prop&gt;</para>
+        <para>                                                              
+  &lt;prop key="writeNotSupported*"&gt;</para>
+        <para>                                                                              
+  PROPAGATION_NOT_SUPPORTED,</para>
+        <para>                                                                              
+  +java.lang.RuntimeException</para>
+        <para>                                                              
+  &lt;/prop&gt;</para>
+        <para>                                                              
+  &lt;prop key="writeRequiredNotSupportedWithPartialRollback"&gt;</para>
+        <para>                                                                              
+  PROPAGATION_REQUIRES_NEW,</para>
+        <para>                                                                              
+  +java.lang.RuntimeException</para>
+        <para>                                                              
+  &lt;/prop&gt;</para>
+        <para>                                                              
+  &lt;prop key="writeRequiredNotSupportedWithPartialCommit"&gt;</para>
+        <para>                                                                              
+  PROPAGATION_REQUIRES_NEW,</para>
+        <para>                                                                              
+  +java.lang.RuntimeException</para>
+        <para>                                                              
+  &lt;/prop&gt;</para>
+        <para>                                              
+  &lt;/props&gt;</para>
+        <para>                              
+  &lt;/property&gt;</para>
+        <para>              
+  &lt;/bean&gt;</para>
+        <para> </para>
+        <para> </para>
+        <para>              
+  &lt;!-- declaration of spring transaction interceptor for transaction declaration--&gt;</para>
+        <para>              
+  &lt;bean id="txInterceptor"</para>
+        <para>                              
+  class="org.springframework.transaction.interceptor.TransactionInterceptor"&gt;</para>
+        <para>                              
+  &lt;property name="transactionManager" ref="transactionManager" /&gt;</para>
+        <para>                              
+  &lt;property name="transactionAttributeSource" ref="gigaspacesTransactionAttributeSource"&gt;</para>
+        <para>                              
+  &lt;/property&gt;</para>
+        <para>              
+  &lt;/bean&gt;</para>
+        <para> </para>
+        <para>              
+  &lt;!-- declaration of dao and the service --&gt;</para>
+        <para>              
+  &lt;bean id="txDaoTarget"</para>
+        <para>                              
+  class="com.gigaspaces.spring.examples.transaction.TransactedDao"&gt;</para>
+        <para>                              
+  &lt;property name="space" ref="gigaspaces" /&gt;</para>
+        <para>              
+  &lt;/bean&gt;</para>
+        <para>              
+  &lt;!-- Declaration of GigaSpace template--&gt;</para>
+        <para>              
+  &lt;bean id="gigaspacesTemplate"</para>
+        <para>                              
+  class="com.gigaspaces.spring.GigaSpacesTemplate"&gt;</para>
+        <para>                              
+  &lt;property name="space" ref="gigaspaces" /&gt;</para>
+        <para>              
+  &lt;/bean&gt;</para>
+        <para>              
+  &lt;bean id="txDao"</para>
+        <para>                              
+  class="org.springframework.aop.framework.ProxyFactoryBean"&gt;</para>
+        <para>                              
+  &lt;property name="proxyInterfaces"&gt;</para>
+        <para>                                              
+  &lt;value&gt;</para>
+        <para>                                                              
+  com.gigaspaces.spring.examples.transaction.ITransactedDao</para>
+        <para>                                              
+  &lt;/value&gt;</para>
+        <para>                              
+  &lt;/property&gt;</para>
+        <para>                              
+  &lt;property name="interceptorNames"&gt;</para>
+        <para>                                              
+  &lt;list&gt;</para>
+        <para>                                                              
+  &lt;value&gt;txInterceptor&lt;/value&gt;</para>
+        <para>                                              
+  &lt;/list&gt;</para>
+        <para>                              
+  &lt;/property&gt;</para>
+        <para>                              
+  &lt;property name="target" ref="txDaoTarget" /&gt;</para>
+        <para>              
+  &lt;/bean&gt;</para>
+        <para>              
+  &lt;bean id="simpleBean"</para>
+        <para>                              
+  class="com.gigaspaces.spring.examples.transaction.SimpleBean"/&gt;</para>
+        <para>&lt;/beans&gt;<emphasis></emphasis></para>
+        <para> </para>
+      </section>
+      <section>
+        <title>
+          <anchor id="_Toc137536469" />4.4.          
+ Pojo Primary Key setting</title>
+        <para>A Pojo can be declared with or without primary key. The primary key type can be java.lang.String or any other type, as long it implements the toString() where the toString() return value cannot be changes for the object life time period. The following table describes the operation support when using the Primary Key field.</para>
+        <para> </para>
+        <table>
+          <title>
+          </title>
+          <tgroup cols="4">
+            <colspec colname="c1" />
+            <colspec colname="c2" />
+            <colspec colname="c3" />
+            <colspec colname="c4" />
+            <tbody>
+              <row>
+                <entry>
+                  <para>Operation</para>
+                </entry>
+                <entry>
+                  <para>Write</para>
+                </entry>
+                <entry>
+                  <para>Take/Read</para>
+                </entry>
+                <entry>
+                  <para>Update</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>Without primary key</para>
+                </entry>
+                <entry>
+                  <para>Supported</para>
+                </entry>
+                <entry>
+                  <para>Supported</para>
+                </entry>
+                <entry>
+                  <para>Not
+ Supported</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>With primary key - Auto generator</para>
+                </entry>
+                <entry>
+                  <para>Supported</para>
+                </entry>
+                <entry>
+                  <para>Supported when sending the pk field as not null or call toEntry() with parameter isIgnoreGenerateAutoPk = true.</para>
+                </entry>
+                <entry>
+                  <para>Supported</para>
+                </entry>
+              </row>
+              <row>
+                <entry>
+                  <para>With primary key -No auto generator</para>
+                </entry>
+                <entry>
+                  <para>Supported</para>
+                </entry>
+                <entry>
+                  <para>Supported</para>
+                </entry>
+                <entry>
+                  <para>Supported</para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+        <para> </para>
+        <para>Note:
+ </para>
+        <para>If there are more than one primary key with Auto generator, the converter will generate UID for each primary key. The UIDs will also be set for the Pojo primary key fields.<emphasis></emphasis></para>
+        <section>
+          <title>
+            <anchor id="_Toc137536470" />4.4.1.                 
+ Example</title>
+          <para> </para>
+          <para>&lt;?xml
+ version="1.0"
+ encoding="UTF-8"?&gt;</para>
+          <para>&lt;!DOCTYPE
+ gigaspaces-mapping
+ SYSTEM
+ "src/main/resources/gigaspaces-spring.dtd"&gt;</para>
+          <para>&lt;gigaspaces-mapping&gt;</para>
+          <para>              
+  &lt;class-descriptor
+ name="com.gigaspaces.spring.tests.app.SimpleBean"</para>
+          <para>                              
+  persistent="true"
+ replicatable="false"
+ fifo="true"
+ timetolive="100"&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="name"
+ indexed="false"</para>
+          <para>                                              
+  primary-key="false"
+ auto-generate-pk="false"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testLongObject"
+ indexed="false"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testDoubleObject"
+ indexed="false"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="age"
+ indexed="false"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testFloatObject"
+ indexed="false"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testBooleanObject"
+ indexed="false"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testIntegerObject"
+ indexed="false"
+ /&gt;</para>
+          <para>                              
+  &lt;reference-descriptor</para>
+          <para>                                              
+  class-ref="com.gigaspaces.spring.tests.app.BaseSimpleBean"
+ /&gt;</para>
+          <para>              
+  &lt;/class-descriptor&gt;</para>
+          <para>              
+  &lt;class-descriptor</para>
+          <para>                              
+  name="com.gigaspaces.spring.tests.app.BaseSimpleBean"</para>
+          <para>                              
+  persistent="true"
+ replicatable="false"
+ fifo="true"
+ timetolive="100"&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="teststring"
+ indexed="true"</para>
+          <para>                                              
+  primary-key="false"
+ auto-generate-pk="false"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testboolean"
+ indexed="true"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testlong"
+ indexed="true"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testfloat"
+ indexed="false"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testint"
+ indexed="false"
+ /&gt;</para>
+          <para>                              
+  &lt;field-descriptor
+ name="testdouble"
+ indexed="false"
+ /&gt;</para>
+          <para>              
+  &lt;/class-descriptor&gt;</para>
+          <para>&lt;/gigaspaces-mapping&gt;</para>
+          <para> </para>
+        </section>
+      </section>
+    </section>
+    <section>
+      <title>
+        <anchor id="_Toc137536471" />5.   
+ 3rd party packages</title>
+      <para>
+        <anchor id="_References" />The following libraries are used as part of the GigaSpaces Spring integration.</para>
+      <para>Apache Digester - commons-digester-gs-1.7.jar.</para>
+      <para>Apache Commons - commons-beanutils-gs.jar</para>
+      <para>Apache Velocity - velocity-1.4.jar</para>
+      <para>Remoting - cglib-nodep-2.1_3.jar</para>
+      <para>Transaction support - jta.jar</para>
+    </section>
+    <section>
+      <title>
+        <anchor id="_Toc137536472" />6.   
+ References</title>
+      <para>Spring Framework -
+ <ulink url="http://www.springframework.org/">http://www.springframework.org</ulink>  ,
+ <ulink url="http://www.interface21.com/">http://www.interface21.com/</ulink></para>
+      <para>Beanutils - Using
+ <ulink url="http://jakarta.apache.org/commons/beanutils">http://jakarta.apache.org/commons/beanutils</ulink>   for reflection investigating classes
+ Meta data in order to build ExternalEntery from POJO.</para>
+      <para>Digester - Using
+ <ulink url="http://jakarta.apache.org/commons/digester">http://jakarta.apache.org/commons/digester</ulink> for parsing the gs.xml which describes the POJO to ExternalEntry.</para>
+      <para>Hibernate -
+ <ulink url="http://hibernate.org/">http://hibernate.org</ulink> </para>
+      <para>Velocity - Using
+ <ulink url="http://jakarta.apache.org/velocity">http://jakarta.apache.org/velocity</ulink> </para>
+      <para> </para>
+    </section>
+  </section>
+</article>
