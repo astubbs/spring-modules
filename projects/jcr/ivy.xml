@@ -65,15 +65,17 @@
 	<dependency org="apache" name="jackrabbit-jca" rev="1.0" conf="jackrabbit->*"/>
 		 
 	
-	  <!-- 
+	<!-- -->
     <dependency org="concurrent" name="concurrent" rev="1.3.4" conf="jackrabbit->*" />
 		 
     <dependency org="apache" name="lucene" rev="1.4.3" conf="jackrabbit->*" />
+    <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.0" conf="jackrabbit->*" />
+    
+    
     <dependency org="apache" name="xerces" rev="2.6.2" conf="test, jeceira, jackrabbit->*" >
 		<artifact type="jar" name="xercesImpl"/>
 		<artifact type="jar" name="xmlParserAPIs"/>
     </dependency>
-		 -->
 	  
     <!-- jeceira deps -->
 	<dependency org="jeceira" name="jeceira" rev="0.1.3" conf="buildtime, jeceira->*">
