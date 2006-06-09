@@ -6,6 +6,7 @@
 	<!ENTITY authors	    SYSTEM "authors.xml">	
 	<!ENTITY preface		SYSTEM "preface.xml">
 	<!ENTITY overview		SYSTEM "overview.xml">
+	<!ENTITY flux SYSTEM "../../../projects/flux/docs/reference/src/flux.xml">
 	<!ENTITY hivemind		SYSTEM "../../../projects/hivemind/docs/reference/src/hivemind.xml">
 	<!ENTITY jsr94			SYSTEM "../../../projects/jsr94/docs/reference/src/jsr94.xml">
 	<!ENTITY osworkflow 	SYSTEM "../../../projects/osworkflow/docs/reference/src/osworkflow.xml">
@@ -24,7 +25,9 @@
 
 	&cache;
 
-	&hivemind;
+  &flux;
+
+  &hivemind;
 
 	&javaspaces;
 	

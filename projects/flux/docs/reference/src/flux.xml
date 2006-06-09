@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="flux">
+  <title>Flux</title>
+  <sect1>
+    <title>Introduction</title>
+
+    <para>Flux is a job scheduler, workflow engine and
+      a business process management (BPM) engine. More information about Flux can be found at:
+      <ulink url="http://www.fluxcorp.com">http://www.fluxcorp.com</ulink>
+      .
+    </para>
+  </sect1>
+
+  <sect1>
+    <title>Exposing Flux as a Spring Bean</title>
+    <para>
+      A Flux Spring bean can be created using one of the following methods:
+      <itemizedlist>
+        <listitem>
+          <para>Use the below configuration to create a Flux spring bean with the default configuration options</para>
+          <programlisting>
+            &lt;bean id="fluxEngineBean" class="org.springmodules.scheduling.flux.EngineBean" destroy-method="dispose"&gt;
+            &lt;/bean&gt;
+          </programlisting>
+        </listitem>
+
+        <listitem>
+          <para>Use the below configuration to create a Flux spring bean from the configuration properties that are defined in the "fluxconfig.properties" file</para>
+          <programlisting>
+            &lt;bean id="fluxEngineBeanFromConfigurationFile" class="org.springmodules.scheduling.flux.EngineBean" destroy-method="dispose"&gt;
+              &lt;constructor-arg type="java.lang.String"&gt;&lt;value&gt;fluxconfig.properties&lt;/value&gt;&lt;/constructor-arg&gt;
+            &lt;/bean&gt;
+          </programlisting>
+        </listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+</chapter>
