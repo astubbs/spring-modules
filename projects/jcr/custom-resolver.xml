@@ -6,19 +6,20 @@
 			<!-- apache incubator maven / made an url to respect the naming
 			<ibiblio name="apache-incubator" root="http://cvs.apache.org/dist/incubator/"/>
 			-->
-			<!--
-			<url name="jackrabbit-maven">			
-				<artifact pattern="http://ibiblio.org/maven/org.apache.jackrabbit/jars/[artifact]-[revision].[ext]" />				
+			<!---->
+			<url name="apache-dist">			
+				<artifact pattern="http://www.apache.org/dist/java-repository/org.apache.jackrabbit/jars/[artifact]-[revision].[ext]" />				
 			</url>
-			-->
 			<!-- 
-			<ibiblio name="jackrabbit-maven" m2compatible="true" root="http://ibiblio.org/maven/org/"/>
+			<ibiblio name="apache-maven" m2compatible="false" root="http://www.apache.org/dist/java-repository"/>
 			-->
 			<!-- aparzev/jeceira -->
 			<url name="jeceira">
 				<!-- url pattern for jeceira wiki -->
 		        <artifact pattern="http://www.jeceira.com/confluence/download/attachments/3200/[artifact]-[revision].[ext]?version=1" />
 			</url>
+			
+		
 			<!-- jug -->
 			<url name="jug">
 				<!-- url pattern for jug -->

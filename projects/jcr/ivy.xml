@@ -24,7 +24,7 @@
     
     <!-- global (compile, test, runtime) dependencies  -->
     
-    <dependency org="apache" name="commons-logging" rev="1.0.4" />
+    <dependency org="apache" name="commons-logging" rev="1.1" />
     <dependency org="apache" name="log4j" rev="1.2.13" />
     
     <dependency org="springframework" name="springframework" rev="2.0-m4"
@@ -60,8 +60,8 @@
 	</dependency>
 	 -->
 	<!-- -->
-	<dependency org="org.apache.jackrabbit" name="jackrabbit-core" rev="1.0" conf="buildtime, jackrabbit->*"/>
-	<dependency org="org.apache.jackrabbit" name="jackrabbit-jcr-commons" rev="1.0" conf="buildtime, jackrabbit->*"/>
+	<dependency org="org.apache.jackrabbit" name="jackrabbit-core" rev="1.0.1" conf="buildtime, jackrabbit->*"/>
+	<dependency org="org.apache.jackrabbit" name="jackrabbit-jcr-commons" rev="1.0.1" conf="buildtime, jackrabbit->*"/>
 	<dependency org="apache" name="jackrabbit-jca" rev="1.0" conf="jackrabbit->*"/>
 		 
 	
