@@ -1,8 +1,8 @@
 /**
  * Created on Jan 24, 2006
  *
- * $Id: JbpmFactoryLocator.java,v 1.1 2006/03/02 14:56:01 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JbpmFactoryLocator.java,v 1.2 2006/06/09 09:20:48 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -185,7 +185,7 @@ public class JbpmFactoryLocator implements BeanFactoryLocator, BeanFactoryAware,
 	}
 
 	/**
-	 * @see org.springframework.beans.factory.BeanNameAware#setBeanName(java.lang.String)
+	 * @see org.springframework.beans.factory.BeanNameAware#setTargetBean(java.lang.String)
 	 */
 	public void setBeanName(String name) {
 		factoryName = name;

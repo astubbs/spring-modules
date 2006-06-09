@@ -41,29 +41,29 @@ import org.springframework.beans.factory.access.BeanFactoryReference;
  * @author Costin Leau
  *
  */
-public class JbpmHandler implements ActionHandler, AssignmentHandler, DecisionHandler {
+public class JbpmHandlerProxy implements ActionHandler, AssignmentHandler, DecisionHandler {
 
-	private static final Log logger = LogFactory.getLog(JbpmHandler.class);
+	private static final Log logger = LogFactory.getLog(JbpmHandlerProxy.class);
 
 	private String factoryKey;
 
 	/**
 	 * Spring beanName name.
 	 */
-	private String beanName;
+	private String targetBean;
 
 	/**
 	 * @return Returns the beanName.
 	 */
-	public String getBeanName() {
-		return beanName;
+	public String getTargetBean() {
+		return targetBean;
 	}
 
 	/**
-	 * @param beanName The beanName to set.
+	 * @param targetBean The beanName to set.
 	 */
-	public void setBeanName(String bean) {
-		this.beanName = bean;
+	public void setTargetBean(String bean) {
+		this.targetBean = bean;
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class JbpmHandler implements ActionHandler, AssignmentHandler, DecisionHa
 	 * @return
 	 */
 	protected Object lookupBean(Class type) {
-		return retrieveBeanFactory().getBean(getBeanName(), type);
+		return retrieveBeanFactory().getBean(getTargetBean(), type);
 	}
 
 	/**

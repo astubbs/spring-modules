@@ -10,8 +10,8 @@
 	
 	<state name="myState">
 		<transition to="end">
-			<action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandler">
-				<beanName>jbpmAction</beanName>
+			<action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>jbpmAction</targetBean>
 				<factoryKey>jbpmConfiguration</factoryKey>
 			</action>
 		</transition>

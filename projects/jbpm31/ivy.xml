@@ -42,7 +42,7 @@
 		  <artifact name="easymockclassextension" type="jar" conf="test" />
 	    </dependency>
     
-        <dependency org="hibernate" name="hibernate" rev="3.1.2"/>
+        <dependency org="hibernate" name="hibernate" rev="3.1.3"/>
  
          <dependency org="apache" name="geronimo-spec" rev="rc4">
 			<artifact name="geronimo-spec-jta-1.0.1B" type="jar"/>
@@ -57,7 +57,7 @@
             <artifact name="cglib-nodep" type="jar"/>
         </dependency>
 
-        <dependency org="jboss" name="jbpm" rev="3.1"/>
+        <dependency org="jboss" name="jbpm" rev="3.1.1"/>
 
     </dependencies>
 
