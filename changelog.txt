@@ -2,13 +2,35 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
-Changes in version 0.4 (in progress)
+Changes in version 0.5 (in progress)
+------------------------------------
+
+Package org.springmodules.lucene
+* Upgraded Lucene to 2.0.0
+* Fixed AbstractIndexFactory  to work with Lucene 2.0.0 [MOD-141]. Thanks eearley.
+
+
+Changes in version 0.4
 ------------------------------------
 
 Added docbook documentation for validation module
 
 Package org.springmodules.javaspaces
 * New Javaspaces module
+* Added usage documentation
+
+Package org.springmodules.jbpm30
+* Updated jBPM to 3.0.3
+* Renamed JbpmHandler to JbpmHandlerProxy (and changed beanName to targetBean) [JIRA MOD-114]
+
+Package org.springmodules.jbpm31
+* Updated jBPM to 3.1.1
+* Renamed JbpmHandler to JbpmHandlerProxy (and changed beanName to targetBean) [JIRA MOD-114]
+* JbpmTemplate will use jBPM context sessionFactory if no hibernateTemplate is set [JIRA MOD-138]
+* Added usage documentation
+
+Package org.springmodules.jcr
+* Updated Jackrabbit to 1.0.1
 
 Package org.springmodules.validation
 * Created a new package org.springmodules.validation.parser
