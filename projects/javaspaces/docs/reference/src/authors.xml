@@ -3,7 +3,19 @@
 	   multiple tags.
 	 -->
 
-			<author>
-				<firstname>Costin</firstname>
-				<surname>Leau</surname>
-			</author>
+	<author>
+		<firstname>Costin</firstname>
+		<surname>Leau</surname>
+	</author>
+    <author>
+      <firstname>Shay</firstname>
+      <surname>Hassidim</surname>
+      </author>
+          <author>
+      <firstname>Gershon</firstname>
+      <surname>Diner</surname>
+      </author>
+          <author>
+      <firstname>Lior</firstname>
+      <surname>Ben Yizhak</surname>
+    </author>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="jbpm31">
+  <title>jBPM 3.1.x</title>
+
+  <important>
+    <para>The following documentation can be used as reference documentation
+    for Spring Modules jBPM 3.0.x support as well.</para>
+  </important>
+
+  <sect1>
+    <title>Introduction</title>
+
+    <para>jBPM module offers integration between the <ulink
+    url="http://www.springframework.org/">Spring</ulink> and <ulink
+    url="http://www.jboss.com/products/jbpm/">jBPM</ulink> allowing for reuse
+    of Spring's <ulink url="http://www.hibernate.org">Hibernate</ulink>
+    support along with the IoC container. The module allows jBPM's underlying
+    Hibernate sessionFactory to be configured through Spring and jBPM actions
+    to access Spring's context.</para>
+  </sect1>
+
+  <sect1>
+    <title>Configuration</title>
+
+    <para>Users familiar with Spring will see that the jBPM module structure
+    resembles with the orm package from the main Spring distribution. The
+    module offers a central template class for working with jBPM, a callback
+    to access the native JbpmContext and a local factory bean for
+    configuration and creating a jBPM instance.</para>
+
+    <programlisting>&lt;beans&gt;
+  &lt;!-- DataSource definition --&gt;
+  &lt;bean id="dataSource" class="..."&gt;
+    ...
+  &lt;/bean&gt;
+
+  &lt;!-- Hibernate SessionFactory definition --&gt;
+  &lt;bean id="hibernateSessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
+    ...
+  &lt;/bean&gt;
+
+  &lt;!-- helper for reading jBPM process definitions --&gt;
+  &lt;bean id="simpleWorkflow" class="org.springmodules.workflow.jbpm31.definition.ProcessDefinitionFactoryBean"&gt;
+    &lt;property name="definitionLocation" value="classpath:org/springmodules/workflow/jbpm31/simpleWorkflow.xml"/&gt;
+  &lt;/bean&gt;
+
+  &lt;!-- jBPM configuration --&gt;
+  &lt;bean id="jbpmConfiguration" class="org.springmodules.workflow.jbpm31.LocalJbpmConfigurationFactoryBean"&gt;
+    &lt;property name="sessionFactory" ref="hibernateSessionFactory"/&gt;
+    &lt;property name="configuration" value="classpath:jbpm.cfg.xml"/&gt;
+    &lt;property name="processDefinitions"&gt;
+     &lt;list&gt;
+      &lt;ref local="simpleWorkflow"/&gt;
+     &lt;/list&gt;
+    &lt;/property&gt;
+    &lt;property name="createSchema" value="true"/&gt;
+  &lt;/bean&gt;
+
+ &lt;!-- jBPM template --&gt;
+ &lt;bean id="jbpmTemplate" class="org.springmodules.workflow.jbpm31.JbpmTemplate"&gt;
+  &lt;constructor-arg index="0" ref="jbpmConfiguration"/&gt;
+  &lt;constructor-arg index="1" ref="simpleWorkflow"/&gt;
+ &lt;/bean&gt;
+
+&lt;/beans&gt;</programlisting>
+
+    <para>The example above shows how (existing) Spring-managed Hibernate
+    SessionFactories and transaction management can be reused with
+    jBPM.</para>
+
+    <sect2>
+      <title>LocalJbpmConfigurationFactoryBean</title>
+
+      <para>The main element is
+      <emphasis>LocalJbpmConfigurationFactoryBean</emphasis> which should be
+      familiar to users acustomed to Spring. Based on the jbpm configuration
+      file and the given SessionFactory, it will create a jBPM configuration
+      which can be used for working with the given process definitions. It is
+      possible to replace jBPM xml configuration with jBPM 3.1.x newly added
+      ObjectFactory - note that if both are present the xml configuration is
+      preffered. <emphasis>LocalJbpmConfigurationFactoryBean</emphasis> allows
+      the creation of the underlying schema based on the process definitions
+      loaded automatically at startup.</para>
+
+      <para>Note that the sessionFactory property is not mandatory - Hibernate
+      SessionFactory can be reused with jBPM or jBPM can work by itself
+      without any integration with the existing infrastructure. However, in
+      most scenarios, using
+      <emphasis>LocalJbpmConfigurationFactoryBean</emphasis> allows one to
+      take advantage of Spring <ulink
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/transaction.html">transaction
+      management infrastructure</ulink> so it's possible without any code
+      change to use jBPM, Hibernate and jdbc-based code inside the same
+      transactional context, be it managed locally or globally (JTA).
+      Moreover, it is possible to use <ulink
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/orm.html#orm-hibernate">thread-bound</ulink>
+      session or OpenSessionInView patterns with jBPM.</para>
+
+      <para><emphasis>LocalJbpmConfigurationFactoryBean</emphasis> is also
+      aware of the enclosing applicationContext lifecycle - jBPM will be
+      initialized once the context is started (usually application startup)
+      and will be closed properly when the context is destroyed (application
+      is shutdown).</para>
+
+      <para>Note that <emphasis>LocalJbpmConfigurationFactoryBean</emphasis>
+      can be configured programatically and can be used standalone only to
+      build an jBPM context which can be used independently of Spring Modules
+      jBPM support.</para>
+    </sect2>
+
+    <sect2>
+      <title>Inversion of Control: JbpmTemplate and JbpmCallback</title>
+
+      <para>Another important feature of Spring Modules jBPM support is
+      <emphasis>JbpmTemplate</emphasis>. The template offers very convient
+      ways of working directly with process definitions as well as jBPM API
+      taking care of handling exceptions (be it jBPM or Hibernate based) in
+      respect to the ongoing transaction (if it's present), the underlying
+      Hibernate session (if pesistent services are used) and the jBPM context.
+      jBPM exceptions (and the underlying Hibernate information) are
+      translated into Spring's DAO exception hierarchy. Everything happens in
+      a transparent and consistent manner.This is possible, as with every
+      Spring-style template,even when direct access to the native JbpmContext
+      is desired, through the <emphasis>JbpmCallback</emphasis>:</para>
+
+      <para><programlisting>public ProcessInstance findProcessInstance(final Long processInstanceId) {
+  return (ProcessInstance) execute(new JbpmCallback() {
+   public Object doInJbpm(JbpmContext context) {
+    // do something
+    ...
+    return context.getGraphSession().loadProcessInstance(processInstanceId.longValue());
+   }
+  });
+}</programlisting>As well, as
+      <emphasis>LocalJbpmConfigurationFactoryBean</emphasis>, the
+      <emphasis>JbpmTemplate</emphasis> can be configured programatically and
+      can be used standalone on a pre-existing jbpmContext (configured through
+      <emphasis>LocalJbpmConfigurationFactoryBean</emphasis> or not) and can
+      be used independently of Spring Modules jBPM support.</para>
+    </sect2>
+
+    <sect2>
+      <title>ProcessDefinitionFactoryBean</title>
+
+      <para><emphasis>ProcessDefinitionFactoryBean</emphasis> is a simple
+      reader that loads jBPM process definition using Spring's <ulink
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/resources.html#d0e4913">ResourceLoader</ulink>s.
+      Thus, the xml files can be load using the classpath, relative or
+      absolute file path or even from the Servlet Context. See the official
+      <ulink
+      url="http://static.springframework.org/spring/docs/2.0.x/reference/resources.html">documentation</ulink>
+      for more information.</para>
+    </sect2>
+
+    <sect2>
+      <title>Outside Spring container</title>
+
+      <para>It is important to note that while our example showed
+      LocalJbpmConfigurationFactoryBean and JbpmTemplate template inside a
+      Spring xml, these classes do not depend on each other or on Spring
+      application context. They can be just as well configured programatically
+      and can</para>
+    </sect2>
+  </sect1>
+
+  <sect1>
+    <title>Accessing Spring beans from jBPM actions</title>
+
+    <para>Another important feature of Spring Modules jBPM integration is
+    allowing Spring configured beans to be reused inside jBPM actions. This
+    allows one to leverage Spring container capabilities (bean lifecycles,
+    scoping, injection, proxying just to name a few) in a transparent way with
+    jBPM. Consider the following Spring application context:</para>
+
+    <programlisting>&lt;beans&gt;
+ &lt;!-- Spring bean visible inside jBPM processed --&gt;
+ &lt;bean id="jbpmAction" class="org.MyJbpmActionHandler" singleton="true"&gt;
+   &lt;property name="someProp" ref="anotherBean"/&gt;
+   ...
+ &lt;/bean&gt;
+..
+&lt;/beans&gt;</programlisting>
+
+    <para>and jBPM process definition:</para>
+
+    <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;process-definition name="simpleWorkflow"&gt;
+ &lt;start-state&gt;
+  &lt;transition to="myState"&gt;
+  &lt;/transition&gt;
+ &lt;/start-state&gt;
+
+ &lt;state name="myState"&gt;
+  &lt;transition to="end"&gt;
+   &lt;action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"&gt;
+    &lt;targetBean&gt;jbpmAction&lt;/targetBean&gt;
+    &lt;factoryKey&gt;jbpmConfiguration&lt;/factoryKey&gt;
+   &lt;/action&gt;
+  &lt;/transition&gt;
+ &lt;/state&gt;
+
+ &lt;end-state name="end"/&gt;
+&lt;/process-definition&gt;</programlisting>
+
+    <para><emphasis>JbpmHandlerProxy</emphasis> transparently locates Spring
+    applicationContext and searches the bean identified by the
+    <emphasis>targetBean</emphasis> parameter (in this case jbpmAction) and
+    delegate all calls to the jBPM action. This way, one is not limited only
+    to the injection offered by jBPM container and can integrate and
+    communicate in a very easy manner with other Spring managed beans.
+    Moreover, your action lifecycle can be sigleton (one shared instance) or
+    prototype (every call gets a new instance) or in Spring 2.0 scoped to a
+    certain application component (like one instance per http session).</para>
+
+    <para>The optional <emphasis>factoryKey</emphasis> parameter specified in
+    this example should be used when one is dealing with more then one jBPM
+    configuration inside the same classloader (not common in practice). The
+    <emphasis>factoryKey</emphasis> should be the same as the bean name of the
+    <emphasis>LocalJbpmConfigurationFactoryBean</emphasis> to be used (in our
+    case jbpmConfiguration).</para>
+  </sect1>
+</chapter>

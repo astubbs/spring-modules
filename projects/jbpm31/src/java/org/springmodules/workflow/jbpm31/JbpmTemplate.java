@@ -1,8 +1,8 @@
 /**
  * Created on Feb 20, 2006
  *
- * $Id: JbpmTemplate.java,v 1.2 2006/03/10 08:27:04 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JbpmTemplate.java,v 1.3 2006/06/10 11:27:46 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -23,20 +23,22 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 /**
- * Jbpm 3.1 Template. Requires a jbpmConfiguration and accepts also a hibernateTemplate and processDefinition.
- * Jbpm Persistence Service can be managed by Spring through the given HibernateTemplate, allowing jBPM to work
- * with a user configured session factory and thread-bound session depending on the HibernateTemplate settings.
- * However, due to the nature of jBPM architecture, on each execute the jbpmContext will try to close the user 
- * Hibernate session which is undesireable when working with a thread-bound session or a transaction. One can
- * overcome this undesired behavior by setting 'exposeNative' property on the HibernateTemplate to false (default).
+ * Jbpm 3.1 Template. Requires a jbpmConfiguration and accepts also a
+ * hibernateTemplate and processDefinition. Jbpm Persistence Service can be
+ * managed by Spring through the given HibernateTemplate, allowing jBPM to work
+ * with a user configured session factory and thread-bound session depending on
+ * the HibernateTemplate settings. However, due to the nature of jBPM
+ * architecture, on each execute the jbpmContext will try to close the user
+ * Hibernate session which is undesireable when working with a thread-bound
+ * session or a transaction. One can overcome this undesired behavior by setting
+ * 'exposeNative' property on the HibernateTemplate to false (default).
  * 
  * @see org.springframework.orm.hibernate3.HibernateTemplate
  * @author Costin Leau
- *
+ * 
  */
 public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 	// TODO: persistence is not always required
-
 
 	/**
 	 * Optional process definition.
@@ -49,18 +51,20 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 	private HibernateTemplate hibernateTemplate;
 
 	/**
-	 * Boolean used to determine if the persistence service is used or not. If so, hibernateTemplate
-	 * will be required and used internally.
+	 * Boolean used to determine if the persistence service is used or not. If
+	 * so, hibernateTemplate will be required and used internally.
 	 */
 	private boolean hasPersistenceService;
 
 	/**
-	 * jBPM context name. defaults to null which is equivalent to JbpmContext.DEFAULT_JBPM_CONTEXT_NAME
+	 * jBPM context name. defaults to null which is equivalent to
+	 * JbpmContext.DEFAULT_JBPM_CONTEXT_NAME
 	 */
 	private String contextName = JbpmContext.DEFAULT_JBPM_CONTEXT_NAME;
 
 	/**
-	 * Execute the action specified by the given action object within a JbpmSession.
+	 * Execute the action specified by the given action object within a
+	 * JbpmSession.
 	 * 
 	 * @param callback
 	 * @return
@@ -69,7 +73,7 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 		final JbpmContext context = getContext();
 
 		try {
-			// use the hibernateTemplate is present and if needed 
+			// use the hibernateTemplate is present and if needed
 			if (hibernateTemplate != null && hasPersistenceService) {
 
 				// use hibernate template
@@ -84,7 +88,7 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 					}
 				});
 			}
-			
+
 			// plain callback invocation (no template w/ persistence)
 			return callback.doInJbpm(context);
 
@@ -125,24 +129,33 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 		super.afterPropertiesSet();
 		// see if persistence is required
 
-		// we don't have any other way to get the services then by creating a jbpm context
+		// we don't have any other way to get the services then by creating a
+		// jbpm context
 		// secured in try/finally block
 		JbpmContext dummy = getContext();
 		try {
-				
+
 			if (dummy.getServiceFactory(Services.SERVICENAME_PERSISTENCE) != null) {
 				hasPersistenceService = true;
 				logger.debug("jBPM persistence service present");
 			}
+
+			if (hibernateTemplate != null)
+				logger.debug("hibernateTemplate present - jBPM persistence service will be managed by Spring");
+			else {
+				if (dummy.getSessionFactory() != null) {
+					logger.debug("creating hibernateTemplate based on jBPM SessionFactory");
+					hibernateTemplate = new HibernateTemplate(dummy.getSessionFactory());
+				}
+				else
+
+					logger.debug("hibernateTemplate missing - jBPM will handle its own persistence");
+			}
+
 		}
 		finally {
 			dummy.close();
 		}
-
-		if (hibernateTemplate != null)
-			logger.debug("hibernateTemplate present - jBPM persistence service will be managed by Spring");
-		else
-			logger.debug("hibernateTemplate missing - jBPM will handle its own persistence");
 
 	}
 
@@ -186,7 +199,6 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 		this.hibernateTemplate = hibernateTemplate;
 	}
 
-
 	/**
 	 * @return Returns the processDefinition.
 	 */
@@ -200,7 +212,6 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 	public void setProcessDefinition(ProcessDefinition processDefinition) {
 		this.processDefinition = processDefinition;
 	}
-	
 
 	/**
 	 * @see org.springmodules.workflow.jbpm31.JbpmOperations#findProcessInstance(java.lang.Long)
@@ -226,7 +237,6 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 		});
 	}
 
-	
 	/**
 	 * @see org.springmodules.workflow.jbpm31.JbpmOperations#findPooledTaskInstances(java.lang.String)
 	 */
@@ -305,7 +315,7 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 			}
 		});
 	}
-	
+
 	/**
 	 * @see org.springmodules.workflow.jbpm31.JbpmOperations#signal(org.jbpm.graph.exe.ProcessInstance)
 	 */
@@ -333,7 +343,8 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 	}
 
 	/**
-	 * @see org.springmodules.workflow.jbpm31.JbpmOperations#signal(org.jbpm.graph.exe.ProcessInstance, java.lang.String)
+	 * @see org.springmodules.workflow.jbpm31.JbpmOperations#signal(org.jbpm.graph.exe.ProcessInstance,
+	 *      java.lang.String)
 	 */
 	public void signal(final ProcessInstance processInstance, final String transitionId) {
 		execute(new JbpmCallback() {
@@ -346,7 +357,8 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 	}
 
 	/**
-	 * @see org.springmodules.workflow.jbpm31.JbpmOperations#signal(org.jbpm.graph.exe.ProcessInstance, org.jbpm.graph.def.Transition)
+	 * @see org.springmodules.workflow.jbpm31.JbpmOperations#signal(org.jbpm.graph.exe.ProcessInstance,
+	 *      org.jbpm.graph.def.Transition)
 	 */
 	public void signal(final ProcessInstance processInstance, final Transition transition) {
 		execute(new JbpmCallback() {
@@ -358,8 +370,5 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 		});
 		throw new UnsupportedOperationException();
 	}
-
-
-
 
 }
