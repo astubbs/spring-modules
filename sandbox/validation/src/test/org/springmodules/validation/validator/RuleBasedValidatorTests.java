@@ -19,13 +19,14 @@ package org.springmodules.validation.validator;
 import org.easymock.MockControl;
 import org.springframework.validation.Errors;
 import org.springmodules.validation.util.condition.Condition;
+import junit.framework.TestCase;
 
 /**
  * Tests for {@link org.springmodules.validation.validator.RuleBasedValidator}.
  *
  * @author Uri Boness
  */
-public class RuleBasedValidatorTests extends AbstractTypeSpecificValidatorTests {
+public class RuleBasedValidatorTests extends TestCase {
 
     private RuleBasedValidator validator;
 
@@ -146,11 +147,7 @@ public class RuleBasedValidatorTests extends AbstractTypeSpecificValidatorTests 
     }
 
     protected RuleBasedValidator createRuleBasedValidator(Class clazz) {
-        return new RuleBasedValidator(clazz);
-    }
-
-    protected AbstractTypeSpecificValidator createTypeSpecificValidator(Class clazz) {
-        return createRuleBasedValidator(clazz);
+        return new RuleBasedValidator();
     }
 
 

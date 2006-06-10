@@ -24,13 +24,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
 import org.springmodules.validation.bean.rule.PropertyValidatoinRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.util.condition.Condition;
 
 /**
- * An {@link AbstractTypeSpecificValidator} implementation which uses {@link ValidationRule}'s to define its
+ * A {@link org.springframework.validation.Validator} implementation which uses {@link ValidationRule}'s to define its
  * validation execution. There are two types of validation rules this validator accepts:
  * <ul>
  *  <li>
@@ -46,7 +47,7 @@ import org.springmodules.validation.util.condition.Condition;
  *
  * @author Uri Boness
  */
-public class RuleBasedValidator extends AbstractTypeSpecificValidator {
+public class RuleBasedValidator implements Validator {
 
     // a list of global ValidationRule's - List<ValidationRule>
     private List globalRules;
@@ -57,15 +58,21 @@ public class RuleBasedValidator extends AbstractTypeSpecificValidator {
     /**
      * Contrusts a new RuleBasedValidator for the given type. After contruction, this validator will initially hold
      * no rules.
-     *
-     * @param type The class this validator supports.
      */
-    public RuleBasedValidator(Class type) {
-        super(type);
+    public RuleBasedValidator() {
         globalRules = new ArrayList();
         rulesByProperty = new HashMap();
     }
 
+    /**
+     * This validator supports all classes. Any object can be validated by this validator as long as the validation rules
+     * apply to it.
+     *
+     * @see Validator#supports(Class)
+     */
+    public boolean supports(Class clazz) {
+        return true;
+    }
 
     /**
      * Validates the given object and registers all validation errors with the given errors object. The validation

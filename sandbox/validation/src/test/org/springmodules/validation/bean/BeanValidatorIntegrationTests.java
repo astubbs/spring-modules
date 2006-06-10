@@ -40,7 +40,7 @@ public class BeanValidatorIntegrationTests extends TestCase {
         SimpleBeanValidationConfigurationLoader loader = new SimpleBeanValidationConfigurationLoader();
         loader.setClassValidation(Person.class, personValidationConfiguration);
 
-        BeanValidator validator = new BeanValidator(Person.class);
+        BeanValidator validator = new BeanValidator();
         validator.setErrorCodeConverter(new DefaultErrorCodeConverter());
         validator.setConfigurationLoader(loader);
 

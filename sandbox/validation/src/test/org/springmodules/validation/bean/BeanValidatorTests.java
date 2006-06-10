@@ -71,7 +71,10 @@ public class BeanValidatorTests extends TestCase {
         converterControl = MockControl.createControl(ErrorCodeConverter.class);
         converter = (ErrorCodeConverter)converterControl.getMock();
 
-        validator = new BeanValidator(Object.class);
+        loaderControl = MockControl.createControl(BeanValidationConfigurationLoader.class);
+        loader = (BeanValidationConfigurationLoader)loaderControl.getMock();
+
+        validator = new BeanValidator(loader);
         validator.setErrorCodeConverter(converter);
 
         errorsControl = MockControl.createControl(Errors.class);
@@ -86,11 +89,15 @@ public class BeanValidatorTests extends TestCase {
         ruleControl2 = MockControl.createControl(ValidationRule.class);
         rule2 = (ValidationRule)ruleControl2.getMock();
 
-        loaderControl = MockControl.createControl(BeanValidationConfigurationLoader.class);
-        loader = (BeanValidationConfigurationLoader)loaderControl.getMock();
-
         wrapperControl = MockControl.createControl(BeanWrapper.class);
         wrapper = (BeanWrapper)wrapperControl.getMock();
+    }
+
+    public void testSupports_WhenLoaderSupports() throws Exception {
+        loaderControl.expectAndReturn(loader.supports(Object.class), true);
+        replay();
+        assertTrue(validator.supports(Object.class));
+        verify();
     }
 
     public void testValidateObjectGraphConstraints_WithArrayProperty() throws Exception {
@@ -99,7 +106,7 @@ public class BeanValidatorTests extends TestCase {
         final Set validatedObjects = new HashSet();
 
         // creating the bean with stub methods
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             protected void applyBeanValidation(BeanValidationConfiguration conf, Object obj, Errors errors) {
                 assertSame(configuration, conf);
                 assertSame(object, obj);
@@ -139,7 +146,7 @@ public class BeanValidatorTests extends TestCase {
         final Set validatedObjects = new HashSet();
 
         // creating the bean with stub methods
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             protected void applyBeanValidation(BeanValidationConfiguration conf, Object obj, Errors errors) {
                 assertSame(configuration, conf);
                 assertSame(object, obj);
@@ -180,7 +187,7 @@ public class BeanValidatorTests extends TestCase {
         final Set validatedObjects = new HashSet();
 
         // creating the bean with stub methods
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             protected void applyBeanValidation(BeanValidationConfiguration conf, Object obj, Errors errors) {
                 assertSame(configuration, conf);
                 assertSame(object, obj);
@@ -221,7 +228,7 @@ public class BeanValidatorTests extends TestCase {
         final Set validatedObjects = new HashSet();
 
         // creating the bean with stub methods
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             protected void applyBeanValidation(BeanValidationConfiguration conf, Object obj, Errors errors) {
                 assertSame(configuration, conf);
                 assertSame(object, obj);
@@ -262,7 +269,7 @@ public class BeanValidatorTests extends TestCase {
         final Set validatedObjects = new HashSet();
 
         // creating the bean with stub methods
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             protected void applyBeanValidation(BeanValidationConfiguration conf, Object obj, Errors errors) {
                 assertSame(configuration, conf);
                 assertSame(object, obj);
@@ -304,7 +311,7 @@ public class BeanValidatorTests extends TestCase {
         final Object[] array = new Object[] { element1, element2};
         final Set validatedObjects = new HashSet();
 
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             private int runCount = 0;
             protected void validateObjectGraphConstraints(Object rootObject, Object obj, Errors errors, Set validatedObjs) {
                 assertSame(root, rootObject);
@@ -338,7 +345,7 @@ public class BeanValidatorTests extends TestCase {
         final List list = new ArrayList(); list.add(element1); list.add(element2);
         final Set validatedObjects = new HashSet();
 
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             private int runCount = 0;
             protected void validateObjectGraphConstraints(Object rootObject, Object obj, Errors errors, Set validatedObjs) {
                 assertSame(root, rootObject);
@@ -372,7 +379,7 @@ public class BeanValidatorTests extends TestCase {
         final Set set = new TreeSet(); set.add(element1); set.add(element2);
         final Set validatedObjects = new HashSet();
 
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             private int runCount = 0;
             protected void validateObjectGraphConstraints(Object rootObject, Object obj, Errors errors, Set validatedObjs) {
                 assertSame(root, rootObject);
@@ -408,7 +415,7 @@ public class BeanValidatorTests extends TestCase {
         map.put("e2", element2);
         final Set validatedObjects = new HashSet();
 
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             protected void validateObjectGraphConstraints(Object rootObject, Object obj, Errors errors, Set validatedObjs) {
                 assertSame(root, rootObject);
                 assertSame(BeanValidatorTests.this.errors, errors);
@@ -433,7 +440,7 @@ public class BeanValidatorTests extends TestCase {
         final Object subBean = new Object();
         final Set validatedObjects = new HashSet();
 
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             protected void validateObjectGraphConstraints(Object rootObject, Object obj, Errors errors, Set validatedObjs) {
                 assertSame(root, rootObject);
                 assertSame(BeanValidatorTests.this.errors, errors);
@@ -454,7 +461,7 @@ public class BeanValidatorTests extends TestCase {
     public void testApplyBeanValidation() throws Exception {
         final Object object = new Object();
 
-        BeanValidator validator = new BeanValidator(Object.class, loader) {
+        BeanValidator validator = new BeanValidator(loader) {
             protected void applyGlobalValidationRules(BeanValidationConfiguration conf, Object obj, Errors errors) {
                 assertSame(configuration, conf);
                 assertSame(object, obj);
@@ -509,7 +516,7 @@ public class BeanValidatorTests extends TestCase {
         configurationControl.expectAndReturn(configuration.getValidatedProperties(), new String[] { "name" });
         configurationControl.expectAndReturn(configuration.getPropertyRules("name"), rules);
 
-        BeanValidator validator = new BeanValidator(Object.class) {
+        BeanValidator validator = new BeanValidator() {
             protected void validateAndShortCircuitRules(ValidationRule[] validationRules, String propertyName, Object obj, Errors errors) {
                 assertSame(rules, rules);
                 assertEquals("name", propertyName);

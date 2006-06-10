@@ -32,4 +32,15 @@ public interface BeanValidationConfigurationLoader {
      */
     BeanValidationConfiguration loadConfiguration(Class clazz);
 
+    /**
+     * Indicates whether the given class is supported by this loader. The {@link #loadConfiguration(Class)} will return
+     * a validation configuration only for the supported classes. This method should typically be called to determine
+     * whether the {@link #loadConfiguration(Class)} should be called.
+     *
+     * @param clazz The class to be checked.
+     * @return <code>true</code> if this loader can load a valication configuration for the given class,
+     *         <code>false</code> otherwise.
+     */
+    boolean supports(Class clazz);
+
 }

@@ -59,34 +59,33 @@ public class BeanValidator extends RuleBasedValidator {
     private ErrorCodeConverter errorCodeConverter;
 
     /**
-     * Default empty contructor (javabean support)
-     */
-    public BeanValidator() {
-        this(null);
-    }
-
-    /**
      * Constructs a new BeanValidator. By default the
      * {@link org.springmodules.validation.bean.conf.SimpleBeanValidationConfigurationLoader} is
      * used as the bean validation configuration loader.
-     *
-     * @param clazz The root class of the objects this validator supports.
      */
-    public BeanValidator(Class clazz) {
-        this(clazz, new SimpleBeanValidationConfigurationLoader());
+    public BeanValidator() {
+        this(new SimpleBeanValidationConfigurationLoader());
     }
 
     /**
      * Constructs a new BeanValidator for the given bean class using the given validation configuration loader.
      *
-     * @param clazz The root class of the objects this validator supports.
      * @param configurationLoader The {@link BeanValidationConfigurationLoader} that is used to load the bean validation
      *        configuration.
      */
-    public BeanValidator(Class clazz, BeanValidationConfigurationLoader configurationLoader) {
-        super(clazz);
+    public BeanValidator(BeanValidationConfigurationLoader configurationLoader) {
         this.configurationLoader = configurationLoader;
         errorCodeConverter = new DefaultErrorCodeConverter();
+    }
+
+    /**
+     * This validator supports only those classes that are supported by the validation configuration loader it uses.
+     *
+     * @see RuleBasedValidator#supports(Class)
+     * @see BeanValidationConfigurationLoader#supports(Class)
+     */
+    public boolean supports(Class clazz) {
+        return configurationLoader.supports(clazz) || super.supports(clazz);
     }
 
     /**

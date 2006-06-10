@@ -39,6 +39,13 @@ public class SimpleBeanValidationConfigurationLoader implements BeanValidationCo
     }
 
     /**
+     * @see BeanValidationConfigurationLoader#supports(Class)
+     */
+    public boolean supports(Class clazz) {
+        return configurationByClass.containsKey(clazz);
+    }
+
+    /**
      * Returns the bean validation configuration that is associated with the given class, or one of its super classes.
      * Returns <code>null</code> if no such association was found.
      *
