@@ -6,7 +6,7 @@
 	<!ENTITY authors	    SYSTEM "authors.xml">	
 	<!ENTITY preface		SYSTEM "preface.xml">
 	<!ENTITY overview		SYSTEM "overview.xml">
-	<!ENTITY flux SYSTEM "../../../projects/flux/docs/reference/src/flux.xml">
+	<!ENTITY flux 			SYSTEM "../../../projects/flux/docs/reference/src/flux.xml">
 	<!ENTITY hivemind		SYSTEM "../../../projects/hivemind/docs/reference/src/hivemind.xml">
 	<!ENTITY jsr94			SYSTEM "../../../projects/jsr94/docs/reference/src/jsr94.xml">
 	<!ENTITY osworkflow 	SYSTEM "../../../projects/osworkflow/docs/reference/src/osworkflow.xml">
@@ -14,7 +14,9 @@
 	<!ENTITY jcr 			SYSTEM "../../../projects/jcr/docs/reference/src/jcr.xml">
 	<!ENTITY lucene 		SYSTEM "../../../projects/lucene/docs/reference/src/lucene.xml">
 	<!ENTITY javaspaces		SYSTEM "../../../projects/javaspaces/docs/reference/src/javaspaces.xml">
+	<!ENTITY gigaspaces		SYSTEM "../../../projects/javaspaces/docs/reference/src/gigaspaces.xml">
 	<!ENTITY validation		SYSTEM "../../../projects/validation/docs/reference/src/validation.xml">
+	<!ENTITY jbpm			SYSTEM "../../../projects/jbpm31/docs/reference/src/jbpm31.xml">
 	]>
 
 
@@ -25,11 +27,15 @@
 
 	&cache;
 
-  &flux;
+    &flux;
 
-  &hivemind;
+    &hivemind;
 
 	&javaspaces;
+	
+	&gigaspaces;
+	
+	&jbpm;
 	
 	&jcr;
 
@@ -38,7 +44,6 @@
 	&lucene;
 		
 	&osworkflow;
-
-	&validation;
 	
+	&validation;
 </book>
