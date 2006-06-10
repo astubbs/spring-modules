@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-  <info organisation="springmodules" module="springmodules-javaspace"/>
+  <info organisation="springmodules" module="springmodules-javaspaces"/>
 
   <configurations>
     <!-- default configuration that 'by default' pulls in the global configuration -->

@@ -15,6 +15,7 @@
 
   <!-- import clover support -->
   <import file="${common.build.dir}/clover-targets.xml"/>
+   <import file="${common.build.dir}/doc-targets.xml" />
 
 
 </project>

@@ -2,10 +2,10 @@
 <chapter id="jbpm31">
   <title>jBPM 3.1.x</title>
 
-  <important>
+  <note>
     <para>The following documentation can be used as reference documentation
     for Spring Modules jBPM 3.0.x support as well.</para>
-  </important>
+  </note>
 
   <sect1>
     <title>Introduction</title>
