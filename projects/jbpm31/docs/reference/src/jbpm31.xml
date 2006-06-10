@@ -35,17 +35,21 @@
   &lt;/bean&gt;
 
   &lt;!-- Hibernate SessionFactory definition --&gt;
-  &lt;bean id="hibernateSessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
+  &lt;bean id="hibernateSessionFactory" 
+     class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
     ...
   &lt;/bean&gt;
 
   &lt;!-- helper for reading jBPM process definitions --&gt;
-  &lt;bean id="simpleWorkflow" class="org.springmodules.workflow.jbpm31.definition.ProcessDefinitionFactoryBean"&gt;
-    &lt;property name="definitionLocation" value="classpath:org/springmodules/workflow/jbpm31/simpleWorkflow.xml"/&gt;
+  &lt;bean id="simpleWorkflow" 
+      class="org.springmodules.workflow.jbpm31.definition.ProcessDefinitionFactoryBean"&gt;
+    &lt;property name="definitionLocation" 
+      value="classpath:org/springmodules/workflow/jbpm31/simpleWorkflow.xml"/&gt;
   &lt;/bean&gt;
 
   &lt;!-- jBPM configuration --&gt;
-  &lt;bean id="jbpmConfiguration" class="org.springmodules.workflow.jbpm31.LocalJbpmConfigurationFactoryBean"&gt;
+  &lt;bean id="jbpmConfiguration" 
+      class="org.springmodules.workflow.jbpm31.LocalJbpmConfigurationFactoryBean"&gt;
     &lt;property name="sessionFactory" ref="hibernateSessionFactory"/&gt;
     &lt;property name="configuration" value="classpath:jbpm.cfg.xml"/&gt;
     &lt;property name="processDefinitions"&gt;
@@ -193,7 +197,8 @@
 
  &lt;state name="myState"&gt;
   &lt;transition to="end"&gt;
-   &lt;action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"&gt;
+   &lt;action name="myAction" config-type="bean" 
+      class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"&gt;
     &lt;targetBean&gt;jbpmAction&lt;/targetBean&gt;
     &lt;factoryKey&gt;jbpmConfiguration&lt;/factoryKey&gt;
    &lt;/action&gt;
