@@ -7,7 +7,7 @@
 
     <title>Introduction</title>
 
-    JavaSpaces module offers Spring-style services, like transaction management, template, callback and interceptor as well as remoting services to JavaSpaces environments.
+     JavaSpaces module offers Spring-style services, like transaction management, template, callback and interceptor as well as remoting services to JavaSpaces environments. 
   </sect1>
 
   <sect1>
@@ -37,7 +37,8 @@
 ...
  &lt;!-- Blitz based localSpace --&gt;
  &lt;bean id="blitzLocalSpace" class="org.springmodules.javaspaces.blitz.LocalSpaceFactoryBean"&gt;
-  &lt;property name="configuration" value="classpath:/org/springmodules/javaspaces/blitz/blitz.config"/&gt;
+  &lt;property name="configuration" 
+     value="classpath:/org/springmodules/javaspaces/blitz/blitz.config"/&gt;
  &lt;/bean&gt;
  &lt;!-- Null space - useful for tests --&gt;
  &lt;bean id="blitzLocalSpace" class="org.springmodules.javaspaces.blitz.NullSpaceFactoryBean"/&gt;
@@ -53,7 +54,8 @@
 
         <programlisting>&lt;beans&gt;
  &lt;!-- GigaSpace localSpace --&gt;
- &lt;bean id="gigaSpaceLocalSpace" class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean"&gt;
+ &lt;bean id="gigaSpaceLocalSpace" 
+    class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean"&gt;
   &lt;property name="urls"&gt;
    &lt;list&gt;
     &lt;value&gt;/./myCache?properties=gs&amp;amp;&lt;/value&gt;
@@ -110,8 +112,9 @@
     access:</para>
 
     <programlisting>spaceTemplate.execute(new JavaSpaceCallback() {
-  public Object doInSpace(JavaSpace js,Transaction transaction) throws RemoteException, TransactionException, 
-        UnusableEntryException,InterruptedException {
+  public Object doInSpace(JavaSpace js,Transaction transaction) 
+    throws RemoteException, TransactionException, 
+           UnusableEntryException, InterruptedException {
       ...
       Entry myEntry = ...;
       js.write(myEntry, transaction, Lease.FOREVER);

@@ -6,7 +6,7 @@
 	<!ENTITY preface	SYSTEM "../../../../../docs/reference/src/preface.xml">
 	<!ENTITY authors	SYSTEM "authors.xml">
 	<!ENTITY javaspaces	SYSTEM "javaspaces.xml">
-	<!ENTITY gigaspaces	SYSTEM "GigaSpaces_Spring_Integration_ShortVersion.xml">
+	<!ENTITY gigaspaces	SYSTEM "gigaspaces.xml">
 	]>
 
 <book>
