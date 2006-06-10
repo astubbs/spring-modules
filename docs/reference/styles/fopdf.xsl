@@ -44,7 +44,7 @@
 							<fo:block font-family="Helvetica" font-size="22pt" padding-before="10mm">
 								<xsl:value-of select="bookinfo/subtitle"/>
 							</fo:block>
-							<fo:block font-family="Helvetica" font-size="12pt" padding="10mm">
+							<fo:block font-family="Helvetica" font-size="17pt" padding="10mm">
 								<xsl:value-of select="bookinfo/releaseinfo"/>
 							</fo:block>
 						</fo:table-cell>
@@ -58,17 +58,22 @@
 					</fo:table-row>
 					<fo:table-row>
 						<fo:table-cell text-align="center">
-							<fo:block font-family="Helvetica" font-size="12pt" padding="10mm">
-								<xsl:text>Copyright (c) 2005 -</xsl:text>
+							
+							<fo:block font-family="Helvetica" font-size="13pt" padding="3mm">
 								<xsl:for-each select="bookinfo/authorgroup/author">
 									<xsl:if test="position() > 1">
-										<xsl:text>,</xsl:text>
+										<xsl:text>, </xsl:text>
 									</xsl:if>
 									<xsl:value-of select="firstname"/>
-									<xsl:text></xsl:text>
+									<xsl:text> </xsl:text>
 									<xsl:value-of select="surname"/>
 								</xsl:for-each>
 							</fo:block>
+
+							<fo:block font-family="Helvetica" font-size="10pt" padding="2mm">
+								<xsl:text>Copyright (c) 2005 - 2006</xsl:text>
+							</fo:block>
+							
 							<fo:block font-family="Helvetica" font-size="10pt" padding="1mm">
 								<xsl:value-of select="bookinfo/legalnotice"/>
 							</fo:block>
