@@ -248,55 +248,6 @@
         &lt;/list&gt;
     &lt;/property&gt;
     &lt;property name="allowDirtyForward" value="false"/&gt;
-    &lt;property name="validator" ref="pageValidator"/&gt;
-    &lt;property name="commandName" value="person"/&gt;
-    &lt;property name="commandClass" value="PersonData"/&gt;
-&lt;/bean&gt;
-
-&lt;bean id="pageValidator" class="org.springmodules.validation.commons.ConfigurablePageBeanValidator"&gt;
-    &lt;property name="formName" value="personDataWizard"/&gt;
-    &lt;property name="validatorFactory" ref="validatorFactory"/&gt;
-&lt;/bean&gt;
-
-&lt;bean id="validatorFactory" class="org.springmodules.validation.commons.DefaultValidatorFactory"&gt;
-    &lt;property name="validationConfigLocations"&gt;
-        &lt;list&gt;
-            &lt;value&gt;/WEB-INF/validator-rules.xml&lt;/value&gt;
-            &lt;value&gt;/WEB-INF/validator.xml&lt;/value&gt;
-        &lt;/list&gt;
-    &lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-            <para>
-                For this configuration the controller will look like this:
-            </para>
-
-            <programlisting>public class PersonWizardController extends AbstractWizardFormController {
-    ...
-
-    protected void validatePage(Object command, Errors errors, int page) {
-        Validator[] validators = getValidators();
-        for (int i=0; i&lt;validators.length; i++) {
-            Validator validator = validators[i];
-            if (validator instanceof PageAware) {
-                ((PageAware)validator).setPage(page);
-                validator.validate(command, errors);
-            }
-        }
-    }
-
-}</programlisting>
-
-            Another configuration can be as follows:
-
-            <programlisting>&lt;bean id="personWizardController" class="PersonWizardController"&gt;
-    &lt;property name="pages"&gt;
-        &lt;list&gt;
-            &lt;value&gt;personPage0&lt;/value&gt;
-            &lt;value&gt;personPage1&lt;/value&gt;
-        &lt;/list&gt;
-    &lt;/property&gt;
-    &lt;property name="allowDirtyForward" value="false"/&gt;
     &lt;property name="validators"&gt;
         &lt;list&gt;
             &lt;ref bean="pageValidator0"/&gt;
@@ -325,7 +276,7 @@
             </programlisting>
 
             <para>
-                In this case the code will look like this:
+                The controller will look like this:
             </para>
 
             <programlisting>public class PersonWizardController extends AbstractWizardFormController {
@@ -344,12 +295,6 @@
         }
     }
 }</programlisting>
-
-            <para>
-                Both approaches are acceptable and have their pros and cons. The first makes the application context
-                configuration less verbose but at the same time changes the runtime state of the validators in each request.
-                The second involves a bit more configuration but the runtime state of the validator remains unchanged.
-            </para>
 
         </sect2>
 
