@@ -7,8 +7,6 @@ package org.springmodules.validation.commons;
  */
 public interface PageAware {
 
-    void setPage(int page);
-
     int getPage();
 
 }
