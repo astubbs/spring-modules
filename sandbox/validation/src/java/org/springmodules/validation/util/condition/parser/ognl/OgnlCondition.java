@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util.condition.adapter;
+package org.springmodules.validation.util.condition.parser.ognl;
 
 import ognl.Ognl;
 import ognl.OgnlException;

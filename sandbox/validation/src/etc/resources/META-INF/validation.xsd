@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           targetNamespace="http://www.springmodules.org/validation/bean"
+           xmlns:bean="http://www.springmodules.org/validation/bean">
+
+    <!-- Custom Types -->
+
+    <xs:simpleType name="trueFalse">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="true"/>
+            <xs:enumeration value="false"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Basic Structure Element Definitions -->
+
+    <xs:element name="validation">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="bean:class"/>
+            </xs:sequence>
+            <xs:attribute name="package" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="class">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="bean:global" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="bean:property" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="name" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="global">
+        <xs:complexType>
+            <xs:group ref="bean:rules"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="property">
+        <xs:complexType>
+            <xs:group ref="bean:rules"/>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="valid" use="optional" type="bean:trueFalse"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:group name="rules">
+        <xs:sequence>
+            <xs:element ref="bean:valang" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:ognl" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:in-future" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:in-past" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:email" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:length" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:not-blank" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:not-empty" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:not-null" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:range" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:regexp" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:size" minOccurs="0" maxOccurs="1"/>
+            <xs:any minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:group>
+
+    <!-- Validation Rule Elements -->
+
+    <xs:attributeGroup name="ruleCommons">
+        <xs:attribute name="code" type="xs:string" use="optional"/>
+        <xs:attribute name="message" type="xs:string" use="optional"/>
+        <xs:attribute name="args" type="xs:string" use="optional"/>
+        <xs:attribute name="apply-if" type="xs:string" use="optional"/>
+    </xs:attributeGroup>
+
+    <xs:element name="valang">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+            <xs:attribute name="expression" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ognl">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+            <xs:attribute name="expression" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="in-future">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="in-past">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="email">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="length">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+            <xs:attribute name="min" use="optional" type="xs:integer"/>
+            <xs:attribute name="max" use="optional" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="not-blank">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="not-empty">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="not-null">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="range">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+            <xs:attribute name="min" use="optional" type="xs:integer"/>
+            <xs:attribute name="max" use="optional" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="regexp">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+            <xs:attribute name="expression" use="required" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="size">
+        <xs:complexType>
+            <xs:attributeGroup ref="bean:ruleCommons"/>
+            <xs:attribute name="min" use="optional" type="xs:integer"/>
+            <xs:attribute name="max" use="optional" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

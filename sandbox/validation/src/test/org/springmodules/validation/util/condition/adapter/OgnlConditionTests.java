@@ -17,9 +17,10 @@
 package org.springmodules.validation.util.condition.adapter;
 
 import junit.framework.TestCase;
+import org.springmodules.validation.util.condition.parser.ognl.OgnlCondition;
 
 /**
- * Tests for {@link OgnlCondition}.
+ * Tests for {@link org.springmodules.validation.util.condition.parser.ognl.OgnlCondition}.
  *
  * @author Uri Boness
  */

@@ -26,6 +26,7 @@ import org.springmodules.validation.util.condition.bean.PropertyBeanCondition;
 import org.springmodules.validation.util.condition.collection.IsEmptyCollectionCondition;
 import org.springmodules.validation.util.condition.collection.MaxSizeCollectionCondition;
 import org.springmodules.validation.util.condition.collection.MinSizeCollectionCondition;
+import org.springmodules.validation.util.condition.collection.SizeRangeCollectionCondition;
 import org.springmodules.validation.util.condition.common.AndCondition;
 import org.springmodules.validation.util.condition.common.InstanceOfCondition;
 import org.springmodules.validation.util.condition.common.IsNullCondition;
@@ -181,7 +182,7 @@ public final class Conditions {
         return new IsEmptyStringCondition();
     }
 
-    public static Condition notEmptyString() {
+    public static Condition notBlank() {
         return not(isEmptyString());
     }
 
@@ -225,6 +226,14 @@ public final class Conditions {
 
     public static Condition maxSize(String propertyName, int maxSize) {
         return property(propertyName, maxSize(maxSize));
+    }
+
+    public static Condition sizeRange(int minSize, int maxSize) {
+        return new SizeRangeCollectionCondition(minSize, maxSize);
+    }
+
+    public static Condition sizeRange(String propertyName, int minSize, int maxSize) {
+        return property(propertyName, sizeRange(minSize, maxSize));
     }
 
     // range conditions

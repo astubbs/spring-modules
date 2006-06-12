@@ -31,7 +31,7 @@ import org.springmodules.validation.validator.CompoundValidator;
  *
  * @author Uri Boness
  */
-public class DefaultBeanValidationConfiguration implements BeanValidationConfiguration {
+public class DefaultBeanValidationConfiguration implements MutableBeanValidationConfiguration {
 
     // a list of all the required validatable property names (list elements are strings).
     private List validatableProperties;
