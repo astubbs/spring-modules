@@ -24,15 +24,16 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="class">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="bean:global" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="bean:property" minOccurs="0" maxOccurs="unbounded"/>
-            </xs:sequence>
-            <xs:attribute name="name" use="required"/>
-        </xs:complexType>
-    </xs:element>
+    <xs:element name="class" type="bean:classValidationConfigurationType"/>
+
+    <xs:complexType name="classValidationConfigurationType">
+        <xs:sequence>
+            <xs:element ref="bean:global" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:property" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" use="required" type="xs:string"/>
+        <xs:anyAttribute namespace="##any" processContents="skip"/>
+    </xs:complexType>
 
     <xs:element name="global">
         <xs:complexType>
@@ -50,6 +51,7 @@
 
     <xs:group name="rules">
         <xs:sequence>
+            <xs:element ref="bean:not-null" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:valang" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:ognl" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:in-future" minOccurs="0" maxOccurs="1"/>
@@ -58,11 +60,10 @@
             <xs:element ref="bean:length" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:not-blank" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:not-empty" minOccurs="0" maxOccurs="1"/>
-            <xs:element ref="bean:not-null" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:range" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:regexp" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:size" minOccurs="0" maxOccurs="1"/>
-            <xs:any minOccurs="0" maxOccurs="unbounded"/>
+            <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
 

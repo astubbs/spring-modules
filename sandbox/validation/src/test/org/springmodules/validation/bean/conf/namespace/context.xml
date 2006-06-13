@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:vld="http://www.springmodules.org/validation/bean"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
+
+
+    <vld:class id="validator" name="org.springmodules.validation.bean.conf.namespace.Person">
+        <vld:global>
+            <vld:valang expression="password == confirmPassword" code="passwords.do.not.match"/>
+        </vld:global>
+        <vld:property name="firstName">
+            <vld:not-blank/>
+            <vld:not-null/>
+        </vld:property>
+        <vld:property name="lastName">
+            <vld:not-blank/>
+            <vld:not-null/>
+        </vld:property>
+        <vld:property name="age">
+            <vld:range min="0" code="min"/>
+        </vld:property>
+        <vld:property name="email">
+            <vld:email/>
+        </vld:property>
+        <vld:property name="password">
+            <vld:length min="3"/>
+        </vld:property>
+    </vld:class>
+
+
+</beans>

@@ -23,7 +23,7 @@
     
     <dependency org="apache" name="commons-logging" rev="1.0.4" />
     
-    <dependency org="springframework" name="springframework" rev="1.2.7">
+    <dependency org="springframework" name="springframework" rev="2.0-m5">
       <artifact name="spring" type="jar" conf="global" />
       <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>

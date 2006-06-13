@@ -16,12 +16,8 @@
 
 package org.springmodules.validation.bean.conf.xml;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.xml.DomUtils;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
 import org.springmodules.validation.bean.rule.PropertyValidatoinRule;
@@ -188,19 +184,19 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * @param element The &lt;class&gt; element.
      * @return The created bean validation configuration.
      */
-    protected BeanValidationConfiguration createClassDefinition(Class clazz, Element element) {
+    public BeanValidationConfiguration createClassDefinition(Class clazz, Element element) {
 
         DefaultBeanValidationConfiguration configuration = new DefaultBeanValidationConfiguration();
 
-        List globalDefinitions = DomUtils.getChildElementsByTagName(element, GLOBAL_TAG);
-        for (Iterator iter = globalDefinitions.iterator(); iter.hasNext();) {
-            Element globalDefinition = (Element)iter.next();
+        NodeList nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, GLOBAL_TAG);
+        for (int i=0; i<nodes.getLength(); i++) {
+            Element globalDefinition = (Element)nodes.item(i);
             handleGlobalDefinition(globalDefinition, configuration);
         }
 
-        List propertyDefinitions = DomUtils.getChildElementsByTagName(element, PROPERTY_TAG);
-        for (Iterator iter = propertyDefinitions.iterator(); iter.hasNext();) {
-            Element propertyDefinition = (Element)iter.next();
+        nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, PROPERTY_TAG);
+        for (int i=0; i<nodes.getLength(); i++) {
+            Element propertyDefinition = (Element)nodes.item(i);
             handlePropertyDefinition(propertyDefinition, configuration);
         }
 

@@ -1,0 +1,39 @@
+package org.springmodules.validation.bean.conf.namespace;
+
+import junit.framework.TestCase;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.validation.BindException;
+import org.springmodules.validation.bean.BeanValidator;
+
+/**
+ * Tests for {@link org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader}.
+ *
+ * @author Uri Boness
+ */
+public class NamespaceConfigurationIntegrationTests extends TestCase {
+
+    private BeanValidator validator;
+
+    protected void setUp() throws Exception {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("validation.xml", getClass());
+        validator = (BeanValidator)context.getBean("personValidator");
+    }
+
+    public void testLoadConfiguration() throws Exception {
+
+        Person person = new Person();
+        person.setFirstName("Uri");
+        person.setLastName("Boness");
+        person.setAge(-1);
+        person.setEmail("uri@b");
+        person.setPassword("pa");
+        person.setConfirmPassword("pa1");
+
+        BindException errors = new BindException(person, "person");
+        validator.validate(person, errors);
+
+        assertEquals(1, errors.getGlobalErrorCount());
+        assertEquals(3, errors.getFieldErrorCount());
+
+    }
+}

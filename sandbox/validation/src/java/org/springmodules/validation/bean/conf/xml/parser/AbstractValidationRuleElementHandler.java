@@ -97,8 +97,8 @@ public abstract class AbstractValidationRuleElementHandler implements Validation
      * @see ValidationRuleElementHandler#supports(org.w3c.dom.Element)
      */
     public boolean supports(Element element) {
-        String tagName = element.getTagName();
-        if (!tagName.equals(elementName)) {
+        String localName = element.getLocalName();
+        if (!localName.equals(elementName)) {
             return false;
         }
         String ns = element.getNamespaceURI();
