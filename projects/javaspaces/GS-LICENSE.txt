@@ -1,16 +1,4 @@
----------------------------------------------
--- NOTICE file corresponding to section    --
--- 4 D of the Apache License,  Version 2.0 --
----------------------------------------------
-
-All files in and underneath this "springmodules/projects/repository/gigaspaces/gigaspaces-ce/jars" 
-directory:
-
-- Includes material developed by GigaSpaces Technologies, Inc. (http://www.gigaspaces.com).
-- Includes software developed by the Spring Framework Project (http://www.springframework.org)
-- Includes software developed by the Apache Software Foundation (http://www.apache.org).
-
-- Licensed under the following license agreement:
+Licensed under the following license agreement:
 
 GigaSpaces 5.0 Software License Agreement - Community Edition 
 
