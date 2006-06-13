@@ -82,6 +82,24 @@ extends JavaSpaceTemplate
 		}
 	}
 
+	/**
+	 * Set GigaSpaces mapping resources to be found in the class path, like
+	 * "example.gs.xml" or "mypackage/example.gs.xml". Analogous to mapping
+	 * entries in a GigaSpaces XML config file. Alternative to the more generic
+	 * setMappingLocations method.
+	 * <p>
+	 * Can be used to add to mappings from a GigaSpaces XML config file, or to
+	 * specify all mappings locally.
+	 *
+	 * @param mappingResources
+	 * @throws IOException
+	 */
+	public void setMappingResources(String[] mappingResources)
+			throws IOException
+	{
+		((Pojo2ExternalEntryConverter)converter).setMappingResources(mappingResources);
+
+	}
 	public GigaSpacesTemplate(IJSpace space)
 	{
 		this();
