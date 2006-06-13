@@ -6,12 +6,12 @@
             <valang expression="password == confirmPassword" code="passwords.do.not.match"/>
         </global>
         <property name="firstName">
-            <not-blank/>
             <not-null/>
+            <not-blank/>
         </property>
         <property name="lastName">
-            <not-blank/>
             <not-null/>
+            <not-blank/>
         </property>
         <property name="age">
             <range min="0" code="min"/>
