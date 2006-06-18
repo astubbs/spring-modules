@@ -1337,7 +1337,7 @@ public class ValangParser implements ValangParserConstants {
   }
 
   public ValangParserTokenManager token_source;
-  SimpleCharStream jj_input_stream;
+  JavaCharStream jj_input_stream;
   public Token token, jj_nt;
   private int jj_ntk;
   private Token jj_scanpos, jj_lastpos;
@@ -1366,7 +1366,7 @@ public class ValangParser implements ValangParserConstants {
      this(stream, null);
   }
   public ValangParser(java.io.InputStream stream, String encoding) {
-    try { jj_input_stream = new SimpleCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
+    try { jj_input_stream = new JavaCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new ValangParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;
@@ -1389,7 +1389,7 @@ public class ValangParser implements ValangParserConstants {
   }
 
   public ValangParser(java.io.Reader stream) {
-    jj_input_stream = new SimpleCharStream(stream, 1, 1);
+    jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new ValangParserTokenManager(jj_input_stream);
     token = new Token();
     jj_ntk = -1;

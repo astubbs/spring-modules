@@ -480,4 +480,9 @@ public class ValangParserTests extends TestCase {
         String text = "{tags : length(tags[1]) == 4 : 'length of tag2 is 4'}";
         assertTrue(validate(new Person(10, "Uri"), text));
     }
+
+    public void testParser55UnicodeMessage() {
+        String text = "{tags : true == false :'\u4E20'}";
+        assertFalse(validate(new Person(10, "Uri"), text));
+    }
 }
