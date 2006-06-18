@@ -9,6 +9,9 @@ Package org.springmodules.lucene
 * Upgraded Lucene to 2.0.0
 * Fixed AbstractIndexFactory  to work with Lucene 2.0.0 [MOD-141]. Thanks eearley.
 
+Package org.springmodules.validation.valang.parser
+* Fixed the valang.jj to support direct list/array elements using the BeanWrapper notation (e.g. tags[0])
+
 
 Changes in version 0.4
 ------------------------------------
