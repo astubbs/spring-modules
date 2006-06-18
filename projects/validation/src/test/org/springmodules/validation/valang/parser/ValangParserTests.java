@@ -470,4 +470,14 @@ public class ValangParserTests extends TestCase {
         String text = "{age: email(firstName) == true : 'first name is hello@world.com and it is a valid email'}";
         assertTrue(validate(new Person(10, "hello@world.com"), text));
     }
+
+    public void testParser53ArrayAccess() {
+        String text = "{sizes : length(sizes[3]) == 2 : 'length of XL is 2'}";
+        assertTrue(validate(new Person(10, "Uri"), text));
+    }
+
+    public void testParser54ListAccess() {
+        String text = "{tags : length(tags[1]) == 4 : 'length of tag2 is 4'}";
+        assertTrue(validate(new Person(10, "Uri"), text));
+    }
 }

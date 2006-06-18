@@ -44,12 +44,13 @@ public interface ValangParserConstants {
   int DOT = 42;
   int UNDERSCORE = 43;
   int DIGIT = 44;
-  int LOWERLETTER = 45;
-  int UPPERLETTER = 46;
-  int PLAIN_PATH_ELEMENT = 47;
-  int INDEXED_PATH_ELEMENT = 48;
-  int FUNCTION_NAME = 49;
-  int PATH = 50;
+  int POSITIVE_INTEGER = 45;
+  int LOWERLETTER = 46;
+  int UPPERLETTER = 47;
+  int PLAIN_PATH_ELEMENT = 48;
+  int INDEXED_PATH_ELEMENT = 49;
+  int FUNCTION_NAME = 50;
+  int PATH = 51;
 
   int DEFAULT = 0;
 
@@ -99,6 +100,7 @@ public interface ValangParserConstants {
     "\".\"",
     "\"_\"",
     "<DIGIT>",
+    "<POSITIVE_INTEGER>",
     "<LOWERLETTER>",
     "<UPPERLETTER>",
     "<PLAIN_PATH_ELEMENT>",

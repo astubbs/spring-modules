@@ -77,7 +77,7 @@ public class ValangParser implements ValangParserConstants {
         Function fieldFunction = null;
     label_1:
     while (true) {
-      jj_consume_token(51);
+      jj_consume_token(52);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case FUNCTION_NAME:
         jj_consume_token(FUNCTION_NAME);
@@ -96,19 +96,19 @@ public class ValangParser implements ValangParserConstants {
 				   kudos to Cesar Ordinana for reporting this bug. */
                                 errorKey = null;
                                 errorArgs = new ArrayList();
-      jj_consume_token(52);
+      jj_consume_token(53);
       predicate = predicates(fieldFunction);
-      jj_consume_token(52);
+      jj_consume_token(53);
       jj_consume_token(STRING);
                                    message = token.image.substring(1, token.image.length() - 1);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 52:
-        jj_consume_token(52);
+      case 53:
+        jj_consume_token(53);
         jj_consume_token(STRING);
                                            errorKey = token.image.substring(1, token.image.length() - 1);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 52:
-          jj_consume_token(52);
+        case 53:
+          jj_consume_token(53);
           label_2:
           while (true) {
             if (jj_2_1(2)) {
@@ -118,7 +118,7 @@ public class ValangParser implements ValangParserConstants {
             }
             function = function(fieldFunction);
                                                                                      errorArgs.add(function);
-            jj_consume_token(53);
+            jj_consume_token(54);
           }
           function = function(fieldFunction);
                                                                              errorArgs.add(function);
@@ -132,11 +132,11 @@ public class ValangParser implements ValangParserConstants {
         jj_la1[2] = jj_gen;
         ;
       }
-      jj_consume_token(54);
-                        /* JIRA-MOD-20: take into account error key and error args for localization, kudos to Cèsar Ordiñana. */
+      jj_consume_token(55);
+                        /* JIRA-MOD-20: take into account error key and error args for localization, kudos to Cesar Ordinana. */
                         rules.add(new BasicValidationRule(field, predicate, errorKey, message, errorArgs));
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 51:
+      case 52:
         ;
         break;
       default:
@@ -204,9 +204,9 @@ public class ValangParser implements ValangParserConstants {
   final public Predicate expression(Function fieldFunction) throws ParseException {
         Predicate predicate = null;
     if (jj_2_2(2147483647)) {
-      jj_consume_token(55);
-      predicate = predicates(fieldFunction);
       jj_consume_token(56);
+      predicate = predicates(fieldFunction);
+      jj_consume_token(57);
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case NOT:
@@ -219,9 +219,9 @@ public class ValangParser implements ValangParserConstants {
       case DATE:
       case FUNCTION_NAME:
       case PATH:
-      case 55:
-      case 58:
+      case 56:
       case 59:
+      case 60:
         predicate = predicate(fieldFunction);
         break;
       default:
@@ -346,9 +346,9 @@ public class ValangParser implements ValangParserConstants {
       case DATE:
       case FUNCTION_NAME:
       case PATH:
-      case 55:
-      case 58:
+      case 56:
       case 59:
+      case 60:
         label_4:
         while (true) {
           if (jj_2_3(2)) {
@@ -358,13 +358,13 @@ public class ValangParser implements ValangParserConstants {
           }
           tmpFunction = additiveExpr(fieldFunction);
                                                                                             functions.add(tmpFunction);
-          jj_consume_token(53);
+          jj_consume_token(54);
         }
         tmpFunction = additiveExpr(fieldFunction);
                                                                                     functions.add(tmpFunction);
         break;
-      case 57:
-        jj_consume_token(57);
+      case 58:
+        jj_consume_token(58);
         tmpFunction = beanProperty(fieldFunction);
                                                                                         collectionProperty = true;
         break;
@@ -399,8 +399,8 @@ public class ValangParser implements ValangParserConstants {
     Collection functionArguments = new ArrayList();
     if (jj_2_4(2)) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 58:
-        jj_consume_token(58);
+      case 59:
+        jj_consume_token(59);
         break;
       case FUNCTION_NAME:
         jj_consume_token(FUNCTION_NAME);
@@ -411,24 +411,24 @@ public class ValangParser implements ValangParserConstants {
         throw new ParseException();
       }
           function = token.image; line = token.beginLine; column = token.beginColumn;
-      jj_consume_token(55);
+      jj_consume_token(56);
       leftFunction = function(fieldFunction);
                                                          functionArguments.add(leftFunction);
       label_5:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-        case 53:
+        case 54:
           ;
           break;
         default:
           jj_la1[13] = jj_gen;
           break label_5;
         }
-        jj_consume_token(53);
+        jj_consume_token(54);
         leftFunction = function(fieldFunction);
                                                                  functionArguments.add(leftFunction);
       }
-      jj_consume_token(56);
+      jj_consume_token(57);
           leftFunction = getVisitor().getFunction(function, (Function[])functionArguments.toArray(new Function[functionArguments.size()]), line, column);
     } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -441,14 +441,14 @@ public class ValangParser implements ValangParserConstants {
       case PATH:
         leftFunction = beanPropertyOrLiteral(fieldFunction);
         break;
-      case 59:
-        jj_consume_token(59);
+      case 60:
+        jj_consume_token(60);
               leftFunction = fieldFunction;
         break;
-      case 55:
-        jj_consume_token(55);
-        leftFunction = additiveExpr(fieldFunction);
+      case 56:
         jj_consume_token(56);
+        leftFunction = additiveExpr(fieldFunction);
+        jj_consume_token(57);
         break;
       default:
         jj_la1[14] = jj_gen;
@@ -786,20 +786,20 @@ public class ValangParser implements ValangParserConstants {
   }
 
   final private boolean jj_3R_76() {
-    if (jj_scan_token(53)) return true;
+    if (jj_scan_token(54)) return true;
     if (jj_3R_9()) return true;
     return false;
   }
 
   final private boolean jj_3R_14() {
-    if (jj_scan_token(55)) return true;
-    if (jj_3R_11()) return true;
     if (jj_scan_token(56)) return true;
+    if (jj_3R_11()) return true;
+    if (jj_scan_token(57)) return true;
     return false;
   }
 
   final private boolean jj_3R_13() {
-    if (jj_scan_token(59)) return true;
+    if (jj_scan_token(60)) return true;
     return false;
   }
 
@@ -809,31 +809,31 @@ public class ValangParser implements ValangParserConstants {
   }
 
   final private boolean jj_3R_51() {
-    if (jj_scan_token(57)) return true;
+    if (jj_scan_token(58)) return true;
     if (jj_3R_33()) return true;
     return false;
   }
 
   final private boolean jj_3_3() {
     if (jj_3R_11()) return true;
-    if (jj_scan_token(53)) return true;
+    if (jj_scan_token(54)) return true;
     return false;
   }
 
   final private boolean jj_3_4() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(58)) {
+    if (jj_scan_token(59)) {
     jj_scanpos = xsp;
-    if (jj_scan_token(49)) return true;
+    if (jj_scan_token(50)) return true;
     }
-    if (jj_scan_token(55)) return true;
+    if (jj_scan_token(56)) return true;
     if (jj_3R_9()) return true;
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_76()) { jj_scanpos = xsp; break; }
     }
-    if (jj_scan_token(56)) return true;
+    if (jj_scan_token(57)) return true;
     return false;
   }
 
@@ -1115,9 +1115,9 @@ public class ValangParser implements ValangParserConstants {
   }
 
   final private boolean jj_3_2() {
-    if (jj_scan_token(55)) return true;
-    if (jj_3R_10()) return true;
     if (jj_scan_token(56)) return true;
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(57)) return true;
     return false;
   }
 
@@ -1142,9 +1142,9 @@ public class ValangParser implements ValangParserConstants {
   }
 
   final private boolean jj_3R_20() {
-    if (jj_scan_token(55)) return true;
-    if (jj_3R_10()) return true;
     if (jj_scan_token(56)) return true;
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(57)) return true;
     return false;
   }
 
@@ -1243,7 +1243,7 @@ public class ValangParser implements ValangParserConstants {
 
   final private boolean jj_3_1() {
     if (jj_3R_9()) return true;
-    if (jj_scan_token(53)) return true;
+    if (jj_scan_token(54)) return true;
     return false;
   }
 
@@ -1356,7 +1356,7 @@ public class ValangParser implements ValangParserConstants {
       jj_la1_0 = new int[] {0x0,0x0,0x0,0x0,0x60,0x60,0xc000080,0xf3fff000,0x300,0xc00,0xc000000,0xf3ffff00,0x0,0x0,0xc000000,0x0,0x0,0x0,0x0,0xc000000,0xc000000,0x0,0xf0000000,0x3fff000,};
    }
    private static void jj_la1_1() {
-      jj_la1_1 = new int[] {0x60000,0x100000,0x100000,0x80000,0x0,0x0,0xc860380,0x3,0x0,0x0,0xe860380,0x3,0x4020000,0x200000,0x8860380,0x4,0x8,0x70,0x70,0x60380,0x380,0x60000,0x3,0x0,};
+      jj_la1_1 = new int[] {0xc0000,0x200000,0x200000,0x100000,0x0,0x0,0x190c0380,0x3,0x0,0x0,0x1d0c0380,0x3,0x8040000,0x400000,0x110c0380,0x4,0x8,0x70,0x70,0xc0380,0x380,0xc0000,0x3,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[4];
   private boolean jj_rescan = false;
@@ -1533,8 +1533,8 @@ public class ValangParser implements ValangParserConstants {
 
   public ParseException generateParseException() {
     jj_expentries.removeAllElements();
-    boolean[] la1tokens = new boolean[60];
-    for (int i = 0; i < 60; i++) {
+    boolean[] la1tokens = new boolean[61];
+    for (int i = 0; i < 61; i++) {
       la1tokens[i] = false;
     }
     if (jj_kind >= 0) {
@@ -1553,7 +1553,7 @@ public class ValangParser implements ValangParserConstants {
         }
       }
     }
-    for (int i = 0; i < 60; i++) {
+    for (int i = 0; i < 61; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
