@@ -6,46 +6,42 @@ PARSER_BEGIN(ValangParser)
 
 package org.springmodules.validation.valang.parser;
 
-import org.springmodules.validation.valang.predicates.Operator;
-import org.springmodules.validation.valang.predicates.OperatorConstants;
-import org.springmodules.validation.valang.predicates.GenericTestPredicate;
-import org.springmodules.validation.valang.predicates.BasicValidationRule;
-
-import org.springmodules.validation.valang.functions.Function;
-import org.springmodules.validation.valang.functions.LiteralFunction;
-import org.springmodules.validation.valang.functions.DateLiteralFunction;
-import org.springmodules.validation.valang.functions.BeanPropertyFunction;
-import org.springmodules.validation.valang.functions.LengthOfFunction;
-import org.springmodules.validation.valang.functions.MapEntryFunction;
-import org.springmodules.validation.valang.functions.TargetBeanFunction;
-import org.springmodules.validation.valang.functions.AddFunction;
-import org.springmodules.validation.valang.functions.SubtractFunction;
-import org.springmodules.validation.valang.functions.MultiplyFunction;
-import org.springmodules.validation.valang.functions.DivideFunction;
-import org.springmodules.validation.valang.functions.ModuloFunction;
-
-import org.springmodules.validation.valang.parser.ValangVisitor;
-import org.springmodules.validation.valang.parser.DefaultVisitor;
+import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.functors.AndPredicate;
-import org.apache.commons.collections.functors.OrPredicate;
 import org.apache.commons.collections.functors.NotPredicate;
-
-import org.springmodules.validation.util.date.DateParseException;
-
+import org.apache.commons.collections.functors.OrPredicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.Assert;
+import org.springmodules.validation.util.date.DateParseException;
+import org.springmodules.validation.util.date.DefaultDateParser;
+import org.springmodules.validation.valang.functions.AddFunction;
+import org.springmodules.validation.valang.functions.BeanPropertyFunction;
+import org.springmodules.validation.valang.functions.DateLiteralFunction;
+import org.springmodules.validation.valang.functions.DivideFunction;
+import org.springmodules.validation.valang.functions.Function;
+import org.springmodules.validation.valang.functions.LiteralFunction;
+import org.springmodules.validation.valang.functions.ModuloFunction;
+import org.springmodules.validation.valang.functions.MultiplyFunction;
+import org.springmodules.validation.valang.functions.SubtractFunction;
+import org.springmodules.validation.valang.functions.TargetBeanFunction;
+import org.springmodules.validation.valang.predicates.BasicValidationRule;
+import org.springmodules.validation.valang.predicates.Operator;
+import org.springmodules.validation.valang.predicates.OperatorConstants;
 
-import java.math.BigDecimal;
+public class ValangParser {
 
-import java.util.Collection;
-import java.util.ArrayList;
-
-public class ValangParser
-{
 	private static Log log = LogFactory.getLog(ValangParser.class);
 	
 	private DefaultVisitor visitor = new DefaultVisitor();
@@ -58,9 +54,84 @@ public class ValangParser
 	}
 	
 	public void setVisitor(DefaultVisitor visitor) {
+	    Assert.notNull(visitor, "ValangParser cannot accept a 'null' visitor");
 		this.visitor = visitor;
 	}
-	
+
+	public void setDateParsersByRegexp(Map dateParsersByRegexp) {
+	    if (dateParsersByRegexp == null) {
+            return;
+        }
+        for (Iterator iter = dateParsersByRegexp.keySet().iterator(); iter.hasNext();) {
+            String regexp = (String)iter.next();
+            Object value = dateParsersByRegexp.get(regexp);
+
+            if (value instanceof String) {
+                getVisitor().getDateParser().register(regexp, (String)value);
+            }
+            else if (value instanceof DefaultDateParser.DateModifier) {
+                getVisitor().getDateParser().register(regexp, (DefaultDateParser.DateModifier)value);
+            }
+            else {
+                throw new ClassCastException("Could not register instance [" + value + "] with date parser!");
+            }
+        }
+	}
+
+	public void setFunctionsByName(Map functionsByName) {
+	    if (functionsByName == null) {
+	        return;
+	    }
+	    final Map constructorMap = new HashMap();
+        for (Iterator iter = functionsByName.keySet().iterator(); iter.hasNext();) {
+            Object stringNameObject = iter.next();
+            if (!(stringNameObject instanceof String)) {
+                throw new IllegalArgumentException("Key for custom functions map must be a string value!");
+            }
+            String functionName = (String)stringNameObject;
+            Object functionClassNameObject = functionsByName.get(functionName);
+            if (!(functionClassNameObject instanceof String)) {
+                throw new IllegalArgumentException("Value for custom function map must be a string!");
+            }
+            String functionClassName = (String)functionClassNameObject;
+            Class functionClass = loadClass(functionClassName);
+            if (!(Function.class.isAssignableFrom(functionClass))) {
+                throw new IllegalArgumentException(
+                        "Custom function classes must implement org.springmodules.validation.valang.functions.Function!");
+            }
+            Constructor constructor = null;
+            try {
+                constructor = functionClass.getConstructor(new Class[] {Function[].class, int.class, int.class});
+            }
+            catch (NoSuchMethodException e) {
+                throw new IllegalArgumentException(
+                        "Class ["
+                                + functionClass.getName()
+                                + "] has no constructor with one org.springmodules.validation.valang.functions.Function parameter!");
+            }
+            constructorMap.put(functionName, constructor);
+        }
+        getVisitor().setVisitor(new ValangVisitor() {
+            public Function getFunction(String name, Function[] functions, int line, int column) {
+                if (constructorMap.containsKey(name)) {
+                    Constructor functionConstructor = (Constructor)constructorMap.get(name);
+                    return (Function) BeanUtils.instantiateClass(functionConstructor, new Object[] {functions,
+                            new Integer(line), new Integer(column)});
+                }
+                return null;
+            }
+        });
+	}
+
+	private Class loadClass(String className) {
+        try {
+            return ClassUtils.forName(className);
+        } catch (ClassNotFoundException cnfe) {
+            log.error("Could not load class '" + className + "'", cnfe);
+            throw new IllegalArgumentException("Could not load class '" + className + "'");
+        }
+    }
+
 	private String replace(String s) {
 		String tmpS = s;
 		
@@ -74,6 +145,8 @@ public class ValangParser
 		
 		return tmpS;
 	}
+
+
 }
 
 PARSER_END(ValangParser)
@@ -194,7 +267,7 @@ Collection parseValidation() :
 			"}"
 		)
 		{
-			/* JIRA-MOD-20: take into account error key and error args for localization, kudos to Cesar Ordinana. */
+			/* take into account error key and error args for localization */
 			rules.add(new BasicValidationRule(field, predicate, errorKey, message, errorArgs));
 		}
 	)+

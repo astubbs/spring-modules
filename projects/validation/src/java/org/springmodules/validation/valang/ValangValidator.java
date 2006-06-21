@@ -1,39 +1,21 @@
 package org.springmodules.validation.valang;
 
 import java.io.StringReader;
-import java.lang.reflect.Constructor;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.ResourceLoaderAware;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.context.ServletContextAware;
+import org.springmodules.validation.util.BasicContextAware;
 import org.springmodules.validation.util.date.DefaultDateParser;
 import org.springmodules.validation.util.date.DefaultDateParser.DateModifier;
-import org.springmodules.validation.valang.functions.Function;
-import org.springmodules.validation.valang.parser.ParseException;
 import org.springmodules.validation.valang.parser.ValangParser;
-import org.springmodules.validation.valang.parser.ValangVisitor;
 import org.springmodules.validation.valang.predicates.ValidationRule;
 
 /**
@@ -93,30 +75,15 @@ import org.springmodules.validation.valang.predicates.ValidationRule;
  * @see org.springframework.validation.Validator
  */
 
-public class ValangValidator implements Validator, InitializingBean, ApplicationContextAware, BeanFactoryAware,
-        ResourceLoaderAware, MessageSourceAware, ServletContextAware, ApplicationEventPublisherAware {
+public class ValangValidator extends BasicContextAware implements Validator, InitializingBean {
 
     private String valang = null;
-
-    private ValangVisitor visitor = null;
 
     private Collection customPropertyEditors = null;
 
     private Map dateParserRegistrations = null;
 
     private Map customFunctions = null;
-
-    private ApplicationContext applicationContext = null;
-
-    private BeanFactory beanFactory = null;
-
-    private ResourceLoader resourceLoader = null;
-
-    private MessageSource messageSource = null;
-
-    private ServletContext servletContext = null;
-
-    private ApplicationEventPublisher applicationEventPublisher = null;
 
     private Collection rules = null;
 
@@ -133,23 +100,6 @@ public class ValangValidator implements Validator, InitializingBean, Application
      */
     public void setValang(String valang) {
         this.valang = valang;
-    }
-
-    /**
-     * <p>
-     * This property takes a custom visitor with custom functions.
-     * 
-     * @param visitor
-     *            the custom visitor;
-     * @see org.springmodules.validation.valang.parser.DefaultVisitor#setVisitor(org.springmodules.validation.valang.parser.ValangVisitor)
-     */
-
-    public void setVisitor(ValangVisitor visitor) {
-        this.visitor = visitor;
-    }
-
-    private ValangVisitor getVisitor() {
-        return this.visitor;
     }
 
     /**
@@ -220,90 +170,22 @@ public class ValangValidator implements Validator, InitializingBean, Application
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (!StringUtils.hasLength(getValang())) {
-            throw new IllegalArgumentException("[valang] property must be set!");
-        }
+        Assert.hasLength(getValang(), "'valang' property must be set!");
 
-        try {
-            ValangParser parser = new ValangParser(new StringReader(getValang()));
+        ValangParser parser = new ValangParser(new StringReader(getValang()));
 
-            parser.getVisitor().setApplicationContext(applicationContext);
-            parser.getVisitor().setBeanFactory(beanFactory);
-            parser.getVisitor().setApplicationEventPublisher(applicationEventPublisher);
-            parser.getVisitor().setMessageSource(messageSource);
-            parser.getVisitor().setResourceLoader(resourceLoader);
-            parser.getVisitor().setServletContext(servletContext);
+        parser.getVisitor().setApplicationContext(applicationContext);
+        parser.getVisitor().setBeanFactory(beanFactory);
+        parser.getVisitor().setApplicationEventPublisher(applicationEventPublisher);
+        parser.getVisitor().setMessageSource(messageSource);
+        parser.getVisitor().setResourceLoader(resourceLoader);
+        parser.getVisitor().setServletContext(servletContext);
 
-            if (getDateParserRegistrations() != null) {
-                for (Iterator iter = getDateParserRegistrations().keySet().iterator(); iter.hasNext();) {
-                    String regexp = (String)iter.next();
-                    Object value = getDateParserRegistrations().get(regexp);
+        parser.setDateParsersByRegexp(getDateParserRegistrations());
+        parser.setFunctionsByName(getCustomFunctions());
 
-                    if (value instanceof String) {
-                        parser.getVisitor().getDateParser().register(regexp, (String)value);
-                    }
-                    else if (value instanceof DefaultDateParser.DateModifier) {
-                        parser.getVisitor().getDateParser().register(regexp, (DefaultDateParser.DateModifier)value);
-                    }
-                    else {
-                        throw new ClassCastException("Could not register instance [" + value + "] with date parser!");
-                    }
-                }
-            }
+        rules = parser.parseValidation();
 
-            if (getCustomFunctions() != null) {
-                final Map constructorMap = new HashMap();
-                for (Iterator iter = getCustomFunctions().keySet().iterator(); iter.hasNext();) {
-                    Object stringNameObject = iter.next();
-                    if (!(stringNameObject instanceof String)) {
-                        throw new IllegalArgumentException("Key for custom functions map must be a string value!");
-                    }
-                    String functionName = (String)stringNameObject;
-                    Object functionClassNameObject = getCustomFunctions().get(functionName);
-                    if (!(functionClassNameObject instanceof String)) {
-                        throw new IllegalArgumentException("Value for custom function map must be a string!");
-                    }
-                    String functionClassName = (String)functionClassNameObject;
-                    Class functionClass = Class.forName(functionClassName);
-                    if (!(Function.class.isAssignableFrom(functionClass))) {
-                        throw new IllegalArgumentException(
-                                "Custom function classes must implement org.springmodules.validation.valang.functions.Function!");
-                    }
-                    Constructor constructor = null;
-                    try {
-                        constructor = functionClass.getConstructor(new Class[] {Function[].class, int.class, int.class});
-                    }
-                    catch (NoSuchMethodException e) {
-                        throw new IllegalArgumentException(
-                                "Class ["
-                                        + functionClass.getName()
-                                        + "] has no constructor with one org.springmodules.validation.valang.functions.Function parameter!");
-                    }
-                    constructorMap.put(functionName, constructor);
-                }
-                parser.getVisitor().setVisitor(new ValangVisitor() {
-                    public Function getFunction(String name, Function[] functions, int line, int column) {
-                        if (constructorMap.containsKey(name)) {
-                            Constructor functionConstructor = (Constructor)constructorMap.get(name);
-                            return (Function)BeanUtils.instantiateClass(functionConstructor, new Object[] {functions,
-                                    new Integer(line), new Integer(column)});
-                        }
-                        else if (getVisitor() != null) {
-                            return getVisitor().getFunction(name, functions, line, column);
-                        }
-                        return null;
-                    }
-                });
-            }
-            else {
-                parser.getVisitor().setVisitor(visitor);
-            }
-
-            rules = parser.parseValidation();
-        }
-        catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public boolean supports(Class clazz) {
@@ -311,14 +193,8 @@ public class ValangValidator implements Validator, InitializingBean, Application
     }
 
     public void validate(Object target, Errors errors) {
-        BeanWrapper beanWrapper = null;
 
-        if (target instanceof BeanWrapper) {
-            beanWrapper = (BeanWrapper)target;
-        }
-        else {
-            beanWrapper = new BeanWrapperImpl(target);
-        }
+        BeanWrapper beanWrapper = (target instanceof BeanWrapper) ? (BeanWrapper)target : new BeanWrapperImpl(target);
 
         if (getCustomPropertyEditors() != null) {
             for (Iterator iter = getCustomPropertyEditors().iterator(); iter.hasNext();) {
@@ -347,29 +223,5 @@ public class ValangValidator implements Validator, InitializingBean, Application
             ValidationRule rule = (ValidationRule)iter.next();
             rule.validate(beanWrapper, errors);
         }
-    }
-
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
-
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-    }
-
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
-
-    public void setMessageSource(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
-    }
-
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
     }
 }

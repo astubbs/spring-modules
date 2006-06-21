@@ -485,4 +485,9 @@ public class ValangParserTests extends TestCase {
         String text = "{tags : true == false :'\u4E20'}";
         assertFalse(validate(new Person(10, "Uri"), text));
     }
+
+    public void testParser56MapAccess() {
+        String text = "{map : map[firstName] == 'Steven' : 'name should be equal'}";
+        assertTrue(validate(new Person(10, "Uri"), text));
+    }
 }
