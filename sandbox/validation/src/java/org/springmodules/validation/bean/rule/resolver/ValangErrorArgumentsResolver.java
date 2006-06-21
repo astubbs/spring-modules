@@ -17,21 +17,15 @@
 package org.springmodules.validation.bean.rule.resolver;
 
 import java.io.StringReader;
-import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.util.ClassUtils;
 import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.valang.functions.Function;
 import org.springmodules.validation.valang.functions.TargetBeanFunction;
 import org.springmodules.validation.valang.parser.ParseException;
 import org.springmodules.validation.valang.parser.ValangParser;
-import org.springmodules.validation.valang.parser.ValangVisitor;
 
 /**
  * Resolves error arguments based on valang expressions.
@@ -103,66 +97,13 @@ public class ValangErrorArgumentsResolver implements ErrorArgumentsResolver {
      * @return The parsed function.
      */
     protected Function parseFunction(String expression, Map functionsByName) {
-
+        ValangParser parser = new ValangParser(new StringReader(expression));
+        parser.setFunctionsByName(functionsByName);
         try {
-
-            ValangParser parser = new ValangParser(new StringReader(expression));
-            if (functionsByName == null) {
-                return parser.function(new TargetBeanFunction());
-            }
-
-            final Map constructorMap = new HashMap();
-            for (Iterator iter = functionsByName.keySet().iterator(); iter.hasNext();) {
-                Object stringNameObject = iter.next();
-                if (!(stringNameObject instanceof String)) {
-                    throw new IllegalArgumentException("Key for custom functions map must be a string value!");
-                }
-                String functionName = (String)stringNameObject;
-                Object functionClassNameObject = functionsByName.get(functionName);
-                if (!(functionClassNameObject instanceof String)) {
-                    throw new IllegalArgumentException("Value for custom function map must be a string!");
-                }
-                String functionClassName = (String)functionClassNameObject;
-                Class functionClass = loadClass(functionClassName);
-                if (!(Function.class.isAssignableFrom(functionClass))) {
-                    throw new IllegalArgumentException(
-                            "Custom function classes must implement org.springmodules.validation.valang.functions.Function!");
-                }
-                Constructor constructor;
-                try {
-                    constructor = functionClass.getConstructor(new Class[] {Function[].class, int.class, int.class});
-                }
-                catch (NoSuchMethodException e) {
-                    throw new IllegalArgumentException("Class [" + functionClass.getName()
-                        + "] has no constructor with one org.springmodules.validation.valang.functions.Function parameter!");
-                }
-                constructorMap.put(functionName, constructor);
-            }
-            parser.getVisitor().setVisitor(new ValangVisitor() {
-                public Function getFunction(String name, Function[] functions, int line, int column) {
-                    if (constructorMap.containsKey(name)) {
-                        Constructor functionConstructor = (Constructor)constructorMap.get(name);
-                        return (Function) BeanUtils.instantiateClass(functionConstructor, new Object[] {functions,
-                                new Integer(line), new Integer(column)});
-                    }
-                    return null;
-                }
-            });
-
             return parser.function(new TargetBeanFunction());
-
         } catch (ParseException pe) {
             logger.error("Could not parse valang expression '" + expression + "' to a function", pe);
             throw new IllegalArgumentException("Could not parse valang expression '" + expression + "' to a function");
-        }
-    }
-
-    protected Class loadClass(String className) {
-        try {
-            return ClassUtils.forName(className);
-        } catch (ClassNotFoundException cnfe) {
-            logger.error("Could not load class '" + className + "'", cnfe);
-            throw new IllegalArgumentException("Could not load class '" + className + "'");
         }
     }
 
