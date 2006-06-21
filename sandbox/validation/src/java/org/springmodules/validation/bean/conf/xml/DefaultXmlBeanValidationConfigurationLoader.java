@@ -16,11 +16,17 @@
 
 package org.springmodules.validation.bean.conf.xml;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
-import org.springmodules.validation.bean.rule.PropertyValidatoinRule;
+import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -109,12 +115,12 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
     }
 
     /**
-     * Traverses the given document and generates a new BeanValidationConfiguration for the given class. If the given
-     * document does not conatain the configuration for the given class <code>null</code> is returned.
+     * todo: document
      *
-     * @see AbstractXmlBeanValidationConfigurationLoader#loadConfiguration(Class, org.w3c.dom.Document)
+     * @see AbstractXmlBeanValidationConfigurationLoader#loadConfigurations(org.w3c.dom.Document, String)
      */
-    protected BeanValidationConfiguration loadConfiguration(Class clazz, Document document) {
+    protected Map loadConfigurations(Document document, String resourceName) {
+        Map configurations = new HashMap();
         Element validationDefinition = document.getDocumentElement();
         String packageName = validationDefinition.getAttribute(PACKAGE_ATTR);
         NodeList nodes = validationDefinition.getElementsByTagNameNS(
@@ -122,34 +128,17 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         for (int i=0; i<nodes.getLength(); i++) {
             Element classDefinition = (Element)nodes.item(i);
             String className = classDefinition.getAttribute(NAME_ATTR);
-            String classNameWithPackage = (packageName != null) ? packageName + "." + className : className;
-            if (clazz.getName().equals(className) || clazz.getName().equals(classNameWithPackage)) {
-                return createClassDefinition(clazz, classDefinition);
+            className = (StringUtils.hasLength(packageName)) ? packageName + "." + className : className;
+            Class clazz;
+            try {
+                clazz = ClassUtils.forName(className);
+            } catch (ClassNotFoundException cnfe) {
+                logger.error("Could not load class '" + className + "' as defined in '" + resourceName + "'", cnfe);
+                continue;
             }
+            configurations.put(clazz, handleClassDefinition(clazz, classDefinition));
         }
-        return null;
-    }
-
-    /**
-     * Searches the given document for a &lt;class&gt; element that serves as configuration for the given class. If no
-     * such element is found, this class is not supported by this loader.
-     *
-     * @see AbstractXmlBeanValidationConfigurationLoader#supports(Class, org.w3c.dom.Document)
-     */
-    protected boolean supports(Class clazz, Document document) {
-        Element validationDefinition = document.getDocumentElement();
-        String packageName = validationDefinition.getAttribute(PACKAGE_ATTR);
-        NodeList nodes = validationDefinition.getElementsByTagNameNS(
-            DefaultXmBeanValidationConfigurationlLoaderConstants.DEFAULT_NAMESPACE_URL, CLASS_TAG);
-        for (int i=0; i<nodes.getLength(); i++) {
-            Element classDefinition = (Element)nodes.item(i);
-            String className = classDefinition.getAttribute(NAME_ATTR);
-            String classNameWithPackage = (packageName != null) ? packageName + "." + className : className;
-            if (clazz.getName().equals(className) || clazz.getName().equals(classNameWithPackage)) {
-                return true;
-            }
-        }
-        return false;
+        return configurations;
     }
 
 
@@ -180,11 +169,10 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * Creates and builds a bean validation configuration based for the given class, based on the given &lt;class&gt;
      * element.
      *
-     * @param clazz The class for which the bean validation configuration will be created.
      * @param element The &lt;class&gt; element.
      * @return The created bean validation configuration.
      */
-    public BeanValidationConfiguration createClassDefinition(Class clazz, Element element) {
+    public BeanValidationConfiguration handleClassDefinition(Class clazz, Element element) {
 
         DefaultBeanValidationConfiguration configuration = new DefaultBeanValidationConfiguration();
 
@@ -209,7 +197,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * @param globalDefinition The &lt;global&gt; element.
      * @param configuration The bean validation configuration to update.
      */
-    protected void handleGlobalDefinition(Element globalDefinition, DefaultBeanValidationConfiguration configuration) {
+    protected void handleGlobalDefinition(Element globalDefinition, MutableBeanValidationConfiguration configuration) {
         NodeList nodes = globalDefinition.getChildNodes();
         for (int i=0; i<nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -235,7 +223,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * @param propertyDefinition The &lt;property&gt; element.
      * @param configuration The bean validation configuration to update.
      */
-    protected void handlePropertyDefinition(Element propertyDefinition, DefaultBeanValidationConfiguration configuration) {
+    protected void handlePropertyDefinition(Element propertyDefinition, MutableBeanValidationConfiguration configuration) {
         String propertyName = propertyDefinition.getAttribute(NAME_ATTR);
         if (propertyName == null) {
             logger.error("Could not parse property element. Missing 'name' attribute");
@@ -258,8 +246,12 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
                 throw new XmlConfigurationException("Could not handle element '" + ruleDefinition.getTagName() + "'");
             }
             ValidationRule rule = handler.handle(ruleDefinition);
-            configuration.addPropertyRule(propertyName, new PropertyValidatoinRule(propertyName, rule));
+            configuration.addPropertyRule(propertyName, createPropertyRule(propertyName, rule));
         }
+    }
+
+    protected PropertyValidationRule createPropertyRule(String propertyName, ValidationRule rule) {
+        return new PropertyValidationRule(propertyName, rule);
     }
 
 }

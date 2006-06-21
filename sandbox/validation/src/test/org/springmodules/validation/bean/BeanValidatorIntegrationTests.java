@@ -16,13 +16,25 @@
 
 package org.springmodules.validation.bean;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.validation.BindException;
+import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.SimpleBeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry;
+import org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.xml.ValidationRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ValangRuleElementHandler;
 import org.springmodules.validation.bean.converter.DefaultErrorCodeConverter;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
 import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.util.condition.parser.valang.ValangCondition;
+import org.springmodules.validation.valang.functions.UpperCaseFunction;
 
 /**
  * Integration tests for the bean validator framework.
@@ -53,31 +65,84 @@ public class BeanValidatorIntegrationTests extends TestCase {
         assertTrue(errors.hasGlobalErrors());
         assertEquals(1, errors.getFieldErrorCount("name"));
         assertEquals(1, errors.getGlobalErrorCount());
-        assertEquals("BeanValidatorIntegrationTests.Person[minLength]", errors.getGlobalError().getCode());
-        assertEquals("BeanValidatorIntegrationTests.Person.name[minLength]", errors.getFieldError("name").getCode());
+        assertEquals("Person[minLength]", errors.getGlobalError().getCode());
+        assertEquals("Person.name[minLength]", errors.getFieldError("name").getCode());
 
     }
 
-    //================================================ Inner Classes ===================================================
+    public void testBeanValidator_WithCustomValangFunctions() throws Exception {
 
-    private static class Person {
+        Map functionsByName = new HashMap();
+        functionsByName.put("tupper", UpperCaseFunction.class.getName());
+        ValangCondition goodCondition = new ValangCondition("tupper(name) == 'URI'", functionsByName, null);
+        ValangCondition badCondition = new ValangCondition("tupper(name) == 'Uri'", functionsByName, null);
 
-        private String name;
+        // creating the validation configuration for the bean.
+        DefaultBeanValidationConfiguration personValidationConfiguration = new DefaultBeanValidationConfiguration();
+        personValidationConfiguration.addGlobalRule(new DefaultValidationRule(goodCondition, "good"));
+        personValidationConfiguration.addGlobalRule(new DefaultValidationRule(badCondition, "bad"));
+        SimpleBeanValidationConfigurationLoader loader = new SimpleBeanValidationConfigurationLoader();
+        loader.setClassValidation(Person.class, personValidationConfiguration);
 
-        public Person() {
-        }
+        BeanValidator validator = new BeanValidator(loader);
 
-        public Person(String name) {
-            this.name = name;
-        }
+        validator.setErrorCodeConverter(new DefaultErrorCodeConverter());
+        validator.setConfigurationLoader(loader);
 
-        public String getName() {
-            return name;
-        }
+        Person person = new Person("Uri");
+        BindException errors = new BindException(person, "person");
 
-        public void setName(String name) {
-            this.name = name;
-        }
+        validator.validate(person, errors);
+
+        assertTrue(errors.hasGlobalErrors());
+        assertEquals(1, errors.getGlobalErrorCount());
+        assertEquals("Person[bad]", errors.getGlobalError().getCode());
+    }
+
+    public void testBeanValidator_WithCustomValangFunctions2() throws Exception {
+
+        Map functionsByName = new HashMap();
+        functionsByName.put("tupper", UpperCaseFunction.class.getName());
+        ValangRuleElementHandler handler = new ValangRuleElementHandler();
+        handler.setCustomFunctionsByName(functionsByName);
+
+        DefaultValidationRuleElementHandlerRegistry registry = new DefaultValidationRuleElementHandlerRegistry();
+        registry.setExtraHandlers(new ValidationRuleElementHandler[] { handler });
+
+        DefaultXmlBeanValidationConfigurationLoader loader = new DefaultXmlBeanValidationConfigurationLoader();
+        loader.setResource(new ClassPathResource("validation.xml", getClass()));
+        loader.setElementHandlerRegistry(registry);
+        loader.afterPropertiesSet();
+
+        BeanValidator validator = new BeanValidator(loader);
+
+        validator.setErrorCodeConverter(new DefaultErrorCodeConverter());
+        validator.setConfigurationLoader(loader);
+
+        Person person = new Person("Uri");
+        BindException errors = new BindException(person, "person");
+
+        validator.validate(person, errors);
+
+        assertTrue(errors.hasGlobalErrors());
+        assertEquals(1, errors.getGlobalErrorCount());
+        assertEquals("Person[bad]", errors.getGlobalError().getCode());
+    }
+
+    public void testBeanValidator_WithApplicationContext() throws Exception {
+        ClassPathXmlApplicationContext context =
+            new ClassPathXmlApplicationContext("org/springmodules/validation/bean/beanValidator-tests.xml");
+
+        Person person = new Person("Uri");
+        BindException errors = new BindException(person, "person");
+
+        Validator validator = (Validator)context.getBean("validator");
+        validator.validate(person, errors);
+
+        assertTrue(errors.hasGlobalErrors());
+        assertEquals(1, errors.getGlobalErrorCount());
+        assertEquals("Person[bad]", errors.getGlobalError().getCode());
 
     }
+
 }

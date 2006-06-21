@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
-import org.springmodules.validation.bean.rule.PropertyValidatoinRule;
+import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.util.condition.Condition;
 
@@ -86,7 +86,7 @@ public class RuleBasedValidator implements Validator {
         for (Iterator iter = globalRules.iterator(); iter.hasNext();) {
             ValidationRule rule = (ValidationRule)iter.next();
             if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
-                errors.reject(rule.getErrorCode(), rule.getErrorArguments(), rule.getDefaultErrorMessage());
+                errors.reject(rule.getErrorCode(), rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
             }
         }
 
@@ -97,7 +97,7 @@ public class RuleBasedValidator implements Validator {
             for (Iterator iter = rules.iterator(); iter.hasNext();) {
                 ValidationRule rule = (ValidationRule)iter.next();
                 if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
-                    errors.rejectValue(propertyName, rule.getErrorCode(), rule.getErrorArguments(), rule.getDefaultErrorMessage());
+                    errors.rejectValue(propertyName, rule.getErrorCode(), rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
                 }
             }
         }
@@ -192,7 +192,7 @@ public class RuleBasedValidator implements Validator {
      * @param propertyRule The rule that should be applied on the value of the given property.
      */
     public void addPropertyRule(String propertyName, ValidationRule propertyRule) {
-        addPropertyGlobalRule(propertyName, new PropertyValidatoinRule(propertyName, propertyRule));
+        addPropertyGlobalRule(propertyName, new PropertyValidationRule(propertyName, propertyRule));
     }
 
     /**

@@ -16,6 +16,7 @@
 
 package org.springmodules.validation.bean.rule;
 
+import org.springmodules.validation.bean.rule.resolver.StaticErrorArgumentsResolver;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
 
@@ -39,11 +40,11 @@ public class DefaultValidationRule implements ValidationRule {
     // the error code of this validation rule.
     private String errorCode;
 
-    // the error arguments of this validation rule.
-    private Object[] errorArguments;
-
     // the default error message of this validation rule.
     private String defalutErrorMessage;
+
+    // the resolver to be used to resolve the error arguments.
+    private ErrorArgumentsResolver errorArgumentsResolver;
 
     /**
      * Empty contructor (javabean support).
@@ -71,7 +72,7 @@ public class DefaultValidationRule implements ValidationRule {
      * @param errorCode The error code of this validation rule.
      * @param errorArguments The error arguments of this validation rule.
      */
-    public DefaultValidationRule(Condition condition, String errorCode, Object[]errorArguments) {
+    public DefaultValidationRule(Condition condition, String errorCode, Object[] errorArguments) {
         this(condition, DEFAULT_APPLICABILITY_CONDITION, errorCode, errorCode, errorArguments);
     }
 
@@ -140,10 +141,30 @@ public class DefaultValidationRule implements ValidationRule {
         String defalutErrorMessage,
         Object[] errorArguments) {
 
+        this(condition, applicabilityCondition, errorCode, defalutErrorMessage, new StaticErrorArgumentsResolver(errorArguments));
+    }
+
+    /**
+     * Constructs a new DefaultValidationRule with given condition, error code, error arguments resolver, and default error
+     * message. The applicability of this rule is determined by the given applicability condition.
+     *
+     * @param condition The condition of this validation rule.
+     * @param applicabilityCondition Determines whether this rule is applicable on a given object.
+     * @param errorCode The error code of this validation rule.
+     * @param defalutErrorMessage The default error message of this validation rule.
+     * @param errorArgumentsResolver The resolver that will be used to resolve the error arguments.
+     */
+    public DefaultValidationRule(
+        Condition condition,
+        Condition applicabilityCondition,
+        String errorCode,
+        String defalutErrorMessage,
+        ErrorArgumentsResolver errorArgumentsResolver) {
+
         this.condition = condition;
         this.applicabilityCondition = applicabilityCondition;
         this.errorCode = errorCode;
-        this.errorArguments = errorArguments;
+        this.errorArgumentsResolver = errorArgumentsResolver;
         this.defalutErrorMessage = defalutErrorMessage;
     }
 
@@ -190,19 +211,28 @@ public class DefaultValidationRule implements ValidationRule {
     }
 
     /**
-     * See {@link org.springmodules.validation.bean.rule.ValidationRule#getErrorArguments()}
+     * See {@link org.springmodules.validation.bean.rule.ValidationRule#getErrorArguments(Object)}
      */
-    public Object[] getErrorArguments() {
-        return errorArguments;
+    public Object[] getErrorArguments(Object obj) {
+        return errorArgumentsResolver.resolveArguments(obj);
     }
 
     /**
-     * Sets the arguments to attach to the error code of this validation rule. see {@link #getErrorArguments()}.
+     * Sets the arguments to attach to the error code of this validation rule. see {@link #getErrorArguments(Object)}.
      *
      * @param errorArguments The arguments to attach to the error code of this validation rule.
      */
     public void setErrorArguments(Object[] errorArguments) {
-        this.errorArguments = errorArguments;
+        this.errorArgumentsResolver = new StaticErrorArgumentsResolver(errorArguments);
+    }
+
+    /**
+     * Sets the error arguments resolver to be used by this validation rule to resolve the error arguments.
+     *
+     * @param errorArgumentsResolver The given error arguments resolver.
+     */
+    public void setErrorArgumentsResolver(ErrorArgumentsResolver errorArgumentsResolver) {
+        this.errorArgumentsResolver = errorArgumentsResolver;
     }
 
     /**

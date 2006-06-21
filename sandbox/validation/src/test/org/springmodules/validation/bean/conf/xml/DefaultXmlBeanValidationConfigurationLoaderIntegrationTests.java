@@ -18,6 +18,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderIntegrationTests extends
     protected void setUp() throws Exception {
         loader = new DefaultXmlBeanValidationConfigurationLoader();
         loader.setResource(new ClassPathResource("Person.vld.xml", getClass()));
+        loader.afterPropertiesSet();
     }
 
     public void testLoadConfiguration() throws Exception {

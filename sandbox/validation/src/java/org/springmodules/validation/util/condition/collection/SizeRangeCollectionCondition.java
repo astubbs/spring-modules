@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.util.condition.collection;
 
-import java.util.Collection;
 import java.lang.reflect.Array;
+import java.util.Collection;
 
 /**
  * An {@link AbstractCollectionCondition} that checks that the size/length of the the checked collection/array is

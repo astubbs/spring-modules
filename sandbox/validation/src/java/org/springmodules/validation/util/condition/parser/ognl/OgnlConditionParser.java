@@ -1,8 +1,8 @@
 package org.springmodules.validation.util.condition.parser.ognl;
 
-import org.springmodules.validation.util.condition.parser.ConditionParser;
-import org.springmodules.validation.util.condition.parser.ConditionParseException;
 import org.springmodules.validation.util.condition.Condition;
+import org.springmodules.validation.util.condition.parser.ConditionParseException;
+import org.springmodules.validation.util.condition.parser.ConditionParser;
 
 /**
  * @author Uri Boness

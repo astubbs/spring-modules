@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<validation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<spring:beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://www.springmodules.org/validation/bean"
-    xsi:schemaLocation="http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
+    xmlns:spring="http://www.springframework.org/schema/beans"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
 
-    <class id="personValidator" name="org.springmodules.validation.bean.conf.namespace.Person">
+    <validator id="validator"/>
+
+    <class name="org.springmodules.validation.bean.conf.namespace.Person">
         <global>
             <valang expression="password == confirmPassword" code="passwords.do.not.match"/>
         </global>
@@ -26,4 +30,4 @@
         </property>
     </class>
 
-</validation>
+</spring:beans>

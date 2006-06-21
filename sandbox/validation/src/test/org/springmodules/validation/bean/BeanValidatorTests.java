@@ -492,7 +492,7 @@ public class BeanValidatorTests extends TestCase {
         ruleControl1.expectAndReturn(rule1.getCondition(), new AlwaysFalseCondition());
         ruleControl1.expectAndReturn(rule1.getErrorCode(), "errorCode1");
         ruleControl1.expectAndReturn(rule1.getDefaultErrorMessage(), "message1");
-        ruleControl1.expectAndReturn(rule1.getErrorArguments(), args);
+        ruleControl1.expectAndReturn(rule1.getErrorArguments(object), args);
 
         ruleControl2.expectAndReturn(rule2.isApplicable(object), true);
         ruleControl2.expectAndReturn(rule2.getCondition(), new AlwaysTrueCondition());
@@ -543,7 +543,7 @@ public class BeanValidatorTests extends TestCase {
         ruleControl2.expectAndReturn(rule2.getCondition(), new AlwaysFalseCondition());
         ruleControl2.expectAndReturn(rule2.getErrorCode(), "errorCode2");
         ruleControl2.expectAndReturn(rule2.getDefaultErrorMessage(), "message2");
-        ruleControl2.expectAndReturn(rule2.getErrorArguments(), args);
+        ruleControl2.expectAndReturn(rule2.getErrorArguments(object), args);
 
         ValidationRule[] rules = new ValidationRule[] { rule1, rule2 };
 
@@ -564,7 +564,7 @@ public class BeanValidatorTests extends TestCase {
         ruleControl1.expectAndReturn(rule1.getCondition(), new AlwaysFalseCondition());
         ruleControl1.expectAndReturn(rule1.getErrorCode(), "errorCode1");
         ruleControl1.expectAndReturn(rule1.getDefaultErrorMessage(), "message1");
-        ruleControl1.expectAndReturn(rule1.getErrorArguments(), args);
+        ruleControl1.expectAndReturn(rule1.getErrorArguments(object), args);
 
         ValidationRule[] rules = new ValidationRule[] { rule1, rule2 };
 

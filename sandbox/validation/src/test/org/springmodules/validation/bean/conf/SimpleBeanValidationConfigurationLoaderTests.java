@@ -18,9 +18,10 @@ package org.springmodules.validation.bean.conf;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
+import org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader;
 
 /**
- * Tests for {@link org.springmodules.validation.bean.conf.SimpleBeanValidationConfigurationLoader}.
+ * Tests for {@link org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader}.
  *
  * @author Uri Boness
  */

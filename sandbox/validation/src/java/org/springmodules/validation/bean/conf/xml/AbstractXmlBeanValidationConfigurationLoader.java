@@ -17,18 +17,19 @@
 package org.springmodules.validation.bean.conf.xml;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.springframework.core.io.Resource;
-import org.springmodules.validation.bean.conf.AbstractResourceBasedBeanValidationConfigurationLoader;
-import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.core.io.Resource;
+import org.springmodules.validation.bean.conf.ResourceConfigurationLoadingException;
+import org.springmodules.validation.bean.conf.loader.AbstractResourceBasedBeanValidationConfigurationLoader;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * An {@link AbstractResourceBasedBeanValidationConfigurationLoader} implementation that serves as a base class
@@ -41,79 +42,36 @@ public abstract class AbstractXmlBeanValidationConfigurationLoader extends Abstr
     private final static Log logger = LogFactory.getLog(AbstractXmlBeanValidationConfigurationLoader.class);
 
     /**
-     * Creates a {@link Document} from the given resource and delegates the call to
-     * {@link #loadConfiguration(Class, org.w3c.dom.Document)}.
+     * todo: document
      *
-     * @see AbstractResourceBasedBeanValidationConfigurationLoader#loadConfiguration(Class, org.springframework.core.io.Resource)
+     * @see org.springmodules.validation.bean.conf.loader.AbstractResourceBasedBeanValidationConfigurationLoader#loadConfigurations(org.springframework.core.io.Resource)
      */
-    protected final BeanValidationConfiguration loadConfiguration(Class clazz, Resource resource) {
+    protected final Map loadConfigurations(Resource resource) {
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setNamespaceAware(true);
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
             Document document = builder.parse(resource.getInputStream());
-            return loadConfiguration(clazz, document);
+            return loadConfigurations(document, resource.getDescription());
         } catch (IOException ioe) {
             logger.error("Could not read resource '" + resource.getDescription() + "'", ioe);
-            return null;
+            throw new ResourceConfigurationLoadingException(resource, ioe);
         } catch (ParserConfigurationException pce) {
             logger.error("Could not parse xml resource '" + resource.getDescription() + "'", pce);
-            return null;
+            throw new ResourceConfigurationLoadingException(resource, pce);
         } catch (SAXException se) {
             logger.error("Could not parse xml resource '" + resource.getDescription() + "'", se);
-            return null;
+            throw new ResourceConfigurationLoadingException(resource, se);
         } catch (Throwable t) {
             logger.error("Could not parse xml resource '" + resource.getDescription() + "'", t);
-            return null;
+            throw new ResourceConfigurationLoadingException(resource, t);
         }
     }
 
     /**
-     * Creates a {@link Document} from the given resource and delegates the call to
-     * {@link #supports(Class, org.w3c.dom.Document)}.
-     *
-     * @see AbstractResourceBasedBeanValidationConfigurationLoader#supports(Class, org.springframework.core.io.Resource)
+     * todo: document
      */
-    protected final boolean supports(Class clazz, Resource resource) {
-        try {
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            builderFactory.setNamespaceAware(true);
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document document = builder.parse(resource.getInputStream());
-            return supports(clazz, document);
-        } catch (IOException ioe) {
-            logger.error("Could not read resource '" + resource.getDescription() + "'", ioe);
-            return false;
-        } catch (ParserConfigurationException pce) {
-            logger.error("Could not parse xml resource '" + resource.getDescription() + "'", pce);
-            return false;
-        } catch (SAXException se) {
-            logger.error("Could not parse xml resource '" + resource.getDescription() + "'", se);
-            return false;
-        } catch (Throwable t) {
-            logger.error("Could not parse xml resource '" + resource.getDescription() + "'", t);
-            return false;
-        }
-    }
+    protected abstract Map loadConfigurations(Document document, String resourceName);
 
-    /**
-     * Loads the bean validation configuration for the given class from the given configuration document.
-     *
-     * @param clazz The class for which the bean validation configuration will be loaded.
-     * @param document The configuration document.
-     * @return The loaded bean validation configuration.
-     * @see #loadConfiguration(Class, org.springframework.core.io.Resource)
-     */
-    protected abstract BeanValidationConfiguration loadConfiguration(Class clazz, Document document);
-
-    /**
-     * Checks whether the given class is supported by this loader based on the given configuration document.
-     *
-     * @param clazz The class to be checked.
-     * @param document The configuration document.
-     * @return <code>true</code> if the given class is supported, <code>false</code> otherwise.
-     * @see #supports(Class, org.springframework.core.io.Resource)
-     */
-    protected abstract boolean supports(Class clazz, Document document);
 
 }

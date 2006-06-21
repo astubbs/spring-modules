@@ -34,7 +34,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
-import org.springmodules.validation.bean.conf.SimpleBeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.converter.DefaultErrorCodeConverter;
 import org.springmodules.validation.bean.converter.ErrorCodeConverter;
 import org.springmodules.validation.bean.rule.ValidationRule;
@@ -60,7 +60,7 @@ public class BeanValidator extends RuleBasedValidator {
 
     /**
      * Constructs a new BeanValidator. By default the
-     * {@link org.springmodules.validation.bean.conf.SimpleBeanValidationConfigurationLoader} is
+     * {@link org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader} is
      * used as the bean validation configuration loader.
      */
     public BeanValidator() {
@@ -354,7 +354,7 @@ public class BeanValidator extends RuleBasedValidator {
             ValidationRule rule = globalRules[i];
             if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
                 String errorCode = errorCodeConverter.convertGlobalErrorCode(rule.getErrorCode(), obj.getClass());
-                errors.reject(errorCode, rule.getErrorArguments(), rule.getDefaultErrorMessage());
+                errors.reject(errorCode, rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
             }
         }
     }
@@ -400,7 +400,7 @@ public class BeanValidator extends RuleBasedValidator {
             ValidationRule rule = rules[i];
             if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
                 String errorCode = errorCodeConverter.convertPropertyErrorCode(rule.getErrorCode(), obj.getClass(), propertyName);
-                errors.rejectValue(propertyName, errorCode, rule.getErrorArguments(), rule.getDefaultErrorMessage());
+                errors.rejectValue(propertyName, errorCode, rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
                 return;
             }
         }

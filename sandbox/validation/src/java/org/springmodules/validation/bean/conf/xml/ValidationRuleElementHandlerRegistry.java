@@ -30,7 +30,7 @@ public interface ValidationRuleElementHandlerRegistry {
      *
      * @param handler The handler to register.
      */
-    void registerParser(ValidationRuleElementHandler handler);
+    void registerHandler(ValidationRuleElementHandler handler);
 
     /**
      * Returns the validation rule element handler that can handle the given element.

@@ -16,7 +16,7 @@ public class NamespaceConfigurationIntegrationTests extends TestCase {
 
     protected void setUp() throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("validation.xml", getClass());
-        validator = (BeanValidator)context.getBean("personValidator");
+        validator = (BeanValidator)context.getBean("validator");
     }
 
     public void testLoadConfiguration() throws Exception {

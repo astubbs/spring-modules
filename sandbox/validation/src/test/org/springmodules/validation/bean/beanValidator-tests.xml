@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <bean id="validator" class="org.springmodules.validation.bean.BeanValidator">
+        <property name="configurationLoader" ref="configurationLoader"/>
+    </bean>
+
+	<bean id="configurationLoader" class="org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader">
+        <property name="resource" value="classpath:org/springmodules/validation/bean/validation.xml"/>
+        <property name="elementHandlerRegistry">
+            <bean class="org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry">
+                <property name="extraHandlers">
+                    <bean class="org.springmodules.validation.bean.conf.xml.handler.ValangRuleElementHandler">
+                        <property name="customFunctionsByName">
+                            <map>
+                                <entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
+                            </map>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+</beans>

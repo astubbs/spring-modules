@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<validation xmlns="http://www.springmodules.org/validation/bean"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
+
+    <class name="org.springmodules.validation.bean.Person">
+        <global>
+            <valang expression="tupper(name) == 'URI'" code="good"/>
+            <valang expression="tupper(name) == 'Uri'" code="bad"/>
+        </global>
+    </class>
+
+</validation>

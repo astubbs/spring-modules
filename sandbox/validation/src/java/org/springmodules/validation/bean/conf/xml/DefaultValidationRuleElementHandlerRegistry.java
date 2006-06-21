@@ -16,22 +16,22 @@
 
 package org.springmodules.validation.bean.conf.xml;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import org.springmodules.validation.bean.conf.xml.handler.DateInFutureRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.DateInPastRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.EmailRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.LengthRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.NotBlankRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.NotEmptyRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.NotNullRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.RangeRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.RegExpRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.SizeRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ValangRuleElementHandler;
 import org.w3c.dom.Element;
-import org.springmodules.validation.bean.conf.xml.parser.LengthRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.EmailRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.NotBlankRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.NotEmptyRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.NotNullRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.RangeRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.RegExpRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.SizeRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.ValangRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.DateInPastRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.parser.DateInFutureRuleElementHandler;
 
 /**
  * A default implementation of {@link ValidationRuleElementHandlerRegistry}. The order in which the the handlers are
@@ -41,10 +41,10 @@ import org.springmodules.validation.bean.conf.xml.parser.DateInFutureRuleElement
  */
 public class DefaultValidationRuleElementHandlerRegistry implements ValidationRuleElementHandlerRegistry {
 
-    private final static ValidationRuleElementHandler[] DEFAULT_PARSERS;
+    private final static ValidationRuleElementHandler[] DEFAULT_HANDLER;
 
     static {
-        DEFAULT_PARSERS = new ValidationRuleElementHandler[] {
+        DEFAULT_HANDLER = new ValidationRuleElementHandler[] {
             new NotNullRuleElementHandler(),
             new LengthRuleElementHandler(),
             new NotBlankRuleElementHandler(),
@@ -79,7 +79,7 @@ public class DefaultValidationRuleElementHandlerRegistry implements ValidationRu
      * </ol>
      */
     public DefaultValidationRuleElementHandlerRegistry() {
-        this(DEFAULT_PARSERS);
+        this(DEFAULT_HANDLER);
     }
 
     /**
@@ -89,16 +89,16 @@ public class DefaultValidationRuleElementHandlerRegistry implements ValidationRu
      */
     public DefaultValidationRuleElementHandlerRegistry(ValidationRuleElementHandler[] handlers) {
         this.handlers = new ArrayList();
-        setExtraParsers(handlers);
+        setExtraHandlers(handlers);
     }
 
     /**
      * Registers the given handler with this registry. The registered handler is registered in such a way that it will
      * be checked first for support (LIFC - Last In First Checked).
      *
-     * @see ValidationRuleElementHandlerRegistry#registerParser(ValidationRuleElementHandler)
+     * @see ValidationRuleElementHandlerRegistry#registerHandler(ValidationRuleElementHandler)
      */
-    public void registerParser(ValidationRuleElementHandler handler) {
+    public void registerHandler(ValidationRuleElementHandler handler) {
         handlers.add(0, handler);
     }
 
@@ -107,9 +107,9 @@ public class DefaultValidationRuleElementHandlerRegistry implements ValidationRu
      */
     public ValidationRuleElementHandler findHandler(Element element) {
         for (Iterator iter = handlers.iterator(); iter.hasNext();) {
-            ValidationRuleElementHandler parser = (ValidationRuleElementHandler)iter.next();
-            if (parser.supports(element)) {
-                return parser;
+            ValidationRuleElementHandler handler = (ValidationRuleElementHandler)iter.next();
+            if (handler.supports(element)) {
+                return handler;
             }
         }
         return null;
@@ -123,10 +123,19 @@ public class DefaultValidationRuleElementHandlerRegistry implements ValidationRu
      *
      * @param handlers The handlers to register with this registry.
      */
-    public void setExtraParsers(ValidationRuleElementHandler[] handlers) {
+    public void setExtraHandlers(ValidationRuleElementHandler[] handlers) {
         for (int i=0; i<handlers.length; i++) {
-            registerParser(handlers[i]);
+            registerHandler(handlers[i]);
         }
+    }
+
+    /**
+     * Return all handlers that are registered with this registry.
+     *
+     * @return All handlers that are registered with this registry.
+     */
+    public ValidationRuleElementHandler[] getHandlers() {
+        return (ValidationRuleElementHandler[])handlers.toArray(new ValidationRuleElementHandler[handlers.size()]);
     }
 
 }

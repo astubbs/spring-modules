@@ -25,20 +25,28 @@ import junit.framework.TestCase;
  */
 public class DefaultErrorCodeConverterTests extends TestCase {
 
-    private DefaultErrorCodeConverter converter;
-
-    protected void setUp() throws Exception {
-        converter = new DefaultErrorCodeConverter();
-    }
-
-    public void testConvertGlobalErrorCode() throws Exception {
+    public void testConvertGlobalErrorCode_WhenNotUsingFQN() throws Exception {
+        DefaultErrorCodeConverter converter = new DefaultErrorCodeConverter();
         String code = converter.convertGlobalErrorCode("errorCode", Object.class);
         assertEquals("Object[errorCode]", code);
     }
 
-    public void testConvertPropertyErrorCode() throws Exception {
+    public void testConvertPropertyErrorCode_WhenNotUsingFQN() throws Exception {
+        DefaultErrorCodeConverter converter = new DefaultErrorCodeConverter();
         String code = converter.convertPropertyErrorCode("errorCode", Object.class, "name");
         assertEquals("Object.name[errorCode]", code);
+    }
+
+    public void testConvertGlobalErrorCode_WhenUsingFQN() throws Exception {
+        DefaultErrorCodeConverter converter = new DefaultErrorCodeConverter(true);
+        String code = converter.convertGlobalErrorCode("errorCode", Object.class);
+        assertEquals("java.lang.Object[errorCode]", code);
+    }
+
+    public void testConvertPropertyErrorCode_WhenUsingFQN() throws Exception {
+        DefaultErrorCodeConverter converter = new DefaultErrorCodeConverter(true);
+        String code = converter.convertPropertyErrorCode("errorCode", Object.class, "name");
+        assertEquals("java.lang.Object.name[errorCode]", code);
     }
     
 }

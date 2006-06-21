@@ -21,7 +21,7 @@ import org.easymock.MockControl;
 import org.springmodules.validation.util.condition.Condition;
 
 /**
- * Tests for {@link org.springmodules.validation.bean.rule.PropertyValidatoinRule}.
+ * Tests for {@link org.springmodules.validation.bean.rule.PropertyValidationRule}.
  *
  * @author Uri Boness
  */
@@ -47,7 +47,7 @@ public class PropertyValidatoinRuleTests extends TestCase {
         conditionControl.replay();
 
         ValidationRule innerRule = new DefaultValidationRule(null, condition, "errorCode");
-        PropertyValidatoinRule rule = new PropertyValidatoinRule("name", innerRule);
+        PropertyValidationRule rule = new PropertyValidationRule("name", innerRule);
         assertTrue(rule.isApplicable(new Person("Uri")));
 
         conditionControl.verify();
@@ -59,14 +59,14 @@ public class PropertyValidatoinRuleTests extends TestCase {
         conditionControl.replay();
 
         ValidationRule innerRule = new DefaultValidationRule(null, condition, "errorCode");
-        PropertyValidatoinRule rule = new PropertyValidatoinRule("name", innerRule);
+        PropertyValidationRule rule = new PropertyValidationRule("name", innerRule);
         assertFalse(rule.isApplicable(new Person("Uri")));
 
         conditionControl.verify();
     }
 
     public void testIsApplicable_WhenPropertyDoesNotExist() throws Exception {
-        PropertyValidatoinRule rule = new PropertyValidatoinRule("name", null);
+        PropertyValidationRule rule = new PropertyValidationRule("name", null);
         assertFalse(rule.isApplicable(new Object()));
     }
 
@@ -77,8 +77,8 @@ public class PropertyValidatoinRuleTests extends TestCase {
         conditionControl.replay();
         ruleControl.replay();
 
-        PropertyValidatoinRule propertyValidatoinRule = new PropertyValidatoinRule("name", rule);
-        Condition propertyCondition = propertyValidatoinRule.getCondition();
+        PropertyValidationRule propertyValidationRule = new PropertyValidationRule("name", rule);
+        Condition propertyCondition = propertyValidationRule.getCondition();
         assertTrue(propertyCondition.check(new Person("Uri")));
 
         conditionControl.verify();
@@ -92,8 +92,8 @@ public class PropertyValidatoinRuleTests extends TestCase {
         conditionControl.replay();
         ruleControl.replay();
 
-        PropertyValidatoinRule propertyValidatoinRule = new PropertyValidatoinRule("name", rule);
-        Condition propertyCondition = propertyValidatoinRule.getCondition();
+        PropertyValidationRule propertyValidationRule = new PropertyValidationRule("name", rule);
+        Condition propertyCondition = propertyValidationRule.getCondition();
         assertFalse(propertyCondition.check(new Person("Uri")));
 
         conditionControl.verify();
@@ -105,20 +105,22 @@ public class PropertyValidatoinRuleTests extends TestCase {
         ruleControl.expectAndReturn(rule.getErrorCode(), "errorCode");
         ruleControl.replay();
 
-        PropertyValidatoinRule propertyValidatoinRule = new PropertyValidatoinRule("name", rule);
-        assertEquals("errorCode", propertyValidatoinRule.getErrorCode());
+        PropertyValidationRule propertyValidationRule = new PropertyValidationRule("name", rule);
+        assertEquals("errorCode", propertyValidationRule.getErrorCode());
 
         ruleControl.verify();
     }
 
     public void testGetErrorArguments() throws Exception {
 
+        Object object = new Object();
+
         Object[] arguments = new Object[0];
-        ruleControl.expectAndReturn(rule.getErrorArguments(), arguments);
+        ruleControl.expectAndReturn(rule.getErrorArguments(object), arguments);
         ruleControl.replay();
 
-        PropertyValidatoinRule propertyValidatoinRule = new PropertyValidatoinRule("name", rule);
-        assertSame(arguments, propertyValidatoinRule.getErrorArguments());
+        PropertyValidationRule propertyValidationRule = new PropertyValidationRule("name", rule);
+        assertSame(arguments, propertyValidationRule.getErrorArguments(object));
 
         ruleControl.verify();
     }
@@ -128,8 +130,8 @@ public class PropertyValidatoinRuleTests extends TestCase {
         ruleControl.expectAndReturn(rule.getDefaultErrorMessage(), "message");
         ruleControl.replay();
 
-        PropertyValidatoinRule propertyValidatoinRule = new PropertyValidatoinRule("name", rule);
-        assertEquals("message", propertyValidatoinRule.getDefaultErrorMessage());
+        PropertyValidationRule propertyValidationRule = new PropertyValidationRule("name", rule);
+        assertEquals("message", propertyValidationRule.getDefaultErrorMessage());
 
         ruleControl.verify();
     }

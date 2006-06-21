@@ -16,10 +16,10 @@
 
 package org.springmodules.validation.validator;
 
+import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.validation.Errors;
 import org.springmodules.validation.util.condition.Condition;
-import junit.framework.TestCase;
 
 /**
  * Tests for {@link org.springmodules.validation.validator.RuleBasedValidator}.

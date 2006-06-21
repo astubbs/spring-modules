@@ -35,7 +35,7 @@ public class ValidationRuleElementHandlerRegistrar implements InitializingBean {
      * Constructs a new ValidationRuleElementHandlerRegistrar.
      */
     public ValidationRuleElementHandlerRegistrar() {
-        this(new ValidationRuleElementHandler[0]);
+        this(null, new ValidationRuleElementHandler[0]);
     }
 
     /**
@@ -43,8 +43,12 @@ public class ValidationRuleElementHandlerRegistrar implements InitializingBean {
      *
      * @param handlers The validation rule element handlers to be registered with the registry.
      */
-    public ValidationRuleElementHandlerRegistrar(ValidationRuleElementHandler[] handlers) {
+    public ValidationRuleElementHandlerRegistrar(
+        ValidationRuleElementHandlerRegistry registry,
+        ValidationRuleElementHandler[] handlers) {
+
         this.handlers = handlers;
+        this.registry = registry;
     }
 
     /**
@@ -53,7 +57,7 @@ public class ValidationRuleElementHandlerRegistrar implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(registry, "Required property 'registry' was not set");
         for (int i=0; i<handlers.length; i++) {
-            registry.registerParser(handlers[i]);
+            registry.registerHandler(handlers[i]);
         }
     }
 

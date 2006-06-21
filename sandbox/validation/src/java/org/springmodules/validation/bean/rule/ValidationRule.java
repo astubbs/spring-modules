@@ -51,11 +51,13 @@ public interface ValidationRule {
     /**
      * Returns the arguments that apply to the error code of this validation rule. This
      * method should never return null. If there are no arguments, this method must return
-     * an empty array.
+     * an empty array. This method accepts the validated object, this enables runtime generation
+     * of arguments based on that object.
      *
+     * @param obj The validated object.
      * @return The arguments that apply to the error code of this validation rule.
      */
-    Object[] getErrorArguments();
+    Object[] getErrorArguments(Object obj);
 
     /**
      * Returns the default error message that can be used in case no error message is bound

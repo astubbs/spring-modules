@@ -30,6 +30,28 @@ public class DefaultErrorCodeConverter implements ErrorCodeConverter {
     private final static String ERROR_CODE_SEPERATOR_SUFFIX = "]";
     private final static String PROPERTY_SEPERATOR = ".";
 
+    private boolean useFullyQualifiedClassName;
+
+    /**
+     * Constructs a new DefaultErrorCodeConverter that uses class simple names. For example, the validation error code
+     * <code>error_code</code> for class <code>org.springmodules.validation.sample.Person</code> will be converted
+     * to <code>Person[error_code]</code>.
+     */
+    public DefaultErrorCodeConverter() {
+        this(false);
+    }
+
+    /**
+     * Constructs a new DefaultErrorCodeConverter. The given argument idicateds whether a fully qualified name should
+     * be used for the converted error codes. For example, if the validation error code <code>error_code</code> for
+     * class <code>org.springmodules.validation.sample.Person</code> will be converted with fully qualified name set
+     * to <code>true</code>, the converted error code will be
+     * <code>org.springmodules.validation.sample.Person[error_code]</code>.
+     */
+    public DefaultErrorCodeConverter(boolean useFullyQualifiedClassName) {
+        this.useFullyQualifiedClassName = useFullyQualifiedClassName;
+    }
+
     /**
      * Converts the given error code to the following format:<br/> <code>short_class_name[errorCode]</code></br>
      * where <code>short_class_name</code> is the name of the given class with its package stripped, and
@@ -40,7 +62,8 @@ public class DefaultErrorCodeConverter implements ErrorCodeConverter {
      * @return The converted error code.
      */
     public String convertGlobalErrorCode(String errorCode, Class clazz) {
-        return new StringBuffer(ClassUtils.getShortName(clazz))
+        String className = (useFullyQualifiedClassName) ? clazz.getName() : ClassUtils.getShortName(clazz);
+        return new StringBuffer(className)
             .append(ERROR_CODE_SEPERATOR_PREFIX)
             .append(errorCode)
             .append(ERROR_CODE_SEPERATOR_SUFFIX)
@@ -60,7 +83,8 @@ public class DefaultErrorCodeConverter implements ErrorCodeConverter {
      * @return The converted error code.
      */
     public String convertPropertyErrorCode(String errorCode, Class clazz, String propertyName) {
-        return new StringBuffer(ClassUtils.getShortName(clazz))
+        String className = (useFullyQualifiedClassName) ? clazz.getName() : ClassUtils.getShortName(clazz);
+        return new StringBuffer(className)
             .append(PROPERTY_SEPERATOR)
             .append(propertyName)
             .append(ERROR_CODE_SEPERATOR_PREFIX)
