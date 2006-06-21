@@ -40,7 +40,7 @@ public class ValangParser implements ValangParserConstants {
         }
 
         public void setVisitor(DefaultVisitor visitor) {
-                this.visitor = visitor;
+            this.visitor = visitor;
         }
 
         private String replace(String s) {

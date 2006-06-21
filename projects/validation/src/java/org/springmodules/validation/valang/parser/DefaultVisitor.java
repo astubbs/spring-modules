@@ -76,7 +76,6 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
     private ServletContext servletContext = null;
 
     public DefaultVisitor() {
-        super();
         if (JdkVersion.getMajorJavaVersion() != JdkVersion.JAVA_13) {
             this.dateParser = new DefaultDateParser();
         }

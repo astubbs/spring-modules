@@ -2,20 +2,20 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
 <beans>
-	<bean id="testCustomFunctions" class="org.springmodules.validation.valang.ValangValidatorFactoryBean" lazy-init="true">
+	<bean id="testCustomFunctions" class="org.springmodules.validation.valang.ValangValidator" lazy-init="true">
 		<property name="customFunctions">
 			<map>
-				<entry key="tupper">
-					<value>org.springmodules.validation.valang.functions.UpperCaseFunction</value>
-				</entry>
+				<entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
 				<entry key="lifeCycle" value="org.springmodules.validation.valang.LifeCycleTestFunction"/>
 			</map>
 		</property>
 		<property name="valang">
-			<value><![CDATA[
-{ firstName : length(tupper(?)) > 0 : 'First name is empty' }
-{ lifeCycleBean : lifeCycle(?) is not null and length('abc\'') = 4 and length('\\') = 1 : 'Life cycle property is null' }
-			]]></value>
+			<value>
+                <![CDATA[
+                    { lifeCycleBean : lifeCycle(?) is not null and length('abc\'') = 4 and length('\\') = 1 : 'Life cycle property is null' }
+                    { firstName : length(tupper(?)) == 'FN' : 'First name is empty' }
+			    ]]>
+            </value>
 		</property>
 	</bean>
 
@@ -25,12 +25,15 @@
 		<constructor-arg value="foo|bar"/>
 	</bean>
 	
-	<bean id="personValidator" class="org.springmodules.validation.valang.ValangValidatorFactoryBean" lazy-init="true">
+	<bean id="personValidator" class="org.springmodules.validation.valang.ValangValidator" lazy-init="true">
 		<property name="valang">
-			<value><![CDATA[
- { form[name] : length(?) BETWEEN 4 AND 30 : 'name must be between 4 and 30' }
- { form[passwd] : length(?) BETWEEN 5 AND 20 : 'password must be between 5 and 20' }
-			]]></value>
+			<value>
+                <![CDATA[
+                    { form[name] : ? is not null : 'the form name should not be null' : 'not.null' }
+                    { form[name] : length(?) BETWEEN 4 AND 30 : 'name must be between 4 and 30' }
+                    { form[passwd] : length(?) BETWEEN 5 AND 20 : 'password must be between 5 and 20' }
+			    ]]>
+            </value>
 		</property>
 	</bean>	
 	

@@ -78,7 +78,7 @@ public class ValangParserTests extends TestCase {
         assertTrue(validate(new Person(30, "Steven"), text));
         assertFalse(validate(new Person(150, "Steven"), text));
     }
-
+    
     public void testParser3LengthRule() {
         String text =
             "{firstName : length (firstName) < 7 and length (firstName) > -1 : 'First name must be no longer than 30 characters.'}"
