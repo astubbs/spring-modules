@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.io.StringReader;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.functors.AndPredicate;
@@ -45,7 +46,17 @@ public class ValangParser {
 	private static Log log = LogFactory.getLog(ValangParser.class);
 	
 	private DefaultVisitor visitor = new DefaultVisitor();
-		
+
+	public ValangParser(String expression) {
+	    this(new StringReader(expression));
+	}
+
+    public ValangParser(String expression, Map customFunctions, Map dateParsers) {
+	    this(new StringReader(expression));
+	    setDateParsersByRegexp(dateParsers);
+	    setFunctionsByName(customFunctions);
+	}
+
 	public DefaultVisitor getVisitor() {
 	   if (this.visitor == null) {
 	       throw new IllegalStateException("Visistor is not set on parser");

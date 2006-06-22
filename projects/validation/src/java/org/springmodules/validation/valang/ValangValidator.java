@@ -1,6 +1,5 @@
 package org.springmodules.validation.valang;
 
-import java.io.StringReader;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,6 +14,7 @@ import org.springframework.validation.Validator;
 import org.springmodules.validation.util.BasicContextAware;
 import org.springmodules.validation.util.date.DefaultDateParser;
 import org.springmodules.validation.util.date.DefaultDateParser.DateModifier;
+import org.springmodules.validation.valang.parser.ValangBased;
 import org.springmodules.validation.valang.parser.ValangParser;
 import org.springmodules.validation.valang.predicates.ValidationRule;
 
@@ -75,7 +75,7 @@ import org.springmodules.validation.valang.predicates.ValidationRule;
  * @see org.springframework.validation.Validator
  */
 
-public class ValangValidator extends BasicContextAware implements Validator, InitializingBean {
+public class ValangValidator extends BasicContextAware implements ValangBased, Validator, InitializingBean {
 
     private String valang = null;
 
@@ -128,13 +128,18 @@ public class ValangValidator extends BasicContextAware implements Validator, Ini
      *      String)
      * @see DefaultDateParser#register(String,
      *      DateModifier)
+     * @deprecated Use {@link #setDateParsers(java.util.Map)} instead.
      */
     public void setDateParserRegistrations(Map dateParserRegistrations) {
-        this.dateParserRegistrations = dateParserRegistrations;
+        setDateParsers(dateParserRegistrations);
     }
 
     private Map getDateParserRegistrations() {
         return this.dateParserRegistrations;
+    }
+
+    public void setDateParsers(Map parserByRegexp) {
+        this.dateParserRegistrations = parserByRegexp;
     }
 
     /**
@@ -172,7 +177,7 @@ public class ValangValidator extends BasicContextAware implements Validator, Ini
     public void afterPropertiesSet() throws Exception {
         Assert.hasLength(getValang(), "'valang' property must be set!");
 
-        ValangParser parser = new ValangParser(new StringReader(getValang()));
+        ValangParser parser = new ValangParser(getValang());
 
         parser.getVisitor().setApplicationContext(applicationContext);
         parser.getVisitor().setBeanFactory(beanFactory);

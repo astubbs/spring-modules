@@ -487,7 +487,7 @@ public class ValangParserTests extends TestCase {
     }
 
     public void testParser56MapAccess() {
-        String text = "{map : map[firstName] == 'Steven' : 'name should be equal'}";
+        String text = "{map : map[firstName] EQUALS 'Steven' : 'name should be equal'}";
         assertTrue(validate(new Person(10, "Uri"), text));
     }
 }
