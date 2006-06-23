@@ -17,10 +17,21 @@ package org.springmodules.validation.bean.conf.xml.handler;
 
 import java.util.Map;
 
+import javax.servlet.ServletContext;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.xml.DefaultXmBeanValidationConfigurationlLoaderConstants;
 import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.parser.valang.ValangCondition;
+import org.springmodules.validation.util.condition.parser.ConditionParserCondition;
+import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
+import org.springmodules.validation.valang.parser.SimpleValangBased;
+import org.springmodules.validation.valang.parser.ValangBased;
 import org.w3c.dom.Element;
 
 /**
@@ -29,25 +40,25 @@ import org.w3c.dom.Element;
  *
  * @author Uri Boness
  */
-public class ValangRuleElementHandler extends AbstractValidationRuleElementHandler implements DefaultXmBeanValidationConfigurationlLoaderConstants {
+public class ValangRuleElementHandler extends AbstractValidationRuleElementHandler
+    implements DefaultXmBeanValidationConfigurationlLoaderConstants, ValangBased {
 
     /**
      * The default error code for the created valang validation rule.
      */
     public static final String DEFAULT_ERROR_CODE = "valang";
 
-
     private static final String ELEMENT_NAME = "valang";
     private static final String EXPRESSION_ATTR = "expression";
 
-    private Map customFunctionsByName;
-    private Map dateParsersByRegexp;
+    private SimpleValangBased valangBased;
 
     /**
      * Constructs a new ValangRuleElementHandler.
      */
     public ValangRuleElementHandler() {
         super(ELEMENT_NAME, DEFAULT_NAMESPACE_URL);
+        valangBased = new SimpleValangBased();
     }
 
     /**
@@ -71,28 +82,68 @@ public class ValangRuleElementHandler extends AbstractValidationRuleElementHandl
         if (!StringUtils.hasText(expression)) {
             throw new XmlConditionConfigurationException("Element '" + ELEMENT_NAME + "' must have an 'expression' attribute");
         }
-        return new ValangCondition(expression, customFunctionsByName, dateParsersByRegexp);
+        ValangConditionParser parser = new ValangConditionParser();
+        valangBased.init(parser);
+        return new ConditionParserCondition(parser, expression);
     }
 
 
     //=============================================== Setter/Getter ====================================================
 
     /**
-     * Sets custom functions to be used in the valang expression.
-     *
-     * @param customFunctionsByName The custom function classes mapped by the function name.
+     * @see ValangBased#setCustomFunctions(java.util.Map)
      */
-    public void setCustomFunctionsByName(Map customFunctionsByName) {
-        this.customFunctionsByName = customFunctionsByName;
+    public void setCustomFunctions(Map functionByName) {
+        valangBased.setCustomFunctions(functionByName);
     }
 
     /**
-     * Sets the date parsers to be used in the valang expression.
-     *
-     * @param dateParsersByRegexp The date parsers mapped by theie rassociated regular expressions.
+     * @see ValangBased#setDateParsers(java.util.Map)
      */
-    public void setDateParsersByRegexp(Map dateParsersByRegexp) {
-        this.dateParsersByRegexp = dateParsersByRegexp;
+    public void setDateParsers(Map parserByRegexp) {
+        valangBased.setDateParsers(parserByRegexp);
+    }
+
+    /**
+     * @see ValangBased#setApplicationContext(org.springframework.context.ApplicationContext)
+     */
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        valangBased.setApplicationContext(applicationContext);
+    }
+
+    /**
+     * @see ValangBased#setBeanFactory(org.springframework.beans.factory.BeanFactory)
+     */
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        valangBased.setBeanFactory(beanFactory);
+    }
+
+    /**
+     * @see ValangBased#setResourceLoader(org.springframework.core.io.ResourceLoader)
+     */
+    public void setResourceLoader(ResourceLoader resourceLoader) {
+        valangBased.setResourceLoader(resourceLoader);
+    }
+
+    /**
+     * @see ValangBased#setMessageSource(org.springframework.context.MessageSource)
+     */
+    public void setMessageSource(MessageSource messageSource) {
+        valangBased.setMessageSource(messageSource);
+    }
+
+    /**
+     * @see ValangBased#setServletContext(javax.servlet.ServletContext)
+     */
+    public void setServletContext(ServletContext servletContext) {
+        valangBased.setServletContext(servletContext);
+    }
+
+    /**
+     * @see ValangBased#setApplicationEventPublisher(org.springframework.context.ApplicationEventPublisher)
+     */
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        valangBased.setApplicationEventPublisher(applicationEventPublisher);
     }
 
 }

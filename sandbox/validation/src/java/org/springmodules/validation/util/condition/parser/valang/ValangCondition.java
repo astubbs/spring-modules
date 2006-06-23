@@ -14,7 +14,14 @@ public class ValangCondition extends ConditionParserCondition {
     }
 
     public ValangCondition(String expression, Map functionByName, Map dateParserByRegexp) {
-        super(new ValangConditionParser(functionByName, dateParserByRegexp), expression);
+        super(createParser(functionByName, dateParserByRegexp), expression);
+    }
+
+    private static ValangConditionParser createParser(Map functionByName, Map dateParserByRegexp) {
+        ValangConditionParser parser = new ValangConditionParser();
+        parser.setCustomFunctions(functionByName);
+        parser.setDateParsers(dateParserByRegexp);
+        return parser;
     }
 
 }

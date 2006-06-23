@@ -20,10 +20,15 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.xml.ValidationRuleElementHandler;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
+import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.ValidationRule;
+import org.springmodules.validation.bean.rule.resolver.ExpressionErrorArgumentsResolver;
+import org.springmodules.validation.util.bel.BeanExpressionResolver;
+import org.springmodules.validation.util.bel.BeanExpressionResolverAware;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
 import org.springmodules.validation.util.condition.parser.ConditionParser;
+import org.springmodules.validation.util.condition.parser.ConditionParserAware;
 import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
 import org.w3c.dom.Element;
 
@@ -44,7 +49,8 @@ import org.w3c.dom.Element;
  *
  * @author Uri Boness
  */
-public abstract class AbstractValidationRuleElementHandler implements ValidationRuleElementHandler {
+public abstract class AbstractValidationRuleElementHandler
+    implements ValidationRuleElementHandler, ConditionParserAware, BeanExpressionResolverAware {
 
     private static final String ERROR_CODE_ATTR = "code";
     private static final String MESSAGE_ATTR = "message";
@@ -56,6 +62,7 @@ public abstract class AbstractValidationRuleElementHandler implements Validation
     private String elementName;
     private String namespaceUrl;
     private ConditionParser conditionParser;
+    private BeanExpressionResolver expressionResolver;
 
     /**
      * Constructs a new AbstractValidationRuleElementHandler with given supported element name.
@@ -115,10 +122,10 @@ public abstract class AbstractValidationRuleElementHandler implements Validation
     public ValidationRule handle(Element element) {
         String errorCode = extractErrorCode(element);
         String message = extractMessage(element);
-        Object[] args = extractArguments(element);
+        ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(element);
         Condition condition = extractCondition(element);
         Condition applicabilityCondition = extractApplicabilityCondition(element);
-        return new DefaultValidationRule(condition, applicabilityCondition, errorCode, message, args);
+        return new DefaultValidationRule(condition, applicabilityCondition, errorCode, message, argumentsResolver);
     }
 
     /**
@@ -151,12 +158,10 @@ public abstract class AbstractValidationRuleElementHandler implements Validation
      * @param element The element that represents the validation rule.
      * @return The validation rule error arguments.
      */
-    protected Object[] extractArguments(Element element) {
+    protected ErrorArgumentsResolver extractArgumentsResolver(Element element) {
         String argsString = element.getAttribute(ARGS_ATTR);
-        if (argsString == null) {
-            return new Object[0];
-        }
-        return StringUtils.tokenizeToStringArray(argsString, ", ");
+        String[] expressions = (argsString == null) ? new String[0] : StringUtils.tokenizeToStringArray(argsString, ", ");
+        return new ExpressionErrorArgumentsResolver(expressions, expressionResolver);
     }
 
     /**
@@ -170,6 +175,34 @@ public abstract class AbstractValidationRuleElementHandler implements Validation
     protected Condition extractApplicabilityCondition(Element element) {
         String expression = element.getAttribute(APPLY_IF_ATTR);
         return (StringUtils.hasText(expression)) ? conditionParser.parse(expression) : new AlwaysTrueCondition();
+    }
+
+    /**
+     * @see ConditionParserAware#setConditionParser(org.springmodules.validation.util.condition.parser.ConditionParser)
+     */
+    public void setConditionParser(ConditionParser conditionParser) {
+        this.conditionParser = conditionParser;
+    }
+
+    /**
+     * @see org.springmodules.validation.util.condition.parser.ConditionParserAware#getConditionParser()
+     */
+    public ConditionParser getConditionParser() {
+        return conditionParser;
+    }
+
+    /**
+     * @see BeanExpressionResolverAware#setBeanExpressionResolver(org.springmodules.validation.util.bel.BeanExpressionResolver)
+     */
+    public void setBeanExpressionResolver(BeanExpressionResolver resolver) {
+        this.expressionResolver = resolver;
+    }
+
+    /**
+     * @see org.springmodules.validation.util.bel.BeanExpressionResolverAware#getBeanExpressionResolver()
+     */
+    public BeanExpressionResolver getBeanExpressionResolver() {
+        return expressionResolver;
     }
 
     /**

@@ -13,7 +13,7 @@
             <bean class="org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry">
                 <property name="extraHandlers">
                     <bean class="org.springmodules.validation.bean.conf.xml.handler.ValangRuleElementHandler">
-                        <property name="customFunctionsByName">
+                        <property name="customFunctions">
                             <map>
                                 <entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
                             </map>

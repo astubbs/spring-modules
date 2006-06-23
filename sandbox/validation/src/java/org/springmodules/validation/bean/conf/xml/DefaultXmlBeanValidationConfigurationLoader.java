@@ -82,7 +82,7 @@ import org.w3c.dom.NodeList;
  * @author Uri Boness
  */
 public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBeanValidationConfigurationLoader
-    implements DefaultXmBeanValidationConfigurationlLoaderConstants{
+    implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     private final static Log logger = LogFactory.getLog(DefaultXmlBeanValidationConfigurationLoader.class);
 
@@ -115,7 +115,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
     }
 
     /**
-     * todo: document
+     * Loads the validation configuration from the given document that was created from the given resource.
      *
      * @see AbstractXmlBeanValidationConfigurationLoader#loadConfigurations(org.w3c.dom.Document, String)
      */

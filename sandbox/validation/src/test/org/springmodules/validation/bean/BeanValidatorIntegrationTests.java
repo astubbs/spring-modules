@@ -104,10 +104,11 @@ public class BeanValidatorIntegrationTests extends TestCase {
         Map functionsByName = new HashMap();
         functionsByName.put("tupper", UpperCaseFunction.class.getName());
         ValangRuleElementHandler handler = new ValangRuleElementHandler();
-        handler.setCustomFunctionsByName(functionsByName);
+        handler.setCustomFunctions(functionsByName);
 
         DefaultValidationRuleElementHandlerRegistry registry = new DefaultValidationRuleElementHandlerRegistry();
         registry.setExtraHandlers(new ValidationRuleElementHandler[] { handler });
+        registry.afterPropertiesSet();
 
         DefaultXmlBeanValidationConfigurationLoader loader = new DefaultXmlBeanValidationConfigurationLoader();
         loader.setResource(new ClassPathResource("validation.xml", getClass()));
@@ -115,9 +116,7 @@ public class BeanValidatorIntegrationTests extends TestCase {
         loader.afterPropertiesSet();
 
         BeanValidator validator = new BeanValidator(loader);
-
         validator.setErrorCodeConverter(new DefaultErrorCodeConverter());
-        validator.setConfigurationLoader(loader);
 
         Person person = new Person("Uri");
         BindException errors = new BindException(person, "person");

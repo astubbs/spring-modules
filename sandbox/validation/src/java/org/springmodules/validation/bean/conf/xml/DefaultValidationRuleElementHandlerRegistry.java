@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.validation.bean.conf.xml.handler.DateInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.DateInPastRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.EmailRuleElementHandler;
@@ -31,15 +33,35 @@ import org.springmodules.validation.bean.conf.xml.handler.RangeRuleElementHandle
 import org.springmodules.validation.bean.conf.xml.handler.RegExpRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.SizeRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.ValangRuleElementHandler;
+import org.springmodules.validation.util.BasicContextAware;
+import org.springmodules.validation.util.bel.BeanExpressionResolver;
+import org.springmodules.validation.util.bel.BeanExpressionResolverAware;
+import org.springmodules.validation.util.condition.parser.ConditionParser;
+import org.springmodules.validation.util.condition.parser.ConditionParserAware;
 import org.w3c.dom.Element;
 
 /**
  * A default implementation of {@link ValidationRuleElementHandlerRegistry}. The order in which the the handlers are
  * registered with this registry is meaningful. The last to register will be the first to be checked for support.<br/>
+ * This registry is pre-configured with the following handlers:
+ * <ol>
+ *  <li>{@link NotNullRuleElementHandler}</li>
+ *  <li>{@link LengthRuleElementHandler}</li>
+ *  <li>{@link NotBlankRuleElementHandler}</li>
+ *  <li>{@link EmailRuleElementHandler}</li>
+ *  <li>{@link RegExpRuleElementHandler}</li>
+ *  <li>{@link SizeRuleElementHandler}</li>
+ *  <li>{@link NotEmptyRuleElementHandler}</li>
+ *  <li>{@link RangeRuleElementHandler}</li>
+ *  <li>{@link ValangRuleElementHandler}</li>
+ *  <li>{@link DateInPastRuleElementHandler}</li>
+ *  <li>{@link DateInFutureRuleElementHandler}</li>
+ * </ol>
  *
  * @author Uri Boness
  */
-public class DefaultValidationRuleElementHandlerRegistry implements ValidationRuleElementHandlerRegistry {
+public class DefaultValidationRuleElementHandlerRegistry extends BasicContextAware
+    implements ValidationRuleElementHandlerRegistry, BeanExpressionResolverAware, ConditionParserAware, InitializingBean {
 
     private final static ValidationRuleElementHandler[] DEFAULT_HANDLER;
 
@@ -60,23 +82,13 @@ public class DefaultValidationRuleElementHandlerRegistry implements ValidationRu
     }
 
     private List handlers;
+    private BeanExpressionResolver expressionResolver;
+    private ConditionParser conditionParser;
 
     /**
      * Constructs a new DefaultValidationRuleElementHandlerRegistry with the following default handlers (in that order):
      *
-     * <ol>
-     *  <li>{@link NotNullRuleElementHandler}</li>
-     *  <li>{@link LengthRuleElementHandler}</li>
-     *  <li>{@link NotBlankRuleElementHandler}</li>
-     *  <li>{@link EmailRuleElementHandler}</li>
-     *  <li>{@link RegExpRuleElementHandler}</li>
-     *  <li>{@link SizeRuleElementHandler}</li>
-     *  <li>{@link NotEmptyRuleElementHandler}</li>
-     *  <li>{@link RangeRuleElementHandler}</li>
-     *  <li>{@link ValangRuleElementHandler}</li>
-     *  <li>{@link DateInPastRuleElementHandler}</li>
-     *  <li>{@link DateInFutureRuleElementHandler}</li>
-     * </ol>
+     *
      */
     public DefaultValidationRuleElementHandlerRegistry() {
         this(DEFAULT_HANDLER);
@@ -115,6 +127,18 @@ public class DefaultValidationRuleElementHandlerRegistry implements ValidationRu
         return null;
     }
 
+    public void afterPropertiesSet() throws Exception {
+        for (Iterator iter = handlers.iterator(); iter.hasNext();) {
+            ValidationRuleElementHandler handler = (ValidationRuleElementHandler)iter.next();
+            if (ConditionParserAware.class.isInstance(handler) && conditionParser != null) {
+                ((ConditionParserAware)handler).setConditionParser(conditionParser);
+            }
+            if (BeanExpressionResolverAware.class.isInstance(handler) && expressionResolver != null) {
+                ((BeanExpressionResolverAware)handler).setBeanExpressionResolver(expressionResolver);
+            }
+            initLifecycle(handler);
+        }
+    }
 
     //=============================================== Setter/Getter ====================================================
 
@@ -124,6 +148,7 @@ public class DefaultValidationRuleElementHandlerRegistry implements ValidationRu
      * @param handlers The handlers to register with this registry.
      */
     public void setExtraHandlers(ValidationRuleElementHandler[] handlers) {
+        ArrayUtils.reverse(handlers);
         for (int i=0; i<handlers.length; i++) {
             registerHandler(handlers[i]);
         }
@@ -136,6 +161,42 @@ public class DefaultValidationRuleElementHandlerRegistry implements ValidationRu
      */
     public ValidationRuleElementHandler[] getHandlers() {
         return (ValidationRuleElementHandler[])handlers.toArray(new ValidationRuleElementHandler[handlers.size()]);
+    }
+
+    /**
+     * Sets the {@link org.springmodules.validation.util.bel.BeanExpressionResolver} to be used.
+     *
+     * @param resolver The bean expression resolver to be used.
+     */
+    public void setBeanExpressionResolver(BeanExpressionResolver resolver) {
+        this.expressionResolver = resolver;
+    }
+
+    /**
+     * Returns the used {@link org.springmodules.validation.util.bel.BeanExpressionResolver}.
+     *
+     * @return The used bean expression resolver.
+     */
+    public BeanExpressionResolver getBeanExpressionResolver() {
+        return expressionResolver;
+    }
+
+    /**
+     * Returns the used {@link org.springmodules.validation.util.condition.parser.ConditionParser}.
+     *
+     * @return The used condition parser.
+     */
+    public ConditionParser getConditionParser() {
+        return conditionParser;
+    }
+
+    /**
+     * Sets the {@link org.springmodules.validation.util.condition.parser.ConditionParser} to be used.
+     *
+     * @param conditionParser The condition parser to be used.
+     */
+    public void setConditionParser(ConditionParser conditionParser) {
+        this.conditionParser = conditionParser;
     }
 
 }
