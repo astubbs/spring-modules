@@ -3,18 +3,17 @@
   <title>JavaSpaces</title>
 
   <sect1>
-     
+      <title>Introduction</title>
 
-    <title>Introduction</title>
-
-     JavaSpaces module offers Spring-style services, like transaction management, template, callback and interceptor as well as remoting services to JavaSpaces environments. 
+     JavaSpaces module offers Spring-style services, like transaction management, 
+     template, callback and interceptor as well as remoting services to JavaSpaces based environments. 
   </sect1>
 
   <sect1>
     <title>JavaSpaces configuration</title>
 
     <para>One challenge when dealing with Jini-based environments(like
-    JavaSpaces) is retrieving the approapriate services. JavaSpaces module
+    JavaSpaces) is retrieving the appropriate services. JavaSpaces module
     addresses this problem by providing generic as well as customized classes
     to work with various JavaSpaces implementations as well as Jini services
     in a simple and concise manner.</para>
@@ -22,7 +21,7 @@
     <sect2>
       <title>Using specialized classes</title>
 
-      <para>JavaSpaces modules offers configuration support of the box
+      <para>JavaSpaces modules offers configuration support out of the box
       for:</para>
 
       <sect3>
@@ -48,12 +47,15 @@
       <sect3>
         <title>GigaSpaces</title>
 
-        <para><ulink url="http://www.gigaspaces.com/">Gigaspaces</ulink> is a
-        commercial JavaSpaces implementation. See the dedicated documentation
-        for more support informatoin:</para>
+        <para><ulink url="http://www.gigaspaces.com/">GigaSpaces</ulink> is a commercial JavaSpaces 
+        implementation that provides a free Community Edition. 
+        See the dedicated documentation for more support information and 
+        the online Wiki documentation which is available at 
+		<ulink url="http://gigaspaces.com/wiki/display/GS/Spring">http://gigaspaces.com/wiki/display/GS/Spring</ulink>
+        </para>
 
         <programlisting>&lt;beans&gt;
- &lt;!-- GigaSpace localSpace --&gt;
+ &lt;!-- GigaSpaces localSpace --&gt;
  &lt;bean id="gigaSpaceLocalSpace" 
     class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean"&gt;
   &lt;property name="urls"&gt;
@@ -94,7 +96,7 @@
     native JavaSpace API in a consistent manner, handling any exceptions that
     might occur and taking care of the ongoing transaction (if any) as well as
     converting the exceptions into Spring DAO and Remote exception hierarchy.
-    The template can be constructed either programatically or declaratively
+    The template can be constructed either programmatically or declaratively
     (through Spring's xml) and requires a JavaSpace implementation
     instance:</para>
 
@@ -136,7 +138,7 @@
     <para>One important feature of JavaSpaces module is the
     <emphasis>JiniTransactionManager</emphasis> which integrates Jini
     transaction API with Spring transaction infrastructure. This allows users
-    for example to use declaratively or programatically use Jini transactions
+    for example to use declaratively or programmatically use Jini transactions
     in the same manner as with JDBC-based transactions - without any code
     change or API coupling; changing the transaction infrastructure is as easy
     as changing some configuration lines (see Spring <ulink
@@ -183,7 +185,7 @@
     <para>To some extent, the <emphasis>JiniTransactionManager</emphasis> is
     similar to Spring's <ulink
     url="http://static.springframework.org/spring/docs/2.0.x/api/org/springframework/transaction/jta/JtaTransactionManager.html">JtaTransactionManager</ulink>,
-    provinding integration with a custom transactional API.</para>
+    providing integration with a custom transactional API.</para>
 
     <para>Note that <emphasis>JiniTransactionManager</emphasis> is not
     JavaSpace specific - it can be used on any Jini resource.</para>
@@ -233,7 +235,7 @@
  &lt;/bean&gt;
 
  &lt;!--
-  Server side. We start these guys as threads.
+  Server side. We start these as threads.
   Note the singleton=false setting. This means that each one of these we obtain from
   Spring will be a distinct instance.
  --&gt;
@@ -269,11 +271,30 @@
         <emphasis>DelegatingWorker</emphasis> which watches the JavaSpace and
         will pick any method calls which it can compute. The call entries are
         transformed into method invocations which are delegated to the
-        approapriate implementation - in our case
+        appropriate implementation - in our case
         <emphasis>testBean</emphasis>.</para>
 
         <para></para>
       </listitem>
     </itemizedlist>
   </sect1>
+  
+  <sect1>
+	    <title>GigaSpaces Spring Integration</title>
+	<sect2>
+		<title>Simplifying Business Logic Abstraction</title>
+		<para>The GigaSpaces Spring integration plays a major part in GigaSpaces Write Once Scale Anywhere roadmap. 
+			It allows you to write your POJO once using Spring and scale it anywhere using GigaSpaces middleware. 
+			Spring provides a framework for implementing the application business logic, 
+			while GigaSpaces implements the middleware and service framework for executing this business logic efficiently, 
+			in a scalable fashion.</para>
+	</sect2>	
+	
+	<sect2>
+		<title>Online Wiki Documentation</title>
+		<para>Please refer to the online Wiki documentation which is available at 
+			    <ulink url="http://gigaspaces.com/wiki/display/GS/Spring">http://gigaspaces.com/wiki/display/GS/Spring</ulink>
+	    </para>
+	</sect2>
+ </sect1>
 </chapter>
