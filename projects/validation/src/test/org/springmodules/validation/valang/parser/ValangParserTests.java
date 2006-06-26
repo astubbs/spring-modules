@@ -490,4 +490,15 @@ public class ValangParserTests extends TestCase {
         String text = "{map : map[firstName] EQUALS 'Steven' : 'name should be equal'}";
         assertTrue(validate(new Person(10, "Uri"), text));
     }
+
+    public void testParser57MapAccessWithRadomTextAsKey() {
+        String text = "{map : map[Test Key] EQUALS 'Value' : ''}";
+        assertTrue(validate(new Person(10, "Uri"), text));
+    }
+
+    public void testParser58MapAccessWithRadomTextAsKey() {
+        String text = "{map[Test Key] : ? is not null : ''}\n"
+                    + "{map[Test Key] : ? EQUALS 'Value' : ''}";
+        assertTrue(validate(new Person(10, "Uri"), text));
+    }
 }

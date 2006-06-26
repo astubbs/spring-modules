@@ -1,7 +1,7 @@
 /*
  * Copyright 13/09/2005 (C) Our Community Pty. Ltd. All Rights Reserved.
  *
- * $Id: Person.java,v 1.3 2006/06/21 19:50:33 hueboness Exp $
+ * $Id: Person.java,v 1.4 2006/06/26 00:59:17 hueboness Exp $
  */
 package org.springmodules.validation.valang.parser;
 
@@ -93,6 +93,7 @@ public class Person {
         Map map = new HashMap();
         map.put("firstName", "Steven"); 
         map.put("sizes", getSizes());
+        map.put("Test Key", "Value");
         return map;
     }
 
