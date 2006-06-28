@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<validation xmlns="http://www.springmodules.org/validation/bean"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
+
+    <class name="org.springmodules.validation.bean.conf.namespace.Person">
+        <global>
+            <valang expression="password == confirmPassword" code="passwords.do.not.match"/>
+        </global>
+        <property name="firstName">
+            <not-null/>
+            <valang expression="tupper(?) == 'URI'"/>
+            <not-blank/>
+        </property>
+        <property name="lastName">
+            <not-null/>
+            <not-blank/>
+        </property>
+        <property name="age">
+            <range min="0" code="min"/>
+        </property>
+        <property name="email">
+            <email/>
+        </property>
+        <property name="password">
+            <length min="3"/>
+        </property>
+    </class>
+
+</validation>

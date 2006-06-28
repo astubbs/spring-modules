@@ -6,51 +6,41 @@
 
     <!-- Basic Structure Element Definitions -->
 
-    <xs:element name="validator" type="bean:validatorType"/>
+    <xs:element name="validation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="bean:class" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="package" use="optional"/>
+        </xs:complexType>
+    </xs:element>
 
-    <xs:element name="validation" type="bean:validationType"/>
+    <xs:element name="class">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="bean:global" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="bean:property" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="name" use="required" type="xs:string"/>
+            <xs:anyAttribute namespace="##any" processContents="skip"/>
+        </xs:complexType>
+    </xs:element>
 
-    <xs:element name="class" type="bean:classType"/>
+    <xs:element name="global">
+        <xs:complexType>
+            <xs:group ref="bean:rules"/>
+        </xs:complexType>
+    </xs:element>
 
-    <xs:element name="global" type="bean:globalType"/>
+    <xs:element name="property">
+        <xs:complexType>
+            <xs:group ref="bean:rules"/>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="valid" use="optional" type="bean:true-false-type"/>
+        </xs:complexType>
+    </xs:element>
 
-    <xs:element name="property" type="bean:propertyType"/>
-
-
-    <!-- Types -->
-
-    <xs:complexType name="validatorType">
-        <xs:attribute name="id" use="required" type="xs:string"/>
-        <xs:attribute name="errorCodeConverter" use="optional" type="xs:string"/>
-    </xs:complexType>
-
-    <xs:complexType name="validationType">
-        <xs:sequence>
-            <xs:element ref="bean:class" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-        <xs:attribute name="package" use="optional"/>
-    </xs:complexType>
-
-    <xs:complexType name="classType">
-        <xs:sequence>
-            <xs:element ref="bean:global" minOccurs="0" maxOccurs="1"/>
-            <xs:element ref="bean:property" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-        <xs:attribute name="name" use="required" type="xs:string"/>
-        <xs:anyAttribute namespace="##any" processContents="skip"/>
-    </xs:complexType>
-
-    <xs:complexType name="globalType">
-        <xs:group ref="bean:rules"/>
-    </xs:complexType>
-
-    <xs:complexType name="propertyType">
-        <xs:group ref="bean:rules"/>
-        <xs:attribute name="name" use="required"/>
-        <xs:attribute name="valid" use="optional" type="bean:trueFalseType"/>
-    </xs:complexType>
-
-    <xs:simpleType name="trueFalseType">
+    <xs:simpleType name="true-false-type">
         <xs:restriction base="xs:string">
             <xs:enumeration value="true"/>
             <xs:enumeration value="false"/>
@@ -78,7 +68,7 @@
     
     <!-- Validation Rule Elements -->
 
-    <xs:attributeGroup name="ruleCommonAttributes">
+    <xs:attributeGroup name="common-rule-attributes">
         <xs:attribute name="code" type="xs:string" use="optional"/>
         <xs:attribute name="message" type="xs:string" use="optional"/>
         <xs:attribute name="args" type="xs:string" use="optional"/>
@@ -87,39 +77,39 @@
 
     <xs:element name="valang">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
             <xs:attribute name="expression" use="required"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="ognl">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
             <xs:attribute name="expression" use="required"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="in-future">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="in-past">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="email">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="length">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
             <xs:attribute name="min" use="optional" type="xs:integer"/>
             <xs:attribute name="max" use="optional" type="xs:integer"/>
         </xs:complexType>
@@ -127,25 +117,25 @@
 
     <xs:element name="not-blank">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="not-empty">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="not-null">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="range">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
             <xs:attribute name="min" use="optional" type="xs:integer"/>
             <xs:attribute name="max" use="optional" type="xs:integer"/>
         </xs:complexType>
@@ -153,14 +143,14 @@
 
     <xs:element name="regexp">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
             <xs:attribute name="expression" use="required" type="xs:string"/>
         </xs:complexType>
     </xs:element>
 
     <xs:element name="size">
         <xs:complexType>
-            <xs:attributeGroup ref="bean:ruleCommonAttributes"/>
+            <xs:attributeGroup ref="bean:common-rule-attributes"/>
             <xs:attribute name="min" use="optional" type="xs:integer"/>
             <xs:attribute name="max" use="optional" type="xs:integer"/>
         </xs:complexType>

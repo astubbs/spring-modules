@@ -98,6 +98,13 @@ public class ValangRuleElementHandler extends AbstractValidationRuleElementHandl
     }
 
     /**
+     * @see ValangBased#addCustomFunction(String, String)
+     */
+    public void addCustomFunction(String functionName, String functionClassName) {
+        valangBased.addCustomFunction(functionName,  functionClassName);
+    }
+
+    /**
      * @see ValangBased#setDateParsers(java.util.Map)
      */
     public void setDateParsers(Map parserByRegexp) {

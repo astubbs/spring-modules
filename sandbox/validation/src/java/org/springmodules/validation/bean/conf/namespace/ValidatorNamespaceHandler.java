@@ -30,14 +30,13 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
  *
  * @author Uri Boness
  */
-public class BeanValidationNamespaceHandler extends NamespaceHandlerSupport {
+public class ValidatorNamespaceHandler extends NamespaceHandlerSupport {
 
     /**
      * @see org.springframework.beans.factory.xml.NamespaceHandlerSupport#init()
      */
     public void init() {
-        registerBeanDefinitionParser("class", new ClassValidationConfigurationBeanDefinitionParser());
-        registerBeanDefinitionParser("validator", new ValidatorBeanDefinitionParser());
+        registerBeanDefinitionParser("xml-based-validator", new XmlBasedValidatorBeanDefinitionParser());
     }
 
 }

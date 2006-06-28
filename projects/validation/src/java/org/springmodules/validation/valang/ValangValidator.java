@@ -158,6 +158,16 @@ public class ValangValidator extends BasicContextAware implements ValangBased, V
         this.customFunctions = customFunctions;
     }
 
+    /**
+     * Adds the a new custom function to be used in the valang el.
+     *
+     * @param functionName  The name of the function.
+     * @param functionClassName The class name of the function.
+     */
+    public void addCustomFunction(String functionName, String functionClassName) {
+        customFunctions.put(functionName, functionClassName);
+    }
+
     private Map getCustomFunctions() {
         return this.customFunctions;
     }

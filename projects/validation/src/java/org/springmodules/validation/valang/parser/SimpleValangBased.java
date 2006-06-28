@@ -44,6 +44,13 @@ public class SimpleValangBased extends BasicContextAware implements ValangBased 
     }
 
     /**
+     * @see ValangBased#addCustomFunction(String, String)
+     */
+    public void addCustomFunction(String functionName, String functionClassName) {
+        customFunctions.put(functionName, functionClassName);
+    }
+
+    /**
      * @see ValangBased#setDateParsers(java.util.Map)
      */
     public void setDateParsers(Map parserByRegexp) {

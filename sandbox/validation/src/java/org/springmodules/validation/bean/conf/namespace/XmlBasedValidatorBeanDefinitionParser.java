@@ -1,0 +1,161 @@
+/*
+ * Copyright 2004-2005 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.springmodules.validation.bean.conf.namespace;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.StringUtils;
+import org.springmodules.validation.bean.BeanValidator;
+import org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry;
+import org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.xml.XmlConfigurationException;
+import org.springmodules.validation.bean.conf.xml.handler.ValangRuleElementHandler;
+import org.springmodules.validation.util.io.FileIterator;
+import org.springmodules.validation.util.xml.ChildElementsIterator;
+import org.springmodules.validation.util.xml.DomUtils;
+import org.w3c.dom.Element;
+
+/**
+ *
+ * @author Uri Boness
+ */
+public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitionParser implements ValidationBeansParserConstants {
+
+    private final static String ERROR_CODE_CONVERTER_ATTR = "errorConverter";
+    private final static String CLASS_ATTR = "class";
+    private final static String NAME_ATTR = "name";
+    private final static String PATTERN_ATTR = "pattern";
+    private final static String DIR_ATTR = "dir";
+    private final static String LOCATION_ATTR = "location";
+
+    private final static String RESOURCE_ELEMENT = "resource";
+    private final static String RESOURCE_DIR_ELEMENT = "resource-dir";
+    private final static String FUNCTIONS_ELEMENT = "valang-functions";
+    private final static String FUNCTION_ELEMENT = "function";
+
+    private static final String HANDLER_REGISTRY_SUFFIX = "__handler_registry__";
+
+    private static final String CONFIGURATION_LOADER_SUFFIX = "__configuration_loader__";
+
+    protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
+
+        String validatorId = extractId(element);
+
+        String registryId = validatorId + HANDLER_REGISTRY_SUFFIX;
+        BeanDefinitionBuilder registryBuilder = BeanDefinitionBuilder.rootBeanDefinition(DefaultValidationRuleElementHandlerRegistry.class);
+        parseFunctionsElements(element, registryBuilder);
+        parserContext.getRegistry().registerBeanDefinition(registryId, registryBuilder.getBeanDefinition());
+
+        String loaderId = validatorId + CONFIGURATION_LOADER_SUFFIX;
+        BeanDefinitionBuilder loaderBuilder = BeanDefinitionBuilder.rootBeanDefinition(DefaultXmlBeanValidationConfigurationLoader.class);
+        parseResourcesElements(element, loaderBuilder);
+        loaderBuilder.addPropertyReference("elementHandlerRegistry", registryId);
+        parserContext.getRegistry().registerBeanDefinition(loaderId, loaderBuilder.getBeanDefinition());
+
+        BeanDefinitionBuilder validatorBuilder = BeanDefinitionBuilder.rootBeanDefinition(BeanValidator.class);
+        if (element.hasAttribute(ERROR_CODE_CONVERTER_ATTR)) {
+            validatorBuilder.addPropertyReference("errorCodeConverter", element.getAttribute(ERROR_CODE_CONVERTER_ATTR));
+        }
+        validatorBuilder.addPropertyReference("configurationLoader", loaderId);
+
+        return validatorBuilder.getBeanDefinition();
+    }
+
+    /**
+     * Returns the {@link org.springmodules.validation.bean.BeanValidator} class.
+     *
+     * @see org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser#doParse(org.w3c.dom.Element, org.springframework.beans.factory.support.BeanDefinitionBuilder)
+     */
+    protected Class getBeanClass(Element element) {
+        return BeanValidator.class;
+    }
+
+    //=============================================== Helper Methods ===================================================
+
+    protected void parseResourcesElements(Element element, BeanDefinitionBuilder loaderBuilder) {
+        List resources = new ArrayList();
+        for (Iterator subElements = new ChildElementsIterator(element); subElements.hasNext();) {
+            Element subElement = (Element)subElements.next();
+            if (subElement.getLocalName().equals(RESOURCE_ELEMENT)) {
+                resources.add(createResource(subElement));
+            }
+            else if(subElement.getLocalName().equals(RESOURCE_DIR_ELEMENT)) {
+                resources.addAll(createResources(subElement));
+            }
+        }
+        loaderBuilder.addPropertyValue("resources", resources.toArray(new Resource[resources.size()]));
+    }
+
+    protected Resource createResource(Element resourceDefinition) {
+        String path = resourceDefinition.getAttribute(LOCATION_ATTR);
+        if (!StringUtils.hasText(path)) {
+            throw new XmlConfigurationException("Resoruce path is required and cannot be empty");
+        }
+        return new DefaultResourceLoader().getResource(path);
+    }
+
+    protected List createResources(Element resourcesDefinition) {
+        String dirName = resourcesDefinition.getAttribute(DIR_ATTR);
+        final String pattern = resourcesDefinition.getAttribute(PATTERN_ATTR);
+        final AntPathMatcher matcher = new AntPathMatcher();
+        FileFilter filter = new FileFilter() {
+            public boolean accept(File file) {
+                return matcher.match(pattern, file.getName());
+            }
+        };
+        List resources = new ArrayList();
+        for (Iterator files = new FileIterator(dirName, filter); files.hasNext();) {
+            File file = (File)files.next();
+            resources.add(new FileSystemResource(file));
+        }
+        return resources;
+    }
+
+    protected void parseFunctionsElements(Element element, BeanDefinitionBuilder registryBuilder) {
+        Element functionsElement = DomUtils.getSingleSubElement(element, VALIDATION_BEANS_NAMESPACE, FUNCTIONS_ELEMENT);
+        if (functionsElement == null) {
+            return;
+        }
+
+        ValangRuleElementHandler valangHanlder = new ValangRuleElementHandler();
+        Iterator functionElements = new ChildElementsIterator(functionsElement, VALIDATION_BEANS_NAMESPACE, FUNCTION_ELEMENT);
+        while(functionElements.hasNext()) {
+            Element functionElement = (Element)functionElements.next();
+            String functionName = functionElement.getAttribute(NAME_ATTR);
+            String className = functionElement.getAttribute(CLASS_ATTR);
+            valangHanlder.addCustomFunction(functionName, className);
+        }
+
+        List extraHandlers = new ArrayList();
+        extraHandlers.add(valangHanlder);
+
+        registryBuilder.addPropertyValue("extraHandlers", extraHandlers);
+    }
+
+}

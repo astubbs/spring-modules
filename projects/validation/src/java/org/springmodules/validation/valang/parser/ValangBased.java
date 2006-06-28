@@ -28,6 +28,14 @@ import org.springmodules.validation.util.ContextAware;
 public interface ValangBased extends ContextAware {
 
     /**
+     * Adds the a new custom function to be used in the valang el.
+     *
+     * @param functionName The name of the function.
+     * @param functionClassName The fully qualified class name of the function.
+     */
+    void addCustomFunction(String functionName, String functionClassName);
+
+    /**
      * Sets custom functions that should be registered with the used {@link ValangParser}.
      *
      * @param functionByName the custom functions where the key is the function name and the value is the function

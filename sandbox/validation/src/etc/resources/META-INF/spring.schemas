@@ -1,1 +1,2 @@
 http\://www.springmodules.org/validation/bean/validation.xsd=org/springmodules/validation/bean/conf/xml/validation.xsd
+http\://www.springmodules.org/validation/bean/validator.xsd=org/springmodules/validation/bean/conf/namespace/validator.xsd

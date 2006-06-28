@@ -1,33 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <spring:beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns="http://www.springmodules.org/validation/bean"
+    xmlns="http://www.springmodules.org/validation/bean/validator"
     xmlns:spring="http://www.springframework.org/schema/beans"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                        http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
+                        http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator.xsd">
 
-    <validator id="validator"/>
-
-    <class name="org.springmodules.validation.bean.conf.namespace.Person">
-        <global>
-            <valang expression="password == confirmPassword" code="passwords.do.not.match"/>
-        </global>
-        <property name="firstName">
-            <not-null/>
-            <not-blank/>
-        </property>
-        <property name="lastName">
-            <not-null/>
-            <not-blank/>
-        </property>
-        <property name="age">
-            <range min="0" code="min"/>
-        </property>
-        <property name="email">
-            <email/>
-        </property>
-        <property name="password">
-            <length min="3"/>
-        </property>
-    </class>
+    <xml-based-validator id="validator">
+        <valang-functions>
+            <function name="tupper" class="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
+        </valang-functions>
+        <resource location="classpath:org/springmodules/validation/bean/conf/namespace/Person.vld.xml"/>
+    </xml-based-validator>
 
 </spring:beans>
