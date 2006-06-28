@@ -9,7 +9,7 @@
        <property name="serverProperties">
             <props>
                 <prop key="server.port">9101</prop>
-                <prop key="server.database.0">sandbox/test/org/springmodules/datamap/db/test</prop>
+                <prop key="server.database.0">org/springmodules/datamap/db/test</prop>
                 <prop key="server.dbname.0">test</prop>
              </props>
         </property>

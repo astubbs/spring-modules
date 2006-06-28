@@ -21,7 +21,10 @@
     
     <dependency org="apache" name="commons-logging" rev="1.0.4" />
     <dependency org="apache" name="log4j" rev="1.2.13" />    
-    <dependency org="springframework" name="springframework" rev="1.2.7"/>
+    <dependency org="springframework" name="springframework" rev="1.2.7">
+		<artifact name="spring" type="jar"/>
+		<artifact name="spring-mock" type="jar"/>
+    </dependency>
     <dependency org="hibernate" name="hibernate" rev="">
 		<artifact name="hibernate-2.1.8" type="jar"/>
 		<artifact name="hibernate-3.0.5" type="jar"/>
@@ -29,7 +32,7 @@
     
     <dependency org="orbroker" name="orbroker"  rev="2.0.2-debug"/>
     <dependency org="springmodules" name="springmodules-sandbox-db" rev="latest.integration" conf="test ->*"/>
-    <dependency org="springmodules" name="springmodules-sandbox-valang" rev="latest.integration" conf="test ->*"/>
+    <dependency org="springmodules" name="springmodules-validation" rev="latest.integration" conf="test ->*"/>
     
     <dependency org="apache" name="geronimo-spec" rev="rc4" conf="test->*" >
 		<artifact name="geronimo-spec-jta-1.0.1B" type="jar"/>
