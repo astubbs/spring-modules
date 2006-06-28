@@ -141,7 +141,7 @@ CREATE TABLE T_USERS (
 		<property name="validators">
 			<map>
 				<entry key="org.springmodules.orm.support.domain.User,onSave,onFlushDirty">
-					<bean class="org.springmodules.validation.ValangValidatorFactoryBean">
+					<bean class="org.springmodules.validation.valang.ValangValidator">
 						<property name="valang">
 							<value><![CDATA[
 { username : length(?) between 4 and 8 : 'Username should be minimum 4 characters long, maximum 8 characters.' }
@@ -159,7 +159,7 @@ CREATE TABLE T_USERS (
 		<property name="validators">
 			<map>
 				<entry key="org.springmodules.orm.support.domain.User,onDelete">
-					<bean class="org.springmodules.validation.ValangValidatorFactoryBean">
+					<bean class="org.springmodules.validation.valang.ValangValidator">
 						<property name="valang">
 							<value><![CDATA[
 { admin : admin = false : 'Administrators cannot be removed.' }
