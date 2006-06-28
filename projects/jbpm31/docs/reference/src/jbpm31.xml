@@ -129,11 +129,11 @@
 
       <para><programlisting>public ProcessInstance findProcessInstance(final Long processInstanceId) {
   return (ProcessInstance) execute(new JbpmCallback() {
-   public Object doInJbpm(JbpmContext context) {
-    // do something
-    ...
-    return context.getGraphSession().loadProcessInstance(processInstanceId.longValue());
-   }
+     public Object doInJbpm(JbpmContext context) {
+      // do something
+      ...
+      return context.getGraphSession().loadProcessInstance(processInstanceId.longValue());
+     }
   });
 }</programlisting>As well, as
       <emphasis>LocalJbpmConfigurationFactoryBean</emphasis>, the
@@ -154,6 +154,20 @@
       <ulink
       url="http://static.springframework.org/spring/docs/2.0.x/reference/resources.html">documentation</ulink>
       for more information.</para>
+
+      <note>
+        <para>As <ulink
+        url="http://forum.springframework.org/showpost.php?p=64025&amp;postcount=26">reported</ulink>
+        on the <ulink
+        url="http://forum.springframework.org/forumdisplay.php?f=37">forums</ulink>,
+        using ProcessDefinitionFactoryBean jBPM 3.1.1will trigger a new
+        process definition to be persisted(through
+        <literal>deployProcessDefinition</literal>) at each startup. While
+        this is useful in development when the database is created on
+        application startup and destroyed on closing, for cases where the
+        definition doesn't change, the process should not be declared inside
+        Spring XML files.</para>
+      </note>
     </sect2>
 
     <sect2>

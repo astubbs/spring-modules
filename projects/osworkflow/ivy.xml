@@ -19,9 +19,9 @@
     <dependencies defaultconf="global->default">
     
 	  <!-- global dependencies -->
-	  <dependency org="apache" name="commons-logging" rev="1.0.4"/>
+	  <dependency org="apache" name="commons-logging" rev="1.1"/>
 
-	  <dependency org="springframework" name="springframework" rev="1.2.7">
+	  <dependency org="springframework" name="springframework" rev="1.2.8">
        <artifact name="spring-beans" type="jar" conf="global" />
        <artifact name="spring-context" type="jar" conf="global" />
        <artifact name="spring-core" type="jar" conf="global" />
@@ -32,7 +32,7 @@
        <artifact name="spring-mock" type="jar" conf="global" />		  
       </dependency>
 		
-	  <dependency org="acegisecurity" name="acegi-security" rev="0.8.3"/>
+	  <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.1"/>
 		
 	  <dependency org="sun" name="javax.servlet" rev="2.3">
 		  <artifact name="servlet-api" type="jar"/>

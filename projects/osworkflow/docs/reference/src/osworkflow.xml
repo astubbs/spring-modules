@@ -1,6 +1,242 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="osworkflow">
-	<title>OSWorkflow</title>
+  <title>OSWorkflow</title>
 
-	<para>TODO</para>
+  <sect1>
+    <title>Introduction</title>
+
+    <para>OSWorkflow module offers <ulink
+    url="http://www.springframework.org">Spring-style</ulink> support for
+    <ulink url="http://www.opensymphony.com/osworkflow/">OSWorkflow</ulink>
+    allowing easy configuration and interaction with its API. For OSWorkflow
+    version 2.8 and upwards, beans maintained by Spring contained can be
+    accessed by OSWorkflow definition as conditions, functions, etc...</para>
+  </sect1>
+
+  <sect1>
+    <title>Configuration</title>
+
+    <para>OSWorkflow module offers ConfigurationBean for configuring
+    OSWorkflow resources:</para>
+
+    <programlisting>&lt;bean id="configuration" class="org.springmodules.workflow.osworkflow.configuration.ConfigurationBean"&gt;
+  &lt;property name="workflowLocations"&gt;
+   &lt;props&gt;
+    &lt;prop key="documentApproval"&gt;
+      classpath:/org/springmodules/examples/workflow/osworkflow/service/documentApproval.xml&lt;/prop&gt;
+   &lt;/props&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+    <para><literal>ConfigurationBean</literal> is not a
+    <literal>FactoryBean</literal> as OSWorkflow already manages the creation
+    of workflow instances. The bean extends OSWorkflow's
+    <literal>DefaultConfiguration</literal> and allows workflows to be loaded
+    using Spring's <ulink
+    url="http://static.springframework.org/spring/docs/2.0.x/reference/resources.html#d0e4913">ResourceLoader</ulink>s
+    and the underlying persistence store to be either injected or configured
+    and managed by OSWorkflow. Note that by default,
+    <literal>ConfigurationBean</literal> uses a memory based storage
+    (<literal>MemoryWorkflowStore</literal>).</para>
+  </sect1>
+
+  <sect1>
+    <title>Inversion of Control: OsWorkflowTemplate and
+    OsWorkflowCallback</title>
+
+    <para>One of the core classes of OSWorkflow module is
+    <literal>OsWorkflowTemplate</literal> which greatly simplifies interaction
+    with the OSWorkflow API by hiding the management of context parameters
+    such as the caller and workflow ID besides offering the usual advantages
+    of Spring's template pattern such as exception translation (from
+    OSWorkflow checked exception into unchecked ones). The template mirrors
+    most of the OSWorkflow API methods; however for lengthy interactions or
+    cases where the native Workflow is required,
+    <literal>OsWorkflowCallback</literal> should be used.</para>
+
+    <para>It is important to note, that OsWorkflowTemplate manages all
+    instances of a single workflow within an application - that is there
+    should be one template per workflow definition. This results in simple
+    method calls as the workflow name or id are not required - they will be
+    automatically passed in by the template. Consider the following
+    example:</para>
+
+    <programlisting>&lt;bean id="workflowTemplate" class="org.springmodules.workflow.osworkflow.OsWorkflowTemplate"&gt;
+  &lt;property name="configuration" ref="configuration"/&gt;
+  &lt;property name="workflowName" value="documentApproval"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="someWorkflowClass" class="some.example.SomeWorkflowFacade"&gt;
+  &lt;property name="workflowTemplate"/&gt;
+&lt;/bean&gt;</programlisting>
+
+    <programlisting>public class SomeWorkflowFacade
+{
+  private OsWorkflowTemplate template;
+
+  public void setTemplate(OsWorkflowTemplate template) {
+    this.template = template;
+  }
+  ...
+  
+  public void executeSomeAction(int actionNumber) {
+    template.doAction(actionNumber);
+  }
+
+  public void addSomeInput(Object input) {
+    template.doAction(INPUT_ACTION, "some_input", input);
+  }
+
+  public void accessNativeWorkflowObject() {
+     template.execute(new OsWorkflowCallback()
+     {
+        public Object doWithWorkflow(Workflow workflow) throws WorkflowException {
+            // call the OSWorkflow API directly
+            workflow.changeEntryState(someInstanceId, someState);
+        }
+     });
+  }
+}</programlisting>
+
+    <para>In this case, the facade uses the injected template to execute
+    several actions on the workflow - note that workflow id or caller are
+    never specified as the template determines them internally. The template
+    is thread safe; the same template instance can be used with different
+    instances of the same workflow.</para>
+  </sect1>
+
+  <sect1>
+    <title>Working with workflow instances</title>
+
+    <para>As mentioned previously, the template transparently handles the
+    workflow instance ID and caller on which the methods are executed. Both ID
+    and caller values can be retrieved and set using
+    <literal>OsWorkflowContextHolder</literal> and
+    <literal>WorkflowContext</literal>. OSWorkflow module offers two
+    convenient classes when working with Spring MVC:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><literal>AbstractWorkflowContextHandlerInterceptor</literal> -
+        abstract base class which can set the workflow id from HTTP parameters
+        and store it on the <literal>HttpSession</literal></para>
+      </listitem>
+
+      <listitem>
+        <para><literal>DefaultWorkflowContextHandlerInterceptor</literal> -
+        default implementation which retrieves the workflow caller from
+        <literal>HttpRequest</literal></para>
+      </listitem>
+
+      <listitem>
+        <para><literal>AcegiWorkflowContextHandlerInterceptor</literal> -
+        <ulink url="http://www.acegisecurity.org/">Acegi</ulink> specific
+        implementation - the workflow caller will be retrieved from <ulink
+        url="http://www.acegisecurity.org/">Acegi</ulink>.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Spring Modules CVS contains an osworkflow sample which shows the
+    Spring MVC Handler in action along with the rest of the OSWorkflow
+    module.</para>
+  </sect1>
+
+  <sect1>
+    <title>Acegi integration</title>
+
+    <para>Besides the already mentioned Acegi web handler , OSWorkflow module
+    also offers out of the box an Acegi aware OSWorkflow condition that can be
+    used inside workflow definition:</para>
+
+    <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE workflow PUBLIC
+ "-//OpenSymphony Group//DTD OSWorkflow 2.7//EN"
+ "http://www.opensymphony.com/osworkflow/workflow_2_7.dtd"&gt;
+&lt;workflow&gt;
+ ...
+ &lt;steps&gt;
+  &lt;step id="1" name="Awaiting Document"&gt;
+   &lt;actions&gt;
+    &lt;action id="1" name="Create Document" view="upload"&gt;
+     &lt;restrict-to&gt;
+      &lt;conditions&gt;
+       &lt;condition type="class"&gt;
+        &lt;arg name="class.name"&gt;org.springmodules.workflow.osworkflow.support.AcegiRoleCondition&lt;/arg&gt;
+        &lt;arg name="role"&gt;ROLE_CREATOR&lt;/arg&gt;
+       &lt;/condition&gt;
+      &lt;/conditions&gt;
+     &lt;/restrict-to&gt;
+     &lt;results&gt;
+      &lt;unconditional-result old-status="Finished" status="Document Uploaded" step="2"/&gt;
+     &lt;/results&gt;
+     ...
+    &lt;/action&gt;
+   &lt;/actions&gt;
+  &lt;/step&gt;
+  ...
+  &lt;/steps&gt;
+&lt;/workflow&gt;</programlisting>
+
+    <para><literal>AcegiRoleCondition</literal> will check the current Acegi
+    authorities against the 'role' parameter specified in the workflow
+    definition and return <literal>true</literal> if a match is found or
+    <literal>false</literal> otherwise.</para>
+
+    <note>
+      <para>Spring Modules CVS contains a comprehensive OSWorkflow module
+      sample which uses the classes discussed.</para>
+    </note>
+  </sect1>
+
+  <sect1>
+    <title>OSWorkflow 2.8+ support</title>
+
+    <para>OSWorkflow 2.8 release added two important componets:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><ulink
+        url="http://www.opensymphony.com/osworkflow/api/com/opensymphony/workflow/TypeResolver.html">TypeResolver</ulink>
+        - which allows business components to be resolved and used inside
+        workflow definitions. For Spring users, the most important subclass is
+        <ulink
+        url="http://www.opensymphony.com/osworkflow/api/com/opensymphony/workflow/util/SpringTypeResolver.html">SpringTypeResolver</ulink>
+        which creates a bridge between Spring application context and
+        OSWorkflow so it's possible to simply reuse beans just by using their
+        name.</para>
+      </listitem>
+
+      <listitem>
+        <para><ulink
+        url="http://www.opensymphony.com/osworkflow/api/com/opensymphony/workflow/util/VariableResolver.html">VariableResolver</ulink>
+        which adds translation capabilities for variables.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>However, as OsWorkflow 2.7 is widely deploy, OSWorkflow module adds
+    support for the new features under a special package :
+    org.springmodules.workflow.osworkflow.v28. A typical configuration under
+    OSWorkflow 2.8 might look like this:</para>
+
+    <para>-- Spring application context --<programlisting>&lt;bean id="workflowTemplate" class="org.springmodules.workflow.osworkflow.v28.OsWorkflowTemplate"&gt;
+  &lt;property name="configuration" ref="configuration"/&gt;
+  &lt;property name="workflowName" value="documentApproval"/&gt;
+  &lt;property name="typeResolver"&gt;
+    &lt;bean class="com.opensymphony.workflow.util.SpringTypeResolver"/&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;
+
+&lt;bean id="whiteHorseFunction" class="mypackage.WhiteHorse" singleton="false"/&gt;</programlisting><parameter>--
+    OSWorkflow workflow definition --</parameter><programlisting>&lt;workflow&gt;
+...
+&lt;function type="spring"&gt;
+  &lt;arg name="bean.name"&gt;whiteHorseFunction&lt;/arg&gt;
+&lt;/function&gt;
+...
+&lt;/workflow&gt;</programlisting>In this case, the whiteHorseFunction is
+    retrieved from Spring application context and used inside the workflow
+    instance; this is a power concept as the business components can be
+    configured inside Spring and take advantage of the advanced IoC
+    functionality as transaction demarcation or custom scoping.</para>
+  </sect1>
 </chapter>

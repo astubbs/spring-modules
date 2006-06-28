@@ -1,13 +1,13 @@
 
 package org.springmodules.workflow.osworkflow.web;
 
-import net.sf.acegisecurity.Authentication;
-import net.sf.acegisecurity.GrantedAuthority;
-import net.sf.acegisecurity.context.ContextHolder;
-import net.sf.acegisecurity.context.security.SecureContext;
-import net.sf.acegisecurity.context.security.SecureContextImpl;
-import net.sf.acegisecurity.providers.UsernamePasswordAuthenticationToken;
-import net.sf.acegisecurity.providers.dao.User;
+import org.acegisecurity.Authentication;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.context.SecurityContext;
+import org.acegisecurity.context.SecurityContextImpl;
+import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.acegisecurity.userdetails.User;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -20,9 +20,9 @@ public class AcegiWorkflowContextHandlerInterceptorTests extends AbstractWorkflo
 	protected MockHttpServletRequest getMockRequest(String userName) {
 		User user = new User(userName, "dummy", true, true, true, true, new GrantedAuthority[]{});
 		Authentication auth = new UsernamePasswordAuthenticationToken(user, null);
-		SecureContext context = new SecureContextImpl();
+		SecurityContext context = new SecurityContextImpl();
 		context.setAuthentication(auth);
-		ContextHolder.setContext(context);
+		SecurityContextHolder.setContext(context);
 
 		return new MockHttpServletRequest();
 	}

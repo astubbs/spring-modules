@@ -21,9 +21,9 @@ import java.util.Map;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.workflow.Condition;
 import com.opensymphony.workflow.WorkflowException;
-import net.sf.acegisecurity.GrantedAuthority;
-import net.sf.acegisecurity.context.ContextHolder;
-import net.sf.acegisecurity.context.security.SecureContext;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.context.SecurityContext;
 
 /**
  * @author robh
@@ -39,8 +39,8 @@ public class AcegiRoleCondition implements Condition {
 			throw new WorkflowException("Condition [" + getClass().getName() + "] expects argument [" + ROLE + "].");
 		}
 
-		SecureContext secureContext = (SecureContext) ContextHolder.getContext();
-		GrantedAuthority[] authorities = secureContext.getAuthentication().getAuthorities();
+		SecurityContext securityContext = (SecurityContext) SecurityContextHolder.getContext();
+		GrantedAuthority[] authorities = securityContext.getAuthentication().getAuthorities();
 
 		for (int i = 0; i < authorities.length; i++) {
 			GrantedAuthority authority = authorities[i];

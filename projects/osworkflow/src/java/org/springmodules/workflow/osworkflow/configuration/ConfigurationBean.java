@@ -29,6 +29,7 @@ import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.util.Assert;
 import org.xml.sax.SAXException;
 
@@ -42,27 +43,27 @@ import com.opensymphony.workflow.spi.WorkflowStore;
 import com.opensymphony.workflow.spi.memory.MemoryWorkflowStore;
 
 /**
- * Supports Spring-style configuration of OSWorkflow resources.
- * <p/>
- * Workflow descriptor resources are configured through the <code>workflowLocations</code> property. This property
- * accepts a <code>Properties</code> instance and treats the key of each entry as the workflow name and the value
- * as the resource path. All standard Spring resource paths are supported including <code>classpath:</code> style
- * resources.
- * <p/>
- * By default <code>MemoryWorkflowStore</code> is used as the persistence class. However it is possible
- * to use an already configured <code>WorkflowStore</code> by calling #setWorkflowStore.
- * <p/>
- *
+ * Supports Spring-style configuration of OSWorkflow resources. <p/> Workflow
+ * descriptor resources are configured through the
+ * <code>workflowLocations</code> property. This property accepts a
+ * <code>Properties</code> instance and treats the key of each entry as the
+ * workflow name and the value as the resource path. All standard Spring
+ * resource paths are supported including <code>classpath:</code> style
+ * resources. <p/> By default <code>MemoryWorkflowStore</code> is used as the
+ * persistence class. However it is possible to use an already configured
+ * <code>WorkflowStore</code> by calling #setWorkflowStore. <p/>
+ * 
  * @author Rob Harrop
  */
-public class ConfigurationBean extends DefaultConfiguration {
+public class ConfigurationBean extends DefaultConfiguration implements ResourceLoaderAware {
 	/**
 	 * <code>Log</code> instance for this class.
 	 */
 	private static final Log logger = LogFactory.getLog(ConfigurationBean.class);
 
 	/**
-	 * Spring <code>ResourceLoader</code> used to load workflow <code>Resource</code>s.
+	 * Spring <code>ResourceLoader</code> used to load workflow
+	 * <code>Resource</code>s.
 	 * 
 	 */
 	protected ResourceLoader resourceLoader = new DefaultResourceLoader();
@@ -88,15 +89,16 @@ public class ConfigurationBean extends DefaultConfiguration {
 	private WorkflowStore workflowStore;
 
 	/**
-	 * Creates a new <code>ConfigurationBean</code> with <code>MemoryWorkflowStore</code>
-	 * as the persistence class.
+	 * Creates a new <code>ConfigurationBean</code> with
+	 * <code>MemoryWorkflowStore</code> as the persistence class.
 	 */
 	public ConfigurationBean() {
 		setPersistence(MemoryWorkflowStore.class.getName());
 	}
 
 	/**
-	 * Gets the <code>Map</code> of arguments to be passed to the persistence object
+	 * Gets the <code>Map</code> of arguments to be passed to the persistence
+	 * object
 	 */
 	public Map getPersistenceArgs() {
 		return this.persistenceArgs;
@@ -111,12 +113,11 @@ public class ConfigurationBean extends DefaultConfiguration {
 	}
 
 	/**
-	 * Sets the locations of the workflow definition files as a <code>Properties</code> instance.
-	 * The key of each entry corresponds to the logical name for the workflow definition and
-	 * the value of each entry is the location of the definition file.
-	 * <p/>
-	 * Locations are specified as Spring-style resource paths and classpath: resources
-	 * are fully supported.
+	 * Sets the locations of the workflow definition files as a
+	 * <code>Properties</code> instance. The key of each entry corresponds to
+	 * the logical name for the workflow definition and the value of each entry
+	 * is the location of the definition file. <p/> Locations are specified as
+	 * Spring-style resource paths and classpath: resources are fully supported.
 	 */
 	public void setWorkflowLocations(Properties workflowLocations) {
 		Assert.notNull(workflowLocations, "workflowLocations cannot be null");
@@ -172,7 +173,8 @@ public class ConfigurationBean extends DefaultConfiguration {
 	}
 
 	/**
-	 * Loads a <code>WorkflowDescriptor</code> from the specified location using the <code>WorkflowLoader</code> class.
+	 * Loads a <code>WorkflowDescriptor</code> from the specified location
+	 * using the <code>WorkflowLoader</code> class.
 	 */
 	protected WorkflowDescriptor loadWorkflowDescriptor(String resourceLocation, String name) {
 		Resource resource = this.resourceLoader.getResource(resourceLocation);
@@ -201,8 +203,9 @@ public class ConfigurationBean extends DefaultConfiguration {
 	}
 
 	/**
-	 * Hook which allows subclasses to invoke the approapriate/available method on the WorkflowLoader since between 2.7 and 2.8
-	 * the method signatures changed.
+	 * Hook which allows subclasses to invoke the approapriate/available method
+	 * on the WorkflowLoader since between 2.7 and 2.8 the method signatures
+	 * changed.
 	 * 
 	 * @see com.opensymphony.workflow.loader.WorkflowLoader#load(java.io.InputStream)
 	 * 
@@ -212,7 +215,7 @@ public class ConfigurationBean extends DefaultConfiguration {
 	 */
 	protected WorkflowDescriptor invokeLoader(Resource resource) throws IOException, SAXException, InvalidWorkflowDescriptorException {
 		// oswf 2.8 version
-		//return WorkflowLoader.load(resource.getURL(), true);
+		// return WorkflowLoader.load(resource.getURL(), true);
 
 		// the method exists in both 2.7 and 2.8(deprecated)
 		return WorkflowLoader.load(resource.getInputStream());
@@ -233,6 +236,10 @@ public class ConfigurationBean extends DefaultConfiguration {
 	 */
 	public void setWorkflowStore(WorkflowStore workflowStore) {
 		this.workflowStore = workflowStore;
+	}
+	
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
 	}
 
 }

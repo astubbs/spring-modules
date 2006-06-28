@@ -17,9 +17,9 @@ package org.springmodules.workflow.osworkflow.web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.acegisecurity.context.security.SecureContext;
-import net.sf.acegisecurity.context.ContextHolder;
-import net.sf.acegisecurity.providers.dao.User;
+import org.acegisecurity.context.SecurityContext;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.userdetails.UserDetails;
 
 /**
  * @author robh
@@ -27,8 +27,8 @@ import net.sf.acegisecurity.providers.dao.User;
 public class AcegiWorkflowContextHandlerInterceptor extends DefaultWorkflowContextHandlerInterceptor {
 
 	protected String getCaller(HttpServletRequest request) {
-		SecureContext context = (SecureContext)ContextHolder.getContext();
-		User user = (User)context.getAuthentication().getPrincipal();
+		SecurityContext context = (SecurityContext) SecurityContextHolder.getContext();
+		UserDetails user = (UserDetails)context.getAuthentication().getPrincipal();
 		return user.getUsername();
 	}
 }

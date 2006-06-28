@@ -2,12 +2,22 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
-Changes in version 0.5 (in progress)
+Changes in version 0.6 (in progress)
 ------------------------------------
 
 Package org.springmodules.lucene
 * Upgraded Lucene to 2.0.0
-* Fixed AbstractIndexFactory  to work with Lucene 2.0.0 [MOD-141]. Thanks eearley.
+* Fixed AbstractIndexFactory to work with Lucene 2.0.0 [JIRA MOD-141]. Thanks eearley.
+
+Changes in version 0.5 (in progress)
+------------------------------------
+
+Package org.springmodules.workflow.jbpm31
+* Updated docs regarding ProcessDefinitionFB [JIRA MOD-135]
+
+Package org.springmodules.workflow.osworkflow
+* Added reference documentation [JIRA MOD-158]
+* Upgraded Acegi to 1.0.1 version [JIRA MOD-65]. Thanks go to Stefan Kleineikenscheidt for helping out.
 
 Package org.springmodules.validation.valang.parser
 * Fixed the valang.jj to support direct list/array elements using the BeanWrapper notation (e.g. tags[0])
