@@ -9,8 +9,8 @@
         </global>
         <property name="firstName">
             <not-null/>
-            <valang expression="tupper(?) == 'URI'"/>
             <not-blank/>
+            <valang expression="tupper(firstName) == 'URI'"/>
         </property>
         <property name="lastName">
             <not-null/>

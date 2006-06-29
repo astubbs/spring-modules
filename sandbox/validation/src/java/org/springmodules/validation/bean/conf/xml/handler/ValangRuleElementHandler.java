@@ -87,6 +87,12 @@ public class ValangRuleElementHandler extends AbstractValidationRuleElementHandl
         return new ConditionParserCondition(parser, expression);
     }
 
+    /**
+     * This validation rules should always be associated with the global context.
+     */
+    public boolean isAlwaysGlobal() {
+        return true;
+    }
 
     //=============================================== Setter/Getter ====================================================
 

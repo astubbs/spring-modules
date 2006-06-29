@@ -70,4 +70,13 @@ public class OgnlRuleElementHandler extends AbstractValidationRuleElementHandler
         return new OgnlCondition(expression);
     }
 
+    /**
+     * This validation rule handler should always be associated with the global context.
+     *
+     * @see org.springmodules.validation.bean.conf.xml.ValidationRuleElementHandler#isAlwaysGlobal() 
+     */
+    public boolean isAlwaysGlobal() {
+        return true;
+    }
+
 }

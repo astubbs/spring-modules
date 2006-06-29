@@ -246,7 +246,10 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
                 throw new XmlConfigurationException("Could not handle element '" + ruleDefinition.getTagName() + "'");
             }
             ValidationRule rule = handler.handle(ruleDefinition);
-            configuration.addPropertyRule(propertyName, createPropertyRule(propertyName, rule));
+            if (!handler.isAlwaysGlobal()) {
+                rule = createPropertyRule(propertyName, rule);
+            }
+            configuration.addPropertyRule(propertyName, rule);
         }
     }
 

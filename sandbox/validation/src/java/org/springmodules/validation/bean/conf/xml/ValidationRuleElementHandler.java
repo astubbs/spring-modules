@@ -42,4 +42,12 @@ public interface ValidationRuleElementHandler {
      */
     ValidationRule handle(Element element);
 
+    /**
+     * Returns whether the validation rule handled by this hanlder is always a global rule.
+     *
+     * @return <code>true</code> if the validation rule handled by this handler is always global, <code>false</code> otherwise.
+     * @see org.springmodules.validation.bean.conf.xml.handler.ValangRuleElementHandler
+     */
+    boolean isAlwaysGlobal();
+
 }

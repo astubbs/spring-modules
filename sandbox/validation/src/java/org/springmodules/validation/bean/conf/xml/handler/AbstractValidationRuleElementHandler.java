@@ -129,6 +129,16 @@ public abstract class AbstractValidationRuleElementHandler
     }
 
     /**
+     * By default the element handlers handle and produce rules that can be associated with both global and non-global
+     * contexts.
+     *
+     * @see org.springmodules.validation.bean.conf.xml.ValidationRuleElementHandler#isAlwaysGlobal()
+     */
+    public boolean isAlwaysGlobal() {
+        return false;
+    }
+
+    /**
      * Extracts the validation rule error code from the given element. Expects a "code" attribute to indicate the
      * error code. If no such attribute exisits, returns {@link #getDefaultErrorCode(org.w3c.dom.Element)} instead.
      *

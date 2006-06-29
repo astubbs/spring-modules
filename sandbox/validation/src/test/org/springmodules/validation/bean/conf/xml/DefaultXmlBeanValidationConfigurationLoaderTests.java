@@ -85,6 +85,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         configuration.addRequiredValidatableProperty("name");
         registryControl.expectAndReturn(registry.findHandler(ruleDefinition), handler);
         handlerControl.expectAndReturn(handler.handle(ruleDefinition), rule);
+        handlerControl.expectAndReturn(handler.isAlwaysGlobal(), false);
 
         final PropertyValidationRule propertyRule = new PropertyValidationRule("name", rule);
         loader = new DefaultXmlBeanValidationConfigurationLoader(registry) {

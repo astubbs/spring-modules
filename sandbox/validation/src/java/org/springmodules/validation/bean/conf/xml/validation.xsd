@@ -50,8 +50,6 @@
     <xs:group name="rules">
         <xs:sequence>
             <xs:element ref="bean:not-null" minOccurs="0" maxOccurs="1"/>
-            <xs:element ref="bean:valang" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element ref="bean:ognl" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element ref="bean:in-future" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:in-past" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:email" minOccurs="0" maxOccurs="1"/>
@@ -61,6 +59,8 @@
             <xs:element ref="bean:range" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:regexp" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="bean:size" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="bean:valang" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="bean:ognl" minOccurs="0" maxOccurs="unbounded"/>
             <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
