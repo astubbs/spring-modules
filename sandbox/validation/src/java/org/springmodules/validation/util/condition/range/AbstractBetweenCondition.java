@@ -19,7 +19,6 @@ package org.springmodules.validation.util.condition.range;
 import java.util.Comparator;
 
 import org.springframework.util.Assert;
-import org.springframework.util.comparator.ComparableComparator;
 
 /**
  * An {@link AbstractRangeCondition} implementation that serves as a base class for all between conditions.
@@ -39,7 +38,7 @@ public abstract class AbstractBetweenCondition extends AbstractRangeCondition {
      * @param upperBound The upper bound the checked object will be compared with.
      */
     public AbstractBetweenCondition(Comparable lowerBound, Comparable upperBound) {
-        this(lowerBound, upperBound, new ComparableComparator());
+        this(lowerBound, upperBound, new NumberAwareComparableComparator());
     }
 
     public AbstractBetweenCondition(Object lowerBound, Object upperBound, Comparator comparator) {

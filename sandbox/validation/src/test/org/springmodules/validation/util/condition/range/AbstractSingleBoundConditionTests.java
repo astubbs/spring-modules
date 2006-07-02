@@ -44,6 +44,15 @@ public abstract class AbstractSingleBoundConditionTests extends AbstractRangeCon
         }
     }
 
+    public void testCheck_WithDifferentNumberTypes() {
+        AbstractSingleBoundCondition cond = createCondition(new Integer(3));
+        try {
+            cond.check(new Double(2.0));
+        } catch (ClassCastException cce) {
+            fail("Comparing numbers of different types sould be possible");
+        }
+    }
+
     protected Comparable getComparableBound() {
         return new Integer(5);
     }

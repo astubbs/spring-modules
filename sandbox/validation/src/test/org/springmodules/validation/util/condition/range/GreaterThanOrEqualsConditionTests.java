@@ -19,32 +19,33 @@ package org.springmodules.validation.util.condition.range;
 import java.util.Comparator;
 
 /**
- * Tests for {@link LtCondition}.
+ * Tests for {@link GreaterThanOrEqualsCondition}.
  *
  * @author Uri Boness
  */
-public class LtConditionTests extends AbstractSingleBoundConditionTests {
+public class GreaterThanOrEqualsConditionTests extends AbstractSingleBoundConditionTests {
 
     protected AbstractSingleBoundCondition createCondition(Comparable bound) {
-        return new LtCondition(bound);
+        return new GreaterThanOrEqualsCondition(bound);
     }
 
     protected AbstractSingleBoundCondition createCondition(Object bound, Comparator comparator) {
-        return new LtCondition(bound, comparator);
+        return new GreaterThanOrEqualsCondition(bound, comparator);
     }
 
     public void testCheck_Success() throws Exception {
-        assertTrue(conditionWithComparable.check(getLowerComparable()));
-        assertTrue(conditionWithComparator.check(getLowerObject()));
+        assertTrue(conditionWithComparable.check(getHigherComparable()));
+        assertTrue(conditionWithComparator.check(getHigherObject()));
+    }
+
+    public void testCheck_SuccessWithLowerBoundAsValue() throws Exception {
+        assertTrue(conditionWithComparable.check(getComparableBound()));
+        assertTrue(conditionWithComparator.check(getObjectBound()));
     }
 
     public void testCheck_Failure() throws Exception {
-        assertFalse(conditionWithComparable.check(getHigherComparable()));
-        assertFalse(conditionWithComparator.check(getHigherObject()));
+        assertFalse(conditionWithComparable.check(getLowerComparable()));
+        assertFalse(conditionWithComparator.check(getLowerObject()));
     }
 
-    public void testCheck_FailureWithLowerBoundAsValue() throws Exception {
-        assertFalse(conditionWithComparable.check(getComparableBound()));
-        assertFalse(conditionWithComparator.check(getObjectBound()));
-    }
 }

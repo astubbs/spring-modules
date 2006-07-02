@@ -53,4 +53,9 @@ public class BetweenConditionTests extends AbstractBetweenConditionTests {
         assertFalse(conditionWithComparator.check(getObjectLowerBound()));
     }
 
+    public void testCheck_WithNumbers() throws Exception {
+        AbstractBetweenCondition cond = createBetweenCondition(new Integer(2), new Double(3.0));
+        assertTrue(cond.check(new Float(2.5)));
+    }
+
 }

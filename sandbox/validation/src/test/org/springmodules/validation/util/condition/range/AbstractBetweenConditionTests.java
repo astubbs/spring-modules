@@ -68,6 +68,15 @@ public abstract class AbstractBetweenConditionTests extends AbstractRangeConditi
         }
     }
 
+    public void testCheck_WithDifferentNumberTypes() {
+        AbstractBetweenCondition cond = createBetweenCondition(new Integer(3), new Double(2.0));
+        try {
+            cond.check(new Double(2.5));
+        } catch (ClassCastException cce) {
+            fail("Comparing numbers of different types sould be possible");
+        }
+    }
+
     protected AbstractRangeCondition createRangeConditionWithComparable() {
         return createBetweenCondition(getComparableLowerBound(), getComparableUpperBound());
     }

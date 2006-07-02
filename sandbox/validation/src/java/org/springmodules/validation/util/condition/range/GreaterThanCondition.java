@@ -24,24 +24,24 @@ import java.util.Comparator;
  *
  * @author Uri Boness
  */
-public class GtCondition extends AbstractSingleBoundCondition {
+public class GreaterThanCondition extends AbstractSingleBoundCondition {
 
     /**
-     * Constructs a new GtCondition with a given lower bound.
+     * Constructs a new GreaterThanCondition with a given lower bound.
      *
      * @param lowerBound The lower bound.
      */
-    public GtCondition(Comparable lowerBound) {
+    public GreaterThanCondition(Comparable lowerBound) {
         super(lowerBound);
     }
 
     /**
-     * Constructs a new GtCondition with given lower bound and the comparator to be used to compare the checked value.
+     * Constructs a new GreaterThanCondition with given lower bound and the comparator to be used to compare the checked value.
      *
      * @param lowerBound The lower bound.
      * @param comparator The comparator.
      */
-    public GtCondition(Object lowerBound, Comparator comparator) {
+    public GreaterThanCondition(Object lowerBound, Comparator comparator) {
         super(lowerBound, comparator);
     }
 

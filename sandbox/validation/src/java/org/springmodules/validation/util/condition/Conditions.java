@@ -45,10 +45,10 @@ import org.springmodules.validation.util.condition.range.BetweenCondition;
 import org.springmodules.validation.util.condition.range.BetweenIncludingCondition;
 import org.springmodules.validation.util.condition.range.BetweenIncludingLowerBoundCondition;
 import org.springmodules.validation.util.condition.range.BetweenIncludingUpperBoundCondition;
-import org.springmodules.validation.util.condition.range.GtCondition;
-import org.springmodules.validation.util.condition.range.GteCondition;
-import org.springmodules.validation.util.condition.range.LtCondition;
-import org.springmodules.validation.util.condition.range.LteCondition;
+import org.springmodules.validation.util.condition.range.GreaterThanCondition;
+import org.springmodules.validation.util.condition.range.GreaterThanOrEqualsCondition;
+import org.springmodules.validation.util.condition.range.LessThanCondition;
+import org.springmodules.validation.util.condition.range.LessThanOrEqualsCondition;
 import org.springmodules.validation.util.condition.string.ContainsSubstringStringCondition;
 import org.springmodules.validation.util.condition.string.EqualsIgnoreCaseStringCondition;
 import org.springmodules.validation.util.condition.string.IsEmptyStringCondition;
@@ -239,7 +239,7 @@ public final class Conditions {
     // range conditions
 
     public static Condition isGt(Comparable min) {
-        return new GtCondition(min);
+        return new GreaterThanCondition(min);
     }
 
     public static Condition isGt(String propertyName, Comparable min) {
@@ -247,7 +247,7 @@ public final class Conditions {
     }
 
     public static Condition isGte(Comparable min) {
-        return new GteCondition(min);
+        return new GreaterThanOrEqualsCondition(min);
     }
 
     public static Condition isGte(String propertyName, Comparable min) {
@@ -255,11 +255,11 @@ public final class Conditions {
     }
 
     public static Condition isLt(Comparable max) {
-        return new LtCondition(max);
+        return new LessThanCondition(max);
     }
 
     public static Condition isLte(Comparable max) {
-        return new LteCondition(max);
+        return new LessThanOrEqualsCondition(max);
     }
 
     public static Condition isLte(String propertyName, Comparable max) {

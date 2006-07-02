@@ -19,7 +19,6 @@ package org.springmodules.validation.util.condition.range;
 import java.util.Comparator;
 
 import org.springframework.util.Assert;
-import org.springframework.util.comparator.ComparableComparator;
 
 /**
  * A base class for all single bound conditions.
@@ -36,7 +35,7 @@ public abstract class AbstractSingleBoundCondition extends AbstractRangeConditio
      * @param bound The bound.
      */
     public AbstractSingleBoundCondition(Comparable bound) {
-        this(bound, new ComparableComparator());
+        this(bound, new NumberAwareComparableComparator());
     }
 
     /**

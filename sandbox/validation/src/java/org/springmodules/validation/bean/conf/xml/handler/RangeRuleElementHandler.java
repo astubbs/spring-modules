@@ -88,9 +88,9 @@ public class RangeRuleElementHandler extends AbstractValidationRuleElementHandle
      *  <li>If the element has both <code>min</code> and <code>max</code> attributes, then
      *     {@link org.springmodules.validation.util.condition.range.BetweenIncludingCondition}</li>
      *  <li>If the element only has the <code>min</code> attribute, then
-     *     {@link org.springmodules.validation.util.condition.range.GteCondition}</li>
+     *     {@link org.springmodules.validation.util.condition.range.GreaterThanOrEqualsCondition}</li>
      *  <li>If the element only has the <code>max</code> attribute, then
-     *     {@link org.springmodules.validation.util.condition.range.LteCondition}</li>
+     *     {@link org.springmodules.validation.util.condition.range.LessThanOrEqualsCondition}</li>
      * </ul>
      *
      * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)

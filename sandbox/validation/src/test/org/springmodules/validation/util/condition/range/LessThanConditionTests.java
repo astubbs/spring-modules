@@ -19,28 +19,28 @@ package org.springmodules.validation.util.condition.range;
 import java.util.Comparator;
 
 /**
- * Tests for {@link GtCondition}.
+ * Tests for {@link LessThanCondition}.
  *
  * @author Uri Boness
  */
-public class GtConditionTests extends AbstractSingleBoundConditionTests {
+public class LessThanConditionTests extends AbstractSingleBoundConditionTests {
 
     protected AbstractSingleBoundCondition createCondition(Comparable bound) {
-        return new GtCondition(bound);
+        return new LessThanCondition(bound);
     }
 
     protected AbstractSingleBoundCondition createCondition(Object bound, Comparator comparator) {
-        return new GtCondition(bound, comparator);
+        return new LessThanCondition(bound, comparator);
     }
 
     public void testCheck_Success() throws Exception {
-        assertTrue(conditionWithComparable.check(getHigherComparable()));
-        assertTrue(conditionWithComparator.check(getHigherObject()));
+        assertTrue(conditionWithComparable.check(getLowerComparable()));
+        assertTrue(conditionWithComparator.check(getLowerObject()));
     }
 
     public void testCheck_Failure() throws Exception {
-        assertFalse(conditionWithComparable.check(getLowerComparable()));
-        assertFalse(conditionWithComparator.check(getLowerObject()));
+        assertFalse(conditionWithComparable.check(getHigherComparable()));
+        assertFalse(conditionWithComparator.check(getHigherObject()));
     }
 
     public void testCheck_FailureWithLowerBoundAsValue() throws Exception {

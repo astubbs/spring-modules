@@ -8,24 +8,24 @@ import java.util.Comparator;
  *
  * @author Uri Boness
  */
-public class GteCondition extends AbstractSingleBoundCondition {
+public class GreaterThanOrEqualsCondition extends AbstractSingleBoundCondition {
 
     /**
-     * Constructs a new GteCondition with a given lower bound.
+     * Constructs a new GreaterThanOrEqualsCondition with a given lower bound.
      *
      * @param lowerBound The lower bound.
      */
-    public GteCondition(Comparable lowerBound) {
+    public GreaterThanOrEqualsCondition(Comparable lowerBound) {
         super(lowerBound);
     }
 
     /**
-     * Constructs a new GteCondition with given lower bound and the comparator to be used to compare the checked value.
+     * Constructs a new GreaterThanOrEqualsCondition with given lower bound and the comparator to be used to compare the checked value.
      *
      * @param lowerBound The lower bound.
      * @param comparator The comparator.
      */
-    public GteCondition(Object lowerBound, Comparator comparator) {
+    public GreaterThanOrEqualsCondition(Object lowerBound, Comparator comparator) {
         super(lowerBound, comparator);
     }
 

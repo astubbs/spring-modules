@@ -24,24 +24,24 @@ import java.util.Comparator;
  *
  * @author Uri Boness
  */
-public class LteCondition extends AbstractSingleBoundCondition {
+public class LessThanOrEqualsCondition extends AbstractSingleBoundCondition {
 
     /**
-     * Constructs a new LtCondition with a given upper bound.
+     * Constructs a new LessThanCondition with a given upper bound.
      *
      * @param upperBound The upper bound.
      */
-    public LteCondition(Comparable upperBound) {
+    public LessThanOrEqualsCondition(Comparable upperBound) {
         super(upperBound);
     }
 
     /**
-     * Constructs a new LteCondition with given upper bound and the comparator to be used to compare the checked value.
+     * Constructs a new LessThanOrEqualsCondition with given upper bound and the comparator to be used to compare the checked value.
      *
      * @param upperBound The upper bound.
      * @param comparator The comparator.
      */
-    public LteCondition(Object upperBound, Comparator comparator) {
+    public LessThanOrEqualsCondition(Object upperBound, Comparator comparator) {
         super(upperBound, comparator);
     }
 

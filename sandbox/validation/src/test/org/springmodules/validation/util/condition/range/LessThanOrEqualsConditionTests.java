@@ -19,18 +19,18 @@ package org.springmodules.validation.util.condition.range;
 import java.util.Comparator;
 
 /**
- * Tests for {@link LteCondition}.
+ * Tests for {@link LessThanOrEqualsCondition}.
  *
  * @author Uri Boness
  */
-public class LteConditionTests extends AbstractSingleBoundConditionTests {
+public class LessThanOrEqualsConditionTests extends AbstractSingleBoundConditionTests {
 
     protected AbstractSingleBoundCondition createCondition(Comparable bound) {
-        return new LteCondition(bound);
+        return new LessThanOrEqualsCondition(bound);
     }
 
     protected AbstractSingleBoundCondition createCondition(Object bound, Comparator comparator) {
-        return new LteCondition(bound, comparator);
+        return new LessThanOrEqualsCondition(bound, comparator);
     }
 
     public void testCheck_Success() throws Exception {
