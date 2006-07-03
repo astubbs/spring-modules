@@ -285,13 +285,6 @@ public class LocalTransactionManagerTests extends TestCase {
         sessionControl.expectAndReturn(session.getXAResource(), xaRes);
         session.save();
 
-/*        // used for ServiceProvider
-        MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
-        Repository repository = (Repository) repositoryControl.getMock();
-        repositoryControl.replay();
-
-        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
-*/        
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();
@@ -333,13 +326,6 @@ public class LocalTransactionManagerTests extends TestCase {
         sessionControl.expectAndReturn(session.getXAResource(), xaRes);
         session.save();
         
-/*        // used for ServiceProvider
-        MockControl repositoryControl = MockControl.createNiceControl(Repository.class);
-        Repository repository = (Repository) repositoryControl.getMock();
-        repositoryControl.replay();
-
-        sessionControl.expectAndReturn(session.getRepository(), repository, MockControl.ONE_OR_MORE);
-*/
         sfControl.replay();
         sessionControl.replay();
         xaResControl.replay();

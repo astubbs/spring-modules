@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+	<bean id="jcrTransactionManager"
+		class="org.springmodules.jcr.jackrabbit.LocalTransactionManager">
+		<property name="sessionFactory" ref="jcrSessionFactory" />
+	</bean>
+
+	<bean id="jcrSessionFactory" class="org.springmodules.jcr.JcrSessionFactory">
+		<property name="repository" ref="repository"/>
+		<property name="credentials">
+			<bean class="javax.jcr.SimpleCredentials">
+				<constructor-arg index="0" value="bogus"/>
+				<!-- create the credentials using a bean factory -->
+				<constructor-arg index="1">
+					<bean factory-bean="password"
+					      factory-method="toCharArray"/>
+				</constructor-arg>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- create the password to return it as a char[] -->
+	<bean id="password" class="java.lang.String">
+		<constructor-arg index="0" value="pass"/>
+	</bean>
+	
+	<bean id="jcrTemplate" class="org.springmodules.jcr.JcrTemplate">
+		<property name="sessionFactory" ref="jcrSessionFactory"/>
+		<property name="allowCreate" value="true"/>
+	</bean>
+	
+</beans>
