@@ -43,10 +43,6 @@
 			</list>
 		</property>
 		-->
-		<!-- optional setting - used for discovery of transaction support for various repositories -->
-		<property name="sessionHolderProviderManager">
-			<bean class="org.springmodules.jcr.support.ServiceSessionHolderProviderManager"/>
-		</property>
 	</bean>
 	
 	<!-- create the password to return it as a char[] -->
