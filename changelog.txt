@@ -11,6 +11,8 @@ Package org.springmodules.lucene
 
 Changes in version 0.5 (in progress)
 ------------------------------------
+Package org.springmodules.jcr.jackrabbit
+* Added TransientRepositoryFactoryBean
 
 Package org.springmodules.workflow.jbpm31
 * Updated docs regarding ProcessDefinitionFB [JIRA MOD-135]
