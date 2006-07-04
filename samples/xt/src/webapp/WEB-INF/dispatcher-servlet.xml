@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    
+    <!-- Message Source -->
+    
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename"><value>messages</value></property>
+    </bean>
+    
+    <!-- Application Beans -->
+    
+    <bean id="store" class="org.springmodules.xt.examples.domain.MemoryRepository" init-method="init">
+        <property name="loader">
+            <bean class="org.springmodules.xt.examples.domain.MemoryRepositoryLoaderImpl"/>
+        </property>
+    </bean>
+    
+    <!-- Ajax -->
+  
+    <bean id="ajaxValidationHandler" class="org.springmodules.xt.ajax.taconite.support.TaconiteValidationHandler">
+        <property name="errorRenderingCallback">
+            <bean class="org.springmodules.xt.examples.ajax.FormErrorRenderingCallback"/>
+        </property>
+    </bean>
+    
+    <bean id="ajaxTestActionsHandler" class="org.springmodules.xt.examples.ajax.TestActionsHandler"/>
+    
+    <bean id="ajaxLoadOfficesHandler" class="org.springmodules.xt.examples.ajax.LoadOfficesHandler">
+        <property name="store" ref="store"/>
+    </bean>
+    
+    <bean id="ajaxSelectionHandler" class="org.springmodules.xt.examples.ajax.SelectionHandler">
+        <property name="store" ref="store"/>
+    </bean>
+    
+    <bean id="ajaxListEmployeesHandler" class="org.springmodules.xt.examples.ajax.ListEmployeesHandler">
+        <property name="store" ref="store"/>
+    </bean>
+    
+    <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
+        <property name="handlerMappings">
+            <props>
+                <prop key="/ajax/*.action">ajaxValidationHandler</prop>
+                <prop key="/ajax/ex*">ajaxLoadOfficesHandler</prop>
+                <prop key="/ajax/ex1.page">ajaxTestActionsHandler</prop>
+                <prop key="/ajax/ex2.page">ajaxSelectionHandler</prop>
+                <prop key="/ajax/ex4.action">ajaxListEmployeesHandler</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <!-- -->
+    
+    <!-- Property Editors -->
+    
+    <bean id="officeEditor" class="org.springmodules.xt.utils.mvc.util.ReflectivePropertyEditor">
+        <property name="dataAccessObject"><ref bean="store"/></property>
+        <property name="dataAccessMethod"><value>getOffice</value></property>
+        <property name="propertyName"><value>officeId</value></property>
+    </bean>
+    
+    <bean id="employeesCollectionEditor" class="org.springmodules.xt.utils.mvc.util.ReflectiveCollectionEditor">
+        <constructor-arg index="0"><value>java.util.Set</value></constructor-arg>
+        <property name="dataAccessObject"><ref bean="store"/></property>
+        <property name="dataAccessMethod"><value>getEmployee</value></property>
+        <property name="propertyName"><value>matriculationCode</value></property>
+    </bean>
+    
+    <!-- -->
+    
+    <!-- Validators and Controllers -->
+       
+    <bean id="insertEmployeeValidator" class="org.springmodules.xt.examples.mvc.InsertEmployeeValidator">
+        <property name="store"><ref bean="store"/></property>
+    </bean>
+    
+    <bean id="insertOfficeValidator" class="org.springmodules.xt.examples.mvc.InsertOfficeValidator">
+        <property name="store"><ref bean="store"/></property>
+    </bean>
+    
+    <bean id="staticViewController" class="org.springmodules.xt.utils.mvc.controller.FullPathUrlFilenameViewController"/>
+    
+    <bean id="insertEmployeeControllerOne" class="org.springmodules.xt.examples.mvc.InsertEmployeeController">
+        <property name="formView"><value>model/ex1</value></property>
+        <property name="successView"><value>redirect:/start.page</value></property>
+        <property name="validator"><ref bean="insertEmployeeValidator"/></property>
+        <property name="store"><ref bean="store"/></property>
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>org.springmodules.xt.examples.domain.Office</value></key>
+                    <ref bean="officeEditor"/>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="insertEmployeeControllerTwo" class="org.springmodules.xt.examples.mvc.InsertEmployeeController">
+        <property name="formView"><value>ajax/ex3</value></property>
+        <property name="successView"><value>ajax-redirect:/start.page</value></property>
+        <property name="validator"><ref bean="insertEmployeeValidator"/></property>
+        <property name="store"><ref bean="store"/></property>
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>org.springmodules.xt.examples.domain.Office</value></key>
+                    <ref bean="officeEditor"/>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="removeEmployeeController" class="org.springmodules.xt.examples.mvc.RemoveEmployeeController">
+        <property name="formView"><value>model/ex2</value></property>
+        <property name="successView"><value>redirect:/start.page</value></property>
+        <property name="store"><ref bean="store"/></property>
+    </bean>
+    
+    <bean id="listEmployeesController" class="org.springmodules.xt.examples.mvc.ListEmployeesController">
+        <property name="formView"><value>ajax/ex4</value></property>
+        <property name="successView"><value>ajax-redirect:/start.page</value></property>
+        <property name="store"><ref bean="store"/></property>
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>org.springmodules.xt.examples.domain.Office</value></key>
+                    <ref bean="officeEditor"/>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="insertOfficeController" class="org.springmodules.xt.examples.mvc.InsertOfficeController">
+        <property name="formView"><value>model/ex3</value></property>
+        <property name="successView"><value>redirect:/start.page</value></property>
+        <property name="validator"><ref bean="insertOfficeValidator"/></property>
+        <property name="store"><ref bean="store"/></property>  
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>java.util.Set</value></key>
+                    <ref bean="employeesCollectionEditor"/>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <!-- -->
+    
+    <!-- Url Mappings -->
+
+    <bean id="urlHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="ajaxInterceptor"/>
+            </list>
+        </property>
+        <property name="mappings">
+            <props>
+                <prop key="/**/*.page">staticViewController</prop>
+                <prop key="/model/ex1.action">insertEmployeeControllerOne</prop>
+                <prop key="/model/ex2.action">removeEmployeeController</prop>
+                <prop key="/model/ex3.action">insertOfficeController</prop>
+                <prop key="/ajax/ex3.action">insertEmployeeControllerTwo</prop>
+                <prop key="/ajax/ex4.action">listEmployeesController</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <!-- -->
+    
+    <!-- Resolvers-->
+       
+    <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="suffix"><value>.jsp</value></property>
+        <property name="prefix"><value>/WEB-INF/jsp/</value></property>
+        <property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
+    </bean>
+    
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.Exception">error</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- -->
+    
+</beans>

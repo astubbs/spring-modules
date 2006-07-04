@@ -1,0 +1,38 @@
+<ivy-module version="1.1">
+  <info organisation="springmodules" module="springmodules-xt-sample"/>
+
+  <configurations>
+    <!-- default configuration that 'by default' pulls in the global configuration -->
+    <conf name="default" extends="global" />
+
+    <!-- core dependencies needed at compile-time, test-time, and runtime -->
+    <conf name="global" visibility="private" />
+
+    <!-- additional dependencies needed only at build-time -->
+    <conf name="buildtime" visibility="private" />
+
+    <!-- additional dependencies needed only at test-time -->
+    <conf name="test" visibility="private" />
+
+  </configurations>
+
+  <dependencies>
+  
+    <!-- global (compile, test, runtime) dependencies -->
+    
+    <dependency org="springframework" name="springframework" rev="1.2.7">
+      <artifact name="spring" type="jar"/>
+    </dependency>
+
+    <dependency org="sun" name="javax.servlet" rev="2.4">
+		  <artifact name="servlet-api" type="jar"/> 		
+    </dependency>
+
+    <dependency org="jstl" name="jstl" rev="1.1.2" />
+
+    <dependency org="taglibs" name="standard" rev="1.1.2" />
+
+    <dependency org="springmodules" name="springmodules-xt" rev="latest.integration"/>
+    
+  </dependencies>
+</ivy-module>
