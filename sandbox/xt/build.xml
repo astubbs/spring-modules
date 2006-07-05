@@ -26,7 +26,7 @@
           <attribute name="Implementation-Version" value="${project.version}" />
         </manifest>
         <fileset dir="${target.classes.dir}">
-          <include name="net/sourceforge/springxt/ajax/**"/>
+          <include name="org/springmodules/xt/ajax/**"/>
         </fileset>
       </jar>
       
@@ -37,7 +37,7 @@
           <attribute name="Implementation-Version" value="${project.version}" />
         </manifest>
         <fileset dir="${target.classes.dir}">
-          <include name="net/sourceforge/springxt/model/**"/>
+          <include name="org/springmodules/xt/model/**"/>
         </fileset>
       </jar>
       
@@ -48,7 +48,7 @@
           <attribute name="Implementation-Version" value="${project.version}" />
         </manifest>
         <fileset dir="${target.classes.dir}">
-          <include name="net/sourceforge/springxt/utils/**"/>
+          <include name="org/springmodules/xt/utils/**"/>
         </fileset>
       </jar>
   </target>
