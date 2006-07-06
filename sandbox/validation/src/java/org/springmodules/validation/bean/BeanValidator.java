@@ -32,6 +32,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader;
@@ -354,7 +355,19 @@ public class BeanValidator extends RuleBasedValidator {
             ValidationRule rule = globalRules[i];
             if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
                 String errorCode = errorCodeConverter.convertGlobalErrorCode(rule.getErrorCode(), obj.getClass());
-                errors.reject(errorCode, rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
+
+                // if there is a nested path in errors, the global errors should be registered as field errors
+                // for the nested path. Otherwise, they should be registered as global errors.
+
+                if (StringUtils.hasLength(errors.getNestedPath())) {
+                    String nestedPath = errors.getNestedPath();
+                    String propertyName = nestedPath.substring(0, nestedPath.length() - 1);
+                    errors.popNestedPath();
+                    errors.rejectValue(propertyName, errorCode, rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
+                    errors.pushNestedPath(propertyName);
+                } else {
+                    errors.reject(errorCode, rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
+                }
             }
         }
     }

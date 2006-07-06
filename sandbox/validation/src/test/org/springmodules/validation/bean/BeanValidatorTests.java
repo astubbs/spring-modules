@@ -502,6 +502,7 @@ public class BeanValidatorTests extends TestCase {
 
         converterControl.expectAndReturn(converter.convertGlobalErrorCode("errorCode1", Object.class), "_errorCode1");
 
+        errorsControl.expectAndReturn(errors.getNestedPath(), "");
         errors.reject("_errorCode1", args, "message1");
 
         replay();

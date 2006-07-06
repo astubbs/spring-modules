@@ -17,6 +17,7 @@
 package org.springmodules.validation.bean.conf.namespace;
 
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+import org.apache.commons.lang.SystemUtils;
 
 /**
  * A namespace handler for the <code>validation</code> namepsace. This namespace contains the following elements:
@@ -37,6 +38,9 @@ public class ValidatorNamespaceHandler extends NamespaceHandlerSupport {
      */
     public void init() {
         registerBeanDefinitionParser("xml-based-validator", new XmlBasedValidatorBeanDefinitionParser());
+        if (SystemUtils.IS_JAVA_1_5) {
+            // register an annotation based validator
+        }
     }
 
 }

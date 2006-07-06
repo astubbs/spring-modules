@@ -1,14 +1,107 @@
 <?xml version="1.0"?>
 
 <project name="springmodules-sandbox-validation" default="dist">
-    <property file="build.properties" />
-    <property file="project.properties" />
-    <property file="${common.build.dir}/build.properties" />
-    <property file="${common.build.dir}/project.properties" />
-    <property file="${user.home}/build.properties" />
+    <property file="build.properties"/>
+    <property file="project.properties"/>
+    <property file="${common.build.dir}/build.properties"/>
+    <property file="${common.build.dir}/project.properties"/>
+    <property file="${user.home}/build.properties"/>
 
-    <import file="${common.build.dir}/common-targets.xml" />
-    <import file="${common.build.dir}/clover-targets.xml" />
-    <import file="${common.build.dir}/doc-targets.xml" />
+    <import file="${common.build.dir}/common-targets.xml"/>
+    <import file="${common.build.dir}/clover-targets.xml"/>
+    <import file="${common.build.dir}/doc-targets.xml"/>
+
+    <target name="statics.post">
+        <antcall target="tiger.resources"/>
+        <antcall target="tiger.test.resources"/>
+    </target>
+
+    <target name="compile.post">
+        <antcall target="compile.tiger.source"/>
+        <antcall target="compile.tiger.tests"/>
+    </target>
+
+    <available file="${tiger.src.test.resources.dir}" property="tiger.test.resources.dir.exists"/>
+    <available file="${tiger.src.resources.dir}" property="tiger.resources.dir.exists"/>
+
+    <target name="tiger.resources" depends="copy.tiger.resources.from.src.dir, copy.tiger.resources.from.resources.dir"/>
+
+    <target name="copy.tiger.resources.from.src.dir">
+        <copy todir="${target.classes.dir}">
+            <fileset dir="${tiger.src.java.dir}">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copy.tiger.resources.from.resources.dir" if="tiger.resources.dir.exists">
+
+            <copy todir="${target.classes.dir}" filtering="on">
+                <fileset dir="${tiger.src.resources.dir}">
+                    <patternset refid="std.files.to.filter"/>
+                </fileset>
+                <filterset>
+                    <filtersfile file="${target.filter.file}"/>
+                </filterset>
+            </copy>
+
+            <copy todir="${target.classes.dir}">
+                <fileset dir="${tiger.src.resources.dir}">
+                    <patternset refid="std.files.not.to.filter"/>
+                </fileset>
+            </copy>
+
+    </target>
+
+    <target name="tiger.test.resources" depends="copy.tiger.test.resources.from.test.resources.dir, copy.tiger.test.resources.from.test.dir"/>
+
+    <target name="copy.tiger.test.resources.from.test.dir" if="tiger.test.resources.exists">
+        <copy todir="${target.testclasses.dir}">
+            <fileset dir="${tiger.src.test.resources.dir}">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+
+    <target name="copy.tiger.test.resources.from.test.resources.dir" if="tiger.test.resources.exists">
+
+        <copy todir="${target.testclasses.dir}" filtering="on">
+            <fileset dir="${tiger.src.test.resources.dir}">
+                <patternset refid="std.files.to.filter"/>
+            </fileset>
+            <filterset>
+                <filtersfile file="${target.filter.file}"/>
+            </filterset>
+        </copy>
+
+        <copy todir="${target.testclasses.dir}">
+            <fileset dir="${tiger.src.test.resources.dir}">
+                <patternset refid="std.files.not.to.filter"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+
+    <target name="compile.tiger.source">
+        <echo>compiling java tiger sources</echo>
+        <javac destdir="${target.classes.dir}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}"
+               source="${tiger.javac.source}" target="${tiger.javac.target}">
+            <src path="${tiger.src.java.dir}"/>
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+    <target name="compile.tiger.tests">
+        <echo>compiling tiger test sources</echo>
+        <javac srcdir="${tiger.src.test.dir}" destdir="${target.testclasses.dir}" debug="${debug}"
+               deprecation="${deprecation}" optimize="${optimize}" source="${tiger.javac.source}" target="${tiger.javac.target}">
+            <classpath>
+                <pathelement location="${target.classes.dir}"/>
+                <path refid="test.classpath"/>
+            </classpath>
+        </javac>
+    </target>
 
 </project>

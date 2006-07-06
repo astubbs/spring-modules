@@ -20,6 +20,7 @@
             <email/>
         </property>
         <property name="password">
+            <not-null/>
             <length min="3"/>
         </property>
     </class>

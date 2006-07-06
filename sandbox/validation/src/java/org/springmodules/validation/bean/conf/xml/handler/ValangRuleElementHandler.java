@@ -28,7 +28,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.xml.DefaultXmBeanValidationConfigurationlLoaderConstants;
 import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.parser.ConditionParserCondition;
 import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
 import org.springmodules.validation.valang.parser.SimpleValangBased;
 import org.springmodules.validation.valang.parser.ValangBased;
@@ -84,7 +83,7 @@ public class ValangRuleElementHandler extends AbstractValidationRuleElementHandl
         }
         ValangConditionParser parser = new ValangConditionParser();
         valangBased.init(parser);
-        return new ConditionParserCondition(parser, expression);
+        return parser.parse(expression);
     }
 
     /**
@@ -158,5 +157,4 @@ public class ValangRuleElementHandler extends AbstractValidationRuleElementHandl
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         valangBased.setApplicationEventPublisher(applicationEventPublisher);
     }
-
 }

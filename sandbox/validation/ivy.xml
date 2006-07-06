@@ -31,6 +31,7 @@
 
         <dependency org="ognl" name="ognl" rev="2.6.7"/>
         <dependency org="joda-time" name="joda-time" rev="1.2.1"/>
+        <dependency org="org.hibernate" name="hibernate-annotations" rev="3.2.0.cr1" transitive="false"/>
 
         <!-- build time dependencies -->
 
