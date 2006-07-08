@@ -1,32 +1,36 @@
-		<author>
-				<firstname>Rob</firstname>
-				<surname>Harrop</surname>
-			</author>
-			<author>
-				<firstname>Costin</firstname>
-				<surname>Leau</surname>
-			</author>
-			<author>
-				<firstname>Jan</firstname>
-				<surname>Machacek</surname>
-			</author>
-			<author>
-				<firstname>Thierry</firstname>
-				<surname>Templier</surname>
-			</author>
-			<author>
-				<firstname>Thomas</firstname>
-				<surname>Risberg</surname>
-			</author>
-			<author>
-				<firstname>Alex</firstname>
-				<surname>Ruiz</surname>
-			</author>
-			<author>
-				<firstname>Uri</firstname>
-				<surname>Boness</surname>
-			</author>
-            <author>
-				<firstname>Gurwinder</firstname>
-				<surname>Singh</surname>
-			</author>
+<author>
+  <firstname>Rob</firstname>
+  <surname>Harrop</surname>
+</author>
+<author>
+  <firstname>Costin</firstname>
+  <surname>Leau</surname>
+</author>
+<author>
+  <firstname>Jan</firstname>
+  <surname>Machacek</surname>
+</author>
+<author>
+  <firstname>Thierry</firstname>
+  <surname>Templier</surname>
+</author>
+<author>
+  <firstname>Thomas</firstname>
+  <surname>Risberg</surname>
+</author>
+<author>
+  <firstname>Alex</firstname>
+  <surname>Ruiz</surname>
+</author>
+<author>
+  <firstname>Uri</firstname>
+  <surname>Boness</surname>
+</author>
+<author>
+  <firstname>Gurwinder</firstname>
+  <surname>Singh</surname>
+</author>
+<author>
+  <firstname>Sergio</firstname>
+  <surname>Bossa</surname>
+</author>
