@@ -237,7 +237,7 @@
     <target name="gen.release.javadoc" depends="init">
     	<!-- copy sources under one folder -->
        	<copy todir="${target.release.dir}/tmp/sources">
-			<fileset dir="../projects/" includes="**/src/java/**/*.java"/>
+			<fileset dir="../projects/" includes="**/src/java/**/*.java,**/src/java/**/package.html"/>
 			<mapper type="regexp" from="^(.*)org(.*)$$" to="org\\\2"/>
 		</copy>
 
