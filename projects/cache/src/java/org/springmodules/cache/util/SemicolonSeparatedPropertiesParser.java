@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Jan 18, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -31,7 +31,7 @@ import org.springmodules.cache.regex.Regex;
  * Parses a String of form <code>key1=value1;key2=value2;keyN=valueN</code>,
  * and creates a <code>java.util.Properties</code>.
  * </p>
- * 
+ *
  * @author Alex Ruiz
  */
 public abstract class SemicolonSeparatedPropertiesParser {
@@ -41,13 +41,13 @@ public abstract class SemicolonSeparatedPropertiesParser {
    * String of form "key=value".
    */
   private static final Regex KEY_VALUE_REGEX = new Perl5Regex(
-      "([\\w]+)=([\\w /,\\*]+)");
+      "([\\w]+)=([\\w /,\\*.:]+)");
 
   private static final String PROPERTY_DELIMITER = ";";
 
   /**
    * Creates a <code>java.util.Properties</code> from the specified String.
-   * 
+   *
    * @param text
    *          the String to parse.
    * @throws IllegalArgumentException
