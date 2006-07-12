@@ -1,0 +1,79 @@
+<sect1 id="utils"><title>Spring Modules XT Utils</title>
+
+    <para>
+        Spring Modules XT Utils contains utility classes for solving common problems and tasks.
+    </para>
+    
+    <sect2 id="EnhancedSimpleFormController"><title>Using the EnhancedSimpleFormController</title>
+        <para>
+            The EnhancedSimpleFormController is a <ulink url='http://www.springframework.org/docs/api/org/springframework/web/servlet/mvc/SimpleFormController.html'><citetitle>form controller</citetitle></ulink> 
+            which provides facilities for setting custom <ulink url='http://java.sun.com/j2se/1.4.2/docs/api/java/beans/PropertyEditor.html'><citetitle>property editors</citetitle></ulink> in a declarative way.
+            Through the <emphasis>setCustomEditor(Map )</emphasis> method you can set a map of custom property editors, containing the class name of the objects to edit as a key,
+            and the related property editor object as a value.
+            So, if you extend the EnhancedSimpleFormController for your controllers, you can use the method above and avoid to overwrite the 
+            <ulink url='http://www.springframework.org/docs/api/org/springframework/web/servlet/mvc/BaseCommandController.html#initBinder(javax.servlet.http.HttpServletRequest,%20org.springframework.web.bind.ServletRequestDataBinder)'><citetitle>initBinder</citetitle></ulink> method for many uses.
+        </para>
+        <para>Here is an example of EnhancedSimpleFormController declaration into the Spring application context:</para>
+        <programlisting>
+            <![CDATA[
+            <bean id="exampleController" class="org.acme.ExampleController">
+            
+            <property name="formView"><value>...</value></property>
+            <property name="successView"><value>...</value></property>
+            <property name="validator">...</property>
+                
+            <property name="customEditors">
+            <map>
+            <entry>
+            <key><value>org.acme.Office</value></key>
+            <ref bean="officeEditor"/>
+            </entry>
+            </map>
+            </property>  
+                
+            </bean>
+            ]]>
+        </programlisting>
+    </sect2>
+    
+    <sect2 id="FullPathUrlFilenameViewController"><title>Using the FullPathUrlFilenameViewController</title>
+        <para>
+            The FullPathUrlFilenameViewController is an <ulink url='http://www.springframework.org/docs/api/org/springframework/web/servlet/mvc/AbstractUrlViewController.html'><citetitle>AbstractUrlViewController</citetitle></ulink>
+            which like the <ulink url='http://www.springframework.org/docs/api/org/springframework/web/servlet/mvc/UrlFilenameViewController.html'><citetitle>UrlFilenameViewController</citetitle></ulink>  transforms the page name at the end of a URL into a view name, but preserves the full path in the web URL.
+            For example, the URL "/foo/index.html" will correspond to the the "foo/index" view name. 
+        </para>
+    </sect2>
+    
+    <sect2 id="ReflectivePropertyEditor"><title>Using the ReflectivePropertyEditor</title>
+        <para>
+            The ReflectivePropertyEditor is a <ulink url='http://java.sun.com/j2se/1.4.2/docs/api/java/beans/PropertyEditor.html'><citetitle>property editor</citetitle></ulink> implementation
+            capable of converting any object type to and from text, using Java reflection.
+            It converts objects to text and vice-versa thanks to four configurable parameters:
+        </para>
+        <itemizedlist>
+            <listitem><para><emphasis role='bold'>dataAccessObject</emphasis>, the object used for converting from text to the actual desired object: it could be a Factory, or a DAO.</para></listitem>
+            <listitem><para><emphasis role='bold'>dataAccessMethod</emphasis>, the method of the dataAccessObject object to call for converting from text to object.</para></listitem>
+            <listitem><para><emphasis role='bold'>propertyName</emphasis>, the name of the property which will represent the object text value.</para></listitem>
+            <listitem><para><emphasis role='bold'>stringConvertor</emphasis>, for converting the string value to be passed to the dataAccessMethod.</para></listitem>
+        </itemizedlist>
+    </sect2>
+    
+    <sect2 id="ReflectiveCollectionEditor"><title>Using the ReflectiveCollectionEditor</title>
+        <para>
+            The ReflectiveCollectionEditor is a <ulink url='http://java.sun.com/j2se/1.4.2/docs/api/java/beans/PropertyEditor.html'><citetitle>property editor</citetitle></ulink> implementation
+            for converting a collection of strings to a collection of objects and vice-versa. 
+            For converting you have to define the following:
+        </para>
+        <itemizedlist>
+            <listitem><para><emphasis role='bold'>dataAccessObject</emphasis>, the object used for converting from text to the actual desired object: it could be a Factory, or a DAO.</para></listitem>
+            <listitem><para><emphasis role='bold'>dataAccessMethod</emphasis>, the method of the dataAccessObject object to call for converting from text to object.</para></listitem>
+            <listitem><para><emphasis role='bold'>propertyName</emphasis>, the name of the property which will represent the object text value.</para></listitem>
+            <listitem><para><emphasis role='bold'>stringConvertor</emphasis>, for converting the string value to be passed to the dataAccessMethod.</para></listitem>
+        </itemizedlist>
+        <para>
+            This class is useful for binding collections in SpringMVC: for example, if you want to bind a collection of customers starting from a collection of customer ids, obtained from some kind of
+            selection list, you can use this class for automatically converting the collection of customer ids to a collection of actual customer objects.
+        </para>
+    </sect2>
+    
+</sect1>

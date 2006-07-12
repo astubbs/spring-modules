@@ -1,0 +1,64 @@
+/*
+ * Copyright 2006 the original author or authors.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.springmodules.xt.ajax.component;
+
+import junit.framework.*;
+import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
+
+/**
+ *
+ * @author Sergio Bossa
+ */
+public class TaggedTextTest extends XMLEnhancedTestCase {
+    
+    public TaggedTextTest(String testName) {
+        super(testName);
+    }
+
+    protected void setUp() throws Exception {
+    }
+
+    protected void tearDown() throws Exception {
+    }
+
+    public static Test suite() {
+        TestSuite suite = new TestSuite(TaggedTextTest.class);
+        
+        return suite;
+    }
+
+    /**
+     * Test of render method, of class org.springmodules.xt.ajax.component.SimpleText.
+     */
+    public void testRender() throws Exception {
+        TaggedText text = new TaggedText("Test Text", TaggedText.Tag.DIV);
+        text.addAttribute("class", "myText");
+        
+        System.out.println(text.render());
+        
+        String rendering = text.render();
+        assertXpathEvaluatesTo("Test Text", "/div", rendering);
+        assertXpathEvaluatesTo("myText", "/div/@class", rendering);
+        
+        text = new TaggedText("Test Text", TaggedText.Tag.SPAN);
+        text.addAttribute("class", "myText");
+        
+        rendering = text.render();
+        assertXpathEvaluatesTo("Test Text", "/span", rendering);
+        assertXpathEvaluatesTo("myText", "/span/@class", rendering);
+    } 
+}
