@@ -5,10 +5,10 @@
   <section>
     <title>Introduction</title>
 
-    <para>Flux is a job scheduler, workflow engine and a business process
+    <para>Flux is a job scheduler, workflow engine, and business process
     management (BPM) engine. More information about Flux can be found at:
     <ulink
-    url="http://www.fluxcorp.com">http://www.fluxcorp.com</ulink></para>
+    url="http://www.fluxcorp.com">http://www.fluxcorp.com</ulink>.</para>
   </section>
 
   <section>
@@ -19,17 +19,17 @@
 
     <itemizedlist>
       <listitem>
-        <para>Use the below configuration to create a Flux spring bean with
-        the default configuration options<programlisting>  &lt;bean id="fluxEngineBean"
+        <para>Use the following configuration to create a Flux spring bean
+        with the default configuration options<programlisting>  &lt;bean id="fluxEngineBean"
       class="org.springmodules.scheduling.flux.EngineBean"
       destroy-method="dispose"&gt;
   &lt;/bean&gt;</programlisting></para>
       </listitem>
 
       <listitem>
-        <para>Use the below configuration to create a Flux spring bean from
-        the configuration properties that are defined in the
-        "fluxconfig.properties" file<programlisting>  &lt;bean id="fluxEngineBeanFromConfigurationFile"
+        <para>Use the following configuration to create a Flux spring bean
+        from the configuration properties that are defined in the
+        "fluxconfig.properties" file.<programlisting>  &lt;bean id="fluxEngineBeanFromConfigurationFile"
         class="org.springmodules.scheduling.flux.EngineBean"
         destroy-method="dispose"&gt;
 
@@ -38,7 +38,27 @@
     &lt;/constructor-arg&gt;
 
   &lt;/bean&gt;</programlisting></para>
+
+        <para>An XML Engine bean and a Configuration bean can also be created
+        in similar ways. To create these beans, use the
+        "org.springmodules.scheduling.flux.XmlEngineBean" and
+        "org.springmodules.scheduling.flux.ConfigurationBean" classes.</para>
       </listitem>
     </itemizedlist>
+  </section>
+
+  <section>
+    <title>Getting Help</title>
+
+    <para>If you have any questions, feel free to contact our support
+    team.</para>
+
+    <para><emphasis role="bold">Email</emphasis></para>
+
+    <para>support@fluxcorp.com</para>
+
+    <para><emphasis role="bold">Telephone</emphasis></para>
+
+    <para>+1 (406) 656-7398 </para>
   </section>
 </chapter>
