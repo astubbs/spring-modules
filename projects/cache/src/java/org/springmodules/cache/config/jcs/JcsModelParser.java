@@ -77,8 +77,7 @@ public final class JcsModelParser extends AbstractCacheModelParser {
 
     JcsFlushingModel model = new JcsFlushingModel();
 
-    List cacheElements = DomUtils.getChildElementsByTagName(element, "cache",
-        true);
+    List cacheElements = DomUtils.getChildElementsByTagName(element, "cache");
     if (!CollectionUtils.isEmpty(cacheElements)) {
       int count = cacheElements.size();
       CacheStruct[] cacheStructs = new CacheStruct[count];

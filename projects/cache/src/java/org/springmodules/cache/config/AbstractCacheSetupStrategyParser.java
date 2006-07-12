@@ -165,7 +165,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
     Object keyGenerator = null;
 
     List cacheKeyGeneratorElements = DomUtils.getChildElementsByTagName(
-        element, "cacheKeyGenerator", true);
+        element, "cacheKeyGenerator");
     if (!CollectionUtils.isEmpty(cacheKeyGeneratorElements)) {
       Element cacheKeyGeneratorElement = (Element) cacheKeyGeneratorElements
           .get(0);
@@ -201,7 +201,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
       ParserContext parserContext) throws IllegalStateException {
 
     List listenersElements = DomUtils.getChildElementsByTagName(element,
-        "cachingListeners", true);
+        "cachingListeners");
 
     if (CollectionUtils.isEmpty(listenersElements)) {
       return null;
@@ -209,7 +209,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
 
     Element listenersElement = (Element) listenersElements.get(0);
     List listenerElements = DomUtils.getChildElementsByTagName(
-        listenersElement, "cachingListener", true);
+        listenersElement, "cachingListener");
 
     ManagedList listeners = new ManagedList();
     boolean registerCachingListener = true;
@@ -239,8 +239,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
    *         <code>CachingModel</code>)
    */
   private Map parseCachingModels(Element element) {
-    List modelElements = DomUtils.getChildElementsByTagName(element, "caching",
-        true);
+    List modelElements = DomUtils.getChildElementsByTagName(element, "caching");
     if (CollectionUtils.isEmpty(modelElements)) {
       return null;
     }
@@ -273,7 +272,7 @@ public abstract class AbstractCacheSetupStrategyParser implements
    */
   private Map parseFlushingModels(Element element) {
     List modelElements = DomUtils.getChildElementsByTagName(element,
-        "flushing", true);
+        "flushing");
     if (CollectionUtils.isEmpty(modelElements)) {
       return null;
     }

@@ -251,7 +251,21 @@ public final class CacheProxyFactoryBean extends ProxyConfig implements
    */
   public void setProxyInterfaces(String[] interfaceNames)
       throws ClassNotFoundException {
-    proxyInterfaces = AopUtils.toInterfaceArray(interfaceNames);
+    proxyInterfaces = toInterfaceArray(interfaceNames);
+  }
+  
+  private Class[] toInterfaceArray(String[] interfaceNames) throws ClassNotFoundException
+  {
+	  Class interfaces[] = new Class[interfaceNames.length];
+		for (int i = 0; i < interfaceNames.length; i++) {
+			interfaces[i] = ClassUtils.forName(interfaceNames[i].trim());
+			// Check whether it is an interface.
+			if (!interfaces[i].isInterface()) {
+				throw new IllegalArgumentException(
+						"Can proxy only interfaces: [" + interfaces[i].getName() + "] is a class");
+			}
+		}
+		return interfaces;
   }
 
   /**

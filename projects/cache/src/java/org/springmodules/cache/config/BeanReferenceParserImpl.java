@@ -58,8 +58,7 @@ public class BeanReferenceParserImpl implements BeanReferenceParser {
     }
 
     Element beanElement = null;
-    List beanElements = DomUtils.getChildElementsByTagName(element, "bean",
-        true);
+    List beanElements = DomUtils.getChildElementsByTagName(element, "bean");
     if (!CollectionUtils.isEmpty(beanElements)) {
       beanElement = (Element) beanElements.get(0);
     }
@@ -70,7 +69,7 @@ public class BeanReferenceParserImpl implements BeanReferenceParser {
           + "bean definition");
     }
 
-    BeanDefinitionHolder holder = parserContext.getHelper()
+    BeanDefinitionHolder holder = parserContext.getDelegate()
         .parseBeanDefinitionElement(beanElement, true);
 
     String beanName = holder.getBeanName();
