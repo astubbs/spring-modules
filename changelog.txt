@@ -11,6 +11,9 @@ Package org.springmodules.lucene
 
 Changes in version 0.5 (in progress)
 ------------------------------------
+Package org.springmodules.bpm.flux
+* Added XML Engine bean.
+
 Package org.springmodules.cache
 * Patched the module to work with Spring post 2.0-m3. Many thanks to Craig Walls for submitting the patch.
 
@@ -19,6 +22,12 @@ Package org.springmodules.jcr
 
 Package org.springmodules.jcr.jackrabbit
 * Added TransientRepositoryFactoryBean
+
+Package org.springmodules.scheduling.flux
+* Added XML Engine bean.
+
+Package org.springmodules.workflow.flux
+* Added XML Engine bean.
 
 Package org.springmodules.workflow.jbpm31
 * Updated docs regarding ProcessDefinitionFB [JIRA MOD-135]

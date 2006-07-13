@@ -103,7 +103,7 @@ public class XmlEngineBean implements XmlEngine {
    * registry under the default bind name.
    */
   public XmlEngineBean(String host, int port) throws EngineException, RemoteException, NotBoundException {
-    xmlEngine = new XmlEngineBean(host, port, Configuration.DEFAULT_SERVER_NAME);
+    xmlEngine = new XmlEngineBean(host, port, "Flux");
   } // constructor
 
   /**
