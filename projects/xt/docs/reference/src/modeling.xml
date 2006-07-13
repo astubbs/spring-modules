@@ -5,290 +5,299 @@
             It comprises different parts which we'll illustrate in sections below. 
         </para>
     </sect2>
-    <sect2 id='introductor'><title id='introductor-title'>Introductor</title>
-        <para>The Spring Modules XT ''Introductor'' permits you to make existent objects implementing additional interfaces defined at runtime, that is, it ''introduces'' new interfaces into already existent plain old java objects.
-            This is achieved through the use of <ulink url='http://www.springframework.org/documentation'><citetitle>Spring AOP Introduction</citetitle></ulink>, for creating ''proxy'' objects that behave like the original ones but also implement new interfaces. 
-        </para>
-        <!--<para>
-        <imageobject> <imagedata fileref="images/introductor.png" format="PNG"/> </imageobject>
-        </para>-->
-        <sect3 id='dynamicintroductor'><title id='dynamicintroductor-title'>DynamicIntroductor</title>
-            <para>The core interface is the <emphasis role='bold'>DynamicIntroductor</emphasis>:
+    <sect2 id='modeling-base'><title id='modeling-base-title'>Base Concepts</title>
+        <sect3 id='introductor'><title id='introductor-title'>Introductor</title>
+            <para>The Spring Modules XT ''Introductor'' permits you to make existent objects implementing additional interfaces defined at runtime, that is, it ''introduces'' new interfaces into already existent plain old java objects.
+                This is achieved through the use of <ulink url='http://www.springframework.org/documentation'><citetitle>Spring AOP Introduction</citetitle></ulink>, for creating ''proxy'' objects that behave like the original ones but also implement new interfaces. 
             </para>
-            <programlisting><![CDATA[
-                public interface DynamicIntroductor {
+            <!--<para>
+            <imageobject> <imagedata fileref="images/introductor.png" format="PNG"/> </imageobject>
+            </para>-->
+            <sect4 id='dynamicintroductor'><title id='dynamicintroductor-title'>DynamicIntroductor</title>
+                <para>The core interface is the <emphasis role='bold'>DynamicIntroductor</emphasis>:
+                </para>
+                <programlisting><![CDATA[
+                    public interface DynamicIntroductor {
       
-                public Object introduceInterfaces(Object target, Class[] introducedInterfaces);
+                    public Object introduceInterfaces(Object target, Class[] introducedInterfaces);
 
-                public Object introduceInterfaces(Object target, Class[] introducedInterfaces, Class[] targetInterfaces);
+                    public Object introduceInterfaces(Object target, Class[] introducedInterfaces, 
+                    Class[] targetInterfaces);
 
-                public Object getTarget(Object proxy);
-                }]]>
-            </programlisting> 
-            <itemizedlist>
-                <listitem><para>introduceInterfaces(Object target, Class[] introducedInterfaces) </para></listitem>
-                <listitem><para>Introduce to the given target object a set of interfaces defined at runtime. The resulting proxy object <emphasis role='bold'>subclasses</emphasis> the target object class.</para></listitem>
-                <listitem><para>public Object introduceInterfaces(Object target, Class[] introducedInterfaces, Class[] targetInterfaces)</para></listitem>
-                <listitem><para>Introduce to the given target object a set of interfaces defined at runtime. The resulting proxy object <emphasis role='bold'>implements</emphasis> a set of target interfaces defined at runtime.</para></listitem> 
-                <listitem><para>public Object getTarget(Object proxy)</para></listitem> 
-                <listitem><para>Get the original target object from the proxied one.</para></listitem>
-            </itemizedlist>
+                    public Object getTarget(Object proxy);
+                    }]]>
+                </programlisting> 
+                <itemizedlist>
+                    <listitem><para>introduceInterfaces(Object target, Class[] introducedInterfaces) </para></listitem>
+                    <listitem><para>Introduce to the given target object a set of interfaces defined at runtime. The resulting proxy object <emphasis role='bold'>subclasses</emphasis> the target object class.</para></listitem>
+                    <listitem><para>public Object introduceInterfaces(Object target, Class[] introducedInterfaces, Class[] targetInterfaces)</para></listitem>
+                    <listitem><para>Introduce to the given target object a set of interfaces defined at runtime. The resulting proxy object <emphasis role='bold'>implements</emphasis> a set of target interfaces defined at runtime.</para></listitem> 
+                    <listitem><para>public Object getTarget(Object proxy)</para></listitem> 
+                    <listitem><para>Get the original target object from the proxied one.</para></listitem>
+                </itemizedlist>
+            </sect4>
+            <sect4 id='dynamicbeanintroductor'><title id='dynamicbeanintroductor-title'>DynamicBeanIntroductor</title>
+                <para>The <emphasis role='bold'>DynamicBeanIntroductor</emphasis> class is a concrete implementation for introducing ''JavaBeans-style'' interfaces with getter/setter methods.
+                    You can introduce any interface <emphasis role='bold'>without</emphasis> manually implementing it, because its getter/setter methods will be automatically implemented; the only constraints to follow when using the <emphasis role='bold'>DynamicBeanIntroductor</emphasis> are to not introduce interfaces with methods different than getter or setters, and to not use primitive types as getter return types, using instead their object wrappers. 
+                </para>
+                <para>For example, take this domain object:
+                </para>
+                <programlisting><![CDATA[
+                    public class Employee {
+    
+                    private String matriculationCode;
+                    private String firstname;
+                    private String surname;
+
+                    public String getFirstname() {
+                    return firstname;
+                    }
+
+                    public void setFirstname(String firstname) {
+                    this.firstname = firstname;
+                    }
+
+                    public String getSurname() {
+                    return surname;
+                    }
+
+                    public void setSurname(String surname) {
+                    this.surname = surname;
+                    }
+
+                    public String getMatriculationCode() {
+                    return matriculationCode;
+                    }
+
+                    public void setMatriculationCode(String matriculationCode) {
+                    this.matriculationCode = matriculationCode;
+                    }
+                    }]]>
+                </programlisting>
+                <para>You can automatically introduce the following interface:
+                </para>
+                <programlisting><![CDATA[
+                    public interface EmployeeView {
+    
+                    void setOffice(Office office);
+    
+                    Office getOffice();
+    
+                    void setSelected(Boolean selected);
+    
+                    Boolean getSelected();
+                    }]]>
+                </programlisting>
+                <para>Simply doing this:
+                </para>
+                <programlisting><![CDATA[
+                    DynamicBeanIntroductor introductor =  new DynamicBeanIntroductor();
+                    Object introducedEmployee = introductor.introduceInterfaces(new Employee(), 
+                    new Class[]{EmployeeView.class});]]>
+                </programlisting>
+                <para>You can now use your introduced object:
+                </para>
+                <programlisting><![CDATA[
+                    ((Employee) introducedEmployee).getMatriculationCode();
+                    ((EmployeeView) introducedEmployee).getSelected();]]>
+                </programlisting>
+            </sect4>
+            <sect4 id='introductor-collections'><title id='introductor-collections-title'>Introductor Collections</title>
+                <para>Introductor Collections are <ulink url='http://java.sun.com/docs/books/tutorial/collections/index.html'><citetitle>Java Collections</citetitle></ulink> decorators that apply Dynamic Introductors to contained objects.
+                    You can decorate a Java <ulink url='http://java.sun.com/docs/books/tutorial/collections/interfaces/index.html'><citetitle>Collection</citetitle></ulink>, <ulink url='http://java.sun.com/docs/books/tutorial/collections/interfaces/index.html'><citetitle>Set</citetitle></ulink>, or <ulink url='http://java.sun.com/docs/books/tutorial/collections/interfaces/index.html'><citetitle>List</citetitle></ulink>. 
+                    Here is how you construct an Introductor Collection: 
+                </para>
+                <programlisting><![CDATA[
+                    public IntroductorCollection(Collection target, Class[] introducedInterfaces, 
+                    Class[] targetObjectsInterfaces, DynamicIntroductor introductor);
+
+                    public IntroductorCollection(Collection target, Class[] interfaces, 
+                    DynamicIntroductor introductor);
+
+                    public IntroductorSet(Collection target, Class[] introducedInterfaces, 
+                    Class[] targetObjectsInterfaces, DynamicIntroductor introductor);
+
+                    public IntroductorSet(Collection target, Class[] interfaces, 
+                    DynamicIntroductor introductor);
+
+                    public IntroductorList(Collection target, Class[] introducedInterfaces, 
+                    Class[] targetObjectsInterfaces, DynamicIntroductor introductor);
+
+                    public IntroductorList(Collection target, Class[] interfaces, 
+                    DynamicIntroductor introductor);]]>
+                </programlisting>
+                <para>You can specify the following constructor parameters:
+                </para>
+                <para>; Collection target : The target collection to decorate.</para>
+                <itemizedlist>
+                    <listitem><para>Class[] introducedInterfaces : The interfaces to introduce into every contained object.</para></listitem>
+                    <listitem><para>Class[] targetObjectsInterfaces : The interfaces of the target object that the proxy object must implement. </para></listitem>
+                    <listitem><para>DynamicIntroductor introductor : The Dynamic Introductor to use. </para></listitem>
+                </itemizedlist>
+                <para>You can safely add and remove objects to and from Introductor Collections like they were normal collections: all changes are backed by the original non-decorated collection.
+                    Every object you get from an Introductor Collections implements a given set of interfaces using a particular, concrete, Dynamic Introductor. 
+                    Please <emphasis role='bold'>note</emphasis> that objects stored in the original collection <emphasis role='bold'>are not modified</emphasis>. 
+                </para>
+            </sect4>
         </sect3>
-        <sect3 id='dynamicbeanintroductor'><title id='dynamicbeanintroductor-title'>DynamicBeanIntroductor</title>
-            <para>The <emphasis role='bold'>DynamicBeanIntroductor</emphasis> class is a concrete implementation for introducing ''JavaBeans-style'' interfaces with getter/setter methods.
-                You can introduce any interface <emphasis role='bold'>without</emphasis> manually implementing it, because its getter/setter methods will be automatically implemented; the only constraints to follow when using the <emphasis role='bold'>DynamicBeanIntroductor</emphasis> are to not introduce interfaces with methods different than getter or setters, and to not use primitive types as getter return types, using instead their object wrappers. 
+        <sect3 id='notifications'><title id='notifications-title'>Notifications</title>
+            <para><ulink url='http://www.martinfowler.com/eaaDev/Notification.html'><citetitle>Notifications</citetitle></ulink> are lightweight objects capable of collecting and carrying messages among different application layers, even if they mainly carry messages toward the presentation layer.
             </para>
-            <para>For example, take this domain object:
+            <para>Our Notifications implementation is based on a ''Message'' interface and a ''Notification'' interface.
             </para>
-            <programlisting><![CDATA[
-                public class Employee {
+            <sect4 id='the-message-interface'><title id='the-message-interface-title'>The Message Interface</title>
+                <para>The Message interface looks like this:</para>
+                <programlisting><![CDATA[
+                    public interface Message {
     
-                private String matriculationCode;
-                private String firstname;
-                private String surname;
-
-                public String getFirstname() {
-                return firstname;
-                }
-
-                public void setFirstname(String firstname) {
-                this.firstname = firstname;
-                }
-
-                public String getSurname() {
-                return surname;
-                }
-
-                public void setSurname(String surname) {
-                this.surname = surname;
-                }
-
-                public String getMatriculationCode() {
-                return matriculationCode;
-                }
-
-                public void setMatriculationCode(String matriculationCode) {
-                this.matriculationCode = matriculationCode;
-                }
-                }]]>
-            </programlisting>
-            <para>You can automatically introduce the following interface:
-            </para>
-            <programlisting><![CDATA[
-                public interface EmployeeView {
+                    public enum Type { ERROR, WARNING, INFO };
     
-                void setOffice(Office office);
+                    public String getCode();
     
-                Office getOffice();
+                    public Message.Type getType();
     
-                void setSelected(Boolean selected);
+                    public String getPropertyName();
     
-                Boolean getSelected();
-                }]]>
-            </programlisting>
-            <para>Simply doing this:
-            </para>
-            <programlisting><![CDATA[
-                DynamicBeanIntroductor introductor =  new DynamicBeanIntroductor();
-                Object introducedEmployee = introductor.introduceInterfaces(new Employee(), new Class[]{EmployeeView.class});]]>
-            </programlisting>
-            <para>You can now use your introduced object:
-            </para>
-            <programlisting><![CDATA[
-                ((Employee) introducedEmployee).getMatriculationCode();
-                ((EmployeeView) introducedEmployee).getSelected();]]>
-            </programlisting>
-        </sect3>
-        <sect3 id='introductor-collections'><title id='introductor-collections-title'>Introductor Collections</title>
-            <para>Introductor Collections are <ulink url='http://java.sun.com/docs/books/tutorial/collections/index.html'><citetitle>Java Collections</citetitle></ulink> decorators that apply Dynamic Introductors to contained objects.
-                You can decorate a Java <ulink url='http://java.sun.com/docs/books/tutorial/collections/interfaces/index.html'><citetitle>Collection</citetitle></ulink>, <ulink url='http://java.sun.com/docs/books/tutorial/collections/interfaces/index.html'><citetitle>Set</citetitle></ulink>, or <ulink url='http://java.sun.com/docs/books/tutorial/collections/interfaces/index.html'><citetitle>List</citetitle></ulink>. 
-                Here is how you construct an Introductor Collection: 
-            </para>
-            <programlisting><![CDATA[
-                public IntroductorCollection(Collection target, Class[] introducedInterfaces, Class[] targetObjectsInterfaces, DynamicIntroductor introductor);
-
-                public IntroductorCollection(Collection target, Class[] interfaces, DynamicIntroductor introductor);
-
-                public IntroductorSet(Collection target, Class[] introducedInterfaces, Class[] targetObjectsInterfaces, DynamicIntroductor introductor);
-
-                public IntroductorSet(Collection target, Class[] interfaces, DynamicIntroductor introductor);
-
-                public IntroductorList(Collection target, Class[] introducedInterfaces, Class[] targetObjectsInterfaces, DynamicIntroductor introductor);
-
-                public IntroductorList(Collection target, Class[] interfaces, DynamicIntroductor introductor);]]>
-            </programlisting>
-            <para>You can specify the following constructor parameters:
-            </para>
-            <para>; Collection target : The target collection to decorate.</para>
-            <itemizedlist>
-                <listitem><para>Class[] introducedInterfaces : The interfaces to introduce into every contained object.</para></listitem>
-                <listitem><para>Class[] targetObjectsInterfaces : The interfaces of the target object that the proxy object must implement. </para></listitem>
-                <listitem><para>DynamicIntroductor introductor : The Dynamic Introductor to use. </para></listitem>
-            </itemizedlist>
-            <para>You can safely add and remove objects to and from Introductor Collections like they were normal collections: all changes are backed by the original non-decorated collection.
-                Every object you get from an Introductor Collections implements a given set of interfaces using a particular, concrete, Dynamic Introductor. 
-                Please <emphasis role='bold'>note</emphasis> that objects stored in the original collection <emphasis role='bold'>are not modified</emphasis>. 
-            </para>
-        </sect3>
-    </sect2>
-    <sect2 id='notifications'><title id='notifications-title'>Notifications</title>
-        <para><ulink url='http://www.martinfowler.com/eaaDev/Notification.html'><citetitle>Notifications</citetitle></ulink> are lightweight objects capable of collecting and carrying messages among different application layers, even if they mainly carry messages toward the presentation layer.
-        </para>
-        <para>Our Notifications implementation is based on a ''Message'' interface and a ''Notification'' interface.
-        </para>
-        <sect3 id='the-message-interface'><title id='the-message-interface-title'>The Message Interface</title>
-            <para>The Message interface looks like this:</para>
-            <programlisting><![CDATA[
-                public interface Message {
-    
-                public enum Type { ERROR, WARNING, INFO };
-    
-                public String getCode();
-    
-                public Message.Type getType();
-    
-                public String getPropertyName();
-    
-                public String getDefaultMessage();
-                }]]>
-            </programlisting>
-            <para>A message object can hold the following information:
-            </para>
-            <itemizedlist>
-                <listitem>
-                    <para>A message type, between ''ERROR'', ''WARNING'' and ''INFO''.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>A message code.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>A default message text.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>The name of an object property this message refers to, useful for example when messages refer to validation errors.
-                    </para>
-                </listitem>
-            </itemizedlist>
-        </sect3>
-        <sect3 id='the-notification-interface'><title id='the-notification-interface-title'>The Notification Interface</title>
-            <para>The Notification interface looks like this:</para>
-            <programlisting><![CDATA[
-                public interface Notification {
+                    public String getDefaultMessage();
+                    }]]>
+                </programlisting>
+                <para>A message object can hold the following information:
+                </para>
+                <itemizedlist>
+                    <listitem>
+                        <para>A message type, between ''ERROR'', ''WARNING'' and ''INFO''.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>A message code.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>A default message text.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>The name of an object property this message refers to, useful for example when messages refer to validation errors.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+            </sect4>
+            <sect4 id='the-notification-interface'><title id='the-notification-interface-title'>The Notification Interface</title>
+                <para>The Notification interface looks like this:</para>
+                <programlisting><![CDATA[
+                    public interface Notification {
    
-                public void addMessage(Message message);
+                    public void addMessage(Message message);
 
-                public boolean removeMessage(Message message);
+                    public boolean removeMessage(Message message);
 
-                public Message[] getMessages(Message.Type type);
+                    public Message[] getMessages(Message.Type type);
 
-                public boolean hasMessages(Message.Type type);
+                    public boolean hasMessages(Message.Type type);
 
-                public Message[] getAllMessages();
+                    public Message[] getAllMessages();
 
-                public boolean hasMessages();
+                    public boolean hasMessages();
 
-                public void addAllMessages(Notification notification);
-                }]]>
-            </programlisting>
-            <para>As you can see, you can add and remove Message objects, and ask for Messages of a given type.
-            </para>
+                    public void addAllMessages(Notification notification);
+                    }]]>
+                </programlisting>
+                <para>As you can see, you can add and remove Message objects, and ask for Messages of a given type.
+                </para>
+            </sect4>
         </sect3>
-    </sect2>
-    <sect2 id='specifications'><title id='specifications-title'>Specifications</title>
-        <para><ulink url='http://www.martinfowler.com/apsupp/spec.pdf'><citetitle>Specifications</citetitle></ulink> are predicate-like objects for powerfully expressing all kind of business/validation/selection rules and matching business objects against them.
-            So, every Specification implementation must have a boolean method for verifying if a business object satisfies the Specification rules. 
-        </para>
-        <para>Our Specification implementation is based on the following interface:</para>
-        <programlisting><![CDATA[
-            public interface Specification<O> {
-   
-            public boolean evaluate(O object);
-    
-            public boolean evaluate(O object, Notification notification);
-    
-            public void addMessage(Message message, boolean whenSatisfied);
-    
-            public boolean removeMessage(Message message, boolean whenSatisfied);
-            }]]>
-        </programlisting>
-        <para>As you can see, you'll also be able to define what <link linkend="the-message-interface">Messages</link> the specification will issue when satisfied or unsatisfied, and then collect all actual messages into a <link linkend="notifications">Notification</link> object at evaluation time.
-        </para>
-        <sect3 id='composite-specifications'><title id='composite-specifications-title'>Composite Specifications</title>
-            <para>Composite Specifications let you compose your own specification objects through logical operators and define what <link linkend="the-message-interface">Messages</link> will be issued by what specifications when satisfied or unsatisfied, all using a nice <ulink url='http://www.martinfowler.com/bliki/FluentInterface.html'><citetitle>fluent interface</citetitle></ulink>.
+        <sect3 id='specifications'><title id='specifications-title'>Specifications</title>
+            <para><ulink url='http://www.martinfowler.com/apsupp/spec.pdf'><citetitle>Specifications</citetitle></ulink> are predicate-like objects for powerfully expressing all kind of business/validation/selection rules and matching business objects against them.
+                So, every Specification implementation must have a boolean method for verifying if a business object satisfies the Specification rules. 
             </para>
-            <para>Other than this, the main advantage of using the Composite Specification is that you can combine your own specification whatever their class is, without modifying one line of your code.
-            </para>
-            <para>Here is the CompositeSpecification interface:</para>
+            <para>Our Specification implementation is based on the following interface:</para>
             <programlisting><![CDATA[
-                public interface CompositeSpecification<S, O> extends Specification<O> {
-    
-                public CompositeSpecification and(CompositeSpecification<S, O> specification);
-
-                public CompositeSpecification and(S specification);
-
-                public CompositeSpecification andNot(CompositeSpecification<S, O> specification);
-
-                public CompositeSpecification andNot(S specification);
-
-                public CompositeSpecification compose(S specification);
-
-                public CompositeSpecification withMessage(Message message, boolean whenSatisfied);
-    
+                public interface Specification<O> {
+   
                 public boolean evaluate(O object);
-
-                public CompositeSpecification or(CompositeSpecification<S, O> specification);
-
-                public CompositeSpecification or(S specification);
-
-                public CompositeSpecification orNot(CompositeSpecification<S, O> specification);
-
-                public CompositeSpecification orNot(S specification);
+    
+                public boolean evaluate(O object, Notification notification);
+    
+                public void addMessage(Message message, boolean whenSatisfied);
+    
+                public boolean removeMessage(Message message, boolean whenSatisfied);
                 }]]>
             </programlisting>
-            <para>You have to simply specify the type of the specification you want to compose and of the object you want to evaluate, through the generic interface, and call the fluent interface methods.
+            <para>As you can see, you'll also be able to define what <link linkend="the-message-interface">Messages</link> the specification will issue when satisfied or unsatisfied, and then collect all actual messages into a <link linkend="notifications">Notification</link> object at evaluation time.
             </para>
-            <para>Some code is worth a lot of words, so for taking a glimpse on how powerful a CompositeSpecification can be, say you have implemented these two specifications in your own project (independent form Spring Modules XT code):</para>
-            <programlisting><![CDATA[
-                public class OfficeIdSpecification implements BaseSpecification<IOffice> {
+            <sect4 id='composite-specifications'><title id='composite-specifications-title'>Composite Specifications</title>
+                <para>Composite Specifications let you compose your own specification objects through logical operators and define what <link linkend="the-message-interface">Messages</link> will be issued by what specifications when satisfied or unsatisfied, all using a nice <ulink url='http://www.martinfowler.com/bliki/FluentInterface.html'><citetitle>fluent interface</citetitle></ulink>.
+                </para>
+                <para>Other than this, the main advantage of using the Composite Specification is that you can combine your own specification whatever their class is, without modifying one line of your code.
+                </para>
+                <para>Here is the CompositeSpecification interface:</para>
+                <programlisting><![CDATA[
+                    public interface CompositeSpecification<S, O> extends Specification<O> {
     
-                public boolean isSatisfiedBy(IOffice o) {
-                return o.getOfficeId().matches("\\d+") || o.getOfficeId().matches("o\\d+"); 
-                }
-                }
+                    public CompositeSpecification and(CompositeSpecification<S, O> specification);
 
-                public class FullOfficeSpecification implements BaseSpecification<IOffice> {
+                    public CompositeSpecification and(S specification);
+
+                    public CompositeSpecification andNot(CompositeSpecification<S, O> specification);
+
+                    public CompositeSpecification andNot(S specification);
+
+                    public CompositeSpecification compose(S specification);
+
+                    public CompositeSpecification withMessage(Message message, boolean whenSatisfied);
     
-                private int limit = 3;
+                    public boolean evaluate(O object);
+
+                    public CompositeSpecification or(CompositeSpecification<S, O> specification);
+
+                    public CompositeSpecification or(S specification);
+
+                    public CompositeSpecification orNot(CompositeSpecification<S, O> specification);
+
+                    public CompositeSpecification orNot(S specification);
+                    }]]>
+                </programlisting>
+                <para>You have to simply specify the type of the specification you want to compose and of the object you want to evaluate, through the generic interface, and call the fluent interface methods.
+                </para>
+                <para>Some code is worth a lot of words, so for taking a glimpse on how powerful a CompositeSpecification can be, say you have implemented these two specifications in your own project (independent form Spring Modules XT code):</para>
+                <programlisting><![CDATA[
+                    public class OfficeIdSpecification implements BaseSpecification<IOffice> {
     
-                public boolean isSatisfiedBy(IOffice o) {
-                return o.getEmployees().size() > this.limit; 
-                }
-                }]]>
-            </programlisting>
-            <para>You can powerfully combine them simply writing the following:</para>
-            <programlisting><![CDATA[
-                OfficeIdSpecification idSpecification = new OfficeIdSpecification();
-                FullOfficeSpecification fullOfficeSpecification = new FullOfficeSpecification();
+                    public boolean isSatisfiedBy(IOffice o) {
+                    return o.getOfficeId().matches("\\d+") || o.getOfficeId().matches("o\\d+"); 
+                    }
+                    }
+
+                    public class FullOfficeSpecification implements BaseSpecification<IOffice> {
+    
+                    private int limit = 3;
+    
+                    public boolean isSatisfiedBy(IOffice o) {
+                    return o.getEmployees().size() > this.limit; 
+                    }
+                    }]]>
+                </programlisting>
+                <para>You can powerfully combine them simply writing the following:</para>
+                <programlisting><![CDATA[
+                    OfficeIdSpecification idSpecification = new OfficeIdSpecification();
+                    FullOfficeSpecification fullOfficeSpecification = new FullOfficeSpecification();
         
-                CompositeSpecification<BaseSpecification, IOffice> officeSpecification = 
-                new CompositeSpecificationImpl(BaseSpecification.class, "isSatisfiedBy");
+                    CompositeSpecification<BaseSpecification, IOffice> officeSpecification = 
+                    new CompositeSpecificationImpl(BaseSpecification.class, "isSatisfiedBy");
 
-                Message wrongIdMessage = new MessageImpl(OfficeErrorCodes.WRONG_ID, 
-                Message.Type.ERROR,
-                "officeId" ,"Wrong office id");
-                Message fullOfficeMessage = new MessageImpl(OfficeErrorCodes.FULL,
-                Message.Type.ERROR,
-                "employees", "Too many employees");
+                    Message wrongIdMessage = new MessageImpl(OfficeErrorCodes.WRONG_ID, 
+                    Message.Type.ERROR,
+                    "officeId" ,"Wrong office id");
+                    Message fullOfficeMessage = new MessageImpl(OfficeErrorCodes.FULL,
+                    Message.Type.ERROR,
+                    "employees", "Too many employees");
 
-                officeSpecification.compose(idSpecification).withMessage(wrongIdMessage, false)
-                .andNot(fullOfficeSpecification).withMessage(fullOfficeMessage, true);]]>
-            </programlisting>
-            <para>The last line will compose a specification matching an office with a correct id and not being full.
-            </para>
+                    officeSpecification.compose(idSpecification).withMessage(wrongIdMessage, false)
+                    .andNot(fullOfficeSpecification).withMessage(fullOfficeMessage, true);]]>
+                </programlisting>
+                <para>The last line will compose a specification matching an office with a correct id and not being full.
+                </para>
+            </sect4>
         </sect3>
     </sect2>
-    
 </sect1>
