@@ -41,7 +41,7 @@ public abstract class SemicolonSeparatedPropertiesParser {
    * String of form "key=value".
    */
   private static final Regex KEY_VALUE_REGEX = new Perl5Regex(
-      "([\\w]+)=([\\w /,\\*.:]+)");
+      "([\\w]+)=([\\w /,\\*.:=&?]+)");
 
   private static final String PROPERTY_DELIMITER = ";";
 
