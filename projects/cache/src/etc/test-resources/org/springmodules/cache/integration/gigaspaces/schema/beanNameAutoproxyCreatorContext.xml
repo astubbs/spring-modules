@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:gigaspaces="http://www.springmodules.org/schema/gigaspaces"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springmodules.org/schema/gigaspaces http://www.springmodules.org/schema/cache/springmodules-gigaspaces.xsd">
+
+  <gigaspaces:methodMapInterceptors cachingInterceptorId="cachingInterceptor"
+    flushingInterceptorId="flushingInterceptor">
+    <gigaspaces:cachingListeners>
+      <gigaspaces:cachingListener refId="cachingListener" />
+    </gigaspaces:cachingListeners>
+
+    <gigaspaces:caching
+      methodFQN="org.springmodules.cache.integration.CacheableService.get*"
+      cacheName="/./myCache5?schema=cache&amp;properties=gs" />
+    <gigaspaces:flushing
+      methodFQN="org.springmodules.cache.integration.CacheableService.update*"
+      cacheNames="/./myCache5?schema=cache&amp;properties=gs" />
+  </gigaspaces:methodMapInterceptors>
+
+  <bean
+    class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+    <property name="beanNames">
+      <list>
+        <idref local="cacheableService" />
+      </list>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <value>cachingInterceptor</value>
+        <value>flushingInterceptor</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="cacheableService"
+    class="org.springmodules.cache.integration.CacheableServiceImpl">
+    <property name="names">
+      <list>
+        <value>Luke Skywalker</value>
+        <value>Leia Organa</value>
+      </list>
+    </property>
+  </bean>
+</beans>

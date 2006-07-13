@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:gigaspaces="http://www.springmodules.org/schema/gigaspaces"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springmodules.org/schema/gigaspaces http://www.springmodules.org/schema/cache/springmodules-gigaspaces.xsd">
+
+  <gigaspaces:proxy id="cacheableService">
+    <gigaspaces:cacheKeyGenerator>
+      <bean 
+        class="org.springmodules.cache.key.HashCodeCacheKeyGenerator" />
+    </gigaspaces:cacheKeyGenerator>
+
+    <gigaspaces:cachingListeners>
+      <gigaspaces:cachingListener refId="cachingListener" />
+    </gigaspaces:cachingListeners>
+
+    <bean
+      class="org.springmodules.cache.integration.CacheableServiceImpl">
+      <property name="names">
+        <list>
+          <value>Luke Skywalker</value>
+          <value>Leia Organa</value>
+        </list>
+      </property>
+    </bean>
+
+    <gigaspaces:caching methodName="get*" cacheName="/./myCache6?schema=cache&amp;properties=gs" />
+    <gigaspaces:flushing methodName="update*" cacheNames="/./myCache6?schema=cache&amp;properties=gs" />
+  </gigaspaces:proxy>
+
+</beans>

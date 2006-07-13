@@ -28,13 +28,32 @@
       <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>
 
+
+
     <!-- cache dependencies
     <dependency org="tangosol" name="coherence" rev="3.2-b351">
       <artifact name="coherence" type="jar" conf="global" />
       <artifact name="tangosol" type="jar" conf="global" />
     </dependency>
 	 -->
-	 
+
+    <dependency org="gigaspaces" name="commons-beanutils-gs" rev="1.6"/>
+	<dependency org="gigaspaces" name="commons-digester-gs" rev="1.7"/>
+	<dependency org="gigaspaces" name="gigaspaces-ce" rev="5.0"/>
+
+    <dependency org="jini" name="jsk" rev="2.1">
+		<artifact name="jsk-lib" type="jar"/>
+		<artifact name="jsk-platform" type="jar"/>
+		<artifact name="mahalo" type="jar"/>
+		<artifact name="reggie" type="jar"/>
+		<artifact name="start" type="jar"/>
+	</dependency>
+
+    <dependency org="jini" name="rio" rev="20060125" conf="test->*">
+		<artifact name="boot" type="jar"/>
+		<artifact name="webster" type="jar"/>
+	</dependency>
+
     <dependency org="apache" name="commons-attributes" rev="2.1">
       <artifact name="commons-attributes-api" type="jar" />
       <artifact name="commons-attributes-compiler" type="jar" />
@@ -55,13 +74,14 @@
     <dependency org="jboss" name="javassist" rev="3.0" />
 
     <dependency org="jboss" name="jboss-cache" rev="1.2.4"/>
-	
+
     <dependency org="jboss" name="jboss" rev="4.0.3">
       <artifact name="jboss-common" type="jar" />
       <artifact name="jboss-jmx" type="jar" />
       <artifact name="jboss-minimal" type="jar" />
       <artifact name="jboss-system" type="jar" />
     </dependency>
+	<dependency org="backport-util-concurrent" name="backport-util-concurrent" rev="2.1" conf="test->*"/>
 
     <dependency org="jcs" name="jcs" rev="1.2.6.5" />
 

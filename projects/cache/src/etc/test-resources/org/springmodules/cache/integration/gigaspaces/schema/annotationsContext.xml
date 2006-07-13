@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:gigaspaces="http://www.springmodules.org/schema/gigaspaces"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springmodules.org/schema/gigaspaces http://www.springmodules.org/schema/cache/springmodules-gigaspaces.xsd">
+
+  <gigaspaces:annotations>
+    <gigaspaces:cachingListeners>
+      <gigaspaces:cachingListener refId="cachingListener" />
+    </gigaspaces:cachingListeners>
+    <gigaspaces:caching id="test" cacheName="/./myCache4?schema=cache&amp;properties=gs" />
+    <gigaspaces:flushing id="test" cacheNames="/./myCache4?schema=cache&amp;properties=gs" />
+  </gigaspaces:annotations>
+
+  <!-- Set up the objects to apply caching to -->
+  <bean id="cacheableService"
+    class="org.springmodules.cache.annotations.TigerCacheableService">
+    <property name="names">
+      <list>
+        <value>Luke Skywalker</value>
+        <value>Leia Organa</value>
+      </list>
+    </property>
+  </bean>
+</beans>
