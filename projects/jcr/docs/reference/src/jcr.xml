@@ -204,7 +204,8 @@
 
         <para>-- or --</para>
 
-        <programlisting>&lt;!-- configuring a 'transient' repository (automatically starts when a session is opened and shutdowns when all sessions are closed) --&gt;
+        <programlisting>&lt;!-- configuring a 'transient' repository (automatically starts when a session is opened 
+     and shutdowns when all sessions are closed) --&gt;
 &lt;bean id="repository" class="org.springmodules.jcr.jackrabbit.TransientRepositoryFactoryBean"&gt;
   &lt;!-- normal factory beans params --&gt;
   &lt;property name="configuration" value="classpath:jackrabbit-repo.xml"/&gt;
@@ -271,7 +272,7 @@
   &lt;/bean&gt;
  &lt;/property&gt;
 &lt;/bean&gt;</programlisting>for which only the
-        <literal>sessionFactory</literal> is required. </para>
+        <literal>sessionFactory</literal> is required.</para>
 
         <para>Note that when using transactions in most cases you want to
         reuse the session (which means <literal>allowCreate</literal> property
@@ -295,7 +296,7 @@
         vary from repository to repository; JCR module contains (quite a lot
         of) classes to make this issue as painless as possible. Normally users
         should not be concern with these classes,however they are the main
-        point for adding support for custom implementations. </para>
+        point for adding support for custom implementations.</para>
 
         <para>In order to plug in extra capabilities one must supply a
         <literal>SessionHolderProvider</literal> implementation which can take
@@ -303,7 +304,7 @@
         <literal>SessionHolderProviderManager</literal> acts as a registry of
         <literal>SessionHolderProvider</literal>s for different repositories
         and has several implementations that return user defined provider or
-        discover them automatically. </para>
+        discover them automatically.</para>
 
         <para><literal>By default,
         ServiceSessionHolderProviderManager</literal> is used, which is
