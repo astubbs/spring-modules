@@ -11,6 +11,12 @@ Package org.springmodules.lucene
 
 Changes in version 0.5 (in progress)
 ------------------------------------
+Package org.springmodules.cache
+* Patched the module to work with Spring post 2.0-m3. Many thanks to Craig Walls for submitting the patch.
+
+Package org.springmodules.jcr
+* Updated docs and the sample [JIRA MOD-160]
+
 Package org.springmodules.jcr.jackrabbit
 * Added TransientRepositoryFactoryBean
 
@@ -24,6 +30,8 @@ Package org.springmodules.workflow.osworkflow
 Package org.springmodules.validation.valang.parser
 * Fixed the valang.jj to support direct list/array elements using the BeanWrapper notation (e.g. tags[0])
 
+Package org.springmodules.xt
+* New top-level module added. Spring XT (http://springxt.sourceforge.net) is now part of the Spring Modules project.
 
 Changes in version 0.4
 ------------------------------------
