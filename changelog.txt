@@ -5,10 +5,6 @@ http://springmodules.dev.java.net
 Changes in version 0.6 (in progress)
 ------------------------------------
 
-Package org.springmodules.lucene
-* Upgraded Lucene to 2.0.0
-* Fixed AbstractIndexFactory to work with Lucene 2.0.0 [JIRA MOD-141]. Thanks eearley.
-
 Changes in version 0.5 (14.07.2006)
 -----------------------------------
 Package org.springmodules.bpm.flux
