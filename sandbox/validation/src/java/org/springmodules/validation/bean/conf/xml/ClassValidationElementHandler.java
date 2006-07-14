@@ -16,38 +16,32 @@
 
 package org.springmodules.validation.bean.conf.xml;
 
-import org.springmodules.validation.bean.rule.ValidationRule;
 import org.w3c.dom.Element;
+import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
 
 /**
- * An handler that can create a validation rule from a given {@link Element}.
+ * An handler that handles class level validation dom elements and manipulates the validation configuration
+ * appropriately.
  *
  * @author Uri Boness
  */
-public interface ValidationRuleElementHandler {
+public interface ClassValidationElementHandler {
 
     /**
      * Determines whether this handler can handle the given element.
      *
      * @param element The element to be handled.
+     * @param clazz The validated class.
      * @return <code>true</code> if this handler can handle the given element, <code>false</code> otherwise.
      */
-    boolean supports(Element element);
+    boolean supports(Element element, Class clazz);
 
     /**
-     * Handles the given element and creates a {@link ValidationRule} based on it.
+     * Handles the given element and and manipulates the given configuration appropriately.
      *
      * @param element The element to be handled.
-     * @return The created validation rule.
+     * @param configuration The configuration to be manipulated.
      */
-    ValidationRule handle(Element element);
-
-    /**
-     * Returns whether the validation rule handled by this hanlder is always a global rule.
-     *
-     * @return <code>true</code> if the validation rule handled by this handler is always global, <code>false</code> otherwise.
-     * @see org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler
-     */
-    boolean isAlwaysGlobal();
+    void handle(Element element, MutableBeanValidationConfiguration configuration);
 
 }

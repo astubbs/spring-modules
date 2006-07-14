@@ -22,7 +22,7 @@ import org.springmodules.validation.util.condition.Conditions;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} that parses a size validation rules. This handler creates a
+ * An {@link AbstractPropertyValidationElementHandler} that parses a size validation rules. This handler creates a
  * {@link org.springmodules.validation.util.condition.collection.SizeRangeCollectionCondition},
  * {@link org.springmodules.validation.util.condition.collection.MinSizeCollectionCondition}, or
  * {@link org.springmodules.validation.util.condition.collection.MaxSizeCollectionCondition} from the &lt;size&gt;
@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
  *
  * @author Uri Boness
  */
-public class SizeRuleElementHandler extends AbstractValidationRuleElementHandler
+public class SizeRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -67,7 +67,7 @@ public class SizeRuleElementHandler extends AbstractValidationRuleElementHandler
      *  <li>If the element only has the 'max' attribute, then {@link #DEFAULT_MAX_SIZE_ERROR_CODE}</li>
      * </ul>
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         boolean hasMin = element.hasAttribute(MIN_ATTR);
@@ -97,7 +97,7 @@ public class SizeRuleElementHandler extends AbstractValidationRuleElementHandler
      *
      * @param element The parsed element.
      * @return The created condition.
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      */
     protected Condition extractCondition(Element element) {
         String minText = element.getAttribute(MIN_ATTR);

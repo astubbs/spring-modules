@@ -51,7 +51,8 @@ public class Person {
     @NotNull @Valid
     private Person mother;
 
-    @Min(0)
+    @Valang(value = "? >= 0", applyIf = "true = false", scope = ExpressionScope.VALIDATED_VALUE)
+    @Min(value = 0, errorCode = "just.another.error.code")
     private int age;
 
 

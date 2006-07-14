@@ -23,12 +23,12 @@ import org.springmodules.validation.util.condition.Conditions;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} implementation that knows how to handle elements that represent
+ * An {@link AbstractPropertyValidationElementHandler} implementation that knows how to handle elements that represent
  * regular expression validation rules.
  *
  * @author Uri Boness
  */
-public class RegExpRuleElementHandler extends AbstractValidationRuleElementHandler
+public class RegExpRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -49,7 +49,7 @@ public class RegExpRuleElementHandler extends AbstractValidationRuleElementHandl
     /**
      * Returns {@link #DEFAULT_ERROR_CODE}
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         return DEFAULT_ERROR_CODE;
@@ -60,7 +60,7 @@ public class RegExpRuleElementHandler extends AbstractValidationRuleElementHandl
      *
      * @param element The parsed element.
      * @return The created {@link org.springmodules.validation.util.condition.string.RegExpStringCondition}.
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      */
     protected Condition extractCondition(Element element) {
         String expression = element.getAttribute(EXPRESSION_ATTR);

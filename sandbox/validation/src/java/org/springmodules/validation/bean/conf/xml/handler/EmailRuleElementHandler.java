@@ -22,12 +22,12 @@ import org.springmodules.validation.util.condition.string.EmailStringCondition;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} implementation that can handle an element that represents an email
+ * An {@link AbstractPropertyValidationElementHandler} implementation that can handle an element that represents an email
  * validation rule.
  *
  * @author Uri Boness
  */
-public class EmailRuleElementHandler extends AbstractValidationRuleElementHandler
+public class EmailRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -47,7 +47,7 @@ public class EmailRuleElementHandler extends AbstractValidationRuleElementHandle
     /**
      * Returns {@link #DEFAULT_ERROR_CODE}.
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         return DEFAULT_ERROR_CODE;
@@ -56,7 +56,7 @@ public class EmailRuleElementHandler extends AbstractValidationRuleElementHandle
     /**
      * Creates and returns a new {@link EmailStringCondition}.
      *
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      */
     protected Condition extractCondition(Element element) {
         return new EmailStringCondition();

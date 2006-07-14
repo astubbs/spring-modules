@@ -22,12 +22,12 @@ import org.springmodules.validation.util.condition.Conditions;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} implementation that can handle an element that represents a not-null
+ * An {@link AbstractPropertyValidationElementHandler} implementation that can handle an element that represents a not-null
  * validation rule.
  *
  * @author Uri Boness
  */
-public class NotNullRuleElementHandler extends AbstractValidationRuleElementHandler
+public class NotNullRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -47,7 +47,7 @@ public class NotNullRuleElementHandler extends AbstractValidationRuleElementHand
     /**
      * Returns {@link #DEFAULT_ERROR_CODE}.
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         return DEFAULT_ERROR_CODE;
@@ -56,7 +56,7 @@ public class NotNullRuleElementHandler extends AbstractValidationRuleElementHand
     /**
      * Creates and returns a condition that checks that an object is not null.
      *
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      * @see org.springmodules.validation.util.condition.Conditions#notNull()
      */
     protected Condition extractCondition(Element element) {

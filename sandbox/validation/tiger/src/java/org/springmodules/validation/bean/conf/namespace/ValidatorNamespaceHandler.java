@@ -39,7 +39,7 @@ public class ValidatorNamespaceHandler extends NamespaceHandlerSupport {
     public void init() {
         registerBeanDefinitionParser("xml-based-validator", new XmlBasedValidatorBeanDefinitionParser());
         if (SystemUtils.IS_JAVA_1_5) {
-            // register an annotation based validator
+            registerBeanDefinitionParser("annotation-based-validator", new AnnotationBasedValidatorBeanDefinitionParser());
         }
     }
 

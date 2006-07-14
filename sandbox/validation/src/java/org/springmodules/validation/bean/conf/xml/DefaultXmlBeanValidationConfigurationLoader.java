@@ -18,11 +18,14 @@ package org.springmodules.validation.bean.conf.xml;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.beans.PropertyDescriptor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
@@ -179,13 +182,13 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         NodeList nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, GLOBAL_TAG);
         for (int i=0; i<nodes.getLength(); i++) {
             Element globalDefinition = (Element)nodes.item(i);
-            handleGlobalDefinition(globalDefinition, configuration);
+            handleGlobalDefinition(globalDefinition, clazz, configuration);
         }
 
         nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, PROPERTY_TAG);
         for (int i=0; i<nodes.getLength(); i++) {
             Element propertyDefinition = (Element)nodes.item(i);
-            handlePropertyDefinition(propertyDefinition, configuration);
+            handlePropertyDefinition(propertyDefinition, clazz, configuration);
         }
 
         return configuration;
@@ -195,9 +198,10 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * Handles the &lt;global&gt; element and updates the given configuration with the global validation rules.
      *
      * @param globalDefinition The &lt;global&gt; element.
+     * @param clazz The validated class.
      * @param configuration The bean validation configuration to update.
      */
-    protected void handleGlobalDefinition(Element globalDefinition, MutableBeanValidationConfiguration configuration) {
+    protected void handleGlobalDefinition(Element globalDefinition, Class clazz, MutableBeanValidationConfiguration configuration) {
         NodeList nodes = globalDefinition.getChildNodes();
         for (int i=0; i<nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -205,14 +209,13 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
                 continue;
             }
             Element ruleDefinition = (Element)node;
-            ValidationRuleElementHandler handler = handlerRegistry.findHandler(ruleDefinition);
+            ClassValidationElementHandler handler = handlerRegistry.findClassHandler(ruleDefinition, clazz);
             if (handler == null) {
                 logger.error("Could not handle element '" + ruleDefinition.getTagName() +
                     "'. Please make sure the proper validation rule definition handler is registered");
                 throw new XmlConfigurationException("Could not handler element '" + ruleDefinition.getTagName() + "'");
             }
-            ValidationRule rule = handler.handle(ruleDefinition);
-            configuration.addGlobalRule(rule);
+            handler.handle(ruleDefinition, configuration);
         }
     }
 
@@ -221,17 +224,25 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * validation rules.
      *
      * @param propertyDefinition The &lt;property&gt; element.
+     * @param clazz The validated class.
      * @param configuration The bean validation configuration to update.
      */
-    protected void handlePropertyDefinition(Element propertyDefinition, MutableBeanValidationConfiguration configuration) {
+    protected void handlePropertyDefinition(Element propertyDefinition, Class clazz, MutableBeanValidationConfiguration configuration) {
         String propertyName = propertyDefinition.getAttribute(NAME_ATTR);
         if (propertyName == null) {
             logger.error("Could not parse property element. Missing 'name' attribute");
             throw new XmlConfigurationException("Could not parse property element. Missing 'name' attribute");
         }
+
+        PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(clazz, propertyName);
+        if (propertyDescriptor == null) {
+            logger.error("Property '" + propertyName + "' does not exist in class '" + clazz.getName() + "'");
+        }
+
         if (propertyDefinition.hasAttribute(VALID_ATTR)) {
             configuration.addRequiredValidatableProperty(propertyName);
         }
+
         NodeList nodes = propertyDefinition.getChildNodes();
         for (int i=0; i<nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -239,17 +250,13 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
                 continue;
             }
             Element ruleDefinition = (Element)node;
-            ValidationRuleElementHandler handler = handlerRegistry.findHandler(ruleDefinition);
+            PropertyValidationElementHandler handler = handlerRegistry.findPropertyHandler(ruleDefinition, clazz, propertyDescriptor);
             if (handler == null) {
                 logger.error("Could not handle element '" + ruleDefinition.getTagName() +
                     "'. Please make sure the proper validation rule definition handler is registered");
                 throw new XmlConfigurationException("Could not handle element '" + ruleDefinition.getTagName() + "'");
             }
-            ValidationRule rule = handler.handle(ruleDefinition);
-            if (!handler.isAlwaysGlobal()) {
-                rule = createPropertyRule(propertyName, rule);
-            }
-            configuration.addPropertyRule(propertyName, rule);
+            handler.handle(ruleDefinition, propertyName, configuration);
         }
     }
 

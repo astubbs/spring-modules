@@ -11,9 +11,20 @@
         <property name="resource" value="classpath:org/springmodules/validation/bean/validation.xml"/>
         <property name="elementHandlerRegistry">
             <bean class="org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry">
-                <property name="extraHandlers">
+                <property name="extraPropertyHandlers">
                     <list>
-                        <bean class="org.springmodules.validation.bean.conf.xml.handler.ValangRuleElementHandler">
+                        <bean class="org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler">
+                            <property name="customFunctions">
+                                <map>
+                                    <entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
+                                </map>
+                            </property>
+                        </bean>
+                    </list>
+                </property>
+                <property name="extraClassHandlers">
+                    <list>
+                        <bean class="org.springmodules.validation.bean.conf.xml.handler.ValangClassValidationElementHandler">
                             <property name="customFunctions">
                                 <map>
                                     <entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>

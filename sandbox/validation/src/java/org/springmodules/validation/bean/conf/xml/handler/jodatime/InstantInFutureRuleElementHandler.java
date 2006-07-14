@@ -16,19 +16,22 @@
 
 package org.springmodules.validation.bean.conf.xml.handler.jodatime;
 
+import java.beans.PropertyDescriptor;
+
 import org.springmodules.validation.bean.conf.xml.DefaultXmBeanValidationConfigurationlLoaderConstants;
-import org.springmodules.validation.bean.conf.xml.handler.AbstractValidationRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.AbstractPropertyValidationElementHandler;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.date.jodatime.IsInTheFutureInstantCondition;
 import org.w3c.dom.Element;
+import org.joda.time.Instant;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} implementation that can handle an element that represents an "in the
+ * An {@link AbstractPropertyValidationElementHandler} implementation that can handle an element that represents an "in the
  * future" joda-time instant validation rule.
  *
  * @author Uri Boness
  */
-public class InstantInFutureRuleElementHandler extends AbstractValidationRuleElementHandler
+public class InstantInFutureRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -46,9 +49,19 @@ public class InstantInFutureRuleElementHandler extends AbstractValidationRuleEle
     }
 
     /**
+     * In addition to the element name and namespace check, this handler only support properties of type
+     * {@link org.joda.time.Instant}.
+     *
+     * @see org.springmodules.validation.bean.conf.xml.PropertyValidationElementHandler#supports(org.w3c.dom.Element, Class, java.beans.PropertyDescriptor)
+     */
+    public boolean supports(Element element, Class clazz, PropertyDescriptor descriptor) {
+        return super.supports(element, clazz, descriptor) && Instant.class.isAssignableFrom(descriptor.getPropertyType());
+    }
+
+    /**
      * Returns {@link #DEFAULT_ERROR_CODE}.
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         return InstantInFutureRuleElementHandler.DEFAULT_ERROR_CODE;
@@ -57,7 +70,7 @@ public class InstantInFutureRuleElementHandler extends AbstractValidationRuleEle
     /**
      * Creates and returns a new {@link IsInTheFutureInstantCondition}.
      *
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      */
     protected Condition extractCondition(Element element) {
         return new IsInTheFutureInstantCondition();

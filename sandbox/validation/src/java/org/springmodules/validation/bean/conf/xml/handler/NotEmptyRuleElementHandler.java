@@ -22,12 +22,12 @@ import org.springmodules.validation.util.condition.Conditions;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} implementation that can handle an element that represents a "not empty"
+ * An {@link AbstractPropertyValidationElementHandler} implementation that can handle an element that represents a "not empty"
  * validation rule (validation rule that validates that a collection/array is not empty).
  *
  * @author Uri Boness
  */
-public class NotEmptyRuleElementHandler extends AbstractValidationRuleElementHandler
+public class NotEmptyRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -47,7 +47,7 @@ public class NotEmptyRuleElementHandler extends AbstractValidationRuleElementHan
     /**
      * Returns {@link #DEFAULT_ERROR_CODE}.
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         return DEFAULT_ERROR_CODE;
@@ -56,7 +56,7 @@ public class NotEmptyRuleElementHandler extends AbstractValidationRuleElementHan
     /**
      * Creates and returns a new "not empty" condition - a condition that checks if a given collection/array is not empty.
      *
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      * @see org.springmodules.validation.util.condition.Conditions#notEmpty()
      */
     protected Condition extractCondition(Element element) {

@@ -16,28 +16,34 @@
 
 package org.springmodules.validation.bean.conf.xml;
 
+import java.beans.PropertyDescriptor;
+
 import org.w3c.dom.Element;
 
 /**
- * A registry of {@link ValidationRuleElementHandler}'s.
+ * A registry of {@link PropertyValidationElementHandler}'s and {@link ClassValidationElementHandler}'s.
  *
  * @author Uri Boness
  */
 public interface ValidationRuleElementHandlerRegistry {
 
     /**
-     * Registers the given validation rule element handler with this registry.
-     *
-     * @param handler The handler to register.
-     */
-    void registerHandler(ValidationRuleElementHandler handler);
-
-    /**
-     * Returns the validation rule element handler that can handle the given element.
+     * Returns the class validation element handler that can handle the given element.
      *
      * @param element The element to be handled.
-     * @return The validation rule element handler that can handle the given element.
+     * @param clazz The validated class.
+     * @return The class validation element handler that can handle the given element.
      */
-    ValidationRuleElementHandler findHandler(Element element);
+    ClassValidationElementHandler findClassHandler(Element element, Class clazz);
+
+    /**
+     * Returns the property validation element handler that can handle the given element.
+     *
+     * @param element The element be handled.
+     * @param clazz The validated class.
+     * @param descriptor The property descriptor of the validated property.
+     * @return The property validation element handler that can handle the given element.
+     */
+    PropertyValidationElementHandler findPropertyHandler(Element element, Class clazz, PropertyDescriptor descriptor);
 
 }

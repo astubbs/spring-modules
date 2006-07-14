@@ -35,7 +35,7 @@ public class DomUtils {
     }
 
     public static Iterator childElements(Element element) {
-        return new ChildElementsIterator(element);
+        return new SubElementsIterator(element);
     }
 
     public static Iterator childNodes(Node node) {

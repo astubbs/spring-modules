@@ -34,12 +34,12 @@ import org.springmodules.validation.valang.parser.ValangBased;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} that can handle elements that represent valang validation rules.
+ * An {@link AbstractPropertyValidationElementHandler} that can handle elements that represent valang validation rules.
  * This handler creates a valang conditoin out of a &lt;valang&gt; element.
  *
  * @author Uri Boness
  */
-public class ValangRuleElementHandler extends AbstractValidationRuleElementHandler
+public class ValangPropertyValidationElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants, ValangBased {
 
     /**
@@ -49,13 +49,16 @@ public class ValangRuleElementHandler extends AbstractValidationRuleElementHandl
 
     private static final String ELEMENT_NAME = "valang";
     private static final String EXPRESSION_ATTR = "expression";
+    private static final String SCOPE_ATTR = "scope";
+    private static final String PROPERTY_SCOPE_VALUE = "property";
+    private static final String GLOBAL_SCOPE_VALUE = "global";
 
     private SimpleValangBased valangBased;
 
     /**
-     * Constructs a new ValangRuleElementHandler.
+     * Constructs a new ValangPropertyValidationElementHandler.
      */
-    public ValangRuleElementHandler() {
+    public ValangPropertyValidationElementHandler() {
         super(ELEMENT_NAME, DEFAULT_NAMESPACE_URL);
         valangBased = new SimpleValangBased();
     }
@@ -63,7 +66,7 @@ public class ValangRuleElementHandler extends AbstractValidationRuleElementHandl
     /**
      * Returns {@link #DEFAULT_ERROR_CODE}.
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         return DEFAULT_ERROR_CODE;
@@ -74,7 +77,7 @@ public class ValangRuleElementHandler extends AbstractValidationRuleElementHandl
      *
      * @param element The element that represents the valang validation rule.
      * @return The created valang condition
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      */
     protected Condition extractCondition(Element element) {
         String expression = element.getAttribute(EXPRESSION_ATTR);
@@ -82,15 +85,22 @@ public class ValangRuleElementHandler extends AbstractValidationRuleElementHandl
             throw new XmlConditionConfigurationException("Element '" + ELEMENT_NAME + "' must have an 'expression' attribute");
         }
         ValangConditionParser parser = new ValangConditionParser();
-        valangBased.init(parser);
+        valangBased.initValang(parser);
         return parser.parse(expression);
     }
 
-    /**
-     * This validation rules should always be associated with the global context.
-     */
-    public boolean isAlwaysGlobal() {
-        return true;
+    public boolean isConditionGloballyScoped(Element element) {
+        if (!element.hasAttribute(SCOPE_ATTR)) {
+            return true;
+        }
+        String value = element.getAttribute(SCOPE_ATTR);
+        if (GLOBAL_SCOPE_VALUE.equals(value)) {
+            return true;
+        }
+        if (PROPERTY_SCOPE_VALUE.equals(value)) {
+            return false;
+        }
+        throw new XmlConditionConfigurationException("Unknown value '" + value + "' for attribute '" + SCOPE_ATTR + "'");
     }
 
     //=============================================== Setter/Getter ====================================================

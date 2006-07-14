@@ -11,11 +11,10 @@
         <spring:property name="className" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
     </spring:bean>
 
-    <xml-based-validator id="validator">
-        <element-handlers>
-            <handler class="org.springmodules.validation.bean.conf.namespace.IsFirstLetterCapitalizedPropertyElementHandler"/>
-        </element-handlers>
-        <resource location="classpath:org/springmodules/validation/bean/conf/namespace/Person.vld.xml"/>
-    </xml-based-validator>
+    <annotation-based-validator id="validator">
+        <annotation-handlers>
+            <handler class="org.springmodules.validation.bean.conf.namespace.IsFirstLetterCapitalizedPropertyAnnotationHandler"/>
+        </annotation-handlers>
+    </annotation-based-validator>
 
 </spring:beans>

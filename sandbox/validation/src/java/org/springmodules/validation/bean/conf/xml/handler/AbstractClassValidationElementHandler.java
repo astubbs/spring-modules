@@ -1,24 +1,9 @@
-/*
- * Copyright 2004-2005 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.springmodules.validation.bean.conf.xml.handler;
 
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springmodules.validation.bean.conf.xml.ValidationRuleElementHandler;
+import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.xml.ClassValidationElementHandler;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
 import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.ValidationRule;
@@ -33,9 +18,9 @@ import org.springmodules.validation.util.condition.parser.valang.ValangCondition
 import org.w3c.dom.Element;
 
 /**
- * A base class for common {@link ValidationRuleElementHandler} implementations. This base handler idetifies the
- * the supported elements by their tag names (qualified and local). In addition, it assumes the following common
- * attributes:
+ * A base class for common {@link org.springmodules.validation.bean.conf.xml.PropertyValidationElementHandler}
+ * implementations that represent validation rules. This base handler idetifies the supported elements by their
+ * tag names (qualified and local). In addition, it assumes the following common attributes:
  *
  * <ul>
  *  <li>code - Indicates the error code of the validatoin rule</li>
@@ -44,13 +29,14 @@ import org.w3c.dom.Element;
  *  <li>apply-if - An condition expression that determines the applicability of the validation rule</li>
  * </ul>
  *
- * Note: The apply-if attribute is being parsed by the {@link ConditionParser} that is associated with this handler. It
- * uses {@link ValangConditionParser} by default.
+ * Note: The apply-if attribute is being parsed by the
+ * {@link org.springmodules.validation.util.condition.parser.ConditionParser} that is associated with this handler. It
+ * uses {@link org.springmodules.validation.util.condition.parser.valang.ValangConditionParser} by default.
  *
  * @author Uri Boness
  */
-public abstract class AbstractValidationRuleElementHandler
-    implements ValidationRuleElementHandler, ConditionParserAware, BeanExpressionResolverAware {
+public abstract class AbstractClassValidationElementHandler
+    implements ClassValidationElementHandler, ConditionParserAware, BeanExpressionResolverAware {
 
     private static final String ERROR_CODE_ATTR = "code";
     private static final String MESSAGE_ATTR = "message";
@@ -65,33 +51,33 @@ public abstract class AbstractValidationRuleElementHandler
     private BeanExpressionResolver expressionResolver;
 
     /**
-     * Constructs a new AbstractValidationRuleElementHandler with given supported element name.
+     * Constructs a new AbstractPropertyValidationElementHandler with given supported element name.
      *
      * @param elementName The supported element name.
      */
-    public AbstractValidationRuleElementHandler(String elementName) {
+    public AbstractClassValidationElementHandler(String elementName) {
         this(elementName, null);
     }
 
     /**
-     * Constructs a new AbstractValidationRuleElementHandler with given supported element name and namespace.
+     * Constructs a new AbstractPropertyValidationElementHandler with given supported element name and namespace.
      *
      * @param elementName The supported element name.
      * @param namespace The supported namespace.
      */
-    public AbstractValidationRuleElementHandler(String elementName, String namespace) {
-        this(elementName, namespace, DEFAULT_CONDITION_PARSER);
+    public AbstractClassValidationElementHandler(String elementName, String namespace) {
+        this(elementName, namespace, AbstractClassValidationElementHandler.DEFAULT_CONDITION_PARSER);
     }
 
     /**
-     * Constructs a new AbstractValidationRuleElementHandler with given supported element name and namespace and a
+     * Constructs a new AbstractPropertyValidationElementHandler with given supported element name and namespace and a
      * condition handler to parse the <code>apply-if</code> expressions.
      *
      * @param elementName The supported element name.
      * @param namespace The supported namespace.
      * @param conditionParser The condition handler to be used when parsing the <code>apply-if</code> expression.
      */
-    public AbstractValidationRuleElementHandler(String elementName, String namespace, ConditionParser conditionParser) {
+    public AbstractClassValidationElementHandler(String elementName, String namespace, ConditionParser conditionParser) {
         this.elementName = elementName;
         this.namespaceUrl = namespace;
         this.conditionParser = conditionParser;
@@ -101,9 +87,9 @@ public abstract class AbstractValidationRuleElementHandler
      * Determines whether the given element is supported by this handler. The check is done by comparing the element
      * tag name and namespace with the ones that are configured with this handler.
      *
-     * @see ValidationRuleElementHandler#supports(org.w3c.dom.Element)
+     * @see org.springmodules.validation.bean.conf.xml.PropertyValidationElementHandler#supports(org.w3c.dom.Element, Class, java.beans.PropertyDescriptor)
      */
-    public boolean supports(Element element) {
+    public boolean supports(Element element, Class clazz) {
         String localName = element.getLocalName();
         if (!localName.equals(elementName)) {
             return false;
@@ -113,19 +99,19 @@ public abstract class AbstractValidationRuleElementHandler
     }
 
     /**
-     * Creates and returns an appropriate {@link ValidationRule} based on the given element.
+     * Creates the appropriate {@link org.springmodules.validation.bean.rule.ValidationRule} based on the given element
+     * and adds it to the given configuration.
      *
-     * @param element The element that represents the validation rule.
-     * @return The created validation rule.
-     * @see ValidationRuleElementHandler#handle(org.w3c.dom.Element)
+     * @see org.springmodules.validation.bean.conf.xml.handler.AbstractClassValidationElementHandler#handle(org.w3c.dom.Element, org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration)
      */
-    public ValidationRule handle(Element element) {
+    public void handle(Element element, MutableBeanValidationConfiguration configuration) {
         String errorCode = extractErrorCode(element);
         String message = extractMessage(element);
         ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(element);
         Condition condition = extractCondition(element);
         Condition applicabilityCondition = extractApplicabilityCondition(element);
-        return new DefaultValidationRule(condition, applicabilityCondition, errorCode, message, argumentsResolver);
+        ValidationRule rule = new DefaultValidationRule(condition, applicabilityCondition, errorCode, message, argumentsResolver);
+        configuration.addGlobalRule(rule);
     }
 
     /**
@@ -134,7 +120,7 @@ public abstract class AbstractValidationRuleElementHandler
      *
      * @see org.springmodules.validation.bean.conf.xml.ValidationRuleElementHandler#isAlwaysGlobal()
      */
-    public boolean isAlwaysGlobal() {
+    public boolean isConditionGloballyScoped() {
         return false;
     }
 
@@ -146,7 +132,7 @@ public abstract class AbstractValidationRuleElementHandler
      * @return The validation rule error code.
      */
     protected String extractErrorCode(Element element) {
-        String code = element.getAttribute(ERROR_CODE_ATTR);
+        String code = element.getAttribute(AbstractClassValidationElementHandler.ERROR_CODE_ATTR);
         return (StringUtils.hasText(code)) ? code : getDefaultErrorCode(element);
     }
 
@@ -158,7 +144,7 @@ public abstract class AbstractValidationRuleElementHandler
      * @return The validation rule error message.
      */
     protected String extractMessage(Element element) {
-        return element.getAttribute(MESSAGE_ATTR);
+        return element.getAttribute(AbstractClassValidationElementHandler.MESSAGE_ATTR);
     }
 
     /**
@@ -169,26 +155,26 @@ public abstract class AbstractValidationRuleElementHandler
      * @return The validation rule error arguments.
      */
     protected ErrorArgumentsResolver extractArgumentsResolver(Element element) {
-        String argsString = element.getAttribute(ARGS_ATTR);
+        String argsString = element.getAttribute(AbstractClassValidationElementHandler.ARGS_ATTR);
         String[] expressions = (argsString == null) ? new String[0] : StringUtils.tokenizeToStringArray(argsString, ", ");
         return new ExpressionErrorArgumentsResolver(expressions, expressionResolver);
     }
 
     /**
      * Extracts the validation rule applicability condition from the given element. Expects an "apply-if" attribute to
-     * indicate the condition expression. If no such attribute exisits, an {@link AlwaysTrueCondition} is returned. The
-     * configured {@link ConditionParser} is used to parse the found expression to a condition.
+     * indicate the condition expression. If no such attribute exisits, an {@link org.springmodules.validation.util.condition.common.AlwaysTrueCondition} is returned. The
+     * configured {@link org.springmodules.validation.util.condition.parser.ConditionParser} is used to parse the found expression to a condition.
      *
      * @param element The element that represents the validation rule.
      * @return The validation rule applicability condition.
      */
     protected Condition extractApplicabilityCondition(Element element) {
-        String expression = element.getAttribute(APPLY_IF_ATTR);
+        String expression = element.getAttribute(AbstractClassValidationElementHandler.APPLY_IF_ATTR);
         return (StringUtils.hasText(expression)) ? conditionParser.parse(expression) : new AlwaysTrueCondition();
     }
 
     /**
-     * @see ConditionParserAware#setConditionParser(org.springmodules.validation.util.condition.parser.ConditionParser)
+     * @see org.springmodules.validation.util.condition.parser.ConditionParserAware#setConditionParser(org.springmodules.validation.util.condition.parser.ConditionParser)
      */
     public void setConditionParser(ConditionParser conditionParser) {
         this.conditionParser = conditionParser;
@@ -202,7 +188,7 @@ public abstract class AbstractValidationRuleElementHandler
     }
 
     /**
-     * @see BeanExpressionResolverAware#setBeanExpressionResolver(org.springmodules.validation.util.bel.BeanExpressionResolver)
+     * @see org.springmodules.validation.util.bel.BeanExpressionResolverAware#setBeanExpressionResolver(org.springmodules.validation.util.bel.BeanExpressionResolver)
      */
     public void setBeanExpressionResolver(BeanExpressionResolver resolver) {
         this.expressionResolver = resolver;
@@ -231,4 +217,5 @@ public abstract class AbstractValidationRuleElementHandler
      * @throws XmlConditionConfigurationException When the given the format (structure) of the given element is mal-formed.
      */
     protected abstract Condition extractCondition(Element element) throws XmlConditionConfigurationException;
+
 }

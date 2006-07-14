@@ -1,27 +1,27 @@
 package org.springmodules.validation.bean.conf.namespace;
 
 import junit.framework.TestCase;
+import org.springmodules.validation.bean.BeanValidator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.validation.BindException;
-import org.springmodules.validation.bean.BeanValidator;
 
 /**
  * Tests for {@link org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader}.
  *
  * @author Uri Boness
  */
-public class NamespaceConfigurationIntegrationTests extends TestCase {
+public class NamespaceAnnotationConfigurationIntegrationTests extends TestCase {
 
     private BeanValidator validator;
 
     protected void setUp() throws Exception {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("validation.xml", getClass());
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("annotation-validation.xml", getClass());
         validator = (BeanValidator)context.getBean("validator");
     }
 
     public void testLoadConfiguration() throws Exception {
 
-        Person person = new Person();
+        AnnotatedPerson person = new AnnotatedPerson();
         person.setFirstName("Uri");
         person.setLastName("Boness");
         person.setAge(-1);
@@ -39,7 +39,7 @@ public class NamespaceConfigurationIntegrationTests extends TestCase {
 
     public void testLoadConfiguration_WithCustomHandlerFailure() throws Exception {
 
-        Person person = new Person();
+        AnnotatedPerson person = new AnnotatedPerson();
         person.setFirstName("Uri");
         person.setLastName("boness");
         person.setAge(-1);

@@ -25,9 +25,9 @@ import org.w3c.dom.Node;
  *
  * @author Uri Boness
  */
-public class ChildElementsIterator extends FilteredIterator {
+public class SubElementsIterator extends FilteredIterator {
 
-    public ChildElementsIterator(Node node) {
+    public SubElementsIterator(Node node) {
         super(new ChildNodesIterator(node), new AbstractCondition() {
             public boolean doCheck(Object object) {
                 Node node = (Node)object;
@@ -36,7 +36,7 @@ public class ChildElementsIterator extends FilteredIterator {
         });
     }
 
-    public ChildElementsIterator(Node node, final String elementName) {
+    public SubElementsIterator(Node node, final String elementName) {
         super(new ChildNodesIterator(node), new AbstractCondition() {
             public boolean doCheck(Object object) {
                 Node node = (Node)object;
@@ -46,7 +46,7 @@ public class ChildElementsIterator extends FilteredIterator {
         });
     }
 
-    public ChildElementsIterator(Node node, final String namespace, final String elementName) {
+    public SubElementsIterator(Node node, final String namespace, final String elementName) {
         super(new ChildNodesIterator(node), new AbstractCondition() {
             public boolean doCheck(Object object) {
                 Node node = (Node)object;

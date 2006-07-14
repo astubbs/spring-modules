@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 
-import org.springmodules.validation.bean.conf.xml.handler.ValangRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler;
 
 /**
  * Represents a validation rule that is expressed using the Valang expression language.
@@ -49,12 +49,12 @@ public @interface Valang {
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default ValangRuleElementHandler.DEFAULT_ERROR_CODE;
+    String errorCode() default ValangPropertyValidationElementHandler.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default ValangRuleElementHandler.DEFAULT_ERROR_CODE;
+    String message() default ValangPropertyValidationElementHandler.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code.

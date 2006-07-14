@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.bean.conf.xml.handler;
+package org.springmodules.validation.bean.conf.namespace;
 
-import org.springmodules.validation.bean.conf.xml.XmlConfigurationException;
+import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
- * An {@link XmlConditionConfigurationException} that is thrown by the when the validation xml configuration
- * is not valid.
- *
  * @author Uri Boness
  */
-public class XmlConditionConfigurationException extends XmlConfigurationException {
-
-    public XmlConditionConfigurationException(String message) {
-        super(message);
-    }
-
-    public XmlConditionConfigurationException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
+@Target({ ElementType.FIELD, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface IsFirstLetterCapitalized {
 }

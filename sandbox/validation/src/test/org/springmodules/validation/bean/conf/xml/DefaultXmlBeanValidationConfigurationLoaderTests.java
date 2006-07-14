@@ -1,10 +1,13 @@
 package org.springmodules.validation.bean.conf.xml;
 
+import java.beans.PropertyDescriptor;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
+import org.springframework.beans.BeanUtils;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
@@ -26,8 +29,11 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     private MockControl configurationControl;
     private MutableBeanValidationConfiguration configuration;
 
-    private MockControl handlerControl;
-    private ValidationRuleElementHandler handler;
+    private MockControl propertyHandlerControl;
+    private PropertyValidationElementHandler propertyHandler;
+
+    private MockControl classHandlerControl;
+    private ClassValidationElementHandler classHandler;
 
     private MockControl ruleControl;
     private ValidationRule rule;
@@ -43,8 +49,11 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         ruleControl = MockControl.createControl(ValidationRule.class);
         rule = (ValidationRule)ruleControl.getMock();
 
-        handlerControl = MockControl.createControl(ValidationRuleElementHandler.class);
-        handler = (ValidationRuleElementHandler)handlerControl.getMock();
+        propertyHandlerControl = MockControl.createControl(PropertyValidationElementHandler.class);
+        propertyHandler = (PropertyValidationElementHandler)propertyHandlerControl.getMock();
+
+        classHandlerControl = MockControl.createControl(ClassValidationElementHandler.class);
+        classHandler = (ClassValidationElementHandler)classHandlerControl.getMock();
 
         loader = new DefaultXmlBeanValidationConfigurationLoader(registry);
     }
@@ -56,7 +65,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         );
 
         replay();
-        loader.handlePropertyDefinition(propertyDefinition, configuration);
+        loader.handlePropertyDefinition(propertyDefinition, Object.class, configuration);
         verify();
     }
 
@@ -69,11 +78,11 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         configuration.addRequiredValidatableProperty("name");
 
         replay();
-        loader.handlePropertyDefinition(propertyDefinition, configuration);
+        loader.handlePropertyDefinition(propertyDefinition, TestBean.class, configuration);
         verify();
     }
 
-    public void testHandlePropertyDefinition_WithARulesAndCascading() throws Exception {
+    public void testHandlePropertyDefinition_WithARuleAndCascading() throws Exception {
         Document document = document();
         Element propertyDefinition = element(document, "property",
             new String[] { "name", "valid" },
@@ -82,10 +91,11 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         Element ruleDefinition = element(document, "rule");
         propertyDefinition.appendChild(ruleDefinition);
 
+        PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(TestBean.class, "name");
+
         configuration.addRequiredValidatableProperty("name");
-        registryControl.expectAndReturn(registry.findHandler(ruleDefinition), handler);
-        handlerControl.expectAndReturn(handler.handle(ruleDefinition), rule);
-        handlerControl.expectAndReturn(handler.isAlwaysGlobal(), false);
+        registryControl.expectAndReturn(registry.findPropertyHandler(ruleDefinition, TestBean.class, descriptor), propertyHandler);
+        propertyHandler.handle(ruleDefinition, "name", configuration);
 
         final PropertyValidationRule propertyRule = new PropertyValidationRule("name", rule);
         loader = new DefaultXmlBeanValidationConfigurationLoader(registry) {
@@ -94,10 +104,8 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
             }
         };
 
-        configuration.addPropertyRule("name", propertyRule);
-
         replay();
-        loader.handlePropertyDefinition(propertyDefinition, configuration);
+        loader.handlePropertyDefinition(propertyDefinition, TestBean.class, configuration);
         verify();
     }
 
@@ -110,13 +118,15 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         Element ruleDefinition = element(document, "rule");
         propertyDefinition.appendChild(ruleDefinition);
 
+        PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(TestBean.class, "name");
+
         configuration.addRequiredValidatableProperty("name");
-        registryControl.expectAndReturn(registry.findHandler(ruleDefinition), null);
+        registryControl.expectAndReturn(registry.findPropertyHandler(ruleDefinition, TestBean.class, descriptor), null);
 
         replay();
 
         try {
-            loader.handlePropertyDefinition(propertyDefinition, configuration);
+            loader.handlePropertyDefinition(propertyDefinition, TestBean.class, configuration);
             fail("An XmlConfigurationException is expected to be thrown if of the configured rules has no handler");
         } catch (XmlConfigurationException xce) {
             // expected
@@ -129,7 +139,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         Element globalDefinition = element("global");
 
         replay();
-        loader.handleGlobalDefinition(globalDefinition, configuration);
+        loader.handleGlobalDefinition(globalDefinition, TestBean.class, configuration);
         verify();
     }
 
@@ -139,12 +149,11 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         Element ruleDefinition = element(document, "rule");
         globalDefinition.appendChild(ruleDefinition);
 
-        configuration.addGlobalRule(rule);
-        registryControl.expectAndReturn(registry.findHandler(ruleDefinition), handler);
-        handlerControl.expectAndReturn(handler.handle(ruleDefinition), rule);
+        registryControl.expectAndReturn(registry.findClassHandler(ruleDefinition, TestBean.class), classHandler);
+        classHandler.handle(ruleDefinition, configuration);
 
         replay();
-        loader.handleGlobalDefinition(globalDefinition, configuration);
+        loader.handleGlobalDefinition(globalDefinition, TestBean.class, configuration);
         verify();
     }
 
@@ -154,12 +163,12 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         Element ruleDefinition = element(document, "rule");
         globalDefinition.appendChild(ruleDefinition);
 
-        registryControl.expectAndReturn(registry.findHandler(ruleDefinition), null);
+        registryControl.expectAndReturn(registry.findClassHandler(ruleDefinition, TestBean.class), null);
 
         replay();
 
         try {
-            loader.handleGlobalDefinition(globalDefinition, configuration);
+            loader.handleGlobalDefinition(globalDefinition, TestBean.class, configuration);
             fail("An XmlConfigurationException is expected to be thrown if no proper element handler " +
                 "could be found for a rule definition");
         } catch (XmlConfigurationException xce) {
@@ -174,14 +183,16 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     protected void replay() {
         registryControl.replay();
         configurationControl.replay();
-        handlerControl.replay();
+        propertyHandlerControl.replay();
+        classHandlerControl.replay();
         ruleControl.replay();
     }
 
     protected void verify() {
         registryControl.verify();
         configurationControl.verify();
-        handlerControl.verify();
+        propertyHandlerControl.verify();
+        classHandlerControl.verify();
         ruleControl.verify();
     }
 
@@ -211,6 +222,23 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
             element.setAttribute(attrNames[i], attrValues[i]);
         }
         return element;
+    }
+
+
+    //=============================================== Inner Classes ===================================================
+
+    public class TestBean {
+
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
     }
 
 }

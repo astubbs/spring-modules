@@ -22,12 +22,12 @@ import org.springmodules.validation.util.condition.Conditions;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} implementation that can handle and element that represents a "not blank"
+ * An {@link AbstractPropertyValidationElementHandler} implementation that can handle and element that represents a "not blank"
  * validation rule - a rule that validates that a string is not blank.
  *
  * @author Uri Boness
  */
-public class NotBlankRuleElementHandler extends AbstractValidationRuleElementHandler
+public class NotBlankRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -47,7 +47,7 @@ public class NotBlankRuleElementHandler extends AbstractValidationRuleElementHan
     /**
      * Returns {@link #DEFAULT_ERROR_CODE}.
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         return DEFAULT_ERROR_CODE;
@@ -56,7 +56,7 @@ public class NotBlankRuleElementHandler extends AbstractValidationRuleElementHan
     /**
      * Creates and returns a new "not blank" condition - a condition that checks if a given string is blank.
      *
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      * @see org.springmodules.validation.util.condition.Conditions#notBlank()
      */
     protected Condition extractCondition(Element element) {

@@ -55,7 +55,8 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
         assertTrue(errors.hasFieldErrors("firstName"));
         assertTrue(errors.hasFieldErrors("lastName"));
         assertFalse(errors.hasFieldErrors("birthday"));
-        assertTrue(errors.hasFieldErrors("age"));
+        assertEquals(1, errors.getFieldErrorCount("age"));
+        assertEquals("Person.age[just.another.error.code]", errors.getFieldError("age").getCode());
         assertTrue(errors.hasFieldErrors("father"));
         assertTrue(errors.hasFieldErrors("mother.*"));
         assertTrue(errors.hasFieldErrors("friends"));

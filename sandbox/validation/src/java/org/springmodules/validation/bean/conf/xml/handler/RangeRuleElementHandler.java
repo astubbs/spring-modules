@@ -23,12 +23,12 @@ import org.springmodules.validation.util.condition.Conditions;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} implementation that can handle an element that represent a range
+ * An {@link AbstractPropertyValidationElementHandler} implementation that can handle an element that represent a range
  * validation rule, min validation rule, or max validation rule.
  *
  * @author Uri Boness
  */
-public class RangeRuleElementHandler extends AbstractValidationRuleElementHandler
+public class RangeRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -65,7 +65,7 @@ public class RangeRuleElementHandler extends AbstractValidationRuleElementHandle
      *  <li>If the element represents a max validation rule, then {@link #DEFAULT_MAX_ERROR_CODE}</li>
      * </ul>
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         boolean hasMin = element.hasAttribute(MIN_ATTR);
@@ -93,7 +93,7 @@ public class RangeRuleElementHandler extends AbstractValidationRuleElementHandle
      *     {@link org.springmodules.validation.util.condition.range.LessThanOrEqualsCondition}</li>
      * </ul>
      *
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      */
     protected Condition extractCondition(Element element) {
         String minText = element.getAttribute(MIN_ATTR);

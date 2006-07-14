@@ -38,6 +38,12 @@ import org.springmodules.validation.bean.conf.annotation.handler.ValangClassVali
 import org.springmodules.validation.bean.conf.annotation.handler.ValidatorClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.ValidatorsClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.ValidValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.handler.hibernate.HibernatePropertyValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.handler.jodatime.InstantInTheFutureValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.handler.jodatime.InstantInThePastValidationAnnotationHandler;
+import org.springmodules.validation.util.LibraryUtils;
+import org.springmodules.validation.util.BasicContextAware;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  * The default validation annotation handler registry. This registry come with the following pre-registered handlers:
@@ -47,7 +53,8 @@ import org.springmodules.validation.bean.conf.annotation.handler.ValidValidation
  *
  * @author Uri Boness
  */
-public class DefaultValidationAnnotationHandlerRegistry implements ValidationAnnotationHandlerRegistry {
+public class DefaultValidationAnnotationHandlerRegistry extends BasicContextAware
+    implements ValidationAnnotationHandlerRegistry, InitializingBean {
 
     private List<ClassValidationAnnotationHandler> classHandlers;
     private List<PropertyValidationAnnotationHandler> propertyHandlers;
@@ -139,6 +146,14 @@ public class DefaultValidationAnnotationHandlerRegistry implements ValidationAnn
         }
     }
 
+    public void afterPropertiesSet() throws Exception {
+        for (ClassValidationAnnotationHandler handler : classHandlers) {
+            initLifecycle(handler);
+        }
+        for (PropertyValidationAnnotationHandler handler : propertyHandlers) {
+            initLifecycle(handler);
+        }
+    }
 
     //=============================================== Helper Methods ===================================================
 
@@ -157,6 +172,10 @@ public class DefaultValidationAnnotationHandlerRegistry implements ValidationAnn
         propertyHandlers.add(new EmailValidationAnnotationHandler());
         propertyHandlers.add(new DateInTheFutureValidationAnnotationHandler());
         propertyHandlers.add(new DateInThePastValidationAnnotationHandler());
+        if (LibraryUtils.JODA_TIME_IN_CLASSPATH) {
+            propertyHandlers.add(new InstantInTheFutureValidationAnnotationHandler());
+            propertyHandlers.add(new InstantInThePastValidationAnnotationHandler());
+        }
         propertyHandlers.add(new LengthValidationAnnotationHandler());
         propertyHandlers.add(new NotBlankValidationAnnotationHandler());
         propertyHandlers.add(new NotEmptyValidationAnnotationHandler());
@@ -165,6 +184,9 @@ public class DefaultValidationAnnotationHandlerRegistry implements ValidationAnn
         propertyHandlers.add(new RegExpValidationAnnotationHandler());
         propertyHandlers.add(new SizeValidationAnnotationHandler());
         propertyHandlers.add(new ValangPropertyValidationAnnotationHandler());
+        if (LibraryUtils.HIBERNATE_VALIDATOR_IN_CLASSPATH) {
+            propertyHandlers.add(new HibernatePropertyValidationAnnotationHandler());
+        }
     }
 
 }

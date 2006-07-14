@@ -23,12 +23,12 @@ import org.springmodules.validation.util.condition.Conditions;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} that can handle an element that represents a length range validation rule,
+ * An {@link AbstractPropertyValidationElementHandler} that can handle an element that represents a length range validation rule,
  * min length validation rule, or max length vaidation rule.
  *
  * @author Uri Boness
  */
-public class LengthRuleElementHandler extends AbstractValidationRuleElementHandler
+public class LengthRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -66,7 +66,7 @@ public class LengthRuleElementHandler extends AbstractValidationRuleElementHandl
      *  <li>If the element represents a max length validation rule, then {@link #DEFAULT_MAX_LENGTH_ERROR_CODE}</li>
      * </ul>
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         boolean hasMin = element.hasAttribute(MIN_ATTR);
@@ -95,7 +95,7 @@ public class LengthRuleElementHandler extends AbstractValidationRuleElementHandl
      *      {@link org.springmodules.validation.util.condition.string.MaxLengthStringCondition}</li>
      * </ul>
      *
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
      * @see org.springmodules.validation.util.condition.string.LengthRangeStringCondition
      * @see org.springmodules.validation.util.condition.string.MinLengthStringCondition
      * @see org.springmodules.validation.util.condition.string.MaxLengthStringCondition

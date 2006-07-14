@@ -16,18 +16,22 @@
 
 package org.springmodules.validation.bean.conf.xml.handler;
 
+import java.beans.PropertyDescriptor;
+import java.util.Date;
+import java.util.Calendar;
+
 import org.springmodules.validation.bean.conf.xml.DefaultXmBeanValidationConfigurationlLoaderConstants;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.date.IsInTheFutureDateCondition;
 import org.w3c.dom.Element;
 
 /**
- * An {@link AbstractValidationRuleElementHandler} implementation that can handle an element that represents a "date in
+ * An {@link AbstractPropertyValidationElementHandler} implementation that can handle an element that represents a "date in
  * the future" validation rule - a rule that validates that a given date occured in the future.
  *
  * @author Uri Boness
  */
-public class DateInFutureRuleElementHandler extends AbstractValidationRuleElementHandler
+public class DateInFutureRuleElementHandler extends AbstractPropertyValidationElementHandler
     implements DefaultXmBeanValidationConfigurationlLoaderConstants {
 
     /**
@@ -45,9 +49,25 @@ public class DateInFutureRuleElementHandler extends AbstractValidationRuleElemen
     }
 
     /**
+     * In addition to the element name and namespace check, this handler only support properties of types
+     * {@link java.util.Date} and {@link java.util.Calendar}.
+     *
+     * @see org.springmodules.validation.bean.conf.xml.PropertyValidationElementHandler#supports(org.w3c.dom.Element, Class, java.beans.PropertyDescriptor)
+     */
+    public boolean supports(Element element, Class clazz, PropertyDescriptor descriptor) {
+        return super.supports(element, clazz, descriptor)
+               &&
+               (
+                   Date.class.isAssignableFrom(descriptor.getPropertyType())
+                   ||
+                   Calendar.class.isAssignableFrom(descriptor.getPropertyType())
+               );
+    }
+
+    /**
      * Returns {@link #DEFAULT_ERROR_CODE}.
      *
-     * @see AbstractValidationRuleElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
+     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
      */
     protected String getDefaultErrorCode(Element element) {
         return DEFAULT_ERROR_CODE;
@@ -56,7 +76,7 @@ public class DateInFutureRuleElementHandler extends AbstractValidationRuleElemen
     /**
      * Creates and returns a new {@link IsInTheFutureDateCondition}.
      *
-     * @see AbstractValidationRuleElementHandler#extractCondition(org.w3c.dom.Element).
+     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element).
      */
     protected Condition extractCondition(Element element) {
         return new IsInTheFutureDateCondition();

@@ -16,8 +16,6 @@
 
 package org.springmodules.validation.bean.conf.namespace;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,19 +24,13 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.BeanValidator;
-import org.springmodules.validation.bean.conf.xml.ClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry;
-import org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader;
-import org.springmodules.validation.bean.conf.xml.PropertyValidationElementHandler;
+import org.springmodules.validation.bean.conf.annotation.AnnotationBeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.annotation.ClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.DefaultValidationAnnotationHandlerRegistry;
+import org.springmodules.validation.bean.conf.annotation.PropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.xml.XmlConfigurationException;
-import org.springmodules.validation.util.io.FileIterator;
 import org.springmodules.validation.util.xml.DomUtils;
 import org.springmodules.validation.util.xml.SubElementsIterator;
 import org.w3c.dom.Element;
@@ -47,21 +39,15 @@ import org.w3c.dom.Element;
  *
  * @author Uri Boness
  */
-public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitionParser implements ValidationBeansParserConstants {
+public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitionParser implements ValidationBeansParserConstants {
 
     private final static String ERROR_CODE_CONVERTER_ATTR = "errorConverter";
     private final static String CLASS_ATTR = "class";
-    private final static String PATTERN_ATTR = "pattern";
-    private final static String DIR_ATTR = "dir";
-    private final static String LOCATION_ATTR = "location";
 
-    private final static String RESOURCE_ELEMENT = "resource";
-    private final static String RESOURCE_DIR_ELEMENT = "resource-dir";
-    private final static String ELEMENT_HANDLERS_ELEMENT = "element-handlers";
+    private final static String ANNOTATION_HANDLERS_ELEMENT = "annotation-handlers";
     private final static String HANDLER_ELEMENT = "handler";
 
     private static final String HANDLER_REGISTRY_PREFIX = "__handler_registry_";
-
     private static final String CONFIGURATION_LOADER_PREFIX = "__configuration_loader_";
 
     protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
@@ -69,19 +55,18 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
         String validatorId = extractId(element);
 
         String registryId = HANDLER_REGISTRY_PREFIX + validatorId;
-        BeanDefinitionBuilder registryBuilder = BeanDefinitionBuilder.rootBeanDefinition(DefaultValidationRuleElementHandlerRegistry.class);
+        BeanDefinitionBuilder registryBuilder = BeanDefinitionBuilder.rootBeanDefinition(DefaultValidationAnnotationHandlerRegistry.class);
         parseHandlerElements(element, registryBuilder);
         parserContext.getRegistry().registerBeanDefinition(registryId, registryBuilder.getBeanDefinition());
 
         String loaderId = CONFIGURATION_LOADER_PREFIX + validatorId;
-        BeanDefinitionBuilder loaderBuilder = BeanDefinitionBuilder.rootBeanDefinition(DefaultXmlBeanValidationConfigurationLoader.class);
-        parseResourcesElements(element, loaderBuilder);
-        loaderBuilder.addPropertyReference("elementHandlerRegistry", registryId);
+        BeanDefinitionBuilder loaderBuilder = BeanDefinitionBuilder.rootBeanDefinition(AnnotationBeanValidationConfigurationLoader.class);
+        loaderBuilder.addPropertyReference("handlerRegistry", registryId);
         parserContext.getRegistry().registerBeanDefinition(loaderId, loaderBuilder.getBeanDefinition());
 
         BeanDefinitionBuilder validatorBuilder = BeanDefinitionBuilder.rootBeanDefinition(BeanValidator.class);
-        if (element.hasAttribute(ERROR_CODE_CONVERTER_ATTR)) {
-            validatorBuilder.addPropertyReference("errorCodeConverter", element.getAttribute(ERROR_CODE_CONVERTER_ATTR));
+        if (element.hasAttribute(AnnotationBasedValidatorBeanDefinitionParser.ERROR_CODE_CONVERTER_ATTR)) {
+            validatorBuilder.addPropertyReference("errorCodeConverter", element.getAttribute(AnnotationBasedValidatorBeanDefinitionParser.ERROR_CODE_CONVERTER_ATTR));
         }
         validatorBuilder.addPropertyReference("configurationLoader", loaderId);
 
@@ -99,47 +84,8 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
 
     //=============================================== Helper Methods ===================================================
 
-    protected void parseResourcesElements(Element element, BeanDefinitionBuilder loaderBuilder) {
-        List resources = new ArrayList();
-        for (Iterator subElements = new SubElementsIterator(element); subElements.hasNext();) {
-            Element subElement = (Element)subElements.next();
-            if (subElement.getLocalName().equals(RESOURCE_ELEMENT)) {
-                resources.add(createResource(subElement));
-            }
-            else if(subElement.getLocalName().equals(RESOURCE_DIR_ELEMENT)) {
-                resources.addAll(createResources(subElement));
-            }
-        }
-        loaderBuilder.addPropertyValue("resources", resources.toArray(new Resource[resources.size()]));
-    }
-
-    protected Resource createResource(Element resourceDefinition) {
-        String path = resourceDefinition.getAttribute(LOCATION_ATTR);
-        if (!StringUtils.hasText(path)) {
-            throw new XmlConfigurationException("Resoruce path is required and cannot be empty");
-        }
-        return new DefaultResourceLoader().getResource(path);
-    }
-
-    protected List createResources(Element resourcesDefinition) {
-        String dirName = resourcesDefinition.getAttribute(DIR_ATTR);
-        final String pattern = resourcesDefinition.getAttribute(PATTERN_ATTR);
-        final AntPathMatcher matcher = new AntPathMatcher();
-        FileFilter filter = new FileFilter() {
-            public boolean accept(File file) {
-                return matcher.match(pattern, file.getName());
-            }
-        };
-        List resources = new ArrayList();
-        for (Iterator files = new FileIterator(dirName, filter); files.hasNext();) {
-            File file = (File)files.next();
-            resources.add(new FileSystemResource(file));
-        }
-        return resources;
-    }
-
     protected void parseHandlerElements(Element element, BeanDefinitionBuilder registryBuilder) {
-        Element functionsElement = DomUtils.getSingleSubElement(element, VALIDATION_BEANS_NAMESPACE, ELEMENT_HANDLERS_ELEMENT);
+        Element functionsElement = DomUtils.getSingleSubElement(element, VALIDATION_BEANS_NAMESPACE, ANNOTATION_HANDLERS_ELEMENT);
         if (functionsElement == null) {
             return;
         }
@@ -149,11 +95,11 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
         List classHandlers = new ArrayList();
         while(handlerElements.hasNext()) {
             Element handlerElement = (Element)handlerElements.next();
-            String className = handlerElement.getAttribute(CLASS_ATTR);
+            String className = handlerElement.getAttribute(AnnotationBasedValidatorBeanDefinitionParser.CLASS_ATTR);
             Object handler = loadAndInstantiate(className);
-            if (PropertyValidationElementHandler.class.isInstance(handler)) {
+            if (PropertyValidationAnnotationHandler.class.isInstance(handler)) {
                 propertyHandlers.add(handler);
-            } else if (ClassValidationElementHandler.class.isInstance(handler)) {
+            } else if (ClassValidationAnnotationHandler.class.isInstance(handler)) {
                 classHandlers.add(handler);
             } else {
                 throw new XmlConfigurationException("class '" + className + "' is not a property hanlder nor a class handler");
@@ -161,13 +107,14 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
         }
         registryBuilder.addPropertyValue(
             "extraPropertyHandlers",
-            propertyHandlers.toArray(new PropertyValidationElementHandler[propertyHandlers.size()])
+            propertyHandlers.toArray(new PropertyValidationAnnotationHandler[propertyHandlers.size()])
         );
         registryBuilder.addPropertyValue(
             "extraClassHandlers",
-            classHandlers.toArray(new ClassValidationElementHandler[classHandlers.size()])
+            classHandlers.toArray(new ClassValidationAnnotationHandler[classHandlers.size()])
         );
     }
+
 
     //=============================================== Helper Methods ===================================================
 

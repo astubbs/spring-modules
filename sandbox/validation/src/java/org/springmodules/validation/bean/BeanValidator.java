@@ -357,7 +357,9 @@ public class BeanValidator extends RuleBasedValidator {
                 String errorCode = errorCodeConverter.convertGlobalErrorCode(rule.getErrorCode(), obj.getClass());
 
                 // if there is a nested path in errors, the global errors should be registered as field errors
-                // for the nested path. Otherwise, they should be registered as global errors.
+                // for the nested path. Otherwise, they should be registered as global errors. Starting from Spring 2.0-rc2
+                // this is actually not required - it's just enough to call rejectValue() with null as the field name,
+                // but we keep this implementation for now to support earlier versions.
 
                 if (StringUtils.hasLength(errors.getNestedPath())) {
                     String nestedPath = errors.getNestedPath();
