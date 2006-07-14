@@ -17,6 +17,9 @@ Package org.springmodules.bpm.flux
 Package org.springmodules.cache
 * Patched the module to work with Spring post 2.0-m3. Many thanks to Craig Walls for submitting the patch.
 
+Package org.springmodules.cache.provider.gigaspaces
+* GigaSpaces caching support
+
 Package org.springmodules.jcr
 * Updated docs and the sample [JIRA MOD-160]
 
