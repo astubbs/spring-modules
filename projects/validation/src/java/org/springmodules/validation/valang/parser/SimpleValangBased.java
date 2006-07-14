@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springmodules.validation.util.BasicContextAware;
+import org.springmodules.validation.valang.functions.FunctionDefinition;
 
 /**
  * A simple implementation of {@link ValangBased}.
@@ -64,12 +65,12 @@ public class SimpleValangBased extends BasicContextAware implements ValangBased 
      * @return A new {@link ValangParser}.
      */
     public ValangParser createValangParser(String expression) {
-        ValangParser parser = new ValangParser(expression, customFunctions, dateParsers);
+        ValangParser parser = new ValangParser(expression, getAllCustomFunctions(), dateParsers);
         initLifecycle(parser);
         return parser;
     }
 
-    public void init(Object object) {
+    public void initValang(Object object) {
         super.initLifecycle(object);
         if (object instanceof ValangBased) {
             ((ValangBased)object).setCustomFunctions(customFunctions);
@@ -77,5 +78,32 @@ public class SimpleValangBased extends BasicContextAware implements ValangBased 
         }
     }
 
+    /**
+     * Returns all the custom functions that can be found. This method returns all the custom functions
+     * that were explicitly registered with this instance and all custom functions that can be found in the
+     * application context (if one is set) by looking for {@link org.springmodules.validation.valang.functions.FunctionDefinition}
+     * beans.
+     *
+     * @return All the custom function that can be found.
+     */
+    public Map getAllCustomFunctions() {
+        Map functionByName = new HashMap();
+        functionByName.putAll(customFunctions);
+        functionByName.putAll(findAllCustomFunctionsInApplicationContext());
+        return functionByName;
+    }
+
+    protected Map findAllCustomFunctionsInApplicationContext() {
+        Map functionByName = new HashMap();
+        if (applicationContext == null) {
+            return functionByName;
+        }
+        String[] names = applicationContext.getBeanNamesForType(FunctionDefinition.class);
+        for (int i=0; i<names.length; i++) {
+            FunctionDefinition def = (FunctionDefinition)applicationContext.getBean(names[i]);
+            functionByName.put(def.getName(), def.getClassName());
+        }
+        return functionByName;
+    }
 
 }

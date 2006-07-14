@@ -27,10 +27,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springmodules.validation.util.BasicContextAware;
 import org.springmodules.validation.util.date.DefaultDateParser;
 import org.springmodules.validation.util.date.DefaultDateParser.DateModifier;
-import org.springmodules.validation.valang.parser.ValangBased;
+import org.springmodules.validation.valang.parser.SimpleValangBased;
 import org.springmodules.validation.valang.parser.ValangParser;
 import org.springmodules.validation.valang.predicates.ValidationRule;
 
@@ -91,7 +90,7 @@ import org.springmodules.validation.valang.predicates.ValidationRule;
  * @see org.springframework.validation.Validator
  */
 
-public class ValangValidator extends BasicContextAware implements ValangBased, Validator, InitializingBean {
+public class ValangValidator extends SimpleValangBased implements Validator, InitializingBean {
 
     private String valang = null;
 
@@ -204,16 +203,9 @@ public class ValangValidator extends BasicContextAware implements ValangBased, V
         Assert.hasLength(getValang(), "'valang' property must be set!");
 
         ValangParser parser = new ValangParser(getValang());
-
-        parser.getVisitor().setApplicationContext(applicationContext);
-        parser.getVisitor().setBeanFactory(beanFactory);
-        parser.getVisitor().setApplicationEventPublisher(applicationEventPublisher);
-        parser.getVisitor().setMessageSource(messageSource);
-        parser.getVisitor().setResourceLoader(resourceLoader);
-        parser.getVisitor().setServletContext(servletContext);
-
+        initLifecycle(parser.getVisitor());
         parser.setDateParsersByRegexp(getDateParserRegistrations());
-        parser.setFunctionsByName(getCustomFunctions());
+        parser.setFunctionsByName(getAllCustomFunctions());
 
         rules = parser.parseValidation();
 

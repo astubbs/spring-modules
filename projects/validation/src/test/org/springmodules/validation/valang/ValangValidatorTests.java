@@ -42,6 +42,26 @@ public class ValangValidatorTests extends TestCase {
         assertTrue(errors.hasFieldErrors("firstName"));
     }
 
+    public void testCustomFunctionsFromApplicationContext() {
+
+        LifeCycleBean lifeCycleBean = new LifeCycleBean();
+        Person person = new Person();
+        person.setLifeCycleBean(lifeCycleBean);
+        person.setFirstName("FN");
+
+        Validator validator = (Validator)appCtx.getBean("testCustomFunctionsFromApplicationContext");
+        BindException errors = new BindException(person, "person");
+        validator.validate(person, errors);
+
+        assertTrue(lifeCycleBean.isApplicationContextSet());
+        assertTrue(lifeCycleBean.isApplicationEventPublisher());
+        assertTrue(lifeCycleBean.isBeanFactorySet());
+        assertTrue(lifeCycleBean.isMessageSourceSet());
+        assertTrue(lifeCycleBean.isResourceLoaderSet());
+
+        assertTrue(errors.hasFieldErrors("firstName"));
+    }
+
     public void testPersonValidator() {
 		Validator validator = (Validator)appCtx.getBean("personValidator", Validator.class);
 		Person person = new Person();
