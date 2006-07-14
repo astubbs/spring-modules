@@ -77,6 +77,9 @@ public class BasicContextAware implements ContextAware {
     }
 
     protected void initLifecycle(Object object) {
+        if (object == null) {
+            return;
+        }
         if (object instanceof BeanFactoryAware) {
             ((BeanFactoryAware)object).setBeanFactory(beanFactory);
         }
