@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-jcr" default="dist">
+<project name="spring-modules-jcr" default="dist">
     <property file="build.properties" />
     <property file="project.properties" />
     <property file="${common.build.dir}/build.properties" />

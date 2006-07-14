@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-osworkflow" default="dist">
+<project name="spring-modules-osworkflow" default="dist">
 
 	<property file="build.properties" />
 	<property file="project.properties" />

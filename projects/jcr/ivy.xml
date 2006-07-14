@@ -1,5 +1,5 @@
 <ivy-module version="1.1">
-  <info organisation="springmodules" module="springmodules-jcr"/>
+  <info organisation="springmodules" module="spring-modules-jcr"/>
 
   <configurations>
     <!-- default configuration that 'by default' pulls in the global configuration -->
@@ -27,7 +27,7 @@
     <dependency org="apache" name="commons-logging" rev="1.1" conf="global->*"/>
     <dependency org="apache" name="log4j" rev="1.2.13" />
     
-    <dependency org="springframework" name="springframework" rev="2.0-rc1"
+    <dependency org="springframework" name="springframework" rev="2.0-m4"
       conf="global,test->default">
       <artifact name="spring" type="jar" conf="global" />
       <artifact name="spring-mock" type="jar" conf="test" />

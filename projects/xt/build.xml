@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-xt" default="dist">
+<project name="spring-modules-xt" default="dist">
   
     <property file="build.properties" />
     <property file="project.properties" />

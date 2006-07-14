@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-    <info organisation="springmodules" module="springmodules-lucene"/>
+    <info organisation="springmodules" module="spring-modules-lucene"/>
 
     <configurations>
 		<!-- default configuration that 'by default' pulls in the global configuration -->

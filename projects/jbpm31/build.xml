@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="springmodules-jbpm31" default="dist">
+<project name="spring-modules-jbpm31" default="dist">
 
   <!-- you may override default properties for the build by using entries
        in a build.properties file, or by just adding 'property' elements

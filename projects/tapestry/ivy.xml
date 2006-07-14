@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-    <info organisation="springmodules" module="springmodules-tapestry"/>
+    <info organisation="springmodules" module="spring-modules-tapestry"/>
 
     <configurations>
         <!-- default configuration that 'by default' pulls in the global configuration -->
