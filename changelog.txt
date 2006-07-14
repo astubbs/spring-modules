@@ -9,8 +9,8 @@ Package org.springmodules.lucene
 * Upgraded Lucene to 2.0.0
 * Fixed AbstractIndexFactory to work with Lucene 2.0.0 [JIRA MOD-141]. Thanks eearley.
 
-Changes in version 0.5 (in progress)
-------------------------------------
+Changes in version 0.5 (14.07.2006)
+-----------------------------------
 Package org.springmodules.bpm.flux
 * Added XML Engine bean.
 
@@ -42,8 +42,8 @@ Package org.springmodules.validation.valang.parser
 Package org.springmodules.xt
 * New top-level module added. Spring XT (http://springxt.sourceforge.net) is now part of the Spring Modules project.
 
-Changes in version 0.4
-------------------------------------
+Changes in version 0.4 (10.06.2006)
+-----------------------------------
 
 Added docbook documentation for validation module
 
@@ -90,7 +90,7 @@ Package org.springmodules.validation.valang.parser
 
 
 Changes in version 0.3 (12.05.2006)
-------------------------------------
+-----------------------------------
 
 Package org.springmodules.cache.provider.jboss
 * Added support for JBossCache
