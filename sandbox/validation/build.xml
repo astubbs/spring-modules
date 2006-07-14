@@ -55,9 +55,9 @@
 
     <target name="tiger.test.resources" depends="copy.tiger.test.resources.from.test.resources.dir, copy.tiger.test.resources.from.test.dir"/>
 
-    <target name="copy.tiger.test.resources.from.test.dir" if="tiger.test.resources.exists">
+    <target name="copy.tiger.test.resources.from.test.dir">
         <copy todir="${target.testclasses.dir}">
-            <fileset dir="${tiger.src.test.resources.dir}">
+            <fileset dir="${tiger.src.test.dir}">
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
@@ -88,6 +88,13 @@
         <echo>compiling java tiger sources</echo>
         <javac destdir="${target.classes.dir}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}"
                source="${tiger.javac.source}" target="${tiger.javac.target}">
+            <exclude name="**/ValidatorNamespaceHandler.*"/>
+            <src path="${tiger.src.java.dir}"/>
+            <classpath refid="compile.classpath"/>
+        </javac>
+        <javac destdir="${target.classes.dir}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}"
+               source="${javac.source}" target="${javac.target}">
+            <include name="**/ValidatorNamespaceHandler.*"/>
             <src path="${tiger.src.java.dir}"/>
             <classpath refid="compile.classpath"/>
         </javac>
