@@ -41,6 +41,18 @@
 		</property>
 	</bean>
 
+    <bean id="equal" class="org.springmodules.validation.valang.EqualsFunction" singleton="false"/>
+
+    <bean id="testFunctionFromApplicationContext" class="org.springmodules.validation.valang.ValangValidator" lazy-init="true">
+		<property name="valang">
+			<value>
+                <![CDATA[
+                    { firstName : equal(firstName, lastName) == true : 'First name must be the same as the last name' }
+			    ]]>
+            </value>
+		</property>
+	</bean>
+
     <bean class="java.util.Date"/>
 	
 	<bean id="pattern" class="java.util.regex.Pattern" factory-method="compile">

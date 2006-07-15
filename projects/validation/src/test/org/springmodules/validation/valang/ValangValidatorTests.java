@@ -62,6 +62,19 @@ public class ValangValidatorTests extends TestCase {
         assertTrue(errors.hasFieldErrors("firstName"));
     }
 
+    public void testFunctionsFromApplicationContext() {
+
+        Person person = new Person();
+        person.setFirstName("FN");
+        person.setFirstName("LN");
+
+        Validator validator = (Validator)appCtx.getBean("testFunctionFromApplicationContext");
+        BindException errors = new BindException(person, "person");
+        validator.validate(person, errors);
+
+        assertTrue(errors.hasFieldErrors("firstName"));
+    }
+
     public void testPersonValidator() {
 		Validator validator = (Validator)appCtx.getBean("personValidator", Validator.class);
 		Person person = new Person();
@@ -83,6 +96,7 @@ public class ValangValidatorTests extends TestCase {
 
         private LifeCycleBean lifeCycleBean;
         private String firstName;
+        private String lastName;
 
         private Map form;
 
@@ -108,6 +122,14 @@ public class ValangValidatorTests extends TestCase {
 
         public void setFirstName(String firstName) {
             this.firstName = firstName;
+        }
+
+        public String getLastName() {
+            return lastName;
+        }
+
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
         }
     }
 	

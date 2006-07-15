@@ -19,6 +19,8 @@ package org.springmodules.validation.valang.parser;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -37,6 +39,7 @@ import org.springframework.web.context.ServletContextAware;
 import org.springmodules.validation.util.date.DefaultDateParser;
 import org.springmodules.validation.valang.ValangException;
 import org.springmodules.validation.valang.functions.AbstractFunction;
+import org.springmodules.validation.valang.functions.AbstractInitializableFunction;
 import org.springmodules.validation.valang.functions.EmailFunction;
 import org.springmodules.validation.valang.functions.Function;
 import org.springmodules.validation.valang.functions.InRoleFunction;
@@ -66,6 +69,8 @@ import org.springmodules.validation.valang.predicates.Operator;
  */
 public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, ApplicationContextAware, ResourceLoaderAware, MessageSourceAware, ApplicationEventPublisherAware, ServletContextAware {
 
+    private final static Log logger = LogFactory.getLog(DefaultVisitor.class);
+
     private ValangVisitor visitor = null;
     private DefaultDateParser dateParser = null;
 
@@ -87,20 +92,48 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
     }
 
     private Function doGetFunction(String name, Function[] arguments, int line, int column) {
-        if (getVisitor() != null) {
-            Function function = getVisitor().getFunction(name, arguments, line, column);
-            if (function != null) {
-                return function;
-            }
+
+        Function function = resolveCustomFunction(name, arguments, line, column);
+        if (function != null) {
+            return function;
         }
 
-        if ("len".equals(name)) {
-            return new LengthOfFunction(arguments, line, column);
-        } else if ("length".equals(name)) {
-            return new LengthOfFunction(arguments, line, column);
-        } else if ("size".equals(name)) {
-            return new LengthOfFunction(arguments, line, column);
-        } else if ("count".equals(name)) {
+        function = resolveFunctionFromApplicationContext(name, arguments, line, column);
+        if (function != null) {
+            return function;
+        }
+
+        function = resolveDefaultFunction(name, arguments, line, column);
+        if (function != null) {
+            return function;
+        }
+
+        throw new ValangException("Could not find function [" + name + "]", line, column);
+    }
+
+    private Function resolveCustomFunction(String name, Function[] arguments, int line, int column) {
+        if (getVisitor() == null) {
+            return null;
+        }
+        return getVisitor().getFunction(name, arguments, line, column);
+    }
+
+    private Function resolveFunctionFromApplicationContext(String name, Function[] arguments, int line, int column) {
+        if (applicationContext == null || !applicationContext.containsBean(name)) {
+            return null;
+        }
+        Object bean = applicationContext.getBean(name);
+        if (!AbstractInitializableFunction.class.isInstance(bean)) {
+            logger.warn("Bean '" + name + "' is not of a '" + AbstractInitializableFunction.class.getName() + "' type");
+            return null;
+        }
+        AbstractInitializableFunction function = (AbstractInitializableFunction)bean;
+        function.init(arguments, line, column);
+        return function;
+    }
+
+    private Function resolveDefaultFunction(String name, Function[] arguments, int line, int column) {
+        if ("len".equals(name) || "length".equals(name) || "size".equals(name) || "count".equals(name)) {
             return new LengthOfFunction(arguments, line, column);
         } else if ("upper".equals(name)) {
             return new UpperCaseFunction(arguments, line, column);
@@ -110,18 +143,16 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
             return new NotFunction(arguments, line, column);
         } else if ("resolve".equals(name)) {
             return new ResolveFunction(arguments, line, column);
-        } else if ("match".equals(name)) {
-            return new RegExFunction(arguments, line, column);
-        } else if ("matches".equals(name)) {
+        } else if ("match".equals(name) || "matches".equals(name)) {
             return new RegExFunction(arguments, line, column);
         } else if ("inRole".equals(name)) {
             return new InRoleFunction(arguments, line, column);
         } else if ("email".equals(name)) {
             return new EmailFunction(arguments, line, column);
         }
-
-        throw new ValangException("Could not find function [" + name + "]", line, column);
+        return null;
     }
+
 
     private Function lifeCycleCallbacks(Function function, int line, int column) {
         if (function instanceof BeanFactoryAware) {
