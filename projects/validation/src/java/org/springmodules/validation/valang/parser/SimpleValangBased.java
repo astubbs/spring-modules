@@ -58,6 +58,14 @@ public class SimpleValangBased extends BasicContextAware implements ValangBased 
         dateParsers = parserByRegexp;
     }
 
+    public Map getCustomFunctions() {
+        return customFunctions;
+    }
+
+    public Map getDateParsers() {
+        return dateParsers;
+    }
+
     /**
      * Creates a new {@link ValangParser} that is already configured with the proper custom functions and date
      * parsers.

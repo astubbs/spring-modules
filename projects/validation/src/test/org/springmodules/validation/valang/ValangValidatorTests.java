@@ -12,17 +12,17 @@ import org.springframework.validation.Validator;
 
 public class ValangValidatorTests extends TestCase {
 
-	public ValangValidatorTests() {
-		super();
-	}
+    public ValangValidatorTests() {
+        super();
+    }
 
-	public ValangValidatorTests(String arg0) {
-		super(arg0);
-	}
+    public ValangValidatorTests(String arg0) {
+        super(arg0);
+    }
 
-	private static ApplicationContext appCtx = new ClassPathXmlApplicationContext("org/springmodules/validation/valang/ValangValidator-tests.xml");
-	
-	public void testCustomFunctions() {
+    private static ApplicationContext appCtx = new ClassPathXmlApplicationContext("org/springmodules/validation/valang/ValangValidator-tests.xml");
+
+    public void testCustomFunctions() {
 
         LifeCycleBean lifeCycleBean = new LifeCycleBean();
         Person person = new Person();
@@ -76,17 +76,32 @@ public class ValangValidatorTests extends TestCase {
     }
 
     public void testPersonValidator() {
-		Validator validator = (Validator)appCtx.getBean("personValidator", Validator.class);
-		Person person = new Person();
-		Map map = new HashMap();
-		map.put("name", "Steven");
-		map.put("passwd", "pas");
-		person.setForm(map);
-		Errors errors = new BindException(person, "person");
-		validator.validate(person, errors);
+        Validator validator = (Validator)appCtx.getBean("personValidator", Validator.class);
+        Person person = new Person();
+        Map map = new HashMap();
+        map.put("name", "Steven");
+        map.put("passwd", "pas");
+        person.setForm(map);
+        Errors errors = new BindException(person, "person");
+        validator.validate(person, errors);
 
         assertFalse(errors.hasFieldErrors("form[name]"));
         assertTrue(errors.hasFieldErrors("form[passwd]"));
+    }
+
+    public void testCustomFunction() throws Exception {
+
+        ValangValidator validator = new ValangValidator();
+        validator.addCustomFunction("tupper", "org.springmodules.validation.valang.functions.UpperCaseFunction");
+        validator.setValang("{ firstName : tupper(?) == 'FN' : 'First name is empty' }");
+        validator.afterPropertiesSet();
+
+        Person person = new Person();
+        person.setFirstName("fn");
+        BindException errors = new BindException(person, "person");
+        validator.validate(person, errors);
+
+        assertFalse(errors.hasErrors());
     }
 
 
@@ -132,5 +147,5 @@ public class ValangValidatorTests extends TestCase {
             this.lastName = lastName;
         }
     }
-	
+
 }

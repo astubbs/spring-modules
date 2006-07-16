@@ -96,10 +96,6 @@ public class ValangValidator extends SimpleValangBased implements Validator, Ini
 
     private Collection customPropertyEditors = null;
 
-    private Map dateParserRegistrations = null;
-
-    private Map customFunctions = null;
-
     private Collection rules = null;
 
     public ValangValidator() {
@@ -149,44 +145,6 @@ public class ValangValidator extends SimpleValangBased implements Validator, Ini
         setDateParsers(dateParserRegistrations);
     }
 
-    private Map getDateParserRegistrations() {
-        return this.dateParserRegistrations;
-    }
-
-    public void setDateParsers(Map parserByRegexp) {
-        this.dateParserRegistrations = parserByRegexp;
-    }
-
-    /**
-     * <p>
-     * Takes a map with function names and function class names. Function classes
-     * must have a public constructor with a single org.springmodules.validation.valang.functions.Function
-     * parameter.
-     * 
-     * <p>
-     * These custom functions can be combined with a separate visitor. A function will first be looked
-     * up in this map if present, then in the custom visitor if present and then in the default functions.
-     * 
-     * @param customFunctions map with custom functions
-     */
-    public void setCustomFunctions(Map customFunctions) {
-        this.customFunctions = customFunctions;
-    }
-
-    /**
-     * Adds the a new custom function to be used in the valang el.
-     *
-     * @param functionName  The name of the function.
-     * @param functionClassName The class name of the function.
-     */
-    public void addCustomFunction(String functionName, String functionClassName) {
-        customFunctions.put(functionName, functionClassName);
-    }
-
-    private Map getCustomFunctions() {
-        return this.customFunctions;
-    }
-
     private Collection getCustomPropertyEditors() {
         return this.customPropertyEditors;
     }
@@ -204,7 +162,7 @@ public class ValangValidator extends SimpleValangBased implements Validator, Ini
 
         ValangParser parser = new ValangParser(getValang());
         initLifecycle(parser.getVisitor());
-        parser.setDateParsersByRegexp(getDateParserRegistrations());
+        parser.setDateParsersByRegexp(getDateParsers());
         parser.setFunctionsByName(getAllCustomFunctions());
 
         rules = parser.parseValidation();
