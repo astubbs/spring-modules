@@ -16,36 +16,27 @@
 package org.springmodules.xt.utils.mvc.util;
 
 import junit.framework.*;
+import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springmodules.xt.test.domain.IEmployee;
 import org.springmodules.xt.test.domain.MemoryRepository;
-import org.springmodules.xt.test.domain.MemoryRepositoryLoaderImpl;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class ReflectivePropertyEditorTest extends TestCase {
+public class ReflectivePropertyEditorTest extends AbstractDependencyInjectionSpringContextTests {
     
     private ReflectivePropertyEditor editor;
     private IEmployee employee;
-    private MemoryRepository repository;
     
     public ReflectivePropertyEditorTest(String testName) {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-        this.repository = new MemoryRepository(new MemoryRepositoryLoaderImpl());
-        this.editor = new ReflectivePropertyEditor();
-        
-        this.editor.setDataAccessObject(this.repository);
-        this.editor.setDataAccessMethod("getEmployee");
-        this.editor.setPropertyName("matriculationCode");
-        
-        this.employee = this.repository.getEmployee("1");
-    }
-
-    protected void tearDown() throws Exception {
+    protected void onSetUp() throws Exception {
+        MemoryRepository repository = (MemoryRepository) this.applicationContext.getBean("store");
+        this.editor = (ReflectivePropertyEditor) this.applicationContext.getBean("employeeEditor");
+        this.employee = repository.getEmployee("1");
     }
 
     public static Test suite() {
@@ -68,5 +59,9 @@ public class ReflectivePropertyEditorTest extends TestCase {
     public void testSetAsText() {
         this.editor.setAsText("1");
         assertEquals(this.employee, this.editor.getValue());
+    }
+    
+    protected String[] getConfigLocations() {
+        return new String[]{"testApplicationContext.xml"};
     }
 }

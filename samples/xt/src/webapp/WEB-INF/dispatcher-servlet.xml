@@ -56,13 +56,13 @@
     
     <!-- Property Editors -->
     
-    <bean id="officeEditor" class="org.springmodules.xt.utils.mvc.util.ReflectivePropertyEditor">
+    <bean id="officeEditor" class="org.springmodules.xt.utils.mvc.util.ReflectivePropertyEditor" singleton="false">
         <property name="dataAccessObject"><ref bean="store"/></property>
         <property name="dataAccessMethod"><value>getOffice</value></property>
         <property name="propertyName"><value>officeId</value></property>
     </bean>
     
-    <bean id="employeesCollectionEditor" class="org.springmodules.xt.utils.mvc.util.ReflectiveCollectionEditor">
+    <bean id="employeesCollectionEditor" class="org.springmodules.xt.utils.mvc.util.ReflectiveCollectionEditor" singleton="false">
         <constructor-arg index="0"><value>java.util.Set</value></constructor-arg>
         <property name="dataAccessObject"><ref bean="store"/></property>
         <property name="dataAccessMethod"><value>getEmployee</value></property>
@@ -92,7 +92,7 @@
             <map>
                 <entry>
                     <key><value>org.springmodules.xt.examples.domain.Office</value></key>
-                    <ref bean="officeEditor"/>
+                    <value>officeEditor</value>
                 </entry>
             </map>
         </property>  
@@ -107,7 +107,7 @@
             <map>
                 <entry>
                     <key><value>org.springmodules.xt.examples.domain.Office</value></key>
-                    <ref bean="officeEditor"/>
+                    <value>officeEditor</value>
                 </entry>
             </map>
         </property>  
@@ -126,8 +126,8 @@
         <property name="customEditors">
             <map>
                 <entry>
-                    <key><value>org.springmodules.xt.examples.domain.Office</value></key>
-                    <ref bean="officeEditor"/>
+                    <key><value>class:org.springmodules.xt.examples.domain.Office</value></key>
+                    <value>officeEditor</value>
                 </entry>
             </map>
         </property>  
@@ -141,8 +141,8 @@
         <property name="customEditors">
             <map>
                 <entry>
-                    <key><value>java.util.Set</value></key>
-                    <ref bean="employeesCollectionEditor"/>
+                    <key><value>property:employees</value></key>
+                    <value>employeesCollectionEditor</value>
                 </entry>
             </map>
         </property>  
@@ -180,13 +180,13 @@
         <property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
     </bean>
     
-    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">
             <props>
                 <prop key="java.lang.Exception">error</prop>
             </props>
         </property>
-    </bean>
+    </bean>-->
 
     <!-- -->
     

@@ -19,9 +19,7 @@ public class MemoryRepository {
     private Map<String, IOffice> officesMap = new HashMap<String, IOffice>();
     private MemoryRepositoryLoader loader;
     
-    public MemoryRepository(MemoryRepositoryLoader loader) {
-        this.loader = loader;
-        this.init();
+    public MemoryRepository() {
     }
     
     public void init() {
@@ -84,5 +82,9 @@ public class MemoryRepository {
             }
         });
         return result;
+    }
+    
+    public void setLoader(MemoryRepositoryLoader loader) {
+        this.loader = loader;
     }
 }

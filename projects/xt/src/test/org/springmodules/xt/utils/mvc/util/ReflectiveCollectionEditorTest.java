@@ -18,15 +18,15 @@ package org.springmodules.xt.utils.mvc.util;
 import java.util.LinkedList;
 import java.util.List;
 import junit.framework.*;
+import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springmodules.xt.test.domain.IEmployee;
 import org.springmodules.xt.test.domain.MemoryRepository;
-import org.springmodules.xt.test.domain.MemoryRepositoryLoaderImpl;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class ReflectiveCollectionEditorTest extends TestCase {
+public class ReflectiveCollectionEditorTest extends AbstractDependencyInjectionSpringContextTests {
     
     private MemoryRepository repository;
     private ReflectiveCollectionEditor editor;
@@ -35,16 +35,9 @@ public class ReflectiveCollectionEditorTest extends TestCase {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-        this.repository = new MemoryRepository(new MemoryRepositoryLoaderImpl());
-        this.editor = new ReflectiveCollectionEditor(List.class);
-        
-        this.editor.setDataAccessObject(this.repository);
-        this.editor.setDataAccessMethod("getEmployee");
-        this.editor.setPropertyName("matriculationCode");
-    }
-
-    protected void tearDown() throws Exception {
+    protected void onSetUp() throws Exception {
+        this.repository = (MemoryRepository) this.applicationContext.getBean("store");
+        this.editor = (ReflectiveCollectionEditor) this.applicationContext.getBean("employeesCollectionEditor");
     }
 
     public static Test suite() {
@@ -89,5 +82,9 @@ public class ReflectiveCollectionEditorTest extends TestCase {
         
         assertEquals(strings.get(0), this.repository.getEmployee("1").getMatriculationCode());
         assertEquals(strings.get(1), this.repository.getEmployee("2").getMatriculationCode());
+    }
+    
+    protected String[] getConfigLocations() {
+        return new String[]{"testApplicationContext.xml"};
     }
 }
