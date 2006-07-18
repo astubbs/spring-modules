@@ -12,7 +12,7 @@
     <import file="${common.build.dir}/doc-targets.xml" />
     
     <target name="compile.post">
-      <concat destfile="${basedir}/src/js/springxt.js" force="yes">
+      <concat destfile="${basedir}/src/js/springxt.js" force="no">
         <filelist dir="${basedir}/src/js/" 
           files="taconite-client.js, taconite-parser.js, springxt-taconite.js"/>
       </concat>
