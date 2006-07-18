@@ -8,25 +8,65 @@
         <para>
             The EnhancedSimpleFormController is a <ulink url='http://www.springframework.org/docs/api/org/springframework/web/servlet/mvc/SimpleFormController.html'><citetitle>form controller</citetitle></ulink> 
             which provides facilities for setting custom <ulink url='http://java.sun.com/j2se/1.4.2/docs/api/java/beans/PropertyEditor.html'><citetitle>property editors</citetitle></ulink> in a declarative way.
-            Through the <emphasis>setCustomEditor(Map )</emphasis> method you can set a map of custom property editors, containing the class name of the objects to edit as a key,
-            and the related property editor object as a value.
-            So, if you extend the EnhancedSimpleFormController for your controllers, you can use the method above and avoid to overwrite the 
-            <ulink url='http://www.springframework.org/docs/api/org/springframework/web/servlet/mvc/BaseCommandController.html#initBinder(javax.servlet.http.HttpServletRequest,%20org.springframework.web.bind.ServletRequestDataBinder)'><citetitle>initBinder</citetitle></ulink> method for many uses.
+            Using the <emphasis>setCustomEditor(Map )</emphasis> method you can set a map of custom property editors containing, as <emphasis role="bold">key</emphasis>, 
+            the class of the property in the form <emphasis>class:CLASS_NAME</emphasis> if you want to edit all properties of the given type, or its path in the form 
+            <emphasis>property:PROPERTY_PATH</emphasis> if you want to edit only the given property,  and as <emphasis role="bold">value</emphasis> the name of a bean in 
+            the application context. 
+            Please note that the bean have to be a PropertyEditor and must be declared as <emphasis>prototype</emphasis>.
+            If the <emphasis>class</emphasis> and <emphasis>property</emphasis> prefixes above are missed, the key is treated as a class name.
+            So, if you extend the EnhancedSimpleFormController for your controllers, you can use the method above and avoid to overwrite and manually code the 
+            <ulink url='http://www.springframework.org/docs/api/org/springframework/web/servlet/mvc/BaseCommandController.html#initBinder(javax.servlet.http.HttpServletRequest,%20org.springframework.web.bind.ServletRequestDataBinder)'><citetitle>initBinder</citetitle></ulink> method.
         </para>
-        <para>Here is an example of EnhancedSimpleFormController declaration into the Spring application context:</para>
+        <para>Here is an XML snippet of EnhancedSimpleFormController custom editors configuration into the Spring application context, using the default prefix:</para>
         <programlisting>
             <![CDATA[
             <bean id="exampleController" class="org.acme.ExampleController">
             
-            <property name="formView"><value>...</value></property>
-            <property name="successView"><value>...</value></property>
-            <property name="validator">...</property>
+            <!-- ....... -->
                 
             <property name="customEditors">
             <map>
             <entry>
             <key><value>org.acme.Office</value></key>
-            <ref bean="officeEditor"/>
+            <value>officeEditor</value>
+            </entry>
+            </map>
+            </property>  
+                
+            </bean>
+            ]]>
+        </programlisting>
+        <para>This one uses the <emphasis>class</emphasis> prefix:</para>
+        <programlisting>
+            <![CDATA[
+            <bean id="exampleController" class="org.acme.ExampleController">
+            
+            <!-- ....... -->
+                
+            <property name="customEditors">
+            <map>
+            <entry>
+            <key><value>class:org.acme.Office</value></key>
+            <value>officeEditor</value>
+            </entry>
+            </map>
+            </property>  
+                
+            </bean>
+            ]]>
+        </programlisting>
+        <para>Finally, this one uses the <emphasis>property</emphasis> prefix:</para>
+        <programlisting>
+            <![CDATA[
+            <bean id="exampleController" class="org.acme.ExampleController">
+            
+            <!-- ....... -->
+                
+            <property name="customEditors">
+            <map>
+            <entry>
+            <key><value>property:office</value></key>
+            <value>officeEditor</value>
             </entry>
             </map>
             </property>  
