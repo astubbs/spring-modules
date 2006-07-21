@@ -74,7 +74,7 @@ public class SimpleValangBased extends BasicContextAware implements ValangBased 
      */
     public ValangParser createValangParser(String expression) {
         ValangParser parser = new ValangParser(expression, getAllCustomFunctions(), dateParsers);
-        initLifecycle(parser);
+        initLifecycle(parser.getVisitor());
         return parser;
     }
 

@@ -116,7 +116,7 @@ public class ValangValidator extends SimpleValangBased implements Validator, Ini
     /**
      * <p>
      * Sets custom property editors on BeanWrapper instances (optional).
-     * 
+     *
      * @param customPropertyEditors
      *            the custom editors.
      * @see BeanWrapper#registerCustomEditor(java.lang.Class, java.lang.String,
@@ -132,7 +132,7 @@ public class ValangValidator extends SimpleValangBased implements Validator, Ini
      * <p>
      * Sets date parser registrations (formats and modifiers) on
      * DefaultDateParser (optional).
-     * 
+     *
      * @param dateParserRegistrations
      *            the date parser registrations
      * @see DefaultDateParser#register(String,
@@ -159,14 +159,8 @@ public class ValangValidator extends SimpleValangBased implements Validator, Ini
 
     public void afterPropertiesSet() throws Exception {
         Assert.hasLength(getValang(), "'valang' property must be set!");
-
-        ValangParser parser = new ValangParser(getValang());
-        initLifecycle(parser.getVisitor());
-        parser.setDateParsersByRegexp(getDateParsers());
-        parser.setFunctionsByName(getAllCustomFunctions());
-
+        ValangParser parser = createValangParser(getValang());
         rules = parser.parseValidation();
-
     }
 
     public boolean supports(Class clazz) {
