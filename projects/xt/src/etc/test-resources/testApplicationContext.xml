@@ -39,6 +39,23 @@
         <property name="propertyName"><value>matriculationCode</value></property>
     </bean>
     
+    <!-- Ajax -->
+  
+    <bean id="dummyHandler" class="org.springmodules.xt.test.ajax.DummyHandler"/>
+    
+    <bean id="ajaxValidationHandler" class="org.springmodules.xt.ajax.taconite.support.TaconiteValidationHandler"/>
+    
+    <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
+        <property name="handlerMappings">
+            <props>
+                <prop key="/ajax/*.action">ajaxValidationHandler</prop>
+                <prop key="/ajax/test.action">dummyHandler</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <!-- -->
+    
     <!-- Controllers -->
        
     <bean id="testCustomEditorsControllerOne" class="org.springmodules.xt.utils.mvc.controller.EnhancedSimpleFormController">

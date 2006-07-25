@@ -80,7 +80,8 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     
     /**
      * Pre-handle the http request and if this is an ajax request firing an action, looks for a mapped ajax handler, executes it and
-     * returns an ajax response.
+     * returns an ajax response.<br>
+     * Note: if the matching mapped handler returns a null ajax response, the interceptor proceed with the execution chain.
      *
      * @throws IllegalStateException If the ajax request doesn't have an event id as request parameter.
      * @throws UnsupportedEventException If the event associated with this ajax request is not supported by any
@@ -104,21 +105,27 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 AjaxActionEvent event = new AjaxActionEventImpl(eventId, request);
                 AjaxResponse ajaxResponse = null;
                 
+                boolean supported = false;
                 for (AjaxHandler ajaxHandler : handlers) {
                     if (ajaxHandler.supports(event)) {
                         event.setElementName(request.getParameter(this.elementParameter));
                         ajaxResponse = ajaxHandler.handle(event);
+                        supported = true;
                         break;
                     }
                 }
-                if (ajaxResponse != null) {
-                    this.sendResponse(response, ajaxResponse.getResponse());
-                }
-                else {
+                if (!supported) {
                     throw new UnsupportedEventException("Cannot handling the given event with id: " + eventId);
                 }
-                
-                return false;
+                else {
+                    if (ajaxResponse != null) {
+                        this.sendResponse(response, ajaxResponse.getResponse());
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
+                }
             }
             else {
                 throw new NoMatchingHandlerException("Cannot find an handler matching the request: " + 
@@ -130,6 +137,16 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         }
     }
 
+    /**
+     * Post-handle the http request and if it was an ajax request firing a submit, looks for a mapped ajax handler, executes it and
+     * returns an ajax response.<br>
+     * Note: if the matching mapped handler returns a null ajax response, the interceptor proceed with the execution chain.
+     *
+     * @throws IllegalStateException If the ajax request doesn't have an event id as request parameter.
+     * @throws UnsupportedEventException If the event associated with this ajax request is not supported by any
+     * mapped handler.
+     * @throws NoMatchingHandlerException If no mapped handler matching the URL can be found.
+     */
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) 
     throws Exception {
         String requestType = request.getParameter(this.ajaxParameter);
@@ -142,77 +159,63 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
             
             logger.warn(new StringBuilder("Post-handling ajax request for event: ").append(eventId));
             
-            RequestContext requestContext = new RequestContext(request, modelAndView.getModel());
-            // FIXME: Can we avoid this cast to BaseCommandController?  
-            if (!(handler instanceof BaseCommandController)) {
-                throw new IllegalStateException("Wrong controller type: " +
-                        "you can handle validation only for controllers extending org.springframework.web.servlet.mvc.BaseCommandController.");
-            }
-            Errors errors = requestContext.getErrors(((BaseCommandController) handler).getCommandName());
-            if (errors != null) {
-                logger.info(new StringBuilder("Found errors, handling event: ").append(eventId));
-                
-                List<AjaxHandler> handlers = this.lookupHandlers(request);
-                if (handlers != null) {
-                    AjaxSubmitEvent event = new AjaxSubmitEventImpl(eventId, request);
-                    AjaxResponse ajaxResponse = null;
+            List<AjaxHandler> handlers = this.lookupHandlers(request);
+            if (handlers != null) {
+                AjaxSubmitEvent event = new AjaxSubmitEventImpl(eventId, request);
+                AjaxResponse ajaxResponse = null;
 
-                    for (AjaxHandler ajaxHandler : handlers) {
-                        if (ajaxHandler.supports(event)) {
-                            event.setElementName(request.getParameter(this.elementParameter));
-                            event.setValidationErrors(errors);
-                            ajaxResponse = ajaxHandler.handle(event);
-                            break;
+                boolean supported = false;
+                for (AjaxHandler ajaxHandler : handlers) {
+                    if (ajaxHandler.supports(event)) {
+                        event.setElementName(request.getParameter(this.elementParameter));
+                        if (handler instanceof BaseCommandController) {
+                            RequestContext requestContext = new RequestContext(request, modelAndView.getModel());
+                            Errors errors = requestContext.getErrors(((BaseCommandController) handler).getCommandName());
+                            if (errors != null) {
+                                logger.info(new StringBuilder("Found errors for event: ").append(eventId));
+                                event.setValidationErrors(errors);
+                            }
                         }
+                        ajaxResponse = ajaxHandler.handle(event);
+                        supported = true;
+                        break;
                     }
+                }
+                if (!supported) {
+                    throw new UnsupportedEventException("Cannot handling the given event with id: " + eventId);
+                }
+                else {
                     if (ajaxResponse != null) {
                         // Need to clear the ModelAndView because we are handling the response by ourselves:
                         modelAndView.clear();
                         this.sendResponse(response, ajaxResponse.getResponse());
                     }
                     else {
-                        throw new UnsupportedEventException("Cannot handling the given event with id: " + eventId);
+                        String view = modelAndView.getViewName();
+                        if (view.startsWith(AJAX_REDIRECT_PREFIX)) {
+                            String path = view.substring(AJAX_REDIRECT_PREFIX.length());
+                            
+                            logger.warn(new StringBuilder("After Ajax submit, handling an Ajax redirect to: ").append(path));
+
+                            AjaxResponse ajaxRedirect = new TaconiteResponse();
+                            AjaxAction ajaxAction = new TaconiteRedirectAction(request.getContextPath() + path, modelAndView);
+                            ajaxRedirect.addAction(ajaxAction);
+
+                            // Need to clear the ModelAndView because we are handling the response by ourselves:
+                            modelAndView.clear();
+                            this.sendResponse(response, ajaxRedirect.getResponse());
+                        }
+                        else {
+                            logger.warn(new StringBuilder("After Ajax submit, handling a normal forward/redirect to: ").append(view));
+                        }
                     }
-                }
-                else {
-                    throw new NoMatchingHandlerException("Cannot find an handler matching the request: " + 
-                            this.urlPathHelper.getLookupPathForRequest(request));
                 }
             }
             else {
-                String view = modelAndView.getViewName();
-                
-                logger.info(new StringBuilder("No errors, going to: ").append(view));
-                
-                if (view.startsWith(AJAX_REDIRECT_PREFIX)) {
-                    String path = view.substring(AJAX_REDIRECT_PREFIX.length());
-                    logger.warn(new StringBuilder("After Ajax submit, handling an Ajax redirect to: ").append(path));
-                    
-                    AjaxResponse ajaxResponse = new TaconiteResponse();
-                    AjaxAction ajaxAction = new TaconiteRedirectAction(request.getContextPath() + path, modelAndView);
-                    ajaxResponse.addAction(ajaxAction);
-                    
-                    // Need to clear the ModelAndView because we are handling the response by ourselves:
-                    modelAndView.clear();
-                    this.sendResponse(response, ajaxResponse.getResponse());
-                }
-                else {
-                    logger.warn(new StringBuilder("After Ajax submit, handling a normal forward/redirect to: ").append(view));
-                }
+                throw new NoMatchingHandlerException("Cannot find an handler matching the request: " + 
+                        this.urlPathHelper.getLookupPathForRequest(request));
             }
         }
-    }
-
-    public void setAjaxParameter(String ajaxParameter) {
-        this.ajaxParameter = ajaxParameter;
-    }
-
-    public void setElementParameter(String elementParameter) {
-        this.elementParameter = elementParameter;
-    }
-
-    public void setEventParameter(String eventParameter) {
-        this.eventParameter = eventParameter;
     }
     
     /**
@@ -243,6 +246,30 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         for (Map.Entry entry : mappings.entrySet()) {
             this.handlerMappings.put((String) entry.getKey(), (String) entry.getValue());
         }
+    }
+    
+    public void setAjaxParameter(String ajaxParameter) {
+        this.ajaxParameter = ajaxParameter;
+    }
+
+    public void setElementParameter(String elementParameter) {
+        this.elementParameter = elementParameter;
+    }
+
+    public void setEventParameter(String eventParameter) {
+        this.eventParameter = eventParameter;
+    }
+    
+    public String getAjaxParameter() {
+        return this.ajaxParameter;
+    }
+
+    public String getElementParameter() {
+        return this.elementParameter;
+    }
+
+    public String getEventParameter() {
+        return this.eventParameter;
     }
     
     public void setApplicationContext(ApplicationContext applicationContext) 

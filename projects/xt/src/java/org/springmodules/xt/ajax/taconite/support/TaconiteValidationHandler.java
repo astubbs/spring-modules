@@ -35,7 +35,10 @@ import org.springframework.validation.ObjectError;
 
 /**
  * Ready-to-use Ajax handler for handling validation errors on submit.<br>
- * FIXME : Needs more comments ...
+ * This handler manages {@link org.springmodules.xt.ajax.AjaxSubmitEvent}s with id equals to "validate", replacing the content of HTML elements 
+ * named after validation error codes, with related validation error messages, in case using {@link org.springmodules.xt.ajax.taconite.support.ErrorRenderingCallback}
+ * if configured, or rendering error messages as simple text.<br>
+ * If the fired {@link org.springmodules.xt.ajax.AjaxSubmitEvent} has no validation errors, this handler returns a null response.
  *
  * @author Sergio Bossa
  */
@@ -44,14 +47,16 @@ public class TaconiteValidationHandler extends AbstractAjaxHandler implements Me
     private static final Logger logger = Logger.getLogger(TaconiteValidationHandler.class);
     
     private MessageSource messageSource;
-    
     private ErrorRenderingCallback errorRenderingCallback;
     
     public AjaxResponse validate(AjaxSubmitEvent event) {
-        TaconiteResponse response = new TaconiteResponse();
+        TaconiteResponse response = null;
         
-        response = this.removeOldErrors(event, response);
-        response = this.putNewErrors(event, response);
+        if (event.getValidationErrors() != null) {
+            response = new TaconiteResponse();
+            this.removeOldErrors(event, response);
+            this.putNewErrors(event, response);
+        }
         
         return response;
     }
@@ -64,7 +69,7 @@ public class TaconiteValidationHandler extends AbstractAjaxHandler implements Me
         this.errorRenderingCallback = errorRenderingCallback;
     }
 
-    private TaconiteResponse removeOldErrors(AjaxSubmitEvent event, TaconiteResponse response) {
+    private void removeOldErrors(AjaxSubmitEvent event, TaconiteResponse response) {
         HttpServletRequest request = event.getHttpRequest();
         Errors errors = (Errors) request.getSession().getAttribute(request.getRequestURL().toString());
          
@@ -80,12 +85,10 @@ public class TaconiteValidationHandler extends AbstractAjaxHandler implements Me
                 TaconiteRemoveContentAction action = new TaconiteRemoveContentAction(error.getCode());
                 response.addAction(action);
             }
-        } 
-        
-        return response;
+        }
     }
 
-    private TaconiteResponse putNewErrors(AjaxSubmitEvent event, TaconiteResponse response) {
+    private void putNewErrors(AjaxSubmitEvent event, TaconiteResponse response) {
         Errors errors = event.getValidationErrors();
         HttpServletRequest request = event.getHttpRequest();
         Locale locale = LocaleContextHolder.getLocale(); // <- Get the current Locale, if any ...
@@ -106,7 +109,5 @@ public class TaconiteValidationHandler extends AbstractAjaxHandler implements Me
             TaconiteReplaceContentAction action = new TaconiteReplaceContentAction(error.getCode(), errorComponent);
             response.addAction(action);
         }
-        
-        return response;
     }
 }
