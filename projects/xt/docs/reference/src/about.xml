@@ -12,6 +12,9 @@
     <para>And if you have a rich domain model, why not having a <emphasis>rich user interface</emphasis>?
         Spring Modules XT provides also the Spring Modules XT Ajax Framework, which integrates Spring and its MVC framework with <ulink url='http://adaptivepath.com/publications/essays/archives/000385.php'><citetitle>AJAX</citetitle></ulink> technologies. 
     </para>
+    <para>
+        <emphasis role='bold'>Spring Modules XT needs Java 1.5 or later: it will not work in older environments.</emphasis>
+    </para>
     <sect2 id='modeling-framework'><title id='modeling-framework-title'>Spring Modules XT Modeling Framework</title>
         <para>Spring Modules XT Modeling Framework provides components for developing rich domain models and making them collaborate with other application layers without violating DDD principles.
             At the moment it provides: 
