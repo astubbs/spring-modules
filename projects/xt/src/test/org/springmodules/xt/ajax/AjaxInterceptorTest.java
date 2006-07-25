@@ -27,6 +27,7 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springmodules.xt.test.ajax.DummyHandler;
 
 /**
  *
@@ -45,24 +46,29 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
     }
 
     public void testPreHandle() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/ajax/test.action");
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletRequest httpRequest = new MockHttpServletRequest("GET", "/ajax/test.action");
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         ModelAndView mv = new ModelAndView();
         SimpleFormController controller = new SimpleFormController();
         AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptor");
         
-        request.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_ACTION_REQUEST);
-        request.setParameter(ajaxInterceptor.getEventParameter(), "fail");
+        httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_ACTION_REQUEST);
+        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "fail");
         
         try {
-            ajaxInterceptor.preHandle(request, response, controller);
+            ajaxInterceptor.preHandle(httpRequest, httpResponse, controller);
             fail();
         }
         catch(Exception ex) {}
         
-        request.setParameter(ajaxInterceptor.getEventParameter(), "test");
+        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "test");
         
-        ajaxInterceptor.preHandle(request, response, controller);
+        ajaxInterceptor.preHandle(httpRequest, httpResponse, controller);
+        
+        String response1 = httpResponse.getContentAsString();
+        String response2 = new DummyHandler().test(new AjaxActionEventImpl("test", httpRequest)).getResponse();
+        
+        assertEquals(response1, response2);
     }
 
     public void testPostHandle() throws Exception {
