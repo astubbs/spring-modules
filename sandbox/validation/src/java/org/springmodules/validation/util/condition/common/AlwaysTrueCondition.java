@@ -23,7 +23,7 @@ import org.springmodules.validation.util.condition.AbstractCondition;
  *
  * @author Uri Boness
  */
-public class AlwaysTrueCondition extends AbstractCondition {
+public final class AlwaysTrueCondition extends AbstractCondition {
 
     /**
      * Always returns <code>true</code>.
@@ -32,6 +32,14 @@ public class AlwaysTrueCondition extends AbstractCondition {
      */
     public boolean doCheck(Object value) {
         return true;
+    }
+
+    public boolean equals(Object obj) {
+        return (obj == this ) || (obj instanceof AlwaysTrueCondition);
+    }
+
+    public int hashCode() {
+        return AlwaysTrueCondition.class.hashCode();
     }
 
 }

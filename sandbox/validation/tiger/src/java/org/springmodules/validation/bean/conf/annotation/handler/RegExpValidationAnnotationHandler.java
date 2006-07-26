@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.bean.conf.annotation.handler;
 
-import java.lang.annotation.Annotation;
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.Conditions;

@@ -19,8 +19,8 @@ package org.springmodules.validation.util.xml;
 import java.util.NoSuchElementException;
 
 import org.springmodules.validation.util.collection.ReadOnlyIterator;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Iterates over the direct child nodes of the given node.

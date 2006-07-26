@@ -32,6 +32,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.converter.ErrorCodeConverter;
 import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.util.condition.common.AlwaysFalseCondition;
@@ -129,8 +130,8 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("array"), Object[].class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("array"), propertyValue);
 
-        String[] properties = new String[] { "array" };
-        configurationControl.expectAndReturn(configuration.getRequiredValidatableProperties(), properties);
+        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("array") };
+        configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
         replay();
@@ -170,8 +171,8 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("list"), List.class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("list"), propertyValue);
 
-        String[] properties = new String[] { "list" };
-        configurationControl.expectAndReturn(configuration.getRequiredValidatableProperties(), properties);
+        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("list") };
+        configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
         replay();
@@ -211,8 +212,8 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("set"), Set.class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("set"), propertyValue);
 
-        String[] properties = new String[] { "set" };
-        configurationControl.expectAndReturn(configuration.getRequiredValidatableProperties(), properties);
+        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("set") };
+        configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
         replay();
@@ -252,8 +253,8 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("map"), Map.class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("map"), propertyValue);
 
-        String[] properties = new String[] { "map" };
-        configurationControl.expectAndReturn(configuration.getRequiredValidatableProperties(), properties);
+        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("map") };
+        configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
         replay();
@@ -293,8 +294,8 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("subBean"), Object.class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("subBean"), propertyValue);
 
-        String[] properties = new String[] { "subBean" };
-        configurationControl.expectAndReturn(configuration.getRequiredValidatableProperties(), properties);
+        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("subBean") };
+        configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
         replay();

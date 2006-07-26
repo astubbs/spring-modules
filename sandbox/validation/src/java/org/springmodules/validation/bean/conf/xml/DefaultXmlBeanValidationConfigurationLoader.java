@@ -16,21 +16,25 @@
 
 package org.springmodules.validation.bean.conf.xml;
 
+import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.Map;
-import java.beans.PropertyDescriptor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.beans.BeanUtils;
+import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
+import org.springmodules.validation.util.condition.parser.ConditionParser;
+import org.springmodules.validation.util.condition.parser.ConditionParserAware;
+import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -85,19 +89,24 @@ import org.w3c.dom.NodeList;
  * @author Uri Boness
  */
 public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBeanValidationConfigurationLoader
-    implements DefaultXmBeanValidationConfigurationlLoaderConstants {
+    implements DefaultXmBeanValidationConfigurationlLoaderConstants, ConditionParserAware {
 
     private final static Log logger = LogFactory.getLog(DefaultXmlBeanValidationConfigurationLoader.class);
 
     private static final String CLASS_TAG = "class";
     private static final String GLOBAL_TAG = "global";
     private static final String PROPERTY_TAG = "property";
+    private static final String VALIDATOR_TAG = "validator";
 
     private static final String PACKAGE_ATTR = "package";
     private static final String NAME_ATTR = "name";
-    private static final String VALID_ATTR = "valid";
+    private static final String CASCADE_ATTR = "cascade";
+    private static final String CASCADE_CONDITION_ATTR = "cascade-condition";
+    private static final String CLASS_ATTR = "class";
 
     private ValidationRuleElementHandlerRegistry handlerRegistry;
+
+    private ConditionParser conditionParser;
 
     /**
      * Constructs a new DefaultXmlBeanValidationConfigurationLoader with the default validation rule
@@ -114,7 +123,22 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * @param handlerRegistry The validation rule element handler registry that will be used by this loader.
      */
     public DefaultXmlBeanValidationConfigurationLoader(ValidationRuleElementHandlerRegistry handlerRegistry) {
+        this(handlerRegistry,  new ValangConditionParser());
+    }
+
+    /**
+     * Constructs a new DefaultXmlBeanValidationConfigurationLoader with the given validation rule
+     * element handler registry.
+     *
+     * @param handlerRegistry The validation rule element handler registry that will be used by this loader.
+     * @param conditionParser The condition parser this loader should use to parse the cascade validation conditions.
+     */
+    public DefaultXmlBeanValidationConfigurationLoader(
+        ValidationRuleElementHandlerRegistry handlerRegistry,
+        ConditionParser conditionParser) {
+
         this.handlerRegistry = handlerRegistry;
+        this.conditionParser = conditionParser;
     }
 
     /**
@@ -166,6 +190,24 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         return handlerRegistry;
     }
 
+    /**
+     * Sets the {@link org.springmodules.validation.util.condition.parser.ConditionParser} to be used.
+     *
+     * @param conditionParser The condition parser to be used.
+     */
+    public void setConditionParser(ConditionParser conditionParser) {
+        this.conditionParser = conditionParser;
+    }
+
+    /**
+     * Returns the used {@link org.springmodules.validation.util.condition.parser.ConditionParser}.
+     *
+     * @return The used condition parser.
+     */
+    public ConditionParser getConditionParser() {
+        return conditionParser;
+    }
+
     //=============================================== Helper Methods ===================================================
 
     /**
@@ -179,7 +221,13 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
 
         DefaultBeanValidationConfiguration configuration = new DefaultBeanValidationConfiguration();
 
-        NodeList nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, GLOBAL_TAG);
+        NodeList nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, VALIDATOR_TAG);
+        for (int i=0; i<nodes.getLength(); i++) {
+            Element validatorDefinition = (Element)nodes.item(i);
+            handleValidatorDefinition(validatorDefinition, clazz, configuration);
+        }
+
+        nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, GLOBAL_TAG);
         for (int i=0; i<nodes.getLength(); i++) {
             Element globalDefinition = (Element)nodes.item(i);
             handleGlobalDefinition(globalDefinition, clazz, configuration);
@@ -192,6 +240,11 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         }
 
         return configuration;
+    }
+
+    protected void handleValidatorDefinition(Element validatorDefinition, Class clazz, MutableBeanValidationConfiguration configuration) {
+        String className = validatorDefinition.getAttribute(CLASS_ATTR);
+        configuration.addCustomValidator(constructValidator(className));
     }
 
     /**
@@ -239,8 +292,13 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             logger.error("Property '" + propertyName + "' does not exist in class '" + clazz.getName() + "'");
         }
 
-        if (propertyDefinition.hasAttribute(VALID_ATTR)) {
-            configuration.addRequiredValidatableProperty(propertyName);
+        if (propertyDefinition.hasAttribute(CASCADE_ATTR) && "true".equals(propertyDefinition.getAttribute(CASCADE_ATTR))) {
+            CascadeValidation cascadeValidation = new CascadeValidation(propertyName);
+            if (propertyDefinition.hasAttribute(CASCADE_CONDITION_ATTR)) {
+                String conditionExpression = propertyDefinition.getAttribute(CASCADE_CONDITION_ATTR);
+                cascadeValidation.setApplicabilityCondition(conditionParser.parse(conditionExpression));
+            }
+            configuration.addCascadeValidation(cascadeValidation);
         }
 
         NodeList nodes = propertyDefinition.getChildNodes();
@@ -264,4 +322,24 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         return new PropertyValidationRule(propertyName, rule);
     }
 
+
+    //=============================================== Helper Methods ===================================================
+
+    protected Validator constructValidator(String className) {
+        try {
+            Class clazz = ClassUtils.forName(className);
+            if (!Validator.class.isAssignableFrom(clazz)) {
+                throw new XmlConfigurationException("class '" + className + "' is not a Validator implementation");
+            }
+            return (Validator)clazz.newInstance();
+        } catch (ClassNotFoundException e) {
+            throw new XmlConfigurationException("Could not load validator class '" + className + "'");
+        } catch (IllegalAccessException e) {
+            throw new XmlConfigurationException("Could not instantiate validator '" + className +
+                "'. Make sure it has a default constructor.");
+        } catch (InstantiationException e) {
+            throw new XmlConfigurationException("Could not instantiate validator '" + className +
+                "'. Make sure it has a default constructor.");
+        }
+    }
 }

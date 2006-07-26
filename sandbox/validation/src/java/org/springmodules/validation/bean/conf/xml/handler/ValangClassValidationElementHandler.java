@@ -20,19 +20,19 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
-import org.springmodules.validation.bean.conf.xml.DefaultXmBeanValidationConfigurationlLoaderConstants;
-import org.springmodules.validation.valang.parser.ValangBased;
-import org.springmodules.validation.valang.parser.SimpleValangBased;
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
-import org.w3c.dom.Element;
-import org.springframework.util.StringUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.MessageSource;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.util.StringUtils;
+import org.springmodules.validation.bean.conf.xml.DefaultXmBeanValidationConfigurationlLoaderConstants;
+import org.springmodules.validation.util.condition.Condition;
+import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
+import org.springmodules.validation.valang.parser.SimpleValangBased;
+import org.springmodules.validation.valang.parser.ValangBased;
+import org.w3c.dom.Element;
 
 /**
  * An {@link AbstractClassValidationElementHandler} that can handle class elements that represent valang validation rules.

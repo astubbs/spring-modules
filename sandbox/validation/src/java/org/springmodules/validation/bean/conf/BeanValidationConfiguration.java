@@ -81,11 +81,10 @@ public interface BeanValidationConfiguration {
     Validator getCustomValidator();
 
     /**
-     * Returns the validatable property names that are required to be valid in order for the bean to be valid. This
-     * method never returns <code>null</code>. If no properties need to be valid on their own, an empty array is returned.
+     * Returns the configured cascade validations.
      *
-     * @return The required validatable property names of the bean.
+     * @return The configured cascade validations.
      */
-    String[] getRequiredValidatableProperties();
+    CascadeValidation[] getCascadeValidations();
 
 }

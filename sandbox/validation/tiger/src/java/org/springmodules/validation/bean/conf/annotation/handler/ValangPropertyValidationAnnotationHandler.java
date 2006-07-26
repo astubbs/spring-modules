@@ -22,15 +22,15 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.MessageSource;
+import org.springframework.core.io.ResourceLoader;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
 import org.springmodules.validation.valang.parser.ValangBased;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.MessageSource;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.core.io.ResourceLoader;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} implementation that handles {@link Valang} annnotations.

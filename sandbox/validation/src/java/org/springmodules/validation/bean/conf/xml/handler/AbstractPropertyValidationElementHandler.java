@@ -24,8 +24,8 @@ import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration
 import org.springmodules.validation.bean.conf.xml.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
 import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
-import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
+import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.bean.rule.resolver.ExpressionErrorArgumentsResolver;
 import org.springmodules.validation.util.bel.BeanExpressionResolver;
 import org.springmodules.validation.util.bel.BeanExpressionResolverAware;

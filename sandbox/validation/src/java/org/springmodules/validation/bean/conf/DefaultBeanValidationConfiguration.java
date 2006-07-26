@@ -34,7 +34,7 @@ import org.springmodules.validation.validator.CompoundValidator;
 public class DefaultBeanValidationConfiguration implements MutableBeanValidationConfiguration {
 
     // a list of all the required validatable property names (list elements are strings).
-    private List validatableProperties;
+    private List cascadeValidations;
 
     // a list of all the global rules (list elements are ValidationRule's)
     private List globalRules;
@@ -49,7 +49,7 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      * Constructs a new DefaultBeanValidationConfiguration with no rules, validatable properties, or custom validator.
      */
     public DefaultBeanValidationConfiguration() {
-        validatableProperties = new ArrayList();
+        cascadeValidations = new ArrayList();
         globalRules = new ArrayList();
         rulesByProperty = new HashMap();
         customValidator = new CompoundValidator();
@@ -159,6 +159,13 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
     }
 
     /**
+     * @see org.springmodules.validation.bean.conf.BeanValidationConfiguration#getCascadeValidations()
+     */
+    public CascadeValidation[] getCascadeValidations() {
+        return (CascadeValidation[])cascadeValidations.toArray(new CascadeValidation[cascadeValidations.size()]);
+    }
+
+    /**
      * Sets the custom validator for this configuration.
      *
      * @param validator The custom validator for this configuration.
@@ -196,41 +203,35 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
     }
 
     /**
-     * @see org.springmodules.validation.bean.conf.BeanValidationConfiguration#getRequiredValidatableProperties()
+     * Sets the cascade validations of this configuration.
+     *
+     * param cascadeValidations The cascade validations of this configuration.
      */
-    public String[] getRequiredValidatableProperties() {
-        return (String[])validatableProperties.toArray(new String[validatableProperties.size()]);
+    public void setCascadeValidations(CascadeValidation[] cascadeValidations) {
+        this.cascadeValidations = new ArrayList();
+        for (int i=0; i<cascadeValidations.length; i++) {
+            this.cascadeValidations.add(cascadeValidations[i]);
+        }
     }
 
     /**
-     * Sets the required validatable properties for this configuration.
+     * Adds the given cascade validation to this configuration.
      *
-     * @param propertyNames The names of the required validatable properties.
+     * @param cascadeValidation The cascase validation to be added to this configuration.
      */
-    public void setRequiredValidatableProperties(String[] propertyNames) {
-        List names = new ArrayList();
-        CollectionUtils.addAll(names, propertyNames);
-        validatableProperties = names;
+    public void addCascadeValidation(CascadeValidation cascadeValidation) {
+        addCascadeValidations(new CascadeValidation[] { cascadeValidation });
     }
 
     /**
-     * Adds the given property to the required validatable properties of this configuration.
+     * Adds the given cascade validations to this configuration.
      *
-     * @param propertyName The name of the property to be added to the required validatable properties of
-     *        this configuration.
+     * @param cascadeValidations The cascade validation to be added to this configuration.
      */
-    public void addRequiredValidatableProperty(String propertyName) {
-        validatableProperties.add(propertyName);
-    }
-
-    /**
-     * Adds the given properties to the required validatable properties of this configuration.
-     *
-     * @param propertyNames The names of the properties to be added to the required validatable properties of
-     *        this configuration.
-     */
-    public void addRequiredValidatableProperties(String[] propertyNames) {
-        CollectionUtils.addAll(validatableProperties, propertyNames);
+    public void addCascadeValidations(CascadeValidation[] cascadeValidations) {
+        for (int i=0; i<cascadeValidations.length; i++) {
+            this.cascadeValidations.add(cascadeValidations[i]);
+        }
     }
 
 }

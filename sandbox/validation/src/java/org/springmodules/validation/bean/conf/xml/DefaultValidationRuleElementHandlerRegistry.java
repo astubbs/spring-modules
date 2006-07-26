@@ -16,12 +16,11 @@
 
 package org.springmodules.validation.bean.conf.xml;
 
+import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.beans.PropertyDescriptor;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.validation.bean.conf.xml.handler.DateInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.DateInPastRuleElementHandler;
@@ -33,11 +32,10 @@ import org.springmodules.validation.bean.conf.xml.handler.NotNullRuleElementHand
 import org.springmodules.validation.bean.conf.xml.handler.RangeRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.RegExpRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.SizeRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.ValangClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValidatorValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.jodatime.InstantInPastRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.jodatime.InstantInFutureRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.jodatime.InstantInPastRuleElementHandler;
 import org.springmodules.validation.util.BasicContextAware;
 import org.springmodules.validation.util.LibraryUtils;
 import org.springmodules.validation.util.bel.BeanExpressionResolver;
@@ -263,7 +261,6 @@ public class DefaultValidationRuleElementHandlerRegistry extends BasicContextAwa
 
         // registering class handlers
         registerClassHandler(new ValangClassValidationElementHandler());
-        registerClassHandler(new ValidatorValidationElementHandler());
 
         // registering property handlers
         registerPropertyHandler(new NotNullRuleElementHandler());

@@ -124,13 +124,17 @@ public class BeanValidatorIntegrationTests extends TestCase {
         validator.setErrorCodeConverter(new DefaultErrorCodeConverter());
 
         Person person = new Person("Uri");
+        person.setHomeless(false);
+        person.setAddress(new Address(null, "Amsterdam"));
         BindException errors = new BindException(person, "person");
 
         validator.validate(person, errors);
 
         assertTrue(errors.hasGlobalErrors());
         assertEquals(1, errors.getGlobalErrorCount());
+        assertEquals(1, errors.getFieldErrorCount());
         assertEquals("Person[bad]", errors.getGlobalError().getCode());
+        assertEquals("Address.street[not.null]", errors.getFieldError("address.street").getCode());
     }
 
     public void testBeanValidator_WithApplicationContext() throws Exception {

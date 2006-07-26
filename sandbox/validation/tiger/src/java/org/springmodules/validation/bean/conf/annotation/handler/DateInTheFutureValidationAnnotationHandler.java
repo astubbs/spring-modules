@@ -16,10 +16,10 @@
 
 package org.springmodules.validation.bean.conf.annotation.handler;
 
-import java.lang.annotation.Annotation;
 import java.beans.PropertyDescriptor;
-import java.util.Date;
+import java.lang.annotation.Annotation;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.date.IsInTheFutureDateCondition;

@@ -16,12 +16,12 @@
 
 package org.springmodules.validation.bean.conf.annotation;
 
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 
 import junit.framework.TestCase;
-import org.springmodules.validation.bean.BeanValidator;
 import org.springframework.validation.BindException;
+import org.springmodules.validation.bean.BeanValidator;
 
 /**
  * Integration tests for {@link AnnotationBeanValidationConfigurationLoader}.
@@ -41,6 +41,8 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
         person.setFather(null); // invalid - father cannot be null
         person.setMother(new Person()); // invalid - mother must be valid
         person.setFriends(new ArrayList<Person>()); // invalid - friends cannot be empty
+        person.setHomeless(false);
+        person.setAddress(new Address(null, "Amsterdam"));
 
         AnnotationBeanValidationConfigurationLoader loader = new AnnotationBeanValidationConfigurationLoader();
         BeanValidator validator = new BeanValidator(loader);
@@ -60,6 +62,8 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
         assertTrue(errors.hasFieldErrors("father"));
         assertTrue(errors.hasFieldErrors("mother.*"));
         assertTrue(errors.hasFieldErrors("friends"));
+        assertTrue(errors.hasFieldErrors("address.street"));
+        assertEquals("Address.street[not.null]", errors.getFieldError("address.street").getCode());
 
 
     }

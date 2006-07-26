@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.bean.conf.namespace;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.apache.commons.lang.SystemUtils;
+import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
  * A namespace handler for the <code>validation</code> namepsace. This namespace contains the following elements:

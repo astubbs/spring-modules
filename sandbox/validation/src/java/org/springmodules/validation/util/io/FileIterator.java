@@ -20,9 +20,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Iterator;
 
-import org.springmodules.validation.util.collection.ReadOnlyIterator;
-import org.springframework.util.Assert;
 import org.apache.commons.collections.iterators.ArrayIterator;
+import org.springframework.util.Assert;
+import org.springmodules.validation.util.collection.ReadOnlyIterator;
 
 /**
  * Iterates over the files within a specific directory.

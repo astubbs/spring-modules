@@ -14,22 +14,38 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.bean.conf.annotation.handler;
-
-import java.lang.annotation.Target;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Documented;
+package org.springmodules.validation.bean;
 
 /**
- * A marker property level annotation to indicate that the property needs to be valid in order for the containing
- * bean to be valid. This is to support cascade validation.
- *
  * @author Uri Boness
  */
-@Documented
-@Target({ ElementType.FIELD, ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Valid {
+public class Address {
+
+    private String street;
+    private String city;
+
+    public Address() {
+    }
+
+    public Address(String street, String city) {
+        this.street = street;
+        this.city = city;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
 }

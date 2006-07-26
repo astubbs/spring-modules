@@ -4,10 +4,26 @@
     xsi:schemaLocation="http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
 
     <class name="org.springmodules.validation.bean.Person">
+
         <global>
             <valang expression="tupper(name) == 'URI'" code="good"/>
             <valang expression="tupper(name) == 'Uri'" code="bad"/>
         </global>
+
+        <property name="address" cascade="true" cascade-condition="homeless == false"/>
+
+    </class>
+
+    <class name="org.springmodules.validation.bean.Address">
+
+        <property name="street">
+            <not-null/>
+        </property>
+
+        <property name="city">
+            <not-null/>
+        </property>
+
     </class>
 
 </validation>

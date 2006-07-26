@@ -16,20 +16,21 @@
 
 package org.springmodules.validation.bean.conf.annotation.handler.hibernate;
 
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.beans.PropertyDescriptor;
 
-import org.springmodules.validation.bean.conf.annotation.PropertyValidationAnnotationHandler;
-import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.rule.DefaultValidationRule;
-import org.springmodules.validation.util.condition.AbstractCondition;
-import org.springmodules.validation.util.condition.Conditions;
-import org.springmodules.validation.util.condition.Condition;
-import org.hibernate.validator.ValidatorClass;
 import org.hibernate.validator.Valid;
 import org.hibernate.validator.Validator;
+import org.hibernate.validator.ValidatorClass;
 import org.springframework.beans.BeanUtils;
+import org.springmodules.validation.bean.conf.CascadeValidation;
+import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.annotation.PropertyValidationAnnotationHandler;
+import org.springmodules.validation.bean.rule.DefaultValidationRule;
+import org.springmodules.validation.util.condition.AbstractCondition;
+import org.springmodules.validation.util.condition.Condition;
+import org.springmodules.validation.util.condition.Conditions;
 
 /**
  * A {@link PropertyValidationAnnotationHandler} that handles Hibernate-Annotation validation annotations.
@@ -68,7 +69,7 @@ public class HibernatePropertyValidationAnnotationHandler implements PropertyVal
     public void handleAnnotation(Annotation annotation, Class clazz, PropertyDescriptor descriptor, MutableBeanValidationConfiguration configuration) {
 
         if (annotation instanceof Valid) {
-            configuration.addRequiredValidatableProperty(descriptor.getName());
+            configuration.addCascadeValidation(new CascadeValidation(descriptor.getName()));
             return;
         }
 

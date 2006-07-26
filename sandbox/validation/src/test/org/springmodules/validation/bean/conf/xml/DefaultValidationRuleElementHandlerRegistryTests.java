@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
+import org.springframework.beans.BeanUtils;
 import org.springmodules.validation.bean.conf.xml.handler.DateInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.DateInPastRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.EmailRuleElementHandler;
@@ -33,11 +34,9 @@ import org.springmodules.validation.bean.conf.xml.handler.NotNullRuleElementHand
 import org.springmodules.validation.bean.conf.xml.handler.RangeRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.RegExpRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.SizeRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.ValangClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValidatorValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler;
 import org.w3c.dom.Element;
-import org.springframework.beans.BeanUtils;
 
 /**
  * Tests for {@link org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry}.
@@ -71,8 +70,7 @@ public class DefaultValidationRuleElementHandlerRegistryTests extends TestCase {
 
         ClassValidationElementHandler[] classHandlers = registry.getClassHandlers();
         assertTrue(containsHandlerOfType(classHandlers, ValangClassValidationElementHandler.class));
-        assertTrue(containsHandlerOfType(classHandlers, ValidatorValidationElementHandler.class));
-
+        
         PropertyValidationElementHandler[] propertyHandlers = registry.getPropertyHandlers();
         assertTrue(containsHandlerOfType(propertyHandlers, NotNullRuleElementHandler.class));
         assertTrue(containsHandlerOfType(propertyHandlers, LengthRuleElementHandler.class));

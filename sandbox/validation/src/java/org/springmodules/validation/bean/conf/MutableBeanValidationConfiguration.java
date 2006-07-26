@@ -31,21 +31,21 @@ public interface MutableBeanValidationConfiguration extends BeanValidationConfig
      *
      * @param globalRules The global rules for this configuration
      */
-    public void setGlobalRules(ValidationRule[] globalRules);
+    void setGlobalRules(ValidationRule[] globalRules);
 
     /**
      * Adds the given rule as global rules for this configuration.
      *
      * @param globalRule The rule to be added as global rules for this configuration.
      */
-    public void addGlobalRule(ValidationRule globalRule);
+    void addGlobalRule(ValidationRule globalRule);
 
     /**
      * Adds the given rules as global rules for this configuration.
      *
      * @param globalRules The rules to be added as global rules for this configuration.
      */
-    public void addGlobalRules(ValidationRule[] globalRules);
+    void addGlobalRules(ValidationRule[] globalRules);
 
     /**
      * Sets the property validation rules for the given property.
@@ -53,7 +53,7 @@ public interface MutableBeanValidationConfiguration extends BeanValidationConfig
      * @param propertyName The name of the property.
      * @param rules The validation rules for the given property.
      */
-    public void setPropertyRules(String propertyName, ValidationRule[] rules);
+    void setPropertyRules(String propertyName, ValidationRule[] rules);
 
     /**
      * Adds the given validation rule to the given property.
@@ -61,7 +61,7 @@ public interface MutableBeanValidationConfiguration extends BeanValidationConfig
      * @param propertyName The name of the property.
      * @param rule The validation rule to be added to the given property.
      */
-    public void addPropertyRule(String propertyName, ValidationRule rule);
+    void addPropertyRule(String propertyName, ValidationRule rule);
 
     /**
      * Adds the given validation rules to the given property.
@@ -69,14 +69,14 @@ public interface MutableBeanValidationConfiguration extends BeanValidationConfig
      * @param propertyName The name of the property.
      * @param extraRules The extra validation rules that will be added to the given property.
      */
-    public void addPropertyRules(String propertyName, ValidationRule[] extraRules);
+    void addPropertyRules(String propertyName, ValidationRule[] extraRules);
 
     /**
      * Sets the custom validator for this configuration.
      *
      * @param validator The custom validator for this configuration.
      */
-    public void setCustomValidator(Validator validator);
+    void setCustomValidator(Validator validator);
 
     /**
      * Sets the custom validator for this configuration. The custom validator will be compound with the given
@@ -84,48 +84,41 @@ public interface MutableBeanValidationConfiguration extends BeanValidationConfig
      *
      * @param validators The validators that will make the custom validator of this configuration.
      */
-    public void setCustomValidators(Validator[] validators);
+    void setCustomValidators(Validator[] validators);
 
     /**
      * Adds the given validator to the custom validator of this configuration.
      *
      * @param validator The validator to be added to the custom validator of this configuration.
      */
-    public void addCustomValidator(Validator validator);
+    void addCustomValidator(Validator validator);
 
     /**
      * Adds the given validators to the custom validator of this configuration.
      *
      * @param validators The validators to be added to the custom validator of this configuration.
      */
-    public void addCustomValidators(Validator[] validators);
+    void addCustomValidators(Validator[] validators);
 
     /**
-     * @see BeanValidationConfiguration#getRequiredValidatableProperties()
-     */
-    public String[] getRequiredValidatableProperties();
-
-    /**
-     * Sets the required validatable properties for this configuration.
+     * Sets the cascade validations of this configuration.
      *
-     * @param propertyNames The names of the required validatable properties.
+     * param cascadeValidations The cascade validations of this configuration.
      */
-    public void setRequiredValidatableProperties(String[] propertyNames);
+    void setCascadeValidations(CascadeValidation[] cascadeValidations);
 
     /**
-     * Adds the given property to the required validatable properties of this configuration.
+     * Adds the given cascade validation to this configuration.
      *
-     * @param propertyName The name of the property to be added to the required validatable properties of
-     *        this configuration.
+     * @param cascadeValidation The cascase validation to be added to this configuration.
      */
-    public void addRequiredValidatableProperty(String propertyName);
+    void addCascadeValidation(CascadeValidation cascadeValidation);
 
     /**
-     * Adds the given properties to the required validatable properties of this configuration.
+     * Adds the given cascade validations to this configuration.
      *
-     * @param propertyNames The names of the properties to be added to the required validatable properties of
-     *        this configuration.
+     * @param cascadeValidations The cascade validation to be added to this configuration.
      */
-    public void addRequiredValidatableProperties(String[] propertyNames);
+    void addCascadeValidations(CascadeValidation[] cascadeValidations);
 
 }

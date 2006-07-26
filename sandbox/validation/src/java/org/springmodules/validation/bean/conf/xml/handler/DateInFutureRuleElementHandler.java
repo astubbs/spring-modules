@@ -17,8 +17,8 @@
 package org.springmodules.validation.bean.conf.xml.handler;
 
 import java.beans.PropertyDescriptor;
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
 
 import org.springmodules.validation.bean.conf.xml.DefaultXmBeanValidationConfigurationlLoaderConstants;
 import org.springmodules.validation.util.condition.Condition;

@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.bean.conf.annotation;
 
-import org.springframework.validation.Validator;
 import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 /**
  *

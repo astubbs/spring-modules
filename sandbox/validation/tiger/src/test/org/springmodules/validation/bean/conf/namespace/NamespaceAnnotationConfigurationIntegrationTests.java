@@ -1,9 +1,9 @@
 package org.springmodules.validation.bean.conf.namespace;
 
 import junit.framework.TestCase;
-import org.springmodules.validation.bean.BeanValidator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.validation.BindException;
+import org.springmodules.validation.bean.BeanValidator;
 
 /**
  * Tests for {@link org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader}.

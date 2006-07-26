@@ -37,7 +37,8 @@
         <xs:complexType>
             <xs:group ref="vld:propertyRules"/>
             <xs:attribute name="name" use="required"/>
-            <xs:attribute name="valid" use="optional" type="vld:true-false-type"/>
+            <xs:attribute name="cascade" use="optional" type="vld:true-false-type"/>
+            <xs:attribute name="cascade-condition" use="optional" type="xs:string"/>
         </xs:complexType>
     </xs:element>
 
@@ -51,7 +52,6 @@
     <xs:group name="globalRules">
         <xs:sequence>
             <xs:element ref="vld:valang" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element ref="vld:validator" minOccurs="0" maxOccurs="unbounded"/>
             <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
@@ -129,6 +129,11 @@
     </xs:element>
 
     <xs:element name="length">
+        <xs:annotation>
+            <xs:documentation>
+                A validation rule that checks that the length of a String property is between specific bounds.
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:attributeGroup ref="vld:common-rule-attributes"/>
             <xs:attribute name="min" use="optional" type="xs:integer"/>
@@ -143,6 +148,11 @@
     </xs:element>
 
     <xs:element name="not-empty">
+        <xs:annotation>
+            <xs:documentation>
+                A validation rule that checks that a collection or an array property is not empty.
+            </xs:documentation>
+        </xs:annotation>
         <xs:complexType>
             <xs:attributeGroup ref="vld:common-rule-attributes"/>
         </xs:complexType>

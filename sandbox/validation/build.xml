@@ -85,7 +85,7 @@
 
 
     <target name="compile.tiger.source">
-        <echo>compiling java tiger sources</echo>
+        <echo>compiling tiger java sources</echo>
         <javac destdir="${target.classes.dir}" debug="${debug}" deprecation="${deprecation}" optimize="${optimize}"
                source="${tiger.javac.source}" target="${tiger.javac.target}">
             <exclude name="**/ValidatorNamespaceHandler.*"/>

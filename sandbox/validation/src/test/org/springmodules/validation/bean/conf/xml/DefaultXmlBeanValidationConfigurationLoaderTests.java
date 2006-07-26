@@ -8,6 +8,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.beans.BeanUtils;
+import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
@@ -71,11 +72,11 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
 
     public void testHandlePropertyDefinition_WithNoRulesButWithCascading() throws Exception {
         Element propertyDefinition = element("property",
-            new String[] { "name", "valid" },
+            new String[] { "name", "cascade" },
             new String[] { "name", "true" }
         );
 
-        configuration.addRequiredValidatableProperty("name");
+        configuration.addCascadeValidation(new CascadeValidation("name"));
 
         replay();
         loader.handlePropertyDefinition(propertyDefinition, TestBean.class, configuration);
@@ -85,7 +86,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     public void testHandlePropertyDefinition_WithARuleAndCascading() throws Exception {
         Document document = document();
         Element propertyDefinition = element(document, "property",
-            new String[] { "name", "valid" },
+            new String[] { "name", "cascade" },
             new String[] { "name", "true" }
         );
         Element ruleDefinition = element(document, "rule");
@@ -93,7 +94,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
 
         PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(TestBean.class, "name");
 
-        configuration.addRequiredValidatableProperty("name");
+        configuration.addCascadeValidation(new CascadeValidation("name"));
         registryControl.expectAndReturn(registry.findPropertyHandler(ruleDefinition, TestBean.class, descriptor), propertyHandler);
         propertyHandler.handle(ruleDefinition, "name", configuration);
 
@@ -112,7 +113,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     public void testHandlePropertyDefinition_WithoutAppropriateHandler() throws Exception {
         Document document = document();
         Element propertyDefinition = element(document, "property",
-            new String[] { "name", "valid" },
+            new String[] { "name", "cascade" },
             new String[] { "name", "true" }
         );
         Element ruleDefinition = element(document, "rule");
@@ -120,7 +121,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
 
         PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(TestBean.class, "name");
 
-        configuration.addRequiredValidatableProperty("name");
+        configuration.addCascadeValidation(new CascadeValidation("name"));
         registryControl.expectAndReturn(registry.findPropertyHandler(ruleDefinition, TestBean.class, descriptor), null);
 
         replay();

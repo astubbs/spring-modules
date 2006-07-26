@@ -16,16 +16,18 @@
 
 package org.springmodules.validation.bean.conf.annotation;
 
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.beans.PropertyDescriptor;
+import java.util.List;
 
-import org.springmodules.validation.bean.conf.annotation.handler.EmailValidationAnnotationHandler;
-import org.springmodules.validation.bean.conf.annotation.handler.Email;
+import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.validation.bean.conf.annotation.handler.CascadeValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.DateInTheFutureValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.DateInThePastValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.handler.Email;
+import org.springmodules.validation.bean.conf.annotation.handler.EmailValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.LengthValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.NotBlankValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.NotEmptyValidationAnnotationHandler;
@@ -33,17 +35,15 @@ import org.springmodules.validation.bean.conf.annotation.handler.NotNullValidati
 import org.springmodules.validation.bean.conf.annotation.handler.RangeValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.RegExpValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.SizeValidationAnnotationHandler;
-import org.springmodules.validation.bean.conf.annotation.handler.ValangPropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.ValangClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.handler.ValangPropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.ValidatorClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.ValidatorsClassValidationAnnotationHandler;
-import org.springmodules.validation.bean.conf.annotation.handler.ValidValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.hibernate.HibernatePropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.jodatime.InstantInTheFutureValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.jodatime.InstantInThePastValidationAnnotationHandler;
-import org.springmodules.validation.util.LibraryUtils;
 import org.springmodules.validation.util.BasicContextAware;
-import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.validation.util.LibraryUtils;
 
 /**
  * The default validation annotation handler registry. This registry come with the following pre-registered handlers:
@@ -168,7 +168,7 @@ public class DefaultValidationAnnotationHandlerRegistry extends BasicContextAwar
         classHandlers.add(new ValidatorsClassValidationAnnotationHandler());
 
         // property annotation handlers
-        propertyHandlers.add(new ValidValidationAnnotationHandler());
+        propertyHandlers.add(new CascadeValidationAnnotationHandler());
         propertyHandlers.add(new EmailValidationAnnotationHandler());
         propertyHandlers.add(new DateInTheFutureValidationAnnotationHandler());
         propertyHandlers.add(new DateInThePastValidationAnnotationHandler());

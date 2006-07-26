@@ -18,12 +18,12 @@ package org.springmodules.validation.bean.conf.xml.handler.jodatime;
 
 import java.beans.PropertyDescriptor;
 
+import org.joda.time.Instant;
 import org.springmodules.validation.bean.conf.xml.DefaultXmBeanValidationConfigurationlLoaderConstants;
 import org.springmodules.validation.bean.conf.xml.handler.AbstractPropertyValidationElementHandler;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.date.jodatime.IsInTheFutureInstantCondition;
 import org.w3c.dom.Element;
-import org.joda.time.Instant;
 
 /**
  * An {@link AbstractPropertyValidationElementHandler} implementation that can handle an element that represents an "in the

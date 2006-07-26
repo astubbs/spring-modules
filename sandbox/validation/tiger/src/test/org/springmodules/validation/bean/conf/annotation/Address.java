@@ -14,27 +14,43 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.bean.conf.annotation.handler;
+package org.springmodules.validation.bean.conf.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springmodules.validation.bean.conf.annotation.handler.NotNull;
 
 /**
- * A class level annotation that defines a validator for the annotated class.
- *
  * @author Uri Boness
  */
-@Documented
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Validator {
+public class Address {
 
-    /**
-     * The class of the validator implementation.
-     */
-    Class<? extends org.springframework.validation.Validator> value();
+    @NotNull
+    private String street;
+
+    @NotNull
+    private String city;
+
+    public Address() {
+    }
+
+    public Address(String street, String city) {
+        this.street = street;
+        this.city = city;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
 
 }

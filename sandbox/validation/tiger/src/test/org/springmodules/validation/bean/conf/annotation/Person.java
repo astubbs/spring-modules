@@ -19,7 +19,16 @@ package org.springmodules.validation.bean.conf.annotation;
 import java.util.Date;
 import java.util.List;
 
-import org.springmodules.validation.bean.conf.annotation.handler.*;
+import org.springmodules.validation.bean.conf.annotation.handler.CascadeValidation;
+import org.springmodules.validation.bean.conf.annotation.handler.ExpressionScope;
+import org.springmodules.validation.bean.conf.annotation.handler.InThePast;
+import org.springmodules.validation.bean.conf.annotation.handler.Length;
+import org.springmodules.validation.bean.conf.annotation.handler.Min;
+import org.springmodules.validation.bean.conf.annotation.handler.NotBlank;
+import org.springmodules.validation.bean.conf.annotation.handler.NotEmpty;
+import org.springmodules.validation.bean.conf.annotation.handler.NotNull;
+import org.springmodules.validation.bean.conf.annotation.handler.Valang;
+import org.springmodules.validation.bean.conf.annotation.handler.Validator;
 
 /**
  * A Bean to test the validation annotations with.
@@ -45,11 +54,16 @@ public class Person {
     @NotNull @NotEmpty
     private List<Person> friends;
 
-    @NotNull @Valid
+    @NotNull @CascadeValidation
     private Person father;
 
-    @NotNull @Valid
+    @NotNull @CascadeValidation
     private Person mother;
+
+    private boolean homeless;
+
+    @CascadeValidation("homeless == false")
+    private Address address;
 
     @Valang(value = "? >= 0", applyIf = "true = false", scope = ExpressionScope.VALIDATED_VALUE)
     @Min(value = 0, errorCode = "just.another.error.code")
@@ -118,6 +132,22 @@ public class Person {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public boolean isHomeless() {
+        return homeless;
+    }
+
+    public void setHomeless(boolean homeless) {
+        this.homeless = homeless;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
 }

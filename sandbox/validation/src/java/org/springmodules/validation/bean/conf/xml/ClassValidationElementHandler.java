@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.bean.conf.xml;
 
-import org.w3c.dom.Element;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.w3c.dom.Element;
 
 /**
  * An handler that handles class level validation dom elements and manipulates the validation configuration

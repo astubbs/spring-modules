@@ -1,11 +1,11 @@
 package org.springmodules.validation.bean.conf.namespace;
 
-import org.springmodules.validation.bean.conf.annotation.handler.Valang;
-import org.springmodules.validation.bean.conf.annotation.handler.NotNull;
-import org.springmodules.validation.bean.conf.annotation.handler.NotBlank;
-import org.springmodules.validation.bean.conf.annotation.handler.Min;
 import org.springmodules.validation.bean.conf.annotation.handler.Email;
 import org.springmodules.validation.bean.conf.annotation.handler.Length;
+import org.springmodules.validation.bean.conf.annotation.handler.Min;
+import org.springmodules.validation.bean.conf.annotation.handler.NotBlank;
+import org.springmodules.validation.bean.conf.annotation.handler.NotNull;
+import org.springmodules.validation.bean.conf.annotation.handler.Valang;
 
 /**
  * @author Uri Boness

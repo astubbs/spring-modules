@@ -16,23 +16,23 @@
 
 package org.springmodules.validation.bean.conf.annotation;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
-import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
+import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
 
 /**
  * A {@link BeanValidationConfigurationLoader} implementation that creates validation configuration based on

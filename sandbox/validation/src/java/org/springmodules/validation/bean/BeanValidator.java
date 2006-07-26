@@ -25,20 +25,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.collections.iterators.ArrayIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.converter.DefaultErrorCodeConverter;
 import org.springmodules.validation.bean.converter.ErrorCodeConverter;
 import org.springmodules.validation.bean.rule.ValidationRule;
+import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.validator.AbstractTypeSpecificValidator;
 import org.springmodules.validation.validator.RuleBasedValidator;
 
@@ -174,10 +175,17 @@ public class BeanValidator extends RuleBasedValidator {
 
         // after all the validation rules where applied, checking what properties of the object require their own
         // validation and recursively calling this method on them.
-        String[] properties = configuration.getRequiredValidatableProperties();
+        CascadeValidation[] cascadeValidations = configuration.getCascadeValidations();
         BeanWrapper wrapper = wrapBean(obj);
-        for (Iterator propertyNames = new ArrayIterator(properties); propertyNames.hasNext();) {
-            String propertyName = (String)propertyNames.next();
+        for (int i=0; i<cascadeValidations.length; i++) {
+            CascadeValidation cascadeValidation = cascadeValidations[i];
+            Condition applicabilityCondition = cascadeValidation.getApplicabilityCondition();
+
+            if (!applicabilityCondition.check(obj)) {
+                continue;
+            }
+
+            String propertyName = cascadeValidation.getPropertyName();
             Class propertyType = wrapper.getPropertyType(propertyName);
             Object propertyValue = wrapper.getPropertyValue(propertyName);
 
