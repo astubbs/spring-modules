@@ -30,6 +30,10 @@ import org.springmodules.validation.util.condition.Conditions;
  */
 public class NotNullValidationAnnotationHandler extends AbstractPropertyValidationAnnotationHandler {
 
+    protected boolean isNullSupported() {
+        return true;
+    }
+
     /**
      * Constructs a new NotNullValidationAnnotationHandler.
      */

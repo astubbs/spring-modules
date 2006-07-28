@@ -32,6 +32,7 @@ import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
+import org.springmodules.validation.util.condition.common.IsNullCondition;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
@@ -135,6 +136,9 @@ public abstract class AbstractPropertyValidationElementHandler
         String message = extractMessage(element);
         ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(element);
         Condition condition = extractCondition(element);
+        if (!isNullSupported()) {
+            condition = new IsNullCondition().or(condition);
+        }
         Condition applicabilityCondition = extractApplicabilityCondition(element);
         ValidationRule rule = new DefaultValidationRule(condition, applicabilityCondition, errorCode, message, argumentsResolver);
         if (isConditionGloballyScoped(element)) {
@@ -224,6 +228,17 @@ public abstract class AbstractPropertyValidationElementHandler
 
     protected FunctionExpressionParser getFunctionExpressionParser() {
         return functionExpressionParser;
+    }
+
+    /**
+     * Indicates whether the validation rule supports null values. Null values support means such values will be
+     * passed to the rule condition during validation. If the rule doesn't support null values, such value will not
+     * be evaluated by the rule condition and the validation will treat them as valid values.
+     *
+     * @return <code>true</code> if the validation rule support null values, <code>false</code> otherwise.
+     */
+    protected boolean isNullSupported() {
+        return false;
     }
 
     /**

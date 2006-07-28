@@ -69,6 +69,11 @@ public class Person {
     @Min(value = 0, errorCode = "just.another.error.code")
     private int age;
 
+    @Length(min = 5)
+    private String nullableString;
+
+    @Min(10)
+    private Integer nullableInteger;
 
     public String getFirstName() {
         return firstName;
@@ -148,6 +153,22 @@ public class Person {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String getNullableString() {
+        return nullableString;
+    }
+
+    public void setNullableString(String nullableString) {
+        this.nullableString = nullableString;
+    }
+
+    public Integer getNullableInteger() {
+        return nullableInteger;
+    }
+
+    public void setNullableInteger(Integer nullableInteger) {
+        this.nullableInteger = nullableInteger;
     }
 
 }

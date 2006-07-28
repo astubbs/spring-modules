@@ -11,6 +11,8 @@ public class Person {
 
     private boolean homeless;
 
+    private String phone;
+
     public Person() {
     }
 
@@ -40,6 +42,14 @@ public class Person {
 
     public boolean isHomeless() {
         return homeless;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
 }

@@ -148,4 +148,20 @@ public class BeanValidatorIntegrationTests extends TestCase {
 
     }
 
+    public void testBeanValidator_WithNonNullNullableValue() throws Exception {
+        ClassPathXmlApplicationContext context =
+            new ClassPathXmlApplicationContext("org/springmodules/validation/bean/beanValidator-tests.xml");
+
+        Person person = new Person("Uri");
+        person.setPhone("1234"); // should be validation error - length < 7
+        BindException errors = new BindException(person, "person");
+
+        Validator validator = (Validator)context.getBean("validator");
+        validator.validate(person, errors);
+
+        assertTrue(errors.hasFieldErrors("phone"));
+        assertEquals(1, errors.getFieldErrorCount("phone"));
+        assertEquals("Person.phone[min.length]", errors.getFieldError("phone").getCode());
+    }
+
 }

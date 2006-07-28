@@ -44,6 +44,11 @@ public class NotNullRuleElementHandler extends AbstractPropertyValidationElement
         super(ELEMENT_NAME, DEFAULT_NAMESPACE_URL);
     }
 
+
+    protected boolean isNullSupported() {
+        return true;
+    }
+
     /**
      * Returns {@link #DEFAULT_ERROR_CODE}.
      *

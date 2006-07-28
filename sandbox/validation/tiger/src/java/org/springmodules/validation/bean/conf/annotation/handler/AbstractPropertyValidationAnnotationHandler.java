@@ -31,6 +31,7 @@ import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
+import org.springmodules.validation.util.condition.common.IsNullCondition;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
@@ -97,6 +98,9 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
         MutableBeanValidationConfiguration configuration) {
 
         Condition condition = extractCondition(annotation, clazz, descriptor);
+        if (!isNullSupported()) {
+            condition = new IsNullCondition().or(condition);
+        }
         String errorCode = extractErrorCode(annotation);
         String message = extractDefaultMessage(annotation);
         ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(annotation);
@@ -173,6 +177,16 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
         } catch (Exception e) {
             throw new IllegalArgumentException("Expecting attribute '" + APPLY_IF_ATTR + "' in annotation '" + annotation.getClass().getName());
         }
+    }
+
+    /**
+     * Returns whether the validation rule represented by the rule definition supports null values.
+     *
+     * @return <code>true</code> if the validation rule represented by the rule definition supports null values,
+     *         <code>false</code> otherwise.
+     */
+    protected boolean isNullSupported() {
+        return false;
     }
 
     /**

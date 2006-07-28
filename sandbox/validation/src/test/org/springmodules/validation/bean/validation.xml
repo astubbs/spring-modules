@@ -12,6 +12,11 @@
 
         <property name="address" cascade="true" cascade-condition="homeless == false"/>
 
+        <!-- this property can be null, in which case the length won't be checked -->
+        <property name="phone">
+            <length min="7"/>
+        </property>
+
     </class>
 
     <class name="org.springmodules.validation.bean.Address">

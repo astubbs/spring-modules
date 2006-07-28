@@ -43,6 +43,7 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
         person.setFriends(new ArrayList<Person>()); // invalid - friends cannot be empty
         person.setHomeless(false);
         person.setAddress(new Address(null, "Amsterdam"));
+        person.setNullableInteger(new Integer(3));
 
         AnnotationBeanValidationConfigurationLoader loader = new AnnotationBeanValidationConfigurationLoader();
         BeanValidator validator = new BeanValidator(loader);
@@ -63,6 +64,8 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
         assertTrue(errors.hasFieldErrors("mother.*"));
         assertTrue(errors.hasFieldErrors("friends"));
         assertTrue(errors.hasFieldErrors("address.street"));
+        assertFalse(errors.hasFieldErrors("nullableString"));
+        assertTrue(errors.hasFieldErrors("nullableInteger"));
         assertEquals("Address.street[not.null]", errors.getFieldError("address.street").getCode());
 
 
