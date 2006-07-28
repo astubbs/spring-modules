@@ -30,12 +30,13 @@ import org.springmodules.validation.bean.conf.xml.ClassValidationElementHandler;
 import org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry;
 import org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.conf.xml.PropertyValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValangClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionPropertyValidationElementHandler;
 import org.springmodules.validation.bean.converter.DefaultErrorCodeConverter;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
 import org.springmodules.validation.util.condition.Conditions;
 import org.springmodules.validation.util.condition.parser.valang.ValangCondition;
+import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
 import org.springmodules.validation.valang.functions.UpperCaseFunction;
 
 /**
@@ -105,14 +106,12 @@ public class BeanValidatorIntegrationTests extends TestCase {
 
         Map functionsByName = new HashMap();
         functionsByName.put("tupper", UpperCaseFunction.class.getName());
-        ValangPropertyValidationElementHandler propertyHandler = new ValangPropertyValidationElementHandler();
-        propertyHandler.setCustomFunctions(functionsByName);
-        ValangClassValidationElementHandler classHandler = new ValangClassValidationElementHandler();
-        classHandler.setCustomFunctions(functionsByName);
+
+        ValangConditionExpressionParser conditionExpressionParser = new ValangConditionExpressionParser();
+        conditionExpressionParser.setCustomFunctions(functionsByName);
 
         DefaultValidationRuleElementHandlerRegistry registry = new DefaultValidationRuleElementHandlerRegistry();
-        registry.setExtraPropertyHandlers(new PropertyValidationElementHandler[] { propertyHandler });
-        registry.setExtraClassHandlers(new ClassValidationElementHandler[] { classHandler });
+        registry.setConditionExpressionParser(conditionExpressionParser);
         registry.afterPropertiesSet();
 
         DefaultXmlBeanValidationConfigurationLoader loader = new DefaultXmlBeanValidationConfigurationLoader();

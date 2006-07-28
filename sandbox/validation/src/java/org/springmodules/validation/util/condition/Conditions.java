@@ -117,7 +117,6 @@ public final class Conditions {
         return not(isNull());
     }
 
-
     // bean conditions
 
     public static Condition propertiesMatch(String[] propertyNames) {

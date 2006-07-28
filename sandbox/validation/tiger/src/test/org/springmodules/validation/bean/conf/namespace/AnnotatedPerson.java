@@ -5,15 +5,15 @@ import org.springmodules.validation.bean.conf.annotation.handler.Length;
 import org.springmodules.validation.bean.conf.annotation.handler.Min;
 import org.springmodules.validation.bean.conf.annotation.handler.NotBlank;
 import org.springmodules.validation.bean.conf.annotation.handler.NotNull;
-import org.springmodules.validation.bean.conf.annotation.handler.Valang;
+import org.springmodules.validation.bean.conf.annotation.handler.Expression;
 
 /**
  * @author Uri Boness
  */
-@Valang(value = "password == confirmPassword", errorCode = "passwords.do.not.match")
+@Expression(value = "password == confirmPassword", errorCode = "passwords.do.not.match")
 public class AnnotatedPerson {
 
-    @NotNull @NotBlank @Valang("tupper(firstName) == 'URI'")
+    @NotNull @NotBlank @Expression("tupper(firstName) == 'URI'")
     private String firstName;
 
     @NotNull @NotBlank @IsFirstLetterCapitalized

@@ -34,8 +34,8 @@ import org.springmodules.validation.bean.conf.xml.handler.NotNullRuleElementHand
 import org.springmodules.validation.bean.conf.xml.handler.RangeRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.RegExpRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.SizeRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValangClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionPropertyValidationElementHandler;
 import org.w3c.dom.Element;
 
 /**
@@ -69,7 +69,7 @@ public class DefaultValidationRuleElementHandlerRegistryTests extends TestCase {
         registry = new DefaultValidationRuleElementHandlerRegistry();
 
         ClassValidationElementHandler[] classHandlers = registry.getClassHandlers();
-        assertTrue(containsHandlerOfType(classHandlers, ValangClassValidationElementHandler.class));
+        assertTrue(containsHandlerOfType(classHandlers, ExpressionClassValidationElementHandler.class));
         
         PropertyValidationElementHandler[] propertyHandlers = registry.getPropertyHandlers();
         assertTrue(containsHandlerOfType(propertyHandlers, NotNullRuleElementHandler.class));
@@ -80,7 +80,7 @@ public class DefaultValidationRuleElementHandlerRegistryTests extends TestCase {
         assertTrue(containsHandlerOfType(propertyHandlers, SizeRuleElementHandler.class));
         assertTrue(containsHandlerOfType(propertyHandlers, NotEmptyRuleElementHandler.class));
         assertTrue(containsHandlerOfType(propertyHandlers, RangeRuleElementHandler.class));
-        assertTrue(containsHandlerOfType(propertyHandlers, ValangPropertyValidationElementHandler.class));
+        assertTrue(containsHandlerOfType(propertyHandlers, ExpressionPropertyValidationElementHandler.class));
         assertTrue(containsHandlerOfType(propertyHandlers, DateInPastRuleElementHandler.class));
         assertTrue(containsHandlerOfType(propertyHandlers, DateInFutureRuleElementHandler.class));
     }

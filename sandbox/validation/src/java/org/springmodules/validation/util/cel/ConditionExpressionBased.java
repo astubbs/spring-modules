@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.bean.conf.annotation.handler;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.springmodules.validation.util.cel;
 
 /**
- * A list of valang annotations. This annotation enables multiple valang
- * annotation to be set on one construct (class, method, or field).
+ * Represents objects that are based on condition expression.
  *
  * @author Uri Boness
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
-public @interface ValangList {
+public interface ConditionExpressionBased {
 
     /**
-     * The list of valang validation annotations.
+     * Sets the condition expression parser to be used when parsing the condition expression.
+     *
+     * @param conditionExpressionParser The condition expression parser to be used.
      */
-    Valang[] value();
+    void setConditionExpressionParser(ConditionExpressionParser conditionExpressionParser);
 
 }

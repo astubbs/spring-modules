@@ -32,19 +32,21 @@ import org.springmodules.validation.bean.conf.xml.handler.NotNullRuleElementHand
 import org.springmodules.validation.bean.conf.xml.handler.RangeRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.RegExpRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.SizeRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValangClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionPropertyValidationElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.jodatime.InstantInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.jodatime.InstantInPastRuleElementHandler;
 import org.springmodules.validation.util.BasicContextAware;
 import org.springmodules.validation.util.LibraryUtils;
-import org.springmodules.validation.util.bel.BeanExpressionResolver;
-import org.springmodules.validation.util.bel.BeanExpressionResolverAware;
-import org.springmodules.validation.util.bel.resolver.ValangFunctionExpressionResolver;
-import org.springmodules.validation.util.condition.parser.ConditionParser;
-import org.springmodules.validation.util.condition.parser.ConditionParserAware;
-import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
+import org.springmodules.validation.util.cel.ConditionExpressionBased;
+import org.springmodules.validation.util.cel.ConditionExpressionParser;
+import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
+import org.springmodules.validation.util.fel.FunctionExpressionBased;
+import org.springmodules.validation.util.fel.FunctionExpressionParser;
+import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
 import org.w3c.dom.Element;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A default implementation of {@link ValidationRuleElementHandlerRegistry}. The order in which the the handlers are
@@ -60,7 +62,7 @@ import org.w3c.dom.Element;
  *  <li>{@link NotEmptyRuleElementHandler}</li>
  *  <li>{@link NotBlankRuleElementHandler}</li>
  *  <li>{@link RangeRuleElementHandler}</li>
- *  <li>{@link ValangPropertyValidationElementHandler}</li>
+ *  <li>{@link ExpressionPropertyValidationElementHandler}</li>
  *  <li>{@link DateInPastRuleElementHandler}</li>
  *  <li>{@link DateInFutureRuleElementHandler}</li>
  * </ol>
@@ -68,12 +70,18 @@ import org.w3c.dom.Element;
  * @author Uri Boness
  */
 public class DefaultValidationRuleElementHandlerRegistry extends BasicContextAware
-    implements ValidationRuleElementHandlerRegistry, BeanExpressionResolverAware, ConditionParserAware, InitializingBean {
+    implements ValidationRuleElementHandlerRegistry, InitializingBean, ConditionExpressionBased, FunctionExpressionBased {
+
+    private final static Log logger = LogFactory.getLog(DefaultValidationRuleElementHandlerRegistry.class);
 
     private List classHandlers;
     private List propertyHandlers;
-    private BeanExpressionResolver expressionResolver;
-    private ConditionParser conditionParser;
+
+    private boolean functoinExpressionParserSet = false;
+    private FunctionExpressionParser functionExpressionParser;
+
+    private boolean conditionExpressionParserSet = false;
+    private ConditionExpressionParser conditionExpressionParser;
 
     /**
      * Constructs a new DefaultValidationRuleElementHandlerRegistry with the default handlers.
@@ -81,8 +89,8 @@ public class DefaultValidationRuleElementHandlerRegistry extends BasicContextAwa
     public DefaultValidationRuleElementHandlerRegistry() {
         classHandlers = new ArrayList();
         propertyHandlers = new ArrayList();
-        expressionResolver = new ValangFunctionExpressionResolver();
-        conditionParser = new ValangConditionParser();
+        functionExpressionParser = new ValangFunctionExpressionParser();
+        conditionExpressionParser = new ValangConditionExpressionParser();
         registerDefaultHandlers();
     }
 
@@ -130,28 +138,18 @@ public class DefaultValidationRuleElementHandlerRegistry extends BasicContextAwa
 
     public void afterPropertiesSet() throws Exception {
 
-        initLifecycle(conditionParser);
-        initLifecycle(expressionResolver);
+        findConditionExpressionParserInApplicationContext();
+        findFunctionExpressionParserInApplicationContext();
 
         for (Iterator iter = classHandlers.iterator(); iter.hasNext();) {
             ClassValidationElementHandler handler = (ClassValidationElementHandler)iter.next();
-            if (ConditionParserAware.class.isInstance(handler) && conditionParser != null) {
-                ((ConditionParserAware)handler).setConditionParser(conditionParser);
-            }
-            if (BeanExpressionResolverAware.class.isInstance(handler) && expressionResolver != null) {
-                ((BeanExpressionResolverAware)handler).setBeanExpressionResolver(expressionResolver);
-            }
+            setExpressionParsers(handler);
             initLifecycle(handler);
         }
 
         for (Iterator iter = propertyHandlers.iterator(); iter.hasNext();) {
             PropertyValidationElementHandler handler = (PropertyValidationElementHandler)iter.next();
-            if (ConditionParserAware.class.isInstance(handler) && conditionParser != null) {
-                ((ConditionParserAware)handler).setConditionParser(conditionParser);
-            }
-            if (BeanExpressionResolverAware.class.isInstance(handler) && expressionResolver != null) {
-                ((BeanExpressionResolverAware)handler).setBeanExpressionResolver(expressionResolver);
-            }
+            setExpressionParsers(handler);
             initLifecycle(handler);
         }
     }
@@ -219,48 +217,27 @@ public class DefaultValidationRuleElementHandlerRegistry extends BasicContextAwa
     }
 
     /**
-     * Sets the {@link org.springmodules.validation.util.bel.BeanExpressionResolver} to be used.
-     *
-     * @param resolver The bean expression resolver to be used.
+     * @see FunctionExpressionBased#setFunctionExpressionParser(org.springmodules.validation.util.fel.FunctionExpressionParser)
      */
-    public void setBeanExpressionResolver(BeanExpressionResolver resolver) {
-        this.expressionResolver = resolver;
+    public void setFunctionExpressionParser(FunctionExpressionParser functionExpressionParser) {
+        this.functoinExpressionParserSet = true;
+        this.functionExpressionParser = functionExpressionParser;
     }
 
     /**
-     * Returns the used {@link org.springmodules.validation.util.bel.BeanExpressionResolver}.
-     *
-     * @return The used bean expression resolver.
+     * @see ConditionExpressionBased#setConditionExpressionParser(org.springmodules.validation.util.cel.ConditionExpressionParser)
      */
-    public BeanExpressionResolver getBeanExpressionResolver() {
-        return expressionResolver;
+    public void setConditionExpressionParser(ConditionExpressionParser conditionExpressionParser) {
+        this.conditionExpressionParserSet = true;
+        this.conditionExpressionParser = conditionExpressionParser;
     }
-
-    /**
-     * Returns the used {@link org.springmodules.validation.util.condition.parser.ConditionParser}.
-     *
-     * @return The used condition parser.
-     */
-    public ConditionParser getConditionParser() {
-        return conditionParser;
-    }
-
-    /**
-     * Sets the {@link org.springmodules.validation.util.condition.parser.ConditionParser} to be used.
-     *
-     * @param conditionParser The condition parser to be used.
-     */
-    public void setConditionParser(ConditionParser conditionParser) {
-        this.conditionParser = conditionParser;
-    }
-
 
     //=============================================== Helper Methods ===================================================
 
     protected void registerDefaultHandlers() {
 
         // registering class handlers
-        registerClassHandler(new ValangClassValidationElementHandler());
+        registerClassHandler(new ExpressionClassValidationElementHandler());
 
         // registering property handlers
         registerPropertyHandler(new NotNullRuleElementHandler());
@@ -271,13 +248,59 @@ public class DefaultValidationRuleElementHandlerRegistry extends BasicContextAwa
         registerPropertyHandler(new NotEmptyRuleElementHandler());
         registerPropertyHandler(new NotBlankRuleElementHandler());
         registerPropertyHandler(new RangeRuleElementHandler());
-        registerPropertyHandler(new ValangPropertyValidationElementHandler());
+        registerPropertyHandler(new ExpressionPropertyValidationElementHandler());
         registerPropertyHandler(new DateInPastRuleElementHandler());
         registerPropertyHandler(new DateInFutureRuleElementHandler());
         if (LibraryUtils.JODA_TIME_IN_CLASSPATH) {
             registerPropertyHandler(new InstantInPastRuleElementHandler());
             registerPropertyHandler(new InstantInFutureRuleElementHandler());
         }
+    }
+
+    protected void setExpressionParsers(Object object) {
+        if (ConditionExpressionBased.class.isInstance(object) && conditionExpressionParser != null) {
+            ((ConditionExpressionBased)object).setConditionExpressionParser(conditionExpressionParser);
+        }
+        if (FunctionExpressionBased.class.isInstance(object) && functionExpressionParser != null) {
+            ((FunctionExpressionBased)object).setFunctionExpressionParser(functionExpressionParser);
+        }
+    }
+
+    protected void findConditionExpressionParserInApplicationContext() {
+        if (conditionExpressionParserSet) {
+            return;
+        }
+        ConditionExpressionParser parser = (ConditionExpressionParser)findObjectInApplicationContext(ConditionExpressionParser.class);
+        if (parser == null) {
+            return;
+        }
+        conditionExpressionParser = parser;
+    }
+
+    protected void findFunctionExpressionParserInApplicationContext() {
+        if (functoinExpressionParserSet) {
+            return;
+        }
+        FunctionExpressionParser parser = (FunctionExpressionParser)findObjectInApplicationContext(FunctionExpressionParser.class);
+        if (parser == null) {
+            return;
+        }
+        functionExpressionParser = parser;
+    }
+
+    protected Object findObjectInApplicationContext(Class clazz) {
+        if (applicationContext == null) {
+            return null;
+        }
+        String[] names = applicationContext.getBeanNamesForType(clazz);
+        if (names.length == 0) {
+            return null;
+        }
+        if (names.length > 1) {
+            logger.warn("Multiple bean of type '" + clazz.getName() + "' are defined in the application context." +
+                "Only the first encountered one will be used");
+        }
+        return applicationContext.getBean(names[0]);
     }
 
 }

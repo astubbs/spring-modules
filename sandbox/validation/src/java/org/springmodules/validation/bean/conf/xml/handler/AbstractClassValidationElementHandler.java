@@ -7,14 +7,15 @@ import org.springmodules.validation.bean.conf.xml.ClassValidationElementHandler;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
 import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.ValidationRule;
-import org.springmodules.validation.bean.rule.resolver.ExpressionErrorArgumentsResolver;
-import org.springmodules.validation.util.bel.BeanExpressionResolver;
-import org.springmodules.validation.util.bel.BeanExpressionResolverAware;
+import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
+import org.springmodules.validation.util.cel.ConditionExpressionBased;
+import org.springmodules.validation.util.cel.ConditionExpressionParser;
+import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
-import org.springmodules.validation.util.condition.parser.ConditionParser;
-import org.springmodules.validation.util.condition.parser.ConditionParserAware;
-import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
+import org.springmodules.validation.util.fel.FunctionExpressionBased;
+import org.springmodules.validation.util.fel.FunctionExpressionParser;
+import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
 import org.w3c.dom.Element;
 
 /**
@@ -36,19 +37,18 @@ import org.w3c.dom.Element;
  * @author Uri Boness
  */
 public abstract class AbstractClassValidationElementHandler
-    implements ClassValidationElementHandler, ConditionParserAware, BeanExpressionResolverAware {
+    implements ClassValidationElementHandler, ConditionExpressionBased, FunctionExpressionBased {
 
     private static final String ERROR_CODE_ATTR = "code";
     private static final String MESSAGE_ATTR = "message";
     private static final String ARGS_ATTR = "args";
     private static final String APPLY_IF_ATTR = "apply-if";
 
-    private static final ConditionParser DEFAULT_CONDITION_PARSER = new ValangConditionParser();
-
     private String elementName;
     private String namespaceUrl;
-    private ConditionParser conditionParser;
-    private BeanExpressionResolver expressionResolver;
+
+    private ConditionExpressionParser conditionExpressionParser;
+    private FunctionExpressionParser functionExpressionParser;
 
     /**
      * Constructs a new AbstractPropertyValidationElementHandler with given supported element name.
@@ -66,7 +66,7 @@ public abstract class AbstractClassValidationElementHandler
      * @param namespace The supported namespace.
      */
     public AbstractClassValidationElementHandler(String elementName, String namespace) {
-        this(elementName, namespace, AbstractClassValidationElementHandler.DEFAULT_CONDITION_PARSER);
+        this(elementName, namespace, new ValangConditionExpressionParser(), new ValangFunctionExpressionParser());
     }
 
     /**
@@ -75,12 +75,19 @@ public abstract class AbstractClassValidationElementHandler
      *
      * @param elementName The supported element name.
      * @param namespace The supported namespace.
-     * @param conditionParser The condition handler to be used when parsing the <code>apply-if</code> expression.
+     * @param conditionExpressionParser The condition expression parser to be used to parse the various condition expressions.
+     * @param functionExpressionParser The function expression parser to be used to parse the error arguments expressions.
      */
-    public AbstractClassValidationElementHandler(String elementName, String namespace, ConditionParser conditionParser) {
+    public AbstractClassValidationElementHandler(
+        String elementName,
+        String namespace,
+        ConditionExpressionParser conditionExpressionParser,
+        FunctionExpressionParser functionExpressionParser) {
+
         this.elementName = elementName;
         this.namespaceUrl = namespace;
-        this.conditionParser = conditionParser;
+        this.conditionExpressionParser = conditionExpressionParser;
+        this.functionExpressionParser = functionExpressionParser;
     }
 
     /**
@@ -157,7 +164,7 @@ public abstract class AbstractClassValidationElementHandler
     protected ErrorArgumentsResolver extractArgumentsResolver(Element element) {
         String argsString = element.getAttribute(AbstractClassValidationElementHandler.ARGS_ATTR);
         String[] expressions = (argsString == null) ? new String[0] : StringUtils.tokenizeToStringArray(argsString, ", ");
-        return new ExpressionErrorArgumentsResolver(expressions, expressionResolver);
+        return new FunctionErrorArgumentsResolver(expressions, functionExpressionParser);
     }
 
     /**
@@ -170,35 +177,29 @@ public abstract class AbstractClassValidationElementHandler
      */
     protected Condition extractApplicabilityCondition(Element element) {
         String expression = element.getAttribute(AbstractClassValidationElementHandler.APPLY_IF_ATTR);
-        return (StringUtils.hasText(expression)) ? conditionParser.parse(expression) : new AlwaysTrueCondition();
+        return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : new AlwaysTrueCondition();
     }
 
     /**
-     * @see org.springmodules.validation.util.condition.parser.ConditionParserAware#setConditionParser(org.springmodules.validation.util.condition.parser.ConditionParser)
+     * @see ConditionExpressionBased#setConditionExpressionParser(org.springmodules.validation.util.cel.ConditionExpressionParser)
      */
-    public void setConditionParser(ConditionParser conditionParser) {
-        this.conditionParser = conditionParser;
+    public void setConditionExpressionParser(ConditionExpressionParser conditionExpressionParser) {
+        this.conditionExpressionParser = conditionExpressionParser;
+    }
+
+    protected ConditionExpressionParser getConditionExpressionParser() {
+        return conditionExpressionParser;
     }
 
     /**
-     * @see org.springmodules.validation.util.condition.parser.ConditionParserAware#getConditionParser()
+     * @see FunctionExpressionBased#setFunctionExpressionParser(org.springmodules.validation.util.fel.FunctionExpressionParser)
      */
-    public ConditionParser getConditionParser() {
-        return conditionParser;
+    public void setFunctionExpressionParser(FunctionExpressionParser functionExpressionParser) {
+        this.functionExpressionParser = functionExpressionParser;
     }
 
-    /**
-     * @see org.springmodules.validation.util.bel.BeanExpressionResolverAware#setBeanExpressionResolver(org.springmodules.validation.util.bel.BeanExpressionResolver)
-     */
-    public void setBeanExpressionResolver(BeanExpressionResolver resolver) {
-        this.expressionResolver = resolver;
-    }
-
-    /**
-     * @see org.springmodules.validation.util.bel.BeanExpressionResolverAware#getBeanExpressionResolver()
-     */
-    public BeanExpressionResolver getBeanExpressionResolver() {
-        return expressionResolver;
+    protected FunctionExpressionParser getFunctionExpressionParser() {
+        return functionExpressionParser;
     }
 
     /**

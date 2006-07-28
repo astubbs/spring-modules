@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util.bel;
+package org.springmodules.validation.bean.conf.annotation.handler;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Evaluates an expression on a given bean to resolve/extract/create another object.
+ * A list of {@link Expression} annotations. This annotation enables multiple expression
+ * annotation to be set on one construct (class, method, or field).
  *
  * @author Uri Boness
  */
-public interface BeanExpressionResolver {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
+public @interface Expressions {
 
     /**
-     * Evaluates the given expression upon the given bean and returns the resolved object.
-     *
-     * @param bean The bean upon which the expression will be evalutated.
-     * @param expression The expression.
-     * @return The resolved object.
+     * The list of valang validation annotations.
      */
-    Object resolve(Object bean, String expression) throws BeanExpressionException;
+    Expression[] value();
 
 }

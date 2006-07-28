@@ -6,8 +6,8 @@
     <class name="org.springmodules.validation.bean.Person">
 
         <global>
-            <valang expression="tupper(name) == 'URI'" code="good"/>
-            <valang expression="tupper(name) == 'Uri'" code="bad"/>
+            <expression condition="tupper(name) == 'URI'" code="good"/>
+            <expression condition="tupper(name) == 'Uri'" code="bad"/>
         </global>
 
         <property name="address" cascade="true" cascade-condition="homeless == false"/>

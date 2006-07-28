@@ -3,7 +3,7 @@
 
     <class name="org.springmodules.validation.bean.conf.xml.Person">
         <global>
-            <valang expression="password == confirmPassword" code="passwords.do.not.match"/>
+            <expression condition="password == confirmPassword" code="passwords.do.not.match"/>
         </global>
         <property name="firstName">
             <not-null/>

@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util.bel;
-
-import org.springframework.core.NestedRuntimeException;
+package org.springmodules.validation.util.fel;
 
 /**
- * Thrown when a {@link BeanExpressionResolver#resolve(Object, String)} fails.
+ * Represents objects that are based on function expressions.
+ *
+ *
+ * @see FunctionExpressionParser
+ * @see Function
  *
  * @author Uri Boness
  */
-public class BeanExpressionException extends NestedRuntimeException {
+public interface FunctionExpressionBased {
 
-    public BeanExpressionException(String msg) {
-        super(msg);
-    }
-
-    public BeanExpressionException(String msg, Throwable ex) {
-        super(msg, ex);
-    }
+    /**
+     * Sets the function expression parser to be used when parsing the function expressions.
+     *
+     * @param functionExpressionParser The function expression parser to be used.
+     */
+    void setFunctionExpressionParser(FunctionExpressionParser functionExpressionParser);
 
 }

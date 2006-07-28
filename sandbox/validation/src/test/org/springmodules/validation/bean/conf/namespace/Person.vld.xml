@@ -6,13 +6,13 @@
     <class name="org.springmodules.validation.bean.conf.namespace.Person">
 
         <global>
-            <valang expression="password == confirmPassword" code="passwords.do.not.match"/>
+            <expression condition="password == confirmPassword" code="passwords.do.not.match"/>
         </global>
 
         <property name="firstName">
             <not-null/>
             <not-blank/>
-            <valang expression="tupper(firstName) == 'URI'"/>
+            <expression condition="tupper(firstName) == 'URI'"/>
         </property>
 
         <property name="lastName">

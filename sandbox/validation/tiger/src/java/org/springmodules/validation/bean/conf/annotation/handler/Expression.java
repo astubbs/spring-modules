@@ -22,20 +22,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionPropertyValidationElementHandler;
 
 /**
- * Represents a validation rule that is expressed using the Valang expression language.
+ * Represents a validation rule that is expressed using the Expression expression language.
  *
  * @author Uri Boness
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
-public @interface Valang {
+public @interface Expression {
 
     /**
-     * The Valang expression.
+     * The Expression expression.
      */
     String value();
 
@@ -49,12 +49,12 @@ public @interface Valang {
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default ValangPropertyValidationElementHandler.DEFAULT_ERROR_CODE;
+    String errorCode() default ExpressionPropertyValidationElementHandler.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default ValangPropertyValidationElementHandler.DEFAULT_ERROR_CODE;
+    String message() default ExpressionPropertyValidationElementHandler.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code.

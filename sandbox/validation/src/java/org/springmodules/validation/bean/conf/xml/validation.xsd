@@ -51,7 +51,7 @@
 
     <xs:group name="globalRules">
         <xs:sequence>
-            <xs:element ref="vld:valang" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="vld:expression" minOccurs="0" maxOccurs="unbounded"/>
             <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
@@ -68,7 +68,7 @@
             <xs:element ref="vld:range" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="vld:regexp" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="vld:size" minOccurs="0" maxOccurs="1"/>
-            <xs:element ref="vld:valang" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="vld:expression" minOccurs="0" maxOccurs="unbounded"/>
             <xs:any namespace="##local" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
@@ -83,10 +83,10 @@
         <xs:attribute name="apply-if" type="xs:string" use="optional"/>
     </xs:attributeGroup>
 
-    <xs:element name="valang">
+    <xs:element name="expression">
         <xs:complexType>
             <xs:attributeGroup ref="vld:common-rule-attributes"/>
-            <xs:attribute name="expression" use="required" type="xs:string"/>
+            <xs:attribute name="condition" use="required" type="xs:string"/>
             <xs:attribute name="scope" use="optional" type="vld:expression-scope"/>
         </xs:complexType>
     </xs:element>

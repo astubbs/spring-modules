@@ -27,7 +27,7 @@ import org.springmodules.validation.bean.conf.annotation.handler.Min;
 import org.springmodules.validation.bean.conf.annotation.handler.NotBlank;
 import org.springmodules.validation.bean.conf.annotation.handler.NotEmpty;
 import org.springmodules.validation.bean.conf.annotation.handler.NotNull;
-import org.springmodules.validation.bean.conf.annotation.handler.Valang;
+import org.springmodules.validation.bean.conf.annotation.handler.Expression;
 import org.springmodules.validation.bean.conf.annotation.handler.Validator;
 
 /**
@@ -36,7 +36,7 @@ import org.springmodules.validation.bean.conf.annotation.handler.Validator;
  * @author Uri Boness
  */
 @Validator(PersonValidator.class)
-@Valang("father is not null")
+@Expression("father is not null")
 public class Person {
 
     @NotNull @Length(min = 2, max = 10)
@@ -65,7 +65,7 @@ public class Person {
     @CascadeValidation("homeless == false")
     private Address address;
 
-    @Valang(value = "? >= 0", applyIf = "true = false", scope = ExpressionScope.VALIDATED_VALUE)
+    @Expression(value = "? >= 0", applyIf = "true = false", scope = ExpressionScope.VALIDATED_VALUE)
     @Min(value = 0, errorCode = "just.another.error.code")
     private int age;
 

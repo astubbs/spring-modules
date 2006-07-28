@@ -25,15 +25,16 @@ import org.springmodules.validation.bean.conf.annotation.PropertyValidationAnnot
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
 import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
-import org.springmodules.validation.bean.rule.resolver.ExpressionErrorArgumentsResolver;
-import org.springmodules.validation.util.bel.BeanExpressionResolver;
-import org.springmodules.validation.util.bel.BeanExpressionResolverAware;
-import org.springmodules.validation.util.bel.resolver.ValangFunctionExpressionResolver;
+import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
+import org.springmodules.validation.util.cel.ConditionExpressionBased;
+import org.springmodules.validation.util.cel.ConditionExpressionParser;
+import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
 import org.springmodules.validation.util.condition.parser.ConditionParser;
-import org.springmodules.validation.util.condition.parser.ConditionParserAware;
-import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
+import org.springmodules.validation.util.fel.FunctionExpressionBased;
+import org.springmodules.validation.util.fel.FunctionExpressionParser;
+import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
 
 /**
  * A parent for all common {@link PropertyValidationAnnotationHandler} implementations that represent validation rules.
@@ -49,7 +50,7 @@ import org.springmodules.validation.util.condition.parser.valang.ValangCondition
  * @author Uri Boness
  */
 public abstract class AbstractPropertyValidationAnnotationHandler implements PropertyValidationAnnotationHandler,
-    ConditionParserAware, BeanExpressionResolverAware {
+    ConditionExpressionBased, FunctionExpressionBased {
 
     public final static String APPLY_IF_ATTR = "applyIf";
     public final static String ERROR_CODE_ATTR = "errorCode";
@@ -57,8 +58,9 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
     public final static String ARGS_ATTR = "args";
 
     private Class[] supportedAnnotationTypes;
-    private ConditionParser conditionParser;
-    private BeanExpressionResolver beanExpressionResolver;
+
+    private ConditionExpressionParser conditionExpressionParser;
+    private FunctionExpressionParser functionExpressionParser;
 
     /**
      * Constructs a new AbstractPropertyValidationAnnotationHandler with a given supported annotation types.
@@ -67,8 +69,8 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
      */
     public AbstractPropertyValidationAnnotationHandler(Class... supportedAnnotationTypes) {
         this.supportedAnnotationTypes = supportedAnnotationTypes;
-        conditionParser = new ValangConditionParser();
-        beanExpressionResolver = new ValangFunctionExpressionResolver();
+        conditionExpressionParser = new ValangConditionExpressionParser();
+        functionExpressionParser = new ValangFunctionExpressionParser();
     }
 
     /**
@@ -150,7 +152,7 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
             String argsAsString = (String) annotation.getClass().getMethod(ARGS_ATTR).invoke(annotation);
             argsAsString = (argsAsString == null) ? "" : argsAsString;
             String[] argsExpressions = StringUtils.commaDelimitedListToStringArray(argsAsString);
-            return new ExpressionErrorArgumentsResolver(argsExpressions, beanExpressionResolver);
+            return new FunctionErrorArgumentsResolver(argsExpressions, functionExpressionParser);
         } catch (Exception e) {
             throw new IllegalArgumentException("Expecting attribute '" + ARGS_ATTR + "' in annotation '" + annotation.getClass().getName());
         }
@@ -168,7 +170,7 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
     protected Condition extractApplicabilityContidion(Annotation annotation) {
         try {
             String expression = (String)annotation.getClass().getMethod(APPLY_IF_ATTR).invoke(annotation);
-            return (StringUtils.hasText(expression)) ? conditionParser.parse(expression) : new AlwaysTrueCondition();
+            return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : new AlwaysTrueCondition();
         } catch (Exception e) {
             throw new IllegalArgumentException("Expecting attribute '" + APPLY_IF_ATTR + "' in annotation '" + annotation.getClass().getName());
         }
@@ -201,43 +203,25 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
     //=============================================== Setter/Getter ====================================================
 
     /**
-     * Sets the {@link org.springmodules.validation.util.condition.parser.ConditionParser} to be used. This parser will
-     * be used to parse the applicability condition expressions.
-     *
-     * @param conditionParser The condition parser to be used.
+     * @see ConditionExpressionBased#setConditionExpressionParser(org.springmodules.validation.util.cel.ConditionExpressionParser)
      */
-    public void setConditionParser(ConditionParser conditionParser) {
-        this.conditionParser = conditionParser;
+    public void setConditionExpressionParser(ConditionExpressionParser conditionExpressionParser) {
+        this.conditionExpressionParser = conditionExpressionParser;
+    }
+
+    protected ConditionExpressionParser getConditionExpressionParser() {
+        return conditionExpressionParser;
     }
 
     /**
-     * Returns the used {@link org.springmodules.validation.util.condition.parser.ConditionParser}.
-     *
-     * @return The used condition parser.
-     * @see #setConditionParser(org.springmodules.validation.util.condition.parser.ConditionParser)
+     * @see FunctionExpressionBased#setFunctionExpressionParser(org.springmodules.validation.util.fel.FunctionExpressionParser)
      */
-    public ConditionParser getConditionParser() {
-        return conditionParser;
+    public void setFunctionExpressionParser(FunctionExpressionParser functionExpressionParser) {
+        this.functionExpressionParser = functionExpressionParser;
     }
 
-    /**
-     * Sets the {@link org.springmodules.validation.util.bel.BeanExpressionResolver} to be used. This resolver will
-     * be used to resolve the values of the error arguments.
-     *
-     * @param beanExpressionResolver The bean expression resolver to be used.
-     */
-    public void setBeanExpressionResolver(BeanExpressionResolver beanExpressionResolver) {
-        this.beanExpressionResolver = beanExpressionResolver;
-    }
-
-    /**
-     * Returns the used {@link org.springmodules.validation.util.bel.BeanExpressionResolver}.
-     *
-     * @return The used bean expression resolver.
-     * @see #setBeanExpressionResolver(org.springmodules.validation.util.bel.BeanExpressionResolver)
-     */
-    public BeanExpressionResolver getBeanExpressionResolver() {
-        return beanExpressionResolver;
+    protected FunctionExpressionParser getFunctionExpressionParser() {
+        return functionExpressionParser;
     }
 
 }

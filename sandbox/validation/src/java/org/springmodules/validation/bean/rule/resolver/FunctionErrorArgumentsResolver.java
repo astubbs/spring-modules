@@ -17,21 +17,24 @@
 package org.springmodules.validation.bean.rule.resolver;
 
 import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
-import org.springmodules.validation.util.bel.BeanExpressionResolver;
+import org.springmodules.validation.util.fel.Function;
+import org.springmodules.validation.util.fel.FunctionExpressionParser;
 
 /**
  * Resolves error arguments based on valang expressions.
  *
  * @author Uri Boness
  */
-public class ExpressionErrorArgumentsResolver implements ErrorArgumentsResolver {
+public class FunctionErrorArgumentsResolver implements ErrorArgumentsResolver {
 
-    private BeanExpressionResolver resolver;
-    private String[] expressions;
+    private Function[] functions;
 
-    public ExpressionErrorArgumentsResolver(String[] expressions, BeanExpressionResolver resolver) {
-        this.resolver = resolver;
-        this.expressions = expressions;
+    public FunctionErrorArgumentsResolver(Function[] functions) {
+        this.functions = functions;
+    }
+
+    public FunctionErrorArgumentsResolver(String[] expressions, FunctionExpressionParser functionExpressionParser) {
+        this(parseFunctionExpressions(expressions, functionExpressionParser));
     }
 
     /**
@@ -40,11 +43,22 @@ public class ExpressionErrorArgumentsResolver implements ErrorArgumentsResolver 
      * @see org.springmodules.validation.bean.rule.ErrorArgumentsResolver#resolveArguments(Object)
      */
     public Object[] resolveArguments(Object obj) {
-        Object[] args = new Object[expressions.length];
+        Object[] args = new Object[functions.length];
         for (int i=0; i<args.length; i++) {
-            args[i] = resolver.resolve(obj, expressions[i]);
+            args[i] = functions[i].evaluate(obj);
         }
         return args;
+    }
+
+
+    //=============================================== Helper Methods ===================================================
+
+    protected static Function[] parseFunctionExpressions(String[] expressions, FunctionExpressionParser parser) {
+        Function[] functions = new Function[expressions.length];
+        for (int i=0; i<expressions.length; i++) {
+            functions[i] = parser.parse(expressions[i]);
+        }
+        return functions;
     }
 
 }

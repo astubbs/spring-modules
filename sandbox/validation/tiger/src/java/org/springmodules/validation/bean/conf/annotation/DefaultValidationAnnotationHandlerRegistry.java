@@ -35,15 +35,25 @@ import org.springmodules.validation.bean.conf.annotation.handler.NotNullValidati
 import org.springmodules.validation.bean.conf.annotation.handler.RangeValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.RegExpValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.SizeValidationAnnotationHandler;
-import org.springmodules.validation.bean.conf.annotation.handler.ValangClassValidationAnnotationHandler;
-import org.springmodules.validation.bean.conf.annotation.handler.ValangPropertyValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.handler.ExpressionClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.handler.ExpressionPropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.ValidatorClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.ValidatorsClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.handler.ExpressionsClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.annotation.handler.ExpressionsPropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.hibernate.HibernatePropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.jodatime.InstantInTheFutureValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.annotation.handler.jodatime.InstantInThePastValidationAnnotationHandler;
 import org.springmodules.validation.util.BasicContextAware;
 import org.springmodules.validation.util.LibraryUtils;
+import org.springmodules.validation.util.fel.FunctionExpressionBased;
+import org.springmodules.validation.util.fel.FunctionExpressionParser;
+import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
+import org.springmodules.validation.util.cel.ConditionExpressionBased;
+import org.springmodules.validation.util.cel.ConditionExpressionParser;
+import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The default validation annotation handler registry. This registry come with the following pre-registered handlers:
@@ -54,10 +64,18 @@ import org.springmodules.validation.util.LibraryUtils;
  * @author Uri Boness
  */
 public class DefaultValidationAnnotationHandlerRegistry extends BasicContextAware
-    implements ValidationAnnotationHandlerRegistry, InitializingBean {
+    implements ValidationAnnotationHandlerRegistry, InitializingBean, ConditionExpressionBased, FunctionExpressionBased {
+
+    private final static Log logger = LogFactory.getLog(DefaultValidationAnnotationHandlerRegistry.class);
 
     private List<ClassValidationAnnotationHandler> classHandlers;
     private List<PropertyValidationAnnotationHandler> propertyHandlers;
+
+    private boolean conditionExpressionParserSet = false;
+    private ConditionExpressionParser conditionExpressionParser;
+
+    private boolean functionExpressionParserSet = false;
+    private FunctionExpressionParser functionExpressionParser;
 
     /**
      * Constructs a new DefaultValidationAnnotationHandlerRegistry.
@@ -65,6 +83,8 @@ public class DefaultValidationAnnotationHandlerRegistry extends BasicContextAwar
     public DefaultValidationAnnotationHandlerRegistry() {
         classHandlers = new ArrayList<ClassValidationAnnotationHandler>();
         propertyHandlers = new ArrayList<PropertyValidationAnnotationHandler>();
+        conditionExpressionParser = new ValangConditionExpressionParser();
+        functionExpressionParser = new ValangFunctionExpressionParser();
         registerDefaultHandlers();
     }
 
@@ -146,11 +166,33 @@ public class DefaultValidationAnnotationHandlerRegistry extends BasicContextAwar
         }
     }
 
+    /**
+     * @see ConditionExpressionBased#setConditionExpressionParser(org.springmodules.validation.util.cel.ConditionExpressionParser)
+     */
+    public void setConditionExpressionParser(ConditionExpressionParser conditionExpressionParser) {
+
+        this.conditionExpressionParser = conditionExpressionParser;
+    }
+
+    /**
+     * @see FunctionExpressionBased#setFunctionExpressionParser(org.springmodules.validation.util.fel.FunctionExpressionParser)
+     */
+    public void setFunctionExpressionParser(FunctionExpressionParser functionExpressionParser) {
+        this.functionExpressionParser = functionExpressionParser;
+    }
+
     public void afterPropertiesSet() throws Exception {
+
+        findConditionExpressionParserInApplicationContext();
+        findFunctionExpressionParserInApplicationContext();
+
         for (ClassValidationAnnotationHandler handler : classHandlers) {
+            setExpressionParsers(handler);
             initLifecycle(handler);
         }
+
         for (PropertyValidationAnnotationHandler handler : propertyHandlers) {
+            setExpressionParsers(handler);
             initLifecycle(handler);
         }
     }
@@ -163,7 +205,8 @@ public class DefaultValidationAnnotationHandlerRegistry extends BasicContextAwar
     protected void registerDefaultHandlers() {
 
         // class annotation handlers
-        classHandlers.add(new ValangClassValidationAnnotationHandler());
+        classHandlers.add(new ExpressionClassValidationAnnotationHandler());
+        classHandlers.add(new ExpressionsClassValidationAnnotationHandler());
         classHandlers.add(new ValidatorClassValidationAnnotationHandler());
         classHandlers.add(new ValidatorsClassValidationAnnotationHandler());
 
@@ -172,10 +215,6 @@ public class DefaultValidationAnnotationHandlerRegistry extends BasicContextAwar
         propertyHandlers.add(new EmailValidationAnnotationHandler());
         propertyHandlers.add(new DateInTheFutureValidationAnnotationHandler());
         propertyHandlers.add(new DateInThePastValidationAnnotationHandler());
-        if (LibraryUtils.JODA_TIME_IN_CLASSPATH) {
-            propertyHandlers.add(new InstantInTheFutureValidationAnnotationHandler());
-            propertyHandlers.add(new InstantInThePastValidationAnnotationHandler());
-        }
         propertyHandlers.add(new LengthValidationAnnotationHandler());
         propertyHandlers.add(new NotBlankValidationAnnotationHandler());
         propertyHandlers.add(new NotEmptyValidationAnnotationHandler());
@@ -183,10 +222,63 @@ public class DefaultValidationAnnotationHandlerRegistry extends BasicContextAwar
         propertyHandlers.add(new RangeValidationAnnotationHandler());
         propertyHandlers.add(new RegExpValidationAnnotationHandler());
         propertyHandlers.add(new SizeValidationAnnotationHandler());
-        propertyHandlers.add(new ValangPropertyValidationAnnotationHandler());
+        propertyHandlers.add(new ExpressionPropertyValidationAnnotationHandler());
+        propertyHandlers.add(new ExpressionsPropertyValidationAnnotationHandler());
+
+        if (LibraryUtils.JODA_TIME_IN_CLASSPATH) {
+            propertyHandlers.add(new InstantInTheFutureValidationAnnotationHandler());
+            propertyHandlers.add(new InstantInThePastValidationAnnotationHandler());
+        }
+
         if (LibraryUtils.HIBERNATE_VALIDATOR_IN_CLASSPATH) {
             propertyHandlers.add(new HibernatePropertyValidationAnnotationHandler());
         }
+    }
+
+    protected void setExpressionParsers(Object object) {
+        if (ConditionExpressionBased.class.isInstance(object) && conditionExpressionParser != null) {
+            ((ConditionExpressionBased)object).setConditionExpressionParser(conditionExpressionParser);
+        }
+        if (FunctionExpressionBased.class.isInstance(object) && functionExpressionParser != null) {
+            ((FunctionExpressionBased)object).setFunctionExpressionParser(functionExpressionParser);
+        }
+    }
+
+    protected void findConditionExpressionParserInApplicationContext() {
+        if (conditionExpressionParserSet) {
+            return;
+        }
+        ConditionExpressionParser parser = (ConditionExpressionParser)findObjectInApplicationContext(ConditionExpressionParser.class);
+        if (parser == null) {
+            return;
+        }
+        conditionExpressionParser = parser;
+    }
+
+    protected void findFunctionExpressionParserInApplicationContext() {
+        if (functionExpressionParserSet) {
+            return;
+        }
+        FunctionExpressionParser parser = (FunctionExpressionParser)findObjectInApplicationContext(FunctionExpressionParser.class);
+        if (parser == null) {
+            return;
+        }
+        functionExpressionParser = parser;
+    }
+
+    protected Object findObjectInApplicationContext(Class clazz) {
+        if (applicationContext == null) {
+            return null;
+        }
+        String[] names = applicationContext.getBeanNamesForType(clazz);
+        if (names.length == 0) {
+            return null;
+        }
+        if (names.length > 1) {
+            logger.warn("Multiple bean of type '" + clazz.getName() + "' are defined in the application context." +
+                "Only the first encountered one will be used");
+        }
+        return applicationContext.getBean(names[0]);
     }
 
 }

@@ -23,6 +23,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Validator;
@@ -32,9 +35,9 @@ import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
-import org.springmodules.validation.util.condition.parser.ConditionParser;
-import org.springmodules.validation.util.condition.parser.ConditionParserAware;
-import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
+import org.springmodules.validation.util.cel.ConditionExpressionBased;
+import org.springmodules.validation.util.cel.ConditionExpressionParser;
+import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -89,7 +92,7 @@ import org.w3c.dom.NodeList;
  * @author Uri Boness
  */
 public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBeanValidationConfigurationLoader
-    implements DefaultXmBeanValidationConfigurationlLoaderConstants, ConditionParserAware {
+    implements DefaultXmBeanValidationConfigurationlLoaderConstants, ConditionExpressionBased, ApplicationContextAware {
 
     private final static Log logger = LogFactory.getLog(DefaultXmlBeanValidationConfigurationLoader.class);
 
@@ -106,7 +109,10 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
 
     private ValidationRuleElementHandlerRegistry handlerRegistry;
 
-    private ConditionParser conditionParser;
+    private boolean conditionExplicitlySet = false;
+    private ConditionExpressionParser conditionExpressionParser;
+
+    private ApplicationContext applicationContext;
 
     /**
      * Constructs a new DefaultXmlBeanValidationConfigurationLoader with the default validation rule
@@ -123,7 +129,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * @param handlerRegistry The validation rule element handler registry that will be used by this loader.
      */
     public DefaultXmlBeanValidationConfigurationLoader(ValidationRuleElementHandlerRegistry handlerRegistry) {
-        this(handlerRegistry,  new ValangConditionParser());
+        this(handlerRegistry,  new ValangConditionExpressionParser());
     }
 
     /**
@@ -131,14 +137,14 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * element handler registry.
      *
      * @param handlerRegistry The validation rule element handler registry that will be used by this loader.
-     * @param conditionParser The condition parser this loader should use to parse the cascade validation conditions.
+     * @param conditionExpressionParser The condition parser this loader should use to parse the cascade validation conditions.
      */
     public DefaultXmlBeanValidationConfigurationLoader(
         ValidationRuleElementHandlerRegistry handlerRegistry,
-        ConditionParser conditionParser) {
+        ConditionExpressionParser conditionExpressionParser) {
 
         this.handlerRegistry = handlerRegistry;
-        this.conditionParser = conditionParser;
+        this.conditionExpressionParser = conditionExpressionParser;
     }
 
     /**
@@ -168,6 +174,14 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         return configurations;
     }
 
+    /**
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        initContext(handlerRegistry);
+        super.afterPropertiesSet();
+        findConditionExpressionParserInApplicationContext();
+    }
 
     //=============================================== Setter/Getter ====================================================
 
@@ -191,24 +205,30 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
     }
 
     /**
-     * Sets the {@link org.springmodules.validation.util.condition.parser.ConditionParser} to be used.
-     *
-     * @param conditionParser The condition parser to be used.
+     * @see ConditionExpressionBased#setConditionExpressionParser(org.springmodules.validation.util.cel.ConditionExpressionParser)
      */
-    public void setConditionParser(ConditionParser conditionParser) {
-        this.conditionParser = conditionParser;
+    public void setConditionExpressionParser(ConditionExpressionParser conditionExpressionParser) {
+        this.conditionExplicitlySet = true;
+        this.conditionExpressionParser = conditionExpressionParser;
     }
 
     /**
-     * Returns the used {@link org.springmodules.validation.util.condition.parser.ConditionParser}.
-     *
-     * @return The used condition parser.
+     * @see ApplicationContextAware#setApplicationContext(org.springframework.context.ApplicationContext)
      */
-    public ConditionParser getConditionParser() {
-        return conditionParser;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     //=============================================== Helper Methods ===================================================
+
+    protected void initContext(Object object) throws Exception {
+        if (object instanceof ApplicationContextAware) {
+            ((ApplicationContextAware)object).setApplicationContext(applicationContext);
+        }
+        if (object instanceof InitializingBean) {
+            ((InitializingBean)object).afterPropertiesSet();
+        }
+    }
 
     /**
      * Creates and builds a bean validation configuration based for the given class, based on the given &lt;class&gt;
@@ -296,7 +316,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             CascadeValidation cascadeValidation = new CascadeValidation(propertyName);
             if (propertyDefinition.hasAttribute(CASCADE_CONDITION_ATTR)) {
                 String conditionExpression = propertyDefinition.getAttribute(CASCADE_CONDITION_ATTR);
-                cascadeValidation.setApplicabilityCondition(conditionParser.parse(conditionExpression));
+                cascadeValidation.setApplicabilityCondition(conditionExpressionParser.parse(conditionExpression));
             }
             configuration.addCascadeValidation(cascadeValidation);
         }
@@ -322,9 +342,6 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         return new PropertyValidationRule(propertyName, rule);
     }
 
-
-    //=============================================== Helper Methods ===================================================
-
     protected Validator constructValidator(String className) {
         try {
             Class clazz = ClassUtils.forName(className);
@@ -341,5 +358,20 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             throw new XmlConfigurationException("Could not instantiate validator '" + className +
                 "'. Make sure it has a default constructor.");
         }
+    }
+
+    protected void findConditionExpressionParserInApplicationContext() {
+        if (applicationContext == null || conditionExplicitlySet) {
+            return;
+        }
+        String[] names = applicationContext.getBeanNamesForType(ConditionExpressionParser.class);
+        if (names.length == 0) {
+            return;
+        }
+        if (names.length > 1) {
+            logger.warn("Multiple condition expression parsers are defined in the application context. " +
+                "Only the first encountered one will be used");
+        }
+        conditionExpressionParser = (ConditionExpressionParser)applicationContext.getBean(names[0]);
     }
 }

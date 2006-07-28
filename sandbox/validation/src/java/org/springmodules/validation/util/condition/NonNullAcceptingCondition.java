@@ -19,7 +19,7 @@ package org.springmodules.validation.util.condition;
 import org.springframework.util.Assert;
 
 /**
- * A base class for all conditions that cannot checkCalendar <code>null</code> values.
+ * A base class for all conditions that cannot check <code>null</code> values.
  *
  * @author Uri Boness
  */
@@ -32,7 +32,7 @@ public abstract class NonNullAcceptingCondition extends AbstractCondition {
      * @throws IllegalArgumentException when the checked object is <code>null</code>.
      */
     protected void beforeObjectChecked(Object object) {
-        Assert.notNull(object, getClass().getName() + " cannot checkCalendar 'null' values");
+        Assert.notNull(object, getClass().getName() + " cannot check 'null' values");
     }
 
 }

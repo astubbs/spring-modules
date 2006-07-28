@@ -7,33 +7,21 @@
         <property name="configurationLoader" ref="configurationLoader"/>
     </bean>
 
-	<bean id="configurationLoader" class="org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader">
+    <bean id="configurationLoader" class="org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader">
         <property name="resource" value="classpath:org/springmodules/validation/bean/validation.xml"/>
-        <property name="elementHandlerRegistry">
-            <bean class="org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry">
-                <property name="extraPropertyHandlers">
-                    <list>
-                        <bean class="org.springmodules.validation.bean.conf.xml.handler.ValangPropertyValidationElementHandler">
-                            <property name="customFunctions">
-                                <map>
-                                    <entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
-                                </map>
-                            </property>
-                        </bean>
-                    </list>
-                </property>
-                <property name="extraClassHandlers">
-                    <list>
-                        <bean class="org.springmodules.validation.bean.conf.xml.handler.ValangClassValidationElementHandler">
-                            <property name="customFunctions">
-                                <map>
-                                    <entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
-                                </map>
-                            </property>
-                        </bean>
-                    </list>
-                </property>
-            </bean>
+        <!--<property name="conditionExpressionParser" ref="conditionExpressionParser"/>-->
+        <!--<property name="elementHandlerRegistry">-->
+            <!--<bean class="org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry">-->
+                <!--<property name="conditionExpressionParser" ref="conditionExpressionParser"/>-->
+            <!--</bean>-->
+        <!--</property>-->
+    </bean>
+
+    <bean id="conditionExpressionParser" class="org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser">
+        <property name="customFunctions">
+            <map>
+                <entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
+            </map>
         </property>
     </bean>
 

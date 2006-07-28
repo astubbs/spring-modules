@@ -32,7 +32,7 @@ public class ValangConditionParser extends SimpleValangBased implements Conditio
         try {
             return new CommonsPredicateCondition(createValangParser(text).parseExpression());
         } catch (ParseException pe) {
-            throw new ConditionParseException("Could not parse Valang expression '" + text + "'", pe);
+            throw new ConditionParseException("Could not parse Expression expression '" + text + "'", pe);
         }
     }
 

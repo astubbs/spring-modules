@@ -53,7 +53,7 @@ public abstract class AbstractCondition implements Condition {
     }
 
     /**
-     * See {@link Condition#and(Condition)}
+     * See {@link Condition#or(Condition)}
      */
     public Condition or(Condition condition) {
         return Conditions.or(this, condition);
