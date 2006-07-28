@@ -19,7 +19,7 @@ package org.springmodules.validation.bean.conf.namespace;
 import java.beans.PropertyDescriptor;
 
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.xml.PropertyValidationElementHandler;
+import org.springmodules.validation.bean.conf.loader.xml.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.util.condition.AbstractCondition;

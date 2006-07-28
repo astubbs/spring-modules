@@ -6,7 +6,7 @@ import org.springframework.validation.BindException;
 import org.springmodules.validation.bean.BeanValidator;
 
 /**
- * Tests for {@link org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader}.
+ * Tests for {@link org.springmodules.validation.bean.conf.loader.xml.DefaultXmlBeanValidationConfigurationLoader}.
  *
  * @author Uri Boness
  */

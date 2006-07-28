@@ -41,7 +41,7 @@ public class SimpleValangBased extends BasicContextAware implements ValangBased 
      * @see ValangBased#setCustomFunctions(java.util.Map)
      */
     public void setCustomFunctions(Map functionByName) {
-        customFunctions = functionByName;
+        customFunctions = (functionByName != null) ? functionByName : new HashMap();
     }
 
     /**
@@ -55,7 +55,7 @@ public class SimpleValangBased extends BasicContextAware implements ValangBased 
      * @see ValangBased#setDateParsers(java.util.Map)
      */
     public void setDateParsers(Map parserByRegexp) {
-        dateParsers = parserByRegexp;
+        dateParsers = (parserByRegexp != null) ? parserByRegexp : new HashMap();
     }
 
     public Map getCustomFunctions() {
