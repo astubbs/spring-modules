@@ -10,7 +10,7 @@ import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
-import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
+import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
@@ -136,7 +136,7 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
 
     /**
      * Extracts the validation rule applicability condition from the given annotation. Expects a {@link #APPLY_IF_ATTR}
-     * to be present - the value of this attribute is parsed using the {@link org.springmodules.validation.util.condition.parser.ConditionParser} associated with this
+     * to be present - the value of this attribute is parsed using the {@link org.springmodules.validation.util.cel.ConditionExpressionParser} associated with this
      * handler. If the attribute is an empty string or <code>null</code> it is treated as if the validation rule is
      * always applicable (that is, the applicability condition is {@link org.springmodules.validation.util.condition.common.AlwaysTrueCondition}).
      *

@@ -10,7 +10,7 @@ import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
-import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
+import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
@@ -31,8 +31,8 @@ import org.w3c.dom.Element;
  * </ul>
  *
  * Note: The apply-if attribute is being parsed by the
- * {@link org.springmodules.validation.util.condition.parser.ConditionParser} that is associated with this handler. It
- * uses {@link org.springmodules.validation.util.condition.parser.valang.ValangConditionParser} by default.
+ * {@link org.springmodules.validation.util.cel.ConditionExpressionParser} that is associated with this handler. It
+ * uses {@link org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser} by default.
  *
  * @author Uri Boness
  */
@@ -170,7 +170,7 @@ public abstract class AbstractClassValidationElementHandler
     /**
      * Extracts the validation rule applicability condition from the given element. Expects an "apply-if" attribute to
      * indicate the condition expression. If no such attribute exisits, an {@link org.springmodules.validation.util.condition.common.AlwaysTrueCondition} is returned. The
-     * configured {@link org.springmodules.validation.util.condition.parser.ConditionParser} is used to parse the found expression to a condition.
+     * configured {@link org.springmodules.validation.util.cel.ConditionExpressionParser} is used to parse the found expression to a condition.
      *
      * @param element The element that represents the validation rule.
      * @return The validation rule applicability condition.

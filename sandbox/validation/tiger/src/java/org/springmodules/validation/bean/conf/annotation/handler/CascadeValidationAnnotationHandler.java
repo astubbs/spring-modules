@@ -22,33 +22,39 @@ import java.lang.annotation.Annotation;
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.annotation.PropertyValidationAnnotationHandler;
-import org.springmodules.validation.util.condition.parser.ConditionParser;
-import org.springmodules.validation.util.condition.parser.ConditionParserAware;
-import org.springmodules.validation.util.condition.parser.valang.ValangConditionParser;
+import org.springmodules.validation.util.cel.ConditionExpressionBased;
+import org.springmodules.validation.util.cel.ConditionExpressionParser;
+import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 
 /**
  * A {@link PropertyValidationAnnotationHandler} that handles {@link CascadeValidation} annotations.
  *
  * @author Uri Boness
  */
-public class CascadeValidationAnnotationHandler implements PropertyValidationAnnotationHandler, ConditionParserAware {
+public class CascadeValidationAnnotationHandler implements PropertyValidationAnnotationHandler, ConditionExpressionBased {
 
-    private ConditionParser conditionParser;
+    private ConditionExpressionParser conditionExpressionParser;
 
     /**
      * Constructs a new CascadeValidationAnnotationHandler.
      */
     public CascadeValidationAnnotationHandler() {
-        this(new ValangConditionParser());
+        this(new ValangConditionExpressionParser());
     }
 
     /**
-     * Constructs a new CascadeValidationAnnotationHandler witha a given condition parser.
-     *
-     * @param conditionParser The condition parser to be used when parsing the applicability boolean expression.
+     * Constructs a new CascadeValidationAnnotationHandler with a given condition expression parser to be used
+     * when evaluating the applicability condition expression.
      */
-    public CascadeValidationAnnotationHandler(ConditionParser conditionParser) {
-        this.conditionParser = conditionParser;
+    public CascadeValidationAnnotationHandler(ConditionExpressionParser conditionExpressionParser) {
+        setConditionExpressionParser(conditionExpressionParser);
+    }
+
+    /**
+     * @see ConditionExpressionBased#setConditionExpressionParser(org.springmodules.validation.util.cel.ConditionExpressionParser)
+     */
+    public void setConditionExpressionParser(ConditionExpressionParser conditionExpressionParser) {
+        this.conditionExpressionParser = conditionExpressionParser;
     }
 
     /**
@@ -70,27 +76,9 @@ public class CascadeValidationAnnotationHandler implements PropertyValidationAnn
         org.springmodules.validation.bean.conf.CascadeValidation cascadeValidation =
             new org.springmodules.validation.bean.conf.CascadeValidation(descriptor.getName());
         if (StringUtils.hasText(cascadeValidationAnnotation.value())) {
-            cascadeValidation.setApplicabilityCondition(conditionParser.parse(cascadeValidationAnnotation.value()));
+            cascadeValidation.setApplicabilityCondition(conditionExpressionParser.parse(cascadeValidationAnnotation.value()));
         }
         configuration.addCascadeValidation(cascadeValidation);
-    }
-
-    /**
-     * Sets the {@link org.springmodules.validation.util.condition.parser.ConditionParser} to be used.
-     *
-     * @param conditionParser The condition parser to be used.
-     */
-    public void setConditionParser(ConditionParser conditionParser) {
-        this.conditionParser = conditionParser;
-    }
-
-    /**
-     * Returns the used {@link org.springmodules.validation.util.condition.parser.ConditionParser}.
-     *
-     * @return The used condition parser.
-     */
-    public ConditionParser getConditionParser() {
-        return conditionParser;
     }
 
 }

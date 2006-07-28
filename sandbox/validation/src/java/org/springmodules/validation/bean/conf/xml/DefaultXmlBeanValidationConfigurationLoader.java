@@ -37,7 +37,7 @@ import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
-import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
+import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

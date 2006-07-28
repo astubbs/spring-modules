@@ -26,17 +26,13 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader;
-import org.springmodules.validation.bean.conf.xml.ClassValidationElementHandler;
 import org.springmodules.validation.bean.conf.xml.DefaultValidationRuleElementHandlerRegistry;
 import org.springmodules.validation.bean.conf.xml.DefaultXmlBeanValidationConfigurationLoader;
-import org.springmodules.validation.bean.conf.xml.PropertyValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ExpressionClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ExpressionPropertyValidationElementHandler;
 import org.springmodules.validation.bean.converter.DefaultErrorCodeConverter;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
+import org.springmodules.validation.util.cel.valang.ValangCondition;
+import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Conditions;
-import org.springmodules.validation.util.condition.parser.valang.ValangCondition;
-import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
 import org.springmodules.validation.valang.functions.UpperCaseFunction;
 
 /**

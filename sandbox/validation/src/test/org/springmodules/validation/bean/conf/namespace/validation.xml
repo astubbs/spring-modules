@@ -5,7 +5,7 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                         http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator.xsd">
 
-    <spring:bean id="conditionExpressionParser" class="org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser">
+    <spring:bean id="conditionExpressionParser" class="org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser">
         <spring:property name="customFunctions">
             <map xmlns="http://www.springframework.org/schema/beans">
                 <spring:entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>

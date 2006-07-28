@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springmodules.validation.bean.conf.annotation.handler.CascadeValidation;
+import org.springmodules.validation.bean.conf.annotation.handler.Expression;
 import org.springmodules.validation.bean.conf.annotation.handler.ExpressionScope;
 import org.springmodules.validation.bean.conf.annotation.handler.InThePast;
 import org.springmodules.validation.bean.conf.annotation.handler.Length;
@@ -27,7 +28,6 @@ import org.springmodules.validation.bean.conf.annotation.handler.Min;
 import org.springmodules.validation.bean.conf.annotation.handler.NotBlank;
 import org.springmodules.validation.bean.conf.annotation.handler.NotEmpty;
 import org.springmodules.validation.bean.conf.annotation.handler.NotNull;
-import org.springmodules.validation.bean.conf.annotation.handler.Expression;
 import org.springmodules.validation.bean.conf.annotation.handler.Validator;
 
 /**

@@ -21,10 +21,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.validation.bean.conf.xml.handler.DateInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.DateInPastRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.EmailRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionPropertyValidationElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.LengthRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.NotBlankRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.NotEmptyRuleElementHandler;
@@ -32,21 +36,17 @@ import org.springmodules.validation.bean.conf.xml.handler.NotNullRuleElementHand
 import org.springmodules.validation.bean.conf.xml.handler.RangeRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.RegExpRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.SizeRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ExpressionClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ExpressionPropertyValidationElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.jodatime.InstantInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.jodatime.InstantInPastRuleElementHandler;
 import org.springmodules.validation.util.BasicContextAware;
 import org.springmodules.validation.util.LibraryUtils;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
-import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
+import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
 import org.w3c.dom.Element;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A default implementation of {@link ValidationRuleElementHandlerRegistry}. The order in which the the handlers are

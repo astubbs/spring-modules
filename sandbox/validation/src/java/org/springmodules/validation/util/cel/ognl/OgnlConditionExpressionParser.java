@@ -14,27 +14,25 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util.cel.parser;
+package org.springmodules.validation.util.cel.ognl;
 
-import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.cel.CelParseException;
+import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.adapter.CommonsPredicateCondition;
-import org.springmodules.validation.valang.parser.ParseException;
-import org.springmodules.validation.valang.parser.SimpleValangBased;
 
 /**
- * A {@link ConditionExpressionParser} implementation that knows how to parse valang boolean expressions.
+ * A {@link ConditionExpressionParser} implementation that knows how to parse boolean OGNL expressions and return
+ * the appropriate condition.
  *
  * @author Uri Boness
  */
-public class ValangConditionExpressionParser extends SimpleValangBased implements ConditionExpressionParser {
+public class OgnlConditionExpressionParser implements ConditionExpressionParser {
 
     public Condition parse(String expression) throws CelParseException {
         try {
-            return new CommonsPredicateCondition(createValangParser(expression).parseExpression());
-        } catch (ParseException pe) {
-            throw new CelParseException("Could not parse Expression expression '" + expression + "'", pe);
+            return new OgnlCondition(expression);
+        } catch (IllegalArgumentException iae) {
+            throw new CelParseException("Could not parse OGNL expression '" + expression + "'", iae);
         }
     }
 

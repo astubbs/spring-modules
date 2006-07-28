@@ -28,10 +28,9 @@ import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
-import org.springmodules.validation.util.cel.parser.ValangConditionExpressionParser;
+import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
-import org.springmodules.validation.util.condition.parser.ConditionParser;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
@@ -160,7 +159,7 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
 
     /**
      * Extracts the validation rule applicability condition from the given annotation. Expects a {@link #APPLY_IF_ATTR}
-     * to be present - the value of this attribute is parsed using the {@link ConditionParser} associated with this
+     * to be present - the value of this attribute is parsed using the {@link ConditionExpressionParser} associated with this
      * handler. If the attribute is an empty string or <code>null</code> it is treated as if the validation rule is
      * always applicable (that is, the applicability condition is {@link AlwaysTrueCondition}).
      *

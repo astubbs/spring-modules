@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util.condition.adapter;
+package org.springmodules.validation.util.cel.ognl;
 
 import junit.framework.TestCase;
-import org.springmodules.validation.util.condition.parser.ognl.OgnlCondition;
 
 /**
- * Tests for {@link org.springmodules.validation.util.condition.parser.ognl.OgnlCondition}.
+ * Tests for {@link org.springmodules.validation.util.cel.ognl.OgnlCondition}.
  *
  * @author Uri Boness
  */

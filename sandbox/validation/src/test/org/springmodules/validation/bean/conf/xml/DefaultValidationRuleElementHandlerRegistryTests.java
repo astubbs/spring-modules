@@ -27,6 +27,8 @@ import org.springframework.beans.BeanUtils;
 import org.springmodules.validation.bean.conf.xml.handler.DateInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.DateInPastRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.EmailRuleElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.xml.handler.ExpressionPropertyValidationElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.LengthRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.NotBlankRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.NotEmptyRuleElementHandler;
@@ -34,8 +36,6 @@ import org.springmodules.validation.bean.conf.xml.handler.NotNullRuleElementHand
 import org.springmodules.validation.bean.conf.xml.handler.RangeRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.RegExpRuleElementHandler;
 import org.springmodules.validation.bean.conf.xml.handler.SizeRuleElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ExpressionClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.xml.handler.ExpressionPropertyValidationElementHandler;
 import org.w3c.dom.Element;
 
 /**
