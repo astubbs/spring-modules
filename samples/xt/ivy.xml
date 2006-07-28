@@ -20,12 +20,12 @@
   
     <!-- global (compile, test, runtime) dependencies -->
     
-    <dependency org="springframework" name="springframework" rev="1.2.7">
+    <dependency org="springframework" name="springframework" rev="1.2.8">
       <artifact name="spring" type="jar"/>
     </dependency>
 
     <dependency org="sun" name="javax.servlet" rev="2.4">
-		  <artifact name="servlet-api" type="jar"/> 		
+      <artifact name="servlet-api" type="jar"/> 		
     </dependency>
 
     <dependency org="jstl" name="jstl" rev="1.1.2" />
