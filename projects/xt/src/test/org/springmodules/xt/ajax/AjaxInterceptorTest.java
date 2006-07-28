@@ -28,6 +28,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springmodules.xt.test.ajax.DummyHandler;
+import org.springmodules.xt.test.ajax.DummySubmitHandler;
 
 /**
  *
@@ -61,12 +62,14 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         }
         catch(Exception ex) {}
         
-        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "test");
+        httpResponse = new MockHttpServletResponse();
+        
+        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "action");
         
         ajaxInterceptor.preHandle(httpRequest, httpResponse, controller);
         
         String response1 = httpResponse.getContentAsString();
-        String response2 = new DummyHandler().test(new AjaxActionEventImpl("test", httpRequest)).getResponse();
+        String response2 = new DummyHandler().action(new AjaxActionEventImpl("action", httpRequest)).getResponse();
         
         assertEquals(response1, response2);
     }
@@ -80,12 +83,12 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         springContext.refresh();
         servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
         
-        MockHttpServletRequest request = new MockHttpServletRequest(servletContext, "POST", "/ajax/test.action");
+        MockHttpServletRequest httpRequest = new MockHttpServletRequest(servletContext, "POST", "/ajax/submit.action");
         MockHttpSession session = new MockHttpSession(servletContext);
-        request.setSession(session);
-        request.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
+        httpRequest.setSession(session);
+        httpRequest.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
         
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         
         ModelAndView mv = new ModelAndView("ajax-redirect:/ajax/success.page");
         SimpleFormController controller = new SimpleFormController();
@@ -93,18 +96,34 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         
         AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptor");
         
-        request.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_SUBMIT_REQUEST);
-        request.setParameter(ajaxInterceptor.getEventParameter(), "test");
+        httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_SUBMIT_REQUEST);
+        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "fail");
         
         try {
-            ajaxInterceptor.postHandle(request, response, controller, mv);
+            ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
             fail();
         }
         catch(Exception ex) {}
         
-        request.setParameter(ajaxInterceptor.getEventParameter(), "validate");
+        httpResponse = new MockHttpServletResponse();
         
-        ajaxInterceptor.postHandle(request, response, controller, mv);
+        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "validate");
+        
+        ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
+        
+        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\" parseInBrowser=\"true\"></taconite-redirect> </taconite-root>", 
+                httpResponse.getContentAsString());
+        
+        httpResponse = new MockHttpServletResponse();
+        
+        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "submit");
+        
+        ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
+        
+        String response1 = httpResponse.getContentAsString();
+        String response2 = new DummySubmitHandler().submit(new AjaxSubmitEventImpl("submit", httpRequest)).getResponse();
+        
+        assertEquals(response1, response2);
     }
     
     protected String[] getConfigLocations() {
