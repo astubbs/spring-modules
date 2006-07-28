@@ -103,13 +103,6 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:element name="ognl">
-        <xs:complexType>
-            <xs:attributeGroup ref="vld:common-rule-attributes"/>
-            <xs:attribute name="expression" use="required"/>
-        </xs:complexType>
-    </xs:element>
-
     <xs:element name="in-future">
         <xs:complexType>
             <xs:attributeGroup ref="vld:common-rule-attributes"/>
