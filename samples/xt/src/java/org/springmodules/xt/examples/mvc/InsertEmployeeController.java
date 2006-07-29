@@ -50,8 +50,6 @@ public class InsertEmployeeController extends EnhancedSimpleFormController {
             office.addEmployee(employee);
             store.addEmployee(employee);
             store.addOffice(office);
-            
-            return new ModelAndView(this.getSuccessView());
         }
         catch(BusinessException ex) {
             for (Error error : ex.getErrors()) {
@@ -64,6 +62,8 @@ public class InsertEmployeeController extends EnhancedSimpleFormController {
             }
             return this.showForm(request, response, errors);
         }
+        
+        return new ModelAndView(this.getSuccessView(), errors.getModel());
     }
     
     public void setStore(MemoryRepository store) {

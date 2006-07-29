@@ -4,9 +4,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.validation.BindException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.mvc.form.EmployeesListForm;
 import org.springmodules.xt.utils.mvc.controller.EnhancedSimpleFormController;
 import org.springmodules.xt.examples.domain.MemoryRepository;
+import org.springmodules.xt.examples.domain.Office;
 
 /**
  * Form controller for listing employees.
@@ -30,6 +34,14 @@ public class ListEmployeesController extends EnhancedSimpleFormController {
         return result;
     }
 
+    protected ModelAndView onSubmit(Object command, BindException errors) throws Exception {
+        EmployeesListForm form = (EmployeesListForm) command;
+        Office office = form.getOffice();
+        Collection<IEmployee> employees = store.getEmployeesByOffice(office);
+        
+        return new ModelAndView(this.getFormView(), errors.getModel()).addObject("employees", employees);
+    }
+    
     public void setStore(MemoryRepository store) {
         this.store = store;
     }

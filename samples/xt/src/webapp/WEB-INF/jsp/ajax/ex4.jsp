@@ -17,37 +17,40 @@
         </p>
         <form method="POST" action="">
             <table>
-                <tr>
-                    <td>Choose an office:</td>
-                    <td>
-                        <spring:bind path="command.office">
-                            <select id="offices" name="${status.expression}">
-                                <option>Select one ...</option>
-                                <c:forEach items="${offices}" var="office">
-                                    <spring:transform value="${office}" var="officeString"/>
-                                    <option value="${officeString}">${office.name}</option>
-                                </c:forEach>
-                            </select>
-                        </spring:bind>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="button" value="List" onclick="javascript:doAjaxAction('listEmployees', this);"></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <table border="1">
-                            <thead>
-                                <tr>
-                                    <th>Firstname</th>
-                                    <th>Surname</th>
-                                    <th>Matriculation Code</th>
-                                </tr>
-                            </thead>
-                            <tbody id="employees">
-                            </tbody>
-                    </td>
-                </tr>
+            <tr>
+                <td>Choose an office:</td>
+                <td>
+                    <spring:bind path="command.office">
+                        <select id="offices" name="${status.expression}">
+                            <option>Select one ...</option>
+                            <c:forEach items="${offices}" var="office">
+                                <spring:transform value="${office}" var="officeString"/>
+                                <option value="${officeString}">${office.name}</option>
+                            </c:forEach>
+                        </select>
+                    </spring:bind>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="button" value="List" onclick="javascript:doAjaxSubmit('listEmployees', this);"></td>
+            </tr>
+            <tr>
+                <td id="message"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <table border="1">
+                    <thead>
+                        <tr>
+                            <th>Firstname</th>
+                            <th>Surname</th>
+                            <th>Matriculation Code</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employees">
+                    </tbody>
+                </td>
+            </tr>
             </table>
         </form>
     </body>

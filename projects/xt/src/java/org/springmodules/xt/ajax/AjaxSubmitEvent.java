@@ -16,12 +16,23 @@
 
 package org.springmodules.xt.ajax;
 
+import java.util.Map;
 import org.springframework.validation.Errors;
 
 /**
  * Special interface for an ajax submit event.<br>
- * It has also an {@link org.springframework.validation.Errors} object containing validation errors, if any.
- * 
+ * It also has:
+ * <ul>
+ *      <li>The {@link org.springframework.validation.Errors} object containing validation errors, if any.</li>
+ *      <li>The command object associated with the submitted form (if any).</li>
+ *      <li>A {@link java.util.Map} containing the model set on submit.</li>
+ * </ul>
+ * The {@link org.springframework.validation.Errors} and command objects and the model map are set if the ajax submit event is generated from a form 
+ * handled by a {@link org.springframework.web.servlet.mvc.BaseCommandController}: they are the same form command object, errors and model map you can
+ * use in the controller.<br>
+ * Moreover, the command object is set if and only if the {@link org.springframework.web.servlet.ModelAndView} returned by the controller contains the original model, that is,
+ * <code>errors.getModel()</code> is used for setting the {@link org.springframework.web.servlet.ModelAndView} model and adding other objects.
+ *
  * @author Sergio Bossa
  */
 public interface AjaxSubmitEvent extends AjaxEvent {
@@ -37,4 +48,28 @@ public interface AjaxSubmitEvent extends AjaxEvent {
      * @param errors An {@link org.springframework.validation.Errors} object.
      */
     public void setValidationErrors(Errors errors);
+    
+    /**
+     * Get the command object associated with the form (if any).
+     * @return The command object, or null if no command object has been found.
+     */
+    public Object getCommandObject();
+    
+    /**
+     * Set the command object associated with the form (if any).
+     * @param command The command object.
+     */
+    public void setCommandObject(Object command);
+    
+    /**
+     * Get the model map (if any).
+     * @return The model map, or null if no model has been found.
+     */
+    public Map getModel();
+    
+    /**
+     * Set the model map (if any).
+     * @param model The model map.
+     */
+    public void setModel(Map model);
 }

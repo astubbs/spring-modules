@@ -49,7 +49,7 @@ public class InsertOfficeController extends EnhancedSimpleFormController {
             return this.showForm(request, response, errors);
         }
         
-        return new ModelAndView(this.getSuccessView());
+        return new ModelAndView(this.getSuccessView(), errors.getModel());
     }
     
     public void setStore(MemoryRepository store) {

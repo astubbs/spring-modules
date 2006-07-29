@@ -169,11 +169,12 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     if (ajaxHandler.supports(event)) {
                         event.setElementName(request.getParameter(this.elementParameter));
                         if (handler instanceof BaseCommandController) {
+                            String commandName = ((BaseCommandController) handler).getCommandName();
                             RequestContext requestContext = new RequestContext(request, modelAndView.getModel());
-                            Errors errors = requestContext.getErrors(((BaseCommandController) handler).getCommandName());
-                            if (errors != null) {
-                                logger.info(new StringBuilder("Found errors for event: ").append(eventId));
-                                event.setValidationErrors(errors);
+                            event.setValidationErrors(requestContext.getErrors(commandName));
+                            if (modelAndView.getModel() != null) {
+                                event.setCommandObject(modelAndView.getModel().get(commandName));
+                                event.setModel(modelAndView.getModel());
                             }
                         }
                         ajaxResponse = ajaxHandler.handle(event);

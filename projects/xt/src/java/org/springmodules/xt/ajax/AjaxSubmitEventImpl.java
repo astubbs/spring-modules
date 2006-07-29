@@ -16,6 +16,7 @@
 
 package org.springmodules.xt.ajax;
 
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.validation.Errors;
 
@@ -27,6 +28,8 @@ import org.springframework.validation.Errors;
 public class AjaxSubmitEventImpl extends AjaxActionEventImpl implements AjaxSubmitEvent {
     
     private Errors validationErrors;
+    private Object commandObject;
+    private Map model;
     
     public AjaxSubmitEventImpl(String eventId, HttpServletRequest httpRequest) {
         super(eventId, httpRequest);
@@ -38,5 +41,21 @@ public class AjaxSubmitEventImpl extends AjaxActionEventImpl implements AjaxSubm
     
     public void setValidationErrors(Errors errors) {
         this.validationErrors = errors;
+    }
+
+    public Object getCommandObject() {
+        return this.commandObject;
+    }
+
+    public void setCommandObject(Object command) {
+        this.commandObject = command;
+    }
+
+    public Map getModel() {
+        return this.model;
+    }
+
+    public void setModel(Map model) {
+        this.model = model;
     }
 }

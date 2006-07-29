@@ -52,7 +52,7 @@ public class TaconiteValidationHandler extends AbstractAjaxHandler implements Me
     public AjaxResponse validate(AjaxSubmitEvent event) {
         TaconiteResponse response = null;
         
-        if (event.getValidationErrors() != null) {
+        if (event.getValidationErrors() != null && event.getValidationErrors().hasErrors() == true) {
             response = new TaconiteResponse();
             this.removeOldErrors(event, response);
             this.putNewErrors(event, response);
