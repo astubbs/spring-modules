@@ -22,7 +22,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.Validator;
 
 /**
- * Tests for {@link org.springmodules.validation.validator.CompoundValidator}.
+ * Tests for {@link CompoundValidator}.
  *
  * @author Uri Boness
  */

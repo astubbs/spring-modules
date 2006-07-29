@@ -12,39 +12,37 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ */ package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-package org.springmodules.validation.bean.conf.loader.annotation;
-
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
 
 /**
- * Represents a handler that knows how the handle property validation annotation based on which the given
- * configuration will be changed.
+ * Represents a handler that knows how to handle a class level validation annoation and based on which manipulate
+ * a bean validation configuration.
  *
  * @author Uri Boness
  */
-public interface PropertyValidationAnnotationHandler {
+public interface ClassValidationAnnotationHandler {
 
     /**
      * Indicates whether this handler can handle the given annotation.
      *
-     * @param annotation The annotation to handle.
+     * @param annotation The annoation to handle.
      * @return <code>true</code> if this handler can handle the given annotation, <code>false</code> otherwise.
      */
-    boolean supports(Annotation annotation, Class clazz, PropertyDescriptor descriptor);
+    boolean supports(Annotation annotation, Class clazz);
 
     /**
-     * Handles the given property level annotation and manipulates the given bean validation configuration accordingly.
+     * Handles the given class level annotation and manipulates the given bean validation configuration appropriately.
+     * This method assumes that {@link #supports(java.lang.annotation.Annotation, Class)} returns <code>true</code> for the
+     * given annotation.
      *
      * @param annotation The annotation to handle.
      * @param clazz The annotated class.
-     * @param descriptor The property descriptor of the annotated property.
      * @param configuration The bean validation configuration to manipulate.
      */
-    void handleAnnotation(Annotation annotation, Class clazz, PropertyDescriptor descriptor, MutableBeanValidationConfiguration configuration);
+    void handleAnnotation(Annotation annotation, Class clazz, MutableBeanValidationConfiguration configuration);
 
 }

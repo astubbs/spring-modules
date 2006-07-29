@@ -50,7 +50,7 @@ public class DateInFutureRuleElementHandler extends AbstractPropertyValidationEl
      * In addition to the element name and namespace check, this handler only support properties of types
      * {@link java.util.Date} and {@link java.util.Calendar}.
      *
-     * @see org.springmodules.validation.bean.conf.loader.xml.PropertyValidationElementHandler#supports(org.w3c.dom.Element, Class, java.beans.PropertyDescriptor)
+     * @see org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler#supports(org.w3c.dom.Element, Class, java.beans.PropertyDescriptor)
      */
     public boolean supports(Element element, Class clazz, PropertyDescriptor descriptor) {
         return super.supports(element, clazz, descriptor)

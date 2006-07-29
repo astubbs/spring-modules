@@ -33,19 +33,17 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.conf.CascadeValidation;
+import org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.converter.DefaultErrorCodeConverter;
 import org.springmodules.validation.bean.converter.ErrorCodeConverter;
 import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.validator.AbstractTypeSpecificValidator;
-import org.springmodules.validation.validator.RuleBasedValidator;
 
 /**
- * An {@link AbstractTypeSpecificValidator} implementation that applies all validation rules
- * on a bean of a specific type, based on an appropriate {@link BeanValidationConfiguration}. The validation
+ * An {@link org.springmodules.validation.validator.AbstractTypeSpecificValidator} implementation that applies all validation rules
+ * on a bean of a specific type, based on an appropriate {@link org.springmodules.validation.bean.conf.BeanValidationConfiguration}. The validation
  * configuration is loaded per bean type by the configured {@link BeanValidationConfigurationLoader}.
  *
  * @author Uri Boness
@@ -72,7 +70,7 @@ public class BeanValidator extends RuleBasedValidator {
     /**
      * Constructs a new BeanValidator for the given bean class using the given validation configuration loader.
      *
-     * @param configurationLoader The {@link BeanValidationConfigurationLoader} that is used to load the bean validation
+     * @param configurationLoader The {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader} that is used to load the bean validation
      *        configuration.
      */
     public BeanValidator(BeanValidationConfigurationLoader configurationLoader) {
@@ -83,16 +81,16 @@ public class BeanValidator extends RuleBasedValidator {
     /**
      * This validator supports only those classes that are supported by the validation configuration loader it uses.
      *
-     * @see RuleBasedValidator#supports(Class)
-     * @see BeanValidationConfigurationLoader#supports(Class)
+     * @see org.springmodules.validation.bean.RuleBasedValidator#supports(Class)
+     * @see org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader#supports(Class)
      */
     public boolean supports(Class clazz) {
         return configurationLoader.supports(clazz) || super.supports(clazz);
     }
 
     /**
-     * Applies all validation rules as defined in the {@link BeanValidationConfiguration} retrieved for the given
-     * bean from the configured {@link BeanValidationConfigurationLoader}.
+     * Applies all validation rules as defined in the {@link org.springmodules.validation.bean.conf.BeanValidationConfiguration} retrieved for the given
+     * bean from the configured {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader}.
      *
      * @see Validator#validate(Object, org.springframework.validation.Errors)
      */
@@ -132,7 +130,7 @@ public class BeanValidator extends RuleBasedValidator {
     /**
      * The heart of this validator. This is a recursive method that validates the given object (object) under the
      * context of the given object graph root (root). The validation rules to be applied are loaded using the
-     * configured {@link BeanValidationConfigurationLoader}. All errors are registered with the given {@link Errors}
+     * configured {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader}. All errors are registered with the given {@link Errors}
      * object under the context of the object graph root.
      *
      * @param root The root of the object graph.

@@ -26,14 +26,14 @@ import org.hibernate.validator.ValidatorClass;
 import org.springframework.beans.BeanUtils;
 import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.loader.annotation.PropertyValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
 import org.springmodules.validation.util.condition.AbstractCondition;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.Conditions;
 
 /**
- * A {@link PropertyValidationAnnotationHandler} that handles Hibernate-Annotation validation annotations.
+ * A {@link org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler} that handles Hibernate-Annotation validation annotations.
  *
  * @author Uri Boness
  */

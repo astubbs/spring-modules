@@ -17,6 +17,7 @@
 package org.springmodules.validation.bean.conf.loader.xml;
 
 import junit.framework.TestCase;
+import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.DateInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.DateInPastRuleElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.EmailRuleElementHandler;
@@ -26,6 +27,7 @@ import org.springmodules.validation.bean.conf.loader.xml.handler.LengthRuleEleme
 import org.springmodules.validation.bean.conf.loader.xml.handler.NotBlankRuleElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.NotEmptyRuleElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.NotNullRuleElementHandler;
+import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.RangeRuleElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.RegExpRuleElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.SizeRuleElementHandler;

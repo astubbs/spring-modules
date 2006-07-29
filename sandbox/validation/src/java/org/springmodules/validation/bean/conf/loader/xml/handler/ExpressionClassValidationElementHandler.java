@@ -17,6 +17,7 @@
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
 import org.springframework.util.StringUtils;
+import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
 import org.springmodules.validation.util.condition.Condition;
 import org.w3c.dom.Element;
 
@@ -62,7 +63,7 @@ public class ExpressionClassValidationElementHandler extends AbstractClassValida
     protected Condition extractCondition(Element element) {
         String expression = element.getAttribute(CONDITION_ATTR);
         if (!StringUtils.hasText(expression)) {
-            throw new XmlConditionConfigurationException("Element '" + ELEMENT_NAME + "' must have a '" + CONDITION_ATTR + "' attribute");
+            throw new XmlConfigurationException("Element '" + ELEMENT_NAME + "' must have a '" + CONDITION_ATTR + "' attribute");
         }
         return getConditionExpressionParser().parse(expression);
     }

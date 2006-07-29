@@ -21,10 +21,9 @@ import java.lang.annotation.Annotation;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.loader.annotation.PropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
-import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
+import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
@@ -144,11 +143,11 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
     }
 
     /**
-     * Extracts the {@link ErrorArgumentsResolver} for the validation rule represented by the given annotation.
+     * Extracts the {@link org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver} for the validation rule represented by the given annotation.
      * Expects a {@link #ARGS_ATTR} to be present.
      *
      * @param annotation The property validation annotation.
-     * @return The {@link ErrorArgumentsResolver} for the represented validation rule.
+     * @return The {@link org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver} for the represented validation rule.
      */
     protected ErrorArgumentsResolver extractArgumentsResolver(Annotation annotation) {
         try {

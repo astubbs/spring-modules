@@ -24,6 +24,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.beans.BeanUtils;
+import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.w3c.dom.Element;
 
 /**

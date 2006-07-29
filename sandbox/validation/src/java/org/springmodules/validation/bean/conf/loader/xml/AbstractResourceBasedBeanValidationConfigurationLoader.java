@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springmodules.validation.bean.conf.loader;
+package org.springmodules.validation.bean.conf.loader.xml;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +21,7 @@ import java.util.Map;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader;
 
 /**
  * A base class for all bean validation configuration loaders that are resource based (that is, load configuration from
@@ -56,7 +56,7 @@ public abstract class AbstractResourceBasedBeanValidationConfigurationLoader
     /**
      * Loads the bean validation configuration for the given class from the configured resources.
      *
-     * @see BeanValidationConfigurationLoader#loadConfiguration(Class)
+     * @see org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader#loadConfiguration(Class)
      */
     public final BeanValidationConfiguration loadConfiguration(Class clazz) {
         return (BeanValidationConfiguration)configurationByClass.get(clazz);

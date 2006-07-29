@@ -17,6 +17,7 @@
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
 import org.springframework.util.StringUtils;
+import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.Conditions;
 import org.w3c.dom.Element;
@@ -63,7 +64,7 @@ public class RegExpRuleElementHandler extends AbstractPropertyValidationElementH
     protected Condition extractCondition(Element element) {
         String expression = element.getAttribute(EXPRESSION_ATTR);
         if (!StringUtils.hasText(expression)) {
-            throw new XmlConditionConfigurationException("Element '" + ELEMENT_NAME + "' must have an 'expression' attribute");
+            throw new XmlConfigurationException("Element '" + ELEMENT_NAME + "' must have an 'expression' attribute");
         }
         return Conditions.regexp(expression);
     }

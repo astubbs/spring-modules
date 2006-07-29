@@ -19,6 +19,9 @@ package org.springmodules.validation.bean.conf.loader.annotation;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
+import org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
+
 /**
  * A registry for all validation annotation handlers.
  *

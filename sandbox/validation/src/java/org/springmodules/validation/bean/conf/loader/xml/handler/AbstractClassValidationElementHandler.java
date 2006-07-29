@@ -3,11 +3,11 @@ package org.springmodules.validation.bean.conf.loader.xml.handler;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.DefaultValidationErrorCodes;
-import org.springmodules.validation.bean.conf.loader.xml.ClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
-import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.ValidationRule;
+import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
@@ -21,7 +21,7 @@ import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionPars
 import org.w3c.dom.Element;
 
 /**
- * A base class for common {@link org.springmodules.validation.bean.conf.loader.xml.PropertyValidationElementHandler}
+ * A base class for common {@link org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler}
  * implementations that represent validation rules. This base handler idetifies the supported elements by their
  * tag names (qualified and local). In addition, it assumes the following common attributes:
  *
@@ -96,7 +96,7 @@ public abstract class AbstractClassValidationElementHandler
      * Determines whether the given element is supported by this handler. The check is done by comparing the element
      * tag name and namespace with the ones that are configured with this handler.
      *
-     * @see org.springmodules.validation.bean.conf.loader.xml.PropertyValidationElementHandler#supports(org.w3c.dom.Element, Class, java.beans.PropertyDescriptor)
+     * @see org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler#supports(org.w3c.dom.Element, Class, java.beans.PropertyDescriptor)
      */
     public boolean supports(Element element, Class clazz) {
         String localName = element.getLocalName();
@@ -129,8 +129,6 @@ public abstract class AbstractClassValidationElementHandler
     /**
      * By default the element handlers handle and produce rules that can be associated with both global and non-global
      * contexts.
-     *
-     * @see org.springmodules.validation.bean.conf.loader.xml.ValidationRuleElementHandler#isAlwaysGlobal()
      */
     public boolean isConditionGloballyScoped() {
         return false;
@@ -236,8 +234,8 @@ public abstract class AbstractClassValidationElementHandler
      *
      * @param element The element that represents the validation rule.
      * @return The validation rule condition.
-     * @throws XmlConditionConfigurationException When the given the format (structure) of the given element is mal-formed.
+     * @throws XmlConfigurationException When the given the format (structure) of the given element is mal-formed.
      */
-    protected abstract Condition extractCondition(Element element) throws XmlConditionConfigurationException;
+    protected abstract Condition extractCondition(Element element) throws XmlConfigurationException;
 
 }

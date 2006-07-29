@@ -10,6 +10,8 @@ import org.easymock.MockControl;
 import org.springframework.beans.BeanUtils;
 import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
 import org.w3c.dom.Document;

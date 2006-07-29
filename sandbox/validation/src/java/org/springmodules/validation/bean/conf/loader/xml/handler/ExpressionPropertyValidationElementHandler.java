@@ -16,6 +16,7 @@
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
 import org.springframework.util.StringUtils;
+import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
 import org.springmodules.validation.util.condition.Condition;
 import org.w3c.dom.Element;
 
@@ -64,7 +65,7 @@ public class ExpressionPropertyValidationElementHandler extends AbstractProperty
     protected Condition extractCondition(Element element) {
         String expression = element.getAttribute(CONDITION_ATTR);
         if (!StringUtils.hasText(expression)) {
-            throw new XmlConditionConfigurationException("Element '" + ELEMENT_NAME + "' must have a '" + CONDITION_ATTR + "' attribute");
+            throw new XmlConfigurationException("Element '" + ELEMENT_NAME + "' must have a '" + CONDITION_ATTR + "' attribute");
         }
         return getConditionExpressionParser().parse(expression);
     }
@@ -80,7 +81,7 @@ public class ExpressionPropertyValidationElementHandler extends AbstractProperty
         if (PROPERTY_SCOPE_VALUE.equals(value)) {
             return false;
         }
-        throw new XmlConditionConfigurationException("Unknown value '" + value + "' for attribute '" + SCOPE_ATTR + "'");
+        throw new XmlConfigurationException("Unknown value '" + value + "' for attribute '" + SCOPE_ATTR + "'");
     }
 
 }

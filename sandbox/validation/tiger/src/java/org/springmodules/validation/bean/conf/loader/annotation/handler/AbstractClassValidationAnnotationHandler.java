@@ -4,9 +4,8 @@ import java.lang.annotation.Annotation;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.loader.annotation.ClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.rule.DefaultValidationRule;
-import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
+import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
@@ -19,7 +18,7 @@ import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
 
 /**
- * A parent for all common {@link org.springmodules.validation.bean.conf.loader.annotation.PropertyValidationAnnotationHandler} implementations that represent validation rules.
+ * A parent for all common {@link org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler} implementations that represent validation rules.
  * The following attributes are searched for in the handled annotations:
  * <ul>
  *  <li>{@link #ERROR_CODE_ATTR} - A string indicating the error code for the validation rule</li>
@@ -56,7 +55,7 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
     }
 
     /**
-     * @see org.springmodules.validation.bean.conf.loader.annotation.ClassValidationAnnotationHandler#supports(java.lang.annotation.Annotation, Class)
+     * @see org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler#supports(java.lang.annotation.Annotation, Class)
      */
     public boolean supports(Annotation annotation, Class clazz) {
         for (Class supportedType : supportedAnnotationTypes) {
@@ -71,7 +70,7 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
      * Creates a validation rule out of the given class validation annoation and adds it to the given
      * bean validation configuration.
      *
-     * @see org.springmodules.validation.bean.conf.loader.annotation.ClassValidationAnnotationHandler#handleAnnotation(java.lang.annotation.Annotation, Class, org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration)
+     * @see org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler#handleAnnotation(java.lang.annotation.Annotation, Class, org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration)
      */
     public void handleAnnotation(
         Annotation annotation,
@@ -121,11 +120,11 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
     }
 
     /**
-     * Extracts the {@link org.springmodules.validation.bean.rule.ErrorArgumentsResolver} for the validation rule represented by the given annotation.
+     * Extracts the {@link org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver} for the validation rule represented by the given annotation.
      * Expects a {@link #ARGS_ATTR} to be present.
      *
      * @param annotation The property validation annotation.
-     * @return The {@link org.springmodules.validation.bean.rule.ErrorArgumentsResolver} for the represented validation rule.
+     * @return The {@link org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver} for the represented validation rule.
      */
     protected ErrorArgumentsResolver extractArgumentsResolver(Annotation annotation) {
         try {

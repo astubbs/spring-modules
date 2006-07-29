@@ -33,6 +33,8 @@ import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
@@ -86,7 +88,7 @@ import org.w3c.dom.NodeList;
  * </ul>
  *
  * The validation rule element (sub-elements of &lt;global&gt; and &lt;property&gt;) are resolved using
- * {@link ValidationRuleElementHandler}'s. This class holds a registry for such handlers, where new handlers can
+ * validation rule element handlers. This class holds a registry for such handlers, where new handlers can
  * be registered as well. The default registry is {@link DefaultValidationRuleElementHandlerRegistry}.
  *
  * @author Uri Boness

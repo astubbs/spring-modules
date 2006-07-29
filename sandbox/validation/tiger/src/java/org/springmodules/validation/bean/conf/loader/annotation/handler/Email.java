@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
 
 /**
  * An annotation to represent an email validation rule. When this annotation is put on a property <code>setter</code>

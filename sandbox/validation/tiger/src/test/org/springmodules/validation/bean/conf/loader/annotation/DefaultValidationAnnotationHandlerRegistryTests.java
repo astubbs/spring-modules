@@ -7,6 +7,8 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
 
 /**
  * Tests for {@link org.springmodules.validation.bean.conf.loader.annotation.DefaultValidationAnnotationHandlerRegistry}.

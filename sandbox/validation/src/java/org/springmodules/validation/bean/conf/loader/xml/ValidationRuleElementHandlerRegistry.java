@@ -18,10 +18,12 @@ package org.springmodules.validation.bean.conf.loader.xml;
 
 import java.beans.PropertyDescriptor;
 
+import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
+import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.w3c.dom.Element;
 
 /**
- * A registry of {@link PropertyValidationElementHandler}'s and {@link ClassValidationElementHandler}'s.
+ * A registry of {@link org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler}'s and {@link ClassValidationElementHandler}'s.
  *
  * @author Uri Boness
  */

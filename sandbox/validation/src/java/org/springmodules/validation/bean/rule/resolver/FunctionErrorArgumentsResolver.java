@@ -16,7 +16,6 @@
 
 package org.springmodules.validation.bean.rule.resolver;
 
-import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.util.fel.Function;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 
@@ -40,7 +39,7 @@ public class FunctionErrorArgumentsResolver implements ErrorArgumentsResolver {
     /**
      * Returns the error arguments that are resolved by the configured valang expressions.
      *
-     * @see org.springmodules.validation.bean.rule.ErrorArgumentsResolver#resolveArguments(Object)
+     * @see org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver#resolveArguments(Object)
      */
     public Object[] resolveArguments(Object obj) {
         Object[] args = new Object[functions.length];

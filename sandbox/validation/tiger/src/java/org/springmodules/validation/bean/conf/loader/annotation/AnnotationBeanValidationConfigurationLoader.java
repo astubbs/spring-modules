@@ -30,12 +30,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
 
 /**
- * A {@link BeanValidationConfigurationLoader} implementation that creates validation configuration based on
+ * A {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader} implementation that creates validation configuration based on
  * validation rule extracted from class annoatations.
  *
  * @author Uri Boness

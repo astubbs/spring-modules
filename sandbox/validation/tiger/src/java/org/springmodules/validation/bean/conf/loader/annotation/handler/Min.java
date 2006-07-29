@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
 
 /**
  * Represents a validation rule that checks whether the a numeric instance is greater then (or equals) a specific lower

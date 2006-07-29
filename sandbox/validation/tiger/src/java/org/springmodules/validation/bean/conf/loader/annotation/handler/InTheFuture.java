@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
 
 /**
  * Represents a date validation rule that validates that a date is in the future. Can be applied to any instance

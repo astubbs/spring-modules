@@ -20,10 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
 
 /**
- * A simple implementation of {@link org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader} that enables registration of bean validation
+ * A simple implementation of {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader} that enables registration of bean validation
  * configuration with classes.
  *
  * This class can be used on its own or can be extended and used as configuration cache.

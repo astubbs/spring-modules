@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 import org.springmodules.validation.bean.conf.ResourceConfigurationLoadingException;
-import org.springmodules.validation.bean.conf.loader.AbstractResourceBasedBeanValidationConfigurationLoader;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -44,7 +43,7 @@ public abstract class AbstractXmlBeanValidationConfigurationLoader extends Abstr
     /**
      * todo: document
      *
-     * @see org.springmodules.validation.bean.conf.loader.AbstractResourceBasedBeanValidationConfigurationLoader#loadConfigurations(org.springframework.core.io.Resource)
+     * @see org.springmodules.validation.bean.conf.loader.xml.AbstractResourceBasedBeanValidationConfigurationLoader#loadConfigurations(org.springframework.core.io.Resource)
      */
     protected final Map loadConfigurations(Resource resource) {
         try {

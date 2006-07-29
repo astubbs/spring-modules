@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.bean.conf.loader.xml;
+package org.springmodules.validation.bean.conf.loader.xml.handler;
 
 import java.beans.PropertyDescriptor;
 

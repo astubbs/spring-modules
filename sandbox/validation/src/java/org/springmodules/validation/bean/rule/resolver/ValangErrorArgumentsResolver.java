@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
 import org.springmodules.validation.valang.functions.Function;
 import org.springmodules.validation.valang.functions.TargetBeanFunction;
 import org.springmodules.validation.valang.parser.ParseException;
@@ -76,7 +75,7 @@ public class ValangErrorArgumentsResolver implements ErrorArgumentsResolver {
     /**
      * Returns the error arguments that are resolved by the configured valang expressions.
      *
-     * @see ErrorArgumentsResolver#resolveArguments(Object)
+     * @see org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver#resolveArguments(Object)
      */
     public Object[] resolveArguments(Object obj) {
         Object[] args = new Object[functions.length];

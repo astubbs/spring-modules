@@ -1,4 +1,4 @@
-package org.springmodules.validation.bean.conf;
+package org.springmodules.validation.bean.conf.loader;
 
 /**
  * @author Uri Boness

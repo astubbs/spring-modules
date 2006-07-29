@@ -92,7 +92,7 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
     }
 
     /**
-     * @see BeanValidationConfiguration#getPropertyRules(String).
+     * @see org.springmodules.validation.bean.conf.BeanValidationConfiguration#getPropertyRules(String).
      */
     public ValidationRule[] getPropertyRules(String propertyName) {
         List rules = (List)rulesByProperty.get(propertyName);

@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.bean.conf;
+package org.springmodules.validation.bean.conf.loader;
+
+import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 
 /**
  * A strategy to load {@link org.springmodules.validation.bean.conf.BeanValidationConfiguration}'s for bean clases.

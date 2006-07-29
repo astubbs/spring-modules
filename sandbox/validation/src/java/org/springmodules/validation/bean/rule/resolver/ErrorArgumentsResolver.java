@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.bean.rule;
+package org.springmodules.validation.bean.rule.resolver;
 
 /**
  * Resolves error arguments based on the validated object.

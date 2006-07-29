@@ -16,12 +16,13 @@
 
 package org.springmodules.validation.bean.rule;
 
+import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.resolver.StaticErrorArgumentsResolver;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
 
 /**
- * The default implementation of the {@link ValidationRule} interface. This implementation uses an applicability condition
+ * The default implementation of the {@link org.springmodules.validation.bean.rule.ValidationRule} interface. This implementation uses an applicability condition
  * to determine whether this rule is applicable on a given object (see {@link ValidationRule#isApplicable(Object)}).
  *
  * @author Uri Boness

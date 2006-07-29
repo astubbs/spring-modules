@@ -19,7 +19,7 @@ package org.springmodules.validation.bean.conf;
 import org.springframework.core.io.Resource;
 
 /**
- * Thrown when a {@link org.springmodules.validation.bean.conf.loader.AbstractResourceBasedBeanValidationConfigurationLoader} implementation fails to load
+ * Thrown when a {@link org.springmodules.validation.bean.conf.loader.xml.AbstractResourceBasedBeanValidationConfigurationLoader} implementation fails to load
  * configurations from a resource.
  *
  * @author Uri Boness

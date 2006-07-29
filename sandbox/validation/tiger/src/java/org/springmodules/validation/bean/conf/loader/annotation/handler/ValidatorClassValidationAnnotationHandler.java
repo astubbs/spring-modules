@@ -19,7 +19,6 @@ package org.springmodules.validation.bean.conf.loader.annotation.handler;
 import java.lang.annotation.Annotation;
 
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.loader.annotation.ClassValidationAnnotationHandler;
 
 /**
  * A {@link ClassValidationAnnotationHandler} that handles {@link Validator} annotations.

@@ -16,10 +16,8 @@
 
 package org.springmodules.validation.bean.rule.resolver;
 
-import org.springmodules.validation.bean.rule.ErrorArgumentsResolver;
-
 /**
- * An {@link ErrorArgumentsResolver} that is statically pre-configured with the error arguments, that is, the
+ * An {@link org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver} that is statically pre-configured with the error arguments, that is, the
  * arguments are not dependent on the validated object.
  *
  * @author Uri Boness

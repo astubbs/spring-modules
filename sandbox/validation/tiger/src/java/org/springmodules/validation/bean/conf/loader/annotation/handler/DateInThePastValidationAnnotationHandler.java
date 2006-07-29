@@ -44,7 +44,7 @@ public class DateInThePastValidationAnnotationHandler extends AbstractPropertyVa
      * In addition to the normal {@link org.springmodules.validation.bean.conf.loader.annotation.handler.AbstractPropertyValidationAnnotationHandler#supports(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)}
      * call, it also checks that the property is either a {@link java.util.Date} or {@link java.util.Calendar}.
      *
-     * @see org.springmodules.validation.bean.conf.loader.annotation.PropertyValidationAnnotationHandler#supports(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
+     * @see org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler#supports(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
      */
     public boolean supports(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
         return

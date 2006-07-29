@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.validator;
+package org.springmodules.validation.bean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.util.condition.Condition;
 
 /**
- * A {@link org.springframework.validation.Validator} implementation which uses {@link ValidationRule}'s to define its
+ * A {@link org.springframework.validation.Validator} implementation which uses {@link org.springmodules.validation.bean.rule.ValidationRule}'s to define its
  * validation execution. There are two types of validation rules this validator accepts:
  * <ul>
  *  <li>

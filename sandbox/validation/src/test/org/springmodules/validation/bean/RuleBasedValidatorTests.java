@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.validator;
+package org.springmodules.validation.bean;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
@@ -22,7 +22,7 @@ import org.springframework.validation.Errors;
 import org.springmodules.validation.util.condition.Condition;
 
 /**
- * Tests for {@link org.springmodules.validation.validator.RuleBasedValidator}.
+ * Tests for {@link org.springmodules.validation.bean.RuleBasedValidator}.
  *
  * @author Uri Boness
  */

@@ -36,7 +36,7 @@ public class KeepAsIsErrorCodeConverter implements ErrorCodeConverter {
     /**
      * Returns the passed in error code.
      *
-     * @see ErrorCodeConverter#convertPropertyErrorCode(String, Class, String)
+     * @see org.springmodules.validation.bean.converter.ErrorCodeConverter#convertPropertyErrorCode(String, Class, String)
      */
     public String convertPropertyErrorCode(String errorCode, Class clazz, String propertyName) {
         return errorCode;

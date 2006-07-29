@@ -16,19 +16,9 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation;
 
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.CascadeValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.DateInTheFutureValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.DateInThePastValidationAnnotationHandler;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.Email;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.EmailValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ExpressionClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ExpressionPropertyValidationAnnotationHandler;
@@ -46,239 +36,79 @@ import org.springmodules.validation.bean.conf.loader.annotation.handler.Validato
 import org.springmodules.validation.bean.conf.loader.annotation.handler.hibernate.HibernatePropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.jodatime.InstantInTheFutureValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.jodatime.InstantInThePastValidationAnnotationHandler;
-import org.springmodules.validation.util.BasicContextAware;
 import org.springmodules.validation.util.LibraryUtils;
-import org.springmodules.validation.util.cel.ConditionExpressionBased;
-import org.springmodules.validation.util.cel.ConditionExpressionParser;
-import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
-import org.springmodules.validation.util.fel.FunctionExpressionBased;
-import org.springmodules.validation.util.fel.FunctionExpressionParser;
-import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
 
 /**
- * The default validation annotation handler registry. This registry come with the following pre-registered handlers:
+ * The default validation annotation handler registry.
+ * <p/>
+ *
+ * Class annotation handlers:
  * <ul>
- *  <li>{@link EmailValidationAnnotationHandler} - handlers {@link Email} annotations</li>
+ *  <li>{@link ExpressionClassValidationAnnotationHandler}</li>
+ *  <li>{@link ExpressionsClassValidationAnnotationHandler}</li>
+ *  <li>{@link ValidatorClassValidationAnnotationHandler}</li>
+ *  <li>{@link ValidatorsClassValidationAnnotationHandler}</li>
+ * </ul>
+ * <p/>
+ *
+ * Property annotation handlers:
+ * <ul>
+ *  <li>{@link CascadeValidationAnnotationHandler}</li>
+ *  <li>{@link EmailValidationAnnotationHandler}</li>
+ *  <li>{@link DateInTheFutureValidationAnnotationHandler}</li>
+ *  <li>{@link DateInThePastValidationAnnotationHandler}</li>
+ *  <li>{@link LengthValidationAnnotationHandler}</li>
+ *  <li>{@link NotBlankValidationAnnotationHandler}</li>
+ *  <li>{@link NotEmptyValidationAnnotationHandler}</li>
+ *  <li>{@link NotNullValidationAnnotationHandler}</li>
+ *  <li>{@link RangeValidationAnnotationHandler}</li>
+ *  <li>{@link RegExpValidationAnnotationHandler}</li>
+ *  <li>{@link SizeValidationAnnotationHandler}</li>
+ *  <li>{@link ExpressionPropertyValidationAnnotationHandler}</li>
+ *  <li>{@link ExpressionsPropertyValidationAnnotationHandler}</li>
+ *  <li>{@link InstantInTheFutureValidationAnnotationHandler} (only if joda-time is in the classpath)</li>
+ *  <li>{@link InstantInThePastValidationAnnotationHandler} (only if joda-time is in the classpath)</li>
+ *  <li>{@link HibernatePropertyValidationAnnotationHandler} (only if hibernate-annotations is in the classpath)</li>
  * </ul>
  *
  * @author Uri Boness
  */
-public class DefaultValidationAnnotationHandlerRegistry extends BasicContextAware
-    implements ValidationAnnotationHandlerRegistry, InitializingBean, ConditionExpressionBased, FunctionExpressionBased {
-
-    private final static Log logger = LogFactory.getLog(DefaultValidationAnnotationHandlerRegistry.class);
-
-    private List<ClassValidationAnnotationHandler> classHandlers;
-    private List<PropertyValidationAnnotationHandler> propertyHandlers;
-
-    private boolean conditionExpressionParserSet = false;
-    private ConditionExpressionParser conditionExpressionParser;
-
-    private boolean functionExpressionParserSet = false;
-    private FunctionExpressionParser functionExpressionParser;
+public class DefaultValidationAnnotationHandlerRegistry extends SimpleValidationAnnotationHandlerRegistry {
 
     /**
      * Constructs a new DefaultValidationAnnotationHandlerRegistry.
      */
     public DefaultValidationAnnotationHandlerRegistry() {
-        classHandlers = new ArrayList<ClassValidationAnnotationHandler>();
-        propertyHandlers = new ArrayList<PropertyValidationAnnotationHandler>();
-        conditionExpressionParser = new ValangConditionExpressionParser();
-        functionExpressionParser = new ValangFunctionExpressionParser();
-        registerDefaultHandlers();
-    }
-
-    /**
-     * @see ValidationAnnotationHandlerRegistry#findClassHanlder(java.lang.annotation.Annotation, Class)
-     */
-    public ClassValidationAnnotationHandler findClassHanlder(Annotation annotation, Class clazz) {
-        for (ClassValidationAnnotationHandler handler : classHandlers) {
-            if (handler.supports(annotation, clazz)) {
-                return handler;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @see ValidationAnnotationHandlerRegistry#findPropertyHanlder(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
-     */
-    public PropertyValidationAnnotationHandler findPropertyHanlder(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
-        for (PropertyValidationAnnotationHandler handler : propertyHandlers) {
-            if (handler.supports(annotation, clazz, descriptor)) {
-                return handler;
-            }
-        }
-        return null;
-    }
-
-    //=============================================== Setter/Getter ====================================================
-
-    /**
-     * Registers the given class validation annotation handler with this registry. The newly added handler will have
-     * precedence over the already registered handlers, that is, for every annotation, this handler will be checked
-     * for support before the already registered handlers.
-     *
-     * @param handler The class validation annoation handler to be registered.
-     */
-    public void registerClassHandler(ClassValidationAnnotationHandler handler) {
-        classHandlers.add(0, handler);
-    }
-
-    /**
-     * Registers the given class validation annoation handlers to the registry. These handlers will have precedence
-     * over the already registered handlers, that is, for every annotation, these handlers will be check for suppport
-     * before the already registered ones. The order of the given handler list is important for it determines the
-     * precedence of the handlers within this list.
-     *
-     * @param handlers The extra class validation annotation handlers to register with this registry.
-     */
-    public void setExtraClassHandlers(List<ClassValidationAnnotationHandler> handlers) {
-        Collections.reverse(handlers);
-        for (ClassValidationAnnotationHandler handler : handlers) {
-            registerClassHandler(handler);
-        }
-    }
-
-    /**
-     * Registers the given property validation annoation handler with this registry. The newly added handler will have
-     * precedence over the already registered handlers, that is, for every annotation, this handler will be checked
-     * for support before the already registered handlers.
-     *
-     * @param handler The property validation annoation handler to be registered.
-     */
-    public void registerPropertyHandler(PropertyValidationAnnotationHandler handler) {
-        propertyHandlers.add(0, handler);
-    }
-
-    /**
-     * Registers the given property validation annoation handlers to the registry. These handlers will have precedence
-     * over the already registered handlers, that is, for every annotation, these handlers will be check for suppport
-     * before the already registered ones. The order of the given handler list is important for it determines the
-     * precedence of the handlers within this list.
-     *
-     * @param handlers The extra property validation annotation handlers to register with this registry.
-     */
-    public void setExtraPropertyHandlers(List<PropertyValidationAnnotationHandler> handlers) {
-        Collections.reverse(handlers);
-        for (PropertyValidationAnnotationHandler handler : handlers) {
-            registerPropertyHandler(handler);
-        }
-    }
-
-    /**
-     * @see ConditionExpressionBased#setConditionExpressionParser(org.springmodules.validation.util.cel.ConditionExpressionParser)
-     */
-    public void setConditionExpressionParser(ConditionExpressionParser conditionExpressionParser) {
-
-        this.conditionExpressionParser = conditionExpressionParser;
-    }
-
-    /**
-     * @see FunctionExpressionBased#setFunctionExpressionParser(org.springmodules.validation.util.fel.FunctionExpressionParser)
-     */
-    public void setFunctionExpressionParser(FunctionExpressionParser functionExpressionParser) {
-        this.functionExpressionParser = functionExpressionParser;
-    }
-
-    public void afterPropertiesSet() throws Exception {
-
-        findConditionExpressionParserInApplicationContext();
-        findFunctionExpressionParserInApplicationContext();
-
-        for (ClassValidationAnnotationHandler handler : classHandlers) {
-            setExpressionParsers(handler);
-            initLifecycle(handler);
-        }
-
-        for (PropertyValidationAnnotationHandler handler : propertyHandlers) {
-            setExpressionParsers(handler);
-            initLifecycle(handler);
-        }
-    }
-
-    //=============================================== Helper Methods ===================================================
-
-    /**
-     * Registers the default (pre-registered) validation annotation handlers with this registry.
-     */
-    protected void registerDefaultHandlers() {
 
         // class annotation handlers
-        classHandlers.add(new ExpressionClassValidationAnnotationHandler());
-        classHandlers.add(new ExpressionsClassValidationAnnotationHandler());
-        classHandlers.add(new ValidatorClassValidationAnnotationHandler());
-        classHandlers.add(new ValidatorsClassValidationAnnotationHandler());
+        registerClassHandler(new ExpressionClassValidationAnnotationHandler());
+        registerClassHandler(new ExpressionsClassValidationAnnotationHandler());
+        registerClassHandler(new ValidatorClassValidationAnnotationHandler());
+        registerClassHandler(new ValidatorsClassValidationAnnotationHandler());
 
         // property annotation handlers
-        propertyHandlers.add(new CascadeValidationAnnotationHandler());
-        propertyHandlers.add(new EmailValidationAnnotationHandler());
-        propertyHandlers.add(new DateInTheFutureValidationAnnotationHandler());
-        propertyHandlers.add(new DateInThePastValidationAnnotationHandler());
-        propertyHandlers.add(new LengthValidationAnnotationHandler());
-        propertyHandlers.add(new NotBlankValidationAnnotationHandler());
-        propertyHandlers.add(new NotEmptyValidationAnnotationHandler());
-        propertyHandlers.add(new NotNullValidationAnnotationHandler());
-        propertyHandlers.add(new RangeValidationAnnotationHandler());
-        propertyHandlers.add(new RegExpValidationAnnotationHandler());
-        propertyHandlers.add(new SizeValidationAnnotationHandler());
-        propertyHandlers.add(new ExpressionPropertyValidationAnnotationHandler());
-        propertyHandlers.add(new ExpressionsPropertyValidationAnnotationHandler());
+        registerPropertyHandler(new CascadeValidationAnnotationHandler());
+        registerPropertyHandler(new EmailValidationAnnotationHandler());
+        registerPropertyHandler(new DateInTheFutureValidationAnnotationHandler());
+        registerPropertyHandler(new DateInThePastValidationAnnotationHandler());
+        registerPropertyHandler(new LengthValidationAnnotationHandler());
+        registerPropertyHandler(new NotBlankValidationAnnotationHandler());
+        registerPropertyHandler(new NotEmptyValidationAnnotationHandler());
+        registerPropertyHandler(new NotNullValidationAnnotationHandler());
+        registerPropertyHandler(new RangeValidationAnnotationHandler());
+        registerPropertyHandler(new RegExpValidationAnnotationHandler());
+        registerPropertyHandler(new SizeValidationAnnotationHandler());
+        registerPropertyHandler(new ExpressionPropertyValidationAnnotationHandler());
+        registerPropertyHandler(new ExpressionsPropertyValidationAnnotationHandler());
 
         if (LibraryUtils.JODA_TIME_IN_CLASSPATH) {
-            propertyHandlers.add(new InstantInTheFutureValidationAnnotationHandler());
-            propertyHandlers.add(new InstantInThePastValidationAnnotationHandler());
+            registerPropertyHandler(new InstantInTheFutureValidationAnnotationHandler());
+            registerPropertyHandler(new InstantInThePastValidationAnnotationHandler());
         }
 
         if (LibraryUtils.HIBERNATE_VALIDATOR_IN_CLASSPATH) {
-            propertyHandlers.add(new HibernatePropertyValidationAnnotationHandler());
+            registerPropertyHandler(new HibernatePropertyValidationAnnotationHandler());
         }
-    }
 
-    protected void setExpressionParsers(Object object) {
-        if (ConditionExpressionBased.class.isInstance(object) && conditionExpressionParser != null) {
-            ((ConditionExpressionBased)object).setConditionExpressionParser(conditionExpressionParser);
-        }
-        if (FunctionExpressionBased.class.isInstance(object) && functionExpressionParser != null) {
-            ((FunctionExpressionBased)object).setFunctionExpressionParser(functionExpressionParser);
-        }
     }
-
-    protected void findConditionExpressionParserInApplicationContext() {
-        if (conditionExpressionParserSet) {
-            return;
-        }
-        ConditionExpressionParser parser = (ConditionExpressionParser)findObjectInApplicationContext(ConditionExpressionParser.class);
-        if (parser == null) {
-            return;
-        }
-        conditionExpressionParser = parser;
-    }
-
-    protected void findFunctionExpressionParserInApplicationContext() {
-        if (functionExpressionParserSet) {
-            return;
-        }
-        FunctionExpressionParser parser = (FunctionExpressionParser)findObjectInApplicationContext(FunctionExpressionParser.class);
-        if (parser == null) {
-            return;
-        }
-        functionExpressionParser = parser;
-    }
-
-    protected Object findObjectInApplicationContext(Class clazz) {
-        if (applicationContext == null) {
-            return null;
-        }
-        String[] names = applicationContext.getBeanNamesForType(clazz);
-        if (names.length == 0) {
-            return null;
-        }
-        if (names.length > 1) {
-            logger.warn("Multiple bean of type '" + clazz.getName() + "' are defined in the application context." +
-                "Only the first encountered one will be used");
-        }
-        return applicationContext.getBean(names[0]);
-    }
-
 }

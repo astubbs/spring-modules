@@ -20,7 +20,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.loader.annotation.PropertyValidationAnnotationHandler;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;

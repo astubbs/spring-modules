@@ -40,5 +40,5 @@ public class KeepAsIsErrorCodeConverterTests extends TestCase {
         String code = converter.convertPropertyErrorCode("errorCode", Object.class, "name");
         assertEquals("errorCode", code);
     }
-    
+
 }

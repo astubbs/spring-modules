@@ -48,5 +48,5 @@ public class DefaultErrorCodeConverterTests extends TestCase {
         String code = converter.convertPropertyErrorCode("errorCode", Object.class, "name");
         assertEquals("java.lang.Object.name[errorCode]", code);
     }
-    
+
 }

@@ -17,6 +17,7 @@
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
 import org.springframework.util.StringUtils;
+import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.Conditions;
 import org.w3c.dom.Element;
@@ -117,7 +118,7 @@ public class LengthRuleElementHandler extends AbstractPropertyValidationElementH
             return Conditions.maxLength(max.intValue());
         }
 
-        throw new XmlConditionConfigurationException("Element '" + ELEMENT_NAME +
+        throw new XmlConfigurationException("Element '" + ELEMENT_NAME +
             "' must have either 'min' attribute, 'max' attribute, or both");
     }
 

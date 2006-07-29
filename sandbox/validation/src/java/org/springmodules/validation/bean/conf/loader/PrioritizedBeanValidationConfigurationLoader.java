@@ -17,10 +17,9 @@
 package org.springmodules.validation.bean.conf.loader;
 
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader;
 
 /**
- * A composite {@link org.springmodules.validation.bean.conf.BeanValidationConfigurationLoader} implementation that
+ * A composite {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader} implementation that
  * loads bean validation configuration using multiple sub-loaders.
  *
  * @author Uri Boness

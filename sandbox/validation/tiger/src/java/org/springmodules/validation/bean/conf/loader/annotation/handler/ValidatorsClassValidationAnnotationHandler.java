@@ -19,7 +19,6 @@ package org.springmodules.validation.bean.conf.loader.annotation.handler;
 import java.lang.annotation.Annotation;
 
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.loader.annotation.ClassValidationAnnotationHandler;
 
 /**
  * A {@link ClassValidationAnnotationHandler} that handles {@link Validators} annotations.
@@ -31,7 +30,7 @@ public class ValidatorsClassValidationAnnotationHandler implements ClassValidati
     /**
      * Returns <code>true</code> if the given annotation is of type <code>{@link Validators}</code>.
      *
-     * @see org.springmodules.validation.bean.conf.loader.annotation.ClassValidationAnnotationHandler#supports(java.lang.annotation.Annotation, Class)
+     * @see org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler#supports(java.lang.annotation.Annotation, Class)
      */
     public boolean supports(Annotation annotation, Class clazz) {
         return Validators.class.isInstance(annotation);
