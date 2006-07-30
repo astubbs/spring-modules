@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.taconite.support;
+package org.springmodules.xt.ajax.validation;
 
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ import org.springmodules.xt.ajax.component.Component;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.taconite.RemoveContentAction;
 import org.springmodules.xt.ajax.taconite.ReplaceContentAction;
-import org.springmodules.xt.ajax.taconite.AjaxResponseImpl;
+import org.springmodules.xt.ajax.AjaxResponseImpl;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;

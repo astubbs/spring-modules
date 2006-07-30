@@ -17,6 +17,7 @@
 package org.springmodules.xt.ajax.taconite;
 
 import junit.framework.*;
+import org.springmodules.xt.ajax.AjaxActionImpl;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 

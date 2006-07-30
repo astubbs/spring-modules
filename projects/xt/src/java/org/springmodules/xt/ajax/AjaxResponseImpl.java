@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.taconite;
+package org.springmodules.xt.ajax;
 
-import org.springmodules.xt.ajax.AjaxAction;
-import org.springmodules.xt.ajax.AjaxResponse;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;

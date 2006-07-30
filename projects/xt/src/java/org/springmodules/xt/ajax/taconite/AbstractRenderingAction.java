@@ -18,6 +18,7 @@ package org.springmodules.xt.ajax.taconite;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.springmodules.xt.ajax.AjaxActionImpl;
 import org.springmodules.xt.ajax.component.Component;
 
 /**

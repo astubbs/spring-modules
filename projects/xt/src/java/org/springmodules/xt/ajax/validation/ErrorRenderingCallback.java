@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.taconite.support;
+package org.springmodules.xt.ajax.validation;
 
 import java.util.Locale;
 import org.springmodules.xt.ajax.component.Component;

@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.taconite;
+package org.springmodules.xt.ajax;
 
 import junit.framework.*;
 import org.springmodules.xt.ajax.component.SimpleText;
+import org.springmodules.xt.ajax.taconite.*;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**

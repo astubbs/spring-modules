@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
 import org.springframework.web.servlet.ModelAndView;
+import org.springmodules.xt.ajax.AjaxActionImpl;
 
 /**
  * Taconite based ajax action for redirecting to a given URL.

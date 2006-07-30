@@ -5,7 +5,7 @@ import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxSubmitEvent;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.taconite.AppendContentAction;
-import org.springmodules.xt.ajax.taconite.AjaxResponseImpl;
+import org.springmodules.xt.ajax.AjaxResponseImpl;
 
 /**
  *

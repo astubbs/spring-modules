@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.taconite;
-
-import org.springmodules.xt.ajax.AjaxAction;
+package org.springmodules.xt.ajax;
 
 /**
  * Default interface to be implemented by all ajax actions based on Taconite.

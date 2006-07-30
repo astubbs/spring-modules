@@ -45,7 +45,7 @@
     
     <bean id="dummySubmitHandler" class="org.springmodules.xt.test.ajax.DummySubmitHandler"/>
     
-    <bean id="ajaxValidationHandler" class="org.springmodules.xt.ajax.taconite.support.DefaultValidationHandler"/>
+    <bean id="ajaxValidationHandler" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler"/>
     
     <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
         <property name="handlerMappings">

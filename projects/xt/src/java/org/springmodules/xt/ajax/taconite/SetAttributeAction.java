@@ -16,6 +16,8 @@
 
 package org.springmodules.xt.ajax.taconite;
 
+import org.springmodules.xt.ajax.AjaxActionImpl;
+
 /**
  * Taconite based ajax action for setting an attribute value.
  *
