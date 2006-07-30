@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.taconite;
+package org.springmodules.xt.ajax.action;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

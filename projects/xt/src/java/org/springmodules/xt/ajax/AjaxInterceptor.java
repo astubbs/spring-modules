@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
-import org.springmodules.xt.ajax.taconite.RedirectAction;
+import org.springmodules.xt.ajax.action.RedirectAction;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

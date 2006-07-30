@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.taconite;
+package org.springmodules.xt.ajax.action;
 
 import java.util.List;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
- * Taconite based action for replacing the content of a given html element.
+ * Taconite based action for replacing a given html element.
  * 
  * @author Sergio Bossa
  */
-public class ReplaceContentAction extends AbstractRenderingAction {
+public class ReplaceElementAction extends AbstractRenderingAction {
     
     /**
      * Construct the action.
-     * @param elementId The id of the html element whose content must be replaced.
-     * @param components A list of components (html elements) that will replace the content of the given element.
+     * @param elementId The id of the html element to replace.
+     * @param components A list of components (html elements) that will replace the given element.
      */
-    public ReplaceContentAction(String elementId, List<Component> components) {
+    public ReplaceElementAction(String elementId, List<Component> components) {
         super(elementId, components);
     }
     
     /**
      * Construct the action.
-     * @param elementId The id of the html element whose content must be replaced.
-     * @param components The component (html element) that will replace the content of the given element.
+     * @param elementId The id of the html element to replace.
+     * @param components The component (html element) that will replace the given element.
      */
-    public ReplaceContentAction(String elementId, Component component) {
+    public ReplaceElementAction(String elementId, Component component) {
         super(elementId, component);
     }
     
     protected String getOpeningTag() {
-        return "<taconite-replace-children contextNodeID=\"$1\" parseInBrowser=\"true\">";
+        return "<taconite-replace contextNodeID=\"$1\" parseInBrowser=\"true\">";
     }
 
     protected  String getClosingTag() {
-        return "</taconite-replace-children>";
+        return "</taconite-replace>";
     }
 }
