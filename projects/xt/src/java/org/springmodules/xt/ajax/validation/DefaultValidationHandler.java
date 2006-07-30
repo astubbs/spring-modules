@@ -36,7 +36,7 @@ import org.springframework.validation.ObjectError;
 /**
  * Ready-to-use Ajax handler for handling validation errors on submit.<br>
  * This handler manages {@link org.springmodules.xt.ajax.AjaxSubmitEvent}s with id equals to "validate", replacing the content of HTML elements 
- * named after validation error codes, with related validation error messages, in case using {@link org.springmodules.xt.ajax.taconite.support.ErrorRenderingCallback}
+ * named after validation error codes, with related validation error messages, in case using {@link ErrorRenderingCallback}
  * if configured, or rendering error messages as simple text.<br>
  * If the fired {@link org.springmodules.xt.ajax.AjaxSubmitEvent} has no validation errors, this handler returns a null response.
  *

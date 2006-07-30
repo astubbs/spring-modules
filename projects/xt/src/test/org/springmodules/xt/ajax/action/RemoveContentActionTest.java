@@ -42,9 +42,6 @@ public class RemoveContentActionTest extends XMLEnhancedTestCase {
         return suite;
     }
 
-    /**
-     * Test of execute method, of class org.springmodules.xt.ajax.taconite.RemoveContentAction.
-     */
     public void testExecute() throws Exception {
         AjaxActionImpl action = new RemoveContentAction("testId");
         

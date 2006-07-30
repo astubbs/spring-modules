@@ -255,9 +255,9 @@
                 Here is a code snippet: 
             </para>
             <para><programlisting><![CDATA[
-                public TaconiteReplaceContentAction(String elementId, List<Component> components); 
+                public ReplaceContentAction(String elementId, List<Component> components); 
         
-                public TaconiteReplaceContentAction(String elementId, Component component); 
+                public ReplaceContentAction(String elementId, Component component); 
                 ]]></programlisting>
             </para>
         </sect3>

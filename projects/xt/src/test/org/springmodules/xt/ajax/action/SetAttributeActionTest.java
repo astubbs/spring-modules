@@ -42,9 +42,6 @@ public class SetAttributeActionTest extends XMLEnhancedTestCase {
         return suite;
     }
 
-    /**
-     * Test of execute method, of class org.springmodules.xt.ajax.taconite.SetAttributeAction.
-     */
     public void testExecute() throws Exception {
         AjaxActionImpl action = new SetAttributeAction("testId", "class", "testClass");
         

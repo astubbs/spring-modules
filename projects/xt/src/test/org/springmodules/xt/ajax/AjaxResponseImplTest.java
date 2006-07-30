@@ -44,9 +44,6 @@ public class AjaxResponseImplTest extends XMLEnhancedTestCase {
         return suite;
     }
 
-    /**
-     * Test of getResponse method, of class org.springmodules.xt.ajax.taconite.AjaxResponseImpl.
-     */
     public void testGetResponse() throws Exception {
         AppendContentAction action1 = new AppendContentAction("action1", new SimpleText("Test Text"));
         ReplaceContentAction action2 = new ReplaceContentAction("action2", new SimpleText("Test Text"));

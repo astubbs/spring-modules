@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Taconite based implementation of {@link AjaxResponse}.
+ * Default Taconite based implementation of {@link AjaxResponse}.
  *
  * @author Sergio Bossa
  */
