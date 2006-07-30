@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.taconite;
+package org.springmodules.xt.ajax.action;
 
 import junit.framework.*;
 import org.springmodules.xt.ajax.AjaxActionImpl;
-import org.springmodules.xt.ajax.action.RemoveContentAction;
+import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class RemoveContentActionTest extends XMLEnhancedTestCase {
+public class ReplaceElementActionTest extends XMLEnhancedTestCase {
     
-    public RemoveContentActionTest(String testName) {
+    public ReplaceElementActionTest(String testName) {
         super(testName);
     }
 
@@ -38,21 +38,19 @@ public class RemoveContentActionTest extends XMLEnhancedTestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(RemoveContentActionTest.class);
+        TestSuite suite = new TestSuite(ReplaceElementActionTest.class);
         
         return suite;
     }
-
-    /**
-     * Test of execute method, of class org.springmodules.xt.ajax.taconite.RemoveContentAction.
-     */
+    
     public void testExecute() throws Exception {
-        AjaxActionImpl action = new RemoveContentAction("testId");
+        AjaxActionImpl action = new ReplaceElementAction("testId", new SimpleText("Test Component"));
         
         String result = action.execute();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("testId", "/taconite-replace-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component", "/taconite-replace", result);
+        assertXpathEvaluatesTo("testId", "/taconite-replace/@contextNodeID", result);
     }
 }

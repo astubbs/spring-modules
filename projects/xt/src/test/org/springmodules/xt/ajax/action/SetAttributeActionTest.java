@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.taconite;
+package org.springmodules.xt.ajax.action;
 
 import junit.framework.*;
 import org.springmodules.xt.ajax.AjaxActionImpl;
-import org.springmodules.xt.ajax.action.AppendContentAction;
-import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class AppendContentActionTest extends XMLEnhancedTestCase {
+public class SetAttributeActionTest extends XMLEnhancedTestCase {
     
-    public AppendContentActionTest(String testName) {
+    public SetAttributeActionTest(String testName) {
         super(testName);
     }
 
@@ -39,19 +37,22 @@ public class AppendContentActionTest extends XMLEnhancedTestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(AppendContentActionTest.class);
+        TestSuite suite = new TestSuite(SetAttributeActionTest.class);
         
         return suite;
     }
-    
+
+    /**
+     * Test of execute method, of class org.springmodules.xt.ajax.taconite.SetAttributeAction.
+     */
     public void testExecute() throws Exception {
-        AjaxActionImpl action = new AppendContentAction("testId", new SimpleText("Test Component"));
+        AjaxActionImpl action = new SetAttributeAction("testId", "class", "testClass");
         
         String result = action.execute();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component", "/taconite-append-as-children", result);
-        assertXpathEvaluatesTo("testId", "/taconite-append-as-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId", "/taconite-set-attributes/@contextNodeID", result);
+        assertXpathEvaluatesTo("testClass", "/taconite-set-attributes/@class", result);
     }
 }
