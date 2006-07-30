@@ -174,9 +174,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                             event.setValidationErrors(requestContext.getErrors(commandName));
                             if (modelAndView.getModel() != null) {
                                 event.setCommandObject(modelAndView.getModel().get(commandName));
-                                event.setModel(modelAndView.getModel());
                             }
                         }
+                        event.setModel(modelAndView.getModel());
+                        // Handling event: 
                         ajaxResponse = ajaxHandler.handle(event);
                         supported = true;
                         break;

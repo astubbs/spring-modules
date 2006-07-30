@@ -27,9 +27,9 @@ import org.springframework.validation.Errors;
  *      <li>The command object associated with the submitted form (if any).</li>
  *      <li>A {@link java.util.Map} containing the model set on submit.</li>
  * </ul>
- * The {@link org.springframework.validation.Errors} and command objects and the model map are set if the ajax submit event is generated from a form 
- * handled by a {@link org.springframework.web.servlet.mvc.BaseCommandController}: they are the same form command object, errors and model map you can
- * use in the controller.<br>
+ * The {@link org.springframework.validation.Errors} and command objects are set if the ajax submit event is generated from a form 
+ * handled by a {@link org.springframework.web.servlet.mvc.BaseCommandController}, while the model map is always set but can be null if
+ * the controller returned no model: they are the same form command object, errors and model map you use in the controller.<br>
  * Moreover, the command object is set if and only if the {@link org.springframework.web.servlet.ModelAndView} returned by the controller contains the original model, that is,
  * <code>errors.getModel()</code> is used for setting the {@link org.springframework.web.servlet.ModelAndView} model and adding other objects.
  *
