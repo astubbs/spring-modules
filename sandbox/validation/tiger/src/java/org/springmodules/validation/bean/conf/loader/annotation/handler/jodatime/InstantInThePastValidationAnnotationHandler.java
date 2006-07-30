@@ -22,8 +22,8 @@ import java.lang.annotation.Annotation;
 import org.joda.time.Instant;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.AbstractPropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.InThePast;
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.date.jodatime.IsInThePastInstantCondition;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.InstantInThePastValidationRule;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} implementation that can handle {@link InThePast} annotations
@@ -51,13 +51,8 @@ public class InstantInThePastValidationAnnotationHandler extends AbstractPropert
             Instant.class.isAssignableFrom(descriptor.getPropertyType());
     }
 
-    /**
-     * Creates and returns a new {@link IsInThePastInstantCondition}.
-     *
-     * @see AbstractPropertyValidationAnnotationHandler#extractCondition(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
-        return new IsInThePastInstantCondition();
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
+        return new InstantInThePastValidationRule();
     }
 
 }

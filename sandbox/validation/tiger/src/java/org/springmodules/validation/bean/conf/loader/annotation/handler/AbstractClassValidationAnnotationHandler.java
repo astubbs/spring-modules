@@ -4,15 +4,13 @@ import java.lang.annotation.Annotation;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.rule.DefaultValidationRule;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
 import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
-import org.springmodules.validation.util.condition.common.IsNullCondition;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
@@ -77,15 +75,28 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
         Class clazz,
         MutableBeanValidationConfiguration configuration) {
 
-        Condition condition = extractCondition(annotation, clazz);
-        if (!isNullSupported()) {
-            condition = new IsNullCondition().or(condition);
-        }
+        AbstractValidationRule rule = createValidationRule(annotation, clazz);
+
         String errorCode = extractErrorCode(annotation);
+        if (errorCode != null) {
+            rule.setErrorCode(errorCode);
+        }
+
         String message = extractDefaultMessage(annotation);
+        if (message != null) {
+            rule.setDefaultErrorMessage(message);
+        }
+
         ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(annotation);
+        if (argumentsResolver != null) {
+            rule.setErrorArgumentsResolver(argumentsResolver);
+        }
+
         Condition applicabilityCondition = extractApplicabilityContidion(annotation);
-        DefaultValidationRule rule = new DefaultValidationRule(condition, applicabilityCondition, errorCode, message, argumentsResolver);
+        if (applicabilityCondition != null) {
+            rule.setApplicabilityCondition(applicabilityCondition);
+        }
+
         configuration.addGlobalRule(rule);
     }
 
@@ -98,9 +109,10 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
      */
     protected String extractErrorCode(Annotation annotation) {
         try {
-            return (String) annotation.getClass().getMethod(AbstractClassValidationAnnotationHandler.ERROR_CODE_ATTR).invoke(annotation);
+            return (String) annotation.getClass().getMethod(ERROR_CODE_ATTR).invoke(annotation);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + AbstractClassValidationAnnotationHandler.ERROR_CODE_ATTR + "' in annotation '" + annotation.getClass().getName());
+            throw new IllegalArgumentException("Expecting attribute '" + ERROR_CODE_ATTR +
+                "' in annotation '" + annotation.getClass().getName());
         }
     }
 
@@ -113,9 +125,10 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
      */
     protected String extractDefaultMessage(Annotation annotation) {
         try {
-            return (String) annotation.getClass().getMethod(AbstractClassValidationAnnotationHandler.MESSAGE_ATTR).invoke(annotation);
+            return (String) annotation.getClass().getMethod(MESSAGE_ATTR).invoke(annotation);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + AbstractClassValidationAnnotationHandler.MESSAGE_ATTR + "' in annotation '" + annotation.getClass().getName());
+            throw new IllegalArgumentException("Expecting attribute '" + MESSAGE_ATTR + "' in annotation '" +
+                annotation.getClass().getName());
         }
     }
 
@@ -128,12 +141,16 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
      */
     protected ErrorArgumentsResolver extractArgumentsResolver(Annotation annotation) {
         try {
-            String argsAsString = (String) annotation.getClass().getMethod(AbstractClassValidationAnnotationHandler.ARGS_ATTR).invoke(annotation);
+            String argsAsString = (String) annotation.getClass().getMethod(ARGS_ATTR).invoke(annotation);
             argsAsString = (argsAsString == null) ? "" : argsAsString;
             String[] argsExpressions = StringUtils.commaDelimitedListToStringArray(argsAsString);
+            if (argsExpressions.length == 0) {
+                return null;
+            }
             return new FunctionErrorArgumentsResolver(argsExpressions, functionExpressionParser);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + AbstractClassValidationAnnotationHandler.ARGS_ATTR + "' in annotation '" + annotation.getClass().getName());
+            throw new IllegalArgumentException("Expecting attribute '" + ARGS_ATTR + "' in annotation '" +
+                annotation.getClass().getName());
         }
     }
 
@@ -148,31 +165,23 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
      */
     protected Condition extractApplicabilityContidion(Annotation annotation) {
         try {
-            String expression = (String)annotation.getClass().getMethod(AbstractClassValidationAnnotationHandler.APPLY_IF_ATTR).invoke(annotation);
-            return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : new AlwaysTrueCondition();
+            String expression = (String)annotation.getClass().getMethod(APPLY_IF_ATTR).invoke(annotation);
+            return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : null;
         } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + AbstractClassValidationAnnotationHandler.APPLY_IF_ATTR + "' in annotation '" + annotation.getClass().getName());
+            throw new IllegalArgumentException("Expecting attribute '" + APPLY_IF_ATTR + "' in annotation '" +
+                annotation.getClass().getName());
         }
     }
 
     /**
-     * Returns whether the validation rule represented by the rule definition supports null values.
+     * Creates and returns the validation rule that is represented and initialized by and with the given annotation.
      *
-     * @return <code>true</code> if the validation rule represented by the rule definition supports null values,
-     *         <code>false</code> otherwise.
+     * @param annotation The annotation from which the validation rule should be created.
+     * @param clazz The class of the valiated object.
+     * @return The created validation rule.
      */
-    protected boolean isNullSupported() {
-        return false;
-    }
+    protected abstract AbstractValidationRule createValidationRule(Annotation annotation, Class clazz);
 
-    /**
-     * Extracts the condition of the validation rule represented by the given annotation.
-     *
-     * @param annotation The annotation from which the condition should be extracted.
-     * @param clazz The annotated class.
-     * @return The extracted condition.
-     */
-    protected abstract Condition extractCondition(Annotation annotation, Class clazz);
 
     //=============================================== Setter/Getter ====================================================
 
@@ -183,6 +192,11 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
         this.conditionExpressionParser = conditionExpressionParser;
     }
 
+    /**
+     * Returns the condition expression parser associated with this handler.
+     *
+     * @return The condition expression parser associated with this handler.
+     */
     protected ConditionExpressionParser getConditionExpressionParser() {
         return conditionExpressionParser;
     }
@@ -194,7 +208,13 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
         this.functionExpressionParser = functionExpressionParser;
     }
 
+    /**
+     * Returns the function expression parser associated with this handler.
+     *
+     * @return The function expression parser associated with this handler.
+     */
     protected FunctionExpressionParser getFunctionExpressionParser() {
         return functionExpressionParser;
     }
+
 }

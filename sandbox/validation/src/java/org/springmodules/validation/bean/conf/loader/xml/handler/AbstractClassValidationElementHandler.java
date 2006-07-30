@@ -3,18 +3,13 @@ package org.springmodules.validation.bean.conf.loader.xml.handler;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
-import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
-import org.springmodules.validation.bean.rule.DefaultValidationRule;
-import org.springmodules.validation.bean.rule.ValidationRule;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
 import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
-import org.springmodules.validation.util.condition.common.IsNullCondition;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
@@ -39,7 +34,7 @@ import org.w3c.dom.Element;
  * @author Uri Boness
  */
 public abstract class AbstractClassValidationElementHandler
-    implements ClassValidationElementHandler, ConditionExpressionBased, FunctionExpressionBased, DefaultValidationErrorCodes {
+    implements ClassValidationElementHandler, ConditionExpressionBased, FunctionExpressionBased {
 
     private static final String ERROR_CODE_ATTR = "code";
     private static final String MESSAGE_ATTR = "message";
@@ -114,15 +109,29 @@ public abstract class AbstractClassValidationElementHandler
      * @see org.springmodules.validation.bean.conf.loader.xml.handler.AbstractClassValidationElementHandler#handle(org.w3c.dom.Element, org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration)
      */
     public void handle(Element element, MutableBeanValidationConfiguration configuration) {
+
+        AbstractValidationRule rule = createValidationRule(element);
+
         String errorCode = extractErrorCode(element);
-        String message = extractMessage(element);
-        ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(element);
-        Condition condition = extractCondition(element);
-        if (!isNullSupported()) {
-            condition = new IsNullCondition().or(condition);
+        if (errorCode != null) {
+            rule.setErrorCode(errorCode);
         }
+
+        String message = extractMessage(element);
+        if (message != null) {
+            rule.setDefaultErrorMessage(message);
+        }
+
+        ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(element);
+        if (argumentsResolver != null) {
+            rule.setErrorArgumentsResolver(argumentsResolver);
+        }
+
         Condition applicabilityCondition = extractApplicabilityCondition(element);
-        ValidationRule rule = new DefaultValidationRule(condition, applicabilityCondition, errorCode, message, argumentsResolver);
+        if (applicabilityCondition != null) {
+            rule.setApplicabilityCondition(applicabilityCondition);
+        }
+
         configuration.addGlobalRule(rule);
     }
 
@@ -136,30 +145,31 @@ public abstract class AbstractClassValidationElementHandler
 
     /**
      * Extracts the validation rule error code from the given element. Expects a "code" attribute to indicate the
-     * error code. If no such attribute exisits, returns {@link #getDefaultErrorCode(org.w3c.dom.Element)} instead.
+     * error code. If no such attribute exisits, returns <code>null</code>.
      *
      * @param element The element that represents the validation rule.
      * @return The validation rule error code.
      */
     protected String extractErrorCode(Element element) {
         String code = element.getAttribute(AbstractClassValidationElementHandler.ERROR_CODE_ATTR);
-        return (StringUtils.hasText(code)) ? code : getDefaultErrorCode(element);
+        return (StringUtils.hasLength(code)) ? code : null;
     }
 
     /**
      * Extracts the validation rule error message from the given element. Expects a "message" attribute to indicate the
-     * error message. If no such attribute exisits, returns {@link #extractErrorCode(org.w3c.dom.Element)} instead.
+     * error message. If no such attribute exisits, returns <code>null</code> instead.
      *
      * @param element The element that represents the validation rule.
      * @return The validation rule error message.
      */
     protected String extractMessage(Element element) {
-        return element.getAttribute(AbstractClassValidationElementHandler.MESSAGE_ATTR);
+        String message = element.getAttribute(AbstractClassValidationElementHandler.MESSAGE_ATTR);
+        return (StringUtils.hasLength(message)) ? message : null;
     }
 
     /**
      * Extracts the validation rule error arguments from the given element. Expects an "args" attribute to indicate the
-     * error arguments. If no such attribute exisits, returns an empty array.
+     * error arguments. If no such attribute exisits, returns <code>null</code>.
      *
      * @param element The element that represents the validation rule.
      * @return The validation rule error arguments.
@@ -167,20 +177,22 @@ public abstract class AbstractClassValidationElementHandler
     protected ErrorArgumentsResolver extractArgumentsResolver(Element element) {
         String argsString = element.getAttribute(AbstractClassValidationElementHandler.ARGS_ATTR);
         String[] expressions = (argsString == null) ? new String[0] : StringUtils.tokenizeToStringArray(argsString, ", ");
+        if (expressions.length == 0) {
+            return null;
+        }
         return new FunctionErrorArgumentsResolver(expressions, functionExpressionParser);
     }
 
     /**
      * Extracts the validation rule applicability condition from the given element. Expects an "apply-if" attribute to
-     * indicate the condition expression. If no such attribute exisits, an {@link org.springmodules.validation.util.condition.common.AlwaysTrueCondition} is returned. The
-     * configured {@link org.springmodules.validation.util.cel.ConditionExpressionParser} is used to parse the found expression to a condition.
+     * indicate the condition expression. If no such attribute exisits, returns <code>null</code>.
      *
      * @param element The element that represents the validation rule.
      * @return The validation rule applicability condition.
      */
     protected Condition extractApplicabilityCondition(Element element) {
         String expression = element.getAttribute(AbstractClassValidationElementHandler.APPLY_IF_ATTR);
-        return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : new AlwaysTrueCondition();
+        return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : null;
     }
 
     /**
@@ -190,6 +202,11 @@ public abstract class AbstractClassValidationElementHandler
         this.conditionExpressionParser = conditionExpressionParser;
     }
 
+    /**
+     * Returns the condition expression parser associated with this handler.
+     *
+     * @return The condition expression parser associated with this handler.
+     */
     protected ConditionExpressionParser getConditionExpressionParser() {
         return conditionExpressionParser;
     }
@@ -222,20 +239,11 @@ public abstract class AbstractClassValidationElementHandler
     }
 
     /**
-     * Returns the default error code for the validation rule.
-     *
-     * @param element The element that respresents the validation rule.
-     * @return The default error code for the validation rule.
-     */
-    protected abstract String getDefaultErrorCode(Element element);
-
-    /**
-     * Extracts the validation rule condition from the given element.
+     * Creates the validation rule represented and initialized by and with the given element.
      *
      * @param element The element that represents the validation rule.
-     * @return The validation rule condition.
-     * @throws XmlConfigurationException When the given the format (structure) of the given element is mal-formed.
+     * @return The newly created validation rule.
      */
-    protected abstract Condition extractCondition(Element element) throws XmlConfigurationException;
+    protected abstract AbstractValidationRule createValidationRule(Element element);
 
 }

@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.rule.RangeValidationRule;
 
 /**
  * Represents a validation rule that checks whether the range of a numeric instance is within specific
@@ -46,19 +46,19 @@ public @interface Range {
     double max();
 
     /**
-     * Indicates whether the range includes the bounds.
+     * Indicates whether the lower bound is a legal value of the checked value.
      */
     boolean inclusive() default true;
 
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default DefaultValidationErrorCodes.RANGE_ERROR_CODE;
+    String errorCode() default RangeValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default DefaultValidationErrorCodes.RANGE_ERROR_CODE;
+    String message() default RangeValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code

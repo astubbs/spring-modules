@@ -33,9 +33,9 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.BeanValidator;
+import org.springmodules.validation.bean.conf.ValidationConfigurationException;
 import org.springmodules.validation.bean.conf.loader.xml.DefaultValidationRuleElementHandlerRegistry;
 import org.springmodules.validation.bean.conf.loader.xml.DefaultXmlBeanValidationConfigurationLoader;
-import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
 import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.springmodules.validation.util.io.FileIterator;
@@ -116,7 +116,7 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
     protected Resource createResource(Element resourceDefinition) {
         String path = resourceDefinition.getAttribute(LOCATION_ATTR);
         if (!StringUtils.hasText(path)) {
-            throw new XmlConfigurationException("Resoruce path is required and cannot be empty");
+            throw new ValidationConfigurationException("Resoruce path is required and cannot be empty");
         }
         return new DefaultResourceLoader().getResource(path);
     }
@@ -156,7 +156,7 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
             } else if (ClassValidationElementHandler.class.isInstance(handler)) {
                 classHandlers.add(handler);
             } else {
-                throw new XmlConfigurationException("class '" + className + "' is not a property hanlder nor a class handler");
+                throw new ValidationConfigurationException("class '" + className + "' is not a property hanlder nor a class handler");
             }
         }
         registryBuilder.addPropertyValue(
@@ -182,11 +182,11 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
             clazz = ClassUtils.forName(className);
             return clazz.newInstance();
         } catch (ClassNotFoundException cnfe) {
-            throw new XmlConfigurationException("Could not load class '" + className + "'", cnfe);
+            throw new ValidationConfigurationException("Could not load class '" + className + "'", cnfe);
         } catch (IllegalAccessException iae) {
-            throw new XmlConfigurationException("Could not instantiate class '" + className + "'", iae);
+            throw new ValidationConfigurationException("Could not instantiate class '" + className + "'", iae);
         } catch (InstantiationException ie) {
-            throw new XmlConfigurationException("Could not instantiate class '" + className + "'", ie);
+            throw new ValidationConfigurationException("Could not instantiate class '" + className + "'", ie);
         }
     }
 }

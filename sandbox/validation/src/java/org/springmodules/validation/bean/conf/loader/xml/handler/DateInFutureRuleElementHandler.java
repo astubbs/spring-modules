@@ -20,8 +20,8 @@ import java.beans.PropertyDescriptor;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.date.IsInTheFutureDateCondition;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.DateInTheFutureValidationRule;
 import org.w3c.dom.Element;
 
 /**
@@ -31,11 +31,6 @@ import org.w3c.dom.Element;
  * @author Uri Boness
  */
 public class DateInFutureRuleElementHandler extends AbstractPropertyValidationElementHandler {
-
-    /**
-     * The default error code for the parsed validation rule.
-     */
-    public static final String DEFAULT_ERROR_CODE = DATE_IN_FUTURE_ERROR_CODE;
 
     private static final String ELEMENT_NAME = "in-future";
 
@@ -62,22 +57,8 @@ public class DateInFutureRuleElementHandler extends AbstractPropertyValidationEl
                );
     }
 
-    /**
-     * Returns {@link #DEFAULT_ERROR_CODE}.
-     *
-     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
-     */
-    protected String getDefaultErrorCode(Element element) {
-        return DEFAULT_ERROR_CODE;
-    }
-
-    /**
-     * Creates and returns a new {@link IsInTheFutureDateCondition}.
-     *
-     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element).
-     */
-    protected Condition extractCondition(Element element) {
-        return new IsInTheFutureDateCondition();
+    protected AbstractValidationRule createValidationRule(Element element) {
+        return new DateInTheFutureValidationRule();
     }
 
 }

@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.string.EmailStringCondition;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.EmailValidationRule;
 import org.w3c.dom.Element;
 
 /**
@@ -28,11 +28,6 @@ import org.w3c.dom.Element;
  */
 public class EmailRuleElementHandler extends AbstractPropertyValidationElementHandler {
 
-    /**
-     * The default error code of the parsed validation rule.
-     */
-    public static final String DEFAULT_ERROR_CODE = EMAIL_ERROR_CODE;
-
     private static final String ELEMENT_NAME = "email";
 
     /**
@@ -42,22 +37,8 @@ public class EmailRuleElementHandler extends AbstractPropertyValidationElementHa
         super(ELEMENT_NAME, namespaceUri);
     }
 
-    /**
-     * Returns {@link #DEFAULT_ERROR_CODE}.
-     *
-     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
-     */
-    protected String getDefaultErrorCode(Element element) {
-        return DEFAULT_ERROR_CODE;
-    }
-
-    /**
-     * Creates and returns a new {@link EmailStringCondition}.
-     *
-     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
-     */
-    protected Condition extractCondition(Element element) {
-        return new EmailStringCondition();
+    protected AbstractValidationRule createValidationRule(Element element) {
+        return new EmailValidationRule();
     }
 
 }

@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.rule.MinSizeValidationRule;
 
 /**
  * Represents a validation rule that checks whether the size of a colllection or an array is at least a specific value.
@@ -42,12 +42,12 @@ public @interface MinSize {
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default DefaultValidationErrorCodes.MIN_SIZE_ERROR_CODE;
+    String errorCode() default MinSizeValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default DefaultValidationErrorCodes.MIN_SIZE_ERROR_CODE;
+    String message() default MinSizeValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code

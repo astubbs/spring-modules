@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.rule.MaxValidationRule;
 
 /**
  * Represents a validation rule that checks whether the a numeric instance is less then (or equals) a specific upper
@@ -48,12 +48,12 @@ public @interface Max {
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default DefaultValidationErrorCodes.MAX_ERROR_CODE;
+    String errorCode() default MaxValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default DefaultValidationErrorCodes.MAX_ERROR_CODE;
+    String message() default MaxValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code

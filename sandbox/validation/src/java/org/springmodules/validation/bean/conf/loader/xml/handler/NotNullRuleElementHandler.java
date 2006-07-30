@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.NotNullValidationRule;
 import org.w3c.dom.Element;
 
 /**
@@ -27,11 +27,6 @@ import org.w3c.dom.Element;
  * @author Uri Boness
  */
 public class NotNullRuleElementHandler extends AbstractPropertyValidationElementHandler {
-
-    /**
-     * The default error code for the not-null validation rule.
-     */
-    public static final String DEFAULT_ERROR_CODE = NOT_NULL_ERROR_CODE;
 
     private static final String ELEMENT_NAME = "not-null";
 
@@ -47,23 +42,8 @@ public class NotNullRuleElementHandler extends AbstractPropertyValidationElement
         return true;
     }
 
-    /**
-     * Returns {@link #DEFAULT_ERROR_CODE}.
-     *
-     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
-     */
-    protected String getDefaultErrorCode(Element element) {
-        return DEFAULT_ERROR_CODE;
-    }
-
-    /**
-     * Creates and returns a condition that checks that an object is not null.
-     *
-     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
-     * @see org.springmodules.validation.util.condition.Conditions#notNull()
-     */
-    protected Condition extractCondition(Element element) {
-        return Conditions.notNull();
+    protected AbstractValidationRule createValidationRule(Element element) {
+        return new NotNullValidationRule();
     }
 
 }

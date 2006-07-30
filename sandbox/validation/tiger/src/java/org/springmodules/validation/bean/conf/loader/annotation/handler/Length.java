@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.loader.xml.handler.LengthRuleElementHandler;
+import org.springmodules.validation.bean.rule.LengthValidationRule;
 
 /**
  * Represents a validation rule that checks whether the length of a string is within specific
@@ -50,12 +50,12 @@ public @interface Length {
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default LengthRuleElementHandler.DEFAULT_LENGTH_ERROR_CODE;
+    String errorCode() default LengthValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default LengthRuleElementHandler.DEFAULT_LENGTH_ERROR_CODE;
+    String message() default LengthValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code

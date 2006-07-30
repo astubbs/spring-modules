@@ -21,19 +21,14 @@ import java.beans.PropertyDescriptor;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
-import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
-import org.springmodules.validation.bean.rule.DefaultValidationRule;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
-import org.springmodules.validation.bean.rule.ValidationRule;
 import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
-import org.springmodules.validation.util.condition.common.IsNullCondition;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
@@ -58,7 +53,7 @@ import org.w3c.dom.Element;
  * @author Uri Boness
  */
 public abstract class AbstractPropertyValidationElementHandler
-    implements PropertyValidationElementHandler, ConditionExpressionBased, FunctionExpressionBased, DefaultValidationErrorCodes {
+    implements PropertyValidationElementHandler, ConditionExpressionBased, FunctionExpressionBased {
 
     private static final String ERROR_CODE_ATTR = "code";
     private static final String MESSAGE_ATTR = "message";
@@ -133,15 +128,29 @@ public abstract class AbstractPropertyValidationElementHandler
      * @see AbstractPropertyValidationElementHandler#handle(org.w3c.dom.Element, String, org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration)
      */
     public void handle(Element element, String propertyName, MutableBeanValidationConfiguration configuration) {
+
+        AbstractValidationRule rule = createValidationRule(element);
+
         String errorCode = extractErrorCode(element);
-        String message = extractMessage(element);
-        ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(element);
-        Condition condition = extractCondition(element);
-        if (!isNullSupported()) {
-            condition = new IsNullCondition().or(condition);
+        if (errorCode != null) {
+            rule.setErrorCode(errorCode);
         }
+
+        String message = extractMessage(element);
+        if (message != null) {
+            rule.setDefaultErrorMessage(message);
+        }
+
+        ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(element);
+        if (argumentsResolver != null) {
+            rule.setErrorArgumentsResolver(argumentsResolver);
+        }
+
         Condition applicabilityCondition = extractApplicabilityCondition(element);
-        ValidationRule rule = new DefaultValidationRule(condition, applicabilityCondition, errorCode, message, argumentsResolver);
+        if (applicabilityCondition != null) {
+            rule.setApplicabilityCondition(applicabilityCondition);
+        }
+
         if (isConditionGloballyScoped(element)) {
             configuration.addPropertyRule(propertyName, rule);
         } else {
@@ -160,14 +169,14 @@ public abstract class AbstractPropertyValidationElementHandler
 
     /**
      * Extracts the validation rule error code from the given element. Expects a "code" attribute to indicate the
-     * error code. If no such attribute exisits, returns {@link #getDefaultErrorCode(org.w3c.dom.Element)} instead.
+     * error code. If no such attribute exisits, returns <code>null</code>.
      *
      * @param element The element that represents the validation rule.
      * @return The validation rule error code.
      */
     protected String extractErrorCode(Element element) {
         String code = element.getAttribute(AbstractPropertyValidationElementHandler.ERROR_CODE_ATTR);
-        return (StringUtils.hasText(code)) ? code : getDefaultErrorCode(element);
+        return (StringUtils.hasLength(code)) ? code : null;
     }
 
     /**
@@ -178,7 +187,8 @@ public abstract class AbstractPropertyValidationElementHandler
      * @return The validation rule error message.
      */
     protected String extractMessage(Element element) {
-        return element.getAttribute(AbstractPropertyValidationElementHandler.MESSAGE_ATTR);
+        String message = element.getAttribute(AbstractPropertyValidationElementHandler.MESSAGE_ATTR);
+        return (StringUtils.hasLength(message)) ? message : null;
     }
 
     /**
@@ -191,6 +201,9 @@ public abstract class AbstractPropertyValidationElementHandler
     protected ErrorArgumentsResolver extractArgumentsResolver(Element element) {
         String argsString = element.getAttribute(AbstractPropertyValidationElementHandler.ARGS_ATTR);
         String[] expressions = (argsString == null) ? new String[0] : StringUtils.tokenizeToStringArray(argsString, ", ");
+        if (expressions.length == 0) {
+            return null;
+        }
         return new FunctionErrorArgumentsResolver(expressions, functionExpressionParser);
     }
 
@@ -204,7 +217,7 @@ public abstract class AbstractPropertyValidationElementHandler
      */
     protected Condition extractApplicabilityCondition(Element element) {
         String expression = element.getAttribute(AbstractPropertyValidationElementHandler.APPLY_IF_ATTR);
-        return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : new AlwaysTrueCondition();
+        return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : null;
     }
 
     /**
@@ -230,31 +243,11 @@ public abstract class AbstractPropertyValidationElementHandler
     }
 
     /**
-     * Indicates whether the validation rule supports null values. Null values support means such values will be
-     * passed to the rule condition during validation. If the rule doesn't support null values, such value will not
-     * be evaluated by the rule condition and the validation will treat them as valid values.
-     *
-     * @return <code>true</code> if the validation rule support null values, <code>false</code> otherwise.
-     */
-    protected boolean isNullSupported() {
-        return false;
-    }
-
-    /**
-     * Returns the default error code for the validation rule.
-     *
-     * @param element The element that respresents the validation rule.
-     * @return The default error code for the validation rule.
-     */
-    protected abstract String getDefaultErrorCode(Element element);
-
-    /**
-     * Extracts the validation rule condition from the given element.
+     * Creates the validation rule represented and initialized by and with the given element.
      *
      * @param element The element that represents the validation rule.
-     * @return The validation rule condition.
-     * @throws XmlConfigurationException When the given the format (structure) of the given element is mal-formed.
+     * @return The newly created validation rule.
      */
-    protected abstract Condition extractCondition(Element element) throws XmlConfigurationException;
+    protected abstract AbstractValidationRule createValidationRule(Element element);
 
 }

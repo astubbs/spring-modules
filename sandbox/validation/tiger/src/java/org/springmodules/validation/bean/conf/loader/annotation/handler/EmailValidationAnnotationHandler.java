@@ -16,11 +16,10 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.string.EmailStringCondition;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.EmailValidationRule;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} implementation that can handle {@link @Email} property
@@ -37,13 +36,8 @@ public class EmailValidationAnnotationHandler extends AbstractPropertyValidation
         super(Email.class);
     }
 
-    /**
-     * Creates and returns a new {@link EmailStringCondition}.
-     *
-     * @see AbstractPropertyValidationAnnotationHandler#extractCondition(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
-        return new EmailStringCondition();
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
+        return new EmailValidationRule();
     }
 
 }

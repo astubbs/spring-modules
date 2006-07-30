@@ -10,6 +10,7 @@ import org.easymock.MockControl;
 import org.springframework.beans.BeanUtils;
 import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.ValidationConfigurationException;
 import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
@@ -130,8 +131,8 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
 
         try {
             loader.handlePropertyDefinition(propertyDefinition, TestBean.class, configuration);
-            fail("An XmlConfigurationException is expected to be thrown if of the configured rules has no handler");
-        } catch (XmlConfigurationException xce) {
+            fail("An ValidationConfigurationException is expected to be thrown if of the configured rules has no handler");
+        } catch (ValidationConfigurationException xce) {
             // expected
         }
 
@@ -172,9 +173,9 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
 
         try {
             loader.handleGlobalDefinition(globalDefinition, TestBean.class, configuration);
-            fail("An XmlConfigurationException is expected to be thrown if no proper element handler " +
+            fail("An ValidationConfigurationException is expected to be thrown if no proper element handler " +
                 "could be found for a rule definition");
-        } catch (XmlConfigurationException xce) {
+        } catch (ValidationConfigurationException xce) {
             // expected
         }
 

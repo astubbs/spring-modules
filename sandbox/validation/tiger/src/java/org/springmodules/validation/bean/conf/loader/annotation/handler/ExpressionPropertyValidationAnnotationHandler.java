@@ -16,10 +16,10 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
-import org.springmodules.validation.util.condition.Condition;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.ExpressionValidationRule;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} implementation that handles {@link Expression} annnotations.
@@ -46,12 +46,9 @@ public class ExpressionPropertyValidationAnnotationHandler extends AbstractPrope
         return valang.scope() == ExpressionScope.CONTAINING_OBJECT;
     }
 
-    /**
-     *
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
         Expression expression = (Expression)annotation;
-        return getConditionExpressionParser().parse(expression.value());
+        return new ExpressionValidationRule(getConditionExpressionParser(), expression.value());
     }
 
 }

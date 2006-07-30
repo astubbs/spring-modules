@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.rule.NotEmptyValidationRule;
 
 /**
  * Represents a validation rule that checks that a collection or an array is not empty.
@@ -37,12 +37,12 @@ public @interface NotEmpty {
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default DefaultValidationErrorCodes.NOT_EMPTY_ERROR_CODE;
+    String errorCode() default NotEmptyValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default DefaultValidationErrorCodes.NOT_EMPTY_ERROR_CODE;
+    String message() default NotEmptyValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code

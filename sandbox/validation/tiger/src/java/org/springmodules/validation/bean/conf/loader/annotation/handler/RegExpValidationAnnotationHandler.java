@@ -16,11 +16,10 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.RegExpValidationRule;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} that handles {@link RegExp} annotations.
@@ -36,14 +35,9 @@ public class RegExpValidationAnnotationHandler extends AbstractPropertyValidatio
         super(RegExp.class);
     }
 
-    /**
-     * Createa and returns a new {@link org.springmodules.validation.util.condition.string.RegExpStringCondition}.
-     *
-     * @see AbstractPropertyValidationAnnotationHandler#extractCondition(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
         RegExp regexp = (RegExp)annotation;
-        return Conditions.regexp(regexp.value());
+        return new RegExpValidationRule(regexp.value());
     }
 
 }

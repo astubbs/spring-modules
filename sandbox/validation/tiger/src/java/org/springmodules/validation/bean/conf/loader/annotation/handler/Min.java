@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.rule.MinValidationRule;
 
 /**
  * Represents a validation rule that checks whether the a numeric instance is greater then (or equals) a specific lower
@@ -48,12 +48,12 @@ public @interface Min {
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default DefaultValidationErrorCodes.MIN_ERROR_CODE;
+    String errorCode() default MinValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default DefaultValidationErrorCodes.MIN_ERROR_CODE;
+    String message() default MinValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code

@@ -16,11 +16,12 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.MaxValidationRule;
+import org.springmodules.validation.bean.rule.MinValidationRule;
+import org.springmodules.validation.bean.rule.RangeValidationRule;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} that handles {@link Range}, {@link Min}, and {@link Max}
@@ -37,53 +38,21 @@ public class RangeValidationAnnotationHandler extends AbstractPropertyValidation
         super(Range.class, Min.class, Max.class);
     }
 
-    /**
-     * This method delegates to {@link #extractRangeCondition(Range, Class, java.beans.PropertyDescriptor)},
-     * {@link #extractMinCondition(Min, Class, java.beans.PropertyDescriptor)}, or
-     * {@link #extractMaxCondition(Max, Class, java.beans.PropertyDescriptor)} based on the annotation type.
-     *
-     * @see AbstractPropertyValidationAnnotationHandler#extractCondition(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
         if (Range.class.isInstance(annotation)) {
-            return extractRangeCondition((Range)annotation, clazz, descriptor);
+            Range range = (Range)annotation;
+            return new RangeValidationRule(range.min(), range.max());
         }
         if (Min.class.isInstance(annotation)) {
-            return extractMinCondition((Min)annotation, clazz, descriptor);
+            Min min = (Min)annotation;
+            return new MinValidationRule(min.value());
         }
         if (Max.class.isInstance(annotation)) {
-            return extractMaxCondition((Max)annotation, clazz, descriptor);
+            Max max = (Max)annotation;
+            return new MaxValidationRule(max.value());
         }
         throw new IllegalArgumentException("RangeValidationAnnotationHandler does not suppport annotations of type: " +
             annotation.getClass().getName());
     }
 
-    /**
-     * Creates a {@link org.springmodules.validation.util.condition.range.BetweenIncludingCondition} or
-     * {@link org.springmodules.validation.util.condition.range.BetweenCondition} for the given {@link Range}
-     * annotation.
-     */
-    protected Condition extractRangeCondition(Range range, Class clazz, PropertyDescriptor descriptor) {
-        double min = range.min();
-        double max = range.max();
-        return (range.inclusive()) ? Conditions.isBetweenIncluding(min, max) : Conditions.isBetween(min, max);
-    }
-
-    /**
-     * Creates a {@link org.springmodules.validation.util.condition.range.GreaterThanOrEqualsCondition} or
-     * {@link org.springmodules.validation.util.condition.range.GreaterThanCondition} for the given {@link Min}
-     * annotation.
-     */
-    protected Condition extractMinCondition(Min min, Class clazz, PropertyDescriptor descriptor) {
-        return (min.inclusive()) ? Conditions.isGte(min.value()) : Conditions.isGt(min.value());
-    }
-
-    /**
-     * Creates a {@link org.springmodules.validation.util.condition.range.LessThanOrEqualsCondition} or
-     * {@link org.springmodules.validation.util.condition.range.LessThanCondition} for the given {@link Max}
-     * annotation.
-     */
-    protected Condition extractMaxCondition(Max max, Class clazz, PropertyDescriptor descriptor) {
-        return (max.inclusive()) ? Conditions.isLte(max.value()) : Conditions.isLt(max.value());
-    }
 }

@@ -20,8 +20,8 @@ import java.beans.PropertyDescriptor;
 
 import org.joda.time.Instant;
 import org.springmodules.validation.bean.conf.loader.xml.handler.AbstractPropertyValidationElementHandler;
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.date.jodatime.IsInThePastInstantCondition;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.InstantInThePastValidationRule;
 import org.w3c.dom.Element;
 
 /**
@@ -31,11 +31,6 @@ import org.w3c.dom.Element;
  * @author Uri Boness
  */
 public class InstantInPastRuleElementHandler extends AbstractPropertyValidationElementHandler {
-
-    /**
-     * The default error code for the parsed validation rule.
-     */
-    public static final String DEFAULT_ERROR_CODE = "in.past";
 
     private static final String ELEMENT_NAME = "in-past";
 
@@ -56,22 +51,8 @@ public class InstantInPastRuleElementHandler extends AbstractPropertyValidationE
         return super.supports(element, clazz, descriptor) && Instant.class.isAssignableFrom(descriptor.getPropertyType());
     }
 
-    /**
-     * Returns {@link #DEFAULT_ERROR_CODE}.
-     *
-     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
-     */
-    protected String getDefaultErrorCode(Element element) {
-        return InstantInPastRuleElementHandler.DEFAULT_ERROR_CODE;
-    }
-
-    /**
-     * Creates and returns a new {@link IsInThePastInstantCondition}.
-     *
-     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
-     */
-    protected Condition extractCondition(Element element) {
-        return new IsInThePastInstantCondition();
+    protected AbstractValidationRule createValidationRule(Element element) {
+        return new InstantInThePastValidationRule();
     }
 
 }

@@ -16,11 +16,10 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.NotEmptyValidationRule;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} implementation that handles {@link NotEmpty} annotations.
@@ -36,13 +35,8 @@ public class NotEmptyValidationAnnotationHandler extends AbstractPropertyValidat
         super(NotEmpty.class);
     }
 
-    /**
-     * Returns a condition that checks whether a collection or an array is empty.
-     *
-     * @see AbstractPropertyValidationAnnotationHandler#extractCondition(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
-        return Conditions.notEmpty();
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
+        return new NotEmptyValidationRule();
     }
 
 }

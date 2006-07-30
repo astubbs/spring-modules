@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springmodules.validation.bean.conf.loader.DefaultValidationErrorCodes;
+import org.springmodules.validation.bean.rule.DateInThePastValidationRule;
 
 /**
  * Represents a date validation rule that validates that a date is in the past. Can be applied to any instance
@@ -38,12 +38,12 @@ public @interface InThePast {
     /**
      * Returns the error code that represents the error when the validation fails.
      */
-    String errorCode() default DefaultValidationErrorCodes.DATE_IN_PAST_ERROR_CODE;
+    String errorCode() default DateInThePastValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Returns the default message that represents the error when the validation fails.
      */
-    String message() default DefaultValidationErrorCodes.DATE_IN_PAST_ERROR_CODE;
+    String message() default DateInThePastValidationRule.DEFAULT_ERROR_CODE;
 
     /**
      * Comma-delimited list of arguments to be attached to the error code.

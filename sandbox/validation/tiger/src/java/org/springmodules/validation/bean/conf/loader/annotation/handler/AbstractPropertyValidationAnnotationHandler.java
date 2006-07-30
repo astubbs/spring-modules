@@ -21,7 +21,7 @@ import java.lang.annotation.Annotation;
 
 import org.springframework.util.StringUtils;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.rule.DefaultValidationRule;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
 import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
@@ -30,7 +30,6 @@ import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
-import org.springmodules.validation.util.condition.common.IsNullCondition;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
@@ -96,15 +95,28 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
         PropertyDescriptor descriptor,
         MutableBeanValidationConfiguration configuration) {
 
-        Condition condition = extractCondition(annotation, clazz, descriptor);
-        if (!isNullSupported()) {
-            condition = new IsNullCondition().or(condition);
-        }
+        AbstractValidationRule rule = createValidationRule(annotation, clazz, descriptor.getName());
+
         String errorCode = extractErrorCode(annotation);
+        if (errorCode != null) {
+            rule.setErrorCode(errorCode);
+        }
+
         String message = extractDefaultMessage(annotation);
+        if (message != null) {
+            rule.setDefaultErrorMessage(message);
+        }
+
         ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(annotation);
+        if (argumentsResolver != null) {
+            rule.setErrorArgumentsResolver(argumentsResolver);
+        }
+
         Condition applicabilityCondition = extractApplicabilityContidion(annotation);
-        DefaultValidationRule rule = new DefaultValidationRule(condition, applicabilityCondition, errorCode, message, argumentsResolver);
+        if (applicabilityCondition != null) {
+            rule.setApplicabilityCondition(applicabilityCondition);
+        }
+
         if (isConditionGloballyScoped(annotation)) {
             configuration.addPropertyRule(descriptor.getName(), rule);
         } else {
@@ -123,7 +135,8 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
         try {
             return (String) annotation.getClass().getMethod(ERROR_CODE_ATTR).invoke(annotation);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + ERROR_CODE_ATTR + "' in annotation '" + annotation.getClass().getName());
+            throw new IllegalArgumentException("Expecting attribute '" + ERROR_CODE_ATTR + "' in annotation '" +
+                annotation.getClass().getName());
         }
     }
 
@@ -138,7 +151,8 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
         try {
             return (String) annotation.getClass().getMethod(MESSAGE_ATTR).invoke(annotation);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + MESSAGE_ATTR + "' in annotation '" + annotation.getClass().getName());
+            throw new IllegalArgumentException("Expecting attribute '" + MESSAGE_ATTR + "' in annotation '" +
+                annotation.getClass().getName());
         }
     }
 
@@ -154,9 +168,13 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
             String argsAsString = (String) annotation.getClass().getMethod(ARGS_ATTR).invoke(annotation);
             argsAsString = (argsAsString == null) ? "" : argsAsString;
             String[] argsExpressions = StringUtils.commaDelimitedListToStringArray(argsAsString);
+            if (argsExpressions.length == 0) {
+                return null;
+            }
             return new FunctionErrorArgumentsResolver(argsExpressions, functionExpressionParser);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + ARGS_ATTR + "' in annotation '" + annotation.getClass().getName());
+            throw new IllegalArgumentException("Expecting attribute '" + ARGS_ATTR + "' in annotation '" +
+                annotation.getClass().getName());
         }
     }
 
@@ -172,20 +190,11 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
     protected Condition extractApplicabilityContidion(Annotation annotation) {
         try {
             String expression = (String)annotation.getClass().getMethod(APPLY_IF_ATTR).invoke(annotation);
-            return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : new AlwaysTrueCondition();
+            return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : null;
         } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + APPLY_IF_ATTR + "' in annotation '" + annotation.getClass().getName());
+            throw new IllegalArgumentException("Expecting attribute '" + APPLY_IF_ATTR + "' in annotation '" +
+                annotation.getClass().getName());
         }
-    }
-
-    /**
-     * Returns whether the validation rule represented by the rule definition supports null values.
-     *
-     * @return <code>true</code> if the validation rule represented by the rule definition supports null values,
-     *         <code>false</code> otherwise.
-     */
-    protected boolean isNullSupported() {
-        return false;
     }
 
     /**
@@ -196,21 +205,20 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
      * This method can be overriden by sub-classes that create globally scoped conditions.
      *
      * @return <code>true</code> if the extracted condition is globally scoped, <code>false</code> otherwise.
-     * @see #extractCondition(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
      */
     protected boolean isConditionGloballyScoped(Annotation annotation) {
         return false;
     }
 
     /**
-     * Extracts the condition of the validation rule represented by the given annotation.
+     * Creates and returns the validation rule that is represented and initialized by and with the given annotation.
      *
-     * @param annotation The annotation from which the condition should be extracted.
-     * @param clazz The annotated class.
-     * @param descriptor The property descriptor of the annotated property.
-     * @return The extracted condition.
+     * @param annotation The annotation from which the validation rule should be created.
+     * @param clazz The class of the valiated object.
+     * @param propertyName The name of the validated property within the validated class.
+     * @return The created validation rule.
      */
-    protected abstract Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor);
+    protected abstract AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName);
 
     //=============================================== Setter/Getter ====================================================
 

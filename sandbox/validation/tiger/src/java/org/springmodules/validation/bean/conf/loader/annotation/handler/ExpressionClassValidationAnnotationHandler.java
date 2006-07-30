@@ -18,7 +18,8 @@ package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
 import java.lang.annotation.Annotation;
 
-import org.springmodules.validation.util.condition.Condition;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.ExpressionValidationRule;
 
 /**
  * An {@link AbstractClassValidationAnnotationHandler} implementation that handles {@link Expression} annnotations.
@@ -36,14 +37,9 @@ public class ExpressionClassValidationAnnotationHandler extends AbstractClassVal
         super(Expression.class);
     }
 
-    /**
-     * Creates a condition out of the given valang annotation.
-     *
-     * @see AbstractClassValidationAnnotationHandler#extractCondition(java.lang.annotation.Annotation, Class)
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz) {
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz) {
         Expression expression = (Expression)annotation;
-        return getConditionExpressionParser().parse(expression.value());
+        return new ExpressionValidationRule(getConditionExpressionParser(), expression.value());
     }
 
 }

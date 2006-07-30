@@ -33,6 +33,7 @@ import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
+import org.springmodules.validation.bean.conf.ValidationConfigurationException;
 import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
@@ -289,7 +290,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             if (handler == null) {
                 logger.error("Could not handle element '" + ruleDefinition.getTagName() +
                     "'. Please make sure the proper validation rule definition handler is registered");
-                throw new XmlConfigurationException("Could not handler element '" + ruleDefinition.getTagName() + "'");
+                throw new ValidationConfigurationException("Could not handler element '" + ruleDefinition.getTagName() + "'");
             }
             handler.handle(ruleDefinition, configuration);
         }
@@ -307,7 +308,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         String propertyName = propertyDefinition.getAttribute(NAME_ATTR);
         if (propertyName == null) {
             logger.error("Could not parse property element. Missing 'name' attribute");
-            throw new XmlConfigurationException("Could not parse property element. Missing 'name' attribute");
+            throw new ValidationConfigurationException("Could not parse property element. Missing 'name' attribute");
         }
 
         PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(clazz, propertyName);
@@ -335,7 +336,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             if (handler == null) {
                 logger.error("Could not handle element '" + ruleDefinition.getTagName() +
                     "'. Please make sure the proper validation rule definition handler is registered");
-                throw new XmlConfigurationException("Could not handle element '" + ruleDefinition.getTagName() + "'");
+                throw new ValidationConfigurationException("Could not handle element '" + ruleDefinition.getTagName() + "'");
             }
             handler.handle(ruleDefinition, propertyName, configuration);
         }
@@ -349,16 +350,16 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         try {
             Class clazz = ClassUtils.forName(className);
             if (!Validator.class.isAssignableFrom(clazz)) {
-                throw new XmlConfigurationException("class '" + className + "' is not a Validator implementation");
+                throw new ValidationConfigurationException("class '" + className + "' is not a Validator implementation");
             }
             return (Validator)clazz.newInstance();
         } catch (ClassNotFoundException e) {
-            throw new XmlConfigurationException("Could not load validator class '" + className + "'");
+            throw new ValidationConfigurationException("Could not load validator class '" + className + "'");
         } catch (IllegalAccessException e) {
-            throw new XmlConfigurationException("Could not instantiate validator '" + className +
+            throw new ValidationConfigurationException("Could not instantiate validator '" + className +
                 "'. Make sure it has a default constructor.");
         } catch (InstantiationException e) {
-            throw new XmlConfigurationException("Could not instantiate validator '" + className +
+            throw new ValidationConfigurationException("Could not instantiate validator '" + className +
                 "'. Make sure it has a default constructor.");
         }
     }

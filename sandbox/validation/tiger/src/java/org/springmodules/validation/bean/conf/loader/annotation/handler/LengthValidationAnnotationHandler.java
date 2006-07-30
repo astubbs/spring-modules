@@ -16,12 +16,12 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
 import org.springframework.util.Assert;
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.LengthValidationRule;
+import org.springmodules.validation.bean.rule.MinLengthValidationRule;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} implementation that handles {@link Length} annotations.
@@ -34,28 +34,50 @@ public class LengthValidationAnnotationHandler extends AbstractPropertyValidatio
      * Constructs a new LengthValidationAnnotationHandler.
      */
     public LengthValidationAnnotationHandler() {
-        super(Length.class);
+        super(Length.class, MinLength.class, MaxLength.class);
     }
 
-    /**
-     * Extracts the condition of the validation rule represented by the given annotation.
-     *
-     * @param annotation The annotation from which the condition should be extracted.
-     * @param clazz      The annotated class.
-     * @param descriptor The property descriptor of the annotated property.
-     * @return The extracted condition.
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
-        Length length = (Length)annotation;
-        int min = length.min();
-        int max = length.max();
-        Assert.isTrue(max >= 0, "@Length annotation on property '" + clazz.getName() + "." + descriptor.getName() +
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
+
+        if (Length.class.isInstance(annotation)) {
+            Length length = (Length)annotation;
+            validateMinMax(length.min(), length.max(), clazz, propertyName);
+            return new LengthValidationRule(length.min(), length.max());
+        }
+
+        if (MinLength.class.isInstance(annotation)) {
+            MinLength minLength = (MinLength)annotation;
+            validateMin(minLength.value(), clazz, propertyName);
+            return new MinLengthValidationRule(minLength.value());
+        }
+
+        if (Length.class.isInstance(annotation)) {
+            Length length = (Length)annotation;
+            validateMinMax(length.min(), length.max(), clazz, propertyName);
+            return new LengthValidationRule(length.min(), length.max());
+        }
+
+        throw new IllegalArgumentException("LengthValidationAnnotationHandler does not suppport annotations of type: " +
+            annotation.getClass().getName());
+    }
+
+
+    protected void validateMinMax(int min, int max, Class clazz, String propertyName) {
+        Assert.isTrue(max >= 0, "@Length annotation on property '" + clazz.getName() + "." + propertyName +
             "' is mal-configured - 'max' attribute cannot hold a negative value");
-        Assert.isTrue(min >= 0, "@Length annotation on property '" + clazz.getName() + "." + descriptor.getName() +
+        Assert.isTrue(min >= 0, "@Length annotation on property '" + clazz.getName() + "." + propertyName +
             "' is mal-configured - 'min' attribute cannot hold a negative value");
-        Assert.isTrue(max >= min, "@Length annotation on property '" + clazz.getName() + "." + descriptor.getName() +
+        Assert.isTrue(max >= min, "@Length annotation on property '" + clazz.getName() + "." + propertyName +
             "' is mal-configured - 'max' attribute is smaller than 'min'");
-        return Conditions.lengthBetween(min, max);
     }
 
+    protected void validateMax(int max, Class clazz, String propertyName) {
+        Assert.isTrue(max >= 0, "@Length annotation on property '" + clazz.getName() + "." + propertyName +
+            "' is mal-configured - 'max' attribute cannot hold a negative value");
+    }
+
+    protected void validateMin(int min, Class clazz, String propertyName) {
+        Assert.isTrue(min >= 0, "@Length annotation on property '" + clazz.getName() + "." + propertyName +
+            "' is mal-configured - 'min' attribute cannot hold a negative value");
+    }
 }

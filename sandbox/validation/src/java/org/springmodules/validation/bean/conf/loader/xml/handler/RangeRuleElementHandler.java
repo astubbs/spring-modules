@@ -16,10 +16,14 @@
 
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
+import java.math.BigDecimal;
+
 import org.springframework.util.StringUtils;
-import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.bean.conf.ValidationConfigurationException;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.MaxValidationRule;
+import org.springmodules.validation.bean.rule.MinValidationRule;
+import org.springmodules.validation.bean.rule.RangeValidationRule;
 import org.w3c.dom.Element;
 
 /**
@@ -29,11 +33,6 @@ import org.w3c.dom.Element;
  * @author Uri Boness
  */
 public class RangeRuleElementHandler extends AbstractPropertyValidationElementHandler {
-
-    /**
-     * The defult error code for the range validation rule.
-     */
-    public static final String DEFAULT_RANGE_ERROR_CODE = RANGE_ERROR_CODE;
 
     /**
      * The defult error code for the min validation rule.
@@ -56,64 +55,27 @@ public class RangeRuleElementHandler extends AbstractPropertyValidationElementHa
         super(ELEMENT_NAME, namespaceUri);
     }
 
-    /**
-     * Returns one of the followings:
-     * <ul>
-     *  <li>If the element represents a range validation rule, then {@link #DEFAULT_RANGE_ERROR_CODE}</li>
-     *  <li>If the element represents a min validation rule, then {@link #DEFAULT_MIN_ERROR_CODE}</li>
-     *  <li>If the element represents a max validation rule, then {@link #DEFAULT_MAX_ERROR_CODE}</li>
-     * </ul>
-     *
-     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
-     */
-    protected String getDefaultErrorCode(Element element) {
-        boolean hasMin = element.hasAttribute(MIN_ATTR);
-        boolean hasMax = element.hasAttribute(MAX_ATTR);
+    protected AbstractValidationRule createValidationRule(Element element) {
 
-        if (hasMin && hasMax) {
-            return DEFAULT_RANGE_ERROR_CODE;
-        }
-
-        if (hasMin) {
-            return DEFAULT_MIN_ERROR_CODE;
-        }
-
-        return DEFAULT_MAX_ERROR_CODE;
-    }
-
-    /**
-     * Returns one of the followings:
-     * <ul>
-     *  <li>If the element has both <code>min</code> and <code>max</code> attributes, then
-     *     {@link org.springmodules.validation.util.condition.range.BetweenIncludingCondition}</li>
-     *  <li>If the element only has the <code>min</code> attribute, then
-     *     {@link org.springmodules.validation.util.condition.range.GreaterThanOrEqualsCondition}</li>
-     *  <li>If the element only has the <code>max</code> attribute, then
-     *     {@link org.springmodules.validation.util.condition.range.LessThanOrEqualsCondition}</li>
-     * </ul>
-     *
-     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
-     */
-    protected Condition extractCondition(Element element) {
         String minText = element.getAttribute(MIN_ATTR);
         String maxText = element.getAttribute(MAX_ATTR);
 
-        Integer min = (StringUtils.hasText(minText)) ? new Integer(minText) : null;
-        Integer max = (StringUtils.hasText(maxText)) ? new Integer(maxText) : null;
+        BigDecimal min = (StringUtils.hasText(minText)) ? new BigDecimal(minText) : null;
+        BigDecimal max = (StringUtils.hasText(maxText)) ? new BigDecimal(maxText) : null;
 
         if (min != null && max != null) {
-            return Conditions.isBetweenIncluding(min, max);
+            return new RangeValidationRule(min, max);
         }
 
         if (min != null) {
-            return Conditions.isGte(min);
+            return new MinValidationRule(min);
         }
 
         if (max != null) {
-            return Conditions.isLte(max);
+            return new MaxValidationRule(max);
         }
 
-        throw new XmlConfigurationException("Element '" + ELEMENT_NAME +
+        throw new ValidationConfigurationException("Element '" + ELEMENT_NAME +
             "' must have either 'min' attribute, 'max' attribute, or both");
     }
 

@@ -16,8 +16,9 @@
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
 import org.springframework.util.StringUtils;
-import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
-import org.springmodules.validation.util.condition.Condition;
+import org.springmodules.validation.bean.conf.ValidationConfigurationException;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.ExpressionValidationRule;
 import org.w3c.dom.Element;
 
 /**
@@ -27,11 +28,6 @@ import org.w3c.dom.Element;
  * @author Uri Boness
  */
 public class ExpressionPropertyValidationElementHandler extends AbstractPropertyValidationElementHandler {
-
-    /**
-     * The default error code for the created valang validation rule.
-     */
-    public static final String DEFAULT_ERROR_CODE = EXPRESSION_ERROR_CODE;
 
     private static final String ELEMENT_NAME = "expression";
     private static final String CONDITION_ATTR = "condition";
@@ -46,28 +42,12 @@ public class ExpressionPropertyValidationElementHandler extends AbstractProperty
         super(ELEMENT_NAME, namespaceUri);
     }
 
-    /**
-     * Returns {@link #DEFAULT_ERROR_CODE}.
-     *
-     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
-     */
-    protected String getDefaultErrorCode(Element element) {
-        return DEFAULT_ERROR_CODE;
-    }
-
-    /**
-     * Creates a valang condition from the given validation rule element.
-     *
-     * @param element The element that represents the valang validation rule.
-     * @return The created valang condition
-     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
-     */
-    protected Condition extractCondition(Element element) {
+    protected AbstractValidationRule createValidationRule(Element element) {
         String expression = element.getAttribute(CONDITION_ATTR);
         if (!StringUtils.hasText(expression)) {
-            throw new XmlConfigurationException("Element '" + ELEMENT_NAME + "' must have a '" + CONDITION_ATTR + "' attribute");
+            throw new ValidationConfigurationException("Element '" + ELEMENT_NAME + "' must have a '" + CONDITION_ATTR + "' attribute");
         }
-        return getConditionExpressionParser().parse(expression);
+        return new ExpressionValidationRule(getConditionExpressionParser(), expression);
     }
 
     public boolean isConditionGloballyScoped(Element element) {
@@ -81,7 +61,7 @@ public class ExpressionPropertyValidationElementHandler extends AbstractProperty
         if (PROPERTY_SCOPE_VALUE.equals(value)) {
             return false;
         }
-        throw new XmlConfigurationException("Unknown value '" + value + "' for attribute '" + SCOPE_ATTR + "'");
+        throw new ValidationConfigurationException("Unknown value '" + value + "' for attribute '" + SCOPE_ATTR + "'");
     }
 
 }

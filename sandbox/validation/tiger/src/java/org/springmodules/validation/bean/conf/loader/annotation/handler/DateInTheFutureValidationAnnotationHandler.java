@@ -21,8 +21,8 @@ import java.lang.annotation.Annotation;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.date.IsInTheFutureDateCondition;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.DateInTheFutureValidationRule;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} implementation that can handle {@link @InTheFuture} annotations
@@ -56,13 +56,8 @@ public class DateInTheFutureValidationAnnotationHandler extends AbstractProperty
             );
     }
 
-    /**
-     * Creates and returns a new {@link IsInTheFutureDateCondition}.
-     *
-     * @see AbstractPropertyValidationAnnotationHandler#extractCondition(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
-        return new IsInTheFutureDateCondition();
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
+        return new DateInTheFutureValidationRule();
     }
 
 }

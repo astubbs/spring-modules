@@ -16,11 +16,12 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.MaxSizeValidationRule;
+import org.springmodules.validation.bean.rule.MinSizeValidationRule;
+import org.springmodules.validation.bean.rule.SizeValidationRule;
 
 /**
  * An {@link AbstractPropertyValidationAnnotationHandler} implementation that handles {@link Size}, {@link MinSize},
@@ -37,48 +38,23 @@ public class SizeValidationAnnotationHandler extends AbstractPropertyValidationA
         super(Size.class, MinSize.class, MaxSize.class);
     }
 
-    /**
-     * Delegates to {@link #extractSizeCondition(Size, Class, java.beans.PropertyDescriptor)},
-     * {@link #extractMinSizeCondition(MinSize, Class, java.beans.PropertyDescriptor)} or
-     * {@link #extractMaxSizeCondition(MaxSize, Class, java.beans.PropertyDescriptor)} based on the annotation type.
-     *
-     * @see AbstractPropertyValidationAnnotationHandler#extractCondition(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
+
         if (Size.class.isInstance(annotation)) {
-            return extractSizeCondition((Size)annotation, clazz, descriptor);
+            Size size = (Size)annotation;
+            return new SizeValidationRule(size.min(), size.max());
         }
+
         if (MinSize.class.isInstance(annotation)) {
-            return extractMinSizeCondition((MinSize)annotation, clazz, descriptor);
+            MinSize minSize = (MinSize)annotation;
+            return new MinSizeValidationRule(minSize.value());
         }
         if (MaxSize.class.isInstance(annotation)) {
-            return extractMaxSizeCondition((MaxSize)annotation, clazz, descriptor);
+            MaxSize maxSize = (MaxSize)annotation;
+            return new MaxSizeValidationRule(maxSize.value());
         }
         throw new IllegalArgumentException("SizeValidationAnnotationHandler cannot handle annotation of type: " +
             annotation.getClass().getName());
     }
 
-    /**
-     * Creates and returnes a new {@link org.springmodules.validation.util.condition.collection.SizeRangeCollectionCondition}
-     * from the given {@link Size} annotation.
-     */
-    protected Condition extractSizeCondition(Size size, Class clazz, PropertyDescriptor descriptor) {
-        return Conditions.sizeRange(size.min(), size.max());
-    }
-
-    /**
-     * Creates and returns a new {@link org.springmodules.validation.util.condition.collection.MinSizeCollectionCondition}
-     * from the given {@link MinSize} annotation.
-     */
-    protected Condition extractMinSizeCondition(MinSize minSize, Class clazz, PropertyDescriptor descriptor) {
-        return Conditions.minSize(minSize.value());
-    }
-
-    /**
-     * Creates and returns a new {@link org.springmodules.validation.util.condition.collection.MaxSizeCollectionCondition}
-     * from the given {@link MaxSize} annotation.
-     */
-    protected Condition extractMaxSizeCondition(MaxSize maxSize, Class clazz, PropertyDescriptor descriptor) {
-        return Conditions.maxSize(maxSize.value());
-    }
 }

@@ -21,8 +21,8 @@ import java.lang.annotation.Annotation;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.date.IsInThePastDateCondition;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.DateInThePastValidationRule;
 
 /**
  * An {@link org.springmodules.validation.bean.conf.loader.annotation.handler.AbstractPropertyValidationAnnotationHandler}
@@ -57,13 +57,8 @@ public class DateInThePastValidationAnnotationHandler extends AbstractPropertyVa
             );
     }
 
-    /**
-     * Creates and returns a new {@link IsInThePastDateCondition}.
-     *
-     * @see AbstractPropertyValidationAnnotationHandler#extractCondition(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
-     */
-    protected Condition extractCondition(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
-        return new IsInThePastDateCondition();
+    protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
+        return new DateInThePastValidationRule();
     }
 
 }

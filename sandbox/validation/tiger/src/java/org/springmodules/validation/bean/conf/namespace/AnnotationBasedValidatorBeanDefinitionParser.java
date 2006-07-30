@@ -26,11 +26,11 @@ import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.ClassUtils;
 import org.springmodules.validation.bean.BeanValidator;
+import org.springmodules.validation.bean.conf.ValidationConfigurationException;
 import org.springmodules.validation.bean.conf.loader.annotation.AnnotationBeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.conf.loader.annotation.DefaultValidationAnnotationHandlerRegistry;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
-import org.springmodules.validation.bean.conf.loader.xml.XmlConfigurationException;
 import org.springmodules.validation.util.xml.DomUtils;
 import org.springmodules.validation.util.xml.SubElementsIterator;
 import org.w3c.dom.Element;
@@ -102,7 +102,7 @@ public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDe
             } else if (ClassValidationAnnotationHandler.class.isInstance(handler)) {
                 classHandlers.add(handler);
             } else {
-                throw new XmlConfigurationException("class '" + className + "' is not a property hanlder nor a class handler");
+                throw new ValidationConfigurationException("class '" + className + "' is not a property hanlder nor a class handler");
             }
         }
         registryBuilder.addPropertyValue(
@@ -129,11 +129,11 @@ public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDe
             clazz = ClassUtils.forName(className);
             return clazz.newInstance();
         } catch (ClassNotFoundException cnfe) {
-            throw new XmlConfigurationException("Could not load class '" + className + "'", cnfe);
+            throw new ValidationConfigurationException("Could not load class '" + className + "'", cnfe);
         } catch (IllegalAccessException iae) {
-            throw new XmlConfigurationException("Could not instantiate class '" + className + "'", iae);
+            throw new ValidationConfigurationException("Could not instantiate class '" + className + "'", iae);
         } catch (InstantiationException ie) {
-            throw new XmlConfigurationException("Could not instantiate class '" + className + "'", ie);
+            throw new ValidationConfigurationException("Could not instantiate class '" + className + "'", ie);
         }
     }
 }

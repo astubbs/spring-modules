@@ -16,8 +16,8 @@
 
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
-import org.springmodules.validation.util.condition.Condition;
-import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.bean.rule.AbstractValidationRule;
+import org.springmodules.validation.bean.rule.NotEmptyValidationRule;
 import org.w3c.dom.Element;
 
 /**
@@ -28,11 +28,6 @@ import org.w3c.dom.Element;
  */
 public class NotEmptyRuleElementHandler extends AbstractPropertyValidationElementHandler {
 
-    /**
-     * The default error code for the created validation rule.
-     */
-    public static final String DEFAULT_ERROR_CODE = NOT_EMPTY_ERROR_CODE;
-
     private static final String ELEMENT_NAME = "not-empty";
 
     /**
@@ -42,23 +37,8 @@ public class NotEmptyRuleElementHandler extends AbstractPropertyValidationElemen
         super(ELEMENT_NAME, namespaceUri);
     }
 
-    /**
-     * Returns {@link #DEFAULT_ERROR_CODE}.
-     *
-     * @see AbstractPropertyValidationElementHandler#getDefaultErrorCode(org.w3c.dom.Element)
-     */
-    protected String getDefaultErrorCode(Element element) {
-        return DEFAULT_ERROR_CODE;
-    }
-
-    /**
-     * Creates and returns a new "not empty" condition - a condition that checks if a given collection/array is not empty.
-     *
-     * @see AbstractPropertyValidationElementHandler#extractCondition(org.w3c.dom.Element)
-     * @see org.springmodules.validation.util.condition.Conditions#notEmpty()
-     */
-    protected Condition extractCondition(Element element) {
-        return Conditions.notEmpty();
+    protected AbstractValidationRule createValidationRule(Element element) {
+        return new NotEmptyValidationRule();
     }
 
 }
