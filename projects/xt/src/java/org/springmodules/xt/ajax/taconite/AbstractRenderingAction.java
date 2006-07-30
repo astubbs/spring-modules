@@ -26,7 +26,7 @@ import org.springmodules.xt.ajax.component.Component;
  * 
  * @author Sergio Bossa
  */
-public abstract class AbstractTaconiteRenderingAction implements TaconiteAction {
+public abstract class AbstractRenderingAction implements AjaxActionImpl {
     
     private String elementId;
     private List<Component> components = new LinkedList();
@@ -36,7 +36,7 @@ public abstract class AbstractTaconiteRenderingAction implements TaconiteAction 
      * @param elementId The id of the element this action refers to.
      * @param components A list of components that will be rendered.
      */
-    public AbstractTaconiteRenderingAction(String elementId, List<Component> components) {
+    public AbstractRenderingAction(String elementId, List<Component> components) {
         this.elementId = elementId;
         this.components = components;
     }
@@ -46,7 +46,7 @@ public abstract class AbstractTaconiteRenderingAction implements TaconiteAction 
      * @param elementId The id of the element this action refers to.
      * @param component The component that will be rendered.
      */
-    public AbstractTaconiteRenderingAction(String elementId, Component component) {
+    public AbstractRenderingAction(String elementId, Component component) {
         this.elementId = elementId;
         this.components.add(component);
     }

@@ -17,15 +17,16 @@
 package org.springmodules.xt.ajax.taconite;
 
 import junit.framework.*;
+import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class TaconiteRemoveContentActionTest extends XMLEnhancedTestCase {
+public class AppendContentActionTest extends XMLEnhancedTestCase {
     
-    public TaconiteRemoveContentActionTest(String testName) {
+    public AppendContentActionTest(String testName) {
         super(testName);
     }
 
@@ -36,21 +37,19 @@ public class TaconiteRemoveContentActionTest extends XMLEnhancedTestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(TaconiteRemoveContentActionTest.class);
+        TestSuite suite = new TestSuite(AppendContentActionTest.class);
         
         return suite;
     }
-
-    /**
-     * Test of execute method, of class org.springmodules.xt.ajax.taconite.TaconiteRemoveContentAction.
-     */
+    
     public void testExecute() throws Exception {
-        TaconiteAction action = new TaconiteRemoveContentAction("testId");
+        AjaxActionImpl action = new AppendContentAction("testId", new SimpleText("Test Component"));
         
         String result = action.execute();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("testId", "/taconite-replace-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component", "/taconite-append-as-children", result);
+        assertXpathEvaluatesTo("testId", "/taconite-append-as-children/@contextNodeID", result);
     }
 }

@@ -17,15 +17,16 @@
 package org.springmodules.xt.ajax.taconite;
 
 import junit.framework.*;
+import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class TaconiteSetAttributeActionTest extends XMLEnhancedTestCase {
+public class ReplaceElementActionTest extends XMLEnhancedTestCase {
     
-    public TaconiteSetAttributeActionTest(String testName) {
+    public ReplaceElementActionTest(String testName) {
         super(testName);
     }
 
@@ -36,22 +37,19 @@ public class TaconiteSetAttributeActionTest extends XMLEnhancedTestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(TaconiteSetAttributeActionTest.class);
+        TestSuite suite = new TestSuite(ReplaceElementActionTest.class);
         
         return suite;
     }
-
-    /**
-     * Test of execute method, of class org.springmodules.xt.ajax.taconite.TaconiteSetAttributeAction.
-     */
+    
     public void testExecute() throws Exception {
-        TaconiteAction action = new TaconiteSetAttributeAction("testId", "class", "testClass");
+        AjaxActionImpl action = new ReplaceElementAction("testId", new SimpleText("Test Component"));
         
         String result = action.execute();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("testId", "/taconite-set-attributes/@contextNodeID", result);
-        assertXpathEvaluatesTo("testClass", "/taconite-set-attributes/@class", result);
+        assertXpathEvaluatesTo("Test Component", "/taconite-replace", result);
+        assertXpathEvaluatesTo("testId", "/taconite-replace/@contextNodeID", result);
     }
 }

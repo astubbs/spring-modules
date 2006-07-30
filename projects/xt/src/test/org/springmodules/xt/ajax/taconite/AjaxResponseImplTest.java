@@ -24,9 +24,9 @@ import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
  *
  * @author Sergio Bossa
  */
-public class TaconiteAppendContentActionTest extends XMLEnhancedTestCase {
+public class AjaxResponseImplTest extends XMLEnhancedTestCase {
     
-    public TaconiteAppendContentActionTest(String testName) {
+    public AjaxResponseImplTest(String testName) {
         super(testName);
     }
 
@@ -37,19 +37,27 @@ public class TaconiteAppendContentActionTest extends XMLEnhancedTestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(TaconiteAppendContentActionTest.class);
+        TestSuite suite = new TestSuite(AjaxResponseImplTest.class);
         
         return suite;
     }
-    
-    public void testExecute() throws Exception {
-        TaconiteAction action = new TaconiteAppendContentAction("testId", new SimpleText("Test Component"));
+
+    /**
+     * Test of getResponse method, of class org.springmodules.xt.ajax.taconite.AjaxResponseImpl.
+     */
+    public void testGetResponse() throws Exception {
+        AppendContentAction action1 = new AppendContentAction("action1", new SimpleText("Test Text"));
+        ReplaceContentAction action2 = new ReplaceContentAction("action2", new SimpleText("Test Text"));
+        AjaxResponseImpl response = new AjaxResponseImpl();
         
-        String result = action.execute();
+        response.addAction(action1);
+        response.addAction(action2);
+        
+        String result = response.getResponse();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component", "/taconite-append-as-children", result);
-        assertXpathEvaluatesTo("testId", "/taconite-append-as-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("action1", "/taconite-root/taconite-append-as-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("action2", "/taconite-root/taconite-replace-children/@contextNodeID", result);
     }
 }

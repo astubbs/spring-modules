@@ -27,14 +27,14 @@ import java.util.List;
  *
  * @author Sergio Bossa
  */
-public class TaconiteResponse implements AjaxResponse<TaconiteAction> {
+public class AjaxResponseImpl implements AjaxResponse<AjaxActionImpl> {
     
     private static final String OPEN_RESPONSE = new String("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> ");
     private static final String CLOSE_RESPONSE = new String(" </taconite-root>");
     
-    private List<TaconiteAction> actions = new LinkedList();
+    private List<AjaxActionImpl> actions = new LinkedList();
     
-    public void addAction(TaconiteAction action) {
+    public void addAction(AjaxActionImpl action) {
         this.actions.add(action);
     }
 

@@ -27,7 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Sergio Bossa
  */
-public class TaconiteRedirectAction implements TaconiteAction {
+public class RedirectAction implements AjaxActionImpl {
     
     private static final String OPEN_REDIRECT_ACTION = new String("<taconite-redirect targetUrl=\"$1\" parseInBrowser=\"true\">");
     private static final String CLOSE_REDIRECT_ACTION = new String("</taconite-redirect>");
@@ -40,7 +40,7 @@ public class TaconiteRedirectAction implements TaconiteAction {
      * @param url The target url.
      * @param model The view model, containing parameters to pass to the new view. 
      */
-    public TaconiteRedirectAction(String url, ModelAndView model) {
+    public RedirectAction(String url, ModelAndView model) {
         this.targetUrl = new StringBuilder(url);
         this.model= model;
     }

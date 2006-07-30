@@ -17,16 +17,15 @@
 package org.springmodules.xt.ajax.taconite;
 
 import junit.framework.*;
-import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class TaconiteResponseTest extends XMLEnhancedTestCase {
+public class SetAttributeActionTest extends XMLEnhancedTestCase {
     
-    public TaconiteResponseTest(String testName) {
+    public SetAttributeActionTest(String testName) {
         super(testName);
     }
 
@@ -37,27 +36,22 @@ public class TaconiteResponseTest extends XMLEnhancedTestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(TaconiteResponseTest.class);
+        TestSuite suite = new TestSuite(SetAttributeActionTest.class);
         
         return suite;
     }
 
     /**
-     * Test of getResponse method, of class org.springmodules.xt.ajax.taconite.TaconiteResponse.
+     * Test of execute method, of class org.springmodules.xt.ajax.taconite.SetAttributeAction.
      */
-    public void testGetResponse() throws Exception {
-        TaconiteAppendContentAction action1 = new TaconiteAppendContentAction("action1", new SimpleText("Test Text"));
-        TaconiteReplaceContentAction action2 = new TaconiteReplaceContentAction("action2", new SimpleText("Test Text"));
-        TaconiteResponse response = new TaconiteResponse();
+    public void testExecute() throws Exception {
+        AjaxActionImpl action = new SetAttributeAction("testId", "class", "testClass");
         
-        response.addAction(action1);
-        response.addAction(action2);
-        
-        String result = response.getResponse();
+        String result = action.execute();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("action1", "/taconite-root/taconite-append-as-children/@contextNodeID", result);
-        assertXpathEvaluatesTo("action2", "/taconite-root/taconite-replace-children/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId", "/taconite-set-attributes/@contextNodeID", result);
+        assertXpathEvaluatesTo("testClass", "/taconite-set-attributes/@class", result);
     }
 }

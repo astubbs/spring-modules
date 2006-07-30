@@ -21,7 +21,7 @@ package org.springmodules.xt.ajax.taconite;
  *
  * @author Sergio Bossa
  */
-public class TaconiteSetAttributeAction implements TaconiteAction {
+public class SetAttributeAction implements AjaxActionImpl {
     
     private static final String OPEN_SET_ATTRIBUTE = new String("<taconite-set-attributes contextNodeID=\"$1\" parseInBrowser=\"true\" $2=\"$3\">");
     private static final String CLOSE_SET_ATTRIBUTE = new String("</taconite-set-attributes>");
@@ -36,7 +36,7 @@ public class TaconiteSetAttributeAction implements TaconiteAction {
      * @param attribute The attribute name.
      * @param value The value to set. 
      */
-    public TaconiteSetAttributeAction(String elementId, String attribute, String value) {
+    public SetAttributeAction(String elementId, String attribute, String value) {
         this.elementId = elementId;
         this.attribute = attribute;
         this.value = value;

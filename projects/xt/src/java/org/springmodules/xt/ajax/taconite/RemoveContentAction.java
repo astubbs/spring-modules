@@ -17,22 +17,22 @@
 package org.springmodules.xt.ajax.taconite;
 
 /**
- * Taconite based ajax action for removing a given element, identified by its id.
+ * Taconite based ajax action for removing the whole content of a given element.
  *
  * @author Sergio Bossa
  */
-public class TaconiteRemoveElementAction implements TaconiteAction {
+public class RemoveContentAction implements AjaxActionImpl {
     
-    private static final String OPEN = new String("<taconite-delete contextNodeID=\"$1\" parseInBrowser=\"true\">");
-    private static final String CLOSE = new String("</taconite-delete>");
+    private static final String OPEN = new String("<taconite-replace-children contextNodeID=\"$1\" parseInBrowser=\"true\">");
+    private static final String CLOSE = new String("</taconite-replace-children>");
     
     private String elementId;
     
     /** 
      * Construct the action.
-     * @param elementId The id of the html element to remove.
+     * @param elementId The id of the html element whose content must be removed.
      */
-    public TaconiteRemoveElementAction(String elementId) {
+    public RemoveContentAction(String elementId) {
         this.elementId = elementId;
     }
     

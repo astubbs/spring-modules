@@ -23,9 +23,9 @@ import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
  *
  * @author Sergio Bossa
  */
-public class TaconiteRemoveElementActionTest extends XMLEnhancedTestCase {
+public class RemoveContentActionTest extends XMLEnhancedTestCase {
     
-    public TaconiteRemoveElementActionTest(String testName) {
+    public RemoveContentActionTest(String testName) {
         super(testName);
     }
 
@@ -36,22 +36,21 @@ public class TaconiteRemoveElementActionTest extends XMLEnhancedTestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(TaconiteRemoveElementActionTest.class);
+        TestSuite suite = new TestSuite(RemoveContentActionTest.class);
         
         return suite;
     }
 
     /**
-     * Test of execute method, of class org.springmodules.xt.ajax.taconite.TaconiteRemoveElementAction.
+     * Test of execute method, of class org.springmodules.xt.ajax.taconite.RemoveContentAction.
      */
     public void testExecute() throws Exception {
-        TaconiteAction action = new TaconiteRemoveElementAction("testId");
+        AjaxActionImpl action = new RemoveContentAction("testId");
         
         String result = action.execute();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("testId", "/taconite-delete/@contextNodeID", result);
+        assertXpathEvaluatesTo("testId", "/taconite-replace-children/@contextNodeID", result);
     }
-    
 }

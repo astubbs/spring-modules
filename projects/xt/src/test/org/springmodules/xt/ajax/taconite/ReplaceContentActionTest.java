@@ -24,9 +24,9 @@ import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
  *
  * @author Sergio Bossa
  */
-public class TaconiteReplaceElementActionTest extends XMLEnhancedTestCase {
+public class ReplaceContentActionTest extends XMLEnhancedTestCase {
     
-    public TaconiteReplaceElementActionTest(String testName) {
+    public ReplaceContentActionTest(String testName) {
         super(testName);
     }
 
@@ -37,19 +37,19 @@ public class TaconiteReplaceElementActionTest extends XMLEnhancedTestCase {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite(TaconiteReplaceElementActionTest.class);
+        TestSuite suite = new TestSuite(ReplaceContentActionTest.class);
         
         return suite;
     }
     
     public void testExecute() throws Exception {
-        TaconiteAction action = new TaconiteReplaceElementAction("testId", new SimpleText("Test Component"));
+        AjaxActionImpl action = new ReplaceContentAction("testId", new SimpleText("Test Component"));
         
         String result = action.execute();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Test Component", "/taconite-replace", result);
-        assertXpathEvaluatesTo("testId", "/taconite-replace/@contextNodeID", result);
+        assertXpathEvaluatesTo("Test Component", "/taconite-replace-children", result);
+        assertXpathEvaluatesTo("testId", "/taconite-replace-children/@contextNodeID", result);
     }
 }

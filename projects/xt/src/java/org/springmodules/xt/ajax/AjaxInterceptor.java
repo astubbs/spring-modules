@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
-import org.springmodules.xt.ajax.taconite.TaconiteResponse;
-import org.springmodules.xt.ajax.taconite.TaconiteRedirectAction;
+import org.springmodules.xt.ajax.taconite.AjaxResponseImpl;
+import org.springmodules.xt.ajax.taconite.RedirectAction;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -199,8 +199,8 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                             
                             logger.warn(new StringBuilder("After Ajax submit, handling an Ajax redirect to: ").append(path));
 
-                            AjaxResponse ajaxRedirect = new TaconiteResponse();
-                            AjaxAction ajaxAction = new TaconiteRedirectAction(request.getContextPath() + path, modelAndView);
+                            AjaxResponse ajaxRedirect = new AjaxResponseImpl();
+                            AjaxAction ajaxAction = new RedirectAction(request.getContextPath() + path, modelAndView);
                             ajaxRedirect.addAction(ajaxAction);
 
                             // Need to clear the ModelAndView because we are handling the response by ourselves:

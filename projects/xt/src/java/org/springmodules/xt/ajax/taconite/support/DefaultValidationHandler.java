@@ -23,9 +23,9 @@ import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxSubmitEvent;
 import org.springmodules.xt.ajax.component.Component;
 import org.springmodules.xt.ajax.component.SimpleText;
-import org.springmodules.xt.ajax.taconite.TaconiteRemoveContentAction;
-import org.springmodules.xt.ajax.taconite.TaconiteReplaceContentAction;
-import org.springmodules.xt.ajax.taconite.TaconiteResponse;
+import org.springmodules.xt.ajax.taconite.RemoveContentAction;
+import org.springmodules.xt.ajax.taconite.ReplaceContentAction;
+import org.springmodules.xt.ajax.taconite.AjaxResponseImpl;
 import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -42,18 +42,18 @@ import org.springframework.validation.ObjectError;
  *
  * @author Sergio Bossa
  */
-public class TaconiteValidationHandler extends AbstractAjaxHandler implements MessageSourceAware {
+public class DefaultValidationHandler extends AbstractAjaxHandler implements MessageSourceAware {
     
-    private static final Logger logger = Logger.getLogger(TaconiteValidationHandler.class);
+    private static final Logger logger = Logger.getLogger(DefaultValidationHandler.class);
     
     private MessageSource messageSource;
     private ErrorRenderingCallback errorRenderingCallback;
     
     public AjaxResponse validate(AjaxSubmitEvent event) {
-        TaconiteResponse response = null;
+        AjaxResponseImpl response = null;
         
         if (event.getValidationErrors() != null && event.getValidationErrors().hasErrors() == true) {
-            response = new TaconiteResponse();
+            response = new AjaxResponseImpl();
             this.removeOldErrors(event, response);
             this.putNewErrors(event, response);
         }
@@ -69,7 +69,7 @@ public class TaconiteValidationHandler extends AbstractAjaxHandler implements Me
         this.errorRenderingCallback = errorRenderingCallback;
     }
 
-    private void removeOldErrors(AjaxSubmitEvent event, TaconiteResponse response) {
+    private void removeOldErrors(AjaxSubmitEvent event, AjaxResponseImpl response) {
         HttpServletRequest request = event.getHttpRequest();
         Errors errors = (Errors) request.getSession().getAttribute(request.getRequestURL().toString());
          
@@ -82,13 +82,13 @@ public class TaconiteValidationHandler extends AbstractAjaxHandler implements Me
             
             for (Object o : errors.getAllErrors()) {
                 ObjectError error = (ObjectError) o;
-                TaconiteRemoveContentAction action = new TaconiteRemoveContentAction(error.getCode());
+                RemoveContentAction action = new RemoveContentAction(error.getCode());
                 response.addAction(action);
             }
         }
     }
 
-    private void putNewErrors(AjaxSubmitEvent event, TaconiteResponse response) {
+    private void putNewErrors(AjaxSubmitEvent event, AjaxResponseImpl response) {
         Errors errors = event.getValidationErrors();
         HttpServletRequest request = event.getHttpRequest();
         Locale locale = LocaleContextHolder.getLocale(); // <- Get the current Locale, if any ...
@@ -106,7 +106,7 @@ public class TaconiteValidationHandler extends AbstractAjaxHandler implements Me
             else {
                 errorComponent = new SimpleText(this.messageSource.getMessage(error.getCode(), null, error.getDefaultMessage(), locale));
             }
-            TaconiteReplaceContentAction action = new TaconiteReplaceContentAction(error.getCode(), errorComponent);
+            ReplaceContentAction action = new ReplaceContentAction(error.getCode(), errorComponent);
             response.addAction(action);
         }
     }

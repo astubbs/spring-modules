@@ -19,9 +19,9 @@ package org.springmodules.xt.ajax.taconite;
 import org.springmodules.xt.ajax.AjaxAction;
 
 /**
- * Marker interface to be implemented by all ajax actions based on Taconite and used in the context of a {@link TaconiteResponse}.
+ * Default interface to be implemented by all ajax actions based on Taconite.
  *
  * @author Sergio Bossa
  */
-public interface TaconiteAction extends AjaxAction {  
+public interface AjaxActionImpl extends AjaxAction {  
 }

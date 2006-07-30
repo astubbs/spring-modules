@@ -20,35 +20,35 @@ import java.util.List;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
- * Taconite based action for replacing the content of a given html element.
+ * Taconite based action for appending content to a given html element.
  * 
  * @author Sergio Bossa
  */
-public class TaconiteReplaceContentAction extends AbstractTaconiteRenderingAction {
+public class AppendContentAction extends AbstractRenderingAction {
     
     /**
      * Construct the action.
-     * @param elementId The id of the html element whose content must be replaced.
-     * @param components A list of components (html elements) that will replace the content of the given element.
+     * @param elementId The id of the html element for appending content to.
+     * @param components A list of components (html elements) that will be appended.
      */
-    public TaconiteReplaceContentAction(String elementId, List<Component> components) {
+    public AppendContentAction(String elementId, List<Component> components) {
         super(elementId, components);
     }
     
     /**
      * Construct the action.
-     * @param elementId The id of the html element whose content must be replaced.
-     * @param components The component (html element) that will replace the content of the given element.
+     * @param elementId The id of the html element for appending content to.
+     * @param components The component (html element) that will be appended.
      */
-    public TaconiteReplaceContentAction(String elementId, Component component) {
+    public AppendContentAction(String elementId, Component component) {
         super(elementId, component);
     }
     
     protected String getOpeningTag() {
-        return "<taconite-replace-children contextNodeID=\"$1\" parseInBrowser=\"true\">";
+        return "<taconite-append-as-children contextNodeID=\"$1\" parseInBrowser=\"true\">";
     }
 
-    protected  String getClosingTag() {
-        return "</taconite-replace-children>";
+    protected String getClosingTag() {
+        return "</taconite-append-as-children>";
     }
 }

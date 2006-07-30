@@ -4,8 +4,8 @@ import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxSubmitEvent;
 import org.springmodules.xt.ajax.component.SimpleText;
-import org.springmodules.xt.ajax.taconite.TaconiteAppendContentAction;
-import org.springmodules.xt.ajax.taconite.TaconiteResponse;
+import org.springmodules.xt.ajax.taconite.AppendContentAction;
+import org.springmodules.xt.ajax.taconite.AjaxResponseImpl;
 
 /**
  *
@@ -14,8 +14,8 @@ import org.springmodules.xt.ajax.taconite.TaconiteResponse;
 public class DummySubmitHandler extends AbstractAjaxHandler {
 
     public AjaxResponse submit(AjaxSubmitEvent e) {
-        TaconiteResponse response = new TaconiteResponse();
-        TaconiteAppendContentAction action = new TaconiteAppendContentAction("submit", new SimpleText("submit"));
+        AjaxResponseImpl response = new AjaxResponseImpl();
+        AppendContentAction action = new AppendContentAction("submit", new SimpleText("submit"));
         response.addAction(action);
         return response;
     }

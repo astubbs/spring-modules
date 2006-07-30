@@ -20,35 +20,35 @@ import java.util.List;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
- * Taconite based action for appending content to a given html element.
+ * Taconite based action for replacing a given html element.
  * 
  * @author Sergio Bossa
  */
-public class TaconiteAppendContentAction extends AbstractTaconiteRenderingAction {
+public class ReplaceElementAction extends AbstractRenderingAction {
     
     /**
      * Construct the action.
-     * @param elementId The id of the html element for appending content to.
-     * @param components A list of components (html elements) that will be appended.
+     * @param elementId The id of the html element to replace.
+     * @param components A list of components (html elements) that will replace the given element.
      */
-    public TaconiteAppendContentAction(String elementId, List<Component> components) {
+    public ReplaceElementAction(String elementId, List<Component> components) {
         super(elementId, components);
     }
     
     /**
      * Construct the action.
-     * @param elementId The id of the html element for appending content to.
-     * @param components The component (html element) that will be appended.
+     * @param elementId The id of the html element to replace.
+     * @param components The component (html element) that will replace the given element.
      */
-    public TaconiteAppendContentAction(String elementId, Component component) {
+    public ReplaceElementAction(String elementId, Component component) {
         super(elementId, component);
     }
     
     protected String getOpeningTag() {
-        return "<taconite-append-as-children contextNodeID=\"$1\" parseInBrowser=\"true\">";
+        return "<taconite-replace contextNodeID=\"$1\" parseInBrowser=\"true\">";
     }
 
-    protected String getClosingTag() {
-        return "</taconite-append-as-children>";
+    protected  String getClosingTag() {
+        return "</taconite-replace>";
     }
 }
