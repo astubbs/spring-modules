@@ -3,9 +3,9 @@ package org.springmodules.xt.examples.ajax;
 import java.util.Locale;
 import org.springmodules.xt.ajax.component.Component;
 import org.springmodules.xt.ajax.component.TaggedText;
-import org.springmodules.xt.ajax.taconite.support.ErrorRenderingCallback;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.ObjectError;
+import org.springmodules.xt.ajax.validation.ErrorRenderingCallback;
 
 /**
  * Callback for rendering errors on forms.

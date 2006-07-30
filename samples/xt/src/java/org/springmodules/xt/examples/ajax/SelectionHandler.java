@@ -4,12 +4,12 @@ import java.util.Collection;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxActionEvent;
 import org.springmodules.xt.ajax.AjaxResponse;
+import org.springmodules.xt.ajax.AjaxResponseImpl;
+import org.springmodules.xt.ajax.action.ReplaceContentAction;
+import org.springmodules.xt.ajax.action.ReplaceElementAction;
+import org.springmodules.xt.ajax.action.SetAttributeAction;
 import org.springmodules.xt.ajax.component.InputField;
 import org.springmodules.xt.ajax.component.OptionList;
-import org.springmodules.xt.ajax.taconite.TaconiteReplaceContentAction;
-import org.springmodules.xt.ajax.taconite.TaconiteReplaceElementAction;
-import org.springmodules.xt.ajax.taconite.TaconiteResponse;
-import org.springmodules.xt.ajax.taconite.TaconiteSetAttributeAction;
 import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.domain.MemoryRepository;
 
@@ -27,13 +27,13 @@ public class SelectionHandler extends AbstractAjaxHandler {
         // Load employees related to the selected office:
         Collection employees = store.getEmployeesByOffice(store.getOffice(officeId));
         // Create the ajax response:
-        TaconiteResponse response = new TaconiteResponse();
+        AjaxResponse response = new AjaxResponseImpl();
         
         // Create the component to render (a list of html option element):
         OptionList options = new OptionList(employees.toArray(), null, "matriculationCode", "surname");
         options.setFirstTextOption("-1", "Select one ...");
         // Create an ajax action for replacing the content of the "employees" element: 
-        TaconiteReplaceContentAction action = new TaconiteReplaceContentAction("employees", options);
+        ReplaceContentAction action = new ReplaceContentAction("employees", options);
         
         // Add the action:
         response.addAction(action);
@@ -47,17 +47,17 @@ public class SelectionHandler extends AbstractAjaxHandler {
         // Get the selected employee:
         IEmployee e = store.getEmployee(matriculationCode);
         // Create the ajax response:
-        TaconiteResponse response = new TaconiteResponse();
+        AjaxResponse response = new AjaxResponseImpl();
         
         // Create the component to render:
         InputField field = new InputField("name", e.getSurname(), InputField.InputType.TEXT);
         field.addAttribute("id", "surname");
         
         // Create an ajax action for setting the "value" attribute of the "firstname" html element:
-        TaconiteSetAttributeAction action1 = new TaconiteSetAttributeAction("firstname", "value", e.getFirstname());
+        SetAttributeAction action1 = new SetAttributeAction("firstname", "value", e.getFirstname());
         
         // Create an ajax action for rendering the field component, replacing the "surname" element: 
-        TaconiteReplaceElementAction action2 = new TaconiteReplaceElementAction("surname", field);
+        ReplaceElementAction action2 = new ReplaceElementAction("surname", field);
         
         // Add the actions to the response:
         response.addAction(action1);

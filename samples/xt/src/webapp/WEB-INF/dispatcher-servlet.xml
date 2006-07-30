@@ -20,7 +20,7 @@
     
     <!-- Ajax -->
   
-    <bean id="ajaxValidationHandler" class="org.springmodules.xt.ajax.taconite.support.TaconiteValidationHandler">
+    <bean id="ajaxValidationHandler" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler">
         <property name="errorRenderingCallback">
             <bean class="org.springmodules.xt.examples.ajax.FormErrorRenderingCallback"/>
         </property>
