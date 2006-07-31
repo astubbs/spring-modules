@@ -1,6 +1,5 @@
 package org.springmodules.javaspaces;
 
-import java.lang.reflect.InvocationTargetException;
 import java.rmi.RemoteException;
 
 import net.jini.core.entry.Entry;
@@ -14,8 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springmodules.javaspaces.entry.AbstractMethodCallEntry;
 import org.springmodules.javaspaces.entry.MethodResultEntry;
-import org.springmodules.javaspaces.entry.RunnableMethodCallEntry;
-import org.springmodules.javaspaces.entry.ServiceSeekingMethodCallEntry;
 
 /**
  * Generic worker designed to run in a thread. Takes method call entries from a
@@ -92,7 +89,7 @@ public class DelegatingWorker implements Runnable {
 
 			// On reading from the space, the result will be computed and
 			// written
-			// back into the space in the one transaction
+			// back into the space in one transaction
 			jsTemplate.execute(new JavaSpaceCallback() {
 				public Object doInSpace(JavaSpace js, Transaction transaction) throws RemoteException,
 						TransactionException, UnusableEntryException, InterruptedException {
@@ -109,11 +106,8 @@ public class DelegatingWorker implements Runnable {
 					}
 
 					try {
-						if (debug)
-							log.debug("call is " + call.getClass().getName());
-						MethodResultEntry result = call.invokeMethod(delegate);
-						if (debug)
-							log.debug("Got result " + result.result);
+						MethodResultEntry result = invokeMethod(call, delegate);
+						// push the result back to the JavaSpace
 						js.write(result, transaction, Lease.FOREVER);
 					}
 					catch (Exception ex) {
@@ -128,5 +122,24 @@ public class DelegatingWorker implements Runnable {
 		}
 		if (debug)
 			log.debug("Worker " + this + " terminating");
+	}
+
+	/**
+	 * Invoke the method on the delegate object in order to get the
+	 * MethodResultEntry. Subclasses can extend the method and add custom
+	 * behavior (ex: security propagation).
+	 * 
+	 * @param localDelegate the delegate used for executing the method
+	 * @return the methodResultEntry
+	 */
+	protected MethodResultEntry invokeMethod(AbstractMethodCallEntry call, Object localDelegate)
+			throws IllegalAccessException {
+		if (log.isDebugEnabled())
+			log.debug("call is " + call.getClass().getName());
+		MethodResultEntry result = call.invokeMethod(localDelegate);
+
+		if (log.isDebugEnabled())
+			log.debug("Got result " + result.result);
+		return result;
 	}
 }
