@@ -1,5 +1,8 @@
 package org.springmodules.javaspaces;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
@@ -25,8 +28,10 @@ public class MethodIdentifier implements Serializable {
 	public String methodString;
 
 	/**
-	 * Unique identifier. Has to be set up externally depending on the chosen strategy (id unique on the same machine
-	 * generated very fast or ids unique across a cluster or worldwide which have more expensive creation process).
+	 * Unique identifier. Has to be set up externally depending on the chosen
+	 * strategy (id unique on the same machine generated very fast or ids unique
+	 * across a cluster or worldwide which have more expensive creation
+	 * process).
 	 */
 	public Serializable uid;
 
@@ -40,11 +45,12 @@ public class MethodIdentifier implements Serializable {
 	public MethodIdentifier() {
 	}
 
-	
 	public synchronized Method getMethod() {
-		if (method == null) {
-			method = stringToMethod();
-		}
+		// The method resolving has moved to readObject
+		
+		//if (method == null) {
+		//	method = stringToMethod();
+		//}
 
 		return method;
 	}
@@ -71,6 +77,9 @@ public class MethodIdentifier implements Serializable {
 	 */
 	private Method stringToMethod(String className) {
 
+		if (className == null || methodString == null)
+			return null;
+
 		if (log.isDebugEnabled())
 			log.debug("Fqn='" + className + "'; methodName='" + methodString + "'");
 		Class clazz;
@@ -80,8 +89,9 @@ public class MethodIdentifier implements Serializable {
 		catch (ClassNotFoundException e) {
 			throw new IllegalArgumentException(e);
 		}
-		for (int i = 0; i < clazz.getMethods().length; i++) {
-			Method m = clazz.getMethods()[i];
+		Method methods[] = clazz.getMethods();
+		for (int i = 0; i < methods.length; i++) {
+			Method m = methods[i];
 			if (m.toString().equals(methodString)) {
 				return m;
 			}
@@ -103,15 +113,18 @@ public class MethodIdentifier implements Serializable {
 	// It would be good to put the method resolving here
 	// and keep the getter unsynchronized.
 
-	/*
-	 * private void writeObject(ObjectOutputStream oos) throws IOException {
-	 * oos.defaultWriteObject(); //oos.writeObject(className);
-	 * //oos.writeObject(methodString); // oos.writeObject(); }
-	 * 
-	 * private void readObject(ObjectInputStream ois) throws IOException,
-	 * ClassNotFoundException { ois.defaultReadObject(); //className = (String)
-	 * ois.readObject(); //methodString = (String) ois.readObject(); // TODO
-	 * pass out to build method // // TODO args method = stringToMethod(); }
-	 */
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.defaultWriteObject();
+		System.out.println("writeObject called!");
+		// oos.writeObject(className);
+		// oos.writeObject(methodString); // oos.writeObject();
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		ois.defaultReadObject();
+		System.out.println("readObject called!");
+		this.method = stringToMethod(this.className);
+		System.out.println("determined method " + this.method);
+	}
 
 }

@@ -5,7 +5,6 @@
 
 package org.springmodules.util;
 
-import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,11 +12,6 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
-
-import junit.framework.TestCase;
-
-import org.springmodules.beans.TestBean;
 
 /**
  * Utilities for testing serializability of objects.
@@ -26,7 +20,7 @@ import org.springmodules.beans.TestBean;
  *
  * @author Rod Johnson
  */
-public class SerializationTestUtils extends TestCase {
+public class SerializationTestUtils {
 	
 	public static void testSerialization(Object o) throws IOException {
 		OutputStream baos = new ByteArrayOutputStream();
@@ -58,40 +52,4 @@ public class SerializationTestUtils extends TestCase {
 		
 		return o2;
 	}
-	
-	public SerializationTestUtils(String s) {
-		super(s);
-	}
-	
-	public void testWithNonSerializableObject() throws IOException {
-		TestBean o = new TestBean();
-		assertFalse(o instanceof Serializable);
-		
-		assertFalse(isSerializable(o));
-		
-		try {
-			testSerialization(o);
-			fail();
-		}
-		catch (NotSerializableException ex) {
-			// Ok
-		}
-	}
-	
-	public void testWithSerializableObject() throws Exception {
-		int x = 5;
-		int y = 10;
-		Point p = new Point(x, y);
-		assertTrue(p instanceof Serializable);
-	
-		testSerialization(p);
-		
-		assertTrue(isSerializable(p));
-		
-		Point p2 = (Point) serializeAndDeserialize(p);
-		assertNotSame(p, p2);
-		assertEquals(x, (int) p2.getX());
-		assertEquals(y, (int) p2.getY());
-	}
-
 }

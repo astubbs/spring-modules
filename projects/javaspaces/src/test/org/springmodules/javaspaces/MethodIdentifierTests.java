@@ -11,12 +11,20 @@ public class MethodIdentifierTests extends TestCase {
 	public void testSerializeMethodIdentifier() throws Exception {
 		MethodIdentifier mi = new MethodIdentifier(Object.class.getMethod("hashCode", null));
 		MethodIdentifier mi2 = (MethodIdentifier) SerializationTestUtils.serializeAndDeserialize(mi);
+		assertNotSame(mi, mi2);
 		assertEquals(mi.getMethod(), mi2.getMethod());
 	}
-	
+
 	public void testSerializeMethodCallEntry() throws Exception {
 		AbstractMethodCallEntry mi = new AbstractMethodCallEntry(Object.class.getMethod("hashCode", null), null);
 		AbstractMethodCallEntry mi2 = (AbstractMethodCallEntry) SerializationTestUtils.serializeAndDeserialize(mi);
 		assertEquals(mi.getMethod(), mi2.getMethod());
 	}
+
+	public void testSerializeTemplateMethodCallEntries() throws Exception {
+		AbstractMethodCallEntry mi = new AbstractMethodCallEntry(null, null);
+		AbstractMethodCallEntry mi2 = (AbstractMethodCallEntry) SerializationTestUtils.serializeAndDeserialize(mi);
+		assertEquals(mi.getMethod(), mi2.getMethod());
+	}
+
 }
