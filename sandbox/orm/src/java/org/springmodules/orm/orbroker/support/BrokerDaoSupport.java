@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,48 +19,54 @@ package org.springmodules.orm.orbroker.support;
 import net.sourceforge.orbroker.Broker;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.dao.support.DaoSupport;
 import org.springmodules.orm.orbroker.BrokerTemplate;
 
 /**
+ * Convenient super class for O/R Broker data access objects.
+ * Requires a Broker to be set, providing a BrokerTemplate
+ * based on it to subclasses.
+ *
+ * <p>Instead of a plain Broker, you can also pass a preconfigured
+ * BrokerTemplate instance in. This allows you to share your
+ * BrokerTemplate configuration for all your DAOs, for example
+ * a custom SQLExceptionTranslator to use.
+ *
  * @author Omar Irbouh
+ * @see #setBroker
+ * @see #setBrokerTemplate
+ * @see org.springmodules.orm.orbroker.BrokerTemplate
+ * @see org.springmodules.orm.orbroker.BrokerTemplate#setExceptionTranslator
  * @since 2005.06.02
  */
-public abstract class BrokerDaoSupport implements InitializingBean {
+public abstract class BrokerDaoSupport extends DaoSupport {
 
-  protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log logger = LogFactory.getLog(getClass());
 
-  protected BrokerTemplate brokerTemplate;
+	private boolean externalTemplate = false;
 
-  public final void setBrokerTemplate(BrokerTemplate brokerTemplate) {
-    this.brokerTemplate = brokerTemplate;
-  }
+	protected BrokerTemplate brokerTemplate = new BrokerTemplate();
 
-  public BrokerTemplate getBrokerTemplate() {
-    return brokerTemplate;
-  }
+	public final void setBrokerTemplate(BrokerTemplate brokerTemplate) {
+		Assert.notNull(brokerTemplate, "Cannot set brokerTemplate to null");
+		this.brokerTemplate = brokerTemplate;
+		this.externalTemplate = true;
+	}
 
-  public void setBroker(Broker broker) {
-    this.brokerTemplate = createBrokerTemplate(broker);
-  }
+	public BrokerTemplate getBrokerTemplate() {
+		return brokerTemplate;
+	}
 
-  protected BrokerTemplate createBrokerTemplate(Broker broker) {
-    return new BrokerTemplate(broker);
-  }
+	public void setBroker(Broker broker) {
+		this.brokerTemplate.setBroker(broker);
+	}
 
-  public void afterPropertiesSet() throws Exception {
-    Assert.notNull(brokerTemplate, "brokerTemplate is required");
-    initDao();
-  }
-
-  /**
-   * Subclasses can override this for custom initialization behavior.
-   * Gets called after population of this instance's bean properties.
-   *
-   * @throws Exception if initialization fails
-   */
-  protected void initDao() throws Exception {
-  }
+  protected final void checkDaoConfig() {
+		Assert.notNull(this.brokerTemplate, "broker or brokerTemplate is required");
+		if (externalTemplate) {
+			this.brokerTemplate.afterPropertiesSet();
+		}
+	}
 
 }

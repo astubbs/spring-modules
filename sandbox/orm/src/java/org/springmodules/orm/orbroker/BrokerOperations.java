@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,88 +16,93 @@
 
 package org.springmodules.orm.orbroker;
 
-import org.springframework.dao.DataAccessException;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
+
 /**
+ * Interface that specifies a basic set of O/R Broker Executable operations.
+ * Implemented by BrokerTemplate. Not often used, but a useful option
+ * to enhance testability, as it can easily be mocked or stubbed.
+ *
  * @author Omar Irbouh
  * @since 2005.06.02
  */
 public interface BrokerOperations {
 
-  int execute(String statementID) throws DataAccessException;
+	int execute(String statementID) throws DataAccessException;
 
-  int execute(String statementID, String paramName, Object value) throws DataAccessException;
+	int execute(String statementID, String paramName, Object value) throws DataAccessException;
 
-  int execute(String statementID, String[] paramNames, Object[] values) throws DataAccessException;
+	int execute(String statementID, String[] paramNames, Object[] values) throws DataAccessException;
 
-  int executeBatch(String statementID, String batchParameterName,
-                   Collection batchParameters) throws DataAccessException;
+	int executeBatch(String statementID, String batchParameterName,
+									 Collection batchParameters) throws DataAccessException;
 
-  int[] executeBatch(String statementID, String batchParameterName,
-                     Object[] batchParameters) throws DataAccessException;
+	int[] executeBatch(String statementID, String batchParameterName,
+										 Object[] batchParameters) throws DataAccessException;
 
-  Object selectOne(String statementID) throws DataAccessException;
+	Object selectOne(String statementID) throws DataAccessException;
 
-  Object selectOne(String statementID, String paramName, Object value) throws DataAccessException;
+	Object selectOne(String statementID, String paramName, Object value) throws DataAccessException;
 
-  Object selectOne(String statementID, String[] paramNames, Object[] values) throws DataAccessException;
+	Object selectOne(String statementID, String[] paramNames, Object[] values) throws DataAccessException;
 
-  boolean selectOne(String statementID, Object resultObject) throws DataAccessException;
+	boolean selectOne(String statementID, Object resultObject) throws DataAccessException;
 
-  boolean selectOne(String statementID, String paramName, Object value,
-                    Object resultObject) throws DataAccessException;
+	boolean selectOne(String statementID, String paramName, Object value,
+										Object resultObject) throws DataAccessException;
 
-  boolean selectOne(String statementID, String[] paramNames, Object[] values,
-                    Object resultObject) throws DataAccessException;
+	boolean selectOne(String statementID, String[] paramNames, Object[] values,
+										Object resultObject) throws DataAccessException;
 
-  Object selectOneFromMany(String statementID, int fromRow) throws DataAccessException;
+	Object selectOneFromMany(String statementID, int fromRow) throws DataAccessException;
 
-  Object selectOneFromMany(String statementID, int fromRow,
-                           String paramName, Object value) throws DataAccessException;
+	Object selectOneFromMany(String statementID, int fromRow,
+													 String paramName, Object value) throws DataAccessException;
 
-  Object selectOneFromMany(String statementID, int fromRow,
-                           String[] paramNames, Object[] values) throws DataAccessException;
+	Object selectOneFromMany(String statementID, int fromRow,
+													 String[] paramNames, Object[] values) throws DataAccessException;
 
-  List selectMany(String statementID) throws DataAccessException;
+	List selectMany(String statementID) throws DataAccessException;
 
-  List selectMany(String statementID, String paramName, Object value) throws DataAccessException;
+	List selectMany(String statementID, String paramName, Object value) throws DataAccessException;
 
-  List selectMany(String statementID, String[] paramNames, Object[] values) throws DataAccessException;
+	List selectMany(String statementID, String[] paramNames, Object[] values) throws DataAccessException;
 
-  int selectMany(String statementID, Collection resultCollection) throws DataAccessException;
+	int selectMany(String statementID, Collection resultCollection) throws DataAccessException;
 
-  int selectMany(String statementID, String paramName, Object value,
-                 Collection resultCollection) throws DataAccessException;
+	int selectMany(String statementID, String paramName, Object value,
+								 Collection resultCollection) throws DataAccessException;
 
-  int selectMany(String statementID, String[] paramNames, Object[] values,
-                 Collection resultCollection) throws DataAccessException;
+	int selectMany(String statementID, String[] paramNames, Object[] values,
+								 Collection resultCollection) throws DataAccessException;
 
-  List selectMany(String statementID, int startRow, int rowCount) throws DataAccessException;
+	List selectMany(String statementID, int startRow, int rowCount) throws DataAccessException;
 
-  List selectMany(String statementID, String paramName, Object value,
-                  int startRow, int rowCount) throws DataAccessException;
+	List selectMany(String statementID, String paramName, Object value,
+									int startRow, int rowCount) throws DataAccessException;
 
-  List selectMany(String statementID, String[] paramNames, Object[] values,
-                  int startRow, int rowCount) throws DataAccessException;
+	List selectMany(String statementID, String[] paramNames, Object[] values,
+									int startRow, int rowCount) throws DataAccessException;
 
-  int selectMany(String statementID, Collection resultCollection,
-                 int startRow, int rowCount) throws DataAccessException;
+	int selectMany(String statementID, Collection resultCollection,
+								 int startRow, int rowCount) throws DataAccessException;
 
-  int selectMany(String statementID, String paramName, Object value,
-                 Collection resultCollection, int startRow, int rowCount) throws DataAccessException;
+	int selectMany(String statementID, String paramName, Object value,
+								 Collection resultCollection, int startRow, int rowCount) throws DataAccessException;
 
-  int selectMany(String statementID, String[] paramNames, Object[] values,
-                 Collection resultCollection, int startRow, int rowCount) throws DataAccessException;
+	int selectMany(String statementID, String[] paramNames, Object[] values,
+								 Collection resultCollection, int startRow, int rowCount) throws DataAccessException;
 
-  Iterator iterate(String statementID, int fetchSize) throws DataAccessException;
+	Iterator iterate(String statementID, int fetchSize) throws DataAccessException;
 
-  Iterator iterate(String statementID, int fetchSize,
-                   String paramName, Object value) throws DataAccessException;
+	Iterator iterate(String statementID, int fetchSize,
+									 String paramName, Object value) throws DataAccessException;
 
-  Iterator iterate(String statementID, int fetchSize,
-                   String[] paramNames, Object[] values) throws DataAccessException;
+	Iterator iterate(String statementID, int fetchSize,
+									 String[] paramNames, Object[] values) throws DataAccessException;
+
 }

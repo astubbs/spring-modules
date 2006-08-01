@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,65 +16,86 @@
 
 package org.springmodules.orm.orbroker;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import net.sourceforge.orbroker.Broker;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.util.Properties;
-
 /**
+ * FactoryBean that creates a local O/R Broker's Broker instance.
+ * Behaves like a Broker instance when used as bean reference, e.g.
+ * for BrokerTemplate's "broker" property.
+ *
+ * <p>The typical usage will be to register this as singleton factory
+ * (for a certain underlying JDBC DataSource) in an application context,
+ * and give bean references to application services that need it.
+ *
  * @author Omar Irbouh
  * @since 2005.06.02
+ * @see BrokerTemplate#setBroker
  */
 public class BrokerFactoryBean implements FactoryBean, InitializingBean {
 
-  private DataSource dataSource;
+	private DataSource dataSource;
 
-  private Resource configLocation;
+	private Resource configLocation;
 
-  private Properties textReplacements = null;
+	private Properties textReplacements = null;
 
-  private Broker broker;
+	private Broker broker;
 
-  public void setDataSource(DataSource dataSource) {
-    this.dataSource = dataSource;
-  }
+	/**
+	 * Set the DataSource to be used by O/R Broker.
+	 * A typical value is "WEB-INF/broker.xml".
+	 */
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
-  public void setConfigLocation(Resource configLocation) {
-    this.configLocation = configLocation;
-  }
+	/**
+	 * Set the location of the O/R Broker config file.
+	 */
+	public void setConfigLocation(Resource configLocation) {
+		this.configLocation = configLocation;
+	}
 
-  public void setTextReplacements(Properties textReplacements) {
-    this.textReplacements = textReplacements;
-  }
+	/**
+	 * Set text replacement values. This will replace all <code>{{key}}</code>
+   * type properties in an sql-statement with the values.
+	 */
+	public void setTextReplacements(Properties textReplacements) {
+		this.textReplacements = textReplacements;
+	}
 
-  public void afterPropertiesSet() throws IOException {
-    // some assertions
-    Assert.notNull(dataSource, "dataSource can not be null");
-    Assert.notNull(configLocation, "configLocation can not be null");
+	public void afterPropertiesSet() throws IOException {
+		// some assertions
+		Assert.notNull(dataSource, "dataSource can not be null");
+		Assert.notNull(configLocation, "configLocation can not be null");
 
-    // create and initialize the broker
-    this.broker = new Broker(configLocation.getInputStream(), dataSource);
+		// create and initialize the broker
+		this.broker = new Broker(configLocation.getInputStream(), dataSource);
 
-    // register text replacements
-    if (this.textReplacements != null && !this.textReplacements.isEmpty())
-      this.broker.setTextReplacements(this.textReplacements);
-  }
+		// register text replacements
+		if (this.textReplacements != null && !this.textReplacements.isEmpty())
+			this.broker.setTextReplacements(this.textReplacements);
+	}
 
-  public Object getObject() throws Exception {
-    return this.broker;
-  }
+	public Object getObject() throws Exception {
+		return this.broker;
+	}
 
-  public Class getObjectType() {
-    return (this.broker != null ? this.broker.getClass() : Broker.class);
-  }
+	public Class getObjectType() {
+		return (this.broker != null ? this.broker.getClass() : Broker.class);
+	}
 
-  public boolean isSingleton() {
-    return true;
-  }
+	public boolean isSingleton() {
+		return true;
+	}
 
 }

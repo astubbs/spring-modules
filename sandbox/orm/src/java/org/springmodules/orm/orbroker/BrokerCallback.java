@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,23 @@ import net.sourceforge.orbroker.BrokerException;
 import net.sourceforge.orbroker.Executable;
 
 /**
+ * Callback interface for data access code that works on an O/R Broker Exeutable.
+ * To be used with BrokerTemplate's execute method, assumably often as anonymous
+ * classes within a method implementation.
+ *
  * @author Omar Irbouh
- * @see org.springframework.orm.orbroker.BrokerTemplate#execute(BrokerCallback)
+ * @see BrokerTemplate#execute(BrokerCallback)
  * @since 2005.06.02
  */
 public interface BrokerCallback {
 
-  Object doInBroker(Executable executable) throws BrokerException;
+	/**
+	 * Gets called by <code>BrokerTemplate.execute</code> with an active Executable.
+	 *
+	 * @param executable O/R broker Executable
+	 * @return a result object, or <code>null</code> if none
+	 * @throws BrokerException if thrown by Executable methods
+	 */
+	Object doInBroker(Executable executable) throws BrokerException;
 
 }

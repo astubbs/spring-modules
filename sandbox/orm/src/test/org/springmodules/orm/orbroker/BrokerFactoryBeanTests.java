@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 
 /**
- * BrokerFactoryBean Tester.
+ * BrokerFactoryBean Tests.
  *
  * @author Omar Irbouh
  * @since 2005.06.03
@@ -147,8 +147,8 @@ public class BrokerFactoryBeanTests extends TestCase {
 
   /**
    * This method may be updated when upgrading ORBroker to a newer version.
-   * ORBroker has no interface, and its main classes are final with a package scope visibility!!!
-   * I found no way to mock ORBroker classes!!! jmock / cglib dones not support final classes
+   * ORBroker does not use interfaces, and its main classes are final with a package scope visibility!!!
+   * I found noway to mock ORBroker classes!!! jmock / cglib does not support final classes
    *
    * @param dsControl DataSource mock control
    * @param ds DataSource mock
@@ -187,8 +187,8 @@ public class BrokerFactoryBeanTests extends TestCase {
 
   /**
    * This method may be updated when upgrading ORBroker to a newer version.
-   * ORBroker has no interface, and its main classes are final with a package scope visibility!!!
-   * I found no way to mock ORBroker classes!!! jmock / cglib dones not support final classes
+   * ORBroker does not use interface, and its main classes are final with a package scope visibility!!!
+   * I found noway to mock ORBroker classes!!! jmock / cglib does not support final classes
    *
    * @param conControl Connection mock control
    * @param con Connection mock

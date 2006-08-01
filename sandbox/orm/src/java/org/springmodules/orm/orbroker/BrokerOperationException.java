@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2006 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,16 @@ import net.sourceforge.orbroker.BrokerException;
 import org.springframework.dao.UncategorizedDataAccessException;
 
 /**
- * Generic exception thrown on ORBroker operation failure without SQLException cause.
+ * Generic exception thrown on O/R Broker operation failure without
+ * SQLException cause.
  *
  * @author Omar Irbouh
  * @since 2005.06.02
  */
 public class BrokerOperationException extends UncategorizedDataAccessException {
 
-  public BrokerOperationException(BrokerException e) {
-    super("ORBroker operation failed", e);
-  }
+	public BrokerOperationException(BrokerException e) {
+		super("ORBroker operation failed", e);
+	}
 
 }
