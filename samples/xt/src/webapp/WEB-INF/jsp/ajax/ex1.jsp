@@ -46,6 +46,30 @@
                 <tr>
                     <td colspan="2"><span id="toRemove" style="color: red;">Text to be removed</span></td>
                 </tr>
+                <tr>
+                    <td>Press to show a greetings message (hidden using a CSS inline rule) :</td>
+                    <td><input type="button" value="Press" onclick="javascript:doAjaxAction('showElement', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="toShow" style="display: none;">
+                            <div style="color: red;">Your greetings ...</div>
+                            <div style="color: red;">Hello, Spring Modules user!</div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Press to hide the greetings message below :</td>
+                    <td><input type="button" value="Press" onclick="javascript:doAjaxAction('hideElement', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="toHide">
+                            <div style="color: red;">Your greetings to hide ...</div>
+                            <div style="color: red;">Hello, Spring Modules user!</div>
+                        </div>
+                    </td>
+                </tr>
             </table>
         </form>
     </body>
