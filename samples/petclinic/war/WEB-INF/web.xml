@@ -31,15 +31,11 @@
 	<!--
 	  - Location of the XML file that defines the root application context.
 	  - Applied by ContextLoaderServlet.
-		-
-		- Can be set to "/WEB-INF/applicationContext-hibernate.xml" for the Hibernate
-		- implementation, "/WEB-INF/applicationContext-ojb.xml" for the Apache OJB one,
-		- "/WEB-INF/applicationContext-toplink.xml" for the Oracle TopLink one,
-		- or "/WEB-INF/applicationContext-jdbc.xml" for the JDBC one.
 	  -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-    <param-value>/WEB-INF/applicationContext-broker.xml</param-value>
+
+		<param-value>/WEB-INF/applicationContext-broker.xml</param-value>
 	</context-param>
 
 	<!--
@@ -64,8 +60,8 @@
 	<!--
 	  - Loads the root application context of this web app at startup,
 	  - by default from "/WEB-INF/applicationContext.xml".
-		- Note that it is preferable to use ContextLoaderListener in a servlet container
-		- that follows the Servlet 2.4 initialization order (many Servlet 2.3 containers do).
+		- Note that you need to fall back to Spring's ContextLoaderServlet for
+		- J2EE servers that do not follow the Servlet 2.4 initialization order.
 		-
 	  - Use WebApplicationContextUtils.getWebApplicationContext(servletContext)
 	  - to access it anywhere in the web application, outside of the framework.
@@ -73,12 +69,10 @@
 	  - The root context is the parent of all servlet-specific contexts.
 	  - This means that its beans are automatically available in these child contexts,
 	  - both for getBean(name) calls and (external) bean references.
-    -->
-	<servlet>
-		<servlet-name>context</servlet-name>
-		<servlet-class>org.springframework.web.context.ContextLoaderServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+	  -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
 
 	<!--
 	  - Servlet that dispatches request to registered handlers (Controller implementations).

@@ -11,7 +11,7 @@ import org.springframework.samples.petclinic.Owner;
 import org.springframework.samples.petclinic.Pet;
 import org.springframework.samples.petclinic.PetType;
 import org.springframework.samples.petclinic.util.EntityUtils;
-import org.springframework.web.bind.RequestUtils;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class AddPetForm extends AbstractClinicForm {
 
 	public AddPetForm() {
+		setCommandName("pet");
 		// need a session to hold the formBackingObject
 		setSessionForm(true);
 	}
@@ -33,7 +34,7 @@ public class AddPetForm extends AbstractClinicForm {
 	}
 
 	protected Object formBackingObject(HttpServletRequest request) throws ServletException {
-		Owner owner = getClinic().loadOwner(RequestUtils.getRequiredIntParameter(request, "ownerId"));
+		Owner owner = getClinic().loadOwner(ServletRequestUtils.getRequiredIntParameter(request, "ownerId"));
 		Pet pet = new Pet();
 		owner.addPet(pet);
 		return pet;

@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/includes.jsp" %>
 
 <B>First Name:</B>
-<spring:bind path="command.firstName">
+<spring:bind path="firstName">
   <FONT color="red">
     <B><c:out value="${status.errorMessage}"/></B>
   </FONT>

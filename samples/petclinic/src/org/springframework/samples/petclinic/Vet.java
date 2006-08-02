@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.io.Serializable;
 
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
@@ -16,7 +15,7 @@ import org.springframework.beans.support.PropertyComparator;
  * @author Ken Krebs
  * @author Juergen Hoeller
  */
-public class Vet extends Person{
+public class Vet extends Person {
 
 	private Set specialties;
 

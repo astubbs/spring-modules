@@ -1,0 +1,85 @@
+CREATE USER pc IDENTIFIED BY 'pc';
+
+GRANT CONNECT, RESOURCE TO pc;
+
+CONNECT pc/pc;
+
+CREATE SEQUENCE seq_owners;
+
+CREATE SEQUENCE seq_pets;
+
+CREATE SEQUENCE seq_visits;
+
+CREATE TABLE vets
+(
+   id number,
+   fist_name varchar2(30),
+   last_name varchar2(30),
+   CONSTRAINT pk_vets PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_vets_last_name
+   ON vets (last_name);
+
+CREATE TABLE specialties
+(
+   id number,
+   name varchar2(80),
+   CONSTRAINT pk_specialities PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_specialties_name
+   ON specialties (name);
+
+CREATE TABLE vet_specialties
+(
+   vet_id number,
+   specialty_id number,
+   CONSTRAINT fk_vet_specialities_vets FOREIGN KEY (vet_id) REFERENCES vets (id),
+   CONSTRAINT fk_vet_specialities_specialities FOREIGN KEY (specialty_id) REFERENCES specialties (id)
+);
+
+CREATE INDEX idx_types_name
+   ON types (name);
+
+CREATE TABLE owners
+(
+   id number,
+   first_name varchar2(30),
+   last_name varchar2(30),
+   address varchar2(255),
+   city varchar2(80),
+   telephone varchar2(20),
+   CONSTRAINT pk_owners PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_owners_last_name
+   ON owners (last_name);
+
+CREATE TABLE pets
+(
+   id number,
+   name varchar2(30),
+   birth_date date,
+   type_id number,
+   owner_id number,
+   CONSTRAINT pk_pets PRIMARY KEY (id),
+   CONSTRAINT fk_pets_types FOREIGN KEY (type_id) REFERENCES types (id),
+   CONSTRAINT fk_pets_owners FOREIGN KEY (owner_id) REFERENCES owners (id)
+);
+
+CREATE INDEX idx_pets_name
+   ON pets (name);
+
+CREATE TABLE visits
+(
+   id number,
+   pet_id number,
+   visit_date date,
+   description varchar2(255),
+   CONSTRAINT pk_visits PRIMARY KEY (id),
+   CONSTRAINT fk_visits_pets FOREIGN KEY (pet_id) REFERENCES pets (id)
+);
+
+CREATE INDEX idx_visits_pet_id
+   ON visits (pet_id);

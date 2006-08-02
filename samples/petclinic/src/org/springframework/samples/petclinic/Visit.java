@@ -6,9 +6,8 @@ import java.util.Date;
  * Simple JavaBean domain object representing a visit.
  *
  * @author Ken Krebs
- * @author Omar Irbouh
  */
-public class Visit extends Entity {
+public class Visit extends BaseEntity {
 
 	/** Holds value of property date. */
 	private Date date;
@@ -19,10 +18,12 @@ public class Visit extends Entity {
 	/** Holds value of property pet. */
 	private Pet pet;
 
+
 	/** Creates a new instance of Visit for the current date */
 	public Visit() {
 		this.date = new Date();
 	}
+
 
 	/** Getter for property date.
 	 * @return Value of property date.

@@ -5,15 +5,15 @@
     <H2>Owner Information</H2>
 
     <TABLE border="0">
-      <TR><TD>Name</TD><TD><b><c:out value="${model.owner.firstName}"/> <c:out value="${model.owner.lastName}"/></b></TD></TR>
-      <TR><TD>Address</TD><TD><c:out value="${model.owner.address}"/></TD></TR>
-      <TR><TD>City</TD><TD><c:out value="${model.owner.city}"/></TD></tr>
-      <TR><TD>Telephone </TD><TD><c:out value="${model.owner.telephone}"/></TD></TR>
+      <TR><TD>Name</TD><TD><b><c:out value="${owner.firstName}"/> <c:out value="${owner.lastName}"/></b></TD></TR>
+      <TR><TD>Address</TD><TD><c:out value="${owner.address}"/></TD></TR>
+      <TR><TD>City</TD><TD><c:out value="${owner.city}"/></TD></tr>
+      <TR><TD>Telephone </TD><TD><c:out value="${owner.telephone}"/></TD></TR>
       <TR>
         <TD></TD>
         <TD>
             <FORM method=GET action="<c:url value="/editOwner.htm"/>">
-                <INPUT type="hidden" name="ownerId" value="<c:out value="${model.owner.id}"/>"/>
+                <INPUT type="hidden" name="ownerId" value="<c:out value="${owner.id}"/>"/>
                 <INPUT type="submit" value="Edit Owner"/>
             </FORM>
         </TD>
@@ -24,7 +24,7 @@
     <BR>
     <H3>Pets and Visits</H3>
 
-    <c:forEach var="pet" items="${model.owner.pets}">
+    <c:forEach var="pet" items="${owner.pets}">
     <TABLE border="0">
       <TR><TD valign="top">
         <TABLE border="0">
@@ -62,7 +62,7 @@
     </c:forEach>
 
     <FORM method=GET action="<c:url value="/addPet.htm"/>" name="formAddPet">
-        <INPUT type="hidden" name="ownerId" value="<c:out value="${model.owner.id}"/>"/>
+        <INPUT type="hidden" name="ownerId" value="<c:out value="${owner.id}"/>"/>
         <INPUT type="submit" value="Add New Pet"/>
     </FORM>
     <BR>

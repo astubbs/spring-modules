@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.samples.petclinic.Pet;
 import org.springframework.samples.petclinic.PetType;
 import org.springframework.samples.petclinic.util.EntityUtils;
-import org.springframework.web.bind.RequestUtils;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class EditPetForm extends AbstractClinicForm {
 
 	public EditPetForm() {
+		setCommandName("pet");
 		// need a session to hold the formBackingObject
 		setSessionForm(true);
 		// initialize the form from the formBackingObject
@@ -34,12 +35,12 @@ public class EditPetForm extends AbstractClinicForm {
 
 	protected Object formBackingObject(HttpServletRequest request) throws ServletException {
 		// get the Pet referred to by id in the request
-		return getClinic().loadPet(RequestUtils.getRequiredIntParameter(request, "petId"));
+		return getClinic().loadPet(ServletRequestUtils.getRequiredIntParameter(request, "petId"));
 	}
 
 	protected void onBind(HttpServletRequest request, Object command) throws ServletException {
 		Pet pet = (Pet) command;
-		int typeId = RequestUtils.getRequiredIntParameter(request, "typeId");
+		int typeId = ServletRequestUtils.getRequiredIntParameter(request, "typeId");
 		pet.setType((PetType) EntityUtils.getById(getClinic().getPetTypes(), PetType.class, typeId));
 	}
 

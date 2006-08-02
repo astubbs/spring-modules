@@ -92,6 +92,12 @@
     <property name="broker" ref="clinicBroker"/>
 	</bean>
 
+	<!-- PetClinic's central data access object: Oracle ORBroker implementation -->
+	<!-- (only initialized when referenced by the "clinic" proxy) -->
+  <bean id="oracleClinic" class="org.springframework.samples.petclinic.orbroker.OracleBrokerClinic">
+    <property name="broker" ref="clinicBroker"/>
+	</bean>
+
 	<!--
 		- Transactional proxy for PetClinic's central data access facade.
 		-
@@ -104,7 +110,8 @@
 		<property name="target"><ref bean="${petclinic.jdbcImplBeanName}"/></property>
 		<property name="transactionAttributes">
 			<props>
-				<prop key="*">PROPAGATION_REQUIRED</prop>
+				<prop key="store*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
 			</props>
 		</property>
 	</bean>

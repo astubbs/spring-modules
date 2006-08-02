@@ -5,7 +5,7 @@
 <H2>Veterinarians:</H2>
 <TABLE border="1">
   <TH>Name</TH><TH>Specialties</TH>
-  <c:forEach var="vet" items="${vets}">
+  <c:forEach var="vet" items="${vetList}">
     <TR>
       <TD><c:out value="${vet.firstName}"/> <c:out value="${vet.lastName}"/></TD>
       <TD>

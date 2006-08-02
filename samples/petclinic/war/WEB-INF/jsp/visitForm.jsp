@@ -2,8 +2,8 @@
 <%@ include file="/WEB-INF/jsp/header.jsp" %>
 
 <P>
-<H2><c:if test="${command.new}">New </c:if>Visit:</H2>
-<spring:bind path="command">
+<H2><c:if test="${visit.new}">New </c:if>Visit:</H2>
+<spring:bind path="visit">
   <FONT color="red">
     <B><c:out value="${status.errorMessage}"/></B><BR>
   </FONT>
@@ -13,16 +13,16 @@
 <TABLE border="true">
   <TH>Name</TH><TH>Birth Date</TH><TH>Type</TH><TH>Owner</TH>
   <TR>
-    <TD><c:out value="${command.pet.name}"/></TD>
-    <TD><fmt:formatDate value="${command.pet.birthDate}" pattern="yyyy-MM-dd"/></TD>
-    <TD><c:out value="${command.pet.type.name}"/></TD>
-    <TD><c:out value="${command.pet.owner.firstName}"/> <c:out value="${command.pet.owner.lastName}"/></TD>
+    <TD><c:out value="${visit.pet.name}"/></TD>
+    <TD><fmt:formatDate value="${visit.pet.birthDate}" pattern="yyyy-MM-dd"/></TD>
+    <TD><c:out value="${visit.pet.type.name}"/></TD>
+    <TD><c:out value="${visit.pet.owner.firstName}"/> <c:out value="${visit.pet.owner.lastName}"/></TD>
   </TR>
 </TABLE>
 <P>
 <FORM method="POST">
   <B>Date:</B>
-  <spring:bind path="command.date">
+  <spring:bind path="visit.date">
     <FONT color="red">
       <B><c:out value="${status.errorMessage}"/></B>
     </FONT>
@@ -31,14 +31,14 @@
   <BR>(yyyy-mm-dd)
   <P>
   <B>Description:</B>
-  <spring:bind path="command.description">
+  <spring:bind path="visit.description">
     <FONT color="red">
       <B><c:out value="${status.errorMessage}"/></B>
     </FONT>
     <BR><TEXTAREA rows="10" cols="25" name="description"><c:out value="${status.value}"/></TEXTAREA>
   </spring:bind>
   <P>
-  <INPUT type="hidden" name="petId" value="<c:out value="${command.pet.id}"/>"/>
+  <INPUT type="hidden" name="petId" value="<c:out value="${visit.pet.id}"/>"/>
   <INPUT type = "submit" value="Add Visit"  />
 </FORM>
 <P>
@@ -46,7 +46,7 @@
 <B>Previous Visits:</B>
 <TABLE border="true">
   <TH>Date</TH><TH>Description</TH>
-  <c:forEach var="visit" items="${command.pet.visits}">
+  <c:forEach var="visit" items="${visit.pet.visits}">
 		<c:if test="${!visit.new}">
     <TR>
       <TD><fmt:formatDate value="${visit.date}" pattern="yyyy-MM-dd"/></TD>

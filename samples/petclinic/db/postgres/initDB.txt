@@ -1,10 +1,10 @@
-CREATE USER petclinic PASSWORD 'manager'
+CREATE USER pc PASSWORD 'pc'
   CREATEDB
    VALID UNTIL 'infinity';
 
-CREATE DATABASE petclinic
+CREATE DATABASE pc
   WITH ENCODING='UNICODE'
-       OWNER=petclinic;
+       OWNER=pc;
 
 CREATE SEQUENCE seq_owners;
 

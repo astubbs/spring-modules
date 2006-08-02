@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.samples.petclinic.Clinic;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.ServletRequestDataBinder;
@@ -38,12 +39,14 @@ public abstract class AbstractClinicForm extends SimpleFormController {
 	}
 
 	/**
-	 * Set up a custom property editor for the application's date format.
+	 * Sets up a number of custom property editors; one for the application's date format,
+     * and another for empty fields.
 	 */
 	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		dateFormat.setLenient(false);
 		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, false));
+		binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
 	}
 
 	/**

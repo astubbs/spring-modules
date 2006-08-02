@@ -4,16 +4,16 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.springframework.orm.ObjectRetrievalFailureException;
-import org.springframework.samples.petclinic.Entity;
+import org.springframework.samples.petclinic.BaseEntity;
 
 /**
  * Utility methods for handling entities.
- * Separate from the Entity class mainly because of dependency
+ * Separate from the BaseEntity class mainly because of dependency
  * on the ORM-associated ObjectRetrievalFailureException.
  *
  * @author Juergen Hoeller
  * @since 29.10.2003
- * @see org.springframework.samples.petclinic.Entity
+ * @see org.springframework.samples.petclinic.BaseEntity
  */
 public abstract class EntityUtils {
 
@@ -26,11 +26,11 @@ public abstract class EntityUtils {
 	 * @return the found entity
 	 * @throws ObjectRetrievalFailureException if the entity was not found
 	 */
-	public static Entity getById(Collection entities, Class entityClass, int entityId)
+	public static BaseEntity getById(Collection entities, Class entityClass, int entityId)
 	    throws ObjectRetrievalFailureException {
 
 		for (Iterator it = entities.iterator(); it.hasNext();) {
-			Entity entity = (Entity) it.next();
+			BaseEntity entity = (BaseEntity) it.next();
 			if (entity.getId().intValue() == entityId && entityClass.isInstance(entity)) {
 				return entity;
 			}

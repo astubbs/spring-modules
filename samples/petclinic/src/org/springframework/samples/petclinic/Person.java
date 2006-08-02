@@ -5,7 +5,7 @@ package org.springframework.samples.petclinic;
  *
  * @author Ken Krebs
  */
-public class Person extends Entity {
+public class Person extends BaseEntity {
 
 	private String firstName;
 
@@ -16,6 +16,7 @@ public class Person extends Entity {
 	private String city;
 
 	private String telephone;
+	
 
 	public String getFirstName() {
 		return this.firstName;

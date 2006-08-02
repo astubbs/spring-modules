@@ -3,27 +3,24 @@
 <Context path="/petclinic" docBase="petclinic" debug="4" reloadable="true">
   <Logger className="org.apache.catalina.logger.FileLogger" prefix="localhost_petclinic_log." suffix=".txt" timestamp="true"/>
 
-  <!-- Define a database connection pool for MYSQL -->
-  <Resource name="jdbc/petclinicMYSQL" auth="Container" type="javax.sql.DataSource"/>
-  <ResourceParams name="jdbc/petclinicMYSQL">
+  <!-- Define a database connection pool for ORACLE -->
+  <Resource name="jdbc/petclinicORACLE" auth="Container" type="javax.sql.DataSource"/>
+  <ResourceParams name="jdbc/petclinicORACLE">
     <parameter>
       <name>factory</name>
       <value>org.apache.commons.dbcp.BasicDataSourceFactory</value>
     </parameter>
-    
+
     <parameter>
       <name>driverClassName</name>
-      <value>org.gjt.mm.mysql.Driver</value>
+      <value>oracle.jdbc.driver.OracleDriver</value>
     </parameter>
     <!--
-          The JDBC connection url for connecting to your MySQL dB.
-          The autoReconnect=true argument to the url makes sure that the
-          mm.mysql JDBC Driver will automatically reconnect if mysqld closed the
-          connection.  mysqld by default closes idle connections after 8 hours.
+          The JDBC connection url for connecting to your ORACLE dB.
     -->
     <parameter>
       <name>url</name>
-      <value>jdbc:mysql://localhost:3306/petclinic?autoReconnect=true</value>
+      <value>jdbc:oracle:thin:@localhost:1521:orcl</value>
     </parameter>
     <parameter>
       <name>username</name>
@@ -33,7 +30,7 @@
       <name>password</name>
       <value>pc</value>
     </parameter>
-    
+
     <parameter>
       <name>maxActive</name>
       <value>50</value>
@@ -60,5 +57,5 @@
     </parameter>
   </ResourceParams>
 
-  
+
 </Context>

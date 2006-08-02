@@ -1,3 +1,19 @@
+/*
+ * Copyright 2002-2006 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springframework.samples.petclinic;
 
 import java.util.Collection;
@@ -12,7 +28,7 @@ import org.springframework.test.AbstractTransactionalDataSourceSpringContextTest
  *
  * <p>This class extends AbstractTransactionalDataSourceSpringContextTests,
  * one of the valuable test superclasses provided in the org.springframework.test
- * package. This represents best practice for integration tests with Spring.
+ * package. This represents best practice for integration tests with Spring. 
  * The AbstractTransactionalDataSourceSpringContextTests superclass provides the
  * following services:
  * <li>Injects test dependencies, meaning that we don't need to perform application
@@ -27,7 +43,7 @@ import org.springframework.test.AbstractTransactionalDataSourceSpringContextTest
  *
  * <p>The AbstractTransactionalDataSourceSpringContextTests and related classes are shipped
  * in the spring-mock.jar.
- *
+ * 
  * @see org.springframework.test.AbstractTransactionalDataSourceSpringContextTests
  * @author Ken Krebs
  * @author Rod Johnson
@@ -36,6 +52,7 @@ import org.springframework.test.AbstractTransactionalDataSourceSpringContextTest
 public abstract class AbstractClinicTests extends AbstractTransactionalDataSourceSpringContextTests {
 
 	protected Clinic clinic;
+
 
 	/**
 	 * This method is provided to set the Clinic instance being tested by the Dependency Injection
@@ -46,13 +63,14 @@ public abstract class AbstractClinicTests extends AbstractTransactionalDataSourc
 		this.clinic = clinic;
 	}
 
+
 	public void testGetVets() {
 		Collection vets = this.clinic.getVets();
-
-		// Use the inherited JdbcTemplate (from AbstractTransactionalDataSourceSpringContextTests)
+		
+		// Use the inherited JdbcTemplate (from AbstractTransactionalDataSourceSpringContextTests) 
 		// to verify the results of the query
 		assertEquals("JDBC query must show the same number of vets",
-				jdbcTemplate.queryForInt("SELECT COUNT(0) FROM VETS"),
+				jdbcTemplate.queryForInt("SELECT COUNT(0) FROM VETS"), 
 				vets.size());
 		Vet v1 = (Vet) EntityUtils.getById(vets, Vet.class, 2);
 		assertEquals("Leary", v1.getLastName());
@@ -68,7 +86,7 @@ public abstract class AbstractClinicTests extends AbstractTransactionalDataSourc
 	public void testGetPetTypes() {
 		Collection petTypes = this.clinic.getPetTypes();
 		assertEquals("JDBC query must show the same number of pet typess",
-				jdbcTemplate.queryForInt("SELECT COUNT(0) FROM TYPES"),
+				jdbcTemplate.queryForInt("SELECT COUNT(0) FROM TYPES"), 
 				petTypes.size());
 		PetType t1 = (PetType) EntityUtils.getById(petTypes, PetType.class, 1);
 		assertEquals("cat", t1.getName());
@@ -88,7 +106,7 @@ public abstract class AbstractClinicTests extends AbstractTransactionalDataSourc
 		assertTrue(o1.getLastName().startsWith("Franklin"));
 		Owner o10 = this.clinic.loadOwner(10);
 		assertEquals("Carlos", o10.getFirstName());
-
+		
 		// Check lazy loading, by ending the transaction
 		endTransaction();
 		// Now Owners are "disconnected" from the data store.
@@ -134,10 +152,10 @@ public abstract class AbstractClinicTests extends AbstractTransactionalDataSourc
 		int found = o6.getPets().size();
 		Pet pet = new Pet();
 		pet.setName("bowser");
-		o6.addPet(pet);
 		Collection types = this.clinic.getPetTypes();
 		pet.setType((PetType) EntityUtils.getById(types, PetType.class, 2));
 		pet.setBirthDate(new Date());
+		o6.addPet(pet);
 		assertEquals(found + 1, o6.getPets().size());
 		// both storePet and storeOwner are necessary to cover all ORM tools
 		this.clinic.storePet(pet);

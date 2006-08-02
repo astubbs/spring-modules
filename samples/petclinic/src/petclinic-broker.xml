@@ -158,4 +158,9 @@
     select nextVal('{{sequenceName}}') as ID
   ]]></sql-statement>
 
+  <sql-statement id="getOracleSequenceNextValue"><![CDATA[
+    select {{sequenceName}}.nextVal as ID
+      from DUAL
+  ]]></sql-statement>
+
 </broker>

@@ -3,7 +3,7 @@
 
 <!--
   - DispatcherServlet application context for PetClinic's web tier.
-	-->
+  -->
 <beans>
 
 	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
@@ -14,39 +14,11 @@
 		- but is currently just used within PetClinic's web tier.
     -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basename"><value>messages</value></property>
+		<property name="basename" value="messages"/>
 	</bean>
 
 
 	<!-- ========================= MAPPING DEFINITIONS ========================= -->
-
-	<!--
-	  - This bean provides explicit View mappings in a resource bundle instead of the
-	  - default InternalResourceViewResolver. It fetches the view mappings from
-	  - localized "views_xx" classpath files, i.e. "/WEB-INF/classes/views.properties"
-	  - or "/WEB-INF/classes/views_de.properties".
-	  -
-	  - Symbolic view names returned by Controllers will be resolved by this bean
-	  - using the respective properties file, which defines arbitrary mappings between
-	  - view names and resources.
-	  -->
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
-		<property name="basename"><value>views</value></property>
-	</bean>
-
-	<!--
-	  - This bean resolves specific types of exception to corresponding error views.
-		- The default behaviour of DispatcherServlet is to propagate all exceptions to the
-		- servlet container: This will happen here with all other types of exception.
-		-->
-	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-		<property name="exceptionMappings">
-			<props>
-				<prop key="org.springframework.dao.DataAccessException">dataAccessFailure</prop>
-				<prop key="org.springframework.transaction.TransactionException">dataAccessFailure</prop>
-			</props>
-		</property>
-	</bean>
 
 	<!--
 	 - This bean is an explicit URL mapper that is used by the "petclinic" DispatcherServlet
@@ -68,6 +40,44 @@
 		</property>
 	</bean>
 
+	<!--
+	  - This bean resolves specific types of exception to corresponding error views.
+		- The default behaviour of DispatcherServlet is to propagate all exceptions to the
+		- servlet container: This will happen here with all other types of exception.
+		-->
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.springframework.dao.DataAccessException">dataAccessFailure</prop>
+				<prop key="org.springframework.transaction.TransactionException">dataAccessFailure</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!--
+		- This bean resolves default view names for controllers that do not explicitly
+		- specify a view name in their return ModelAndView (see ClinicController).
+		- This translator takes the request URL and extracts a view name from it: e.g.
+		- "/welcome.html" -> "welcome", plus configured "View" suffix -> "welcomeView".
+		-->
+	<bean id="viewNameTranslator" class="org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator">
+		<property name="suffix" value="View"/>
+	</bean>
+
+	<!--
+	  - This bean provides explicit View mappings in a resource bundle instead of the
+	  - default InternalResourceViewResolver. It fetches the view mappings from
+	  - localized "views_xx" classpath files, i.e. "/WEB-INF/classes/views.properties"
+	  - or "/WEB-INF/classes/views_de.properties".
+	  -
+	  - Symbolic view names returned by Controllers will be resolved by this bean
+	  - using the respective properties file, which defines arbitrary mappings between
+	  - view names and resources.
+	  -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+		<property name="basename" value="views"/>
+	</bean>
+
 
 	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
 
@@ -76,8 +86,8 @@
 	  - It uses the "clinicControllerResolver" bean below for method name resolution.
 	  -->
 	<bean id="clinicController" class="org.springframework.samples.petclinic.web.ClinicController">
-		<property name="methodNameResolver"><ref local="clinicControllerResolver"/></property>
-		<property name="clinic"><ref bean="clinic"/></property>
+		<property name="methodNameResolver" ref="clinicControllerResolver"/>
+		<property name="clinic" ref="clinic"/>
 	</bean>
 
 	<!--
@@ -99,10 +109,10 @@
 	  - It uses the "findOwnersValidator" and "clinic" beans.
 	  -->
 	<bean id="findOwnersForm" class="org.springframework.samples.petclinic.web.FindOwnersForm">
-		<property name="formView"><value>findOwnersForm</value></property>
-		<property name="selectView"><value>selectOwnerView</value></property>
-		<property name="successView"><value>ownerRedirect</value></property>
-		<property name="clinic"><ref bean="clinic"/></property>
+		<property name="formView" value="findOwnersForm"/>
+		<property name="selectView" value="selectOwnerView"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="clinic" ref="clinic"/>
 	</bean>
 
 	<!--
@@ -110,10 +120,10 @@
 	  - It uses the "ownerValidator" and "clinic" beans.
 	  -->
 	<bean id="addOwnerForm" class="org.springframework.samples.petclinic.web.AddOwnerForm">
-		<property name="formView"><value>ownerForm</value></property>
-		<property name="successView"><value>ownerRedirect</value></property>
-		<property name="validator"><ref local="ownerValidator"/></property>
-		<property name="clinic"><ref bean="clinic"/></property>
+		<property name="formView" value="ownerForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="ownerValidator"/>
+		<property name="clinic" ref="clinic"/>
 	</bean>
 
 	<!--
@@ -121,10 +131,10 @@
 	  - It uses the "ownerValidator" and "clinic" beans.
 	  -->
 	<bean id="editOwnerForm" class="org.springframework.samples.petclinic.web.EditOwnerForm">
-		<property name="formView"><value>ownerForm</value></property>
-		<property name="successView"><value>ownerRedirect</value></property>
-		<property name="validator"><ref local="ownerValidator"/></property>
-		<property name="clinic"><ref bean="clinic"/></property>
+		<property name="formView" value="ownerForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="ownerValidator"/>
+		<property name="clinic" ref="clinic"/>
 	</bean>
 
 	<!--
@@ -139,10 +149,10 @@
 	  - It uses the "petValidator" and "clinic" beans.
 	  -->
 	<bean id="addPetForm" class="org.springframework.samples.petclinic.web.AddPetForm">
-		<property name="formView"><value>petForm</value></property>
-		<property name="successView"><value>ownerRedirect</value></property>
-		<property name="validator"><ref local="petValidator"/></property>
-		<property name="clinic"><ref bean="clinic"/></property>
+		<property name="formView" value="petForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="petValidator"/>
+		<property name="clinic" ref="clinic"/>
 	</bean>
 
 	<!--
@@ -150,10 +160,10 @@
 	  - It uses the "petValidator" and "clinic" beans.
 	  -->
 	<bean id="editPetForm" class="org.springframework.samples.petclinic.web.EditPetForm">
-		<property name="formView"><value>petForm</value></property>
-		<property name="successView"><value>ownerRedirect</value></property>
-		<property name="validator"><ref local="petValidator"/></property>
-		<property name="clinic"><ref bean="clinic"/></property>
+		<property name="formView" value="petForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="petValidator"/>
+		<property name="clinic" ref="clinic"/>
 	</bean>
 
 	<!--
@@ -168,10 +178,10 @@
 	  - It uses the "visitValidator" and "clinic" beans.
 	  -->
 	<bean id="addVisitForm" class="org.springframework.samples.petclinic.web.AddVisitForm">
-		<property name="formView"><value>visitForm</value></property>
-		<property name="successView"><value>ownerRedirect</value></property>
-		<property name="validator"><ref local="visitValidator"/></property>
-		<property name="clinic"><ref bean="clinic"/></property>
+		<property name="formView" value="visitForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="visitValidator"/>
+		<property name="clinic" ref="clinic"/>
 	</bean>
 
 	<!--

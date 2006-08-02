@@ -4,7 +4,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.samples.petclinic.Owner;
-import org.springframework.web.bind.RequestUtils;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class EditOwnerForm extends AbstractClinicForm {
 
 	public EditOwnerForm() {
+		setCommandName("owner");
 		// need a session to hold the formBackingObject
 		setSessionForm(true);
 		// initialize the form from the formBackingObject
@@ -24,7 +25,7 @@ public class EditOwnerForm extends AbstractClinicForm {
 	/** Method forms a copy of an existing Owner for editing */
 	protected Object formBackingObject(HttpServletRequest request) throws ServletException {
 		// get the Owner referred to by id in the request
-		return getClinic().loadOwner(RequestUtils.getRequiredIntParameter(request, "ownerId"));
+		return getClinic().loadOwner(ServletRequestUtils.getRequiredIntParameter(request, "ownerId"));
 	}
 
 	/** Method updates an existing Owner. */

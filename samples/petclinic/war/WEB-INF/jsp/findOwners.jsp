@@ -3,14 +3,16 @@
 
 <P>
 <H2>Find Owners:</H2>
-<spring:bind path="command">
+<spring:bind path="owner">
   <FONT color="red">
     <B><c:out value="${status.errorMessage}"/></B>
   </FONT>
 </spring:bind>
 <P>
 <FORM method="POST">
-  <jsp:include page="/WEB-INF/jsp/fields/lastName.jsp"/>
+  <spring:nestedPath path="owner">
+    <jsp:include page="/WEB-INF/jsp/fields/lastName.jsp"/>
+  </spring:nestedPath>
   <INPUT type = "submit" value="Find Owners"  />
 </FORM>
 <P>
