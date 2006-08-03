@@ -25,7 +25,7 @@ import org.springframework.validation.Errors;
  *
  * @author Sergio Bossa
  */
-public class AjaxSubmitEventImpl extends AjaxActionEventImpl implements AjaxSubmitEvent {
+public class AjaxSubmitEventImpl extends BaseAjaxEvent implements AjaxSubmitEvent {
     
     private Errors validationErrors;
     private Object commandObject;

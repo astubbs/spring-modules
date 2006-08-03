@@ -16,6 +16,7 @@
 
 package org.springmodules.xt.ajax;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
 
@@ -48,11 +49,18 @@ public abstract class AbstractAjaxHandler implements AjaxHandler {
         }
         
         try {
-            // TODO: Cache reflection results ...
-            Method m = this.getClass().getDeclaredMethod(id, new Class[]{this.getEventInterface(event)});
-            response = (AjaxResponse) m.invoke(this, new Object[]{event});
+            Method m = this.getMatchingMethod(event);
+            if (m != null) {
+                response = (AjaxResponse) m.invoke(this, new Object[]{event});
+            }
+            else {
+                throw new IllegalStateException("You need to call the supports() method first!");
+            }
         }
-        catch(Exception ex) {
+        catch(IllegalAccessException ex) {
+            throw new UnsupportedEventException("Cannot handling the given event with id: " + id, ex);
+        }
+        catch(InvocationTargetException ex) {
             throw new UnsupportedEventException("Cannot handling the given event with id: " + id, ex);
         }
         
@@ -67,29 +75,44 @@ public abstract class AbstractAjaxHandler implements AjaxHandler {
      */
     public boolean supports(AjaxEvent event) {
         String id = event.getEventId();
-        boolean result = false;
         
         if (id == null) { 
             throw new IllegalArgumentException("Event id cannot be null."); 
         }
         
-        try {
-            // TODO: Cache reflection results ...
-            this.getClass().getDeclaredMethod(id, new Class[]{this.getEventInterface(event)});
-            result = true;
+        Method m = this.getMatchingMethod(event);
+        if (m != null) {
+            return true;
         }
-        catch(Exception ex) {
-            result = false;
+        else {
+            return false;
         }
-        
-        return result;
     }
     
-    private Class getEventInterface(AjaxEvent e) {
-        Class[] interfaces = e.getClass().getInterfaces();
-        Class ret = e.getClass();
+    /**
+     * FIXME: Cache reflection results!
+     */
+    private Method getMatchingMethod(AjaxEvent event) {
+        Class eventType = this.getEventType(event);
+        Method[] methods = this.getClass().getDeclaredMethods();
+        Method ret = null;
+        for (Method method : methods) {
+            if (method.getName().equals(event.getEventId()) && method.getParameterTypes()[0].isAssignableFrom(eventType)) {
+                ret = method;
+                break;
+            }
+        }
+        return ret;
+    }
+    
+    /**
+     * FIXME: Cache reflection results!
+     */
+    private Class getEventType(AjaxEvent event) {
+        Class[] interfaces = event.getClass().getInterfaces();
+        Class ret = event.getClass();
         for (Class intf : interfaces) {
-            if (intf.isInterface() && AjaxEvent.class.isAssignableFrom(intf)) {
+            if (AjaxEvent.class.isAssignableFrom(intf)) {
                 ret = intf;
                 break;
             }

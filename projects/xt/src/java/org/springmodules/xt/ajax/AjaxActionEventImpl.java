@@ -23,30 +23,9 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author Sergio Bossa
  */
-public class AjaxActionEventImpl implements AjaxActionEvent {
-    
-    private String eventId;
-    private HttpServletRequest httpRequest;
-    private String elementName;
-    
+public class AjaxActionEventImpl extends BaseAjaxEvent implements AjaxActionEvent {
+   
     public AjaxActionEventImpl(String eventId, HttpServletRequest httpRequest) {
-        this.eventId = eventId;
-        this.httpRequest = httpRequest;
-    }
-    
-    public String getEventId() {
-        return this.eventId;
-    }
-
-    public HttpServletRequest getHttpRequest() {
-        return this.httpRequest;
-    }
-
-    public String getElementName() {
-        return this.elementName;
-    }
-
-    public void setElementName(String elementName) {
-        this.elementName = elementName;
+        super(eventId, httpRequest);
     }
 }
