@@ -34,7 +34,7 @@
             <artifact name="spring-mock" type="jar" conf="test"/>
         </dependency>
 
-        <dependency org="mozilla" name="rhino" rev="1.6+">
+        <dependency org="mozilla" name="rhino" rev="1.6R2">
             <artifact name="js" type="jar"/>
         </dependency>
 
