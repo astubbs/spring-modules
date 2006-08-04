@@ -2,7 +2,7 @@
 // that is aware of a form object injected using Rhino
 ValangValidator.Rule.prototype.getPropertyValue = function(propertyName) {
     var javaResult = formObject[propertyName]
-    if (javaResult) {        
+    if (javaResult) {
         var result 
         if (javaResult['getClass'] && javaResult.getClass() == new java.util.Date().getClass()) {
             // convert java Date to JavaScript Date
