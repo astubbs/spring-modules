@@ -24,8 +24,18 @@ import javax.servlet.http.HttpServletRequest;
  * @author Sergio Bossa
  */
 public class AjaxActionEventImpl extends BaseAjaxEvent implements AjaxActionEvent {
+
+    private Object commandObject;
    
     public AjaxActionEventImpl(String eventId, HttpServletRequest httpRequest) {
         super(eventId, httpRequest);
+    }
+    
+    public Object getCommandObject() {
+        return this.commandObject;
+    }
+
+    public void setCommandObject(Object command) {
+        this.commandObject = command;
     }
 }

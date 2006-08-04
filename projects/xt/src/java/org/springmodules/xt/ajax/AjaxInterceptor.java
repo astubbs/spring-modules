@@ -107,6 +107,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 for (AjaxHandler ajaxHandler : handlers) {
                     if (ajaxHandler.supports(event)) {
                         event.setElementName(request.getParameter(this.elementParameter));
+                        if (handler instanceof BaseCommandController) {
+                            String commandName = ((BaseCommandController) handler).getCommandName();
+                            event.setCommandObject(request.getAttribute(commandName));
+                        }
                         ajaxResponse = ajaxHandler.handle(event);
                         supported = true;
                         break;

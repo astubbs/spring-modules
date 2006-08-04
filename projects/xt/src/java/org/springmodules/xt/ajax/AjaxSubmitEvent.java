@@ -21,10 +21,10 @@ import org.springframework.validation.Errors;
 
 /**
  * Special interface for an ajax submit event.<br>
- * It also has:
+ * It carries:
  * <ul>
  *      <li>The {@link org.springframework.validation.Errors} object containing validation errors, if any.</li>
- *      <li>The command object associated with the submitted form (if any).</li>
+ *      <li>The command object associated with the submitted form (if any), with all values bound.</li>
  *      <li>A {@link java.util.Map} containing the model set on submit.</li>
  * </ul>
  * The {@link org.springframework.validation.Errors} and command objects are set if the ajax submit event is generated from a form 
@@ -50,13 +50,13 @@ public interface AjaxSubmitEvent extends AjaxEvent {
     public void setValidationErrors(Errors errors);
     
     /**
-     * Get the command object associated with the form (if any).
+     * Get the command object associated with the form (if any), with all values bound.
      * @return The command object, or null if no command object has been found.
      */
     public Object getCommandObject();
     
     /**
-     * Set the command object associated with the form (if any).
+     * Set the command object associated with the form (if any), with all values bound.
      * @param command The command object.
      */
     public void setCommandObject(Object command);
