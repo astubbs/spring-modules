@@ -1,5 +1,5 @@
 <ivy-module version="1.1">
-    <info organisation="springmodules" module="spring-modules-validation"/>
+    <info organisation="springmodules" module="springmodules-validation"/>
 
     <configurations>
         <!-- default configuration that 'by default' pulls in the global configuration -->
@@ -32,7 +32,7 @@
         <dependency org="springframework" name="springframework" rev="2.0-rc2">
             <artifact name="spring" type="jar" conf="global"/>
             <artifact name="spring-mock" type="jar" conf="test"/>
-        </dependency> 
+        </dependency>
 
         <dependency org="mozilla" name="rhino" rev="1.6R2">
             <artifact name="js" type="jar"/>
@@ -40,8 +40,11 @@
 
         <!-- build time dependencies -->
 
-        <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.1" transitive="false"
-                    conf="buildtime->default"/>
+        <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.1" transitive="false" conf="buildtime->default"/>
+
+        <dependency org="ognl" name="ognl" rev="2.6.7" transitive="false" conf="buildtime->default"/>
+        <dependency org="joda-time" name="joda-time" rev="1.2.1" transitive="false" conf="buildtime->default"/>
+        <dependency org="org.hibernate" name="hibernate-annotations" rev="3.2.0.cr1" transitive="false" conf="buildtime->default"/>
 
         <!-- test time only dependencies -->
 
