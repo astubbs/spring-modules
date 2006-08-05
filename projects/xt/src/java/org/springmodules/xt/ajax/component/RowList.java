@@ -27,6 +27,7 @@ import org.springframework.beans.BeanWrapperImpl;
  *
  * @author Sergio Bossa
  */
+@Deprecated
 public class RowList implements Component {
     
     private Object[] rows;

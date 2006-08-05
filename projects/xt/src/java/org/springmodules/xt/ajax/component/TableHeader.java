@@ -40,7 +40,7 @@ public class TableHeader implements Component {
     }
     
     /**
-     * Add a generic attribute to the rendered row.
+     * Add a generic attribute to the header row.
      * @param name The attribute name.
      * @param value The attribute value.
      */
@@ -49,7 +49,7 @@ public class TableHeader implements Component {
     }
     
     /**
-     * Add a generic attribute to every rendered header column.
+     * Add a generic attribute to every header column.
      * @param name The attribute name.
      * @param value The attribute value.
      */

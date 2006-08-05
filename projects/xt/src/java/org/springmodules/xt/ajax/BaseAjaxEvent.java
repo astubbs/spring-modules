@@ -28,6 +28,7 @@ public abstract class BaseAjaxEvent implements AjaxEvent {
     private String eventId;
     private HttpServletRequest httpRequest;
     private String elementName;
+    private String elementId;
     
     public BaseAjaxEvent(String eventId, HttpServletRequest httpRequest) {
         this.eventId = eventId;
@@ -48,5 +49,13 @@ public abstract class BaseAjaxEvent implements AjaxEvent {
 
     public void setElementName(String elementName) {
         this.elementName = elementName;
+    }
+
+    public String getElementId() {
+        return this.elementId;
+    }
+
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
     }
 }

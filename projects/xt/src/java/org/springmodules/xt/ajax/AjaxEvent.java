@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
  * <li>An event id.</li>
  * <li>The http request object.</li>
  * <li>The name of the html element that fired the event (optional).</li>
+ * <li>The id of the html element that fired the event (optional).</li>
  * </ul>
  * 
  * @author Sergio Bossa
@@ -54,4 +55,16 @@ public interface AjaxEvent {
      * @param elementName The source element name.
      */
     public void setElementName(String elementName);
+    
+    /**
+     * Get the id of the html element firing the event (the event source).
+     * @return The source element id.
+     */
+    public String getElementId();
+    
+    /**
+     * Set the id of the html element firing the event (the event source).
+     * @param elementId The source element id.
+     */
+    public void setElementId(String elementName);
 }

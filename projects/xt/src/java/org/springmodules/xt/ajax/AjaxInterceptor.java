@@ -71,6 +71,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     private String ajaxParameter = "ajax-request";
     private String eventParameter = "event-id";
     private String elementParameter = "source-element";
+    private String elementIdParameter = "source-element-id";
     
     private SortedMap<String, String> handlerMappings = new TreeMap();
     
@@ -107,6 +108,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 for (AjaxHandler ajaxHandler : handlers) {
                     if (ajaxHandler.supports(event)) {
                         event.setElementName(request.getParameter(this.elementParameter));
+                        event.setElementId(request.getParameter(this.elementIdParameter));
                         if (handler instanceof BaseCommandController) {
                             String commandName = ((BaseCommandController) handler).getCommandName();
                             event.setCommandObject(request.getAttribute(commandName));
@@ -170,6 +172,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 for (AjaxHandler ajaxHandler : handlers) {
                     if (ajaxHandler.supports(event)) {
                         event.setElementName(request.getParameter(this.elementParameter));
+                        event.setElementId(request.getParameter(this.elementIdParameter));
                         if (handler instanceof BaseCommandController) {
                             String commandName = ((BaseCommandController) handler).getCommandName();
                             RequestContext requestContext = new RequestContext(request, modelAndView.getModel());
@@ -259,6 +262,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     public void setElementParameter(String elementParameter) {
         this.elementParameter = elementParameter;
     }
+    
+    public void setElementIdParameter(String elementIdParameter) {
+        this.elementIdParameter = elementIdParameter;
+    }
 
     public void setEventParameter(String eventParameter) {
         this.eventParameter = eventParameter;
@@ -270,6 +277,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
 
     public String getElementParameter() {
         return this.elementParameter;
+    }
+    
+    public String getElementIdParameter() {
+        return this.elementIdParameter;
     }
 
     public String getEventParameter() {
