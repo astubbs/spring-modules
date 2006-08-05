@@ -5,6 +5,10 @@ http://springmodules.dev.java.net
 Changes in version 0.6 (in progress)
 ------------------------------------
 
+package org.springmodules.validation.commons
+* removed MapException class
+
+
 Changes in version 0.5 (14.07.2006)
 -----------------------------------
 Package org.springmodules.bpm.flux
@@ -34,6 +38,9 @@ Package org.springmodules.workflow.jbpm31
 Package org.springmodules.workflow.osworkflow
 * Added reference documentation [JIRA MOD-158]
 * Upgraded Acegi to 1.0.1 version [JIRA MOD-65]. Thanks go to Stefan Kleineikenscheidt for helping out.
+
+Package org.springmodules.validation.valang
+* Removed deprecated ValangValidationFactoryBean class
 
 Package org.springmodules.validation.valang.parser
 * Fixed the valang.jj to support direct list/array elements using the BeanWrapper notation (e.g. tags[0])
