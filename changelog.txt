@@ -5,8 +5,16 @@ http://springmodules.dev.java.net
 Changes in version 0.6 (in progress)
 ------------------------------------
 
+package org.springmodules.validation
+* Updated dependency on spring to spring-2.0-rc2
+* Updated dependency on acegi to acegi-security-1.0.1
+
 package org.springmodules.validation.commons
 * removed MapException class
+
+package org.springmodules.validation.util
+* Moved ContextAware to org.springmodules.validation.util.context
+* Moved BasicContextAware to org.springmodules.validation.util.context
 
 
 Changes in version 0.5 (14.07.2006)
