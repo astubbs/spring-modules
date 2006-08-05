@@ -19,7 +19,7 @@ package org.springmodules.validation.valang.parser;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springmodules.validation.util.BasicContextAware;
+import org.springmodules.validation.util.context.BasicContextAware;
 import org.springmodules.validation.valang.functions.FunctionDefinition;
 
 /**

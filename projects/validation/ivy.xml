@@ -29,10 +29,10 @@
 
         <dependency org="antlr" name="antlr" rev="2.7.6"/>
 
-        <dependency org="springframework" name="springframework" rev="1.2.7">
+        <dependency org="springframework" name="springframework" rev="2.0-rc2">
             <artifact name="spring" type="jar" conf="global"/>
             <artifact name="spring-mock" type="jar" conf="test"/>
-        </dependency>
+        </dependency> 
 
         <dependency org="mozilla" name="rhino" rev="1.6R2">
             <artifact name="js" type="jar"/>
@@ -40,7 +40,7 @@
 
         <!-- build time dependencies -->
 
-        <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.0" transitive="false"
+        <dependency org="org.acegisecurity" name="acegi-security" rev="1.0.1" transitive="false"
                     conf="buildtime->default"/>
 
         <!-- test time only dependencies -->

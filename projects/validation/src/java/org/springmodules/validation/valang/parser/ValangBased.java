@@ -18,7 +18,7 @@ package org.springmodules.validation.valang.parser;
 
 import java.util.Map;
 
-import org.springmodules.validation.util.ContextAware;
+import org.springmodules.validation.util.context.ContextAware;
 
 /**
  * Objects that are based on the {@link ValangParser} should implement this interface.

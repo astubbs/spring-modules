@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util;
+package org.springmodules.validation.util.context;
 
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.context.ApplicationContextAware;

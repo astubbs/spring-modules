@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.validation.util;
+package org.springmodules.validation.util.context;
 
 import javax.servlet.ServletContext;
 
