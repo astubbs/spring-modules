@@ -1,6 +1,8 @@
 package org.springmodules.xt.examples.ajax;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxActionEvent;
 import org.springmodules.xt.ajax.AjaxResponse;
@@ -9,7 +11,7 @@ import org.springmodules.xt.ajax.action.ReplaceContentAction;
 import org.springmodules.xt.ajax.action.ReplaceElementAction;
 import org.springmodules.xt.ajax.action.SetAttributeAction;
 import org.springmodules.xt.ajax.component.InputField;
-import org.springmodules.xt.ajax.component.OptionList;
+import org.springmodules.xt.ajax.component.Option;
 import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.domain.MemoryRepository;
 
@@ -25,13 +27,18 @@ public class SelectionHandler extends AbstractAjaxHandler {
     public AjaxResponse officeSelection(AjaxActionEvent event) {
         String officeId = event.getHttpRequest().getParameter(event.getElementName());
         // Load employees related to the selected office:
-        Collection employees = store.getEmployeesByOffice(store.getOffice(officeId));
+        Collection<IEmployee> employees = store.getEmployeesByOffice(store.getOffice(officeId));
         // Create the ajax response:
         AjaxResponse response = new AjaxResponseImpl();
         
         // Create the component to render (a list of html option element):
-        OptionList options = new OptionList(employees.toArray(), null, "matriculationCode", "surname");
-        options.setFirstTextOption("-1", "Select one ...");
+        List options = new LinkedList();
+        Option first = new Option("-1", "Select one ...");
+        options.add(first);
+        for(IEmployee emp : employees) {
+            Option option = new Option(emp, "matriculationCode", "surname");
+            options.add(option);
+        }
         // Create an ajax action for replacing the content of the "employees" element: 
         ReplaceContentAction action = new ReplaceContentAction("employees", options);
         

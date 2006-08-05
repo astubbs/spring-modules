@@ -5,43 +5,35 @@
 <html>
     <head>
         <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>   
-        <title>Spring Modules XT Ajax Framework : Example 4</title>
+        <title>Spring Modules XT Ajax Framework : Example 5</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
     <body>
         <div id="titleBar"></div>
         <h1>Spring Modules XT Framework</h1>
-        <h3 align="center">List employees with Spring Modules XT ajax-enabled dynamic tables ...</h3>
+        <h3 align="center">Fill an office with Spring Modules XT ajax-enabled dynamic tables ...</h3>
         <p>
-            This example uses Spring Modules XT Ajax Framework for listing employees in offices.
+            This example uses Spring Modules XT Ajax Framework for filling an office with a new list of employees.
         </p>
         <form method="POST" action="">
             <table>
             <tr>
                 <td>Choose an office:</td>
                 <td>
-                    <spring:bind path="command.office">
-                        <select id="offices" name="${status.expression}">
-                            <option>Select one ...</option>
-                            <c:forEach items="${offices}" var="office">
-                                <spring:transform value="${office}" var="officeString"/>
-                                <option value="${officeString}">${office.name}</option>
-                            </c:forEach>
-                        </select>
-                    </spring:bind>
+                    <select name="officeId">
+                        <c:forEach items="${offices}" var="office">
+                            <option value="${office.officeId}">${office.name}</option>
+                        </c:forEach>
+                    </select>
                 </td>
             </tr>
             <tr>
-                <td><input type="button" value="List" onclick="doAjaxSubmit('listEmployees', this);"></td>
-            </tr>
-            <tr>
-                <td id="message"></td>
-            </tr>
-            <tr>
                 <td colspan="2">
+                    <br/><br/>
                     <table border="1">
                         <thead>
                             <tr>
+                                <th>Employee</th>
                                 <th>Firstname</th>
                                 <th>Surname</th>
                                 <th>Matriculation Code</th>
@@ -50,7 +42,19 @@
                         <tbody id="employees">
                         </tbody>
                     </table>
+                    <input type="hidden" name="counter" id="counter" value="0"/>
                 </td>
+            </tr>
+            <tr>
+                <td>
+                    <br/>
+                    <div id="message"/>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td><input type="button" value="Add" onclick="doAjaxAction('addEmployee', this);"></td>&nbsp;
+                <td><input type="button" value="Fill" onclick="doAjaxSubmit('validate', this);"></td>
             </tr>
         </form>
     </body>

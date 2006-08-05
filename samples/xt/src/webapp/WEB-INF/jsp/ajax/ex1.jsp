@@ -19,36 +19,36 @@
             <table>
                 <tr>
                     <td>Press to append a random number :</td>
-                    <td><input type="button" value="Press" onclick="javascript:doAjaxAction('appendNumber', this);"></td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('appendNumber', this);"></td>
                 </tr>
                 <tr>
                     <td id="num" colspan="2"></td>
                 </tr>
                 <tr>
                     <td>Press to replace all numbers above with a single number :</td>
-                    <td><input type="button" value="Press" onclick="javascript:doAjaxAction('replaceNumbers', this);"></td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('replaceNumbers', this);"></td>
                 </tr>
                 <tr>
                     <td>Press to remove all numbers above :</td>
-                    <td><input type="button" value="Press" onclick="javascript:doAjaxAction('removeNumbers', this);"></td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('removeNumbers', this);"></td>
                 </tr>
                 <tr>
                     <td>Press to replace the text below, sorrounded by a <i>span</i> element, with an input field :</td>
-                    <td><input type="button" value="Press" onclick="javascript:doAjaxAction('replaceElement', this);"></td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('replaceElement', this);"></td>
                 </tr>
                 <tr>
                     <td colspan="2"><span id="toReplace" style="color: red;">Text to be replaced</span></td>
                 </tr>
                 <tr>
                     <td>Press to remove the text below, sorrouned by a <i>span</i> element :</td>
-                    <td><input type="button" value="Press" onclick="javascript:doAjaxAction('removeElement', this);"></td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('removeElement', this);"></td>
                 </tr>
                 <tr>
                     <td colspan="2"><span id="toRemove" style="color: red;">Text to be removed</span></td>
                 </tr>
                 <tr>
                     <td>Press to show a greetings message (hidden using a CSS inline rule) :</td>
-                    <td><input type="button" value="Press" onclick="javascript:doAjaxAction('showElement', this);"></td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('showElement', this);"></td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -60,7 +60,7 @@
                 </tr>
                 <tr>
                     <td>Press to hide the greetings message below :</td>
-                    <td><input type="button" value="Press" onclick="javascript:doAjaxAction('hideElement', this);"></td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('hideElement', this);"></td>
                 </tr>
                 <tr>
                     <td colspan="2">

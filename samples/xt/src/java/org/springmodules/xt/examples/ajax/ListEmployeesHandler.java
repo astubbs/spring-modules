@@ -1,14 +1,15 @@
 package org.springmodules.xt.examples.ajax;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
 import org.springmodules.xt.ajax.AjaxSubmitEvent;
 import org.springmodules.xt.ajax.action.ReplaceContentAction;
-import org.springmodules.xt.ajax.component.Component;
-import org.springmodules.xt.ajax.component.RowList;
 import org.springmodules.xt.ajax.component.SimpleText;
+import org.springmodules.xt.ajax.component.TableRow;
 import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.domain.MemoryRepository;
 import org.springmodules.xt.examples.mvc.form.EmployeesListForm;
@@ -31,12 +32,11 @@ public class ListEmployeesHandler extends AbstractAjaxHandler {
         // Create an ajax action for setting the message:
         ReplaceContentAction setMessage = new ReplaceContentAction("message", message);
         
-        // Create the component to render (a list of html table rows):
-        RowList rows = new RowList(employees.toArray(), new String[]{"firstname", "surname"});
-        int i = 0;
+        // Create the components to render (a list of html table rows):
+        List rows = new LinkedList();
         for(IEmployee emp : employees) {
-            SimpleText code = new SimpleText(emp.getMatriculationCode());
-            rows.appendComponentsToRow(new Component[]{code}, i++);
+            TableRow row = new TableRow(emp, new String[]{"firstname", "surname", "matriculationCode"}, null);
+            rows.add(row);
         }
         // Create an ajax action for replacing the old table body content, inserting these new rows:
         ReplaceContentAction replaceRows = new ReplaceContentAction("employees", rows);
