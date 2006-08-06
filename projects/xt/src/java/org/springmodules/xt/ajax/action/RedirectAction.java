@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.springmodules.xt.ajax.action;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,7 +34,7 @@ public class RedirectAction implements AjaxActionImpl {
     private static final String CLOSE_REDIRECT_ACTION = new String("</taconite-redirect>");
     
     private StringBuilder targetUrl;
-    private ModelAndView model;
+    private Map model;
     
     /** 
      * Construct the action.
@@ -43,12 +43,14 @@ public class RedirectAction implements AjaxActionImpl {
      */
     public RedirectAction(String url, ModelAndView model) {
         this.targetUrl = new StringBuilder(url);
-        this.model= model;
+        if (model.getModel() != null) {
+            this.model= new HashMap(model.getModel());
+        }
     }
     
     public String execute() {
         try {
-            this.appendQueryProperties(this.targetUrl, this.model.getModel(), "UTF-8");
+            this.appendQueryProperties(this.targetUrl, this.model, "UTF-8");
         }
         catch(UnsupportedEncodingException ex) {
             // FIXME : Unexpected ....
@@ -74,7 +76,7 @@ public class RedirectAction implements AjaxActionImpl {
                 first = false;
             }
             else {
-                targetUrl.append('&');
+                targetUrl.append("&amp;");
             }
             Map.Entry entry = (Map.Entry) entries.next();
             String encodedKey = URLEncoder.encode(entry.getKey().toString(), encodingScheme);

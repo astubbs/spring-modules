@@ -141,7 +141,6 @@
     
     <bean id="listEmployeesController" class="org.springmodules.xt.examples.mvc.ListEmployeesController">
         <property name="formView"><value>ajax/ex4</value></property>
-        <property name="successView"><value>ajax-redirect:/start.page</value></property>
         <property name="store"><ref bean="store"/></property>
         <property name="customEditors">
             <map>
