@@ -12,11 +12,12 @@
     <import file="${common.build.dir}/doc-targets.xml" />
     
     <target name="compile.post">
-      <concat destfile="${basedir}/src/js/lib/springxt.js" force="no">
+      <concat destfile="${basedir}/src/js/lib/core/springxt.js" force="no">
         <filelist dir="${basedir}/src/js/" 
-          files="springxt-taconite.js, taconite-client.js, taconite-parser.js, prototype.js"/>
+          files="springxt-taconite.js, taconite-client.js, taconite-parser.js"/>
       </concat>
-      <copy todir="${basedir}/../../samples/xt/src/webapp/js" file="${basedir}/src/js/lib/springxt.js"></copy>
+      <copy todir="${basedir}/../../samples/xt/src/webapp/js" file="${basedir}/src/js/lib/core/springxt.js"/>
+      <copy todir="${basedir}/../../samples/xt/src/webapp/js" file="${basedir}/src/js/lib/opt/prototype.js"/>
     </target>
     
     <target name="jar.post">

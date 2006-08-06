@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.action;
+package org.springmodules.xt.ajax.action.prototype;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.springmodules.xt.ajax.AjaxActionImpl;
+import org.springmodules.xt.ajax.action.SetAttributeActionTest;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class HideElementActionTest extends XMLEnhancedTestCase {
+public class ShowElementActionTest extends XMLEnhancedTestCase {
     
-    public HideElementActionTest(String testName) {
+    public ShowElementActionTest(String testName) {
         super(testName);
     }
 
@@ -43,12 +45,12 @@ public class HideElementActionTest extends XMLEnhancedTestCase {
     }
 
     public void testExecute() throws Exception {
-        AjaxActionImpl action = new HideElementAction("testId");
+        AjaxActionImpl action = new ShowElementAction("testId");
         
         String result = action.execute();
         
         System.out.println(result);
         
-        assertXpathEvaluatesTo("Element.hide('testId');", "/taconite-execute-javascript/script[@type=\"text/javascript\"]", result);
+        assertXpathEvaluatesTo("Element.show('testId');", "/taconite-execute-javascript/script[@type=\"text/javascript\"]", result);
     }
 }

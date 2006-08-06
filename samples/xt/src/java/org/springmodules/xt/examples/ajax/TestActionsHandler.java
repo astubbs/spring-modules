@@ -6,12 +6,12 @@ import org.springmodules.xt.ajax.AjaxActionEvent;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
 import org.springmodules.xt.ajax.action.AppendContentAction;
-import org.springmodules.xt.ajax.action.HideElementAction;
 import org.springmodules.xt.ajax.action.RemoveContentAction;
 import org.springmodules.xt.ajax.action.RemoveElementAction;
 import org.springmodules.xt.ajax.action.ReplaceContentAction;
 import org.springmodules.xt.ajax.action.ReplaceElementAction;
-import org.springmodules.xt.ajax.action.ShowElementAction;
+import org.springmodules.xt.ajax.action.prototype.HideElementAction;
+import org.springmodules.xt.ajax.action.prototype.ShowElementAction;
 import org.springmodules.xt.ajax.component.InputField;
 import org.springmodules.xt.ajax.component.SimpleText;
 
