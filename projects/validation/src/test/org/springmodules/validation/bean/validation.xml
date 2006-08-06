@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<validation xmlns="http://www.springmodules.org/validation/bean"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
+
+    <class name="org.springmodules.validation.bean.Person">
+
+        <global>
+            <expression condition="tupper(name) == 'URI'" code="good"/>
+            <expression condition="tupper(name) == 'Uri'" code="bad"/>
+        </global>
+
+        <property name="address" cascade="true" cascade-condition="homeless == false"/>
+
+        <!-- this property can be null, in which case the length won't be checked -->
+        <property name="phone">
+            <length min="7"/>
+        </property>
+
+    </class>
+
+    <class name="org.springmodules.validation.bean.Address">
+
+        <property name="street">
+            <not-null/>
+        </property>
+
+        <property name="city">
+            <not-null/>
+        </property>
+
+    </class>
+
+</validation>

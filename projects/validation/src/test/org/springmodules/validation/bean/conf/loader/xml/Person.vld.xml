@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<validation xmlns="http://www.springmodules.org/validation/bean">
+
+    <class name="org.springmodules.validation.bean.conf.loader.xml.Person">
+        <global>
+            <expression condition="password == confirmPassword" code="passwords.do.not.match"/>
+        </global>
+        <property name="firstName">
+            <not-null/>
+            <not-blank/>
+        </property>
+        <property name="lastName">
+            <not-null/>
+            <not-blank/>
+        </property>
+        <property name="age">
+            <range min="0" code="min"/>
+        </property>
+        <property name="email">
+            <email/>
+        </property>
+        <property name="password">
+            <not-null/>
+            <length min="3"/>
+        </property>
+    </class>
+
+</validation>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:vld="http://www.springmodules.org/validation/bean/validator"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator.xsd">
+
+    <!--<bean id="conditionExpressionParser" class="org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser">-->
+        <!--<property name="customFunctions">-->
+            <!--<map>-->
+                <!--<entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>-->
+            <!--</map>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <vld:xml-based-validator id="validator">
+        <vld:element-handlers>
+            <vld:handler class="org.springmodules.validation.bean.conf.namespace.IsFirstLetterCapitalizedPropertyElementHandler"/>
+        </vld:element-handlers>
+        <vld:resource location="classpath:org/springmodules/validation/bean/conf/namespace/Person.vld.xml"/>
+    </vld:xml-based-validator>
+
+    <vld:valang-condition-parser id="celParser">
+        <vld:function name="tupper" class="org.springmodules.validation.valang.functions.UpperCaseFunction"/>
+    </vld:valang-condition-parser>
+
+</beans>
