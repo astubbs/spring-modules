@@ -46,6 +46,9 @@ public class RedirectAction implements AjaxActionImpl {
         if (model.getModel() != null) {
             this.model= new HashMap(model.getModel());
         }
+        else {
+            this.model= new HashMap(1);
+        }
     }
     
     public String execute() {
