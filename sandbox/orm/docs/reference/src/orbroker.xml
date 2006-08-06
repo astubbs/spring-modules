@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="orbroker">
+  <title>O/R Broker</title>
+
+  <sect1>
+    <title>Introduction</title>
+
+    <para><ulink url="http://orbroker.sf.net">O/R Broker</ulink> is a
+    convenience framework for applications that use JDBC. It allows you to
+    externalize your SQL statements into individual files, for readability and
+    easy manipulation, and it allows declarative mapping from tables to Java
+    objects. Not just JavaBeans.</para>
+
+    <para>Spring Modules Integration for O/R Broker aims at simplifying the
+    use of O/R Broker from within Spring applications. This module supports
+    the same template style programming provided for JDBC, Hibernate, iBATIS,
+    JPA...</para>
+
+    <para>Transaction management can be handled through Spring's standard
+    facilities. As with iBATIS, there are no special transaction strategies
+    for O/R Broker, as there is no special transactional resource involved
+    other than a JDBC Connection. Hence, Spring's standard JDBC
+    DataSourceTransactionManager or JtaTransactionManager are perfectly
+    sufficient.</para>
+  </sect1>
+
+  <sect1>
+    <title>Setting up the Broker</title>
+
+    <para>To use O/R Broker you need to create the Java classes and configure
+    the mappings. Spring Modules Integration for O/R Broker provides a factory
+    called BrokerFactoryBean that loads the resources and creates the
+    Broker.</para>
+
+    <para><programlisting>public class Account {
+
+    private Integer id;
+    private String name;
+    private String email;
+    
+    public void setId(Integer id) {
+      this.id = id;
+    }
+
+    public Integer getId() {
+      return id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getEmail() {
+        return this.email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+}</programlisting>To map this class, we need to create the following
+    account-broker.xml. The Sql statement "getAccountById" is used to retrieve
+    the accounts through their ids. "insertAccount" is used to create new
+    accounts.</para>
+
+    <para><programlisting>&lt;broker name="Petclinic" version="2.0"&gt;
+
+  &lt;result-object id="Account" class="Account" key-columns="id"&gt;
+    &lt;property name="id"&gt; &lt;column name="id"/&gt; &lt;/property&gt;
+    &lt;property name="name"&gt; &lt;column name="name"/&gt; &lt;/property&gt;
+    &lt;property name="email"&gt; &lt;column name="email"/&gt; &lt;/property&gt;
+  &lt;/result-object&gt;
+
+  &lt;sql-statement id="getAccountById" result-object="Account"&gt;&lt;![CDATA[
+    SELECT id, name, email
+      FROM acounts
+     WHERE id = :id
+  ]]&gt;&lt;/sql-statement&gt;
+
+  &lt;sql-statement id="insertAccount"&gt;&lt;![CDATA[
+    INSERT INTO accounts (id, name, email)
+    VALUES (:account.id, :account.name, :account.email)
+  ]]&gt;&lt;/sql-statement&gt;
+
+&lt;/broker&gt;</programlisting>Using Spring, we can now configure a Broker
+    through the BrokerFactoryBean:</para>
+
+    <para><programlisting>&lt;beans&gt;
+
+  &lt;bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"&gt;
+    &lt;property name="driverClassName" value="${jdbc.driverClassName}"/&gt;
+    &lt;property name="url" value="${jdbc.url}"/&gt;
+    &lt;property name="username" value="${jdbc.username}"/&gt;
+    &lt;property name="password" value="${jdbc.password}"/&gt;
+  &lt;/bean&gt;
+
+  &lt;!-- BrokerFactoryBean --&gt;
+  &lt;bean id="broker" class="org.springmodules.orm.orbroker.BrokerFactoryBean"&gt;
+    &lt;property name="dataSource" ref="dataSource"/&gt;
+    &lt;property name="configLocation" value="classpath:META-INF/account-broker.xml"/&gt;
+  &lt;/bean&gt;
+
+  ...
+&lt;/beans&gt;</programlisting>As you can see from the previous config,
+    account-broker.xml is saved under the META-INF folder and loaded using a
+    classpath resource.</para>
+  </sect1>
+
+  <sect1>
+    <title>BrokerTemplate and BrokerDaoSupport</title>
+
+    <para>The BrokerDaoSupport class offers a supporting class similar to the
+    HibernateDaoSupport and the JdoDaoSupport classes. Let's implement a
+    DAO:</para>
+
+    <programlisting>public class BrokerAccountDao extends BrokerDaoSupport implements AccountDao {
+
+    public Account getAccount(Integer id) throws DataAccessException {
+        return (Account) getBrokerTemplate().selectOne("getAccountById", "id", id);
+    }
+
+    public void insertAccount(Account account) throws DataAccessException {
+        getBrokerTemplate().execute("insertAccount", "account", account);
+    }
+}</programlisting>
+
+    <para>In the DAO, we use the pre-configured BrokerTemplate to execute the
+    queries, after setting up the BrokerAccountDao in the application context
+    and wiring it with our Broker instance:</para>
+
+    <programlisting>&lt;beans&gt;
+  ...
+
+  &lt;bean id="accountDao" class="examples.BrokerAccountDao"&gt;
+    &lt;property name="broker" ref="broker"/&gt;
+  &lt;/bean&gt;
+
+&lt;/beans&gt;</programlisting>
+
+    <para>The BrokerTample offers a generic execute method, taking a custom
+    BrokerCallback imlpementation as argument. This can be used as
+    follows:</para>
+
+    <programlisting>public class BrokerAccountDao extends BrokerDaoSupport implements AccountDao {
+    ...
+
+    public void insertAccount(final Account account) throws DataAccessException {
+        getBrokerTemplate().execute(new BrokerCallback() {
+            public Object doInBroker(Executable executable) throws BrokerException {
+                executable.execute("insertAccount", "account", account);
+            }
+        });
+    }
+}</programlisting>
+
+    <para>Any BrokerException thrown will automatically get converted to
+    Spring's generic DataAccessException hierarchy.</para>
+  </sect1>
+
+  <sect1>
+    <title>Implementing DAOs based on plain O/R Broker API</title>
+
+    <para>DAOs can also be written against plain O/R Broker API, without any
+    Spring dependencies, directly using an injected Broker. A corresponding
+    DAO implementation looks like as follows:</para>
+
+    <programlisting>public class BrokerAccountDao implements AccountDao {
+
+    private Broker broker;
+    
+    public void setBroker(Broker broker) {
+        this.broker = broker;
+    }
+
+    public Account getAccount(Integer id) {
+        Query qry = this.broker.startQuery();
+        qry.setParameter("id", id);
+        try {
+            return (Account) qry.queryForOne("getAccountById");
+        }
+        catch (Throwable ex) {
+            throw new MyDaoException(ex);
+        }
+        finally () {
+          qry.close();
+        }
+    }
+
+    ...
+}</programlisting>
+
+    <para>Configuring such a DAO can be done as follows:</para>
+
+    <programlisting>&lt;beans&gt;
+  ...
+
+  &lt;bean id="accountDao" class="example.BrokerAccountDao"&gt;
+    &lt;property name="broker" ref="broker"/&gt;
+  &lt;/bean&gt;
+
+&lt;/beans&gt;</programlisting>
+  </sect1>
+</chapter>
