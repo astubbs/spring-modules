@@ -4,7 +4,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>   
+        <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>
+        <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
+        <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects"/>'></script>
         <title>Spring Modules XT Ajax Framework : Example 5</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
@@ -34,9 +36,7 @@
                         <thead>
                             <tr>
                                 <th>Employee</th>
-                                <th>Firstname</th>
-                                <th>Surname</th>
-                                <th>Matriculation Code</th>
+                                <th>Remove Row</th>
                             </tr>
                         </thead>
                         <tbody id="employees">
