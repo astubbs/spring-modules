@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:vld="http://www.springmodules.org/validation/bean/validator"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator.xsd">
+
+    <!--================================= Message sources ======================================-->
+
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames" value="messages,domain-messages"/>
+	</bean>
+
+
+
+    <!--================================== View Resolvers =======================================-->
+
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+
+
+    <!--================================ Handler mappings =====================================-->
+
+	<bean id="handlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+
+    <!--=================================== Controllers ========================================-->
+
+    <bean name="/person.html" class="org.springmodules.samples.validation.bean.web.PersonFormController">
+		<property name="formView" value="person"/>
+        <property name="successView" value="redirect:/success.html"/>
+        <property name="validator" ref="beanValidator"/>
+        <property name="commandName" value="person"/>
+        <property name="commandClass" value="org.springmodules.samples.validation.bean.web.PersonData"/>
+    </bean>
+
+    <bean name="/success.html" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+
+    <!--=================================== Commons Validator =====================================-->
+
+    <vld:annotation-based-validator id="beanValidator"/>
+
+    <!--
+        comment the annotation-based-validator above and uncomment this element
+        to check out the xml based validation. You'll find validation.xml under
+        the src/etc/resources directory of this project.
+    -->
+    <!--<vld:xml-based-validator id="beanValidator">-->
+        <!--<vld:resource location="classpath:validation.xml"/>-->
+    <!--</vld:xml-based-validator>-->
+
+</beans>

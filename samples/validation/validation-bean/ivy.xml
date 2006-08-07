@@ -1,0 +1,47 @@
+<ivy-module version="1.1">
+  <info organisation="springmodules" module="springmodules-validation-bean-sample"/>
+
+  <configurations>
+    <!-- default configuration that 'by default' pulls in the global configuration -->
+    <conf name="default" extends="global" />
+
+    <!-- core dependencies needed at compile-time, test-time, and runtime -->
+    <conf name="global" visibility="private" />
+
+    <!-- additional dependencies needed only at build-time -->
+    <conf name="buildtime" visibility="private" />
+
+    <!-- additional dependencies needed only at test-time -->
+    <conf name="test" visibility="private" />
+
+  </configurations>
+
+  <dependencies>
+
+    <!-- buildtime dependencies -->
+
+    <dependency org="jspapi" name="jsp-api" rev="2.0" conf="buildtime->default"/>
+
+    <dependency org="sun" name="javax.servlet" rev="2.3">
+		<artifact name="servlet-api" type="jar"/>
+	</dependency>
+
+    <!-- global (compile, test, runtime) dependencies -->
+
+    <dependency org="apache" name="log4j" rev="1.2.12" />
+    
+    <dependency org="apache" name="commons-logging" rev="1.0.4" />
+    <dependency org="apache" name="commons-collections" rev="3.1" />
+
+    <dependency org="springframework" name="springframework" rev="2.0-rc2" conf="buildtime->default">
+      <artifact name="spring" type="jar"/>
+    </dependency>
+
+    <dependency org="jstl" name="jstl" rev="1.1.2" />
+
+    <dependency org="taglibs" name="standard" rev="1.1.2" />
+
+    <dependency org="springmodules" name="springmodules-validation" rev="latest.integration"/>
+    
+  </dependencies>
+</ivy-module>
