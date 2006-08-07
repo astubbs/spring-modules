@@ -2,13 +2,23 @@
 
 <project name="springmodules-xt-sample" default="war">
   
-    <property file="build.properties" />
-    <property file="project.properties" />
-    <property file="${common.build.dir}/build.properties" />
-    <property file="${common.build.dir}/project.properties" />
-    <property file="${user.home}/build.properties" />
+  <property file="build.properties" />
+  <property file="project.properties" />
+  <property file="${common.build.dir}/build.properties" />
+  <property file="${common.build.dir}/project.properties" />
+  <property file="${user.home}/build.properties" />
 
-    <import file="${common.build.dir}/common-targets.xml" />
-    <import file="${common.build.dir}/tomcat-targets.xml" />
+  <import file="${common.build.dir}/common-targets.xml" />
+  <import file="${common.build.dir}/tomcat-targets.xml" />
+  
+  <target name="compile.post">
+    <copy todir="${basedir}/src/webapp/js" file="${basedir}/../../projects/xt/src/js/lib/core/springxt.js"/>
+    <copy todir="${basedir}/src/webapp/js">
+      <fileset dir="${basedir}/../../projects/xt/src/js/lib/opt/prototype"/>
+    </copy>
+    <copy todir="${basedir}/src/webapp/js">
+      <fileset dir="${basedir}/../../projects/xt/src/js/lib/opt/scriptaculous"/>
+    </copy>
+  </target>
 
 </project>

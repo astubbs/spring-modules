@@ -30,9 +30,9 @@ public abstract class AbstractExecuteJavascriptAction implements AjaxActionImpl 
     
     public String execute() {
         StringBuilder response = new StringBuilder(OPEN_EXECUTE);
-        response.append("<script type=\"text/javascript\"> ");
+        response.append("<script type=\"text/javascript\">");
         response.append(this.getJavascript());
-        response.append(" </script>");
+        response.append("</script>");
         response.append(CLOSE_EXECUTE);
         return response.toString();
     }

@@ -19,7 +19,7 @@ package org.springmodules.xt.ajax.action.prototype;
 import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
 
 /**
- * Taconite based ajax action for hiding an HTML element by its id.<br>
+ * Ajax action for hiding an HTML element by its id.<br>
  * This action uses the Prototype Javascript library, so you need to include it in your web pages.
  *
  * @author Sergio Bossa

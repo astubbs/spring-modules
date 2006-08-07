@@ -8,6 +8,7 @@ import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
 import org.springmodules.xt.ajax.AjaxSubmitEvent;
 import org.springmodules.xt.ajax.action.ReplaceContentAction;
+import org.springmodules.xt.ajax.action.prototype.scriptaculous.HighlightAction;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.component.TableRow;
 import org.springmodules.xt.examples.domain.IEmployee;
@@ -29,8 +30,10 @@ public class ListEmployeesHandler extends AbstractAjaxHandler {
         
         // Create the simple text message:
         SimpleText message = new SimpleText(new StringBuilder("Selected office: ").append(form.getOffice().getName()).toString());
-        // Create an ajax action for setting the message:
-        ReplaceContentAction setMessage = new ReplaceContentAction("message", message);
+        // Create an ajax action for setting the message and hi:
+        ReplaceContentAction setMessageAction = new ReplaceContentAction("message", message);
+        // Create an highlighting effect action for the appearing message:
+        HighlightAction highlightAction = new HighlightAction("message", (float) 0.5);
         
         // Create the components to render (a list of html table rows):
         List rows = new LinkedList();
@@ -39,17 +42,18 @@ public class ListEmployeesHandler extends AbstractAjaxHandler {
             rows.add(row);
         }
         // Create an ajax action for replacing the old table body content, inserting these new rows:
-        ReplaceContentAction replaceRows = new ReplaceContentAction("employees", rows);
+        ReplaceContentAction replaceRowsAction = new ReplaceContentAction("employees", rows);
         
         // Create a concrete ajax response:
-       AjaxResponse response = new AjaxResponseImpl();
+        AjaxResponse response = new AjaxResponseImpl();
         // Add actions:
-        response.addAction(setMessage);
-        response.addAction(replaceRows);
+        response.addAction(setMessageAction);
+        response.addAction(highlightAction);
+        response.addAction(replaceRowsAction);
         
         return response;
     }
-
+    
     public void setStore(MemoryRepository store) {
         this.store = store;
     }
