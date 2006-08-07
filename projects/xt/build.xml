@@ -14,7 +14,7 @@
   <target name="compile.post">
     <concat destfile="${basedir}/src/js/lib/core/springxt.js" force="no">
       <filelist dir="${basedir}/src/js/" 
-        files="springxt-taconite.js, taconite-client.js, taconite-parser.js"/>
+        files="springxt-taconite.js, taconite-client.js, taconite-parser.js, json.js"/>
     </concat>
   </target>
   
