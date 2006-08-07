@@ -14,7 +14,7 @@ public class SelectTest extends XMLEnhancedTestCase {
         super(testName);
     }
 
-    public void testAddTableData() throws Exception {
+    public void testAddOption() throws Exception {
         Select select = new Select("test");
         Option option1 = new Option("value1", "content1");
         Option option2 = new Option("value2", "content2");
