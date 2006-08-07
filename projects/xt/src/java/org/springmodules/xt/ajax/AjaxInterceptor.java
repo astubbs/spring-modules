@@ -18,6 +18,8 @@ package org.springmodules.xt.ajax;
 
 import java.io.IOException;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import java.util.TreeMap;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONObject;
 import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
 import org.springmodules.xt.ajax.action.RedirectAction;
@@ -72,6 +75,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     private String eventParameter = "event-id";
     private String elementParameter = "source-element";
     private String elementIdParameter = "source-element-id";
+    private String jsonParamsParameter = "json-params";
     
     private SortedMap<String, String> handlerMappings = new TreeMap();
     
@@ -107,8 +111,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 boolean supported = false;
                 for (AjaxHandler ajaxHandler : handlers) {
                     if (ajaxHandler.supports(event)) {
-                        event.setElementName(request.getParameter(this.elementParameter));
-                        event.setElementId(request.getParameter(this.elementIdParameter));
+                        this.initEvent(event, request);
                         if (handler instanceof BaseCommandController) {
                             String commandName = ((BaseCommandController) handler).getCommandName();
                             event.setCommandObject(request.getAttribute(commandName));
@@ -171,8 +174,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 boolean supported = false;
                 for (AjaxHandler ajaxHandler : handlers) {
                     if (ajaxHandler.supports(event)) {
-                        event.setElementName(request.getParameter(this.elementParameter));
-                        event.setElementId(request.getParameter(this.elementIdParameter));
+                        this.initEvent(event, request);
                         if (handler instanceof BaseCommandController) {
                             String commandName = ((BaseCommandController) handler).getCommandName();
                             RequestContext requestContext = new RequestContext(request, modelAndView.getModel());
@@ -271,6 +273,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         this.eventParameter = eventParameter;
     }
     
+    public void setJsonParamsParameter(String jsonParamsParameter) {
+        this.jsonParamsParameter = jsonParamsParameter;
+    }
+    
     public String getAjaxParameter() {
         return this.ajaxParameter;
     }
@@ -285,6 +291,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
 
     public String getEventParameter() {
         return this.eventParameter;
+    }
+    
+    public String getJsonParamsParameter() {
+        return this.jsonParamsParameter;
     }
     
     public void setApplicationContext(ApplicationContext applicationContext) 
@@ -330,5 +340,22 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         httpResponse.setHeader("Cache-Control", "no-cache");
         out.print(response);
         out.close();
+    }
+    
+    private void initEvent(AjaxEvent event, HttpServletRequest request) {
+        String paramsString = request.getParameter(this.jsonParamsParameter);
+        if (paramsString != null) {
+            Map<String, String> parameters = new HashMap();
+            JSONObject json = new JSONObject(paramsString);
+            Iterator keys = json.keys();
+            while (keys.hasNext()) {
+                String key = keys.next().toString();
+                parameters.put(key, json.opt(key).toString());
+            }
+            event.setParameters(parameters);
+        }
+        
+        event.setElementName(request.getParameter(this.elementParameter));
+        event.setElementId(request.getParameter(this.elementIdParameter));
     }
 }

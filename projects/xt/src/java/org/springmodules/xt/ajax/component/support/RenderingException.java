@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.support;
+package org.springmodules.xt.ajax.component.support;
 
 /**
  * Exception thrown when rendering a {@link org.springmodules.xt.ajax.Component}.

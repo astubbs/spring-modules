@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing an option element.
@@ -83,21 +84,15 @@ public class Option implements Component {
         StringBuilder response = new StringBuilder();
         
         response.append("<option value=\"")
-            .append(this.value)
-            .append("\"");
+        .append(this.value)
+        .append("\"");
         
         if (selected) {
             response.append(" selected=\"true\"");
         }
         
         if (!this.attributes.isEmpty()) {
-            for (Map.Entry<String, String> entry : this.attributes.entrySet()) {
-                response.append(" ")
-                    .append(entry.getKey())
-                    .append("=\"")
-                    .append(entry.getValue())
-                    .append("\"");
-            }
+            ComponentUtils.appendAsAttributes(this.attributes, response);
         }
         
         response.append(">");

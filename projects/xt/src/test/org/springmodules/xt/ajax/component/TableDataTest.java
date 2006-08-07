@@ -12,6 +12,17 @@ public class TableDataTest extends XMLEnhancedTestCase {
     public TableDataTest(String testName) {
         super(testName);
     }
+    
+    public void testAddAttribute() throws Exception {
+        TableData tableData = new TableData(new TaggedText("test", TaggedText.Tag.SPAN));
+        tableData.addAttribute("id", "testId");
+        String rendering = tableData.render();
+        
+        System.out.println(rendering);
+        
+        assertXpathEvaluatesTo("testId", "/td/@id", rendering);
+        assertXpathEvaluatesTo("test", "/td/span", rendering);
+    }
 
     public void testRenderPart1() throws Exception {
         TableData tableData = new TableData(new TaggedText("test", TaggedText.Tag.SPAN));

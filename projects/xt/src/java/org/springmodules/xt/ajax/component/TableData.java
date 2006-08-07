@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing an HTML table data inside a {@link TableRow}.
@@ -42,7 +43,7 @@ public class TableData implements Component {
     
     /**
      * Construct the component.
-     * 
+     *
      * @param dataObject An object containing data to render.
      * @param property The object property whose value will be this table data.<br>
      * Property name adheres to the JavaBeans convention: so, for the property there must be a corresponding getter method in the object.
@@ -54,8 +55,7 @@ public class TableData implements Component {
         String value = wrapper.getPropertyValue(property).toString();
         if (textRenderingCallback != null) {
             this.data = textRenderingCallback.getRenderingComponent(value);
-        } 
-        else {
+        } else {
             this.data = new SimpleText(value);
         }
     }
@@ -74,13 +74,7 @@ public class TableData implements Component {
         
         response.append("<td");
         if (!this.attributes.isEmpty()) {
-            for (Map.Entry<String, String> entry : this.attributes.entrySet()) {
-                response.append(" ")
-                .append(entry.getKey())
-                .append("=\"")
-                .append(entry.getValue())
-                .append("\"");
-            }
+            ComponentUtils.appendAsAttributes(this.attributes, response);
         }
         response.append(">");
         

@@ -1,12 +1,12 @@
 /*
  * Copyright 2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing an HTML table row, containing {@link TableData} objects.
@@ -39,7 +40,7 @@ public class TableRow implements Component {
     
     /**
      * Construct the component.
-     * 
+     *
      * @param tableDataList The list of {@link TableData} (columns) to render into this row.
      */
     public TableRow(List<TableData> tableDataList) {
@@ -48,7 +49,7 @@ public class TableRow implements Component {
     
     /**
      * Construct the component.
-     * 
+     *
      * @param rowObject The object containing data to render in this row.
      * @param properties The object properties whose values will be rendered into this row, in the same order as they are listed.<br>
      * Property names adhere to the JavaBeans convention: so, for each property there must be a corresponding getter method in the object.
@@ -84,13 +85,7 @@ public class TableRow implements Component {
         
         response.append("<tr");
         if (!this.attributes.isEmpty()) {
-            for (Map.Entry<String, String> entry : this.attributes.entrySet()) {
-                response.append(" ")
-                .append(entry.getKey())
-                .append("=\"")
-                .append(entry.getValue())
-                .append("\"");
-            }
+            ComponentUtils.appendAsAttributes(this.attributes, response);
         }
         response.append(">");
         

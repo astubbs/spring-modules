@@ -12,6 +12,18 @@ public class OptionTest extends XMLEnhancedTestCase {
     public OptionTest(String testName) {
         super(testName);
     }
+    
+    public void testAddAttribute() throws Exception {
+        Option option = new Option("value", "content");
+        option.addAttribute("id", "testId");
+        String rendering = option.render();
+        
+        System.out.println(rendering);
+        
+        assertXpathEvaluatesTo("testId", "/option/@id", rendering);
+        assertXpathEvaluatesTo("value", "/option/@value", rendering);
+        assertXpathEvaluatesTo("content", "/option", rendering);
+    }
 
     public void testRenderPart1() throws Exception {
         Option option = new Option("value", "content");

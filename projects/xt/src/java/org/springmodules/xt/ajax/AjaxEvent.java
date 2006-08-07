@@ -16,6 +16,7 @@
 
 package org.springmodules.xt.ajax;
 
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  * <li>The http request object.</li>
  * <li>The name of the html element that fired the event (optional).</li>
  * <li>The id of the html element that fired the event (optional).</li>
+ * <li>A map of string parameters (optional).</li>
  * </ul>
  * 
  * @author Sergio Bossa
@@ -67,4 +69,16 @@ public interface AjaxEvent {
      * @param elementId The source element id.
      */
     public void setElementId(String elementName);
+    
+    /**
+     * Get a map of extra parameters passed with the ajax request.
+     * @return The map of parameters;
+     */
+    public Map<String, String> getParameters();
+
+    /**
+     * Set a map of extra parameters passed with the ajax request.
+     * @param parameters A map of parameters;
+     */
+    public void setParameters(Map<String, String> parameters);
 }

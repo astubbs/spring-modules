@@ -1,12 +1,12 @@
 /*
  * Copyright 2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing an HTML table.
@@ -42,7 +43,7 @@ public class Table implements Component {
     
     /**
      * Construct a table with header.
-     * 
+     *
      * @param tableHeader The table header.
      */
     public Table(TableHeader tableHeader) {
@@ -60,7 +61,7 @@ public class Table implements Component {
     
     /**
      * Construct a table with header and rows.
-     * 
+     *
      * @param tableHeader The table header.
      * @param tableRowList The list of {@link TableRow} (rows) to render into this table.
      */
@@ -118,26 +119,14 @@ public class Table implements Component {
         // Open Table
         response.append("<table");
         if (!this.tableAttributes.isEmpty()) {
-            for (Map.Entry<String, String> entry : this.tableAttributes.entrySet()) {
-                response.append(" ")
-                .append(entry.getKey())
-                .append("=\"")
-                .append(entry.getValue())
-                .append("\"");
-            }
+            ComponentUtils.appendAsAttributes(this.tableAttributes, response);
         }
         response.append(">");
         
         // Header
         response.append("<thead");
         if (!this.tableHeaderAttributes.isEmpty()) {
-            for (Map.Entry<String, String> entry : this.tableHeaderAttributes.entrySet()) {
-                response.append(" ")
-                .append(entry.getKey())
-                .append("=\"")
-                .append(entry.getValue())
-                .append("\"");
-            }
+            ComponentUtils.appendAsAttributes(this.tableHeaderAttributes, response);
         }
         response.append(">");
         
@@ -148,13 +137,7 @@ public class Table implements Component {
         // Body
         response.append("<tbody");
         if (!this.tableBodyAttributes.isEmpty()) {
-            for (Map.Entry<String, String> entry : this.tableBodyAttributes.entrySet()) {
-                response.append(" ")
-                .append(entry.getKey())
-                .append("=\"")
-                .append(entry.getValue())
-                .append("\"");
-            }
+            ComponentUtils.appendAsAttributes(this.tableBodyAttributes, response);
         }
         response.append("> ");
         

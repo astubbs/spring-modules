@@ -58,10 +58,10 @@ public abstract class AbstractAjaxHandler implements AjaxHandler {
             }
         }
         catch(IllegalAccessException ex) {
-            throw new UnsupportedEventException("Cannot handling the given event with id: " + id, ex);
+            throw new UnsupportedEventException("Cannot handle the given event with id: " + id, ex);
         }
         catch(InvocationTargetException ex) {
-            throw new UnsupportedEventException("Cannot handling the given event with id: " + id, ex);
+            throw new UnsupportedEventException("Cannot handle the given event with id: " + id, ex);
         }
         
         return response;

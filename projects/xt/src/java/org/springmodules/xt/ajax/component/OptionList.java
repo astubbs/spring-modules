@@ -18,7 +18,7 @@ package org.springmodules.xt.ajax.component;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.springmodules.xt.ajax.support.RenderingException;
+import org.springmodules.xt.ajax.component.support.RenderingException;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 

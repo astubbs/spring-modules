@@ -16,6 +16,7 @@
 
 package org.springmodules.xt.ajax;
 
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -29,6 +30,7 @@ public abstract class BaseAjaxEvent implements AjaxEvent {
     private HttpServletRequest httpRequest;
     private String elementName;
     private String elementId;
+    private Map<String, String> parameters;
     
     public BaseAjaxEvent(String eventId, HttpServletRequest httpRequest) {
         this.eventId = eventId;
@@ -57,5 +59,13 @@ public abstract class BaseAjaxEvent implements AjaxEvent {
 
     public void setElementId(String elementId) {
         this.elementId = elementId;
+    }
+
+    public Map<String, String> getParameters() {
+        return this.parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
     }
 }

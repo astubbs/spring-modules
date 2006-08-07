@@ -13,6 +13,18 @@ public class SelectTest extends XMLEnhancedTestCase {
     public SelectTest(String testName) {
         super(testName);
     }
+    
+    public void testAddAttribute() throws Exception {
+        Select select = new Select("test");
+       
+        select.addAttribute("id", "testId");
+        
+        String rendering = select.render();
+        
+        System.out.println(rendering);
+        
+        assertXpathEvaluatesTo("testId", "/select/@id", rendering);
+    }
 
     public void testAddOption() throws Exception {
         Select select = new Select("test");

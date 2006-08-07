@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.component;
+package org.springmodules.xt.ajax.component.support;
+
+import java.util.Map;
 
 /**
- * Wrapper component for simple text messages.
+ * Utility methods for creating components.
  *
  * @author Sergio Bossa
  */
-public class SimpleText implements Component {
+public class ComponentUtils {
     
-    private String text;
-    
-    /**
-     * Construct the component.
-     * @param text The string to wrap.
-     */
-    public SimpleText(String text) {
-        this.text = text;
-    }
-    
-    public String render() {
-        return this.text;
+    public static void appendAsAttributes(Map<String, String> attributes, StringBuilder component) {
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            component.append(" ")
+            .append(entry.getKey())
+            .append("=\"")
+            .append(entry.getValue().replaceAll("\\\"", "&quot;"))
+            .append("\"");
+        }
     }
 }

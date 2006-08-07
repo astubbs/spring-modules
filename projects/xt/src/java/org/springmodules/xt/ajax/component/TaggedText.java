@@ -1,12 +1,12 @@
 /*
  * Copyright 2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,8 @@ package org.springmodules.xt.ajax.component;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springmodules.xt.ajax.component.support.ComponentUtils;
+import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing text surrounded by tags.
@@ -54,34 +56,28 @@ public class TaggedText implements Component {
         
         response.append(this.tag.getTagName());
         if (!this.attributes.isEmpty()) {
-            for (Map.Entry<String, String> entry : this.attributes.entrySet()) {
-                response.append(" ")
-                               .append(entry.getKey())
-                               .append("=\"")
-                               .append(entry.getValue())
-                               .append("\"");
-            }
+            ComponentUtils.appendAsAttributes(this.attributes, response);
         }
         response.append(">");
         
         response.append(this.text);
         
         response.append("</")
-                       .append(this.tag.getTagName())
-                       .append(">");
+        .append(this.tag.getTagName())
+        .append(">");
         
         return response.toString();
     }
     
-    public enum Tag { 
+    public enum Tag {
         
-        DIV { 
+        DIV {
             public String getTagName() {
                 return "div";
             }
         },
         
-        SPAN { 
+        SPAN {
             public String getTagName() {
                 return "span";
             }

@@ -24,6 +24,7 @@ import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
  *
  * @author Sergio Bossa
  */
+@Deprecated
 public class RowListTest extends XMLEnhancedTestCase {
     
     private RowList rowList;

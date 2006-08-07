@@ -23,6 +23,7 @@ import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
  *
  * @author Sergio Bossa
  */
+@Deprecated
 public class OptionListTest extends XMLEnhancedTestCase {
     
     private OptionList optionList;

@@ -1,12 +1,12 @@
 /*
  * Copyright 2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@ package org.springmodules.xt.ajax.component;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing a table header.
@@ -32,7 +33,7 @@ public class TableHeader implements Component {
     
     /**
      * Construct the component.
-     * 
+     *
      * @param columns An array of strings representing headers text.
      */
     public TableHeader(String[] headers) {
@@ -61,26 +62,14 @@ public class TableHeader implements Component {
         StringBuilder row = new StringBuilder("<tr");
         
         if (!this.rowAttributes.isEmpty()) {
-            for (Map.Entry<String, String> entry : this.rowAttributes.entrySet()) {
-                row.append(" ")
-                      .append(entry.getKey())
-                      .append("=\"")
-                      .append(entry.getValue())
-                      .append("\"");
-            }
+            ComponentUtils.appendAsAttributes(this.rowAttributes, row);
         }
         row.append(">");
         
         for (int i = 0; i < this.headers.length; i++) {
             StringBuilder column = new StringBuilder("<th");
             if (!this.columnAttributes.isEmpty()) {
-                for (Map.Entry<String, String> entry : this.columnAttributes.entrySet()) {
-                    column.append(" ")
-                               .append(entry.getKey())
-                               .append("=\"")
-                               .append(entry.getValue())
-                               .append("\"");
-                }
+                ComponentUtils.appendAsAttributes(this.columnAttributes, column);
             }
             column.append(">");
             column.append(this.headers[i]);
