@@ -20,11 +20,13 @@ function doAjaxSubmit(eventId, sourceElement) {
 
 function createSimpleQueryString(sourceElement) {
     var qs = "";
-    if (sourceElement.name != null && sourceElement.name != "") {
-        qs = qs + "&source-element=" + sourceElement.name;
-    }
-    if (sourceElement.id != null && sourceElement.id != "") {
-        qs = qs + "&source-element-id=" + sourceElement.id;
+    if (sourceElement != undefined && sourceElement != null) {
+        if (sourceElement.name != null && sourceElement.name != "") {
+            qs = qs + "&source-element=" + sourceElement.name;
+        }
+        if (sourceElement.id != null && sourceElement.id != "") {
+            qs = qs + "&source-element-id=" + sourceElement.id;
+        }
     }
     return qs;
 }
