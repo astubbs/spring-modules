@@ -16,6 +16,12 @@ package org.springmodules.validation.util
 * Moved ContextAware to org.springmodules.validation.util.context
 * Moved BasicContextAware to org.springmodules.validation.util.context
 
+package org.springmodules.validation.bean
+* Added the bean validation framework
+
+package org.springmodules.samples.validation.bean
+* Added a sample application for the new bean validation framework
+
 
 Changes in version 0.5 (14.07.2006)
 -----------------------------------
