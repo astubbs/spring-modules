@@ -6,9 +6,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
 import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.mvc.form.EmployeesListForm;
-import org.springmodules.xt.utils.mvc.controller.EnhancedSimpleFormController;
 import org.springmodules.xt.examples.domain.MemoryRepository;
 import org.springmodules.xt.examples.domain.Office;
 

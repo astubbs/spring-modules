@@ -61,13 +61,13 @@
     
     <!-- Property Editors -->
     
-    <bean id="officeEditor" class="org.springmodules.xt.utils.mvc.util.ReflectivePropertyEditor" singleton="false">
+    <bean id="officeEditor" class="org.springmodules.web.propertyeditors.ReflectivePropertyEditor" singleton="false">
         <property name="dataAccessObject"><ref bean="store"/></property>
         <property name="dataAccessMethod"><value>getOffice</value></property>
         <property name="propertyName"><value>officeId</value></property>
     </bean>
     
-    <bean id="employeesCollectionEditor" class="org.springmodules.xt.utils.mvc.util.ReflectiveCollectionEditor" singleton="false">
+    <bean id="employeesCollectionEditor" class="org.springmodules.web.propertyeditors.ReflectiveCollectionEditor" singleton="false">
         <constructor-arg index="0"><value>java.util.Set</value></constructor-arg>
         <property name="dataAccessObject"><ref bean="store"/></property>
         <property name="dataAccessMethod"><value>getEmployee</value></property>
@@ -86,7 +86,7 @@
         <property name="store"><ref bean="store"/></property>
     </bean>
     
-    <bean id="staticViewController" class="org.springmodules.xt.utils.mvc.controller.FullPathUrlFilenameViewController"/>
+    <bean id="staticViewController" class="org.springmodules.web.servlet.mvc.FullPathUrlFilenameViewController"/>
     
     <bean id="insertEmployeeControllerOne" class="org.springmodules.xt.examples.mvc.InsertEmployeeController">
         <property name="formView"><value>model/ex1</value></property>
@@ -199,13 +199,13 @@
         <property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
     </bean>
     
-    <!--<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">
             <props>
                 <prop key="java.lang.Exception">error</prop>
             </props>
         </property>
-    </bean>-->
+    </bean>
 
     <!-- -->
     

@@ -10,9 +10,9 @@ import org.springmodules.xt.examples.domain.Error;
 import org.springmodules.xt.examples.domain.IOffice;
 import org.springmodules.xt.examples.domain.Office;
 import org.springmodules.xt.examples.domain.MemoryRepository;
-import org.springmodules.xt.utils.mvc.controller.EnhancedSimpleFormController;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
 
 /**
  * Form controller for inserting an office.

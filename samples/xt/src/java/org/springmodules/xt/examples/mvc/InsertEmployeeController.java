@@ -11,12 +11,12 @@ import org.springmodules.xt.examples.domain.IOffice;
 import org.springmodules.xt.examples.domain.codes.OfficeErrorCodes;
 import org.springmodules.xt.model.introductor.bean.DynamicBeanIntroductor;
 import org.springmodules.xt.examples.mvc.form.EmployeeView;
-import org.springmodules.xt.utils.mvc.controller.EnhancedSimpleFormController;
 import org.springmodules.xt.examples.domain.Employee;
 import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.domain.MemoryRepository;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
 
 /**
  * Form controller for inserting an employee.
