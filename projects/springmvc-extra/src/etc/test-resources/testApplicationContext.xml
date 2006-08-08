@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    
+    <!-- Application Beans -->
+    
+    <bean id="store" class="org.springmodules.web.test.domain.MemoryRepository" init-method="init">
+        <property name="loader">
+            <bean class="org.springmodules.web.test.domain.MemoryRepositoryLoaderImpl"/>
+        </property>
+    </bean>
+    
+    <!-- Property Editors -->
+    
+    <bean id="singletonOfficeEditor" class="org.springmodules.web.propertyeditors.ReflectivePropertyEditor">
+        <property name="dataAccessObject"><ref bean="store"/></property>
+        <property name="dataAccessMethod"><value>getOffice</value></property>
+        <property name="propertyName"><value>officeId</value></property>
+    </bean>
+    
+    <bean id="officeEditor" class="org.springmodules.web.propertyeditors.ReflectivePropertyEditor" singleton="false">
+        <property name="dataAccessObject"><ref bean="store"/></property>
+        <property name="dataAccessMethod"><value>getOffice</value></property>
+        <property name="propertyName"><value>officeId</value></property>
+    </bean>
+    
+    <bean id="employeeEditor" class="org.springmodules.web.propertyeditors.ReflectivePropertyEditor" singleton="false">
+        <property name="dataAccessObject"><ref bean="store"/></property>
+        <property name="dataAccessMethod"><value>getEmployee</value></property>
+        <property name="propertyName"><value>matriculationCode</value></property>
+    </bean>
+    
+    <bean id="employeesCollectionEditor" class="org.springmodules.web.propertyeditors.ReflectiveCollectionEditor" singleton="false">
+        <constructor-arg index="0"><value>java.util.List</value></constructor-arg>
+        <property name="dataAccessObject"><ref bean="store"/></property>
+        <property name="dataAccessMethod"><value>getEmployee</value></property>
+        <property name="propertyName"><value>matriculationCode</value></property>
+    </bean>
+    
+    <!-- Controllers -->
+    
+    <bean id="testCustomEditorsControllerOne" class="org.springmodules.web.servlet.mvc.EnhancedSimpleFormController">
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>org.springmodules.web.test.domain.Office</value></key>
+                    <value>officeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="testCustomEditorsControllerTwo" class="org.springmodules.web.servlet.mvc.EnhancedSimpleFormController">
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>class:org.springmodules.web.test.domain.Office</value></key>
+                    <value>officeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="testCustomEditorsControllerThree" class="org.springmodules.web.servlet.mvc.EnhancedSimpleFormController">
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>property:office</value></key>
+                    <value>officeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="testCustomEditorsControllerFour" class="org.springmodules.web.servlet.mvc.EnhancedSimpleFormController">
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>property:office</value></key>
+                    <value>singletonOfficeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+</beans>

@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springmodules.xt.utils.mvc.util;
+package org.springmodules.web.propertyeditors;
 
 import java.util.LinkedList;
 import java.util.List;
 import junit.framework.*;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-import org.springmodules.xt.test.domain.IEmployee;
-import org.springmodules.xt.test.domain.MemoryRepository;
+import org.springmodules.web.test.domain.IEmployee;
+import org.springmodules.web.test.domain.MemoryRepository;
 
 /**
  *
@@ -50,7 +50,7 @@ public class ReflectiveCollectionEditorTest extends AbstractDependencyInjectionS
      * 
      */
     public void testConversionToObject() {
-        List<String> strings = new LinkedList<String>();
+        List strings = new LinkedList();
         
         strings.add("1");
         strings.add("2");
@@ -69,7 +69,7 @@ public class ReflectiveCollectionEditorTest extends AbstractDependencyInjectionS
      * 
      */
     public void testConversionToString() {
-        List<IEmployee> emps = new LinkedList<IEmployee>();
+        List emps = new LinkedList();
         
         emps.add(this.repository.getEmployee("1"));
         emps.add(this.repository.getEmployee("2"));

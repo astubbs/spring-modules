@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.utils.mvc.controller;
+package org.springmodules.web.servlet.mvc;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ import org.springframework.web.servlet.mvc.AbstractUrlViewController;
  * For example, given the path "/foo/index.html", this controller will point to the view "foo/index".
  *
  * @author The Spring Team
- * @author Sergio Bossa (sergio.bossa(at)gmail.com)
+ * @author Sergio Bossa
  */
 public class FullPathUrlFilenameViewController extends AbstractUrlViewController {
     

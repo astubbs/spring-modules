@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springmodules.xt.utils.mvc.controller;
+package org.springmodules.web.servlet.mvc;
 
 import junit.framework.*;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springmodules.xt.test.domain.Employee;
-import org.springmodules.xt.test.domain.IEmployee;
-import org.springmodules.xt.test.domain.Office;
+import org.springmodules.web.test.domain.Employee;
+import org.springmodules.web.test.domain.IEmployee;
+import org.springmodules.web.test.domain.Office;
 
 /**
  *

@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springmodules.xt.utils.mvc.util;
+package org.springmodules.web.propertyeditors;
 
 import junit.framework.*;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-import org.springmodules.xt.test.domain.IEmployee;
-import org.springmodules.xt.test.domain.MemoryRepository;
+import org.springmodules.web.test.domain.IEmployee;
+import org.springmodules.web.test.domain.MemoryRepository;
 
 /**
  *
@@ -45,17 +45,11 @@ public class ReflectivePropertyEditorTest extends AbstractDependencyInjectionSpr
         return suite;
     }
 
-    /**
-     * Test of getAsText method, of class org.springmodules.xt.utils.mvc.util.ReflectivePropertyEditor.
-     */
     public void testGetAsText() {
         this.editor.setValue(this.employee);
         assertEquals(this.employee.getMatriculationCode(), this.editor.getAsText());
     }
 
-    /**
-     * Test of setAsText method, of class org.springmodules.xt.utils.mvc.util.ReflectivePropertyEditor.
-     */
     public void testSetAsText() {
         this.editor.setAsText("1");
         assertEquals(this.employee, this.editor.getValue());

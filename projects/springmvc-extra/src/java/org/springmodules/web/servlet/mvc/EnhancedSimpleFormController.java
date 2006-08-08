@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.utils.mvc.controller;
+package org.springmodules.web.servlet.mvc;
 
 import java.beans.PropertyEditor;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -40,16 +40,18 @@ public class EnhancedSimpleFormController extends SimpleFormController {
     private static final String PROPERTY_QUALIFIER = "property";
     private static final String QUALIFIER_SEPARATOR = ":";
     
-    private Map<String, String> customEditors = new HashMap();
+    private Map customEditors = new HashMap();
     
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) 
     throws Exception {
         // Configured editors:
-        for (Map.Entry<String, String> entry : this.customEditors.entrySet()) {
-            String value = entry.getValue();
+        Iterator entries = this.customEditors.entrySet().iterator();
+        while(entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            String value = (String) entry.getValue();
             if (this.getApplicationContext().getBean(value) instanceof PropertyEditor && !this.getApplicationContext().isSingleton(value)) {
                 PropertyEditor editor = (PropertyEditor) this.getApplicationContext().getBean(value);
-                String key = entry.getKey();
+                String key = (String) entry.getKey();
                 String[] splittedKey = key.split(QUALIFIER_SEPARATOR);
                 if (splittedKey.length == 2) {
                     String qualifier = splittedKey[0];
@@ -87,7 +89,7 @@ public class EnhancedSimpleFormController extends SimpleFormController {
     /**
      * Get the map of custom editors.
      */
-    public Map<String, String> getCustomEditors() {
+    public Map getCustomEditors() {
         return  this.customEditors;
     }
 }

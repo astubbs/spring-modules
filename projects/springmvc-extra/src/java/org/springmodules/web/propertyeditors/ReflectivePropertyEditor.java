@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.utils.mvc.util;
+package org.springmodules.web.propertyeditors;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorSupport;

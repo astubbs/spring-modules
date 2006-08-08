@@ -14,50 +14,46 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.utils.mvc.util;
+package org.springmodules.web.propertyeditors;
 
 /**
- * Exception thrown by a {@link ReflectiveCollectionEditor}.
+ * Exception thrown by a {@link ReflectivePropertyEditor}.
  *
  * @author Sergio Bossa
  */
-public class ReflectiveCollectionEditorException extends RuntimeException {
+public class ReflectivePropertyEditorException extends RuntimeException {
     
     /**
-     * Creates a new instance of <code>ReflectiveCollectionEditorException</code> without detail message.
+     * Creates a new instance of <code>ReflectivePropertyEditorException</code> without detail message.
      */
-    public ReflectiveCollectionEditorException() {
+    public ReflectivePropertyEditorException() {
     }
     
-    
     /**
-     * Constructs an instance of <code>ReflectiveCollectionEditorException</code> with the specified detail message.
-     * 
+     * Constructs an instance of <code>ReflectivePropertyEditorException</code> with the specified detail message.
      * 
      * @param msg the detail message.
      */
-    public ReflectiveCollectionEditorException(String msg) {
+    public ReflectivePropertyEditorException(String msg) {
         super(msg);
     }
     
     /**
-     * Constructs an instance of <code>ReflectiveCollectionEditorException</code> with the specified nested exception.
-     * 
+     * Constructs an instance of <code>ReflectivePropertyEditorException</code> with the specified nested exception.
      * 
      * @param ex the nested exception.
      */
-    public ReflectiveCollectionEditorException(Throwable ex) {
+    public ReflectivePropertyEditorException(Throwable ex) {
         super(ex);
     }
     
     /**
-     * Constructs an instance of <code>ReflectiveCollectionEditorException</code> with the specified detail message and nested exception.
-     * 
+     * Constructs an instance of <code>ReflectivePropertyEditorException</code> with the specified detail message and nested exception.
      * 
      * @param msg the detail message.
      * @param ex the nested exception.
      */
-    public ReflectiveCollectionEditorException(String msg, Throwable ex) {
+    public ReflectivePropertyEditorException(String msg, Throwable ex) {
         super(msg, ex);
     }
 }

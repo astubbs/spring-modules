@@ -12,33 +12,6 @@
         </property>
     </bean>
     
-    <!-- Property Editors -->
-    
-    <bean id="singletonOfficeEditor" class="org.springmodules.xt.utils.mvc.util.ReflectivePropertyEditor">
-        <property name="dataAccessObject"><ref bean="store"/></property>
-        <property name="dataAccessMethod"><value>getOffice</value></property>
-        <property name="propertyName"><value>officeId</value></property>
-    </bean>
-    
-    <bean id="officeEditor" class="org.springmodules.xt.utils.mvc.util.ReflectivePropertyEditor" singleton="false">
-        <property name="dataAccessObject"><ref bean="store"/></property>
-        <property name="dataAccessMethod"><value>getOffice</value></property>
-        <property name="propertyName"><value>officeId</value></property>
-    </bean>
-    
-    <bean id="employeeEditor" class="org.springmodules.xt.utils.mvc.util.ReflectivePropertyEditor" singleton="false">
-        <property name="dataAccessObject"><ref bean="store"/></property>
-        <property name="dataAccessMethod"><value>getEmployee</value></property>
-        <property name="propertyName"><value>matriculationCode</value></property>
-    </bean>
-    
-    <bean id="employeesCollectionEditor" class="org.springmodules.xt.utils.mvc.util.ReflectiveCollectionEditor" singleton="false">
-        <constructor-arg index="0"><value>java.util.List</value></constructor-arg>
-        <property name="dataAccessObject"><ref bean="store"/></property>
-        <property name="dataAccessMethod"><value>getEmployee</value></property>
-        <property name="propertyName"><value>matriculationCode</value></property>
-    </bean>
-    
     <!-- Ajax -->
     
     <bean id="dummyHandler" class="org.springmodules.xt.test.ajax.DummyHandler"/>
@@ -58,51 +31,5 @@
     </bean>
     
     <!-- -->
-    
-    <!-- Controllers -->
-    
-    <bean id="testCustomEditorsControllerOne" class="org.springmodules.xt.utils.mvc.controller.EnhancedSimpleFormController">
-        <property name="customEditors">
-            <map>
-                <entry>
-                    <key><value>org.springmodules.xt.test.domain.Office</value></key>
-                    <value>officeEditor</value>
-                </entry>
-            </map>
-        </property>  
-    </bean>
-    
-    <bean id="testCustomEditorsControllerTwo" class="org.springmodules.xt.utils.mvc.controller.EnhancedSimpleFormController">
-        <property name="customEditors">
-            <map>
-                <entry>
-                    <key><value>class:org.springmodules.xt.test.domain.Office</value></key>
-                    <value>officeEditor</value>
-                </entry>
-            </map>
-        </property>  
-    </bean>
-    
-    <bean id="testCustomEditorsControllerThree" class="org.springmodules.xt.utils.mvc.controller.EnhancedSimpleFormController">
-        <property name="customEditors">
-            <map>
-                <entry>
-                    <key><value>property:office</value></key>
-                    <value>officeEditor</value>
-                </entry>
-            </map>
-        </property>  
-    </bean>
-    
-    <bean id="testCustomEditorsControllerFour" class="org.springmodules.xt.utils.mvc.controller.EnhancedSimpleFormController">
-        <property name="customEditors">
-            <map>
-                <entry>
-                    <key><value>property:office</value></key>
-                    <value>singletonOfficeEditor</value>
-                </entry>
-            </map>
-        </property>  
-    </bean>
     
 </beans>
