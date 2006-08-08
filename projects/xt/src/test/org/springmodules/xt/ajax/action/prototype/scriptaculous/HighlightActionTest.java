@@ -24,7 +24,7 @@ public class HighlightActionTest extends XMLEnhancedTestCase {
     }
     
     public void testRenderPart2() throws Exception {
-        HighlightAction action = new HighlightAction("test", (float) 0.5, "#ffff33", "#ffff44", "#ffff55");
+        HighlightAction action = new HighlightAction("test", new Float(0.5), "#ffff33", "#ffff44", "#ffff55");
         String rendering = action.execute();
         
         System.out.println(rendering);

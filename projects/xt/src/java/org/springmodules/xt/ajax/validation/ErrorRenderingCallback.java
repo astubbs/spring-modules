@@ -17,12 +17,13 @@
 package org.springmodules.xt.ajax.validation;
 
 import java.util.Locale;
+import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.component.Component;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.ObjectError;
 
 /**
- * Callback to implement for rendering validation errors into a {@link Component}.
+ * Callback to implement for rendering validation errors.
  *
  * @author Sergio Bossa
  */
@@ -36,4 +37,11 @@ public interface ErrorRenderingCallback {
      * @param locale The locale to use for messages.
      */
     public Component getRenderingComponent(ObjectError error, MessageSource messageSource, Locale locale);
+    
+    /**
+     * Get the action that will be executed <b>after</b> rendering the component.
+     *
+     * @param error The error object.
+     */
+    public AjaxAction getRenderingAction(ObjectError error);
 }

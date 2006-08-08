@@ -51,19 +51,19 @@ public class HighlightAction extends AbstractExecuteJavascriptAction {
     }
     
     /**
-     * Action constructor.
+     * Action constructor (you can leave null the unneeded arguments).
      * @param elementId The id of the element to highlight in the HTML page.
      * @param duration The effect duration.
      * @param startColor The highlighting color: defaults to ”#ffff99” (light yellow).
      * @param endColor The color shown at the end of the highlight: defaults to ”#ffffff” (white).
      * @param restoreColor The background color after the highlighting has finished: by default it is guessed.
      */
-    public HighlightAction(String elementId, float duration, String startColor, String endColor, String restoreColor) {
+    public HighlightAction(String elementId, Float duration, String startColor, String endColor, String restoreColor) {
         this.elementId = elementId;
-        this.options.put("duration", duration);
-        this.options.put("startcolor", startColor);
-        this.options.put("endcolor", endColor);
-        this.options.put("restorecolor", restoreColor);
+        if (duration != null) this.options.put("duration", duration);
+        if (startColor != null) this.options.put("startcolor", startColor);
+        if (endColor != null) this.options.put("endcolor", endColor);
+        if (restoreColor != null) this.options.put("restorecolor", restoreColor);
     }
     
     protected String getJavascript() {

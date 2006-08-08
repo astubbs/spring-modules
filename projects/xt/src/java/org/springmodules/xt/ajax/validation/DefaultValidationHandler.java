@@ -18,26 +18,28 @@ package org.springmodules.xt.ajax.validation;
 
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.log4j.Logger;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
+import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxSubmitEvent;
 import org.springmodules.xt.ajax.component.Component;
-import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.action.RemoveContentAction;
 import org.springmodules.xt.ajax.action.ReplaceContentAction;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
-import org.apache.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
+import org.springmodules.xt.ajax.validation.support.DefaultErrorRenderingCallback;
 
 /**
  * Ready-to-use Ajax handler for handling validation errors on submit.<br>
- * This handler manages {@link org.springmodules.xt.ajax.AjaxSubmitEvent}s with id equals to "validate", replacing the content of HTML elements 
- * named after validation error codes, with related validation error messages, in case using {@link ErrorRenderingCallback}
- * if configured, or rendering error messages as simple text.<br>
+ * This handler manages {@link org.springmodules.xt.ajax.AjaxSubmitEvent}s with id equals to "validate": for each validation error, it looks for
+ * an HTML element named after the error code, and replace its content with the related error message.<br>
+ * The rendering of the error message can be customized through the {@link ErrorRenderingCallback}: by default it uses the
+ * {@link org.springmodules.xt.ajax.validation.support.DefaultErrorRenderingCallback}.<br><br>
  * If the fired {@link org.springmodules.xt.ajax.AjaxSubmitEvent} has no validation errors, this handler returns a null response.
  *
  * @author Sergio Bossa
@@ -47,7 +49,7 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     private static final Logger logger = Logger.getLogger(DefaultValidationHandler.class);
     
     private MessageSource messageSource;
-    private ErrorRenderingCallback errorRenderingCallback;
+    private ErrorRenderingCallback errorRenderingCallback = new DefaultErrorRenderingCallback();
     
     public AjaxResponse validate(AjaxSubmitEvent event) {
         AjaxResponseImpl response = null;
@@ -99,15 +101,14 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
         
         for (Object o : errors.getAllErrors()) {
             ObjectError error = (ObjectError) o;
-            Component errorComponent = null;
-            if (this.errorRenderingCallback != null) {
-                errorComponent = this.errorRenderingCallback.getRenderingComponent(error, this.messageSource, locale);
-            }
-            else {
-                errorComponent = new SimpleText(this.messageSource.getMessage(error.getCode(), null, error.getDefaultMessage(), locale));
-            }
-            ReplaceContentAction action = new ReplaceContentAction(error.getCode(), errorComponent);
-            response.addAction(action);
+            
+            Component renderingComponent = this.errorRenderingCallback.getRenderingComponent(error, this.messageSource, locale);
+            
+            AjaxAction renderingAction = this.errorRenderingCallback.getRenderingAction(error);
+            ReplaceContentAction replaceAction = new ReplaceContentAction(error.getCode(), renderingComponent);
+            
+            response.addAction(replaceAction);
+            response.addAction(renderingAction);
         }
     }
 }
