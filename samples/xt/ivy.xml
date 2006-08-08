@@ -32,6 +32,7 @@
 
     <dependency org="taglibs" name="standard" rev="1.1.2" />
 
+    <dependency org="springmodules" name="spring-modules-springmvc-extra" rev="latest.integration"/>
     <dependency org="springmodules" name="spring-modules-xt" rev="latest.integration"/>
     
   </dependencies>

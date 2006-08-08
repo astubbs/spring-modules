@@ -19,6 +19,7 @@
   </target>
   
   <target name="jar.post">
+    
     <jar jarfile="${target.lib.dir}/${project.name}-ajax.jar">
       <manifest>
         <attribute name="Implementation-Vendor" value="${org.name}" />
@@ -41,16 +42,6 @@
       </fileset>
     </jar>
     
-    <jar jarfile="${target.lib.dir}/${project.name}-utils.jar">
-      <manifest>
-        <attribute name="Implementation-Vendor" value="${org.name}" />
-        <attribute name="Implementation-Title" value="${project.title}" />
-        <attribute name="Implementation-Version" value="${project.version}" />
-      </manifest>
-      <fileset dir="${target.classes.dir}">
-        <include name="org/springmodules/xt/utils/**"/>
-      </fileset>
-    </jar>
   </target>
 
 </project>
