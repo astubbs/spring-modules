@@ -17,7 +17,7 @@
 package org.springmodules.xt.ajax.action;
 
 import junit.framework.*;
-import org.springmodules.xt.ajax.AjaxActionImpl;
+import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
@@ -44,7 +44,7 @@ public class ReplaceElementActionTest extends XMLEnhancedTestCase {
     }
     
     public void testExecute() throws Exception {
-        AjaxActionImpl action = new ReplaceElementAction("testId", new SimpleText("Test Component"));
+        AjaxAction action = new ReplaceElementAction("testId", new SimpleText("Test Component"));
         
         String result = action.execute();
         

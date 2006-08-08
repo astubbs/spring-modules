@@ -17,7 +17,7 @@
 package org.springmodules.xt.ajax.action;
 
 import junit.framework.*;
-import org.springmodules.xt.ajax.AjaxActionImpl;
+import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
@@ -43,7 +43,7 @@ public class RemoveElementActionTest extends XMLEnhancedTestCase {
     }
 
     public void testExecute() throws Exception {
-        AjaxActionImpl action = new RemoveElementAction("testId");
+        AjaxAction action = new RemoveElementAction("testId");
         
         String result = action.execute();
         

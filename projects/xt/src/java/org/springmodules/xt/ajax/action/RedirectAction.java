@@ -21,14 +21,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.springframework.web.servlet.ModelAndView;
-import org.springmodules.xt.ajax.AjaxActionImpl;
+import org.springmodules.xt.ajax.AjaxAction;
 
 /**
  * Taconite based ajax action for redirecting to a given URL.
  *
  * @author Sergio Bossa
  */
-public class RedirectAction implements AjaxActionImpl {
+public class RedirectAction implements AjaxAction {
     
     private static final String OPEN_REDIRECT_ACTION = new String("<taconite-redirect targetUrl=\"$1\" parseInBrowser=\"true\">");
     private static final String CLOSE_REDIRECT_ACTION = new String("</taconite-redirect>");

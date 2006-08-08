@@ -16,14 +16,14 @@
 
 package org.springmodules.xt.ajax.action;
 
-import org.springmodules.xt.ajax.AjaxActionImpl;
+import org.springmodules.xt.ajax.AjaxAction;
 
 /**
  * Taconite based ajax action for executing Javascript code in the context of an Ajax request.
  *
  * @author Sergio Bossa
  */
-public abstract class AbstractExecuteJavascriptAction implements AjaxActionImpl {
+public abstract class AbstractExecuteJavascriptAction implements AjaxAction {
     
     private static final String OPEN_EXECUTE = new String("<taconite-execute-javascript  parseInBrowser=\"true\">");
     private static final String CLOSE_EXECUTE = new String("</taconite-execute-javascript>");

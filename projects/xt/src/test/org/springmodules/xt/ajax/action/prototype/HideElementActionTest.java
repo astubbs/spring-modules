@@ -18,7 +18,7 @@ package org.springmodules.xt.ajax.action.prototype;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.springmodules.xt.ajax.AjaxActionImpl;
+import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.action.SetAttributeActionTest;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
@@ -45,7 +45,7 @@ public class HideElementActionTest extends XMLEnhancedTestCase {
     }
 
     public void testExecute() throws Exception {
-        AjaxActionImpl action = new HideElementAction("testId");
+        AjaxAction action = new HideElementAction("testId");
         
         String result = action.execute();
         

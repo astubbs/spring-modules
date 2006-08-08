@@ -16,14 +16,14 @@
 
 package org.springmodules.xt.ajax.action;
 
-import org.springmodules.xt.ajax.AjaxActionImpl;
+import org.springmodules.xt.ajax.AjaxAction;
 
 /**
  * Taconite based ajax action for removing a given element, identified by its id.
  *
  * @author Sergio Bossa
  */
-public class RemoveElementAction implements AjaxActionImpl {
+public class RemoveElementAction implements AjaxAction {
     
     private static final String OPEN = new String("<taconite-delete contextNodeID=\"$1\" parseInBrowser=\"true\">");
     private static final String CLOSE = new String("</taconite-delete>");

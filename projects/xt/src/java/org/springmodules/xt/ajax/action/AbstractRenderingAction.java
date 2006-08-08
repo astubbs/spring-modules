@@ -18,7 +18,7 @@ package org.springmodules.xt.ajax.action;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.springmodules.xt.ajax.AjaxActionImpl;
+import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.component.Component;
 
 /**
@@ -27,7 +27,7 @@ import org.springmodules.xt.ajax.component.Component;
  * 
  * @author Sergio Bossa
  */
-public abstract class AbstractRenderingAction implements AjaxActionImpl {
+public abstract class AbstractRenderingAction implements AjaxAction {
     
     private String elementId;
     private List<Component> components = new LinkedList();

@@ -16,14 +16,14 @@
 
 package org.springmodules.xt.ajax.action;
 
-import org.springmodules.xt.ajax.AjaxActionImpl;
+import org.springmodules.xt.ajax.AjaxAction;
 
 /**
  * Taconite based ajax action for setting an attribute value.
  *
  * @author Sergio Bossa
  */
-public class SetAttributeAction implements AjaxActionImpl {
+public class SetAttributeAction implements AjaxAction {
     
     private static final String OPEN_SET_ATTRIBUTE = new String("<taconite-set-attributes contextNodeID=\"$1\" parseInBrowser=\"true\" $2=\"$3\">");
     private static final String CLOSE_SET_ATTRIBUTE = new String("</taconite-set-attributes>");

@@ -44,6 +44,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.BaseCommandController;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.util.UrlPathHelper;
+import org.springmodules.xt.ajax.AjaxResponseImpl;
 
 /**
  * <p>Spring web interceptor which intercepts http requests and handles ajax requests.<br> 
