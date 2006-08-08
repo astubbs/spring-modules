@@ -5,6 +5,8 @@
 <html>
     <head>
         <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>  
+        <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
+        <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects"/>'></script>
         <title>Spring Modules XT Ajax Framework : Example 3</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
