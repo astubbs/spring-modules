@@ -9,12 +9,6 @@
 
     <bean id="configurationLoader" class="org.springmodules.validation.bean.conf.loader.xml.DefaultXmlBeanValidationConfigurationLoader">
         <property name="resource" value="classpath:org/springmodules/validation/bean/validation.xml"/>
-        <!--<property name="conditionExpressionParser" ref="conditionExpressionParser"/>-->
-        <!--<property name="elementHandlerRegistry">-->
-            <!--<bean class="org.springmodules.validation.bean.conf.loader.xml.DefaultValidationRuleElementHandlerRegistry">-->
-                <!--<property name="conditionExpressionParser" ref="conditionExpressionParser"/>-->
-            <!--</bean>-->
-        <!--</property>-->
     </bean>
 
     <bean id="conditionExpressionParser" class="org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser">

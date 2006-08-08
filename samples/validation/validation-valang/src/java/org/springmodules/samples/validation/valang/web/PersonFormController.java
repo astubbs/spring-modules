@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 public class PersonFormController extends SimpleFormController {
 
     protected ModelAndView onSubmit(HttpServletRequest request,
-    		HttpServletResponse response, Object command, BindException errors) throws Exception { 
+    		HttpServletResponse response, Object command, BindException errors) throws Exception {
 
         return showForm(request,response,errors);
     }

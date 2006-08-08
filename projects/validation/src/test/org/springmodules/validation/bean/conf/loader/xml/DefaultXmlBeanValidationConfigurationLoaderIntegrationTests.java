@@ -40,4 +40,12 @@ public class DefaultXmlBeanValidationConfigurationLoaderIntegrationTests extends
         assertEquals(1, errors.getGlobalErrorCount());
 
     }
+
+    public void testLoadDefaultConfiguration() throws Exception {
+        loader = new DefaultXmlBeanValidationConfigurationLoader();
+        loader.afterPropertiesSet();
+        BeanValidationConfiguration conf = loader.loadConfiguration(Person.class);
+        assertNotNull(conf);
+    }
+
 }

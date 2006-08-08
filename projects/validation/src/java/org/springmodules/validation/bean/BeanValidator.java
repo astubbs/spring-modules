@@ -35,7 +35,7 @@ import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.CascadeValidation;
 import org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader;
-import org.springmodules.validation.bean.conf.loader.SimpleBeanValidationConfigurationLoader;
+import org.springmodules.validation.bean.conf.loader.xml.DefaultXmlBeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.converter.ErrorCodeConverter;
 import org.springmodules.validation.bean.converter.ModelAwareErrorCodeConverter;
 import org.springmodules.validation.bean.rule.ValidationRule;
@@ -64,7 +64,7 @@ public class BeanValidator extends RuleBasedValidator {
      * used as the bean validation configuration loader.
      */
     public BeanValidator() {
-        this(new SimpleBeanValidationConfigurationLoader());
+        this(new DefaultXmlBeanValidationConfigurationLoader());
     }
 
     /**

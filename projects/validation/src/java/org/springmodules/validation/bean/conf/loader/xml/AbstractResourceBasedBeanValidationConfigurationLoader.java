@@ -18,7 +18,10 @@ package org.springmodules.validation.bean.conf.loader.xml;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader;
@@ -31,6 +34,10 @@ import org.springmodules.validation.bean.conf.loader.BeanValidationConfiguration
  */
 public abstract class AbstractResourceBasedBeanValidationConfigurationLoader
     implements BeanValidationConfigurationLoader, InitializingBean {
+
+    private final static Log logger = LogFactory.getLog(AbstractResourceBasedBeanValidationConfigurationLoader.class);
+
+    private final static String DEFAULT_RESOURCE_EXTENTION = ".vld.xml";
 
     private Map configurationByClass;
 
@@ -59,7 +66,11 @@ public abstract class AbstractResourceBasedBeanValidationConfigurationLoader
      * @see org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader#loadConfiguration(Class)
      */
     public final BeanValidationConfiguration loadConfiguration(Class clazz) {
-        return (BeanValidationConfiguration)configurationByClass.get(clazz);
+        BeanValidationConfiguration configuration = (BeanValidationConfiguration)configurationByClass.get(clazz);
+        if (configuration != null) {
+            return configuration;
+        }
+        return loadDefaultConfiguration(clazz);
     }
 
     /**
@@ -127,6 +138,42 @@ public abstract class AbstractResourceBasedBeanValidationConfigurationLoader
      */
     public void setResource(Resource resource) {
         setResources(new Resource[] { resource });
+    }
+
+
+    //=============================================== Helper Methods ===================================================
+
+    /**
+     * Loads the default validation configuration for the given class, caches it and returns it. The configuration
+     * resource for the given class is resolved by the {@link #createDefaultConfigurationFileName(Class)} method.
+     *
+     * @param clazz The class for which the default configuration should be loaded.
+     * @return The default validation configuration of the given class.
+     */
+    protected BeanValidationConfiguration loadDefaultConfiguration(Class clazz) {
+        String fileName = createDefaultConfigurationFileName(clazz);
+        Resource resource = new ClassPathResource(fileName, clazz);
+        if (resource.exists()) {
+            Map configurationByClass = loadConfigurations(resource);
+            this.configurationByClass.putAll(configurationByClass);
+            return (BeanValidationConfiguration)configurationByClass.get(clazz);
+        }
+        logger.warn("Could not find the default validation configuration for class '" + clazz.getName() + "'");
+        this.configurationByClass.put(clazz, null);
+        return null;
+    }
+
+    /**
+     * Creates the default configuration file name for the given class. This method will search in the classpath for
+     * a file that is located where the class itself is located, named after the class, and has the extention of
+     * ".vld.xml". For example, the default configuration file name for class
+     * <code>Person</code> will be <code>Person.vld.xml</code>.
+     *
+     * @param clazz The class for which the default configuration will be created.
+     * @return The default validatoin configuration resource for the given class.
+     */
+    protected String createDefaultConfigurationFileName(Class clazz) {
+        return clazz.getSimpleName() + DEFAULT_RESOURCE_EXTENTION;
     }
 
 }
