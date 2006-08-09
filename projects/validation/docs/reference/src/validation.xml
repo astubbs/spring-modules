@@ -1033,5 +1033,2262 @@ length(?) mod 4</programlisting>
         </sect2>
 
 	</sect1>
+
+    <sect1 id="beanValidator">
+
+ 		<title>Bean Validation Framework</title>
+
+		<sect2>
+		
+			<title>Introduction</title>
+
+			<para>
+				The Bean Validation Framework was developed to fill in gaps in the other available validation approaches, namely commons
+				validator and valang. The main goals of this framework are:
+			</para>
+		
+			<itemizedlist>
+				<listitem><para>Enable clear separation of concerns when it comes to validation</para></listitem>
+				<listitem><para>Extract the best features from the other approaches and unite them under one framework</para></listitem>
+				<listitem><para>Make use of latest technologies and methodologies</para></listitem>
+				<listitem><para>Make it as intuitive and simple as possible to define the validation rules in the application</para></listitem>
+			</itemizedlist>
+        
+
+        	<bridgehead renderas="sect3">Separation of Concerns</bridgehead>
+
+            <para>
+                Essentially, validation is there to help enforce the integrity of the data within an application. The
+                integrity is defined by a set of well defined constraints which the application relies on in order to work
+                properly. There are several types of such constraints:
+			</para>
+			
+			<itemizedlist>
+
+				<listitem>
+					<para>
+						<emphasis>Domain model constraints</emphasis> - These constraints are defined on top of the
+						domain model data that is used within the program. These are dictated by the domain in which
+						the application operates in.
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>
+						<emphasis>Data constraints</emphasis> - These are not part of the domain but more of technical
+						limitations that define additional constraints. An example of such constraint is a database
+						constraint where a column can only hold a string value with a maximum number of characters.
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>
+						<emphasis>Business (Logic) Rules</emphasis> - Some constraints are defined by the business
+						rules that drive the application. These rules define the valid interactions between the
+						domain model and the services provided by the application. The business rules can be seen as
+						domain oriented constraints applied on services rather than on data. An example of such a rule
+						can be "Username must be unique between all users".
+					</para>
+				</listitem>
+
+				<listitem>
+					<para>
+						<emphasis>Application Constraints</emphasis> - Constraints on data/services that are not
+						part of the domain per se, but part of the application. These constraints come on top
+						of the domain oriented constraints and define additional contract between the application
+						and its clients. For example, in the user registration form, the user needs to fill in its
+						password twice for confirmation. This is clearly an application constraint. As far as the
+						domain is concerned, there is only one password, but the application need to accept two
+						passwords as an input.
+					</para>
+				</listitem>
+
+			</itemizedlist>
+
+			<para>
+                The validation framework focuses on the first two constraint types above. It enables defining the
+                domain model and data constraints in an explicit manner. Application constraints are also partially
+                supported as the same techniques that are used to define the domain model constraints can also be use
+                to define the application data constraints.
+            </para>
+
+
+            <bridgehead renderas="sect3">Uniting Best Practices</bridgehead>
+
+            <para>
+                Perhaps the most known and used validation framework is commons-validation. Originally this framework was
+                developed as the validation mechanism for the Struts web framework, and later it was extracted and became
+                an independent project. There are good and bad sides to this framework. The good is that in a way
+                it introduced declarative validation and showed that validation can be configured and does not necessarily
+                needs to be part of the code. The bad part is that, as mentioned above, it originated in the Strut web
+                framework making it very web oriented. Commons validation does the job, but there is quite a lot of
+                room for improvement - mainly in the extensive, complex, and non-intuitive xml configurations. The web
+                orientation, for example, is clearly apparent in the configuration as it deals with terms like
+                forms and javascript.
+            </para>
+
+            <para>
+                In early  [TODO: date] Steven Devijver created Valang and committed it to spring modules. Valang (stands for
+                <emphasis>Va</emphasis>-lidation <emphasis>Lang</emphasis>-uage) introduced a new approach towards validation.
+                Instead of using predefined validator classes, valang provides a powerful and extensible expression language
+                to represent validation rules. One of the most appealing features in Valang is the ability to express complex
+                boolean expressions using a quite natural language which is both intuitive to write and very easy to read. The
+                downside of Valang is that it mixes these boolean expressions and the validation configuration in one
+                language. Experience shows that complex validations become quite verbose due to this tight coupling.
+            </para>
+
+            <para>
+                The validation framework takes the good parts from both of these approaches and aims to fix and improve
+                the bad ones. One major improvement is the abstraction of the validation configuration and the
+                clear separation between it and the actual alidation rules constructs. This abstraction
+                enables the usage of different types of configuration mechanism implementations. The framework comes with
+                out of the box XML files and Java 5 annotation support, but other mechanisms can easily be
+                created as well. With the lessons learned from Valang, the framework also
+                makes use of a boolean expression language where possible. The expression language itself can
+                change according to the developer preferences.
+            </para>
+
+
+            <bridgehead renderas="sect3">Makes Use of Latest Technologies</bridgehead>
+
+            <para>
+                As mentioned above, the validation framework tried to make use of the latest technologies. The use
+                of Java 5 annotations and advanced expression languages serve evident for that.
+            </para>
+
+            <bridgehead renderas="sect3">Simple &amp; Intuitive</bridgehead>
+
+            <para>
+                One of the main goals of this framework is to make it as intuitive and simple as possible for the developer
+                to use. If XML configuration is used, the element names are very descriptive and as opposed to
+                commons-validator, do not use any web related terms, but more of generic terms (e.g. beans, properties, etc...). 
+                The use of annotations also makes using this framework very intuitive to work with. While the two different configuration mechanisms are totally
+                independent, they both use the same terms and names of common validation rules.
+            </para>
+
+        </sect2>
+
+        <sect2>
+
+            <title>Using the Framework</title>
+
+            <para>
+                In this section you'll learn how to make use of the validation framework. The core components in
+                this framework will be introduced and we'll show how they interact with each other. Along the way you'll also
+                learn how to configure the validation rules both in XML and annotations and how Spring 2.0 namespaces
+                support makes integration in a typical spring application even easier.
+            </para>
+
+            <sect3>
+
+                <title>The Validation Rule</title>
+
+                <para>
+                    Spring defines the <emphasis>org.springframework.validation.Validator</emphasis> interface to abstract the task of
+                    object validation. While this is a good abstraction, in practice, all the implementation of this
+                    interface does is applying one or more validation rules on the validated object and populating
+                    the passed in <emphasis>org.springframework.validation.Errors</emphasis> argument with all encountered validation errors.
+				</para>
+				
+				<para>
+                    Realizing that, a finer grained abstraction is introduced in this framework - The
+                    <emphasis>org.springmodules.validation.bean.rule.ValidationRule</emphasis>. Here is the complete interface:
+				</para>
+				
+                <programlisting>public interface ValidationRule {
+
+    boolean isApplicable(Object obj);
+
+    Condition getCondition();
+
+    String getErrorCode();
+
+    Object[] getErrorArguments(Object obj);
+
+    String getDefaultErrorMessage();
+
+}</programlisting>
+
+				<para>
+                    A validation rule can be seen as a &lt;condition, error&gt; pair. The condition represents the
+                    predicate to be evaluated up on the object and determine whether this rule sees this object as
+                    valid or not. The error defines the validation error in case the rule sees this validated object
+                    as invalid. The interface above supports this definition as follows:
+				</para>
+				
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            The <emphasis>getCondition()</emphasis> method returns the condition/predicate of this rule.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>getErrorCode()</emphasis> method returns the error code of the rule. This
+                            enables associating codes to different validation errors which can be resolved to
+                            a descriptive message using a resource bundle.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>getErrorArguments(Object)</emphasis> method returns any arguments that
+                            might be useful for the error indication. For example, when a validation rule checks
+                            that a string value is at least 4 chars long, two arguments that might be useful in case
+                            of validation failure are the actual and required lengths of the string. Notice that
+                            this method accepts the validated object as an argument. This enables returning
+                            arguments based on the validated object (e.g. This is how the actual string length would
+                            be returned as an error argument in the example above).
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>getDefaultErrorMessage()</emphasis> method returns a string message
+                            describing the error that can be used as the default error message when the error
+                            code is not used.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+                    
+				<para>
+                    Last but not least, the <emphasis>isApplicable(Object)</emphasis> method is there to indicate
+                    whether or not the rule can be applied on the validated object in the first place. This is an important
+                    feature for it enables support for conditional validation rules. Conditional validation rules are
+                    applied on an object only if a certain condition is met. For example, lets assume we have an account
+                    in a web shop where a typical account can hold two addresses: shipping address and billing address.
+                    Just to make the point, we'll also assume that an account holds another flag indicating whether the
+                    shipping address should also be used as the billing address. In this scenario, validation rules
+                    defined for the billing address should only be applied if that flag is set to false. This is where
+                    the conditional rule will play part.
+                </para>
+
+
+                <bridgehead renderas="sect4">AbstractValidationRule and Predefined Rules</bridgehead>
+
+                <para>
+                    The framework comes with AbstractValidationRule class which is a parent class with
+                    default behavior to make it easier for developer to write custom validation rules.
+                    This class relies on the following two strategies:
+                </para>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <emphasis>Applicability Condition</emphasis> - This condition helps in the decision
+                            whether the validation rule can be applied to a given validated object.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>ErrorArgumentResolver</emphasis> - A strategy to extract the error
+                            arguments based on the validated object.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+                <para>
+                    The following are all the pre-defined validation rules the framework comes with:
+                </para>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <emphasis>NotNullValidationRule</emphasis> - Checks that the validated
+                            object is not null.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>ExpressionValidationRule</emphasis> - Checks the validated object
+                            against a condition expression [TODO see...]
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>DateInThePastValidationRule</emphasis> - Checks that the validated
+                            Date/Calendar occurred in the past (relative to the validation time)
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>DateInTheFutureValidationRule</emphasis> - Checks that the validated
+                            Date/Calendar occurred in the future (relative to the validation time)
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>InstantInThePastValidationRule</emphasis> - Checks that the validated
+                            joda-time instant occurred in the past (relative to the validation time)
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>InstantInTheFutureValidationRule</emphasis> - Checks that the validated
+                            joda-time instant occurred in the future (relative to the validation time)
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>LengthValidationRule</emphasis> - Checks that the length of the
+                            validated string is within specific bounds
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>MaxLengthValidationRule</emphasis> - Checks that the length of the
+                            validated string is less than or equals a specific bound.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>MinLengthValidationRule</emphasis> - Checks that the length of the
+                            validated string is greater than or equals a specific bound.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>NotBlankValidationRule</emphasis> - Checks that the validated
+                            String is not blank, that is, has length greater than zero.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>RegExpValidationRule</emphasis> - Checks that the validated
+                            String matches a specific regular expression.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>EmailValidationRule</emphasis> - Checks that the validated
+                            string is a valid email address
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>SizeValidationRule</emphasis> - Checks that the size of the
+                            validated collection/array is within specific bounds
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>MaxSizeValidationRule</emphasis> - Checks that the size of the
+                            validated collection/array is less than or equals a specific bound.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>MinSizeValidationRule</emphasis> - Checks that the length of the
+                            validated collection/array is greater than or equals a specific bound.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>NotEmptyValidationRule</emphasis> - Checks that the validated
+                            collection/array is not empty.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>RangeValidationRule</emphasis> - Checks that the validated
+                            Comparable is within a specific range.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>MaxValidationRule</emphasis> - Checks that the validated
+                            Comparable is less than or equals a specific bound.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>MinValidationRule</emphasis> - Checks that the validated
+                            Comparable is greater than or equals a specific bound.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>PropertyValidationRule</emphasis> - A validation rule that applies
+                            another validation rule on the value of a specific property of the validated
+                            object.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+            </sect3>
+
+            <sect3>
+
+                <title>Validation Configuration &amp; Configuration Loader</title>
+
+                <para>
+                    As mentioned above, one of the key features in this framework is the clear abstraction of the
+                    validation configuration. This abstraction is represented by the
+                    <emphasis>org.springmodules.validation.bean.conf.BeanValidationConfiguration</emphasis> interface. Here is the complete
+                    interface:
+                </para>
+
+                <programlisting>public interface BeanValidationConfiguration {
+
+    ValidationRule[] getGlobalRules();
+
+    ValidationRule[] getPropertyRules(String propertyName);
+
+    String[] getValidatedProperties();
+
+    Validator getCustomValidator();
+
+    CascadeValidation[] getCascadeValidations();
+
+}</programlisting>
+
+                <para>
+                    As its name suggests, the bean validation framework focuses on validating beans. One of the main goals
+                    of this framework was to enable defining validation rules for bean classes. The ValidationConfiguration
+                    interface provides all information needed about those validation rules and it's largely based on the
+                    same terminology used in Spring's Errors interface:
+                </para>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            The <emphasis>getGlobalRules()</emphasis> method returns all validation rules that are associated
+                            globally with the validated object. In practice, this association means the encountered validation
+                            errors will be registered globally for this object.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>getPropertyRules(String)</emphasis> method returns all validation rules that
+                            are associated with the given property name. In practice, this association means the
+                            encountered validation errors will be registered at the field/property level.
+                            This method is closely related to the <emphasis>getValidatedProperties()</emphasis> method
+                            (described below) in the sense that only those property names returned by that method should
+                            be passed in as an argument to this method.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>getValidatedProperties()</emphasis> method returns the names of all the
+                            validated properties, that is, all properties that have validation rules associated with them.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>getCustomValidator()</emphasis> method returns a Spring Validator implementation
+                            that should be used to validate the validated object. This enables associating custom validator
+                            implementation for the object and still configure it using the same configuration mechanism used
+                            to configure the validation rules. It enables easy pluggability of validation that cannot be
+                            easily captured by neither the global nor the property validation rules.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>getCascadeValidations()</emphasis> method returns all the cascade validations
+                            associated with this configuration (see below).
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+                <bridgehead renderas="sect4">Cascade Validation</bridgehead>
+
+                <para>
+                    Cascade validation is probably best explained by an example:
+                    Consider a Person class that is associated with an Address class. The two classes are indeed
+                    associated but still are independent and so are their validation rules. Nonetheless, it is
+                    sensible to say that a person instance is valid only if its associated address is valid. Thus,
+                    when validating the person you'd like to notify the validation mechanism that it should also
+                    validate the address that associated with it. This is where the cascade validation comes in
+                    the picture. The org.springmodules.validation.bean.conf.CascadeValidation class holds a
+                    property name indicating the property/association that should be validated as part of the validation
+                    of its parent. This class also holds an applicability condition to determine when this cascading
+                    behavior should be applied.
+                </para>
+
+                <para>
+                    Providing an abstraction over the configuration information is nice, but it's not complete. To complete
+                    the abstraction we also need to abstract the manner in which this configuration is being loaded. This
+                    is reason behind the org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader
+                    interface. Here is the complete interface:
+                </para>
+
+                <programlisting>public interface BeanValidationConfigurationLoader {
+
+    boolean supports(Class clazz);
+
+    BeanValidationConfiguration loadConfiguration(Class clazz);
+
+}</programlisting>
+
+                <para>
+                    This is a simple interface that represents the strategy in which the validation configuration is
+                    loaded for a bean class.
+                </para>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            The <emphasis>supports(Class)</emphasis> method indicates whether this loader can load
+                            (or can try to load) the validation configuration for the given class.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>loadConfiguration(Class)</emphasis> method does the actual loading of
+                            the validation configuration for the given class.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+                <para>
+                    The validation framework supports two configuration loading mechanisms out of the box: XML
+                    configuration files and Java 5 annotations.
+                </para>
+
+            </sect3>
+
+            <sect3>
+
+                <title>XML Configuration</title>
+
+                <para>
+                    The org.springmodules.validation.bean.conf.loader.xml.DefaultXmlBeanValidationConfigurationLoader class
+                    is the configuration loader implementation that loads the configuration from XML files.
+                </para>
+
+                <para>
+                    If you already worked with XML mapping files such as Hibernate's ones, you'd find the structure of
+                    the validation XML files quite familiar. Here is a sample configuration file:
+                </para>
+
+                <programlisting>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;validation xmlns="http://www.springmodules.org/validation/bean"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springmodules.org/validation/bean
+                        http://www.springmodules.org/validation/bean/validation.xsd"&gt;
+
+    &lt;class name="Person"&gt;
+
+        &lt;validator class="PersonValidator" /&gt;
+
+        &lt;global&gt;
+            &lt;!-- global validation rules go here --&gt;
+        &lt;/global&gt;
+
+        &lt;property name="firstName"&gt;
+            &lt;!-- property validation rules go here --&gt;
+        &lt;/property&gt;
+
+        &lt;property name="address" cascade="true"/&gt;
+
+    &lt;/class&gt;
+
+&lt;/validation&gt;</programlisting>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            The <emphasis>validation</emphasis> element is the root element of the xml configuration.
+                            This element can hold zero or more <emphasis>class</emphasis> elements. This enables
+                            configuring validation rules for multiple classes in one file (Although the recommend
+                            approach is to have a separate mapping file per class).
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>class</emphasis> element defines the validation configuration for a specific
+                            class. The class is indicated by the <emphasis>name</emphasis> attribute. This can be
+                            a fully qualified class name or the class simple name. In the later case, the package
+                            name can be defined globally in the <emphasis>package</emphasis> attribute of the
+                            <emphasis>validation</emphasis> element. (Note: even if the package name is defined
+                            in the <emphasis>validation</emphasis> level, it is still possible to define fully qualified
+                            names in the <emphasis>name</emphasis> attribute of the <emphasis>class</emphasis> element.
+                            In that case, the <emphasis>package</emphasis> attribute will be ignored.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>validator</emphasis> element enables configuring custom validators for
+                            the class. The validator class is indicated by the <emphasis>class</emphasis> required
+                            attribute. This attribute must hold the fully qualified name of a class that implements
+                            Spring's Validator interface. Currently it is required that this class will expose a default
+                            constructor which will be used to instantiate the validator. There can be zero or more
+                            <emphasis>validator</emphasis> elements under the <emphasis>class</emphasis> element.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>global</emphasis> element contains all the global validation rules for
+                            the class. For more information on supported global validation rules see [TODO]. Zero
+                            or one <emphasis>global</emphasis> elements can be defined under the
+                            <emphasis>class</emphasis> element.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>property</emphasis> element defines the configuration rules for a specific
+                            property identified by the <emphasis>name</emphasis> attribute. It is also possible to
+                            define the cascading validation for the associated property using the <emphasis>cascade</emphasis>
+                            property (which accepts <emphasis>true|false</emphasis>) and the <emphasis>cascade-condition</emphasis>
+                            property (which accepts a boolean expression that defines the condition under which the
+                            validation cascading should be applied). This element contains all the property validation
+                            rule definitions for the associated property. There can be zero or more <emphasis>property</emphasis>
+                            element under the <emphasis>class</emphasis> element.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+
+                <bridgehead renderas="sect4">Global Validation Rule Definitions</bridgehead>
+
+                <para>
+                    There is only one global validation rule definition that comes out-of-the-box: The
+                    <emphasis>expression</emphasis> definition. The attributes of this element are described below:
+                </para>
+
+                <table frame="all">
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>condition</entry>
+                                <entry>yes</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Holds a condition expression to indicate the global validation rule
+                                    constraint that should be checked when validating an object. For more
+                                    information on condition expressions see [TODO]
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>code</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the error code associated with this validation rule
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>message</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the default error message that should be used in case the
+                                    error code cannot be used
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>args</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies a comma-separated list of arguments that should be passed
+                                    along with the error code. The strings in the list can either be
+                                    static strings or function expressions. For more information on function
+                                    expressions see [TODO]
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>apply-if</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Holds a condition expression to represent the applicability condition
+                                    of this validation rule. For more information on condition expressions
+                                    see [TODO]
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect4">Property Validation Rule Definitions</bridgehead>
+
+                <para>
+                    All property validation rule definitions that come with the framework share common
+                    attributes. These attributes are listed in the following table:
+                </para>
+
+                <table frame="all">
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>code</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the error code associated with this validation rule
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>message</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the default error message that should be used in case the
+                                    error code cannot be used
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>args</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies a comma-separated list of arguments that should be passed
+                                    along with the error code. The strings in the list can either be
+                                    static strings or object expressions. For more information on object
+                                    expressions see [TODO]
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>apply-if</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Holds a condition expression to represent the applicability condition
+                                    of this validation rule. For more information on condition expressions
+                                    see [TODO]
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">&lt;not-null&gt;</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.NotNullValidationRule
+
+
+                <bridgehead renderas="sect5">&lt;in-future&gt;</bridgehead>
+
+                Represents either org.springmodules.validation.bean.rule.DateInTheFutureValidationRule or
+                org.springmodules.validation.bean.rule.InstantInTheFutureValidationRule (depending on the
+                data type). This validation rule checks that the validated date/calendar/instant occurred
+                in the future (relative to the time of validation).
+
+
+                <bridgehead renderas="sect5">&lt;in-past&gt;</bridgehead>
+
+                Represents either org.springmodules.validation.bean.rule.DateInThePastValidationRule or
+                org.springmodules.validation.bean.rule.InstantInThePastValidationRule (depending on the
+                data type). This validation rule checks that the validated date/calendar/instant occurred
+                in the past (relative to the time of validation).
+
+
+                <bridgehead renderas="sect5">&lt;email&gt;</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.EmailValidationRule. This rule validates
+                that a string value holds a valid email address.
+
+
+                <bridgehead renderas="sect5">&lt;length&gt;</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.LengthValidationRule. This rule checks
+                that the range of a string's length is within specific bounds.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>min</entry>
+                                <entry>only if max is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the minimum length the string value can have
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>max</entry>
+                                <entry>only if min is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the maximum length the string value can have
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+                Of course, both <emphasis>min</emphasis> and <emphasis>max</emphasis> attribute can
+                be defined, in which case the length of the sptring value will have to be within the
+                specified range.
+
+
+                <bridgehead renderas="sect5">&lt;not-blank&gt;</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.NotBlankValidationRule. This rule
+                checks that a string value is not blank (that is, it holds some characters).
+
+
+                <bridgehead renderas="sect5">&lt;not-empty&gt;</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.NotEmptyValidationRule. This rule checks
+                that a collection/array is not empty (that is, it holds at least one element).
+
+
+                <bridgehead renderas="sect5">&lt;size&gt;</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.SizeValidationRule. This rule checks
+                that the size of a collection/array is within specific bounds.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>min</entry>
+                                <entry>only if max is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the minimum size of the collection or array
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>max</entry>
+                                <entry>only if min is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the maximum size of the collection or array
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+                Of course, both <emphasis>min</emphasis> and <emphasis>max</emphasis> attribute can
+                be defined, in which case the size of the collection or array will have to be within the
+                specified range.
+
+
+                <bridgehead renderas="sect5">&lt;range&gt;</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.RangeValidationRule. This rule checks
+                that a <emphasis>java.lang.Comparable</emphasis> value is within a specific range.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>min</entry>
+                                <entry>only if max is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the lower bound of the range
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>max</entry>
+                                <entry>only if min is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the upper bound of the range
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">&lt;regexp&gt;</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.RegExpValidationRule. This rule checks
+                that a string value matches a specific regular expression.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>expression</entry>
+                                <entry>yes</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the regular expression
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">&lt;expression&gt;</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.ExpressionValidationRule. This rule
+                checks the validated value against a condition expression (see [TODO CEL]).
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>expression</entry>
+                                <entry>yes</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the condition expression
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>scope</entry>
+                                <entry>no</entry>
+                                <entry>enum [global|property]</entry>
+                                <entry>
+                                    Defines the evaluation scope of the condition expression.
+                                    <emphasis>global</emphasis> will define the validated object as
+                                    the scope, while <emphasis>property</emphasis> will define the
+                                    property value as the scope. Using the property scope enables the definition
+                                    of conditions that apply directly on the property value (e.g. "length &gt; 5").
+                                    The global scope enables the definition of conditions that apply on other
+                                    properties of the validated object (e.g. "equals some_other_property")
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+                <bridgehead renderas="sect4">Custom Validation Rule Definitions</bridgehead>
+
+                <para>
+                    The pre-defined set of validation rules is pretty extensive and with the
+                    <emphasis>&lt;expression&gt;</emphasis> definition the majority of validation rules are supported
+                    out-of-the-box (well, at least the common ones). However, there will always be occasions
+                    where you would want to write your own custom validation rule and you would want it to be
+                    configured within the same XML configuration file where all other rules are configured.
+                </para>
+
+                <para>
+                    The xml configuration loader org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler
+                    org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler to parse the
+                    validation rules in the configuration. These handlers are registered within a
+                    org.springmodules.validation.bean.conf.loader.xml.ValidationRuleElementHandlerRegistry which the
+                    loader uses to find the proper handlers.
+                </para>
+
+                <para>
+                    Here is the complete ClassValidationElementHandler interface:
+                </para>
+
+                <programlisting>public interface ClassValidationElementHandler {
+
+boolean supports(Element element, Class clazz);
+
+void handle(Element element, MutableBeanValidationConfiguration configuration);
+
+}</programlisting>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            The <emphasis>supports(Element, Class)</emphasis> method determines whether the
+                            handler knows how to handle the given validation rule definition element
+                            for the given class. Based on this method, the loader knows whether the
+                            <emphasis>handle(...)</emphasis> method should be called on this handler.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>handle(Element, MutableBeanValidationConfiguration)</emphasis> method
+                            handles the given validation rule definition element by manipulating the
+                            given configuration accordingly.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+                <para>
+                    Here is the complete PropertyValidationElementHandler interface:
+                </para>
+
+                <programlisting>public interface PropertyValidationElementHandler {
+
+boolean supports(Element element, Class clazz, PropertyDescriptor descriptor);
+
+void handle(Element element,
+            String propertyName,
+            MutableBeanValidationConfiguration configuration);
+
+}</programlisting>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            The <emphasis>supports(Element, Class, PropertyDescriptor)</emphasis> method
+                            determines whether this handler knows how to handle the given property
+                            validation rule definition element for the given class and property descriptor.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The <emphasis>handle(Element, String, MutableBeanValidationConfiguration)</emphasis>
+                            method handles the given validation rule definition element by manipulating the
+                            given configuration accordingly.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+                <para>
+                    There are two abstract implementations of these interfaces above to make it easy for developers
+                    to create custom element handlers. These classes rely on the fact that creating
+                    a custom handler usually goes hand in hand with the creation of custom validation rules. In
+                    fact, this approach (of creating both) is the one we recommend on. When using these
+                    parent classes, all that is needed is basically to create the appropriate validation rule
+                    based on the element structure (e.g. the "min" attribute in the range element represents
+                    the lower bound of the range) and define the element name. All pre-defined element handlers
+                    are implemented in this way, so it might be good to use them as a reference.
+                </para>
+
+            </sect3>
+
+            <sect3>
+
+                <title>Java 5 Annotation Configuration</title>
+
+                <para>
+                    The org.springmodules.validation.bean.conf.loader.annotation.AnnotationBeanValidationConfigurationLoader class
+                    is the configuration loader implementation that loads the configuration from Java 5 annotations.
+                </para>
+
+                <para>
+                    Here is the same configuration as described above in XML defined using annotations:
+                </para>
+
+                <programlisting>@Validator(PersonValidator.class)
+@Expression("address is not null")
+public class Person {
+
+    @Length(min = 2, max = 10)
+    private String firstName;
+
+    @CascadeValidation
+    private Address address;
+
+    ...
+}</programlisting>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            The <emphasis>@Validation</emphasis> annotation defines a custom validator class to be
+                            used for extra validation. This is the annotation counterpart of the
+                            <emphasis>&lt;validator&gt;</emphasis> xml definition.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            All global validation rules can be defined as annotations on the class level. In this
+                            example the <emphasis>@Expression</emphasis> annotation defines a condition expression
+                            as a global validation rule.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The property validation rules can be defined either on the property setter method or
+                            on the associated class field. We believe that putting the annotations on the class
+                            fields is cleaner and more intuitive, but it all boils down to your personal preference.
+                            In this example the <emphasis>@Length</emphasis> annotation defines a LengthValidationRule
+                            on the <emphasis>firstName</emphasis> property. We can also see that the validation cascading
+                            behavior can be defined using the <emphasis>@CascadeValidation</emphasis> (as in the
+                            address property example)
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+                <bridgehead renderas="sect4">Global Validation Rule Annotations</bridgehead>
+
+                <para>
+                    As in the XML configuration, there four global validation rule annotation that comes
+                    with the framework out-of-the-box:
+                </para>
+
+
+                <bridgehead renderas="sect5">@Expression</bridgehead>
+
+                This annotation represents an expression based validation rule.
+
+                <table frame="all">
+                    <title>Attributes:</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                                <entry>Name</entry>
+                                <entry>Type</entry>
+                                <entry>Required</entry>
+                                <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>value</entry>
+                                <entry>string</entry>
+                                <entry>yes</entry>
+                                <entry>
+                                    Holds a condition expression to indicate the global validation rule
+                                    constraint that should be checked when validating an object. For more
+                                    information on condition expressions see [TODO]
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>errorCode</entry>
+                                <entry>string</entry>
+                                <entry>no</entry>
+                                <entry>
+                                    Specifies the error code associated with this validation rule
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>message</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the default error message that should be used in case the
+                                    error code cannot be used
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>args</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies a comma-separated list of arguments that should be passed
+                                    along with the error code. The strings in the list can either be
+                                    static strings or function expressions. For more information on function
+                                    expressions see [TODO]
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>applyIf</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Holds a condition expression to represent the applicability condition
+                                    of this validation rule. For more information on condition expressions
+                                    see [TODO]
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>scope</entry>
+                                <entry>no</entry>
+                                <entry>ExpressionScope</entry>
+                                <entry>
+                                    This attribute is ignored when put in the class level.
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+                <bridgehead renderas="sect5">@Expressions</bridgehead>
+
+                This annotation enables defining multiple <emphasis>@Expression</emphasis>
+                annotations on the class level.
+
+
+                <bridgehead renderas="sect5">@Validator</bridgehead>
+
+                This annotation defines a custom validator class to be used in the validation process. It has
+                only one required attribute <emphasis>class</emphasis> that defines the class of the validator.
+
+
+                <bridgehead renderas="sect5">@Validators</bridgehead>
+
+                This annotation enabled defining multiple <emphasis>@Validator</emphasis> annotation on
+                the class level.
+
+
+                <bridgehead renderas="sect4">Property Validation Rule Annotations</bridgehead>
+
+                <para>
+                    All property validation rule annotation that come with the framework share common attributes.
+                    These attributes are listed in the following table:
+                </para>
+
+                <table frame="all">
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                                <entry>Name</entry>
+                                <entry>Type</entry>
+                                <entry>Required</entry>
+                                <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>errorCode</entry>
+                                <entry>string</entry>
+                                <entry>no</entry>
+                                <entry>
+                                    Specifies the error code associated with this validation rule
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>message</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the default error message that should be used in case the
+                                    error code cannot be used
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>args</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies a comma-separated list of arguments that should be passed
+                                    along with the error code. The strings in the list can either be
+                                    static strings or function expressions. For more information on function
+                                    expressions see [TODO]
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>applyIf</entry>
+                                <entry>no</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Holds a condition expression to represent the applicability condition
+                                    of this validation rule. For more information on condition expressions
+                                    see [TODO]
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">@NotNull</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.NotNullValidationRule. This rule validates
+                that the validated value is not null.
+
+
+                <bridgehead renderas="sect5">@InTheFuture</bridgehead>
+
+                Represents either org.springmodules.validation.bean.rule.DateInTheFutureValidationRule or
+                org.springmodules.validation.bean.rule.InstantInTheFutureValidationRule (depending on the
+                data type). This validation rule checks that the validated date/calendar/instant occurs
+                in the future (relative to the time of validation).
+
+
+                <bridgehead renderas="sect5">@InThePast</bridgehead>
+
+                Represents either org.springmodules.validation.bean.rule.DateInThePastValidationRule or
+                org.springmodules.validation.bean.rule.InstantInThePastValidationRule (depending on the
+                data type). This validation rule checks that the validated date/calendar/instant occurred
+                in the past (relative to the time of validation).
+
+
+                <bridgehead renderas="sect5">@Email</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.EmailValidationRule. This rule validates
+                that a string value holds a valid email address.
+
+
+                <bridgehead renderas="sect5">@Length</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.LengthValidationRule. This rule checks
+                that the range of a string's length is within specific bounds.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>min</entry>
+                                <entry>yes</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the minimum length the string value can have
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>max</entry>
+                                <entry>yes</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the maximum length the string value can have
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+                <bridgehead renderas="sect5">@MinLength</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.LengthValidationRule. This rule checks
+                that a string's length is greater than or equals a specific lower bound.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>value</entry>
+                                <entry>yes</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the minimum length the string value can have
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+                <bridgehead renderas="sect5">@MaxLength</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.LengthValidationRule. This rule checks
+                that the range of a string's length is less than or equals a specific upper bound.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>max</entry>
+                                <entry>yes</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the maximum length the string value can have
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">@NotBlank</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.NotBlankValidationRule. This rule
+                checks that a string value is not blank (that is, it holds some characters).
+
+
+                <bridgehead renderas="sect5">@NotEmpty</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.NotEmptyValidationRule. This rule checks
+                that a collection/array is not empty (that is, it holds at least one element).
+
+
+                <bridgehead renderas="sect5">@Size</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.SizeValidationRule. This rule checks
+                that the size of a collection/array is within specific bounds.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>min</entry>
+                                <entry>yes</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the minimum size of the collection or array
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>max</entry>
+                                <entry>yes</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the maximum size of the collection or array
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+                <bridgehead renderas="sect5">@MinSize</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.SizeValidationRule. This rule checks
+                that the size of a collection/array is greater than or equals a specific lower bound.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>value</entry>
+                                <entry>yes</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the minimum size of the collection or array
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">@MaxSize</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.SizeValidationRule. This rule checks
+                that the size of a collection/array is less than or equals a specific bound.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>value</entry>
+                                <entry>yes</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the maximum size of the collection or array
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">@Range</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.RangeValidationRule. This rule checks
+                that a <emphasis>java.lang.Comparable</emphasis> value is within a specific range.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>min</entry>
+                                <entry>only if max is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the lower bound of the range
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>max</entry>
+                                <entry>only if min is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the upper bound of the range
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">@Min</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.RangeValidationRule. This rule checks
+                that a <emphasis>java.lang.Comparable</emphasis> value is greater than or equals a specific
+                lower bound.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>value</entry>
+                                <entry>only if max is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the lower bound of the range
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">@Max</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.RangeValidationRule. This rule checks
+                that a <emphasis>java.lang.Comparable</emphasis> value is less than or equals a specific upper
+                bound.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>value</entry>
+                                <entry>only if min is not defined</entry>
+                                <entry>non-negative integer</entry>
+                                <entry>
+                                    Specifies the upper bound of the range
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">@RegExp</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.RegExpValidationRule. This rule checks
+                that a string value matches a specific regular expression.
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="20pt"/>
+                        <colspec colname="Description" colwidth="100pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>value</entry>
+                                <entry>yes</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the regular expression
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">@Expression</bridgehead>
+
+                Represents a org.springmodules.validation.bean.rule.ExpressionValidationRule. This rule
+                checks the validated value against a condition expression (see [TODO CEL]).
+
+                <table frame="all">
+                    <title>Extra Attributes</title>
+                    <tgroup cols="4" align="left" colsep="1" rowsep="1">
+                        <colspec colname="Name" colwidth="20pt"/>
+                        <colspec colname="Required" colwidth="20pt"/>
+                        <colspec colname="Type" colwidth="26pt"/>
+                        <colspec colname="Description" colwidth="90pt"/>
+                        <thead>
+                            <row>
+                              <entry>Name</entry>
+                              <entry>Required</entry>
+                              <entry>Type</entry>
+                              <entry>Description</entry>
+                            </row>
+                        </thead>
+                        <tbody>
+                            <row>
+                                <entry>value</entry>
+                                <entry>yes</entry>
+                                <entry>string</entry>
+                                <entry>
+                                    Specifies the condition expression
+                                </entry>
+                            </row>
+                            <row>
+                                <entry>scope</entry>
+                                <entry>no</entry>
+                                <entry>ExpressionScope</entry>
+                                <entry>
+                                    Defines the evaluation scope of the condition expression.
+                                    <emphasis>global</emphasis> will define the validated object as
+                                    the scope, while <emphasis>property</emphasis> will define the
+                                    property value as the scope. Using the property scope enables the definition
+                                    of conditions that apply directly on the property value (e.g. "length &gt; 5").
+                                    The global scope enables the definition of conditions that apply on other
+                                    properties of the validated object (e.g. "equals some_other_property")
+                                </entry>
+                            </row>
+                        </tbody>
+                    </tgroup>
+                </table>
+
+
+                <bridgehead renderas="sect5">@Expressions</bridgehead>
+
+                This annotation enables defining multiple <emphasis>@Expression</emphasis> annotations on
+                a property.
+
+            </sect3>
+
+            <sect3>
+
+                <title>Condition Expression Language (CEL) &amp; Function Expression Language (FEL)</title>
+
+                <para>
+                    If there's one good lesson learned from Valang, is the significant role an expression language can
+                    play when it comes to validation. By no means, the validation framework core constructs depends on
+                    any expression language, but as mentioned above, the default implementations do use them heavily.
+                    Using expression language enables defining relatively complex and less common validation rules
+                    without the need to write custom java code for it. Of course it also depends on the richness of
+                    the language used.
+                </para>
+
+                <para>
+                    The validation framework recognizes two types of expression languages: Condition Expression Language
+                    (CEL) and Function Expression Language (FEL).
+                </para>
+
+
+                <bridgehead renderas="sect4">Condition Expression Language (CEL)</bridgehead>
+
+                <para>
+                    As the name suggests, CEL represents an expression language that defines conditions. A Condition
+                    can be seen as a predicate, that given an object it evaluates to either <emphasis>true</emphasis>
+                    or <emphasis>false</emphasis>.
+                </para>
+
+                <para>
+                    As you probably know by now, CEL fits easily within the validation framework, and practically can
+                    be used whenever a condition is used. The various validation rule handlers (annotation or xml
+                    element) are good examples where you'd rather use CEL in the configuration than writing java code
+                    to represent an applicability condition for example.
+                </para>
+
+                <para>
+                    When designing the framework, we didn't want to tie the user to a specific expression language
+                    and an abstraction was added to support such languages. The relevant constructs for this abstraction
+                    are located in the <emphasis>org.springmodules.validation.util.cel</emphasis> package and are
+                    listed below:
+                </para>
+
+
+                <bridgehead renderas="sect5">ConditionExpressionParser</bridgehead>
+
+                <para>
+                    This interface represents a parser that can parse a CEL expression and construct a
+                    <emphasis>org.springmodules.validation.util.condition.Condition</emphasis> from it. Here is the
+                    complete interface:
+                </para>
+
+                <programlisting>public interface ConditionExpressionParser {
+
+    Condition parse(String expression) throws CelParseException;
+
+}</programlisting>
+
+                <note>
+                    <para>
+                        All exceptions thrown by the CEL constructs are unchecked exceptions. The CelParseException
+                        is declared above just for clarity.
+                    </para>
+                </note>
+
+                <para>
+                    There are two concrete implementations of this interface supplied by the framework out of the box:
+                    The first is <emphasis>org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser</emphasis>
+                    which is based on the Valang language, and the second is
+                    <emphasis>org.springmodules.validation.util.cel.ognl.OgnlConditionExpressionParser</emphasis>
+                    which is based on the OGNL [TODO add link] expression language. The former is the preferred and
+                    the default one used by the framework (although changing it is just a matter of configuration).
+                </para>
+
+
+                <bridgehead renderas="sect5">ConditionExpressionBased</bridgehead>
+
+                <para>
+                    This interface should be implemented by any class that depends on <emphasis>ConditionExpressionParser</emphasis>. It
+                    defines only one method which is a setter to set the condition expression parser.
+                    <emphasis>org.springmodules.validation.bean.conf.loader.xml.handler.AbstractPropertyValidationElementHandler</emphasis>
+                    and <emphasis>org.springmodules.validation.bean.conf.loader.annotation.handler.AbstractPropertyValidationAnnotationHandler</emphasis>
+                    are two examples of classes that implement this interface. They both depend on a <emphasis>ConditionExpressionParser</emphasis>
+                    to be used when the applicability conditions of the validation rules are parsed.
+                </para>
+
+                <bridgehead renderas="sect4">Function Expression Language (FEL)</bridgehead>
+
+                <para>
+                    FEL represents an expression language that defines functions. A function is a construct that
+                    accepts an object as an argument, evaluates it, and returns the evaluation result. The following
+                    is the Function interface:
+                </para>
+
+                <programlisting>public interface Function {
+
+    Object evaluate(Object argument) throws FelEvaluationException;
+
+}</programlisting>
+
+                <note>
+                    <para>
+                        All exceptions thrown by the different FEL constructs are unchecked exceptions.
+                    </para>
+                </note>
+
+                <para>
+                    As with CEL, FEL also provides an abstraction over the expression language. All of FEL
+                    constructs are located in the <emphasis>org.springmodules.validation.util.fel</emphasis> package
+                    and are listed bellow:
+                </para>
+
+
+                <bridgehead renderas="sect5">FunctionExpressionParser</bridgehead>
+
+                <para>
+                    This interface represents a parser that can parse a FEL expression and create a Function
+                    from it. Here is the complete interface:
+                </para>
+
+                <programlisting>public interface FunctionExpressionParser {
+
+    Function parse(String expression) throws FelParseException;
+
+}</programlisting>
+
+                <para>
+                    There are three concrete implementation of this parser that come with the framework:
+                </para>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <emphasis>ValangFunctionExpressionParser</emphasis> - This parser can parse Valang function
+                            expressions.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>OgnlFunctionExpressionParser</emphasis> - This parser can parse Ognl expression
+                            that can be evaluated upon an object.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>PropertyPathFunctionExpressionParser</emphasis> - This parser is based on
+                            Spring's BeanWrapper and creates functions that can resolve property paths on the functions
+                            argument.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+
+                <bridgehead renderas="sect5">FunctionExpressionBased</bridgehead>
+
+                This interface can be implemented any object that depends on FEL - specifically on a
+                FunctionExpressionParser. Here is the complete interface:
+
+                <programlisting>public interface FunctionExpressionBased {
+
+    void setFunctionExpressionParser(FunctionExpressionParser functionExpressionParser);
+
+}</programlisting>
+
+                <para>
+                    The core constructs of the framework don't depend on FEL. Some default implementations however do
+                    make use of FEL. The <emphasis>AbstractPropertyValidationAnnotationHandler</emphasis> for example,
+                    uses FEL to represent the error arguments. That is, one can define error arguments within a
+                    validation rule annotation using function expression language. The handler will then parse
+                    these expressions, create functions, and evaluate them passing the property value as an argument.
+                </para>
+
+            </sect3>
+
+            <sect3>
+
+                <title>The BeanValidator</title>
+
+                <para>
+                    Now that we know how to define the validation rules and how to load the validation configuration, it
+                    is time to put everything together and see how it can all be used to perform the actual validation.
+                </para>
+
+                <para>
+                    Surprisingly or not, there's only one class that does this job - The
+                    <emphasis>org.springmodules.validation.bean.BeanValidator</emphasis>. This class is an implementation
+                    of Spring's <emphasis>org.springframework.validation.Validator</emphasis> interface. It is configured
+                    with the configuration loader we discussed above which is used to load all the validation rules for
+                    the validated objects. Here are a few fact to know about the bean validator:
+                </para>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            The BeanValidator support any class that its configuration loader supports.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            When the <emphasis>validate(Object, Errors)</emphasis> method is called on the BeanValiator
+                            The following occurs:
+
+                            <itemizedlist>
+                                <listitem>
+                                    <para>
+                                        The validation configuration is loaded for the validated object based on its
+                                        class.
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        The global validation rules are extracted from the configuration and applied
+                                        on the validated object.
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        The property validation rules are extracted from the configuration and applied
+                                        on the validated object.
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        The custom validators are extracted from the configuration and are applied
+                                        on the object.
+                                    </para>
+                                </listitem>
+                                <listitem>
+                                    <para>
+                                        All the cascade validations are extracted from the configuration. This
+                                        validation process is executed recursively for each cascade validation
+                                        where the validated object is the cascaded property value. This is done while
+                                        keeping the original validated object as the validation context to perform
+                                        proper error registration. For example, consider a <emphasis>Person</emphasis>
+                                        with an <emphasis>address</emphasis> property. If the <emphasis>street</emphasis>
+                                        property of the <emphasis>address</emphasis> is invalid, the error code will
+                                        be registered in the Errors object under the <emphasis>person.address.street</emphasis>
+                                        property. This is because the original validation context was the person and not the
+                                        address itself.
+                                    </para>
+                                </listitem>
+                            </itemizedlist>
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The Bean Validator uses the <emphasis>org.springmodules.validation.bean.converter.ErrorCodeConverter</emphasis>
+                            abstraction to convert the default validation error codes to different ones. [TODO see...]
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            The BeanValidator is just a spring validator, thus it can be used just like you'd use
+                            nay other validator.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            It is possible to use BeanValidator to validate multiple object of different types - for
+                            each object, different validation rules will be applied depending on its type and the
+                            validation configuration loader.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+            </sect3>
+
+            <sect3>
+
+                <title>Application Context Configuration</title>
+
+                <para>
+                    In this section we'll walk through the steps needed to configure the validation framework within the
+                    application context.
+                </para>
+
+                <para>
+                    There are two options when it comes to configuring the framework. You can use the traditional spring
+                    bean definitions in the application context or if spring 2.0 is used you can use the validation
+                    namespace to configure the framework in even more intuitive and easy manner.
+                </para>
+
+
+                <bridgehead renderas="sect4">Traditional Spring Bean Definition</bridgehead>
+
+                <para>
+                    All the constructs in the framework were designed as java beans, thus they can easily be configured
+                    in the application context as beans. Here is an example of a BeanValidator configuration using plain
+                    old spring bean tags:
+                </para>
+
+                <programlisting>&lt;beans&gt;
+
+    &lt;bean id="validator" class="BeanValidator"&gt;
+        &lt;property name="configurationLoader" ref="configurationLoader"/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="configurationLoader" class="DefaultXmlBeanValidationConfigurationLoader"&gt;
+        &lt;property name="resource" value="classpath:validation.xml"/&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;</programlisting>
+
+                <note>
+                    <para>The packages of the classes where dropped in the configuration for brevity.</para>
+                </note>
+
+                <para>
+                    The above example defines the bean validator "validator" which is configured with a configuration
+                    loader that is also defined in the application context. In this case, the loader is an xml configuration
+                    loader that loads the configuration rules from the <emphasis>validation.xml</emphasis> file in
+                    the classpath. (of course, the loader could have also be defined as an anonymous bean within the
+                    bean validator definition).
+                </para>
+
+                <para>
+                    This is the simplest form of configuration. Of course, we might want to customize the defaults
+                    in the configuration. For example, lets say we would like to use valang as the CEL implementation
+                    and further more extend it with a custom function. Here is how we would configure it:
+                </para>
+
+                <programlisting>&lt;beans&gt;
+
+    &lt;bean id="validator" class="BeanValidator"&gt;
+        &lt;property name="configurationLoader" ref="configurationLoader"/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="configurationLoader" class="DefaultXmlBeanValidationConfigurationLoader"&gt;
+        &lt;property name="resource" value="classpath:validation.xml"/&gt;
+        &lt;property name="conditionExpressionParser" ref="conditionExpressionParser"/&gt;
+        &lt;property name="elementHandlerRegistry"&gt;
+            &lt;bean class="DefaultValidationRuleElementHandlerRegistry"&gt;
+                &lt;property name="conditionExpressionParser" ref="conditionExpressionParser"/&gt;
+            &lt;/bean&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="conditionExpressionParser" class="ValangConditionExpressionParser"&gt;
+        &lt;property name="customFunctions"&gt;
+            &lt;map&gt;
+                &lt;entry key="tupper" value="UpperCaseFunction"/&gt;
+            &lt;/map&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;</programlisting>
+
+                <para>
+                    As you can see, all classes are just normal java beans that are configured just like any other beans.
+                    Nonetheless, looking at the configuration above, it is clearly too verbose for such a small customization. 
+                    First, you need to redefine the validation rule element handler registry just to introduce the new CEL
+                    parser. Then you need to set the new CEL parser twice (on the loader itself and the element
+                    handler). Luckily, a lot of beans in the framework are optimized to work within an application context.
+                    This optimization enables you to configure the above configuration as follows:
+                </para>
+
+                <programlisting>&lt;beans&gt;
+
+    &lt;bean id="validator" class="BeanValidator"&gt;
+        &lt;property name="configurationLoader" ref="configurationLoader"/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="configurationLoader" class="DefaultXmlBeanValidationConfigurationLoader"&gt;
+        &lt;property name="resource" value="classpath:validation.xml"/&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id="conditionExpressionParser" class="ValangConditionExpressionParser"&gt;
+        &lt;property name="customFunctions"&gt;
+            &lt;map&gt;
+                &lt;entry key="tupper" value="UpperCaseFunction"/&gt;
+            &lt;/map&gt;
+        &lt;/property&gt;
+    &lt;/bean&gt;
+
+&lt;/beans&gt;</programlisting>
+
+                <para>
+                    In this configuration, the CEL parser implementation is picked up from the application context by
+                    all beans that depend on it. This form of configuration hides the complex wiring from the developer
+                    and enables focusing on the specific customization that is needed.
+                </para>
+
+                <para>
+                    Note: FEL parser implementation can also be customized and configured in the same way.
+                </para>
+
+
+                <bridgehead renderas="sect4">Spring 2.0 Namespaces</bridgehead>
+
+                <para>
+                    The traditional bean configuration is definitely a viable option but if you're working with Spring 2.0
+                    an even better one exists. Spring 2.0 introduced support for richer xml configuration via the use
+                    of XML namespaces. Using this support enables transforming the generic cross-domain spring configuration
+                    to a domain specific configuration (some sort of DSL) by using xml constructs (elements and attributes)
+                    that are specific per domain.
+                </para>
+
+                <para>
+                    The validation framework comes with its own namespace making the configuration of its constructs
+                    even simpler, more readable, and more intuitive to work with. Here is the example above configured
+                    using the validation namespace:
+                </para>
+
+                <programlisting>&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:vld="http://www.springmodules.org/validation/bean/validator"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://.../beans http://.../spring-beans.xsd
+                        http://.../bean/validator http://.../bean/validator.xsd"&gt;
+
+    &lt;vld:valang-condition-parser&gt;
+        &lt;vld:function name="tupper" class="UpperCaseFunction"/&gt;
+    &lt;/vld:valang-condition-parser&gt;
+
+    &lt;vld:xml-based-validator id="validator"&gt;
+        &lt;vld:resource location="classpath:validation.xml"/&gt;
+    &lt;/vld:xml-based-validator&gt;
+
+&lt;/beans&gt;</programlisting>
+
+                <para>
+                    The <emphasis>xml-based-validator</emphasis> practically defines a <emphasis>BeanValidator</emphasis>
+                    that is configured with <emphasis>DefaultXmlBeanValidationConfigurationLoader</emphasis>. The
+                    <emphasis>resource</emphasis> element defines the xml configuration file where the validation rules are
+                    defined.
+                </para>
+
+                <para>
+                    The <emphasis>valang-condition-parser</emphasis> practically defines a
+                    <emphasis>ValangConditionExpressionParser</emphasis>. The <emphasis>function</emphasis> sub
+                    element defines a custom valang function to be registered with the parser.
+                </para>
+
+                <para>
+                    As you can see, this xml is much clearer than the generic spring one. It is very easy to read and
+                    understand it as a configuration. It is also much easier to write, especially when using schema
+                    supported editor/IDE's. The use of xml schema practically leads the developer in how the validator
+                    should and can be configured. The amount of code (text) is also reduced.
+                </para>
+
+            </sect3>
+
+        </sect2>
+
+        <sect2>
+
+            <title>Future Directions</title>
+
+            <para>
+                The validation framework is quite new and its architecture and design is a subject to changes. The
+                more experience we'll gain with this framework, the better we'll understand the demands of such
+                a framework, and we hope to continuously improve it with time.
+            </para>
+
+            <para>
+                Valang was proven to be very powerful expression language when it comes to validation. Nonetheless,
+                it was originally developed independently and somewhat in an experimental manner. Nowadays, we have
+                a much better grasp of the requirements of this language and there are plans to improve it even more.
+            </para>
+
+            <para>
+                We also keep a close eye on the recently submitted JSR-303. The following is taken from the original
+                request:
+
+                <blockquote>
+                    <attribution>Jason Carreira</attribution>
+                    <para>
+                        "This JSR will define a meta-data model and API for JavaBean validation. The default meta-data
+                        source will be annotations, with the abilty to override and extend the meta-data through the
+                        use of XML validation descriptors. It is expected that the common cases will be easily
+                        accomplished using the annotations, while more complex validations or context-aware validation
+                        configuration will be available in the XML validation descriptors.
+                    </para>
+                    <para>
+                        The validation API developed by this JSR will not be specific to any one tier or programming
+                        model. It will specifically not be tied to either the web tier or the persistence tier,
+                        and will be available for both server-side application programming, as well as rich client
+                        Swing application developers. This API is seen as a general extension to the JavaBeans object
+                        model, and as such is expected to be used as a core component in other specifications, such
+                        as JSF, JPA, and Bean Binding."
+                    </para>
+                </blockquote>
+            </para>
+
+        </sect2>
+
+    </sect1>
+
 		
 </chapter>
