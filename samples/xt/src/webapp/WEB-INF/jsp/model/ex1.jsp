@@ -4,15 +4,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <title>Spring Modules XT Modeling Framework : Example 1</title>
+        <title>XT Modeling Framework : Example 1</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
     <body>
         <div id="titleBar"></div>
-        <h1>Spring Modules XT Framework</h1>
+        <h1>XT Modeling Framework</h1>
         <h3 align="center">Insert a new employee with bean introductor ...</h3>
         <p>
-            This example uses Spring Modules XT bean introductor for directly binding the employee office on the employee command object.<br/>
+            This example uses XT bean introductor for directly binding the employee office on the employee command object.<br/>
             Be careful: do not insert duplicated matriculation codes and do not put too many employees in the same office!
         </p>
         <form method="POST" action="">

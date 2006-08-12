@@ -11,7 +11,7 @@
     </head>
     <body>
         <div id="titleBar"></div>
-        <h1>Spring Modules XT Framework</h1>
+        <h1>XT Framework</h1>
         <h3>There was an error while processing your request ...</h1>
     </body>
 </html>

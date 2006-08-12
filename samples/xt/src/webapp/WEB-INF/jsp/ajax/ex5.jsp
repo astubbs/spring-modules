@@ -7,15 +7,15 @@
         <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>
         <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
         <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects"/>'></script>
-        <title>Spring Modules XT Ajax Framework : Example 5</title>
+        <title>XT Ajax Framework : Example 5</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
     <body>
         <div id="titleBar"></div>
-        <h1>Spring Modules XT Framework</h1>
-        <h3 align="center">Fill an office with Spring Modules XT ajax-enabled dynamic tables ...</h3>
+        <h1>XT Ajax Framework</h1>
+        <h3 align="center">Fill an office with XT ajax-enabled dynamic tables ...</h3>
         <p>
-            This example uses Spring Modules XT Ajax Framework for filling an office with a new list of employees.
+            This example uses XT Ajax Framework for filling an office with a new list of employees.
         </p>
         <form method="POST" action="">
             <table>

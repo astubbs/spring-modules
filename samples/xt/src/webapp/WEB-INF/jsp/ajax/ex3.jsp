@@ -7,16 +7,16 @@
         <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>  
         <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
         <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects"/>'></script>
-        <title>Spring Modules XT Ajax Framework : Example 3</title>
+        <title>XT Ajax Framework : Example 3</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
     <body>
         <div id="titleBar"></div>
-        <h1>Spring Modules XT Framework</h1>
-        <h3 align="center">Take a look at Spring Modules XT ajax-enabled validation ...</h3>
+        <h1>XT Ajax Framework</h1>
+        <h3 align="center">Take a look at XT ajax-enabled validation ...</h3>
         <p>
-            This example uses Spring Modules XT Ajax Framework for adding ajax-enabled validation to 
-            <a href='<c:url value="/model/ex1.action"/>'>Spring Modules XT Domain Development Framework Example 1</a>.<br/>
+            This example uses XT Ajax Framework for adding ajax-enabled validation to 
+            <a href='<c:url value="/model/ex1.action"/>'>XT Modeling Framework Example 1</a>.<br/>
             Try inserting duplicated matriculation codes or assigning the employee to a full office ...
         </p>
         <form method="POST" action="">

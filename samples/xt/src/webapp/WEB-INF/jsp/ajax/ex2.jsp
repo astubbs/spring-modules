@@ -5,15 +5,15 @@
 <html>
     <head>
         <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>  
-        <title>Spring Modules XT Ajax Framework : Example 2</title>
+        <title>XT Ajax Framework : Example 2</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
     <body>
         <div id="titleBar"></div>
-        <h1>Spring Modules XT Framework</h1>
+        <h1>XT Ajax Framework</h1>
         <h3 align="center">Choose some Ajax enabled offices and employees ...</h3>
         <p>
-            This example uses Spring Modules XT Ajax Framework for ajax-enabling a simple page with no Spring MVC controller.
+            This example uses XT Ajax Framework for ajax-enabling a simple page with no Spring MVC controller.
         </p>
         <form name="" action="">
             <table>

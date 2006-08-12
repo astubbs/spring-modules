@@ -6,12 +6,12 @@
     <head>
         <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>
         <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
-        <title>Spring Modules XT Ajax Framework : Example 1</title>
+        <title>XT Ajax Framework : Example 1</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
     <body>
         <div id="titleBar"></div>
-        <h1>Spring Modules XT Framework</h1>
+        <h1>XT Ajax Framework</h1>
         <h3 align="center">Test page updating actions ...</h3>
         <p>
             This example gives you a taste of ajax updating actions.

@@ -4,15 +4,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <title>Spring Modules XT Modeling Framework : Example 3</title>
+        <title>XT Modeling Framework : Example 3</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
     <body>
         <div id="titleBar"></div>
-        <h1>Spring Modules XT Framework</h1>
+        <h1>XT Modeling Framework</h1>
         <h3 align="center">Create a new Office and use composite specifications for validating it ...</h3>
         <p>
-            This example uses Spring Modules XT composite specifications for validating the new office ...
+            This example uses XT composite specifications for validating the new office ...
         </p>
         <form method="POST" action="">
             <table>

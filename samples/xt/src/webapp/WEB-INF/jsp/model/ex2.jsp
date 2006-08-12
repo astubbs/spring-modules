@@ -4,15 +4,15 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <title>Spring Modules XT Modeling Framework : Example 2</title>
+        <title>XT Modeling Framework : Example 2</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
     <body>
         <div id="titleBar"></div>
-        <h1>Spring Modules XT Framework</h1>
+        <h1>XT Modeling Framework</h1>
         <h3 align="center">Remove employees from our Office <c:out value="${param.office}"/> with introductor collection ...</h3>
         <p>
-            This example uses Spring Modules XT introductor collection for managing selectable collections of employees ...
+            This example uses XT introductor collection for managing selectable collections of employees ...
         </p>
         <form method="POST" action="">
             <table>
