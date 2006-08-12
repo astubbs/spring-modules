@@ -46,96 +46,94 @@ import com.sun.syndication.io.SyndFeedOutput;
  * @author Jettro Coenradie
  */
 public abstract class AbstractRssView extends AbstractView {
-	private static final String DEFAULT_FEED_TYPE = "atom_0.3";
-	private static final String FEED_TYPE = "type";
-
-	private String defaultFeedType;
-	private String baseUrl;
-
-	/**
-	 * This constructor sets the appropriate content type "application/xml; charset=UTF-8".
-	 */
-	public AbstractRssView() {
-		setContentType("application/xml; charset=UTF-8");
-		setDefaultFeedType(DEFAULT_FEED_TYPE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.springframework.web.servlet.view.AbstractView#renderMergedOutputModel(java.util.Map, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-	 */
-	protected final void renderMergedOutputModel(Map model,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		setBaseUrl(request);
-
-		SyndFeed feed = newSyndFeed();
-		buildFeed(model,request,response,feed);
-
-		String feedType = RequestUtils.getStringParameter(request,FEED_TYPE);
+    private static final String DEFAULT_FEED_TYPE = "atom_0.3";
+    private static final String FEED_TYPE = "type";
+    
+    private String defaultFeedType;
+    private String baseUrl;
+    
+    /**
+     * This constructor sets the appropriate content type "application/xml; charset=UTF-8".
+     */
+    public AbstractRssView() {
+        setContentType("application/xml; charset=UTF-8");
+        setDefaultFeedType(DEFAULT_FEED_TYPE);
+    }
+    
+        /* (non-Javadoc)
+         * @see org.springframework.web.servlet.view.AbstractView#renderMergedOutputModel(java.util.Map, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+         */
+    protected final void renderMergedOutputModel(Map model, HttpServletRequest request, HttpServletResponse response)
+    throws Exception {
+        setBaseUrl(request);
+        
+        SyndFeed feed = newSyndFeed();
+        buildFeed(model,request,response,feed);
+        
+        String feedType = RequestUtils.getStringParameter(request,FEED_TYPE);
         feedType = (feedType!=null) ? feedType : getDefaultFeedType();
         feed.setFeedType(feedType);
-
+        
         response.setContentType(getContentType());
         SyndFeedOutput output = new SyndFeedOutput();
         output.output(feed,response.getWriter());
-	}
-
-	/**
-	 * This method must be implemented by your subclass and must create a
-	 * <code>com.sun.syndication.feed.synd.SyndFeed</code>
-	 * @param model the model Map
-	 * @param request in case we need locale etc. Shouldn't look at attributes.
-	 * @param respons in case we need to set cookies. Shouldn't write to it.
-	 * @param feed feed to be filled with data.
-	 * @throws Exception any exception that occured during the creation of the feed
-	 */
-	abstract protected void buildFeed(Map model, HttpServletRequest request,
-			HttpServletResponse respons, SyndFeed feed)
-			throws Exception;
-
-	/**
-	 * Creates a new instance of a SyndFeed, you can override this method to return
-	 * your own instance of a SyndFeed. Default a <code>com.sun.syndication.feed.synd.SyndFeedImpl</code>
-	 * is returned.
-	 * @return new instance of a SyndFeed
-	 * @see com.lowagie.text.Document
-	 */
-	protected SyndFeed newSyndFeed() {
-		return new SyndFeedImpl();
-	}
-
-	/**
-	 * Returns the base url of the server the rss in running on, is used to create
-	 * the url where the rss items link to.
-	 * @return String with the baseUrl.
-	 */
-	protected String getBaseUrl() {
-		return this.baseUrl;
-	}
-
-	/**
-	 * Sets the baseUrl based on parameters obtained from the request. This method is
-	 * called by renderMergedOutputModel and can be overridden.
-	 * @param request used to obtain data from the running server.
-	 */
-	protected void setBaseUrl(HttpServletRequest request) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("http://");
-		sb.append(request.getServerName());
-		sb.append(":");
-		sb.append(request.getServerPort());
-		sb.append(request.getContextPath());
-		sb.append("/");
-		this.baseUrl = sb.toString();
-	}
-
-	/* Getters and setter */
-	public String getDefaultFeedType() {
-		return defaultFeedType;
-	}
-
-	public void setDefaultFeedType(String defaultFeedType) {
-		this.defaultFeedType = defaultFeedType;
-	}
+    }
+    
+    /**
+     * This method must be implemented by your subclass and must create a
+     * <code>com.sun.syndication.feed.synd.SyndFeed</code>
+     * @param model the model Map
+     * @param request in case we need locale etc. Shouldn't look at attributes.
+     * @param respons in case we need to set cookies. Shouldn't write to it.
+     * @param feed feed to be filled with data.
+     * @throws Exception any exception that occured during the creation of the feed
+     */
+    abstract protected void buildFeed(Map model, HttpServletRequest request, HttpServletResponse respons, SyndFeed feed)
+    throws Exception;
+    
+    /**
+     * Creates a new instance of a SyndFeed, you can override this method to return
+     * your own instance of a SyndFeed. Default a <code>com.sun.syndication.feed.synd.SyndFeedImpl</code>
+     * is returned.
+     * @return new instance of a SyndFeed
+     * @see com.lowagie.text.Document
+     */
+    protected SyndFeed newSyndFeed() {
+        return new SyndFeedImpl();
+    }
+    
+    /**
+     * Returns the base url of the server the rss in running on, is used to create
+     * the url where the rss items link to.
+     * @return String with the baseUrl.
+     */
+    protected String getBaseUrl() {
+        return this.baseUrl;
+    }
+    
+    /**
+     * Sets the baseUrl based on parameters obtained from the request. This method is
+     * called by renderMergedOutputModel and can be overridden.
+     * @param request used to obtain data from the running server.
+     */
+    protected void setBaseUrl(HttpServletRequest request) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("http://");
+        sb.append(request.getServerName());
+        sb.append(":");
+        sb.append(request.getServerPort());
+        sb.append(request.getContextPath());
+        sb.append("/");
+        this.baseUrl = sb.toString();
+    }
+    
+    /* Getters and setter */
+    public String getDefaultFeedType() {
+        return defaultFeedType;
+    }
+    
+    public void setDefaultFeedType(String defaultFeedType) {
+        this.defaultFeedType = defaultFeedType;
+    }
 }
 

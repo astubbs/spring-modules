@@ -5,23 +5,12 @@
 	<!ENTITY index SYSTEM "../../../../../docs/reference/src/index-module.xml">
 	<!ENTITY preface SYSTEM "../../../../../docs/reference/src/preface.xml">
 	<!ENTITY authors SYSTEM "authors.xml">
-        <!ENTITY about SYSTEM "about.xml">
-        <!ENTITY modeling SYSTEM "modeling.xml">
-        <!ENTITY ajax SYSTEM "ajax.xml">
+        <!ENTITY springmvc-extra SYSTEM "springmvc-extra.xml">
 	]>
 
 <book>
 
     &index;
-    
-    <chapter id="xt">
-
-        <title>XT Framework</title>
-    
-            &about;
-            &modeling;
-            &ajax;
-            
-    </chapter>
+    &springmvc-extra;
 	
 </book>
