@@ -1,4 +1,4 @@
-<sect1 id='about'><title>About Spring XT Framework</title>
+<sect1 id='about'><title>About XT Framework</title>
     <para>The XT Framework is a <ulink url='http://www.springframework.org'><citetitle>Spring</citetitle></ulink> module for developing applications with ''richer domain models and richer user interfaces'', following the <ulink url='http://domaindrivendesign.org'><citetitle>Domain Driven Design</citetitle></ulink> practices.
     </para>
     <para>Domain Driven Design puts the <ulink url='http://martinfowler.com/eaaCatalog/domainModel.html'><citetitle>domain model</citetitle></ulink> in the heart of the development process.
