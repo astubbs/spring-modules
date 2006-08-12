@@ -295,8 +295,8 @@
         <sect3 id='integration'><title id='integration-title'>XT Ajax Framework, Taconite and integration with other JavaScript libraries</title>
             <para>
                 The way XT Ajax Framework interacts with client web pages is based on the wonderful <ulink url='http://taconite.sourceforge.net'><citetitle>Taconite</citetitle></ulink> JavaScript library.
-                So, for using the XT Ajax Framework you need to include in your web pages Taconite, plus some other JavaScript library you can find under the <emphasis>xt/src/js</emphasis> directory. 
-                However, all these core JavaScript libraries are put, at compile time, in the <emphasis>springxt.js</emphasis> file under the <emphasis>xt/src/js/lib/core</emphasis> directory.
+                So, for using the XT Ajax Framework you need to include in your web pages Taconite, plus some other JavaScript library you can find under the <emphasis>js</emphasis> directory. 
+                However, all these core JavaScript libraries are put, at compile time, in the <emphasis>springxt.js</emphasis> file under the <emphasis>js/lib/core</emphasis> directory.
                 This is the only file you need to include in your web page:
             </para>
             <programlisting><![CDATA[
@@ -304,8 +304,14 @@
             ]]></programlisting> 
             <para>
                 However, XT Ajax Framework integrates with other JavaScript libraries for providing additional capabilities, like new kind of actions: take a look at javadocs for more details.
-                All these additional libraries can be found under the <emphasis>xt/src/js/lib/opt</emphasis> directory.
+                All these additional libraries can be found under the <emphasis>js/lib/opt</emphasis> directory.
             </para>
+            <tip>
+                <para>
+                    Under the <emphasis>js/lib/core</emphasis> you'll find also a <emphasis>springxt-min.js</emphasis> file: it is a minified version 
+                    of <emphasis>springxt.js</emphasis> you can include in your pages for reducing the download size.
+                </para>
+            </tip>
         </sect3>
     </sect2>
 </sect1>

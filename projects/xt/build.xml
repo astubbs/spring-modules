@@ -12,10 +12,33 @@
   <import file="${common.build.dir}/doc-targets.xml" />
   
   <target name="compile.post">
+    
     <concat destfile="${basedir}/src/js/lib/core/springxt.js" force="no">
       <filelist dir="${basedir}/src/js/" 
         files="springxt-taconite.js, taconite-client.js, taconite-parser.js, json.js"/>
     </concat>
+    <java jar="${basedir}/tools/jsmin.jar" fork="true">
+      <arg value="${basedir}/src/js/lib/core/springxt.js"/>
+      <arg value="${basedir}/src/js/lib/core/springxt-min.js"/>
+    </java>
+    
+  </target>
+  
+  <!-- main jar target -->
+  <target name="jar.main">
+    
+    <jar jarfile="${target.lib.dir}/${project.name}.jar">
+      <manifest>
+        <attribute name="Implementation-Vendor" value="${org.name}" />
+        <attribute name="Implementation-Title" value="${project.title}" />
+        <attribute name="Implementation-Version" value="${project.version}" />
+      </manifest>
+      <fileset dir="${target.classes.dir}"></fileset>
+      <fileset dir="${basedir}/src">
+        <include name="js/**"/>
+      </fileset>
+    </jar>
+    
   </target>
   
   <target name="jar.post">
@@ -28,6 +51,9 @@
       </manifest>
       <fileset dir="${target.classes.dir}">
         <include name="org/springmodules/xt/ajax/**"/>
+      </fileset>
+      <fileset dir="${basedir}/src">
+        <include name="js/**"/>
       </fileset>
     </jar>
     

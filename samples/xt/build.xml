@@ -13,6 +13,7 @@
   
   <target name="compile.post">
     <copy todir="${basedir}/src/webapp/js" file="${basedir}/../../projects/xt/src/js/lib/core/springxt.js"/>
+    <copy todir="${basedir}/src/webapp/js" file="${basedir}/../../projects/xt/src/js/lib/core/springxt-min.js"/>
     <copy todir="${basedir}/src/webapp/js">
       <fileset dir="${basedir}/../../projects/xt/src/js/lib/opt/prototype"/>
     </copy>
