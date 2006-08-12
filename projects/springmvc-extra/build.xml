@@ -8,14 +8,12 @@
   	<property file="${common.build.dir}/project.properties" />
   	<property file="${user.home}/build.properties" />
   
-  	<property name="project.title" value="Extra classes for Spring MVC for Spring" />
+  	<property name="project.title" value="Extra classes for Spring MVC" />
   	<property name="project.package" value="org.springmodules.web" />
-  
   
   	<import file="${common.build.dir}/common-targets.xml" />
   	<import file="${common.build.dir}/clover-targets.xml" />
   	<import file="${common.build.dir}/doc-targets.xml" />
-  
   
   	<!-- main jar target -->
   	<target name="jar.main">
