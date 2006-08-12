@@ -17,14 +17,10 @@
 	<!ENTITY gigaspaces		SYSTEM "../../../projects/javaspaces/docs/reference/src/gigaspaces.xml">
 	<!ENTITY validation		SYSTEM "../../../projects/validation/docs/reference/src/validation.xml">
 	<!ENTITY jbpm			SYSTEM "../../../projects/jbpm31/docs/reference/src/jbpm31.xml">
-   <!ENTITY jbpm			SYSTEM "../../../projects/jbpm31/docs/reference/src/jbpm31.xml">
-   <!ENTITY jbpm			SYSTEM "../../../projects/jbpm31/docs/reference/src/jbpm31.xml">
-   <!ENTITY jbpm			SYSTEM "../../../projects/jbpm31/docs/reference/src/jbpm31.xml">
-  	
   <!ENTITY xt-about   SYSTEM "../../../projects/xt/docs/reference/src/about.xml">
   <!ENTITY xt-modeling   SYSTEM "../../../projects/xt/docs/reference/src/modeling.xml">
   <!ENTITY xt-ajax     SYSTEM "../../../projects/xt/docs/reference/src/ajax.xml">
-  <!ENTITY xt-utils     SYSTEM "../../../projects/xt/docs/reference/src/utils.xml">
+  <!ENTITY springmvc-extra    SYSTEM "../../../projects/springmvc-extra/docs/reference/src/springmvc-extra.xml">
 	]>
 
 
@@ -57,12 +53,14 @@
   
   <chapter id="xt">
     
-    <title>Spring Modules XT</title>
+    <title>XT Framework</title>
     
     &xt-about;
     &xt-modeling;
     &xt-ajax;
-    &xt-utils;
     
   </chapter>
+  
+  &springmvc-extra;
+  
 </book>
