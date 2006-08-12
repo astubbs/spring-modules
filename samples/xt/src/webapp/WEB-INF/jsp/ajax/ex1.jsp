@@ -6,6 +6,7 @@
     <head>
         <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>
         <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
+        <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects"/>'></script>
         <title>XT Ajax Framework : Example 1</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
@@ -18,6 +19,7 @@
         </p>
         <form name="" action="">
             <table>
+                
                 <tr>
                     <td>Press to append a random number :</td>
                     <td><input type="button" value="Press" onclick="doAjaxAction('appendNumber', this);"></td>
@@ -25,14 +27,17 @@
                 <tr>
                     <td id="num" colspan="2"></td>
                 </tr>
+                
                 <tr>
                     <td>Press to replace all numbers above with a single number :</td>
                     <td><input type="button" value="Press" onclick="doAjaxAction('replaceNumbers', this);"></td>
                 </tr>
+                
                 <tr>
                     <td>Press to remove all numbers above :</td>
                     <td><input type="button" value="Press" onclick="doAjaxAction('removeNumbers', this);"></td>
                 </tr>
+                
                 <tr>
                     <td>Press to replace the text below, sorrounded by a <i>span</i> element, with an input field :</td>
                     <td><input type="button" value="Press" onclick="doAjaxAction('replaceElement', this);"></td>
@@ -40,6 +45,7 @@
                 <tr>
                     <td colspan="2"><span id="toReplace" style="color: red;">Text to be replaced</span></td>
                 </tr>
+                
                 <tr>
                     <td>Press to remove the text below, sorrouned by a <i>span</i> element :</td>
                     <td><input type="button" value="Press" onclick="doAjaxAction('removeElement', this);"></td>
@@ -47,6 +53,7 @@
                 <tr>
                     <td colspan="2"><span id="toRemove" style="color: red;">Text to be removed</span></td>
                 </tr>
+                
                 <tr>
                     <td>Press to show a greetings message (hidden using a CSS inline rule) :</td>
                     <td><input type="button" value="Press" onclick="doAjaxAction('showElement', this);"></td>
@@ -59,6 +66,7 @@
                         </div>
                     </td>
                 </tr>
+                
                 <tr>
                     <td>Press to hide the greetings message below :</td>
                     <td><input type="button" value="Press" onclick="doAjaxAction('hideElement', this);"></td>
@@ -71,6 +79,49 @@
                         </div>
                     </td>
                 </tr>
+                
+                <tr>
+                    <td>Press to highlight the greetings message below :</td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('highlightElement', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="toHighlight">Hello, Spring Modules user!</div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Press to complete the greetings message below :</td>
+                    <td><input id="insertAfterButton" type="button" value="Press" onclick="doAjaxAction('insertAfter', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span id="toInsertAfter">Hello</span>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Press to complete the greetings message below :</td>
+                    <td><input id="insertBeforeButton" type="button" value="Press" onclick="doAjaxAction('insertBefore', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <span id="toInsertBefore">Spring Modules user</span>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Press to complete the greetings message below :</td>
+                    <td><input id="appendAsFirstButton" type="button" value="Press" onclick="doAjaxAction('appendAsFirst', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="toAppendAsFirst">
+                            <span>Spring Modules user</span>
+                        </div>
+                    </td>
+                </tr>
+                
             </table>
         </form>
     </body>
