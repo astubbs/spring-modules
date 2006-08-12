@@ -24,7 +24,6 @@
     
   </target>
   
-  <!-- main jar target -->
   <target name="jar.main">
     
     <jar jarfile="${target.lib.dir}/${project.name}.jar">
