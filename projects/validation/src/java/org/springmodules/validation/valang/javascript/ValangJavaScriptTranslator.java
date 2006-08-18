@@ -157,7 +157,11 @@ public class ValangJavaScriptTranslator {
 
     protected void appendJsString(String string) throws IOException {
         writer.write('\'');
-        writer.write(JavaScriptUtils.javaScriptEscape(string));
+        if (string == null) {
+            writer.write("null");
+        } else {
+            writer.write(JavaScriptUtils.javaScriptEscape(string));
+        }
         writer.write('\'');
     }
 
