@@ -6,18 +6,6 @@
 
         <title>Commons Validator</title>
 
-		<important>
-			<para>
-				In version 0.4, the commons validator support was moved from the commons module to the validation module. As a
-				consequence, all related classes in the commons module were deprecated and will be removed in version 0.5.
-			</para>
-		  	<para>
-		  		Please note that due to this change, the packages were renamed. Apart from that, the functionality stayed more
-		  		or less the same with the exception of some bug fixes and small improvements. Also note that all bug fixes and
-                maintenance will be done on the validation module solely.
-              </para>
-  		</important>
-
         <para>
             The Commons Validator is a library that allows you to perform
             validation based on rules specified in XML configuration files.
@@ -171,6 +159,18 @@
                 Commons Validator must contain a form tag with <emphasis>myForm</emphasis>
                 as value of the name property. The following code shows the contents of this file.
             </para>
+
+            <important>
+                <para>
+                    In version 0.6 the logic to resolve the form names has changed. In the previous versions
+                    <emphasis>org.springframework.util.StringUtils.uncapitalize(...)</emphasis>  was used to transform 
+                    the command class name to the form name. From version 0.6
+                    <emphasis>java.beans.Introspector.decapitalize(...)</emphasis> is used instead. The main difference
+                    between the two approaches is that the second one better complies to the javabean naming conventions,
+                    so for example, <emphasis>URLCommand</emphasis> would be translated to URLCommand and not
+                    <emphasis>uRLCommand</emphasis>.
+                </para>
+            </important>
 
             <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!DOCTYPE form-validation PUBLIC
