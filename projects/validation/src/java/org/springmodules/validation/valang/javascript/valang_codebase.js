@@ -457,6 +457,12 @@ ValangValidator.Rule.prototype = {
     
     // Binary Operators
     equals: function(lhs, rhs) {
+        if ((lhs == null && rhs != null) || (rhs == null && lhs != null)) {
+            return false;
+        }
+        if (lhs == rhs) {
+            return true;
+        }
         lhs = this._makeCompatible(lhs, rhs)
         rhs = this._makeCompatible(rhs, lhs)
         return lhs === rhs
