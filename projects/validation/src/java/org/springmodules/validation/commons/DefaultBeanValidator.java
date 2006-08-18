@@ -16,8 +16,9 @@
 
 package org.springmodules.validation.commons;
 
+import java.beans.Introspector;
+
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Daniel Miller
@@ -48,6 +49,6 @@ public class DefaultBeanValidator extends AbstractBeanValidator {
      * @return the bean name.
      */
     protected String getFormName(Class cls) {
-        return (this.useFullyQualifiedClassName) ? cls.getName() : StringUtils.uncapitalize(ClassUtils.getShortName(cls));
+        return (this.useFullyQualifiedClassName) ? cls.getName() : Introspector.decapitalize(ClassUtils.getShortName(cls));
     }
 }
