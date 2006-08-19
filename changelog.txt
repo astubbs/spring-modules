@@ -11,6 +11,14 @@ package org.springmodules.validation
 
 package org.springmodules.validation.commons
 * removed MapException class
+* Updated DefaultBeanValidator class (JIRA MOD-39)
+
+package org.springmodules.validation.valang.javascript
+* Updated ValangJavaScriptTranslator - fixed NPE when appendJsString(String) is called with null.
+* Updated valang_codebase.js to support better display of validation errors
+
+package org.springmodules.validation.valang.javascript.taglib
+* Updated ValangCodebaseTag to support better display of validation errors
 
 package org.springmodules.validation.util
 * Moved ContextAware to org.springmodules.validation.util.context
