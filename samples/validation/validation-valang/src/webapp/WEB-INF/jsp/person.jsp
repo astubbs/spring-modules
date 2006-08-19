@@ -7,7 +7,19 @@
 
             <title>Person Data</title>
 
-            <valang:codebase includeScriptTags="true"/>
+            <style type="text/css">
+
+                .error {
+                    color: red;
+                }
+
+                .error li{
+                    list-style: circle;
+                }
+
+            </style>
+
+            <valang:codebase includeScriptTags="true" fieldErrorsIdSuffix="_error" globalErrorsId="global_error"/>
 
     </head>
 
@@ -27,14 +39,18 @@
 
             <valang:validate commandName="person"/>
 
+            <div id="global_error" class="error">
+                <!-- will be filled with global errors -->
+            </div>
+
             <table>
 
                 <tr>
                     <td><fmt:message key="person.first.name"/></td>
                     <td>
                         <spring:bind path="person.firstName">
-                            <input type="text" name="firstName" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
-                            <font color="red"><c:out value="${status.errorMessage}"/></font>
+                            <input type="text" name="<c:out value="${status.expression}"/>" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
+                            <span id="<c:out value="${status.expression}"/>_error" class="error"><c:out value="${status.errorMessage}"/></span>
                         </spring:bind>
                     </td>
                 </tr>
@@ -42,8 +58,8 @@
                     <td><fmt:message key="person.last.name"/></td>
                     <td>
                         <spring:bind path="person.lastName">
-                            <input type="text" name="lastName" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
-                            <font color="red"><c:out value="${status.errorMessage}"/></font>
+                            <input type="text" name="<c:out value="${status.expression}"/>" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
+                            <span id="<c:out value="${status.expression}"/>_error" class="error"><c:out value="${status.errorMessage}"/></span>
                         </spring:bind>
                     </td>
                 </tr>
@@ -51,8 +67,8 @@
                     <td><fmt:message key="person.email"/></td>
                     <td>
                         <spring:bind path="person.email">
-                            <input type="text" name="email" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
-                            <font color="red"><c:out value="${status.errorMessage}"/></font>
+                            <input type="text" name="<c:out value="${status.expression}"/>" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
+                            <span id="<c:out value="${status.expression}"/>_error" class="error"><c:out value="${status.errorMessage}"/></span>
                         </spring:bind>
                     </td>
                 </tr>
@@ -60,8 +76,8 @@
                     <td><fmt:message key="person.password"/></td>
                     <td>
                         <spring:bind path="person.password">
-                            <input type="password" name="password" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
-                            <font color="red"><c:out value="${status.errorMessage}"/></font>
+                            <input type="password" name="<c:out value="${status.expression}"/>" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
+                            <span id="<c:out value="${status.expression}"/>_error" class="error"><c:out value="${status.errorMessage}"/></span>
                         </spring:bind>
                     </td>
                 </tr>
@@ -69,8 +85,8 @@
                     <td><fmt:message key="person.verify.password"/></td>
                     <td>
                         <spring:bind path="person.verifyPassword">
-                            <input type="password" name="verifyPassword" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
-                            <font color="red"><c:out value="${status.errorMessage}"/></font>
+                            <input type="password" name="<c:out value="${status.expression}"/>" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
+                            <span id="<c:out value="${status.expression}"/>_error" class="error"><c:out value="${status.errorMessage}"/></span>
                         </spring:bind>
                     </td>
                 </tr>

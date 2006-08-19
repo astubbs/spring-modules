@@ -15,6 +15,14 @@
  *
  * @author Oliver Hutchison
  */
+
+//var globalErrorsBoxId = (deglobalErrorsId) ? globalErrorsId : 'global_errors';
+var globalErrorsId = 'global_errors';
+
+//var fieldErrorBoxIdSuffix = (fieldErrorIdSuffix) ? fieldErrorIdSuffix : '_error';
+var fieldErrorIdSuffix = '_error';
+
+
 if (!Array.prototype.push) {
     // Based on code from http://prototype.conio.net/
     Array.prototype.push = function() {
@@ -64,19 +72,48 @@ ValangValidator.prototype = {
         return failedRules.length === 0
     },
     showValidationFeedback: function(failedRules) {
-        var errors = ''
+
+        // first putting all the valiation error in field propriatery error place
+        // holders, basically elements with id <filed_name>_error.
+        var globalRules = new Array();
         for (var i=0; i<failedRules.length; i++) {
-            errors = errors + failedRules[i].getErrorMessage() + '\n'
+            var errorBoxId = failedRules[i].field + fieldErrorIdSuffix;
+            var errorBox = document.getElementById(errorBoxId);
+            if (errorBox != null) {
+                errorBox.innerHTML = failedRules[i].getErrorMessage();
+            } else {
+                globalRules.push(failedRules[i]);
+            }
         }
-        // The following line is sometimes effected by Firefox Bug 236791. Please just ignore
-        // the error or tell me how to fix it?
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=236791
-        alert(errors)
+
+        // all those errors that weren't put in a field propriatery error place holders
+        // will be grouped together as global errors, either in a global error place holder
+        // (element with id 'global_errors') or will be shown in an alert.
+        var globalErrorsBox = document.getElementById(globalErrorsId);
+        if (globalErrorsBox != null) {
+            var ul = document.createElement('ul');
+            for (var i=0; i<globalRules.length; i++) {
+                var li = document.createElement('li');
+                li.innerHTML = globalRules[i].getErrorMessage();
+                ul.appendChild(li);
+            }
+            globalErrorsBox.appendChild(ul);
+        } else {
+            var errors = ''
+            for (var i=0; i<globalRules.length; i++) {
+                errors = errors + globalRules[i].getErrorMessage() + '\n'
+            }
+            // The following line is sometimes effected by Firefox Bug 236791. Please just ignore
+            // the error or tell me how to fix it?
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=236791
+            alert(errors)
+        }
+
         var fields = this.form.getFieldsWithName(failedRules[0].field)
         if (fields.length > 0) {
             fields[0].activate()
         }
-    },        
+    },
     _findForm: function(name) {
         var element = document.getElementById(name)
         if (!element || element.tagName.toLowerCase() != 'form') {
@@ -119,10 +156,12 @@ ValangValidator.prototype = {
         }
     },
     _validateAndReturnFailedRules: function() {
+        this._clearGlobalErrors();
         ValangValidator.Logger.push('Starting validation')
         var failedRules = new Array()
         for (var i=0; i<this.rules.length; i++) {
             var rule = this.rules[i]
+            this._clearErrorIfExists(rule.field);
             //try {
                ValangValidator.Logger.push('Evaluating rule for field [' + rule.field + ']')
                rule.form = this.form
@@ -139,6 +178,18 @@ ValangValidator.prototype = {
         
         ValangValidator.Logger.pop('Finshed - ' + failedRules.length + ' failed rules')
         return this._giveRulesSameOrderAsFormFields(failedRules)
+    },
+    _clearErrorIfExists: function(field) {
+        var errorBox = document.getElementById(field + fieldErrorIdSuffix);
+        if (errorBox != null) {
+            errorBox.innerHTML = '';
+        }
+    },
+    _clearGlobalErrors: function() {
+        var errorBox = document.getElementById(globalErrorsId);
+        if (errorBox != null) {
+            errorBox.innerHTML = '';
+        }
     },
     _giveRulesSameOrderAsFormFields: function(failedRules) {
         var sortedFailedRules = new Array()        

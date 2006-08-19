@@ -46,8 +46,13 @@ import org.springmodules.validation.valang.javascript.ValangJavaScriptTranslator
  * @author Oliver Hutchison
  */
 public class ValangCodebaseTag extends RequestContextAwareTag {
-    
-    private boolean includeScriptTags; 
+
+    private final static String DEFAULT_GLOBAL_ERRORS_ID = "global_errors";
+    private final static String DEFAULT_FIELD_ERROR_ID_SUFFIX = "_error";
+
+    private boolean includeScriptTags;
+    private String globalErrorsId = DEFAULT_GLOBAL_ERRORS_ID;
+    private String fieldErrorsIdSuffix = DEFAULT_FIELD_ERROR_ID_SUFFIX;
 
     /**
      * Sets whether or not the generated code should be wrapped in HTML
@@ -56,6 +61,28 @@ public class ValangCodebaseTag extends RequestContextAwareTag {
      */
     public void setIncludeScriptTags(String includeScriptTags) {
         this.includeScriptTags = "true".equalsIgnoreCase(includeScriptTags);
+    }
+
+    /**
+     * Sets the id of the element that will hold the global error. If not set, this tag will look for
+     * an element with id "global_errors".
+     *
+     * @param globalErrorsId The id of the element that should hold the global errors.
+     */
+    public void setGlobalErrorsId(String globalErrorsId) {
+        this.globalErrorsId = globalErrorsId;
+    }
+
+    /**
+     * Sets the id suffix of the element that should hold the error of a specific field. For example, if the
+     * validated field is "firstName" and the suffix is set to "_err" then this tag will put the validation
+     * errors for the firstName field in an element with id "firstName_err". If this suffix is not set, it is set
+     * by default to "_error".
+     *
+     * @param fieldErrorsIdSuffix The id suffix of the element that should hold the error of a specific field.
+     */
+    public void setFieldErrorsIdSuffix(String fieldErrorsIdSuffix) {
+        this.fieldErrorsIdSuffix = fieldErrorsIdSuffix;
     }
 
     protected int doStartTagInternal() throws ServletException, JspException {
@@ -68,6 +95,8 @@ public class ValangCodebaseTag extends RequestContextAwareTag {
             if (includeScriptTags) {
                 out.write("<script type=\"text/javascript\">\n");
             }
+            out.write("var globalErrorsId = '" + globalErrorsId + "';\n");
+            out.write("var fieldErrorIdSuffix = '" + fieldErrorsIdSuffix + "';\n");
             copy(ValangJavaScriptTranslator.getCodebaseReader(), out);
             if (includeScriptTags) {
                 out.write("\n</script>");

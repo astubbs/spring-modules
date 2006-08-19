@@ -19,7 +19,24 @@
             <name>includeScriptTags</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
-        </attribute>            
+        </attribute>
+        <attribute>
+            <name>globalErrorsId</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Holds the id of the element that should hold/display the global errors</description>
+        </attribute>
+        <attribute>
+            <name>fieldErrorsIdSuffix</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>
+                Holds the id suffix of the element that should hold/display a specific field error. For example, if
+                the suffix is set to "_error" and the validated field is "firstName" then the validation error of
+                this field will be shown in an element with id "firstName_err". The default value of this attribute
+                is "_error".
+            </description>
+        </attribute>
     </tag>
     <tag>
         <name>validate</name>

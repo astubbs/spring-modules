@@ -1,4 +1,13 @@
-// overide the default getPropertyValue with a version 
+
+// Mocking the document variable in the browser env.
+function Doc() {
+}
+Doc.prototype.getElementById = function(id) {
+    return null;
+}
+var document = new Doc();
+
+// overide the default getPropertyValue with a version
 // that is aware of a form object injected using Rhino
 ValangValidator.Rule.prototype.getPropertyValue = function(propertyName) {
     var javaResult = formObject[propertyName]
