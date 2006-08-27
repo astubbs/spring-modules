@@ -12,7 +12,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Serializable representation of a method and invocation id, solving the
  * problem of java.lang.reflect.Method not being serializable.
- * 
+ *
  * @author Rod Johnson
  */
 public class MethodIdentifier implements Serializable {
@@ -47,11 +47,13 @@ public class MethodIdentifier implements Serializable {
 
 	public synchronized Method getMethod() {
 		// The method resolving has moved to readObject
-		
-		//if (method == null) {
-		//	method = stringToMethod();
-		//}
-
+		//Lior b:(27.8.2006) - Gigaspaces serializes other 
+		//entry data structure and not the AbstractMethodCallEntry.
+		//That means the readObject()/writeObject() will never be called.
+		//  
+		if (method == null) {
+			method = stringToMethod();
+		}
 		return method;
 	}
 
@@ -61,7 +63,7 @@ public class MethodIdentifier implements Serializable {
 
 	/**
 	 * Method to String conversion.
-	 * 
+	 *
 	 * @param m
 	 */
 	private void methodToString(Method m) {
@@ -71,7 +73,7 @@ public class MethodIdentifier implements Serializable {
 
 	/**
 	 * String to method conversion.
-	 * 
+	 *
 	 * @return
 	 * @throws ClassNotFoundException
 	 */
