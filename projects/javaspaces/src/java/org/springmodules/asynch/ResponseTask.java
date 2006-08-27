@@ -1,18 +1,17 @@
 package org.springmodules.asynch;
 
 /**
- * Need API to pick it up...
  * @author Rod Johnson
  *
  */
 public interface ResponseTask {
-    
+
     /**
      * Implemented to return the object that should be processed
-     * @return
+     * @return the object that should be processed
      */
     Object getWhat() throws Throwable;
-    
+
     /**
      * TODO what about transactional capabilities?
      * What about failure of call? Instigation API will handle that

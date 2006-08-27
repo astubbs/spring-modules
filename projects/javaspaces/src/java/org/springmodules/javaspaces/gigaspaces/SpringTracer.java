@@ -17,7 +17,7 @@ package org.springmodules.javaspaces.gigaspaces;
 
 import java.util.logging.Logger;
 
-import com.j_spaces.core.Constants;
+import com.gigaspaces.logger.Constants;
 
 /**
  * Title:
@@ -33,7 +33,6 @@ public final class SpringTracer {
 	{
 		return logger;
 	}
-	private static final String GIGASPACES_SPRING_INTEGRATION = "org.springmodules.javaspaces.gigaspaces.SpringTracer";
-	private static final Logger logger = Logger.getLogger(GIGASPACES_SPRING_INTEGRATION);
+	private static final Logger logger = Logger.getLogger(Constants.LOGGER_SPRING);
 
 }

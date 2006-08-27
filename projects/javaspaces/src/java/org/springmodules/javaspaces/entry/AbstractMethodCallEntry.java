@@ -13,7 +13,7 @@ import org.springmodules.javaspaces.MethodIdentifier;
 /**
  * JINI entry representing a method call. Subclasses vary depending on whether
  * the entry includes the code to be executed.
- * 
+ *
  * @author Rod Johnson
  */
 public class AbstractMethodCallEntry extends MethodIdentifier implements Entry {
@@ -22,16 +22,31 @@ public class AbstractMethodCallEntry extends MethodIdentifier implements Entry {
 
 	public Object[] args;
 
+	/**
+	 * Constructor
+	 * @param method the method of the RMI
+	 * @param args the arguments of the method
+	 */
 	public AbstractMethodCallEntry(Method method, Object[] args) {
 		this(method, args, null);
 	}
 
+	/**
+	 * Constructor
+	 * @param method the method of the RMI
+	 * @param args the arguments of the method
+	 * @param uid the id of the method invocation
+	 */
 	public AbstractMethodCallEntry(Method method, Object[] args, Serializable uid) {
 		super(method);
 		this.args = args;
-		this.uid = uid; 
+		this.uid = uid;
 	}
 
+	/**
+	 * Default constructor
+	 *
+	 */
 	public AbstractMethodCallEntry() {
 		this(null, null);
 	}
@@ -44,10 +59,10 @@ public class AbstractMethodCallEntry extends MethodIdentifier implements Entry {
 	 * Invoke the delegate or run the code contained in the MethodCallEntry. Note that the delegate
 	 * is an optional parameter - some call implementations (like ServiceSeekingMethodCallEntry) require
 	 * it while other do not.
-	 * 
+	 *
 	 * @param call
 	 * @param delegate
-	 * @return
+	 * @return MethodResultEntry the result of the invocation
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 * @throws ClassNotFoundException

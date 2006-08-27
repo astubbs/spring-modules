@@ -11,10 +11,12 @@ package org.springmodules.javaspaces.gigaspaces.app;
 
 import org.springmodules.javaspaces.gigaspaces.GigaSpacesDaoSupport;
 
+import com.j_spaces.core.client.Modifiers;
+
 public class SimpleDao extends GigaSpacesDaoSupport implements ISimpleDao {
 
 	public void writeSimple(SimpleBean bean) throws Exception  {
-		getGigaSpaceTemplate().write(bean, -1);
+		getGigaSpaceTemplate().write(bean, -1, Modifiers.WRITE);
 	}
 
 	public SimpleBean takeIfExists(SimpleBean template) {

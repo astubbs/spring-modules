@@ -14,9 +14,7 @@
 * limitations under the License.
 */
 package org.springmodules.javaspaces.gigaspaces;
-
 import org.springframework.dao.support.DaoSupport;
-
 
 import com.j_spaces.core.IJSpace;
 

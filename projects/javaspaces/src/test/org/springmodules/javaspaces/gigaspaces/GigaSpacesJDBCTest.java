@@ -57,7 +57,7 @@ extends AbstractDependencyInjectionSpringContextTests
 		/* SQL CREATE TABLE statement
 		 *
 		 */
-		String createSQL = "CREATE TABLE Person(FirstName varchar2 INDEX, " +
+		String createSQL = "CREATE TABLE Employee(FirstName varchar2 INDEX, " +
 		"LastName varchar2)";
 		System.out.println("Create table...");
 		try {
@@ -75,7 +75,7 @@ extends AbstractDependencyInjectionSpringContextTests
 		 *
 		 */
 		int maxRows = 10;
-		String insertSQL = "INSERT INTO Person VALUES(?,?)";
+		String insertSQL = "INSERT INTO Employee VALUES(?,?)";
 		System.out.println("Insert into table...");
 		for (int i = 1; i < maxRows; i++) {
 			Object[] params = new Object[] {"FirstName" + i,"LastName" + i};
@@ -85,7 +85,7 @@ extends AbstractDependencyInjectionSpringContextTests
 		/* SQL DELETE statement
 		 *
 		 */
-		String deleteSQL="DELETE FROM Person WHERE FirstName='FirstName3'";
+		String deleteSQL="DELETE FROM Employee WHERE FirstName='FirstName3'";
 		System.out.println("Delete from table...");
 		template.execute( deleteSQL );
 		System.out.print("Delete from table...Done!");
@@ -93,7 +93,7 @@ extends AbstractDependencyInjectionSpringContextTests
 		/* SQL SELECT statement
 		 *
 		 */
-		String selectSQL="SELECT * FROM Person ORDER BY Person.FirstName";
+		String selectSQL="SELECT * FROM Employee ORDER BY Employee.FirstName";
 		System.out.println("Select from table...");
 		template.query( selectSQL, new RowCallbackHandler() {
 			public void processRow(ResultSet rs) throws SQLException

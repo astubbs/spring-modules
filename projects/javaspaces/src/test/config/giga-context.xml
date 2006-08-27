@@ -12,7 +12,7 @@
 		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean" >
 		<property name="urls">
 			<list>
-				<value>java://localhost/./myCache</value>
+				<value>/./myCache?schema=cache&amp;properties=gs</value>
 			</list>
 		</property>
 	</bean>

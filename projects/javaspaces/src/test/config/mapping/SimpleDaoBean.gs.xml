@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+<!DOCTYPE gigaspaces-mapping PUBLIC "-//GIGASPACES//DTD GS//EN" "http://www.gigaspaces.com/dtd/1_0/gigaspaces-metadata.dtd">
+ -->
 <gigaspaces-mapping>
-	<class-descriptor name="org.springmodules.javaspaces.gigaspaces.app.SimpleBean"
-		persistent="true" replicatable="false" fifo="true" timetolive="100">
-		<field-descriptor name="name" indexed="false"
-			primary-key="true" auto-generate-pk="false" />
-		<field-descriptor name="testLongObject" indexed="true" />
-		<field-descriptor name="testDoubleObject" indexed="false" />
-		<field-descriptor name="age" indexed="false" />
-		<field-descriptor name="testFloatObject" indexed="false" />
-		<field-descriptor name="testBooleanObject" indexed="false" />
-		<reference-descriptor
+	<class name="org.springmodules.javaspaces.gigaspaces.app.SimpleBean"
+		persist="true" replicate="false" fifo="true" timetolive="100">
+		<property name="name" index="false"
+			key="true" auto-generate-key="false" />
+		<property name="testLongObject" index="false" />
+		<property name="testDoubleObject" index="false" />
+		<property name="age" index="false" />
+		<property name="testFloatObject" index="false" />
+		<property name="testBooleanObject" index="false" />
+		<property name="testIntegerObject" index="false" />
+		<reference
 			class-ref="org.springmodules.javaspaces.gigaspaces.app.BaseSimpleBean" />
-	</class-descriptor>
-	<class-descriptor
+	</class>
+	<class
 		name="org.springmodules.javaspaces.gigaspaces.app.BaseSimpleBean"
-		persistent="true" replicatable="false" fifo="true" timetolive="100">
-		<field-descriptor name="teststring" indexed="true"
-			primary-key="false" auto-generate-pk="false" />
-		<field-descriptor name="testboolean" indexed="true" />
-		<field-descriptor name="testlong" indexed="true" />
-		<field-descriptor name="testfloat" indexed="false" />
-		<field-descriptor name="testint" indexed="false" />
-		<field-descriptor name="testdouble" indexed="false" />
-	</class-descriptor>
+		persist="true" replicate="false" fifo="true" timetolive="100">
+		<property name="teststring" index="true"
+			key="false" auto-generate-key="false" />
+		<property name="testboolean" index="true" />
+		<property name="testlong" index="true" />
+		<property name="testfloat" index="false" />
+		<property name="testint" index="false" />
+		<property name="testdouble" index="false" />
+	</class>
 </gigaspaces-mapping>

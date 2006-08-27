@@ -29,21 +29,38 @@ public class GigaSpacesException
 		extends RuntimeException
 {
 
+	/**
+	 * Empty constructor
+	 *
+	 */
 	public GigaSpacesException()
 	{
 		super();
 	}
 
+	/**
+	 * Constructor
+	 * @param message the error message
+	 * @param cause the cause exception
+	 */
 	public GigaSpacesException(String message, Throwable cause)
 	{
 		super(message, cause);
 	}
 
+	/**
+	 * Constructor
+	 * @param message the error message
+	 */
 	public GigaSpacesException(String message)
 	{
 		super(message);
 	}
 
+	/**
+	 * Constructor
+	 * @param cause the cause exception
+	 */
 	public GigaSpacesException(Throwable cause)
 	{
 		super(cause);

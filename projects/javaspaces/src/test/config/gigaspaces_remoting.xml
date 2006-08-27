@@ -8,7 +8,7 @@
 		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesFactoryBean">
 		<property name="urls">
 			<list>
-				  <value>java://localhost/./myCache</value>
+				  <value>/./myCacheRemote?schema=cache&amp;properties=gs</value>
 			</list>
 		</property>
 	</bean>

@@ -25,11 +25,17 @@ public class BaseSimpleBean {
 	}
 
 	public boolean equals(Object other) {
-		if(other == null || !(other instanceof SimpleBean))
+		if(other == null || !(other instanceof BaseSimpleBean))
 			return false;
 		else {
-			SimpleBean otherBean = (SimpleBean)other;
-			return (otherBean.getTeststring().equals(teststring));
+			BaseSimpleBean otherBean = (BaseSimpleBean)other;
+			return 	(otherBean.teststring != null && otherBean.teststring.equals(teststring) || otherBean.teststring == teststring ) &&
+			(otherBean.testboolean == testboolean ) &&
+			(otherBean.testdouble == testdouble ) &&
+			(otherBean.testfloat == testfloat )&&
+			(otherBean.testint == testint) &&
+			(otherBean.testlong == testlong );
+
 		}
 	}
 

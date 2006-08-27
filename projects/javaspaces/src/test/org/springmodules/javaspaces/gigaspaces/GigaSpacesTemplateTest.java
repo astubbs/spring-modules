@@ -10,7 +10,6 @@
 package org.springmodules.javaspaces.gigaspaces;
 
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Random;
 
 import net.jini.core.event.RemoteEvent;
@@ -19,16 +18,12 @@ import net.jini.core.event.UnknownEventException;
 import net.jini.core.lease.Lease;
 
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
-
-import com.gigaspaces.converter.IPojoToEntryConverter;
 import org.springmodules.javaspaces.gigaspaces.GigaSpacesTemplate;
 import org.springmodules.javaspaces.gigaspaces.app.SimpleBean;
-import com.j_spaces.core.IJSpace;
-import com.j_spaces.core.client.EntryArrivedRemoteEvent;
+
 import com.j_spaces.core.client.ExternalEntry;
-import com.j_spaces.core.client.NotifyModifiers;
 import com.j_spaces.core.client.UpdateModifiers;
-import com.j_spaces.core.IJSpace;
+
 
 public class GigaSpacesTemplateTest
 		extends AbstractDependencyInjectionSpringContextTests
@@ -105,7 +100,7 @@ public class GigaSpacesTemplateTest
 	{
 		SimpleBean templateBean = new SimpleBean("lior_Snapshot", 1);
 		ExternalEntry taken = (ExternalEntry) template.snapshot(templateBean);
-		assertNull("Taken object is not null!", taken);
+		assertNotNull("Taken object is null!", taken);
 	}
 
 	public void testCount() throws Exception
@@ -187,8 +182,8 @@ public class GigaSpacesTemplateTest
 		SimpleBean bean2 = new SimpleBean("lior_read1", 1);
 		template.writeMultiple(new Object[] { bean1, bean2 }, -1);
 		SimpleBean templateBean = new SimpleBean(null, 1);
-		List taken = template.readMultiple(templateBean,  2);
-		assertEquals("The bean are null!", 2, taken.size());
+		Object[] taken = template.readMultiple(templateBean,  2);
+		assertEquals("The bean are null!", 2, taken.length);
 	}
 
 	public void testTakeMultiple() throws Throwable
@@ -197,8 +192,8 @@ public class GigaSpacesTemplateTest
 		SimpleBean bean2 = new SimpleBean("lior_take2", 1);
 		template.writeMultiple(new Object[] { bean1, bean2 }, -1);
 		SimpleBean templateBean = new SimpleBean(null, 1);
-		List taken = template.takeMultiple(templateBean, 2);
-		assertEquals("The bean are null!", 2, taken.size());
+		Object[] taken = template.takeMultiple(templateBean, 2);
+		assertEquals("The bean are null!", 2, taken.length);
 	}
 
 	public void testPing() throws Exception
@@ -206,17 +201,17 @@ public class GigaSpacesTemplateTest
 		template.ping();
 		assertTrue("The ping is null!", true);
 	}
-
+/*
 	public void testReplace() throws Throwable
 	{
 		SimpleBean bean1 = new SimpleBean("lior_Replace1", 1);
 		SimpleBean bean2 = new SimpleBean("lior_Replace2", 1);
 		template.write(bean1, Lease.FOREVER);
 		//SimpleBean templateBean = new SimpleBean("lior_Replace1", 1);
-		List taken = template.replace(bean1, bean2, Lease.FOREVER);
-		assertEquals("The bean are null!", 2, taken.size());
+		Object[] taken = template.replace(bean1, bean2, Lease.FOREVER);
+		assertEquals("The bean are null!", 2, taken.length);
 	}
-
+*/
 	public void testUpdate() throws Throwable
 	{
 		template.clean();
@@ -233,9 +228,9 @@ public class GigaSpacesTemplateTest
 	public void testUpdateModifier() throws Throwable
 	{
 		template.clean();
-		SimpleBean bean = new SimpleBean("lior_Update1", 1);
+		SimpleBean bean = new SimpleBean("lior_UpdateModifier2", 1);
 		template.write(bean,  Lease.FOREVER);
-		SimpleBean templateBean = new SimpleBean("lior_Update2", 1);
+		SimpleBean templateBean = new SimpleBean("lior_UpdateModifier2", 2);
 		SimpleBean taken = (SimpleBean) template.update(templateBean,
 														Lease.FOREVER,
 														2000,
@@ -254,10 +249,10 @@ public class GigaSpacesTemplateTest
 		bean2.setAge(3);
 		SimpleBean templateBean1 = new SimpleBean("lior_Update1", 2);
 		SimpleBean templateBean2 = new SimpleBean("lior_Update2", 3);
-		List list = template.updateMultiple(new SimpleBean[] { templateBean1,
+		Object[] list = template.updateMultiple(new SimpleBean[] { templateBean1,
 				templateBean2/*bean1,bean2 */}, new long[] { Lease.FOREVER,
 				Lease.FOREVER });
-		assertEquals("The bean are equal!", 2, list.size());
+		assertEquals("The bean are equal!", 2, list.length);
 	}
 
 	public void testUpdateMultipleModifier() throws Throwable
@@ -269,10 +264,10 @@ public class GigaSpacesTemplateTest
 		template.write(bean2,  Lease.FOREVER);
 		SimpleBean templateBean1 = new SimpleBean("lior_Update1", 2);
 		SimpleBean templateBean2 = new SimpleBean("lior_Update2", 3);
-		List taken = template.updateMultiple(new SimpleBean[] {templateBean1,
+		Object[] taken = template.updateMultiple(new SimpleBean[] {templateBean1,
 				templateBean2/*bean1,bean2*/ },  new long[] { Lease.FOREVER,
 				Lease.FOREVER }, UpdateModifiers.UPDATE_ONLY);
-		assertEquals("The bean are equal!", 2, taken.size());
+		assertEquals("The bean are equal!", 2, taken.length);
 	}
 
 	public void testIsSecured()
@@ -338,6 +333,43 @@ public class GigaSpacesTemplateTest
 
 	}
 
+
+
+	public void testRead() throws Throwable
+	{
+		SimpleBean bean = new SimpleBean("lior_Read", 1);
+		template.write(bean, -1);
+		SimpleBean templateBean = new SimpleBean("lior_Read", 1);
+		SimpleBean taken = (SimpleBean) template.read(	templateBean/*bean*/,
+
+														Lease.ANY);
+		assertNotNull("Read object is null!", taken);
+	}
+
+	public void testReadIfExist() throws Throwable
+	{
+		SimpleBean bean = new SimpleBean("lior_ReadIfExists", 1);
+		template.write(bean, -1);
+		SimpleBean templateBean = new SimpleBean("lior_ReadIfExists", 1);
+		SimpleBean taken = (SimpleBean) template.readIfExists(	templateBean/*bean*/,
+
+																Lease.FOREVER);
+		assertNotNull("Read object is null!", taken);
+	}
+	public void testNotify() throws Throwable
+	{
+		SimpleBean bean = new SimpleBean("lior_AddListener", 1);
+		final SimpleBean templateBean = new SimpleBean("lior_AddListener", 1);
+		RemoteEventListener listener = new RemoteEventListener(){
+			public  void notify(RemoteEvent remoteevent)
+	        throws UnknownEventException, RemoteException{
+				assertNotNull("is null",remoteevent);
+			}
+		};
+		template.notify(templateBean, listener, Lease.FOREVER, null, null);
+		template.write(bean, -1);
+	}
+
 	public void testSetUpdateModifiers()
 	{
 		template.setUpdateModifiers(UpdateModifiers.UPDATE_ONLY);
@@ -369,39 +401,4 @@ public class GigaSpacesTemplateTest
 						ise);
 	}
 
-	public void testRead() throws Throwable
-	{
-		SimpleBean bean = new SimpleBean("lior_Read", 1);
-		template.write(bean, -1);
-		SimpleBean templateBean = new SimpleBean("lior_Read", 1);
-		SimpleBean taken = (SimpleBean) template.read(	templateBean/*bean*/,
-
-														Lease.ANY);
-		assertNotNull("Read object is null!", taken);
-	}
-
-	public void testReadIfExist() throws Throwable
-	{
-		SimpleBean bean = new SimpleBean("lior_ReadIfExists", 1);
-		template.write(bean, -1);
-		SimpleBean templateBean = new SimpleBean("lior_ReadIfExists", 1);
-		SimpleBean taken = (SimpleBean) template.readIfExists(	templateBean/*bean*/,
-
-																Lease.FOREVER);
-		assertNotNull("Read object is null!", taken);
-	}
-	public void testNotify() throws Throwable
-	{
-		SimpleBean bean = new SimpleBean("lior_AddListener", 1);
-		final SimpleBean templateBean = new SimpleBean("lior_AddListener", 1);
-		RemoteEventListener listener = new RemoteEventListener(){
-			public  void notify(RemoteEvent remoteevent)
-	        throws UnknownEventException, RemoteException{
-				System.out.println("testAddListener test");
-				assertNotNull("is null",remoteevent);
-			}
-		};
-		template.notify(templateBean, listener, Lease.FOREVER, null, null);
-		template.write(bean, -1);
-	}
 }

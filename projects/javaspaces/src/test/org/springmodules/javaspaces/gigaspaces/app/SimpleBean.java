@@ -86,9 +86,12 @@ public class SimpleBean extends BaseSimpleBean{
 			return false;
 		else {
 			SimpleBean otherBean = (SimpleBean)other;
-			return ((otherBean.name != null && otherBean.name.equals(name) || otherBean.name == name )) && (otherBean.age == age)
-			&& (otherBean.age == age)
-			&& ((otherBean.getTeststring() != null && otherBean.getTeststring().equals(getTeststring()) || otherBean.getTeststring() ==getTeststring()));
+			return (otherBean.testBooleanObject != null && otherBean.testBooleanObject.equals(testBooleanObject) || otherBean.testBooleanObject == testBooleanObject ) &&
+			   (otherBean.testDoubleObject != null && otherBean.testDoubleObject.equals(testDoubleObject) || otherBean.testDoubleObject == testDoubleObject ) &&
+			   (otherBean.testFloatObject != null && otherBean.testFloatObject.equals(testFloatObject) || otherBean.testFloatObject == testFloatObject ) &&
+			   (otherBean.testIntegerObject != null && otherBean.testIntegerObject.equals(testIntegerObject) || otherBean.testIntegerObject == testIntegerObject) &&
+			   (otherBean.testLongObject != null && otherBean.testLongObject.equals(testLongObject) || otherBean.testLongObject == testLongObject ) &&
+			   super.equals(otherBean);
 		}
 	}
 

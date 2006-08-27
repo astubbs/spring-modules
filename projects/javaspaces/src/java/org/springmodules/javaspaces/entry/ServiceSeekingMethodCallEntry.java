@@ -14,15 +14,30 @@ import java.lang.reflect.Method;
 public class ServiceSeekingMethodCallEntry extends AbstractMethodCallEntry {
 
 
+	/**
+	 * Constructor
+	 * @param method the method to be invoke
+	 * @param args the method's arguments
+	 */
 	public ServiceSeekingMethodCallEntry(Method method, Object[] args) {
 		super(method, args);
 	}
 
-	// TODO forced by spaces
+
+	/**
+	 * Default constructor.
+	 *
+	 */
 	public ServiceSeekingMethodCallEntry() {
 		this(null, null);
 	}
 
+	/**
+	 * Constructor
+	 * @param method the method to be invoked
+	 * @param args the method's arguments
+	 * @param uid the id of the RMI
+	 */
 	public ServiceSeekingMethodCallEntry(Method method, Object[] args, Serializable uid) {
 		super(method, args , uid);
 	}

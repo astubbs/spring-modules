@@ -18,16 +18,32 @@ public class RunnableMethodCallEntry extends AbstractMethodCallEntry {
 	 */
 	public Object target;
 
+	/**
+	 * Constructor
+	 * @param method the method to be invoke.
+	 * @param args the arguments of the method
+	 * @param target the target through invoke the method.
+	 */
 	public RunnableMethodCallEntry(Method method, Object[] args, Object target) {
 		super(method, args);
 		this.target = target;
 	}
 
-	// TODO forced by spaces
+	/**
+	 * Empty constructor
+	 *
+	 */
 	public RunnableMethodCallEntry() {
 		this(null, null, null);
 	}
 
+	/**
+	 * Constructor
+	 * @param method the method to be invoked
+	 * @param args the method's argument
+	 * @param target the target buisness logic object to be invoked through RMI.
+	 * @param uid the id of the RMI
+	 */
 	public RunnableMethodCallEntry(Method method, Object[] args, Object target, Serializable uid) {
 		super(method, args,uid);
 		this.target = target;
@@ -35,6 +51,9 @@ public class RunnableMethodCallEntry extends AbstractMethodCallEntry {
 
 	/**
 	 * Invoke the method ignoring the given delegate by using the internal target object.
+	 * @param delegate in this case the delegate object is not passed through the  client
+	 * but is in the server.
+	 * @see org.springmodules.javaspaces.entry.AbstractMethodCallEntry#doInvocation(java.lang.Object)
 	 */
 	protected MethodResultEntry doInvocation(Object delegate) throws InvocationTargetException, IllegalAccessException {
 		Method method = getMethod();
