@@ -4,14 +4,6 @@
 
 <beans>
     
-    <!-- Application Beans -->
-    
-    <bean id="store" class="org.springmodules.xt.test.domain.MemoryRepository" init-method="init">
-        <property name="loader">
-            <bean class="org.springmodules.xt.test.domain.MemoryRepositoryLoaderImpl"/>
-        </property>
-    </bean>
-    
     <!-- Ajax -->
     
     <bean id="dummyHandler" class="org.springmodules.xt.test.ajax.DummyHandler"/>
