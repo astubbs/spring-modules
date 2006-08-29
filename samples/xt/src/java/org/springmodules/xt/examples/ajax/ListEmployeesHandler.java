@@ -3,6 +3,7 @@ package org.springmodules.xt.examples.ajax;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
@@ -12,6 +13,7 @@ import org.springmodules.xt.ajax.action.prototype.scriptaculous.HighlightAction;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.component.TableRow;
 import org.springmodules.xt.examples.domain.IEmployee;
+import org.springmodules.xt.examples.domain.IOffice;
 import org.springmodules.xt.examples.domain.MemoryRepository;
 import org.springmodules.xt.examples.mvc.form.EmployeesListForm;
 
@@ -26,10 +28,12 @@ public class ListEmployeesHandler extends AbstractAjaxHandler {
     
     public AjaxResponse listEmployees(AjaxSubmitEvent event) {
         EmployeesListForm form = (EmployeesListForm) event.getCommandObject();
-        Collection<IEmployee> employees = (Collection<IEmployee>) event.getModel().get("employees");
+        Map model = event.getModel();
+        IOffice office = form.getOffice();
+        Collection<IEmployee> employees = (Collection) model.get("employees");
         
         // Create the simple text message:
-        SimpleText message = new SimpleText(new StringBuilder("Selected office: ").append(form.getOffice().getName()).toString());
+        SimpleText message = new SimpleText(new StringBuilder("Selected office: ").append(office.getName()).toString());
         // Create an ajax action for setting the message and hi:
         ReplaceContentAction setMessageAction = new ReplaceContentAction("message", message);
         // Create an highlighting effect action for the appearing message:

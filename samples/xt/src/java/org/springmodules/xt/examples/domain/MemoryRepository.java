@@ -23,6 +23,8 @@ import org.springmodules.xt.model.specifications.composite.CompositeSpecificatio
  */
 public class MemoryRepository {
     
+    public static final int MAX_EMPLOYEES = 3;
+    
     private Map<String, IEmployee> employeesMap = new HashMap<String, IEmployee>();
     private Map<String, IOffice> officesMap = new HashMap<String, IOffice>();
     private MemoryRepositoryLoader loader;
@@ -32,7 +34,7 @@ public class MemoryRepository {
     
     public MemoryRepository() {
         OfficeIdSpecification idSpecification = new OfficeIdSpecification();
-        FullOfficeSpecification fullOfficeSpecification = new FullOfficeSpecification();
+        FullOfficeSpecification fullOfficeSpecification = new FullOfficeSpecification(MAX_EMPLOYEES);
         Message wrongIdMessage = new MessageImpl(OfficeErrorCodes.WRONG_ID, Message.Type.ERROR, "officeId" ,"Wrong office id");
         Message fullOfficeMessage = new MessageImpl(OfficeErrorCodes.FULL, Message.Type.ERROR, "employees", "Too many employees");
         

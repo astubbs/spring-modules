@@ -8,9 +8,7 @@ import org.springmodules.xt.ajax.AjaxActionEvent;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
 import org.springmodules.xt.ajax.action.ReplaceContentAction;
-import org.springmodules.xt.ajax.action.ReplaceElementAction;
 import org.springmodules.xt.ajax.action.SetAttributeAction;
-import org.springmodules.xt.ajax.component.InputField;
 import org.springmodules.xt.ajax.component.Option;
 import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.domain.MemoryRepository;
@@ -26,10 +24,8 @@ public class SelectionHandler extends AbstractAjaxHandler {
     
     public AjaxResponse officeSelection(AjaxActionEvent event) {
         String officeId = event.getHttpRequest().getParameter(event.getElementName());
-        // Load employees related to the selected office:
+        // Upon office selection, get employees related to the selected office:
         Collection<IEmployee> employees = store.getEmployeesByOffice(store.getOffice(officeId));
-        // Create the ajax response:
-        AjaxResponse response = new AjaxResponseImpl();
         
         // Create the component to render (a list of html option element):
         List options = new LinkedList();
@@ -42,6 +38,8 @@ public class SelectionHandler extends AbstractAjaxHandler {
         // Create an ajax action for replacing the content of the "employees" element: 
         ReplaceContentAction action = new ReplaceContentAction("employees", options);
         
+        // Create the ajax response:
+        AjaxResponse response = new AjaxResponseImpl();
         // Add the action:
         response.addAction(action);
         
@@ -53,22 +51,17 @@ public class SelectionHandler extends AbstractAjaxHandler {
         String matriculationCode = event.getHttpRequest().getParameter(event.getElementName());
         // Get the selected employee:
         IEmployee e = store.getEmployee(matriculationCode);
-        // Create the ajax response:
-        AjaxResponse response = new AjaxResponseImpl();
-        
-        // Create the component to render:
-        InputField field = new InputField("name", e.getSurname(), InputField.InputType.TEXT);
-        field.addAttribute("id", "surname");
         
         // Create an ajax action for setting the "value" attribute of the "firstname" html element:
-        SetAttributeAction action1 = new SetAttributeAction("firstname", "value", e.getFirstname());
+        SetAttributeAction setFirstname = new SetAttributeAction("firstname", "value", e.getFirstname());
+        // Create an ajax action for setting the "value" attribute of the "surname" html element:
+        SetAttributeAction setSurname = new SetAttributeAction("surname", "value", e.getSurname());
         
-        // Create an ajax action for rendering the field component, replacing the "surname" element: 
-        ReplaceElementAction action2 = new ReplaceElementAction("surname", field);
-        
+        // Create the ajax response:
+        AjaxResponse response = new AjaxResponseImpl();
         // Add the actions to the response:
-        response.addAction(action1);
-        response.addAction(action2);
+        response.addAction(setFirstname);
+        response.addAction(setSurname);
         
         return response;
     }

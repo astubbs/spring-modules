@@ -30,14 +30,15 @@ import org.springmodules.xt.examples.domain.MemoryRepository;
  */
 public class FillOfficeHandler extends AbstractAjaxHandler {
     
-    private int maxEmployees = 3;
     private MemoryRepository store;
     
     public AjaxResponse addEmployee(AjaxActionEvent event) {
+        int maxEmployees = MemoryRepository.MAX_EMPLOYEES;
         int employeeCounter = Integer.parseInt(event.getHttpRequest().getParameter("counter"), 10);
         
-        if (employeeCounter == this.maxEmployees) {
-            SimpleText message = new SimpleText("You cannot add more than " + this.maxEmployees + " employees.");
+        // If the employees to add are too much, display a message:
+        if (employeeCounter == maxEmployees) {
+            SimpleText message = new SimpleText("You cannot add more than " + maxEmployees + " employees.");
             
             // Create ajax action for showing a message and highlighting it:
             ReplaceContentAction messageAction = new ReplaceContentAction("message", message);
@@ -51,31 +52,37 @@ public class FillOfficeHandler extends AbstractAjaxHandler {
             
             return response;
         }
+        // Else, add a row containing a selection box with employees and a "remove" button:
         else {
             Collection<IEmployee> employees = this.store.getEmployees();
 
+            // Create the row:
+            TableRow row = new TableRow();
+            row.addAttribute("id", "row-" + employeeCounter);
+            
+            // Create the employee selection box and add it to a column:
             Select selectionList = new Select("employees");
             for (IEmployee emp : employees) {
                 Option o = new Option(emp, "matriculationCode", "surname");
                 selectionList.addOption(o);
             }
-
-            TableRow row = new TableRow();
-            row.addAttribute("id", "row-" + employeeCounter);
-            
-            Map actionParams = new HashMap();
             TableData td1 = new TableData(selectionList);
-            TableData td2 = new TableData(new InputField("toRemove", "Remove", InputField.InputType.BUTTON));
+            
+            // Create the remove button and add it to another column:
+            InputField removeButton = new InputField("toRemove", "Remove", InputField.InputType.BUTTON);
+            TableData td2 = new TableData(removeButton);
+            Map actionParams = new HashMap();
             actionParams.put("row", "row-" + employeeCounter);
             td2.addAttribute("onclick", AjaxCall.AJAX_ACTION.getCall("removeRow", actionParams));
 
+            // Add the two columns to the row:
             row.addTableData(td1);
             row.addTableData(td2);
 
-            // Create an ajax action for replacing the old table body content, inserting these new rows:
+            // Create an ajax action for appending the new row:
             AppendContentAction appendRowAction = new AppendContentAction("employees", row);
             // Create an ajax action for updating the employees counter:
-            SetAttributeAction updateCounterAction = new SetAttributeAction("counter", "value", "" + (employeeCounter+1));
+            SetAttributeAction updateCounterAction = new SetAttributeAction("counter", "value", "" + (employeeCounter + 1));
 
             // Create a concrete ajax response:
             AjaxResponse response = new AjaxResponseImpl();
@@ -93,10 +100,10 @@ public class FillOfficeHandler extends AbstractAjaxHandler {
         
         // Remove the row passed as paramater in the ajax request:
         RemoveElementAction removeRowAction = new RemoveElementAction(row);
-        // Remove the message:
+        // Remove the message (if any):
         RemoveContentAction removeMessageContentAction = new RemoveContentAction("message");
         // Decrement the employee counter:
-        SetAttributeAction updateCounterAction = new SetAttributeAction("counter", "value", "" + (employeeCounter-1));
+        SetAttributeAction updateCounterAction = new SetAttributeAction("counter", "value", "" + (employeeCounter - 1));
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
@@ -110,13 +117,5 @@ public class FillOfficeHandler extends AbstractAjaxHandler {
     
     public void setStore(MemoryRepository store) {
         this.store = store;
-    }
-
-    public int getMaxEmployees() {
-        return this.maxEmployees;
-    }
-
-    public void setMaxEmployees(int maxEmployees) {
-        this.maxEmployees = maxEmployees;
     }
 }

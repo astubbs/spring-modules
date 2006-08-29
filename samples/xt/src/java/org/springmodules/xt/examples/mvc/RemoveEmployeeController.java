@@ -33,7 +33,7 @@ public class RemoveEmployeeController extends EnhancedSimpleFormController {
             view.setSelectableEmployees(set);
         }
         else {
-            throw new RuntimeException();
+            throw new RuntimeException("No office.");
         }
         return view;
     }

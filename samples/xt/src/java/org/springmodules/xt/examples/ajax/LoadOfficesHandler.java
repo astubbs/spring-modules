@@ -22,10 +22,8 @@ public class LoadOfficesHandler extends AbstractAjaxHandler {
     private MemoryRepository store;
     
     public AjaxResponse loadOffices(AjaxActionEvent event) {
-        // Load offices:
+        // Get offices:
         Collection<IOffice> offices = store.getOffices();
-        // Create a concrete ajax response:
-        AjaxResponse response = new AjaxResponseImpl();
         
         // Create the component to render (a list of html option elements):
         List options = new LinkedList();
@@ -35,9 +33,11 @@ public class LoadOfficesHandler extends AbstractAjaxHandler {
             Option option = new Option(office, "officeId", "name");
             options.add(option);
         }
-        // Create an ajax action for replacing the content of the "offices" element with the component just created: 
+        // Create an ajax action for replacing the content of the "offices" element with the components just created: 
         ReplaceContentAction action = new ReplaceContentAction("offices", options);
         
+        // Create a concrete ajax response:
+        AjaxResponse response = new AjaxResponseImpl();
         // Add the action:
         response.addAction(action);
         
