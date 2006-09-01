@@ -6,7 +6,7 @@
     </sect2>
     <sect2 id='modeling-base'><title id='modeling-base-title'>Base Concepts</title>
         <sect3 id='introductor'><title id='introductor-title'>Introductor</title>
-            <para>The XT <emphasis>Introductor</emphasis> permits you to make existent objects implementing additional interfaces defined at runtime, that is, it <emphasis>introduces</emphasis> new interfaces into already existent plain old java objects.
+            <para>The XT <emphasis>Introductor</emphasis> permits you to make existent objects implementing additional interfaces defined at runtime, that is, it <emphasis>introduces</emphasis> new interfaces into already existent Plain Old Java Objects.
                 This is achieved through the use of <ulink url='http://www.springframework.org/documentation'><citetitle>Spring AOP</citetitle></ulink> <emphasis>Introduction</emphasis>, for creating proxy objects that behave like the original one but also implement new interfaces. 
             </para>
             <sect4 id='dynamicintroductor'><title id='dynamicintroductor-title'>DynamicIntroductor</title>
@@ -200,7 +200,11 @@
                     public void addAllMessages(Notification notification);
                     }]]>
                 </programlisting>
-                <para>As you can see, you can add and remove Message objects, and ask for Messages of a given type.
+                <para>
+                    It is indeed straightforward: you can add and remove Message objects, and ask for Messages of a given type.
+                </para>
+                <para>
+                    Notifications are best used together with <link linkend='specifications'>Specifications</link>.
                 </para>
             </sect4>
         </sect3>
@@ -225,8 +229,11 @@
                 }]]>
             </programlisting>
             <para>
-                You can specify what <link linkend="the-message-interface">Messages</link> will be thrown when the specification is satisfied or unsatisfied, and evaluate it
-                collecting messages into a <link linkend="notifications">Notification</link> object.
+                The Specification has one generic type, <emphasis>O</emphasis>, representing the object type you want to evaluate.
+            </para>
+            <para>
+                As you may note, you can specify what <link linkend="the-message-interface">Messages</link> will be thrown when the specification is satisfied or unsatisfied, and
+                collect them into a <link linkend="notifications">Notification</link> object at evaluation time.
             </para>
             <sect4 id='composite-specifications'><title id='composite-specifications-title'>Composite Specifications</title>
                 <para>
@@ -264,10 +271,10 @@
                     }]]>
                 </programlisting>
                 <para>
-                    The CompositeSpecification has two generic types, <emphasis>S</emphasis> and <emphasis>O</emphasis>: they represent the type of the specification you want to compose,
-                    and the type of the object you want to evaluate.
+                    The CompositeSpecification has two generic types, <emphasis>S</emphasis> and <emphasis>O</emphasis>: the former represents the type of the specification you want to compose,
+                    the latter the type of the object you want to evaluate.
                 </para>
-                <para>Some code is worth a lot of words, so for taking a glimpse on how powerful a CompositeSpecification can be, say you have implemented these two specifications in your own project (independent form XT code):</para>
+                <para>Some code is worth a lot of words, so for taking a glimpse on how powerful a CompositeSpecification can be, say you have implemented these two specifications in your own application (not depending on the XT library):</para>
                 <programlisting><![CDATA[
                     public class OfficeIdSpecification implements BaseSpecification<IOffice> {
     
@@ -288,24 +295,31 @@
                     
                     }]]>
                 </programlisting>
-                <para>You can powerfully combine them by simply writing the following:</para>
+                <para>You can powerfully compose them in a composite specification by simply writing the following:</para>
                 <programlisting><![CDATA[
+                    // Create your business-specific specifications:
                     OfficeIdSpecification idSpecification = new OfficeIdSpecification();
                     FullOfficeSpecification fullOfficeSpecification = new FullOfficeSpecification();
         
-                    CompositeSpecification<BaseSpecification, IOffice> officeSpecification = 
+                    // Create a CompositeSpecification for composing BaseSpecification specifications
+                    // (your base class):
+                    CompositeSpecification<BaseSpecification, IOffice> compositeSpecification = 
                     new CompositeSpecificationImpl(BaseSpecification.class, "isSatisfiedBy");
 
+                    // Create an error message for a wrong id:
                     Message wrongIdMessage = new MessageImpl(OfficeErrorCodes.WRONG_ID, 
                     Message.Type.ERROR,
                     "officeId",
                     "Wrong office id");
+                    
+                    // Create an error message for a full office:
                     Message fullOfficeMessage = new MessageImpl(OfficeErrorCodes.FULL,
                     Message.Type.ERROR,
                     "employees", 
                     "Too many employees");
 
-                    officeSpecification.compose(idSpecification).withMessage(wrongIdMessage, false)
+                    // Compose all:
+                    compositeSpecification.compose(idSpecification).withMessage(wrongIdMessage, false)
                     .andNot(fullOfficeSpecification).withMessage(fullOfficeMessage, true);]]>
                 </programlisting>
                 <para>
