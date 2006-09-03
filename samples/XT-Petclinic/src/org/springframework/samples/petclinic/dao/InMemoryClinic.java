@@ -3,11 +3,11 @@ package org.springframework.samples.petclinic.dao;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.dao.DataAccessException;
@@ -35,7 +35,7 @@ public class InMemoryClinic implements Clinic {
 
 	private Set<Vet> vets = new HashSet<Vet>();
 	private Set<PetType> petTypes = new HashSet<PetType>();
-	private Map<Integer, Owner> owners = new HashMap<Integer, Owner>();
+	private Map<Integer, Owner> owners = new ConcurrentHashMap<Integer, Owner>();
 
 	public void setVets(Collection<Vet> vets) {
 		this.vets = new HashSet<Vet>(vets);
