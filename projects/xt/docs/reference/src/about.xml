@@ -19,7 +19,7 @@
     </important>
     <warning>
         <para>
-            Version 0.6 comes with several packages and interfaces whose name and position has been refactored for better usability.
+            Version 0.6 comes with several packages and interfaces whose name and position have been refactored for better usability.
         </para>
         <para>
             These changes are not backward compatible and require to change your code.
@@ -28,12 +28,12 @@
             We're sorry for any inconvenience.
         </para>
         <para>
-            However, these will be the last changes to break backward compatibility: next versions of XT Framework will not break any existent code.
+            However, next versions of XT Framework will not break any existent code because will be fully backward compatible.
         </para>
     </warning>
     <warning>
         <para>
-            The XT Framework Utils packages have been moved to the SpringMVC-extra web module.
+            In version 0.6, the XT Framework Utils packages have been moved to the SpringMVC-extra web module.
         </para>
     </warning>
     <sect2 id='modeling-framework'><title id='modeling-framework-title'>XT Modeling Framework</title>

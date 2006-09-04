@@ -73,7 +73,8 @@
             <para>Ajax <emphasis role='bold'>action events</emphasis> are fired in web pages as follows:
             </para>
             <programlisting><![CDATA[
-                <input type="button" value="Go" onclick="doAjaxAction('eventId', this, {'param1' : 'value1', 'param2' : 'value2'});"> 
+                <input type="button" value="Go" 
+                onclick="doAjaxAction('eventId', this, {'param1' : 'value1', 'param2' : 'value2'});"> 
             ]]></programlisting>
             <para>You have to simply call the (pre-implemented) <emphasis role='bold'>doAjaxAction</emphasis> JavaScript function, 
                 passing:
@@ -120,7 +121,8 @@
             <para>For firing Ajax <emphasis role='bold'>submit events</emphasis>, you have to write:
             </para>
             <programlisting><![CDATA[
-                <input type="button" value="Press" onclick="doAjaxSubmit('eventId', this {'param1' : 'value1', 'param2' : 'value2'});"> 
+                <input type="button" value="Press" 
+                onclick="doAjaxSubmit('eventId', this {'param1' : 'value1', 'param2' : 'value2'});"> 
             ]]></programlisting>
             <para>You have to simply call the (pre-implemented) <emphasis role='bold'>doAjaxSubmit</emphasis> JavaScript function, passing it the same information
                 defined above.
@@ -216,7 +218,8 @@
                 Here is how:
             </para>
             <programlisting><![CDATA[
-                <bean id="urlHandlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+                <bean id="urlHandlerMapping" 
+                  class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 
                 <property name="interceptors">
                 <list>
@@ -382,7 +385,7 @@
                     to handle, that will accept an <emphasis>org.springmodules.xt.ajax.AjaxActionEvent</emphasis>:
                 </para>
                 <programlisting><![CDATA[
-                    public AjaxResponse loadOffices(AjaxActionEvent event) {
+                    public AjaxResponse loadOffices(AjaxActionEvent event)
                 ]]></programlisting> 
                 <para>
                     Now, let us analyze how to handle the event. 
@@ -433,7 +436,8 @@
                     in the Spring application context and mapping it in the <emphasis>AjaxInterceptor</emphasis>:
                 </para>
                 <programlisting><![CDATA[
-                    <bean id="ajaxLoadOfficesHandler" class="org.springmodules.xt.examples.ajax.LoadOfficesHandler">
+                    <bean id="ajaxLoadOfficesHandler" 
+                      class="org.springmodules.xt.examples.ajax.LoadOfficesHandler">
                     <property name="store" ref="store"/>
                     </bean>
                 ]]></programlisting>
@@ -507,7 +511,8 @@
                     For the purposes of our example, the most interesting part of our Spring MVC controller is the <emphasis>onSubmit</emphasis> method: 
                 </para>
                 <programlisting><![CDATA[
-                    protected ModelAndView onSubmit(Object command, BindException errors) throws Exception {
+                    protected ModelAndView onSubmit(Object command, BindException errors) 
+                    throws Exception {
                     
                     // Take the command object and the office contained in it:
                     EmployeesListForm form = (EmployeesListForm) command;
@@ -515,7 +520,8 @@
                     
                     // Take a list of employees by office and return it into the ModelAndView:
                     Collection<IEmployee> employees = store.getEmployeesByOffice(office);
-                    return new ModelAndView(this.getFormView(), errors.getModel()).addObject("employees", employees);
+                    return new ModelAndView(this.getFormView(), errors.getModel())
+                    .addObject("employees", employees);
                     }
                 ]]></programlisting>
                 <para>
@@ -552,7 +558,8 @@
                 <programlisting><![CDATA[
                     List rows = new LinkedList();
                     for(IEmployee emp : employees) {
-                    TableRow row = new TableRow(emp, new String[]{"firstname", "surname", "matriculationCode"}, null);
+                    TableRow row = new TableRow(emp, 
+                    new String[]{"firstname", "surname", "matriculationCode"}, null);
                     rows.add(row);
                     }
                 ]]></programlisting>
@@ -561,7 +568,8 @@
                     <emphasis>org.springmodules.xt.ajax.action.ReplaceContentAction</emphasis>, adding it the components to render:
                 </para>
                 <programlisting><![CDATA[
-                    ReplaceContentAction replaceRowsAction = new ReplaceContentAction("employees", rows);
+                    ReplaceContentAction replaceRowsAction = 
+                    new ReplaceContentAction("employees", rows);
                 ]]></programlisting>
                 <para>
                     Note that the <emphasis>ReplaceContentAction</emphasis> updates the HTML element with <emphasis>employees</emphasis> as id.
@@ -581,7 +589,8 @@
                     in the Spring application context and mapping it in the <emphasis>AjaxInterceptor</emphasis>:
                 </para>
                 <programlisting><![CDATA[
-                    <bean id="ajaxListEmployeesHandler" class="org.springmodules.xt.examples.ajax.ListEmployeesHandler">
+                    <bean id="ajaxListEmployeesHandler" 
+                      class="org.springmodules.xt.examples.ajax.ListEmployeesHandler">
                     <property name="store" ref="store"/>
                     </bean>
                 ]]></programlisting>

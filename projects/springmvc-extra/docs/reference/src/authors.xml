@@ -2,3 +2,8 @@
     file used for inclusion inside index-module. for multiple authors use
     multiple tags.
 -->
+
+<author>
+  <firstname>Sergio</firstname>
+  <surname>Bossa</surname>
+</author>
