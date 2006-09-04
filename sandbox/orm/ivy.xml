@@ -30,8 +30,7 @@
 		<artifact name="hibernate-3.0.5" type="jar"/>
     </dependency>
     
-    <dependency org="orbroker" name="orbroker"  rev="2.0.2-debug"/>
-    <dependency org="springmodules" name="springmodules-sandbox-db" rev="latest.integration" conf="test ->*"/>
+   <dependency org="springmodules" name="springmodules-sandbox-db" rev="latest.integration" conf="test ->*"/>
     <dependency org="springmodules" name="springmodules-validation" rev="latest.integration" conf="test ->*"/>
     
     <dependency org="apache" name="geronimo-spec" rev="rc4" conf="test->*" >
