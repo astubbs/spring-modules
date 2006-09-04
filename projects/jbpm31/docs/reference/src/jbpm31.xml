@@ -58,6 +58,11 @@
      &lt;/list&gt;
     &lt;/property&gt;
     &lt;property name="createSchema" value="true"/&gt;
+    &lt;property name="processDefinitionsResources"&gt;
+     &lt;list&gt;
+      &lt;value&gt;classpath:/org/springmodules/workflow/jbpm31/someOtherWorkflow.xml&lt;/value&gt;
+     &lt;/list&gt;
+    &lt;/property&gt;
   &lt;/bean&gt;
 
  &lt;!-- jBPM template --&gt;
@@ -65,7 +70,7 @@
   &lt;constructor-arg index="0" ref="jbpmConfiguration"/&gt;
   &lt;constructor-arg index="1" ref="simpleWorkflow"/&gt;
  &lt;/bean&gt;
-
+set
 &lt;/beans&gt;</programlisting>
 
     <para>The example above shows how (existing) Spring-managed Hibernate
@@ -167,6 +172,16 @@
         application startup and destroyed on closing, for cases where the
         definition doesn't change, the process should not be declared inside
         Spring XML files.</para>
+      </note>
+
+      <note>
+        <para>As reported <ulink
+        url="http://opensource.atlassian.com/projects/spring/browse/MOD-193">here</ulink>,
+        due to the static nature of jBPM, process definitions which include
+        sub processes are not loaded properly if a JbpmContext does not exist
+        at the time of the loading (no exception is thrown whatsoever). As a
+        workaround consider using the LocalJbpmConfigurationFactoryBean's
+        processDefinitionsResources property.</para>
       </note>
     </sect2>
 

@@ -1,11 +1,12 @@
 /**
  * Created on Feb 21, 2006
  *
- * $Id: LocalJbpmConfigurationFactoryBean.java,v 1.2 2006/09/04 14:25:55 costin Exp $
- * $Revision: 1.2 $
+ * $Id: LocalJbpmConfigurationFactoryBean.java,v 1.3 2006/09/04 15:09:49 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.workflow.jbpm31;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -17,7 +18,6 @@ import org.jbpm.JbpmContext;
 import org.jbpm.configuration.ObjectFactory;
 import org.jbpm.configuration.ObjectFactoryParser;
 import org.jbpm.graph.def.ProcessDefinition;
-import org.jbpm.persistence.PersistenceService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -26,6 +26,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springmodules.workflow.jbpm31.definition.ProcessDefinitionFactoryBean;
 
 /**
  * FactoryBean which allows customized creation of JbpmConfiguration objects
@@ -58,6 +59,7 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 	private boolean dropSchema;
 	private boolean hasPersistenceService;
 	private String contextName = JbpmContext.DEFAULT_JBPM_CONTEXT_NAME;
+	private Resource[] processDefinitionsResources;
 	private ProcessDefinition[] processDefinitions;
 	private SessionFactory sessionFactory;
 	/**
@@ -134,14 +136,28 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 				jbpmConfiguration.createSchema(contextName);
 			}
 
-			if (processDefinitions != null && processDefinitions.length > 0) {
-				// TODO: replace with another faster utility
-				String toString = Arrays.asList(processDefinitions).toString();
-				logger.info("deploying process definitions:" + toString);
+			if (processDefinitions != null || processDefinitionsResources != null) {
 				JbpmContext context = jbpmConfiguration.createJbpmContext(contextName);
 				try {
-					for (int i = 0; i < processDefinitions.length; i++) {
-						context.deployProcessDefinition(processDefinitions[i]);
+					if (processDefinitions != null) {
+						String toString = Arrays.asList(processDefinitions).toString();
+						logger.info("deploying process definitions:" + toString);
+
+						// deploy the ProcessDefinitions
+						for (int i = 0; i < processDefinitions.length; i++) {
+							context.deployProcessDefinition(processDefinitions[i]);
+						}
+					}
+					if (processDefinitionsResources != null) {
+						ProcessDefinitionFactoryBean factory = new ProcessDefinitionFactoryBean();
+						String toString = Arrays.asList(processDefinitionsResources).toString();
+						logger.info("deploying process definitions (from resources):" + toString);
+
+						for (int i = 0; i < processDefinitionsResources.length; i++) {
+							factory.setDefinitionLocation(processDefinitionsResources[i]);
+							factory.afterPropertiesSet();
+							context.deployProcessDefinition((ProcessDefinition) factory.getObject());
+						}
 					}
 				}
 				finally {
@@ -149,9 +165,11 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 				}
 			}
 		}
+
 		else {
 			logger.info("persistence unavailable not available - schema create/drop and process definition deployment disabled");
 		}
+
 	}
 
 	/**
@@ -273,4 +291,22 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 		this.sessionFactory = sessionFactory;
 	}
 
-}
+	/**
+	 * @return Returns the processDefinitionsResources.
+	 */
+	public Resource[] getProcessDefinitionsResources() {
+		return processDefinitionsResources;
+	}
+
+	/**
+	 * Used for loading the process definition from resources when the configuration is created. This method is an alternative
+	 * to ProcesssDefinitionFactoryBean since when dealing with sub processes (inside the definitions), jBPM requires a 
+	 * JbpmContext to be active on its internal static stack.
+	 *  
+	 * @param processDefinitionsResources The processDefinitionsResources to set.
+	 */
+	public void setProcessDefinitionsResources(Resource[] processDefinitionsResources) {
+		this.processDefinitionsResources = processDefinitionsResources;
+	}
+
+	}

@@ -28,6 +28,11 @@ import java.io.InputStream;
  * Process Definition Factory Bean. It acts as a simple utility for loading ProcessDefinitions
  * using Spring own resource.
  * 
+ * <strong>Note:</strong> Jbpm does not support parsing subprocesses - use LocalJbpmConfigurationFactoryBean#setProcessDefinitionsResources in this case.
+ * See <a href="http://opensource.atlassian.com/projects/spring/browse/MOD-193">MOD-193</a> for more details.
+ * 
+ * @see org.springmodules.workflow.jbpm31.LocalJbpmConfigurationFactoryBean#setProcessDefinitionsResources(Resource[])
+ * 
  * @author Rob Harrop
  * @author Costin Leau
  */
