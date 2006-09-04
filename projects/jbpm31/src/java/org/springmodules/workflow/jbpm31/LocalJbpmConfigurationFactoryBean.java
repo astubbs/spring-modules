@@ -1,8 +1,8 @@
 /**
  * Created on Feb 21, 2006
  *
- * $Id: LocalJbpmConfigurationFactoryBean.java,v 1.1 2006/03/02 14:56:00 costin Exp $
- * $Revision: 1.1 $
+ * $Id: LocalJbpmConfigurationFactoryBean.java,v 1.2 2006/09/04 14:25:55 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -17,6 +17,7 @@ import org.jbpm.JbpmContext;
 import org.jbpm.configuration.ObjectFactory;
 import org.jbpm.configuration.ObjectFactoryParser;
 import org.jbpm.graph.def.ProcessDefinition;
+import org.jbpm.persistence.PersistenceService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -27,22 +28,23 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
 /**
- * FactoryBean which allows customized creation of JbpmConfiguration objects which are binded 
- * to the lifecycle of the bean factory container. A BeanFactory aware ObjectFactory can be used
- * by the resulting object for retrieving beans from the application context, delegating to the
- * default implementation for unresolved names.  
- * It is possible to use an already defined Hibernate SessionFactory by injecting an approapriate
- * HibernateTemplate - if defined, the underlying session factory will be used by jBPM Persistence
- * Service.  
- *    
- * If set to true, createSchema and dropSchema
- * will be executed on factory initialization and destruction, using the contextName property which, by default,
- * is equivalent with JbpmContext.DEFAULT_JBPM_CONTEXT_NAME. 
- *  
- *
+ * FactoryBean which allows customized creation of JbpmConfiguration objects
+ * which are binded to the lifecycle of the bean factory container. A
+ * BeanFactory aware ObjectFactory can be used by the resulting object for
+ * retrieving beans from the application context, delegating to the default
+ * implementation for unresolved names. It is possible to use an already defined
+ * Hibernate SessionFactory by injecting an approapriate HibernateTemplate - if
+ * defined, the underlying session factory will be used by jBPM Persistence
+ * Service.
+ * 
+ * If set to true, createSchema and dropSchema will be executed on factory
+ * initialization and destruction, using the contextName property which, by
+ * default, is equivalent with JbpmContext.DEFAULT_JBPM_CONTEXT_NAME.
+ * 
+ * 
  * @see org.jbpm.configuration.ObjectFactory
  * @author Costin Leau
- *
+ * 
  */
 public class LocalJbpmConfigurationFactoryBean implements InitializingBean, DisposableBean, FactoryBean,
 		BeanFactoryAware, BeanNameAware {
@@ -54,6 +56,7 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 	private Resource configuration;
 	private boolean createSchema;
 	private boolean dropSchema;
+	private boolean hasPersistenceService;
 	private String contextName = JbpmContext.DEFAULT_JBPM_CONTEXT_NAME;
 	private ProcessDefinition[] processDefinitions;
 	private SessionFactory sessionFactory;
@@ -62,7 +65,6 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 	 */
 	private JbpmFactoryLocator factoryLocator = new JbpmFactoryLocator();
 
-	
 	/**
 	 * @see org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
 	 */
@@ -78,18 +80,16 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 		factoryLocator.setBeanName(name);
 	}
 
-
 	/**
 	 * @see org.springframework.beans.factory.DisposableBean#destroy()
 	 */
 	public void destroy() throws Exception {
 
-		if (dropSchema) {
+		if (dropSchema && hasPersistenceService) {
 			logger.info("dropping schema");
 			jbpmConfiguration.dropSchema(contextName);
 		}
 	}
-
 
 	/**
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
@@ -125,24 +125,32 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 		}
 
 		// 3. execute persistence operations
-		if (createSchema) {
-			logger.info("creating schema");
-			jbpmConfiguration.createSchema(contextName);
-		}
+		hasPersistenceService = JbpmUtils.hasPersistenceService(jbpmConfiguration, contextName);
 
-		if (processDefinitions != null && processDefinitions.length > 0) {
-			//TODO: replace with another faster utility
-			String toString = Arrays.asList(processDefinitions).toString();
-			logger.info("deploying process definitions:" + toString);
-			JbpmContext context = jbpmConfiguration.createJbpmContext(contextName);
-			try {
-				for (int i = 0; i < processDefinitions.length; i++) {
-					context.deployProcessDefinition(processDefinitions[i]);
+		if (hasPersistenceService) {
+			logger.info("persistence service available...");
+			if (createSchema) {
+				logger.info("creating schema");
+				jbpmConfiguration.createSchema(contextName);
+			}
+
+			if (processDefinitions != null && processDefinitions.length > 0) {
+				// TODO: replace with another faster utility
+				String toString = Arrays.asList(processDefinitions).toString();
+				logger.info("deploying process definitions:" + toString);
+				JbpmContext context = jbpmConfiguration.createJbpmContext(contextName);
+				try {
+					for (int i = 0; i < processDefinitions.length; i++) {
+						context.deployProcessDefinition(processDefinitions[i]);
+					}
+				}
+				finally {
+					context.close();
 				}
 			}
-			finally {
-				context.close();
-			}
+		}
+		else {
+			logger.info("persistence unavailable not available - schema create/drop and process definition deployment disabled");
 		}
 	}
 

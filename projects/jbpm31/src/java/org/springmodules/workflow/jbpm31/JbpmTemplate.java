@@ -1,8 +1,8 @@
 /**
  * Created on Feb 20, 2006
  *
- * $Id: JbpmTemplate.java,v 1.3 2006/06/10 11:27:46 costin Exp $
- * $Revision: 1.3 $
+ * $Id: JbpmTemplate.java,v 1.4 2006/09/04 14:25:55 costin Exp $
+ * $Revision: 1.4 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -135,7 +135,7 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 		JbpmContext dummy = getContext();
 		try {
 
-			if (dummy.getServiceFactory(Services.SERVICENAME_PERSISTENCE) != null) {
+			if (JbpmUtils.hasPersistenceService(dummy)) {
 				hasPersistenceService = true;
 				logger.debug("jBPM persistence service present");
 			}
