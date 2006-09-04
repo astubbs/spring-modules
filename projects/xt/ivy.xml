@@ -25,7 +25,7 @@
     
     <dependency org="log4j" name="log4j" rev="1.2.8"/>
     
-    <dependency org="net.sf.json-lib" name="json-lib" rev="0.7.1"/>
+    <dependency org="net.sf.json-lib" name="json-lib" rev="0.8"/>
     
     <dependency org="cglib" name="cglib" rev="2.1_3">
       <artifact name="cglib-nodep" type="jar"/>
