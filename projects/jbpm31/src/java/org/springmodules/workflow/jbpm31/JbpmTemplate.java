@@ -1,8 +1,8 @@
 /**
  * Created on Feb 20, 2006
  *
- * $Id: JbpmTemplate.java,v 1.4 2006/09/04 14:25:55 costin Exp $
- * $Revision: 1.4 $
+ * $Id: JbpmTemplate.java,v 1.5 2006/09/04 15:46:15 costin Exp $
+ * $Revision: 1.5 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -371,4 +371,49 @@ public class JbpmTemplate extends JbpmAccessor implements JbpmOperations {
 		throw new UnsupportedOperationException();
 	}
 
+
+    /**
+     * Signals a specific token in a process instance. Used to progress through execution paths other than the main one.
+     * If the token could not be found, the root token is signaled (main execution path).
+     *
+     * @param processInstance process instance to progress through
+     * @param tokenName name of the token to signal
+     */
+    public void signalToken(final ProcessInstance processInstance, final String tokenName) {
+		execute(new JbpmCallback() {
+
+			public Object doInJbpm(JbpmContext context) {
+				Token token = processInstance.getRootToken().findToken(tokenName);
+                if (token == null) {
+                    processInstance.signal();
+                } else {
+                    token.signal();
+                }
+                return null;
+			}
+		});
+	}
+
+    /**
+     * Signals a specific token with the given transition to take.
+     *
+     * @see #signalToken(ProcessInstance, String)
+     * @param processInstance process instance to progress through
+     * @param tokenName name of the token to signal
+     * @param transitionId transition to take in the execution path
+     */
+    public void signalToken(final ProcessInstance processInstance, final String tokenName, final String transitionId) {
+		execute(new JbpmCallback() {
+
+			public Object doInJbpm(JbpmContext context) {
+				Token token = processInstance.getRootToken().findToken(tokenName);
+                if (token == null) {
+                    processInstance.signal(transitionId);
+                } else {
+                    token.signal(transitionId);
+                }
+                return null;
+			}
+		});
+	}
 }

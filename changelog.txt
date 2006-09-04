@@ -4,13 +4,27 @@ http://springmodules.dev.java.net
 
 Changes in version 0.6 (in progress)
 ------------------------------------
+Package org.springmodules.commons
+* Basic support for Jakarta commons-chain added
+
+Package org.springmodules.jbpm31
+* Prevent jBPM NPE when deploying processes when no persistence service is used [MOD-192]
+* Added processDefinitionsResources property to LocalJbpmConfigurationFactoryBean as an alternative for dealing ProcessDefinitions which require
+	a JbpmContext to be loaded. See [MOD-193] for more information
+* Added support inside JbpmTemplate for execution paths/child tokens (thanks go to Rob de Boer) [MOD-194]
+
+Package org.springmodules.javaspaces
+* Moved call method invocation into a separate method to allow subclasses to add custom behavior [MOD-175]
+
+Package org.springmodules.orm.orbroker
+* Promoted O/RBroker support out of the sandbox
 
 package org.springmodules.validation
 * Updated dependency on spring to spring-2.0-rc2
 * Updated dependency on acegi to acegi-security-1.0.1
 
 package org.springmodules.validation.commons
-* removed MapException class
+* Removed MapException class
 * Updated DefaultBeanValidator class (JIRA MOD-39)
 
 package org.springmodules.validation.valang.javascript
@@ -30,8 +44,6 @@ package org.springmodules.validation.bean
 package org.springmodules.samples.validation.bean
 * Added a sample application for the new bean validation framework
 
-package org.springmodules.orm.orbroker
-* O/R Broker support.
 
 Changes in version 0.5 (14.07.2006)
 -----------------------------------
