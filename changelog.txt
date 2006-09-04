@@ -30,6 +30,8 @@ package org.springmodules.validation.bean
 package org.springmodules.samples.validation.bean
 * Added a sample application for the new bean validation framework
 
+package org.springmodules.orm.orbroker
+* O/R Broker support.
 
 Changes in version 0.5 (14.07.2006)
 -----------------------------------
