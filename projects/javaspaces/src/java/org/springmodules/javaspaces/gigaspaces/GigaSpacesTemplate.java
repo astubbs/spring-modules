@@ -33,8 +33,10 @@ import org.springmodules.javaspaces.JavaSpaceTemplate;
 import org.springmodules.javaspaces.gigaspaces.exception.GigaSpacesException;
 
 import com.j_spaces.core.IJSpace;
+import com.j_spaces.core.IJSpaceContainer;
 
 import com.j_spaces.core.client.NotifyDelegator;
+import com.j_spaces.core.client.SpaceURL;
 /**
  * <p>
  * Helper object offered to the use of application developers who need to
@@ -365,6 +367,28 @@ extends JavaSpaceTemplate
 					throws RemoteException
 			{
 				return ((IJSpace) js).getName();
+			}
+		});
+	}
+
+	/**
+	 * Returns the {@link SpaceURL} instance which was used to initialize the space.
+	 * <p>
+	 * Notice: The {@link SpaceURL} object contains information on the space and container
+	 * configuration/setup such as space url used, space/container/cluster schema used
+	 * and other attributes.<p>
+	 * The {@link IJSpaceContainer} keeps also its reference of the SpaceURL which launched the container.
+	 * @return {@link SpaceURL} which initialized that specific space instance.
+	 * @see {@link http://gigaspaces.com/docs/JavaDoc/com/j_spaces/core/IJSpace.html#getUrl()}
+	 **/
+	public SpaceURL getUrl()
+	{
+		return (SpaceURL) execute(new JavaSpaceCallback()
+		{
+			public Object doInSpace(JavaSpace js, Transaction tx)
+					throws RemoteException
+			{
+				return ((IJSpace) js).getURL();
 			}
 		});
 	}
@@ -818,7 +842,7 @@ extends JavaSpaceTemplate
 		})).booleanValue();
 	}
 
-	
+
 	/**
 	 * Sets the update mode modifiers for proxy level.
 	 * @param newModifiers new values for modifiers Values are defined in UpdateModifiers

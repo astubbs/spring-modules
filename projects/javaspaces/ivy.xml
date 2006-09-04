@@ -41,7 +41,7 @@
 	<dependency org="blitz" name="blitz" rev="1.24"/>
 
 
-	<dependency org="gigaspaces" name="gigaspaces-ce" rev="5.1-1601-052"/>
+	<dependency org="gigaspaces" name="gigaspaces-ce" rev="5.1-1603-000"/>
 
 
 	<dependency org="jini" name="jsk" rev="2.1">
