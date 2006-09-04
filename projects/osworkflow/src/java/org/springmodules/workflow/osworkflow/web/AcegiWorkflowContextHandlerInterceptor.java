@@ -28,7 +28,11 @@ public class AcegiWorkflowContextHandlerInterceptor extends DefaultWorkflowConte
 
 	protected String getCaller(HttpServletRequest request) {
 		SecurityContext context = (SecurityContext) SecurityContextHolder.getContext();
-		UserDetails user = (UserDetails)context.getAuthentication().getPrincipal();
-		return user.getUsername();
+		Object principal = context.getAuthentication().getPrincipal();
+		if (principal instanceof UserDetails)
+			return ((UserDetails) principal).getUsername();
+	
+		// fallback mechanism
+		return principal.toString();
 	}
 }

@@ -44,6 +44,9 @@ package org.springmodules.validation.bean
 package org.springmodules.samples.validation.bean
 * Added a sample application for the new bean validation framework
 
+package org.springmodules.workflow.osworkflow
+* Fixed AcegiWorkflowContextHandlerInterceptor when dealing with different AuthenticationProviders [MOD-186]
+
 
 Changes in version 0.5 (14.07.2006)
 -----------------------------------
