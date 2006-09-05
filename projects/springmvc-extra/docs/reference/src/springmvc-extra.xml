@@ -134,16 +134,21 @@
                 public void setDefaultFeedType(String)
             </programlisting>
             <para>
+                Moreover, you can select the syndication format on the fly, using the HTTP request parameter <emphasis>type</emphasis>; 
+                i.e., the <emphasis>http://www.example.org/example.xml?type=rss_1.0</emphasis> make a request for an RSS 1.0 file.
+            </para>
+            <para>
                 The feed type naming format is explained <ulink url='https://rome.dev.java.net/apidocs/0_8/com/sun/syndication/feed/WireFeed.html'><citetitle>here</citetitle></ulink>.
             </para>
             <para>
-                Then, for constructing your feed, you need to extend the AbstractRssView and override the following method: 
+                Then, for constructing your feed, you need to override the following method: 
             </para>
             <programlisting>
                 abstract protected void buildFeed(Map,HttpServletRequest,HttpServletResponse,SyndFeed)
             </programlisting>
             <para>
-                
+                Here, you can construct your feed filling the 
+                <ulink url='https://rome.dev.java.net/apidocs/0_8/com/sun/syndication/feed/synd/SyndFeed.html'><citetitle>SyndFeed</citetitle></ulink> object.
             </para>
         </sect2>
         
