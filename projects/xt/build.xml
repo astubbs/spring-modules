@@ -22,6 +22,10 @@
       <arg value="${basedir}/src/js/lib/core/springxt-min.js"/>
     </java>
     
+    <zip zipfile="${target.lib.dir}/${project.name}-js-src.zip">
+      <fileset dir="${basedir}/src/js" />
+    </zip>
+    
   </target>
   
   <target name="jar.main">
