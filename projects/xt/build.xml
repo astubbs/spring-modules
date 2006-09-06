@@ -22,10 +22,6 @@
       <arg value="${basedir}/src/js/lib/core/springxt-min.js"/>
     </java>
     
-    <zip zipfile="${target.lib.dir}/${project.name}-js-src.zip">
-      <fileset dir="${basedir}/src/js" />
-    </zip>
-    
   </target>
   
   <target name="jar.main">
@@ -70,6 +66,14 @@
         <include name="org/springmodules/xt/model/**"/>
       </fileset>
     </jar>
+    
+  </target>
+  
+  <target name="dist.post">
+    
+    <zip zipfile="${target.lib.dir}/${project.name}-js-src.zip">
+      <fileset dir="${basedir}/src/js" />
+    </zip>
     
   </target>
 
