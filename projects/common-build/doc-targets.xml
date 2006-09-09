@@ -41,22 +41,30 @@
 
 	<target name="doc-pdf" depends="doc.prepare" description="Generate PDF reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/pdf/images" />
-		<copy todir="${docs.ref.target.dir}/pdf/images">
-			<!-- global settings -->
-			<fileset dir="${docs.global.images.dir}">
-				<include name="*.gif" />
-				<include name="*.svg" />
-				<include name="*.jpg" />
-			</fileset>
-			<!-- per project settings -->
-			<fileset dir="${docs.ref.src.dir}/images">
-				<include name="*.gif" />
-				<include name="*.svg" />
-				<include name="*.jpg" />
-			</fileset>
-			
+    <copy todir="${docs.ref.target.dir}/pdf/images" failonerror="false">
+      <!-- global settings -->
+      <fileset dir="${docs.global.images.dir}">
+        <include name="**/*.gif" />
+        <include name="**/*.svg" />
+        <include name="**/*.jpg" />
+        <include name="**/*.png" />
+      </fileset>
+      <!-- per project settings -->     
+      <fileset dir="${docs.ref.src.dir}/images">
+        <include name="**/*.gif" />
+        <include name="**/*.svg" />
+        <include name="**/*.jpg" />
+        <include name="**/*.png" />
+      </fileset>
+      <!-- project images -->     
+      <fileset dir="${docs.project.images.dir}">
+        <include name="**/*.gif" />
+        <include name="**/*.svg" />
+        <include name="**/*.jpg" />
+        <include name="**/*.png" />
+      </fileset>
 		</copy>
-
+    
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
 			<classpath>
 				<fileset dir="${docs.global.lib.dir}">
@@ -81,21 +89,30 @@
 		<delete file="${docs.ref.target.dir}/pdf/docbook_fop.tmp" />
 	</target>
 
-	<target name="doc-html" depends="doc.prepare" description="Generate multi-page HTML reference documentation">
+  <target name="doc-html" depends="doc.prepare" description="Generate multi-page HTML reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/html/images" />
-		<copy todir="${docs.ref.target.dir}/html/images">
+    <copy todir="${docs.ref.target.dir}/html/images" failonerror="false">
 			<!-- global settings -->
 			<fileset dir="${docs.global.images.dir}">
-				<include name="*.gif" />
-				<include name="*.svg" />
-				<include name="*.jpg" />
-			</fileset>
+				<include name="**/*.gif" />
+				<include name="**/*.svg" />
+				<include name="**/*.jpg" />
+        <include name="**/*.png" />
+      </fileset>
 			<!-- per project settings -->			
 			<fileset dir="${docs.ref.src.dir}/images">
-				<include name="*.gif" />
-				<include name="*.svg" />
-				<include name="*.jpg" />
+				<include name="**/*.gif" />
+				<include name="**/*.svg" />
+				<include name="**/*.jpg" />
+        <include name="**/*.png" />
 			</fileset>
+      <!-- project images -->     
+      <fileset dir="${docs.project.images.dir}">
+        <include name="**/*.gif" />
+        <include name="**/*.svg" />
+        <include name="**/*.jpg" />
+        <include name="**/*.png" />
+      </fileset>
 		</copy>
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.target.dir}/html/">
@@ -109,22 +126,31 @@
 		</java>
 	</target>
 
-	<target name="doc-htmlsingle" description="Generate single-page HTML reference documentation">
+  <target name="doc-htmlsingle" description="Generate single-page HTML reference documentation">
 		<mkdir dir="${docs.ref.target.dir}/html_single/images" />
-		<copy todir="${docs.ref.target.dir}/html_single/images">
+    <copy todir="${docs.ref.target.dir}/html_single/images" failonerror="false">
 			<!-- global settings -->
 			<fileset dir="${docs.global.images.dir}">
-				<include name="*.gif" />
-				<include name="*.svg" />
-				<include name="*.jpg" />
+				<include name="**/*.gif" />
+				<include name="**/*.svg" />
+				<include name="**/*.jpg" />
+        <include name="**/*.png" />
 			</fileset>
 			<!-- per project settings -->				
 			<fileset dir="${docs.ref.src.dir}/images">
-				<include name="*.gif" />
-				<include name="*.svg" />
-				<include name="*.jpg" />
+				<include name="**/*.gif" />
+				<include name="**/*.svg" />
+				<include name="**/*.jpg" />
+        <include name="**/*.png" />
 			</fileset>
-		</copy>
+      <!-- project images -->     
+      <fileset dir="${docs.project.images.dir}">
+        <include name="**/*.gif" />
+        <include name="**/*.svg" />
+        <include name="**/*.jpg" />
+        <include name="**/*.png" />
+      </fileset>
+		</copy>  
 
 		<java classname="com.icl.saxon.StyleSheet" fork="true" dir="${docs.ref.dir}">
 			<classpath>
