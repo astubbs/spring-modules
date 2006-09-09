@@ -56,8 +56,8 @@
         <include name="**/*.jpg" />
         <include name="**/*.png" />
       </fileset>
-      <!-- project images -->     
-      <fileset dir="${docs.project.images.dir}">
+      <!-- global project images -->     
+      <fileset dir="${docs.global.project.images.dir}">
         <include name="**/*.gif" />
         <include name="**/*.svg" />
         <include name="**/*.jpg" />
@@ -106,8 +106,8 @@
 				<include name="**/*.jpg" />
         <include name="**/*.png" />
 			</fileset>
-      <!-- project images -->     
-      <fileset dir="${docs.project.images.dir}">
+      <!-- global project images -->     
+      <fileset dir="${docs.global.project.images.dir}">
         <include name="**/*.gif" />
         <include name="**/*.svg" />
         <include name="**/*.jpg" />
@@ -143,8 +143,8 @@
 				<include name="**/*.jpg" />
         <include name="**/*.png" />
 			</fileset>
-      <!-- project images -->     
-      <fileset dir="${docs.project.images.dir}">
+      <!-- global project images -->     
+      <fileset dir="${docs.global.project.images.dir}">
         <include name="**/*.gif" />
         <include name="**/*.svg" />
         <include name="**/*.jpg" />
