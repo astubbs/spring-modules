@@ -32,21 +32,22 @@ import com.sun.syndication.io.SyndFeedOutput;
  * Abstract superclass for rss views, using the
  * <a href="http://wiki.java.net/bin/view/Javawsxml/Rome">Rome</a> Library.
  * This library is created by Alejandro Abdelnur, Patrick Chanezon and
- * Elaine Chien. By default this class uses the atom_0.3 rss version, but
+ * Elaine Chien. By default this class uses the atom_1.0 rss version, but
  * if you specify a parameter 'type' with another rss version that is supported
  * by Rome, it will create an rss feed based on that version. You can also change
  * the deafult type via the appropriate setter.
  *
  * You need to add two libraries to make use of this class:
- * - rome.jar (version 0.7)
+ * - rome.jar (version 0.8)
  * - jdom.jar (version 1.0)
  *
  * Currently j2se1.4+ is also required.
  *
- * @author Jettro Coenradie
+ * @author Jettro Coenradie (original author)
+ * @author Sergio Bossa (maintainer)
  */
 public abstract class AbstractRssView extends AbstractView {
-    private static final String DEFAULT_FEED_TYPE = "atom_0.3";
+    private static final String DEFAULT_FEED_TYPE = "atom_1.0";
     private static final String FEED_TYPE = "type";
     
     private String defaultFeedType;

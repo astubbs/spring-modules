@@ -128,7 +128,7 @@
                 of supporting many syndication formats through the use of the <ulink url="http://wiki.java.net/bin/view/Javawsxml/Rome"><citetitle>Rome</citetitle></ulink> library.
             </para>
             <para>
-                You can select the default syndication format setting the feed type through the following method:
+                AbstractRssView uses ATOM 1.0 as its default syndication format: you can change it by setting the feed type through the following method:
             </para>
             <programlisting>
                 public void setDefaultFeedType(String)

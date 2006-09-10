@@ -28,7 +28,7 @@
       <artifact name="spring-mock" type="jar" conf="test"/>
     </dependency>
     
-    <dependency org="sun" name="rome" rev="0.7"/>
+    <dependency org="sun" name="rome" rev="0.8"/>
     <dependency org="jdom" name="jdom" rev="1.0"/>
       
     <!-- build time only dependencies -->
