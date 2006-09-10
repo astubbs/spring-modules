@@ -18,6 +18,7 @@
                 <prop key="/ajax/*.action">ajaxValidationHandler</prop>
                 <prop key="/ajax/test.action">dummyHandler</prop>
                 <prop key="/ajax/submit.action">dummySubmitHandler</prop>
+                <prop key="/ajax/submit">dummySubmitHandler</prop>
             </props>
         </property>
     </bean>

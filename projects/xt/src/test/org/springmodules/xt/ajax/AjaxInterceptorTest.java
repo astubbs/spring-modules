@@ -15,6 +15,7 @@
  */
 package org.springmodules.xt.ajax;
 
+import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -124,6 +125,24 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         String response2 = new DummySubmitHandler().submit(new AjaxSubmitEventImpl("submit", httpRequest)).getResponse();
         
         assertEquals(response1, response2);
+    }
+    
+    public void testLookupHandlers() throws Exception {
+        AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptor");
+        MockHttpServletRequest httpRequest = null;
+        List<AjaxHandler> handlers = null;
+        
+        httpRequest = new MockHttpServletRequest("GET", "/ajax/test.action");
+        handlers = ajaxInterceptor.lookupHandlers(httpRequest);
+        assertEquals(2, handlers.size());
+        
+        httpRequest = new MockHttpServletRequest("GET", "/ajax/submit");
+        handlers = ajaxInterceptor.lookupHandlers(httpRequest);
+        assertEquals(1, handlers.size());
+        
+        httpRequest = new MockHttpServletRequest("GET", "/ajax/no");
+        handlers = ajaxInterceptor.lookupHandlers(httpRequest);
+        assertEquals(0, handlers.size());
     }
     
     protected String[] getConfigLocations() {
