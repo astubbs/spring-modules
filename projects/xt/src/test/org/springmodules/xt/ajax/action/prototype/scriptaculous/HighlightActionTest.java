@@ -1,7 +1,5 @@
 package org.springmodules.xt.ajax.action.prototype.scriptaculous;
 
-import junit.framework.TestCase;
-import org.springmodules.xt.test.domain.Employee;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
