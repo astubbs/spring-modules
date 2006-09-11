@@ -29,6 +29,11 @@ import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
  */
 public class HighlightAction extends AbstractExecuteJavascriptAction {
     
+    private static final String DURATION = new String("duration");
+    private static final String START_COLOR = new String("startcolor");
+    private static final String END_COLOR = new String("endcolor");
+    private static final String RESTORE_COLOR = new String("restorecolor");
+    
     private String elementId;
     private Map options = new HashMap();
     
@@ -47,7 +52,7 @@ public class HighlightAction extends AbstractExecuteJavascriptAction {
      */
     public HighlightAction(String elementId, float duration) {
         this.elementId = elementId;
-        this.options.put("duration", duration);
+        this.options.put(DURATION, duration);
     }
     
     /**
@@ -60,10 +65,10 @@ public class HighlightAction extends AbstractExecuteJavascriptAction {
      */
     public HighlightAction(String elementId, Float duration, String startColor, String endColor, String restoreColor) {
         this.elementId = elementId;
-        if (duration != null) this.options.put("duration", duration);
-        if (startColor != null) this.options.put("startcolor", startColor);
-        if (endColor != null) this.options.put("endcolor", endColor);
-        if (restoreColor != null) this.options.put("restorecolor", restoreColor);
+        if (duration != null) this.options.put(DURATION, duration);
+        if (startColor != null) this.options.put(START_COLOR, startColor);
+        if (endColor != null) this.options.put(END_COLOR, endColor);
+        if (restoreColor != null) this.options.put(RESTORE_COLOR, restoreColor);
     }
     
     protected String getJavascript() {

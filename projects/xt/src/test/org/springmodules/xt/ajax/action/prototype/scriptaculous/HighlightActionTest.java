@@ -20,7 +20,7 @@ public class HighlightActionTest extends XMLEnhancedTestCase {
         
         System.out.println(rendering);
         
-        assertXpathEvaluatesTo("new Effect.Highlight(\"test\");", "//script", rendering);
+        assertXpathEvaluatesTo("new Effect.Highlight(\"test\");", "/taconite-execute-javascript/script", rendering);
     }
     
     public void testRenderPart2() throws Exception {
@@ -30,6 +30,6 @@ public class HighlightActionTest extends XMLEnhancedTestCase {
         System.out.println(rendering);
         
         // Cannot test because there's no fixed order between json elements:
-        //assertXpathEvaluatesTo("new Effect.Highlight(\"test\",{\"duration\":0.5,\"startcolor\"=\"#ffff33\",\"endcolor\"=\"#ffff44\",\"restorecolor\"=\"#ffff55\"});", "//script", rendering);
+        //assertXpathEvaluatesTo("new Effect.Highlight(\"test\",{\"duration\":0.5,\"startcolor\"=\"#ffff33\",\"endcolor\"=\"#ffff44\",\"restorecolor\"=\"#ffff55\"});", "/taconite-execute-javascript/script", rendering);
     }
 }

@@ -25,8 +25,8 @@ import org.springmodules.xt.ajax.AjaxAction;
  */
 public class SetAttributeAction implements AjaxAction {
     
-    private static final String OPEN_SET_ATTRIBUTE = new String("<taconite-set-attributes contextNodeID=\"$1\" parseInBrowser=\"true\" $2=\"$3\">");
-    private static final String CLOSE_SET_ATTRIBUTE = new String("</taconite-set-attributes>");
+    private static final String OPEN = new String("<taconite-set-attributes contextNodeID=\"$1\" parseInBrowser=\"true\" $2=\"$3\">");
+    private static final String CLOSE = new String("</taconite-set-attributes>");
     
     private String elementId;
     private String attribute;
@@ -45,8 +45,8 @@ public class SetAttributeAction implements AjaxAction {
     }
     
     public String execute() {
-        StringBuilder response = new StringBuilder(OPEN_SET_ATTRIBUTE.replaceFirst("\\$1", this.elementId).replaceFirst("\\$2", this.attribute).replaceFirst("\\$3", this.value));
-        response.append(CLOSE_SET_ATTRIBUTE);
+        StringBuilder response = new StringBuilder(OPEN.replaceFirst("\\$1", this.elementId).replaceFirst("\\$2", this.attribute).replaceFirst("\\$3", this.value));
+        response.append(CLOSE);
         return response.toString();
     }
 }

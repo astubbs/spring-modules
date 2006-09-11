@@ -27,6 +27,9 @@ import org.springmodules.xt.ajax.component.Component;
  */
 public class InsertContentBeforeAction extends AbstractRenderingAction {
     
+    private static final String OPEN = new String("<taconite-insert-before contextNodeID=\"$1\" parseInBrowser=\"true\">");
+    private static final String CLOSE = new String("</taconite-insert-before>");
+    
     /**
      * Construct the action.
      * @param elementId The id of the html element which the content will be inserted before.
@@ -46,10 +49,10 @@ public class InsertContentBeforeAction extends AbstractRenderingAction {
     }
     
     protected String getOpeningTag() {
-        return "<taconite-insert-before contextNodeID=\"$1\" parseInBrowser=\"true\">";
+        return OPEN;
     }
 
     protected String getClosingTag() {
-        return "</taconite-insert-before>";
+        return CLOSE;
     }
 }

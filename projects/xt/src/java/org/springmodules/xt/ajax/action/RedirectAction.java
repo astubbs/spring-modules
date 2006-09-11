@@ -30,8 +30,8 @@ import org.springmodules.xt.ajax.AjaxAction;
  */
 public class RedirectAction implements AjaxAction {
     
-    private static final String OPEN_REDIRECT_ACTION = new String("<taconite-redirect targetUrl=\"$1\" parseInBrowser=\"true\">");
-    private static final String CLOSE_REDIRECT_ACTION = new String("</taconite-redirect>");
+    private static final String OPEN = new String("<taconite-redirect targetUrl=\"$1\" parseInBrowser=\"true\">");
+    private static final String CLOSE = new String("</taconite-redirect>");
     
     private StringBuilder targetUrl;
     private Map model;
@@ -59,8 +59,8 @@ public class RedirectAction implements AjaxAction {
             // FIXME : Unexpected ....
             throw new RuntimeException("Unexpected", ex);
         }
-        StringBuilder response = new StringBuilder(OPEN_REDIRECT_ACTION.replaceFirst("\\$1", this.targetUrl.toString()));
-        response.append(CLOSE_REDIRECT_ACTION);
+        StringBuilder response = new StringBuilder(OPEN.replaceFirst("\\$1", this.targetUrl.toString()));
+        response.append(CLOSE);
         return response.toString();
     }
     

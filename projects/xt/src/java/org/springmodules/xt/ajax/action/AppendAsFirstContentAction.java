@@ -27,6 +27,9 @@ import org.springmodules.xt.ajax.component.Component;
  */
 public class AppendAsFirstContentAction extends AbstractRenderingAction {
     
+    private static final String OPEN = new String("<taconite-append-as-first-child contextNodeID=\"$1\" parseInBrowser=\"true\">");
+    private static final String CLOSE = new String("</taconite-append-as-first-child>");
+    
     /**
      * Construct the action.
      * @param elementId The id of the html element for appending content to.
@@ -46,10 +49,10 @@ public class AppendAsFirstContentAction extends AbstractRenderingAction {
     }
     
     protected String getOpeningTag() {
-        return "<taconite-append-as-first-child contextNodeID=\"$1\" parseInBrowser=\"true\">";
+        return OPEN;
     }
     
     protected String getClosingTag() {
-        return "</taconite-append-as-first-child>";
+        return CLOSE;
     }
 }
