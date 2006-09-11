@@ -17,6 +17,7 @@ import org.springmodules.xt.ajax.action.SetAttributeAction;
 import org.springmodules.xt.ajax.action.prototype.HideElementAction;
 import org.springmodules.xt.ajax.action.prototype.ShowElementAction;
 import org.springmodules.xt.ajax.action.prototype.scriptaculous.HighlightAction;
+import org.springmodules.xt.ajax.action.prototype.scriptaculous.OpacityAction;
 import org.springmodules.xt.ajax.component.InputField;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.component.TaggedText;
@@ -125,6 +126,18 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     public AjaxResponse highlightElement(AjaxActionEvent event) {
         // Create an ajax action for highlighting an element: 
         HighlightAction action = new HighlightAction("toHighlight");
+        
+        // Create a concrete ajax response:
+        AjaxResponse response = new AjaxResponseImpl();
+        // Add the action:
+        response.addAction(action);
+        
+        return response;
+    }
+    
+    public AjaxResponse setOpacity(AjaxActionEvent event) {
+        // Create an ajax action for setting the opacity of an element: 
+        OpacityAction action = new OpacityAction("toSetOpacity", (float) 0.8, (float) 1.0, (float) 0.2);
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();

@@ -91,6 +91,16 @@
                 </tr>
                 
                 <tr>
+                    <td>Press to modify the opacity of the greetings message below :</td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('setOpacity', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="toSetOpacity" style="contentEditable: true;">Hello, Spring Modules user!</div>
+                    </td>
+                </tr>
+                
+                <tr>
                     <td>Press to complete the greetings message below :</td>
                     <td><input id="insertAfterButton" type="button" value="Press" onclick="doAjaxAction('insertAfter', this);"></td>
                 </tr>
