@@ -42,6 +42,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.support.RequestContext;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springmodules.validation.commons.MessageUtils;
 import org.springmodules.validation.commons.ValidatorFactory;
 
@@ -297,7 +298,7 @@ public class JavascriptValidatorTag extends BodyTagSupport {
     public int doStartTag() throws JspException {
         StringBuffer results = new StringBuffer();
 
-        Locale locale = pageContext.getRequest().getLocale();
+        Locale locale = RequestContextUtils.getLocale((HttpServletRequest)pageContext.getRequest());
 
         ValidatorResources resources = getValidatorResources();
 
