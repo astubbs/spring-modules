@@ -251,8 +251,48 @@
         </javadoc>
     </target>
 
+    <target name="gen.release.samples" depends="init">
+      <property name="tmp.samples.dir" value="${target.release.dir}/tmp/samples" />
+      <mkdir dir="${tmp.samples.dir}"/>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-hivemind-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/hivemind/src" />
+      </zip>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-jcr-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/jcr/src" />
+      </zip>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-jsr94-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/jsr94/src" />
+      </zip>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-lucene-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/lucene/src" />
+      </zip>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-osworkflow-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/osworkflow/src" />
+      </zip>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-validation-bean-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/validation/validation-bean/src" />
+      </zip>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-validation-commons-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/validation/validation-commons/src" />
+      </zip>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-validation-valang-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/validation/validation-valang/src" />
+      </zip>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-xt-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/xt/src" />
+      </zip>
+    </target>
 	
-	<target name="gen.release.zip" depends="init, gen.release.jar, gen.release.javadoc"> <!--  -->
+    <target name="gen.release.zip" depends="init, gen.release.jar, gen.release.javadoc, gen.release.samples"> <!--  -->
 		<mkdir dir="${target.release.dir}" />
 		<delete file="${target.release.dir}/${release.zip}" />
 
@@ -284,6 +324,9 @@
 			            prefix="${zip.toplevel.dir}/docs/reference">
 			</zipfileset>
 			
+      <!-- samples -->
+      <zipfileset dir="${target.release.dir}/tmp/samples" includes="**/*-src.zip" prefix="${zip.toplevel.dir}/samples/sources"/>
+      
 			<zipfileset dir="../projects/repository" 
 			            prefix="${zip.toplevel.dir}/repository" />
 			            
