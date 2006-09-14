@@ -384,6 +384,10 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 * @return
 	 */
 	private String getRepositoryInfo() {
+		// in case toString() is called before afterPropertiesSet()
+		if (getRepository() == null)
+			return "<N/A>";
+		
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getRepository().getDescriptor(Repository.REP_NAME_DESC));
 		buffer.append(" ");
