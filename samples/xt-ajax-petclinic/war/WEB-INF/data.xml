@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:petclinic="http://www.petclinic.org/schema/petclinic"
+       xsi:schemaLocation="
+       http://www.petclinic.org/schema/petclinic http://www.petclinic.org/schema/petclinic/petclinic.xsd
+	     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <!-- custom property editors -->
+  <bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+    <property name="customEditors">
+      <map>
+        <entry key="java.util.Date">
+          <bean class="org.springframework.beans.propertyeditors.CustomDateEditor">
+            <constructor-arg>
+              <bean class="java.text.SimpleDateFormat">
+                <constructor-arg value="yyyy-MM-dd"/>
+                <property name="lenient" value="false"/>
+              </bean>
+            </constructor-arg>
+            <constructor-arg value="false"/>
+          </bean>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <!-- pettypes -->
+  <util:set id="petTypes">
+    <petclinic:type id="1" name="cat"/>
+    <petclinic:type id="2" name="dog"/>
+    <petclinic:type id="3" name="lizard"/>
+    <petclinic:type id="4" name="snake"/>
+    <petclinic:type id="5" name="bird"/>
+    <petclinic:type id="6" name="hamster"/>
+  </util:set>
+
+  <!-- specialties -->
+  <util:set id="specialties">
+    <petclinic:specialty id="1" name="radiology"/>
+    <petclinic:specialty id="2" name="surgery"/>
+    <petclinic:specialty id="3" name="dentistry"/>
+  </util:set>
+
+  <!-- vets -->
+  <util:set id="vets">
+    <petclinic:vet id="1" firstName="James" lastName="Carter"/>
+    <petclinic:vet id="2" firstName="Helen" lastName="Leary">
+      <petclinic:specialty id="1"/>
+    </petclinic:vet>
+    <petclinic:vet id="3" firstName="Linda" lastName="Douglas">
+      <petclinic:specialty id="2"/>
+      <petclinic:specialty id="3"/>
+    </petclinic:vet>
+    <petclinic:vet id="4" firstName="Rafael" lastName="Ortega">
+      <petclinic:specialty id="2"/>
+    </petclinic:vet>
+    <petclinic:vet id="5" firstName="Henry" lastName="Stevens">
+      <petclinic:specialty id="1"/>
+    </petclinic:vet>
+    <petclinic:vet id="6" firstName="Sharon" lastName="Jenkins"/>
+  </util:set>
+
+  <!-- visits -->
+  <petclinic:visit id="1" date="1996-03-04" description="rabies shot"/>
+  <petclinic:visit id="2" date="1996-03-04" description="rabies shot"/>
+  <petclinic:visit id="3" date="1996-06-04" description="neutered"/>
+  <petclinic:visit id="4" date="1996-09-04" description="spayed"/>
+
+  <!-- pets -->
+  <petclinic:pet id="1" name="Leo" birthDate="2000-09-07" type-ref="1"/>
+  <petclinic:pet id="2" name="Basil" birthDate="2002-08-06" type-ref="6"/>
+  <petclinic:pet id="3" name="Rosy" birthDate="2001-04-17" type-ref="2"/>
+  <petclinic:pet id="4" name="Jewel" birthDate="2000-03-07" type-ref="2"/>
+  <petclinic:pet id="5" name="Iggy" birthDate="2000-11-30" type-ref="3"/>
+  <petclinic:pet id="6" name="George" birthDate="2000-01-20" type-ref="4"/>
+  <petclinic:pet id="7" name="Samantha" birthDate="1995-09-04" type-ref="1">
+    <petclinic:visit id="1"/>
+    <petclinic:visit id="4"/>
+  </petclinic:pet>
+  <petclinic:pet id="8" name="Max" birthDate="1995-09-04" type-ref="1">
+    <petclinic:visit id="2"/>
+    <petclinic:visit id="3"/>
+  </petclinic:pet>
+  <petclinic:pet id="9" name="Lucky" birthDate="1999-08-06" type-ref="5"/>
+  <petclinic:pet id="10" name="Mulligan" birthDate="1997-02-24" type-ref="2"/>
+  <petclinic:pet id="11" name="Freddy" birthDate="2000-03-09" type-ref="5"/>
+  <petclinic:pet id="12" name="Lucky" birthDate="2000-06-24" type-ref="2"/>
+  <petclinic:pet id="13" name="Sly" birthDate="2002-06-08" type-ref="1"/>
+
+  <!-- owners -->
+  <util:set id="owners">
+    <petclinic:owner id="1" firstName="George" lastName="Franklin" address="110 W. Liberty St." city="Madison" telephone="6085551023">
+      <petclinic:pet id="1"/>
+    </petclinic:owner>
+    <petclinic:owner id="2" firstName="Betty" lastName="Davis" address="638 Cardinal Ave." city="Sun Prairie" telephone="6085551749">
+      <petclinic:pet id="2"/>
+    </petclinic:owner>
+    <petclinic:owner id="3" firstName="Eduardo" lastName="Rodriquez" address="2693 Commerce St." city="McFarland" telephone="6085558763">
+      <petclinic:pet id="3"/>
+      <petclinic:pet id="4"/>
+    </petclinic:owner>
+    <petclinic:owner id="4" firstName="Harold" lastName="Davis" address="563 Friendly St." city="Windsor" telephone="6085553198">
+      <petclinic:pet id="5"/>
+    </petclinic:owner>
+    <petclinic:owner id="5" firstName="Peter" lastName="McTavish" address="2387 S. Fair Way" city="Madison" telephone="6085552765">
+      <petclinic:pet id="6"/>
+    </petclinic:owner>
+    <petclinic:owner id="6" firstName="Jean" lastName="Coleman" address="105 N. Lake St." city="Monona" telephone="6085552654">
+      <petclinic:pet id="7"/>
+      <petclinic:pet id="8"/>
+    </petclinic:owner>
+    <petclinic:owner id="7" firstName="Jeff" lastName="Black" address="1450 Oak Blvd." city="Monona" telephone="6085555387">
+      <petclinic:pet id="9"/>
+    </petclinic:owner>
+    <petclinic:owner id="8" firstName="Maria" lastName="Escobito" address="345 Maple St." city="Madison" telephone="6085557683">
+      <petclinic:pet id="10"/>
+    </petclinic:owner>
+    <petclinic:owner id="9" firstName="David" lastName="Schroeder" address="2749 Blackhawk Trail" city="Madison" telephone="6085559435">
+      <petclinic:pet id="11"/>
+    </petclinic:owner>
+    <petclinic:owner id="10" firstName="Carlos" lastName="Estaban" address="2335 Independence La." city="Waunakee" telephone="6085555487">
+      <petclinic:pet id="12"/>
+      <petclinic:pet id="13"/>
+    </petclinic:owner>
+  </util:set>
+
+</beans>
