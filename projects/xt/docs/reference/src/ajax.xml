@@ -1,406 +1,597 @@
-<sect1 id="ajax"><title>XT Ajax Framework</title>
-    <sect2 id='ajax-intro'><title id='ajax-intro-title'>Introduction</title>
-        <para>XT Ajax Framework is based on the following fundamental concepts:
-        </para>
-        <itemizedlist>
-            <listitem>
-                <para>Events
-                </para>
-            </listitem>
-            <listitem>
-                <para>Handlers
-                </para>
-            </listitem>
-            <listitem>
-                <para>Actions
-                </para>
-            </listitem>
-            <listitem>
-                <para>Components
-                </para>
-            </listitem>
-            <listitem>
-                <para>Responses
-                </para>
-            </listitem>
-        </itemizedlist>
-        <para>They work together in a simple processing flow:
-        </para>
-        <orderedlist>
-            <listitem>
-                <para>Web pages fire <emphasis role='bold'>events</emphasis> using standard <ulink url='http://www.w3schools.com/js/js_events.asp'><citetitle>JavaScript events</citetitle></ulink>.
-                </para>
-            </listitem>
-            <listitem>
-                <para>Each event causes an Ajax request that is processed by simple Java objects acting as server side <emphasis role='bold'>handlers</emphasis>.
-                </para>
-            </listitem>
-            <listitem>
-                <para>The handler processes events creating <emphasis role='bold'>actions</emphasis>.
-                </para>
-            </listitem>
-            <listitem>
-                <para>Each action may render one or more HTML <emphasis role='bold'>components</emphasis> in the page.
-                </para>
-            </listitem>
-            <listitem>
-                <para>At the end, actions are canalised into an Ajax <emphasis role='bold'>response</emphasis> sent back to the web page.
-                </para>
-            </listitem>
-        </orderedlist>
-        <para>We'll take a more detailed look to each of the concepts above in the next section.
-        </para>
-    </sect2>
-    <sect2 id='ajax-base'><title id='ajax-base-title'>Base Concepts</title>
-        <sect3 id='ajax-events'><title id='ajax-events-title'>Ajax Events</title>
-            <para>In XT Ajax Framework you can raise events from your web pages as standard <ulink url='http://www.w3schools.com/js/js_events.asp'><citetitle>JavaScript events</citetitle></ulink>, and handle them by the server side, 
-                <emphasis role='bold'>without having to write any javascript code</emphasis>.
-                There are actually the following types of Ajax events: 
-            </para>
-            <itemizedlist>
-                <listitem>
-                    <para><emphasis role='bold'>Action events</emphasis>, a generic event type directly handled by configured <link linkend="ajax-handlers">handlers</link> <emphasis role='bold'>without</emphasis> calling any Spring MVC controller: 
-                        this is most used for updating the web page with data from the server.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para><emphasis role='bold'>Submit events</emphasis>, a special type of event handled by configured <link linkend="ajax-handlers">handlers</link> <emphasis role='bold'>after</emphasis> executing the Spring MVC controller 
-                        associated with the page: this event causes the submit of the page and so the handling of the submit by the controller, and can be used for
-                        further processing the submit for properly updating the view.
-                    </para>
-                </listitem>
-            </itemizedlist>
-            <para>Ajax <emphasis role='bold'>action events</emphasis> are fired in web pages as follows:
-            </para>
-            <programlisting><![CDATA[
-                <input type="button" value="Go" 
-                onclick="doAjaxAction('eventId', this, {'param1' : 'value1', 'param2' : 'value2'});"> 
-            ]]></programlisting>
-            <para>You have to simply call the (pre-implemented) <emphasis role='bold'>doAjaxAction</emphasis> JavaScript function, 
-                passing:
-            </para>
-            <itemizedlist>
-                <listitem>
-                    <para>The <emphasis role='bold'>name (or id) of the event</emphasis> you want to fire ('eventId').
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>The html element which fired the event, through the <emphasis role='bold'>this</emphasis> objects.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>A <ulink url='http://www.json.org/'><citetitle>JSON</citetitle></ulink> string containing
-                        extra parameters you want to pass to the server.
-                    </para>
-                </listitem>
-            </itemizedlist>
-            <para>Once you receive the event in your server side handler, you can access the following information (see XT javadocs for more information):
-            </para>
-            <itemizedlist>
-                <listitem>
-                    <para>The event id (corresponding to the event name above).
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>The Java <ulink url='http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html'><citetitle>HttpServletRequest</citetitle></ulink> object.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>The name and id of the html element firing the event.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>A map of string key/value pairs, containing the extra parameters defined above using the JSON string.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>The command object created by the Spring MVC controller, if this is a <ulink url='http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/mvc/BaseCommandController.html'><citetitle>BaseCommandController</citetitle></ulink>.
-                    </para>
-                </listitem>
-            </itemizedlist>
-            <para>For firing Ajax <emphasis role='bold'>submit events</emphasis>, you have to write:
-            </para>
-            <programlisting><![CDATA[
-                <input type="button" value="Press" 
-                onclick="doAjaxSubmit('eventId', this {'param1' : 'value1', 'param2' : 'value2'});"> 
-            ]]></programlisting>
-            <para>You have to simply call the (pre-implemented) <emphasis role='bold'>doAjaxSubmit</emphasis> JavaScript function, passing it the same information
-                defined above.
-            </para>
-            <para>Once you receive the event in your server side handler, you can access the following information in addition to those defined above (see XT javadocs for more information):
-            </para>
-            <itemizedlist>
-                <listitem>
-                    <para>A container of <ulink url='http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/validation/Errors.html'><citetitle>validation errors</citetitle></ulink>, for managing form submission errors.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para>The model map returned by the controller submit method, if any.
-                    </para>
-                </listitem>
-            </itemizedlist>
-            <para>Given that submit events are handled after calling the configured Spring MVC controller, the command object, model map, and validation errors contained 
-                in the submit event are <emphasis role='bold'>the same</emphasis> objects you manage in the controller.
-            </para>
-        </sect3>
-        <sect3 id='ajax-handlers'><title id='ajax-handlers-title'>Ajax Handlers</title>
-            <para>The Ajax handler is the server side component to be implemented for managing Ajax events.
-                This is the interface of an Ajax handler, followed by a description of its methods: 
-            </para>
-            <programlisting><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 id="ajax">
+  <title>XT Ajax Framework</title>
+
+  <sect2 id="ajax-intro">
+    <title id="ajax-intro-title">Introduction</title>
+
+    <para>XT Ajax Framework is based on the following fundamental
+    concepts:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Events</para>
+      </listitem>
+
+      <listitem>
+        <para>Handlers</para>
+      </listitem>
+
+      <listitem>
+        <para>Actions</para>
+      </listitem>
+
+      <listitem>
+        <para>Components</para>
+      </listitem>
+
+      <listitem>
+        <para>Responses</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>They work together in a simple processing flow:</para>
+
+    <orderedlist>
+      <listitem>
+        <para>Web pages fire <emphasis role="bold">events</emphasis> using
+        standard <ulink
+        url="http://www.w3schools.com/js/js_events.asp"><citetitle>JavaScript
+        events</citetitle></ulink>.</para>
+      </listitem>
+
+      <listitem>
+        <para>Each event causes an Ajax request that is processed by simple
+        Java objects acting as server side <emphasis
+        role="bold">handlers</emphasis>.</para>
+      </listitem>
+
+      <listitem>
+        <para>The handler processes events creating <emphasis
+        role="bold">actions</emphasis>.</para>
+      </listitem>
+
+      <listitem>
+        <para>Each action may render one or more HTML <emphasis
+        role="bold">components</emphasis> in the page.</para>
+      </listitem>
+
+      <listitem>
+        <para>At the end, actions are canalised into an Ajax <emphasis
+        role="bold">response</emphasis> sent back to the web page.</para>
+      </listitem>
+    </orderedlist>
+
+    <para>We'll take a more detailed look to each of the concepts above in the
+    next section.</para>
+  </sect2>
+
+  <sect2 id="ajax-base">
+    <title id="ajax-base-title">Base Concepts</title>
+
+    <sect3 id="ajax-events">
+      <title id="ajax-events-title">Ajax Events</title>
+
+      <para>In XT Ajax Framework you can raise events from your web pages as
+      standard <ulink
+      url="http://www.w3schools.com/js/js_events.asp"><citetitle>JavaScript
+      events</citetitle></ulink>, and handle them by the server side,
+      <emphasis role="bold">without having to write any javascript
+      code</emphasis>. There are actually the following types of Ajax
+      events:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><emphasis role="bold">Action events</emphasis>, a generic
+          event type directly handled by configured <link
+          linkend="ajax-handlers">handlers</link> <emphasis
+          role="bold">without</emphasis> calling any Spring MVC controller:
+          this is most used for updating the web page with data from the
+          server.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Submit events</emphasis>, a special type
+          of event handled by configured <link
+          linkend="ajax-handlers">handlers</link> <emphasis
+          role="bold">after</emphasis> executing the Spring MVC controller
+          associated with the page: this event causes the submit of the page
+          and so the handling of the submit by the controller, and can be used
+          for further processing the submit for properly updating the
+          view.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Ajax <emphasis role="bold">action events</emphasis> are fired in
+      web pages as follows:</para>
+
+      <programlisting>
+                &lt;input type="button" value="Go" 
+                onclick="doAjaxAction('eventId', this, {'param1' : 'value1', 'param2' : 'value2'});"&gt; 
+            </programlisting>
+
+      <para>You have to simply call the (pre-implemented) <emphasis
+      role="bold">doAjaxAction</emphasis> JavaScript function, passing:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>The <emphasis role="bold">name (or id) of the event</emphasis>
+          you want to fire ('eventId').</para>
+        </listitem>
+
+        <listitem>
+          <para>The html element which fired the event, through the <emphasis
+          role="bold">this</emphasis> objects.</para>
+        </listitem>
+
+        <listitem>
+          <para>A <ulink
+          url="http://www.json.org/"><citetitle>JSON</citetitle></ulink>
+          string containing extra parameters you want to pass to the
+          server.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Once you receive the event in your server side handler, you can
+      access the following information (see XT javadocs for more
+      information):</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>The event id (corresponding to the event name above).</para>
+        </listitem>
+
+        <listitem>
+          <para>The Java <ulink
+          url="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html"><citetitle>HttpServletRequest</citetitle></ulink>
+          object.</para>
+        </listitem>
+
+        <listitem>
+          <para>The name and id of the html element firing the event.</para>
+        </listitem>
+
+        <listitem>
+          <para>A map of string key/value pairs, containing the extra
+          parameters defined above using the JSON string.</para>
+        </listitem>
+
+        <listitem>
+          <para>The command object created by the Spring MVC controller, if
+          this is a <ulink
+          url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/mvc/BaseCommandController.html"><citetitle>BaseCommandController</citetitle></ulink>.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>For firing Ajax <emphasis role="bold">submit events</emphasis>,
+      you have to write:</para>
+
+      <programlisting>
+                &lt;input type="button" value="Press" 
+                onclick="doAjaxSubmit('eventId', this {'param1' : 'value1', 'param2' : 'value2'});"&gt; 
+            </programlisting>
+
+      <para>You have to simply call the (pre-implemented) <emphasis
+      role="bold">doAjaxSubmit</emphasis> JavaScript function, passing it the
+      same information defined above.</para>
+
+      <para>Once you receive the event in your server side handler, you can
+      access the following information in addition to those defined above (see
+      XT javadocs for more information):</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>A container of <ulink
+          url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/validation/Errors.html"><citetitle>validation
+          errors</citetitle></ulink>, for managing form submission
+          errors.</para>
+        </listitem>
+
+        <listitem>
+          <para>The model map returned by the controller submit method, if
+          any.</para>
+        </listitem>
+      </itemizedlist>
+
+      <note>
+        <para>Given that submit events are handled after calling the
+        configured Spring MVC controller, the command object, model map, and
+        validation errors contained in the submit event are <emphasis
+        role="bold">the same</emphasis> objects you manage in the
+        controller.</para>
+      </note>
+    </sect3>
+
+    <sect3 id="ajax-handlers">
+      <title id="ajax-handlers-title">Ajax Handlers</title>
+
+      <para>The Ajax handler is the server side component to be implemented
+      for managing Ajax events. This is the interface of an Ajax handler,
+      followed by a description of its methods:</para>
+
+      <programlisting>
                 public interface AjaxHandler { 
 
                 public boolean supports(AjaxEvent event); 
 
                 public AjaxResponse handle(AjaxEvent event); 
                 } 
-            ]]></programlisting>
-            <itemizedlist>
-                <listitem><para><emphasis>public boolean supports(AjaxEvent event)</emphasis> : Check if <emphasis>this</emphasis> handler supports (can handle) the given, generic, <emphasis role='bold'>AjaxEvent</emphasis></para></listitem>
-                <listitem><para><emphasis>public AjaxResponse handle(AjaxEvent event)</emphasis> : Handle the given, generic, <emphasis role='bold'>AjaxEvent</emphasis> (if supported) and returns an appropriate <emphasis role='bold'>AjaxResponse</emphasis> (see <link linkend="ajax-response">Ajax Response</link>).</para></listitem>
-            </itemizedlist>
-            <para>Out of the box, XT Ajax Framework provides an AjaxHandler abstract implementation which provides a straightforward way of implementing Ajax handlers: the <emphasis role='bold'>AbstractAjaxHandler</emphasis>.
-                AbstractAjaxHandler is an event dispatcher based on Java reflection and Ajax events name (<emphasis>id</emphasis>): it implements the two methods above dispatching events to methods named after the event id. 
-                So, for handling different events, you have to simply implement a method named after the event id you want to handle, with the following signature: 
-            </para>
-            <programlisting><![CDATA[public AjaxResponse eventId(AjaxEvent )]]></programlisting>
-            <para>Given an ajax event with id <emphasis>countrySelection</emphasis>, the handling method will be:
-            </para>
-            <programlisting><![CDATA[public AjaxResponse countrySelection(AjaxEvent )]]></programlisting>
-            <para>Doing so you handle generic <emphasis>AjaxEvent</emphasis>s.
-                If you want to handle <emphasis>AjaxActionEvent</emphasis>s or <emphasis>AjaxSubmitEvent</emphasis>s, simply write methods with the following signatures: 
-            </para>
-            <programlisting><![CDATA[public AjaxResponse eventId(AjaxActionEvent )]]></programlisting>
-            <programlisting><![CDATA[public AjaxResponse eventId(AjaxSubmitEvent )]]></programlisting>
-            <para>However, you are free to implement a different handling strategy, directly implementing the interface above.
-            </para>
-            <para>You've seen how to fire events from web pages, and how to handle them through AjaxHandlers.
-                The next step is <emphasis role='bold'>how to associate events with handlers</emphasis>. 
-            </para>
-        </sect3>
-        <sect3 id='associating-events-with-handlers'><title id='associating-events-with-handlers-title'>Associating events with handlers: the AjaxInterceptor</title>
-            <para>Once defined your events and implemented your handlers, you need to <emphasis role='bold'>associate</emphasis> them.
-            </para>
-            <para>For <emphasis role='bold'>security reason</emphasis>, web pages events and ajax handlers are not automatically associated, nor can be globally associated.
-                If it were so, malicious users could hack your JavaScript events and execute unwanted events. 
-            </para>
-            <para>So, events and handlers are associated <emphasis role='bold'>per page path</emphasis>, that is, you have to configure every handler to manage events fired by a pre-determined, restricted, set of pages.
-                Specifically, you can configure an handler to manage events fired by a specific, single, web page, or by web pages defined with <ulink url='http://ant.apache.org'><citetitle>Ant</citetitle></ulink> style pattern matching.  
-            </para>
-            <para>
-                This is done in two simple steps.
-            </para>
-            <para>
-                First, you have to define in your Spring application context an <emphasis role='bold'>AjaxInterceptor</emphasis>: it is the bean which associates web pages and Ajax handlers,
-                making under the cover the actual event dispatching.
-                Here is an example of AjaxInterceptor configuration:
-            </para>
-            <programlisting><![CDATA[
-                <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
+            </programlisting>
 
-                <property name="handlerMappings">
-                <props
-                <prop key="/ajax/ex*">genericAjaxHandler</prop>
-                <prop key="/ajax/ex1.page">ajaxHandler1</prop>
-                <prop key="/ajax/ex2.page">ajaxHandler2</prop>
-                </props>
-                </property>
+      <itemizedlist>
+        <listitem>
+          <para><emphasis>public boolean supports(AjaxEvent event)</emphasis>
+          : Check if <emphasis>this</emphasis> handler supports (can handle)
+          the given, generic, <emphasis
+          role="bold">AjaxEvent</emphasis></para>
+        </listitem>
 
-                </bean>
-            ]]></programlisting>
-            <para>The <emphasis>handlerMappings</emphasis> property is a list of key/value entries associating a web path (the key) with an handler (the value), which
-                must be an AjaxHandler declared as a bean in the Spring applicationContext. 
-                As you can notice, the first entry associates the handler with an Ant style pattern, while others associate handlers with single pages. 
-                Doing so, you can also apply more handlers to the same group of pages. When more handlers apply for the same event, the one configured for matching the longest web path wins. 
-            </para>
-            <para>
-                Finally, the second step requires you to associate the AjaxInterceptor with the interceptors chain of your Spring MVC <ulink url='http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/HandlerMapping.html'><citetitle>URL handler mapping</citetitle></ulink>.
-                Here is how:
-            </para>
-            <programlisting><![CDATA[
-                <bean id="urlHandlerMapping" 
-                  class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+        <listitem>
+          <para><emphasis>public AjaxResponse handle(AjaxEvent
+          event)</emphasis> : Handle the given, generic, <emphasis
+          role="bold">AjaxEvent</emphasis> (if supported) and returns an
+          appropriate <emphasis role="bold">AjaxResponse</emphasis> (see <link
+          linkend="ajax-response">Ajax Response</link>).</para>
+        </listitem>
+      </itemizedlist>
 
-                <property name="interceptors">
-                <list>
-                <ref bean="ajaxInterceptor"/>
-                </list>
-                </property>
+      <para>Out of the box, XT Ajax Framework provides an AjaxHandler abstract
+      implementation which provides a straightforward way of implementing Ajax
+      handlers: the <emphasis role="bold">AbstractAjaxHandler</emphasis>.
+      AbstractAjaxHandler is an event dispatcher based on Java reflection and
+      Ajax events name (<emphasis>id</emphasis>): it implements the two
+      methods above dispatching events to methods named after the event id.
+      So, for handling different events, you have to simply implement a method
+      named after the event id you want to handle, with the following
+      signature:</para>
 
-                <property name="mappings">
-                <props>
-                <!-- ... -->
-                </props>
-                </property>
+      <programlisting>public AjaxResponse eventId(AjaxEvent )</programlisting>
 
-                </bean>
-            ]]></programlisting>
-            <para>
-                Now, we are ready to go with <link linkend="ajax-actions">actions</link>!
-            </para>
-        </sect3>
-        <sect3 id='ajax-actions'><title id='ajax-actions-title'>Ajax Actions</title>
-            <para>Ajax actions are created by handlers and act on the client: more specifically, they act on the web page that fired the event, interacting with its elements.</para>
-            <para>
-                XT Ajax Framework provides many useful actions ready to be used (see the <emphasis>org.springmodules.xt.ajax.action</emphasis> package for details); 
-                however, creating custom actions is just a matter of implementing the following simple interface:
-            </para>
-            <programlisting><![CDATA[
+      <para>Given an ajax event with id <emphasis>countrySelection</emphasis>,
+      the handling method will be:</para>
+
+      <programlisting>public AjaxResponse countrySelection(AjaxEvent )</programlisting>
+
+      <para>Doing so you handle generic <emphasis>AjaxEvent</emphasis>s. If
+      you want to handle <emphasis>AjaxActionEvent</emphasis>s or
+      <emphasis>AjaxSubmitEvent</emphasis>s, simply write methods with the
+      following signatures:</para>
+
+      <programlisting>public AjaxResponse eventId(AjaxActionEvent )</programlisting>
+
+      <programlisting>public AjaxResponse eventId(AjaxSubmitEvent )</programlisting>
+
+      <para>However, you are free to implement a different handling strategy,
+      directly implementing the interface above.</para>
+
+      <para>You've seen how to fire events from web pages, and how to handle
+      them through AjaxHandlers. The next step is <emphasis role="bold">how to
+      associate events with handlers</emphasis>.</para>
+    </sect3>
+
+    <sect3 id="associating-events-with-handlers">
+      <title id="associating-events-with-handlers-title">Associating events
+      with handlers: the AjaxInterceptor</title>
+
+      <para>Once defined your events and implemented your handlers, you need
+      to <emphasis role="bold">associate</emphasis> them.</para>
+
+      <para>For <emphasis role="bold">security reason</emphasis>, web pages
+      events and ajax handlers are not automatically associated, nor can be
+      globally associated. If it were so, malicious users could hack your
+      JavaScript events and execute unwanted events.</para>
+
+      <para>So, events and handlers are associated <emphasis role="bold">per
+      page path</emphasis>, that is, you have to configure every handler to
+      manage events fired by a pre-determined, restricted, set of pages.
+      Specifically, you can configure an handler to manage events fired by a
+      specific, single, web page, or by web pages defined with <ulink
+      url="http://ant.apache.org"><citetitle>Ant</citetitle></ulink> style
+      pattern matching.</para>
+
+      <para>This is done in two simple steps.</para>
+
+      <para>First, you have to define in your Spring application context an
+      <emphasis role="bold">AjaxInterceptor</emphasis>: it is the bean which
+      associates web pages and Ajax handlers, making under the cover the
+      actual event dispatching. Here is an example of AjaxInterceptor
+      configuration:</para>
+
+      <programlisting>
+                &lt;bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor"&gt;
+
+                &lt;property name="handlerMappings"&gt;
+                &lt;props&gt;
+                &lt;prop key="/ajax/ex*"&gt;genericAjaxHandler&lt;/prop&gt;
+                &lt;prop key="/ajax/ex1.page"&gt;ajaxHandler1&lt;/prop&gt;
+                &lt;prop key="/ajax/ex2.page"&gt;ajaxHandler2&lt;/prop&gt;
+                &lt;/props&gt;
+                &lt;/property&gt;
+
+                &lt;/bean&gt;
+            </programlisting>
+
+      <para>The <emphasis>handlerMappings</emphasis> property is a list of
+      key/value entries associating a web path (the key) with an handler (the
+      value), which must be an AjaxHandler declared as a bean in the Spring
+      applicationContext. As you can notice, the first entry associates the
+      handler with an Ant style pattern, while others associate handlers with
+      single pages. Doing so, you can also apply more handlers to the same
+      group of pages. When more handlers apply to the same event, the one
+      configured for matching the longest web path wins.</para>
+
+      <para>Finally, the second step requires you to associate the
+      AjaxInterceptor with the interceptors chain of your Spring MVC <ulink
+      url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/HandlerMapping.html"><citetitle>URL
+      handler mapping</citetitle></ulink>. Here is how:</para>
+
+      <programlisting>
+                &lt;bean id="urlHandlerMapping" 
+                  class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"&gt;
+
+                &lt;property name="interceptors"&gt;
+                &lt;list&gt;
+                &lt;ref bean="ajaxInterceptor"/&gt;
+                &lt;/list&gt;
+                &lt;/property&gt;
+
+                &lt;property name="mappings"&gt;
+                &lt;props&gt;
+                &lt;!-- ... --&gt;
+                &lt;/props&gt;
+                &lt;/property&gt;
+
+                &lt;/bean&gt;
+            </programlisting>
+
+      <para>Now, we are ready to go with <link
+      linkend="ajax-actions">actions</link>!</para>
+    </sect3>
+
+    <sect3 id="ajax-actions">
+      <title id="ajax-actions-title">Ajax Actions</title>
+
+      <para>Ajax actions are created by handlers and act on the client: more
+      specifically, they act on the web page that fired the event, interacting
+      with its elements.</para>
+
+      <para>XT Ajax Framework provides many useful actions ready to be used
+      (see the <emphasis>org.springmodules.xt.ajax.action</emphasis> package
+      for details); however, creating custom actions is just a matter of
+      implementing the following simple interface:</para>
+
+      <programlisting>
                 public interface AjaxAction { 
 
                 public String execute(); 
 
                 } 
-            ]]></programlisting> 
-            <para>The <emphasis>execute()</emphasis> method is the one you call for producing the action result.</para>
-            <para>Actions can do various things, depending on the concrete implementation, but most of the time they will render <link linkend="components">components</link>.
-            </para>
-        </sect3>
-        <sect3 id='identifying-page-parts'><title id='identifying-page-parts-title'>Identifying page parts</title>
-            <para>
-                Ajax actions act on web pages, often interacting with page content: how do they identify page parts to interact with (i.e. for updating contents)?
-            </para>
-            <para>
-                They identify page parts by the HTML <emphasis>id</emphasis> attribute. So, you have to assign an id to every HTML element you want to
-                interact with through Ajax actions:
-            </para>
-            <programlisting><![CDATA[
-                <select id="toFill">
-                </select>
-            ]]></programlisting>
-        </sect3>
-        <sect3 id='components'><title id='components-title'>Components</title>
-            <para>Generally speaking, <emphasis role='bold'>component</emphasis>s represent web page parts; however, most of the time they represent html elements, like
-                input fields, tables and so. XT Ajax Framework provides many useful components ready to be used (see the <emphasis>org.springmodules.xt.ajax.component</emphasis> package for details), 
-                but creating custom components is just a matter of implementing the following simple interface:
-            </para>
-            <programlisting><![CDATA[
+            </programlisting>
+
+      <para>The <emphasis>execute()</emphasis> method is the one you call for
+      producing the action result.</para>
+
+      <para>Actions can do various things, depending on the concrete
+      implementation, but most of the time they will render <link
+      linkend="components">components</link>.</para>
+    </sect3>
+
+    <sect3 id="identifying-page-parts">
+      <title id="identifying-page-parts-title">Identifying page parts</title>
+
+      <para>Ajax actions act on web pages, often interacting with page
+      content: how do they identify page parts to interact with (i.e. for
+      updating contents)?</para>
+
+      <para>They identify page parts by the HTML <emphasis>id</emphasis>
+      attribute. So, you have to assign an id to every HTML element you want
+      to interact with through Ajax actions:</para>
+
+      <programlisting>
+                &lt;select id="toFill"&gt;
+                &lt;/select&gt;
+            </programlisting>
+    </sect3>
+
+    <sect3 id="components">
+      <title id="components-title">Components</title>
+
+      <para>Generally speaking, <emphasis role="bold">component</emphasis>s
+      represent web page parts; however, most of the time they represent html
+      elements, like input fields, tables and so. XT Ajax Framework provides
+      many useful components ready to be used (see the
+      <emphasis>org.springmodules.xt.ajax.component</emphasis> package for
+      details), but creating custom components is just a matter of
+      implementing the following simple interface:</para>
+
+      <programlisting>
                     public interface Component { 
 
                     public String render(); 
 
                     } 
-                ]]></programlisting>
-            <para>Each component renders itself through the <emphasis role='bold'>render()</emphasis> method, returning a string representation of its rendering.</para>
-            <para>But how do actions render components?</para>
-            <para>
-                Components are added to actions in a way that depends on the concrete action implementation, and then rendered through the action <emphasis>execute()</emphasis> method.
-            </para>
-            <para>
-                Now that you have your ajax actions and components, the only thing left to do is filling your <link linkend="ajax-response">ajax response</link>.
-            </para>
-        </sect3>
-        <sect3 id='ajax-response'><title id='ajax-response-title'>Ajax Response</title>
-            <para><emphasis role='bold'>AjaxResponse</emphasis> objects are filled with actions whose result is carried to clients, that is, to web pages.
-                This is the interface of the AjaxResponse, followed by a description of its methods: 
-            </para>
-            <programlisting><![CDATA[
+                </programlisting>
+
+      <para>Each component renders itself through the <emphasis
+      role="bold">render()</emphasis> method, returning a string
+      representation of its rendering.</para>
+
+      <para>But how do actions render components?</para>
+
+      <para>Components are added to actions in a way that depends on the
+      concrete action implementation, and then rendered through the action
+      <emphasis>execute()</emphasis> method.</para>
+
+      <para>Now that you have your ajax actions and components, the only thing
+      left to do is filling your <link linkend="ajax-response">ajax
+      response</link>.</para>
+    </sect3>
+
+    <sect3 id="ajax-response">
+      <title id="ajax-response-title">Ajax Response</title>
+
+      <para><emphasis role="bold">AjaxResponse</emphasis> objects are filled
+      with actions whose result is carried to clients, that is, to web pages.
+      This is the interface of the AjaxResponse, followed by a description of
+      its methods:</para>
+
+      <programlisting>
                 public interface AjaxResponse { 
 
                 public void addAction(AjaxAction action); 
 
                 public String getResponse(); 
                 } 
-            ]]></programlisting>
-            <itemizedlist>
-                <listitem><para><emphasis>public void addAction(AjaxAction action)</emphasis> : This method is used for adding actions that will be executed and whose result will be sent to the client.</para></listitem>
-                <listitem><para><emphasis>public String getResponse()</emphasis> : This method executes the added actions and returns their result.</para></listitem>
-            </itemizedlist>
-            <para>
-                In the context of one ajax response, actions are executed <emphasis role='bold'>following their order of adding</emphasis>.
-            </para>
-        </sect3>
-        <sect3 id='integration'><title id='integration-title'>XT Ajax Framework, Taconite and integration with other JavaScript libraries</title>
-            <para>
-                The way XT Ajax Framework interacts with client web pages is based on the wonderful <ulink url='http://taconite.sourceforge.net'><citetitle>Taconite</citetitle></ulink> JavaScript library.
-                So, for using the XT Ajax Framework you need to include in your web pages Taconite, plus some other JavaScript library you can find under the <emphasis>js</emphasis> directory. 
-                However, all these core JavaScript libraries are put, at compile time, in the <emphasis>springxt.js</emphasis> file under the <emphasis>js/lib/core</emphasis> directory.
-                This is the only file you need to include in your web page:
-            </para>
-            <programlisting><![CDATA[
-                <script type="text/javascript" src='springxt.js'></script> 
-            ]]></programlisting> 
-            <para>
-                However, XT Ajax Framework integrates with other JavaScript libraries for providing additional capabilities, like new kind of actions: take a look at javadocs for more details.
-                All these additional libraries can be found under the <emphasis>js/lib/opt</emphasis> directory.
-            </para>
-            <tip>
-                <para>
-                    Under the <emphasis>js/lib/core</emphasis> you'll find also a <emphasis>springxt-min.js</emphasis> file: it is a minified version 
-                    of <emphasis>springxt.js</emphasis> you can include in your pages for reducing the download size.
-                </para>
-            </tip>
-        </sect3>
-    </sect2>
-    <sect2 id='ajax-tutorials'><title id='ajax-tutorials-title'>Tutorials</title>
-        <para>
-            In this section we'll show you, by practical, step-by-step tutorials, how to work with XT Ajax Framework.
-            All tutorials are based on XT Ajax samples: 
-            <ulink url="https://springmodules.dev.java.net/source/browse/springmodules/samples/xt/"><citetitle>check out them</citetitle></ulink> 
-            if you want to take a look at the full source code.
-        </para>
-        <sect3 id='ajax-tutorial-1'><title id='ajax-tutorial-1-title'>Working with Ajax action events.</title>
-            <para>
-                Ajax action events are used for updating pages without submitting data to (eventually configured) Spring MVC controllers: 
-                so, <emphasis role='bold'>the execution of an Ajax action event doesn't call controllers</emphasis>.
-            </para>
-            <para>
-                In this tutorial we'll implement a simple Ajax application that let you <emphasis role='bold'>fill a selection box with a list of Office names after clicking a button</emphasis>, 
-                showing you how to:
-            </para>
-            <itemizedlist>
-                <listitem><para>Write the web page.</para></listitem>
-                <listitem><para>Write the Ajax handler.</para></listitem>
-                <listitem><para>Map the Ajax handler to the web page URL.</para></listitem>
-            </itemizedlist>
-            <sect4 id='ajax-tutorial-1-step-1'><title>Step 1 : Writing the web page.</title>
-                <para>
-                    Writing a web page that fires an Ajax action event is not different than writing a normal JSP based web page as you'd usually do. 
-                </para>
-                <para>
-                    Our web page must fill the selection list after clicking a button. So, first write a button input field that fires an Ajax action event
-                    with <emphasis>loadOffices</emphasis> as event id:
-                </para>
-                <programlisting><![CDATA[
-                    <input type="button" value="Press" onclick="doAjaxAction('loadOffices', this);"> 
-                ]]></programlisting> 
-                <para>
-                    Then, write the <emphasis>select</emphasis> HTML element to update and give it an id:
-                </para>
-                <programlisting><![CDATA[
-                    <select id="offices">
-                    <option>--- ---</option>
-                    </select>
-                ]]></programlisting> 
-                <para>
-                    Recall that the <emphasis>id</emphasis> attribute is used for identifying the page part to update, that is, the element to fill with new content.
-                </para>
-                <para>
-                    That's all ... let's write our Ajax handler!
-                </para>
-            </sect4>
-            <sect4 id='ajax-tutorial-1-step-2'><title>Step 2 : Writing the Ajax handler.</title>
-                <para>
-                    Our Ajax handler will extend the <emphasis>org.springmodules.xt.ajax.AbstractAjaxHandler</emphasis>, so it will have a method called after the Ajax event 
-                    to handle, that will accept an <emphasis>org.springmodules.xt.ajax.AjaxActionEvent</emphasis>:
-                </para>
-                <programlisting><![CDATA[
+            </programlisting>
+
+      <itemizedlist>
+        <listitem>
+          <para><emphasis>public void addAction(AjaxAction action)</emphasis>
+          : This method is used for adding actions that will be executed and
+          whose result will be sent to the client.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis>public String getResponse()</emphasis> : This method
+          executes the added actions and returns their result.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>In the context of an ajax response, actions are executed <emphasis
+      role="bold">following their order of adding</emphasis>.</para>
+    </sect3>
+
+    <sect3 id="integration">
+      <title id="integration-title">XT Ajax Framework, Taconite and
+      integration with other JavaScript libraries</title>
+
+      <para>The way XT Ajax Framework interacts with client web pages is based
+      on the wonderful <ulink
+      url="http://taconite.sourceforge.net"><citetitle>Taconite</citetitle></ulink>
+      JavaScript library. So, for using the XT Ajax Framework you need to
+      include in your web pages Taconite, plus some other JavaScript library
+      you can find under the <emphasis>js</emphasis> directory. However, all
+      these core JavaScript libraries are put, at compile time, in the
+      <emphasis>springxt.js</emphasis> file under the
+      <emphasis>js/lib/core</emphasis> directory. This is the only file you
+      need to include in your web page:</para>
+
+      <programlisting>
+                &lt;script type="text/javascript" src='springxt.js'&gt;&lt;/script&gt; 
+            </programlisting>
+
+      <para>However, XT Ajax Framework integrates with other JavaScript
+      libraries for providing additional capabilities, like new kind of
+      actions: take a look at javadocs for more details. All these additional
+      libraries can be found under the <emphasis>js/lib/opt</emphasis>
+      directory.</para>
+
+      <tip>
+        <para>Under the <emphasis>js/lib/core</emphasis> you'll find also a
+        <emphasis>springxt-min.js</emphasis> file: it is a minified version of
+        <emphasis>springxt.js</emphasis> you can include in your pages for
+        reducing the download size.</para>
+      </tip>
+    </sect3>
+  </sect2>
+
+  <sect2 id="ajax-tutorials">
+    <title id="ajax-tutorials-title">Tutorials</title>
+
+    <para>In this section we'll show you, by practical, step-by-step
+    tutorials, how to work with XT Ajax Framework. All tutorials are based on
+    XT Ajax samples: <ulink
+    url="https://springmodules.dev.java.net/source/browse/springmodules/samples/xt/"><citetitle>check
+    out them</citetitle></ulink> if you want to take a look at the full source
+    code.</para>
+
+    <sect3 id="ajax-tutorial-1">
+      <title id="ajax-tutorial-1-title">Working with Ajax action
+      events.</title>
+
+      <para>Ajax action events are used for updating pages without submitting
+      data to (eventually configured) Spring MVC controllers: so, <emphasis
+      role="bold">the execution of an Ajax action event doesn't call
+      controllers</emphasis>.</para>
+
+      <para>In this tutorial we'll implement a simple Ajax application that
+      let you <emphasis role="bold">fill a selection box with a list of Office
+      names after clicking a button</emphasis>, showing you how to:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Write the web page.</para>
+        </listitem>
+
+        <listitem>
+          <para>Write the Ajax handler.</para>
+        </listitem>
+
+        <listitem>
+          <para>Map the Ajax handler to the web page URL.</para>
+        </listitem>
+      </itemizedlist>
+
+      <sect4 id="ajax-tutorial-1-step-1">
+        <title>Step 1 : Writing the web page.</title>
+
+        <para>Writing a web page that fires an Ajax action event is not
+        different than writing a normal JSP based web page as you'd usually
+        do.</para>
+
+        <para>Our web page must fill the selection list after clicking a
+        button. So, first write a button input field that fires an Ajax action
+        event with <emphasis>loadOffices</emphasis> as event id:</para>
+
+        <programlisting>
+                    &lt;input type="button" value="Press" onclick="doAjaxAction('loadOffices', this);"&gt; 
+                </programlisting>
+
+        <para>Then, write the <emphasis>select</emphasis> HTML element to
+        update and give it an id:</para>
+
+        <programlisting>
+                    &lt;select id="offices"&gt;
+                    &lt;option&gt;--- ---&lt;/option&gt;
+                    &lt;/select&gt;
+                </programlisting>
+
+        <para>Recall that the <emphasis>id</emphasis> attribute is used for
+        identifying the page part to update, that is, the element to fill with
+        new content.</para>
+
+        <para>That's all ... let's write our Ajax handler!</para>
+      </sect4>
+
+      <sect4 id="ajax-tutorial-1-step-2">
+        <title>Step 2 : Writing the Ajax handler.</title>
+
+        <para>Our Ajax handler will extend the
+        <emphasis>org.springmodules.xt.ajax.AbstractAjaxHandler</emphasis>, so
+        it will have a method called after the Ajax event to handle, that will
+        accept an
+        <emphasis>org.springmodules.xt.ajax.AjaxActionEvent</emphasis>:</para>
+
+        <programlisting>
                     public AjaxResponse loadOffices(AjaxActionEvent event)
-                ]]></programlisting> 
-                <para>
-                    Now, let us analyze how to handle the event. 
-                </para>
-                <para>
-                    First, we have to retrieve a list of offices to display from some kind of data access object:
-                </para>
-                <programlisting><![CDATA[
-                    Collection<IOffice> offices = store.getOffices();
-                ]]></programlisting>
-                <para>
-                    Then, we have to create the components to render: a list of <emphasis>org.springmodules.xt.ajax.component.Option</emphasis> components, representing
-                    the <emphasis>option</emphasis> HTML elements and containing the office id as value and the office name as content.  
-                </para>
-                <programlisting><![CDATA[
+                </programlisting>
+
+        <para>Now, let us analyze how to handle the event.</para>
+
+        <para>First, we have to retrieve a list of offices to display from
+        some kind of data access object:</para>
+
+        <programlisting>
+                    Collection&lt;IOffice&gt; offices = store.getOffices();
+                </programlisting>
+
+        <para>Then, we have to create the components to render: a list of
+        <emphasis>org.springmodules.xt.ajax.component.Option</emphasis>
+        components, representing the <emphasis>option</emphasis> HTML elements
+        and containing the office id as value and the office name as
+        content.</para>
+
+        <programlisting>
                     List options = new LinkedList();
                     
                     Option first = new Option("-1", "Select one ...");
@@ -410,107 +601,144 @@
                     Option option = new Option(office, "officeId", "name");
                     options.add(option);
                     }
-                ]]></programlisting>
-                <para>
-                    Now, we have to replace the HTML content of the <emphasis>select</emphasis> element showed above, so we have to create an
-                    <emphasis>org.springmodules.xt.ajax.action.ReplaceContentAction</emphasis>, adding it the components to render (the list of options):
-                </para>
-                <programlisting><![CDATA[
+                </programlisting>
+
+        <para>Now, we have to replace the HTML content of the
+        <emphasis>select</emphasis> element showed above, so we have to create
+        an
+        <emphasis>org.springmodules.xt.ajax.action.ReplaceContentAction</emphasis>,
+        adding it the components to render (the list of options):</para>
+
+        <programlisting>
                     ReplaceContentAction action = new ReplaceContentAction("offices", options);
-                ]]></programlisting>
-                <para>
-                    Note that the <emphasis>ReplaceContentAction</emphasis> updates the HTML element with <emphasis>offices</emphasis> as id.
-                </para>
-                <para>
-                    Finally, we create an <emphasis>org.springmodules.xt.ajax.AjaxResponse</emphasis> and return it!
-                </para>
-                <programlisting><![CDATA[
+                </programlisting>
+
+        <para>Note that the <emphasis>ReplaceContentAction</emphasis> updates
+        the HTML element with <emphasis>offices</emphasis> as id.</para>
+
+        <para>Finally, we create an
+        <emphasis>org.springmodules.xt.ajax.AjaxResponse</emphasis> and return
+        it!</para>
+
+        <programlisting>
                     AjaxResponse response = new AjaxResponseImpl();
                     response.addAction(action);
                     return response;
-                ]]></programlisting>
-            </sect4>
-            <sect4 id='ajax-tutorial-1-step-3'><title>Step 3 : Mapping the Ajax handler to the web page URL.</title>
-                <para>
-                    Say the web page URL is: www.springmodules.org/xt/ajax/tutorial1.page. Mapping the Ajax handler is simply a matter of configuring the Ajax handler bean
-                    in the Spring application context and mapping it in the <emphasis>AjaxInterceptor</emphasis>:
-                </para>
-                <programlisting><![CDATA[
-                    <bean id="ajaxLoadOfficesHandler" 
-                      class="org.springmodules.xt.examples.ajax.LoadOfficesHandler">
-                    <property name="store" ref="store"/>
-                    </bean>
-                ]]></programlisting>
-                <programlisting><![CDATA[
-                    <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
-                    <property name="handlerMappings">
-                    <props>
-                    <prop key="/ajax/tutorial1.page">ajaxLoadOfficesHandler</prop>
-                    </props>
-                    </property>
-                    </bean>
-                ]]></programlisting>
-            </sect4>
-        </sect3>
-        <sect3 id='ajax-tutorial-2'><title id='ajax-tutorial-2-title'>Working with Ajax submit events.</title>
-            <para>
-                Ajax submit events are used for updating pages <emphasis role='bold'>after</emphasis> submitting data to your Spring MVC controllers.
-            </para>
-            <para>
-                In this tutorial we'll implement a simple Ajax application that let you choose an office and list its employees in a table after clicking a button. 
-                We'll see how to:
-            </para>
-            <itemizedlist>
-                <listitem><para>Write the web page.</para></listitem>
-                <listitem><para>Write the Spring MVC controller.</para></listitem>
-                <listitem><para>Write the Ajax handler.</para></listitem>
-                <listitem><para>Map the Ajax handler to the web page URL.</para></listitem>
-            </itemizedlist>
-            <sect4 id='ajax-tutorial-2-step-1'><title>Step 1 : Writing the web page.</title>
-                <para>
-                    Writing a web page that fires a submit event is not different than writing a normal JSP based web page as you'd usually do. 
-                </para>
-                <para>
-                    Employees are listed in an HTML table after clicking a button. So, the first interesting thing to write is a button input field that fires an Ajax submit event
-                    with <emphasis>listEmployees</emphasis> as event id:
-                </para>
-                <programlisting><![CDATA[
-                    <input type="button" value="List" onclick="doAjaxSubmit('listEmployees', this);"> 
-                ]]></programlisting> 
-                <para>
-                    Then, write the <emphasis>table</emphasis> HTML element to use for listing the employees:
-                </para>
-                <programlisting><![CDATA[
-                    <table border="1">
+                </programlisting>
+      </sect4>
+
+      <sect4 id="ajax-tutorial-1-step-3">
+        <title>Step 3 : Mapping the Ajax handler to the web page URL.</title>
+
+        <para>Say the web page URL is:
+        www.springmodules.org/xt/ajax/tutorial1.page. Mapping the Ajax handler
+        is simply a matter of configuring the Ajax handler bean in the Spring
+        application context and mapping it in the
+        <emphasis>AjaxInterceptor</emphasis>:</para>
+
+        <programlisting>
+                    &lt;bean id="ajaxLoadOfficesHandler" 
+                      class="org.springmodules.xt.examples.ajax.LoadOfficesHandler"&gt;
+                    &lt;property name="store" ref="store"/&gt;
+                    &lt;/bean&gt;
+                </programlisting>
+
+        <programlisting>
+                    &lt;bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor"&gt;
+                    &lt;property name="handlerMappings"&gt;
+                    &lt;props&gt;
+                    &lt;prop key="/ajax/tutorial1.page"&gt;ajaxLoadOfficesHandler&lt;/prop&gt;
+                    &lt;/props&gt;
+                    &lt;/property&gt;
+                    &lt;/bean&gt;
+                </programlisting>
+      </sect4>
+    </sect3>
+
+    <sect3 id="ajax-tutorial-2">
+      <title id="ajax-tutorial-2-title">Working with Ajax submit
+      events.</title>
+
+      <para>Ajax submit events are used for updating pages <emphasis
+      role="bold">after</emphasis> submitting data to your Spring MVC
+      controllers.</para>
+
+      <para>In this tutorial we'll implement a simple Ajax application that
+      let you choose an office and list its employees in a table after
+      clicking a button. We'll see how to:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Write the web page.</para>
+        </listitem>
+
+        <listitem>
+          <para>Write the Spring MVC controller.</para>
+        </listitem>
+
+        <listitem>
+          <para>Write the Ajax handler.</para>
+        </listitem>
+
+        <listitem>
+          <para>Map the Ajax handler to the web page URL.</para>
+        </listitem>
+      </itemizedlist>
+
+      <sect4 id="ajax-tutorial-2-step-1">
+        <title>Step 1 : Writing the web page.</title>
+
+        <para>Writing a web page that fires a submit event is not different
+        than writing a normal JSP based web page as you'd usually do.</para>
+
+        <para>Employees are listed in an HTML table after clicking a button.
+        So, the first interesting thing to write is a button input field that
+        fires an Ajax submit event with <emphasis>listEmployees</emphasis> as
+        event id:</para>
+
+        <programlisting>
+                    &lt;input type="button" value="List" onclick="doAjaxSubmit('listEmployees', this);"&gt; 
+                </programlisting>
+
+        <para>Then, write the <emphasis>table</emphasis> HTML element to use
+        for listing the employees:</para>
+
+        <programlisting>
+                    &lt;table border="1"&gt;
                     
-                    <thead>
-                    <tr>
-                    <th>Firstname</th>
-                    <th>Surname</th>
-                    <th>Matriculation Code</th>
-                    </tr>
-                    </thead>
+                    &lt;thead&gt;
+                    &lt;tr&gt;
+                    &lt;th&gt;Firstname&lt;/th&gt;
+                    &lt;th&gt;Surname&lt;/th&gt;
+                    &lt;th&gt;Matriculation Code&lt;/th&gt;
+                    &lt;/tr&gt;
+                    &lt;/thead&gt;
                     
-                    <tbody id="employees">
-                    </tbody>
+                    &lt;tbody id="employees"&gt;
+                    &lt;/tbody&gt;
                     
-                    </table>
-                ]]></programlisting> 
-                <para>
-                    Please note the table body, with an <emphasis>employees</emphasis> id attribute: this is the page part that will be updated, where the employees will be listed.
-                </para>
-                <para>
-                    That's all ... let's take a look at our Spring MVC controller!
-                </para>
-            </sect4>
-            <sect4 id='ajax-tutorial-2-step-2'><title>Step 2 : Writing the Spring MVC controller.</title>
-                <para>
-                    XT Ajax Framework doesn't depend on Spring MVC controllers, so the way you write them doesn't change.
-                </para>
-                <para>
-                    For the purposes of our example, the most interesting part of our Spring MVC controller is the <emphasis>onSubmit</emphasis> method: 
-                </para>
-                <programlisting><![CDATA[
+                    &lt;/table&gt;
+                </programlisting>
+
+        <para>Please note the table body, with an
+        <emphasis>employees</emphasis> id attribute: this is the page part
+        that will be updated, where the employees will be listed.</para>
+
+        <para>That's all ... let's take a look at our Spring MVC
+        controller!</para>
+      </sect4>
+
+      <sect4 id="ajax-tutorial-2-step-2">
+        <title>Step 2 : Writing the Spring MVC controller.</title>
+
+        <para>XT Ajax Framework doesn't depend on Spring MVC controllers, so
+        the way you write them doesn't change.</para>
+
+        <para>For the purposes of our example, the most interesting part of
+        our Spring MVC controller is the <emphasis>onSubmit</emphasis>
+        method:</para>
+
+        <programlisting>
                     protected ModelAndView onSubmit(Object command, BindException errors) 
                     throws Exception {
                     
@@ -519,91 +747,111 @@
                     Office office = form.getOffice();
                     
                     // Take a list of employees by office and return it into the ModelAndView:
-                    Collection<IEmployee> employees = store.getEmployeesByOffice(office);
+                    Collection&lt;IEmployee&gt; employees = store.getEmployeesByOffice(office);
                     return new ModelAndView(this.getFormView(), errors.getModel())
                     .addObject("employees", employees);
                     }
-                ]]></programlisting>
-                <para>
-                    As you may note,  the <emphasis>onSubmit</emphasis> method gets the employees belonging to the selected office and returns them 
-                    in a <emphasis>ModelAndView</emphasis> object, under the <emphasis>employees</emphasis> key.
-                </para>
-                <para>
-                    Moreover, note that the returned view (<emphasis>this.getFormView()</emphasis>) is not taken into account, because the response is handled by the XT Ajax Framework.
-                </para>
-                <para>
-                    Let's go with our Ajax handler!
-                </para>
-            </sect4>
-            <sect4 id='ajax-tutorial-2-step-3'><title>Step 3 : Writing the Ajax handler.</title>
-                <para>
-                    Our Ajax handler will extend the <emphasis>org.springmodules.xt.ajax.AbstractAjaxHandler</emphasis>, so it will have a method called after the Ajax event 
-                    to handle, that will accept an <emphasis>org.springmodules.xt.ajax.AjaxSubmitEvent</emphasis>:
-                </para>
-                <programlisting><![CDATA[
+                </programlisting>
+
+        <para>As you may note, the <emphasis>onSubmit</emphasis> method gets
+        the employees belonging to the selected office and returns them in a
+        <emphasis>ModelAndView</emphasis> object, under the
+        <emphasis>employees</emphasis> key.</para>
+
+        <important>
+          <para>The returned view (returned by
+          <emphasis>this.getFormView()</emphasis>) is not taken into account,
+          because the response is handled by the XT Ajax Framework.</para>
+        </important>
+
+        <para>Let's go with our Ajax handler!</para>
+      </sect4>
+
+      <sect4 id="ajax-tutorial-2-step-3">
+        <title>Step 3 : Writing the Ajax handler.</title>
+
+        <para>Our Ajax handler will extend the
+        <emphasis>org.springmodules.xt.ajax.AbstractAjaxHandler</emphasis>, so
+        it will have a method called after the Ajax event to handle, that will
+        accept an
+        <emphasis>org.springmodules.xt.ajax.AjaxSubmitEvent</emphasis>:</para>
+
+        <programlisting>
                     public AjaxResponse listEmployees(AjaxSubmitEvent event)
-                ]]></programlisting> 
-                <para>
-                    We want to show the employees belonging to the selcted office, so we have to retrieve the model map
-                    from the event object, and the employees list contained in it:
-                </para>
-                <programlisting><![CDATA[
+                </programlisting>
+
+        <para>We want to show the employees belonging to the selcted office,
+        so we have to retrieve the model map from the event object, and the
+        employees list contained in it:</para>
+
+        <programlisting>
                     Map model = event.getModel();
-                    Collection<IEmployee> employees = (Collection) model.get("employees");
-                ]]></programlisting>
-                <para>
-                    Then, we have to create the components to render: a list of <emphasis>org.springmodules.xt.ajax.component.TableRow</emphasis> components, 
-                    containing the employees:
-                </para>
-                <programlisting><![CDATA[
+                    Collection&lt;IEmployee&gt; employees = (Collection) model.get("employees");
+                </programlisting>
+
+        <para>Then, we have to create the components to render: a list of
+        <emphasis>org.springmodules.xt.ajax.component.TableRow</emphasis>
+        components, containing the employees:</para>
+
+        <programlisting>
                     List rows = new LinkedList();
                     for(IEmployee emp : employees) {
                     TableRow row = new TableRow(emp, 
                     new String[]{"firstname", "surname", "matriculationCode"}, null);
                     rows.add(row);
                     }
-                ]]></programlisting>
-                <para>
-                    Now we have to replace all the rows in the HTML table, so we have to create an
-                    <emphasis>org.springmodules.xt.ajax.action.ReplaceContentAction</emphasis>, adding it the components to render:
-                </para>
-                <programlisting><![CDATA[
+                </programlisting>
+
+        <para>Now we have to replace all the rows in the HTML table, so we
+        have to create an
+        <emphasis>org.springmodules.xt.ajax.action.ReplaceContentAction</emphasis>,
+        adding it the components to render:</para>
+
+        <programlisting>
                     ReplaceContentAction replaceRowsAction = 
                     new ReplaceContentAction("employees", rows);
-                ]]></programlisting>
-                <para>
-                    Note that the <emphasis>ReplaceContentAction</emphasis> updates the HTML element with <emphasis>employees</emphasis> as id.
-                </para>
-                <para>
-                    Finally, we have to create an <emphasis>org.springmodules.xt.ajax.AjaxResponse</emphasis> and return it!
-                </para>
-                <programlisting><![CDATA[
+                </programlisting>
+
+        <para>Note that the <emphasis>ReplaceContentAction</emphasis> updates
+        the HTML element with <emphasis>employees</emphasis> as id.</para>
+
+        <para>Finally, we have to create an
+        <emphasis>org.springmodules.xt.ajax.AjaxResponse</emphasis> and return
+        it!</para>
+
+        <programlisting>
                     AjaxResponse response = new AjaxResponseImpl();
                     response.addAction(action);
                     return response;
-                ]]></programlisting>
-            </sect4>
-            <sect4 id='ajax-tutorial-2-step-4'><title>Step 4 : Mapping the Ajax handler to the web page URL.</title>
-                <para>
-                    Say the web page URL is: www.springmodules.org/xt/ajax/tutorial2.page. Mapping the Ajax handler is simply a matter of configuring the Ajax handler bean
-                    in the Spring application context and mapping it in the <emphasis>AjaxInterceptor</emphasis>:
-                </para>
-                <programlisting><![CDATA[
-                    <bean id="ajaxListEmployeesHandler" 
-                      class="org.springmodules.xt.examples.ajax.ListEmployeesHandler">
-                    <property name="store" ref="store"/>
-                    </bean>
-                ]]></programlisting>
-                <programlisting><![CDATA[
-                    <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
-                    <property name="handlerMappings">
-                    <props>
-                    <prop key="/ajax/tutorial2.page">ajaxListEmployeesHandler</prop>
-                    </props>
-                    </property>
-                    </bean>
-                ]]></programlisting>
-            </sect4>
-        </sect3>
-    </sect2>
+                </programlisting>
+      </sect4>
+
+      <sect4 id="ajax-tutorial-2-step-4">
+        <title>Step 4 : Mapping the Ajax handler to the web page URL.</title>
+
+        <para>Say the web page URL is:
+        www.springmodules.org/xt/ajax/tutorial2.page. Mapping the Ajax handler
+        is simply a matter of configuring the Ajax handler bean in the Spring
+        application context and mapping it in the
+        <emphasis>AjaxInterceptor</emphasis>:</para>
+
+        <programlisting>
+                    &lt;bean id="ajaxListEmployeesHandler" 
+                      class="org.springmodules.xt.examples.ajax.ListEmployeesHandler"&gt;
+                    &lt;property name="store" ref="store"/&gt;
+                    &lt;/bean&gt;
+                </programlisting>
+
+        <programlisting>
+                    &lt;bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor"&gt;
+                    &lt;property name="handlerMappings"&gt;
+                    &lt;props&gt;
+                    &lt;prop key="/ajax/tutorial2.page"&gt;ajaxListEmployeesHandler&lt;/prop&gt;
+                    &lt;/props&gt;
+                    &lt;/property&gt;
+                    &lt;/bean&gt;
+                </programlisting>
+      </sect4>
+    </sect3>
+  </sect2>
 </sect1>
