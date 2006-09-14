@@ -200,9 +200,7 @@
   &lt;!-- normal factory beans params --&gt;
   &lt;property name="configuration" value="classpath:jackrabbit-repo.xml"/&gt;
   &lt;property name="homeDir" value="/repo"/&gt;
-&lt;/bean&gt;</programlisting></para>
-
-        <para>-- or --</para>
+&lt;/bean&gt;</programlisting>-- or --</para>
 
         <programlisting>&lt;!-- configuring a 'transient' repository (automatically starts when a session is opened 
      and shutdowns when all sessions are closed) --&gt;
@@ -214,6 +212,58 @@
 
         <para>Note that <literal>RepositoryFactoryBean</literal> makes use of
         Spring Resource to find the configuration file.</para>
+      </sect3>
+
+      <sect3>
+        <title>Jackrabbit RMI support</title>
+
+        <para>Jackrabbit's RMI server/client setup is provided through
+        <literal>org.springmodules.jcr.jackrabbit.RmiServerRepositoryFactoryBean</literal>
+        though Spring itself can handle most of the configuration without any
+        special support:</para>
+
+        <programlisting>&lt;!-- normal repository --&gt;
+&lt;bean id="repository" class="org.springmodules.jcr.jackrabbit.RepositoryFactoryBean"&gt;
+   &lt;!-- normal factory beans params --&gt;
+   &lt;property name="configuration" value="/org/springmodules/jcr/jackrabbit/jackrabbit-repo.xml" /&gt;
+   &lt;!-- use the target folder which will be cleaned  --&gt;
+   &lt;property name="homeDir" value="file:./target/repo" /&gt;
+&lt;/bean&gt;
+  
+&lt;!-- rmi server --&gt;
+  
+&lt;!-- use Spring's RMI classes to retrieve the RMI registry --&gt;
+&lt;bean id="rmiRegistry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean"/&gt;
+  
+&lt;bean id="rmiServer" class="org.springmodules.jcr.jackrabbit.RmiServerRepositoryFactoryBean"&gt;
+  &lt;property name="repository" ref="repository"/&gt;
+  &lt;property name="remoteAdapterFactory"&gt;
+    &lt;bean class="org.apache.jackrabbit.rmi.server.ServerAdapterFactory"/&gt;
+  &lt;/property&gt;
+    
+  &lt;property name="registry" ref="rmiRegistry"/&gt;
+  &lt;property name="rmiName" value="jackrabbit"/&gt;
+&lt;/bean&gt;
+  
+&lt;!-- rmi client --&gt;
+&lt;bean id="rmiClientFactory" class="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory"/&gt;
+
+&lt;bean id="rmiClient" factory-bean="rmiClientFactory" factory-method="getRepository" depends-on="rmiServer"&gt;
+  &lt;constructor-arg value="rmi://localhost:1099/jackrabbit"/&gt;
+&lt;/bean&gt;</programlisting>
+      </sect3>
+
+      <sect3>
+        <title>Jeceira</title>
+
+        <para><ulink url="http://www.jeceira.com/">Jeceira</ulink> is another
+        JSR-170 open-source implementation though as not as complete as
+        Jackrabbit. Support for it can be found under the
+        org.springmodules.jcr.jeceira package:</para>
+
+        <programlisting>&lt;bean id="repository" class="org.springmodules.jcr.jeceira.RepositoryFactoryBean"&gt;
+  &lt;property name="repositoryName" value="myRepository"/&gt;
+&lt;/bean&gt;</programlisting>
       </sect3>
     </sect2>
   </sect1>
