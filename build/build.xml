@@ -256,39 +256,65 @@
       <mkdir dir="${tmp.samples.dir}"/>
       
       <zip destfile="${tmp.samples.dir}/spring-modules-hivemind-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/hivemind/src" />
+        <fileset dir="${common.build.dir}/../../samples/hivemind/src">
+          <exclude name="test/**"/>
+        </fileset>
       </zip>
       
       <zip destfile="${tmp.samples.dir}/spring-modules-jcr-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/jcr/src" />
+        <fileset dir="${common.build.dir}/../../samples/jcr/src">
+          <exclude name="test/**"/>
+        </fileset>
       </zip>
       
       <zip destfile="${tmp.samples.dir}/spring-modules-jsr94-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/jsr94/src" />
+        <fileset dir="${common.build.dir}/../../samples/jsr94/src">
+          <exclude name="test/**"/>
+        </fileset>
       </zip>
       
       <zip destfile="${tmp.samples.dir}/spring-modules-lucene-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/lucene/src" />
+        <fileset dir="${common.build.dir}/../../samples/lucene/src">
+          <exclude name="test/**"/>
+        </fileset>
       </zip>
       
       <zip destfile="${tmp.samples.dir}/spring-modules-osworkflow-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/osworkflow/src" />
+        <fileset dir="${common.build.dir}/../../samples/osworkflow/src">
+          <exclude name="test/**"/>
+        </fileset>
       </zip>
       
       <zip destfile="${tmp.samples.dir}/spring-modules-validation-bean-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/validation/validation-bean/src" />
+        <fileset dir="${common.build.dir}/../../samples/validation/validation-bean/src">
+          <exclude name="test/**"/>
+        </fileset>
       </zip>
       
       <zip destfile="${tmp.samples.dir}/spring-modules-validation-commons-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/validation/validation-commons/src" />
+        <fileset dir="${common.build.dir}/../../samples/validation/validation-commons/src">
+          <exclude name="test/**"/>
+        </fileset>
       </zip>
       
       <zip destfile="${tmp.samples.dir}/spring-modules-validation-valang-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/validation/validation-valang/src" />
+        <fileset dir="${common.build.dir}/../../samples/validation/validation-valang/src">
+          <exclude name="test/**"/>
+        </fileset>
       </zip>
       
       <zip destfile="${tmp.samples.dir}/spring-modules-xt-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/xt/src" />
+        <fileset dir="${common.build.dir}/../../samples/xt/src">
+          <exclude name="test/**"/>
+        </fileset>
+      </zip>
+      
+      <zip destfile="${tmp.samples.dir}/spring-modules-orbroker-petclinic-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/orbroker-petclinic">
+          <include name="db/**"/>
+          <include name="src/**"/>
+          <include name="war/**"/>
+        </fileset>
       </zip>
     </target>
 	
