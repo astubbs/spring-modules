@@ -1,5 +1,6 @@
 package org.springmodules.javaspaces;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import net.jini.core.lease.Lease;
@@ -180,8 +181,8 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 		// CGLib usage
 		LazyLoader lazyCallback = new LazyLoader() {
 			public Object loadObject() throws Exception {
-				if (log.isDebugEnabled())
-					log.debug("creating lazy proxy");
+				if (log.isTraceEnabled())
+					log.trace("creating lazy proxy");
 				try {
 					return handleResultRetrieval(call);
 
@@ -196,9 +197,6 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 	}
 
 	protected Object handleResultRetrieval(AbstractMethodCallEntry call) throws Throwable {
-		// TODO must narrow, against string form of method
-		MethodResultEntry template = new MethodResultEntry((Method) null, call.uid, null);
-
 		MethodResultEntry result = null;
 
 		result = takeResult(call);
