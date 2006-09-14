@@ -19,32 +19,48 @@ Package org.springmodules.javaspaces
 Package org.springmodules.orm.orbroker
 * Promoted O/RBroker support out of the sandbox
 
-package org.springmodules.validation
+Package org.springmodules.validation
 * Updated dependency on spring to spring-2.0-rc2
 * Updated dependency on acegi to acegi-security-1.0.1
 
-package org.springmodules.validation.commons
+Package org.springmodules.validation.commons
 * Removed MapException class
 * Updated DefaultBeanValidator class (JIRA MOD-39)
 
-package org.springmodules.validation.valang.javascript
+Package org.springmodules.validation.valang.javascript
 * Updated ValangJavaScriptTranslator - fixed NPE when appendJsString(String) is called with null.
 * Updated valang_codebase.js to support better display of validation errors
 
-package org.springmodules.validation.valang.javascript.taglib
+Package org.springmodules.validation.valang.javascript.taglib
 * Updated ValangCodebaseTag to support better display of validation errors
 
-package org.springmodules.validation.util
+Package org.springmodules.validation.util
 * Moved ContextAware to org.springmodules.validation.util.context
 * Moved BasicContextAware to org.springmodules.validation.util.context
 
-package org.springmodules.validation.bean
+Package org.springmodules.validation.bean
 * Added the bean validation framework
 
-package org.springmodules.samples.validation.bean
+Package org.springmodules.samples.validation.bean
 * Added a sample application for the new bean validation framework
 
-package org.springmodules.workflow.osworkflow
+Package org.springmodules.xt.ajax
+* Integration with Prototype and Scriptaculous JavaScript libraries.
+* New actions and components.
+* Several bugs fixed.
+* Improved documentation with samples.
+* Improved org.springmodules.xt.ajax.AjaxActionEvent and org.springmodules.xt.ajax.AjaxSubmitEvent.
+* The XT Utils packages have been moved to the SpringMVC-extra module.
+* The org.springmodules.xt.ajax.taconite package has been renamed in org.springmodules.xt.ajax.action, 
+  and the Taconite prefix has been removed from all action names. 
+* TaconiteValidationHandler has been moved to org.springmodules.xt.ajax.validation and renamed in 
+  DefaultValidationHandler.
+
+Packages org.springmodules.web.propertyeditors, org.springmodules.web.servlet.mvc, org.springmodules.web.servlet.view
+* XT Utils stuff moved to SpringMVC-extra module.
+* Added documentation for SpringMVC-extra module.
+
+Package org.springmodules.workflow.osworkflow
 * Fixed AcegiWorkflowContextHandlerInterceptor when dealing with different AuthenticationProviders [MOD-186]
 
 
