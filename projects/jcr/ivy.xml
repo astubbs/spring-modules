@@ -63,6 +63,8 @@
 	<!-- -->
 	<dependency org="org.apache.jackrabbit" name="jackrabbit-core" rev="1.0.1" conf="buildtime, jackrabbit->*"/>
 	<dependency org="org.apache.jackrabbit" name="jackrabbit-jcr-commons" rev="1.0.1" conf="buildtime, jackrabbit->*"/>
+	<!-- rmi protocols -->
+	<dependency org="org.apache.jackrabbit" name="jackrabbit-jcr-rmi" rev="1.0.1" conf="buildtime, jackrabbit->*"/>
 	<dependency org="apache" name="jackrabbit-jca" rev="1.0" conf="jackrabbit->*"/>
 		 
 	
