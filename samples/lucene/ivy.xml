@@ -1,6 +1,6 @@
 <ivy-module version="1.1">
 
-    <info organisation="springmodules" module="springmodules-lucene-sample"/>
+    <info organisation="springmodules" module="spring-modules-lucene-sample"/>
 
     <configurations>
 		<!-- default configuration that 'by default' pulls in the global configuration -->
@@ -46,7 +46,7 @@
         </dependency>
         <dependency org="jexcelapi" name="jxl" rev="2.4.2"/>
 
-		<dependency org="springmodules" name="springmodules-lucene" rev="latest.integration"/>        
+		<dependency org="springmodules" name="spring-modules-lucene" rev="latest.integration"/>        
 		<dependency org="sun" name="javax.servlet" rev="2.3">
 			<artifact name="servlet-api" type="jar"/> 		
 	    </dependency>

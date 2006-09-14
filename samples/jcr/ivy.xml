@@ -1,5 +1,5 @@
 <ivy-module version="1.1">
-  <info organisation="springmodules" module="springmodules-jcr-sample"/>
+  <info organisation="springmodules" module="spring-modules-jcr-sample"/>
 
   <configurations>
     <!-- default configuration that 'by default' pulls in the global configuration -->
@@ -14,7 +14,7 @@
 
   <dependencies defaultconf="global->default">
  	<!--  global (core) dependencies -->
-    <dependency org="springmodules" name="springmodules-jcr" rev="latest.integration"/>
+    <dependency org="springmodules" name="spring-modules-jcr" rev="latest.integration"/>
 
     
     <dependency org="hsqldb" name="hsqldb" rev="1.8.0.1" conf="test->default"/>
