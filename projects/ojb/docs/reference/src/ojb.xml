@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="ojb">
+  <title>Apache OJB </title>
+
+  <note>
+    <para>Starting with release 0.6, Spring Modules hosts the Apache OJB
+    project found in the main Spring distribution previous to 2.0 RC4.</para>
+  </note>
+
+  <para>Apache OJB (<ulink url="http://db.apache.org/ojb"></ulink>) offers
+  multiple API levels, such as ODMG and JDO. Aside from supporting OJB through
+  JDO, Spring also supports OJB's lower-level <interfacename>PersistenceBroker
+  </interfacename>API as data access strategy. The corresponding integration
+  classes reside in the <literal>org.springmodules.orm.ojb</literal>
+  package.</para>
+
+  <section>
+    <title>OJB setup in a Spring environment</title>
+
+    <para>In contrast to Hibernate or JDO, OJB does not follow a factory
+    object pattern for its resources. Instead, an OJB
+    <interfacename>PersistenceBroker</interfacename> has to be obtained from
+    the static <interfacename>PersistenceBrokerFactory</interfacename> class.
+    That factory initializes itself from an OJB.properties file, residing in
+    the root of the class path.</para>
+
+    <para>In addition to supporting OJB's default initialization style, Spring
+    also provides a <classname>Local</classname>OjbConfigurer class that
+    allows for using Spring-managed <interfacename>DataSource</interfacename>
+    instances as OJB connection providers. The
+    <interfacename>DataSource</interfacename> instances are referenced in the
+    OJB repository descriptor (the mapping file), through the "jcd-alias"
+    defined there: each such alias is matched against the Spring-managed bean
+    of the same name.</para>
+
+    <programlisting>&lt;beans&gt;
+
+  &lt;bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"&gt;
+    &lt;property name="driverClassName" value="${jdbc.driverClassName}"/&gt;
+    &lt;property name="url" value="${jdbc.url}"/&gt;
+    &lt;property name="username" value="${jdbc.username}"/&gt;
+    &lt;property name="password" value="${jdbc.password}"/&gt;
+  &lt;/bean&gt;
+
+  &lt;bean id="ojbConfigurer" class="org.springmodules.orm.ojb.support.LocalOjbConfigurer"/&gt;
+   
+  ...
+&lt;/beans&gt;</programlisting>
+
+    <programlisting>&lt;descriptor-repository version="1.0"&gt;
+
+  &lt;jdbc-connection-descriptor jcd-alias="dataSource" default-connection="true" ...&gt;
+        ...
+  &lt;/jdbc-connection-descriptor&gt;
+
+  ...
+&lt;/descriptor-repository&gt;</programlisting>
+
+    <para>A <interfacename>PersistenceBroker</interfacename> can then be
+    opened through standard OJB API, specifying a corresponding "PBKey",
+    usually through the corresponding "jcd-alias" (or relying on the default
+    connection).</para>
+  </section>
+
+  <section>
+    <title><classname>PersistenceBrokerTemplate</classname> and
+    <classname>PersistenceBrokerDaoSupport</classname></title>
+
+    <para>Each OJB-based DAO will be configured with a "PBKey" through
+    bean-style configuration, i.e. through a bean property setter. Such a DAO
+    could be coded against plain OJB API, working with OJB's static
+    <interfacename>PersistenceBrokerFactory</interfacename>, but will usually
+    rather be used with Spring's
+    <classname>PersistenceBrokerTemplate</classname>:</para>
+
+    <programlisting>&lt;beans&gt;
+  ...
+  
+  &lt;bean id="myProductDao" class="product.ProductDaoImpl"&gt;
+    &lt;property name="jcdAlias" value="dataSource"/&gt; <lineannotation>&lt;!-- can be omitted (default) --&gt;</lineannotation>
+  &lt;/bean&gt;
+  
+&lt;/beans&gt;</programlisting>
+
+    <programlisting>public class ProductDaoImpl implements ProductDao {
+  
+    private String jcdAlias;
+
+    public void setJcdAlias(String jcdAlias) {
+        this.jcdAlias = jcdAlias;
+    }
+
+    public Collection loadProductsByCategory(final String category) throws DataAccessException {
+        PersistenceBrokerTemplate pbTemplate =
+                new PersistenceBrokerTemplate(new PBKey(this.jcdAlias);
+        return (Collection) pbTemplate.execute(new PersistenceBrokerCallback() {
+            public Object doInPersistenceBroker(PersistenceBroker pb)
+                    throws PersistenceBrokerException {
+
+                Criteria criteria = new Criteria();
+                criteria.addLike("category", category + "%");
+                Query query = new QueryByCriteria(Product.class, criteria);
+
+                List result = pb.getCollectionByQuery(query);
+                // do some further stuff with the result list
+                return result;
+            }
+        });
+    }
+}</programlisting>
+
+    <para>A callback implementation can effectively be used for any OJB data
+    access. <classname>PersistenceBrokerTemplate</classname> will ensure that
+    <classname>PersistenceBroker</classname>s are properly opened and closed,
+    and automatically participate in transactions. The template instances are
+    thread-safe and reusable, they can thus be kept as instance variables of
+    the surrounding class. For simple single-step actions such as a single
+    <literal>getObjectById</literal>, <literal>getObjectByQuery</literal>,
+    <literal>store</literal>, or <literal>delete</literal> call,
+    <classname>PersistenceBrokerTemplate</classname> offers alternative
+    convenience methods that can replace such one line callback
+    implementations. Furthermore, Spring provides a convenient
+    <classname>PersistenceBrokerDaoSupport</classname> base class that
+    provides a <literal>setJcdAlias</literal> method for receiving an OJB JCD
+    alias, and <literal>getPersistenceBrokerTemplate</literal> for use by
+    subclasses. In combination, this allows for very simple DAO
+    implementations for typical requirements:</para>
+
+    <programlisting>public class ProductDaoImpl extends PersistenceBrokerDaoSupport implements ProductDao {
+  
+    public Collection loadProductsByCategory(String category) throws DataAccessException {
+        Criteria criteria = new Criteria();
+        criteria.addLike("category", category + "%");
+        Query query = new QueryByCriteria(Product.class, criteria);
+
+        return getPersistenceBrokerTemplate().getCollectionByQuery(query);
+    }
+}</programlisting>
+
+    <para>As alternative to working with Spring's
+    <classname>PersistenceBrokerTemplate</classname>, you can also code your
+    OJB data access against plain OJB API, explicitly opening and closing a
+    <interfacename>PersistenceBroker</interfacename>. As elaborated in the
+    corresponding Hibernate section, the main advantage of this approach is
+    that your data access code is able to throw checked exceptions.
+    <classname>PersistenceBrokerDaoSupport</classname> offers a variety of
+    support methods for this scenario, for fetching and releasing a
+    transactional <literal>PersistenceBroker</literal> as well as for
+    converting exceptions.</para>
+  </section>
+
+  <section>
+    <title>Transaction management</title>
+
+    <para>To execute service operations within transactions, you can use
+    Spring's common declarative transaction facilities. For example:</para>
+
+    <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xsi:schemaLocation="
+   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"&gt;
+  ...
+
+  &lt;bean id="myTxManager" class="org.springmodules.orm.ojb.PersistenceBrokerTransactionManager"&gt;
+    &lt;property name="jcdAlias" value="dataSource"/&gt;
+  &lt;/bean&gt;
+
+  &lt;bean id="myProductService" class="product.ProductServiceImpl"&gt;
+    &lt;property name="productDao" ref="myProductDao"/&gt;
+  &lt;/bean&gt;
+  
+  &lt;aop:config&gt;
+    &lt;aop:pointcut id="productServiceMethods" expression="execution(* product.ProductService.*(..))"/&gt;
+    &lt;aop:advisor advice-ref="txAdvice" pointcut-ref="productServiceMethods"/&gt;
+  &lt;/aop:config&gt;
+
+  &lt;tx:advice id="txAdvice" transaction-manager="myTxManager"&gt;
+    &lt;tx:attributes&gt;
+      &lt;tx:method name="increasePrice*" propagation="REQUIRED"/&gt;
+      &lt;tx:method name="someOtherBusinessMethod" propagation="REQUIRES_NEW"/&gt;
+      &lt;tx:method name="*" propagation="SUPPORTS" read-only="true"/&gt;
+    &lt;/tx:attributes&gt;
+  &lt;/tx:advice&gt;
+
+&lt;/beans&gt;</programlisting>
+
+    <para>Note that OJB's <interfacename>PersistenceBroker</interfacename>
+    level does not track changes of loaded objects. Therefore, a
+    <interfacename>PersistenceBroker</interfacename> transaction is
+    essentially simply a database transaction at the
+    <interfacename>PersistenceBroker</interfacename> level, just with an
+    additional first-level cache for persistent objects. Lazy loading will
+    work both with and without the
+    <interfacename>PersistenceBroker</interfacename> being open, in contrast
+    to Hibernate and JDO (where the original
+    <interfacename>Session</interfacename> or
+    <interfacename>PersistenceManager</interfacename>, respectively, needs to
+    remain open).</para>
+
+    <para><literal>PersistenceBrokerTransactionManager</literal> is capable of
+    exposing an OJB transaction to JDBC access code that accesses the same
+    JDBC <interfacename>DataSource</interfacename>. The
+    <interfacename>DataSource</interfacename> to expose the transactions for
+    needs to be specified explicitly; it won't be autodetected.</para>
+  </section>
+</chapter>
