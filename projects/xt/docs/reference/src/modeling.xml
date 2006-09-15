@@ -25,11 +25,11 @@
                     ]]>
                 </programlisting> 
                 <itemizedlist>
-                    <listitem><para><emphasis role='bold'>introduceInterfaces(Object target, Class[] introducedInterfaces)</emphasis> : 
+                    <listitem><para><emphasis>public Object introduceInterfaces(Object target, Class[] introducedInterfaces)</emphasis> : 
                     Introduce to the given target object a set of interfaces defined at runtime. The resulting proxy object <emphasis role='bold'>extends</emphasis> the target object class.</para></listitem>
-                    <listitem><para><emphasis role='bold'>public Object introduceInterfaces(Object target, Class[] introducedInterfaces, Class[] targetInterfaces)</emphasis> : 
+                    <listitem><para><emphasis>public Object introduceInterfaces(Object target, Class[] introducedInterfaces, Class[] targetInterfaces)</emphasis> : 
                     Introduce to the given target object a set of interfaces defined at runtime. The resulting proxy object <emphasis role='bold'>implements</emphasis> a set of target interfaces defined at runtime (without extending the target object).</para></listitem> 
-                    <listitem><para><emphasis role='bold'>public Object getTarget(Object proxy)</emphasis> : 
+                    <listitem><para><emphasis>public Object getTarget(Object proxy)</emphasis> : 
                     Get the original target object from the proxied (introduced) one.</para></listitem>
                 </itemizedlist>
             </sect4>
