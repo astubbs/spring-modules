@@ -32,3 +32,7 @@ docs.global.lib.dir=${docs.global.dir}/lib
 docs.global.images.dir=${docs.global.dir}/src/images
 docs.global.styles.dir=${docs.global.dir}/styles
 
+org.name=springmodules.dev.java.net
+org.package.prefix=org.springmodules
+project.base.version=0.6
+project.title=project.name

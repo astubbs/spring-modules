@@ -248,7 +248,8 @@
 &lt;!-- rmi client --&gt;
 &lt;bean id="rmiClientFactory" class="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory"/&gt;
 
-&lt;bean id="rmiClient" factory-bean="rmiClientFactory" factory-method="getRepository" depends-on="rmiServer"&gt;
+&lt;bean id="rmiClient" factory-bean="rmiClientFactory" factory-method="getRepository" 
+                   depends-on="rmiServer"&gt;
   &lt;constructor-arg value="rmi://localhost:1099/jackrabbit"/&gt;
 &lt;/bean&gt;</programlisting>
       </sect3>
@@ -258,8 +259,8 @@
 
         <para><ulink url="http://www.jeceira.com/">Jeceira</ulink> is another
         JSR-170 open-source implementation though as not as complete as
-        Jackrabbit. Support for it can be found under the
-        org.springmodules.jcr.jeceira package:</para>
+        Jackrabbit. Support for it can be found under
+        <literal>org.springmodules.jcr.jeceira</literal> package:</para>
 
         <programlisting>&lt;bean id="repository" class="org.springmodules.jcr.jeceira.RepositoryFactoryBean"&gt;
   &lt;property name="repositoryName" value="myRepository"/&gt;
