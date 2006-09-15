@@ -2,6 +2,7 @@ Doing  a release
 --------------------
 
 1. update build/build.properties and /docs/reference/src/index-module.xml with the release dates
+    update common-build/project.properties (w/ release name (0.x))
      
 2. test that everything is fine
  ant clean-all release
@@ -13,7 +14,7 @@ Doing  a release
  4. log into the jteam machine, add the distro and then upload it to java.net
  5. create a new version on JIRA and close the existing one
  6. do the version release on JIRA
- 7. commit the 0.5 docs on the CVS website
+ 7. commit the 0.x docs on the CVS website
  7.5. do a CVS tag
  8. update the project page
  
