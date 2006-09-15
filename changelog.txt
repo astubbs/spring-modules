@@ -16,6 +16,14 @@ Package org.springmodules.jbpm31
 Package org.springmodules.javaspaces
 * Moved call method invocation into a separate method to allow subclasses to add custom behavior [MOD-175]
 
+Package org.springmodules.jcr.jackrabbit
+* Add support and documentation for Jackrabbit RMI server/client extension [MOD-191]
+* Fixed null pointer exception with JcrSessionFactory when using Spring 2.0-rc3 [MOD-220]
+
+Package org.springmodules.orm.ojb
+* Host for Apache OJB project (moved from Spring starting with 2.0-rc4) [MOD-233]
+* Add ojb support inside Spring Modules petclinic.
+
 Package org.springmodules.orm.orbroker
 * Promoted O/RBroker support out of the sandbox
 
@@ -25,7 +33,7 @@ Package org.springmodules.validation
 
 Package org.springmodules.validation.commons
 * Removed MapException class
-* Updated DefaultBeanValidator class (JIRA MOD-39)
+* Updated DefaultBeanValidator class [JIRA MOD-39]
 
 Package org.springmodules.validation.valang.javascript
 * Updated ValangJavaScriptTranslator - fixed NPE when appendJsString(String) is called with null.
