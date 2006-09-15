@@ -1,8 +1,8 @@
 /**
  * Created on Feb 20, 2006
  *
- * $Id: JbpmTemplate.java,v 1.5 2006/09/04 15:46:15 costin Exp $
- * $Revision: 1.5 $
+ * $Id: JbpmTemplate.java,v 1.6 2006/09/15 13:32:06 costin Exp $
+ * $Revision: 1.6 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -18,7 +18,6 @@ import org.jbpm.graph.def.ProcessDefinition;
 import org.jbpm.graph.def.Transition;
 import org.jbpm.graph.exe.ProcessInstance;
 import org.jbpm.graph.exe.Token;
-import org.jbpm.svc.Services;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
