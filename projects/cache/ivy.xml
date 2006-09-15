@@ -37,11 +37,10 @@
     </dependency>
 	 -->
 
-    <dependency org="gigaspaces" name="commons-beanutils-gs" rev="1.6"/>
-	<dependency org="gigaspaces" name="commons-digester-gs" rev="1.7"/>
-	<dependency org="gigaspaces" name="gigaspaces-ce" rev="5.0"/>
+    <dependency org="gigaspaces" name="gigaspaces-ce" rev="5.1-1603-000"/>
 
-    <dependency org="jini" name="jsk" rev="2.1">
+
+	<dependency org="jini" name="jsk" rev="2.1">
 		<artifact name="jsk-lib" type="jar"/>
 		<artifact name="jsk-platform" type="jar"/>
 		<artifact name="mahalo" type="jar"/>
