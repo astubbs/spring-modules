@@ -1020,19 +1020,246 @@ length(?) mod 4</programlisting>
                     more details about valang validator configuration options, please refer to the class javadoc.
                 </para>
 
+            </sect3>
+        </sect2>
+
+        <sect2>
+
+            <title>Client Side Validation</title>
+
+            <para>
+                The Valang to JavaScript conversion service is a simple extension to the Valang validator package that
+                allows you to use the same Valang validation rules for client-side JavaScript validation that you are
+                already using for your server-side controller validation.
+            </para>
+
+            <para>
+                The default JavaScript validator will be activated when the user tries to submit the form being
+                validated and any errors detected by the validator will be presented in an alert box, but if you wish,
+                you may customize any aspect of the validator to suit you needs.
+            </para>
+
+            <sect3>
+                <title>Getting Started</title>
+
+                <note>
+                    <para>
+                        This Getting Started guide assumes that you are using Valang as the Validator implementation
+                        for your Spring MVC controllers and using JSP for your views.
+                    </para>
+                </note>
+
                 <para>
-                    <emphasis>
-                        NOTE: Until version 0.3 the org.springmodules.validation.valang.ValangValidatorFactoryBean
-                        class served the same purpose as the ValangValidator. In version 0.4, this class was deprecated
-                        and is planned to be removed in version 0.5.
-                    </emphasis>
+                    There are 3 simple steps that are needed to enable the Valang to JavaScript translation:
+                </para>
+
+                <bridgehead renderas="sect4">Step 1 - Add the Valang rules exporter to your DispatcherServlet configuration</bridgehead>
+
+                <para>
+                    Because the translation of your validation rules happens in a custom tag it is necessary for any
+                    Valang validation rules used in your controller to be exported into the JSP page context. A
+                    convenient Spring MVC interceptor is provided that will automatically export the Valang validation
+                    rules for any controllers that make use of them.
+                </para>
+
+                <para>
+                    If you are using the default handler mapping provided by the DispatcherServlet you will need to
+                    add the following to your dispatcher config file:
+                </para>
+
+                <programlisting>&lt;bean id="handlerMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"&gt;
+    &lt;property name="interceptors"&gt;
+        &lt;list&gt;
+            &lt;bean class="org.springmodules.validation.valang.javascript.taglib.ValangRulesExportInterceptor" /&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+                <para>
+                    or, if you have already configured an alternative handler mapping, all you need to do is include
+                    the additional ValangRulesExportInterceptor in the list of interceptors used by your custom
+                    handler mapping:
+                </para>
+
+                <programlisting>&lt;bean id="myHandlerMapping" class="org.springframework.web.servlet.handler.?"&gt;
+    ...
+    &lt;property name="interceptors"&gt;
+        &lt;list&gt;
+            ...
+            &lt;bean class="org.springmodules.validation.valang.javascript.taglib.ValangRulesExportInterceptor" /&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+
+                <bridgehead renderas="sect4">Step 2 - Import the Valang custom tag and JavaScript codebase into your JSP view</bridgehead>
+
+                <para>
+                    In the JSP file that is used to render the view the form you wish to validate you will need to import
+                    the Valang custom tag library by including the following line at the top of the file:
+                </para>
+
+                <programlisting>&lt;%@taglib uri="/WEB-INF/tlds/valang.tld" prefix="valang" %&gt;</programlisting>
+
+                <para>
+                    then somewhere in the HTML <emphasis>&lt;head&gt;</emphasis> section of your JSP template include
+                    the JavaScript codebase that you previously saved to your web application.
+                </para>
+
+                <programlisting>&lt;html&gt;
+&lt;head&gt;
+...
+&lt;valang:codebase includeScriptTags="true" fieldErrorsIdSuffix="_error" globalErrorsId="global_error"/&gt;
+...
+&lt;/head&gt;</programlisting>
+
+                <itemizedlist>
+                    <listitem>
+                        <para>
+                            <emphasis>includeScriptTags</emphasis> - indicates whether the generated code should
+                            also generate the wrapping &lt;script&gt; tags. Should be set to <emphasis>false</emphasis>
+                            if this this line is put within an already existing &lt;script&gt; tag.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>fieldErrorsIdSuffix</emphasis> - indicates suffix of the id of the html element
+                            (usually a &lt;div&gt; or a &lt;span&gt;) that would render the field error. The generated
+                            javascript code will render a filed error in the html element with the id
+                            <emphasis>&lt;field_name&gt;&lt;suffix&gt;</emphasis>. For example, in the case of a suffix
+                            "_error" and field name "firstName" the error will be rendered within the element with id
+                            "firstName_error". If no element with that id is found, the error will be rendered in a
+                            javascript alert dialog.
+                        </para>
+                    </listitem>
+                    <listitem>
+                        <para>
+                            <emphasis>globalErrorsId</emphasis> - indicates the id of the html element where the global
+                            errors will be rendered.
+                        </para>
+                    </listitem>
+                </itemizedlist>
+
+
+                <bridgehead renderas="sect4">Step 3 - Use the &lt;valang:validate&gt; tag to generate the JavaScript validator</bridgehead>
+
+                <para>
+                    Inside the HTML for the form element you wish to validate use the &lt;vl:validate&gt; tag to
+                    generate the JavaScript validator
+                </para>
+
+                <programlisting>&lt;form method="post"&gt;
+&lt;valang:validate commandName="command" /&gt;
+...
+&lt;/form&gt;</programlisting>
+
+                <para>
+                    or if you have some validation rules you would like to have applied in addition to the rules that
+                    were exported in Step 1 you may include these in the body of the &lt;vl:validate&gt; tag:
+                </para>
+
+                <programlisting>&lt;form method="post"&gt;
+&lt;vl:validate commandName="command"&gt;
+{ firstName : length(?) &lt; 30 : 'This rule only gets evaluated in JavaScript' }
+&lt;/vl:validate&gt;
+...
+&lt;/form&gt;</programlisting>
+
+                    <note>
+                        <para>
+                            The &lt;vl:validate&gt; tag must be inside the &lt;form&gt;&lt;/form&gt; tags for the form
+                            you wish to have the validation apply. If you do not do this the JavaScript validator will
+                            be unable to locate the form it is expected to validate and a JavaScript exception will be
+                            thrown
+                        </para>
+                    </note>
+
+            </sect3>
+
+            <sect3>
+
+                <title>Customization</title>
+
+                <bridgehead renderas="sect4">Custom Validation Functions</bridgehead>
+
+                <para>
+                    When the Valang to JavaScript translator encounters a custom validation function it generates a
+                    call to a JavaScript function with the same name as the Java class of the custom function. e.g.
+                    if your validation rule uses a custom validation function whose class is
+                    <emphasis>my.custom.validators.IsEmailFunction</emphasis> then the translated JavaScript validation
+                    call will be to a function <emphasis>ValangValidator.Rules.prototype.IsEmailFunction()</emphasis>.
+                </para>
+
+                <para>
+                    It is therefore necessary that you provide a JavaScript implementation for the function call
+                    generated by the JavaScript translator which is as simple as adding a new function to the
+                    <emphasis>ValangValidator.Rules.prototype</emphasis> object. So for example - the
+                    <emphasis>IsEmailFunction</emphasis> described above would need the following JavaScript function
+                    to be defined after the &lt;valang:codebase...&gt; tag:
+                </para>
+
+                <programlisting>ValangValidator.Rule.prototype.IsEmailFunction = function(value) {
+    // very simple email validation
+    return value &amp;&amp; value.indexOf(".") &gt; 2 &amp;&amp; value.indexOf("@") &gt; 0
+}</programlisting>
+
+
+                <bridgehead renderas="sect4">Customizing the Validation feedback</bridgehead>
+
+                <para>
+                    If you wish to customize the validation feedback that is provided by the JavaScript Valang
+                    validator you will need to override the function
+                    <emphasis>ValangValidator.prototype.showValidationFeedback</emphasis>. This function, which is
+                    only called when a validation error has been detected, takes one argument which is an array
+                    containing all of the failed validation rules.
+                </para>
+
+                <para>
+                    It is recommended that you look at the existing implementation as a guide to how the validator
+                    handles feedback.
+                </para>
+
+            </sect3>
+
+            <sect3>
+
+                <title>Localization</title>
+
+                <para>
+                    The current implementation supports localized error messages as long as they do not use any
+                    arguments. Messages that take arguments will currently be ignored and only the default error
+                    message will be used.
+                </para>
+
+            </sect3>
+
+            <sect3>
+
+                <title>Troubleshooting</title>
+
+                <para>
+                    If the validator is not working the first thing you should do is have a look at the JavaScript
+                    console; there is likely to be an error message showing there.
+                </para>
+
+                <para>
+                    For more detail of what the JavaScript Valang validator doing you can enable the extensive logging
+                    functionality. To enable the log output all you need to do is include the following HTML (it is
+                    recommended that this be placed at the end of the page):
+                </para>
+
+                <programlisting>&lt;div id="valangLogDiv"&gt;&lt;/div&gt;</programlisting>
+
+                <para>
+                    Once you reload the page the JavaScript Valang validator will detect and output logging
+                    information into this div.
                 </para>
 
             </sect3>
 
         </sect2>
 
-	</sect1>
+    </sect1>
 
     <sect1 id="beanValidator">
 
@@ -3253,18 +3480,37 @@ public class Person {
             <para>
                 The validation framework is quite new and its architecture and design is a subject to changes. The
                 more experience we'll gain with this framework, the better we'll understand the demands of such
-                a framework, and we hope to continuously improve it with time.
+                a framework, and we hope to continuously improve it with time. Here some of the future planned
+                features and improvements:
             </para>
 
-            <para>
-                Valang was proven to be very powerful expression language when it comes to validation. Nonetheless,
-                it was originally developed independently and somewhat in an experimental manner. Nowadays, we have
-                a much better grasp of the requirements of this language and there are plans to improve it even more.
-            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <emphasis>Valang</emphasis> - alang was proven to be very powerful expression language when it
+                        comes to validation. Nonetheless, it was originally developed independently and somewhat in an
+                        experimental manner. Nowadays, we have a much better grasp of the requirements of this language
+                        and there are plans to improve it even more.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>Client side support</emphasis> - Both valang and common-validator support javascript
+                        client side validation. Adding  such support to this framework is essential and is planned for
+                        one of the releases following 0.6.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>Context aware validation rule</emphasis> - Validation rules that will only be applied
+                        within and associated execution context.
+                    </para>
+                </listitem>
+            </itemizedlist>
 
             <para>
                 We also keep a close eye on the recently submitted JSR-303. The following is taken from the original
-                request:
+                proposal:
 
                 <blockquote>
                     <attribution>Jason Carreira</attribution>
