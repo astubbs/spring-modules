@@ -303,11 +303,11 @@
         </fileset>
       </zip>
       
-      <zip destfile="${tmp.samples.dir}/spring-modules-xt-samples-src.zip">
+      <!--<zip destfile="${tmp.samples.dir}/spring-modules-xt-samples-src.zip">
         <fileset dir="${common.build.dir}/../../samples/xt/src">
           <exclude name="test/**"/>
         </fileset>
-      </zip>
+      </zip>-->
       
       <zip destfile="${tmp.samples.dir}/spring-modules-orbroker-petclinic-samples-src.zip">
         <fileset dir="${common.build.dir}/../../samples/orbroker-petclinic">
