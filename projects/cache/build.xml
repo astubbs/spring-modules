@@ -151,7 +151,7 @@
                optimize="${optimize}"
                source="${javac.source}"
                target="${javac.target}"
-               excludes="**/config/**"
+               excludes="**/config/**, **/integration/**"
                >
             <src path="${target.gen.java.test.dir}" />
             <src path="${src.java.test.dir}" />
