@@ -88,8 +88,9 @@
 				<exclude name="projects/common-build-bootstrap/build.xml" />
 				<include name="projects/*/build.xml" />
 				
-				<!--  not building 
+				<!--  not building -->
 				<exclude name="projects/cache/build.xml" />
+				<!--
 				<exclude name="projects/jbpm30/build.xml" />
 				<exclude name="projects/jbpm31/build.xml" />
 				<exclude name="projects/jsr94/build.xml" />
