@@ -22,7 +22,7 @@
    	<dependency org="apache" name="commons-logging" rev="1.1"/>
     <dependency org="apache" name="log4j" rev="1.2.13" />
 
-    <dependency org="springframework" name="springframework" rev="2.0-m4">
+    <dependency org="springframework" name="springframework" rev="2.0-rc4">
       <artifact name="spring" type="jar" conf="global" />
       <artifact name="spring-mock" type="jar" conf="global" />
     </dependency>
@@ -38,7 +38,7 @@
 	<dependency org="jini" name="jsk-platform" rev="2.1"/>
 	-->
 
-	<dependency org="blitz" name="blitz" rev="1.24"/>
+	<dependency org="blitz" name="blitz" rev="1.26"/>
 
 
 	<dependency org="gigaspaces" name="gigaspaces-ce" rev="5.1-1603-000"/>
