@@ -21,7 +21,7 @@ import java.util.Map;
 import net.sf.json.JSONObject;
 
 /**
- * Ajax action for executing a Javascript action with the following signature: <i>function name(options)</i>.<br>
+ * Ajax action for executing a Javascript function (declared in the client side) with the following signature: <i>function name(options)</i>.<br>
  * The <i>options</i> argument must be a JSON object in the form: <i>{param1 : value1, param2 : value2 ... }</i>.
  *
  * @author Sergio Bossa
