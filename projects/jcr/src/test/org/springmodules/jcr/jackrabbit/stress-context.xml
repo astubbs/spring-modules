@@ -10,6 +10,6 @@
 		<!-- normal factory beans params -->
 		<property name="configuration" value="/org/springmodules/jcr/jackrabbit/jackrabbit-repo.xml" />
 		<!-- use the target folder which will be cleaned  -->
-		<property name="homeDir" value="file:./target/repo" />
+		<property name="homeDir" value="file:./target/stress-repo" />
 	</bean>
 </beans>
