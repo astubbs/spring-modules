@@ -2,6 +2,10 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
+Changes in version 0.7 (in progress)
+------------------------------------
+
+
 Changes in version 0.6 (19.09.2006)
 -----------------------------------
 Package org.springmodules.commons
