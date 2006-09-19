@@ -224,6 +224,7 @@
 	<target name="release" depends="dist, javadoc, doc, gen.release.zip"
 	              description="Generate the springmodules release archive" />
 
+    
     <target name="gen.release.jar" depends="init">
     	<!-- create jar -->
        	<copy todir="${target.release.dir}/tmp/jar">
@@ -319,6 +320,7 @@
     </target>
 	
     <target name="gen.release.zip" depends="init, gen.release.jar, gen.release.javadoc, gen.release.samples"> <!--  -->
+        <delete file="${target.release.dir}" failonerror="false" />
 		<mkdir dir="${target.release.dir}" />
 		<delete file="${target.release.dir}/${release.zip}" />
 
@@ -357,9 +359,7 @@
 			            prefix="${zip.toplevel.dir}/repository" />
 			            
 		</zip>
-		<!--
 		<delete dir="${target.release.dir}/tmp" failonerror="false" />
-		-->
 	</target>
 	
 </project>
