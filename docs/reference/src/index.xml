@@ -49,11 +49,11 @@
 
 	&lucene;
 
-	&osworkflow;
-
 	&ojb;
 	
 	&orbroker;
+
+	&osworkflow;
 
 	&springmvc-extra;
 
