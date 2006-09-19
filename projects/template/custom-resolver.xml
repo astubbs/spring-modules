@@ -4,7 +4,7 @@
 		<chain name="custom">
 			<!-- webmacro url from sourceforge -->
 			<url name="blojsom-sourceforge">
-			    <artifact pattern="http://cvs.sourceforge.net/viewcvs.py/*checkout*/blojsom/blojsom-2.0/addon-lib/[artifact]-[revision].[ext]" />
+			    <artifact pattern="http://blojsom.cvs.sourceforge.net/*checkout*/blojsom/blojsom-2.0/addon-lib/[artifact]-[revision].[ext]" />
 			</url>
 		</chain>
 	</resolvers>
