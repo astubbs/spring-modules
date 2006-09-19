@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName"><value>org.hsqldb.jdbcDriver</value></property>
+		<property name="url"><value>jdbc:hsqldb:hsql://localhost:9001</value></property>
+		<property name="username"><value>sa</value></property>
+		<property name="password"><value></value></property>
+	</bean>
+
+	<bean id="ojbConfigurer" class="org.springmodules.orm.ojb.support.LocalOjbConfigurer"/>
+
+	<bean id="transactionManager" class="org.springmodules.orm.ojb.PersistenceBrokerTransactionManager"/>
+
+	<!--
+		Note the use of an inner bean for the "target" property.
+		This ensures that there is only one instance of this bean in the
+		factory, allowing us to use autowire by type if necessary.
+	-->
+	<bean id="clinic" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager"><ref local="transactionManager"/></property>
+		<property name="target">
+			<bean class="org.springframework.samples.petclinic.ojb.PersistenceBrokerClinic" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>

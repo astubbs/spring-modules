@@ -31,11 +31,18 @@
 	<!--
 	  - Location of the XML file that defines the root application context.
 	  - Applied by ContextLoaderServlet.
+		-
+		- Can be set to "/WEB-INF/applicationContext-broker.xml" for the ORBroker
+		- implementation or "/WEB-INF/applicationContext-ojb.xml" for the Apache OJB
+		- one.
 	  -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 
-		<param-value>/WEB-INF/applicationContext-broker.xml</param-value>
+    <param-value>/WEB-INF/applicationContext-broker.xml</param-value>
+    <!--
+    <param-value>/WEB-INF/applicationContext-ojb.xml</param-value>
+     -->
 	</context-param>
 
 	<!--

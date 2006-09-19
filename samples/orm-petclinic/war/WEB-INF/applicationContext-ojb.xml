@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition for PetClinic on Apache OJB.
+  -->
+<beans>
+
+	<!-- ========================= RESOURCE DEFINITIONS ========================= -->
+
+	<!-- Configurer that replaces ${...} placeholders with values from a properties file -->
+	<!-- (in this case, JDBC-related settings for the dataSource definition below) -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="/WEB-INF/jdbc.properties"/>
+	</bean>
+
+	<!-- Local DataSource that works in any environment -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
+	</bean>
+
+	<!-- JNDI DataSource for J2EE environments -->
+	<!--
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/petclinic"/>
+	</bean>
+	-->
+
+	<!-- OJB configurer that allows to use LocalDataSourceConnectionFactory in OJB.properties -->
+	<bean id="ojbConfigurer" class="org.springmodules.orm.ojb.support.LocalOjbConfigurer"/>
+
+	<!-- Transaction manager for a single OJB PersistenceBroker (alternative to JTA) -->
+	<bean id="transactionManager" class="org.springmodules.orm.ojb.PersistenceBrokerTransactionManager"/>
+
+	<!-- Transaction manager that delegates to JTA (for a transactional JNDI DataSource) -->
+	<!--
+	<bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager"/>
+	-->
+
+
+	<!-- ========================= BUSINESS OBJECT DEFINITIONS ========================= -->
+
+	<!--
+	  - PetClinic's central data access object: OJB implementation.
+    -->
+	<bean id="clinicTarget" class="org.springframework.samples.petclinic.ojb.PersistenceBrokerClinic"/>
+
+	<!--
+		- Transactional proxy for PetClinic's central data access object.
+		-
+		- Note that in a real-life app with multiple transaction proxies,
+		- you will probably want to use parent and child bean definitions
+		- as described in the manual, to reduce duplication.
+    -->
+	<bean id="clinic" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="target" ref="clinicTarget"/>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans>

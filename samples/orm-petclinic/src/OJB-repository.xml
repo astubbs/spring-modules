@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE descriptor-repository PUBLIC "-//Apache Software Foundation//DTD OJB Repository//EN"
+ 		"OJB-repository.dtd">
+
+<!--
+  - Repository file for the OJB implementation of the Clinic interface.
+	-->
+<descriptor-repository version="1.0">
+
+	<jdbc-connection-descriptor jcd-alias="dataSource" default-connection="true" useAutoCommit="1" platform="Hsqldb">
+		<sequence-manager className="org.apache.ojb.broker.util.sequence.SequenceManagerNativeImpl"/>
+	</jdbc-connection-descriptor>
+
+	<class-descriptor class="org.springframework.samples.petclinic.Vet" table="vets">
+		<field-descriptor name="id" column="id" primarykey="true" autoincrement="true" access="readonly"/>
+		<field-descriptor name="firstName" column="first_name"/>
+		<field-descriptor name="lastName" column="last_name"/>
+		<collection-descriptor name="specialties" indirection-table="vet_specialties"
+ 				element-class-ref="org.springframework.samples.petclinic.Specialty"
+				collection-class="org.apache.ojb.broker.util.collections.ManageableHashSet"
+				auto-retrieve="true">
+			<fk-pointing-to-this-class column="vet_id"/>
+			<fk-pointing-to-element-class column="specialty_id"/>
+		</collection-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="org.springframework.samples.petclinic.Specialty" table="specialties">
+		<field-descriptor name="id" column="id" primarykey="true" autoincrement="true" access="readonly"/>
+		<field-descriptor name="name" column="name"/>
+	</class-descriptor>
+
+	<class-descriptor class="org.springframework.samples.petclinic.Owner" table="owners">
+		<field-descriptor name="id" column="id" primarykey="true" autoincrement="true" access="readonly"/>
+		<field-descriptor name="firstName" column="first_name"/>
+		<field-descriptor name="lastName" column="last_name"/>
+		<field-descriptor name="address" column="address"/>
+		<field-descriptor name="city" column="city"/>
+		<field-descriptor name="telephone" column="telephone"/>
+		<collection-descriptor name="pets"
+ 				element-class-ref="org.springframework.samples.petclinic.Pet"
+				collection-class="org.apache.ojb.broker.util.collections.ManageableHashSet"
+				auto-retrieve="true">
+			<inverse-foreignkey field-ref="ownerId"/>
+		</collection-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="org.springframework.samples.petclinic.Pet" table="pets">
+		<field-descriptor name="id" column="id" primarykey="true" autoincrement="true" access="readonly"/>
+		<field-descriptor name="name" column="name"/>
+		<field-descriptor name="birthDate" column="birth_date"
+			conversion="org.apache.ojb.broker.accesslayer.conversions.JavaDate2SqlDateFieldConversion"/>
+		<field-descriptor name="ownerId" column="owner_id" jdbc-type="INTEGER" access="anonymous"/>
+		<reference-descriptor name="owner" class-ref="org.springframework.samples.petclinic.Owner" auto-retrieve="true">
+			<foreignkey field-ref="ownerId"/>
+		</reference-descriptor>
+		<field-descriptor name="typeId" column="type_id" jdbc-type="INTEGER" access="anonymous"/>
+		<reference-descriptor name="type" class-ref="org.springframework.samples.petclinic.PetType" auto-retrieve="true">
+			<foreignkey field-ref="typeId"/>
+		</reference-descriptor>
+		<collection-descriptor name="visits"
+ 				element-class-ref="org.springframework.samples.petclinic.Visit"
+				collection-class="org.apache.ojb.broker.util.collections.ManageableHashSet"
+				auto-retrieve="true">
+			<inverse-foreignkey field-ref="petId"/>
+		</collection-descriptor>
+	</class-descriptor>
+
+	<class-descriptor class="org.springframework.samples.petclinic.PetType" table="types">
+		<field-descriptor name="id" column="id" primarykey="true" autoincrement="true" access="readonly"/>
+		<field-descriptor name="name" column="name"/>
+	</class-descriptor>
+
+	<class-descriptor class="org.springframework.samples.petclinic.Visit" table="visits">
+		<field-descriptor name="id" column="id" primarykey="true" autoincrement="true" access="readonly"/>
+		<field-descriptor name="date" column="visit_date" jdbc-type="DATE"
+			conversion="org.apache.ojb.broker.accesslayer.conversions.JavaDate2SqlDateFieldConversion"/>
+		<field-descriptor name="description" column="description"/>
+		<field-descriptor name="petId" column="pet_id" jdbc-type="INTEGER" access="anonymous"/>
+		<reference-descriptor name="pet" class-ref="org.springframework.samples.petclinic.Pet" auto-retrieve="true">
+			<foreignkey field-ref="petId"/>
+		</reference-descriptor>
+	</class-descriptor>
+
+</descriptor-repository>
