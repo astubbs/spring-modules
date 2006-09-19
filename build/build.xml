@@ -336,7 +336,7 @@
 			<zipfileset dir="${target.release.dir}/tmp" includes="**/*.jar" prefix="${zip.toplevel.dir}" />
 			
 			<!-- sources -->
-			<zipfileset dir="${target.release.dir}/tmp" includes="**/*-src.zip" prefix="${zip.toplevel.dir}/sources" />
+			<zipfileset dir="${target.release.dir}/tmp" excludes="samples/**" includes="**/*-src.zip" prefix="${zip.toplevel.dir}/sources" />
 
 			<!-- javadocs -->
 			<zipfileset dir="${target.release.dir}/tmp/javadocs" includes="**/*" prefix="${zip.toplevel.dir}/docs/javadoc" />
