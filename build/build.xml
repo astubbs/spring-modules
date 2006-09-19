@@ -309,8 +309,8 @@
         </fileset>
       </zip>-->
       
-      <zip destfile="${tmp.samples.dir}/spring-modules-orbroker-petclinic-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/orbroker-petclinic">
+      <zip destfile="${tmp.samples.dir}/spring-modules-orm-petclinic-samples-src.zip">
+        <fileset dir="${common.build.dir}/../../samples/orm-petclinic">
           <include name="db/**"/>
           <include name="src/**"/>
           <include name="war/**"/>
