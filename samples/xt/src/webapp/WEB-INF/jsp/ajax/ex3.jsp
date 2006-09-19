@@ -68,10 +68,6 @@
                 <tr>
                     <td colspan="2">
                         <div id="office.full"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
                         <div id="office.not.found"/>
                     </td>
                 </tr>

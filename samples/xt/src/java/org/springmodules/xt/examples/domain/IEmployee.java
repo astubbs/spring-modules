@@ -7,17 +7,19 @@ import java.io.Serializable;
  *
  * @author Sergio Bossa
  */
-public interface IEmployee extends Serializable {
+public interface IEmployee extends CopyAware, Serializable {
     
     String getFirstname();
 
     String getMatriculationCode();
 
     String getSurname();
+    
+    void setMatriculationCode(String matriculationCode);
 
     void setFirstname(String firstname);
 
-    void setMatriculationCode(String matriculationCode);
-
     void setSurname(String surname);
+    
+    public IEmployee copy();
 }

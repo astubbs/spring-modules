@@ -7,7 +7,7 @@ package org.springmodules.xt.examples.domain;
  */
 public class AvailableOfficeSpecification implements BaseSpecification<IOffice> {
     
-    private int limit = 3;
+    private int limit = IOffice.MAX_EMPLOYEES;
     
     public boolean isSatisfiedBy(IOffice o) {
         return o.getEmployees().size() < this.limit; 

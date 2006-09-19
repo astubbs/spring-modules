@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springmodules.xt.examples.domain.BusinessException;
 import org.springmodules.xt.examples.domain.Error;
 import org.springmodules.xt.examples.domain.IOffice;
-import org.springmodules.xt.examples.domain.codes.OfficeErrorCodes;
 import org.springmodules.xt.model.introductor.bean.DynamicBeanIntroductor;
 import org.springmodules.xt.examples.mvc.form.EmployeeView;
 import org.springmodules.xt.examples.domain.Employee;
@@ -17,9 +16,11 @@ import org.springmodules.xt.examples.domain.MemoryRepository;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
+import org.springmodules.xt.examples.domain.codes.EmployeeErrorCodes;
+import org.springmodules.xt.examples.domain.codes.OfficeErrorCodes;
 
 /**
- * Form controller for inserting an employee.
+ * Form controller for inserting an employee, also adding it to an office.
  *
  * @author Sergio Bossa
  */
@@ -44,26 +45,30 @@ public class InsertEmployeeController extends EnhancedSimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         EmployeeView view = (EmployeeView) command;
         IOffice office = view.getOffice();
-        IEmployee employee = (IEmployee) this.introductor.getTarget(view);
         
-        try {
-            office.addEmployee(employee);
-            store.addEmployee(employee);
-            store.addOffice(office);
-        }
-        catch(BusinessException ex) {
-            for (Error error : ex.getErrors()) {
-                if (error.getCode().equals(OfficeErrorCodes.FULL)) {
-                    errors.rejectValue("office", error.getCode(), error.getMessage());
-                }
-                else {
-                    errors.rejectValue(error.getPropertyName(), error.getCode(), error.getMessage());
-                }
-            }
+        if (store.getEmployee(view.getMatriculationCode()) != null) {
+            errors.rejectValue("matriculationCode", EmployeeErrorCodes.DUPLICATED_CODE, "Duplicated Matriculation Code!");
             return this.showForm(request, response, errors);
         }
-        
-        return new ModelAndView(this.getSuccessView(), errors.getModel());
+        if (office == null) {
+            errors.rejectValue("office", OfficeErrorCodes.NOT_FOUND, "No office found!");
+            return this.showForm(request, response, errors);
+        }
+        else {
+            try {
+                IEmployee employee = (IEmployee) this.introductor.getTarget(view);
+                office.addEmployee(employee);
+                store.addOffice(office);
+            }
+            catch(BusinessException ex) {
+                for (Error error : ex.getErrors()) {
+                    errors.reject(error.getCode(), error.getMessage());
+                }
+                return this.showForm(request, response, errors);
+            }
+
+            return new ModelAndView(this.getSuccessView(), errors.getModel());
+        }
     }
     
     public void setStore(MemoryRepository store) {

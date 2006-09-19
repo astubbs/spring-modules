@@ -14,18 +14,18 @@ import org.springmodules.xt.examples.domain.MemoryRepository;
 import org.springmodules.xt.examples.domain.Office;
 
 /**
- * Form controller for filling offices with a new list of employees.
+ * Form controller for filling an office dragging employees into it.
  *
  * @author Sergio Bossa
  */
-public class FillOfficeController extends EnhancedSimpleFormController {
+public class FillOfficeWithDraggingController extends EnhancedSimpleFormController {
     
     private MemoryRepository store;
 
     protected Object formBackingObject(HttpServletRequest request) throws Exception {
         String officeId = request.getParameter("officeId");
         if (officeId == null) {
-            return new Office();
+            return null;
         }
         else {
             return this.store.getOffice(officeId);
@@ -33,10 +33,10 @@ public class FillOfficeController extends EnhancedSimpleFormController {
     }
     
     protected Map referenceData(HttpServletRequest request) throws Exception {
-        Collection offices = store.getOffices();
+        Collection employees = store.getEmployees();
         Map result = new HashMap();
         
-        result.put("offices", offices);
+        result.put("employees", employees);
         
         return result;
     }

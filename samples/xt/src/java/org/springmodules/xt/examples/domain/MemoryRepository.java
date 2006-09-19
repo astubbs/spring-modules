@@ -23,23 +23,15 @@ import org.springmodules.xt.model.specifications.composite.CompositeSpecificatio
  */
 public class MemoryRepository {
     
-    public static final int MAX_EMPLOYEES = 3;
+    private MemoryRepositoryLoader loader;
     
     private Map<String, IEmployee> employeesMap = new HashMap<String, IEmployee>();
     private Map<String, IOffice> officesMap = new HashMap<String, IOffice>();
-    private MemoryRepositoryLoader loader;
     
-    private CompositeSpecification<BaseSpecification, IOffice> officeSpecification = 
-            new CompositeSpecificationImpl(BaseSpecification.class, "isSatisfiedBy");
+    private CompositeSpecification<BaseSpecification, IOffice> officeSpecification = new CompositeSpecificationImpl(BaseSpecification.class, "isSatisfiedBy");
     
     public MemoryRepository() {
-        OfficeIdSpecification idSpecification = new OfficeIdSpecification();
-        FullOfficeSpecification fullOfficeSpecification = new FullOfficeSpecification(MAX_EMPLOYEES);
-        Message wrongIdMessage = new MessageImpl(OfficeErrorCodes.WRONG_ID, Message.Type.ERROR, "officeId" ,"Wrong office id");
-        Message fullOfficeMessage = new MessageImpl(OfficeErrorCodes.FULL, Message.Type.ERROR, "employees", "Too many employees");
-        
-        this.officeSpecification.compose(idSpecification).withMessage(wrongIdMessage, false)
-                                           .andNot(fullOfficeSpecification).withMessage(fullOfficeMessage, true);
+        this.setRules();
     }
     
     public void init() {
@@ -47,38 +39,51 @@ public class MemoryRepository {
     }
     
     public void addEmployee(IEmployee e) {
-        this.employeesMap.put(e.getMatriculationCode(), e);
+        this.internalAddEmployee(e);
+        for (IOffice o : this.officesMap.values()) {
+            if (o.getEmployees().contains(e)) {
+                o.addEmployee(e);
+            }
+        }
     }
     
     public void addOffice(IOffice o) {
-        Notification n = new NotificationImpl();
-        if (this.officeSpecification.evaluate(o, n) == false) {
-            BusinessException ex = DomainUtils.notificationErrorsToBusinessException(n);
-            throw ex;
-        }
-        else {
-            this.officesMap.put(o.getOfficeId(), o);
+        this.internalAddOffice(o);
+        for (IEmployee emp : o.getEmployees()) {
+            this.internalAddEmployee(emp);
         }
     }
     
     public IEmployee getEmployee(String matriculationCode) {
-        return (IEmployee) employeesMap.get(matriculationCode);
+        IEmployee result = employeesMap.get(matriculationCode);
+        if (result != null) {
+            return result.copy();
+        }
+        else {
+            return null;
+        }
     }
     
     public IOffice getOffice(String officeId) {
-        return (IOffice) officesMap.get(officeId);
+        IOffice result = officesMap.get(officeId);
+        if (result != null) {
+            return result.copy();
+        }
+        else {
+            return null;
+        }
     }
     
     public Collection<IOffice> getOffices() {
-        List<IOffice> offices = new LinkedList<IOffice>(officesMap.values());
-        Collections.sort(offices, new Comparator() {
+        List<IOffice> result = new LinkedList<IOffice>(officesMap.values());
+        Collections.sort(result, new Comparator() {
             public int compare(Object o1, Object o2) {
                 IOffice office1 = (IOffice) o1;
                 IOffice office2 = (IOffice) o2;
                 return office1.getName().compareTo(office2.getName());
             }
         });
-        return offices;
+        return this.copyOfficeList(result);
     }
     
     public Collection<IEmployee> getEmployeesByOffice(IOffice o) {
@@ -95,7 +100,7 @@ public class MemoryRepository {
                 return emp1.getSurname().compareTo(emp2.getSurname());
             }
         });
-        return result;
+        return this.copyEmployeeList(result);
     }
     
     public Collection<IEmployee> getEmployees() {
@@ -108,10 +113,51 @@ public class MemoryRepository {
                 return emp1.getSurname().compareTo(emp2.getSurname());
             }
         });
-        return result;
+        return this.copyEmployeeList(result);
     }
 
     public void setLoader(MemoryRepositoryLoader loader) {
         this.loader = loader;
+    }
+    
+    private void setRules() {
+        OfficeIdSpecification idSpecification = new OfficeIdSpecification();
+        FullOfficeSpecification fullOfficeSpecification = new FullOfficeSpecification();
+        Message wrongIdMessage = new MessageImpl(OfficeErrorCodes.WRONG_ID, Message.Type.ERROR, "officeId" ,"Wrong office id");
+        Message fullOfficeMessage = new MessageImpl(OfficeErrorCodes.FULL, Message.Type.ERROR, "employees", "Too many employees");
+        
+        this.officeSpecification.compose(idSpecification).withMessage(wrongIdMessage, false)
+                                           .andNot(fullOfficeSpecification).withMessage(fullOfficeMessage, true);
+    }
+    
+    private Collection<IEmployee> copyEmployeeList(Collection<IEmployee> list) {
+        Collection<IEmployee> copy = new LinkedList<IEmployee>();
+        for (IEmployee emp : list) {
+            copy.add(emp.copy());
+        }
+        return copy;
+    }
+    
+    private Collection<IOffice> copyOfficeList(Collection<IOffice> list) {
+        Collection<IOffice> copy = new LinkedList<IOffice>();
+        for (IOffice office : list) {
+            copy.add(office.copy());
+        }
+        return copy;
+    }
+    
+    private void internalAddOffice(IOffice o) {
+        Notification n = new NotificationImpl();
+        if (this.officeSpecification.evaluate(o, n) == false) {
+            BusinessException ex = DomainUtils.notificationErrorsToBusinessException(n);
+            throw ex;
+        }
+        else {
+            this.officesMap.put(o.getOfficeId(), o);
+        }
+    }
+    
+    private void internalAddEmployee(IEmployee e) {
+        this.employeesMap.put(e.getMatriculationCode(), e);
     }
 }

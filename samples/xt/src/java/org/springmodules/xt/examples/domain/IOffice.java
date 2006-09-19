@@ -8,7 +8,9 @@ import java.util.Set;
  *
  * @author Sergio Bossa
  */
-public interface IOffice extends Serializable {
+public interface IOffice extends CopyAware, Serializable {
+    
+    public static final int MAX_EMPLOYEES = 3;
     
     void addEmployee(IEmployee e);
     
@@ -19,10 +21,12 @@ public interface IOffice extends Serializable {
     String getName();
 
     String getOfficeId();
+    
+    void setOfficeId(String officeId);
 
     void setEmployees(Set<IEmployee> employees);
 
     void setName(String name);
-
-    void setOfficeId(String officeId);
+    
+    public IOffice copy();
 }

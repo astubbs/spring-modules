@@ -13,7 +13,13 @@ public class Employee implements IEmployee {
     private String matriculationCode;
     private String firstname;
     private String surname;
-
+    
+    public Employee() {}
+    
+    public Employee(String matriculationCode) {
+        this.matriculationCode = matriculationCode;
+    }
+    
     public String getFirstname() {
         return firstname;
     }
@@ -33,9 +39,17 @@ public class Employee implements IEmployee {
     public String getMatriculationCode() {
         return matriculationCode;
     }
-
+    
     public void setMatriculationCode(String matriculationCode) {
         this.matriculationCode = matriculationCode;
+    }
+    
+    public IEmployee copy() {
+        Employee copy = new Employee(new String(this.matriculationCode));
+        copy.firstname = new String(this.firstname);
+        copy.surname = new String(this.surname);
+        
+        return copy;
     }
     
     public boolean equals(Object obj) {

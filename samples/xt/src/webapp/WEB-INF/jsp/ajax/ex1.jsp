@@ -7,6 +7,11 @@
         <script type="text/javascript" src='<c:url value="/js/springxt-min.js"/>'></script>
         <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
         <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects"/>'></script>
+        <script type="text/javascript">
+            function showAlert(options) {
+                alert(options.message);
+            }
+        </script>
         <title>XT Ajax Framework : Example 1</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
@@ -55,52 +60,6 @@
                 </tr>
                 
                 <tr>
-                    <td>Press to show a greetings message (hidden using a CSS inline rule) :</td>
-                    <td><input type="button" value="Press" onclick="doAjaxAction('showElement', this);"></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div id="toShow" style="display: none;">
-                            <div style="color: red;">Your greetings ...</div>
-                            <div style="color: red;">Hello, Spring Modules user!</div>
-                        </div>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <td>Press to hide the greetings message below :</td>
-                    <td><input type="button" value="Press" onclick="doAjaxAction('hideElement', this);"></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div id="toHide">
-                            <div style="color: red;">Your greetings to hide ...</div>
-                            <div style="color: red;">Hello, Spring Modules user!</div>
-                        </div>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <td>Press to highlight the greetings message below :</td>
-                    <td><input type="button" value="Press" onclick="doAjaxAction('highlightElement', this);"></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div id="toHighlight">Hello, Spring Modules user!</div>
-                    </td>
-                </tr>
-                
-                <tr>
-                    <td>Press to modify the opacity of the greetings message below :</td>
-                    <td><input type="button" value="Press" onclick="doAjaxAction('setOpacity', this);"></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div id="toSetOpacity" style="contentEditable: true;">Hello, Spring Modules user!</div>
-                    </td>
-                </tr>
-                
-                <tr>
                     <td>Press to complete the greetings message below :</td>
                     <td><input id="insertAfterButton" type="button" value="Press" onclick="doAjaxAction('insertAfter', this);"></td>
                 </tr>
@@ -132,6 +91,74 @@
                     </td>
                 </tr>
                 
+                <tr>
+                    <td>Press to show an alert message (by executing a javascript function) :</td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('executeFunction', this);"></td>
+                </tr>
+                
+                <tr>
+                    <td>Press to show a greetings message (hidden using a CSS inline rule) :</td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('showElement', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="toShow" style="display: none;">
+                            <div style="color: red;">Your greetings ...</div>
+                            <div style="color: red;">Hello, Spring Modules user!</div>
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Press to hide the greetings message below :</td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('hideElement', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="toHide">
+                            <div style="color: red;">Your greetings to hide ...</div>
+                            <div style="color: red;">Hello, Spring Modules user!</div>
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Press the corresponding button to apply an effect to the greetings message below :</td>
+                    <td><input type="button" value="Highlight" onclick="doAjaxAction('highlightElement', this);"></td>
+                    <td><input type="button" value="Set Opacity" onclick="doAjaxAction('setOpacity', this);"></td>
+                    <td><input type="button" value="Pulsate" onclick="doAjaxAction('pulsateElement', this);"></td>
+                    <td><input type="button" value="Shrink" onclick="doAjaxAction('shrinkElement', this);"></td>
+                    <td><input type="button" value="Grow" onclick="doAjaxAction('growElement', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div id="toApplyEffect" style="border-style: solid">
+                            <div>Your greetings ...</div>
+                            <div>Hello, Spring Modules user!</div>
+                        </div>
+                    </td>
+                </tr>
+                <!--
+                <tr>
+                    <td>Press to highlight the greetings message below :</td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('highlightElement', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="toHighlight">Hello, Spring Modules user!</div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Press to modify the opacity of the greetings message below :</td>
+                    <td><input type="button" value="Press" onclick="doAjaxAction('setOpacity', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="toSetOpacity" style="contentEditable: true;">Hello, Spring Modules user!</div>
+                    </td>
+                </tr>
+                -->
             </table>
         </form>
     </body>

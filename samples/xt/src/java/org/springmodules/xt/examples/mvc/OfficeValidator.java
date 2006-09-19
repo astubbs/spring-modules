@@ -1,19 +1,21 @@
 package org.springmodules.xt.examples.mvc;
 
+import org.springmodules.xt.examples.domain.FullOfficeSpecification;
 import org.springmodules.xt.examples.domain.IOffice;
-import org.springmodules.xt.examples.domain.MemoryRepository;
+import org.springmodules.xt.examples.domain.OfficeIdSpecification;
 import org.springmodules.xt.examples.domain.codes.OfficeErrorCodes;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
- * Validate office insertion.
+ * Validate offices.
  *
  * @author Sergio Bossa
  */
-public class InsertOfficeValidator implements Validator {
+public class OfficeValidator implements Validator {
     
-    private MemoryRepository store;
+    private FullOfficeSpecification fullOfficeSpecification = new FullOfficeSpecification();
+    private OfficeIdSpecification officeIdSpecification = new OfficeIdSpecification();
     
     public boolean supports(Class aClass) {
         return IOffice.class.isAssignableFrom(aClass);
@@ -27,18 +29,19 @@ public class InsertOfficeValidator implements Validator {
             if (office.getOfficeId() == null || office.getOfficeId().equals("")) {
                 errors.rejectValue("officeId", OfficeErrorCodes.NULL_ID, "No Office Id!");
             }
-            if (store.getOffice(office.getOfficeId()) != null) {
-                errors.rejectValue("officeId", OfficeErrorCodes.DUPLICATED_ID, "Duplicated Office Id!");
+            if (! this.officeIdSpecification.isSatisfiedBy(office)) {
+                errors.rejectValue("officeId", OfficeErrorCodes.WRONG_ID, "Wrong Office Id!");
             }
             
             // Validate office name:
             if (office.getName() == null || office.getName().equals("")) {
                 errors.rejectValue("name", OfficeErrorCodes.NULL_NAME, "No office name!");
             }
+            
+            // Is office full?
+            if (this.fullOfficeSpecification.isSatisfiedBy(office)) {
+                errors.rejectValue("employees", OfficeErrorCodes.FULL, "Full Office!");
+            }
         }
-    }
-    
-    public void setStore(MemoryRepository store) {
-        this.store = store;
     }
 }

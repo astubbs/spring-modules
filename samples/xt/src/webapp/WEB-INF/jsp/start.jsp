@@ -13,8 +13,8 @@
         <h3>XT Modeling Framework</h3>
         <ul>
             <li><a href='<c:url value="/model/ex1.action"/>'/>Example 1</a></li>
-            <li><a href='<c:url value="/model/ex2.action?office=1"/>'/>Example 2, Part 1</a></li>
-            <li><a href='<c:url value="/model/ex2.action?office=2"/>'/>Example 2, Part 2</a></li>
+            <li><a href='<c:url value="/model/ex2.action?officeId=1"/>'/>Example 2, Part 1</a></li>
+            <li><a href='<c:url value="/model/ex2.action?officeId=2"/>'/>Example 2, Part 2</a></li>
             <li><a href='<c:url value="/model/ex3.action"/>'/>Example 3</a></li>
         </ul>
         <h3>XT Ajax Framework</h3>
@@ -24,6 +24,8 @@
             <li><a href='<c:url value="/ajax/ex3.action"/>'/>Example 3</a></li>
             <li><a href='<c:url value="/ajax/ex4.action"/>'/>Example 4</a></li>
             <li><a href='<c:url value="/ajax/ex5.action"/>'/>Example 5</a></li>
+            <li><a href='<c:url value="/ajax/ex6.action?officeId=1"/>'/>Example 6, Part 1</a></li>
+            <li><a href='<c:url value="/ajax/ex6.action?officeId=2"/>'/>Example 6, Part 2</a></li>
         </ul>
     </body>
 </html>

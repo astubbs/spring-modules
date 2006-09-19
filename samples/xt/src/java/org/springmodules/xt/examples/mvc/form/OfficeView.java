@@ -10,7 +10,7 @@ import org.springmodules.xt.examples.domain.IOffice;
  */
 public interface OfficeView extends IOffice {
     
-    void setSelectableEmployees(Set employees);
+    void setSelectableEmployees(Set<EmployeeView> employees);
     
-    Set getSelectableEmployees();
+    Set<EmployeeView> getSelectableEmployees();
 }

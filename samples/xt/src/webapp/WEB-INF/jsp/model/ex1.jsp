@@ -17,21 +17,30 @@
         </p>
         <form method="POST" action="">
             <table>
+                <spring:bind path="command">
+                    <tr>
+                        <td colspan="2">
+                            <c:forEach items="${status.errorMessages}" var="errorMessage">
+                                <c:out value="${errorMessage}"/><br>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                </spring:bind>
                 <spring:bind path="command.matriculationCode">
-                <tr>
-                    <td>Matriculation code :</td>
-                    <td>
-                        <input type="text" name="${status.expression}" value="${status.value}">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <c:forEach items="${status.errorMessages}" var="errorMessage">
-                            <c:out value="${errorMessage}"/><br>
-                        </c:forEach>
-                    </td>
-                </tr>
-                 </spring:bind>
+                    <tr>
+                        <td>Matriculation code :</td>
+                        <td>
+                            <input type="text" name="${status.expression}" value="${status.value}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <c:forEach items="${status.errorMessages}" var="errorMessage">
+                                <c:out value="${errorMessage}"/><br>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                </spring:bind>
                 <tr>
                     <td>Firstname :</td>
                     <td>
@@ -49,25 +58,25 @@
                     </td>
                 </tr>
                 <spring:bind path="command.office">
-                <tr>
-                    <td>Select the employee office :</td>
-                    <td>
-                        <select name="${status.expression}">
-                            <option>Select one ...</option>
-                            <c:forEach items="${offices}" var="office">
-                                <spring:transform value="${office}" var="officeString"/>
-                                <option value="${officeString}">${office.name}</option>
+                    <tr>
+                        <td>Select the employee office :</td>
+                        <td>
+                            <select name="${status.expression}">
+                                <option>Select one ...</option>
+                                <c:forEach items="${offices}" var="office">
+                                    <spring:transform value="${office}" var="officeString"/>
+                                    <option value="${officeString}">${office.name}</option>
+                                </c:forEach>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <c:forEach items="${status.errorMessages}" var="errorMessage">
+                                <c:out value="${errorMessage}"/><br>
                             </c:forEach>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <c:forEach items="${status.errorMessages}" var="errorMessage">
-                            <c:out value="${errorMessage}"/><br>
-                        </c:forEach>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
                 </spring:bind>
                 <tr>
                     <td><input type="submit" value="Add"></td>

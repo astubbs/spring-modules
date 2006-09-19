@@ -7,11 +7,7 @@ package org.springmodules.xt.examples.domain;
  */
 public class FullOfficeSpecification implements BaseSpecification<IOffice> {
     
-    private int limit;
-    
-    public FullOfficeSpecification(int limit) {
-        this.limit = limit;
-    }
+    private int limit = IOffice.MAX_EMPLOYEES;
     
     public boolean isSatisfiedBy(IOffice o) {
         return o.getEmployees().size() > this.limit; 

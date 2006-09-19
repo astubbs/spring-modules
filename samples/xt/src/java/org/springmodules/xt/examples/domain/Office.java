@@ -17,7 +17,13 @@ public class Office implements IOffice {
     private String name;
     private Set<IEmployee> employees = new HashSet();
     private AvailableOfficeSpecification availableOfficeSpecification = new AvailableOfficeSpecification();
+    
+    public Office() {}
 
+    public Office(String officeId) {
+        this.officeId = officeId;
+    }
+    
     public String getName() {
         return name;
     }
@@ -29,11 +35,11 @@ public class Office implements IOffice {
     public String getOfficeId() {
         return officeId;
     }
-
+    
     public void setOfficeId(String officeId) {
         this.officeId = officeId;
     }
-    
+
     public Set getEmployees() {
         return employees;
     }
@@ -56,7 +62,18 @@ public class Office implements IOffice {
     public void removeEmployee(IEmployee e) {
         this.employees.remove(e);
     }
-    
+
+    public IOffice copy() {
+        Office copy = new Office(new String(this.officeId));
+        copy.availableOfficeSpecification = this.availableOfficeSpecification;
+        copy.name = new String(this.name);
+        for (IEmployee emp : this.employees) {
+            copy.addEmployee(emp.copy());
+        }
+        
+        return copy;
+    }
+
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof IOffice)) return false;
         

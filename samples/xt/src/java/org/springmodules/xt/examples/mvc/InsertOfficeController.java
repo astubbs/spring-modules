@@ -13,6 +13,7 @@ import org.springmodules.xt.examples.domain.MemoryRepository;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
+import org.springmodules.xt.examples.domain.codes.OfficeErrorCodes;
 
 /**
  * Form controller for inserting an office.
@@ -39,17 +40,23 @@ public class InsertOfficeController extends EnhancedSimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         IOffice office = (IOffice) command;
         
-        try {
-            this.store.addOffice(office);
-        }
-        catch(BusinessException ex) {
-            for (Error error : ex.getErrors()) {
-                errors.rejectValue(error.getPropertyName(), error.getCode(), error.getMessage());
-            }
+        if (store.getOffice(office.getOfficeId()) != null) {
+            errors.rejectValue("officeId", OfficeErrorCodes.DUPLICATED_ID, "Duplicated Office Id!");
             return this.showForm(request, response, errors);
         }
-        
-        return new ModelAndView(this.getSuccessView(), errors.getModel());
+        else {
+            try {
+                this.store.addOffice(office);
+            }
+            catch(BusinessException ex) {
+                for (Error error : ex.getErrors()) {
+                    errors.rejectValue(error.getPropertyName(), error.getCode(), error.getMessage());
+                }
+                return this.showForm(request, response, errors);
+            }
+
+            return new ModelAndView(this.getSuccessView(), errors.getModel());
+        }
     }
     
     public void setStore(MemoryRepository store) {

@@ -16,17 +16,26 @@
         </p>
         <form method="POST" action="">
             <table>
+                <spring:bind path="command">
+                    <tr>
+                        <td colspan="2">
+                            <c:forEach items="${status.errorMessages}" var="errorMessage">
+                                <c:out value="${errorMessage}"/><br>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                </spring:bind>
                 <tr>
                     <th>Surname</th>
                     <th>Remove</th>
                 </tr>
                 <c:forEach items="${command.selectableEmployees}" var="emp" varStatus="loop">
-                        <spring:bind path="command.selectableEmployees[${loop.index}].selected">
+                    <spring:bind path="command.selectableEmployees[${loop.index}].selected">
                         <tr>
                             <td><c:out value="${emp.surname}"/></td>
                             <td><input type="checkbox" name="${status.expression}"></td>
                         </tr>
-                        </spring:bind>
+                    </spring:bind>
                 </c:forEach>
             </table>
             <div><input type="submit" value="Remove"></div>

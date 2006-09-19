@@ -47,11 +47,18 @@
             </tr>
             <tr>
                 <td>
+                    <div id="office.full"/>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>
                     <br/>
                     <div id="message"/>
                     <br/>
                 </td>
             </tr>
+            
             <tr>
                 <td><input type="button" value="Add" onclick="doAjaxAction('addEmployee', this);"></td>&nbsp;
                 <td><input type="button" value="Fill" onclick="doAjaxSubmit('validate', this);"></td>

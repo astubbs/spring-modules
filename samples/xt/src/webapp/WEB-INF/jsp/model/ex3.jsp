@@ -16,6 +16,15 @@
         </p>
         <form method="POST" action="">
             <table>
+                <spring:bind path="command">
+                    <tr>
+                        <td colspan="2">
+                            <c:forEach items="${status.errorMessages}" var="errorMessage">
+                                <c:out value="${errorMessage}"/><br>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                </spring:bind>
                 <spring:bind path="command.name">
                 <tr>
                     <td>Name: </td>
