@@ -656,8 +656,8 @@
 
         <para>Now, let us analyze how to handle the event.</para>
 
-        <para>First, we have to retrieve a list of offices to display from
-        some kind of data access object:</para>
+        <para>First, we have to retrieve a list of offices from some kind of
+        data access object:</para>
 
         <programlisting>
                     Collection&lt;IOffice&gt; offices = store.getOffices();
