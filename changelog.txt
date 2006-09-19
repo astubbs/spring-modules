@@ -2,8 +2,8 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
-Changes in version 0.6 (in progress)
-------------------------------------
+Changes in version 0.6 (19.09.2006)
+-----------------------------------
 Package org.springmodules.commons
 * Basic support for Jakarta commons-chain added
 
@@ -52,6 +52,13 @@ Package org.springmodules.validation.bean
 Package org.springmodules.samples.validation.bean
 * Added a sample application for the new bean validation framework
 
+Packages org.springmodules.web.propertyeditors, org.springmodules.web.servlet.mvc, org.springmodules.web.servlet.view
+* XT Utils stuff moved to SpringMVC-extra module.
+* Added documentation for SpringMVC-extra module.
+
+Package org.springmodules.workflow.osworkflow
+* Fixed AcegiWorkflowContextHandlerInterceptor when dealing with different AuthenticationProviders [MOD-186]
+
 Package org.springmodules.xt.ajax
 * Integration with Prototype and Scriptaculous JavaScript libraries.
 * New actions and components.
@@ -63,13 +70,6 @@ Package org.springmodules.xt.ajax
   and the Taconite prefix has been removed from all action names. 
 * TaconiteValidationHandler has been moved to org.springmodules.xt.ajax.validation and renamed in 
   DefaultValidationHandler.
-
-Packages org.springmodules.web.propertyeditors, org.springmodules.web.servlet.mvc, org.springmodules.web.servlet.view
-* XT Utils stuff moved to SpringMVC-extra module.
-* Added documentation for SpringMVC-extra module.
-
-Package org.springmodules.workflow.osworkflow
-* Fixed AcegiWorkflowContextHandlerInterceptor when dealing with different AuthenticationProviders [MOD-186]
 
 
 Changes in version 0.5 (14.07.2006)
