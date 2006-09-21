@@ -4,7 +4,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-javaspaces</artifactId>
     <packaging>jar</packaging>
-    <version>0.5</version>
+    <version>0.6</version>
     <name>spring-modules-javaspaces</name>
     <url>https://springmodules.dev.java.net/</url>
     <dependencies>
@@ -21,12 +21,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
-            <version>2.0-m4</version>
+            <version>2.0-rc2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
-            <version>2.0-m4</version>
+            <version>2.0-rc2</version>
         </dependency>
         <dependency>
             <groupId>cglib</groupId>
@@ -36,22 +36,12 @@
         <dependency>
             <groupId>blitz</groupId>
             <artifactId>blitz</artifactId>
-            <version>1.24</version>
-        </dependency>
-        <dependency>
-            <groupId>gigaspaces</groupId>
-            <artifactId>commons-beanutils-gs</artifactId>
-            <version>1.6</version>
-        </dependency>
-        <dependency>
-            <groupId>gigaspaces</groupId>
-            <artifactId>commons-digester-gs</artifactId>
-            <version>1.7</version>
+            <version>1.26</version>
         </dependency>
         <dependency>
             <groupId>gigaspaces</groupId>
             <artifactId>gigaspaces-ce</artifactId>
-            <version>5.0</version>
+            <version>5.1-1603-000</version>
         </dependency>
         <dependency>
             <groupId>jini</groupId>

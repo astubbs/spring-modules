@@ -4,7 +4,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-cache</artifactId>
     <packaging>jar</packaging>
-    <version>0.5</version>
+    <version>0.6</version>
     <name>spring-modules-cache</name>
     <url>https://springmodules.dev.java.net/</url>
     <dependencies>
@@ -31,18 +31,8 @@
         </dependency>
         <dependency>
             <groupId>gigaspaces</groupId>
-            <artifactId>commons-beanutils-gs</artifactId>
-            <version>1.6</version>
-        </dependency>
-        <dependency>
-            <groupId>gigaspaces</groupId>
-            <artifactId>commons-digester-gs</artifactId>
-            <version>1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>gigaspaces</groupId>
             <artifactId>gigaspaces-ce</artifactId>
-            <version>5.0</version>
+            <version>5.1-1603-000</version>
         </dependency>
         <dependency>
             <groupId>jini</groupId>

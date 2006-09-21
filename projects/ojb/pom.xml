@@ -2,48 +2,37 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springmodules</groupId>
-  <artifactId>spring-modules-xt</artifactId>
+  <artifactId>spring-modules-ojb</artifactId>
   <packaging>jar</packaging>
   <version>0.6</version>
-  <name>spring-modules-xt</name>
+  <name>spring-modules-ojb</name>
   <url>https://springmodules.dev.java.net/</url>
   <dependencies>
     <dependency>
-      <groupId>net.sf.json-lib</groupId>
-      <artifactId>json-lib</artifactId>
-      <version>0.8</version>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.4</version>
     </dependency>
     <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.1</version>
-    </dependency>   
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.13</version>
+    </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.1</version>
-    </dependency>   
+    </dependency> 
     <dependency>
-      <groupId>cglib</groupId>
-      <artifactId>cglib-nodep</artifactId>
-      <version>2.1_3</version>
-    </dependency>  
+      <groupId>ojb</groupId>
+      <artifactId>db-ojb</artifactId>
+      <version>1.0.4</version>
+    </dependency> 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring</artifactId>
       <version>1.2.8</version>
     </dependency>  
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.11</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-mock</artifactId>
@@ -57,9 +46,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>xmlunit</groupId>
-      <artifactId>xmlunit</artifactId>
-      <version>1.0</version>
+      <groupId>easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>1.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -4,7 +4,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-jakarta-commons</artifactId>
     <packaging>jar</packaging>
-    <version>0.5</version>
+    <version>0.6</version>
     <name>spring-modules-jakarta-commons</name>
     <url>https://springmodules.dev.java.net/</url>
     <dependencies>
@@ -32,7 +32,12 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
             <version>1.2</version>
-        </dependency>	  
+        </dependency>
+        <dependency>
+          <groupId>commons-chain</groupId>
+          <artifactId>commons-chain</artifactId>
+          <version>1.1</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-support</artifactId>
