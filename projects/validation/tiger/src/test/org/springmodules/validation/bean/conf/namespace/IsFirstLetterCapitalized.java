@@ -21,10 +21,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationRule;
+
 /**
  * @author Uri Boness
  */
 @Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
+@ValidationRule
 public @interface IsFirstLetterCapitalized {
 }
