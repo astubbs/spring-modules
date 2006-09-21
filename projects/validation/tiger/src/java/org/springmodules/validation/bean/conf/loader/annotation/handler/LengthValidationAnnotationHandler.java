@@ -21,6 +21,7 @@ import java.lang.annotation.Annotation;
 import org.springframework.util.Assert;
 import org.springmodules.validation.bean.rule.AbstractValidationRule;
 import org.springmodules.validation.bean.rule.LengthValidationRule;
+import org.springmodules.validation.bean.rule.MaxLengthValidationRule;
 import org.springmodules.validation.bean.rule.MinLengthValidationRule;
 
 /**
@@ -51,10 +52,10 @@ public class LengthValidationAnnotationHandler extends AbstractPropertyValidatio
             return new MinLengthValidationRule(minLength.value());
         }
 
-        if (Length.class.isInstance(annotation)) {
-            Length length = (Length)annotation;
-            validateMinMax(length.min(), length.max(), clazz, propertyName);
-            return new LengthValidationRule(length.min(), length.max());
+        if (MaxLength.class.isInstance(annotation)) {
+            MaxLength maxLength = (MaxLength)annotation;
+            validateMax(maxLength.value(), clazz, propertyName);
+            return new MaxLengthValidationRule(maxLength.value());
         }
 
         throw new IllegalArgumentException("LengthValidationAnnotationHandler does not suppport annotations of type: " +
