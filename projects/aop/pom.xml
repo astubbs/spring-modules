@@ -7,6 +7,15 @@
     <version>0.6</version>
     <name>spring-modules-aop</name>
     <url>https://springmodules.dev.java.net/</url>
+    <licenses>
+      <license>
+        <name>Apache License, Version 2.0</name>
+        <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+      </license>
+    </licenses>
+    <scm>
+      <url>https://springmodules.dev.java.net/source/browse/springmodules/projects/aop</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>commons-logging</groupId>

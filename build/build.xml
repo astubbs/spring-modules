@@ -207,6 +207,20 @@
 		<!-- generate documentation for the entire project -->
 		<ant antfile="${docs.dir}/build.xml" dir="${docs.dir}"/>
 	</target>
+  
+  <target name="m2-bundle" depends="init" description="Calls m2-bundle target on each project">
+    <echo>projects=${projects}</echo>
+    <subant target="m2-bundle" inheritall="false" failonerror="false">
+      <buildpath refid="${projects}" />
+    </subant>
+  </target>
+  
+  <target name="m2-clean" depends="init" description="Calls m2-clean target on each project">
+    <echo>projects=${projects}</echo>
+    <subant target="m2-clean" inheritall="false" failonerror="false">
+      <buildpath refid="${projects}" />
+    </subant>
+  </target>
 
    <target name="get.scb" description="Retrieve spring common build">
         <ant antfile="${bootstrap.dir}/build.xml" dir="${bootstrap.dir}"/>

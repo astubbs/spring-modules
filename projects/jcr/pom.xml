@@ -7,6 +7,15 @@
     <version>0.6</version>
     <name>spring-modules-jcr</name>
     <url>https://springmodules.dev.java.net/</url>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://springmodules.dev.java.net/source/browse/springmodules/projects/jcr</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -75,9 +84,9 @@
             <version>1.0</version>
         </dependency>
         <dependency>
-          <groupId>org.apache.jackrabbit</groupId>
-          <artifactId>jackrabbit-jcr-rmi</artifactId>
-          <version>1.0.1</version>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jcr-rmi</artifactId>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>concurrent</groupId>

@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<!--
+ Copyright 2006 the original author or authors.
+  
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+      http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ - - -
+ Author: Sergio Bossa
+ 
+ Targets for generating Maven2 bundle.
+-->
+
+<project name="m2-targets">
+  
+  <target name="m2.init">
+    <property name="m2.bundle.dir" value="target/m2-bundle" />
+    <property name="m2.bundle.tmp.dir" value="target/m2-bundle/tmp" />
+    <property name="project.name" value="${ant.project.name}" />
+    <property name="project.version" value="${project.base.version}" />
+  </target>
+  
+  <target name="m2.post-init">
+    <mkdir dir="${m2.bundle.dir}" />
+    <mkdir dir="${m2.bundle.tmp.dir}" />
+  </target>
+
+  <target name="m2.sources-jar" depends="m2.init, m2.post-init">
+    <jar destfile="${m2.bundle.tmp.dir}/${project.name}-${project.version}-sources.jar">
+      <fileset dir="${src.java.main.dir}" />
+      <fileset dir="${target.gen.java.dir}" />
+    </jar>
+  </target>
+  
+  <target name="m2.javadoc-jar" depends="m2.init, m2.post-init">
+    <jar destfile="${m2.bundle.tmp.dir}/${project.name}-${project.version}-javadoc.jar">
+      <fileset dir="${target.javadocs.dir}" />
+    </jar>
+  </target>
+  
+  <target name="m2.artifact-jar" depends="m2.init, m2.post-init">
+    <copy file="${target.lib.dir}/${project.name}.jar" tofile="${m2.bundle.tmp.dir}/${project.name}-${project.version}.jar" />
+  </target>
+  
+  <target name="m2.pom" depends="m2.init, m2.post-init">
+    <copy file="${basedir}/pom.xml" todir="${m2.bundle.tmp.dir}" />
+  </target>
+  
+  <target name="m2-bundle" depends="m2.pom, m2.artifact-jar, m2.sources-jar, m2.javadoc-jar">
+    <jar destfile="${m2.bundle.dir}/${project.name}-${project.version}-bundle.jar">
+      <fileset dir="${m2.bundle.tmp.dir}" />
+    </jar>
+    <delete quiet="true" dir="${m2.bundle.tmp.dir}" />
+  </target>
+  
+  <target name="m2-clean" depends="m2.init">
+    <delete quiet="true" dir="${m2.bundle.dir}" />
+    <property name="m2.m2.init.done" value="false" />
+  </target>
+  
+</project>

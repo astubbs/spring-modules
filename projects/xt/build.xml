@@ -10,6 +10,7 @@
 
   <import file="${common.build.dir}/common-targets.xml" />
   <import file="${common.build.dir}/doc-targets.xml" />
+  <import file="${common.build.dir}/m2-targets.xml" />
   
   <target name="compile.post">
     
