@@ -119,6 +119,9 @@
 
 		<!-- directory for release zips -->
 		<property name="target.release.dir" value="${target.dir}/release" />
+    
+    <!-- directory for Maven2 bundles zips -->
+    <property name="target.m2-bundles.dir" value="${target.dir}/m2-bundles" />
 
 		<!-- directory for release zips -->
 		<property name="zip.toplevel.dir" value="spring-modules-${release.version}" />
@@ -210,13 +213,36 @@
   
   <target name="m2-bundle" depends="init" description="Calls m2-bundle target on each project">
     <echo>projects=${projects}</echo>
+    <mkdir dir="${target.m2-bundles.dir}" />
     <subant target="m2-bundle" inheritall="false" failonerror="false">
       <buildpath refid="${projects}" />
     </subant>
+    <copy todir="${target.m2-bundles.dir}">
+      <fileset file="../projects/aop/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/cache/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/commons/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/flux/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/hivemind/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/javaspaces/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/jbpm30/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/jbpm31/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/jcr/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/jsr94/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/lucene/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/ojb/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/orbroker/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/osworkflow/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/springmvc-extra/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/tapestry/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/template/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/validation/target/m2-bundle/*.jar"/>
+      <fileset file="../projects/xt/target/m2-bundle/*.jar"/>
+    </copy>
   </target>
   
   <target name="m2-clean" depends="init" description="Calls m2-clean target on each project">
     <echo>projects=${projects}</echo>
+    <delete dir="${target.m2-bundles.dir}" />
     <subant target="m2-clean" inheritall="false" failonerror="false">
       <buildpath refid="${projects}" />
     </subant>
