@@ -209,7 +209,12 @@ extends JavaSpaceTemplate
 	 */
 	public Lease write(final Object pojo, final long lease)
 	{
-		return write( pojo, lease, getUpdateModifiers());
+		return (Lease) execute(new JavaSpaceCallback() {
+			public Object doInSpace(JavaSpace js, Transaction tx) throws RemoteException,
+			TransactionException, UnusableEntryException, InterruptedException {
+				return ((IJSpace)js).write(pojo,tx, lease);
+			}
+		});
 	}
 
 	/**
