@@ -25,9 +25,9 @@ import org.springmodules.xt.ajax.action.prototype.scriptaculous.OpacityAction;
 import org.springmodules.xt.ajax.action.prototype.scriptaculous.PulsateAction;
 import org.springmodules.xt.ajax.action.prototype.scriptaculous.ShrinkAction;
 import org.springmodules.xt.ajax.component.InputField;
-import org.springmodules.xt.ajax.component.JspComponent;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.component.TaggedText;
+import org.springmodules.xt.ajax.component.dynamic.JspComponent;
 
 /**
  * Ajax handler for testing actions.
