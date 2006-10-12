@@ -25,6 +25,7 @@ import org.springmodules.xt.ajax.action.prototype.scriptaculous.OpacityAction;
 import org.springmodules.xt.ajax.action.prototype.scriptaculous.PulsateAction;
 import org.springmodules.xt.ajax.action.prototype.scriptaculous.ShrinkAction;
 import org.springmodules.xt.ajax.component.InputField;
+import org.springmodules.xt.ajax.component.JspComponent;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.component.TaggedText;
 
@@ -146,6 +147,20 @@ public class TestActionsHandler extends AbstractAjaxHandler {
         // Add the actions:
         response.addAction(action);
         response.addAction(disableAction);
+        
+        return response;
+    }
+    
+    public AjaxResponse includeJsp(AjaxActionEvent event) {
+        // Create the component for including jsp content:
+        JspComponent jsp = new JspComponent(event.getHttpRequest(), "/includes/include.jsp");
+        // Create an ajax action for appending it: 
+        AppendContentAction action = new AppendContentAction("jsp", jsp);
+        
+        // Create a concrete ajax response:
+        AjaxResponse response = new AjaxResponseImpl();
+        // Add the action:
+        response.addAction(action);
         
         return response;
     }

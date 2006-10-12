@@ -92,6 +92,17 @@
                 </tr>
                 
                 <tr>
+                    <td>Press to include external dynamic content through a Jsp:</td>
+                    <td><input id="includeJsp" type="button" value="Press" onclick="doAjaxAction('includeJsp', this);"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="jsp">
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr>
                     <td>Press to show an alert message (by executing a javascript function) :</td>
                     <td><input type="button" value="Press" onclick="doAjaxAction('executeFunction', this);"></td>
                 </tr>

@@ -19,7 +19,7 @@
         </ul>
         <h3>XT Ajax Framework</h3>
         <ul>
-            <li><a href='<c:url value="/ajax/ex1.page"/>'/>Example 1</a></li>
+            <li><a href='<c:url value="/ajax/ex1.page?msg=XT"/>'/>Example 1</a></li>
             <li><a href='<c:url value="/ajax/ex2.page"/>'/>Example 2</a></li>
             <li><a href='<c:url value="/ajax/ex3.action"/>'/>Example 3</a></li>
             <li><a href='<c:url value="/ajax/ex4.action"/>'/>Example 4</a></li>
