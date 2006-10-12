@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.springmodules.xt.ajax.component;
+package org.springmodules.xt.ajax.component.dynamic;
 
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
+import org.springmodules.xt.ajax.component.Component;
 import org.springmodules.xt.ajax.util.InternalHttpServletResponse;
 import org.springmodules.xt.ajax.component.support.RenderingException;
 
