@@ -37,7 +37,7 @@ public class FunctionErrorArgumentsResolver implements ErrorArgumentsResolver {
     }
 
     /**
-     * Returns the error arguments that are resolved by the configured valang expressions.
+     * Returns the error arguments that are resolved by the configured function expressions.
      *
      * @see org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver#resolveArguments(Object)
      */

@@ -48,7 +48,7 @@ public class ValidatorNamespaceHandler extends NamespaceHandlerSupport {
             new XmlBasedValidatorBeanDefinitionParser()
         );
 
-        if (SystemUtils.IS_JAVA_1_5) {
+        if (SystemUtils.IS_JAVA_1_5 || SystemUtils.IS_JAVA_1_6) {
             registerBeanDefinitionParser(
                 AnnotationBasedValidatorBeanDefinitionParser.ELEMENT_NAME,
                 new AnnotationBasedValidatorBeanDefinitionParser()

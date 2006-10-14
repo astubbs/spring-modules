@@ -31,6 +31,7 @@ import org.springmodules.validation.bean.conf.loader.annotation.handler.NotNullV
 import org.springmodules.validation.bean.conf.loader.annotation.handler.RangeValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.RegExpValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.SizeValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationMethodAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidatorClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidatorsClassValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.hibernate.HibernatePropertyValidationAnnotationHandler;
@@ -85,6 +86,9 @@ public class DefaultValidationAnnotationHandlerRegistry extends SimpleValidation
         registerClassHandler(new ExpressionsClassValidationAnnotationHandler());
         registerClassHandler(new ValidatorClassValidationAnnotationHandler());
         registerClassHandler(new ValidatorsClassValidationAnnotationHandler());
+
+        // method annotation handlers
+        registerMethodHandler(new ValidationMethodAnnotationHandler());
 
         // property annotation handlers
         registerPropertyHandler(new CascadeValidationAnnotationHandler());

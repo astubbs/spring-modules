@@ -1,5 +1,7 @@
 package org.springmodules.validation.bean.conf.loader.xml;
 
+import org.springframework.util.ObjectUtils;
+
 /**
  * @author Uri Boness
  */
@@ -58,6 +60,14 @@ public class Person {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public boolean confirmPasswords() {
+        return ObjectUtils.nullSafeEquals(password, confirmPassword);
+    }
+
+    public boolean validateLastNameIsLongerThanTen() {
+        return lastName.length() > 10;
     }
 
 }

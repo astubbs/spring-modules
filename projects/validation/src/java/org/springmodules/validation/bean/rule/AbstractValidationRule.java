@@ -205,6 +205,7 @@ public abstract class AbstractValidationRule implements ValidationRule {
             public Object[] resolveArguments(Object obj) {
                 Object[] result = new Object[arguments.length + 1];
                 System.arraycopy(arguments, 0, result, 1, arguments.length);
+                result[0] = obj;
                 return result;
             }
         };

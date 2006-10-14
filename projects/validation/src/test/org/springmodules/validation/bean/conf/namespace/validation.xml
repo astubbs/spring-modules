@@ -5,14 +5,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                         http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator.xsd">
 
-    <!--<bean id="conditionExpressionParser" class="org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser">-->
-        <!--<property name="customFunctions">-->
-            <!--<map>-->
-                <!--<entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>-->
-            <!--</map>-->
-        <!--</property>-->
-    <!--</bean>-->
-
     <vld:xml-based-validator id="validator">
         <vld:element-handlers>
             <vld:handler class="org.springmodules.validation.bean.conf.namespace.IsFirstLetterCapitalizedPropertyElementHandler"/>

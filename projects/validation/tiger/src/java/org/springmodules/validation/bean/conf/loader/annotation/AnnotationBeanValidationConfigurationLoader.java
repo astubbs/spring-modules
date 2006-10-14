@@ -38,6 +38,7 @@ import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration
 import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.MethodValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationRule;
 
@@ -161,6 +162,7 @@ public class AnnotationBeanValidationConfigurationLoader implements BeanValidati
         MutableBeanValidationConfiguration configuration = new DefaultBeanValidationConfiguration();
         handleClassAnnotations(clazz, configuration);
         handlePropertyAnnotations(clazz, configuration);
+        handleMethodAnnotations(clazz, configuration);
         return configuration;
     }
 
@@ -183,6 +185,25 @@ public class AnnotationBeanValidationConfigurationLoader implements BeanValidati
                     "'... Annotation will be ignored...");
             } else {
                 handler.handleAnnotation(annotation, clazz, configuration);
+            }
+        }
+    }
+
+    protected void handleMethodAnnotations(Class clazz, MutableBeanValidationConfiguration configuration) {
+        Method[] methods = clazz.getMethods();
+        for (Method method : methods) {
+            Annotation[] annotations = method.getAnnotations();
+            for (Annotation annotation : annotations) {
+                if (!isValidationAnnotation(annotation)) {
+                    continue;
+                }
+                MethodValidationAnnotationHandler handler = handlerRegistry.findMethodHandler(annotation, clazz, method);
+                if (handler == null) {
+                    logger.warn("No hanlder is defined for annotation '" + annotation.annotationType().getName() +
+                        "'... Annotation will be ignored...");
+                } else {
+                    handler.handleAnnotation(annotation, clazz, method, configuration);
+                }
             }
         }
     }
@@ -254,6 +275,9 @@ public class AnnotationBeanValidationConfigurationLoader implements BeanValidati
      */
     protected void handleProprtyAnnotations(Annotation[] annotations, Class validatedClass, PropertyDescriptor descriptor, MutableBeanValidationConfiguration configuration) {
         for (Annotation annotation : annotations) {
+            if (!isValidationAnnotation(annotation)) {
+                continue;
+            }
             PropertyValidationAnnotationHandler handler = handlerRegistry.findPropertyHanlder(annotation, validatedClass, descriptor);
             if (handler != null) {
                 handler.handleAnnotation(annotation, validatedClass, descriptor, configuration);

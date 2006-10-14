@@ -28,6 +28,7 @@ import org.springmodules.validation.bean.conf.loader.annotation.handler.Min;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.NotBlank;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.NotEmpty;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.NotNull;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationMethod;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.Validator;
 
 /**
@@ -169,6 +170,16 @@ public class Person {
 
     public void setNullableInteger(Integer nullableInteger) {
         this.nullableInteger = nullableInteger;
+    }
+
+    @ValidationMethod
+    public boolean validate() {
+        return false;
+    }
+
+    @ValidationMethod(forProperty = "birthday")
+    public boolean validateBirthdayIsNull() {
+        return birthday == null;
     }
 
 }

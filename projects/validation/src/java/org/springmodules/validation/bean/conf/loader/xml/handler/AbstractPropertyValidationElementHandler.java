@@ -199,7 +199,7 @@ public abstract class AbstractPropertyValidationElementHandler
      * @return The validation rule error arguments.
      */
     protected ErrorArgumentsResolver extractArgumentsResolver(Element element) {
-        String argsString = element.getAttribute(AbstractPropertyValidationElementHandler.ARGS_ATTR);
+        String argsString = element.getAttribute(ARGS_ATTR);
         String[] expressions = (argsString == null) ? new String[0] : StringUtils.tokenizeToStringArray(argsString, ", ");
         if (expressions.length == 0) {
             return null;

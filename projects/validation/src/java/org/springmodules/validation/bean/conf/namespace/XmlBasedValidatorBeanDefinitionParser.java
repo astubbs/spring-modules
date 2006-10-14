@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -66,14 +66,14 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
 
     private static final String CONFIGURATION_LOADER_PREFIX = "__configuration_loader_";
 
-    protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
+    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
 
-        String validatorId = extractId(element);
-
-        String registryId = HANDLER_REGISTRY_PREFIX + validatorId;
         BeanDefinitionBuilder registryBuilder = BeanDefinitionBuilder.rootBeanDefinition(DefaultValidationRuleElementHandlerRegistry.class);
         parseHandlerElements(element, registryBuilder);
-        parserContext.getRegistry().registerBeanDefinition(registryId, registryBuilder.getBeanDefinition());
+        AbstractBeanDefinition beanDefinition = registryBuilder.getBeanDefinition();
+        String validatorId = resolveId(element, beanDefinition, parserContext);
+        String registryId = HANDLER_REGISTRY_PREFIX + validatorId;
+        parserContext.getRegistry().registerBeanDefinition(registryId, beanDefinition);
 
         String loaderId = CONFIGURATION_LOADER_PREFIX + validatorId;
         BeanDefinitionBuilder loaderBuilder = BeanDefinitionBuilder.rootBeanDefinition(DefaultXmlBeanValidationConfigurationLoader.class);

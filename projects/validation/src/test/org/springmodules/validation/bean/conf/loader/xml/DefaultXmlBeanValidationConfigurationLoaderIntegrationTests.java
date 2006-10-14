@@ -5,6 +5,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.validation.BindException;
 import org.springmodules.validation.bean.BeanValidator;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
+import org.springmodules.validation.util.cel.ognl.OgnlConditionExpressionParser;
+import org.springmodules.validation.util.fel.parser.OgnlFunctionExpressionParser;
 
 /**
  * Tests for {@link org.springmodules.validation.bean.conf.loader.xml.DefaultXmlBeanValidationConfigurationLoader}.
@@ -18,12 +20,14 @@ public class DefaultXmlBeanValidationConfigurationLoaderIntegrationTests extends
     protected void setUp() throws Exception {
         loader = new DefaultXmlBeanValidationConfigurationLoader();
         loader.setResource(new ClassPathResource("Person.vld.xml", getClass()));
+        loader.setConditionExpressionParser(new OgnlConditionExpressionParser());
+        loader.setFunctionExpressionParser(new OgnlFunctionExpressionParser());
         loader.afterPropertiesSet();
     }
 
     public void testLoadConfiguration() throws Exception {
         BeanValidationConfiguration config = loader.loadConfiguration(Person.class);
-        assertEquals(1, config.getGlobalRules().length);
+        assertEquals(2, config.getGlobalRules().length);
 
         Person person = new Person();
         person.setFirstName("Uri");
@@ -37,7 +41,9 @@ public class DefaultXmlBeanValidationConfigurationLoaderIntegrationTests extends
         BeanValidator validator = new BeanValidator(loader);
         validator.validate(person, errors);
 
-        assertEquals(1, errors.getGlobalErrorCount());
+        assertEquals(2, errors.getGlobalErrorCount());
+        assertEquals(1, errors.getFieldErrorCount("lastName"));
+        assertEquals("Person.lastName[validateLastNameIsLongerThanTen()]", errors.getFieldError("lastName").getCode());
 
     }
 

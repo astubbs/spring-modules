@@ -21,6 +21,7 @@
                 <xs:element ref="vld:validator" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element ref="vld:global" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="vld:property" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="vld:method" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:attribute name="name" use="required" type="xs:string"/>
             <xs:anyAttribute namespace="##any" processContents="skip"/>
@@ -39,6 +40,14 @@
             <xs:attribute name="name" use="required"/>
             <xs:attribute name="cascade" use="optional" type="vld:true-false-type"/>
             <xs:attribute name="cascade-condition" use="optional" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="method">
+        <xs:complexType>
+            <xs:attribute name="name" use="required"/>
+            <xs:attribute name="for-property" use="optional"/>
+            <xs:attributeGroup ref="vld:common-rule-attributes"/>
         </xs:complexType>
     </xs:element>
 

@@ -2,6 +2,7 @@ package org.springmodules.validation.bean.conf.loader.annotation;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.MethodValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
@@ -32,6 +34,7 @@ public class SimpleValidationAnnotationHandlerRegistry extends BasicContextAware
 
     private List<ClassValidationAnnotationHandler> classHandlers;
     private List<PropertyValidationAnnotationHandler> propertyHandlers;
+    private List<MethodValidationAnnotationHandler> methodHandlers;
 
     private boolean conditionExpressionParserSet = false;
     private ConditionExpressionParser conditionExpressionParser;
@@ -45,6 +48,7 @@ public class SimpleValidationAnnotationHandlerRegistry extends BasicContextAware
     public SimpleValidationAnnotationHandlerRegistry() {
         classHandlers = new ArrayList<ClassValidationAnnotationHandler>();
         propertyHandlers = new ArrayList<PropertyValidationAnnotationHandler>();
+        methodHandlers = new ArrayList<MethodValidationAnnotationHandler>();
         conditionExpressionParser = new ValangConditionExpressionParser();
         functionExpressionParser = new ValangFunctionExpressionParser();
     }
@@ -62,11 +66,23 @@ public class SimpleValidationAnnotationHandlerRegistry extends BasicContextAware
     }
 
     /**
-     * @see org.springmodules.validation.bean.conf.loader.annotation.ValidationAnnotationHandlerRegistry#findPropertyHanlder(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
+     * @see ValidationAnnotationHandlerRegistry#findPropertyHanlder(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
      */
     public PropertyValidationAnnotationHandler findPropertyHanlder(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
         for (PropertyValidationAnnotationHandler handler : propertyHandlers) {
             if (handler.supports(annotation, clazz, descriptor)) {
+                return handler;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @see ValidationAnnotationHandlerRegistry#findMethodHandler(java.lang.annotation.Annotation, Class, java.lang.reflect.Method)
+     */
+    public MethodValidationAnnotationHandler findMethodHandler(Annotation annotation, Class clazz, Method method) {
+        for (MethodValidationAnnotationHandler handler : methodHandlers) {
+            if (handler.supports(annotation, clazz, method)) {
                 return handler;
             }
         }
@@ -124,6 +140,32 @@ public class SimpleValidationAnnotationHandlerRegistry extends BasicContextAware
         Collections.reverse(handlers);
         for (PropertyValidationAnnotationHandler handler : handlers) {
             registerPropertyHandler(handler);
+        }
+    }
+
+    /**
+     * Registers the given method validation annotation handler with this registry. The newly added handler will have
+     * precedence over the already registered handlers, that is, for every annotation, this handler wil be checked
+     * for support before the already registered ones.
+     *
+     * @param handler The method validation annotation handler to be registered.
+     */
+    public void registerMethodHandler(MethodValidationAnnotationHandler handler) {
+        methodHandlers.add(0, handler);
+    }
+
+    /**
+     * Registers the given method validation annoation handlers to the registry. These handlers will have precedence
+     * over the already registered handlers, that is, for every annotation, these handlers will be check for suppport
+     * before the already registered ones. The order of the given handler list is important for it determines the
+     * precedence of the handlers within this list.
+     *
+     * @param handlers The extra method validation annotation handlers to register with this registry.
+     */
+    public void setExtraMethodHandlers(List<MethodValidationAnnotationHandler> handlers) {
+        Collections.reverse(handlers);
+        for (MethodValidationAnnotationHandler handler : handlers) {
+            registerMethodHandler(handler);
         }
     }
 

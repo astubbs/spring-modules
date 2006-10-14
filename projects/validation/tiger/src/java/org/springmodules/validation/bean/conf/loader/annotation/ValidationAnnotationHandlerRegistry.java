@@ -18,8 +18,10 @@ package org.springmodules.validation.bean.conf.loader.annotation;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ClassValidationAnnotationHandler;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.MethodValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
 
 /**
@@ -38,7 +40,7 @@ public interface ValidationAnnotationHandlerRegistry {
      * @param clazz The annotated class.
      * @return The most appropriate validation annotation handler to handle the given annotation.
      */
-    public ClassValidationAnnotationHandler findClassHanlder(Annotation annotation, Class clazz);
+    ClassValidationAnnotationHandler findClassHanlder(Annotation annotation, Class clazz);
 
     /**
      * Finds and returns the most appropriate {@link PropertyValidationAnnotationHandler} to handle the given
@@ -49,6 +51,16 @@ public interface ValidationAnnotationHandlerRegistry {
      * @param descriptor The property descriptor of the annotated property.
      * @return The most appropriate validation annotation handler to handle the given annoation.
      */
-    public PropertyValidationAnnotationHandler findPropertyHanlder(Annotation annotation, Class clazz, PropertyDescriptor descriptor);
+    PropertyValidationAnnotationHandler findPropertyHanlder(Annotation annotation, Class clazz, PropertyDescriptor descriptor);
 
+    /**
+     * Finds and returns the most appropriate {@link MethodValidationAnnotationHandler} to handle the given
+     * annotation. If no such handler was found, this method returns <code>null</code>.
+     *
+     * @param annotation The annotation to handle.
+     * @param clazz The annotated class.
+     * @param method The annotated method.
+     * @return The most appropriate validation annotation handler to handle the given annoation.
+     */
+    MethodValidationAnnotationHandler findMethodHandler(Annotation annotation, Class clazz, Method method);
 }

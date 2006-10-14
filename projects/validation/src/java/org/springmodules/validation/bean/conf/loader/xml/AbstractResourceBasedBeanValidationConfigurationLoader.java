@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.ClassUtils;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 import org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader;
 
@@ -173,7 +174,7 @@ public abstract class AbstractResourceBasedBeanValidationConfigurationLoader
      * @return The default validatoin configuration resource for the given class.
      */
     protected String createDefaultConfigurationFileName(Class clazz) {
-        return clazz.getSimpleName() + DEFAULT_RESOURCE_EXTENTION;
+        return ClassUtils.getShortName(clazz) + DEFAULT_RESOURCE_EXTENTION;
     }
 
 }

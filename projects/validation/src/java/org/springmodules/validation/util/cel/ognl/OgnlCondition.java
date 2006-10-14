@@ -21,6 +21,7 @@ import ognl.OgnlException;
 import org.springframework.util.Assert;
 import org.springmodules.validation.util.condition.AbstractCondition;
 import org.springmodules.validation.util.condition.Condition;
+import org.springmodules.validation.util.lang.NestedIllegalArgumentException;
 
 /**
  * A {@link Condition} that checks the given object based on a boolean OGNL expression.
@@ -44,7 +45,7 @@ public class OgnlCondition extends AbstractCondition {
         try {
             compiledExpression = Ognl.parseExpression(expression);
         } catch (OgnlException oe) {
-            throw new IllegalArgumentException("Could not parse OGNL boolean expression '" + expression + "'", oe);
+            throw new NestedIllegalArgumentException("Could not parse OGNL boolean expression '" + expression + "'", oe);
         }
     }
 

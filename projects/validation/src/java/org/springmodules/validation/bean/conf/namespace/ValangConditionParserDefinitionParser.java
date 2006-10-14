@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -47,7 +47,7 @@ public class ValangConditionParserDefinitionParser extends AbstractBeanDefinitio
     private final static String REGEXP_ATTR = "regexp";
     private final static String PATTERN_ATTR = "pattern";
 
-    protected BeanDefinition parseInternal(Element element, ParserContext parserContext) {
+    protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
 
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(ValangConditionExpressionParser.class);
 

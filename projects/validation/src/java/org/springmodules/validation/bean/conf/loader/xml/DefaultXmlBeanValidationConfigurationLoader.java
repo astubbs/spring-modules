@@ -17,6 +17,7 @@
 package org.springmodules.validation.bean.conf.loader.xml;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
@@ -37,10 +40,18 @@ import org.springmodules.validation.bean.conf.ValidationConfigurationException;
 import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
+import org.springmodules.validation.bean.rule.ValidationMethodValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
+import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
+import org.springmodules.validation.bean.rule.resolver.FunctionErrorArgumentsResolver;
 import org.springmodules.validation.util.cel.ConditionExpressionBased;
 import org.springmodules.validation.util.cel.ConditionExpressionParser;
 import org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser;
+import org.springmodules.validation.util.condition.Condition;
+import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
+import org.springmodules.validation.util.fel.FunctionExpressionBased;
+import org.springmodules.validation.util.fel.FunctionExpressionParser;
+import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -95,7 +106,7 @@ import org.w3c.dom.NodeList;
  * @author Uri Boness
  */
 public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBeanValidationConfigurationLoader
-    implements ConditionExpressionBased, ApplicationContextAware {
+    implements ConditionExpressionBased, FunctionExpressionBased, ApplicationContextAware {
 
     public static final String DEFAULT_NAMESPACE_URL = "http://www.springmodules.org/validation/bean";
 
@@ -104,6 +115,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
     private static final String CLASS_TAG = "class";
     private static final String GLOBAL_TAG = "global";
     private static final String PROPERTY_TAG = "property";
+    private static final String METHOD_TAG = "method";
     private static final String VALIDATOR_TAG = "validator";
 
     private static final String PACKAGE_ATTR = "package";
@@ -111,11 +123,19 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
     private static final String CASCADE_ATTR = "cascade";
     private static final String CASCADE_CONDITION_ATTR = "cascade-condition";
     private static final String CLASS_ATTR = "class";
+    private static final String CODE_ATTR = "code";
+    private static final String MESSAGE_ATTR = "message";
+    private static final String ARGS_ATTR = "args";
+    private static final String APPLY_IF_ATTR = "apply-if";
+    private static final String FOR_PROPERTY_ATTR = "for-property";
 
     private ValidationRuleElementHandlerRegistry handlerRegistry;
 
-    private boolean conditionExplicitlySet = false;
+    private boolean conditionParserExplicitlySet = false;
     private ConditionExpressionParser conditionExpressionParser;
+
+    private boolean functionParserExplicitlySet = false;
+    private FunctionExpressionParser functionExpressionParser;
 
     private ApplicationContext applicationContext;
 
@@ -134,7 +154,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * @param handlerRegistry The validation rule element handler registry that will be used by this loader.
      */
     public DefaultXmlBeanValidationConfigurationLoader(ValidationRuleElementHandlerRegistry handlerRegistry) {
-        this(handlerRegistry,  new ValangConditionExpressionParser());
+        this(handlerRegistry,  new ValangConditionExpressionParser(), new ValangFunctionExpressionParser());
     }
 
     /**
@@ -146,10 +166,12 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      */
     public DefaultXmlBeanValidationConfigurationLoader(
         ValidationRuleElementHandlerRegistry handlerRegistry,
-        ConditionExpressionParser conditionExpressionParser) {
+        ConditionExpressionParser conditionExpressionParser,
+        FunctionExpressionParser functionExpressionParser) {
 
         this.handlerRegistry = handlerRegistry;
         this.conditionExpressionParser = conditionExpressionParser;
+        this.functionExpressionParser = functionExpressionParser;
     }
 
     /**
@@ -185,6 +207,9 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         initContext(handlerRegistry);
         super.afterPropertiesSet();
         findConditionExpressionParserInApplicationContext();
+        findFunctionExpressionParserInApplicationContext();
+        Assert.notNull(conditionExpressionParser);
+        Assert.notNull(functionExpressionParser);
     }
 
     //=============================================== Setter/Getter ====================================================
@@ -212,8 +237,16 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * @see ConditionExpressionBased#setConditionExpressionParser(org.springmodules.validation.util.cel.ConditionExpressionParser)
      */
     public void setConditionExpressionParser(ConditionExpressionParser conditionExpressionParser) {
-        this.conditionExplicitlySet = true;
+        this.conditionParserExplicitlySet = true;
         this.conditionExpressionParser = conditionExpressionParser;
+    }
+
+    /**
+     * @see FunctionExpressionBased#setFunctionExpressionParser(org.springmodules.validation.util.fel.FunctionExpressionParser)
+     */
+    public void setFunctionExpressionParser(FunctionExpressionParser functionExpressionParser) {
+        this.functionParserExplicitlySet = true;
+        this.functionExpressionParser = functionExpressionParser;
     }
 
     /**
@@ -257,6 +290,12 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             handleGlobalDefinition(globalDefinition, clazz, configuration);
         }
 
+        nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, METHOD_TAG);
+        for (int i=0; i<nodes.getLength(); i++) {
+            Element methodDefinition = (Element)nodes.item(i);
+            handleMethodDefinition(methodDefinition, clazz, configuration);
+        }
+
         nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, PROPERTY_TAG);
         for (int i=0; i<nodes.getLength(); i++) {
             Element propertyDefinition = (Element)nodes.item(i);
@@ -296,6 +335,80 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         }
     }
 
+    protected void handleMethodDefinition(Element methodDefinition, Class clazz, MutableBeanValidationConfiguration configuration) {
+        String methodName = methodDefinition.getAttribute(NAME_ATTR);
+        if (!StringUtils.hasText(methodName)) {
+            logger.error("Could not parse method element. Missing or empty 'name' attribute");
+            throw new ValidationConfigurationException("Could not parse method element. Missing 'name' attribute");
+        }
+
+        String errorCode = methodDefinition.getAttribute(CODE_ATTR);
+        String message = methodDefinition.getAttribute(MESSAGE_ATTR);
+        String argsString = methodDefinition.getAttribute(ARGS_ATTR);
+        String conditionString = methodDefinition.getAttribute(APPLY_IF_ATTR);
+        String propertyName = methodDefinition.getAttribute(FOR_PROPERTY_ATTR);
+
+        ValidationMethodValidationRule rule = createMethodValidationRule(
+            clazz,
+            methodName,
+            errorCode,
+            message,
+            argsString,
+            conditionString
+        );
+
+        if (StringUtils.hasText(propertyName)) {
+            validatePropertyExists(clazz, propertyName);
+            configuration.addPropertyRule(propertyName, rule);
+        } else {
+            configuration.addGlobalRule(rule);
+        }
+    }
+
+    protected ValidationMethodValidationRule createMethodValidationRule(
+        Class clazz,
+        String methodName,
+        String errorCode,
+        String message,
+        String argsString,
+        String applyIfString) {
+
+        Method method = ReflectionUtils.findMethod(clazz, methodName, new Class[0]);
+        if (method == null) {
+            throw new ValidationConfigurationException("Method named '" + methodName +
+                "' was not found in class hierarchy of '" + clazz.getName() + "'.");
+        }
+
+        if (!StringUtils.hasText(errorCode)) {
+            errorCode = methodName + "()";
+        }
+        if (!StringUtils.hasText(message)) {
+            message = errorCode;
+        }
+        if (!StringUtils.hasText(argsString)) {
+            argsString = "";
+        }
+        ErrorArgumentsResolver argsResolver = buildErrorArgumentsResolver(argsString);
+        Condition applyIfCondition = new AlwaysTrueCondition();
+        if (StringUtils.hasText(applyIfString)) {
+            applyIfCondition = conditionExpressionParser.parse(applyIfString);
+        }
+
+        ValidationMethodValidationRule rule = new ValidationMethodValidationRule(method);
+        rule.setErrorCode(errorCode);
+        rule.setDefaultErrorMessage(message);
+        rule.setErrorArgumentsResolver(argsResolver);
+        rule.setApplicabilityCondition(applyIfCondition);
+
+        return rule;
+    }
+
+    protected ErrorArgumentsResolver buildErrorArgumentsResolver(String argsString) {
+        String[] args = StringUtils.tokenizeToStringArray(argsString, ", ");
+        return new FunctionErrorArgumentsResolver(args, functionExpressionParser);
+    }
+
+
     /**
      * Handles the given &lt;property&gt; element and updates the given bean validation configuration with the property
      * validation rules.
@@ -306,8 +419,8 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      */
     protected void handlePropertyDefinition(Element propertyDefinition, Class clazz, MutableBeanValidationConfiguration configuration) {
         String propertyName = propertyDefinition.getAttribute(NAME_ATTR);
-        if (propertyName == null) {
-            logger.error("Could not parse property element. Missing 'name' attribute");
+        if (!StringUtils.hasText(propertyName)) {
+            logger.error("Could not parse property element. Missing or empty 'name' attribute");
             throw new ValidationConfigurationException("Could not parse property element. Missing 'name' attribute");
         }
 
@@ -365,7 +478,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
     }
 
     protected void findConditionExpressionParserInApplicationContext() {
-        if (applicationContext == null || conditionExplicitlySet) {
+        if (applicationContext == null || conditionParserExplicitlySet) {
             return;
         }
         String[] names = applicationContext.getBeanNamesForType(ConditionExpressionParser.class);
@@ -377,5 +490,24 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
                 "Only the first encountered one will be used");
         }
         conditionExpressionParser = (ConditionExpressionParser)applicationContext.getBean(names[0]);
+    }
+
+    protected void findFunctionExpressionParserInApplicationContext() {
+        if (applicationContext == null || functionParserExplicitlySet) {
+            return;
+        }
+        String[] names = applicationContext.getBeanNamesForType(FunctionExpressionParser.class);
+        if (names.length == 0) {
+            return;
+        }
+        if (names.length > 1) {
+            logger.warn("Multiple function expression parsers are defined in the application context. " +
+                "Only the first encountered one will be used");
+        }
+        functionExpressionParser = (FunctionExpressionParser)applicationContext.getBean(names[0]);
+    }
+
+    protected void validatePropertyExists(Class clazz, String property) {
+        BeanUtils.getPropertyDescriptor(clazz, property);
     }
 }

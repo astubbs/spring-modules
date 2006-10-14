@@ -1,11 +1,14 @@
 package org.springmodules.validation.bean.conf.loader.xml;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.TestCase;
+import org.easymock.ArgumentsMatcher;
 import org.easymock.MockControl;
 import org.springframework.beans.BeanUtils;
 import org.springmodules.validation.bean.conf.CascadeValidation;
@@ -14,7 +17,10 @@ import org.springmodules.validation.bean.conf.ValidationConfigurationException;
 import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
+import org.springmodules.validation.bean.rule.ValidationMethodValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
+import org.springmodules.validation.util.cel.ognl.OgnlConditionExpressionParser;
+import org.springmodules.validation.util.fel.parser.OgnlFunctionExpressionParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -182,6 +188,113 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
         verify();
     }
 
+    public void testHandleMethodDefinition() throws Exception {
+        Document document = document();
+        Element methodElement = element(document, "method",
+            new String[] {"name", "code", "message", "args", "apply-if"},
+            new String[] {"validate", "thecode", "themessage", "a, b, c", "true"}
+        );
+
+        loader = new DefaultXmlBeanValidationConfigurationLoader() {
+            protected ValidationMethodValidationRule createMethodValidationRule(
+                Class clazz,
+                String methodName,
+                String errorCode,
+                String message,
+                String argsString,
+                String applyIfString) {
+
+                assertEquals(TestBean.class, clazz);
+                assertEquals("validate", methodName);
+                assertEquals("thecode", errorCode);
+                assertEquals("themessage", message);
+                assertEquals("a, b, c", argsString);
+                assertEquals("true", applyIfString);
+                return super.createMethodValidationRule(clazz, methodName, errorCode, message, argsString, applyIfString);
+            }
+        };
+        loader.setFunctionExpressionParser(new OgnlFunctionExpressionParser());
+        loader.setConditionExpressionParser(new OgnlConditionExpressionParser());
+        loader.handleMethodDefinition(methodElement, TestBean.class, configuration);
+    }
+
+    public void testHandleMethodDefinition_WithProperty() throws Exception {
+        Document document = document();
+        Element methodElement = element(document, "method",
+            new String[] {"name",       "for-property", "code",     "message",      "args",     "apply-if"},
+            new String[] {"validate",   "name",         "thecode",  "themessage",    "a, b, c", "true"}
+        );
+
+        // a hack to ensure the createMethodValidationRule method
+        // is actually called. In the call an element is added to
+        // this list and after the test this list is asserted to be
+        // non-empty
+        final List list = new ArrayList();
+
+        loader = new DefaultXmlBeanValidationConfigurationLoader() {
+            protected ValidationMethodValidationRule createMethodValidationRule(
+                Class clazz,
+                String methodName,
+                String errorCode,
+                String message,
+                String argsString,
+                String applyIfString) {
+
+                list.add("entered");
+                assertEquals(TestBean.class, clazz);
+                assertEquals("validate", methodName);
+                assertEquals("thecode", errorCode);
+                assertEquals("themessage", message);
+                assertEquals("a, b, c", argsString);
+                assertEquals("true", applyIfString);
+                return super.createMethodValidationRule(clazz, methodName, errorCode, message, argsString, applyIfString);
+            }
+        };
+
+        configuration.addPropertyRule("name", null);
+        configurationControl.setMatcher(new ArgumentsMatcher() {
+            public boolean matches(Object[] objects, Object[] objects1) {
+                return objects.length == 2 && objects[0].equals(objects1[0]);
+            }
+            public String toString(Object[] objects) {
+                return "";
+            }
+        });
+
+        loader.setFunctionExpressionParser(new OgnlFunctionExpressionParser());
+        loader.setConditionExpressionParser(new OgnlConditionExpressionParser());
+
+        replay();
+        loader.handleMethodDefinition(methodElement, TestBean.class, configuration);
+        verify();
+
+        assertFalse("createMethodValidationRule on configuration was not called", list.isEmpty());
+    }
+
+    public void testCreateMethodValidationRule() throws Exception {
+        loader.setFunctionExpressionParser(new OgnlFunctionExpressionParser());
+        loader.setConditionExpressionParser(new OgnlConditionExpressionParser());
+        ValidationMethodValidationRule rule = loader.createMethodValidationRule(TestBean.class, "validate", "code", "message", "'a', 'b', 'c'", "true");
+        TestBean testBean = new TestBean() {
+            public boolean validate() {
+                return false;
+            }
+        };
+
+        assertEquals("code", rule.getErrorCode());
+        assertEquals("message", rule.getDefaultErrorMessage());
+        assertTrue(rule.isApplicable(testBean));
+
+        Object[] args = rule.getErrorArguments(testBean);
+        assertEquals(3, args.length);
+        assertEquals(new Character('a'), args[0]);
+        assertEquals(new Character('b'), args[1]);
+        assertEquals(new Character('c'), args[2]);
+
+        assertFalse(rule.getCondition().check(testBean));
+
+    }
+
     //=============================================== Helper Methods ===================================================
 
     protected void replay() {
@@ -241,6 +354,10 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public boolean validate() {
+            return true;
         }
 
     }

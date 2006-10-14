@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" >
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
     <artifactId>springmodules-validation</artifactId>
@@ -13,6 +16,11 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
+    <developers>
+        <developer>
+            <name>Uri Boness</name>
+        </developer>
+    </developers>
     <scm>
         <url>https://springmodules.dev.java.net/source/browse/springmodules/projects/validation</url>
     </scm>
@@ -25,7 +33,7 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.1</version>
+            <version>2.2</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
@@ -55,12 +63,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
-            <version>2.0-rc2</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
-            <version>2.0-rc2</version>
+            <version>2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

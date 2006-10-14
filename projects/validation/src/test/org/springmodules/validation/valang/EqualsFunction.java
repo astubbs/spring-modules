@@ -16,10 +16,10 @@
 
 package org.springmodules.validation.valang;
 
-import org.springmodules.validation.valang.functions.AbstractInitializableFunction;
-import org.springmodules.validation.valang.functions.Function;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
+import org.springmodules.validation.valang.functions.AbstractInitializableFunction;
+import org.springmodules.validation.valang.functions.Function;
 
 /**
  * @author Uri Boness
