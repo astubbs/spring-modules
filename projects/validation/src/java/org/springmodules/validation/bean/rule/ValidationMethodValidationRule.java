@@ -34,14 +34,17 @@ public class ValidationMethodValidationRule extends AbstractValidationRule {
 
         public boolean doCheck(Object object) {
             try {
+                boolean originalAccessiblity = method.isAccessible();
+                method.setAccessible(true);
                 Boolean valid = (Boolean) method.invoke(object, new Object[0]);
+                method.setAccessible(originalAccessiblity);
                 return valid.booleanValue();
             } catch (IllegalAccessException iae) {
                 throw new ConditionException("Could not validate object using validation method '" +
-                    method.getName() + "'" + iae);
+                    method.getName() + "'", iae);
             } catch (InvocationTargetException ite) {
                 throw new ConditionException("Could not validate object using validation method '" +
-                    method.getName() + "'" + ite);
+                    method.getName() + "'", ite);
             }
         }
     }

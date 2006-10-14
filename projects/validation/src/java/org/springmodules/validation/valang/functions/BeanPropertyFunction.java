@@ -45,13 +45,20 @@ public class BeanPropertyFunction implements Function {
     }
 
     public Object getResult(Object target) {
+        String fieldName = getField();
+        if ("this".equals(fieldName)) {
+            return target;
+        }
+        if (fieldName.startsWith("this.")) {
+            fieldName = field.substring(5);
+        }
         if (target instanceof Map) {
-            return getValue((Map)target, split(getField()));
+            return getValue((Map)target, split(fieldName));
         }
         if (target instanceof BeanWrapper) {
-            return ((BeanWrapper)target).getPropertyValue(getField());
+            return ((BeanWrapper)target).getPropertyValue(fieldName);
         }
-        return new BeanWrapperImpl(target).getPropertyValue(getField());
+        return new BeanWrapperImpl(target).getPropertyValue(fieldName);
     }
 
     private String[] split(String path) {

@@ -41,6 +41,7 @@ import org.springmodules.validation.bean.conf.loader.annotation.handler.ClassVal
 import org.springmodules.validation.bean.conf.loader.annotation.handler.MethodValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.PropertyValidationAnnotationHandler;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationRule;
+import org.springmodules.validation.util.lang.ReflectionUtils;
 
 /**
  * A {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader} implementation that creates validation configuration based on
@@ -190,7 +191,7 @@ public class AnnotationBeanValidationConfigurationLoader implements BeanValidati
     }
 
     protected void handleMethodAnnotations(Class clazz, MutableBeanValidationConfiguration configuration) {
-        Method[] methods = clazz.getMethods();
+        Method[] methods = ReflectionUtils.getAllMethods(clazz);
         for (Method method : methods) {
             Annotation[] annotations = method.getAnnotations();
             for (Annotation annotation : annotations) {

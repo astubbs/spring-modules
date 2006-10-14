@@ -32,7 +32,7 @@ public class EmailValidationRule extends AbstractValidationRule {
      * Constructs a new EmailValidationRule.
      */
     public EmailValidationRule() {
-        super(EmailValidationRule.DEFAULT_ERROR_CODE);
+        super(DEFAULT_ERROR_CODE);
     }
 
     /**

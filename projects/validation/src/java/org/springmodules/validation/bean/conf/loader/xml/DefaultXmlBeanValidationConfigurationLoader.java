@@ -29,7 +29,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Validator;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
@@ -52,6 +51,7 @@ import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
 import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionParser;
+import org.springmodules.validation.util.lang.ReflectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -373,7 +373,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         String argsString,
         String applyIfString) {
 
-        Method method = ReflectionUtils.findMethod(clazz, methodName, new Class[0]);
+        Method method = ReflectionUtils.findMethod(clazz, methodName);
         if (method == null) {
             throw new ValidationConfigurationException("Method named '" + methodName +
                 "' was not found in class hierarchy of '" + clazz.getName() + "'.");

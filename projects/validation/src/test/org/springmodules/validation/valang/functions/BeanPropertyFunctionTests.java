@@ -75,4 +75,27 @@ public class BeanPropertyFunctionTests extends TestCase {
         target.put("test", test);
         assertEquals(new Integer(3), f.getResult(target));
     }
+
+    public void test6() {
+        BeanPropertyFunction f = new BeanPropertyFunction("this");
+        Customer customer = new Customer("Uri");
+        Object result = f.getResult(customer);
+        assertEquals(customer, result);
+    }
+
+    public void test7() {
+        BeanPropertyFunction f = new BeanPropertyFunction("this.name");
+        Customer customer = new Customer("Uri");
+        Object result = f.getResult(customer);
+        assertEquals("Uri", result);
+    }
+
+    public void test8() {
+        BeanPropertyFunction f = new BeanPropertyFunction("this.test.customer.name");
+        Map test = new HashMap();
+        test.put("customer", new Customer("Steven"));
+        Map target = new HashMap();
+        target.put("test", test);
+        assertEquals("Steven", f.getResult(target));
+    }
 }
