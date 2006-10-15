@@ -5,12 +5,12 @@
       <ibiblio name="moria-maven"
         root="http://moria.sourceforge.net/maven/"
         pattern="[module]/[type]s/[artifact]-[revision].[ext]" />
-        
+
 	  <url name="jboss-cache-moria">
         <!-- url pattern for moria maven | used to maintain the correct naming system -->
         <artifact
           pattern="http://moria.sourceforge.net/maven/jboss/[type]s/[artifact]-[revision].[ext]" />
-      </url>        
+      </url>
       <!-- jcs official url -->
       <url name="jcs">
         <!-- url pattern for jcs svn repository -->
@@ -22,6 +22,12 @@
         <!-- url pattern for jcs svn repository -->
         <artifact
           pattern="http://www.extreme.indiana.edu/dist/java-repository/xpp3/jars/[artifact]-[revision].[ext]" />
+      </url>
+      <!-- ehcache url -->
+      <url name="ehcache">
+        <!-- url pattern for ehcache repository -->
+        <artifact
+          pattern="http://www.ibiblio.org/maven2/net/sf/ehcache/ehcache/[revision]/[artifact]-[revision].[ext]" />
       </url>
     </chain>
   </resolvers>
