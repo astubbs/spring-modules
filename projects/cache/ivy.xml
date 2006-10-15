@@ -23,7 +23,7 @@
     <dependency org="apache" name="log4j" rev="1.2.13" />
 
     <dependency org="springframework" name="org.springframework"
-      rev="2.0-rc2" conf="global,test->default">
+      rev="2.0" conf="global,test->default">
       <artifact name="spring" type="jar" conf="global" />
       <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>
@@ -68,7 +68,7 @@
       <artifact name="cglib-nodep" type="jar" />
     </dependency>
 
-    <dependency org="ehcache" name="ehcache" rev="1.1" />
+    <dependency org="ehcache" name="ehcache" rev="1.2.3" />
 
     <dependency org="jboss" name="javassist" rev="3.0" />
 
