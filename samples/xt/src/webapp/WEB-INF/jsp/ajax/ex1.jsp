@@ -9,7 +9,7 @@
         <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects"/>'></script>
         <script type="text/javascript">
             function showAlert(options) {
-                alert(options.message);
+            alert(options.message);
             }
         </script>
         <title>XT Ajax Framework : Example 1</title>
@@ -149,27 +149,7 @@
                         </div>
                     </td>
                 </tr>
-                <!--
-                <tr>
-                    <td>Press to highlight the greetings message below :</td>
-                    <td><input type="button" value="Press" onclick="doAjaxAction('highlightElement', this);"></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div id="toHighlight">Hello, Spring Modules user!</div>
-                    </td>
-                </tr>
                 
-                <tr>
-                    <td>Press to modify the opacity of the greetings message below :</td>
-                    <td><input type="button" value="Press" onclick="doAjaxAction('setOpacity', this);"></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <div id="toSetOpacity" style="contentEditable: true;">Hello, Spring Modules user!</div>
-                    </td>
-                </tr>
-                -->
             </table>
         </form>
     </body>
