@@ -1,0 +1,30 @@
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+    
+    <bean name="prevalentSystem" class="org.springmodules.prevayler.system.DefaultPrevalentSystem">
+        <property name="prevalentClasses">
+            <list>
+                <value>org.springmodules.prevayler.test.domain.Employee</value>
+                <value>org.springmodules.prevayler.test.domain.Office</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean name="prevaylerConfiguration" class="org.springmodules.prevayler.configuration.PrevaylerConfiguration">
+        <property name="prevalentSystem" ref="prevalentSystem"/>
+        <property name="prevalenceBase" value="classpath:testPrevalenceBase"/>
+    </bean>
+    
+    <bean name="prevaylerTemplate" class="org.springmodules.prevayler.PrevaylerTemplate">
+        <property name="configuration" ref="prevaylerConfiguration"/>
+    </bean>
+    
+    <bean name="prevaylerTemplateWithMerge" class="org.springmodules.prevayler.PrevaylerTemplate">
+        <property name="configuration" ref="prevaylerConfiguration"/>
+        <property name="idMerging" value="true"/>
+    </bean>
+    
+</beans>
+
+
