@@ -13,7 +13,11 @@
 
         <spring:bind path="person">
             <c:if test="${status.error}">
-                ${status.errorMessage}
+                <ul>
+                    <c:forEach items="${status.errorMessages}" var="errorMessage">
+                    <li><font color="red">${status.errorMessage}</font></li>
+                    </c:forEach>
+                </ul>
             </c:if>
         </spring:bind>
 
@@ -68,7 +72,15 @@
                         </spring:bind>
                     </td>
                 </tr>
-
+                <tr>
+                    <td><fmt:message key="person.lucky.number"/></td>
+                    <td>
+                        <spring:bind path="person.luckyNumber">
+                            <input type="text" name="${status.expression}" value="<c:out value="${status.value}"/>" size="15" maxlength="60"/>
+                            <font color="red"><c:out value="${status.errorMessage}"/></font>
+                        </spring:bind>
+                    </td>
+                </tr>
             </table>
 
             <br/>

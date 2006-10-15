@@ -33,8 +33,11 @@ public class PersonFormController extends SimpleFormController {
         setMessageCodesResolver(new ModelAwareMessageCodesResolver());
     }
 
-    protected ModelAndView onSubmit(HttpServletRequest request,
-                                    HttpServletResponse response, Object command, BindException errors) throws Exception {
+    protected ModelAndView onSubmit(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Object command,
+        BindException errors) throws Exception {
 
         return new ModelAndView(getSuccessView());
     }

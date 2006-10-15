@@ -6,8 +6,8 @@
     <class name="org.springmodules.samples.validation.bean.web.PersonData">
 
         <property name="firstName">
-            <not-blank/>
             <length min="3" max="5"/>
+            <not-blank/>
         </property>
 
         <property name="lastName">
@@ -15,8 +15,8 @@
         </property>
 
         <property name="email">
-            <not-blank/>
             <email/>
+            <not-blank/>
         </property>
 
         <property name="password">
@@ -26,6 +26,8 @@
         <property name="verifyPassword">
             <expression condition="password = verifyPassword"/>
         </property>
+
+        <method name="validateLuckyNumber" for-property="luckyNumber" args="0,10"/>
 
     </class>
 

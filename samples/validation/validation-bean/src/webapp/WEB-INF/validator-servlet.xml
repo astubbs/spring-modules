@@ -39,7 +39,7 @@
 
     <bean name="/success.html" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 
-    <!--=================================== Commons Validator =====================================-->
+    <!--=================================== Bean Validator =====================================-->
 
     <vld:annotation-based-validator id="beanValidator"/>
 

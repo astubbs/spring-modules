@@ -33,7 +33,7 @@
     <dependency org="apache" name="commons-logging" rev="1.0.4" />
     <dependency org="apache" name="commons-collections" rev="3.1" />
 
-    <dependency org="springframework" name="springframework" rev="2.0-rc2" conf="buildtime->default">
+    <dependency org="springframework" name="springframework" rev="2.0" conf="buildtime->default">
       <artifact name="spring" type="jar"/>
     </dependency>
 
@@ -41,7 +41,7 @@
 
     <dependency org="taglibs" name="standard" rev="1.1.2" />
 
-    <dependency org="springmodules" name="springmodules-validation" rev="latest.integration"/>
+    <dependency org="springmodules" name="spring-modules-validation" rev="latest.integration"/>
     
   </dependencies>
 </ivy-module>

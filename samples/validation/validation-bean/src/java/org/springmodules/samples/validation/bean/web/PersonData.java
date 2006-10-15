@@ -20,6 +20,7 @@ import org.springmodules.validation.bean.conf.loader.annotation.handler.Email;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.Expression;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.Length;
 import org.springmodules.validation.bean.conf.loader.annotation.handler.NotBlank;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationMethod;
 
 /**
  *
@@ -43,6 +44,8 @@ public class PersonData {
 
     @Expression("verifyPassword == password")
     private String verifyPassword;
+
+    private int luckyNumber;
 
     public String getEmail() {
         return email;
@@ -82,6 +85,21 @@ public class PersonData {
 
     public void setVerifyPassword(String verifyPassword) {
         this.verifyPassword = verifyPassword;
+    }
+
+    public int getLuckyNumber() {
+        return luckyNumber;
+    }
+
+    public void setLuckyNumber(int luckyNumber) {
+        this.luckyNumber = luckyNumber;
+    }
+
+    //============================================= Validation Methods =================================================
+
+    @ValidationMethod(forProperty = "luckyNumber", args = "0,10")
+    private boolean validateLuckyNumber() {
+        return luckyNumber >= 0 && luckyNumber <= 10;
     }
 
 }
