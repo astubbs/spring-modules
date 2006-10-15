@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Feb 26, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -20,19 +20,19 @@ package org.springmodules.cache.config;
 import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
-
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
-
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
-
+import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springmodules.AssertExt;
+import org.w3c.dom.Element;
 
 /**
  * <p>
  * Unit Tests for <code>{@link AbstractCacheNamespaceHandler}</code>.
  * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public class CacheNamespaceHandlerTests extends TestCase {
@@ -43,7 +43,7 @@ public class CacheNamespaceHandlerTests extends TestCase {
 
   /**
    * Constructor.
-   * 
+   *
    * @param name
    *          the name of the test case.
    */
@@ -91,18 +91,18 @@ public class CacheNamespaceHandlerTests extends TestCase {
     Method[] methodsToMock = { getCacheModelParserMethod,
         getCacheProviderFacadeParserMethod };
 
-    handlerControl = MockClassControl.createControl(target, null, null,
-        methodsToMock);
+    handlerControl = MockClassControl.createControl(target, new Class[0],
+				new Object[0], methodsToMock);
 
     handler = (AbstractCacheNamespaceHandler) handlerControl.getMock();
   }
 
   private void assertCacheSetupStrategyParserIsCorrect(Class expectedClass,
-      String elementName, CacheModelParser modelParser) {
+      String elementName, CacheModelParser modelParser) throws Exception {
 
     BeanDefinitionParser parser = findParserForElement(elementName);
     AssertExt.assertInstanceOf(expectedClass, parser);
-    
+
     CacheModelParser actual = ((AbstractCacheSetupStrategyParser) parser)
         .getCacheModelParser();
     assertSame(modelParser, actual);
@@ -118,7 +118,13 @@ public class CacheNamespaceHandlerTests extends TestCase {
     return (BeanDefinitionParser) control.getMock();
   }
 
-  private BeanDefinitionParser findParserForElement(String elementName) {
-    return handler.findParserForElement(new DomElementStub(elementName));
+  private BeanDefinitionParser findParserForElement(String elementName) throws Exception {
+		Method findParserForElementMethod = NamespaceHandlerSupport.class.getDeclaredMethod(
+				"findParserForElement", new Class[] {Element.class});
+
+		findParserForElementMethod.setAccessible(true);
+		return (BeanDefinitionParser) findParserForElementMethod.invoke(handler,
+				new DomElementStub(elementName));
   }
+
 }
