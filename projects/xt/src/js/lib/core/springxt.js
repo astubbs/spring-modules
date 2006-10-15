@@ -344,7 +344,7 @@ function AjaxRequest(url) {
             //if (xmlHttp.overrideMimeType) {
             //    xmlHttp.setRequestHeader("Connection", "close");
             //}
-            // Very strange, the code above is commented because it actually doesn't work in Firefox - Fix By S.B.
+            // Very strange, the code above is commented because it actually doesn't work in Firefox - Fix By Sergio Bossa
             xmlHttp.open(method, requestURL, true);
             xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
             xmlHttp.send(queryString);
@@ -370,7 +370,15 @@ function AjaxRequest(url) {
                 echoResponse(ajaxRequest);
             }
             
-            var nodes = ajaxRequest.getXMLHttpRequestObject().responseXML.documentElement.childNodes;
+            // Fix null responseXML, By Sergio Bossa
+            var nodes = null;
+            if (ajaxRequest.getXMLHttpRequestObject().responseXML != null) {
+                nodes = ajaxRequest.getXMLHttpRequestObject().responseXML.documentElement.childNodes;
+            }
+            else {
+                nodes = new Array();
+            }
+            //
             var parser = null;
             var parseInBrowser = "";
             for(var i = 0; i < nodes.length; i++) {
@@ -625,6 +633,9 @@ function XhtmlToDOMParser(xml){
                 xml.removeAttribute("parseInBrowser");
                 handleAttributes(contextNode,xml);
                 break;
+                
+            // New functions, By Sergio Bossa
+                
             case "taconite-redirect":
                 handleRedirect(xml);
                 break;
@@ -741,7 +752,7 @@ function XhtmlToDOMParser(xml){
                 }
                 else {
                     /* Standards compliant */
-                    // But it doesn't seem to work ... - Fix By S.B. 
+                    // But it doesn't seem to work ... - Fix By Sergio Bossa
                     //domNode.setAttribute(name,value);
                     eval("domNode." + name.trim().toLowerCase() + "='" + value + "'");
                     

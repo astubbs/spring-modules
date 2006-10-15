@@ -36,7 +36,9 @@ if(!async){handleStateChange(self);}
 if(self.isEchoDebugInfo()){echoRequestParams();}}
 handleStateChange=function(ajaxRequest){if(ajaxRequest.getXMLHttpRequestObject().readyState!=4){return;}
 if(ajaxRequest.getXMLHttpRequestObject().status==200){var debug=ajaxRequest.isEchoDebugInfo();if(debug){echoResponse(ajaxRequest);}
-var nodes=ajaxRequest.getXMLHttpRequestObject().responseXML.documentElement.childNodes;var parser=null;var parseInBrowser="";for(var i=0;i<nodes.length;i++){if(nodes[i].nodeType!=1||!isTaconiteTag(nodes[i])){continue;}
+var nodes=null;if(ajaxRequest.getXMLHttpRequestObject().responseXML!=null){nodes=ajaxRequest.getXMLHttpRequestObject().responseXML.documentElement.childNodes;}
+else{nodes=new Array();}
+var parser=null;var parseInBrowser="";for(var i=0;i<nodes.length;i++){if(nodes[i].nodeType!=1||!isTaconiteTag(nodes[i])){continue;}
 parseInBrowser=nodes[i].getAttribute("parseInBrowser");if(parseInBrowser=="true"){parser=new XhtmlToDOMParser(nodes[i]);parser.startParsing();var js=parser.getJavaScript();if(debug){echoParsedJavaScript(js);}
 eval(parser.getJavaScript());}
 else{eval(nodes[i].firstChild.nodeValue);}}

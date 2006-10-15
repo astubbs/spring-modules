@@ -46,6 +46,9 @@ function XhtmlToDOMParser(xml){
                 xml.removeAttribute("parseInBrowser");
                 handleAttributes(contextNode,xml);
                 break;
+                
+            // New functions, By Sergio Bossa
+                
             case "taconite-redirect":
                 handleRedirect(xml);
                 break;
@@ -162,7 +165,7 @@ function XhtmlToDOMParser(xml){
                 }
                 else {
                     /* Standards compliant */
-                    // But it doesn't seem to work ... - Fix By S.B. 
+                    // But it doesn't seem to work ... - Fix By Sergio Bossa
                     //domNode.setAttribute(name,value);
                     eval("domNode." + name.trim().toLowerCase() + "='" + value + "'");
                     

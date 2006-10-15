@@ -304,7 +304,7 @@ function AjaxRequest(url) {
             //if (xmlHttp.overrideMimeType) {
             //    xmlHttp.setRequestHeader("Connection", "close");
             //}
-            // Very strange, the code above is commented because it actually doesn't work in Firefox - Fix By S.B.
+            // Very strange, the code above is commented because it actually doesn't work in Firefox - Fix By Sergio Bossa
             xmlHttp.open(method, requestURL, true);
             xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
             xmlHttp.send(queryString);
@@ -330,7 +330,15 @@ function AjaxRequest(url) {
                 echoResponse(ajaxRequest);
             }
             
-            var nodes = ajaxRequest.getXMLHttpRequestObject().responseXML.documentElement.childNodes;
+            // Fix null responseXML, By Sergio Bossa
+            var nodes = null;
+            if (ajaxRequest.getXMLHttpRequestObject().responseXML != null) {
+                nodes = ajaxRequest.getXMLHttpRequestObject().responseXML.documentElement.childNodes;
+            }
+            else {
+                nodes = new Array();
+            }
+            //
             var parser = null;
             var parseInBrowser = "";
             for(var i = 0; i < nodes.length; i++) {
