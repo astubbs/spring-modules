@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Mar 14, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -19,26 +19,26 @@ package org.springmodules.cache.config;
 
 import java.lang.reflect.Method;
 
+import junit.framework.TestCase;
 import org.easymock.classextension.MockClassControl;
-import org.w3c.dom.Element;
-
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.beans.factory.xml.BeanDefinitionParserDelegate;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionParserHelper;
+import org.springframework.beans.factory.xml.XmlReaderContext;
 import org.springframework.util.StringUtils;
-
 import org.springmodules.AssertExt;
-
-import junit.framework.TestCase;
+import org.w3c.dom.Element;
 
 /**
  * <p>
  * Unit Tests for <code>{@link BeanReferenceParserImpl}</code>.
  * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public class BeanReferenceParserImplTests extends TestCase {
@@ -69,7 +69,7 @@ public class BeanReferenceParserImplTests extends TestCase {
     }
   }
 
-  protected XmlBeanDefinitionParserHelper helper;
+  protected BeanDefinitionParserDelegate delegate;
 
   protected MockClassControl helperControl;
 
@@ -83,7 +83,7 @@ public class BeanReferenceParserImplTests extends TestCase {
 
   /**
    * Constructor.
-   * 
+   *
    * @param name
    *          the name of the test case
    */
@@ -102,7 +102,7 @@ public class BeanReferenceParserImplTests extends TestCase {
     BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition,
         beanName);
 
-    helper.parseBeanDefinitionElement(beanElement, true);
+    delegate.parseBeanDefinitionElement(beanElement, beanDefinition);
     helperControl.setReturnValue(holder);
     helperControl.replay();
 
@@ -137,7 +137,7 @@ public class BeanReferenceParserImplTests extends TestCase {
     BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition,
         beanName);
 
-    helper.parseBeanDefinitionElement(beanElement, true);
+    delegate.parseBeanDefinitionElement(beanElement, beanDefinition);
     helperControl.setReturnValue(holder);
     helperControl.replay();
 
@@ -160,7 +160,7 @@ public class BeanReferenceParserImplTests extends TestCase {
     BeanDefinitionHolder holder = new BeanDefinitionHolder(beanDefinition,
         beanName);
 
-    helper.parseBeanDefinitionElement(beanElement, true);
+    delegate.parseBeanDefinitionElement(beanElement, beanDefinition);
     helperControl.setReturnValue(holder);
     helperControl.replay();
 
@@ -185,7 +185,7 @@ public class BeanReferenceParserImplTests extends TestCase {
     setUpHelper();
     elementBuilder = new ReferenceElementBuilder();
     parser = new BeanReferenceParserImpl();
-    parserContext = ParserContextFactory.create(helper);
+    parserContext = ParserContextFactory.create(delegate);
     registry = parserContext.getRegistry();
   }
 
@@ -207,17 +207,20 @@ public class BeanReferenceParserImplTests extends TestCase {
   }
 
   private void setUpHelper() throws NoSuchMethodException {
-    Class targetClass = XmlBeanDefinitionParserHelper.class;
+    Class targetClass = BeanDefinitionParserDelegate.class;
 
     Method parseBeanDefinitionElementMethod = targetClass.getDeclaredMethod(
         "parseBeanDefinitionElement", new Class[] { Element.class,
-            boolean.class });
+            BeanDefinition.class });
 
     Method[] methodsToMock = { parseBeanDefinitionElementMethod };
 
-    helperControl = MockClassControl.createControl(targetClass, null, null,
-        methodsToMock);
+    helperControl = MockClassControl.createControl(targetClass,
+				new Class[] { XmlReaderContext.class },
+				new Object[] { new XmlReaderContext(null, null, null, null, null, null) },
+				methodsToMock);
 
-    helper = (XmlBeanDefinitionParserHelper) helperControl.getMock();
+    delegate = (BeanDefinitionParserDelegate) helperControl.getMock();
   }
+
 }
