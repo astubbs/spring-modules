@@ -215,4 +215,19 @@ public class ReflectionsTest extends TestCase {
 				+ ">", expected != actual);
 	}
 
+	public void testReflectionHashCodeWithClass() {
+		Class clazz = String.class;
+		int expected = Reflections.reflectionHashCode(clazz);
+		int actual = clazz.hashCode();
+
+		// test same value
+		assertEquals(expected, actual);
+
+		// test different values
+		actual = Integer.class.hashCode();
+
+		assertTrue("hasCode <" + expected + "> should be different than <" + actual
+				+ ">", expected != actual);
+	}
+
 }

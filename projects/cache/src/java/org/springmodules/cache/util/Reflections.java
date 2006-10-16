@@ -20,10 +20,10 @@ package org.springmodules.cache.util;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Date;
 
 import org.springframework.util.ReflectionUtils;
 
@@ -75,9 +75,7 @@ public abstract class Reflections {
 
     Class targetClass = obj.getClass();
     if (Objects.isArrayOfPrimitives(obj)
-        || Objects.isPrimitiveOrWrapper(targetClass)
-				|| obj instanceof String
-				|| obj instanceof Date) {
+        || Objects.isPrimitiveOrWrapper(targetClass)) {
       return Objects.nullSafeHashCode(obj);
     }
 
@@ -93,7 +91,18 @@ public abstract class Reflections {
       return reflectionHashCode((Map) obj);
     }
 
-    int hash = INITIAL_HASH;
+		// determine whether the object's class declares hashCode() or has a
+		// superClass other than java.lang.Object that declares hashCode()
+		Class clazz = (obj instanceof Class)? (Class) obj : obj.getClass();
+		Method hashCodeMethod = ReflectionUtils.findMethod(clazz,
+				"hashCode", new Class[0]);
+
+		if (hashCodeMethod != null) {
+			return obj.hashCode();
+		}
+
+		// could not find a hashCode other than the one declared by java.lang.Object
+		int hash = INITIAL_HASH;
 
     try {
       while (targetClass != null) {
