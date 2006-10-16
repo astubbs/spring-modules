@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Nov 19, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -23,7 +23,8 @@ package org.springmodules.cache.key;
  * Builds the checksum and hash code needed to create a
  * <code>{@link HashCodeCacheKey}</code>.
  * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public final class HashCodeCalculator {
@@ -57,7 +58,7 @@ public final class HashCodeCalculator {
   /**
    * Recalculates <code>{@link #checkSum}</code> and
    * <code>{@link #hashCode}</code> using the specified value.
-   * 
+   *
    * @param value
    *          the specified value.
    */
@@ -65,7 +66,7 @@ public final class HashCodeCalculator {
     count++;
     int valueToAppend = count * value;
 
-    hashCode = MULTIPLIER * hashCode + (valueToAppend ^ (valueToAppend >>> 32));
+    hashCode = MULTIPLIER * hashCode + (valueToAppend ^ (valueToAppend >>> 16));
     checkSum += valueToAppend;
   }
 
