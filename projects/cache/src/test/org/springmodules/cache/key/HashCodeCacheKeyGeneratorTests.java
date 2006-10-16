@@ -98,8 +98,8 @@ public final class HashCodeCacheKeyGeneratorTests extends
 		Class targetClass = String.class;
 		Method toStringMethod = targetClass.getMethod("toString", new Class[0]);
 
-		Object[] args1 = new Object[]{"arg1", 1};
-		Object[] args2 = new Object[]{"arg2", 2};
+		Object[] args1 = new Object[]{"arg1", new Integer(1)};
+		Object[] args2 = new Object[]{"arg2", new Integer(2)};
 
 		Object key1 = executeGenerateArgumentHashCode(toStringMethod, args1);
 		Object key2 = executeGenerateArgumentHashCode(toStringMethod, args2);
