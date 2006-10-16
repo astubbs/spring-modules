@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Nov 25, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -23,6 +23,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Date;
 
 import org.springframework.util.ReflectionUtils;
 
@@ -32,7 +33,8 @@ import org.springmodules.util.Objects;
  * <p>
  * Reflection-related utility methods.
  * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public abstract class Reflections {
@@ -45,23 +47,23 @@ public abstract class Reflections {
    * <p>
    * This method uses reflection to build a valid hash code.
    * </p>
-   * 
+   *
    * <p>
    * It uses <code>AccessibleObject.setAccessible</code> to gain access to
    * private fields. This means that it will throw a security exception if run
    * under a security manager, if the permissions are not set up correctly. It
    * is also not as efficient as testing explicitly.
    * </p>
-   * 
+   *
    * <p>
-   * Transient members will be not be used, as they are likely derived fields,
+   * Transient members will not be used, as they are likely derived fields,
    * and not part of the value of the <code>Object</code>.
    * </p>
-   * 
+   *
    * <p>
    * Static fields will not be tested. Superclass fields will be included.
    * </p>
-   * 
+   *
    * @param obj
    *          the object to create a <code>hashCode</code> for
    * @return the generated hash code, or zero if the given object is
@@ -73,7 +75,9 @@ public abstract class Reflections {
 
     Class targetClass = obj.getClass();
     if (Objects.isArrayOfPrimitives(obj)
-        || Objects.isPrimitiveOrWrapper(targetClass) || obj instanceof String) {
+        || Objects.isPrimitiveOrWrapper(targetClass)
+				|| obj instanceof String
+				|| obj instanceof Date) {
       return Objects.nullSafeHashCode(obj);
     }
 

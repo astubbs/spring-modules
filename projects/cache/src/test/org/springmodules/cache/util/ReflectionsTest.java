@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Nov 29, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
+import java.util.Calendar;
+import java.sql.Timestamp;
 
 import junit.framework.TestCase;
 
@@ -30,7 +33,8 @@ import org.springmodules.util.Objects;
  * <p>
  * Unit Tests for <code>{@link Reflections}</code>.
  * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public class ReflectionsTest extends TestCase {
@@ -174,4 +178,41 @@ public class ReflectionsTest extends TestCase {
 
     assertEquals(expected, actual);
   }
+
+	public void testReflectionHashCodeWithDate() {
+		Calendar cal = Calendar.getInstance();
+		Date now = cal.getTime();
+		int expected = Reflections.reflectionHashCode(now);
+		int actual = now.hashCode();
+
+		// test same value
+		assertEquals(expected, actual);
+
+		// test different values
+		cal.add(Calendar.DATE, 1);
+		Date tomorrow = cal.getTime();
+		actual = tomorrow.hashCode();
+
+		assertTrue("hasCode <" + expected + "> should be different than <" + actual
+				+ ">", expected != actual);
+	}
+
+	public void testReflectionHashCodeWithTimestamp() {
+		Calendar cal = Calendar.getInstance();
+		Timestamp now = new Timestamp(cal.getTimeInMillis());
+		int expected = Reflections.reflectionHashCode(now);
+		int actual = now.hashCode();
+
+		// test same value
+		assertEquals(expected, actual);
+
+		// test different values
+		cal.add(Calendar.DATE, 1);
+		Timestamp tomorrow = new Timestamp(cal.getTimeInMillis());
+		actual = tomorrow.hashCode();
+
+		assertTrue("hasCode <" + expected + "> should be different than <" + actual
+				+ ">", expected != actual);
+	}
+
 }
