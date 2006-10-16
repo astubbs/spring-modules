@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Nov 10, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -48,7 +48,7 @@ import org.springmodules.cache.provider.CacheProviderFacade;
  * Template for advices that store in a cache the return value of intercepted
  * methods.
  * </p>
- * 
+ *
  * @author Alex Ruiz
  */
 public abstract class AbstractCachingInterceptor implements MethodInterceptor,
@@ -152,12 +152,12 @@ public abstract class AbstractCachingInterceptor implements MethodInterceptor,
   private Object methodNotCacheable(MethodInvocation mi, Method m)
       throws Throwable {
     return logAndProceed("Unable to perform caching. Intercepted method <"
-        + m.toString() + "> does not return a value", mi);
+        + m + "> does not return a value", mi);
   }
 
   private Object noModelFound(MethodInvocation mi, Method m) throws Throwable {
     return logAndProceed("Unable to perform caching. "
-        + "No model is associated to the method <" + m.getName() + ">", mi);
+        + "No model is associated to the method <" + m + ">", mi);
   }
 
   private void notifyListeners(Serializable key, Object cachedObject,
