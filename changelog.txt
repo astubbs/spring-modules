@@ -4,7 +4,13 @@ http://springmodules.dev.java.net
 
 Changes in version 0.7 (in progress)
 ------------------------------------
-
+Package org.springmodules.cache
+* Updated dependency on spring to spring-2.0
+* HashCodeCalculator now generates hashes depending on argument count and values [MOD-157]
+* Reflections properly handles Dates (thanks go to Andrew Bethell) [MOD-200]
+* refactored Reflections to call a class hashCode when declared by the class or a superClass other than java.lang.Object [MOD-201]
+* Improved debug message in AbstractCachingInterceptor: display method signature rather than method name [MOD-219]
+* Removed reference to java.io.Closeable in org.springmodules.cache.impl.Element [MOD-235]
 
 Changes in version 0.6 (19.09.2006)
 -----------------------------------
@@ -70,9 +76,9 @@ Package org.springmodules.xt.ajax
 * Improved documentation with samples.
 * Improved org.springmodules.xt.ajax.AjaxActionEvent and org.springmodules.xt.ajax.AjaxSubmitEvent.
 * The XT Utils packages have been moved to the SpringMVC-extra module.
-* The org.springmodules.xt.ajax.taconite package has been renamed in org.springmodules.xt.ajax.action, 
-  and the Taconite prefix has been removed from all action names. 
-* TaconiteValidationHandler has been moved to org.springmodules.xt.ajax.validation and renamed in 
+* The org.springmodules.xt.ajax.taconite package has been renamed in org.springmodules.xt.ajax.action,
+  and the Taconite prefix has been removed from all action names.
+* TaconiteValidationHandler has been moved to org.springmodules.xt.ajax.validation and renamed in
   DefaultValidationHandler.
 
 
