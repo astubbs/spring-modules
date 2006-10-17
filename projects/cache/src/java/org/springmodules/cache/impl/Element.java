@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Apr 5, 2006
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -19,10 +19,11 @@ package org.springmodules.cache.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
@@ -37,7 +38,8 @@ import org.springframework.util.StringUtils;
  * <p>
  * A cache element that stores <em>copies</em> of the given key and value.
  * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public class Element implements Serializable, Cloneable {
@@ -60,12 +62,12 @@ public class Element implements Serializable, Cloneable {
 
   /**
    * Constructor. Entries created with this constructor never expire.
-   * 
+   *
    * <p>
    * The key and value stored in this element are copies of the ones passed as
    * arguments.
    * </p>
-   * 
+   *
    * @param newKey
    *          the new key for this entry
    * @param newValue
@@ -80,12 +82,12 @@ public class Element implements Serializable, Cloneable {
 
   /**
    * Constructor.
-   * 
+   *
    * <p>
    * The key and value stored in this element are copies of the ones passed as
    * arguments.
    * </p>
-   * 
+   *
    * @param newKey
    *          the new key for this entry
    * @param newValue
@@ -121,7 +123,7 @@ public class Element implements Serializable, Cloneable {
     Element newElement = new Element(key, value, creationTime, timeToLive);
     return newElement;
   }
-  
+
   /**
    * @see Object#equals(Object)
    */
@@ -206,7 +208,7 @@ public class Element implements Serializable, Cloneable {
 
   /**
    * Sets the value for this cache element.
-   * 
+   *
    * @param newValue
    *          the new value for this cache element
    * @throws ObjectCannotBeCopiedException
@@ -221,15 +223,28 @@ public class Element implements Serializable, Cloneable {
    * @see Object#toString()
    */
   public String toString() {
-    StringBuffer buffer = Objects.identityToString(this);
-    buffer.append("[key=" + StringUtils.quoteIfString(key) + ", ");
-    buffer.append("value=" + StringUtils.quoteIfString(value) + ", ");
-    buffer.append("creationTime=" + new Date(creationTime) + ", ");
-    buffer.append("timeToLive=" + timeToLive + "]");
-    return buffer.toString();
+		return Objects.identityToString(this)
+				.append("[key=").append(StringUtils.quoteIfString(key)).append(", ")
+				.append("value=").append(StringUtils.quoteIfString(value)).append(", ")
+				.append("creationTime=").append(new Date(creationTime)).append(", ")
+				.append("timeToLive=").append(timeToLive).append("]")
+				.toString();
   }
 
-  private void close(Closeable closeable) {
+  private void close(InputStream closeable) {
+    if (closeable == null) {
+      return;
+    }
+
+    try {
+      closeable.close();
+    } catch (Exception exception) {
+      String clazz = closeable.getClass().getName();
+      logger.error("Unable to close " + clazz, exception);
+    }
+  }
+
+  private void close(OutputStream closeable) {
     if (closeable == null) {
       return;
     }
