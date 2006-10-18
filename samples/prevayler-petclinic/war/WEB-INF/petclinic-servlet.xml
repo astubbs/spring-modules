@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - DispatcherServlet application context for PetClinic's web tier.
+  -->
+<beans>
+
+	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+
+	<!--
+		- Message source for this context, loaded from localized "messages_xx" files.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within PetClinic's web tier.
+    -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages"/>
+	</bean>
+
+
+	<!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+	<!--
+	  - This bean provides explicit View mappings in a resource bundle instead of the
+	  - default InternalResourceViewResolver. It fetches the view mappings from
+	  - localized "views_xx" classpath files, i.e. "/WEB-INF/classes/views.properties"
+	  - or "/WEB-INF/classes/views_de.properties".
+	  -
+	  - Symbolic view names returned by Controllers will be resolved by this bean
+	  - using the respective properties file, which defines arbitrary mappings between
+	  - view names and resources.
+	  -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+		<property name="basename" value="views"/>
+	</bean>
+
+	<!--
+	  - This bean resolves specific types of exception to corresponding error views.
+		- The default behaviour of DispatcherServlet is to propagate all exceptions to the
+		- servlet container: This will happen here with all other types of exception.
+		-->
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.springframework.dao.DataAccessException">dataAccessFailure</prop>
+				<prop key="org.springframework.transaction.TransactionException">dataAccessFailure</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!--
+	 - This bean is an explicit URL mapper that is used by the "petclinic" DispatcherServlet
+	 - It is used instead of the default BeanNameUrlHandlerMapping.
+	 -->
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/welcome.htm">clinicController</prop>
+				<prop key="/vets.htm">clinicController</prop>
+				<prop key="/findOwners.htm">findOwnersForm</prop>
+				<prop key="/owner.htm">clinicController</prop>
+				<prop key="/addOwner.htm">addOwnerForm</prop>
+				<prop key="/editOwner.htm">editOwnerForm</prop>
+				<prop key="/addPet.htm">addPetForm</prop>
+				<prop key="/editPet.htm">editPetForm</prop>
+				<prop key="/addVisit.htm">addVisitForm</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
+
+	<!--
+	  - This bean is a MultiActionController that manages general View rendering.
+	  - It uses the "clinicControllerResolver" bean below for method name resolution.
+	  -->
+	<bean id="clinicController" class="org.springframework.samples.petclinic.web.ClinicController">
+		<property name="methodNameResolver" ref="clinicControllerResolver"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	<!--
+	  - This bean is a MethodNameResolver definition for a MultiActionController.
+	  - It maps URLs to methods for the "clinicController" bean.
+	  -->
+	<bean id="clinicControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+		<property name="mappings">
+		<props>
+			<prop key="/welcome.htm">welcomeHandler</prop>
+			<prop key="/vets.htm">vetsHandler</prop>
+			<prop key="/owner.htm">ownerHandler</prop>
+		</props>
+		</property>
+	</bean>
+
+	<!--
+	  - This bean is a SimpleFormController that manages the findOwner use case.
+	  - It uses the "findOwnersValidator" and "clinic" beans.
+	  -->
+	<bean id="findOwnersForm" class="org.springframework.samples.petclinic.web.FindOwnersForm">
+		<property name="formView" value="findOwnersForm"/>
+		<property name="selectView" value="selectOwnerView"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	<!--
+	  - This bean is a SimpleFormController that manages the addOwner use case.
+	  - It uses the "ownerValidator" and "clinic" beans.
+	  -->
+	<bean id="addOwnerForm" class="org.springframework.samples.petclinic.web.AddOwnerForm">
+		<property name="formView" value="ownerForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="ownerValidator"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	<!--
+	  - This bean is a SimpleFormController that manages the editOwner use case.
+	  - It uses the "ownerValidator" and "clinic" beans.
+	  -->
+	<bean id="editOwnerForm" class="org.springframework.samples.petclinic.web.EditOwnerForm">
+		<property name="formView" value="ownerForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="ownerValidator"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	<!--
+		- Validator for owner forms, implementing Spring's Validator interface.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within PetClinic's web tier.
+	  -->
+	<bean id="ownerValidator" class="org.springframework.samples.petclinic.validation.OwnerValidator"/>
+
+	<!--
+	  - This bean is a SimpleFormController that manages the addPet use case.
+	  - It uses the "petValidator" and "clinic" beans.
+	  -->
+	<bean id="addPetForm" class="org.springframework.samples.petclinic.web.AddPetForm">
+		<property name="formView" value="petForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="petValidator"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	<!--
+	  - This bean is a SimpleFormController that manages the editPet use case.
+	  - It uses the "petValidator" and "clinic" beans.
+	  -->
+	<bean id="editPetForm" class="org.springframework.samples.petclinic.web.EditPetForm">
+		<property name="formView" value="petForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="petValidator"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	<!--
+		- Validator for pet forms, implementing Spring's Validator interface.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within PetClinic's web tier.
+ 		-->
+	<bean id="petValidator" class="org.springframework.samples.petclinic.validation.PetValidator"/>
+
+	<!--
+	  - This bean is a SimpleFormController that manages the addVisit use case.
+	  - It uses the "visitValidator" and "clinic" beans.
+	  -->
+	<bean id="addVisitForm" class="org.springframework.samples.petclinic.web.AddVisitForm">
+		<property name="formView" value="visitForm"/>
+		<property name="successView" value="ownerRedirect"/>
+		<property name="validator" ref="visitValidator"/>
+		<property name="clinic" ref="clinic"/>
+	</bean>
+
+	<!--
+		- Validator for visit forms, implementing Spring's Validator interface.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within PetClinic's web tier.
+ 		-->
+	<bean id="visitValidator" class="org.springframework.samples.petclinic.validation.VisitValidator"/>
+
+</beans>

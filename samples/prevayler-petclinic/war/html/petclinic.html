@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+    </head>
+    <body>
+        <h1 style="text-align: center;">The Spring PetClinic Application</h1>
+        <big><span style="font-weight: bold;">Updated : <br>
+                &nbsp;&nbsp;&nbsp; 
+            </span>01-DEC-2004 - Ken Krebs<span style="font-weight: bold;"><br></span>
+            &nbsp;&nbsp;&nbsp; 16-AUG-2003</big><big> - Ken Krebs</big><br>
+        <br>
+        <h2>Introduction</h2>
+        Spring is a collection of small, well-focused, loosely coupled Java
+        frameworks that can be used independently or collectively to build
+        industrial strength applications of many different types. The PetClinic
+        sample application is designed to show how the Spring
+        application frameworks can be used to build simple, but powerful
+        database-oriented applications. It will demonstrate the use
+        of Spring's core functionality:<br>
+        <ul>
+            <li>JavaBeans based application configuration using
+                Inversion-Of-Control<br>
+            </li>
+            <li>Model-View-Controller web Presentation Layer</li>
+            <li>Practical database access through JDBC, Hibernate, or Apache OJB</li>
+            <li>Declarative Transaction Management using AOP<br>
+            </li>
+            <li>Data Validation that supports but is not dependent on the
+            Presentation Layer</li>
+        </ul>
+        The Spring frameworks provide a great deal of useful infrastructure to
+        simplify the tasks faced by application developers. This infrastructure
+        helps developers to create applications that are :<br>
+        <ul>
+            <li><span style="font-weight: bold; text-decoration: underline;">concise</span>
+                by handling a lot of the complex control flow that is needed to use the
+            Java API's, such as JDBC, JNDI, JTA, RMI, and EJB.</li>
+            <li><span style="font-weight: bold; text-decoration: underline;">flexible</span>
+                by simplifying the process of external application configuration
+                through
+                the use of Reflection and JavaBeans. This allows the developer to
+                achieve a clean separation of configuration data from application code.
+                All application and web application objects, including validators,
+                workflow controllers, and views, are JavaBeans that can be configured
+            externally.</li>
+            <li><span style="font-weight: bold; text-decoration: underline;">testable</span>
+                by supplying an interface based design to maximize pluggability. This
+                facilitates unit testing of Business Logic without requiring the
+                presence
+            of application or live database servers.</li>
+            <li><span style="font-weight: bold; text-decoration: underline;">maintainable</span>
+                by facilitating a clean separation of the application layers. It most
+                importantly helps maintain the independence of the Business Layer
+                from the Presentation layer. PetClinic demonstrates the use of a
+                Model-View-Controller
+                based web presentation framework that can work seamlessly with many
+                different types of view technologies. The Spring web application
+                framework helps developers to implement their Presentation as a clean
+                and thin layer focused on its main missions of translating user actions
+            into application events and rendering model data.</li>
+        </ul>
+        It is assumed that users of this tutorial will have a basic knowledge
+        of object-oriented design, Java, Servlets, JSP, and relational
+        databases. It also assumes a basic knowledge of the use of a J2EE web
+        application container.<br>
+        <br>
+        Since the purpose of the sample application is tutorial in nature, the
+        implementation presented here will of course provide only a small
+        subset
+        of the functionality that would be needed by a real world version of a
+        PetClinic application.<br>
+        <br>
+        <h2>PetClinic Sample Application Requirements</h2>
+        The application requirement is for an information system that is
+        accessible through a web browser. The users of the application are
+        employees of the clinic who in the course of their work need to view
+        and
+        manage information regarding the veterinarians, the clients, and their
+        pets. The sample application supports the following:<br>
+        <br>
+        <span style="font-weight: bold;">Use Cases:</span><br>
+        <ul>
+            <li>View a list of veterinarians and their specialties</li>
+            <li>View information pertaining to a pet owner</li>
+            <li>Update the information pertaining to a pet owner</li>
+            <li>Add a new pet owner to the system</li>
+            <li>View information pertaining to a pet</li>
+            <li>Update the information pertaining to a pet</li>
+            <li>Add a new pet to the system</li>
+            <li>View information pertaining to a pet's visitation history</li>
+            <li>Add information pertaining to a visit to the pet's visitation
+            history</li>
+        </ul>
+        <span style="font-weight: bold;">Business Rules:</span><br>
+        <ol>
+            <li>An owner may not have multiple pets with the same
+            case-insensitive name.</li>
+        </ol>
+        <br>
+        <ul>
+        </ul>
+    </body>
+</html>
