@@ -9,11 +9,11 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 /**
  * @author Sergio Bossa
  */
-public class PrevaylerTemplateTest extends AbstractDependencyInjectionSpringContextTests {
+public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjectionSpringContextTests {
     
     private PrevaylerTemplate template;
     
-    public PrevaylerTemplateTest(String testName) {
+    public PrevaylerTemplateWithoutMergeTest(String testName) {
         super(testName);
         this.setAutowireMode(AUTOWIRE_BY_NAME);
     }
@@ -160,13 +160,13 @@ public class PrevaylerTemplateTest extends AbstractDependencyInjectionSpringCont
         
         Runnable r1 = new Runnable() {
             public void run() {
-                PrevaylerTemplateTest.this.template.execute(new SleepingPrevaylerCallback(id));
+                PrevaylerTemplateWithoutMergeTest.this.template.execute(new SleepingPrevaylerCallback(id));
             }
         };
         
         Runnable r2 = new Runnable() {
             public void run() {
-                PrevaylerTemplateTest.this.template.execute(new NonSleepingPrevaylerCallback(id));
+                PrevaylerTemplateWithoutMergeTest.this.template.execute(new NonSleepingPrevaylerCallback(id));
             }
         };
         
@@ -185,7 +185,7 @@ public class PrevaylerTemplateTest extends AbstractDependencyInjectionSpringCont
         */
     }
     
-    public void setPrevaylerTemplate(PrevaylerTemplate template) {
+    public void setPrevaylerTemplateWithoutMerge(PrevaylerTemplate template) {
         this.template = template;
     }
     

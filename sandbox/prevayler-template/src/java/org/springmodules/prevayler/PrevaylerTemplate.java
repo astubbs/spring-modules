@@ -64,7 +64,7 @@ public class PrevaylerTemplate extends PrevaylerAccessor implements DisposableBe
     private Prevayler prevayler;
     
     private IdMerger merger;
-    private boolean idMerging = false;
+    private boolean idMerging = true;
     
     /**
      * Mandatory initialization method to call.
@@ -105,7 +105,7 @@ public class PrevaylerTemplate extends PrevaylerAccessor implements DisposableBe
     
     /**
      * Set true if identifiers must be merged into object instances passed to "save" and "update" operations, false otherwise.<br>
-     * The default is <i>false</i>, because the id merging consumes more memory and processing resources.
+     * The default is <i>true</i>, but consider that <b>id merging consumes more memory and processing resources</b>.
      */
     public void setIdMerging(boolean merging) {
         this.idMerging = merging;

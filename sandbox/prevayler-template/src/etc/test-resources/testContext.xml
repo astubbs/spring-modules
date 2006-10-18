@@ -16,8 +16,9 @@
         <property name="prevalenceBase" value="classpath:testPrevalenceBase"/>
     </bean>
     
-    <bean name="prevaylerTemplate" class="org.springmodules.prevayler.PrevaylerTemplate">
+    <bean name="prevaylerTemplateWithoutMerge" class="org.springmodules.prevayler.PrevaylerTemplate">
         <property name="configuration" ref="prevaylerConfiguration"/>
+        <property name="idMerging" value="false"/>
     </bean>
     
     <bean name="prevaylerTemplateWithMerge" class="org.springmodules.prevayler.PrevaylerTemplate">
