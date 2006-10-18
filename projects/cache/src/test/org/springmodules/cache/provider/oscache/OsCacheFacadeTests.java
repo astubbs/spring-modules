@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on May 28, 2005
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -27,6 +27,8 @@ import org.easymock.classextension.MockClassControl;
 
 import com.opensymphony.oscache.base.Cache;
 import com.opensymphony.oscache.base.NeedsRefreshException;
+import com.opensymphony.oscache.base.EntryRefreshPolicy;
+import com.opensymphony.oscache.base.CacheEntry;
 import com.opensymphony.oscache.base.events.CacheEntryEventListener;
 import com.opensymphony.oscache.extra.CacheEntryEventListenerImpl;
 import com.opensymphony.oscache.general.GeneralCacheAdministrator;
@@ -39,7 +41,8 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
  * <p>
  * Unit Tests for <code>{@link OsCacheFacade}</code>.
  * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public class OsCacheFacadeTests extends TestCase {
@@ -178,7 +181,31 @@ public class OsCacheFacadeTests extends TestCase {
     assertNull(cachedObject);
   }
 
-  public void testOnGetFromCacheWhenRefreshPeriodIsNotNullAndCronExpressionIsNotNull()
+	public void testOnGetFromCacheWhenEntryIsStale() {
+		setUpCacheAdministrator();
+
+		Cache cache = cacheAdministrator.getCache();
+
+		cache.putInCache(CACHE_KEY, "An Object",
+				new EntryRefreshPolicy() {
+					/** force refresh */
+					public boolean needsRefresh(CacheEntry cacheEntry) {
+						return true;
+					}
+				});
+
+		Object cachedObject = osCacheFacade.onGetFromCache(CACHE_KEY, cachingModel);
+		assertNull(cachedObject);
+
+		try {
+			cacheAdministrator.cancelUpdate(CACHE_KEY);
+			fail("osCacheFacade.onGetFromCache should have call cacheManager.cancelUpdate(newKey)");
+		} catch	(IllegalStateException e) {
+			// expected
+		}
+	}
+
+	public void testOnGetFromCacheWhenRefreshPeriodIsNotNullAndCronExpressionIsNotNull()
       throws Exception {
     Method getFromCacheMethod = GeneralCacheAdministrator.class
         .getDeclaredMethod("getFromCache", new Class[] { String.class,
@@ -368,7 +395,6 @@ public class OsCacheFacadeTests extends TestCase {
 
   private void setUpCacheAdministrator() {
     cacheAdministrator = new GeneralCacheAdministrator();
-    osCacheFacade.setCacheManager(cacheAdministrator);
 
     Cache cache = cacheAdministrator.getCache();
 

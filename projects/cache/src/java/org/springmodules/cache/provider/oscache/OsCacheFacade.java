@@ -1,12 +1,12 @@
-/* 
+/*
  * Created on Nov 10, 2004
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -41,7 +41,8 @@ import org.springmodules.cache.provider.ReflectionCacheModelEditor;
  * <code>{@link org.springmodules.cache.provider.CacheProviderFacade}</code>
  * that uses OSCache as the underlying cache implementation
  * </p>
- * 
+ *
+ * @author Omar Irbouh
  * @author Alex Ruiz
  */
 public final class OsCacheFacade extends AbstractCacheProviderFacade {
@@ -64,7 +65,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
   /**
    * Returns the validator of cache models. It is always an instance of
    * <code>{@link OsCacheModelValidator}</code>.
-   * 
+   *
    * @return the validator of cache models
    */
   public CacheModelValidator modelValidator() {
@@ -95,7 +96,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * Sets the OSCache cache manager to use.
-   * 
+   *
    * @param newCacheManager
    *          the new cache manager
    */
@@ -105,7 +106,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * Returns the <code>String</code> representation of the given key.
-   * 
+   *
    * @param key
    *          the cache key.
    * @return the <code>String</code> representation of <code>cacheKey</code>.
@@ -122,7 +123,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * 
+   *
    * @see AbstractCacheProviderFacade#onCancelCacheUpdate(Serializable)
    */
   protected void onCancelCacheUpdate(Serializable key) {
@@ -175,8 +176,10 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
             .intValue(), cronExpression);
       }
     } catch (NeedsRefreshException needsRefreshException) {
-      // the cache does not have that entry. Ignore the exception.
-    }
+			// prevent the cache entry from being locked
+			// see: http://www.opensymphony.com/oscache/api/com/opensymphony/oscache/base/Cache.html#getFromCache(java.lang.String, int)
+			cacheManager.cancelUpdate(newKey);
+		}
 
     return cachedObject;
   }
@@ -200,7 +203,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
   }
 
   /**
-   * 
+   *
    * @see AbstractCacheProviderFacade#onRemoveFromCache(Serializable,
    *      CachingModel)
    */
@@ -211,7 +214,7 @@ public final class OsCacheFacade extends AbstractCacheProviderFacade {
 
   /**
    * @see AbstractCacheProviderFacade#validateCacheManager()
-   * 
+   *
    * @throws FatalCacheException
    *           if the cache manager is <code>null</code>.
    */

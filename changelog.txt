@@ -11,6 +11,7 @@ Package org.springmodules.cache
 * refactored Reflections to call a class hashCode when declared by the class or a superClass other than java.lang.Object [MOD-201]
 * Improved debug message in AbstractCachingInterceptor: display method signature rather than method name [MOD-219]
 * Removed reference to java.io.Closeable in org.springmodules.cache.impl.Element [MOD-235]
+* OSCacheFacade.onGetFromCache calls cacheManager.cancelUpdate() to prevent blocking threads (thanks go to Stefan Armbruster) [MOD-208]
 
 Changes in version 0.6 (19.09.2006)
 -----------------------------------
