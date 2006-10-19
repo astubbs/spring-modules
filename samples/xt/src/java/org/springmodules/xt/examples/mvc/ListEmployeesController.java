@@ -39,7 +39,7 @@ public class ListEmployeesController extends EnhancedSimpleFormController {
         Office office = form.getOffice();
         Collection<IEmployee> employees = store.getEmployeesByOffice(office);
         
-        return new ModelAndView(this.getFormView(), errors.getModel()).addObject("employees", employees);
+        return new ModelAndView(this.getSuccessView(), errors.getModel()).addObject("employees", employees);
     }
     
     public void setStore(MemoryRepository store) {
