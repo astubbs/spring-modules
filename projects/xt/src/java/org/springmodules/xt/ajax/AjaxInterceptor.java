@@ -44,7 +44,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.BaseCommandController;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.util.UrlPathHelper;
-import org.springmodules.xt.ajax.AjaxResponseImpl;
 
 /**
  * <p>Spring web interceptor which intercepts http requests and handles ajax requests.<br> 
@@ -68,6 +67,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     public static final String AJAX_ACTION_REQUEST = "ajax-action";
     public static final String AJAX_SUBMIT_REQUEST = "ajax-submit";
     public static final String AJAX_REDIRECT_PREFIX = "ajax-redirect:";
+    public static final String AJAX_VIEW_KEYWORD = "ajax-view";
     
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
     private PathMatcher pathMatcher = new AntPathMatcher();
@@ -95,14 +95,14 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) 
     throws Exception {
         String requestType = request.getParameter(this.ajaxParameter);
-        
         if (requestType != null && requestType.equals(AJAX_ACTION_REQUEST)) {
             String eventId = request.getParameter(this.eventParameter);
+            
             if (eventId == null) {
                 throw new IllegalStateException("Event id cannot be null.");
             }
             
-            logger.warn(new StringBuilder("Pre-handling ajax request for event: ").append(eventId));
+            logger.info(new StringBuilder("Pre-handling ajax request for event: ").append(eventId));
             
             List<AjaxHandler> handlers = this.lookupHandlers(request);
             if (handlers != null) {
@@ -158,14 +158,14 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) 
     throws Exception {
         String requestType = request.getParameter(this.ajaxParameter);
-        
         if (requestType != null && requestType.equals(AJAX_SUBMIT_REQUEST)) {
-            String eventId = request.getParameter(this.eventParameter);    
+            String eventId = request.getParameter(this.eventParameter); 
+            
             if (eventId == null) {
                 throw new IllegalStateException("Event id cannot be null.");
             }
             
-            logger.warn(new StringBuilder("Post-handling ajax request for event: ").append(eventId));
+            logger.info(new StringBuilder("Post-handling ajax request for event: ").append(eventId));
             
             List<AjaxHandler> handlers = this.lookupHandlers(request);
             if (handlers != null) {
@@ -195,29 +195,39 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     throw new UnsupportedEventException("Cannot handling the given event with id: " + eventId);
                 }
                 else {
+                    String view = modelAndView.getViewName();
                     if (ajaxResponse != null) {
+                        if (! view.equals(AJAX_VIEW_KEYWORD)) {
+                            // FIXME: Should we throw an exception?
+                            StringBuilder msg = new StringBuilder("Warning: you should configure the ")
+                            .append(AJAX_VIEW_KEYWORD)
+                            .append(" keyword as model view name. Found: ")
+                            .append(view);
+                            logger.warn(msg);
+                        }
                         // Need to clear the ModelAndView because we are handling the response by ourselves:
                         modelAndView.clear();
                         this.sendResponse(response, ajaxResponse.getResponse());
                     }
                     else {
-                        String view = modelAndView.getViewName();
                         if (view.startsWith(AJAX_REDIRECT_PREFIX)) {
-                            String path = view.substring(AJAX_REDIRECT_PREFIX.length());
-                            
-                            logger.warn(new StringBuilder("After Ajax submit, handling an Ajax redirect to: ").append(path));
-
-                            AjaxResponse ajaxRedirect = new AjaxResponseImpl();
-                            AjaxAction ajaxAction = new RedirectAction(request.getContextPath() + path, modelAndView);
-                            ajaxRedirect.addAction(ajaxAction);
-
-                            // Need to clear the ModelAndView because we are handling the response by ourselves:
-                            modelAndView.clear();
-                            this.sendResponse(response, ajaxRedirect.getResponse());
+                            view = view.substring(AJAX_REDIRECT_PREFIX.length());
                         }
                         else {
-                            logger.warn(new StringBuilder("After Ajax submit, handling a normal forward/redirect to: ").append(view));
+                            // FIXME: Should we throw an exception?
+                            StringBuilder msg = new StringBuilder("After Ajax submit, no Ajax redirect prefix: ")
+                            .append(AJAX_REDIRECT_PREFIX)
+                            .append(" configured, but handling ajax redirect to: ")
+                            .append(view);
+                            logger.warn(msg);
                         }
+                        // Creating Ajax redirect action:
+                        AjaxResponse ajaxRedirect = new AjaxResponseImpl();
+                        AjaxAction ajaxAction = new RedirectAction(request.getContextPath() + view, modelAndView);
+                        ajaxRedirect.addAction(ajaxAction);
+                        // Need to clear the ModelAndView because we are handling the response by ourselves:
+                        modelAndView.clear();
+                        this.sendResponse(response, ajaxRedirect.getResponse());
                     }
                 }
             }
