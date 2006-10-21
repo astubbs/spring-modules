@@ -1,102 +1,142 @@
-<sect1 id='about'><title>About XT Framework</title>
-    <para>The XT Framework is a <ulink url='http://www.springframework.org'><citetitle>Spring</citetitle></ulink> module for developing applications with ''richer domain models and richer user interfaces'', following the <ulink url='http://domaindrivendesign.org'><citetitle>Domain Driven Design</citetitle></ulink> practices.
-    </para>
-    <para>Domain Driven Design puts the <ulink url='http://martinfowler.com/eaaCatalog/domainModel.html'><citetitle>domain model</citetitle></ulink> in the heart of the development process.
-        The domain model becomes the core of your application and the main focus of your development.
-        It concentrates all business logic, rules and constraints, being <emphasis role='bold'>totally independent</emphasis> from other application parts.
-        In particular, considering a well-known layered architecture, domain models are designed to be independent from the so called <emphasis>presentation layer</emphasis> and <emphasis>infrastructure/data access layer</emphasis>. 
-        Unfortunately, practically speaking, this causes a sort of <emphasis>impedence mismatch</emphasis> among layers, causing code duplication, domain model corruption, or the shy <ulink url='http://www.martinfowler.com/bliki/AnemicDomainModel.html'><citetitle>anemic domain model</citetitle></ulink>. 
-    </para>
-    <para>The XT Framework aims at solving this mismatch providing the so called XT Modeling Framework for developing <emphasis>rich domain models</emphasis>, which gracefully adapt to other layers.
-    </para>
-    <para>And if you have a rich domain model, why not having a <emphasis>rich user interface</emphasis>?
-        The XT Framework provides also the XT Ajax Framework, which integrates Spring and its MVC framework with <ulink url='http://adaptivepath.com/publications/essays/archives/000385.php'><citetitle>AJAX</citetitle></ulink> technologies. 
-    </para>
-    <important>
-        <para>
-            The XT Framework needs Java 1.5 or later: it will not work in older environments.
-        </para>
-    </important>
-    <warning>
-        <para>
-            Version 0.6 comes with several packages and interfaces whose name and position have been refactored for better usability.
-        </para>
-        <para>
-            These changes are not backward compatible and require to change your code.
-        </para>
-        <para>
-            We're sorry for any inconvenience.
-        </para>
-        <para>
-            However, next versions of XT Framework will not break any existent code because will be fully backward compatible.
-        </para>
-    </warning>
-    <warning>
-        <para>
-            In version 0.6, the XT Framework Utils packages have been moved to the SpringMVC-extra web module.
-        </para>
-    </warning>
-    <sect2 id='modeling-framework'><title id='modeling-framework-title'>XT Modeling Framework</title>
-        <para>XT Modeling Framework provides components for developing rich domain models and making them collaborate with other application layers without violating DDD principles.
-            At the moment it provides: 
-            <itemizedlist>
-                <listitem>
-                    <para><emphasis role='bold'>DynamicIntroductor</emphasis> : Generic interface for introducing additional interfaces into plain old Java objects.</para>
-                </listitem>
-                <listitem>
-                    <para><emphasis role='bold'>Bean Introductor</emphasis> : Built on top of Spring AOP and DynamicIntroductor interface, it introduces JavaBeans style interfaces with getter/setter methods into domain objects, for adapting/decorating them.</para>
-                </listitem>
-                <listitem>
-                        <para><emphasis role='bold'>Introductor Collections</emphasis> : Standard Java collections decorators for introducing interfaces into objects stored in collections.</para>
-                </listitem>
-                <listitem>
-                        <para><emphasis role='bold'>Notifications</emphasis> : <ulink url='http://www.martinfowler.com/eaaDev/Notification.html'><citetitle>Notification</citetitle></ulink> objects, for carrying messages between different application layers.</para>
-                </listitem>
-                <listitem>
-                    <para><emphasis role='bold'>Specifications</emphasis> : Generic interface for implementing <ulink url='http://www.martinfowler.com/apsupp/spec.pdf'><citetitle>Specifications</citetitle></ulink> capable of collecting messages of different types into notification objects.</para>
-                </listitem>
-                <listitem>
-                    <para><emphasis role='bold'>Composite Specifications</emphasis> : Specifications implementation capable of being combined through logical operators, using a <ulink url='http://www.martinfowler.com/bliki/FluentInterface.html'><citetitle>fluent interface</citetitle></ulink>.</para>
-                </listitem>
-            </itemizedlist>
-        </para>
-        <para>If you want to learn more, take a look at XT Modeling Framework base concepts.
-        </para>
-    </sect2>
-    <sect2 id='ajax-framework'><title id='ajax-framework-title'>XT Ajax Framework</title>
-        <para>XT Ajax Framework is an event based Ajax framework fully integrated with Spring MVC.
-        Here are some of its major features: </para>
-        <itemizedlist>
-            <listitem>
-                <para>No javascript code required, nor special template tags, just plain old HTML: we believe in Separation of Concerns and web pages with no extra logic.
-                </para>
-            </listitem>
-            <listitem>
-                <para>Based on web page level events fired as <ulink url='http://www.w3schools.com/js/js_events.asp'><citetitle>javascript events</citetitle></ulink>.
-                </para>
-            </listitem>
-            <listitem>
-                <para>Pure server side handling of page events.
-                </para>
-            </listitem>
-            <listitem>
-                <para>Ready to use actions and HTML components for page updating.
-                </para>
-            </listitem>
-            <listitem>
-                <para>Dramatically simplified handling of complex HTML forms logic.
-                </para>
-            </listitem>
-            <listitem>
-                <para>Only minor changes required for adapting your existing Spring MVC controllers and web pages.
-                </para>
-            </listitem>
-            <listitem>
-                <para>Secure.</para>
-            </listitem>
-        </itemizedlist>
-        <para>
-            If you want to learn more, take a look at XT Ajax Framework base concepts. 
-        </para>
-    </sect2>
+<?xml version="1.0" encoding="UTF-8"?>
+<sect1 id="about">
+  <title>About XT Framework</title>
+
+  <para>The XT Framework is a <ulink
+  url="http://www.springframework.org"><citetitle>Spring</citetitle></ulink>
+  module for developing applications with ''richer domain models and richer
+  user interfaces'', following the <ulink
+  url="http://domaindrivendesign.org"><citetitle>Domain Driven
+  Design</citetitle></ulink> practices.</para>
+
+  <para>Domain Driven Design puts the <ulink
+  url="http://martinfowler.com/eaaCatalog/domainModel.html"><citetitle>domain
+  model</citetitle></ulink> in the heart of the development process. The
+  domain model becomes the core of your application and the main focus of your
+  development. It concentrates all business logic, rules and constraints,
+  being <emphasis role="bold">totally independent</emphasis> from other
+  application parts. In particular, considering a well-known layered
+  architecture, domain models are designed to be independent from the so
+  called <emphasis>presentation layer</emphasis> and
+  <emphasis>infrastructure/data access layer</emphasis>. Unfortunately,
+  practically speaking, this causes a sort of <emphasis>impedence
+  mismatch</emphasis> among layers, causing code duplication, domain model
+  corruption, or the shy <ulink
+  url="http://www.martinfowler.com/bliki/AnemicDomainModel.html"><citetitle>anemic
+  domain model</citetitle></ulink>.</para>
+
+  <para>The XT Framework aims at solving this mismatch providing the so called
+  XT Modeling Framework for developing <emphasis>rich domain
+  models</emphasis>, which gracefully adapt to other layers.</para>
+
+  <para>And if you have a rich domain model, why not having a <emphasis>rich
+  user interface</emphasis>? The XT Framework provides also the XT Ajax
+  Framework, which integrates Spring and its MVC framework with <ulink
+  url="http://adaptivepath.com/publications/essays/archives/000385.php"><citetitle>AJAX</citetitle></ulink>
+  technologies.</para>
+
+  <important>
+    <para>The XT Framework needs <emphasis role="bold">Java 1.5</emphasis> or
+    later: it will not work in older environments.</para>
+  </important>
+
+  <sect2 id="modeling-framework">
+    <title id="modeling-framework-title">XT Modeling Framework</title>
+
+    <para>XT Modeling Framework provides components for developing rich domain
+    models and making them collaborate with other application layers without
+    violating DDD principles. At the moment it provides: <itemizedlist>
+        <listitem>
+          <para><emphasis role="bold">DynamicIntroductor</emphasis> : Generic
+          interface for introducing additional interfaces into plain old Java
+          objects.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Bean Introductor</emphasis> : Built on
+          top of Spring AOP and DynamicIntroductor interface, it introduces
+          JavaBeans style interfaces with getter/setter methods into domain
+          objects, for adapting/decorating them.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Introductor Collections</emphasis> :
+          Standard Java collections decorators for introducing interfaces into
+          objects stored in collections.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Notifications</emphasis> : <ulink
+          url="http://www.martinfowler.com/eaaDev/Notification.html"><citetitle>Notification</citetitle></ulink>
+          objects, for carrying messages between different application
+          layers.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Specifications</emphasis> : Generic
+          interface for implementing <ulink
+          url="http://www.martinfowler.com/apsupp/spec.pdf"><citetitle>Specifications</citetitle></ulink>
+          capable of collecting messages of different types into notification
+          objects.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Composite Specifications</emphasis> :
+          Specifications implementation capable of being combined through
+          logical operators, using a <ulink
+          url="http://www.martinfowler.com/bliki/FluentInterface.html"><citetitle>fluent
+          interface</citetitle></ulink>.</para>
+        </listitem>
+      </itemizedlist></para>
+
+    <para>If you want to learn more, take a look at XT Modeling Framework base
+    concepts.</para>
+  </sect2>
+
+  <sect2 id="ajax-framework">
+    <title id="ajax-framework-title">XT Ajax Framework</title>
+
+    <para>XT Ajax Framework is an event based Ajax framework fully integrated
+    with Spring MVC. Here are some of its major features:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>No javascript code required, nor special template tags, just
+        plain old HTML: we believe in Separation of Concerns and web pages
+        with no extra logic.</para>
+      </listitem>
+
+      <listitem>
+        <para>Based on web page level events fired as <ulink
+        url="http://www.w3schools.com/js/js_events.asp"><citetitle>javascript
+        events</citetitle></ulink>.</para>
+      </listitem>
+
+      <listitem>
+        <para>Pure server side handling of page events.</para>
+      </listitem>
+
+      <listitem>
+        <para>Ready to use actions and HTML components for page
+        updating.</para>
+      </listitem>
+
+      <listitem>
+        <para>Dramatically simplified handling of complex HTML forms
+        logic.</para>
+      </listitem>
+
+      <listitem>
+        <para>Only minor changes required for adapting your existing Spring
+        MVC controllers and web pages.</para>
+      </listitem>
+
+      <listitem>
+        <para>Secure.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>If you want to learn more, take a look at XT Ajax Framework base
+    concepts.</para>
+  </sect2>
 </sect1>

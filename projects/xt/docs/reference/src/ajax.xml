@@ -84,19 +84,19 @@
           <para><emphasis role="bold">Action events</emphasis>, a generic
           event type directly handled by configured <link
           linkend="ajax-handlers">handlers</link> <emphasis
-          role="bold">without</emphasis> calling any Spring MVC controller:
-          this is most used for updating the web page with data from the
-          server.</para>
+          role="bold">without</emphasis> passing control to any Spring MVC
+          controller: this is most used for updating the web page with data
+          from the server.</para>
         </listitem>
 
         <listitem>
           <para><emphasis role="bold">Submit events</emphasis>, a special type
           of event handled by configured <link
           linkend="ajax-handlers">handlers</link> <emphasis
-          role="bold">after</emphasis> executing the Spring MVC controller
+          role="bold">after</emphasis> having called the Spring MVC controller
           associated with the page: this event causes the submit of the page
           and so the handling of the submit by the controller, and can be used
-          for further processing the submit for properly updating the
+          for further processing the submit in order to properly updating the
           view.</para>
         </listitem>
       </itemizedlist>
@@ -114,13 +114,14 @@
 
       <itemizedlist>
         <listitem>
-          <para>The <emphasis role="bold">name (or id) of the event</emphasis>
-          you want to fire ('eventId').</para>
+          <para>The <emphasis role="bold">name</emphasis> (also called
+          <emphasis role="bold">id</emphasis>) of the event you want to fire
+          ('eventId' in the snippet above).</para>
         </listitem>
 
         <listitem>
           <para>The html element which fired the event, through the <emphasis
-          role="bold">this</emphasis> objects.</para>
+          role="bold">this</emphasis> objects (optional).</para>
         </listitem>
 
         <listitem>
@@ -213,13 +214,13 @@
         <listitem>
           <para>The <ulink
           url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/validation/Errors.html"><citetitle>validation
-          errors</citetitle></ulink>, for managing form submission
-          errors.</para>
+          errors</citetitle></ulink>, for managing form submission errors (if
+          any).</para>
         </listitem>
 
         <listitem>
-          <para>The model map returned by the controller submit method, if
-          any.</para>
+          <para>The model map returned by the controller submit method (if
+          any).</para>
         </listitem>
       </itemizedlist>
 
@@ -277,34 +278,15 @@
         <listitem>
           <para><emphasis>public AjaxResponse handle(AjaxEvent
           event)</emphasis> : Handle the given <emphasis
-          role="bold">AjaxEvent</emphasis> (if supported) and returns an
+          role="bold">AjaxEvent</emphasis> (if supported) and return an
           appropriate <emphasis role="bold">AjaxResponse</emphasis> (see <link
           linkend="ajax-response">Ajax Response</link>).</para>
         </listitem>
       </itemizedlist>
 
-      <note>
-        <para>If you are processing an ajax action event
-        <emphasis>(AjaxActionEvent</emphasis>) and you don't want to make any
-        action, you can safely return a <emphasis role="bold">null</emphasis>
-        <emphasis>AjaxResponse</emphasis>: this will make the request
-        processing continue without any further change.</para>
-      </note>
-
-      <para><note>
-          <para>If you are processing an ajax submit event
-          <emphasis>(AjaxSubmitEvent</emphasis>) and you don't want to make
-          any action, you can safely return a <emphasis
-          role="bold">null</emphasis> <emphasis>AjaxResponse</emphasis> and
-          configure in your Spring MVC <ulink
-          url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/mvc/Controller.html">controller</ulink>
-          a returning view with the <emphasis
-          role="bold">ajax-redirect</emphasis> prefix (i.e. :
-          <emphasis>ajax-redirect:/start.page</emphasis>): this will redirect
-          you, after the submit, to a web page of your choice.</para>
-        </note>Out of the box, XT Ajax Framework provides an AjaxHandler
-      abstract implementation which provides a straightforward way of
-      implementing Ajax handlers: the <emphasis
+      <para>Out of the box, XT Ajax Framework provides an AjaxHandler abstract
+      implementation which provides a straightforward way of implementing Ajax
+      handlers: the <emphasis
       role="bold">org.springmodules.xt.ajax.AbstractAjaxHandler</emphasis>.
       AbstractAjaxHandler is an event dispatcher based on Java reflection and
       Ajax events name (<emphasis>id</emphasis>): it implements the two
@@ -339,6 +321,56 @@
 
       <para>However, you are free to implement a different handling strategy,
       directly implementing the interface above.</para>
+    </sect3>
+
+    <sect3 id="returning-from-ajax-handlers">
+      <title id="returning-from-ajax-handlers-title">Returning from Ajax
+      Handlers</title>
+
+      <para>As seen above, Ajax handlers process events and return an
+      appropriate <emphasis role="bold">AjaxResponse</emphasis> (see <link
+      linkend="ajax-response">Ajax Response</link>) object as a result.</para>
+
+      <para>Here is a more detailed list of what you can do when returning
+      from an handler:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Make some actions (see <link linkend="ajax-actions">Ajax
+          Actions</link>) after processing an ajax action event: in this case
+          you have to normally return an appropriate <emphasis
+          role="bold">AjaxResponse</emphasis> containing your actions.</para>
+        </listitem>
+
+        <listitem>
+          <para>Make some actions after processing an ajax submit event: in
+          this case you have to normally return an appropriate <emphasis
+          role="bold">AjaxResponse</emphasis> containing your actions, and
+          configure in your Spring MVC <ulink
+          url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/mvc/Controller.html">controller</ulink>
+          a returning view with the <emphasis role="bold">ajax-view</emphasis>
+          keyword; please note that if you don't configure such a view the
+          processing will go further and you'll get a warning in your
+          logs.</para>
+        </listitem>
+
+        <listitem>
+          <para>Make no action after processing an ajax action event: in this
+          case, your handler will not produce any output, so you can safely
+          return a null AjaxResponse.</para>
+        </listitem>
+
+        <listitem>
+          <para>Make no action after processing an ajax submit event: in this
+          case, your handler will not produce any output, so you can safely
+          return a null AjaxResponse and configure in your Spring MVC <ulink
+          url="http://static.springframework.org/spring/docs/1.2.x/api/org/springframework/web/servlet/mvc/Controller.html">controller</ulink>
+          a returning view with the <emphasis
+          role="bold">ajax-redirect</emphasis> prefix (i.e. :
+          <emphasis>ajax-redirect:/start.page</emphasis>): this will redirect
+          you, after the submit, to a web page of your choice.</para>
+        </listitem>
+      </itemizedlist>
 
       <para>You've seen how to fire events from web pages, and how to handle
       them through AjaxHandlers. The next step is <emphasis role="bold">how to
@@ -471,12 +503,30 @@
     <sect3 id="components">
       <title id="components-title">Components</title>
 
-      <para>Generally speaking, <emphasis role="bold">component</emphasis>s
+      <para>Generally speaking, <emphasis role="bold">components</emphasis>
       represent web page parts; however, most of the time they represent html
-      elements, like input fields, tables and so. XT Ajax Framework provides
-      many useful components ready to be used (see the
-      <emphasis>org.springmodules.xt.ajax.component</emphasis> package for
-      details), but creating custom components is just a matter of
+      elements, like input fields, tables and so. </para>
+
+      <para>XT Ajax Framework provides many useful components ready to be
+      used: </para>
+
+      <itemizedlist>
+        <listitem>
+          <para><emphasis role="bold">Static components</emphasis>,
+          representing simple, static, html elements (see the
+          <emphasis>org.springmodules.xt.ajax.component</emphasis> package for
+          details).</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Dynamic components</emphasis>, capable
+          of dynamically rendering page parts (see the
+          <emphasis>org.springmodules.xt.ajax.component.dynamic</emphasis>
+          package for details). </para>
+        </listitem>
+      </itemizedlist>
+
+      <para>However, creating custom components is just a matter of
       implementing the following simple interface:</para>
 
       <programlisting>
@@ -549,9 +599,10 @@
       include in your web pages Taconite, plus some other JavaScript library
       you can find under the <emphasis>js</emphasis> directory. However, all
       these core JavaScript libraries are put, at compile time, in the
-      <emphasis>springxt.js</emphasis> file under the
-      <emphasis>js/lib/core</emphasis> directory. This is the only file you
-      need to include in your web page:</para>
+      <emphasis role="bold">springxt.js</emphasis> file under the
+      <emphasis>js/lib/core</emphasis> directory. This is the only <emphasis
+      role="bold">mandatory</emphasis> file you need to include in your web
+      page:</para>
 
       <programlisting>
                 &lt;script type="text/javascript" src='springxt.js'&gt;&lt;/script&gt; 
@@ -565,9 +616,10 @@
 
       <tip>
         <para>Under the <emphasis>js/lib/core</emphasis> you'll find also a
-        <emphasis>springxt-min.js</emphasis> file: it is a minified version of
-        <emphasis>springxt.js</emphasis> you can include in your pages for
-        reducing the download size.</para>
+        <emphasis role="bold"><emphasis>springxt-min.js</emphasis></emphasis>
+        file: it is a minified version of
+        <emphasis><emphasis>springxt.js</emphasis></emphasis> you can include
+        in your pages for reducing the download size.</para>
       </tip>
     </sect3>
   </sect2>
@@ -592,9 +644,9 @@
       role="bold">the execution of an Ajax action event doesn't call
       controllers</emphasis>.</para>
 
-      <para>In this tutorial we'll implement a simple Ajax application that
-      let you <emphasis role="bold">fill a selection box with a list of Office
-      names after clicking a button</emphasis>, showing you how to:</para>
+      <para>In this tutorial we'll implement a simple Ajax sample that let you
+      <emphasis role="bold">fill a selection box with a list of Office names
+      after clicking a button</emphasis>, showing you how to:</para>
 
       <itemizedlist>
         <listitem>
@@ -742,9 +794,9 @@
       role="bold">after</emphasis> submitting data to your Spring MVC
       controllers.</para>
 
-      <para>In this tutorial we'll implement a simple Ajax application that
-      let you <emphasis role="bold">choose an office and list its employees in
-      a table after clicking a button</emphasis>. We'll see how to:</para>
+      <para>In this tutorial we'll implement a simple Ajax sample that let you
+      <emphasis role="bold">choose an office and list its employees in a table
+      after clicking a button</emphasis>. We'll see how to:</para>
 
       <itemizedlist>
         <listitem>
@@ -827,9 +879,10 @@
                     
                     // Take a list of employees by office and return it into the ModelAndView:
                     Collection&lt;IEmployee&gt; employees = store.getEmployeesByOffice(office);
-                    return new ModelAndView(this.getFormView(), errors.getModel())
+                    return new ModelAndView("ajax-view", errors.getModel())
                     .addObject("employees", employees);
                     }
+                    // The model map contains the employee list that will be rendered using ajax!
                 </programlisting>
 
         <para>As you may note, the <emphasis>onSubmit</emphasis> method gets
@@ -838,9 +891,9 @@
         <emphasis>employees</emphasis> key.</para>
 
         <important>
-          <para>The returned view (returned by
-          <emphasis>this.getFormView()</emphasis>) is not taken into account,
-          because the response is handled by the XT Ajax Framework.</para>
+          <para>The returned view has to be <emphasis
+          role="bold">ajax-view</emphasis>, because the submit response is
+          handled by the XT Ajax Framework.</para>
         </important>
 
         <para>Let's go with our Ajax handler!</para>
@@ -861,7 +914,7 @@
 
         <para>We want to show the employees belonging to the selcted office,
         so we have to retrieve the model map from the event object, and the
-        employees list contained in it:</para>
+        employee list contained in it:</para>
 
         <programlisting>
                     Map model = event.getModel();
@@ -931,6 +984,119 @@
                     &lt;/property&gt;
                     &lt;/bean&gt;
                 </programlisting>
+      </sect4>
+    </sect3>
+
+    <sect3 id="ajax-tutorial-3">
+      <title id="ajax-tutorial-3-title">Working with Ajax validation.</title>
+
+      <para>Ajax validation is a common use case, so the XT Ajax Framework
+      provides the <emphasis
+      role="bold">org.springmodules.xt.ajax.validation.DefaultValidationHandler</emphasis>
+      that let you do Ajax based validation in a very simple way.</para>
+
+      <para>In this tutorial we'll implement a simple Ajax validation use
+      case, <emphasis role="bold">validating an employee matriculation
+      code</emphasis>. We'll see how to:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Use the DefaultValidationHandler.</para>
+        </listitem>
+
+        <listitem>
+          <para>Write the Spring MVC validator.</para>
+        </listitem>
+
+        <listitem>
+          <para>Write the web page.</para>
+        </listitem>
+      </itemizedlist>
+
+      <sect4 id="ajax-tutorial-3-step-1">
+        <title>Step 1 : Using the DefaultValidationHandler.</title>
+
+        <para>The DefaultValidationHandler must only be configured and mapped
+        into the Spring application context as you'd usually do with any other
+        handler; here is how:</para>
+
+        <para><programlisting>
+                    &lt;bean id="ajaxValidationHandler" 
+                    class="org.springmodules.xt.ajax.validation.DefaultValidationHandler"&gt;
+                </programlisting><programlisting>
+                    &lt;bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor"&gt;
+                    &lt;property name="handlerMappings"&gt;
+                    &lt;props&gt;
+                    &lt;prop key="/ajax/tutorial3.page"&gt;ajaxValidationHandler&lt;/prop&gt;
+                    &lt;/props&gt;
+                    &lt;/property&gt;
+                    &lt;/bean&gt;
+                </programlisting></para>
+      </sect4>
+
+      <sect4 id="ajax-tutorial-3-step-2">
+        <title>Step 2 : Writing the Spring MVC validator.</title>
+
+        <para>XT Ajax Framework doesn't require to change the validator code:
+        it is completely independent.</para>
+
+        <para>So here is the validator:</para>
+
+        <programlisting>
+                    public class EmployeeValidator implements Validator {
+    
+                    public boolean supports(Class aClass) {
+
+                    return IEmployee.class.isAssignableFrom(aClass);
+
+                    }
+
+                    public void validate(Object object, Errors errors) {
+
+                    if (this.supports(object.getClass())) {
+                    IEmployee emp = (IEmployee) object;
+                    // Validate matriculation code:
+                    if (emp.getMatriculationCode() == null || 
+                       emp.getMatriculationCode().equals("")) {
+                    errors.rejectValue("matriculationCode", 
+                    "employee.null.code", 
+                    "No Matriculation Code!");
+                    }
+                    }
+                    
+                    }
+                    }
+                </programlisting>
+
+        <note>
+          <para>Please note the <emphasis>employee.null.code</emphasis> error
+          code.</para>
+        </note>
+      </sect4>
+
+      <sect4 id="ajax-tutorial-3-step-3">
+        <title>Step 3 : Writing the web page.</title>
+
+        <para>Writing a web page that will show the errors sent by your Ajax
+        validation requires only to <emphasis role="bold">write html elements
+        whose id is the same as the error codes you want to
+        show</emphasis>.</para>
+
+        <para>In our sample, we have an
+        <emphasis>employee.null.code</emphasis> error code; so we have to
+        simply write in our page:</para>
+
+        <programlisting>
+                    &lt;div id="employee.null.code"/&gt;
+                </programlisting>
+
+        <para>The <emphasis>div</emphasis> element above will be the html
+        element where the error message will be rendered.</para>
+
+        <note>
+          <para>The way error messages are resolved doesn't depend on Ajax
+          validation.</para>
+        </note>
       </sect4>
     </sect3>
   </sect2>
