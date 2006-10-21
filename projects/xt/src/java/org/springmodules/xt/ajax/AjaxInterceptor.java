@@ -197,7 +197,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 else {
                     String view = modelAndView.getViewName();
                     if (ajaxResponse != null) {
-                        if (! view.equals(AJAX_VIEW_KEYWORD)) {
+                        if ((view == null) || (! view.equals(AJAX_VIEW_KEYWORD))) {
                             // FIXME: Should we throw an exception?
                             StringBuilder msg = new StringBuilder("Warning: you should configure the ")
                             .append(AJAX_VIEW_KEYWORD)
@@ -210,7 +210,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                         this.sendResponse(response, ajaxResponse.getResponse());
                     }
                     else {
-                        if (view.startsWith(AJAX_REDIRECT_PREFIX)) {
+                        if ((view != null) && (view.startsWith(AJAX_REDIRECT_PREFIX))) {
                             view = view.substring(AJAX_REDIRECT_PREFIX.length());
                         }
                         else {
@@ -223,7 +223,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                         }
                         // Creating Ajax redirect action:
                         AjaxResponse ajaxRedirect = new AjaxResponseImpl();
-                        AjaxAction ajaxAction = new RedirectAction(request.getContextPath() + view, modelAndView);
+                        AjaxAction ajaxAction = new RedirectAction(new StringBuilder(request.getContextPath()).append(view).toString(), modelAndView);
                         ajaxRedirect.addAction(ajaxAction);
                         // Need to clear the ModelAndView because we are handling the response by ourselves:
                         modelAndView.clear();

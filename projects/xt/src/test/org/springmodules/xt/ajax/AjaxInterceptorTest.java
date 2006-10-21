@@ -119,6 +119,8 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         
         httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "submit");
         
+        mv = new ModelAndView(AjaxInterceptor.AJAX_VIEW_KEYWORD);
+        
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
         
         String response1 = httpResponse.getContentAsString();
