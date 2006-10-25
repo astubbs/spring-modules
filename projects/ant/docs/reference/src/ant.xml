@@ -93,7 +93,10 @@ $ ant examples
 
     <para>The most flexible way to use Spring in an Ant project is
     to expose a Spring bean as a project reference, and then use it
-    in a normal Ant script target.  Example:</para>
+    in a normal Ant script target.  For this we use the Ant custom type
+	<literal>&lt;springbean&gt;</literal>.  
+	The bean is referred to by name, 
+	and copied to an Ant project reference with the given id.  Example:</para>
 
     <programlisting>
 &lt;project name="test"&gt;
@@ -126,12 +129,14 @@ $ ant examples
 
     <para>As a simple alternative to writing a script, when the
     desired operation on the Spring bean is something simple like a
-    method call, we can simply evaluate an expression on the bean.
+    method call, we can simply evaluate an expression on the bean
+	using the custom task <literal>&lt;springexec&gt;</literal>.
     The language used is <ulink url="http://www.ognl.org">OGNL</ulink>
-    and the bean is the root of the expression.  The expressoin
+    and the bean is the root of the expression.  The expression
     context also contains references to the Ant project (can be
     referred to in the expression as
-    <literal>#project</literal>).  Example:</para>
+    <literal>#project</literal>).  Again the bean is referred to by 
+	name.  Example:</para>
 
     <programlisting>
 &lt;project name="test"&gt;
@@ -158,7 +163,7 @@ $ ant examples
   <sect1>
     <title>Dependency Injection into a Custom Ant Task</title>
 
-    <para>The <literal>springinject</literal> task is useful if you
+    <para>The <literal>&lt;springinject&gt;</literal> task is useful if you
     want to take advantage of Ant features (e.g. file globbing) or
     prefer for other reasons to write an Ant Task, but need it to be
     injected with services that Ant does not know about.  You can
