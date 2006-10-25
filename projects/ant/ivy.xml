@@ -23,7 +23,9 @@
 
     <dependency org="springframework" name="springframework"
           rev="2.0" conf="global,test->default">
-          <artifact name="spring" type="jar" conf="global" />
+          <artifact name="spring-beans" type="jar" conf="global" />
+          <artifact name="spring-context" type="jar" conf="global" />
+          <artifact name="spring-core" type="jar" conf="global" />
     </dependency>
             
     <dependency org="ognl" name="ognl" rev="2.6.7"/>
