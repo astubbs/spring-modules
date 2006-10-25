@@ -21,7 +21,7 @@
 $ ant examples
 	 </programlisting>
 	  
-	  <para>Springmodules Ant is shipped with explicit dependendcies on 
+	  <para>Springmodules Ant is shipped with explicit dependencies on 
 	  Spring 2.0, but it all works just as well with 1.2.8.</para>
 
     </sect1>
