@@ -14,8 +14,11 @@
     at: <ulink url="http://ant.apache.org">http://ant.apache.org</ulink>.</para>
     <para>The source code for the examples here is in CVS under
     <literal>src/etc/test-resources</literal>.  They can be run from
-    ant using <literal>ant examples</literal> in the ant subdirectory
-    of the main projects.</para>
+    the ant subdirectory of Springmodules projects using</para>
+	  
+	 <programlisting>
+$ ant examples
+	 </programlisting>
 
     </sect1>
 
@@ -49,7 +52,7 @@
     </sect2>
 
     <sect2>
-      <title>Example Master BeanFacory Configuration</title>
+      <title>Example BeanFactory Configuration</title>
 
       <para>An example <literal>beanRefContext.xml</literal>:</para>
 
@@ -86,7 +89,7 @@
   </sect1>
 
   <sect1>
-    <title>Exposing a Spring bean to Ant</title>
+    <title>Exposing a Spring Bean to Ant</title>
 
     <para>The most flexible way to use Spring in an Ant project is
     to expose a Spring bean as a project reference, and then use it
@@ -119,7 +122,7 @@
   </sect1>
 
   <sect1>
-    <title>Evaluating an expression on a Spring bean in Ant</title>
+    <title>Evaluating an Expression on a Spring Bean in Ant</title>
 
     <para>As a simple alternative to writing a script, when the
     desired operation on the Spring bean is something simple like a
@@ -153,7 +156,7 @@
   </sect1>
 
   <sect1>
-    <title>Dependency Injection into a custom Ant Task</title>
+    <title>Dependency Injection into a Custom Ant Task</title>
 
     <para>The <literal>springinject</literal> task is useful if you
     want to take advantage of Ant features (e.g. file globbing) or
@@ -185,7 +188,7 @@
   </sect1>
 
   <sect1>
-    <title>Setting up Ant to use the Custom Elements</title>
+    <title>Configuring Ant</title>
 
     <sect2><title>Definitions</title>
 
@@ -203,8 +206,8 @@
     relevant jar files can be added to your
     <literal>.ant/lib</literal> directory (the standard way of
     extending the ant classpath), or they can be added using an
-    additional custom task provided as part of this package.
-    Example:</para>
+    additional custom task (<literal>springextend</literal>) provided as 
+	part of this package.</para>
 
     </sect2>
 
