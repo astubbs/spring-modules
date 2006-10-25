@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <bean id="properties" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="test.value" value="springmodules-ant-test"/>
+			</map>
+		</constructor-arg>
+   </bean>
+
+</beans>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="ant">
+  <title>Ant Integration</title>
+
+  <sect1>
+    <title>Introduction</title>
+
+    <para>This module provides custom Ant artifacts that expose Spring
+    beans into an Ant project in various ways. This is a very poweful
+    idiom for adding rich behaviour to Ant, for example in a code
+    generation step during a build.  Can also be used to provide a
+    convenient framework for scripting and automating tasks that
+    require Spring services.  More information about Ant can be found
+    at: <ulink url="http://ant.apache.org">http://ant.apache.org</ulink>.</para>
+    <para>The source code for the examples here is in CVS under
+    <literal>src/etc/test-resources</literal>.  They can be run from
+    ant using <literal>ant examples</literal> in the ant subdirectory
+    of the main projects.</para>
+
+    </sect1>
+
+  <sect1>
+    <title>Setting up Spring Configuration</title>
+
+    <para>The first step before using any of the features of ant
+    integration is to configure a Spring BeanFactory with the beans
+    (e.g. services) that you need.</para>
+
+    <para>The basic mechanism is provided by the Spring
+    SingletonBeanFactoryLocator.  This involves setting up a master
+    BeanFactory which contains beans that are themselves BeanFactory
+    instances.  The default search path for the master BeanFactory is
+    <literal>classpath*:beanRefContext.xml</literal>, which means that
+    all files on the classpath called
+    <literal>beanRefContext.xml</literal> will be included.</para>
+
+    <para>Inside the master BeanFactory are one or more BeanFactory
+    instances.  The active BeanFactory for the custom Ant elements in
+    this package can be chosen by specifying the bean id with the
+    <literal>factoryKey</literal> attribute.</para>
+
+    <sect2>
+      <title>Overriding the BeanFactory locations</title>
+
+      <para>The location of the master BeanFactory can be overridden
+      with the <literal>contextRef</literal> attribute of the custom
+      Ant elements provided by this package.</para>
+
+    </sect2>
+
+    <sect2>
+      <title>Example Master BeanFacory Configuration</title>
+
+      <para>An example <literal>beanRefContext.xml</literal>:</para>
+
+      <programlisting>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd"&gt;
+
+&lt;beans&gt;
+
+  &lt;bean id="test.bootstrap" lazy-init="true"
+    class="org.springframework.context.support.ClassPathXmlApplicationContext"&gt;
+    &lt;!-- bootstrap from bean definitions in this file --&gt;
+    &lt;constructor-arg&gt;&lt;value&gt;classpath:bootstrapContext.xml&lt;/value&gt;&lt;/constructor-arg&gt;
+    &lt;!-- this one refreshes by default, but it is quite lightweight, so OK --&gt;
+  &lt;/bean&gt;
+
+   &lt;bean id="test.child" lazy-init="true"
+     class="org.springframework.context.support.ClassPathXmlApplicationContext"&gt;
+     &lt;!-- bootstrap from bean definitions in this file --&gt;
+     &lt;constructor-arg&gt;
+       &lt;list&gt;
+         &lt;value&gt;classpath:childContext.xml&lt;/value&gt;
+       &lt;/list&gt;
+     &lt;/constructor-arg&gt;
+     &lt;constructor-arg value="false"/&gt;&lt;!-- do not refresh --&gt;
+     &lt;property name="parent" ref="test.bootstrap"/&gt;
+  &lt;/bean&gt;
+
+&lt;/beans&gt;
+      </programlisting>
+
+    </sect2>
+
+  </sect1>
+
+  <sect1>
+    <title>Exposing a Spring bean to Ant</title>
+
+    <para>The most flexible way to use Spring in an Ant project is
+    to expose a Spring bean as a project reference, and then use it
+    in a normal Ant script target.  Example:</para>
+
+    <programlisting>
+&lt;project name="test"&gt;
+
+  &lt;!-- set up tasks and classpaths first --&gt;
+
+  &lt;target name="script" depends="setup"
+    description="Demonstrate exposing a bean as a project reference."&gt;
+    &lt;!-- We can pull the bean out in a script by using the project reference --&gt;
+    &lt;springbean name="properties" factoryKey="test.bootstrap"
+      id="test.bean" /&gt;
+    &lt;script language="ruby"&gt;
+      $project.log("test.bean="+$project.getReference("test.bean").toString())
+    &lt;/script&gt;
+    &lt;!-- If we use a valid Java identifier as the id, then it gets translated into a script variable --&gt;
+    &lt;springbean name="properties" factoryKey="test.bootstrap"
+      id="testBean" /&gt;
+    &lt;script language="ruby"&gt;
+      $project.log("testBean['test.name']="+$testBean.value.get("test.name"))
+    &lt;/script&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;
+    </programlisting>
+
+  </sect1>
+
+  <sect1>
+    <title>Evaluating an expression on a Spring bean in Ant</title>
+
+    <para>As a simple alternative to writing a script, when the
+    desired operation on the Spring bean is something simple like a
+    method call, we can simply evaluate an expression on the bean.
+    The language used is <ulink url="http://www.ognl.org">OGNL</ulink>
+    and the bean is the root of the expression.  The expressoin
+    context also contains references to the Ant project (can be
+    referred to in the expression as
+    <literal>#project</literal>).  Example:</para>
+
+    <programlisting>
+&lt;project name="test"&gt;
+
+  &lt;!-- set up tasks and classpaths first --&gt;
+
+  &lt;target name="expression" depends="setup"
+    description="Demonstrate evaluating an expression on a bean."&gt;
+    &lt;!-- We can evaluate an OGNL expression with a bean as its root. 
+    In the example the bean is a Map, so we can call put. --&gt;
+    &lt;springexec name="properties" factoryKey="test.bootstrap"
+      expression="put('foo','bar')" /&gt;
+    &lt;!-- The Ant project is exposed in the expression context.
+    The bean itself is the root of the expression (#this). --&gt;
+    &lt;springexec name="properties" factoryKey="test.bootstrap"
+      expression="#project.log(#this)" /&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;
+    </programlisting>
+
+  </sect1>
+
+  <sect1>
+    <title>Dependency Injection into a custom Ant Task</title>
+
+    <para>The <literal>springinject</literal> task is useful if you
+    want to take advantage of Ant features (e.g. file globbing) or
+    prefer for other reasons to write an Ant Task, but need it to be
+    injected with services that Ant does not know about.  You can
+    autowire a task by type or by name (the default) by changing the
+    <literal>autowire</literal> attribute (legal values are "byName"
+    and "byType").  Example:</para>
+
+    <programlisting>
+&lt;project name="test"&gt;
+
+  &lt;!-- set up tasks and classpaths first --&gt;
+
+  &lt;target name="depend" depends="setup"
+    description="Demonstrate autowire dependency injection into a custom task."&gt;
+    &lt;taskdef name="test"
+      classname="org.springmodules.ant.task.TestTask"
+      classpathref="ant.test.classpath" /&gt;
+    &lt;!-- Inject properties autowire by name into the test task --&gt;
+    &lt;springinject taskref="test" factoryKey="test.bootstrap" /&gt;
+    &lt;!--  Expect to see properties logged --&gt;
+    &lt;test id="test" /&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;
+    </programlisting>
+
+  </sect1>
+
+  <sect1>
+    <title>Setting up Ant to use the Custom Elements</title>
+
+    <sect2><title>Definitions</title>
+
+    <para>The Ant elements provided by this project are defined in the
+    jar file for this project in a file called
+    <literal>org/springmodules/ant/antlib.xml</literal>. 
+    </para>
+
+    </sect2>
+
+    <sect2><title>Classpath</title>
+
+    <para>All the custom elements require Spring to be on the classpath
+    (spring-core?).  The SpringBeanTask also requires OGNL.  The
+    relevant jar files can be added to your
+    <literal>.ant/lib</literal> directory (the standard way of
+    extending the ant classpath), or they can be added using an
+    additional custom task provided as part of this package.
+    Example:</para>
+
+    </sect2>
+
+    <sect2><title>Example</title>
+    <programlisting>
+&lt;project name="test" default="script"&gt;
+
+  &lt;path id="ant.test.classpath"&gt;
+    &lt;pathelement location="${target.classes.dir}" /&gt;
+    &lt;pathelement location="${target.testclasses.dir}" /&gt;
+    &lt;pathelement location="${target.genclasses.dir}" /&gt;
+    &lt;path refid="test.classpath" /&gt;
+  &lt;/path&gt;
+
+  &lt;target name="setup" unless="${setup.complete}"&gt;
+    &lt;taskdef name="springextend"
+      classname="org.springmodules.ant.task.ExtendClasspathTask"
+      classpath="${basedir}/target/classes" /&gt;
+    &lt;springextend&gt;
+      &lt;path refid="ant.test.classpath" /&gt;
+    &lt;/springextend&gt;
+    &lt;taskdef resource="org/springmodules/ant/antlib.xml" /&gt;
+    &lt;property name="setup.complete" value="true" /&gt;
+  &lt;/target&gt;
+
+&lt;/project&gt;
+    </programlisting>
+    
+    </sect2>
+
+  </sect1>
+
+</chapter>

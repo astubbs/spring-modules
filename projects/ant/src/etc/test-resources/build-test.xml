@@ -1,0 +1,58 @@
+<project name="test" default="script">
+
+    <path id="ant.test.classpath">
+        <pathelement location="${target.classes.dir}" />
+        <pathelement location="${target.testclasses.dir}" />
+        <pathelement location="${target.genclasses.dir}" />
+        <path refid="test.classpath" />
+    </path>
+
+	<target name="setup" unless="${setup.complete}">
+		<taskdef name="springextend"
+			classname="org.springmodules.ant.task.ExtendClasspathTask"
+			classpath="${basedir}/target/classes" />
+		<springextend>
+			<path refid="ant.test.classpath" />
+		</springextend>
+		<taskdef resource="org/springmodules/ant/antlib.xml" />
+		<property name="setup.complete" value="true" />
+	</target>
+
+	<target name="expression" depends="setup"
+		description="Demonstrate evaluating an expression on a bean.">
+		<!-- We can evaluate an OGNL expression with a bean as its root -->
+		<springexec name="properties" factoryKey="test.bootstrap"
+			expression="put('foo','bar')" />
+		<!-- The Ant project is exposed in the expression context -->
+		<springexec name="properties" factoryKey="test.bootstrap"
+			expression="#project.log(#this)" />
+	</target>
+
+	<target name="script" depends="setup"
+		description="Demonstrate exposing a bean as a project reference.">
+		<!-- We can pull the bean out in a script by using the project reference -->
+		<springbean name="properties" factoryKey="test.bootstrap"
+			id="test.bean" />
+		<script language="ruby">
+			$project.log("test.bean="+$project.getReference("test.bean").toString())
+		</script>
+		<!-- If we use a valid Java identifier as the id, then it gets translated into a script variable -->
+		<springbean name="properties" factoryKey="test.bootstrap"
+			id="testBean" />
+		<script language="ruby">
+			$project.log("testBean['test.name']="+$testBean.value.get("test.name"))
+		</script>
+	</target>
+
+	<target name="depend" depends="setup"
+		description="Demonstrate autowire dependency insjection into a custom task.">
+		<taskdef name="test"
+			classname="org.springmodules.ant.task.TestTask"
+			classpathref="ant.test.classpath" />
+		<!-- Inject properties autowire by name into the test task -->
+		<springinject taskref="test" factoryKey="test.bootstrap" />
+		<!--  Expect to see properties logged -->
+		<test id="test" />
+	</target>
+
+</project>

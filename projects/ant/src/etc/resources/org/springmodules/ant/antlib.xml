@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<antlib>
+   <taskdef name="springextend" classname="org.springmodules.ant.task.ExtendClasspathTask"/>
+   <taskdef name="springexec" classname="org.springmodules.ant.task.SpringBeanTask"/>
+   <typedef name="springinject" classname="org.springmodules.ant.task.SpringDependencyInjectorTask"/>
+   <typedef name="springbean" classname="org.springmodules.ant.type.SpringBean"/>
+</antlib>

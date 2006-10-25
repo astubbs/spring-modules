@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <bean id="test.bootstrap" lazy-init="true"
+		class="org.springframework.context.support.ClassPathXmlApplicationContext">
+	 <!-- bootstrap from bean definitions in this file -->
+     <constructor-arg><value>classpath:bootstrapContext.xml</value></constructor-arg>
+     <!-- this one refreshes by default, but it is quite lightweight, so OK -->
+   </bean>
+
+    <bean id="test.child" lazy-init="true"
+		class="org.springframework.context.support.ClassPathXmlApplicationContext">
+	 <!-- bootstrap from bean definitions in this file -->
+      	<constructor-arg>
+     		<list>
+				<value>classpath:childContext.xml</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg value="false"/><!-- do not refresh -->
+		<property name="parent" ref="test.bootstrap"/>
+   </bean>
+
+</beans>
