@@ -12,13 +12,17 @@
     convenient framework for scripting and automating tasks that
     require Spring services.  More information about Ant can be found
     at: <ulink url="http://ant.apache.org">http://ant.apache.org</ulink>.</para>
-    <para>The source code for the examples here is in CVS under
+
+	<para>The source code for the examples here is in CVS under
     <literal>src/etc/test-resources</literal>.  They can be run from
     the ant subdirectory of Springmodules projects using</para>
 	  
 	 <programlisting>
 $ ant examples
 	 </programlisting>
+	  
+	  <para>Springmodules Ant is shipped with explicit dependendcies on 
+	  Spring 2.0, but it all works just as well with 1.2.8.</para>
 
     </sect1>
 
