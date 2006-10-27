@@ -24,5 +24,4 @@ package org.springmodules.validation.util.condition.collection;
 public abstract class AbstractCollectionElementConditionTests extends AbstractCollectionConditionTests {
 
 
-
 }

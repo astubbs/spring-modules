@@ -29,26 +29,26 @@ import org.springmodules.validation.util.condition.NonNullAcceptingTypeSpecificC
 public abstract class AbstractDateCondition extends NonNullAcceptingTypeSpecificCondition {
 
     protected AbstractDateCondition() {
-        super(new Class[] { Date.class, Calendar.class });
+        super(new Class[]{Date.class, Calendar.class});
     }
 
     /**
      * See {@link org.springmodules.validation.util.condition.Condition#check(Object)}.
-     *
+     * <p/>
      * This method casts or converts the given object to a {@link Calendar} instance and
      * delegates the call to {@link #checkCalendar(java.util.Calendar)}.
      *
      * @throws IllegalArgumentException when the passed in object is either <code>null</code> or of a type other than
-     *         {@link Calendar} or {@link Date}.
+     * {@link Calendar} or {@link Date}.
      */
     public final boolean doCheck(Object object) {
 
         if (object instanceof Calendar) {
-            return checkCalendar((Calendar)object);
+            return checkCalendar((Calendar) object);
         }
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime((Date)object);
+        calendar.setTime((Date) object);
 
         return checkCalendar(calendar);
     }

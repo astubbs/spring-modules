@@ -22,15 +22,18 @@ import org.springmodules.validation.util.date.DateParser;
 /**
  * <p>Literal function that re-parses date string
  * every time the result is asked for.
- * 
+ *
  * @author Steven Devijver
  * @since 26-04-2005
  */
 public class DateLiteralFunction implements Function {
 
     private String value = null;
+
     private DateParser dateParser = null;
+
     private int line = 0;
+
     private int column = 0;
 
     public DateLiteralFunction(String value, DateParser dateParser, int line, int column) {

@@ -78,11 +78,11 @@
             <xs:element ref="vld:regexp" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="vld:size" minOccurs="0" maxOccurs="1"/>
             <xs:element ref="vld:expression" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:any namespace="##local" processContents="strict" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:any processContents="skip" namespace="##local" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
 
-    
+
     <!-- Validation Rule Elements -->
 
     <xs:attributeGroup name="common-rule-attributes">
@@ -103,7 +103,11 @@
     <xs:simpleType name="expression-scope">
         <xs:annotation>
             <xs:documentation>
-                The scope of a expression. Can be either <i>global</i> or <i>property</i>.
+                The scope of a expression. Can be either
+                <i>global</i>
+                or
+                <i>property</i>
+                .
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">

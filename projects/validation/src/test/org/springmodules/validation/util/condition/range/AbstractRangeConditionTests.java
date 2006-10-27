@@ -64,10 +64,10 @@ public abstract class AbstractRangeConditionTests extends TestCase {
 
     protected abstract AbstractRangeCondition createRangeConditionWithComparator();
 
-
     //=============================================== Inner Classes ====================================================
 
     private class TestBean {
+
     }
 
 }

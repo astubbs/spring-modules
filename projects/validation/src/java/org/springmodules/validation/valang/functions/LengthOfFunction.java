@@ -21,10 +21,9 @@ import java.util.Collection;
 
 /**
  * <p>Gets the length of a string.
- * 
+ *
  * @author Steven Devijver
  * @author Uri Boness
- *
  * @since Apr 23, 2005
  */
 public class LengthOfFunction extends AbstractFunction {
@@ -39,7 +38,7 @@ public class LengthOfFunction extends AbstractFunction {
         Object result = getArguments()[0].getResult(target);
 
         if (Collection.class.isAssignableFrom(result.getClass())) {
-            return new Integer(((Collection)result).size());
+            return new Integer(((Collection) result).size());
         }
 
         if (result.getClass().isArray()) {

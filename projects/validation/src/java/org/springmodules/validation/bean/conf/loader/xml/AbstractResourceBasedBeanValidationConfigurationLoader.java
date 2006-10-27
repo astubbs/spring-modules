@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springmodules.validation.bean.conf.loader.xml;
 
 import java.util.HashMap;
@@ -67,7 +68,7 @@ public abstract class AbstractResourceBasedBeanValidationConfigurationLoader
      * @see org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader#loadConfiguration(Class)
      */
     public final BeanValidationConfiguration loadConfiguration(Class clazz) {
-        BeanValidationConfiguration configuration = (BeanValidationConfiguration)configurationByClass.get(clazz);
+        BeanValidationConfiguration configuration = (BeanValidationConfiguration) configurationByClass.get(clazz);
         if (configuration != null) {
             return configuration;
         }
@@ -87,7 +88,7 @@ public abstract class AbstractResourceBasedBeanValidationConfigurationLoader
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        for (int i=0; i<resources.length; i++) {
+        for (int i = 0; i < resources.length; i++) {
             Map configurations = loadConfigurations(resources[i]);
             configurationByClass.putAll(configurations);
         }
@@ -138,9 +139,8 @@ public abstract class AbstractResourceBasedBeanValidationConfigurationLoader
      * @param resource The one resource this loader will use to load the bean validation configurations from.
      */
     public void setResource(Resource resource) {
-        setResources(new Resource[] { resource });
+        setResources(new Resource[]{resource});
     }
-
 
     //=============================================== Helper Methods ===================================================
 
@@ -157,7 +157,7 @@ public abstract class AbstractResourceBasedBeanValidationConfigurationLoader
         if (resource.exists()) {
             Map configurationByClass = loadConfigurations(resource);
             this.configurationByClass.putAll(configurationByClass);
-            return (BeanValidationConfiguration)configurationByClass.get(clazz);
+            return (BeanValidationConfiguration) configurationByClass.get(clazz);
         }
         logger.warn("Could not find the default validation configuration for class '" + clazz.getName() + "'");
         this.configurationByClass.put(clazz, null);

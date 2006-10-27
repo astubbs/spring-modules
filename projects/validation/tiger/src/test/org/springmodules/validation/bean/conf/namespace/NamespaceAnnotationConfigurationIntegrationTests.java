@@ -13,12 +13,13 @@ import org.springmodules.validation.bean.BeanValidator;
 public class NamespaceAnnotationConfigurationIntegrationTests extends TestCase {
 
     private BeanValidator validator;
+
     private BeanValidator validator2;
 
     protected void setUp() throws Exception {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("annotation-validation.xml", getClass());
-        validator = (BeanValidator)context.getBean("validator");
-        validator2 = (BeanValidator)context.getBean("validator2");
+        validator = (BeanValidator) context.getBean("validator");
+        validator2 = (BeanValidator) context.getBean("validator2");
     }
 
     public void testLoadConfiguration() throws Exception {

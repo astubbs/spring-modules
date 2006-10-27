@@ -22,7 +22,9 @@ import java.math.BigInteger;
 public abstract class AbstractMathFunction implements Function {
 
     private Function leftFunction = null;
+
     private Function rightFunction = null;
+
     private FunctionTemplate template = null;
 
     public AbstractMathFunction(Function leftFunction, Function rightFunction, int line, int column) {
@@ -67,13 +69,13 @@ public abstract class AbstractMathFunction implements Function {
 
     protected static double transform(Object o) {
         if (o instanceof BigInteger) {
-            return new BigDecimal((BigInteger)o).doubleValue();
+            return new BigDecimal((BigInteger) o).doubleValue();
         } else if (o instanceof BigDecimal) {
-            return ((BigDecimal)o).doubleValue();
+            return ((BigDecimal) o).doubleValue();
         } else if (o instanceof Number) {
             return new BigDecimal(o.toString()).doubleValue();
-        } else  if (o instanceof String) {
-            return new BigDecimal((String)o).doubleValue();
+        } else if (o instanceof String) {
+            return new BigDecimal((String) o).doubleValue();
         } else {
             throw new IllegalArgumentException("Could not parse instance of class [" + o.getClass().getName() + "]!");
         }

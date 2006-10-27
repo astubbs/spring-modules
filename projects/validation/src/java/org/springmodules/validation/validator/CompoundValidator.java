@@ -54,13 +54,13 @@ public class CompoundValidator implements Validator {
      * Returns whether this validator supports the given class. In practice this validator
      * supports the given class only if any of its internal validators support it.
      *
-     * @see Validator#supports(Class)
      * @param clazz The class to be validated.
      * @return Whether this validator supports the given class.
+     * @see Validator#supports(Class)
      */
     public boolean supports(Class clazz) {
         for (Iterator i = validators.iterator(); i.hasNext();) {
-            Validator validator = (Validator)i.next();
+            Validator validator = (Validator) i.next();
             if (validator.supports(clazz)) {
                 return true;
             }
@@ -72,13 +72,13 @@ public class CompoundValidator implements Validator {
      * Validates the given object. All internal validators that support the given object class
      * will perform the actual validation.
      *
-     * @see Validator#validate(Object, org.springframework.validation.Errors)
      * @param obj The validated object.
      * @param errors A registry where validation errors are registered.
+     * @see Validator#validate(Object, org.springframework.validation.Errors)
      */
     public void validate(Object obj, Errors errors) {
         for (Iterator i = validators.iterator(); i.hasNext();) {
-            Validator validator = (Validator)i.next();
+            Validator validator = (Validator) i.next();
             if (validator.supports(obj.getClass())) {
                 validator.validate(obj, errors);
             }
@@ -100,7 +100,7 @@ public class CompoundValidator implements Validator {
      * @param validators The validators to be added to this compound validator.
      */
     public void addValidators(Validator[] validators) {
-        for (int i=0; i<validators.length; i++) {
+        for (int i = 0; i < validators.length; i++) {
             addValidator(validators[i]);
         }
     }
@@ -112,7 +112,7 @@ public class CompoundValidator implements Validator {
      */
     public void setValidators(Validator[] validators) {
         List validatorList = new ArrayList(validators.length);
-        for (int i=0; i<validators.length; i++) {
+        for (int i = 0; i < validators.length; i++) {
             validatorList.add(validators[i]);
         }
         this.validators = validatorList;

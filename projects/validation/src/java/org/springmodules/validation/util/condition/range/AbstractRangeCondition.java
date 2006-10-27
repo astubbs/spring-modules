@@ -41,7 +41,7 @@ public abstract class AbstractRangeCondition extends NonNullAcceptingCondition {
 
     /**
      * See {@link NonNullAcceptingTypeSpecificCondition#doCheck(Object)}.
-     *
+     * <p/>
      * Delegates to {@link #checkRange(Object, java.util.Comparator)}
      */
     public final boolean doCheck(Object bean) {

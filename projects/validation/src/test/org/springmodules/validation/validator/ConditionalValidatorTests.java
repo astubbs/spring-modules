@@ -30,19 +30,21 @@ import org.springmodules.validation.util.condition.Condition;
 public class ConditionalValidatorTests extends TestCase {
 
     private MockControl conditionControl;
+
     private Condition condition;
 
     private MockControl innerValidatorControl;
+
     private Validator innerValidator;
 
     private ConditionalValidator validator;
 
     protected void setUp() throws Exception {
         conditionControl = MockControl.createControl(Condition.class);
-        condition = (Condition)conditionControl.getMock();
+        condition = (Condition) conditionControl.getMock();
 
         innerValidatorControl = MockControl.createControl(Validator.class);
-        innerValidator = (Validator)innerValidatorControl.getMock();
+        innerValidator = (Validator) innerValidatorControl.getMock();
 
         validator = new ConditionalValidator(innerValidator, condition);
     }

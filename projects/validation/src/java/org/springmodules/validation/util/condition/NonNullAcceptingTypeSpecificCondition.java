@@ -31,12 +31,12 @@ public abstract class NonNullAcceptingTypeSpecificCondition extends TypeSpecific
 
     /**
      * See {@link TypeSpecificCondition#beforeObjectChecked(Object)}.
-     *
+     * <p/>
      * Also checks whether the checked object is <code>null</code>.
      *
      * @param object The checked object.
      * @throws IllegalArgumentException if the object is either <code>null</code> or is not of the types supported
-     *         by this condition.
+     * by this condition.
      */
     protected void beforeObjectChecked(Object object) {
         Assert.notNull(object, getClass().getName() + " cannot checkCalendar 'null' values");

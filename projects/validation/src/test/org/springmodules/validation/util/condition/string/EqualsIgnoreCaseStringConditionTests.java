@@ -21,7 +21,6 @@ public class EqualsIgnoreCaseStringConditionTests extends AbstractStringConditio
         assertNotEqualsIgnoreCase("BEST");
     }
 
-
     //=============================================== Helper Methods ===================================================
 
     protected void assertEqualsIgnoreCase(String text) {

@@ -22,14 +22,16 @@ import java.beans.PropertyEditor;
  * <p>Container class to register a custom property editor.
  * <i>propertyEditor</i> and <i>requiredType</i> properties
  * are mandatory, <i>propertyPath</i> property is optional.
- * 
+ *
  * @author Steven Devijver
  * @since Apr 24, 2005
  */
 public class CustomPropertyEditor {
 
     private Class requiredType = null;
+
     private PropertyEditor propertyEditor = null;
+
     private String propertyPath = null;
 
     public CustomPropertyEditor() {

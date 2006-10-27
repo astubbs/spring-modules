@@ -37,7 +37,7 @@ public class PrioritizedBeanValidationConfigurationLoader implements BeanValidat
     }
 
     public BeanValidationConfiguration loadConfiguration(Class clazz) {
-        for (int i=0; i<loaders.length; i++) {
+        for (int i = 0; i < loaders.length; i++) {
             if (loaders[i].supports(clazz)) {
                 BeanValidationConfiguration config = loaders[i].loadConfiguration(clazz);
                 if (config != null) {
@@ -50,14 +50,13 @@ public class PrioritizedBeanValidationConfigurationLoader implements BeanValidat
 
 
     public boolean supports(Class clazz) {
-        for (int i=0; i<loaders.length; i++) {
+        for (int i = 0; i < loaders.length; i++) {
             if (loaders[i].supports(clazz)) {
                 return true;
             }
         }
         return false;
     }
-
 
     //=============================================== Setter/Getter ====================================================
 

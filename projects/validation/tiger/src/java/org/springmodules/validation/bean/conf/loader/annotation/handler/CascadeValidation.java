@@ -16,11 +16,7 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * A marker property level annotation to indicate that the property needs to be valid in order for the containing
@@ -29,7 +25,7 @@ import java.lang.annotation.Target;
  * @author Uri Boness
  */
 @Documented
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ValidationRule
 public @interface CascadeValidation {

@@ -22,11 +22,11 @@ public class ReflectionUtils {
         Assert.notNull(type, "'type' cannot be null.");
         Assert.notNull(name, "'name' cannot be null.");
         Class searchType = type;
-        while(!Object.class.equals(searchType) && searchType != null) {
+        while (!Object.class.equals(searchType) && searchType != null) {
             Method[] methods = (type.isInterface() ? searchType.getMethods() : searchType.getDeclaredMethods());
             for (int i = 0; i < methods.length; i++) {
                 Method method = methods[i];
-                if(name.equals(method.getName()) && Arrays.equals(paramTypes, method.getParameterTypes())) {
+                if (name.equals(method.getName()) && Arrays.equals(paramTypes, method.getParameterTypes())) {
                     return method;
                 }
             }
@@ -54,7 +54,7 @@ public class ReflectionUtils {
         Assert.notNull(type, "'type' cannot be null.");
         Map methodBySigniture = new HashMap();
         Class searchType = type;
-        while(!Object.class.equals(searchType) && searchType != null) {
+        while (!Object.class.equals(searchType) && searchType != null) {
             Method[] typeMethods = (type.isInterface() ? searchType.getMethods() : searchType.getDeclaredMethods());
             for (int i = 0; i < typeMethods.length; i++) {
                 Method method = typeMethods[i];
@@ -65,7 +65,7 @@ public class ReflectionUtils {
             }
             searchType = searchType.getSuperclass();
         }
-        return (Method[])methodBySigniture.values().toArray(new Method[methodBySigniture.size()]);
+        return (Method[]) methodBySigniture.values().toArray(new Method[methodBySigniture.size()]);
     }
 
     public static String getSignature(Method method) {
@@ -74,7 +74,7 @@ public class ReflectionUtils {
         Class[] paramTypes = method.getParameterTypes();
         StringBuffer buffer = new StringBuffer();
         buffer.append(name).append("(");
-        for (int i=0; i<paramTypes.length; i++) {
+        for (int i = 0; i < paramTypes.length; i++) {
             if (i != 0) {
                 buffer.append(",");
             }

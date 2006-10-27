@@ -36,7 +36,7 @@ public abstract class AbstractSingleBoundConditionTests extends AbstractRangeCon
     }
 
     public void testConstructor_WithNullComparator() throws Exception {
-         try {
+        try {
             createCondition(new Person(5), null);
             fail("An IllegalArgumentException must be thrown if the condition is initialized with a null comparator");
         } catch (IllegalArgumentException iae) {

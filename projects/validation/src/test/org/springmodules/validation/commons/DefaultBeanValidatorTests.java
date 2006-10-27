@@ -38,7 +38,7 @@ public class DefaultBeanValidatorTests extends TestCase {
         FooBean bean = new FooBean();
 
         MockControl ctl = MockControl.createControl(ValidatorFactory.class);
-        ValidatorFactory factory = (ValidatorFactory)ctl.getMock();
+        ValidatorFactory factory = (ValidatorFactory) ctl.getMock();
 
         // expect call to get validator with args "fooBean", bean and null
         factory.getValidator("fooBean", bean, null);

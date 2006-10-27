@@ -47,12 +47,15 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
     private final static Log logger = LogFactory.getLog(SimpleValidationRuleElementHandlerRegistry.class);
 
     private List classHandlers;
+
     private List propertyHandlers;
 
     private boolean functoinExpressionParserSet = false;
+
     private FunctionExpressionParser functionExpressionParser;
 
     private boolean conditionExpressionParserSet = false;
+
     private ConditionExpressionParser conditionExpressionParser;
 
     /**
@@ -78,7 +81,7 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
      */
     public ClassValidationElementHandler findClassHandler(Element element, Class clazz) {
         for (Iterator iter = classHandlers.iterator(); iter.hasNext();) {
-            ClassValidationElementHandler handler = (ClassValidationElementHandler)iter.next();
+            ClassValidationElementHandler handler = (ClassValidationElementHandler) iter.next();
             if (handler.supports(element, clazz)) {
                 return handler;
             }
@@ -99,7 +102,7 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
      */
     public PropertyValidationElementHandler findPropertyHandler(Element element, Class clazz, PropertyDescriptor descriptor) {
         for (Iterator iter = propertyHandlers.iterator(); iter.hasNext();) {
-            PropertyValidationElementHandler handler = (PropertyValidationElementHandler)iter.next();
+            PropertyValidationElementHandler handler = (PropertyValidationElementHandler) iter.next();
             if (handler.supports(element, clazz, descriptor)) {
                 return handler;
             }
@@ -113,13 +116,13 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
         findFunctionExpressionParserInApplicationContext();
 
         for (Iterator iter = classHandlers.iterator(); iter.hasNext();) {
-            ClassValidationElementHandler handler = (ClassValidationElementHandler)iter.next();
+            ClassValidationElementHandler handler = (ClassValidationElementHandler) iter.next();
             setExpressionParsers(handler);
             initLifecycle(handler);
         }
 
         for (Iterator iter = propertyHandlers.iterator(); iter.hasNext();) {
-            PropertyValidationElementHandler handler = (PropertyValidationElementHandler)iter.next();
+            PropertyValidationElementHandler handler = (PropertyValidationElementHandler) iter.next();
             setExpressionParsers(handler);
             initLifecycle(handler);
         }
@@ -133,7 +136,7 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
      * @param handlers The handlers to register with this registry.
      */
     public void setExtraClassHandlers(ClassValidationElementHandler[] handlers) {
-        for (int i=handlers.length-1; i>=0; i--) {
+        for (int i = handlers.length - 1; i >= 0; i--) {
             registerClassHandler(handlers[i]);
         }
     }
@@ -154,7 +157,7 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
      * @param handlers The handlers to register with this registry.
      */
     public void setExtraPropertyHandlers(PropertyValidationElementHandler[] handlers) {
-        for (int i=handlers.length-1; i>=0; i--) {
+        for (int i = handlers.length - 1; i >= 0; i--) {
             registerPropertyHandler(handlers[i]);
         }
     }
@@ -175,7 +178,7 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
      * @return All class handlers that are registered with this registry.
      */
     public ClassValidationElementHandler[] getClassHandlers() {
-        return (ClassValidationElementHandler[])classHandlers.toArray(new ClassValidationElementHandler[classHandlers.size()]);
+        return (ClassValidationElementHandler[]) classHandlers.toArray(new ClassValidationElementHandler[classHandlers.size()]);
     }
 
     /**
@@ -184,7 +187,7 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
      * @return All property handlers that are registered with this registry.
      */
     public PropertyValidationElementHandler[] getPropertyHandlers() {
-        return (PropertyValidationElementHandler[])propertyHandlers.toArray(new PropertyValidationElementHandler[propertyHandlers.size()]);
+        return (PropertyValidationElementHandler[]) propertyHandlers.toArray(new PropertyValidationElementHandler[propertyHandlers.size()]);
     }
 
     /**
@@ -207,10 +210,10 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
 
     protected void setExpressionParsers(Object object) {
         if (ConditionExpressionBased.class.isInstance(object) && conditionExpressionParser != null) {
-            ((ConditionExpressionBased)object).setConditionExpressionParser(conditionExpressionParser);
+            ((ConditionExpressionBased) object).setConditionExpressionParser(conditionExpressionParser);
         }
         if (FunctionExpressionBased.class.isInstance(object) && functionExpressionParser != null) {
-            ((FunctionExpressionBased)object).setFunctionExpressionParser(functionExpressionParser);
+            ((FunctionExpressionBased) object).setFunctionExpressionParser(functionExpressionParser);
         }
     }
 
@@ -218,7 +221,7 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
         if (conditionExpressionParserSet) {
             return;
         }
-        ConditionExpressionParser parser = (ConditionExpressionParser)findObjectInApplicationContext(ConditionExpressionParser.class);
+        ConditionExpressionParser parser = (ConditionExpressionParser) findObjectInApplicationContext(ConditionExpressionParser.class);
         if (parser == null) {
             return;
         }
@@ -229,7 +232,7 @@ public class SimpleValidationRuleElementHandlerRegistry extends BasicContextAwar
         if (functoinExpressionParserSet) {
             return;
         }
-        FunctionExpressionParser parser = (FunctionExpressionParser)findObjectInApplicationContext(FunctionExpressionParser.class);
+        FunctionExpressionParser parser = (FunctionExpressionParser) findObjectInApplicationContext(FunctionExpressionParser.class);
         if (parser == null) {
             return;
         }

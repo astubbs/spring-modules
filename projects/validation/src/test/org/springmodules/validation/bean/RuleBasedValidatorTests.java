@@ -31,23 +31,26 @@ public class RuleBasedValidatorTests extends TestCase {
     private RuleBasedValidator validator;
 
     private MockControl globalConditionControl;
+
     private Condition globalCondition;
 
     private MockControl propertyConditionControl;
+
     private Condition propertyCondition;
 
     private MockControl errorsControl;
+
     private Errors errors;
 
     protected void setUp() throws Exception {
         globalConditionControl = MockControl.createControl(Condition.class);
-        globalCondition = (Condition)globalConditionControl.getMock();
+        globalCondition = (Condition) globalConditionControl.getMock();
 
         propertyConditionControl = MockControl.createControl(Condition.class);
-        propertyCondition = (Condition)propertyConditionControl.getMock();
+        propertyCondition = (Condition) propertyConditionControl.getMock();
 
         errorsControl = MockControl.createControl(Errors.class);
-        errors = (Errors)errorsControl.getMock();
+        errors = (Errors) errorsControl.getMock();
 
         validator = createRuleBasedValidator(Person.class);
     }
@@ -150,12 +153,12 @@ public class RuleBasedValidatorTests extends TestCase {
         return new RuleBasedValidator();
     }
 
-
     //================================================ Inner Classes ===================================================
 
     private static class Person {
 
         private String name;
+
         private String nickname;
 
         public Person() {

@@ -27,11 +27,12 @@ import org.joda.time.ReadableInstant;
 public class IsInThePastInstantConditionTests extends AbstractInstantConditionTests {
 
     private ReadableInstant laterInstant;
+
     private ReadableInstant earlierInstant;
 
     public IsInThePastInstantConditionTests() {
-        laterInstant = new Instant().plus(3*60*60*1000);
-        earlierInstant = new Instant().minus(3*60*60*1000);
+        laterInstant = new Instant().plus(3 * 60 * 60 * 1000);
+        earlierInstant = new Instant().minus(3 * 60 * 60 * 1000);
     }
 
     protected AbstractInstantCondition createInstantConditionWithInstant() {

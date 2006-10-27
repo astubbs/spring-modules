@@ -173,7 +173,9 @@ public class FieldChecksTests extends TestCase {
     public static class MockValidationBean {
 
         private String name;
+
         private int age;
+
         private double value;
 
         public String getName() {

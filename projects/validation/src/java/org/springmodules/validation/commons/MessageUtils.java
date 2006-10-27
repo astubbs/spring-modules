@@ -40,7 +40,7 @@ public abstract class MessageUtils {
      */
     public static String getMessageKey(ValidatorAction va, Field field) {
         return (field.getMsg(va.getName()) != null ? field.getMsg(va.getName())
-                             : va.getMsg());
+            : va.getMsg());
     }
 
     /**
@@ -95,8 +95,7 @@ public abstract class MessageUtils {
     public static Object getMessage(Arg arg) {
         if (arg.isResource()) {
             return MessageUtils.createMessage(arg.getKey());
-        }
-        else {
+        } else {
             return arg.getKey();
         }
     }

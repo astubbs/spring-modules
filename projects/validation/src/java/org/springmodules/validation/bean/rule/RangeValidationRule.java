@@ -30,6 +30,7 @@ public class RangeValidationRule extends AbstractValidationRule {
     public final static String DEFAULT_ERROR_CODE = "range";
 
     private Comparable min;
+
     private Comparable max;
 
     /**

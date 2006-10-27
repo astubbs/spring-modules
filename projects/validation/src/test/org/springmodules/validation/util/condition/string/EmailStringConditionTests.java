@@ -41,7 +41,6 @@ public class EmailStringConditionTests extends AbstractStringConditionTests {
         assertNotValidEmail("_someone@bla.com");
     }
 
-
     //=============================================== Helper Methods ===================================================
 
     protected void assertValidEmail(String email) {

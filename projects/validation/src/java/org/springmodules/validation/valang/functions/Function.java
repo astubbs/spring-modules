@@ -18,19 +18,19 @@ package org.springmodules.validation.valang.functions;
 
 /**
  * <p>A function is an implementation that returns a value based on one of more arguments.
- *  A function instance is created for each occurrence of the function in the validation language.
- * 
+ * A function instance is created for each occurrence of the function in the validation language.
+ *
  * @author Steven Devijver
  * @since Apr 23, 2005
  */
 public interface Function {
 
-	/**
-	 * <p>Gets the result of the function.
-	 * 
-	 * @param target the target bean
-	 * @return the result of the function
-	 */
-	public Object getResult(Object target);
-	
+    /**
+     * <p>Gets the result of the function.
+     *
+     * @param target the target bean
+     * @return the result of the function
+     */
+    public Object getResult(Object target);
+
 }

@@ -139,7 +139,7 @@ public class BeanValidatorIntegrationTests extends TestCase {
         Person person = new Person("Uri");
         BindException errors = new BindException(person, "person");
 
-        Validator validator = (Validator)context.getBean("validator");
+        Validator validator = (Validator) context.getBean("validator");
         validator.validate(person, errors);
 
         assertTrue(errors.hasGlobalErrors());
@@ -156,7 +156,7 @@ public class BeanValidatorIntegrationTests extends TestCase {
         person.setPhone("1234"); // should be validation error - length < 7
         BindException errors = new BindException(person, "person");
 
-        Validator validator = (Validator)context.getBean("validator");
+        Validator validator = (Validator) context.getBean("validator");
         validator.validate(person, errors);
 
         assertTrue(errors.hasFieldErrors("phone"));

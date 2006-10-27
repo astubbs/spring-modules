@@ -37,15 +37,15 @@ public abstract class AbstractBeanValidator implements Validator {
      * Checks if the validatorFactory is configured to handle this class.  Will
      * convert the class into a form name, suitable for commons validator.
      *
-     * @see #getFormName(Class)
      * @return <code>true</code> if the validatorFactory supports the class,
-     * or <code>false</code> if not
+     *         or <code>false</code> if not
+     * @see #getFormName(Class)
      */
     public boolean supports(Class clazz) {
         boolean canSupport = validatorFactory.hasRulesForBean(getFormName(clazz), getLocale());
         if (log.isDebugEnabled()) {
             log.debug("validatorFactory " + (canSupport ? "does" : "does not")
-                    + " support class " + clazz + " with form name " + getFormName(clazz));
+                + " support class " + clazz + " with form name " + getFormName(clazz));
         }
         return canSupport;
     }

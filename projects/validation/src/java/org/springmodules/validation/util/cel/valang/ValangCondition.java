@@ -19,7 +19,6 @@ package org.springmodules.validation.util.cel.valang;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -38,6 +37,7 @@ import org.springmodules.validation.valang.parser.ValangBased;
 public class ValangCondition extends AbstractCondition implements ValangBased {
 
     private ValangConditionExpressionParser parser;
+
     private String expression;
 
     private Condition compiledExpression;

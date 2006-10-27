@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springmodules.validation.valang.javascript.taglib;
 
 import java.util.Map;
@@ -23,37 +24,39 @@ import org.springframework.web.servlet.mvc.BaseCommandController;
 import org.springmodules.validation.valang.ValangValidator;
 
 /**
- * Static helper methods that place a <code>ValangValidator</code> into a model so 
+ * Static helper methods that place a <code>ValangValidator</code> into a model so
  * that is is accessible to the JSP custom tag {@link ValangValidateTag}.
- * 
+ *
  * @author Oliver Hutchison
  */
 public abstract class ValangJavaScriptTagUtils {
 
     /**
-     * Inserts the valang validator from the provided controller into 
-     * the model using the controller's name as the validation rule's key. 
-     * @param controller the controller that will provide the command name 
+     * Inserts the valang validator from the provided controller into
+     * the model using the controller's name as the validation rule's key.
+     *
+     * @param controller the controller that will provide the command name
      * and validator
      * @param model the model into which the validation rules will be placed
-     * @throws IllegalArgumentException if the controller does not specify a 
+     * @throws IllegalArgumentException if the controller does not specify a
      * command name
-     * @throws IllegalArgumentException if the controller's validator is not 
+     * @throws IllegalArgumentException if the controller's validator is not
      * an instance of {@link org.springmodules.validation.valang.ValangValidator}
      */
     public static void addValangRulesToModel(BaseCommandController controller, Map model) {
         Assert.hasText(controller.getCommandName(), "controller must define a command name");
         Validator validator = controller.getValidator();
         Assert.isInstanceOf(ValangValidator.class, validator, "controller's validator of class '"
-                + (validator != null ? validator.getClass().getName() : "[null]")
-                + "' must be an instance of 'ValangValidator'");
-        addValangRulesToModel(controller.getCommandName(), (ValangValidator)validator, model);
+            + (validator != null ? validator.getClass().getName() : "[null]")
+            + "' must be an instance of 'ValangValidator'");
+        addValangRulesToModel(controller.getCommandName(), (ValangValidator) validator, model);
     }
 
     /**
-     * Inserts the provided validator into the model using the provided command 
-     * name as the validation rule's key. 
-     * @param commandName the command name 
+     * Inserts the provided validator into the model using the provided command
+     * name as the validation rule's key.
+     *
+     * @param commandName the command name
      * @param validator the valang validator
      * @param model the model into which the validation rules will be placed
      */

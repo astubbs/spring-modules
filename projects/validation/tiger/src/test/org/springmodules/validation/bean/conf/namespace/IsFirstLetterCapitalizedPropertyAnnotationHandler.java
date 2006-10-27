@@ -40,7 +40,7 @@ public class IsFirstLetterCapitalizedPropertyAnnotationHandler implements Proper
     public void handleAnnotation(Annotation annotation, Class clazz, PropertyDescriptor descriptor, MutableBeanValidationConfiguration configuration) {
         Condition cond = new AbstractCondition() {
             public boolean doCheck(Object object) {
-                String text = (String)object;
+                String text = (String) object;
                 if (text.length() == 0) {
                     return false;
                 }

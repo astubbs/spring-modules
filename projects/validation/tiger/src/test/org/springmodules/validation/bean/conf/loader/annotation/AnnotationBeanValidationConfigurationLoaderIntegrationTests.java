@@ -72,7 +72,7 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
         assertFalse(errors.hasFieldErrors("nullableString"));
         assertTrue(errors.hasFieldErrors("nullableInteger"));
         assertEquals("Address.street[not.null]", errors.getFieldError("address.street").getCode());
-        
+
     }
 
 }

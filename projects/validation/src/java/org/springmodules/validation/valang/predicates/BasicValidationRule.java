@@ -32,15 +32,18 @@ import org.springmodules.validation.valang.functions.Function;
 /**
  * <p>Validation rule implementation that will validate a target
  * bean an return an error message is the validation fails.
- * 
+ *
  * @author Steven Devijver
  * @since 23-04-2005
  */
 public class BasicValidationRule implements ValidationRule {
 
     private Predicate predicate = null;
+
     private String field = null;
+
     private String errorMessage = null;
+
     private String errorKey = null;
 
     private Collection errorArgs = null;
@@ -53,8 +56,8 @@ public class BasicValidationRule implements ValidationRule {
     }
 
     /*
-      * JIRA-MOD-20: added error key and error args to validation rule, kudos to Cèsar Ordiñana.
-      */
+     * added error key and error args to validation rule
+     */
     public BasicValidationRule(String field, Predicate predicate, String errorKey, String errorMessage, Collection errorArgs) {
         this(field, predicate, errorMessage);
         setErrorKey(errorKey);
@@ -121,13 +124,13 @@ public class BasicValidationRule implements ValidationRule {
         if (!getPredicate().evaluate(tmpTarget)) {
 
             /*
-                * JIRA-MOD-20: take into account error key and error args for localization, kudos to Cèsar Ordiñana.
-                */
+            * Take into account error key and error args for localization
+            */
             if (StringUtils.hasLength(getErrorKey())) {
                 if (getErrorArgs() != null && !getErrorArgs().isEmpty()) {
                     Collection tmpColl = new ArrayList();
                     for (Iterator iter = getErrorArgs().iterator(); iter.hasNext();) {
-                        tmpColl.add(((Function)iter.next()).getResult(tmpTarget));
+                        tmpColl.add(((Function) iter.next()).getResult(tmpTarget));
                     }
                     errors.rejectValue(getField(), getErrorKey(), tmpColl.toArray(), getErrorMessage());
                 } else {

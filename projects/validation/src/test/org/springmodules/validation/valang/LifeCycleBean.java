@@ -12,87 +12,95 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
+
 package org.springmodules.validation.valang;
 
 public class LifeCycleBean {
 
-	private boolean beanFactorySet = false;
-	private boolean applicationContextSet = false;
-	private boolean resourceLoaderSet = false;
-	private boolean messageSourceSet = false;
-	private boolean applicationEventPublisher = false;
-	private boolean servletContextSet = false;
-	private boolean initCalled = false;
-	private int patternSetCount = 0;
-	
-	public LifeCycleBean() {
-		super();
-	}
+    private boolean beanFactorySet = false;
 
-	public boolean isApplicationContextSet() {
-		return applicationContextSet;
-	}
+    private boolean applicationContextSet = false;
 
-	public void setApplicationContextSet(boolean applicationContextSet) {
-		this.applicationContextSet = applicationContextSet;
-	}
+    private boolean resourceLoaderSet = false;
 
-	public boolean isApplicationEventPublisher() {
-		return applicationEventPublisher;
-	}
+    private boolean messageSourceSet = false;
 
-	public void setApplicationEventPublisher(boolean applicationEventPublisher) {
-		this.applicationEventPublisher = applicationEventPublisher;
-	}
+    private boolean applicationEventPublisher = false;
 
-	public boolean isBeanFactorySet() {
-		return beanFactorySet;
-	}
+    private boolean servletContextSet = false;
 
-	public void setBeanFactorySet(boolean beanFactorySet) {
-		this.beanFactorySet = beanFactorySet;
-	}
+    private boolean initCalled = false;
 
-	public boolean isMessageSourceSet() {
-		return messageSourceSet;
-	}
+    private int patternSetCount = 0;
 
-	public void setMessageSourceSet(boolean messageSourceSet) {
-		this.messageSourceSet = messageSourceSet;
-	}
+    public LifeCycleBean() {
+        super();
+    }
 
-	public boolean isResourceLoaderSet() {
-		return resourceLoaderSet;
-	}
+    public boolean isApplicationContextSet() {
+        return applicationContextSet;
+    }
 
-	public void setResourceLoaderSet(boolean resourceLoaderSet) {
-		this.resourceLoaderSet = resourceLoaderSet;
-	}
+    public void setApplicationContextSet(boolean applicationContextSet) {
+        this.applicationContextSet = applicationContextSet;
+    }
 
-	public boolean isServletContextSet() {
-		return servletContextSet;
-	}
+    public boolean isApplicationEventPublisher() {
+        return applicationEventPublisher;
+    }
 
-	public void setServletContextSet(boolean servletContextSet) {
-		this.servletContextSet = servletContextSet;
-	}
+    public void setApplicationEventPublisher(boolean applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
 
-	public boolean isInitCalled() {
-		return initCalled;
-	}
+    public boolean isBeanFactorySet() {
+        return beanFactorySet;
+    }
 
-	public void setInitCalled(boolean initCalled) {
-		this.initCalled = initCalled;
-	}
+    public void setBeanFactorySet(boolean beanFactorySet) {
+        this.beanFactorySet = beanFactorySet;
+    }
 
-	public int getPatternSetCount() {
-		return patternSetCount;
-	}
+    public boolean isMessageSourceSet() {
+        return messageSourceSet;
+    }
 
-	public void setPatternSetCount(int patternSetCount) {
-		this.patternSetCount = patternSetCount;
-	}
+    public void setMessageSourceSet(boolean messageSourceSet) {
+        this.messageSourceSet = messageSourceSet;
+    }
 
-	
+    public boolean isResourceLoaderSet() {
+        return resourceLoaderSet;
+    }
+
+    public void setResourceLoaderSet(boolean resourceLoaderSet) {
+        this.resourceLoaderSet = resourceLoaderSet;
+    }
+
+    public boolean isServletContextSet() {
+        return servletContextSet;
+    }
+
+    public void setServletContextSet(boolean servletContextSet) {
+        this.servletContextSet = servletContextSet;
+    }
+
+    public boolean isInitCalled() {
+        return initCalled;
+    }
+
+    public void setInitCalled(boolean initCalled) {
+        this.initCalled = initCalled;
+    }
+
+    public int getPatternSetCount() {
+        return patternSetCount;
+    }
+
+    public void setPatternSetCount(int patternSetCount) {
+        this.patternSetCount = patternSetCount;
+    }
+
+
 }

@@ -22,13 +22,25 @@ public class BeanPropertyFunctionTests extends TestCase {
     }
 
     public class Customer {
+
         private String name = null;
 
-        public Customer() { super(); }
-        public Customer(String name) { this(); setName(name); }
+        public Customer() {
+            super();
+        }
 
-        public String getName() { return this.name; }
-        public void setName(String name) { this.name = name; }
+        public Customer(String name) {
+            this();
+            setName(name);
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
 
     public void test1() {
@@ -64,7 +76,7 @@ public class BeanPropertyFunctionTests extends TestCase {
 
     public void test5() {
         LengthOfFunction f = new LengthOfFunction(
-            new Function[] {
+            new Function[]{
                 new BeanPropertyFunction("test.customer.name")
             },
             0, 2

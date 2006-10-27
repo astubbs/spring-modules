@@ -31,11 +31,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Validator;
-import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.CascadeValidation;
-import org.springmodules.validation.bean.conf.DefaultBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration;
-import org.springmodules.validation.bean.conf.ValidationConfigurationException;
+import org.springmodules.validation.bean.conf.*;
 import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
@@ -59,7 +55,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * The default xml bean validation configuration loader. This loader expects the following xml format:
- *
+ * <p/>
  * <pre>
  * &lt;validation [package="org.springmodules.validation.sample"]>
  *      &lt;class name="Person"&gt;
@@ -72,33 +68,33 @@ import org.w3c.dom.NodeList;
  *      &lt;/class>
  * &lt;/validation>
  * </pre>
- *
+ * <p/>
  * Please note the following:
- *
+ * <p/>
  * <ul>
- *  <li>Each &lt;validation&gt; element can contain multiple &lt;class&gt; elements.</li>
- *  <li>
- *      A &lt;class&gt; element can have only on &lt;global&gt; elements and multiple &lt;property&gt; elements. This
- *      elements hold validation rules to be bound globaly to the class instance or to specific properties.
- *  </li>
- *  <li>Both &lt;global&gt; and &lt;property&gt; elements can accept any element where each element represents
- *      a validation rule. These validation rule elements will eventually be evaluated in the order they are defined.
- *      When one of these rules fail, the evaluation stops
- *  </li>
- *  <li>
- *      A &lt;property&gt; may have a 'valid' attribute to indicate that the property value needs to be validated as
- *      well (cascade validation).
- *  </li>
- *  <li>
- *      The &lt;validation&gt; element may have a 'package' attribute. This will serve as a default package for all
- *      &lt;class&gt; elements (meaing there is not need to specify the fully qualified name in the 'name' attribute
- *      of this element.
- *  </li>
- *  <li>
- *      This XML format has a unique namespace which is defined by {@link #DEFAULT_NAMESPACE_URL}.
- *  </li>
+ * <li>Each &lt;validation&gt; element can contain multiple &lt;class&gt; elements.</li>
+ * <li>
+ * A &lt;class&gt; element can have only on &lt;global&gt; elements and multiple &lt;property&gt; elements. This
+ * elements hold validation rules to be bound globaly to the class instance or to specific properties.
+ * </li>
+ * <li>Both &lt;global&gt; and &lt;property&gt; elements can accept any element where each element represents
+ * a validation rule. These validation rule elements will eventually be evaluated in the order they are defined.
+ * When one of these rules fail, the evaluation stops
+ * </li>
+ * <li>
+ * A &lt;property&gt; may have a 'valid' attribute to indicate that the property value needs to be validated as
+ * well (cascade validation).
+ * </li>
+ * <li>
+ * The &lt;validation&gt; element may have a 'package' attribute. This will serve as a default package for all
+ * &lt;class&gt; elements (meaing there is not need to specify the fully qualified name in the 'name' attribute
+ * of this element.
+ * </li>
+ * <li>
+ * This XML format has a unique namespace which is defined by {@link #DEFAULT_NAMESPACE_URL}.
+ * </li>
  * </ul>
- *
+ * <p/>
  * The validation rule element (sub-elements of &lt;global&gt; and &lt;property&gt;) are resolved using
  * validation rule element handlers. This class holds a registry for such handlers, where new handlers can
  * be registered as well. The default registry is {@link DefaultValidationRuleElementHandlerRegistry}.
@@ -113,28 +109,43 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
     private final static Log logger = LogFactory.getLog(DefaultXmlBeanValidationConfigurationLoader.class);
 
     private static final String CLASS_TAG = "class";
+
     private static final String GLOBAL_TAG = "global";
+
     private static final String PROPERTY_TAG = "property";
+
     private static final String METHOD_TAG = "method";
+
     private static final String VALIDATOR_TAG = "validator";
 
     private static final String PACKAGE_ATTR = "package";
+
     private static final String NAME_ATTR = "name";
+
     private static final String CASCADE_ATTR = "cascade";
+
     private static final String CASCADE_CONDITION_ATTR = "cascade-condition";
+
     private static final String CLASS_ATTR = "class";
+
     private static final String CODE_ATTR = "code";
+
     private static final String MESSAGE_ATTR = "message";
+
     private static final String ARGS_ATTR = "args";
+
     private static final String APPLY_IF_ATTR = "apply-if";
+
     private static final String FOR_PROPERTY_ATTR = "for-property";
 
     private ValidationRuleElementHandlerRegistry handlerRegistry;
 
     private boolean conditionParserExplicitlySet = false;
+
     private ConditionExpressionParser conditionExpressionParser;
 
     private boolean functionParserExplicitlySet = false;
+
     private FunctionExpressionParser functionExpressionParser;
 
     private ApplicationContext applicationContext;
@@ -154,7 +165,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      * @param handlerRegistry The validation rule element handler registry that will be used by this loader.
      */
     public DefaultXmlBeanValidationConfigurationLoader(ValidationRuleElementHandlerRegistry handlerRegistry) {
-        this(handlerRegistry,  new ValangConditionExpressionParser(), new ValangFunctionExpressionParser());
+        this(handlerRegistry, new ValangConditionExpressionParser(), new ValangFunctionExpressionParser());
     }
 
     /**
@@ -184,8 +195,8 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         Element validationDefinition = document.getDocumentElement();
         String packageName = validationDefinition.getAttribute(PACKAGE_ATTR);
         NodeList nodes = validationDefinition.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, CLASS_TAG);
-        for (int i=0; i<nodes.getLength(); i++) {
-            Element classDefinition = (Element)nodes.item(i);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element classDefinition = (Element) nodes.item(i);
             String className = classDefinition.getAttribute(NAME_ATTR);
             className = (StringUtils.hasLength(packageName)) ? packageName + "." + className : className;
             Class clazz;
@@ -260,10 +271,10 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
 
     protected void initContext(Object object) throws Exception {
         if (object instanceof ApplicationContextAware) {
-            ((ApplicationContextAware)object).setApplicationContext(applicationContext);
+            ((ApplicationContextAware) object).setApplicationContext(applicationContext);
         }
         if (object instanceof InitializingBean) {
-            ((InitializingBean)object).afterPropertiesSet();
+            ((InitializingBean) object).afterPropertiesSet();
         }
     }
 
@@ -279,26 +290,26 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         DefaultBeanValidationConfiguration configuration = new DefaultBeanValidationConfiguration();
 
         NodeList nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, VALIDATOR_TAG);
-        for (int i=0; i<nodes.getLength(); i++) {
-            Element validatorDefinition = (Element)nodes.item(i);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element validatorDefinition = (Element) nodes.item(i);
             handleValidatorDefinition(validatorDefinition, clazz, configuration);
         }
 
         nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, GLOBAL_TAG);
-        for (int i=0; i<nodes.getLength(); i++) {
-            Element globalDefinition = (Element)nodes.item(i);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element globalDefinition = (Element) nodes.item(i);
             handleGlobalDefinition(globalDefinition, clazz, configuration);
         }
 
         nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, METHOD_TAG);
-        for (int i=0; i<nodes.getLength(); i++) {
-            Element methodDefinition = (Element)nodes.item(i);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element methodDefinition = (Element) nodes.item(i);
             handleMethodDefinition(methodDefinition, clazz, configuration);
         }
 
         nodes = element.getElementsByTagNameNS(DEFAULT_NAMESPACE_URL, PROPERTY_TAG);
-        for (int i=0; i<nodes.getLength(); i++) {
-            Element propertyDefinition = (Element)nodes.item(i);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element propertyDefinition = (Element) nodes.item(i);
             handlePropertyDefinition(propertyDefinition, clazz, configuration);
         }
 
@@ -319,12 +330,12 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
      */
     protected void handleGlobalDefinition(Element globalDefinition, Class clazz, MutableBeanValidationConfiguration configuration) {
         NodeList nodes = globalDefinition.getChildNodes();
-        for (int i=0; i<nodes.getLength(); i++) {
+        for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
-            Element ruleDefinition = (Element)node;
+            Element ruleDefinition = (Element) node;
             ClassValidationElementHandler handler = handlerRegistry.findClassHandler(ruleDefinition, clazz);
             if (handler == null) {
                 logger.error("Could not handle element '" + ruleDefinition.getTagName() +
@@ -429,7 +440,8 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             logger.error("Property '" + propertyName + "' does not exist in class '" + clazz.getName() + "'");
         }
 
-        if (propertyDefinition.hasAttribute(CASCADE_ATTR) && "true".equals(propertyDefinition.getAttribute(CASCADE_ATTR))) {
+        if (propertyDefinition.hasAttribute(CASCADE_ATTR) && "true".equals(propertyDefinition.getAttribute(CASCADE_ATTR)))
+        {
             CascadeValidation cascadeValidation = new CascadeValidation(propertyName);
             if (propertyDefinition.hasAttribute(CASCADE_CONDITION_ATTR)) {
                 String conditionExpression = propertyDefinition.getAttribute(CASCADE_CONDITION_ATTR);
@@ -439,12 +451,12 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         }
 
         NodeList nodes = propertyDefinition.getChildNodes();
-        for (int i=0; i<nodes.getLength(); i++) {
+        for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             if (node.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
             }
-            Element ruleDefinition = (Element)node;
+            Element ruleDefinition = (Element) node;
             PropertyValidationElementHandler handler = handlerRegistry.findPropertyHandler(ruleDefinition, clazz, propertyDescriptor);
             if (handler == null) {
                 logger.error("Could not handle element '" + ruleDefinition.getTagName() +
@@ -465,7 +477,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             if (!Validator.class.isAssignableFrom(clazz)) {
                 throw new ValidationConfigurationException("class '" + className + "' is not a Validator implementation");
             }
-            return (Validator)clazz.newInstance();
+            return (Validator) clazz.newInstance();
         } catch (ClassNotFoundException e) {
             throw new ValidationConfigurationException("Could not load validator class '" + className + "'");
         } catch (IllegalAccessException e) {
@@ -489,7 +501,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             logger.warn("Multiple condition expression parsers are defined in the application context. " +
                 "Only the first encountered one will be used");
         }
-        conditionExpressionParser = (ConditionExpressionParser)applicationContext.getBean(names[0]);
+        conditionExpressionParser = (ConditionExpressionParser) applicationContext.getBean(names[0]);
     }
 
     protected void findFunctionExpressionParserInApplicationContext() {
@@ -504,7 +516,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             logger.warn("Multiple function expression parsers are defined in the application context. " +
                 "Only the first encountered one will be used");
         }
-        functionExpressionParser = (FunctionExpressionParser)applicationContext.getBean(names[0]);
+        functionExpressionParser = (FunctionExpressionParser) applicationContext.getBean(names[0]);
     }
 
     protected void validatePropertyExists(Class clazz, String property) {

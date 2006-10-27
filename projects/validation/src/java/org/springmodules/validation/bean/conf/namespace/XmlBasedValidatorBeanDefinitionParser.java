@@ -44,7 +44,6 @@ import org.springmodules.validation.util.xml.SubElementsIterator;
 import org.w3c.dom.Element;
 
 /**
- *
  * @author Uri Boness
  */
 public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitionParser implements ValidationBeansParserConstants {
@@ -52,14 +51,21 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
     final static String ELEMENT_NAME = "xml-based-validator";
 
     private final static String ERROR_CODE_CONVERTER_ATTR = "errorConverter";
+
     private final static String CLASS_ATTR = "class";
+
     private final static String PATTERN_ATTR = "pattern";
+
     private final static String DIR_ATTR = "dir";
+
     private final static String LOCATION_ATTR = "location";
 
     private final static String RESOURCE_ELEMENT = "resource";
+
     private final static String RESOURCE_DIR_ELEMENT = "resource-dir";
+
     private final static String ELEMENT_HANDLERS_ELEMENT = "element-handlers";
+
     private final static String HANDLER_ELEMENT = "handler";
 
     private static final String HANDLER_REGISTRY_PREFIX = "__handler_registry_";
@@ -104,11 +110,10 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
     protected void parseResourcesElements(Element element, BeanDefinitionBuilder loaderBuilder) {
         List resources = new ArrayList();
         for (Iterator subElements = new SubElementsIterator(element); subElements.hasNext();) {
-            Element subElement = (Element)subElements.next();
+            Element subElement = (Element) subElements.next();
             if (subElement.getLocalName().equals(RESOURCE_ELEMENT)) {
                 resources.add(createResource(subElement));
-            }
-            else if(subElement.getLocalName().equals(RESOURCE_DIR_ELEMENT)) {
+            } else if (subElement.getLocalName().equals(RESOURCE_DIR_ELEMENT)) {
                 resources.addAll(createResources(subElement));
             }
         }
@@ -134,7 +139,7 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
         };
         List resources = new ArrayList();
         for (Iterator files = new FileIterator(dirName, filter); files.hasNext();) {
-            File file = (File)files.next();
+            File file = (File) files.next();
             resources.add(new FileSystemResource(file));
         }
         return resources;
@@ -149,8 +154,8 @@ public class XmlBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitio
         Iterator handlerElements = new SubElementsIterator(functionsElement, VALIDATION_BEANS_NAMESPACE, HANDLER_ELEMENT);
         List propertyHandlers = new ArrayList();
         List classHandlers = new ArrayList();
-        while(handlerElements.hasNext()) {
-            Element handlerElement = (Element)handlerElements.next();
+        while (handlerElements.hasNext()) {
+            Element handlerElement = (Element) handlerElements.next();
             String className = handlerElement.getAttribute(CLASS_ATTR);
             Object handler = loadAndInstantiate(className);
             if (PropertyValidationElementHandler.class.isInstance(handler)) {

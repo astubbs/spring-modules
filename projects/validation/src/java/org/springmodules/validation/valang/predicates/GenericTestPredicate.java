@@ -33,7 +33,7 @@ import org.springmodules.validation.valang.functions.LiteralFunction;
 
 /**
  * <p>GenericTestPredicate can test if a property value is null or not null.
- * 
+ *
  * @author Steven Devijver
  * @since 23-04-2005
  */
@@ -82,49 +82,49 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
             return leftValue != null;
         } else if (getOperator() instanceof Operator.EqualsOperator) {
             if (leftValue instanceof BigDecimal && rightValue instanceof BigDecimal) {
-                return ((BigDecimal)leftValue).compareTo((BigDecimal)rightValue) == 0;
+                return ((BigDecimal) leftValue).compareTo((BigDecimal) rightValue) == 0;
             } else if (dates) {
-                return ((Date)leftValue).getTime() == ((Date)rightValue).getTime();
+                return ((Date) leftValue).getTime() == ((Date) rightValue).getTime();
             } else {
                 return leftValue.equals(rightValue);
             }
         } else if (getOperator() instanceof Operator.NotEqualsOperator) {
             if (leftValue instanceof BigDecimal && rightValue instanceof BigDecimal) {
-                return ((BigDecimal)leftValue).compareTo((BigDecimal)rightValue) != 0;
+                return ((BigDecimal) leftValue).compareTo((BigDecimal) rightValue) != 0;
             } else if (dates) {
-                return ((Date)leftValue).getTime() != ((Date)rightValue).getTime();
+                return ((Date) leftValue).getTime() != ((Date) rightValue).getTime();
             } else {
                 return !leftValue.equals(rightValue);
             }
         } else if (getOperator() instanceof Operator.LessThanOperator) {
             if (dates) {
-                return ((Date)leftValue).getTime() < ((Date)rightValue).getTime();
+                return ((Date) leftValue).getTime() < ((Date) rightValue).getTime();
             } else if (numbers) {
-                return ((BigDecimal)leftValue).compareTo((BigDecimal)rightValue) < 0;
+                return ((BigDecimal) leftValue).compareTo((BigDecimal) rightValue) < 0;
             } else {
                 throw new ValangException("< operator only supports two date or two number values!", getLine(), getColumn());
             }
         } else if (getOperator() instanceof Operator.LessThanOrEqualOperator) {
             if (dates) {
-                return ((Date)leftValue).getTime() <= ((Date)rightValue).getTime();
+                return ((Date) leftValue).getTime() <= ((Date) rightValue).getTime();
             } else if (numbers) {
-                return ((BigDecimal)leftValue).compareTo((BigDecimal)rightValue) <= 0;
+                return ((BigDecimal) leftValue).compareTo((BigDecimal) rightValue) <= 0;
             } else {
                 throw new ValangException("<= operator only supports two date or two number values!", getLine(), getColumn());
             }
         } else if (getOperator() instanceof Operator.MoreThanOperator) {
             if (dates) {
-                return ((Date)leftValue).getTime() > ((Date)rightValue).getTime();
+                return ((Date) leftValue).getTime() > ((Date) rightValue).getTime();
             } else if (numbers) {
-                return ((BigDecimal)leftValue).compareTo((BigDecimal)rightValue) > 0;
+                return ((BigDecimal) leftValue).compareTo((BigDecimal) rightValue) > 0;
             } else {
                 throw new ValangException("> operator only supports two date or two number values!", getLine(), getColumn());
             }
         } else if (getOperator() instanceof Operator.MoreThanOrEqualOperator) {
             if (dates) {
-                return ((Date)leftValue).getTime() >= ((Date)rightValue).getTime();
+                return ((Date) leftValue).getTime() >= ((Date) rightValue).getTime();
             } else if (numbers) {
-                return ((BigDecimal)leftValue).compareTo((BigDecimal)rightValue) >= 0;
+                return ((BigDecimal) leftValue).compareTo((BigDecimal) rightValue) >= 0;
             } else {
                 throw new IllegalArgumentException(">= operator only supports two date or two number values!");
             }
@@ -133,7 +133,7 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
             for (Iterator iter = getIterator(rightValue); iter.hasNext();) {
                 Object o = iter.next();
                 if (o instanceof Function) {
-                    predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)o, getLine(), getColumn()));
+                    predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function) o, getLine(), getColumn()));
                 } else {
                     predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, new LiteralFunction(o), getLine(), getColumn()));
                 }
@@ -149,7 +149,7 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
             for (Iterator iter = getIterator(rightValue); iter.hasNext();) {
                 Object o = iter.next();
                 if (o instanceof Function) {
-                    predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function)o, getLine(), getColumn()));
+                    predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, (Function) o, getLine(), getColumn()));
                 } else {
                     predicates.add(getPredicate(new LiteralFunction(leftValue), OperatorConstants.EQUALS_OPERATOR, new LiteralFunction(o), getLine(), getColumn()));
                 }
@@ -162,13 +162,13 @@ public class GenericTestPredicate extends AbstractPropertyPredicate {
             return !AnyPredicate.getInstance(predicates).evaluate(target);
         } else if (getOperator() instanceof Operator.BetweenOperator) {
             Object[] array = getArray(rightValue);
-            Predicate predicate1 = getPredicate(new LiteralFunction(leftValue), OperatorConstants.MORE_THAN_OR_EQUAL_OPERATOR, (Function)array[0], getLine(), getColumn());
-            Predicate predicate2 = getPredicate(new LiteralFunction(leftValue), OperatorConstants.LESS_THAN_OR_EQUAL_OPERATOR, (Function)array[1], getLine(), getColumn());
+            Predicate predicate1 = getPredicate(new LiteralFunction(leftValue), OperatorConstants.MORE_THAN_OR_EQUAL_OPERATOR, (Function) array[0], getLine(), getColumn());
+            Predicate predicate2 = getPredicate(new LiteralFunction(leftValue), OperatorConstants.LESS_THAN_OR_EQUAL_OPERATOR, (Function) array[1], getLine(), getColumn());
             return AndPredicate.getInstance(predicate1, predicate2).evaluate(target);
         } else if (getOperator() instanceof Operator.NotBetweenOperator) {
             Object[] array = getArray(rightValue);
-            Predicate predicate1 = getPredicate(new LiteralFunction(leftValue), OperatorConstants.MORE_THAN_OR_EQUAL_OPERATOR, (Function)array[0], getLine(), getColumn());
-            Predicate predicate2 = getPredicate(new LiteralFunction(leftValue), OperatorConstants.LESS_THAN_OR_EQUAL_OPERATOR, (Function)array[1], getLine(), getColumn());
+            Predicate predicate1 = getPredicate(new LiteralFunction(leftValue), OperatorConstants.MORE_THAN_OR_EQUAL_OPERATOR, (Function) array[0], getLine(), getColumn());
+            Predicate predicate2 = getPredicate(new LiteralFunction(leftValue), OperatorConstants.LESS_THAN_OR_EQUAL_OPERATOR, (Function) array[1], getLine(), getColumn());
             return !AndPredicate.getInstance(predicate1, predicate2).evaluate(target);
         } else if (getOperator() instanceof Operator.HasLengthOperator) {
             return StringUtils.hasLength(leftValue != null ? leftValue.toString() : null);

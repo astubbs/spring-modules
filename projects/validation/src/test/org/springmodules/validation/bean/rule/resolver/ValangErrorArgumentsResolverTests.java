@@ -27,7 +27,7 @@ import org.springmodules.validation.bean.Person;
 public class ValangErrorArgumentsResolverTests extends TestCase {
 
     public void testResolveArguments_WithPath() throws Exception {
-        ValangErrorArgumentsResolver resolver = new ValangErrorArgumentsResolver(new String[] { "name.class.name" });
+        ValangErrorArgumentsResolver resolver = new ValangErrorArgumentsResolver(new String[]{"name.class.name"});
         Object[] args = resolver.resolveArguments(new Person("Uri"));
 
         assertNotNull(args);
@@ -36,7 +36,7 @@ public class ValangErrorArgumentsResolverTests extends TestCase {
     }
 
     public void testResolveArguments_WithFunction() throws Exception {
-        ValangErrorArgumentsResolver resolver = new ValangErrorArgumentsResolver(new String[] { "length(name)" });
+        ValangErrorArgumentsResolver resolver = new ValangErrorArgumentsResolver(new String[]{"length(name)"});
         Object[] args = resolver.resolveArguments(new Person("Uri"));
 
         assertNotNull(args);

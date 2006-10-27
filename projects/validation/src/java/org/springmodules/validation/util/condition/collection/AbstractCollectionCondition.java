@@ -29,7 +29,7 @@ public abstract class AbstractCollectionCondition extends NonNullAcceptingCondit
 
     /**
      * See {@link NonNullAcceptingCondition#beforeObjectChecked(Object)}.
-     *
+     * <p/>
      * Also verifies the given object is of a {@link Collection} or an array.
      */
     protected void beforeObjectChecked(Object object) {
@@ -41,9 +41,9 @@ public abstract class AbstractCollectionCondition extends NonNullAcceptingCondit
 
     /**
      * See {@link org.springmodules.validation.util.condition.AbstractCondition#doCheck(Object)}.<br/>
-     *
+     * <p/>
      * If the given object is an array, the call is delegated to {@link #checkArray(Object)}.<br/>
-     *
+     * <p/>
      * If the given object is of a {@link Collection} type, the call is delegated to
      * {@link #checkCollection(java.util.Collection)}.
      */
@@ -51,7 +51,7 @@ public abstract class AbstractCollectionCondition extends NonNullAcceptingCondit
         if (object.getClass().isArray()) {
             return checkArray(object);
         }
-        return checkCollection((Collection)object);
+        return checkCollection((Collection) object);
     }
 
     /**

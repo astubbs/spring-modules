@@ -53,10 +53,10 @@ public abstract class AbstractCollectionConditionTests extends TestCase {
 
     protected abstract AbstractCollectionCondition createCondition();
 
-
     //=============================================== Helper Classes ===================================================
 
     protected class FluentList extends ArrayList {
+
         public FluentList addObject(Object o) {
             add(o);
             return this;

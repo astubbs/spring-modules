@@ -31,6 +31,7 @@ import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
 public class CascadeValidation {
 
     private String propertyName;
+
     private Condition applicabilityCondition;
 
     /**

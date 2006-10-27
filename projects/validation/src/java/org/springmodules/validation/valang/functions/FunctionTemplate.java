@@ -19,14 +19,13 @@ package org.springmodules.validation.valang.functions;
 import org.springmodules.validation.valang.ValangException;
 
 /**
- * 
- * 
  * @author Steven Devijver
  * @since Jun 25, 2005
  */
 public class FunctionTemplate {
 
     private int line = 0;
+
     private int column = 0;
 
     public FunctionTemplate(int line, int column) {
@@ -51,7 +50,7 @@ public class FunctionTemplate {
         try {
             return functionCallback.execute(target);
         } catch (Exception e) {
-            throw new  ValangException(e, line, column);
+            throw new ValangException(e, line, column);
         }
     }
 }

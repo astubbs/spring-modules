@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springmodules.validation.valang.javascript;
 
 import java.io.IOException;
@@ -36,67 +37,28 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.JavaScriptUtils;
-import org.springmodules.validation.valang.functions.AbstractFunction;
-import org.springmodules.validation.valang.functions.AbstractMathFunction;
-import org.springmodules.validation.valang.functions.AddFunction;
-import org.springmodules.validation.valang.functions.BeanPropertyFunction;
-import org.springmodules.validation.valang.functions.DateLiteralFunction;
-import org.springmodules.validation.valang.functions.DivideFunction;
-import org.springmodules.validation.valang.functions.Function;
-import org.springmodules.validation.valang.functions.LengthOfFunction;
-import org.springmodules.validation.valang.functions.LiteralFunction;
-import org.springmodules.validation.valang.functions.LowerCaseFunction;
-import org.springmodules.validation.valang.functions.MapEntryFunction;
-import org.springmodules.validation.valang.functions.ModuloFunction;
-import org.springmodules.validation.valang.functions.MultiplyFunction;
-import org.springmodules.validation.valang.functions.NotFunction;
-import org.springmodules.validation.valang.functions.SubtractFunction;
-import org.springmodules.validation.valang.functions.TargetBeanFunction;
-import org.springmodules.validation.valang.functions.UpperCaseFunction;
+import org.springmodules.validation.valang.functions.*;
 import org.springmodules.validation.valang.predicates.BasicValidationRule;
 import org.springmodules.validation.valang.predicates.GenericTestPredicate;
 import org.springmodules.validation.valang.predicates.Operator;
-import org.springmodules.validation.valang.predicates.Operator.BetweenOperator;
-import org.springmodules.validation.valang.predicates.Operator.EqualsOperator;
-import org.springmodules.validation.valang.predicates.Operator.HasLengthOperator;
-import org.springmodules.validation.valang.predicates.Operator.HasNoLengthOperator;
-import org.springmodules.validation.valang.predicates.Operator.HasNoTextOperator;
-import org.springmodules.validation.valang.predicates.Operator.HasTextOperator;
-import org.springmodules.validation.valang.predicates.Operator.InOperator;
-import org.springmodules.validation.valang.predicates.Operator.IsBlankOperator;
-import org.springmodules.validation.valang.predicates.Operator.IsLowerCaseOperator;
-import org.springmodules.validation.valang.predicates.Operator.IsNotBlankOperator;
-import org.springmodules.validation.valang.predicates.Operator.IsNotLowerCaseOperator;
-import org.springmodules.validation.valang.predicates.Operator.IsNotUpperCaseOperator;
-import org.springmodules.validation.valang.predicates.Operator.IsNotWordOperator;
-import org.springmodules.validation.valang.predicates.Operator.IsUpperCaseOperator;
-import org.springmodules.validation.valang.predicates.Operator.IsWordOperator;
-import org.springmodules.validation.valang.predicates.Operator.LessThanOperator;
-import org.springmodules.validation.valang.predicates.Operator.LessThanOrEqualOperator;
-import org.springmodules.validation.valang.predicates.Operator.MoreThanOperator;
-import org.springmodules.validation.valang.predicates.Operator.MoreThanOrEqualOperator;
-import org.springmodules.validation.valang.predicates.Operator.NotBetweenOperator;
-import org.springmodules.validation.valang.predicates.Operator.NotEqualsOperator;
-import org.springmodules.validation.valang.predicates.Operator.NotInOperator;
-import org.springmodules.validation.valang.predicates.Operator.NotNullOperator;
-import org.springmodules.validation.valang.predicates.Operator.NullOperator;
+import org.springmodules.validation.valang.predicates.Operator.*;
 
 /**
- * Translates a collection of valang validation rules into a JavaScript statement  
- * that is capable of validating a HTML form and writes this to a provided 
- * <code>Writer</code>. This class is <b>not</b> thread safe so it is recommended 
+ * Translates a collection of valang validation rules into a JavaScript statement
+ * that is capable of validating a HTML form and writes this to a provided
+ * <code>Writer</code>. This class is <b>not</b> thread safe so it is recommended
  * that a new instance be created each time a translation is required.
- * 
- * <p>The generated JavaScript code is dependent on the code base found in the 
+ * <p/>
+ * <p>The generated JavaScript code is dependent on the code base found in the
  * file "valang_codebase.js" having already been loaded into the page where
  * the validation will occur.
- * 
+ *
  * @author Oliver Hutchison
  */
 public class ValangJavaScriptTranslator {
 
     /**
-     * Returns a <code>Reader</code> for accessing the JavaScript codebase used by the 
+     * Returns a <code>Reader</code> for accessing the JavaScript codebase used by the
      * translated validation rules.
      */
     public static Reader getCodebaseReader() {
@@ -116,6 +78,7 @@ public class ValangJavaScriptTranslator {
      * Translates the provided set of Valang <code>BasicValidationRule</code>s into JavaScript
      * code capable of validating a HTML form and outputs the translated code into the provided
      * writer.
+     *
      * @param writer the writer to output the JavaScript code into
      * @param name the name of the command that is being validated
      * @param installSelfWithForm should the generated JavaScript attempt to install
@@ -143,7 +106,7 @@ public class ValangJavaScriptTranslator {
 
     protected void setWriter(Writer writer) {
         Assert.state(this.writer == null,
-                "Attempted to set writer when one already set - is this class being used is multiple threads?");
+            "Attempted to set writer when one already set - is this class being used is multiple threads?");
         this.writer = writer;
     }
 
@@ -176,7 +139,7 @@ public class ValangJavaScriptTranslator {
     protected void appendArrayValidators(Collection rules, MessageSourceAccessor messageSource) throws IOException {
         append("new Array(");
         for (Iterator i = rules.iterator(); i.hasNext();) {
-            appendValidatorRule((BasicValidationRule)i.next(), messageSource);
+            appendValidatorRule((BasicValidationRule) i.next(), messageSource);
             if (i.hasNext()) {
                 append(',');
             }
@@ -185,7 +148,7 @@ public class ValangJavaScriptTranslator {
     }
 
     protected void appendValidatorRule(BasicValidationRule rule, MessageSourceAccessor messageSource)
-            throws IOException {
+        throws IOException {
         append("new ValangValidator.Rule('");
         append(rule.getField());
         append("','not implemented',");
@@ -201,12 +164,10 @@ public class ValangJavaScriptTranslator {
                 // TODO: implement message arguments in JavaScript
                 logger.warn("Translating error message with arguments is not implemented; using default message");
                 return rule.getErrorMessage();
-            }
-            else {
+            } else {
                 return messageSource.getMessage(rule.getErrorKey(), rule.getErrorMessage());
             }
-        }
-        else {
+        } else {
             return rule.getErrorMessage();
         }
     }
@@ -266,8 +227,7 @@ public class ValangJavaScriptTranslator {
             doVisit(innerP);
             if (i < p.getPredicates().length - 1) {
                 append(op);
-            }
-            else {
+            } else {
                 append(')');
             }
         }
@@ -281,8 +241,7 @@ public class ValangJavaScriptTranslator {
             doVisit(innerP);
             if (i < p.getPredicates().length - 1) {
                 append(op);
-            }
-            else {
+            } else {
                 append(')');
             }
         }
@@ -300,77 +259,53 @@ public class ValangJavaScriptTranslator {
     protected String operatorToFunctionName(Operator operator) {
         if (operator instanceof EqualsOperator) {
             return "this.equals";
-        }
-        else if (operator instanceof NotEqualsOperator) {
+        } else if (operator instanceof NotEqualsOperator) {
             return "! this.equals";
-        }
-        else if (operator instanceof LessThanOperator) {
+        } else if (operator instanceof LessThanOperator) {
             return "this.lessThan";
-        }
-        else if (operator instanceof LessThanOrEqualOperator) {
+        } else if (operator instanceof LessThanOrEqualOperator) {
             return "this.lessThanOrEquals";
-        }
-        else if (operator instanceof MoreThanOperator) {
+        } else if (operator instanceof MoreThanOperator) {
             return "this.moreThan";
-        }
-        else if (operator instanceof MoreThanOrEqualOperator) {
+        } else if (operator instanceof MoreThanOrEqualOperator) {
             return "this.moreThanOrEquals";
-        }
-        else if (operator instanceof InOperator) {
+        } else if (operator instanceof InOperator) {
             return "this.inFunc";
-        }
-        else if (operator instanceof NotInOperator) {
+        } else if (operator instanceof NotInOperator) {
             return "! this.inFunc";
-        }
-        else if (operator instanceof BetweenOperator) {
+        } else if (operator instanceof BetweenOperator) {
             return "this.between";
-        }
-        else if (operator instanceof NotBetweenOperator) {
+        } else if (operator instanceof NotBetweenOperator) {
             return "! this.between";
-        }
-        else if (operator instanceof NullOperator) {
+        } else if (operator instanceof NullOperator) {
             return "this.nullFunc";
-        }
-        else if (operator instanceof NotNullOperator) {
+        } else if (operator instanceof NotNullOperator) {
             return "! this.nullFunc";
-        }
-        else if (operator instanceof HasTextOperator) {
+        } else if (operator instanceof HasTextOperator) {
             return "this.hasText";
-        }
-        else if (operator instanceof HasNoTextOperator) {
+        } else if (operator instanceof HasNoTextOperator) {
             return "! this.hasText";
-        }
-        else if (operator instanceof HasLengthOperator) {
+        } else if (operator instanceof HasLengthOperator) {
             return "this.hasLength";
-        }
-        else if (operator instanceof HasNoLengthOperator) {
+        } else if (operator instanceof HasNoLengthOperator) {
             return "! this.hasLength";
-        }
-        else if (operator instanceof IsBlankOperator) {
+        } else if (operator instanceof IsBlankOperator) {
             return "this.isBlank";
-        }
-        else if (operator instanceof IsNotBlankOperator) {
+        } else if (operator instanceof IsNotBlankOperator) {
             return "! this.isBlank";
-        }
-        else if (operator instanceof IsWordOperator) {
+        } else if (operator instanceof IsWordOperator) {
             return "this.isWord";
-        }
-        else if (operator instanceof IsNotWordOperator) {
+        } else if (operator instanceof IsNotWordOperator) {
             return "! this.isWord";
-        }
-        else if (operator instanceof IsUpperCaseOperator) {
+        } else if (operator instanceof IsUpperCaseOperator) {
             return "this.isUpper";
-        }
-        else if (operator instanceof IsNotUpperCaseOperator) {
+        } else if (operator instanceof IsNotUpperCaseOperator) {
             return "! this.isUpper";
-        }
-        else if (operator instanceof IsLowerCaseOperator) {
+        } else if (operator instanceof IsLowerCaseOperator) {
             return "this.isLower";
-        }
-        else if (operator instanceof IsNotLowerCaseOperator) {
+        } else if (operator instanceof IsNotLowerCaseOperator) {
             return "! this.isLower";
-        }
-        else {
+        } else {
             throw new UnsupportedOperationException("Unexpected operator type '" + operator.getClass().getName() + "'");
         }
     }
@@ -396,22 +331,17 @@ public class ValangJavaScriptTranslator {
     void visit(LiteralFunction f) throws IOException {
         Object literal = f.getResult(null);
         if (literal instanceof String) {
-            appendJsString((String)literal);
-        }
-        else if (literal instanceof Number) {
+            appendJsString((String) literal);
+        } else if (literal instanceof Number) {
             append(literal.toString());
-        }
-        else if (literal instanceof Boolean) {
+        } else if (literal instanceof Boolean) {
             append(literal.toString());
-        }
-        else if (literal instanceof Function[]) {
-            Function[] functions = (Function[])literal;
+        } else if (literal instanceof Function[]) {
+            Function[] functions = (Function[]) literal;
             appeandLiteralArray(functions);
-        }
-        else if (literal instanceof Collection) {
-            appeandLiteralArray((((Collection)literal).toArray()));
-        }
-        else {
+        } else if (literal instanceof Collection) {
+            appeandLiteralArray((((Collection) literal).toArray()));
+        } else {
             throw new UnsupportedOperationException("Unexpected literal type '" + literal.getClass() + "'");
         }
     }
@@ -429,7 +359,7 @@ public class ValangJavaScriptTranslator {
 
     void visit(DateLiteralFunction f) throws IOException {
         Calendar cal = Calendar.getInstance();
-        cal.setTime((Date)f.getResult(null));
+        cal.setTime((Date) f.getResult(null));
         append("new Date(");
         append(cal.get(Calendar.YEAR));
         append(", ");
@@ -482,20 +412,15 @@ public class ValangJavaScriptTranslator {
     protected String mathToFunctionName(AbstractMathFunction f) {
         if (f instanceof AddFunction) {
             return "this.add";
-        }
-        else if (f instanceof DivideFunction) {
+        } else if (f instanceof DivideFunction) {
             return "this.divide";
-        }
-        else if (f instanceof ModuloFunction) {
+        } else if (f instanceof ModuloFunction) {
             return "this.modulo";
-        }
-        else if (f instanceof MultiplyFunction) {
+        } else if (f instanceof MultiplyFunction) {
             return "this.multiply";
-        }
-        else if (f instanceof SubtractFunction) {
+        } else if (f instanceof SubtractFunction) {
             return "this.subtract";
-        }
-        else {
+        } else {
             throw new UnsupportedOperationException("Unexpected math function type '" + f.getClass().getName() + "'");
         }
     }

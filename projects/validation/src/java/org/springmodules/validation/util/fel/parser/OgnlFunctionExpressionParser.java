@@ -42,6 +42,7 @@ public class OgnlFunctionExpressionParser implements FunctionExpressionParser {
     protected class OgnlFunction implements Function {
 
         private String expressionAsString;
+
         private Object ognlExpression;
 
         public OgnlFunction(String expressionAsString) {

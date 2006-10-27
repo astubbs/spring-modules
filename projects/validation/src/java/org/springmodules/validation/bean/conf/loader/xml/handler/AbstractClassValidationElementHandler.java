@@ -16,17 +16,17 @@ import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionPars
 import org.w3c.dom.Element;
 
 /**
- * A base class for common {@link org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler}
+ * A base class for common {@link PropertyValidationElementHandler}
  * implementations that represent validation rules. This base handler idetifies the supported elements by their
  * tag names (qualified and local). In addition, it assumes the following common attributes:
- *
+ * <p/>
  * <ul>
- *  <li>code - Indicates the error code of the validatoin rule</li>
- *  <li>message - The default error message of the validation rule</li>
- *  <li>args - A comma separated list of error arguments</li>
- *  <li>apply-if - An condition expression that determines the applicability of the validation rule</li>
+ * <li>code - Indicates the error code of the validatoin rule</li>
+ * <li>message - The default error message of the validation rule</li>
+ * <li>args - A comma separated list of error arguments</li>
+ * <li>apply-if - An condition expression that determines the applicability of the validation rule</li>
  * </ul>
- *
+ * <p/>
  * Note: The apply-if attribute is being parsed by the
  * {@link org.springmodules.validation.util.cel.ConditionExpressionParser} that is associated with this handler. It
  * uses {@link org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser} by default.
@@ -37,14 +37,19 @@ public abstract class AbstractClassValidationElementHandler
     implements ClassValidationElementHandler, ConditionExpressionBased, FunctionExpressionBased {
 
     private static final String ERROR_CODE_ATTR = "code";
+
     private static final String MESSAGE_ATTR = "message";
+
     private static final String ARGS_ATTR = "args";
+
     private static final String APPLY_IF_ATTR = "apply-if";
 
     private String elementName;
+
     private String namespaceUrl;
 
     private ConditionExpressionParser conditionExpressionParser;
+
     private FunctionExpressionParser functionExpressionParser;
 
     /**

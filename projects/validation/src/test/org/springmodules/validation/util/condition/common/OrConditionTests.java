@@ -36,7 +36,7 @@ public class OrConditionTests extends AbstractCompoundConditionTests {
     }
 
     public void testCheck_WhenAllAreFalse() throws Exception {
-        Condition condition = createCondition(new Condition[] {
+        Condition condition = createCondition(new Condition[]{
             createFalseCondition(),
             createFalseCondition(),
             createFalseCondition()
@@ -45,7 +45,7 @@ public class OrConditionTests extends AbstractCompoundConditionTests {
     }
 
     public void testCheck_WhenOneIsTrue() throws Exception {
-        Condition condition = createCondition(new Condition[] {
+        Condition condition = createCondition(new Condition[]{
             createFalseCondition(),
             createFalseCondition(),
             createTrueCondition()

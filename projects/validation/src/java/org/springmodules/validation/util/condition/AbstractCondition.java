@@ -27,7 +27,7 @@ public abstract class AbstractCondition implements Condition {
 
     /**
      * See {@link Condition#check(Object)}.
-     *
+     * <p/>
      * Delegates to the {@link #doCheck(Object)}. Provides callback methods for sub-classes to intercept
      * the checking.
      */
@@ -63,6 +63,7 @@ public abstract class AbstractCondition implements Condition {
      * A callback method that enables sub-classes intercept the object checking before it is
      * being checked. Sub-classes may override this method and perform custom assertions and prevent the
      * checking by throwing an {@link IllegalArgumentException};
+     *
      * @param object
      */
     protected void beforeObjectChecked(Object object) throws IllegalArgumentException {

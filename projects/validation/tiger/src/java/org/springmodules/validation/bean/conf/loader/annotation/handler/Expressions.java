@@ -16,11 +16,7 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * A list of {@link Expression} annotations. This annotation enables multiple expression
@@ -30,7 +26,7 @@ import java.lang.annotation.Target;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.TYPE })
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
 @ValidationRule
 public @interface Expressions {
 

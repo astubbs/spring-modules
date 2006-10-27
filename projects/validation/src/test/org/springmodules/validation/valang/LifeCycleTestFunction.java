@@ -12,24 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
+
 package org.springmodules.validation.valang;
 
 import java.util.Date;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.*;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
 import org.springframework.web.context.ServletContextAware;
@@ -39,15 +33,23 @@ import org.springmodules.validation.valang.functions.Function;
 public class LifeCycleTestFunction extends AbstractFunction implements ApplicationContextAware, BeanFactoryAware, ResourceLoaderAware, MessageSourceAware, ApplicationEventPublisherAware, ServletContextAware {
 
     private Date timestamp = null;
+
     private Pattern pattern = null;
 
     private ApplicationContext applicationContext = null;
+
     private BeanFactory beanFactory = null;
+
     private ResourceLoader resourceLoader = null;
+
     private MessageSource messageSource = null;
+
     private ApplicationEventPublisher applicationEventPublisher = null;
+
     private boolean servletContextSet = false;
+
     private boolean initCalled = false;
+
     private int patternSetCount = 0;
 
     public LifeCycleTestFunction(Function[] arguments, int line, int column) {
@@ -78,7 +80,7 @@ public class LifeCycleTestFunction extends AbstractFunction implements Applicati
     }
 
     protected Object doGetResult(Object target) throws Exception {
-        LifeCycleBean bean = (LifeCycleBean)getArguments()[0].getResult(target);
+        LifeCycleBean bean = (LifeCycleBean) getArguments()[0].getResult(target);
 
         bean.setApplicationContextSet(this.applicationContext != null);
         bean.setBeanFactorySet(this.beanFactory != null);

@@ -71,7 +71,6 @@ public class IsAfterInstantCondition extends AbstractInstantCondition {
         return earlier.isBefore(instant);
     }
 
-
     //=============================================== Setter/Getter ====================================================
 
     /**

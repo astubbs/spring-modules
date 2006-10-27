@@ -29,10 +29,13 @@ import org.springmodules.validation.util.condition.Condition;
 public class FilteredIterator extends ReadOnlyIterator {
 
     private Condition condition;
+
     private Iterator iterator;
 
     private boolean initialized;
+
     private boolean finished;
+
     private Object nextElement;
 
     /**
@@ -60,7 +63,6 @@ public class FilteredIterator extends ReadOnlyIterator {
         advanceIterator();
         return result;
     }
-
 
     //=============================================== Helper Methods ===================================================
 

@@ -26,8 +26,9 @@ import org.springmodules.validation.bean.conf.loader.annotation.handler.Validati
 /**
  * @author Uri Boness
  */
-@Target({ ElementType.FIELD, ElementType.METHOD })
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ValidationRule
 public @interface IsFirstLetterCapitalized {
+
 }

@@ -50,7 +50,7 @@ public class AllCollectionConditionTests extends AbstractCollectionElementCondit
     }
 
     public void testCheck_WhenAllArrayElementsPass() throws Exception {
-        Object[] array = new Object[] { "this", "is", "a", "test" };
+        Object[] array = new Object[]{"this", "is", "a", "test"};
         assertTrue(condition.check(array));
     }
 
@@ -60,7 +60,7 @@ public class AllCollectionConditionTests extends AbstractCollectionElementCondit
     }
 
     public void testCheck_WhenNotAllArrayElementsPass() throws Exception {
-        Object[] array = new Object[] { "this", "is", "a", new Integer(3) };
+        Object[] array = new Object[]{"this", "is", "a", new Integer(3)};
         assertFalse(condition.check(array));
     }
 

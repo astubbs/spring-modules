@@ -84,6 +84,7 @@ public class PropertyBeanConditionTests extends TestCase {
     //=============================================== Helper Classes ===================================================
 
     private class StringCondition extends AbstractCondition {
+
         public boolean doCheck(Object object) {
             return (object instanceof String);
         }

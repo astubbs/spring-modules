@@ -41,6 +41,7 @@ public class AbstractResourceBasedBeanValidationConfigurationLoaderTests extends
     }
 
     private class TestLoader extends AbstractResourceBasedBeanValidationConfigurationLoader {
+
         protected Map loadConfigurations(Resource resource) {
             return new HashMap();
         }

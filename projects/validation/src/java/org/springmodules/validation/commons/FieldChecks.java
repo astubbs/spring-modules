@@ -22,11 +22,7 @@ import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.validator.Field;
-import org.apache.commons.validator.GenericTypeValidator;
-import org.apache.commons.validator.GenericValidator;
-import org.apache.commons.validator.Validator;
-import org.apache.commons.validator.ValidatorAction;
+import org.apache.commons.validator.*;
 import org.apache.commons.validator.util.ValidatorUtils;
 import org.springframework.validation.Errors;
 import org.springmodules.validation.commons.validwhen.ValidWhenLexer;
@@ -75,8 +71,7 @@ public class FieldChecks implements Serializable {
         if (GenericValidator.isBlankOrNull(value)) {
             FieldChecks.rejectValue(errors, field, va);
             return false;
-        }
-        else {
+        } else {
             return true;
         }
 
@@ -119,7 +114,7 @@ public class FieldChecks implements Serializable {
         }
 
         while (!GenericValidator.isBlankOrNull(field.getVarValue("field[" + i
-                + "]"))) {
+            + "]"))) {
             String dependProp = field.getVarValue("field[" + i + "]");
             String dependTest = field.getVarValue("fieldTest[" + i + "]");
             String dependTestValue = field.getVarValue("fieldValue[" + i + "]");
@@ -154,8 +149,7 @@ public class FieldChecks implements Serializable {
 
             if (fieldJoin.equalsIgnoreCase("AND")) {
                 required = required && thisRequired;
-            }
-            else {
+            } else {
                 required = required || thisRequired;
             }
 
@@ -166,8 +160,7 @@ public class FieldChecks implements Serializable {
             if (GenericValidator.isBlankOrNull(value)) {
                 FieldChecks.rejectValue(errors, field, va);
                 return false;
-            }
-            else {
+            } else {
                 return true;
             }
         }
@@ -195,11 +188,10 @@ public class FieldChecks implements Serializable {
         String value = FieldChecks.extractValue(bean, field);
         try {
             if (!GenericValidator.isBlankOrNull(value)
-                            && !GenericValidator.matchRegexp(value, mask)) {
+                && !GenericValidator.matchRegexp(value, mask)) {
                 FieldChecks.rejectValue(errors, field, va);
                 return false;
-            }
-            else {
+            } else {
                 return true;
             }
         }
@@ -423,12 +415,11 @@ public class FieldChecks implements Serializable {
             try {
                 if (datePattern != null && datePattern.length() > 0) {
                     result = GenericTypeValidator.formatDate(value,
-                                    datePattern, false);
-                }
-                else if (datePatternStrict != null
-                                         && datePatternStrict.length() > 0) {
+                        datePattern, false);
+                } else if (datePatternStrict != null
+                    && datePatternStrict.length() > 0) {
                     result = GenericTypeValidator.formatDate(value,
-                                    datePatternStrict, true);
+                        datePatternStrict, true);
                 }
             }
             catch (Exception e) {
@@ -444,26 +435,26 @@ public class FieldChecks implements Serializable {
     }
 
     /**
-         * Checks if a fields value is within a range (min &amp; max specified in
-         * the vars attribute).
-         *
-         * @param bean The bean validation is being performed on.
-         * @param va The <code>ValidatorAction</code> that is currently being
-         * performed.
-         * @param field The <code>Field</code> object associated with the current
-         * field being validated.
-         * @param errors The <code>Errors</code> object to add errors to if any
-         * validation errors occur.
-         * -param request
-         * Current request object.
-         * @return True if in range, false otherwise.
-         * @deprecated As of Struts 1.1, replaced by
-         *             {@see #validateIntRange(java.lang.Object,
-         *             org.apache.validator.validator.ValidatorAction,
-         *             org.apache.validator.validator.Field,
-         *             org.apache.struts.action.Errors,
-         *             javax.servlet.http.HttpServletRequest)}
-         */
+     * Checks if a fields value is within a range (min &amp; max specified in
+     * the vars attribute).
+     *
+     * @param bean The bean validation is being performed on.
+     * @param va The <code>ValidatorAction</code> that is currently being
+     * performed.
+     * @param field The <code>Field</code> object associated with the current
+     * field being validated.
+     * @param errors The <code>Errors</code> object to add errors to if any
+     * validation errors occur.
+     * -param request
+     * Current request object.
+     * @return True if in range, false otherwise.
+     * @deprecated As of Struts 1.1, replaced by
+     *             {@see #validateIntRange(java.lang.Object,
+     *             org.apache.validator.validator.ValidatorAction,
+     *             org.apache.validator.validator.Field,
+     *             org.apache.struts.action.Errors,
+     *             javax.servlet.http.HttpServletRequest)}
+     */
     public static boolean validateRange(Object bean, ValidatorAction va,
                                         Field field, Errors errors) {
         return FieldChecks.validateIntRange(bean, va, field, errors);
@@ -480,7 +471,6 @@ public class FieldChecks implements Serializable {
      * field being validated.
      * @param errors The <code>Errors</code> object to add errors to if any
      * validation errors occur.
-     *
      * @return <code>true</code> if in range, <code>false</code> otherwise.
      */
     public static boolean validateIntRange(Object bean, ValidatorAction va,
@@ -637,11 +627,10 @@ public class FieldChecks implements Serializable {
         String value = FieldChecks.extractValue(bean, field);
 
         if (!GenericValidator.isBlankOrNull(value)
-                        && !GenericValidator.isEmail(value)) {
+            && !GenericValidator.isEmail(value)) {
             FieldChecks.rejectValue(errors, field, va);
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -729,18 +718,14 @@ public class FieldChecks implements Serializable {
      * <code>test</code> parameter.
      *
      * @param bean The bean validation is being performed on.
-     *
      * @param va The <code>ValidatorAction</code> that is currently being
-     *      performed.
-     *
+     * performed.
      * @param field The <code>Field</code> object associated with the current
-     *      field being validated.
-     *
+     * field being validated.
      * @param errors The <code>Errors</code> object to add errors to if any
-     *      validation errors occur.
-     *
+     * validation errors occur.
      * @return <code>true</code> if meets stated requirements,
-     *      <code>false</code> otherwise.
+     *         <code>false</code> otherwise.
      */
     public static boolean validateValidWhen(
         Object bean,
@@ -781,7 +766,7 @@ public class FieldChecks implements Serializable {
         }
 
         // Create the Lexer
-        ValidWhenLexer lexer= null;
+        ValidWhenLexer lexer = null;
         try {
             lexer = new ValidWhenLexer(new StringReader(test));
         } catch (Exception ex) {
@@ -842,11 +827,9 @@ public class FieldChecks implements Serializable {
 
         if (bean == null) {
             return null;
-        }
-        else if (bean instanceof String) {
+        } else if (bean instanceof String) {
             value = (String) bean;
-        }
-        else {
+        } else {
             value = ValidatorUtils.getValueAsString(bean, field.getProperty());
         }
 
@@ -873,7 +856,7 @@ public class FieldChecks implements Serializable {
 
         if (FieldChecks.log.isDebugEnabled()) {
             FieldChecks.log.debug("Rejecting value [field='" + fieldCode + "', errorCode='"
-                    + errorCode + "']");
+                + errorCode + "']");
         }
 
         errors.rejectValue(fieldCode, errorCode, args, errorCode);

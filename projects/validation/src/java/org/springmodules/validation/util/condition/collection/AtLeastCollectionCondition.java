@@ -54,7 +54,7 @@ public class AtLeastCollectionCondition extends AbstractCollectionElementConditi
      */
     protected boolean checkArray(Object array) {
         int counter = 0;
-        for (int i=0; i< Array.getLength(array); i++) {
+        for (int i = 0; i < Array.getLength(array); i++) {
             if (getElementCondition().check(Array.get(array, i))) {
                 counter++;
             }
@@ -79,7 +79,6 @@ public class AtLeastCollectionCondition extends AbstractCollectionElementConditi
         }
         return counter >= getCount();
     }
-
 
     //=============================================== Setter/Getter ====================================================
 

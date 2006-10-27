@@ -12,13 +12,12 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 
 /**
- *
  * @author robh
  * @author Uri Boness
  */
 public class ConfigurablePageBeanValidatorTests extends TestCase {
 
-     public void testSupports() {
+    public void testSupports() {
         ConfigurablePageBeanValidator validator = getValidator(0);
 
         assertTrue("Should support FooBean", validator.supports(FooBean.class));
@@ -40,7 +39,7 @@ public class ConfigurablePageBeanValidatorTests extends TestCase {
         assertTrue(errors.hasFieldErrors("name"));
         assertTrue(errors.hasFieldErrors("name"));
         assertEquals(1, errors.getErrorCount());
-        assertEquals("name", ((FieldError)errors.getAllErrors().iterator().next()).getField());
+        assertEquals("name", ((FieldError) errors.getAllErrors().iterator().next()).getField());
 
         errors = new BindException(bean, "pagedFooBean");
         bean.setName("name");
@@ -53,7 +52,7 @@ public class ConfigurablePageBeanValidatorTests extends TestCase {
         String formName = "myForm";
 
         MockControl ctl = MockControl.createControl(ValidatorFactory.class);
-        ValidatorFactory factory = (ValidatorFactory)ctl.getMock();
+        ValidatorFactory factory = (ValidatorFactory) ctl.getMock();
 
         // expect call to get validator with args "fooBean", bean and null
         factory.getValidator(formName, bean, null);

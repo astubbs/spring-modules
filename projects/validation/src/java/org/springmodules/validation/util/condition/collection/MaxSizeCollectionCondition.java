@@ -65,7 +65,6 @@ public class MaxSizeCollectionCondition extends AbstractCollectionCondition {
         return collection.size() <= maxSize;
     }
 
-
     //============================================= Setter/Getter ===================================================
 
     /**

@@ -24,8 +24,7 @@ import java.util.regex.Pattern;
  * Regular expression match function. Takes two arguments: the pattern as a string and the string
  * to be matched. The toString method of the second parameter value is called to retrieve the
  * string value. This function is not null-safe.
- * 
- * 
+ *
  * @author Steven Devijver
  * @since Sep 15, 2005
  */
@@ -44,9 +43,9 @@ public class RegExFunction extends AbstractFunction {
         if (value instanceof String) {
             Pattern pattern = null;
             if (patternCache.containsKey(value)) {
-                pattern = (Pattern)patternCache.get(value);
+                pattern = (Pattern) patternCache.get(value);
             } else {
-                pattern = Pattern.compile((String)value);
+                pattern = Pattern.compile((String) value);
                 patternCache.put(value, pattern);
             }
             String str = getArguments()[1].getResult(target).toString();

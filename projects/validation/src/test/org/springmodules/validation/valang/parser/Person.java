@@ -1,22 +1,23 @@
 /*
  * Copyright 13/09/2005 (C) Our Community Pty. Ltd. All Rights Reserved.
  *
- * $Id: Person.java,v 1.5 2006/08/04 15:37:24 hueboness Exp $
+ * $Id: Person.java,v 1.6 2006/10/27 02:00:23 hueboness Exp $
  */
+
 package org.springmodules.validation.valang.parser;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Person {
 
     int age = 0;
+
     String firstName = null;
+
     String size = null;
+
     Date dateOfBirth = null;
+
     String email = null;
 
     int minAge = 18;
@@ -79,7 +80,7 @@ public class Person {
     }
 
     public Object[] getSizes() {
-        return new Object[] { "S", "M", "L", "XL" };
+        return new Object[]{"S", "M", "L", "XL"};
     }
 
     public Collection getTags() {
@@ -91,7 +92,7 @@ public class Person {
 
     public Map getMap() {
         Map map = new HashMap();
-        map.put("firstName", "Steven"); 
+        map.put("firstName", "Steven");
         map.put("sizes", getSizes());
         map.put("Test Key", "Value");
         return map;

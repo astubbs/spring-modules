@@ -31,6 +31,7 @@ import org.w3c.dom.Element;
 public class ExpressionClassValidationElementHandler extends AbstractClassValidationElementHandler {
 
     private static final String ELEMENT_NAME = "expression";
+
     private static final String CONDITION_ATTR = "condition";
 
     /**

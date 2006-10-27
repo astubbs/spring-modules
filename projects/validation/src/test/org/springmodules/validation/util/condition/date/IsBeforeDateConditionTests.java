@@ -27,11 +27,15 @@ import java.util.Date;
 public class IsBeforeDateConditionTests extends AbstractDateConditionTests {
 
     private Date earlierDate;
+
     private Date nowDate;
+
     private Date laterDate;
 
     private Calendar earlierCalendar;
+
     private Calendar nowCalendar;
+
     private Calendar laterCalendar;
 
     public IsBeforeDateConditionTests() {
@@ -53,14 +57,14 @@ public class IsBeforeDateConditionTests extends AbstractDateConditionTests {
 
     public void testConstructor_WithNull() throws Exception {
         try {
-            new IsBeforeDateCondition((Date)null);
+            new IsBeforeDateCondition((Date) null);
             fail("An IllegalArgumentException must be thrown when initialized with null");
         } catch (IllegalArgumentException iae) {
             // expected
         }
 
         try {
-            new IsBeforeDateCondition((Calendar)null);
+            new IsBeforeDateCondition((Calendar) null);
             fail("An IllegalArgumentException must be thrown when initialized with null");
         } catch (IllegalArgumentException iae) {
             // expected
@@ -88,11 +92,11 @@ public class IsBeforeDateConditionTests extends AbstractDateConditionTests {
     }
 
     public void testGetLater_WithDate() throws Exception {
-        assertEquals(nowDate, ((IsBeforeDateCondition)dateCondition).getLater().getTime());
+        assertEquals(nowDate, ((IsBeforeDateCondition) dateCondition).getLater().getTime());
     }
 
     public void testGetEarlier_WithCalendar() throws Exception {
-        assertEquals(nowCalendar, ((IsBeforeDateCondition)calendarCondition).getLater());
+        assertEquals(nowCalendar, ((IsBeforeDateCondition) calendarCondition).getLater());
     }
 
     //=============================================== Helper Methods ===================================================

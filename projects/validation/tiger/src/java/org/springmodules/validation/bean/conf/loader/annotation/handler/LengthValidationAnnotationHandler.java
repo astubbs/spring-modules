@@ -41,19 +41,19 @@ public class LengthValidationAnnotationHandler extends AbstractPropertyValidatio
     protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
 
         if (Length.class.isInstance(annotation)) {
-            Length length = (Length)annotation;
+            Length length = (Length) annotation;
             validateMinMax(length.min(), length.max(), clazz, propertyName);
             return new LengthValidationRule(length.min(), length.max());
         }
 
         if (MinLength.class.isInstance(annotation)) {
-            MinLength minLength = (MinLength)annotation;
+            MinLength minLength = (MinLength) annotation;
             validateMin(minLength.value(), clazz, propertyName);
             return new MinLengthValidationRule(minLength.value());
         }
 
         if (MaxLength.class.isInstance(annotation)) {
-            MaxLength maxLength = (MaxLength)annotation;
+            MaxLength maxLength = (MaxLength) annotation;
             validateMax(maxLength.value(), clazz, propertyName);
             return new MaxLengthValidationRule(maxLength.value());
         }

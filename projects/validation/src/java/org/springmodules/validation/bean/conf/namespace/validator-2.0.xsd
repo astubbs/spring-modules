@@ -5,8 +5,8 @@
            targetNamespace="http://www.springmodules.org/validation/bean/validator"
            xmlns:validator="http://www.springmodules.org/validation/bean/validator"
            xmlns:spring="http://www.springframework.org/schema/beans"
-           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                               http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator.xsd">
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                               http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator-2.0.xsd">
 
     <xs:import namespace="http://www.springframework.org/schema/beans"/>
 
@@ -101,7 +101,8 @@
             <xs:attribute name="location" use="required" type="xs:string">
                 <xs:annotation>
                     <xs:documentation>
-                        The location of the resource. This path follows the spring resource description rules (i.e. file,
+                        The location of the resource. This path follows the spring resource description rules (i.e.
+                        file,
                         http, classpath, and classpath* are supported.
                     </xs:documentation>
                 </xs:annotation>

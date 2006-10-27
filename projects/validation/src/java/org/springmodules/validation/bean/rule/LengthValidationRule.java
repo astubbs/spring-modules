@@ -29,6 +29,7 @@ public class LengthValidationRule extends AbstractValidationRule {
     public final static String DEFAULT_ERROR_CODE = "length";
 
     private int min;
+
     private int max;
 
     /**

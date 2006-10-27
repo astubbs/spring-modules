@@ -18,8 +18,8 @@ package org.springmodules.validation.valang.functions;
 
 
 /**
- * <p>Converts a string to upper case. 
- * 
+ * <p>Converts a string to upper case.
+ *
  * @author Steven Devijver
  * @since Apr 23, 2005
  */

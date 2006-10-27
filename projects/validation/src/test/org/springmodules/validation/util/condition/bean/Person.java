@@ -24,8 +24,11 @@ package org.springmodules.validation.util.condition.bean;
 public class Person {
 
     private String name;
+
     private String nickname;
+
     private int age;
+
     private Address address;
 
     public Person() {

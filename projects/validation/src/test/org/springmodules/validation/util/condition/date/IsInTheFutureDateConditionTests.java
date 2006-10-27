@@ -27,9 +27,11 @@ import java.util.Date;
 public class IsInTheFutureDateConditionTests extends AbstractDateConditionTests {
 
     private Date earlierDate;
+
     private Date laterDate;
 
     private Calendar earlierCalendar;
+
     private Calendar laterCalendar;
 
     public IsInTheFutureDateConditionTests() {

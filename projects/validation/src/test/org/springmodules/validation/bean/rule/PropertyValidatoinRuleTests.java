@@ -28,17 +28,20 @@ import org.springmodules.validation.util.condition.Condition;
 public class PropertyValidatoinRuleTests extends TestCase {
 
     private MockControl conditionControl;
+
     private Condition condition;
+
     private MockControl ruleControl;
+
     private ValidationRule rule;
 
     protected void setUp() throws Exception {
 
         conditionControl = MockControl.createControl(Condition.class);
-        condition = (Condition)conditionControl.getMock();
+        condition = (Condition) conditionControl.getMock();
 
         ruleControl = MockControl.createControl(ValidationRule.class);
-        rule = (ValidationRule)ruleControl.getMock();
+        rule = (ValidationRule) ruleControl.getMock();
     }
 
     public void testIsApplicable_Success() throws Exception {

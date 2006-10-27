@@ -41,16 +41,16 @@ public class SizeValidationAnnotationHandler extends AbstractPropertyValidationA
     protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
 
         if (Size.class.isInstance(annotation)) {
-            Size size = (Size)annotation;
+            Size size = (Size) annotation;
             return new SizeValidationRule(size.min(), size.max());
         }
 
         if (MinSize.class.isInstance(annotation)) {
-            MinSize minSize = (MinSize)annotation;
+            MinSize minSize = (MinSize) annotation;
             return new MinSizeValidationRule(minSize.value());
         }
         if (MaxSize.class.isInstance(annotation)) {
-            MaxSize maxSize = (MaxSize)annotation;
+            MaxSize maxSize = (MaxSize) annotation;
             return new MaxSizeValidationRule(maxSize.value());
         }
         throw new IllegalArgumentException("SizeValidationAnnotationHandler cannot handle annotation of type: " +

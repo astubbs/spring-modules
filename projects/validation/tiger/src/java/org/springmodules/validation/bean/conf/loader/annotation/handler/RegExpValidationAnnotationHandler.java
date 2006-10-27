@@ -36,7 +36,7 @@ public class RegExpValidationAnnotationHandler extends AbstractPropertyValidatio
     }
 
     protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
-        RegExp regexp = (RegExp)annotation;
+        RegExp regexp = (RegExp) annotation;
         return new RegExpValidationRule(regexp.value());
     }
 

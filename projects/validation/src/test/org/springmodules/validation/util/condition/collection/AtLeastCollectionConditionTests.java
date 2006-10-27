@@ -55,12 +55,12 @@ public class AtLeastCollectionConditionTests extends AbstractCollectionElementCo
     }
 
     public void testCheck_WhenCountIsGreaterThenArraySize() throws Exception {
-        Object[] array = new Object[] { "this" };
+        Object[] array = new Object[]{"this"};
         assertFalse(condition.check(array));
     }
 
     public void testCheck_WhenMoreArrayElementsPass() throws Exception {
-        Object[] array = new Object[] { "this", "is", "a", new Integer(3) };
+        Object[] array = new Object[]{"this", "is", "a", new Integer(3)};
         assertTrue(condition.check(array));
     }
 
@@ -70,7 +70,7 @@ public class AtLeastCollectionConditionTests extends AbstractCollectionElementCo
     }
 
     public void testCheck_WhenLessArrayElementsPass() throws Exception {
-        Object[] array = new Object[] { "this", new Integer(5), new Integer(4), new Integer(3) };
+        Object[] array = new Object[]{"this", new Integer(5), new Integer(4), new Integer(3)};
         assertFalse(condition.check(array));
     }
 
@@ -80,14 +80,14 @@ public class AtLeastCollectionConditionTests extends AbstractCollectionElementCo
     }
 
     public void testCheck_WhenNoneArrayElementsPass() throws Exception {
-        Object[] array = new Object[] { "test1", "test2", new Integer(4) };
+        Object[] array = new Object[]{"test1", "test2", new Integer(4)};
         assertTrue(condition.check(array));
     }
-
 
     //=============================================== Helper Classes ===================================================
 
     private static class StringCondition extends AbstractCondition {
+
         public boolean doCheck(Object object) {
             return (object instanceof String);
         }

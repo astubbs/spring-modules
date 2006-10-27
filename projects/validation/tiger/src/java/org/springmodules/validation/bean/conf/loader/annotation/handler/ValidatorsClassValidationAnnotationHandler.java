@@ -41,15 +41,14 @@ public class ValidatorsClassValidationAnnotationHandler implements ClassValidati
      * This method assumes that {@link #supports(java.lang.annotation.Annotation, Class)} returns <code>true</code> for the
      * given annotation.
      *
-     * @param annotation    The annotation to handle.
-     * @param clazz         The annotated class.
+     * @param annotation The annotation to handle.
+     * @param clazz The annotated class.
      * @param configuration The bean validation configuration to manipulate.
      */
     public void handleAnnotation(Annotation annotation, Class clazz, MutableBeanValidationConfiguration configuration) {
-        Validator[] validators = ((Validators)annotation).value();
+        Validator[] validators = ((Validators) annotation).value();
         configuration.setCustomValidators(createValidators(validators));
     }
-
 
     //=============================================== Helper Methods ===================================================
 
@@ -59,7 +58,7 @@ public class ValidatorsClassValidationAnnotationHandler implements ClassValidati
     protected org.springframework.validation.Validator[] createValidators(Validator[] validatorAnnotations) {
         org.springframework.validation.Validator[] validators =
             new org.springframework.validation.Validator[validatorAnnotations.length];
-        for (int i=0; i<validatorAnnotations.length; i++) {
+        for (int i = 0; i < validatorAnnotations.length; i++) {
             validators[i] = createValidator(validatorAnnotations[i].value());
         }
         return validators;

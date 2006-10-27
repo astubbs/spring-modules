@@ -65,7 +65,6 @@ public class MinSizeCollectionCondition extends AbstractCollectionCondition {
         return collection.size() >= minSize;
     }
 
-
     //============================================= Setter/Getter ===================================================
 
     /**

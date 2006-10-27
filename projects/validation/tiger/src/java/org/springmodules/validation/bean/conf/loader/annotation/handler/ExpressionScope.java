@@ -22,6 +22,7 @@ package org.springmodules.validation.bean.conf.loader.annotation.handler;
  * @author Uri Boness
  */
 public enum ExpressionScope {
+
     VALIDATED_VALUE,
     CONTAINING_OBJECT
 }

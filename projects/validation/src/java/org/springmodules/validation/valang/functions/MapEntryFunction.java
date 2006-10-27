@@ -25,8 +25,11 @@ import java.util.Map;
 public class MapEntryFunction implements Function {
 
     private Function mapFunction = null;
+
     private Function keyFunction = null;
+
     private int beginLine = 0;
+
     private int beginColumn = 0;
 
     public MapEntryFunction(Function mapFunction, Function keyFunction, int beginLine, int beginColumn) {
@@ -72,7 +75,7 @@ public class MapEntryFunction implements Function {
     public Object getResult(Object target) {
         Object map = getMapFunction().getResult(target);
         if (map instanceof Map) {
-            return ((Map)map).get(getKeyFunction().getResult(target));
+            return ((Map) map).get(getKeyFunction().getResult(target));
         } else {
             throw new ClassCastException("Could to cast property value to java.util.Map at line " + getBeginLine() + ", column " + getBeginColumn() + ".");
         }

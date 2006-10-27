@@ -35,7 +35,7 @@ public final class AlwaysTrueCondition extends AbstractCondition {
     }
 
     public boolean equals(Object obj) {
-        return (obj == this ) || (obj instanceof AlwaysTrueCondition);
+        return (obj == this) || (obj instanceof AlwaysTrueCondition);
     }
 
     public int hashCode() {

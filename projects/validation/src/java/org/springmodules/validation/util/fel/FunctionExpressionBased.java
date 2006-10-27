@@ -19,11 +19,9 @@ package org.springmodules.validation.util.fel;
 /**
  * Represents objects that are based on function expressions.
  *
- *
+ * @author Uri Boness
  * @see FunctionExpressionParser
  * @see Function
- *
- * @author Uri Boness
  */
 public interface FunctionExpressionBased {
 

@@ -16,6 +16,7 @@
 
 package org.springmodules.validation.util;
 
+import org.apache.commons.lang.SystemUtils;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -32,6 +33,11 @@ public class LibraryUtils {
      * Determines whether hibernate validator can be found in the classpath.
      */
     public final static boolean HIBERNATE_VALIDATOR_IN_CLASSPATH = isClassInClasspath("org.hibernate.validator.Validator");
+
+    /**
+     * Indicates whether the jdk supports java 5 annotations.
+     */
+    public static final boolean JDK_ANNOTATIONS_SUPPORTED = SystemUtils.IS_JAVA_1_5 || SystemUtils.IS_JAVA_1_6;
 
     /**
      * Returns whether the given class can be found in the classpath.

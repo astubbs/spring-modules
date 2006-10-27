@@ -39,10 +39,10 @@ public abstract class AbstractStringCondition extends NonNullAcceptingTypeSpecif
      * See {@link Condition#check(Object)}
      *
      * @throws IllegalArgumentException if the given object is either <code>null</code> or not of a
-     *         <code>java.lang.String</code> type.
+     * <code>java.lang.String</code> type.
      */
     public final boolean doCheck(Object object) {
-        return checkString((String)object);
+        return checkString((String) object);
     }
 
     /**

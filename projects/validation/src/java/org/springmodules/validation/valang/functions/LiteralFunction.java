@@ -20,7 +20,7 @@ package org.springmodules.validation.valang.functions;
 /**
  * <p>Container class for a literal function. Stricly speaking this is not a function
  * as it does not manipulate data.
- * 
+ *
  * @author Steven Devijver
  * @since Apr 23, 2005
  */

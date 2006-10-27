@@ -63,7 +63,6 @@ public class IsBeforeDateCondition extends AbstractDateCondition {
         return later.getTimeInMillis() > calendar.getTimeInMillis();
     }
 
-
     //=============================================== Setter/Getter ====================================================
 
     /**

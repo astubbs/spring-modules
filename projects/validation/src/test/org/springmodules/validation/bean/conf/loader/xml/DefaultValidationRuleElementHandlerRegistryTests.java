@@ -17,20 +17,7 @@
 package org.springmodules.validation.bean.conf.loader.xml;
 
 import junit.framework.TestCase;
-import org.springmodules.validation.bean.conf.loader.xml.handler.ClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.DateInFutureRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.DateInPastRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.EmailRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.ExpressionClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.ExpressionPropertyValidationElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.LengthRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.NotBlankRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.NotEmptyRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.NotNullRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidationElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.RangeRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.RegExpRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.SizeRuleElementHandler;
+import org.springmodules.validation.bean.conf.loader.xml.handler.*;
 import org.springmodules.validation.bean.conf.loader.xml.handler.jodatime.InstantInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.jodatime.InstantInPastRuleElementHandler;
 
@@ -66,7 +53,7 @@ public class DefaultValidationRuleElementHandlerRegistryTests extends TestCase {
     //=============================================== Helper Methods ===================================================
 
     protected boolean containsHandlerOfType(ClassValidationElementHandler[] handlers, Class handlerType) {
-        for (int i=0; i<handlers.length; i++) {
+        for (int i = 0; i < handlers.length; i++) {
             if (handlerType.isAssignableFrom(handlerType)) {
                 return true;
             }
@@ -75,7 +62,7 @@ public class DefaultValidationRuleElementHandlerRegistryTests extends TestCase {
     }
 
     protected boolean containsHandlerOfType(PropertyValidationElementHandler[] handlers, Class handlerType) {
-        for (int i=0; i<handlers.length; i++) {
+        for (int i = 0; i < handlers.length; i++) {
             if (handlerType.isAssignableFrom(handlerType)) {
                 return true;
             }

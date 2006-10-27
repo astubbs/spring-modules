@@ -61,9 +61,9 @@ public class PropertyValidationRule implements ValidationRule {
      * only if the given object a property that match the property associated with this rule and if the wrapped rule
      * is applicable on the value of that property.
      *
-     * @see ValidationRule#isApplicable(Object)
      * @param obj The object to be validated.
      * @return <code>true</code> if this rule is applicable on the given object, <code>false</code> otherwise.
+     * @see ValidationRule#isApplicable(Object)
      */
     public boolean isApplicable(Object obj) {
         PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(obj.getClass(), propertyName);
@@ -78,8 +78,8 @@ public class PropertyValidationRule implements ValidationRule {
      * Returns the conditoin of this validation rule. In practice, applying this condition means applying the
      * condition of the wrapped rule on the value of the associated property of the validated object.
      *
-     * @see org.springmodules.validation.bean.rule.ValidationRule#getCondition()
      * @return The condition of this validation rule.
+     * @see ValidationRule#getCondition()
      */
     public Condition getCondition() {
         return Conditions.property(propertyName, rule.getCondition());

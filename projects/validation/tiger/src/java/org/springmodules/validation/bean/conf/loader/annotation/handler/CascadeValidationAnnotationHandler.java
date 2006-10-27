@@ -58,7 +58,6 @@ public class CascadeValidationAnnotationHandler implements PropertyValidationAnn
 
     /**
      * @return <code>true</code> if the annotation is of type <code>{@link CascadeValidation}</code>.
-     *
      * @see PropertyValidationAnnotationHandler#supports(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor)
      */
     public boolean supports(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
@@ -71,7 +70,7 @@ public class CascadeValidationAnnotationHandler implements PropertyValidationAnn
      * @see PropertyValidationAnnotationHandler#handleAnnotation(java.lang.annotation.Annotation, Class, java.beans.PropertyDescriptor, org.springmodules.validation.bean.conf.MutableBeanValidationConfiguration)
      */
     public void handleAnnotation(Annotation annotation, Class clazz, PropertyDescriptor descriptor, MutableBeanValidationConfiguration configuration) {
-        CascadeValidation cascadeValidationAnnotation = (CascadeValidation)annotation;
+        CascadeValidation cascadeValidationAnnotation = (CascadeValidation) annotation;
         org.springmodules.validation.bean.conf.CascadeValidation cascadeValidation =
             new org.springmodules.validation.bean.conf.CascadeValidation(descriptor.getName());
         if (StringUtils.hasText(cascadeValidationAnnotation.value())) {

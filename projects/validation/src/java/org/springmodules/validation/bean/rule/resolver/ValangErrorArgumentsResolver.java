@@ -51,7 +51,7 @@ public class ValangErrorArgumentsResolver implements ErrorArgumentsResolver {
      * @param expressions The argument valang expressions.
      */
     public ValangErrorArgumentsResolver(String[] expressions) {
-        this (expressions, null);
+        this(expressions, null);
     }
 
     /**
@@ -60,14 +60,14 @@ public class ValangErrorArgumentsResolver implements ErrorArgumentsResolver {
      *
      * @param expressions The arguments valang expressions.
      * @param functionsByName A map of custom valang functiosns where the key is the function name and the value is
-     *        the name of the function class.
+     * the name of the function class.
      */
     public ValangErrorArgumentsResolver(String[] expressions, Map functionsByName) {
         if (expressions == null) {
             expressions = new String[0];
         }
         functions = new Function[expressions.length];
-        for (int i=0; i<expressions.length; i++) {
+        for (int i = 0; i < expressions.length; i++) {
             functions[i] = parseFunction(expressions[i], functionsByName);
         }
     }
@@ -79,12 +79,11 @@ public class ValangErrorArgumentsResolver implements ErrorArgumentsResolver {
      */
     public Object[] resolveArguments(Object obj) {
         Object[] args = new Object[functions.length];
-        for (int i=0; i<args.length; i++) {
+        for (int i = 0; i < args.length; i++) {
             args[i] = functions[i].getResult(obj);
         }
         return args;
     }
-
 
     //=============================================== Helper Methods ===================================================
 

@@ -29,11 +29,12 @@ import org.springmodules.validation.util.condition.Condition;
 public class CommonsPredicateConditionTests extends TestCase {
 
     private MockControl predicateControl;
+
     private Predicate predicate;
 
     protected void setUp() throws Exception {
         predicateControl = MockControl.createControl(Predicate.class);
-        predicate = (Predicate)predicateControl.getMock();
+        predicate = (Predicate) predicateControl.getMock();
     }
 
     public void testConstructor_WithNullPredicate() throws Exception {

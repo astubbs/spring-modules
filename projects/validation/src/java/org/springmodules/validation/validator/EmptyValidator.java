@@ -37,7 +37,7 @@ public class EmptyValidator implements Validator {
 
     /**
      * See {@link Validator#validate(Object, org.springframework.validation.Errors)}.
-     *
+     * <p/>
      * Does nothing.
      */
     public void validate(Object obj, Errors errors) {

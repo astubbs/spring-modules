@@ -24,10 +24,9 @@ import java.util.Date;
  *
  * @author Steven Devijver
  * @since 25-04-2005
- *
  */
 public interface DateParser {
 
-	public Date parse(String str) throws DateParseException;
+    public Date parse(String str) throws DateParseException;
 }
 

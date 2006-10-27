@@ -25,6 +25,7 @@ package org.springmodules.validation.util.condition.string;
 public class LengthRangeStringCondition extends AbstractStringCondition {
 
     private int minLength;
+
     private int maxLength;
 
     /**
@@ -48,7 +49,6 @@ public class LengthRangeStringCondition extends AbstractStringCondition {
         int length = text.length();
         return length >= minLength && length <= maxLength;
     }
-
 
     //=============================================== Setter/Getter ====================================================
 

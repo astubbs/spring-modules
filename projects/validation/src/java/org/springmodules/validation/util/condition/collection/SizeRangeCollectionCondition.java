@@ -28,6 +28,7 @@ import java.util.Collection;
 public class SizeRangeCollectionCondition extends AbstractCollectionCondition {
 
     private int minSize;
+
     private int maxSize;
 
     /**
@@ -60,7 +61,6 @@ public class SizeRangeCollectionCondition extends AbstractCollectionCondition {
         int size = collection.size();
         return size >= minSize && size <= maxSize;
     }
-
 
     //=============================================== Setter/Getter ====================================================
 

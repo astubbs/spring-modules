@@ -25,10 +25,9 @@ import org.springmodules.validation.util.fel.FunctionExpressionBased;
 import org.springmodules.validation.util.fel.FunctionExpressionParser;
 
 /**
- *
  * @author Uri Boness
  */
-public class ExpressionsClassValidationAnnotationHandler implements ClassValidationAnnotationHandler, 
+public class ExpressionsClassValidationAnnotationHandler implements ClassValidationAnnotationHandler,
     ConditionExpressionBased, FunctionExpressionBased {
 
     ExpressionClassValidationAnnotationHandler expressionHandler;
@@ -42,13 +41,12 @@ public class ExpressionsClassValidationAnnotationHandler implements ClassValidat
     }
 
     public void handleAnnotation(Annotation annotation, Class clazz, MutableBeanValidationConfiguration configuration) {
-        Expressions expressions = (Expressions)annotation;
+        Expressions expressions = (Expressions) annotation;
         Expression[] expressionAnnotations = expressions.value();
-        for (int i=0; i<expressionAnnotations.length; i++) {
+        for (int i = 0; i < expressionAnnotations.length; i++) {
             expressionHandler.handleAnnotation(expressionAnnotations[i], clazz, configuration);
         }
     }
-
 
     //=============================================== Setter/Getter ====================================================
 

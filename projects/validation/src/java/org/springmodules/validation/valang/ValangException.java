@@ -20,40 +20,41 @@ import org.springframework.core.NestedRuntimeException;
 
 public class ValangException extends NestedRuntimeException {
 
-	private static final long serialVersionUID = -3223482349872384878L;
-	
-	private int line = 0;
-	private int column = 0;
-	
-	public ValangException(String arg0, int line, int column) {
-		super(arg0);
-		this.line = line;
-		this.column = column;
-	}
+    private static final long serialVersionUID = -3223482349872384878L;
 
-	public ValangException(String arg0, Throwable arg1, int line, int column) {
-		super(arg0, arg1);
-		this.line = line;
-		this.column = column;
-	}
-	
-	public ValangException(Throwable t, int line, int column) {
-		super(t.getMessage(), t);
-		this.line = line;
-		this.column = column;
-	}
-	
-	
-	public String getMessage() {
-		return super.getMessage() + " at line " + line + ", column " + column;
-	}
-	
-	public int getLine() {
-		return this.line;
-	}
-	
-	public int getColumn() {
-		return this.column;
-	}
+    private int line = 0;
+
+    private int column = 0;
+
+    public ValangException(String arg0, int line, int column) {
+        super(arg0);
+        this.line = line;
+        this.column = column;
+    }
+
+    public ValangException(String arg0, Throwable arg1, int line, int column) {
+        super(arg0, arg1);
+        this.line = line;
+        this.column = column;
+    }
+
+    public ValangException(Throwable t, int line, int column) {
+        super(t.getMessage(), t);
+        this.line = line;
+        this.column = column;
+    }
+
+
+    public String getMessage() {
+        return super.getMessage() + " at line " + line + ", column " + column;
+    }
+
+    public int getLine() {
+        return this.line;
+    }
+
+    public int getColumn() {
+        return this.column;
+    }
 
 }

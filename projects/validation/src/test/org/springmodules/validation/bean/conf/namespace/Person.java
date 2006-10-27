@@ -6,10 +6,15 @@ package org.springmodules.validation.bean.conf.namespace;
 public class Person {
 
     private String firstName;
+
     private String lastName;
+
     private int age;
+
     private String email;
+
     private String password;
+
     private String confirmPassword;
 
     public String getFirstName() {

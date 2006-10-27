@@ -26,8 +26,8 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
 /**
- * <p>Function taking the value from a bean property or a java.util.Map instance. 
- * 
+ * <p>Function taking the value from a bean property or a java.util.Map instance.
+ *
  * @author Steven Devijver
  * @since Apr 23, 2005
  */
@@ -53,10 +53,10 @@ public class BeanPropertyFunction implements Function {
             fieldName = field.substring(5);
         }
         if (target instanceof Map) {
-            return getValue((Map)target, split(fieldName));
+            return getValue((Map) target, split(fieldName));
         }
         if (target instanceof BeanWrapper) {
-            return ((BeanWrapper)target).getPropertyValue(fieldName);
+            return ((BeanWrapper) target).getPropertyValue(fieldName);
         }
         return new BeanWrapperImpl(target).getPropertyValue(fieldName);
     }
@@ -70,7 +70,7 @@ public class BeanPropertyFunction implements Function {
         for (int i = 1; i < path.length; i++) {
             coll.add(path[i]);
         }
-        return (String[])coll.toArray(new String[] {});
+        return (String[]) coll.toArray(new String[]{});
     }
 
     private String concat(String[] path) {

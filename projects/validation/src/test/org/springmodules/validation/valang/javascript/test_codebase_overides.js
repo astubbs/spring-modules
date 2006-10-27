@@ -1,4 +1,3 @@
-
 // Mocking the document variable in the browser env.
 function Doc() {
 }
@@ -12,7 +11,7 @@ var document = new Doc();
 ValangValidator.Rule.prototype.getPropertyValue = function(propertyName) {
     var javaResult = formObject[propertyName]
     if (javaResult) {
-        var result 
+        var result
         if (javaResult['getClass'] && javaResult.getClass() == new java.util.Date().getClass()) {
             // convert java Date to JavaScript Date
             result = eval('new Date(' + javaResult.getTime() + ')');
@@ -47,5 +46,5 @@ ValangValidator.Logger.logFunctionCalls(ValangValidator.Rule.prototype)
 //ValangValidator.Logger.logFunctionCalls(ValangValidator.prototype)
 var logMessages = new Array()
 ValangValidator.Logger.log = function(msg) {
-    logMessages.push(this._indentString(' ') + msg);  
+    logMessages.push(this._indentString(' ') + msg);
 }

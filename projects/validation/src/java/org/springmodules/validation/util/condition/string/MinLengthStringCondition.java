@@ -49,7 +49,6 @@ public class MinLengthStringCondition extends AbstractStringCondition {
         return text.length() >= minLength;
     }
 
-
     //============================================= Setter/Getter ===================================================
 
     /**

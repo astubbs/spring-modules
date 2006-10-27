@@ -31,7 +31,7 @@ public class DomUtils {
 
     public static Element firstChildElement(Element element) {
         Iterator iter = childElements(element);
-        return (iter.hasNext()) ? (Element)iter.next() : null;
+        return (iter.hasNext()) ? (Element) iter.next() : null;
     }
 
     public static Iterator childElements(Element element) {
@@ -44,11 +44,12 @@ public class DomUtils {
 
     public static Element getSingleSubElement(Element parent, String elementNamespace, String localName) {
         NodeList nodes = parent.getElementsByTagNameNS(elementNamespace, localName);
-        return (nodes.getLength() > 0) ? (Element)nodes.item(0) : null;
+        return (nodes.getLength() > 0) ? (Element) nodes.item(0) : null;
     }
 
     // this class should not be instanciated.
-    private DomUtils() {}
+    private DomUtils() {
+    }
 
 }
 

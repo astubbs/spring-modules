@@ -33,7 +33,9 @@ import org.w3c.dom.Element;
 public class LengthRuleElementHandler extends AbstractPropertyValidationElementHandler {
 
     private static final String ELEMENT_NAME = "length";
+
     private static final String MIN_ATTR = "min";
+
     private static final String MAX_ATTR = "max";
 
     /**

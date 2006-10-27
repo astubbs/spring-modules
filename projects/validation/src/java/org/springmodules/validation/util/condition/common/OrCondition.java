@@ -54,7 +54,7 @@ public class OrCondition extends AbstractCompoundCondition {
      */
     public boolean doCheck(Object object) {
         Condition[] conditions = getConditions();
-        for (int i=0; i<conditions.length; i++) {
+        for (int i = 0; i < conditions.length; i++) {
             if (conditions[i].check(object)) {
                 return true;
             }

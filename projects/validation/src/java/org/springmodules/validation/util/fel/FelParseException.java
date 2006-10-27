@@ -37,7 +37,7 @@ public class FelParseException extends FelException {
      * and nested exception.
      *
      * @param msg the detail message
-     * @param ex  the nested exception
+     * @param ex the nested exception
      */
     public FelParseException(String msg, Throwable ex) {
         super(msg, ex);

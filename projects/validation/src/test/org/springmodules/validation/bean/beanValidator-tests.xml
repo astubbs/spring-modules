@@ -7,11 +7,13 @@
         <property name="configurationLoader" ref="configurationLoader"/>
     </bean>
 
-    <bean id="configurationLoader" class="org.springmodules.validation.bean.conf.loader.xml.DefaultXmlBeanValidationConfigurationLoader">
+    <bean id="configurationLoader"
+          class="org.springmodules.validation.bean.conf.loader.xml.DefaultXmlBeanValidationConfigurationLoader">
         <property name="resource" value="classpath:org/springmodules/validation/bean/validation.xml"/>
     </bean>
 
-    <bean id="conditionExpressionParser" class="org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser">
+    <bean id="conditionExpressionParser"
+          class="org.springmodules.validation.util.cel.valang.ValangConditionExpressionParser">
         <property name="customFunctions">
             <map>
                 <entry key="tupper" value="org.springmodules.validation.valang.functions.UpperCaseFunction"/>

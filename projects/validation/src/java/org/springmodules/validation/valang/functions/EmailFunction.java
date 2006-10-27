@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
  * Email function. Takes one argument. Converts the argument to a string using the <code>toString()</code> method, and
  * checks whether the returned string is a valid email address.
  *
- *
  * @author Uri Boness
  * @since May 26, 2006
  */

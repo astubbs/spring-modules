@@ -16,17 +16,17 @@
 
 package org.springmodules.validation.bean.conf.namespace;
 
-import org.apache.commons.lang.SystemUtils;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+import org.springmodules.validation.util.LibraryUtils;
 
 /**
  * A namespace handler for the <code>validation</code> namepsace. This namespace contains the following elements:
  * <ul>
- *  <li>class - represents a class validation configuration</li>
- *  <li>
- *      validator - represents bean validator that is configured with the validation rules as defined by the
- *      <code>class</code> element
- *  </li>
+ * <li>class - represents a class validation configuration</li>
+ * <li>
+ * validator - represents bean validator that is configured with the validation rules as defined by the
+ * <code>class</code> element
+ * </li>
  * </ul>
  *
  * @author Uri Boness
@@ -48,7 +48,7 @@ public class ValidatorNamespaceHandler extends NamespaceHandlerSupport {
             new XmlBasedValidatorBeanDefinitionParser()
         );
 
-        if (SystemUtils.IS_JAVA_1_5 || SystemUtils.IS_JAVA_1_6) {
+        if (LibraryUtils.JDK_ANNOTATIONS_SUPPORTED) {
             registerBeanDefinitionParser(
                 AnnotationBasedValidatorBeanDefinitionParser.ELEMENT_NAME,
                 new AnnotationBasedValidatorBeanDefinitionParser()

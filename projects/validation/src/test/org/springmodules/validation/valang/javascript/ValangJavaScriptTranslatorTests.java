@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springmodules.validation.valang.javascript;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ import org.springmodules.validation.valang.parser.ValangParser;
 
 /**
  * Tests for {@link ValangJavaScriptTranslator}
- * 
+ *
  * @author Oliver Hutchison
  */
 public class ValangJavaScriptTranslatorTests extends TestCase {
@@ -51,8 +52,8 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
         scope = cx.initStandardObjects();
         cx.evaluateReader(scope, ValangJavaScriptTranslator.getCodebaseReader(), "valang_codebase.js", 1, null);
         cx.evaluateReader(scope, new InputStreamReader(
-                ValangJavaScriptTranslatorTests.class.getResourceAsStream("test_codebase_overides.js")),
-                "test_codebase_overides.js", 1, null);
+            ValangJavaScriptTranslatorTests.class.getResourceAsStream("test_codebase_overides.js")),
+            "test_codebase_overides.js", 1, null);
     }
 
     protected void tearDown() throws Exception {
@@ -81,10 +82,10 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
             Collection rules = parseRules(text);
             StringWriter code = new StringWriter();
             new ValangJavaScriptTranslator().writeJavaScriptValangValidator(code, "someName", false, rules,
-                    messageSource);
+                messageSource);
             code.write("._validateAndReturnFailedRules()");
             ScriptableObject.putProperty(scope, "formObject", Context.javaToJS(target, scope));
-            NativeArray result = (NativeArray)cx.evaluateString(scope, code.toString(), "code", 1, null);
+            NativeArray result = (NativeArray) cx.evaluateString(scope, code.toString(), "code", 1, null);
             return result.getLength() == 0;
         }
         catch (IOException e) {
@@ -103,7 +104,7 @@ public class ValangJavaScriptTranslatorTests extends TestCase {
 
     public void testTranslator2TwoSimpleRules() {
         String text = "{age : age >= 18 : 'Our customers must be 18 years or older.'}\n"
-                + "{age : age <= 120 : 'We do not do business with the undead.'}";
+            + "{age : age <= 120 : 'We do not do business with the undead.'}";
         assertTrue(validate(new Person(30, "Steven"), text));
         assertFalse(validate(new Person(150, "Steven"), text));
     }

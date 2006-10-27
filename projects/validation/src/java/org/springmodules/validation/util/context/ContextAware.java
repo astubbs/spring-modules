@@ -28,10 +28,10 @@ import org.springframework.web.context.ServletContextAware;
  */
 public interface ContextAware
     extends ApplicationContextAware,
-               BeanFactoryAware,
-               ResourceLoaderAware,
-               MessageSourceAware,
-               ServletContextAware,
-               ApplicationEventPublisherAware {
+    BeanFactoryAware,
+    ResourceLoaderAware,
+    MessageSourceAware,
+    ServletContextAware,
+    ApplicationEventPublisherAware {
 
 }

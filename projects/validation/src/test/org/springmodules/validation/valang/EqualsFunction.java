@@ -25,7 +25,7 @@ import org.springmodules.validation.valang.functions.Function;
  * @author Uri Boness
  */
 public class EqualsFunction extends AbstractInitializableFunction {
-    
+
     protected void validateArguments(Function[] arguments) {
         Assert.isTrue(arguments.length == 2, "EqualsFunction can only be initialized with two arguments");
     }

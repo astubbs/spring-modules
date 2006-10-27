@@ -45,7 +45,9 @@ public class RangeRuleElementHandler extends AbstractPropertyValidationElementHa
     public static final String DEFAULT_MAX_ERROR_CODE = "range";
 
     private static final String ELEMENT_NAME = "range";
+
     private static final String MIN_ATTR = "min";
+
     private static final String MAX_ATTR = "max";
 
     /**

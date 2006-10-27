@@ -19,17 +19,7 @@ package org.springmodules.validation.bean.conf.loader.annotation;
 import java.util.Date;
 import java.util.List;
 
-import org.springmodules.validation.bean.conf.loader.annotation.handler.CascadeValidation;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.Expression;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.ExpressionScope;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.InThePast;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.Length;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.Min;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.NotBlank;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.NotEmpty;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.NotNull;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.ValidationMethod;
-import org.springmodules.validation.bean.conf.loader.annotation.handler.Validator;
+import org.springmodules.validation.bean.conf.loader.annotation.handler.*;
 
 /**
  * A Bean to test the validation annotations with.
@@ -40,25 +30,32 @@ import org.springmodules.validation.bean.conf.loader.annotation.handler.Validato
 @Expression("father is not null")
 public class Person {
 
-    @NotNull @Length(min = 2, max = 10)
+    @NotNull
+    @Length(min = 2, max = 10)
     private String firstName;
 
-    @NotNull @Length(min = 2, max = 20)
+    @NotNull
+    @Length(min = 2, max = 20)
     private String lastName;
 
-    @NotNull @NotBlank
+    @NotNull
+    @NotBlank
     private String nickname;
 
-    @NotNull @InThePast()
+    @NotNull
+    @InThePast()
     private Date birthday;
 
-    @NotNull @NotEmpty
+    @NotNull
+    @NotEmpty
     private List<Person> friends;
 
-    @NotNull @CascadeValidation
+    @NotNull
+    @CascadeValidation
     private Person father;
 
-    @NotNull @CascadeValidation
+    @NotNull
+    @CascadeValidation
     private Person mother;
 
     private boolean homeless;

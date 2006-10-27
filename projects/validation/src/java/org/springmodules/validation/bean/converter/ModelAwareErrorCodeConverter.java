@@ -27,7 +27,9 @@ import org.springframework.util.ClassUtils;
 public class ModelAwareErrorCodeConverter implements ErrorCodeConverter {
 
     final static String ERROR_CODE_SEPERATOR_PREFIX = "[";
+
     final static String ERROR_CODE_SEPERATOR_SUFFIX = "]";
+
     final static String PROPERTY_SEPERATOR = ".";
 
     private boolean useFullyQualifiedClassName;
@@ -92,7 +94,6 @@ public class ModelAwareErrorCodeConverter implements ErrorCodeConverter {
             .append(ERROR_CODE_SEPERATOR_SUFFIX)
             .toString();
     }
-
 
     //=============================================== Setter/Getter ====================================================
 

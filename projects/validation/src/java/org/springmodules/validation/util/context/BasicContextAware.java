@@ -17,17 +17,10 @@
 package org.springmodules.validation.util.context;
 
 import javax.servlet.ServletContext;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.*;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.context.ServletContextAware;
 
@@ -37,10 +30,15 @@ import org.springframework.web.context.ServletContextAware;
 public class BasicContextAware implements ContextAware {
 
     protected ApplicationContext applicationContext = null;
+
     protected BeanFactory beanFactory = null;
+
     protected ResourceLoader resourceLoader = null;
+
     protected MessageSource messageSource = null;
+
     protected ServletContext servletContext = null;
+
     protected ApplicationEventPublisher applicationEventPublisher = null;
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -81,22 +79,22 @@ public class BasicContextAware implements ContextAware {
             return;
         }
         if (object instanceof BeanFactoryAware) {
-            ((BeanFactoryAware)object).setBeanFactory(beanFactory);
+            ((BeanFactoryAware) object).setBeanFactory(beanFactory);
         }
         if (object instanceof ApplicationContextAware) {
-            ((ApplicationContextAware)object).setApplicationContext(applicationContext);
+            ((ApplicationContextAware) object).setApplicationContext(applicationContext);
         }
         if (object instanceof ResourceLoaderAware) {
-            ((ResourceLoaderAware)object).setResourceLoader(resourceLoader);
+            ((ResourceLoaderAware) object).setResourceLoader(resourceLoader);
         }
         if (object instanceof MessageSourceAware) {
-            ((MessageSourceAware)object).setMessageSource(messageSource);
+            ((MessageSourceAware) object).setMessageSource(messageSource);
         }
         if (object instanceof ApplicationEventPublisherAware) {
-            ((ApplicationEventPublisherAware)object).setApplicationEventPublisher(applicationEventPublisher);
+            ((ApplicationEventPublisherAware) object).setApplicationEventPublisher(applicationEventPublisher);
         }
         if (object instanceof ServletContextAware) {
-            ((ServletContextAware)object).setServletContext(servletContext);
+            ((ServletContextAware) object).setServletContext(servletContext);
         }
     }
 }

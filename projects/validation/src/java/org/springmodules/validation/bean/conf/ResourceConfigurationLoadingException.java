@@ -38,7 +38,6 @@ public class ResourceConfigurationLoadingException extends RuntimeException {
         this.resource = resource;
     }
 
-
     //=============================================== Setter/Getter ====================================================
 
     public Resource getResource() {

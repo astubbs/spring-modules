@@ -38,7 +38,6 @@ public abstract class AbstractCollectionElementCondition extends AbstractCollect
         this.elementCondition = elementCondition;
     }
 
-
     //=============================================== Setter/Getter ====================================================
 
     /**

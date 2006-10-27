@@ -19,7 +19,7 @@ package org.springmodules.validation.valang.functions;
 
 /**
  * <p>NOT operation on boolean values.
- * 
+ *
  * @author Steven Devijver
  * @since Apr 23, 2005
  */
@@ -31,7 +31,7 @@ public class NotFunction extends AbstractFunction {
     }
 
     protected Object doGetResult(Object target) {
-        return !(((Boolean)getArguments()[0].getResult(target)).booleanValue()) ? Boolean.TRUE : Boolean.FALSE;
+        return !(((Boolean) getArguments()[0].getResult(target)).booleanValue()) ? Boolean.TRUE : Boolean.FALSE;
     }
 
 }

@@ -38,7 +38,7 @@ public class ExpressionClassValidationAnnotationHandler extends AbstractClassVal
     }
 
     protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz) {
-        Expression expression = (Expression)annotation;
+        Expression expression = (Expression) annotation;
         return new ExpressionValidationRule(getConditionExpressionParser(), expression.value());
     }
 

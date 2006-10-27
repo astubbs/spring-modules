@@ -48,9 +48,8 @@ public abstract class AbstractCompoundCondition extends AbstractCondition {
      */
     public AbstractCompoundCondition(Collection conditions) {
         Assert.notNull(conditions, "Compound condition cannot accept null as conditions");
-        this.conditions = (Condition[])conditions.toArray(new Condition[conditions.size()]);
+        this.conditions = (Condition[]) conditions.toArray(new Condition[conditions.size()]);
     }
-
 
     //=============================================== Setter/Getter ====================================================
 

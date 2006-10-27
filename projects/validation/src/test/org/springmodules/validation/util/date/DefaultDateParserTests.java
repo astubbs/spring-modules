@@ -23,7 +23,8 @@ public class DefaultDateParserTests extends TestCase {
         try {
             new DefaultDateParser().parse("2005-04-09 2330:00");
             fail();
-        } catch (DateParseException e) {}
+        } catch (DateParseException e) {
+        }
     }
 
     public void testFormat_yyyyMMdd() throws DateParseException {

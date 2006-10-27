@@ -27,8 +27,8 @@ import org.springmodules.validation.bean.conf.loader.annotation.handler.Property
 /**
  * A registry for all validation annotation handlers.
  *
- * @see {@link AnnotationBeanValidationConfigurationLoader#setHandlerRegistry(ValidationAnnotationHandlerRegistry)}
  * @author Uri Boness
+ * @see {@link AnnotationBeanValidationConfigurationLoader#setHandlerRegistry(ValidationAnnotationHandlerRegistry)}
  */
 public interface ValidationAnnotationHandlerRegistry {
 

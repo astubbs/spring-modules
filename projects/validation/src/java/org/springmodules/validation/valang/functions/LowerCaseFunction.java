@@ -19,7 +19,7 @@ package org.springmodules.validation.valang.functions;
 
 /**
  * <p>Converts a string to lower case.
- * 
+ *
  * @author Steven Devijver
  * @since Apr 23, 2005
  */

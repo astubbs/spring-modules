@@ -31,14 +31,14 @@ public abstract class AbstractCompoundConditionTests extends TestCase {
 
     public void testConstructor_WithNull() throws Exception {
         try {
-            createCondition((Condition[])null);
+            createCondition((Condition[]) null);
             fail("An IllegalArgumentException must be thrown if the AndCondition is initialized with null");
         } catch (IllegalArgumentException iae) {
             // expected
         }
 
         try {
-            createCondition((Collection)null);
+            createCondition((Collection) null);
             fail("An IllegalArgumentException must be thrown if the AndCondition is initialized with null");
         } catch (IllegalArgumentException iae) {
             // expected

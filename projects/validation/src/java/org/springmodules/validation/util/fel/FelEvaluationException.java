@@ -37,7 +37,7 @@ public class FelEvaluationException extends FelException {
      * and nested exception.
      *
      * @param msg the detail message
-     * @param ex  the nested exception
+     * @param ex the nested exception
      */
     public FelEvaluationException(String msg, Throwable ex) {
         super(msg, ex);

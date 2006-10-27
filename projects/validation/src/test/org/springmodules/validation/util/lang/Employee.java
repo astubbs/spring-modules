@@ -8,5 +8,5 @@ public class Employee extends Person {
     public String getType() {
         return "employee";
     }
-    
+
 }

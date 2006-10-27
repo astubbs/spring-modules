@@ -49,12 +49,12 @@ public class DateInFutureRuleElementHandler extends AbstractPropertyValidationEl
      */
     public boolean supports(Element element, Class clazz, PropertyDescriptor descriptor) {
         return super.supports(element, clazz, descriptor)
-               &&
-               (
-                   Date.class.isAssignableFrom(descriptor.getPropertyType())
-                   ||
-                   Calendar.class.isAssignableFrom(descriptor.getPropertyType())
-               );
+            &&
+            (
+                Date.class.isAssignableFrom(descriptor.getPropertyType())
+                    ||
+                    Calendar.class.isAssignableFrom(descriptor.getPropertyType())
+            );
     }
 
     protected AbstractValidationRule createValidationRule(Element element) {

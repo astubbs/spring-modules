@@ -48,7 +48,7 @@ public class SimpleBeanValidationConfigurationLoaderTests extends TestCase {
 
     public void testLoadConfiguration_WithRegisteredClass() throws Exception {
         MockControl configControl = MockControl.createControl(BeanValidationConfiguration.class);
-        BeanValidationConfiguration config = (BeanValidationConfiguration)configControl.getMock();
+        BeanValidationConfiguration config = (BeanValidationConfiguration) configControl.getMock();
         loader.setClassValidation(Object.class, config);
         assertEquals(config, loader.loadConfiguration(Object.class));
     }

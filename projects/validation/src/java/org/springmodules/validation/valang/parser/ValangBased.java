@@ -39,7 +39,7 @@ public interface ValangBased extends ContextAware {
      * Sets custom functions that should be registered with the used {@link ValangParser}.
      *
      * @param functionByName the custom functions where the key is the function name and the value is the function
-     *        class FQN.
+     * class FQN.
      */
     void setCustomFunctions(Map functionByName);
 
@@ -47,7 +47,7 @@ public interface ValangBased extends ContextAware {
      * Sets the date parser that should be registered with the used {@link ValangParser}.
      *
      * @param parserByRegexp the date parsers where the key is the regexp associated with the parser and the value
-     *        is the parser class FQN.
+     * is the parser class FQN.
      */
     void setDateParsers(Map parserByRegexp);
 

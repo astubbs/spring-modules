@@ -2,12 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:vld="http://www.springmodules.org/validation/bean/validator"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                        http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                        http://www.springmodules.org/validation/bean/validator http://www.springmodules.org/validation/bean/validator-2.0.xsd">
 
     <vld:xml-based-validator id="validator">
         <vld:element-handlers>
-            <vld:handler class="org.springmodules.validation.bean.conf.namespace.IsFirstLetterCapitalizedPropertyElementHandler"/>
+            <vld:handler
+                class="org.springmodules.validation.bean.conf.namespace.IsFirstLetterCapitalizedPropertyElementHandler"/>
         </vld:element-handlers>
         <vld:resource location="classpath:org/springmodules/validation/bean/conf/namespace/Person.vld.xml"/>
     </vld:xml-based-validator>

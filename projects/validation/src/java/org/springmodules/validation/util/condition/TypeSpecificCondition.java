@@ -32,7 +32,7 @@ public abstract class TypeSpecificCondition extends AbstractCondition {
      * @param type The object type this condition supports.
      */
     public TypeSpecificCondition(Class type) {
-        this(new Class[] { type });
+        this(new Class[]{type});
     }
 
     /**
@@ -55,7 +55,7 @@ public abstract class TypeSpecificCondition extends AbstractCondition {
 
         boolean foundMatchingType = false;
 
-        for (int i=0; i<types.length; i++) {
+        for (int i = 0; i < types.length; i++) {
             if (types[i].isAssignableFrom(object.getClass())) {
                 foundMatchingType = true;
                 break;
@@ -65,7 +65,7 @@ public abstract class TypeSpecificCondition extends AbstractCondition {
         if (!foundMatchingType) {
             StringBuffer message = new StringBuffer(getClass().getName());
             message.append("can only validation values of the following types: ");
-            for (int j=0; j<types.length; j++) {
+            for (int j = 0; j < types.length; j++) {
                 if (j != 0) {
                     message.append(", ");
                 }

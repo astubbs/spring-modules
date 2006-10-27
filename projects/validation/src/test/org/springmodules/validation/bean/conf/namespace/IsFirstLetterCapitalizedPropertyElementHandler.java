@@ -40,7 +40,7 @@ public class IsFirstLetterCapitalizedPropertyElementHandler implements PropertyV
     public void handle(Element element, String propertyName, MutableBeanValidationConfiguration configuration) {
         Condition cond = new AbstractCondition() {
             public boolean doCheck(Object object) {
-                String text = (String)object;
+                String text = (String) object;
                 if (text.length() == 0) {
                     return false;
                 }

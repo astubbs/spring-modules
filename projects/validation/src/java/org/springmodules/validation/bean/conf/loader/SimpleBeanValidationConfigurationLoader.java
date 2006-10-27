@@ -22,9 +22,9 @@ import java.util.Map;
 import org.springmodules.validation.bean.conf.BeanValidationConfiguration;
 
 /**
- * A simple implementation of {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader} that enables registration of bean validation
+ * A simple implementation of {@link BeanValidationConfigurationLoader} that enables registration of bean validation
  * configuration with classes.
- *
+ * <p/>
  * This class can be used on its own or can be extended and used as configuration cache.
  *
  * @author Uri Boness
@@ -58,7 +58,7 @@ public class SimpleBeanValidationConfigurationLoader implements BeanValidationCo
         while (clazz != null && !configurationByClass.containsKey(clazz)) {
             clazz = clazz.getSuperclass();
         }
-        return (clazz != null)? (BeanValidationConfiguration)configurationByClass.get(clazz) : null;
+        return (clazz != null) ? (BeanValidationConfiguration) configurationByClass.get(clazz) : null;
     }
 
     /**

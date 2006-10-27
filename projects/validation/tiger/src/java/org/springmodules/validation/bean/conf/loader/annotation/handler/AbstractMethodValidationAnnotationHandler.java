@@ -1,3 +1,19 @@
+/*
+ * Copyright 2002-2005 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.springmodules.validation.bean.conf.loader.annotation.handler;
 
 import java.lang.annotation.Annotation;
@@ -22,11 +38,11 @@ import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionPars
  * A parent for all common {@link PropertyValidationAnnotationHandler} implementations that represent validation rules.
  * The following attributes are searched for in the handled annotations:
  * <ul>
- *  <li>{@link #ERROR_CODE_ATTR} - A string indicating the error code for the validation rule</li>
- *  <li>{@link #MESSAGE_ATTR} - A string indicating default error message for the validation rule</li>
- *  <li>{@link #ARGS_ATTR} - A comma-separated string indicating error arguments (may be expressions to be
- *                           resolved against the validated object)</li>
- *  <li>{@link #APPLY_IF_ATTR} - A condition expression that represents the applicability condition</li>
+ * <li>{@link #ERROR_CODE_ATTR} - A string indicating the error code for the validation rule</li>
+ * <li>{@link #MESSAGE_ATTR} - A string indicating default error message for the validation rule</li>
+ * <li>{@link #ARGS_ATTR} - A comma-separated string indicating error arguments (may be expressions to be
+ * resolved against the validated object)</li>
+ * <li>{@link #APPLY_IF_ATTR} - A condition expression that represents the applicability condition</li>
  * </ul>
  *
  * @author Uri Boness
@@ -35,14 +51,19 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
     ConditionExpressionBased, FunctionExpressionBased {
 
     public final static String APPLY_IF_ATTR = "applyIf";
+
     public final static String ERROR_CODE_ATTR = "errorCode";
+
     public final static String MESSAGE_ATTR = "message";
+
     public final static String ARGS_ATTR = "args";
+
     public final static String FOR_PROPERTY_ATTR = "forProperty";
 
     private Class[] supportedAnnotationTypes;
 
     private ConditionExpressionParser conditionExpressionParser;
+
     private FunctionExpressionParser functionExpressionParser;
 
     /**
@@ -102,7 +123,7 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
         }
 
         String propertyName = extractPropertyName(annotation);
-        if (StringUtils.hasText(propertyName))  {
+        if (StringUtils.hasText(propertyName)) {
             validatedPropertyExists(clazz, propertyName);
             configuration.addPropertyRule(propertyName, rule);
         } else {
@@ -118,7 +139,7 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
      * @return The error code for the represented validation rule.
      */
     protected String extractErrorCode(Annotation annotation) {
-        return (String)extractAnnotationAttribute(annotation, ERROR_CODE_ATTR);
+        return (String) extractAnnotationAttribute(annotation, ERROR_CODE_ATTR);
     }
 
     /**
@@ -129,7 +150,7 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
      * @return The default message for the represented validation rule.
      */
     protected String extractDefaultMessage(Annotation annotation) {
-        return (String)extractAnnotationAttribute(annotation, MESSAGE_ATTR);
+        return (String) extractAnnotationAttribute(annotation, MESSAGE_ATTR);
     }
 
     /**
@@ -140,7 +161,7 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
      * @return The {@link org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver} for the represented validation rule.
      */
     protected ErrorArgumentsResolver extractArgumentsResolver(Annotation annotation) {
-        String argsAsString = (String)extractAnnotationAttribute(annotation, ARGS_ATTR);
+        String argsAsString = (String) extractAnnotationAttribute(annotation, ARGS_ATTR);
         argsAsString = (argsAsString == null) ? "" : argsAsString;
         String[] argsExpressions = StringUtils.commaDelimitedListToStringArray(argsAsString);
         if (argsExpressions.length == 0) {
@@ -159,7 +180,7 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
      * @return The applicability condition for the represented validation rule.
      */
     protected Condition extractApplicabilityContidion(Annotation annotation) {
-        String expression = (String)extractAnnotationAttribute(annotation, APPLY_IF_ATTR);
+        String expression = (String) extractAnnotationAttribute(annotation, APPLY_IF_ATTR);
         return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : null;
     }
 
@@ -170,7 +191,7 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
      * @return The property the validation method is associated wit
      */
     protected String extractPropertyName(Annotation annotation) {
-        return (String)extractAnnotationAttribute(annotation, FOR_PROPERTY_ATTR);
+        return (String) extractAnnotationAttribute(annotation, FOR_PROPERTY_ATTR);
     }
 
     /**
@@ -181,7 +202,6 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
      * @return The created validation rule.
      */
     protected abstract AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, Method method);
-
 
     //=============================================== Setter/Getter ====================================================
 
@@ -217,7 +237,6 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
         return functionExpressionParser;
     }
 
-
     //=============================================== Helper Methods ===================================================
 
     /**
@@ -233,10 +252,10 @@ public abstract class AbstractMethodValidationAnnotationHandler implements Metho
 
     protected Object extractAnnotationAttribute(Annotation annotation, String attributeName) {
         try {
-            return annotation.getClass().getMethod(attributeName, new Class[0]).invoke(annotation, new Object[0]);
+            return annotation.getClass().getMethod(attributeName).invoke(annotation);
         } catch (Exception e) {
             throw new IllegalArgumentException("Expecting attribute '" + attributeName +
-                "' in annotation '" + annotation.getClass().getName());
+                "' in annotation '" + annotation.getClass().getName() + "'", e);
         }
     }
 

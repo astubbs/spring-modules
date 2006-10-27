@@ -43,6 +43,7 @@ public class ValangFunctionExpressionParser extends SimpleValangBased implements
     protected class ValangFunction implements Function {
 
         private String valangExpression;
+
         private org.springmodules.validation.valang.functions.Function valangFunction;
 
         public ValangFunction(String valangExpression) {

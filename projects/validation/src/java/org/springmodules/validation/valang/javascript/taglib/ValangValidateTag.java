@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springmodules.validation.valang.javascript.taglib;
 
 import java.io.IOException;
@@ -24,7 +25,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTag;
-
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.mvc.BaseCommandController;
@@ -35,34 +35,34 @@ import org.springmodules.validation.valang.parser.ParseException;
 import org.springmodules.validation.valang.parser.ValangParser;
 
 /**
- * Generates JavaScript validation code from a set valang validation 
+ * Generates JavaScript validation code from a set valang validation
  * rules. The generated code requires a set of JavaScript objects to
  * have been placed into the page either by using the {@link ValangCodebaseTag}
- * or by directly including the code from the file "valang_codebase.js" 
+ * or by directly including the code from the file "valang_codebase.js"
  * located in the org.springmodules.validation.valang.javascript package.
- * 
- * <p>It is expected that the validation rules to be translated are placed 
+ * <p/>
+ * <p>It is expected that the validation rules to be translated are placed
  * into the model using one of the methods from {@link ValangJavaScriptTagUtils}
  * or using the Spring MVC interceptor {@link ValangRulesExportInterceptor},
  * however it is not required that rules be placed into the model to use this
  * tag.
- * 
- * <p>If the tag has any body content this will be interpreted as a set of 
- * additional valang rules that will be appended to the set of rules located 
- * for the provided command name; or if no command name is specified the 
+ * <p/>
+ * <p>If the tag has any body content this will be interpreted as a set of
+ * additional valang rules that will be appended to the set of rules located
+ * for the provided command name; or if no command name is specified the
  * translated body content will be used to provide all rules.
- * 
- * <p>NOTE: this tag must be placed inside the HTML form tags that the validation 
+ * <p/>
+ * <p>NOTE: this tag must be placed inside the HTML form tags that the validation
  * rules are expected to apply too; failure to do this will result in a JavaScript
  * exception being thrown when the page loads.
- * 
+ *
  * @author Oliver Hutchison
  */
 public class ValangValidateTag extends RequestContextAwareTag implements BodyTag {
 
     /**
-     * Prefix which, when appended with a command name, is used to identify valang 
-     * validation rules placed into the model. 
+     * Prefix which, when appended with a command name, is used to identify valang
+     * validation rules placed into the model.
      */
     public static final String VALANG_RULES_KEY_PREFIX = "ValangRules.";
 
@@ -73,10 +73,11 @@ public class ValangValidateTag extends RequestContextAwareTag implements BodyTag
     private BodyContent bodyContent;
 
     /**
-     * Sets the name of the command which will be validated by the generated JavaScript. 
-     * If this value is specified it is expected that a collection of valang rules for 
-     * the specified command name have been placed in the model using one of the 
+     * Sets the name of the command which will be validated by the generated JavaScript.
+     * If this value is specified it is expected that a collection of valang rules for
+     * the specified command name have been placed in the model using one of the
      * methods from {@link ValangJavaScriptTagUtils}.
+     *
      * @see ValangJavaScriptTagUtils#addValangRulesToModel(BaseCommandController, Map)
      * @see ValangJavaScriptTagUtils#addValangRulesToModel(String, ValangValidator, Map)
      */
@@ -118,7 +119,7 @@ public class ValangValidateTag extends RequestContextAwareTag implements BodyTag
             out.write(commandName + "ValangValidator");
             out.write("\">");
             translator.writeJavaScriptValangValidator(out, commandName, true, rules, new MessageSourceAccessor(
-                    getRequestContext().getWebApplicationContext(), getRequestContext().getLocale()));
+                getRequestContext().getWebApplicationContext(), getRequestContext().getLocale()));
             out.write("</script>");
             return EVAL_PAGE;
         }
@@ -137,7 +138,7 @@ public class ValangValidateTag extends RequestContextAwareTag implements BodyTag
     }
 
     protected Collection getRulesForCommand() {
-        Collection rules = (Collection)pageContext.findAttribute(VALANG_RULES_KEY_PREFIX + commandName);
+        Collection rules = (Collection) pageContext.findAttribute(VALANG_RULES_KEY_PREFIX + commandName);
         Assert.notNull(rules, "No valang rules for command '" + commandName + "' were found in the page context.");
         return rules;
     }

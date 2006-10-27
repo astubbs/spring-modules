@@ -16,22 +16,19 @@
 
 package org.springmodules.validation.bean.conf.loader.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * A marker type annotation that indicates whether a class can be validated or not. The
  * {@link AnnotationBeanValidationConfigurationLoader} can be configured to decide whether a class is
  * supported by this annotation.
  *
- * @see AnnotationBeanValidationConfigurationLoader#setCheckValidatableAnnotation(boolean)
  * @author Uri Boness
+ * @see AnnotationBeanValidationConfigurationLoader#setCheckValidatableAnnotation(boolean)
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Validatable {
+
 }

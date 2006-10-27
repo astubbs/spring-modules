@@ -9,6 +9,7 @@ import org.springmodules.validation.valang.ValangException;
 public abstract class AbstractInitializableFunction implements Function {
 
     private Function[] arguments;
+
     private FunctionTemplate functionTemplate;
 
     protected AbstractInitializableFunction() {
@@ -48,13 +49,11 @@ public abstract class AbstractInitializableFunction implements Function {
 
     protected abstract Object getResult(Object target, Function[] arguments);
 
-
     //=============================================== Setter/Getter ====================================================
 
     public Function[] getArguments() {
         return arguments;
     }
-
 
     //=============================================== Helper Methods ===================================================
 

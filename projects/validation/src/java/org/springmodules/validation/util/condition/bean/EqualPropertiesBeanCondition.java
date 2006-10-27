@@ -39,7 +39,7 @@ public class EqualPropertiesBeanCondition extends AbstractBeanCondition {
     public EqualPropertiesBeanCondition(String[] propertyNames) {
         Assert.notNull(propertyNames, getClass().getName() + " cannot be initialized with null array of property names");
         Assert.notEmpty(propertyNames, getClass().getName() + " cannot be initialized with less then 2 property names");
-        for (int i=0; i<propertyNames.length; i++) {
+        for (int i = 0; i < propertyNames.length; i++) {
             Assert.notNull(propertyNames[i], getClass().getName() + " cannot be initialized with null property name");
         }
         this.propertyNames = propertyNames;
@@ -52,7 +52,7 @@ public class EqualPropertiesBeanCondition extends AbstractBeanCondition {
      * @param property2 The name of the second property.
      */
     public EqualPropertiesBeanCondition(String property1, String property2) {
-        this(new String[] { property1, property2 });
+        this(new String[]{property1, property2});
     }
 
     /**
@@ -64,7 +64,7 @@ public class EqualPropertiesBeanCondition extends AbstractBeanCondition {
      */
     protected boolean checkBean(BeanWrapper bean) {
         Object value = bean.getPropertyValue(propertyNames[0]);
-        for (int i=1; i<propertyNames.length; i++) {
+        for (int i = 1; i < propertyNames.length; i++) {
             Object currentValue = bean.getPropertyValue(propertyNames[i]);
             if (!ObjectUtils.nullSafeEquals(value, currentValue)) {
                 return false;

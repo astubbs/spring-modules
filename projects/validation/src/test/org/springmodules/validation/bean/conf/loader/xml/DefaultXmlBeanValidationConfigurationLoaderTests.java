@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import junit.framework.TestCase;
 import org.easymock.ArgumentsMatcher;
 import org.easymock.MockControl;
@@ -34,44 +33,49 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     private DefaultXmlBeanValidationConfigurationLoader loader;
 
     private MockControl registryControl;
+
     private ValidationRuleElementHandlerRegistry registry;
 
     private MockControl configurationControl;
+
     private MutableBeanValidationConfiguration configuration;
 
     private MockControl propertyHandlerControl;
+
     private PropertyValidationElementHandler propertyHandler;
 
     private MockControl classHandlerControl;
+
     private ClassValidationElementHandler classHandler;
 
     private MockControl ruleControl;
+
     private ValidationRule rule;
 
     protected void setUp() throws Exception {
 
         registryControl = MockControl.createControl(ValidationRuleElementHandlerRegistry.class);
-        registry = (ValidationRuleElementHandlerRegistry)registryControl.getMock();
+        registry = (ValidationRuleElementHandlerRegistry) registryControl.getMock();
 
         configurationControl = MockControl.createControl(MutableBeanValidationConfiguration.class);
-        configuration = (MutableBeanValidationConfiguration)configurationControl.getMock();
+        configuration = (MutableBeanValidationConfiguration) configurationControl.getMock();
 
         ruleControl = MockControl.createControl(ValidationRule.class);
-        rule = (ValidationRule)ruleControl.getMock();
+        rule = (ValidationRule) ruleControl.getMock();
 
         propertyHandlerControl = MockControl.createControl(PropertyValidationElementHandler.class);
-        propertyHandler = (PropertyValidationElementHandler)propertyHandlerControl.getMock();
+        propertyHandler = (PropertyValidationElementHandler) propertyHandlerControl.getMock();
 
         classHandlerControl = MockControl.createControl(ClassValidationElementHandler.class);
-        classHandler = (ClassValidationElementHandler)classHandlerControl.getMock();
+        classHandler = (ClassValidationElementHandler) classHandlerControl.getMock();
 
         loader = new DefaultXmlBeanValidationConfigurationLoader(registry);
     }
 
     public void testHandlePropertyDefinition_WithNoRulesAndNoCascading() throws Exception {
         Element propertyDefinition = element("property",
-            new String[] { "name" },
-            new String[] { "name" }
+            new String[]{"name"},
+            new String[]{"name"}
         );
 
         replay();
@@ -81,8 +85,8 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
 
     public void testHandlePropertyDefinition_WithNoRulesButWithCascading() throws Exception {
         Element propertyDefinition = element("property",
-            new String[] { "name", "cascade" },
-            new String[] { "name", "true" }
+            new String[]{"name", "cascade"},
+            new String[]{"name", "true"}
         );
 
         configuration.addCascadeValidation(new CascadeValidation("name"));
@@ -95,8 +99,8 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     public void testHandlePropertyDefinition_WithARuleAndCascading() throws Exception {
         Document document = document();
         Element propertyDefinition = element(document, "property",
-            new String[] { "name", "cascade" },
-            new String[] { "name", "true" }
+            new String[]{"name", "cascade"},
+            new String[]{"name", "true"}
         );
         Element ruleDefinition = element(document, "rule");
         propertyDefinition.appendChild(ruleDefinition);
@@ -122,8 +126,8 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     public void testHandlePropertyDefinition_WithoutAppropriateHandler() throws Exception {
         Document document = document();
         Element propertyDefinition = element(document, "property",
-            new String[] { "name", "cascade" },
-            new String[] { "name", "true" }
+            new String[]{"name", "cascade"},
+            new String[]{"name", "true"}
         );
         Element ruleDefinition = element(document, "rule");
         propertyDefinition.appendChild(ruleDefinition);
@@ -191,8 +195,8 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     public void testHandleMethodDefinition() throws Exception {
         Document document = document();
         Element methodElement = element(document, "method",
-            new String[] {"name", "code", "message", "args", "apply-if"},
-            new String[] {"validate", "thecode", "themessage", "a, b, c", "true"}
+            new String[]{"name", "code", "message", "args", "apply-if"},
+            new String[]{"validate", "thecode", "themessage", "a, b, c", "true"}
         );
 
         loader = new DefaultXmlBeanValidationConfigurationLoader() {
@@ -221,8 +225,8 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     public void testHandleMethodDefinition_WithProperty() throws Exception {
         Document document = document();
         Element methodElement = element(document, "method",
-            new String[] {"name",       "for-property", "code",     "message",      "args",     "apply-if"},
-            new String[] {"validate",   "name",         "thecode",  "themessage",    "a, b, c", "true"}
+            new String[]{"name", "for-property", "code", "message", "args", "apply-if"},
+            new String[]{"validate", "name", "thecode", "themessage", "a, b, c", "true"}
         );
 
         // a hack to ensure the createMethodValidationRule method
@@ -256,6 +260,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
             public boolean matches(Object[] objects, Object[] objects1) {
                 return objects.length == 2 && objects[0].equals(objects1[0]);
             }
+
             public String toString(Object[] objects) {
                 return "";
             }
@@ -335,12 +340,11 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
             throw new IllegalArgumentException("attribute names and attribute values have different sizes");
         }
         Element element = doc.createElement(name);
-        for (int i=0; i<attrNames.length; i++) {
+        for (int i = 0; i < attrNames.length; i++) {
             element.setAttribute(attrNames[i], attrValues[i]);
         }
         return element;
     }
-
 
     //=============================================== Inner Classes ===================================================
 

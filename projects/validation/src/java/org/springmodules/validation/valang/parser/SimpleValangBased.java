@@ -30,6 +30,7 @@ import org.springmodules.validation.valang.functions.FunctionDefinition;
 public class SimpleValangBased extends BasicContextAware implements ValangBased {
 
     private Map customFunctions;
+
     private Map dateParsers;
 
     public SimpleValangBased() {
@@ -81,8 +82,8 @@ public class SimpleValangBased extends BasicContextAware implements ValangBased 
     public void initValang(Object object) {
         super.initLifecycle(object);
         if (object instanceof ValangBased) {
-            ((ValangBased)object).setCustomFunctions(customFunctions);
-            ((ValangBased)object).setDateParsers(dateParsers);
+            ((ValangBased) object).setCustomFunctions(customFunctions);
+            ((ValangBased) object).setDateParsers(dateParsers);
         }
     }
 
@@ -107,8 +108,8 @@ public class SimpleValangBased extends BasicContextAware implements ValangBased 
             return functionByName;
         }
         String[] names = applicationContext.getBeanNamesForType(FunctionDefinition.class);
-        for (int i=0; i<names.length; i++) {
-            FunctionDefinition def = (FunctionDefinition)applicationContext.getBean(names[i]);
+        for (int i = 0; i < names.length; i++) {
+            FunctionDefinition def = (FunctionDefinition) applicationContext.getBean(names[i]);
             functionByName.put(def.getName(), def.getClassName());
         }
         return functionByName;

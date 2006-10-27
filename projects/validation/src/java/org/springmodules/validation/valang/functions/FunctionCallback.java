@@ -19,17 +19,17 @@ package org.springmodules.validation.valang.functions;
 /**
  * <p>The FunctionCallback interface should be implemented by functions
  * that want to delegate exception reporting to a helper class.
- * 
+ *
  * @author Steven Devijver
  * @since Jun 25, 2005
  */
 public interface FunctionCallback {
 
-	/**
-	 * <p>Callback method execute by helper classes.
-	 * 
-	 * @param target the target object
-	 * @return the result of the execution
-	 */
-	public Object execute(Object target) throws Exception;
+    /**
+     * <p>Callback method execute by helper classes.
+     *
+     * @param target the target object
+     * @return the result of the execution
+     */
+    public Object execute(Object target) throws Exception;
 }

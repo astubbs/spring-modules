@@ -47,7 +47,7 @@ public class SomeCollectionCondition extends AbstractCollectionElementCondition 
      *         <code>false</code> otherwise.
      */
     protected boolean checkArray(Object array) {
-        for (int i=0; i< Array.getLength(array); i++) {
+        for (int i = 0; i < Array.getLength(array); i++) {
             if (getElementCondition().check(Array.get(array, i))) {
                 return true;
             }

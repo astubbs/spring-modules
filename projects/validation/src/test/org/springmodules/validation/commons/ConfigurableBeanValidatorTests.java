@@ -13,12 +13,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.validation.BindException;
 
 /**
- *
  * @author robh
  */
 public class ConfigurableBeanValidatorTests extends TestCase {
 
-     public void testSupports() {
+    public void testSupports() {
         ConfigurableBeanValidator validator = getValidator("fooBean");
 
         assertTrue("Should support FooBean", validator.supports(FooBean.class));
@@ -35,7 +34,7 @@ public class ConfigurableBeanValidatorTests extends TestCase {
         String formName = "myForm";
 
         MockControl ctl = MockControl.createControl(ValidatorFactory.class);
-        ValidatorFactory factory = (ValidatorFactory)ctl.getMock();
+        ValidatorFactory factory = (ValidatorFactory) ctl.getMock();
 
         // expect call to get validator with args "fooBean", bean and null
         factory.getValidator(formName, bean, null);
@@ -51,7 +50,7 @@ public class ConfigurableBeanValidatorTests extends TestCase {
         ctl.verify();
     }
 
-     public void testValidate_WithMappedProperty_Failure() throws Exception {
+    public void testValidate_WithMappedProperty_Failure() throws Exception {
         FooBean bean = new FooBean();
         Map attributes = new HashMap();
         bean.setAttributes(attributes);

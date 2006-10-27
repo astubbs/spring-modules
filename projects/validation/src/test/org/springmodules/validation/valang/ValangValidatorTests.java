@@ -29,7 +29,7 @@ public class ValangValidatorTests extends TestCase {
         person.setLifeCycleBean(lifeCycleBean);
         person.setFirstName("FN");
 
-        Validator validator = (Validator)appCtx.getBean("testCustomFunctions");
+        Validator validator = (Validator) appCtx.getBean("testCustomFunctions");
         BindException errors = new BindException(person, "person");
         validator.validate(person, errors);
 
@@ -49,7 +49,7 @@ public class ValangValidatorTests extends TestCase {
         person.setLifeCycleBean(lifeCycleBean);
         person.setFirstName("FN");
 
-        Validator validator = (Validator)appCtx.getBean("testCustomFunctionsFromApplicationContext");
+        Validator validator = (Validator) appCtx.getBean("testCustomFunctionsFromApplicationContext");
         BindException errors = new BindException(person, "person");
         validator.validate(person, errors);
 
@@ -68,7 +68,7 @@ public class ValangValidatorTests extends TestCase {
         person.setFirstName("FN");
         person.setFirstName("LN");
 
-        Validator validator = (Validator)appCtx.getBean("testFunctionFromApplicationContext");
+        Validator validator = (Validator) appCtx.getBean("testFunctionFromApplicationContext");
         BindException errors = new BindException(person, "person");
         validator.validate(person, errors);
 
@@ -76,7 +76,7 @@ public class ValangValidatorTests extends TestCase {
     }
 
     public void testPersonValidator() {
-        Validator validator = (Validator)appCtx.getBean("personValidator", Validator.class);
+        Validator validator = (Validator) appCtx.getBean("personValidator", Validator.class);
         Person person = new Person();
         Map map = new HashMap();
         map.put("name", "Steven");
@@ -104,13 +104,14 @@ public class ValangValidatorTests extends TestCase {
         assertFalse(errors.hasErrors());
     }
 
-
     //================================================ Inner Classes ===================================================
 
     private class Person {
 
         private LifeCycleBean lifeCycleBean;
+
         private String firstName;
+
         private String lastName;
 
         private Map form;

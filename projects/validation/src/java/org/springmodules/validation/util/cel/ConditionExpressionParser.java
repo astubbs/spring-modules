@@ -21,9 +21,8 @@ import org.springmodules.validation.util.condition.Condition;
 /**
  * Represents a parser that can parse a condition expression and return the appropriate condition.
  *
- * @see Condition
- *
  * @author Uri Boness
+ * @see Condition
  */
 public interface ConditionExpressionParser {
 

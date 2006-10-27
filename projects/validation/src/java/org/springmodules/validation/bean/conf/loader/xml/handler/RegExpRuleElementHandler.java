@@ -31,6 +31,7 @@ import org.w3c.dom.Element;
 public class RegExpRuleElementHandler extends AbstractPropertyValidationElementHandler {
 
     private static final String ELEMENT_NAME = "regexp";
+
     private static final String EXPRESSION_ATTR = "expression";
 
     /**

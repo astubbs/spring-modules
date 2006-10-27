@@ -56,7 +56,7 @@ public class EqualPropertiesBeanConditionTests extends TestCase {
     }
 
     public void testCheck_SuccessWithArray() throws Exception {
-        Condition condition = new EqualPropertiesBeanCondition(new String[] { "name", "nickname" });
+        Condition condition = new EqualPropertiesBeanCondition(new String[]{"name", "nickname"});
         assertTrue(condition.check(new Person("boness", "boness", 88)));
     }
 
@@ -66,12 +66,12 @@ public class EqualPropertiesBeanConditionTests extends TestCase {
     }
 
     public void testCheck_FailureWithArray() throws Exception {
-        Condition condition = new EqualPropertiesBeanCondition(new String[] { "name", "nickname" });
+        Condition condition = new EqualPropertiesBeanCondition(new String[]{"name", "nickname"});
         assertFalse(condition.check(new Person("uri", "boness", 88)));
     }
 
     public void testCheck_WithMissingPropertyInBean() throws Exception {
-        Condition condition = new EqualPropertiesBeanCondition(new String[] { "name", "missingProperty" });
+        Condition condition = new EqualPropertiesBeanCondition(new String[]{"name", "missingProperty"});
         try {
             condition.check(new Person("uri", "boness", 88));
             fail("An InvalidPropertyException if the checked bean doesn't have one of the compared properties");
@@ -81,12 +81,12 @@ public class EqualPropertiesBeanConditionTests extends TestCase {
     }
 
     public void testCheck_SuccessWithNestedProperties() throws Exception {
-        Condition condition = new EqualPropertiesBeanCondition(new String[] { "name", "address.street" });
+        Condition condition = new EqualPropertiesBeanCondition(new String[]{"name", "address.street"});
         assertTrue(condition.check(new Person("uri", "boness", 88, new Address("uri"))));
     }
 
     public void testCheck_WithNullInNestedPropertyPath() throws Exception {
-        Condition condition = new EqualPropertiesBeanCondition(new String[] { "name", "address.street" });
+        Condition condition = new EqualPropertiesBeanCondition(new String[]{"name", "address.street"});
         try {
             condition.check(new Person("uri", "boness", 88)); // the address property here is null
             fail("An InvalidPropertyException if the checked bean holds null in the nested property path");

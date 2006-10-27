@@ -51,11 +51,11 @@ public class ModelAwareMessageCodesResolverTests extends TestCase {
     private static class MessageCodesResolverStub implements MessageCodesResolver {
 
         public String[] resolveMessageCodes(String errorCode, String objectName) {
-            return new String[] { "dummy_code_1" };
+            return new String[]{"dummy_code_1"};
         }
 
         public String[] resolveMessageCodes(String errorCode, String objectName, String field, Class fieldType) {
-            return new String[] { "dummy_code_2" };
+            return new String[]{"dummy_code_2"};
         }
     }
 }

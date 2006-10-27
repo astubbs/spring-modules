@@ -27,16 +27,20 @@ import org.springmodules.validation.valang.functions.Function;
 /**
  * <p>AbstractPropertyPredicate deals with extracting values from properties and as such
  * is a utilty base class.
- * 
+ *
  * @author Steven Devijver
  * @since 23-04-2005
  */
 public abstract class AbstractPropertyPredicate implements Predicate {
 
     private Function leftFunction = null;
+
     private Operator operator = null;
+
     private Function rightFunction = null;
+
     private int line = 0;
+
     private int column = 0;
 
     public AbstractPropertyPredicate(Function leftFunction, Operator operator, Function rightFunction, int line, int column) {
@@ -96,13 +100,13 @@ public abstract class AbstractPropertyPredicate implements Predicate {
 
     protected final Iterator getIterator(Object literal) {
         if (literal instanceof Collection) {
-            return ((Collection)literal).iterator();
+            return ((Collection) literal).iterator();
         } else if (literal instanceof Iterator) {
-            return (Iterator)literal;
+            return (Iterator) literal;
         } else if (literal instanceof Enumeration) {
-            return IteratorUtils.asIterator((Enumeration)literal);
+            return IteratorUtils.asIterator((Enumeration) literal);
         } else if (literal instanceof Object[]) {
-            return IteratorUtils.arrayIterator((Object[])literal);
+            return IteratorUtils.arrayIterator((Object[]) literal);
         } else {
             throw new ClassCastException("Could not convert literal value to iterator!");
         }
@@ -110,13 +114,13 @@ public abstract class AbstractPropertyPredicate implements Predicate {
 
     protected final Object[] getArray(Object literal) {
         if (literal instanceof Collection) {
-            return ((Collection)literal).toArray();
+            return ((Collection) literal).toArray();
         } else if (literal instanceof Iterator) {
-            return IteratorUtils.toArray((Iterator)literal);
+            return IteratorUtils.toArray((Iterator) literal);
         } else if (literal instanceof Enumeration) {
-            return IteratorUtils.toArray(IteratorUtils.asIterator((Enumeration)literal));
+            return IteratorUtils.toArray(IteratorUtils.asIterator((Enumeration) literal));
         } else if (literal instanceof Object[]) {
-            return (Object[])literal;
+            return (Object[]) literal;
         } else {
             throw new ClassCastException("Could not convert literal value to array!");
         }

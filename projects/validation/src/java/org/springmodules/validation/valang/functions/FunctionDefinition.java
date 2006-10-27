@@ -46,7 +46,6 @@ public class FunctionDefinition {
         this.className = className;
     }
 
-
     //=============================================== Setter/Getter ====================================================
 
     public String getName() {

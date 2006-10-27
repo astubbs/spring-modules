@@ -74,7 +74,7 @@ public class AnnotationBeanValidationConfigurationLoader implements BeanValidati
      * to <code>true</code>, only classes annotated with the {@link @Validatable} annoation are supported.
      *
      * @param checkValidatableAnnotation Indicates whether this loader should only support {@link @Validatable}
-     *        annotated classes.
+     * annotated classes.
      */
     public AnnotationBeanValidationConfigurationLoader(boolean checkValidatableAnnotation) {
         this.checkValidatableAnnotation = checkValidatableAnnotation;
@@ -288,10 +288,10 @@ public class AnnotationBeanValidationConfigurationLoader implements BeanValidati
 
     protected void initContext(Object object) throws Exception {
         if (object instanceof ApplicationContextAware) {
-            ((ApplicationContextAware)object).setApplicationContext(applicationContext);
+            ((ApplicationContextAware) object).setApplicationContext(applicationContext);
         }
         if (object instanceof InitializingBean) {
-            ((InitializingBean)object).afterPropertiesSet();
+            ((InitializingBean) object).afterPropertiesSet();
         }
     }
 

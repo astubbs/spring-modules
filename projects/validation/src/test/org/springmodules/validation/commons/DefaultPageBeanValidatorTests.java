@@ -45,7 +45,7 @@ public class DefaultPageBeanValidatorTests extends TestCase {
         validator.validate(bean, errors);
         assertTrue(errors.hasFieldErrors("name"));
         assertEquals(1, errors.getErrorCount());
-        assertEquals("name", ((FieldError)errors.getAllErrors().iterator().next()).getField());
+        assertEquals("name", ((FieldError) errors.getAllErrors().iterator().next()).getField());
 
         errors = new BindException(bean, "pagedFooBean");
         bean.setName("name");
@@ -57,7 +57,7 @@ public class DefaultPageBeanValidatorTests extends TestCase {
         FooBean bean = new FooBean();
 
         MockControl ctl = MockControl.createControl(ValidatorFactory.class);
-        ValidatorFactory factory = (ValidatorFactory)ctl.getMock();
+        ValidatorFactory factory = (ValidatorFactory) ctl.getMock();
 
         // expect call to get validator with args "fooBean", bean and null
         factory.getValidator("fooBean", bean, null);

@@ -36,7 +36,6 @@ import org.springmodules.validation.util.xml.SubElementsIterator;
 import org.w3c.dom.Element;
 
 /**
- *
  * @author Uri Boness
  */
 public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDefinitionParser implements ValidationBeansParserConstants {
@@ -44,12 +43,15 @@ public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDe
     final static String ELEMENT_NAME = "annotation-based-validator";
 
     private final static String ERROR_CODE_CONVERTER_ATTR = "errorConverter";
+
     private final static String CLASS_ATTR = "class";
 
     private final static String ANNOTATION_HANDLERS_ELEMENT = "annotation-handlers";
+
     private final static String HANDLER_ELEMENT = "handler";
 
     private static final String HANDLER_REGISTRY_PREFIX = "__handler_registry_";
+
     private static final String CONFIGURATION_LOADER_PREFIX = "__configuration_loader_";
 
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
@@ -97,8 +99,8 @@ public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDe
         Iterator handlerElements = new SubElementsIterator(functionsElement, VALIDATION_BEANS_NAMESPACE, HANDLER_ELEMENT);
         List propertyHandlers = new ArrayList();
         List classHandlers = new ArrayList();
-        while(handlerElements.hasNext()) {
-            Element handlerElement = (Element)handlerElements.next();
+        while (handlerElements.hasNext()) {
+            Element handlerElement = (Element) handlerElements.next();
             String className = handlerElement.getAttribute(AnnotationBasedValidatorBeanDefinitionParser.CLASS_ATTR);
             Object handler = loadAndInstantiate(className);
             if (PropertyValidationAnnotationHandler.class.isInstance(handler)) {
@@ -118,7 +120,6 @@ public class AnnotationBasedValidatorBeanDefinitionParser extends AbstractBeanDe
             classHandlers.toArray(new ClassValidationAnnotationHandler[classHandlers.size()])
         );
     }
-
 
     //=============================================== Helper Methods ===================================================
 

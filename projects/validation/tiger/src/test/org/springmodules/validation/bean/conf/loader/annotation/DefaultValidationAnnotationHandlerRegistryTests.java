@@ -21,18 +21,20 @@ public class DefaultValidationAnnotationHandlerRegistryTests extends TestCase {
     private DefaultValidationAnnotationHandlerRegistry registry;
 
     private ClassValidationAnnotationHandler classHandler;
+
     private MockControl classHandlerControl;
 
     private PropertyValidationAnnotationHandler propertyHandler;
+
     private MockControl propertyHandlerControl;
 
     protected void setUp() throws Exception {
 
         classHandlerControl = MockControl.createControl(ClassValidationAnnotationHandler.class);
-        classHandler = (ClassValidationAnnotationHandler)classHandlerControl.getMock();
+        classHandler = (ClassValidationAnnotationHandler) classHandlerControl.getMock();
 
         propertyHandlerControl = MockControl.createControl(PropertyValidationAnnotationHandler.class);
-        propertyHandler = (PropertyValidationAnnotationHandler)propertyHandlerControl.getMock();
+        propertyHandler = (PropertyValidationAnnotationHandler) propertyHandlerControl.getMock();
 
         registry = new DefaultValidationAnnotationHandlerRegistry() {
             protected void registerDefaultHandlers() {
@@ -84,7 +86,6 @@ public class DefaultValidationAnnotationHandlerRegistryTests extends TestCase {
 
     }
 
-
     //=============================================== Helper Methods ===================================================
 
     protected Annotation getAnnotation() {
@@ -96,6 +97,7 @@ public class DefaultValidationAnnotationHandlerRegistryTests extends TestCase {
             public boolean supports(Annotation annotation, Class clazz) {
                 return supports;
             }
+
             public void handleAnnotation(Annotation annotation, Class clazz, MutableBeanValidationConfiguration configuration) {
             }
         };

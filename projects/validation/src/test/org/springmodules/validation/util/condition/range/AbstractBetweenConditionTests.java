@@ -60,7 +60,7 @@ public abstract class AbstractBetweenConditionTests extends AbstractRangeConditi
     }
 
     public void testConstructor_WithNullComparator() throws Exception {
-         try {
+        try {
             createBetweenCondition(new Integer(3), new Integer(4), null);
             fail("An IllegalArgumentException must be thrown if the condition is initialized with a null comparator");
         } catch (IllegalArgumentException iae) {

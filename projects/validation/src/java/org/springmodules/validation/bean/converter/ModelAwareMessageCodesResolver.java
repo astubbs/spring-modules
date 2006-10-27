@@ -29,12 +29,12 @@ import org.springframework.validation.MessageCodesResolver;
  * error code is <code>Person.firstName[not.blank]</code>, and the basic error code is <code>not.blank</code>,
  * then the resolved error codes will be:
  * <ul>
- *  <li>Person.firstName[not.blank]</li>
- *  <li>not.blank.person.firstName</li>
- *  <li>not.blank.firstName</li>
- *  <li>not.blank.java.lang.String</li>
- *  <li>not.blank</li>
- *</ul>
+ * <li>Person.firstName[not.blank]</li>
+ * <li>not.blank.person.firstName</li>
+ * <li>not.blank.firstName</li>
+ * <li>not.blank.java.lang.String</li>
+ * <li>not.blank</li>
+ * </ul>
  *
  * @author Uri Boness
  */
@@ -65,11 +65,11 @@ public class ModelAwareMessageCodesResolver implements MessageCodesResolver, Ser
         int prefixIndex = errorCode.lastIndexOf(ModelAwareErrorCodeConverter.ERROR_CODE_SEPERATOR_PREFIX);
         int suffixIndex = errorCode.lastIndexOf(ModelAwareErrorCodeConverter.ERROR_CODE_SEPERATOR_SUFFIX);
 
-        if (prefixIndex < 0 || suffixIndex < 0 || suffixIndex != errorCode.length()-1) {
+        if (prefixIndex < 0 || suffixIndex < 0 || suffixIndex != errorCode.length() - 1) {
             return internalResolver.resolveMessageCodes(errorCode, objectName);
         }
 
-        String basicCode = errorCode.substring(prefixIndex+1, suffixIndex);
+        String basicCode = errorCode.substring(prefixIndex + 1, suffixIndex);
         String[] basicCodes = internalResolver.resolveMessageCodes(basicCode, objectName);
         String[] codes = new String[basicCodes.length + 1];
         System.arraycopy(basicCodes, 0, codes, 1, basicCodes.length);
@@ -85,11 +85,11 @@ public class ModelAwareMessageCodesResolver implements MessageCodesResolver, Ser
         int prefixIndex = errorCode.lastIndexOf(ModelAwareErrorCodeConverter.ERROR_CODE_SEPERATOR_PREFIX);
         int suffixIndex = errorCode.lastIndexOf(ModelAwareErrorCodeConverter.ERROR_CODE_SEPERATOR_SUFFIX);
 
-        if (prefixIndex < 0 || suffixIndex < 0 || suffixIndex != errorCode.length()-1) {
-            return internalResolver.resolveMessageCodes(errorCode, objectName, field,  fieldType);
+        if (prefixIndex < 0 || suffixIndex < 0 || suffixIndex != errorCode.length() - 1) {
+            return internalResolver.resolveMessageCodes(errorCode, objectName, field, fieldType);
         }
 
-        String basicCode = errorCode.substring(prefixIndex+1, suffixIndex);
+        String basicCode = errorCode.substring(prefixIndex + 1, suffixIndex);
         String[] basicCodes = internalResolver.resolveMessageCodes(basicCode, objectName, field, fieldType);
         String[] codes = new String[basicCodes.length + 1];
         System.arraycopy(basicCodes, 0, codes, 1, basicCodes.length);

@@ -1,6 +1,6 @@
 <!DOCTYPE form-validation PUBLIC
-          "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.0//EN"
-          "http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
+    "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.0//EN"
+    "http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
 <!--
 
    This file contains the default Struts Validator pluggable validator
@@ -41,18 +41,18 @@
 
 <form-validation>
 
-   <global>
+    <global>
 
-      <validator name="required"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateRequired"
-         methodParams="java.lang.Object,
+        <validator name="required"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateRequired"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
-                  msg="errors.required">
+                   msg="errors.required">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateRequired(form) {
                 var isValid = true;
                 var focusField = null;
@@ -103,45 +103,45 @@
             }
 
             ]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
-      <validator name="requiredif"
-                 classname="org.springmodules.validation.commons.FieldChecks"
-                 method="validateRequiredIf"
-                 methodParams="java.lang.Object,
+        <validator name="requiredif"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateRequiredIf"
+                   methodParams="java.lang.Object,
                                org.apache.commons.validator.ValidatorAction,
                                org.apache.commons.validator.Field,
                                org.springframework.validation.Errors,
                                org.apache.commons.validator.Validator"
 
-                 msg="errors.required">
-      </validator>
+                   msg="errors.required">
+        </validator>
 
-      <validator name="validwhen"
-                 classname="org.springmodules.validation.commons.ValidWhen"
-                 method="validateValidWhen"
-                 methodParams="java.lang.Object,
+        <validator name="validwhen"
+                   classname="org.springmodules.validation.commons.ValidWhen"
+                   method="validateValidWhen"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors,
                        org.apache.commons.validator.Validator,
                        javax.servlet.http.HttpServletRequest"
-                 msg="errors.required"/>
+                   msg="errors.required"/>
 
-      <validator name="minlength"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateMinLength"
-         methodParams="java.lang.Object,
+        <validator name="minlength"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateMinLength"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.minlength">
+                   depends=""
+                   msg="errors.minlength">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateMinLength(form) {
                 var isValid = true;
                 var focusField = null;
@@ -170,23 +170,23 @@
                 }
                 return isValid;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
 
-      <validator name="maxlength"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateMaxLength"
-         methodParams="java.lang.Object,
+        <validator name="maxlength"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateMaxLength"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.maxlength">
+                   depends=""
+                   msg="errors.maxlength">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateMaxLength(form) {
                 var isValid = true;
                 var focusField = null;
@@ -215,23 +215,23 @@
                 }
                 return isValid;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
 
-      <validator name="mask"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateMask"
-         methodParams="java.lang.Object,
+        <validator name="mask"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateMask"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.invalid">
+                   depends=""
+                   msg="errors.invalid">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateMask(form) {
                 var isValid = true;
                 var focusField = null;
@@ -265,24 +265,24 @@
             function matchPattern(value, mask) {
                return mask.exec(value);
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
 
-      <validator name="byte"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateByte"
-         methodParams="java.lang.Object,
+        <validator name="byte"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateByte"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.byte"
-       jsFunctionName="ByteValidations">
+                   depends=""
+                   msg="errors.byte"
+                   jsFunctionName="ByteValidations">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateByte(form) {
                 var bValid = true;
                 var focusField = null;
@@ -337,24 +337,24 @@
                 }
                 return bValid;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
 
-      <validator name="short"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateShort"
-         methodParams="java.lang.Object,
+        <validator name="short"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateShort"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.short"
-       jsFunctionName="ShortValidations">
+                   depends=""
+                   msg="errors.short"
+                   jsFunctionName="ShortValidations">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateShort(form) {
                 var bValid = true;
                 var focusField = null;
@@ -408,24 +408,24 @@
                 }
                 return bValid;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
 
-      <validator name="integer"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateInteger"
-         methodParams="java.lang.Object,
+        <validator name="integer"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateInteger"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.integer"
-       jsFunctionName="IntegerValidations">
+                   depends=""
+                   msg="errors.integer"
+                   jsFunctionName="IntegerValidations">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateInteger(form) {
                 var bValid = true;
                 var focusField = null;
@@ -499,36 +499,36 @@
                 }
                 return true;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
 
-      <validator name="long"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateLong"
-         methodParams="java.lang.Object,
+        <validator name="long"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateLong"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.long"/>
+                   depends=""
+                   msg="errors.long"/>
 
 
-      <validator name="float"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateFloat"
-         methodParams="java.lang.Object,
+        <validator name="float"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateFloat"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.float"
-       jsFunctionName="FloatValidations">
+                   depends=""
+                   msg="errors.float"
+                   jsFunctionName="FloatValidations">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateFloat(form) {
                 var bValid = true;
                 var focusField = null;
@@ -585,36 +585,36 @@
                 }
                 return bValid;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
 
-      <validator name="double"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateDouble"
-         methodParams="java.lang.Object,
+        <validator name="double"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateDouble"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.double"/>
+                   depends=""
+                   msg="errors.double"/>
 
 
-      <validator name="date"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateDate"
-         methodParams="java.lang.Object,
+        <validator name="date"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateDate"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.date"
-       jsFunctionName="DateValidations">
+                   depends=""
+                   msg="errors.date"
+                   jsFunctionName="DateValidations">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateDate(form) {
                var bValid = true;
                var focusField = null;
@@ -760,42 +760,42 @@
                 }
                 return true;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
-<!-- range is deprecated use intRange instead -->
-      <validator name="range"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateIntRange"
-         methodParams="java.lang.Object,
+        <!-- range is deprecated use intRange instead -->
+        <validator name="range"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateIntRange"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends="integer"
-                  msg="errors.range">
+                   depends="integer"
+                   msg="errors.range">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateRange(form) {
                 return validateIntRange(form);
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
-      <validator name="intRange"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateIntRange"
-         methodParams="java.lang.Object,
+        <validator name="intRange"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateIntRange"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends="integer"
-                  msg="errors.range">
+                   depends="integer"
+                   msg="errors.range">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateIntRange(form) {
                 var isValid = true;
                 var focusField = null;
@@ -827,22 +827,22 @@
                 }
                 return isValid;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
-      <validator name="floatRange"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateFloatRange"
-         methodParams="java.lang.Object,
+        <validator name="floatRange"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateFloatRange"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends="float"
-                  msg="errors.range">
+                   depends="float"
+                   msg="errors.range">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateFloatRange(form) {
                 var isValid = true;
                 var focusField = null;
@@ -874,22 +874,22 @@
                 }
                 return isValid;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
-      <validator name="creditCard"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateCreditCard"
-         methodParams="java.lang.Object,
+        <validator name="creditCard"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateCreditCard"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.creditcard">
+                   depends=""
+                   msg="errors.creditcard">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateCreditCard(form) {
                 var bValid = true;
                 var focusField = null;
@@ -951,23 +951,23 @@
                 }
                 return true;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
 
-      <validator name="email"
-            classname="org.springmodules.validation.commons.FieldChecks"
-               method="validateEmail"
-         methodParams="java.lang.Object,
+        <validator name="email"
+                   classname="org.springmodules.validation.commons.FieldChecks"
+                   method="validateEmail"
+                   methodParams="java.lang.Object,
                        org.apache.commons.validator.ValidatorAction,
                        org.apache.commons.validator.Field,
                        org.springframework.validation.Errors"
 
-              depends=""
-                  msg="errors.email">
+                   depends=""
+                   msg="errors.email">
 
-         <javascript><![CDATA[
+            <javascript><![CDATA[
             function validateEmail(form) {
                 var bValid = true;
                 var focusField = null;
@@ -1045,10 +1045,10 @@
                }
                return true;
             }]]>
-         </javascript>
+            </javascript>
 
-      </validator>
+        </validator>
 
-   </global>
+    </global>
 
 </form-validation>

@@ -27,12 +27,7 @@ import org.springmodules.validation.util.condition.collection.IsEmptyCollectionC
 import org.springmodules.validation.util.condition.collection.MaxSizeCollectionCondition;
 import org.springmodules.validation.util.condition.collection.MinSizeCollectionCondition;
 import org.springmodules.validation.util.condition.collection.SizeRangeCollectionCondition;
-import org.springmodules.validation.util.condition.common.AndCondition;
-import org.springmodules.validation.util.condition.common.InstanceOfCondition;
-import org.springmodules.validation.util.condition.common.IsNullCondition;
-import org.springmodules.validation.util.condition.common.IsTrueCondition;
-import org.springmodules.validation.util.condition.common.NotCondition;
-import org.springmodules.validation.util.condition.common.OrCondition;
+import org.springmodules.validation.util.condition.common.*;
 import org.springmodules.validation.util.condition.date.IsAfterDateCondition;
 import org.springmodules.validation.util.condition.date.IsBeforeDateCondition;
 import org.springmodules.validation.util.condition.date.IsInTheFutureDateCondition;
@@ -41,20 +36,8 @@ import org.springmodules.validation.util.condition.date.jodatime.IsAfterInstantC
 import org.springmodules.validation.util.condition.date.jodatime.IsBeforeInstantCondition;
 import org.springmodules.validation.util.condition.date.jodatime.IsInTheFutureInstantCondition;
 import org.springmodules.validation.util.condition.date.jodatime.IsInThePastInstantCondition;
-import org.springmodules.validation.util.condition.range.BetweenCondition;
-import org.springmodules.validation.util.condition.range.BetweenIncludingCondition;
-import org.springmodules.validation.util.condition.range.BetweenIncludingLowerBoundCondition;
-import org.springmodules.validation.util.condition.range.BetweenIncludingUpperBoundCondition;
-import org.springmodules.validation.util.condition.range.GreaterThanCondition;
-import org.springmodules.validation.util.condition.range.GreaterThanOrEqualsCondition;
-import org.springmodules.validation.util.condition.range.LessThanCondition;
-import org.springmodules.validation.util.condition.range.LessThanOrEqualsCondition;
-import org.springmodules.validation.util.condition.string.ContainsSubstringStringCondition;
-import org.springmodules.validation.util.condition.string.EqualsIgnoreCaseStringCondition;
-import org.springmodules.validation.util.condition.string.IsEmptyStringCondition;
-import org.springmodules.validation.util.condition.string.MaxLengthStringCondition;
-import org.springmodules.validation.util.condition.string.MinLengthStringCondition;
-import org.springmodules.validation.util.condition.string.RegExpStringCondition;
+import org.springmodules.validation.util.condition.range.*;
+import org.springmodules.validation.util.condition.string.*;
 
 /**
  * A static factory class to help with creating the various conditions.
@@ -74,7 +57,7 @@ public final class Conditions {
     }
 
     public static Condition and(Condition c1, Condition c2) {
-        return and(new Condition[] { c1, c2 });
+        return and(new Condition[]{c1, c2});
     }
 
     public static Condition and(Condition[] conditions) {
@@ -86,7 +69,7 @@ public final class Conditions {
     }
 
     public static Condition or(Condition c1, Condition c2) {
-        return or(new Condition[] { c1, c2 });
+        return or(new Condition[]{c1, c2});
     }
 
     public static Condition or(Condition[] conditions) {
@@ -122,7 +105,6 @@ public final class Conditions {
     public static Condition propertiesMatch(String[] propertyNames) {
         return new EqualPropertiesBeanCondition(propertyNames);
     }
-
 
     // date conditions
 
@@ -165,7 +147,6 @@ public final class Conditions {
     public static Condition isAfter(Calendar calendar) {
         return new IsAfterDateCondition(calendar);
     }
-
 
     // string conditions
 
@@ -274,7 +255,7 @@ public final class Conditions {
     }
 
     public static Condition isBetweenIncludingMin(Comparable min, Comparable max) {
-        return new BetweenIncludingLowerBoundCondition(min, max) ;
+        return new BetweenIncludingLowerBoundCondition(min, max);
     }
 
     public static Condition isBetweenIncludingMax(Comparable min, Comparable max) {

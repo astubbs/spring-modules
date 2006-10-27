@@ -1,5 +1,5 @@
 <ivyconf>
-	<resolvers>
-		<chain name="custom"/>
-	</resolvers>
+    <resolvers>
+        <chain name="custom"/>
+    </resolvers>
 </ivyconf>

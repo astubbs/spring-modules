@@ -20,7 +20,6 @@ import java.beans.PropertyDescriptor;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import junit.framework.TestCase;
 import org.easymock.MockControl;
 import org.springframework.beans.BeanUtils;
@@ -38,21 +37,23 @@ public class SimpleValidationRuleElementHandlerRegistryTests extends TestCase {
     private SimpleValidationRuleElementHandlerRegistry registry;
 
     private MockControl handler1Control;
+
     private PropertyValidationElementHandler handler1;
 
     private MockControl handler2Control;
+
     private PropertyValidationElementHandler handler2;
 
     protected void setUp() throws Exception {
 
         handler1Control = MockControl.createControl(PropertyValidationElementHandler.class);
-        handler1 = (PropertyValidationElementHandler)handler1Control.getMock();
+        handler1 = (PropertyValidationElementHandler) handler1Control.getMock();
 
         handler2Control = MockControl.createControl(PropertyValidationElementHandler.class);
-        handler2 = (PropertyValidationElementHandler)handler2Control.getMock();
+        handler2 = (PropertyValidationElementHandler) handler2Control.getMock();
 
         registry = new SimpleValidationRuleElementHandlerRegistry();
-        registry.setPropertyHandlers(new PropertyValidationElementHandler[] { handler1, handler2 });
+        registry.setPropertyHandlers(new PropertyValidationElementHandler[]{handler1, handler2});
     }
 
     public void testFindHandler_WithASupportedHandler() throws Exception {
@@ -85,7 +86,7 @@ public class SimpleValidationRuleElementHandlerRegistryTests extends TestCase {
 
         registry = new SimpleValidationRuleElementHandlerRegistry();
         registry.registerPropertyHandler(handler1);
-        registry.setExtraPropertyHandlers(new PropertyValidationElementHandler[] { handler2 });
+        registry.setExtraPropertyHandlers(new PropertyValidationElementHandler[]{handler2});
         Element element = createElement("bla");
         handler2Control.expectAndReturn(handler2.supports(element, org.springmodules.validation.bean.conf.loader.xml.SimpleValidationRuleElementHandlerRegistryTests.TestBean.class, descriptor), true);
         replay();
@@ -96,7 +97,7 @@ public class SimpleValidationRuleElementHandlerRegistryTests extends TestCase {
     //=============================================== Helper Methods ===================================================
 
     protected boolean containsHandlerOfType(ClassValidationElementHandler[] handlers, Class handlerType) {
-        for (int i=0; i<handlers.length; i++) {
+        for (int i = 0; i < handlers.length; i++) {
             if (handlerType.isAssignableFrom(handlerType)) {
                 return true;
             }
@@ -105,7 +106,7 @@ public class SimpleValidationRuleElementHandlerRegistryTests extends TestCase {
     }
 
     protected boolean containsHandlerOfType(PropertyValidationElementHandler[] handlers, Class handlerType) {
-        for (int i=0; i<handlers.length; i++) {
+        for (int i = 0; i < handlers.length; i++) {
             if (handlerType.isAssignableFrom(handlerType)) {
                 return true;
             }
@@ -127,7 +128,6 @@ public class SimpleValidationRuleElementHandlerRegistryTests extends TestCase {
         handler1Control.verify();
         handler2Control.verify();
     }
-
 
     //=============================================== Inner Classes ===================================================
 

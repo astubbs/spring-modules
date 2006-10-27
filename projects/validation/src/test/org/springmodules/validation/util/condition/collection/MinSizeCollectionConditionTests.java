@@ -54,17 +54,17 @@ public class MinSizeCollectionConditionTests extends AbstractCollectionCondition
     }
 
     public void testCheck_WithBiggerArray() throws Exception {
-        Object[] array = new Object[] { "1", "2", "3" };
+        Object[] array = new Object[]{"1", "2", "3"};
         assertTrue(condition.check(array));
     }
 
     public void testCheck_WithSmallerArray() throws Exception {
-        Object[] array = new Object[] { "1" };
+        Object[] array = new Object[]{"1"};
         assertFalse(condition.check(array));
     }
 
     public void testCheck_WithExactArray() throws Exception {
-        Object[] array = new Object[] { "1", "2" };
+        Object[] array = new Object[]{"1", "2"};
         assertTrue(condition.check(array));
     }
 

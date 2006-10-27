@@ -40,15 +40,15 @@ public class RangeValidationAnnotationHandler extends AbstractPropertyValidation
 
     protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
         if (Range.class.isInstance(annotation)) {
-            Range range = (Range)annotation;
+            Range range = (Range) annotation;
             return new RangeValidationRule(range.min(), range.max());
         }
         if (Min.class.isInstance(annotation)) {
-            Min min = (Min)annotation;
+            Min min = (Min) annotation;
             return new MinValidationRule(min.value());
         }
         if (Max.class.isInstance(annotation)) {
-            Max max = (Max)annotation;
+            Max max = (Max) annotation;
             return new MaxValidationRule(max.value());
         }
         throw new IllegalArgumentException("RangeValidationAnnotationHandler does not suppport annotations of type: " +

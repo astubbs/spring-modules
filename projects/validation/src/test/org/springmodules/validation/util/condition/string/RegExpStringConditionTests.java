@@ -17,7 +17,7 @@ public class RegExpStringConditionTests extends AbstractStringConditionTests {
 
     public void testConstructor_WithNullRegularExpression() throws Exception {
         try {
-            new RegExpStringCondition((String)null);
+            new RegExpStringCondition((String) null);
             fail("An IllegalArgumentException must be thrown if the regular expression is null");
         } catch (IllegalArgumentException iae) {
             // expected
@@ -26,7 +26,7 @@ public class RegExpStringConditionTests extends AbstractStringConditionTests {
 
     public void testConstructor_WithNullPattern() throws Exception {
         try {
-            new RegExpStringCondition((Pattern)null);
+            new RegExpStringCondition((Pattern) null);
             fail("An IllegalArgumentException must be thrown if the pattern is null");
         } catch (IllegalArgumentException iae) {
             // expected
@@ -61,7 +61,7 @@ public class RegExpStringConditionTests extends AbstractStringConditionTests {
     }
 
     public void testGetRegExp_WithGivenRegExp() throws Exception {
-        assertEquals("(t|b)est", ((RegExpStringCondition)condition).getRegExp());
+        assertEquals("(t|b)est", ((RegExpStringCondition) condition).getRegExp());
     }
 
     public void testGetRegExp_WithGivenPattern() throws Exception {
@@ -70,7 +70,7 @@ public class RegExpStringConditionTests extends AbstractStringConditionTests {
     }
 
     public void testGetPattern_WithGivenRegExp() throws Exception {
-        assertEquals("(t|b)est", ((RegExpStringCondition)condition).getPattern().pattern());
+        assertEquals("(t|b)est", ((RegExpStringCondition) condition).getPattern().pattern());
     }
 
     public void testGetPattern_WithGivenPattern() throws Exception {

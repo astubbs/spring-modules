@@ -29,6 +29,7 @@ import org.springmodules.validation.util.condition.Condition;
 public class PropertyBeanCondition extends AbstractBeanCondition {
 
     private String propertyName;
+
     private Condition propertyCondition;
 
     /**

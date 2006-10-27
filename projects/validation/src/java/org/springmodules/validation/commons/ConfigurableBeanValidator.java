@@ -17,7 +17,6 @@
 package org.springmodules.validation.commons;
 
 /**
- *
  * @author Rob Harrop
  */
 public class ConfigurableBeanValidator extends AbstractBeanValidator {

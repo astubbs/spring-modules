@@ -102,7 +102,7 @@ public interface MutableBeanValidationConfiguration extends BeanValidationConfig
 
     /**
      * Sets the cascade validations of this configuration.
-     *
+     * <p/>
      * param cascadeValidations The cascade validations of this configuration.
      */
     void setCascadeValidations(CascadeValidation[] cascadeValidations);

@@ -30,7 +30,7 @@ public class SubElementsIterator extends FilteredIterator {
     public SubElementsIterator(Node node) {
         super(new ChildNodesIterator(node), new AbstractCondition() {
             public boolean doCheck(Object object) {
-                Node node = (Node)object;
+                Node node = (Node) object;
                 return node.getNodeType() == Node.ELEMENT_NODE;
             }
         });
@@ -39,7 +39,7 @@ public class SubElementsIterator extends FilteredIterator {
     public SubElementsIterator(Node node, final String elementName) {
         super(new ChildNodesIterator(node), new AbstractCondition() {
             public boolean doCheck(Object object) {
-                Node node = (Node)object;
+                Node node = (Node) object;
                 return node.getNodeType() != Node.ELEMENT_NODE
                     && node.getLocalName().equals(elementName);
             }
@@ -49,7 +49,7 @@ public class SubElementsIterator extends FilteredIterator {
     public SubElementsIterator(Node node, final String namespace, final String elementName) {
         super(new ChildNodesIterator(node), new AbstractCondition() {
             public boolean doCheck(Object object) {
-                Node node = (Node)object;
+                Node node = (Node) object;
                 return node.getNodeType() == Node.ELEMENT_NODE
                     && node.getLocalName().equals(elementName)
                     && node.getNamespaceURI().equals(namespace);

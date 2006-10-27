@@ -39,7 +39,7 @@ public class IsEmptyCollectionConditionTests extends AbstractCollectionCondition
     }
 
     public void testCheck_WithNonEmptyArray() throws Exception {
-        assertFalse(condition.check(new Object[] { "test" }));
+        assertFalse(condition.check(new Object[]{"test"}));
     }
 
     public void testCheck_WithNonEmptyCollection() throws Exception {

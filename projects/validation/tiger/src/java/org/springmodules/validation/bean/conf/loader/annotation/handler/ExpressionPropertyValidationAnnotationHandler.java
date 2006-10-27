@@ -42,12 +42,12 @@ public class ExpressionPropertyValidationAnnotationHandler extends AbstractPrope
      * @see org.springmodules.validation.bean.conf.loader.annotation.handler.AbstractPropertyValidationAnnotationHandler#isConditionGloballyScoped(java.lang.annotation.Annotation)
      */
     protected boolean isConditionGloballyScoped(Annotation annotation) {
-        Expression valang = (Expression)annotation;
+        Expression valang = (Expression) annotation;
         return valang.scope() == ExpressionScope.CONTAINING_OBJECT;
     }
 
     protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {
-        Expression expression = (Expression)annotation;
+        Expression expression = (Expression) annotation;
         return new ExpressionValidationRule(getConditionExpressionParser(), expression.value());
     }
 

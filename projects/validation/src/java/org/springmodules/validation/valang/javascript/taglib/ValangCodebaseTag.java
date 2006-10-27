@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springmodules.validation.valang.javascript.taglib;
 
 import java.io.IOException;
@@ -22,7 +23,6 @@ import java.io.Writer;
 import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
-
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.tags.RequestContextAwareTag;
 import org.springmodules.validation.valang.javascript.ValangJavaScriptTranslator;
@@ -30,28 +30,31 @@ import org.springmodules.validation.valang.javascript.ValangJavaScriptTranslator
 /**
  * Generates the JavaScript codebase that is necessary for the use of the
  * JavaScript validation produced by {@link ValangValidateTag}.
- * 
- * <p>The generated codebase is an exact copy of the code from the file 
- * "valang_codebase.js" located in 
+ * <p/>
+ * <p>The generated codebase is an exact copy of the code from the file
+ * "valang_codebase.js" located in
  * org.springmodules.validation.valang.javascript. You can therefor avoid having to
- * use this tag by simply placing this file on your web server and linking 
+ * use this tag by simply placing this file on your web server and linking
  * to it using a the following HTML:
- * <pre> 
+ * <pre>
  * &lt;script type="text/javascript" src="/somepath/valang_codebase.js"&gt;&lt;/script&gt;
- * </pre> 
- * 
- * <p>When using this tag or the HTML above you must make sure that the 
+ * </pre>
+ * <p/>
+ * <p>When using this tag or the HTML above you must make sure that the
  * codebase is included before any {@link ValangValidateTag}s in you JSP file.
- * 
+ *
  * @author Oliver Hutchison
  */
 public class ValangCodebaseTag extends RequestContextAwareTag {
 
     private final static String DEFAULT_GLOBAL_ERRORS_ID = "global_errors";
+
     private final static String DEFAULT_FIELD_ERROR_ID_SUFFIX = "_error";
 
     private boolean includeScriptTags;
+
     private String globalErrorsId = DEFAULT_GLOBAL_ERRORS_ID;
+
     private String fieldErrorsIdSuffix = DEFAULT_FIELD_ERROR_ID_SUFFIX;
 
     /**
@@ -109,8 +112,8 @@ public class ValangCodebaseTag extends RequestContextAwareTag {
     }
 
     /**
-     * Copies the chars from in to out and then closes in but 
-     * leaves out open. 
+     * Copies the chars from in to out and then closes in but
+     * leaves out open.
      */
     private void copy(Reader in, Writer out) throws IOException {
         Assert.notNull(in, "No Reader specified");
@@ -132,7 +135,7 @@ public class ValangCodebaseTag extends RequestContextAwareTag {
             }
         }
     }
-    
+
     public void doFinally() {
         super.doFinally();
         includeScriptTags = false;

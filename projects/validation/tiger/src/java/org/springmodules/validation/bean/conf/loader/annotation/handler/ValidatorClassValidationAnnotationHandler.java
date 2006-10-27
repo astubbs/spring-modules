@@ -41,15 +41,14 @@ public class ValidatorClassValidationAnnotationHandler implements ClassValidatio
      * This method assumes that {@link #supports(java.lang.annotation.Annotation, Class)} returns <code>true</code> for the
      * given annotation.
      *
-     * @param annotation    The annotation to handle.
-     * @param clazz         The annotated class.
+     * @param annotation The annotation to handle.
+     * @param clazz The annotated class.
      * @param configuration The bean validation configuration to manipulate.
      */
     public void handleAnnotation(Annotation annotation, Class clazz, MutableBeanValidationConfiguration configuration) {
-        Validator validator = (Validator)annotation;
+        Validator validator = (Validator) annotation;
         configuration.setCustomValidator(createValidator(validator.value()));
     }
-
 
     //=============================================== Helper Methods ===================================================
 

@@ -24,8 +24,6 @@ import org.springmodules.validation.bean.rule.AbstractValidationRule;
 import org.springmodules.validation.bean.rule.ValidationMethodValidationRule;
 
 /**
- *
- *
  * @author Uri Boness
  */
 public class ValidationMethodAnnotationHandler extends AbstractMethodValidationAnnotationHandler {

@@ -38,11 +38,11 @@ import org.springmodules.validation.util.fel.parser.ValangFunctionExpressionPars
  * A parent for all common {@link PropertyValidationAnnotationHandler} implementations that represent validation rules.
  * The following attributes are searched for in the handled annotations:
  * <ul>
- *  <li>{@link #ERROR_CODE_ATTR} - A string indicating the error code for the validation rule</li>
- *  <li>{@link #MESSAGE_ATTR} - A string indicating default error message for the validation rule</li>
- *  <li>{@link #ARGS_ATTR} - A comma-separated string indicating error arguments (may be expressions to be
- *                           resolved against the validated object)</li>
- *  <li>{@link #APPLY_IF_ATTR} - A condition expression that represents the applicability condition</li>
+ * <li>{@link #ERROR_CODE_ATTR} - A string indicating the error code for the validation rule</li>
+ * <li>{@link #MESSAGE_ATTR} - A string indicating default error message for the validation rule</li>
+ * <li>{@link #ARGS_ATTR} - A comma-separated string indicating error arguments (may be expressions to be
+ * resolved against the validated object)</li>
+ * <li>{@link #APPLY_IF_ATTR} - A condition expression that represents the applicability condition</li>
  * </ul>
  *
  * @author Uri Boness
@@ -51,13 +51,17 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
     ConditionExpressionBased, FunctionExpressionBased {
 
     public final static String APPLY_IF_ATTR = "applyIf";
+
     public final static String ERROR_CODE_ATTR = "errorCode";
+
     public final static String MESSAGE_ATTR = "message";
+
     public final static String ARGS_ATTR = "args";
 
     private Class[] supportedAnnotationTypes;
 
     private ConditionExpressionParser conditionExpressionParser;
+
     private FunctionExpressionParser functionExpressionParser;
 
     /**
@@ -132,12 +136,7 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
      * @return The error code for the represented validation rule.
      */
     protected String extractErrorCode(Annotation annotation) {
-        try {
-            return (String) annotation.getClass().getMethod(ERROR_CODE_ATTR).invoke(annotation);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + ERROR_CODE_ATTR + "' in annotation '" +
-                annotation.getClass().getName());
-        }
+        return (String) extractAnnotationAttribute(annotation, ERROR_CODE_ATTR);
     }
 
     /**
@@ -148,12 +147,7 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
      * @return The default message for the represented validation rule.
      */
     protected String extractDefaultMessage(Annotation annotation) {
-        try {
-            return (String) annotation.getClass().getMethod(MESSAGE_ATTR).invoke(annotation);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + MESSAGE_ATTR + "' in annotation '" +
-                annotation.getClass().getName());
-        }
+        return (String) extractAnnotationAttribute(annotation, MESSAGE_ATTR);
     }
 
     /**
@@ -164,18 +158,13 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
      * @return The {@link org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver} for the represented validation rule.
      */
     protected ErrorArgumentsResolver extractArgumentsResolver(Annotation annotation) {
-        try {
-            String argsAsString = (String) annotation.getClass().getMethod(ARGS_ATTR).invoke(annotation);
-            argsAsString = (argsAsString == null) ? "" : argsAsString;
-            String[] argsExpressions = StringUtils.commaDelimitedListToStringArray(argsAsString);
-            if (argsExpressions.length == 0) {
-                return null;
-            }
-            return new FunctionErrorArgumentsResolver(argsExpressions, functionExpressionParser);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + ARGS_ATTR + "' in annotation '" +
-                annotation.getClass().getName());
+        String argsAsString = (String) extractAnnotationAttribute(annotation, ARGS_ATTR);
+        argsAsString = (argsAsString == null) ? "" : argsAsString;
+        String[] argsExpressions = StringUtils.commaDelimitedListToStringArray(argsAsString);
+        if (argsExpressions.length == 0) {
+            return null;
         }
+        return new FunctionErrorArgumentsResolver(argsExpressions, functionExpressionParser);
     }
 
     /**
@@ -188,20 +177,15 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
      * @return The applicability condition for the represented validation rule.
      */
     protected Condition extractApplicabilityContidion(Annotation annotation) {
-        try {
-            String expression = (String)annotation.getClass().getMethod(APPLY_IF_ATTR).invoke(annotation);
-            return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : null;
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Expecting attribute '" + APPLY_IF_ATTR + "' in annotation '" +
-                annotation.getClass().getName());
-        }
+        String expression = (String) extractAnnotationAttribute(annotation, APPLY_IF_ATTR);
+        return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : null;
     }
 
     /**
      * Returns whether the extracted condition is globally scoped. A globally scoped condition means that the condition
      * should be evaluated against the property's ower bean rather then the property value. By default <code>false</code>
      * is returned (that is, by default the extracted conditions are <b>NOT</b> globally scoped.<br/>
-     *
+     * <p/>
      * This method can be overriden by sub-classes that create globally scoped conditions.
      *
      * @return <code>true</code> if the extracted condition is globally scoped, <code>false</code> otherwise.
@@ -242,6 +226,17 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
 
     protected FunctionExpressionParser getFunctionExpressionParser() {
         return functionExpressionParser;
+    }
+
+    //================================================== Helper Methods ================================================
+
+    protected Object extractAnnotationAttribute(Annotation annotation, String attributeName) {
+        try {
+            return annotation.getClass().getMethod(attributeName).invoke(annotation);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Expecting attribute '" + attributeName +
+                "' in annotation '" + annotation.getClass().getName() + "'", e);
+        }
     }
 
 }

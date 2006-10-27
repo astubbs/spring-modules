@@ -27,11 +27,15 @@ import java.util.Date;
 public class IsAfterDateConditionTests extends AbstractDateConditionTests {
 
     private Date earlierDate;
+
     private Date nowDate;
+
     private Date laterDate;
 
     private Calendar earlierCalendar;
+
     private Calendar nowCalendar;
+
     private Calendar laterCalendar;
 
     public IsAfterDateConditionTests() {
@@ -54,14 +58,14 @@ public class IsAfterDateConditionTests extends AbstractDateConditionTests {
 
     public void testConstructor_WithNull() throws Exception {
         try {
-            new IsAfterDateCondition((Date)null);
+            new IsAfterDateCondition((Date) null);
             fail("An IllegalArgumentException must be thrown when initialized with null");
         } catch (IllegalArgumentException iae) {
             // expected
         }
 
         try {
-            new IsAfterDateCondition((Calendar)null);
+            new IsAfterDateCondition((Calendar) null);
             fail("An IllegalArgumentException must be thrown when initialized with null");
         } catch (IllegalArgumentException iae) {
             // expected
@@ -89,11 +93,11 @@ public class IsAfterDateConditionTests extends AbstractDateConditionTests {
     }
 
     public void testGetEarlier_WithDate() throws Exception {
-        assertEquals(nowDate, ((IsAfterDateCondition)dateCondition).getEarlier().getTime());
+        assertEquals(nowDate, ((IsAfterDateCondition) dateCondition).getEarlier().getTime());
     }
 
     public void testGetEarlier_WithCalendar() throws Exception {
-        assertEquals(nowCalendar, ((IsAfterDateCondition)calendarCondition).getEarlier());
+        assertEquals(nowCalendar, ((IsAfterDateCondition) calendarCondition).getEarlier());
     }
 
     //=============================================== Helper Methods ===================================================

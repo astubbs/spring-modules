@@ -36,12 +36,12 @@ public abstract class AbstractInstantCondition extends NonNullAcceptingTypeSpeci
 
     /**
      * See {@link TypeSpecificCondition#doCheck(Object)}.
-     *
+     * <p/>
      * Casts the given object to a {@link ReadableInstant} and delegates the call to
      * {@link #checkInstant(org.joda.time.ReadableInstant)}.
      */
     public final boolean doCheck(Object object) {
-        return checkInstant((ReadableInstant)object);
+        return checkInstant((ReadableInstant) object);
     }
 
     protected abstract boolean checkInstant(ReadableInstant instant);

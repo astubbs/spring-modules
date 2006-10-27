@@ -28,6 +28,7 @@ import org.springframework.util.Assert;
 public abstract class AbstractBetweenCondition extends AbstractRangeCondition {
 
     private Object lowerBound;
+
     private Object upperBound;
 
     /**

@@ -28,8 +28,11 @@ import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
 public abstract class AbstractValidationRule implements ValidationRule {
 
     private String errorCode;
+
     private String defaultErrorMessage;
+
     private ErrorArgumentsResolver errorArgumentsResolver;
+
     private Condition applicabilityCondition;
 
     /**
@@ -39,11 +42,10 @@ public abstract class AbstractValidationRule implements ValidationRule {
      * @param defaultErrorCode
      */
     protected AbstractValidationRule(String defaultErrorCode) {
-        this(defaultErrorCode,  createErrorArgumentsResolver(new Object[0]));
+        this(defaultErrorCode, createErrorArgumentsResolver(new Object[0]));
     }
 
     /**
-     *
      * Constructs a new AbstractValidationRule with a default error code and error argument resolver.
      *
      * @param defaultErrorCode The default error code for this validation rule.
@@ -59,10 +61,10 @@ public abstract class AbstractValidationRule implements ValidationRule {
     /**
      * Checks if this validation rule is applicable on a given object by performing the following two steps:
      * <ol>
-     *  <li>If the object is <code>null</code> and {@link #supportsNullValues()} returns <code>false</code>
-     *      then returning <code>false</code>.</li>
-     *  <li>Returning whatever the applicablity condition check returns for the given object
-     *      ({@link #setApplicabilityCondition(org.springmodules.validation.util.condition.Condition)})</li>
+     * <li>If the object is <code>null</code> and {@link #supportsNullValues()} returns <code>false</code>
+     * then returning <code>false</code>.</li>
+     * <li>Returning whatever the applicablity condition check returns for the given object
+     * ({@link #setApplicabilityCondition(org.springmodules.validation.util.condition.Condition)})</li>
      *
      * @see ValidationRule#isApplicable(Object)
      */
@@ -108,7 +110,6 @@ public abstract class AbstractValidationRule implements ValidationRule {
         return false;
     }
 
-
     //================================================== Setters =======================================================
 
     /**
@@ -144,12 +145,11 @@ public abstract class AbstractValidationRule implements ValidationRule {
      * this condition is applicable on a given object or not.
      *
      * @param applicabilityCondition The applicability condition that will be used by this validation rule when deciding
-     *        whether it is applicable on a given object.
+     * whether it is applicable on a given object.
      */
     public void setApplicabilityCondition(Condition applicabilityCondition) {
         this.applicabilityCondition = applicabilityCondition;
     }
-
 
     //=============================================== Helper Methods ===================================================
 
@@ -162,7 +162,7 @@ public abstract class AbstractValidationRule implements ValidationRule {
      * @return The created error arguments resolver.
      */
     protected static ErrorArgumentsResolver createErrorArgumentsResolver(Object arg) {
-        return createErrorArgumentsResolver(new Object[] { arg });
+        return createErrorArgumentsResolver(new Object[]{arg});
     }
 
     /**
@@ -175,7 +175,7 @@ public abstract class AbstractValidationRule implements ValidationRule {
      * @return The created error arguments resolver.
      */
     protected static ErrorArgumentsResolver createErrorArgumentsResolver(Object arg1, Object arg2) {
-        return createErrorArgumentsResolver(new Object[] { arg1, arg2 });
+        return createErrorArgumentsResolver(new Object[]{arg1, arg2});
     }
 
     /**
@@ -189,7 +189,7 @@ public abstract class AbstractValidationRule implements ValidationRule {
      * @return The created error arguments resolver.
      */
     protected static ErrorArgumentsResolver createErrorArgumentsResolver(Object arg1, Object arg2, Object arg3) {
-        return createErrorArgumentsResolver(new Object[] { arg1, arg2, arg3 });
+        return createErrorArgumentsResolver(new Object[]{arg1, arg2, arg3});
     }
 
     /**

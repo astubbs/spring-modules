@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
 import org.springframework.util.StringUtils;
@@ -35,7 +36,9 @@ import org.w3c.dom.Element;
 public class SizeRuleElementHandler extends AbstractPropertyValidationElementHandler {
 
     private static final String ELEMENT_NAME = "size";
+
     private static final String MIN_ATTR = "min";
+
     private static final String MAX_ATTR = "max";
 
     /**

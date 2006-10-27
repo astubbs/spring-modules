@@ -22,26 +22,26 @@ import org.springmodules.validation.bean.rule.ValidationRule;
 /**
  * Holds the various validatoin rules of a bean. This configuration is made out of the following configuration rules:
  * <ul>
- *  <li>
- *      <code>Global Rules</code> - Rules that are associated with the bean itself. Validation error of this rule will
- *            be associated with the bean as well (see {@link org.springframework.validation.Errors#getGlobalError()}).
- *  </li>
- *  <li>
- *      <code>Property Rules</code> - Rules that are associated with a specific property of the bean. Validation error
- *            of this rule will be associated with the property as well
- *            (see {@link org.springframework.validation.Errors#getFieldError(String)}). Note that the condition of these
- *            rules however sould still be applied on the bean itself.
- *  </li>
- *  <li>
- *      <code>Custom Validator</code> - This is not a validation rule per se, but a custom validator that can be
- *           associated with the bean. This enables associating already exsiting or perhaps very complex validators with
- *           the bean.
- *  </li>
- *  <li>
- *      <code>Required Validatable Properties</code> - These are all the bean properties that need to be valid on their
- *           own in order for the bean itself to be valid. A simple example can be a collection property, where in order
- *           for the bean to be valid, all elements in the collection need to be valid as well.
- *  </li>
+ * <li>
+ * <code>Global Rules</code> - Rules that are associated with the bean itself. Validation error of this rule will
+ * be associated with the bean as well (see {@link org.springframework.validation.Errors#getGlobalError()}).
+ * </li>
+ * <li>
+ * <code>Property Rules</code> - Rules that are associated with a specific property of the bean. Validation error
+ * of this rule will be associated with the property as well
+ * (see {@link org.springframework.validation.Errors#getFieldError(String)}). Note that the condition of these
+ * rules however sould still be applied on the bean itself.
+ * </li>
+ * <li>
+ * <code>Custom Validator</code> - This is not a validation rule per se, but a custom validator that can be
+ * associated with the bean. This enables associating already exsiting or perhaps very complex validators with
+ * the bean.
+ * </li>
+ * <li>
+ * <code>Required Validatable Properties</code> - These are all the bean properties that need to be valid on their
+ * own in order for the bean itself to be valid. A simple example can be a collection property, where in order
+ * for the bean to be valid, all elements in the collection need to be valid as well.
+ * </li>
  * </ul>
  *
  * @author Uri Boness

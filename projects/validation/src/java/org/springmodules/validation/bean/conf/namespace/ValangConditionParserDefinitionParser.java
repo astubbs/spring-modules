@@ -40,11 +40,15 @@ public class ValangConditionParserDefinitionParser extends AbstractBeanDefinitio
     final static String ELEMENT_NAME = "valang-condition-parser";
 
     private final static String FUNCTION_ELEMENT = "function";
+
     private final static String NAME_ATTR = "name";
+
     private final static String CLASS_ATTR = "class";
 
     private final static String DATE_PARSER_ELEMENT = "date-parser";
+
     private final static String REGEXP_ATTR = "regexp";
+
     private final static String PATTERN_ATTR = "pattern";
 
     protected AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
@@ -55,7 +59,7 @@ public class ValangConditionParserDefinitionParser extends AbstractBeanDefinitio
         Map dateParsers = new HashMap();
 
         for (Iterator elements = DomUtils.childElements(element); elements.hasNext();) {
-            Element child = (Element)elements.next();
+            Element child = (Element) elements.next();
             if (isFunctionDefinition(child)) {
                 registerFunction(child, functionByName);
             } else if (isDateParserDefinition(child)) {

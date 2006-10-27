@@ -16,40 +16,29 @@
 
 package org.springmodules.validation.bean.conf.loader.xml;
 
-import org.springmodules.validation.bean.conf.loader.xml.handler.DateInFutureRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.DateInPastRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.EmailRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.ExpressionClassValidationElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.ExpressionPropertyValidationElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.LengthRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.NotBlankRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.NotEmptyRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.NotNullRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.RangeRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.RegExpRuleElementHandler;
-import org.springmodules.validation.bean.conf.loader.xml.handler.SizeRuleElementHandler;
+import org.springmodules.validation.bean.conf.loader.xml.handler.*;
 import org.springmodules.validation.bean.conf.loader.xml.handler.jodatime.InstantInFutureRuleElementHandler;
 import org.springmodules.validation.bean.conf.loader.xml.handler.jodatime.InstantInPastRuleElementHandler;
 import org.springmodules.validation.util.LibraryUtils;
 
 /**
  * A {@link SimpleValidationRuleElementHandlerRegistry} that already registers the following default element handlers:
- *
+ * <p/>
  * <ol>
- *  <li>{@link NotNullRuleElementHandler}</li>
- *  <li>{@link LengthRuleElementHandler}</li>
- *  <li>{@link NotBlankRuleElementHandler}</li>
- *  <li>{@link EmailRuleElementHandler}</li>
- *  <li>{@link RegExpRuleElementHandler}</li>
- *  <li>{@link SizeRuleElementHandler}</li>
- *  <li>{@link NotEmptyRuleElementHandler}</li>
- *  <li>{@link NotBlankRuleElementHandler}</li>
- *  <li>{@link RangeRuleElementHandler}</li>
- *  <li>{@link ExpressionPropertyValidationElementHandler}</li>
- *  <li>{@link DateInPastRuleElementHandler}</li>
- *  <li>{@link DateInFutureRuleElementHandler}</li> *
- *  <li>{@link InstantInFutureRuleElementHandler} (only if joda-time library is available in the classpath)</li> *
- *  <li>{@link InstantInPastRuleElementHandler} (only if joda-time library is available in the classpath)</li> *
+ * <li>{@link NotNullRuleElementHandler}</li>
+ * <li>{@link LengthRuleElementHandler}</li>
+ * <li>{@link NotBlankRuleElementHandler}</li>
+ * <li>{@link EmailRuleElementHandler}</li>
+ * <li>{@link RegExpRuleElementHandler}</li>
+ * <li>{@link SizeRuleElementHandler}</li>
+ * <li>{@link NotEmptyRuleElementHandler}</li>
+ * <li>{@link NotBlankRuleElementHandler}</li>
+ * <li>{@link RangeRuleElementHandler}</li>
+ * <li>{@link ExpressionPropertyValidationElementHandler}</li>
+ * <li>{@link DateInPastRuleElementHandler}</li>
+ * <li>{@link DateInFutureRuleElementHandler}</li> *
+ * <li>{@link InstantInFutureRuleElementHandler} (only if joda-time library is available in the classpath)</li> *
+ * <li>{@link InstantInPastRuleElementHandler} (only if joda-time library is available in the classpath)</li> *
  * </ol>
  *
  * @author Uri Boness

@@ -20,7 +20,7 @@ public class NestedIllegalArgumentException extends NestedRuntimeException {
      * Construct a <code>NestedRuntimeException</code> with the specified detail message
      * and nested exception.
      *
-     * @param msg   the detail message
+     * @param msg the detail message
      * @param cause the nested exception
      */
     public NestedIllegalArgumentException(String msg, Throwable cause) {

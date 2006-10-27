@@ -54,7 +54,7 @@ public class OgnlCondition extends AbstractCondition {
      */
     public boolean doCheck(Object object) {
         try {
-            return ((Boolean)Ognl.getValue(compiledExpression, object, Boolean.class)).booleanValue();
+            return ((Boolean) Ognl.getValue(compiledExpression, object, Boolean.class)).booleanValue();
         } catch (OgnlException e) {
             throw new IllegalArgumentException("Could not evaluate expression '" + expression +
                 "' on given object '" + String.valueOf(object) + "'");

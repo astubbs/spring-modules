@@ -33,13 +33,17 @@ public class SimpleValidationAnnotationHandlerRegistry extends BasicContextAware
     private final static Log logger = LogFactory.getLog(SimpleValidationAnnotationHandlerRegistry.class);
 
     private List<ClassValidationAnnotationHandler> classHandlers;
+
     private List<PropertyValidationAnnotationHandler> propertyHandlers;
+
     private List<MethodValidationAnnotationHandler> methodHandlers;
 
     private boolean conditionExpressionParserSet = false;
+
     private ConditionExpressionParser conditionExpressionParser;
 
     private boolean functionExpressionParserSet = false;
+
     private FunctionExpressionParser functionExpressionParser;
 
     /**
@@ -204,10 +208,10 @@ public class SimpleValidationAnnotationHandlerRegistry extends BasicContextAware
 
     protected void setExpressionParsers(Object object) {
         if (ConditionExpressionBased.class.isInstance(object) && conditionExpressionParser != null) {
-            ((ConditionExpressionBased)object).setConditionExpressionParser(conditionExpressionParser);
+            ((ConditionExpressionBased) object).setConditionExpressionParser(conditionExpressionParser);
         }
         if (FunctionExpressionBased.class.isInstance(object) && functionExpressionParser != null) {
-            ((FunctionExpressionBased)object).setFunctionExpressionParser(functionExpressionParser);
+            ((FunctionExpressionBased) object).setFunctionExpressionParser(functionExpressionParser);
         }
     }
 
@@ -215,7 +219,7 @@ public class SimpleValidationAnnotationHandlerRegistry extends BasicContextAware
         if (conditionExpressionParserSet) {
             return;
         }
-        ConditionExpressionParser parser = (ConditionExpressionParser)findObjectInApplicationContext(ConditionExpressionParser.class);
+        ConditionExpressionParser parser = (ConditionExpressionParser) findObjectInApplicationContext(ConditionExpressionParser.class);
         if (parser == null) {
             return;
         }
@@ -226,7 +230,7 @@ public class SimpleValidationAnnotationHandlerRegistry extends BasicContextAware
         if (functionExpressionParserSet) {
             return;
         }
-        FunctionExpressionParser parser = (FunctionExpressionParser)findObjectInApplicationContext(FunctionExpressionParser.class);
+        FunctionExpressionParser parser = (FunctionExpressionParser) findObjectInApplicationContext(FunctionExpressionParser.class);
         if (parser == null) {
             return;
         }

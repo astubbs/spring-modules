@@ -125,7 +125,8 @@ public class GenericTestPredicateTests extends TestCase {
         try {
             assertTrue("six", OperatorConstants.MORE_THAN_OPERATOR, "five");
             fail();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     public void testInNotInOperatorSuccess() {
@@ -263,6 +264,7 @@ public class GenericTestPredicateTests extends TestCase {
     }
 
     public class GenericContainer {
+
         private Object value = null;
 
         public GenericContainer(Object value) {

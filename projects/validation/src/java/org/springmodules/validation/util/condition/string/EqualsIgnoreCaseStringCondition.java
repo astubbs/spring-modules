@@ -41,7 +41,7 @@ public class EqualsIgnoreCaseStringCondition extends AbstractStringCondition {
      *
      * @param text The text to be checed.
      * @return <code>true</code> if the given text equals the text that is associated with this condition,
-     *        <code>false</code> otherwise.
+     *         <code>false</code> otherwise.
      */
     protected boolean checkString(String text) {
         return this.text.equalsIgnoreCase(text);

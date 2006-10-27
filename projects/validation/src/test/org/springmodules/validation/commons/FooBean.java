@@ -3,12 +3,12 @@ package org.springmodules.validation.commons;
 import java.util.Map;
 
 /**
- *
  * @author robh
  */
 public class FooBean {
 
     private String name;
+
     private String emailAddress;
 
     private Map attributes;

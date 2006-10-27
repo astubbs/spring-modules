@@ -27,7 +27,7 @@ import org.acegisecurity.context.SecurityContextHolder;
  * <br/><br/>
  * This method uses Acegi's <code>SecurityContextHolder.getContext().getAuthentication()</code> to
  * get the current user.
- *<br/><br/>
+ * <br/><br/>
  * This function may be used to apply different validation rules based on the logged in user roles.
  *
  * @author Uri Boness
@@ -51,7 +51,7 @@ public class InRoleFunction extends AbstractFunction {
 
         GrantedAuthority[] authorities = authentication.getAuthorities();
 
-        for (int i=0; i<authorities.length; i++) {
+        for (int i = 0; i < authorities.length; i++) {
             if (authorities[i].getAuthority().equals(role)) {
                 return Boolean.TRUE;
             }

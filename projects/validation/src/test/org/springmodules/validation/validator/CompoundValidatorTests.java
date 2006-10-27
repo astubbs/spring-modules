@@ -29,21 +29,23 @@ import org.springframework.validation.Validator;
 public class CompoundValidatorTests extends TestCase {
 
     private MockControl validatorControl1;
+
     private Validator validator1;
 
     private MockControl validatorControl2;
+
     private Validator validator2;
 
     private CompoundValidator validator;
 
     protected void setUp() throws Exception {
         validatorControl1 = MockControl.createControl(Validator.class);
-        validator1 = (Validator)validatorControl1.getMock();
+        validator1 = (Validator) validatorControl1.getMock();
 
         validatorControl2 = MockControl.createControl(Validator.class);
-        validator2 = (Validator)validatorControl2.getMock();
+        validator2 = (Validator) validatorControl2.getMock();
 
-        validator = new CompoundValidator(new Validator[] { validator1, validator2 });
+        validator = new CompoundValidator(new Validator[]{validator1, validator2});
     }
 
     public void testSupports_WhenFirstValidatorSupports() throws Exception {

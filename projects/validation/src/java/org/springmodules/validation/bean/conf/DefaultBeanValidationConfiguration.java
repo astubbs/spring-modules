@@ -59,7 +59,7 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      * @see org.springmodules.validation.bean.conf.BeanValidationConfiguration#getGlobalRules()
      */
     public ValidationRule[] getGlobalRules() {
-        return (ValidationRule[])globalRules.toArray(new ValidationRule[globalRules.size()]);
+        return (ValidationRule[]) globalRules.toArray(new ValidationRule[globalRules.size()]);
     }
 
     /**
@@ -95,18 +95,18 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      * @see org.springmodules.validation.bean.conf.BeanValidationConfiguration#getPropertyRules(String).
      */
     public ValidationRule[] getPropertyRules(String propertyName) {
-        List rules = (List)rulesByProperty.get(propertyName);
+        List rules = (List) rulesByProperty.get(propertyName);
         if (rules == null || rules.isEmpty()) {
             return new ValidationRule[0];
         }
-        return (ValidationRule[])rules.toArray(new ValidationRule[rules.size()]);
+        return (ValidationRule[]) rules.toArray(new ValidationRule[rules.size()]);
     }
 
     /**
      * @see org.springmodules.validation.bean.conf.BeanValidationConfiguration#getValidatedProperties()
      */
     public String[] getValidatedProperties() {
-        return (String[])rulesByProperty.keySet().toArray(new String[rulesByProperty.size()]);
+        return (String[]) rulesByProperty.keySet().toArray(new String[rulesByProperty.size()]);
     }
 
     /**
@@ -128,7 +128,7 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      * @param rule The validation rule to be added to the given property.
      */
     public void addPropertyRule(String propertyName, ValidationRule rule) {
-        List rules = (List)rulesByProperty.get(propertyName);
+        List rules = (List) rulesByProperty.get(propertyName);
         if (rules == null) {
             rules = new ArrayList();
             rulesByProperty.put(propertyName, rules);
@@ -143,7 +143,7 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      * @param extraRules The extra validation rules that will be added to the given property.
      */
     public void addPropertyRules(String propertyName, ValidationRule[] extraRules) {
-        List rules = (List)rulesByProperty.get(propertyName);
+        List rules = (List) rulesByProperty.get(propertyName);
         if (rules == null) {
             rules = new ArrayList();
             rulesByProperty.put(propertyName, rules);
@@ -162,7 +162,7 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      * @see org.springmodules.validation.bean.conf.BeanValidationConfiguration#getCascadeValidations()
      */
     public CascadeValidation[] getCascadeValidations() {
-        return (CascadeValidation[])cascadeValidations.toArray(new CascadeValidation[cascadeValidations.size()]);
+        return (CascadeValidation[]) cascadeValidations.toArray(new CascadeValidation[cascadeValidations.size()]);
     }
 
     /**
@@ -171,7 +171,7 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      * @param validator The custom validator for this configuration.
      */
     public void setCustomValidator(Validator validator) {
-        setCustomValidators(new Validator[] { validator });
+        setCustomValidators(new Validator[]{validator});
     }
 
     /**
@@ -204,12 +204,12 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
 
     /**
      * Sets the cascade validations of this configuration.
-     *
+     * <p/>
      * param cascadeValidations The cascade validations of this configuration.
      */
     public void setCascadeValidations(CascadeValidation[] cascadeValidations) {
         this.cascadeValidations = new ArrayList();
-        for (int i=0; i<cascadeValidations.length; i++) {
+        for (int i = 0; i < cascadeValidations.length; i++) {
             this.cascadeValidations.add(cascadeValidations[i]);
         }
     }
@@ -220,7 +220,7 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      * @param cascadeValidation The cascase validation to be added to this configuration.
      */
     public void addCascadeValidation(CascadeValidation cascadeValidation) {
-        addCascadeValidations(new CascadeValidation[] { cascadeValidation });
+        addCascadeValidations(new CascadeValidation[]{cascadeValidation});
     }
 
     /**
@@ -229,7 +229,7 @@ public class DefaultBeanValidationConfiguration implements MutableBeanValidation
      * @param cascadeValidations The cascade validation to be added to this configuration.
      */
     public void addCascadeValidations(CascadeValidation[] cascadeValidations) {
-        for (int i=0; i<cascadeValidations.length; i++) {
+        for (int i = 0; i < cascadeValidations.length; i++) {
             this.cascadeValidations.add(cascadeValidations[i]);
         }
     }

@@ -34,5 +34,5 @@ public class IsInTheFutureDateCondition extends AbstractDateCondition {
     protected boolean checkCalendar(Calendar calendar) {
         return calendar.getTimeInMillis() > System.currentTimeMillis();
     }
-    
+
 }

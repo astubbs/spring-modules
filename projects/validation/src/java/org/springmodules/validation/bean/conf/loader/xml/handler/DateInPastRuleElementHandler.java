@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
 import java.beans.PropertyDescriptor;
@@ -48,12 +49,12 @@ public class DateInPastRuleElementHandler extends AbstractPropertyValidationElem
      */
     public boolean supports(Element element, Class clazz, PropertyDescriptor descriptor) {
         return super.supports(element, clazz, descriptor)
-               &&
-               (
-                   Date.class.isAssignableFrom(descriptor.getPropertyType())
-                   ||
-                   Calendar.class.isAssignableFrom(descriptor.getPropertyType())
-               );
+            &&
+            (
+                Date.class.isAssignableFrom(descriptor.getPropertyType())
+                    ||
+                    Calendar.class.isAssignableFrom(descriptor.getPropertyType())
+            );
     }
 
     protected AbstractValidationRule createValidationRule(Element element) {

@@ -30,10 +30,13 @@ import org.joda.time.ReadableInstant;
 public class IsBeforeInstantConditionTests extends AbstractInstantConditionTests {
 
     private ReadableInstant earlierInstant;
+
     private ReadableInstant nowInstant;
+
     private ReadableInstant laterInstant;
 
     private Date nowDate;
+
     private Calendar nowCalendar;
 
     public IsBeforeInstantConditionTests() {
@@ -71,19 +74,19 @@ public class IsBeforeInstantConditionTests extends AbstractInstantConditionTests
     }
 
     public void testGetEarlier() throws Exception {
-        assertEquals(nowInstant, ((IsBeforeInstantCondition)instantCondition).getLater());
-        assertEquals(nowDate.getTime(), ((IsBeforeInstantCondition)instantCondition).getLater().getMillis());
-        assertEquals(nowCalendar.getTimeInMillis(), ((IsBeforeInstantCondition)instantCondition).getLater().getMillis());
+        assertEquals(nowInstant, ((IsBeforeInstantCondition) instantCondition).getLater());
+        assertEquals(nowDate.getTime(), ((IsBeforeInstantCondition) instantCondition).getLater().getMillis());
+        assertEquals(nowCalendar.getTimeInMillis(), ((IsBeforeInstantCondition) instantCondition).getLater().getMillis());
     }
 
     //=============================================== Helper Methods ===================================================
 
     protected ReadableInstant createEarlierInstant(ReadableInstant now) {
-        return new Instant(now).minus(3*60*60*1000);
+        return new Instant(now).minus(3 * 60 * 60 * 1000);
     }
 
     protected ReadableInstant createLaterInstant(ReadableInstant now) {
-        return new Instant(now).plus(3*60*60*1000);
+        return new Instant(now).plus(3 * 60 * 60 * 1000);
     }
 
 }

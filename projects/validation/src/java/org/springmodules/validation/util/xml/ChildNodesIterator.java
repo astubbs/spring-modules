@@ -30,7 +30,9 @@ import org.w3c.dom.NodeList;
 public class ChildNodesIterator extends ReadOnlyIterator {
 
     private NodeList nodes;
+
     private int length;
+
     private int index;
 
     public ChildNodesIterator(Node node) {

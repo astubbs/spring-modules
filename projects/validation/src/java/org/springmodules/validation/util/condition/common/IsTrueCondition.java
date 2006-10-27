@@ -39,7 +39,7 @@ public class IsTrueCondition extends NonNullAcceptingTypeSpecificCondition {
      * @return <code>true</code> if the given boolean object is <code>true</code>, <code>false</code> otherwise.
      */
     public boolean doCheck(Object bool) {
-        return ((Boolean)bool).booleanValue();
+        return ((Boolean) bool).booleanValue();
     }
 
 }

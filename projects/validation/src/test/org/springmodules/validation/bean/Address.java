@@ -22,6 +22,7 @@ package org.springmodules.validation.bean;
 public class Address {
 
     private String street;
+
     private String city;
 
     public Address() {

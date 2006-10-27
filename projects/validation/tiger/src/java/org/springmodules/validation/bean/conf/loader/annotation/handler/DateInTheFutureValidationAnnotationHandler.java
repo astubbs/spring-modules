@@ -48,12 +48,12 @@ public class DateInTheFutureValidationAnnotationHandler extends AbstractProperty
     public boolean supports(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
         return
             super.supports(annotation, clazz, descriptor)
-            &&
-            (
-                Date.class.isAssignableFrom(descriptor.getPropertyType())
-                ||
-                Calendar.class.isAssignableFrom(descriptor.getPropertyType())
-            );
+                &&
+                (
+                    Date.class.isAssignableFrom(descriptor.getPropertyType())
+                        ||
+                        Calendar.class.isAssignableFrom(descriptor.getPropertyType())
+                );
     }
 
     protected AbstractValidationRule createValidationRule(Annotation annotation, Class clazz, String propertyName) {

@@ -46,7 +46,7 @@ public class HibernatePropertyValidationAnnotationHandler implements PropertyVal
      */
     public boolean supports(Annotation annotation, Class clazz, PropertyDescriptor descriptor) {
         Class annotationClass = annotation.annotationType();
-        ValidatorClass validatorClassAnnotation = (ValidatorClass)annotationClass.getAnnotation(ValidatorClass.class);
+        ValidatorClass validatorClassAnnotation = (ValidatorClass) annotationClass.getAnnotation(ValidatorClass.class);
         if (validatorClassAnnotation != null) {
             return true;
         }
@@ -61,9 +61,9 @@ public class HibernatePropertyValidationAnnotationHandler implements PropertyVal
     /**
      * Handles the given property level annotation and manipulates the given bean validation configuration accordingly.
      *
-     * @param annotation    The annotation to handle.
-     * @param clazz         The annotated class.
-     * @param descriptor    The property descriptor of the annotated property.
+     * @param annotation The annotation to handle.
+     * @param clazz The annotated class.
+     * @param descriptor The property descriptor of the annotated property.
      * @param configuration The bean validation configuration to manipulate.
      */
     public void handleAnnotation(Annotation annotation, Class clazz, PropertyDescriptor descriptor, MutableBeanValidationConfiguration configuration) {
@@ -74,7 +74,7 @@ public class HibernatePropertyValidationAnnotationHandler implements PropertyVal
         }
 
         Class annotationClass = annotation.annotationType();
-        ValidatorClass validatorClassAnnotation = (ValidatorClass)annotationClass.getAnnotation(ValidatorClass.class);
+        ValidatorClass validatorClassAnnotation = (ValidatorClass) annotationClass.getAnnotation(ValidatorClass.class);
         Class<? extends Validator> validatorClass = validatorClassAnnotation.value();
         Validator validator = (Validator) BeanUtils.instantiateClass(validatorClass);
         validator.initialize(annotation);

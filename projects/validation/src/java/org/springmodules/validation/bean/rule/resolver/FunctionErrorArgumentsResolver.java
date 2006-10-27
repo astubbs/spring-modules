@@ -43,18 +43,17 @@ public class FunctionErrorArgumentsResolver implements ErrorArgumentsResolver {
      */
     public Object[] resolveArguments(Object obj) {
         Object[] args = new Object[functions.length];
-        for (int i=0; i<args.length; i++) {
+        for (int i = 0; i < args.length; i++) {
             args[i] = functions[i].evaluate(obj);
         }
         return args;
     }
 
-
     //=============================================== Helper Methods ===================================================
 
     protected static Function[] parseFunctionExpressions(String[] expressions, FunctionExpressionParser parser) {
         Function[] functions = new Function[expressions.length];
-        for (int i=0; i<expressions.length; i++) {
+        for (int i = 0; i < expressions.length; i++) {
             functions[i] = parser.parse(expressions[i]);
         }
         return functions;

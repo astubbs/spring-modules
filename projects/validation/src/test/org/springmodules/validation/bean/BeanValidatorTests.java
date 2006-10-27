@@ -16,14 +16,7 @@
 
 package org.springmodules.validation.bean;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import junit.framework.TestCase;
 import org.easymock.MockControl;
@@ -48,50 +41,57 @@ public class BeanValidatorTests extends TestCase {
     private BeanValidator validator;
 
     private MockControl errorsControl;
+
     private Errors errors;
 
     private MockControl configurationControl;
+
     private BeanValidationConfiguration configuration;
 
     private MockControl ruleControl1;
+
     private ValidationRule rule1;
 
     private MockControl ruleControl2;
+
     private ValidationRule rule2;
 
     private MockControl converterControl;
+
     private ErrorCodeConverter converter;
 
     private MockControl loaderControl;
+
     private BeanValidationConfigurationLoader loader;
 
     private MockControl wrapperControl = MockControl.createControl(BeanWrapper.class);
-    private BeanWrapper wrapper = (BeanWrapper)wrapperControl.getMock();
+
+    private BeanWrapper wrapper = (BeanWrapper) wrapperControl.getMock();
 
     protected void setUp() throws Exception {
         converterControl = MockControl.createControl(ErrorCodeConverter.class);
-        converter = (ErrorCodeConverter)converterControl.getMock();
+        converter = (ErrorCodeConverter) converterControl.getMock();
 
         loaderControl = MockControl.createControl(BeanValidationConfigurationLoader.class);
-        loader = (BeanValidationConfigurationLoader)loaderControl.getMock();
+        loader = (BeanValidationConfigurationLoader) loaderControl.getMock();
 
         validator = new BeanValidator(loader);
         validator.setErrorCodeConverter(converter);
 
         errorsControl = MockControl.createControl(Errors.class);
-        errors = (Errors)errorsControl.getMock();
+        errors = (Errors) errorsControl.getMock();
 
         configurationControl = MockControl.createControl(BeanValidationConfiguration.class);
-        configuration = (BeanValidationConfiguration)configurationControl.getMock();
+        configuration = (BeanValidationConfiguration) configurationControl.getMock();
 
         ruleControl1 = MockControl.createControl(ValidationRule.class);
-        rule1 = (ValidationRule)ruleControl1.getMock();
+        rule1 = (ValidationRule) ruleControl1.getMock();
 
         ruleControl2 = MockControl.createControl(ValidationRule.class);
-        rule2 = (ValidationRule)ruleControl2.getMock();
+        rule2 = (ValidationRule) ruleControl2.getMock();
 
         wrapperControl = MockControl.createControl(BeanWrapper.class);
-        wrapper = (BeanWrapper)wrapperControl.getMock();
+        wrapper = (BeanWrapper) wrapperControl.getMock();
     }
 
     public void testSupports_WhenLoaderSupports() throws Exception {
@@ -113,9 +113,11 @@ public class BeanValidatorTests extends TestCase {
                 assertSame(object, obj);
                 assertSame(BeanValidatorTests.this.errors, errors);
             }
+
             protected BeanWrapper wrapBean(Object bean) {
                 return wrapper;
             }
+
             protected void validateArrayProperty(Object root, Object array, String propertyName, Errors errors, Set validatedObjs) {
                 assertSame(object, root);
                 assertSame(propertyValue, array);
@@ -130,7 +132,7 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("array"), Object[].class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("array"), propertyValue);
 
-        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("array") };
+        CascadeValidation[] cascadeValidations = new CascadeValidation[]{new CascadeValidation("array")};
         configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
@@ -153,6 +155,7 @@ public class BeanValidatorTests extends TestCase {
                 assertSame(object, obj);
                 assertSame(BeanValidatorTests.this.errors, errors);
             }
+
             protected BeanWrapper wrapBean(Object bean) {
                 return wrapper;
             }
@@ -171,7 +174,7 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("list"), List.class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("list"), propertyValue);
 
-        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("list") };
+        CascadeValidation[] cascadeValidations = new CascadeValidation[]{new CascadeValidation("list")};
         configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
@@ -194,6 +197,7 @@ public class BeanValidatorTests extends TestCase {
                 assertSame(object, obj);
                 assertSame(BeanValidatorTests.this.errors, errors);
             }
+
             protected BeanWrapper wrapBean(Object bean) {
                 return wrapper;
             }
@@ -212,7 +216,7 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("set"), Set.class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("set"), propertyValue);
 
-        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("set") };
+        CascadeValidation[] cascadeValidations = new CascadeValidation[]{new CascadeValidation("set")};
         configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
@@ -235,6 +239,7 @@ public class BeanValidatorTests extends TestCase {
                 assertSame(object, obj);
                 assertSame(BeanValidatorTests.this.errors, errors);
             }
+
             protected BeanWrapper wrapBean(Object bean) {
                 return wrapper;
             }
@@ -253,7 +258,7 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("map"), Map.class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("map"), propertyValue);
 
-        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("map") };
+        CascadeValidation[] cascadeValidations = new CascadeValidation[]{new CascadeValidation("map")};
         configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
@@ -276,6 +281,7 @@ public class BeanValidatorTests extends TestCase {
                 assertSame(object, obj);
                 assertSame(BeanValidatorTests.this.errors, errors);
             }
+
             protected BeanWrapper wrapBean(Object bean) {
                 return wrapper;
             }
@@ -294,7 +300,7 @@ public class BeanValidatorTests extends TestCase {
         wrapperControl.expectAndReturn(wrapper.getPropertyType("subBean"), Object.class);
         wrapperControl.expectAndReturn(wrapper.getPropertyValue("subBean"), propertyValue);
 
-        CascadeValidation[] cascadeValidations = new CascadeValidation[] { new CascadeValidation("subBean") };
+        CascadeValidation[] cascadeValidations = new CascadeValidation[]{new CascadeValidation("subBean")};
         configurationControl.expectAndReturn(configuration.getCascadeValidations(), cascadeValidations);
         loaderControl.expectAndReturn(loader.loadConfiguration(Object.class), configuration);
 
@@ -309,11 +315,12 @@ public class BeanValidatorTests extends TestCase {
         final Object root = new Object();
         final Object element1 = new Object();
         final Object element2 = new Object();
-        final Object[] array = new Object[] { element1, element2};
+        final Object[] array = new Object[]{element1, element2};
         final Set validatedObjects = new HashSet();
 
         BeanValidator validator = new BeanValidator(loader) {
             private int runCount = 0;
+
             protected void validateObjectGraphConstraints(Object rootObject, Object obj, Errors errors, Set validatedObjs) {
                 assertSame(root, rootObject);
                 assertSame(BeanValidatorTests.this.errors, errors);
@@ -343,11 +350,14 @@ public class BeanValidatorTests extends TestCase {
         final Object root = new Object();
         final Object element1 = new Object();
         final Object element2 = new Object();
-        final List list = new ArrayList(); list.add(element1); list.add(element2);
+        final List list = new ArrayList();
+        list.add(element1);
+        list.add(element2);
         final Set validatedObjects = new HashSet();
 
         BeanValidator validator = new BeanValidator(loader) {
             private int runCount = 0;
+
             protected void validateObjectGraphConstraints(Object rootObject, Object obj, Errors errors, Set validatedObjs) {
                 assertSame(root, rootObject);
                 assertSame(BeanValidatorTests.this.errors, errors);
@@ -377,11 +387,14 @@ public class BeanValidatorTests extends TestCase {
         final Object root = new Object();
         final Object element1 = new Integer(1);
         final Object element2 = new Integer(2);
-        final Set set = new TreeSet(); set.add(element1); set.add(element2);
+        final Set set = new TreeSet();
+        set.add(element1);
+        set.add(element2);
         final Set validatedObjects = new HashSet();
 
         BeanValidator validator = new BeanValidator(loader) {
             private int runCount = 0;
+
             protected void validateObjectGraphConstraints(Object rootObject, Object obj, Errors errors, Set validatedObjs) {
                 assertSame(root, rootObject);
                 assertSame(BeanValidatorTests.this.errors, errors);
@@ -468,11 +481,13 @@ public class BeanValidatorTests extends TestCase {
                 assertSame(object, obj);
                 assertSame(BeanValidatorTests.this.errors, errors);
             }
+
             protected void applyPropertiesValidationRules(BeanValidationConfiguration conf, Object obj, Errors errors) {
                 assertSame(configuration, conf);
                 assertSame(object, obj);
                 assertSame(BeanValidatorTests.this.errors, errors);
             }
+
             protected void applyCustomValidator(BeanValidationConfiguration conf, Object obj, Errors errors) {
                 assertSame(configuration, conf);
                 assertSame(object, obj);
@@ -498,7 +513,7 @@ public class BeanValidatorTests extends TestCase {
         ruleControl2.expectAndReturn(rule2.isApplicable(object), true);
         ruleControl2.expectAndReturn(rule2.getCondition(), new AlwaysTrueCondition());
 
-        ValidationRule[] globalRules = new ValidationRule[] { rule1, rule2 };
+        ValidationRule[] globalRules = new ValidationRule[]{rule1, rule2};
         configurationControl.expectAndReturn(configuration.getGlobalRules(), globalRules);
 
         converterControl.expectAndReturn(converter.convertGlobalErrorCode("errorCode1", Object.class), "_errorCode1");
@@ -514,8 +529,8 @@ public class BeanValidatorTests extends TestCase {
     public void testApplyPropertiesValidationRules() throws Exception {
         final Object object = new Object();
 
-        final ValidationRule[] rules = new ValidationRule[] { rule1, rule2 };
-        configurationControl.expectAndReturn(configuration.getValidatedProperties(), new String[] { "name" });
+        final ValidationRule[] rules = new ValidationRule[]{rule1, rule2};
+        configurationControl.expectAndReturn(configuration.getValidatedProperties(), new String[]{"name"});
         configurationControl.expectAndReturn(configuration.getPropertyRules("name"), rules);
 
         BeanValidator validator = new BeanValidator() {
@@ -547,7 +562,7 @@ public class BeanValidatorTests extends TestCase {
         ruleControl2.expectAndReturn(rule2.getDefaultErrorMessage(), "message2");
         ruleControl2.expectAndReturn(rule2.getErrorArguments(object), args);
 
-        ValidationRule[] rules = new ValidationRule[] { rule1, rule2 };
+        ValidationRule[] rules = new ValidationRule[]{rule1, rule2};
 
         converterControl.expectAndReturn(converter.convertPropertyErrorCode("errorCode2", Object.class, "name"), "_errorCode2");
 
@@ -568,7 +583,7 @@ public class BeanValidatorTests extends TestCase {
         ruleControl1.expectAndReturn(rule1.getDefaultErrorMessage(), "message1");
         ruleControl1.expectAndReturn(rule1.getErrorArguments(object), args);
 
-        ValidationRule[] rules = new ValidationRule[] { rule1, rule2 };
+        ValidationRule[] rules = new ValidationRule[]{rule1, rule2};
 
         converterControl.expectAndReturn(converter.convertPropertyErrorCode("errorCode1", Object.class, "name"), "_errorCode1");
 
@@ -588,7 +603,7 @@ public class BeanValidatorTests extends TestCase {
         ruleControl2.expectAndReturn(rule2.isApplicable(object), true);
         ruleControl2.expectAndReturn(rule2.getCondition(), new AlwaysTrueCondition());
 
-        ValidationRule[] rules = new ValidationRule[] { rule1, rule2 };
+        ValidationRule[] rules = new ValidationRule[]{rule1, rule2};
 
         replay();
         validator.validateAndShortCircuitRules(rules, "name", object, errors);
@@ -599,7 +614,7 @@ public class BeanValidatorTests extends TestCase {
         Object object = new Object();
 
         MockControl customValidatorControl = MockControl.createControl(Validator.class);
-        Validator customValidator = (Validator)customValidatorControl.getMock();
+        Validator customValidator = (Validator) customValidatorControl.getMock();
         customValidator.validate(object, errors);
         configurationControl.expectAndReturn(configuration.getCustomValidator(), customValidator);
 

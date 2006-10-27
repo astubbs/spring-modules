@@ -171,7 +171,7 @@ public class DefaultValidationRule implements ValidationRule {
 
     /**
      * see {@link ValidationRule#isApplicable(Object)}.
-     *
+     * <p/>
      * The applicability of this validation rule is determined by the applicability condition.
      * see {@link #getApplicabilityCondition()}.
      */
@@ -252,7 +252,6 @@ public class DefaultValidationRule implements ValidationRule {
     public void setDefalutErrorMessage(String defalutErrorMessage) {
         this.defalutErrorMessage = defalutErrorMessage;
     }
-
 
     //=============================================== Setter/Getter ====================================================
 

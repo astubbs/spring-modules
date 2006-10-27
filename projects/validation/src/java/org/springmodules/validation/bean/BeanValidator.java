@@ -17,13 +17,8 @@
 package org.springmodules.validation.bean;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,9 +48,11 @@ public class BeanValidator extends RuleBasedValidator {
     private final static Log logger = LogFactory.getLog(BeanValidator.class);
 
     private final static String PROPERTY_KEY_PREFIX = "[";
+
     private final static String PROPERTY_KEY_SUFFIX = "]";
 
     private BeanValidationConfigurationLoader configurationLoader;
+
     private ErrorCodeConverter errorCodeConverter;
 
     /**
@@ -71,7 +68,7 @@ public class BeanValidator extends RuleBasedValidator {
      * Constructs a new BeanValidator for the given bean class using the given validation configuration loader.
      *
      * @param configurationLoader The {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader} that is used to load the bean validation
-     *        configuration.
+     * configuration.
      */
     public BeanValidator(BeanValidationConfigurationLoader configurationLoader) {
         this.configurationLoader = configurationLoader;
@@ -110,7 +107,7 @@ public class BeanValidator extends RuleBasedValidator {
      * {@link Errors} object.
      *
      * @param errorCodeConverter The error code converter this validator will use to resolve the error
-     *        different error codes.
+     * different error codes.
      */
     public void setErrorCodeConverter(ErrorCodeConverter errorCodeConverter) {
         this.errorCodeConverter = errorCodeConverter;
@@ -137,7 +134,7 @@ public class BeanValidator extends RuleBasedValidator {
      * @param obj The object to be validated
      * @param errors The {@link Errors} instance where the validation errors will be registered.
      * @param validatedObjects keeps track of all the validated objects (to prevent revalidating the same objects when
-     *        a circular relationship exists).
+     * a circular relationship exists).
      */
     protected void validateObjectGraphConstraints(Object root, Object obj, Errors errors, Set validatedObjects) {
 
@@ -175,7 +172,7 @@ public class BeanValidator extends RuleBasedValidator {
         // validation and recursively calling this method on them.
         CascadeValidation[] cascadeValidations = configuration.getCascadeValidations();
         BeanWrapper wrapper = wrapBean(obj);
-        for (int i=0; i<cascadeValidations.length; i++) {
+        for (int i = 0; i < cascadeValidations.length; i++) {
             CascadeValidation cascadeValidation = cascadeValidations[i];
             Condition applicabilityCondition = cascadeValidation.getApplicabilityCondition();
 
@@ -199,14 +196,11 @@ public class BeanValidator extends RuleBasedValidator {
             // using errors.popNestedPath().
             if (propertyType.isArray()) {
                 validateArrayProperty(root, propertyValue, propertyName, errors, validatedObjects);
-            }
-            else if (List.class.isAssignableFrom(propertyType) || Set.class.isAssignableFrom(propertyType)) {
-                validateListOrSetProperty(root, (Collection)propertyValue, propertyName, errors, validatedObjects);
-            }
-            else if (Map.class.isAssignableFrom(propertyType)) {
-                validateMapProperty(root, ((Map)propertyValue), propertyName, errors, validatedObjects);
-            }
-            else {
+            } else if (List.class.isAssignableFrom(propertyType) || Set.class.isAssignableFrom(propertyType)) {
+                validateListOrSetProperty(root, (Collection) propertyValue, propertyName, errors, validatedObjects);
+            } else if (Map.class.isAssignableFrom(propertyType)) {
+                validateMapProperty(root, ((Map) propertyValue), propertyName, errors, validatedObjects);
+            } else {
                 // if the object is just a normal object (not an array or a collection), then applying its
                 // validation rules.
                 validatedSubBean(root, propertyValue, propertyName, errors, validatedObjects);
@@ -240,7 +234,7 @@ public class BeanValidator extends RuleBasedValidator {
         Errors errors,
         Set validatedObjects) {
 
-        for (int i=0; i< Array.getLength(array); i++) {
+        for (int i = 0; i < Array.getLength(array); i++) {
             String nestedPath = propertyName + PROPERTY_KEY_PREFIX + i + PROPERTY_KEY_SUFFIX;
             errors.pushNestedPath(nestedPath);
             validateObjectGraphConstraints(root, Array.get(array, i), errors, validatedObjects);
@@ -286,7 +280,7 @@ public class BeanValidator extends RuleBasedValidator {
      */
     protected void validateMapProperty(Object root, Map map, String propertyName, Errors errors, Set validatedObjects) {
         for (Iterator entries = map.entrySet().iterator(); entries.hasNext();) {
-            Entry entry = (Entry)entries.next();
+            Entry entry = (Entry) entries.next();
             Object key = entry.getKey();
             if (!(key instanceof String)) {
                 // skipping validation of elements that are mapped to non-string keys for there is no proper
@@ -357,7 +351,7 @@ public class BeanValidator extends RuleBasedValidator {
      */
     protected void applyGlobalValidationRules(BeanValidationConfiguration configuration, Object obj, Errors errors) {
         ValidationRule[] globalRules = configuration.getGlobalRules();
-        for (int i=0; i<globalRules.length; i++) {
+        for (int i = 0; i < globalRules.length; i++) {
             ValidationRule rule = globalRules[i];
             if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
                 String errorCode = errorCodeConverter.convertGlobalErrorCode(rule.getErrorCode(), obj.getClass());
@@ -387,11 +381,11 @@ public class BeanValidator extends RuleBasedValidator {
      * @param configuration The bean validation configuration that holds all the property validation rules.
      * @param obj The validated object.
      * @param errors The {@link Errors} instance where all property validation errors will be registered
-     *        (see {@link Errors#rejectValue(String, String)}).
+     * (see {@link Errors#rejectValue(String, String)}).
      */
     protected void applyPropertiesValidationRules(BeanValidationConfiguration configuration, Object obj, Errors errors) {
         String[] propertyNames = configuration.getValidatedProperties();
-        for (int i=0; i<propertyNames.length; i++) {
+        for (int i = 0; i < propertyNames.length; i++) {
             String propertyName = propertyNames[i];
             if (logger.isDebugEnabled()) {
                 logger.debug("Validating property '" + propertyName + "' rules...");
@@ -417,7 +411,7 @@ public class BeanValidator extends RuleBasedValidator {
      * @param errors The {@link Errors} instance where the validation errors will be registered.
      */
     protected void validateAndShortCircuitRules(ValidationRule[] rules, String propertyName, Object obj, Errors errors) {
-        for (int i=0; i<rules.length; i++) {
+        for (int i = 0; i < rules.length; i++) {
             ValidationRule rule = rules[i];
             if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
                 String errorCode = errorCodeConverter.convertPropertyErrorCode(rule.getErrorCode(), obj.getClass(), propertyName);

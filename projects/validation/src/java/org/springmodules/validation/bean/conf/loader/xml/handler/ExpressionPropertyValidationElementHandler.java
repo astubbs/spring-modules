@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.springmodules.validation.bean.conf.loader.xml.handler;
 
 import org.springframework.util.StringUtils;
@@ -30,9 +31,13 @@ import org.w3c.dom.Element;
 public class ExpressionPropertyValidationElementHandler extends AbstractPropertyValidationElementHandler {
 
     private static final String ELEMENT_NAME = "expression";
+
     private static final String CONDITION_ATTR = "condition";
+
     private static final String SCOPE_ATTR = "scope";
+
     private static final String PROPERTY_SCOPE_VALUE = "property";
+
     private static final String GLOBAL_SCOPE_VALUE = "global";
 
     /**

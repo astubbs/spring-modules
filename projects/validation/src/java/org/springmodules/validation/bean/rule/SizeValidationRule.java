@@ -30,6 +30,7 @@ public class SizeValidationRule extends AbstractValidationRule {
     public final static String DEFAULT_ERROR_CODE = "size";
 
     private int min;
+
     private int max;
 
     /**

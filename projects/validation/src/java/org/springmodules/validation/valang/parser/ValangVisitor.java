@@ -19,8 +19,6 @@ package org.springmodules.validation.valang.parser;
 import org.springmodules.validation.valang.functions.Function;
 
 /**
- * 
- * 
  * @author Steven Devijver
  * @since Apr 23, 2005
  */

@@ -17,7 +17,6 @@
 package org.springmodules.validation.valang.parser;
 
 import javax.servlet.ServletContext;
-
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,45 +24,28 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.ResourceLoaderAware;
+import org.springframework.context.*;
 import org.springframework.core.JdkVersion;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.context.ServletContextAware;
 import org.springmodules.validation.util.date.DefaultDateParser;
 import org.springmodules.validation.valang.ValangException;
-import org.springmodules.validation.valang.functions.AbstractFunction;
-import org.springmodules.validation.valang.functions.AbstractInitializableFunction;
-import org.springmodules.validation.valang.functions.EmailFunction;
-import org.springmodules.validation.valang.functions.Function;
-import org.springmodules.validation.valang.functions.InRoleFunction;
-import org.springmodules.validation.valang.functions.LengthOfFunction;
-import org.springmodules.validation.valang.functions.LowerCaseFunction;
-import org.springmodules.validation.valang.functions.NotFunction;
-import org.springmodules.validation.valang.functions.RegExFunction;
-import org.springmodules.validation.valang.functions.ResolveFunction;
-import org.springmodules.validation.valang.functions.UpperCaseFunction;
+import org.springmodules.validation.valang.functions.*;
 import org.springmodules.validation.valang.predicates.GenericTestPredicate;
 import org.springmodules.validation.valang.predicates.Operator;
 
 /**
  * <p>Allows registration of custom functions. Custom functions can overwrite default functions.
- * 
+ * <p/>
  * <p>Default functions are:
- * 
+ * <p/>
  * <ul>
- * 	<li>len, length, size
- * 	<li>upper
- * 	<li>lower
- * 	<li>!
- * </ul> 
- * 
+ * <li>len, length, size
+ * <li>upper
+ * <li>lower
+ * <li>!
+ * </ul>
+ *
  * @author Steven Devijver
  * @since Apr 23, 2005
  */
@@ -72,13 +54,19 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
     private final static Log logger = LogFactory.getLog(DefaultVisitor.class);
 
     private ValangVisitor visitor = null;
+
     private DefaultDateParser dateParser = null;
 
     private BeanFactory beanFactory = null;
+
     private ApplicationContext applicationContext = null;
+
     private ResourceLoader resourceLoader = null;
+
     private MessageSource messageSource = null;
+
     private ApplicationEventPublisher applicationEventPublisher = null;
+
     private ServletContext servletContext = null;
 
     public DefaultVisitor() {
@@ -127,7 +115,7 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
             logger.warn("Bean '" + name + "' is not of a '" + AbstractInitializableFunction.class.getName() + "' type");
             return null;
         }
-        AbstractInitializableFunction function = (AbstractInitializableFunction)bean;
+        AbstractInitializableFunction function = (AbstractInitializableFunction) bean;
         function.init(arguments, line, column);
         return function;
     }
@@ -156,33 +144,33 @@ public class DefaultVisitor implements ValangVisitor, BeanFactoryAware, Applicat
 
     private Function lifeCycleCallbacks(Function function, int line, int column) {
         if (function instanceof BeanFactoryAware) {
-            ((BeanFactoryAware)function).setBeanFactory(beanFactory);
+            ((BeanFactoryAware) function).setBeanFactory(beanFactory);
         }
         if (function instanceof ApplicationContextAware) {
-            ((ApplicationContextAware)function).setApplicationContext(applicationContext);
+            ((ApplicationContextAware) function).setApplicationContext(applicationContext);
         }
         if (function instanceof ResourceLoaderAware) {
-            ((ResourceLoaderAware)function).setResourceLoader(resourceLoader);
+            ((ResourceLoaderAware) function).setResourceLoader(resourceLoader);
         }
         if (function instanceof MessageSourceAware) {
-            ((MessageSourceAware)function).setMessageSource(messageSource);
+            ((MessageSourceAware) function).setMessageSource(messageSource);
         }
         if (function instanceof ApplicationEventPublisherAware) {
-            ((ApplicationEventPublisherAware)function).setApplicationEventPublisher(applicationEventPublisher);
+            ((ApplicationEventPublisherAware) function).setApplicationEventPublisher(applicationEventPublisher);
         }
         if (function instanceof ServletContextAware) {
-            ((ServletContextAware)function).setServletContext(servletContext);
+            ((ServletContextAware) function).setServletContext(servletContext);
         }
         if (function instanceof AbstractFunction) {
-            AbstractFunction abstractFunction = (AbstractFunction)function;
+            AbstractFunction abstractFunction = (AbstractFunction) function;
             AutowireCapableBeanFactory autowireCapableBeanFactory = null;
 
             if (abstractFunction.isAutowireByName() || abstractFunction.isAutowireByType()) {
                 if (applicationContext instanceof ConfigurableApplicationContext) {
-                    ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext)applicationContext;
+                    ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
                     autowireCapableBeanFactory = configurableApplicationContext.getBeanFactory();
                 } else if (beanFactory instanceof AutowireCapableBeanFactory) {
-                    autowireCapableBeanFactory = (AutowireCapableBeanFactory)beanFactory;
+                    autowireCapableBeanFactory = (AutowireCapableBeanFactory) beanFactory;
                 } else if (applicationContext == null && beanFactory == null) {
                     throw new ValangException("Could not autowire function: no application context or bean factory available", line, column);
                 } else {

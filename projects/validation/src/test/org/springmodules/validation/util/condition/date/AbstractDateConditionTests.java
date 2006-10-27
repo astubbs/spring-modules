@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 public abstract class AbstractDateConditionTests extends TestCase {
 
     protected AbstractDateCondition dateCondition;
+
     protected AbstractDateCondition calendarCondition;
 
     protected void setUp() throws Exception {

@@ -16,11 +16,7 @@
 
 package org.springmodules.validation.bean;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.springframework.validation.Errors;
@@ -34,15 +30,15 @@ import org.springmodules.validation.util.condition.Condition;
  * A {@link org.springframework.validation.Validator} implementation which uses {@link org.springmodules.validation.bean.rule.ValidationRule}'s to define its
  * validation execution. There are two types of validation rules this validator accepts:
  * <ul>
- *  <li>
- *      Global Rules - Rules that apply on the validated objects and where all validation errors are registered
- *                     globaly with the {@link Errors} object (i.e. {@link Errors#reject(String)}).
- *  </li>
- *  <li>
- *      Property Rules - Rules that apply on specific properties of the validated objects and where all validation
- *                       errors are registered with the {@link Errors} object under the context of those properties
- *                       (i.e. {@link Errors#rejectValue(String, String)}).
- *  </li>
+ * <li>
+ * Global Rules - Rules that apply on the validated objects and where all validation errors are registered
+ * globaly with the {@link Errors} object (i.e. {@link Errors#reject(String)}).
+ * </li>
+ * <li>
+ * Property Rules - Rules that apply on specific properties of the validated objects and where all validation
+ * errors are registered with the {@link Errors} object under the context of those properties
+ * (i.e. {@link Errors#rejectValue(String, String)}).
+ * </li>
  * </ul>
  *
  * @author Uri Boness
@@ -84,7 +80,7 @@ public class RuleBasedValidator implements Validator {
 
         // validating using the registered global rules
         for (Iterator iter = globalRules.iterator(); iter.hasNext();) {
-            ValidationRule rule = (ValidationRule)iter.next();
+            ValidationRule rule = (ValidationRule) iter.next();
             if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
                 errors.reject(rule.getErrorCode(), rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
             }
@@ -92,17 +88,16 @@ public class RuleBasedValidator implements Validator {
 
         // validating using the registered field rules
         for (Iterator names = rulesByProperty.keySet().iterator(); names.hasNext();) {
-            String propertyName = (String)names.next();
-            List rules = (List)rulesByProperty.get(propertyName);
+            String propertyName = (String) names.next();
+            List rules = (List) rulesByProperty.get(propertyName);
             for (Iterator iter = rules.iterator(); iter.hasNext();) {
-                ValidationRule rule = (ValidationRule)iter.next();
+                ValidationRule rule = (ValidationRule) iter.next();
                 if (rule.isApplicable(obj) && !rule.getCondition().check(obj)) {
                     errors.rejectValue(propertyName, rule.getErrorCode(), rule.getErrorArguments(obj), rule.getDefaultErrorMessage());
                 }
             }
         }
     }
-
 
     //====== Setters to support JavaBean based configuration environment (e.g. spring's application context ===========
 
@@ -112,7 +107,7 @@ public class RuleBasedValidator implements Validator {
      * @param globalRules The extra global validation rules to be added to this validator.
      */
     public void setExtraGlobalVadlidationRules(ValidationRule[] globalRules) {
-        for (int i=0; i<globalRules.length; i++) {
+        for (int i = 0; i < globalRules.length; i++) {
             addGlobalRule(globalRules[i]);
         }
     }
@@ -121,12 +116,12 @@ public class RuleBasedValidator implements Validator {
      * Sets extra property validation rules for this validator.
      *
      * @param rulesByProperty The extra property validation rules for this validator. The map should hold the property
-     *        names as keys and {@link ValidationRule} instances as values.
+     * names as keys and {@link ValidationRule} instances as values.
      */
     public void setExtraPropertyValidationRules(Map rulesByProperty) {
         for (Iterator entries = rulesByProperty.entrySet().iterator(); entries.hasNext();) {
-            Entry entry = (Entry)entries.next();
-            addPropertyRule((String)entry.getKey(), (ValidationRule)entry.getValue());
+            Entry entry = (Entry) entries.next();
+            addPropertyRule((String) entry.getKey(), (ValidationRule) entry.getValue());
         }
     }
 
@@ -151,12 +146,11 @@ public class RuleBasedValidator implements Validator {
     /**
      * Adds the given property rule to this validator.
      *
-     * @see #addPropertyRule(String, org.springmodules.validation.util.condition.Condition, String, Object[])
-     *
      * @param propertyName The name of the property the added rule is associated with.
      * @param fieldValueCondition The condition of the rule.
      * @param errorCode The error code of the rule.
      * @param args The arguments of the error code of the rule.
+     * @see #addPropertyRule(String, org.springmodules.validation.util.condition.Condition, String, Object[])
      */
     public void addPropertyRule(String propertyName, Condition fieldValueCondition, String errorCode, Object[] args) {
         addPropertyRule(propertyName, fieldValueCondition, errorCode, errorCode, args);
@@ -165,13 +159,12 @@ public class RuleBasedValidator implements Validator {
     /**
      * Adds the given property rule to this validator.
      *
-     * @see #addPropertyRule(String, org.springmodules.validation.util.condition.Condition, String, Object[])
-     *
      * @param propertyName The name of the property the added rule is associated with.
      * @param fieldValueCondition The condition of the rule.
      * @param errorCode The error code of the rule.
      * @param message The default error message of the rule.
      * @param args The arguments of the error code of the rule.
+     * @see #addPropertyRule(String, org.springmodules.validation.util.condition.Condition, String, Object[])
      */
     public void addPropertyRule(
         String propertyName,
@@ -186,10 +179,9 @@ public class RuleBasedValidator implements Validator {
     /**
      * Adds the given property rule for the given property.
      *
-     * @see #addPropertyRule(String, org.springmodules.validation.util.condition.Condition, String)
-     *
      * @param propertyName The name of the property associated with the added rule.
      * @param propertyRule The rule that should be applied on the value of the given property.
+     * @see #addPropertyRule(String, org.springmodules.validation.util.condition.Condition, String)
      */
     public void addPropertyRule(String propertyName, ValidationRule propertyRule) {
         addPropertyGlobalRule(propertyName, new PropertyValidationRule(propertyName, propertyRule));
@@ -200,7 +192,7 @@ public class RuleBasedValidator implements Validator {
      * evaluated on the validated object, not on the property value. The only difference between this added rule and
      * a global rule is that the validation errors of this rule are associated with the given property and are not
      * associated globaly with the validated object.
-     *
+     * <p/>
      * This type of rule comes in handy when a complex validation is required on the validation object, but the error
      * is should only be associated with a specific property. An example would be when two properties of the validated
      * object should match (i.e. have the same value), but if they don't, the error will only be associated with one
@@ -211,14 +203,13 @@ public class RuleBasedValidator implements Validator {
      * @param globalRule The global rule to be added.
      */
     public void addPropertyGlobalRule(String propertyName, ValidationRule globalRule) {
-        List rules = (List)rulesByProperty.get(propertyName);
+        List rules = (List) rulesByProperty.get(propertyName);
         if (rules == null) {
             rules = new ArrayList();
             rulesByProperty.put(propertyName, rules);
         }
         rules.add(globalRule);
     }
-
 
     //==================================== Global Rules Regitration Methods ==========================================
 
@@ -237,11 +228,10 @@ public class RuleBasedValidator implements Validator {
     /**
      * Adds a new global validation rule to this validator.
      *
-     * @see #addGlobalRule(org.springmodules.validation.util.condition.Condition, String)
-     *
      * @param condition The condition of the added rule.
      * @param errorCode The error code of the added rule.
      * @param args The arguments for the error of the added rule.
+     * @see #addGlobalRule(org.springmodules.validation.util.condition.Condition, String)
      */
     public void addGlobalRule(Condition condition, String errorCode, Object[] args) {
         addGlobalRule(condition, errorCode, errorCode, args);
@@ -250,12 +240,11 @@ public class RuleBasedValidator implements Validator {
     /**
      * Adds a new global validation rule to this validator.
      *
-     * @see #addGlobalRule(org.springmodules.validation.util.condition.Condition, String)
-     *
      * @param condition The condition of the added rule.
      * @param errorCode The error code of the added rule.
      * @param message The error message of the added rule.
      * @param args The arguments for the error of the added rule.
+     * @see #addGlobalRule(org.springmodules.validation.util.condition.Condition, String)
      */
     public void addGlobalRule(Condition condition, String errorCode, String message, Object[] args) {
         addGlobalRule(new DefaultValidationRule(condition, errorCode, message, args));
@@ -264,11 +253,10 @@ public class RuleBasedValidator implements Validator {
     /**
      * Adds a new global validation rule to this validator.
      *
-     * @see #addGlobalRule(org.springmodules.validation.util.condition.Condition, String)
-     *
      * @param condition The condition of the added rule.
      * @param errorCode The error code of the added rule.
      * @param message The default error message of the added rule.
+     * @see #addGlobalRule(org.springmodules.validation.util.condition.Condition, String)
      */
     public void addGlobalRule(Condition condition, String errorCode, String message) {
         addGlobalRule(new DefaultValidationRule(condition, errorCode, message, new Object[0]));

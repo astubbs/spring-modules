@@ -29,7 +29,7 @@ public class ResolveFunction extends AbstractFunction {
     protected Object doGetResult(Object target) throws Exception {
         Object value = getArguments()[0].getResult(target);
         Assert.isInstanceOf(String.class, value, "Argument of resolve method must be a string value or return a string value " + getTemplate().getAtLineString() + "!");
-        return new DefaultMessageSourceResolvable((String)value);
+        return new DefaultMessageSourceResolvable((String) value);
     }
 
 }

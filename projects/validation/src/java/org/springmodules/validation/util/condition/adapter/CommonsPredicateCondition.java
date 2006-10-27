@@ -50,7 +50,6 @@ public class CommonsPredicateCondition extends AbstractCondition {
         return predicate.evaluate(object);
     }
 
-
     //============================================= Setter/Getter ===================================================
 
     /**

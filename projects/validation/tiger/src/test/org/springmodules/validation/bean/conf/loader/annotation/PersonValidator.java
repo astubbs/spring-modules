@@ -20,8 +20,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 /**
- *
- *
  * @author Uri Boness
  */
 public class PersonValidator implements Validator {
@@ -38,12 +36,12 @@ public class PersonValidator implements Validator {
      * Validate an object, which must be of a class for which
      * the supports() method returned true.
      *
-     * @param obj    Populated object to validate
+     * @param obj Populated object to validate
      * @param errors Errors object we're building. May contain
-     *               errors for this field relating to types.
+     * errors for this field relating to types.
      */
     public void validate(Object obj, Errors errors) {
-        Person person = (Person)obj;
+        Person person = (Person) obj;
         if (person.getFirstName() == null || person.getNickname() == null) {
             return;
         }

@@ -36,7 +36,7 @@ public class NumberAwareComparableComparator extends ComparableComparator {
      */
     public int compare(Object o1, Object o2) {
         if (Number.class.isInstance(o1) && Number.class.isInstance(o2)) {
-            return compareNumbers((Number)o1, (Number)o2);
+            return compareNumbers((Number) o1, (Number) o2);
         }
         return super.compare(o1, o2);
 

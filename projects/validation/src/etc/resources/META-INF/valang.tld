@@ -5,16 +5,16 @@
     <jsp-version>1.2</jsp-version>
     <short-name>Valang</short-name>
     <uri>http://www.springmodules.org/tags/valang</uri>
-    <description> A set of tags that enable the translation of Valang 
-        validators into JavaScript. </description>
+    <description>A set of tags that enable the translation of Valang
+        validators into JavaScript.</description>
     <tag>
         <name>codebase</name>
         <tag-class>org.springmodules.validation.valang.javascript.taglib.ValangCodebaseTag</tag-class>
         <body-content>None</body-content>
-        <description> Generates the JavaScript code that is necessary for the 
-            translated JavaScript validation rules to execute. This code needs 
-            to be included once per page and before any generated validation 
-            rules. </description>
+        <description>Generates the JavaScript code that is necessary for the
+            translated JavaScript validation rules to execute. This code needs
+            to be included once per page and before any generated validation
+            rules.</description>
         <attribute>
             <name>includeScriptTags</name>
             <required>false</required>
@@ -42,9 +42,9 @@
         <name>validate</name>
         <tag-class>org.springmodules.validation.valang.javascript.taglib.ValangValidateTag</tag-class>
         <body-content>JSP</body-content>
-        <description> Generates a set of JavaScript validation rules bassed on 
-            a suplied set of validation rules bound to a specific commandName 
-            and/or by translating the body content into valang. </description>
+        <description>Generates a set of JavaScript validation rules bassed on
+            a suplied set of validation rules bound to a specific commandName
+            and/or by translating the body content into valang.</description>
         <attribute>
             <name>commandName</name>
             <required>false</required>
