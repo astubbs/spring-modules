@@ -43,7 +43,7 @@ import org.springframework.dao.DataAccessException;
  * <p>Take a look at other classes javadocs for additional details.</p>
  *<p>
  * <b>Managing persistent objects.</b><br>
- * It is strongly suggested that every persistent business object you want to modify must be first retrieved from the prevalent system 
+ * Every persistent business object you want to modify must be first retrieved from the prevalent system 
  * through the template data access methods.<br> 
  * You have to pass fresh (newly created) business objects instances only when doing a save: the other methods require you 
  * to pass persistent object instances previously retrieved from the prevalent system.<br>

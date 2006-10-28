@@ -20,8 +20,40 @@ public class PrevaylerTemplateWithMergeTest extends AbstractDependencyInjectionS
     }
 
     protected void onTearDown() throws Exception {
-        this.template.delete(Employee.class);
-        this.template.delete(Office.class);
+        try {
+            this.template.delete(Employee.class);
+            this.template.delete(Office.class);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void testObjectReferenceIntegrity() {
+        // Create an employee, assign it an office and save:
+        EmployeeImpl emp1 = new EmployeeImpl("a1");
+        OfficeImpl o1 = new OfficeImpl("o1", "Office 1"); 
+        emp1.setOffice(o1);
+        this.template.save(emp1);
+        // Verify:
+        o1 = (OfficeImpl) emp1.getOffice();
+        assertNotNull(emp1.getId());
+        assertNotNull(o1.getId());
+        
+        // Change the office name and DIRECTLY update it:
+        o1.setName("New name");
+        this.template.update(o1);
+        
+        // If we directly get the office, we see its name has been changed:
+        o1 = (OfficeImpl) this.template.get(Office.class, o1.getId());
+        assertEquals("New name", o1.getName());
+        
+        // If we get the office from the employee, the name is changed too:
+        emp1 = (EmployeeImpl) this.template.get(Employee.class, emp1.getId());
+        OfficeImpl o2 = (OfficeImpl) emp1.getOffice();
+        assertNotNull("Value: " + o2.getName(), o2.getName());
+        // What's most important, the office directly retrieved from the template, 
+        // and the one retrieved from the employee, are the same:
+        assertSame(o1, o2);
     }
     
     public void testSaveWithMerge() {

@@ -36,64 +36,69 @@ public class DefaultIdMerger implements IdMerger {
         }
         else {
             this.localIdentityMap.set(new IdentityHashMap());
-            this.mergeValue(source, destination);
+            this.doMerge(source, destination);
         }
     }
     
-    private void mergeValue(Object sourceValue, Object destinationValue) {
+    private void doMerge(Object sourceValue, Object destinationValue) {
         if (sourceValue != null && destinationValue != null) {
             if (sourceValue.getClass().isArray()) {
-                this.mergeArray((Object[]) sourceValue, (Object[]) destinationValue);
+                this.traverseArray((Object[]) sourceValue, (Object[]) destinationValue);
             }
             else if (Collection.class.isAssignableFrom(sourceValue.getClass())) {
-                this.mergeCollection((Collection) sourceValue, (Collection) destinationValue);
+                this.traverseCollection((Collection) sourceValue, (Collection) destinationValue);
             }
             else if (Map.class.isAssignableFrom(sourceValue.getClass())) {
-                this.mergeMap((Map) sourceValue, (Map) destinationValue);
+                this.traverseMap((Map) sourceValue, (Map) destinationValue);
             }
             else if (this.prevalenceInfo.getPrevalentClass(sourceValue.getClass()) != null) {
-                this.mergePrevalentObject(sourceValue, destinationValue);
+                this.mergePrevalentObjectIdentifiers(sourceValue, destinationValue);
             }
         }
     }
 
-    private void mergeArray(Object[] sourceArray, Object[] destinationArray) {
+    private void traverseArray(Object[] sourceArray, Object[] destinationArray) {
         for (int i = 0; i < sourceArray.length; i++) {
-            this.mergeValue(sourceArray[i], destinationArray[i]);
+            this.doMerge(sourceArray[i], destinationArray[i]);
         }
     }
     
-    private void mergeCollection(Collection sourceCollection, Collection destinationCollection) {
+    private void traverseCollection(Collection sourceCollection, Collection destinationCollection) {
         Iterator sIt = sourceCollection.iterator();
         Iterator dIt = destinationCollection.iterator();
         while (sIt.hasNext()) {
-            this.mergeValue(sIt.next(), dIt.next());
+            this.doMerge(sIt.next(), dIt.next());
         }
     }
     
-    private void mergeMap(Map sourceMap, Map destinationMap) {
+    private void traverseMap(Map sourceMap, Map destinationMap) {
         Iterator sIt = sourceMap.entrySet().iterator();
         Iterator dIt = destinationMap.entrySet().iterator();
         while (sIt.hasNext()) {
             Map.Entry sourceEntry = (Entry) sIt.next();
             Map.Entry destinationEntry = (Entry) dIt.next();
-            this.mergeValue(sourceEntry.getKey(), destinationEntry.getKey());
-            this.mergeValue(sourceEntry.getValue(), destinationEntry.getValue());
+            this.doMerge(sourceEntry.getKey(), destinationEntry.getKey());
+            this.doMerge(sourceEntry.getValue(), destinationEntry.getValue());
         }
     }
 
-    private void mergePrevalentObject(Object sourceEntity, Object destinationEntity) {
+    private void mergePrevalentObjectIdentifiers(Object sourceEntity, Object destinationEntity) {
         try {
             Class sourcePrevalentClass = this.prevalenceInfo.getPrevalentClass(sourceEntity.getClass());
             Class destinationPrevalentClass = this.prevalenceInfo.getPrevalentClass(destinationEntity.getClass());
             // If entities have prevalent classes:
             if (sourcePrevalentClass != null && destinationPrevalentClass != null) {
-                // Copy the identifier from source to destination:
-                Field sourceIdField = this.prevalenceInfo.getIdResolutionStrategy().resolveId(sourceEntity);
-                Field destinationIdField = this.prevalenceInfo.getIdResolutionStrategy().resolveId(destinationEntity);
-                destinationIdField.set(destinationEntity, sourceIdField.get(sourceEntity));
-                // Cascade the merge:
-                this.cascade(sourceEntity, destinationEntity);
+                if (sourcePrevalentClass.equals(destinationPrevalentClass)) {
+                    // Copy the identifier from source to destination:
+                    Field sourceIdField = this.prevalenceInfo.getIdResolutionStrategy().resolveId(sourceEntity);
+                    Field destinationIdField = this.prevalenceInfo.getIdResolutionStrategy().resolveId(destinationEntity);
+                    destinationIdField.set(destinationEntity, sourceIdField.get(sourceEntity));
+                    // Cascade the merge:
+                    this.cascadeMerge(sourceEntity, destinationEntity);
+                }
+                else {
+                    throw new IllegalStateException("Classes don't match!");
+                }
             }
             else {
                 throw new PrevaylerConfigurationException("Object with no configured prevalent class!");
@@ -104,7 +109,7 @@ public class DefaultIdMerger implements IdMerger {
         }
     }
     
-    private void cascade(Object source, Object destination) {
+    private void cascadeMerge(Object source, Object destination) {
         // We are traversing the source object graph, and we'll have to put in an identity map the source object.
         IdentityHashMap localIdentityMap = (IdentityHashMap) DefaultIdMerger.localIdentityMap.get();
         if (! localIdentityMap.containsKey(source)) {
@@ -124,7 +129,7 @@ public class DefaultIdMerger implements IdMerger {
 
                     Object sourceValue = currentField.get(source);
                     Object destinationValue = currentField.get(destination);
-                    this.mergeValue(sourceValue, destinationValue);    
+                    this.doMerge(sourceValue, destinationValue);    
                 }
                 currentClass = currentClass.getSuperclass();
             }

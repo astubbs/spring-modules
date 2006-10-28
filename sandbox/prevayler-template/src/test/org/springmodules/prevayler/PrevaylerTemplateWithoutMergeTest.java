@@ -5,6 +5,8 @@ import org.springmodules.prevayler.test.domain.EmployeeImpl;
 import org.springmodules.prevayler.test.domain.ManagerImpl;
 import java.util.List;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springmodules.prevayler.test.domain.Office;
+import org.springmodules.prevayler.test.domain.OfficeImpl;
 
 /**
  * @author Sergio Bossa
@@ -19,19 +21,40 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
     }
 
     protected void onTearDown() throws Exception {
-        this.template.delete(Employee.class);
+        try {
+            this.template.delete(Employee.class);
+            this.template.delete(Office.class);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
     
-    public void testSave() {
-        EmployeeImpl emp = new EmployeeImpl("a1");
+    public void testObjectReferenceIntegrity() {
+        // Create an employee, assign it an office and save:
+        EmployeeImpl emp1 = new EmployeeImpl("a1");
+        OfficeImpl o1 = new OfficeImpl("o1", "Office 1"); 
+        emp1.setOffice(o1);
+        emp1 = (EmployeeImpl) this.template.save(emp1);
+        // Verify:
+        o1 = (OfficeImpl) emp1.getOffice();
+        assertNotNull(emp1.getId());
+        assertNotNull(o1.getId());
         
-        // Id null before adding:
-        assertNull(emp.getId());
+        // Change the office name and DIRECTLY update it:
+        o1.setName("New name");
+        o1 = (OfficeImpl) this.template.update(o1);
         
-        emp = (EmployeeImpl) this.template.save(emp);
+        // If we directly get the office, we see its name has been changed:
+        o1 = (OfficeImpl) this.template.get(Office.class, o1.getId());
+        assertEquals("New name", o1.getName());
         
-        // Id not null after adding:
-        assertNotNull(emp.getId());
+        // If we get the office from the employee, the name is changed too:
+        emp1 = (EmployeeImpl) this.template.get(Employee.class, emp1.getId());
+        OfficeImpl o2 = (OfficeImpl) emp1.getOffice();
+        assertNotNull("Value: " + o2.getName(), o2.getName());
+        // What's most important, the office directly retrieved from the template, 
+        // and the one retrieved from the employee, are the same:
+        assertSame(o1, o2);
     }
     
     public void testCascadeSave() {
@@ -45,7 +68,7 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         // Update the manager and save the employee by cascade:
         man1 = (ManagerImpl) this.template.update(man1);
         
-        // Too bad, the id has not been saved into the original object:
+        // The id has not been saved into the original object:
         assertNull(emp1.getId());
         // But it has been set in the new instance returned by the update method:
         assertNotNull(((EmployeeImpl) man1.getManagedEmployees().iterator().next()).getId());
