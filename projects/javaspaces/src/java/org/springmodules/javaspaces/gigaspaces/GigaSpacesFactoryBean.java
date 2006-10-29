@@ -15,6 +15,12 @@
 */
 package org.springmodules.javaspaces.gigaspaces;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 import net.jini.space.JavaSpace;
 
 import org.springmodules.javaspaces.AbstractJavaSpaceFactoryBean;
@@ -34,13 +40,17 @@ import com.j_spaces.core.client.SpaceFinder;
 public class GigaSpacesFactoryBean extends AbstractJavaSpaceFactoryBean {
 
 	private String[] urls;
-
+	private Map properties = new HashMap(10);
 
 	/**
 	 * @see org.springmodules.javaspaces.AbstractJavaSpaceFactoryBean#createSpace()
 	 */
 	protected JavaSpace createSpace() throws Exception {
-		return (JavaSpace) SpaceFinder.find(urls);
+		if(properties.isEmpty()){
+			return (JavaSpace) SpaceFinder.find(urls);
+		}else{
+			return (JavaSpace) SpaceFinder.find(getUrlsAsString(),getUrlProperties());
+		}
 	}
 
 	/**
@@ -48,6 +58,20 @@ public class GigaSpacesFactoryBean extends AbstractJavaSpaceFactoryBean {
 	 */
 	public String[] getUrls() {
 		return urls;
+	}
+
+	/**
+	 * @return Returns the urls as one string which separated with comma delimiters.
+	 */
+	private String getUrlsAsString() {
+		StringBuilder sb = new StringBuilder();
+		for(int ii = 0; ii < urls.length; ii++){
+			sb.append(urls[ii]);
+			if(ii < (urls.length - 1)){
+				sb.append(";");
+			}
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -65,4 +89,38 @@ public class GigaSpacesFactoryBean extends AbstractJavaSpaceFactoryBean {
 		if (urls == null)
 			throw new IllegalArgumentException("urls property is required");
 	}
+
+	/**
+	 * Create URL properties object for space finder from the hashmap
+	 * @return properties for space finder
+	 */
+	private Properties getUrlProperties()
+	{
+		Properties urlPproperties = new Properties();
+		Iterator iterator = properties.keySet().iterator();
+		while(iterator.hasNext()){
+			Object objectKey = iterator.next();
+			urlPproperties.put(objectKey, properties.get(objectKey));
+		}
+		return urlPproperties;
+	}
+
+	/**
+	 * Get properties of the space URL.
+	 * @return the properties.
+	 */
+	public Map getProperties()
+	{
+		return properties;
+	}
+
+	/**
+	 * Set properties for the space URL.
+	 * @param the properties.
+	 */
+	public void setProperties(Map properties)
+	{
+		this.properties = properties;
+	}
+
 }
