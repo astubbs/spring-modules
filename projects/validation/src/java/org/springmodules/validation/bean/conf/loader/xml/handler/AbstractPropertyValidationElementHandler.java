@@ -159,7 +159,16 @@ public abstract class AbstractPropertyValidationElementHandler
         if (isConditionGloballyScoped(element)) {
             configuration.addPropertyRule(propertyName, rule);
         } else {
-            configuration.addPropertyRule(propertyName, new PropertyValidationRule(propertyName, rule));
+            PropertyValidationRule propertyRule = new PropertyValidationRule(propertyName, rule);
+
+            // By definition, the applicability condition should be evaluated on the validated bean and not on the
+            // validated bean property. Thus we need to explicitely set the applicability condition on the validation
+            // rule otherwise the default applicability condition to be evaluated on the property value.
+            if (applicabilityCondition != null) {
+                propertyRule.setApplicabilityCondition(applicabilityCondition);
+            }
+
+            configuration.addPropertyRule(propertyName, propertyRule);
         }
 
     }

@@ -73,6 +73,9 @@ public class Person {
     @Min(10)
     private Integer nullableInteger;
 
+    @Min(value = 10, applyIf = "firstName is not null")
+    private int smallInteger = 5;
+
     public String getFirstName() {
         return firstName;
     }
@@ -167,6 +170,14 @@ public class Person {
 
     public void setNullableInteger(Integer nullableInteger) {
         this.nullableInteger = nullableInteger;
+    }
+
+    public int getSmallInteger() {
+        return smallInteger;
+    }
+
+    public void setSmallInteger(int smallInteger) {
+        this.smallInteger = smallInteger;
     }
 
     @ValidationMethod

@@ -124,7 +124,16 @@ public abstract class AbstractPropertyValidationAnnotationHandler implements Pro
         if (isConditionGloballyScoped(annotation)) {
             configuration.addPropertyRule(descriptor.getName(), rule);
         } else {
-            configuration.addPropertyRule(descriptor.getName(), new PropertyValidationRule(descriptor.getName(), rule));
+            PropertyValidationRule propertyRule = new PropertyValidationRule(descriptor.getName(), rule);
+
+            // By definition, the applicability condition should be evaluated on the validated bean and not on the
+            // validated bean property. Thus we need to explicitely set the applicability condition on the validation
+            // rule otherwise the default applicability condition to be evaluated on the property value.
+            if (applicabilityCondition != null) {
+                propertyRule.setApplicabilityCondition(applicabilityCondition);
+            }
+
+            configuration.addPropertyRule(descriptor.getName(), propertyRule);
         }
     }
 

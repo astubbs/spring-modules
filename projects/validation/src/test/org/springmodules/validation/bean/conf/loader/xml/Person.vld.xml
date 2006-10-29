@@ -4,29 +4,42 @@
             xsi:schemaLocation="http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
 
     <class name="org.springmodules.validation.bean.conf.loader.xml.Person">
+
         <global>
             <expression condition="password == confirmPassword" code="passwords.do.not.match"/>
         </global>
+
         <property name="firstName">
             <not-null/>
             <not-blank/>
         </property>
+
         <property name="lastName">
             <not-null/>
             <not-blank/>
         </property>
+
         <property name="age">
             <range min="0" code="min"/>
         </property>
+
         <property name="email">
             <email/>
         </property>
+
         <property name="password">
             <not-null/>
             <length min="3"/>
         </property>
+
+        <property name="smallInteger">
+            <range min="10" apply-if="firstName is not null"/>
+        </property>
+
         <method name="confirmPasswords"/>
+
         <method name="validateLastNameIsLongerThanTen" for-property="lastName"/>
+
     </class>
 
 </validation>

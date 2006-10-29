@@ -20,6 +20,7 @@ import java.beans.PropertyDescriptor;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springmodules.validation.util.condition.AbstractCondition;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.Conditions;
 
@@ -39,10 +40,13 @@ public class PropertyValidationRule implements ValidationRule {
     // the wrapped validation rule.
     private ValidationRule rule;
 
+    private Condition applicabilityCondition;
+
     /**
      * Constructs a new PropertyValidationRule (javabean support).
      */
     public PropertyValidationRule() {
+        this(null, null);
     }
 
     /**
@@ -54,6 +58,7 @@ public class PropertyValidationRule implements ValidationRule {
     public PropertyValidationRule(String propertyName, ValidationRule rule) {
         this.propertyName = propertyName;
         this.rule = rule;
+        applicabilityCondition = new DefaultApplicabilityCondition(propertyName, rule);
     }
 
     /**
@@ -66,12 +71,7 @@ public class PropertyValidationRule implements ValidationRule {
      * @see ValidationRule#isApplicable(Object)
      */
     public boolean isApplicable(Object obj) {
-        PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(obj.getClass(), propertyName);
-        if (propertyDescriptor == null) {
-            return false;
-        }
-        Object value = new BeanWrapperImpl(obj).getPropertyValue(propertyName);
-        return rule.isApplicable(value);
+        return applicabilityCondition.check(obj);
     }
 
     /**
@@ -116,4 +116,31 @@ public class PropertyValidationRule implements ValidationRule {
     }
 
 
+    public void setApplicabilityCondition(Condition applicabilityCondition) {
+        this.applicabilityCondition = applicabilityCondition;
+    }
+
+
+    //=================================================== Inner Classes ================================================
+
+    protected static class DefaultApplicabilityCondition extends AbstractCondition {
+
+        private String propertyName;
+        private ValidationRule rule;
+
+        public DefaultApplicabilityCondition(String propertyName, ValidationRule rule) {
+            this.propertyName = propertyName;
+            this.rule = rule;
+        }
+
+        public boolean doCheck(Object obj) {
+            PropertyDescriptor propertyDescriptor = BeanUtils.getPropertyDescriptor(obj.getClass(), propertyName);
+            if (propertyDescriptor == null) {
+                return false;
+            }
+            Object value = new BeanWrapperImpl(obj).getPropertyValue(propertyName);
+            return rule.isApplicable(value);
+        }
+
+    }
 }

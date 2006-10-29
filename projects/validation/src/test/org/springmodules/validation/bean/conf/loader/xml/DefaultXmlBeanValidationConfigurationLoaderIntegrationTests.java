@@ -42,6 +42,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderIntegrationTests extends
         validator.validate(person, errors);
 
         assertEquals(2, errors.getGlobalErrorCount());
+        assertEquals(1, errors.getFieldErrorCount("smallInteger"));
         assertEquals(1, errors.getFieldErrorCount("lastName"));
         assertEquals("Person.lastName[validateLastNameIsLongerThanTen()]", errors.getFieldError("lastName").getCode());
 

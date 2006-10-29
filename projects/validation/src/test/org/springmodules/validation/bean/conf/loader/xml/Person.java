@@ -19,6 +19,8 @@ public class Person {
 
     private String confirmPassword;
 
+    private int smallInteger = 0;
+
     public String getFirstName() {
         return firstName;
     }
@@ -65,6 +67,14 @@ public class Person {
 
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
+    }
+
+    public int getSmallInteger() {
+        return smallInteger;
+    }
+
+    public void setSmallInteger(int smallInteger) {
+        this.smallInteger = smallInteger;
     }
 
     public boolean confirmPasswords() {
