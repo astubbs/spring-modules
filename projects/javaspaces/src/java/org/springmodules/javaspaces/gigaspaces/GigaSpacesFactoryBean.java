@@ -64,7 +64,7 @@ public class GigaSpacesFactoryBean extends AbstractJavaSpaceFactoryBean {
 	 * @return Returns the urls as one string which separated with comma delimiters.
 	 */
 	private String getUrlsAsString() {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		for(int ii = 0; ii < urls.length; ii++){
 			sb.append(urls[ii]);
 			if(ii < (urls.length - 1)){
