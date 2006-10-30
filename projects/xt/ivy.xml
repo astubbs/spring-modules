@@ -25,13 +25,13 @@
     
     <dependency org="log4j" name="log4j" rev="1.2.8"/>
     
-    <dependency org="net.sf.json-lib" name="json-lib" rev="0.8"/>
+    <dependency org="net.sf.json-lib" name="json-lib" rev="0.9"/>
     
     <dependency org="cglib" name="cglib" rev="2.1_3">
       <artifact name="cglib-nodep" type="jar"/>
     </dependency>
     
-    <dependency org="springframework" name="springframework" rev="1.2.8">
+    <dependency org="springframework" name="springframework" rev="2.0">
 		<artifact name="spring" type="jar"/>
         <artifact name="spring-mock" type="jar"/>
     </dependency>
