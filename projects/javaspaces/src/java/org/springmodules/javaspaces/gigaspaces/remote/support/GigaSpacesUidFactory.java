@@ -31,7 +31,7 @@ import com.j_spaces.core.client.AbstractSpaceProxy;
  * GigaSpacesUidFactory based on the GigaSpaces UID factory
  * implementation.
  * </p>
- * 
+ *
  * Copyright:    Copyright 2006 GigaSpaces Technologies. All rights reserved.
  * Company:      Gigaspaces Technologies
  * @author       Lior Ben Yizhak
@@ -92,8 +92,7 @@ public class GigaSpacesUidFactory implements UidFactory {
 			}
 			catch (Exception ex)
 			{
-				throw new IllegalArgumentException(	"error trying to reach innermost space",
-				                                   	ex);
+				throw new IllegalArgumentException(	"error trying to reach innermost space due to exception: "+ex.getMessage());
 			}
 		}
 	}

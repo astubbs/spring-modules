@@ -47,10 +47,10 @@ public class MethodIdentifier implements Serializable {
 
 	public synchronized Method getMethod() {
 		// The method resolving has moved to readObject
-		//Lior b:(27.8.2006) - Gigaspaces serializes other 
+		//Lior b:(27.8.2006) - Gigaspaces serializes other
 		//entry data structure and not the AbstractMethodCallEntry.
 		//That means the readObject()/writeObject() will never be called.
-		//  
+		//
 		if (method == null) {
 			method = stringToMethod();
 		}
@@ -89,7 +89,7 @@ public class MethodIdentifier implements Serializable {
 			clazz = Class.forName(className);
 		}
 		catch (ClassNotFoundException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(e.getMessage());
 		}
 		Method methods[] = clazz.getMethods();
 		for (int i = 0; i < methods.length; i++) {
