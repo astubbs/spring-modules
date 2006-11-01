@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -55,11 +57,13 @@ public class EnhancedSimpleFormController extends SimpleFormController {
                 String[] splittedKey = key.split(QUALIFIER_SEPARATOR);
                 if (splittedKey.length == 2) {
                     String qualifier = splittedKey[0];
+                    String keyValue = splittedKey[1];
                     if (qualifier.equals(PROPERTY_QUALIFIER)) {
-                        binder.registerCustomEditor(null, splittedKey[1], editor);
+                        Class propertyClass = this.extractPropertyClass(binder.getTarget(), keyValue);
+                        binder.registerCustomEditor(propertyClass, keyValue, editor);
                     }
                     else if (qualifier.equals(CLASS_QUALIFIER)) {
-                        binder.registerCustomEditor(Class.forName(splittedKey[1]), editor);
+                        binder.registerCustomEditor(Class.forName(keyValue), editor);
                     }
                     else {
                         throw new IllegalStateException("Wrong qualifier.");
@@ -91,5 +95,10 @@ public class EnhancedSimpleFormController extends SimpleFormController {
      */
     public Map getCustomEditors() {
         return  this.customEditors;
+    }
+
+    private Class extractPropertyClass(Object target, String property) {
+        BeanWrapperImpl wrapper = new BeanWrapperImpl(target);
+        return wrapper.getPropertyType(property);
     }
 }
