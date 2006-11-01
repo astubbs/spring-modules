@@ -30,6 +30,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
+import org.springmodules.xt.ajax.support.ModelHolder;
 import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
 import org.springmodules.xt.ajax.action.RedirectAction;
@@ -62,12 +63,14 @@ import org.springframework.web.util.UrlPathHelper;
  */
 public class AjaxInterceptor extends HandlerInterceptorAdapter implements ApplicationContextAware {
     
-    private static final Logger logger = Logger.getLogger(AjaxInterceptor.class);
-    
     public static final String AJAX_ACTION_REQUEST = "ajax-action";
     public static final String AJAX_SUBMIT_REQUEST = "ajax-submit";
     public static final String AJAX_REDIRECT_PREFIX = "ajax-redirect:";
     public static final String AJAX_VIEW_KEYWORD = "ajax-view";
+    
+    private static final Logger logger = Logger.getLogger(AjaxInterceptor.class);
+    
+    private static final ModelHolder modelHolder = new ModelHolder();
     
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
     private PathMatcher pathMatcher = new AntPathMatcher();
@@ -97,26 +100,30 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         String requestType = request.getParameter(this.ajaxParameter);
         if (requestType != null && requestType.equals(AJAX_ACTION_REQUEST)) {
             String eventId = request.getParameter(this.eventParameter);
-            
             if (eventId == null) {
                 throw new IllegalStateException("Event id cannot be null.");
             }
-            
             logger.info(new StringBuilder("Pre-handling ajax request for event: ").append(eventId));
             
             List<AjaxHandler> handlers = this.lookupHandlers(request);
             if (handlers != null) {
                 AjaxActionEvent event = new AjaxActionEventImpl(eventId, request);
                 AjaxResponse ajaxResponse = null;
-                
                 boolean supported = false;
                 for (AjaxHandler ajaxHandler : handlers) {
                     if (ajaxHandler.supports(event)) {
+                        // Set base event properties:
                         this.initEvent(event, request);
                         if (handler instanceof BaseCommandController) {
+                            // Get the command name:
                             String commandName = ((BaseCommandController) handler).getCommandName();
-                            event.setCommandObject(request.getAttribute(commandName));
+                            // Set the command object:
+                            Map model = AjaxInterceptor.modelHolder.getModel();
+                            if (model != null) {
+                                event.setCommandObject(model.get(commandName));
+                            }
                         }
+                        // Handling event:
                         ajaxResponse = ajaxHandler.handle(event);
                         supported = true;
                         break;
@@ -157,34 +164,40 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      */
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) 
     throws Exception {
+        // Set the model map:
+        AjaxInterceptor.modelHolder.set(modelAndView.getModel());
+        // Continue processing:
         String requestType = request.getParameter(this.ajaxParameter);
         if (requestType != null && requestType.equals(AJAX_SUBMIT_REQUEST)) {
             String eventId = request.getParameter(this.eventParameter); 
-            
             if (eventId == null) {
                 throw new IllegalStateException("Event id cannot be null.");
             }
-            
             logger.info(new StringBuilder("Post-handling ajax request for event: ").append(eventId));
             
             List<AjaxHandler> handlers = this.lookupHandlers(request);
             if (handlers != null) {
                 AjaxSubmitEvent event = new AjaxSubmitEventImpl(eventId, request);
                 AjaxResponse ajaxResponse = null;
-
                 boolean supported = false;
                 for (AjaxHandler ajaxHandler : handlers) {
                     if (ajaxHandler.supports(event)) {
+                        // Set base event properties:
                         this.initEvent(event, request);
                         if (handler instanceof BaseCommandController) {
+                            // Get the command name:
                             String commandName = ((BaseCommandController) handler).getCommandName();
+                            // Set validation errors:
                             RequestContext requestContext = new RequestContext(request, modelAndView.getModel());
                             event.setValidationErrors(requestContext.getErrors(commandName));
-                            if (modelAndView.getModel() != null) {
-                                event.setCommandObject(modelAndView.getModel().get(commandName));
+                            // Set the command object:
+                            Map model = AjaxInterceptor.modelHolder.getModel();
+                            if (model != null) {
+                                event.setCommandObject(model.get(commandName));
                             }
                         }
-                        event.setModel(modelAndView.getModel());
+                        // Set the model:
+                        event.setModel(AjaxInterceptor.modelHolder.getModel());
                         // Handling event: 
                         ajaxResponse = ajaxHandler.handle(event);
                         supported = true;
