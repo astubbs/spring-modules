@@ -3,7 +3,7 @@ package org.springmodules.prevayler;
 import java.util.List;
 
 /**
- * This interface specifies all data access/management methods each prevayler template should provide.
+ * This interface specifies all data access/management methods can be executed on a Prevayler system.
  *
  * @author Sergio Bossa
  */

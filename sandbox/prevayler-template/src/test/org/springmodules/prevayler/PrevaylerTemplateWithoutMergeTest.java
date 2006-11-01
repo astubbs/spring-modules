@@ -58,15 +58,13 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
     }
     
     public void testCascadeSave() {
-        // Create and save the manager:
+        // Create the manager:
         ManagerImpl man1 = new ManagerImpl("m1");
-        man1 = (ManagerImpl) this.template.save(man1);
-        
         // Create an employee and add it to the manager:
         EmployeeImpl emp1 = new EmployeeImpl("a1");
         man1.addManagedEmployee(emp1);
-        // Update the manager and save the employee by cascade:
-        man1 = (ManagerImpl) this.template.update(man1);
+        // Save the manager and the employee by cascade:
+        man1 = (ManagerImpl) this.template.save(man1);
         
         // The id has not been saved into the original object:
         assertNull(emp1.getId());
