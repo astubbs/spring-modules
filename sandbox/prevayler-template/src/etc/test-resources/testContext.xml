@@ -17,12 +17,12 @@
     
     <bean name="prevaylerConfiguration1" class="org.springmodules.prevayler.configuration.PrevaylerConfiguration">
         <property name="prevalentSystem" ref="prevalentSystem"/>
-        <property name="prevalenceBase" value="classpath:testPrevalenceBase1"/>
+        <property name="prevalenceBase" value="classpath:base1"/>
     </bean>
     
     <bean name="prevaylerConfiguration2" class="org.springmodules.prevayler.configuration.PrevaylerConfiguration">
         <property name="prevalentSystem" ref="prevalentSystem"/>
-        <property name="prevalenceBase" value="classpath:testPrevalenceBase2"/>
+        <property name="prevalenceBase" value="classpath:base2"/>
     </bean>
     
     <bean name="basePrevaylerTransactionManager" class="org.springmodules.prevayler.transaction.BasePrevaylerTransactionManager">
