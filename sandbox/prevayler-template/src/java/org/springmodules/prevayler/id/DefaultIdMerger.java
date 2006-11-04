@@ -16,12 +16,17 @@ import org.springmodules.prevayler.system.PrevalenceInfo;
  */
 public class DefaultIdMerger implements IdMerger {
     
+    private static final long serialVersionUID = 476105208506333743L;
+    
     private static final ThreadLocal localIdentityMap = new ThreadLocal();
     
     private PrevalenceInfo prevalenceInfo;
     
     public DefaultIdMerger(PrevalenceInfo info) {
         this.prevalenceInfo = info;
+    }
+    
+    public DefaultIdMerger() {
     }
     
     public void setPrevalenceInfo(PrevalenceInfo info) {
@@ -33,6 +38,9 @@ public class DefaultIdMerger implements IdMerger {
         Class destinationClass = destination.getClass();
         if (! sourceClass.equals(destinationClass)) {
             throw new IllegalArgumentException("Source and destination objects are not of the same class!");
+        }
+        else if (source == destination) {
+            return;
         }
         else {
             this.localIdentityMap.set(new IdentityHashMap());

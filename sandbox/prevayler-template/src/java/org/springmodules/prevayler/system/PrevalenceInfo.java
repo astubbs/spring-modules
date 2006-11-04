@@ -1,11 +1,22 @@
 package org.springmodules.prevayler.system;
 
 import java.io.Serializable;
+import org.springmodules.prevayler.id.DefaultIdResolver;
+import org.springmodules.prevayler.id.DefaultLongIdGenerator;
 import org.springmodules.prevayler.id.IdGenerationStrategy;
 import org.springmodules.prevayler.id.IdResolutionStrategy;
 
 /**
- * Helper class containing information about the prevalent system.
+ * Class containing information about the prevalent system, used to plug prevalence information into a 
+ * {@link PrevalentSystem}.<br>
+ * In particular, it holds the following information:
+ * <ul>
+ * <li>An {@link org.springmodules.prevayler.id.IdGenerationStrategy} for generating business objects id.</li>
+ * <li>An {@link org.springmodules.prevayler.id.IdResolutionStrategy} for setting/getting business objects id.</li>
+ * <li>The list of <b>prevalent classes</b>, that is, the classes you want to persist into this prevalent system.</li>
+ * </ul>
+ * As a default it uses {@link org.springmodules.prevayler.id.DefaultLongIdGenerator} and {@link org.springmodules.prevayler.id.DefaultIdResolver} for
+ * managing object ids.
  *
  * @author Sergio Bossa
  */
@@ -14,8 +25,8 @@ public class PrevalenceInfo implements Serializable {
     private static final long serialVersionUID = 556105268506333743L;
     
     private Class[] prevalentClasses = new Class[0];
-    private IdResolutionStrategy idResolutionStartegy;
-    private IdGenerationStrategy idGenerationStrategy;
+    private IdResolutionStrategy idResolutionStartegy = new DefaultIdResolver();
+    private IdGenerationStrategy idGenerationStrategy = new DefaultLongIdGenerator();
     
     /**
      * Get the prevalent class corresponding to the given object class: that is, check if the given object class

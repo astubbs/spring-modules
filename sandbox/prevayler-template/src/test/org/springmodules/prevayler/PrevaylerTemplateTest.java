@@ -1,21 +1,22 @@
 package org.springmodules.prevayler;
 
-import org.springmodules.prevayler.test.domain.Employee;
-import org.springmodules.prevayler.test.domain.EmployeeImpl;
-import org.springmodules.prevayler.test.domain.ManagerImpl;
 import java.util.List;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springmodules.prevayler.test.domain.Employee;
+import org.springmodules.prevayler.test.domain.EmployeeImpl;
+import org.springmodules.prevayler.test.domain.Manager;
+import org.springmodules.prevayler.test.domain.ManagerImpl;
 import org.springmodules.prevayler.test.domain.Office;
 import org.springmodules.prevayler.test.domain.OfficeImpl;
 
 /**
  * @author Sergio Bossa
  */
-public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjectionSpringContextTests {
+public class PrevaylerTemplateTest extends AbstractDependencyInjectionSpringContextTests {
     
     private PrevaylerTemplate template;
     
-    public PrevaylerTemplateWithoutMergeTest(String testName) {
+    public PrevaylerTemplateTest(String testName) {
         super(testName);
         this.setAutowireMode(AUTOWIRE_BY_NAME);
     }
@@ -34,7 +35,7 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         EmployeeImpl emp1 = new EmployeeImpl("a1");
         OfficeImpl o1 = new OfficeImpl("o1", "Office 1"); 
         emp1.setOffice(o1);
-        emp1 = (EmployeeImpl) this.template.save(emp1);
+        this.template.save(emp1);
         // Verify:
         o1 = (OfficeImpl) emp1.getOffice();
         assertNotNull(emp1.getId());
@@ -42,7 +43,7 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         
         // Change the office name and DIRECTLY update it:
         o1.setName("New name");
-        o1 = (OfficeImpl) this.template.update(o1);
+        this.template.update(o1);
         
         // If we directly get the office, we see its name has been changed:
         o1 = (OfficeImpl) this.template.get(Office.class, o1.getId());
@@ -57,6 +58,18 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         assertSame(o1, o2);
     }
     
+    public void testSimpleSave() {
+        EmployeeImpl emp = new EmployeeImpl("a1");
+        
+        // Id null before adding:
+        assertNull(emp.getId());
+        
+        this.template.save(emp);
+        
+        // Id not null after adding:
+        assertNotNull(emp.getId());
+    }
+    
     public void testCascadeSave() {
         // Create the manager:
         ManagerImpl man1 = new ManagerImpl("m1");
@@ -64,16 +77,15 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         EmployeeImpl emp1 = new EmployeeImpl("a1");
         man1.addManagedEmployee(emp1);
         // Save the manager and the employee by cascade:
-        man1 = (ManagerImpl) this.template.save(man1);
+        this.template.save(man1);
         
-        // The id has not been saved into the original object:
-        assertNull(emp1.getId());
-        // But it has been set in the new instance returned by the update method:
-        assertNotNull(((EmployeeImpl) man1.getManagedEmployees().iterator().next()).getId());
+        // The employee saved by cascade has a not null id:
+        assertNotNull(emp1.getId());
         
         // Verify object identities:
         EmployeeImpl empA = (EmployeeImpl) this.template.get(Employee.class, ((EmployeeImpl) man1.getManagedEmployees().iterator().next()).getId());
-        EmployeeImpl empB = (EmployeeImpl) man1.getManagedEmployees().iterator().next();
+        ManagerImpl manA = (ManagerImpl) this.template.get(Manager.class, man1.getId());
+        EmployeeImpl empB = (EmployeeImpl) manA.getManagedEmployees().iterator().next();
         // The new employee, get from the manager, is not the same as the old one:
         assertNotSame(emp1, empA);
         // But the two employees got from the prevalent system, one by id, one from the manager, are the same:
@@ -84,14 +96,14 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         EmployeeImpl emp = new EmployeeImpl("a1");
         
         // Add an employee:
-        emp = (EmployeeImpl) this.template.save(emp);
+        this.template.save(emp);
         // Firstname is null:
         assertNull(emp.getFirstname());
         
         // Set firstname:
         emp.setFirstname("Sergio");
         // Update the employee:
-        emp = (EmployeeImpl) this.template.update(emp);
+        this.template.update(emp);
         // Read and verify:
         emp = (EmployeeImpl) this.template.get(emp.getClass(), emp.getId());
         assertEquals("Sergio", emp.getFirstname());
@@ -100,19 +112,19 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
     public void testCascadeUpdate() {
         // Create and save the manager:
         ManagerImpl man1 = new ManagerImpl("m1");
-        man1 = (ManagerImpl) this.template.save(man1);
+        this.template.save(man1);
         
         // Create an employee and add it to the manager:
         EmployeeImpl emp1 = new EmployeeImpl("a1");
         man1.addManagedEmployee(emp1);
         // Update the manager:
-        man1 = (ManagerImpl) this.template.update(man1);
+        this.template.update(man1);
         
         // Get the employee from the manager and change employee firstname:
         emp1 = (EmployeeImpl) man1.getManagedEmployees().iterator().next();
         emp1.setFirstname("Sergio");
         // Update the manager and the employee by cascade:
-        man1 = (ManagerImpl) this.template.update(man1);
+        this.template.update(man1);
         
         // Verify:
         emp1 = (EmployeeImpl) this.template.get(Employee.class, emp1.getId());
@@ -123,7 +135,7 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         EmployeeImpl emp = new EmployeeImpl("a1");
         
         // Add an employee:
-        emp = (EmployeeImpl) this.template.save(emp);
+        this.template.save(emp);
         
         // Delete it:
         this.template.delete(emp);
@@ -136,7 +148,7 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         EmployeeImpl emp = new EmployeeImpl("a1");
         
         // Add an employee:
-        emp = (EmployeeImpl) this.template.save(emp);
+        this.template.save(emp);
         // Verify:
         List result = this.template.get(emp.getClass());
         assertFalse(result.isEmpty());
@@ -152,8 +164,8 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         EmployeeImpl emp1 = new EmployeeImpl("a1");
         EmployeeImpl emp2 = new EmployeeImpl("a2");
         
-        emp1 = (EmployeeImpl) this.template.save(emp1);
-        emp2 = (EmployeeImpl) this.template.save(emp2);
+        this.template.save(emp1);
+        this.template.save(emp2);
         
         assertNull(emp1.getFirstname());
         assertNull(emp1.getSurname());
@@ -176,18 +188,18 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
     
     public void testConcurrentUpdates() throws Exception {
         EmployeeImpl emp = new EmployeeImpl("a1");
-        emp = (EmployeeImpl) this.template.save(emp);
+        this.template.save(emp);
         final Object id = emp.getId();
         
         Runnable r1 = new Runnable() {
             public void run() {
-                PrevaylerTemplateWithoutMergeTest.this.template.execute(new SleepingPrevaylerCallback(id));
+                PrevaylerTemplateTest.this.template.execute(new SleepingPrevaylerCallback(id));
             }
         };
         
         Runnable r2 = new Runnable() {
             public void run() {
-                PrevaylerTemplateWithoutMergeTest.this.template.execute(new NonSleepingPrevaylerCallback(id));
+                PrevaylerTemplateTest.this.template.execute(new NonSleepingPrevaylerCallback(id));
             }
         };
         
@@ -199,14 +211,9 @@ public class PrevaylerTemplateWithoutMergeTest extends AbstractDependencyInjecti
         t2.start();
         t1.join();
         t2.join();
-        
-        /* FIXME: Enable this?
-        emp = (EmployeeImpl) this.template.get(emp.getClass(), id);
-        assertEquals("Robert", emp.getFirstname());
-        */
     }
     
-    public void setPrevaylerTemplateWithoutMerge(PrevaylerTemplate template) {
+    public void setPrevaylerTemplate(PrevaylerTemplate template) {
         this.template = template;
     }
     

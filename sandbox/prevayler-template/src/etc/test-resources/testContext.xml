@@ -2,7 +2,7 @@
 
 <beans>
     
-    <bean name="prevalentSystem" class="org.springmodules.prevayler.system.DefaultPrevalentSystem">
+    <bean name="prevalenceInfo" class="org.springmodules.prevayler.system.PrevalenceInfo">
         <property name="prevalentClasses">
             <list>
                 <value>org.springmodules.prevayler.test.domain.Employee</value>
@@ -11,19 +11,34 @@
         </property>
     </bean>
     
-    <bean name="prevaylerConfiguration" class="org.springmodules.prevayler.configuration.PrevaylerConfiguration">
+    <bean name="prevalentSystem" class="org.springmodules.prevayler.system.DefaultPrevalentSystem" singleton="false">
+        <property name="prevalenceInfo" ref="prevalenceInfo"/>
+    </bean>
+    
+    <bean name="prevaylerConfiguration1" class="org.springmodules.prevayler.configuration.PrevaylerConfiguration">
         <property name="prevalentSystem" ref="prevalentSystem"/>
-        <property name="prevalenceBase" value="classpath:testPrevalenceBase"/>
+        <property name="prevalenceBase" value="classpath:testPrevalenceBase1"/>
     </bean>
     
-    <bean name="prevaylerTemplateWithoutMerge" class="org.springmodules.prevayler.PrevaylerTemplate" destroy-method="destroy">
-        <property name="configuration" ref="prevaylerConfiguration"/>
-        <property name="idMerging" value="false"/>
+    <bean name="prevaylerConfiguration2" class="org.springmodules.prevayler.configuration.PrevaylerConfiguration">
+        <property name="prevalentSystem" ref="prevalentSystem"/>
+        <property name="prevalenceBase" value="classpath:testPrevalenceBase2"/>
     </bean>
     
-    <bean name="prevaylerTemplateWithMerge" class="org.springmodules.prevayler.PrevaylerTemplate" destroy-method="destroy">
-        <property name="configuration" ref="prevaylerConfiguration"/>
-        <property name="idMerging" value="true"/>
+    <bean name="basePrevaylerTransactionManager" class="org.springmodules.prevayler.BasePrevaylerTransactionManager">
+        <property name="prevaylerConfiguration" ref="prevaylerConfiguration1"/>
+    </bean>
+    
+    <bean name="threadTransactionManager" class="org.springmodules.prevayler.ThreadTransactionManager">
+        <property name="prevaylerConfiguration" ref="prevaylerConfiguration2"/>
+    </bean>
+    
+    <bean name="prevaylerTemplate" class="org.springmodules.prevayler.PrevaylerTemplate">
+        <property name="transactionManager" ref="basePrevaylerTransactionManager"/>
+    </bean>
+    
+    <bean name="prevaylerTemplateWithThreadTx" class="org.springmodules.prevayler.PrevaylerTemplate">
+        <property name="transactionManager" ref="threadTransactionManager"/>
     </bean>
     
 </beans>

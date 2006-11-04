@@ -1,14 +1,11 @@
 package org.springmodules.prevayler.system;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
+import org.apache.log4j.Logger;
 import org.springmodules.prevayler.PrevaylerCascadePersistenceException;
 import org.springmodules.prevayler.PrevaylerConfigurationException;
 import org.springmodules.prevayler.PrevaylerDataRetrievalException;
 import org.springmodules.prevayler.PrevaylerUnsavedObjectException;
-import org.springmodules.prevayler.id.DefaultLongIdGenerator;
-import org.springmodules.prevayler.id.DefaultIdResolver;
-import org.springmodules.prevayler.id.IdGenerationStrategy;
-import org.springmodules.prevayler.id.IdResolutionStrategy;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.IdentityHashMap;
@@ -17,13 +14,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.springmodules.prevayler.SystemCallback;
+import org.springmodules.prevayler.id.DefaultIdMerger;
+import org.springmodules.prevayler.id.IdMerger;
 
 /**
  * <p>{@link PrevalentSystem} implementation based on concurrent hash maps.</p>
- * <p>As a default it uses {@link org.springmodules.prevayler.id.DefaultLongIdGenerator} and {@link org.springmodules.prevayler.id.DefaultIdResolver} for
- * managing object ids. So, the only mandatory property to set here is the list of prevalent classes (see {@link #setPrevalentClasses(Class[] )})</p>
+ * <p>The only mandatory property to set here is the {@link PrevalenceInfo}.</p>
  * <p>This class is <b>thread safe</b>.</p>
  * 
  * @author Sergio Bossa
@@ -32,16 +29,19 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
     
     private static final long serialVersionUID = 476105268506333743L;
     
-    private transient static final Log logger = LogFactory.getLog(DefaultPrevalentSystem.class);
+    private transient static final Logger logger = Logger.getLogger(DefaultPrevalentSystem.class);
     
     private transient static final ThreadLocal localIdentityMap = new ThreadLocal();
    
+    // FIXME: Currently not configurable:
+    private IdMerger merger = new DefaultIdMerger();
+    
     private PrevalenceInfo prevalenceInfo = new PrevalenceInfo();
+    
     private Map entitiesGlobalMap = new ConcurrentHashMap();
     
     public DefaultPrevalentSystem() {
-        this.prevalenceInfo.setIdResolutionStrategy(new DefaultIdResolver());
-        this.prevalenceInfo.setIdGenerationStrategy(new DefaultLongIdGenerator());
+        this.merger.setPrevalenceInfo(this.prevalenceInfo);
     }
     
     public Object save(Object newEntity) {
@@ -114,20 +114,17 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
         return result;
     }
     
-    public void setPrevalentClasses(Class[] prevalentClasses) {
-        this.prevalenceInfo.setPrevalentClasses(prevalentClasses);
+    public void merge(Object sourceEntity, Object destinationEntity) {
+        this.merger.merge(sourceEntity, destinationEntity);
     }
     
-    public void setIdResolutionStartegy(IdResolutionStrategy idResolutionStartegy) {
-        this.prevalenceInfo.setIdResolutionStrategy(idResolutionStartegy);
-    }
-
-    public void setIdGenerationStrategy(IdGenerationStrategy idGenerationStrategy) {
-        this.prevalenceInfo.setIdGenerationStrategy(idGenerationStrategy);
+    public Object execute(SystemCallback callback) {
+        return callback.execute(this);
     }
     
-    public PrevalenceInfo getPrevalenceInfo() {
-        return this.prevalenceInfo;
+    public void setPrevalenceInfo(PrevalenceInfo info) {
+        this.prevalenceInfo = info;
+        this.merger.setPrevalenceInfo(this.prevalenceInfo);
     }
     
     /*** Class internals ***/

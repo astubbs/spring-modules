@@ -1,22 +1,16 @@
 package org.springmodules.prevayler.system;
 
-import org.springmodules.prevayler.id.IdGenerationStrategy;
-import org.springmodules.prevayler.id.IdResolutionStrategy;
 import java.io.Serializable;
 import java.util.List;
+import org.springmodules.prevayler.SystemCallback;
 
 /**
  * <p>Prevalent system interface based on the standard well known DAO pattern. </p>
  * <p>This prevalent system has the advantage of being business-agnostic, so you can use it for any business domain
  * without implementing any additional code.</p>
- * <p>You just need to configure:
- * <ul>
- * <li>An {@link org.springmodules.prevayler.id.IdGenerationStrategy} for generating business objects id.</li>
- * <li>An {@link org.springmodules.prevayler.id.IdResolutionStrategy} for setting/getting business objects id.</li>
- * <li>The list of <b>prevalent classes</b>, that is, the classes you want to persist into this prevalent system.</li>
- * </ul>
- * </p>
- * <p>Configuring <b>prevalent classes</b> is the most important, yet very simple, step. Just keep in mind the following rules:
+ * <p>You just need to configure its {@link PrevalenceInfo}.</p>
+ * <p>The <b>prevalent classes</b> is the most important information carried by the PrevalenceInfo object. 
+ * Talking about them, just keep in mind the following rules:
  * <ul>
  * <li>If you try to directly persist/retrieve an object of a class not configured here, the prevalent system will throw an exception.</li>
  * <li>If you configure a prevalent class <i>A</i>, all its sub-classes/sub-interfaces will be considered prevalent. This is <b>very important</b>,
@@ -29,14 +23,6 @@ import java.util.List;
  */
 public interface PrevalentSystem extends Serializable {
     
-    public void setPrevalentClasses(Class[] prevalentClasses);
-    
-    public void setIdResolutionStartegy(IdResolutionStrategy idResolutionStartegy);
-
-    public void setIdGenerationStrategy(IdGenerationStrategy idGenerationStrategy);
-    
-    public PrevalenceInfo getPrevalenceInfo();
-    
     public Object save(Object newEntity);
 
     public Object update(Object entity);
@@ -48,4 +34,10 @@ public interface PrevalentSystem extends Serializable {
     public Object get(Class entityClass, Object id);
     
     public List get(Class entityClass);
+    
+    public void merge(Object sourceEntity, Object destinationEntity);
+    
+    public Object execute(SystemCallback callback);
+    
+    public void setPrevalenceInfo(PrevalenceInfo info);
 }

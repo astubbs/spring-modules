@@ -4,9 +4,9 @@ import org.springmodules.prevayler.system.PrevalentSystem;
 import java.io.Serializable;
 
 /**
- * <p>Callback interface for executing code in a {@link org.springmodules.prevayler.system.PrevalentSystem}.<br>
+ * <p>Callback interface for executing code in a {@link org.springmodules.prevayler.system.PrevalentSystem} by going through Prevayler.<br>
  * Please note that all operations into the callback method <b>are executed in the context of a single transaction</b>.<br>
- * So, the callback can be used for grouping more operations into a single transaction.</p>
+ * So, the callback can be used also for grouping more operations into a single transaction.</p>
  * <p><b>Important: </b> due to how object serialization and Prevayler work, don't use anonymous inner classes for
  * implementing this interface.</p>
  *

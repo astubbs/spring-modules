@@ -3,7 +3,7 @@ package org.springmodules.prevayler;
 import java.util.List;
 
 /**
- * This interface specifies all data access/management methods can be executed on a Prevayler system.
+ * This interface specifies all data access/management methods that can be executed on a Prevayler system.
  *
  * @author Sergio Bossa
  */
@@ -12,10 +12,10 @@ public interface PrevaylerOperations {
     /**
      * Save a new entity object and returns it.
      * 
-     * @param newEntity The entity object to save.
+     * @param entity The entity object to save.
      * @return The saved object.
      */
-    public Object save(Object newEntity);
+    public Object save(Object entity);
 
     /**
      * Update e given entity object: the object must be already saved.

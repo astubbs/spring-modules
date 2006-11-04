@@ -21,8 +21,11 @@ public class DefaultPrevalentSystemTest extends TestCase {
     }
 
     protected void setUp() throws Exception {
+        PrevalenceInfo info = new PrevalenceInfo();
+        info.setPrevalentClasses(new Class[]{Employee.class});
+        
         this.prevalentSystem = new DefaultPrevalentSystem();
-        this.prevalentSystem.setPrevalentClasses(new Class[]{Employee.class});
+        this.prevalentSystem.setPrevalenceInfo(info);
     }
 
     public void testSave() {

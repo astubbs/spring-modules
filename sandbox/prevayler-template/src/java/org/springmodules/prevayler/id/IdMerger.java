@@ -1,5 +1,6 @@
 package org.springmodules.prevayler.id;
 
+import java.io.Serializable;
 import org.springmodules.prevayler.system.PrevalenceInfo;
 
 /**
@@ -9,7 +10,7 @@ import org.springmodules.prevayler.system.PrevalenceInfo;
  *
  * @author Sergio Bossa
  */
-public interface IdMerger {
+public interface IdMerger extends Serializable {
     
     /**
      * Merge the identifiers between the two objects, from source to destination.
