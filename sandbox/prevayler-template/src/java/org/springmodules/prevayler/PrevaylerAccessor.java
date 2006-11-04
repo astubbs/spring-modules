@@ -2,9 +2,10 @@ package org.springmodules.prevayler;
 
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.prevayler.transaction.TransactionManager;
 
 /**
- * Base class for prevayler templates, providing access to the {@link org.springmodules.prevayler.TransactionManager}.
+ * Base class for prevayler templates, providing access to the {@link org.springmodules.prevayler.transaction.TransactionManager}.
  * 
  * @author Sergio Bossa
  */
@@ -13,7 +14,7 @@ public class PrevaylerAccessor implements InitializingBean {
     private TransactionManager transactionManager;
 
     /**
-     * Give  access to the {@link org.springmodules.prevayler.TransactionManager} to use.
+     * Give  access to the {@link org.springmodules.prevayler.transaction.TransactionManager} to use.
      */
     public TransactionManager accessTransactionManager() {
         return this.transactionManager;

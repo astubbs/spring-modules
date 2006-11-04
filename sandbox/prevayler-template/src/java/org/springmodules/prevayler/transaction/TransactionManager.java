@@ -1,6 +1,8 @@
-package org.springmodules.prevayler;
+package org.springmodules.prevayler.transaction;
 
+import org.springmodules.prevayler.callback.PrevaylerCallback;
 import org.springmodules.prevayler.configuration.PrevaylerConfiguration;
+import org.springmodules.prevayler.system.callback.SystemCallback;
 
 /**
  * Transaction manager for external transaction demarcation and execution of callbacks into Prevayler and its

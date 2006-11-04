@@ -2,13 +2,14 @@ package org.springmodules.prevayler;
 
 import java.util.List;
 import org.springframework.dao.DataAccessException;
-import org.springmodules.prevayler.transaction.callback.DeleteByEntityClassCallback;
-import org.springmodules.prevayler.transaction.callback.GetByClassCallback;
-import org.springmodules.prevayler.transaction.callback.MergeCallback;
-import org.springmodules.prevayler.transaction.callback.SaveCallback;
-import org.springmodules.prevayler.transaction.callback.DeleteByEntityCallback;
-import org.springmodules.prevayler.transaction.callback.GetByIdCallback;
-import org.springmodules.prevayler.transaction.callback.UpdateCallback;
+import org.springmodules.prevayler.callback.DeleteByEntityClassCallback;
+import org.springmodules.prevayler.callback.GetByClassCallback;
+import org.springmodules.prevayler.callback.PrevaylerCallback;
+import org.springmodules.prevayler.callback.SaveCallback;
+import org.springmodules.prevayler.callback.DeleteByEntityCallback;
+import org.springmodules.prevayler.callback.GetByIdCallback;
+import org.springmodules.prevayler.callback.UpdateCallback;
+import org.springmodules.prevayler.system.callback.MergeCallback;
 
 /**
  * <p>The prevayler template simplifies the creation and use of a prevalent system.</p>
@@ -23,9 +24,9 @@ import org.springmodules.prevayler.transaction.callback.UpdateCallback;
  * <p>The prevayler template provides a simple, common, abstraction over a prevalent system based on Prevayler.</p>
  * <p>The prevayler template provides common data access methods to use for managing the persistence of your business objects. Under the hood,
  * it uses a {@link org.springmodules.prevayler.system.PrevalentSystem} implementation working as a standard Data Access Object, coordinated
- * by a {@link org.springmodules.prevayler.TransactionManager}.</p>
+ * by a {@link org.springmodules.prevayler.transaction.TransactionManager}.</p>
  * <p>For obtaining transparent persistence using the {@link PrevaylerTemplate} you just need to configure it by injecting 
- * the {@link org.springmodules.prevayler.TransactionManager} to use.<br>
+ * the {@link org.springmodules.prevayler.transaction.TransactionManager} to use.<br>
  * You don't have to implement anything special. Your business objects just need to satisfy the rules above, plus the following:
  * <ul>
  * <li>Every business object must have an <i>id</i> property field, either directly declared or inherited: it is automatically managed by the prevalent system through the

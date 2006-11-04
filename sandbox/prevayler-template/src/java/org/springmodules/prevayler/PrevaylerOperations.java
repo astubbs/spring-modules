@@ -1,6 +1,7 @@
 package org.springmodules.prevayler;
 
 import java.util.List;
+import org.springmodules.prevayler.callback.PrevaylerCallback;
 
 /**
  * This interface specifies all data access/management methods that can be executed on a Prevayler system.

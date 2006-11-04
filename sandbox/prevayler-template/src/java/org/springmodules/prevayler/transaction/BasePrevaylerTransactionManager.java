@@ -1,12 +1,11 @@
-package org.springmodules.prevayler;
+package org.springmodules.prevayler.transaction;
 
 import org.apache.log4j.Logger;
-
 import org.prevayler.Prevayler;
-
+import org.springmodules.prevayler.callback.PrevaylerCallback;
 import org.springmodules.prevayler.configuration.PrevaylerConfiguration;
 import org.springmodules.prevayler.system.PrevalentSystem;
-import org.springmodules.prevayler.transaction.TransactionCommand;
+import org.springmodules.prevayler.system.callback.SystemCallback;
 
 /**
  * This {@link TransactionManager} implementation doesn't support transaction demarcation: each execution

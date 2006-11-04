@@ -80,6 +80,25 @@ public class PrevaylerTemplateWithThreadTxTest extends AbstractDependencyInjecti
         this.template.accessTransactionManager().commit();
     }
     
+    public void testSaveWithUnclosedTx() {
+        EmployeeImpl emp = new EmployeeImpl("a1");
+        Long id = null;
+        
+        this.template.accessTransactionManager().begin();
+        this.template.save(emp);
+        
+        id = emp.getId();
+        
+        // The transaction here is not closed, so changes are not persisted:
+        
+        this.template.accessTransactionManager().begin();
+        
+        emp = (EmployeeImpl) this.template.get(Employee.class, id);
+        assertNull(emp);
+        
+        this.template.accessTransactionManager().commit();
+    }
+    
     public void testCorrectIdSequenceBetweenRollbackAndCommit() {
         EmployeeImpl emp1 = new EmployeeImpl("a1");
         EmployeeImpl emp2 = new EmployeeImpl("a2");

@@ -1,5 +1,6 @@
 package org.springmodules.prevayler;
 
+import org.springmodules.prevayler.callback.PrevaylerCallback;
 import org.springmodules.prevayler.test.domain.Employee;
 import org.springmodules.prevayler.test.domain.EmployeeImpl;
 import org.springmodules.prevayler.system.PrevalentSystem;

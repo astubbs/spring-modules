@@ -1,6 +1,5 @@
-package org.springmodules.prevayler.transaction.callback;
+package org.springmodules.prevayler.callback;
 
-import org.springmodules.prevayler.PrevaylerCallback;
 import org.springmodules.prevayler.system.PrevalentSystem;
 
 /**

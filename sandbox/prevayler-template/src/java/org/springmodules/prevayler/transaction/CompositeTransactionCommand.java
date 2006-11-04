@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.prevayler.Transaction;
-import org.springmodules.prevayler.PrevaylerCallback;
+import org.springmodules.prevayler.callback.PrevaylerCallback;
 import org.springmodules.prevayler.system.PrevalentSystem;
 
 /**

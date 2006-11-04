@@ -1,25 +1,22 @@
-package org.springmodules.prevayler;
+package org.springmodules.prevayler.transaction;
 
 import edu.emory.mathcs.backport.java.util.concurrent.Executors;
 import edu.emory.mathcs.backport.java.util.concurrent.Future;
 import edu.emory.mathcs.backport.java.util.concurrent.Semaphore;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import edu.emory.mathcs.backport.java.util.concurrent.locks.ReentrantLock;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.LinkedList;
-
 import org.apache.log4j.Logger;
-
 import org.prevayler.Prevayler;
-
+import org.springmodules.prevayler.callback.PrevaylerCallback;
 import org.springmodules.prevayler.configuration.PrevaylerConfiguration;
 import org.springmodules.prevayler.system.PrevalentSystem;
-import org.springmodules.prevayler.transaction.CompositeTransactionCommand;
+import org.springmodules.prevayler.system.callback.SystemCallback;
 
 /**
  * {@link TransactionManager} implementation supporting thread scoped transaction demarcation.

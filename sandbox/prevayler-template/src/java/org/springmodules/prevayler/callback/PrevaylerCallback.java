@@ -1,4 +1,4 @@
-package org.springmodules.prevayler;
+package org.springmodules.prevayler.callback;
 
 import org.springmodules.prevayler.system.PrevalentSystem;
 import java.io.Serializable;

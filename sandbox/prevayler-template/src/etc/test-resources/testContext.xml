@@ -25,12 +25,13 @@
         <property name="prevalenceBase" value="classpath:testPrevalenceBase2"/>
     </bean>
     
-    <bean name="basePrevaylerTransactionManager" class="org.springmodules.prevayler.BasePrevaylerTransactionManager">
+    <bean name="basePrevaylerTransactionManager" class="org.springmodules.prevayler.transaction.BasePrevaylerTransactionManager">
         <property name="prevaylerConfiguration" ref="prevaylerConfiguration1"/>
     </bean>
     
-    <bean name="threadTransactionManager" class="org.springmodules.prevayler.ThreadTransactionManager">
+    <bean name="threadTransactionManager" class="org.springmodules.prevayler.transaction.ThreadTransactionManager">
         <property name="prevaylerConfiguration" ref="prevaylerConfiguration2"/>
+        <property name="secondsTimeout" value="1"/>
     </bean>
     
     <bean name="prevaylerTemplate" class="org.springmodules.prevayler.PrevaylerTemplate">

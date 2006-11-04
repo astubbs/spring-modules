@@ -2,7 +2,7 @@ package org.springmodules.prevayler.system;
 
 import java.io.Serializable;
 import java.util.List;
-import org.springmodules.prevayler.SystemCallback;
+import org.springmodules.prevayler.system.callback.SystemCallback;
 
 /**
  * <p>Prevalent system interface based on the standard well known DAO pattern. </p>
