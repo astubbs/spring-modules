@@ -4,6 +4,7 @@ import edu.emory.mathcs.backport.java.util.concurrent.Executors;
 import edu.emory.mathcs.backport.java.util.concurrent.Future;
 import edu.emory.mathcs.backport.java.util.concurrent.Semaphore;
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
+import edu.emory.mathcs.backport.java.util.concurrent.atomic.AtomicBoolean;
 import edu.emory.mathcs.backport.java.util.concurrent.locks.ReentrantLock;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,7 +58,7 @@ public class ThreadTransactionManager implements TransactionManager {
         ThreadTransactionManager.activeTransactionLock.lock();
         try {
             // Set the thread local transaction flag:
-            ThreadTransactionManager.transactionFlag.set(Boolean.TRUE);
+            ThreadTransactionManager.transactionFlag.set(new AtomicBoolean(true));
             
             // Begin transaction:
             logger.debug("Beginning transaction.");
@@ -68,10 +69,14 @@ public class ThreadTransactionManager implements TransactionManager {
             
             // Create a watcher thread for releasing the transactionSemaphore after a given period of inactivity expressed in seconds,
             // and store in a thread local variable a "future" to use for stopping the thread when the transaction
-            // completes successfully:
+            // completes:
             ThreadTransactionManager.semaphoreWatcher.set(
                     Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(
-                    new SemaphoreWatcherThread(), this.secondsTimeout, this.secondsTimeout, TimeUnit.SECONDS));
+                    new SemaphoreWatcherThread((AtomicBoolean) ThreadTransactionManager.transactionFlag.get()), 
+                    this.secondsTimeout, this.secondsTimeout, TimeUnit.SECONDS));
+        } catch(Exception ex) {
+            this.releaseAll();
+            throw new PrevaylerTransactionException(ex.getMessage(), ex);
         } finally {
             ThreadTransactionManager.activeTransactionLock.unlock();
         }
@@ -82,7 +87,8 @@ public class ThreadTransactionManager implements TransactionManager {
         // Acquire activeTransactionLock:
         ThreadTransactionManager.activeTransactionLock.lock();
         try {
-            if (ThreadTransactionManager.transactionFlag.get() == null) {
+            AtomicBoolean flag = (AtomicBoolean) ThreadTransactionManager.transactionFlag.get();
+            if (flag == null || flag.get() == false) {
                 logger.info("No active transaction: no transaction was started, or the previous transaction timed out.");
                 throw new PrevaylerTransactionException("No active transaction found!");
             } else {
@@ -102,7 +108,8 @@ public class ThreadTransactionManager implements TransactionManager {
         // Acquire activeTransactionLock:
         ThreadTransactionManager.activeTransactionLock.lock();
         try {
-            if (ThreadTransactionManager.transactionFlag.get() == null) {
+            AtomicBoolean flag = (AtomicBoolean) ThreadTransactionManager.transactionFlag.get();
+            if (flag == null || flag.get() == false) {
                 logger.info("No active transaction: no transaction was started, or the previous transaction timed out.");
                 throw new PrevaylerTransactionException("No active transaction found!");
             }
@@ -117,7 +124,8 @@ public class ThreadTransactionManager implements TransactionManager {
         // Acquire activeTransactionLock:
         ThreadTransactionManager.activeTransactionLock.lock();
         try {
-            if (ThreadTransactionManager.transactionFlag.get() == null) {
+            AtomicBoolean flag = (AtomicBoolean) ThreadTransactionManager.transactionFlag.get();
+            if (flag == null || flag.get() == false) {
                 logger.info("No active transaction: no transaction was started, or the previous transaction timed out.");
                 throw new PrevaylerTransactionException("No active transaction found!");
             } else {
@@ -129,6 +137,9 @@ public class ThreadTransactionManager implements TransactionManager {
                 PrevalentSystem localSystem = (PrevalentSystem) ThreadTransactionManager.transactionSystem.get();
                 return callback.doInTransaction(localSystem);
             }
+        } catch(Exception ex) {
+            this.releaseAll();
+            throw new PrevaylerTransactionException(ex.getMessage(), ex);
         } finally {
             ThreadTransactionManager.activeTransactionLock.unlock();
         }
@@ -139,7 +150,8 @@ public class ThreadTransactionManager implements TransactionManager {
         // Acquire activeTransactionLock:
         ThreadTransactionManager.activeTransactionLock.lock();
         try {
-            if (ThreadTransactionManager.transactionFlag.get() == null) {
+            AtomicBoolean flag = (AtomicBoolean) ThreadTransactionManager.transactionFlag.get();
+            if (flag == null || flag.get() == false) {
                 logger.info("No active transaction: no transaction was started, or the previous transaction timed out.");
                 throw new PrevaylerTransactionException("No active transaction found!");
             } else {
@@ -148,6 +160,9 @@ public class ThreadTransactionManager implements TransactionManager {
                 return localSystem.execute(callback);
                 // No need to enqueue because this is a callback to directly execute into the system.
             }
+        } catch(Exception ex) {
+            this.releaseAll();
+            throw new PrevaylerTransactionException(ex.getMessage(), ex);
         } finally {
             ThreadTransactionManager.activeTransactionLock.unlock();
         }
@@ -164,10 +179,9 @@ public class ThreadTransactionManager implements TransactionManager {
     /** Class internals **/
     
     private void releaseAll() {
-        // Release resources:
-        ThreadTransactionManager.transactionSystem.set(null);
-        ThreadTransactionManager.transactionQueue.set(null);
-        ThreadTransactionManager.transactionFlag.set(null);
+        // Release the transaction flag (putting it to false):
+        AtomicBoolean flag = (AtomicBoolean) ThreadTransactionManager.transactionFlag.get();
+        flag.set(false);
         
         // Release the transactionSemaphore:
         ThreadTransactionManager.transactionSemaphore.release();
@@ -189,7 +203,7 @@ public class ThreadTransactionManager implements TransactionManager {
             in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
             replica = in.readObject();
         } catch(Exception ex) {
-                throw new PrevaylerTransactionException("Internal error in transaction!", ex);
+            throw new PrevaylerTransactionException("Internal error in transaction!", ex);
         } finally {
             try {
                 if (out != null) out.close();
@@ -202,10 +216,22 @@ public class ThreadTransactionManager implements TransactionManager {
     }
     
     private class SemaphoreWatcherThread implements Runnable {
+        
+        private AtomicBoolean transactionFlag;
+        
+        public SemaphoreWatcherThread(AtomicBoolean transactionFlag) {
+            this.transactionFlag = transactionFlag;
+        }
+        
         public void run() {
-            if (! ThreadTransactionManager.activeTransactionLock.isLocked()) {
-                logger.info("Timeout: forcing resource releasing.");
-                ThreadTransactionManager.this.releaseAll();
+            if (ThreadTransactionManager.activeTransactionLock.tryLock()) {
+                try {
+                    logger.info("Timeout: forcing transaction abort.");
+                    this.transactionFlag.set(false);
+                    ThreadTransactionManager.transactionSemaphore.release();
+                } finally {
+                    ThreadTransactionManager.activeTransactionLock.unlock();
+                }
             }
         }
     }

@@ -19,6 +19,23 @@ public class PrevaylerTemplateWithThreadTxTest extends AbstractDependencyInjecti
     protected void onTearDown() throws Exception {
     }
     
+    public void testSaveWithTimeout() throws InterruptedException {
+        EmployeeImpl emp = new EmployeeImpl("a1");
+        
+        this.template.accessTransactionManager().begin();
+        
+        this.template.save(emp);
+        
+        // Go to sleep and wait for timeout:
+        Thread.sleep(3000);
+        
+        // This fails because the transaction has been aborted due to the timeout:
+        try {
+            this.template.accessTransactionManager().commit();
+            fail();
+        } catch(Exception ex) {}
+    }
+    
     public void testSaveWithCommit() {
         EmployeeImpl emp = new EmployeeImpl("a1");
         Long id = null;
@@ -122,7 +139,7 @@ public class PrevaylerTemplateWithThreadTxTest extends AbstractDependencyInjecti
         this.template.accessTransactionManager().rollback();
         
         // Now, make a save with commit and verify that the id is the same as before,
-        // because the new transaction must re-assign the id assigned in the previously 
+        // because the new transaction must re-assign the id assigned in the previously
         // rolled back transaction:
         
         this.template.accessTransactionManager().begin();
