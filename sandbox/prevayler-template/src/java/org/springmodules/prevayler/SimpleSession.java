@@ -1,45 +1,26 @@
-package org.springmodules.prevayler.transaction;
+package org.springmodules.prevayler;
 
 import org.apache.log4j.Logger;
 import org.prevayler.Prevayler;
 import org.springmodules.prevayler.callback.PrevaylerCallback;
 import org.springmodules.prevayler.configuration.PrevaylerConfiguration;
+import org.springmodules.prevayler.support.PrevaylerTransactionException;
 import org.springmodules.prevayler.system.PrevalentSystem;
 import org.springmodules.prevayler.system.callback.SystemCallback;
+import org.springmodules.prevayler.transaction.TransactionCommand;
 
 /**
- * This {@link TransactionManager} implementation doesn't support transaction demarcation: each execution
- * is directly delegated to Prevayler, following so the base Prevayler transactional behaviour.
- *
+ * {@link SimplePersistenceManager} {@link Session} implementation.
  * @author Sergio Bossa
  */
-public class BasePrevaylerTransactionManager implements TransactionManager {
+public class SimpleSession implements Session {
     
-    private static final Logger logger = Logger.getLogger(BasePrevaylerTransactionManager.class);
+    private static final Logger logger = Logger.getLogger(SimpleSession.class);
     
     private PrevaylerConfiguration configuration;
     
-    public BasePrevaylerTransactionManager(PrevaylerConfiguration configuration) {
+    public SimpleSession(PrevaylerConfiguration configuration) {
         this.configuration = configuration;
-    }
-    
-    public BasePrevaylerTransactionManager() {
-    }
-    
-    public void setPrevaylerConfiguration(PrevaylerConfiguration configuration) {
-        this.configuration = configuration;
-    }
-    
-    public void begin() {
-        throw new UnsupportedOperationException("Transaction demarcation is not supported by this transaction manager!");
-    }
-    
-    public void commit() {
-        throw new UnsupportedOperationException("Transaction demarcation is not supported by this transaction manager!");
-    }
-    
-    public void rollback() {
-        throw new UnsupportedOperationException("Transaction demarcation is not supported by this transaction manager!");
     }
     
     public Object execute(PrevaylerCallback callback) {
@@ -56,5 +37,9 @@ public class BasePrevaylerTransactionManager implements TransactionManager {
         logger.debug("Executing callback into prevalent system.");
         PrevalentSystem localSystem = (PrevalentSystem) this.configuration.getPrevaylerInstance().prevalentSystem();
         return localSystem.execute(callback);
+    }
+    
+    public void flush(Prevayler prevayler) {
+        // Do nothing: all operations are suddenly committed.
     }
 }

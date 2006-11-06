@@ -1,9 +1,9 @@
-package org.springmodules.prevayler.transaction;
+package org.springmodules.prevayler.support;
 
 import org.springframework.dao.DataAccessException;
 
 /**
- * Exception thrown during execution of a transaction in the context of a {@link org.springmodules.prevayler.transaction.TransactionManager}.
+ * Exception thrown during execution of a transaction.
  * 
  * @author Sergio Bossa
  */

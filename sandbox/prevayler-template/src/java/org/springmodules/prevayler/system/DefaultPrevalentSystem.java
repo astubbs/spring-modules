@@ -1,7 +1,6 @@
 package org.springmodules.prevayler.system;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
-import org.apache.log4j.Logger;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.IdentityHashMap;
@@ -10,10 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.springmodules.prevayler.PrevaylerCascadePersistenceException;
-import org.springmodules.prevayler.PrevaylerConfigurationException;
-import org.springmodules.prevayler.PrevaylerDataRetrievalException;
-import org.springmodules.prevayler.PrevaylerUnsavedObjectException;
+import org.apache.log4j.Logger;
+import org.springmodules.prevayler.support.PrevaylerCascadePersistenceException;
+import org.springmodules.prevayler.support.PrevaylerConfigurationException;
+import org.springmodules.prevayler.support.PrevaylerDataRetrievalException;
+import org.springmodules.prevayler.support.PrevaylerUnsavedObjectException;
 import org.springmodules.prevayler.system.callback.SystemCallback;
 import org.springmodules.prevayler.id.DefaultIdMerger;
 import org.springmodules.prevayler.id.IdMerger;

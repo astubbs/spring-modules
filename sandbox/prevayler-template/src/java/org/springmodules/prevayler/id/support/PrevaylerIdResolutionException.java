@@ -1,4 +1,4 @@
-package org.springmodules.prevayler.id;
+package org.springmodules.prevayler.id.support;
 
 import org.springframework.dao.DataAccessException;
 

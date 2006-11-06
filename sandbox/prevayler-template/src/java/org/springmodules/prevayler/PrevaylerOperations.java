@@ -2,6 +2,7 @@ package org.springmodules.prevayler;
 
 import java.util.List;
 import org.springmodules.prevayler.callback.PrevaylerCallback;
+import org.springmodules.prevayler.system.callback.SystemCallback;
 
 /**
  * This interface specifies all data access/management methods that can be executed on a Prevayler system.
@@ -58,10 +59,19 @@ public interface PrevaylerOperations {
     public List get(Class entityClass);
     
     /**
-     * Execute the code contained in the given {@link PrevaylerCallback} into a Prevayler transaction.
+     * Execute the code contained in the given {@link org.springmodules.prevayler.callback.PrevaylerCallback} into Prevayler.
      *
      * @param callback The callback to execute.
-     * @return The transaction result, if any.
+     * @return The execution result, if any.
      */
     public Object execute(PrevaylerCallback callback);
+    
+    /**
+     * Execute the code contained in the given {@link org.springmodules.prevayler.system.callback.SystemCallback} into 
+     * the prevalent system, without going through Prevayler.
+     *
+     * @param callback The callback to execute.
+     * @return The execution result, if any.
+     */
+    public Object execute(SystemCallback callback);
 }

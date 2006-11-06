@@ -1,4 +1,4 @@
-package org.springmodules.prevayler;
+package org.springmodules.prevayler.support;
 
 import org.springframework.dao.UncategorizedDataAccessException;
 

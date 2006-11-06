@@ -25,21 +25,25 @@
         <property name="prevalenceBase" value="classpath:base2"/>
     </bean>
     
-    <bean name="basePrevaylerTransactionManager" class="org.springmodules.prevayler.transaction.BasePrevaylerTransactionManager">
+    <bean name="simplePersistenceManager" class="org.springmodules.prevayler.SimplePersistenceManager">
         <property name="prevaylerConfiguration" ref="prevaylerConfiguration1"/>
     </bean>
     
-    <bean name="threadTransactionManager" class="org.springmodules.prevayler.transaction.ThreadTransactionManager">
+    <bean name="transactionalPersistenceManager" class="org.springmodules.prevayler.TransactionalPersistenceManager">
         <property name="prevaylerConfiguration" ref="prevaylerConfiguration2"/>
         <property name="secondsTimeout" value="1"/>
     </bean>
     
     <bean name="prevaylerTemplate" class="org.springmodules.prevayler.PrevaylerTemplate">
-        <property name="transactionManager" ref="basePrevaylerTransactionManager"/>
+        <property name="persistenceManager" ref="simplePersistenceManager"/>
     </bean>
     
-    <bean name="prevaylerTemplateWithThreadTx" class="org.springmodules.prevayler.PrevaylerTemplate">
-        <property name="transactionManager" ref="threadTransactionManager"/>
+    <bean name="prevaylerTemplateWithTx" class="org.springmodules.prevayler.PrevaylerTemplate">
+        <property name="persistenceManager" ref="transactionalPersistenceManager"/>
+    </bean>
+    
+    <bean name="transactionManager" class="org.springmodules.prevayler.PrevaylerTransactionManager">
+        <property name="persistenceManager" ref="transactionalPersistenceManager"/>
     </bean>
     
 </beans>

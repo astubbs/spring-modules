@@ -1,13 +1,13 @@
 package org.springmodules.prevayler.system;
 
+import java.util.List;
+import junit.framework.TestCase;
 import org.springmodules.prevayler.test.domain.Employee;
 import org.springmodules.prevayler.test.domain.EmployeeImpl;
 import org.springmodules.prevayler.test.domain.ManagerImpl;
 import org.springmodules.prevayler.test.domain.OfficeImpl;
-import org.springmodules.prevayler.PrevaylerConfigurationException;
-import org.springmodules.prevayler.PrevaylerUnsavedObjectException;
-import java.util.List;
-import junit.framework.TestCase;
+import org.springmodules.prevayler.support.PrevaylerConfigurationException;
+import org.springmodules.prevayler.support.PrevaylerUnsavedObjectException;
 
 /**
  * @author Sergio Bossa

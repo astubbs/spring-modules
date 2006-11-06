@@ -6,7 +6,8 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.springmodules.prevayler.PrevaylerConfigurationException;
+import org.springmodules.prevayler.id.support.PrevaylerIdMergeException;
+import org.springmodules.prevayler.support.PrevaylerConfigurationException;
 import org.springmodules.prevayler.system.PrevalenceInfo;
 
 /**

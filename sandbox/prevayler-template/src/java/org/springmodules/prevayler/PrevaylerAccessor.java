@@ -2,34 +2,33 @@ package org.springmodules.prevayler;
 
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
-import org.springmodules.prevayler.transaction.TransactionManager;
 
 /**
- * Base class for prevayler templates, providing access to the {@link org.springmodules.prevayler.transaction.TransactionManager}.
+ * Base class for prevayler templates.
  * 
  * @author Sergio Bossa
  */
 public class PrevaylerAccessor implements InitializingBean {
     
-    private TransactionManager transactionManager;
+    private PersistenceManager persistenceManager;
 
     /**
-     * Give  access to the {@link org.springmodules.prevayler.transaction.TransactionManager} to use.
+     * Give access to the {@link PersistenceManager}.
      */
-    public TransactionManager accessTransactionManager() {
-        return this.transactionManager;
+    public PersistenceManager getPersistenceManager() {
+        return this.persistenceManager;
     }
 
     /**
-     * Set the {@link org.springmodules.prevayler.configuration.PrevaylerConfiguration} to use.
+     * Set the {@link PersistenceManager} to use.
      */
-    public void setTransactionManager(TransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
+    public void setPersistenceManager(PersistenceManager persistenceManager) {
+        this.persistenceManager = persistenceManager;
     }
     
     public void afterPropertiesSet() throws Exception {
-        if (this.transactionManager == null) {
-            throw new BeanInstantiationException(this.getClass(), "No transaction manager found!");
+        if (this.persistenceManager == null) {
+            throw new BeanInstantiationException(this.getClass(), "No persistence manager found!");
         }
     }
 }

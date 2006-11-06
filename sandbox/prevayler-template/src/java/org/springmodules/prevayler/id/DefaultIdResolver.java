@@ -1,6 +1,7 @@
 package org.springmodules.prevayler.id;
 
 import java.lang.reflect.Field;
+import org.springmodules.prevayler.id.support.PrevaylerIdResolutionException;
 
 /**
  * <p>Default id resolver which uses a default (configurable) id name: <i>id</i>.</p>
