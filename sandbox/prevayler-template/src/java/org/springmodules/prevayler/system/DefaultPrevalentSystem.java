@@ -22,7 +22,7 @@ import org.springmodules.prevayler.id.IdMerger;
  * <p>{@link PrevalentSystem} implementation based on concurrent hash maps.</p>
  * <p>The only mandatory property to set here is the {@link PrevalenceInfo}.</p>
  * <p>This class is <b>thread safe</b>.</p>
- * 
+ *
  * @author Sergio Bossa
  */
 public class DefaultPrevalentSystem implements PrevalentSystem {
@@ -32,7 +32,7 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
     private transient static final Logger logger = Logger.getLogger(DefaultPrevalentSystem.class);
     
     private transient static final ThreadLocal localIdentityMap = new ThreadLocal();
-   
+    
     // FIXME: Currently not configurable:
     private IdMerger merger = new DefaultIdMerger();
     
@@ -58,12 +58,10 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
                 this.localIdentityMap.set(new IdentityHashMap());
                 this.internalUpdate(entity, id);
                 return entity;
+            } else {
+                throw new PrevaylerUnsavedObjectException("Cannot update unsaved object!");
             }
-            else {
-               throw new PrevaylerUnsavedObjectException("Cannot update unsaved object!");
-            }
-        }
-        catch (IllegalAccessException actual) {
+        } catch (IllegalAccessException actual) {
             throw new IllegalStateException("Cannot access id value: " + id, actual);
         }
     }
@@ -77,16 +75,13 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
                 Object old = entityMap.get(id);
                 if (old != null) {
                     entityMap.remove(id);
-                }
-                else {
+                } else {
                     throw new PrevaylerDataRetrievalException("Cannot find object with id: " + id);
                 }
+            } else {
+                throw new PrevaylerUnsavedObjectException("Cannot delete unsaved object!");
             }
-            else {
-               throw new PrevaylerUnsavedObjectException("Cannot delete unsaved object!");
-            }
-        }
-        catch (IllegalAccessException actual) {
+        } catch (IllegalAccessException actual) {
             throw new IllegalStateException("Cannot access id value: " + id, actual);
         }
     }
@@ -100,7 +95,7 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
         Map entityMap = this.lookupMap(entityClass);
         return entityMap.get(id);
     }
-
+    
     public List get(Class entityClass) {
         Map entityMap = this.lookupMap(entityClass);
         List result = new LinkedList();
@@ -127,9 +122,9 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
         this.merger.setPrevalenceInfo(this.prevalenceInfo);
     }
     
-    /*** Class internals ***/
+    /*** Persistence internals ***/
     
-    private void internalSave(Object newEntity) {
+    private Object internalSave(Object newEntity) {
         DefaultPrevalentSystem.logger.debug("Saving object: " + newEntity);
         Object id = null;
         try {
@@ -143,57 +138,38 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
             localIdentityMap.put(newEntity, new Integer(1));
             // Add the new entity to the system:
             entityMap.put(id, newEntity);
-            // Cascade persistence:
-            this.doCascadePersistence(newEntity);
-        }
-        catch(IllegalAccessException actual) {
+            // Self cascade persistence (needed for updating pointers to already persisted entities):
+            this.doCascadePersistence(newEntity, newEntity);
+            // Return the new, updated and saved, entity:
+            return newEntity;
+        } catch(IllegalAccessException actual) {
             throw new IllegalStateException("Cannot access id value: " + id, actual);
         }
     }
     
-    private void internalUpdate(Object updatedEntity, Object id) {
+    private Object internalUpdate(Object updatedEntity, Object id) {
         DefaultPrevalentSystem.logger.debug("Updating object " + updatedEntity + " with id: " + id);
         //  Get the identity map by the entity class:
         Map entityMap = this.lookupMap(updatedEntity.getClass());
         // Look for the entity in the map and update it (if found):
-       Object actualEntity = entityMap.get(id);
-        if ((actualEntity != null) && (actualEntity.getClass().equals(updatedEntity.getClass()))) {
+        Object currentEntity = entityMap.get(id);
+        if ((currentEntity != null) && (currentEntity.getClass().equals(updatedEntity.getClass()))) {
             IdentityHashMap localIdentityMap = (IdentityHashMap) DefaultPrevalentSystem.localIdentityMap.get();
             // If the object has still not been reached:
-            if (localIdentityMap.get(actualEntity) == null) {
+            if (localIdentityMap.get(currentEntity) == null) {
                 // Add the actual entity to the thread local identity map, for tracking its traversal (an entity once traversed must not be tarversed again):
-                localIdentityMap.put(actualEntity, new Integer(1));
+                localIdentityMap.put(currentEntity, new Integer(1));
                 // Copy new into actual and do cascade persistence:
-                this.doCopyAndCascadePersistence(updatedEntity, actualEntity);
+                this.doCascadePersistence(updatedEntity, currentEntity);
             }
-        }
-        else {
+            // Return the updated (original) entity:
+            return currentEntity;
+        } else {
             throw new PrevaylerDataRetrievalException("Cannot find object with id: " + id);
         }
     }
-
-    private void doCascadePersistence(Object root) {
-        Class currentClass = root.getClass();
-        while (currentClass != null) {
-            try {
-                Field[] fields = currentClass.getDeclaredFields();
-                for (int counter = 0; counter < fields.length; counter++) {
-                    // Get the field:
-                    Field currentField = fields[counter];
-                    currentField.setAccessible(true);
-                    // Traverse its sub-graph, making cascade persistence:
-                    Object value = currentField.get(root);
-                    this.traverseValue(value);    
-                }
-                currentClass = currentClass.getSuperclass();
-            }
-            catch(IllegalAccessException ex) {
-                throw new PrevaylerCascadePersistenceException(ex.getMessage(), ex);
-            }
-        }
-    }
     
-    private void doCopyAndCascadePersistence(Object source, Object destination) {
+    private void doCascadePersistence(Object source, Object destination) {
         Class currentClass = source.getClass();
         while (currentClass != null) {
             try {
@@ -202,75 +178,85 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
                     // Get the field:
                     Field currentField = fields[counter];
                     currentField.setAccessible(true);
-                    // Copy the source value into destination one:
-                    Object sourceValue = currentField.get(source);
-                    currentField.set(destination, sourceValue); 
-                    // Make cascade persistence:
-                    this.traverseValue(sourceValue);
+                    // Update the field, from source to destination:
+                    this.updateValue(source, destination, currentField);
                 }
                 currentClass = currentClass.getSuperclass();
-            }
-            catch(IllegalAccessException ex) {
+            } catch(Exception ex) {
                 throw new PrevaylerCascadePersistenceException(ex.getMessage(), ex);
             }
         }
     }
     
-    private void traverseValue(Object value) {
+    private void updateValue(Object source, Object destination, Field field) throws Exception {
+        Object value = field.get(source);
         if (value != null) {
-            if (value.getClass().isArray()) {
-                this.traverseArray((Object[]) value);
-            }
-            else if (Collection.class.isAssignableFrom(value.getClass())) {
-                this.traverseCollection((Collection) value);
-            }
-            else if (Map.class.isAssignableFrom(value.getClass())) {
-                this.traverseMap((Map) value);
-            }
-            else if (this.prevalenceInfo.getPrevalentClass(value.getClass()) != null) {
-                this.persistPrevalentObject(value);
-            }
+            value = this.getUpdatedValue(value);
         }
-    }
-
-    private void traverseArray(Object[] array) {
-        for (int i = 0; i < array.length; i++) {
-            this.traverseValue(array[i]);
-        }
+        field.set(destination, value);
     }
     
-    private void traverseCollection(Collection collection) {
+    private Object getUpdatedValue(Object value) throws Exception {
+        Object result = value;
+        if (value.getClass().isArray()) {
+            result = this.getUpdatedArray((Object[]) value);
+        } else if (Collection.class.isAssignableFrom(value.getClass())) {
+            result = this.getUpdatedCollection((Collection) value);
+        } else if (Map.class.isAssignableFrom(value.getClass())) {
+            result = this.getUpdatedMap((Map) value);
+        } else if (this.prevalenceInfo.getPrevalentClass(value.getClass()) != null) {
+            result = this.getUpdatedPrevalentObject(value);
+        }
+        return result;
+    }
+    
+    private Object getUpdatedArray(Object[] array) throws Exception {
+        Object[] result = (Object[]) array.clone();
+        for (int i = 0; i < array.length; i++) {
+            result[i] = this.getUpdatedValue(array[i]);
+        }
+        return result;
+    }
+    
+    private Collection getUpdatedCollection(Collection collection) throws Exception {
+        Collection result = (Collection) collection.getClass().getConstructor(new Class[0]).newInstance(new Object[0]);
         Iterator it = collection.iterator();
         while (it.hasNext()) {
-            this.traverseValue(it.next());
+            result.add(this.getUpdatedValue(it.next()));
         }
+        return result;
     }
     
-    private void traverseMap(Map map) {
+    private Map getUpdatedMap(Map map) throws Exception {
+        Map result = (Map) map.getClass().getConstructor(new Class[0]).newInstance(new Object[0]);
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry entry = (Entry) it.next();
-            this.traverseValue(entry.getKey());
-            this.traverseValue(entry.getValue());
+            Object key = this.getUpdatedValue(entry.getKey());
+            Object value = this.getUpdatedValue(entry.getValue());
+            result.put(key, value);
         }
+        return result;
     }
-
-    private void persistPrevalentObject(Object entity) {
+    
+    private Object getUpdatedPrevalentObject(Object entity) {
+        Object result = null;
         Object id = null;
         try {
             Field idField = this.prevalenceInfo.getIdResolutionStrategy().resolveId(entity);
             id = idField.get(entity);
             if (id == null) {
-                this.internalSave(entity);
+                result = this.internalSave(entity);
+            } else {
+                result = this.internalUpdate(entity, id);
             }
-            else {
-                this.internalUpdate(entity, id);
-            }
-        }
-        catch (IllegalAccessException actual) {
+            return result;
+        } catch (IllegalAccessException actual) {
             throw new IllegalStateException("Cannot access id value: " + id, actual);
         }
     }
+    
+    /** Other internals **/
     
     private Map lookupMap(Class entityClass) {
         Class prevalentClass = this.prevalenceInfo.getPrevalentClass(entityClass);
@@ -281,8 +267,7 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
                 this.entitiesGlobalMap.put(prevalentClass, entityMap);
             }
             return entityMap;
-        }
-        else {
+        } else {
             throw new PrevaylerConfigurationException("Object with no configured prevalent class: " + entityClass);
         }
     }
