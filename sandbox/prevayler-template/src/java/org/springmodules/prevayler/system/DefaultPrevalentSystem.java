@@ -2,6 +2,7 @@ package org.springmodules.prevayler.system;
 
 import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -189,11 +190,14 @@ public class DefaultPrevalentSystem implements PrevalentSystem {
     }
     
     private void updateValue(Object source, Object destination, Field field) throws Exception {
-        Object value = field.get(source);
-        if (value != null) {
-            value = this.getUpdatedValue(value);
+        int modifiers = field.getModifiers();
+        if (! Modifier.isFinal(modifiers) && ! Modifier.isStatic(modifiers)) {
+            Object value = field.get(source);
+            if (value != null) {
+                value = this.getUpdatedValue(value);
+            }
+            field.set(destination, value);
         }
-        field.set(destination, value);
     }
     
     private Object getUpdatedValue(Object value) throws Exception {
