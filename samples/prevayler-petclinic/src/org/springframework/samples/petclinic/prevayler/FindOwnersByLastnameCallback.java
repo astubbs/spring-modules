@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.samples.petclinic.Owner;
-import org.springmodules.prevayler.PrevaylerCallback;
+import org.springmodules.prevayler.callback.PrevaylerCallback;
 import org.springmodules.prevayler.system.PrevalentSystem;
 
 /**

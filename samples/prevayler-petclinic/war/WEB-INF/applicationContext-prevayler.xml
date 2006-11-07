@@ -2,7 +2,7 @@
 
 <beans>
     
-    <bean name="prevalentSystem" class="org.springmodules.prevayler.system.DefaultPrevalentSystem">
+    <bean name="prevalenceInfo" class="org.springmodules.prevayler.system.PrevalenceInfo">
         <property name="idGenerationStrategy">
             <bean class="org.springmodules.prevayler.id.DefaultIntegerIdGenerator"/>
         </property>
@@ -13,17 +13,38 @@
         </property>
     </bean>
     
+    <bean name="prevalentSystem" class="org.springmodules.prevayler.system.DefaultPrevalentSystem" singleton="false">
+        <property name="prevalenceInfo" ref="prevalenceInfo"/>
+    </bean>
+    
     <bean name="prevaylerConfiguration" class="org.springmodules.prevayler.configuration.PrevaylerConfiguration">
         <property name="prevalentSystem" ref="prevalentSystem"/>
         <property name="prevalenceBase" value="classpath:clinicPrevalenceBase"/>
     </bean>
     
-    <bean name="prevaylerTemplate" class="org.springmodules.prevayler.PrevaylerTemplate">
-        <property name="configuration" ref="prevaylerConfiguration"/>
+    <bean name="transactionalPersistenceManager" class="org.springmodules.prevayler.TransactionalPersistenceManager">
+        <property name="prevaylerConfiguration" ref="prevaylerConfiguration"/>
+        <property name="secondsTimeout" value="5"/>
     </bean>
     
-    <bean id="clinic" class="org.springframework.samples.petclinic.prevayler.PrevaylerClinic" autowire="byType" init-method="initClinic"/>
+    <bean name="prevaylerTemplate" class="org.springmodules.prevayler.PrevaylerTemplate">
+        <property name="persistenceManager" ref="transactionalPersistenceManager"/>
+    </bean>
+    
+    <bean name="transactionManager" class="org.springmodules.prevayler.PrevaylerTransactionManager">
+        <property name="persistenceManager" ref="transactionalPersistenceManager"/>
+    </bean>
+    
+    <bean id="clinicTarget" class="org.springframework.samples.petclinic.prevayler.PrevaylerClinic" autowire="byType" init-method="initClinic"/>
+    
+    <bean id="clinic" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="target" ref="clinicTarget"/>
+        <property name="transactionAttributes">
+            <props>
+                <prop key="*">PROPAGATION_REQUIRED</prop>
+            </props>
+        </property>
+    </bean>
     
 </beans>
-
-

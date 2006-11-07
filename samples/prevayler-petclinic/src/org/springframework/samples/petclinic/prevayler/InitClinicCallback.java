@@ -6,7 +6,7 @@ import org.springframework.samples.petclinic.Pet;
 import org.springframework.samples.petclinic.PetType;
 import org.springframework.samples.petclinic.Specialty;
 import org.springframework.samples.petclinic.Vet;
-import org.springmodules.prevayler.PrevaylerCallback;
+import org.springmodules.prevayler.callback.PrevaylerCallback;
 import org.springmodules.prevayler.system.PrevalentSystem;
 
 /**

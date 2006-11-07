@@ -1,8 +1,6 @@
 package org.springframework.samples.petclinic.prevayler;
 
 import java.util.Collection;
-import org.springframework.beans.factory.BeanInitializationException;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.Clinic;
 import org.springframework.samples.petclinic.Owner;
@@ -41,8 +39,7 @@ public class PrevaylerClinic extends PrevaylerDaoSupport implements Clinic {
 
     public void storeOwner(Owner owner) throws DataAccessException {
         if (owner.getId() == null) {
-            Owner newOwner = (Owner) this.getPrevaylerTemplate().save(owner);
-            owner.setId(newOwner.getId());
+            this.getPrevaylerTemplate().save(owner);
         }
         else {
             this.getPrevaylerTemplate().update(owner);
@@ -51,8 +48,7 @@ public class PrevaylerClinic extends PrevaylerDaoSupport implements Clinic {
 
     public void storePet(Pet pet) throws DataAccessException {
         if (pet.getId() == null) {
-            Pet newPet = (Pet) this.getPrevaylerTemplate().save(pet);
-            pet.setId(newPet.getId());
+            this.getPrevaylerTemplate().save(pet);
         }
         else {
             this.getPrevaylerTemplate().update(pet);
@@ -61,8 +57,7 @@ public class PrevaylerClinic extends PrevaylerDaoSupport implements Clinic {
 
     public void storeVisit(Visit visit) throws DataAccessException {
         if (visit.getId() == null) {
-            Visit newVisit = (Visit) this.getPrevaylerTemplate().save(visit);
-            visit.setId(newVisit.getId());
+            this.getPrevaylerTemplate().save(visit);
         }
         else {
             this.getPrevaylerTemplate().update(visit);
