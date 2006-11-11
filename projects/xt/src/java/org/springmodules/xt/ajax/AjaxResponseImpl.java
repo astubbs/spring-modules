@@ -30,7 +30,7 @@ public class AjaxResponseImpl implements AjaxResponse {
     private static final String OPEN_RESPONSE = new String("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> ");
     private static final String CLOSE_RESPONSE = new String(" </taconite-root>");
     
-    private List<AjaxAction> actions = new LinkedList();
+    private List<AjaxAction> actions = new LinkedList<AjaxAction>();
     
     public void addAction(AjaxAction action) {
         this.actions.add(action);

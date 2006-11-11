@@ -28,7 +28,7 @@ import org.springmodules.xt.ajax.component.support.ComponentUtils;
 public class ListItem implements Component {
     
     private Component content;
-    private Map<String, String> attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the list item.
@@ -59,7 +59,9 @@ public class ListItem implements Component {
 
         response.append(">");
         
-        response.append(this.content.render());
+        if (this.content != null) {
+            response.append(this.content.render());
+        }
         
         response.append("</li>");
         

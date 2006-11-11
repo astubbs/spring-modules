@@ -22,7 +22,9 @@ import java.util.Map;
 import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
- * Component implementing an HTML (ordered or unordered) list.
+ * Component implementing an HTML list element.<br>
+ * The list can be ordered or unordered, depending on the
+ * {@link ListType}.
  *
  * @author Sergio Bossa
  */
@@ -30,7 +32,7 @@ public class List implements Component {
     
     private List.ListType type;
     private java.util.List<ListItem> items = new LinkedList<ListItem>();
-    private Map<String, String> attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the component.
@@ -96,5 +98,8 @@ public class List implements Component {
         return response.toString();
     }
     
+    /**
+     * List type.
+     */
     public enum ListType { ORDERED, UNORDERED };
 }

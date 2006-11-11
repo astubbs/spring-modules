@@ -28,8 +28,8 @@ import org.springmodules.xt.ajax.component.support.ComponentUtils;
 public class TableHeader implements Component {
     
     private String[] headers;
-    private Map<String, String> rowAttributes = new HashMap();
-    private Map<String, String> columnAttributes = new HashMap();
+    private Map<String, String> rowAttributes = new HashMap<String, String>();
+    private Map<String, String> columnAttributes = new HashMap<String, String>();
     
     /**
      * Construct the component.

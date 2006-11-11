@@ -30,10 +30,10 @@ import org.springmodules.xt.ajax.component.support.ComponentUtils;
 public class Table implements Component {
     
     private TableHeader tableHeader;
-    private List<TableRow> tableRowList = new LinkedList();
-    private Map<String, String> tableAttributes = new HashMap();
-    private Map<String, String> tableHeaderAttributes = new HashMap();
-    private Map<String, String> tableBodyAttributes = new HashMap();
+    private List<TableRow> tableRowList = new LinkedList<TableRow>();
+    private Map<String, String> tableAttributes = new HashMap<String, String>();
+    private Map<String, String> tableHeaderAttributes = new HashMap<String, String>();
+    private Map<String, String> tableBodyAttributes = new HashMap<String, String>();
     
     /**
      * Construct an empty table.
@@ -129,9 +129,9 @@ public class Table implements Component {
             ComponentUtils.appendAsAttributes(this.tableHeaderAttributes, response);
         }
         response.append(">");
-        
-        response.append(this.tableHeader.render());
-        
+        if (this.tableHeader != null) {
+            response.append(this.tableHeader.render());
+        }
         response.append("</thead>");
         
         // Body
@@ -140,17 +140,15 @@ public class Table implements Component {
             ComponentUtils.appendAsAttributes(this.tableBodyAttributes, response);
         }
         response.append("> ");
-        
         for (TableRow tr : this.tableRowList) {
             response.append(tr.render());
         }
-        
         response.append("</tbody>");
         
         // Close Table
         response.append("</table>");
         
-        // Response
+        // Return response:
         return response.toString();
     }
 }

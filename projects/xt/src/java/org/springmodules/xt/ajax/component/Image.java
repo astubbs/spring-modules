@@ -21,7 +21,7 @@ import java.util.Map;
 import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
- * Component representinh an HTML inline image.
+ * Component representing an HTML inline image.
  *
  * @author Sergio Bossa
  */
@@ -29,12 +29,12 @@ public class Image implements Component {
     
     private String location;
     private String alternateText;
-    private Map<String, String> attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the component.
      * @param location The image location.
-     * @param alternateText The image alternate text for this image.
+     * @param alternateText The alternate text for this image.
      */
     public Image(String location, String alternateText) {
         this.location = location;
@@ -42,7 +42,7 @@ public class Image implements Component {
     }
     
     /**
-     * Add a generic attribute to the input field.
+     * Add a generic attribute.
      * @param name The attribute name.
      * @param value The attribute value.
      */

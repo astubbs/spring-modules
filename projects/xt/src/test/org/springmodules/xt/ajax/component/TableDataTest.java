@@ -45,4 +45,16 @@ public class TableDataTest extends XMLEnhancedTestCase {
         
         assertXpathEvaluatesTo("123", "/td", rendering);
     }
+    
+    public void testRenderPart3() throws Exception {
+        Employee emp = new Employee();
+        
+        // Matriculation code is null:
+        TableData tableData = new TableData(emp, "matriculationCode", null);
+        String rendering = tableData.render();
+        
+        System.out.println(rendering);
+        
+        assertXpathEvaluatesTo("", "/td", rendering);
+    }
 }

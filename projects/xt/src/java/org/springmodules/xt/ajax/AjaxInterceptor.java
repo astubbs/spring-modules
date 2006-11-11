@@ -81,7 +81,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     private String elementIdParameter = "source-element-id";
     private String jsonParamsParameter = "json-params";
     
-    private SortedMap<String, String> handlerMappings = new TreeMap();
+    private SortedMap<String, String> handlerMappings = new TreeMap<String, String>();
     
     private ApplicationContext applicationContext;
     
@@ -259,7 +259,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      * @param mappings A {@link java.util.Properties} containing handler mappings.
      */
     public void setHandlerMappings(Properties mappings) {
-        this.handlerMappings = new TreeMap(new Comparator() {
+        this.handlerMappings = new TreeMap<String, String>(new Comparator() {
             public int compare(Object o1, Object o2) {
                 if (!(o1 instanceof String) && !(o2 instanceof String)) {
                     throw new ClassCastException();
@@ -339,7 +339,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      */
     protected List<AjaxHandler> lookupHandlers(HttpServletRequest request) {   
         String urlPath = this.urlPathHelper.getLookupPathForRequest(request);
-        List<AjaxHandler> handlers = new LinkedList();
+        List<AjaxHandler> handlers = new LinkedList<AjaxHandler>();
         for (Map.Entry<String, String> entry : this.handlerMappings.entrySet()) {
             String configuredPath = entry.getKey();
             if (this.pathMatcher.match(configuredPath, urlPath)) {
@@ -369,7 +369,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     private void initEvent(AjaxEvent event, HttpServletRequest request) {
         String paramsString = request.getParameter(this.jsonParamsParameter);
         if (paramsString != null) {
-            Map<String, String> parameters = new HashMap();
+            Map<String, String> parameters = new HashMap<String, String>();
             JSONObject json = new JSONObject(paramsString);
             Iterator keys = json.keys();
             while (keys.hasNext()) {

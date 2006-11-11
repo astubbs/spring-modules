@@ -21,7 +21,7 @@ import java.util.Map;
 import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
- * Component representinh an HTML anchor (a link).
+ * Component representing an HTML anchor (a link).
  *
  * @author Sergio Bossa
  */
@@ -29,7 +29,7 @@ public class Anchor implements Component {
     
     private String link;
     private Component content;
-    private Map<String, String> attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the component.
@@ -50,7 +50,7 @@ public class Anchor implements Component {
     }
     
     /**
-     * Add a generic attribute to the input field.
+     * Add a generic attribute.
      * @param name The attribute name.
      * @param value The attribute value.
      */

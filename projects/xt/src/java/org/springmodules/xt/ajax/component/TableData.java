@@ -30,7 +30,7 @@ import org.springmodules.xt.ajax.component.support.ComponentUtils;
 public class TableData implements Component {
     
     private Component data;
-    private Map<String, String> attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the component.
@@ -51,17 +51,30 @@ public class TableData implements Component {
      * the object property value will be rendered as simple text.
      */
     public TableData(Object dataObject, String property, TextRenderingCallback textRenderingCallback) {
-        BeanWrapper wrapper = new BeanWrapperImpl(dataObject);
-        String value = wrapper.getPropertyValue(property).toString();
-        if (textRenderingCallback != null) {
-            this.data = textRenderingCallback.getRenderingComponent(value);
-        } else {
-            this.data = new SimpleText(value);
+        if (dataObject != null) {
+            BeanWrapper wrapper = new BeanWrapperImpl(dataObject);
+            Object tmp = wrapper.getPropertyValue(property);
+            if (tmp != null) {
+                String value = tmp.toString();
+                if (textRenderingCallback != null) {
+                    this.data = textRenderingCallback.getRenderingComponent(value);
+                }
+                else {
+                    this.data = new SimpleText(value);
+                }
+            }
+            else {
+                this.data = new SimpleText("");
+            }
+        }
+        else {
+            throw new IllegalArgumentException("The object to render in the table data component cannot be null!");
         }
     }
     
     /**
      * Add a generic attribute.
+     *
      * @param name The attribute name.
      * @param value The attribute value.
      */
@@ -78,7 +91,9 @@ public class TableData implements Component {
         }
         response.append(">");
         
-        response.append(this.data.render());
+        if (this.data != null) {
+            response.append(this.data.render());
+        }
         
         response.append("</td>");
         

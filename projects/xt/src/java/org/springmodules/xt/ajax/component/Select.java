@@ -30,22 +30,22 @@ import org.springmodules.xt.ajax.component.support.ComponentUtils;
 public class Select implements Component {
     
     private String name;
-    private List<Option> optionList = new LinkedList();
-    private Map<String, String> attributes = new HashMap();
+    private List<Option> optionList = new LinkedList<Option>();
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct an empty select list with a name.
      *
-     * @param name The select name.
+     * @param name The name.
      */
     public Select(String name) {
         this.name = name;
     }
     
     /**
-     * Construct with a name and some options.
+     * Construct a select element with a name and some options.
      *
-     * @param name The select name.
+     * @param name The name.
      * @param optionList The list of {@link Option} elements.
      */
     public Select(String name, List<Option> optionList) {
@@ -55,6 +55,7 @@ public class Select implements Component {
     
     /**
      * Add an {@link Option}.
+     *
      * @param option The option to add.
      */
     public void addOption(Option option) {
@@ -63,6 +64,7 @@ public class Select implements Component {
     
     /**
      * Add a generic attribute.
+     *
      * @param name The attribute name.
      * @param value The attribute value.
      */

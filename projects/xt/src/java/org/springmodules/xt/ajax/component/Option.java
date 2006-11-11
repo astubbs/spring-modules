@@ -32,7 +32,7 @@ public class Option implements Component {
     private String value;
     private String content;
     private boolean selected;
-    private Map<String, String> attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the option.
@@ -55,24 +55,45 @@ public class Option implements Component {
      * a standard JavaBean getter for this property.
      */
     public Option(Object optionObject, String valueProperty, String contentProperty) {
-        BeanWrapper wrapper = new BeanWrapperImpl(optionObject);
-        this.value = wrapper.getPropertyValue(valueProperty).toString();
-        this.content = wrapper.getPropertyValue(contentProperty).toString();
+        if (optionObject != null) {
+            BeanWrapper wrapper = new BeanWrapperImpl(optionObject);
+            Object tmp = wrapper.getPropertyValue(valueProperty);
+            if (tmp != null) {
+                this.value = tmp.toString();
+            }
+            else {
+                this.value = "";
+            }
+            tmp = wrapper.getPropertyValue(contentProperty);
+            if (tmp != null) {
+                this.content = tmp.toString();
+            }
+            else {
+                this.content = "";
+            }
+        }
+        else {
+            throw new IllegalArgumentException("The object to render in the option component cannot be null!");
+        }
     }
     
     /**
-     * Set this option as selected.
+     * Check if this option is selected.
      */
     public boolean getSelected() {
         return this.selected;
     }
     
+    /**
+     * Set this option as selected.
+     */
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
     
     /**
-     * Add a generic attribute to each option.
+     * Add a generic attribute to the option.
+     *
      * @param name The attribute name.
      * @param value The attribute value.
      */
@@ -91,7 +112,7 @@ public class Option implements Component {
             response.append(" selected=\"true\"");
         }
         
-        if (!this.attributes.isEmpty()) {
+        if (! this.attributes.isEmpty()) {
             ComponentUtils.appendAsAttributes(this.attributes, response);
         }
         

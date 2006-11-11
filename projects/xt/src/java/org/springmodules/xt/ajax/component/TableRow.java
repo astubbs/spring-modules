@@ -29,8 +29,8 @@ import org.springmodules.xt.ajax.component.support.ComponentUtils;
  */
 public class TableRow implements Component {
     
-    private List<TableData> tableDataList = new LinkedList();
-    private Map<String, String> attributes = new HashMap();
+    private List<TableData> tableDataList = new LinkedList<TableData>();
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the component (an empty row).
@@ -65,6 +65,7 @@ public class TableRow implements Component {
     
     /**
      * Add a {@link TableData} to this row.
+     *
      * @param data The table data to add.
      */
     public void addTableData(TableData data) {
@@ -73,6 +74,7 @@ public class TableRow implements Component {
     
     /**
      * Add a generic attribute to this row.
+     *
      * @param name The attribute name.
      * @param value The attribute value.
      */

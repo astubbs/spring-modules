@@ -19,21 +19,22 @@ package org.springmodules.xt.ajax.component;
 import java.util.HashMap;
 import java.util.Map;
 import org.springmodules.xt.ajax.component.support.ComponentUtils;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
- * Component implementing text surrounded by tags.
+ * Component implementing text surrounded by tags represented
+ * by the {@link Tag} enumeration. By default it uses a div tag.
  *
  * @author Sergio Bossa
  */
 public class TaggedText implements Component {
     
     private String text;
-    private TaggedText.Tag tag;
-    private Map<String, String> attributes = new HashMap();
+    private TaggedText.Tag tag = TaggedText.Tag.DIV;
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the component.
+     *
      * @param text The text.
      * @param tag The tag to use for enclosing the given text.
      */
@@ -44,6 +45,7 @@ public class TaggedText implements Component {
     
     /**
      * Add a generic attribute to the input field.
+     *
      * @param name The attribute name.
      * @param value The attribute value.
      */
@@ -69,6 +71,9 @@ public class TaggedText implements Component {
         return response.toString();
     }
     
+    /**
+     * The wrapping tag.
+     */
     public enum Tag {
         
         DIV {

@@ -21,7 +21,7 @@ import java.util.Map;
 import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
- * Component implementing an input field.
+ * Component implementing an input field, whose type depends on its {@link InputType}.
  *
  * @author Sergio Bossa
  */
@@ -30,7 +30,7 @@ public class InputField implements Component {
     private String name;
     private String value;
     private InputField.InputType type;
-    private Map<String, String> attributes = new HashMap();
+    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the component.
@@ -70,5 +70,8 @@ public class InputField implements Component {
         return response.toString();
     }
     
+    /**
+     * Input field type.
+     */
     public enum InputType { TEXT, CHECKBOX, RADIO, HIDDEN, PASSWORD, BUTTON };
 }
