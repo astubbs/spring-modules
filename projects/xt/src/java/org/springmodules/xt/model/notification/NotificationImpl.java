@@ -64,9 +64,12 @@ public class NotificationImpl implements Notification {
     }
     
     public boolean hasMessages() {
-        boolean result = true;
+        boolean result = false;
         for (Message.Type type : Message.Type.values()) {
-           result = result && !this.messagesMap.get(type).isEmpty();
+          if (! this.messagesMap.get(type).isEmpty()) {
+              result = true;
+              break;
+          }
         }
         return result;
     }

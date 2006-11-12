@@ -81,6 +81,15 @@ public class NotificationImplTest extends TestCase {
         assertTrue(this.notification.hasMessages(Message.Type.INFO));
         assertTrue(this.notification.hasMessages());
     }
+    
+    /**
+     *
+     */
+    public void testHasAtLeastOneMessage() {
+        this.notification = new NotificationImpl();
+        this.notification.addMessage(new MessageImpl("error",  Message.Type.ERROR, "ERROR"));
+        assertTrue(this.notification.hasMessages());
+    }
 
     /**
      * Test of getAllMessages method, of class org.springmodules.xt.model.notification.NotificationImpl.
