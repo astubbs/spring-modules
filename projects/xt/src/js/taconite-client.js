@@ -3,7 +3,7 @@
  This JavaScript file represents the core browser-side functionality
  supplied by Taconite. In general, the tools in this file wrap an instance
  of XMLHttpRequest object and provide utility methods for gather data from
- form elements to be sent to the server as part of an Ajax request.
+ form elements to be sent to the server as par of an Ajax request.
  */
 
 /**
@@ -29,6 +29,7 @@
  @param {String} a String repesenting the URL to which the Ajax request
  will be sent.
  */
+var taconite_client_version=1.6;
 function AjaxRequest(url) {
     /** @private */
     var self = this;
@@ -90,6 +91,13 @@ function AjaxRequest(url) {
      */
     this.setPostRequest = function(func) {
         postRequest = func;
+    }
+    
+    /**
+     Return the post request function.
+     */
+    this.getPostRequest = function() {
+        return postRequest;
     }
     
     /**
@@ -156,7 +164,7 @@ function AjaxRequest(url) {
     /** 
      @param {Function} Set the error handler function that is called if the 
      server's HTTP response code is something other than 200.
-     */  
+     */	
     this.setErrorHandler = function(func){
         errorHandler = func;
     }
@@ -178,7 +186,7 @@ function AjaxRequest(url) {
      Add all of the form elements under the specified form to the query
      string to be sent to the server as part of the Ajax request. The values
      are automatically encoded.
-     @param {String} form, the form element from
+     @param {String} formEl, the form element from
      which you wish to accumulate the form values.
      */
     this.addFormElementsByFormEl = function(formEl) {
@@ -198,11 +206,21 @@ function AjaxRequest(url) {
     }
     
     /**
-        Same as addNamedFormElements, except it will filter form elements by form's id.
-        For example, these are all valid uses:<br>
-        <br>ajaxRequest.addNamedFormElements("form-id""element-name-1");
-        <br>ajaxRequest.addNamedFormElements("form-id","element-name-1",
-        "element-name-2", "element-name-3");
+     Add the name/value pair to the query string.
+     @param {String} name
+     @param {String} value
+     */
+    this.addNameValuePair = function(name, value) {
+        var nameValuePair = name + "=" + encodeURIComponent(value);
+        accumulateQueryString(nameValuePair);
+    }
+    
+    /**
+     Same as addNamedFormElements, except it will filter form elements by form's id.
+     For example, these are all valid uses:<br>
+     <br>ajaxRequest.addNamedFormElements("form-id""element-name-1");
+     <br>ajaxRequest.addNamedFormElements("form-id","element-name-1",
+     "element-name-2", "element-name-3");
      */
     this.addNamedFormElementsByFormID = function() {
         var elementName = "";
@@ -214,7 +232,7 @@ function AjaxRequest(url) {
             var arNamedElements = new Array();
             for(j = 0; j < namedElements.length; j++) {
                 if(namedElements[j].form  && namedElements[j].form.getAttribute("id") == arguments[0]){
-                    arNamedElements.push(namedElements[j]);       
+                    arNamedElements.push(namedElements[j]);				
                 }
             }
             if(arNamedElements.length > 0){
@@ -282,55 +300,69 @@ function AjaxRequest(url) {
         }
         
         var obj = this;
-        
-        xmlHttp.onreadystatechange = function () { handleStateChange(self) };
-        
-        if(requestURL.indexOf("?") > 0) {
-            requestURL = requestURL + "&ts=" + new Date().getTime();
-        }
-        else {
-            requestURL = requestURL + "?ts=" + new Date().getTime();
-        }
-        
-        if(method == "GET") {
-            if(queryString.length > 0) {
-                requestURL = requestURL + "&" + queryString;
+        if(async)
+            xmlHttp.onreadystatechange = function () { handleStateChange(self) };
+            
+            if(requestURL.indexOf("?") > 0) {
+                requestURL = requestURL + "&ts=" + new Date().getTime();
             }
-            xmlHttp.open(method, requestURL, true);
-            xmlHttp.send(null);
-        }
-        else {
-            //Fix a bug in Firefox when posting
-            //if (xmlHttp.overrideMimeType) {
-            //    xmlHttp.setRequestHeader("Connection", "close");
-            //}
-            // Very strange, the code above is commented because it actually doesn't work in Firefox - Fix By Sergio Bossa
-            xmlHttp.open(method, requestURL, true);
-            xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
-            xmlHttp.send(queryString);
-        }
-        
-        if(!async) {  //synchronous request, handle the state change
-            handleStateChange(self);
-        }
-        
-        if(self.isEchoDebugInfo()) {
-            echoRequestParams();
-        }
+            else {
+                requestURL = requestURL + "?ts=" + new Date().getTime();
+            }
+            
+            
+            try {
+                if(method == "GET") {
+                    if(queryString.length > 0) {
+                        requestURL = requestURL + "&" + queryString;
+                    }
+                    xmlHttp.open(method, requestURL, async);
+                    xmlHttp.send(null);
+                }
+                else {
+                    xmlHttp.open(method, requestURL, async);
+                    //Fix a bug in Firefox when posting
+                    try {
+                        if (xmlHttp.overrideMimeType) {
+                            xmlHttp.setRequestHeader("Connection", "close");//set header after open
+                        }			
+                    }
+                    catch(e) {
+                        // Do nothing
+                    }
+                    xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+                    xmlHttp.send(queryString);
+                }
+            }
+            catch(exception) {
+                if(errorHandler) {
+                    errorHandler(self, exception);
+                }
+                else {
+                    throw exception;
+                }
+            }
+            
+            if(!async) {  //synchronous request, handle the state change
+                handleStateChange(self);
+            }
+            
+            if(self.isEchoDebugInfo()) {
+                echoRequestParams();
+            }
     }
     
     handleStateChange = function(ajaxRequest) {
         if(ajaxRequest.getXMLHttpRequestObject().readyState != 4) {
             return;
         }
-        if(ajaxRequest.getXMLHttpRequestObject().status == 200) {
-            
+        try {
             var debug = ajaxRequest.isEchoDebugInfo();
             if(debug) {
                 echoResponse(ajaxRequest);
             }
             
-            // Fix null responseXML, By Sergio Bossa
+            //handle null responseXML
             var nodes = null;
             if (ajaxRequest.getXMLHttpRequestObject().responseXML != null) {
                 nodes = ajaxRequest.getXMLHttpRequestObject().responseXML.documentElement.childNodes;
@@ -338,8 +370,8 @@ function AjaxRequest(url) {
             else {
                 nodes = new Array();
             }
-            //
-            var parser = null;
+            
+            var parser = new XhtmlToDOMParser();
             var parseInBrowser = "";
             for(var i = 0; i < nodes.length; i++) {
                 if(nodes[i].nodeType != 1 || !isTaconiteTag(nodes[i])) {
@@ -348,26 +380,28 @@ function AjaxRequest(url) {
                 
                 parseInBrowser = nodes[i].getAttribute("parseInBrowser");
                 if(parseInBrowser == "true") {
-                    parser = new XhtmlToDOMParser(nodes[i]);
-                    parser.startParsing();
+                    parser.parseXhtml(nodes[i]);
                     var js = parser.getJavaScript();
                     if(debug) {
                         echoParsedJavaScript(js);
                     }
-                    eval(parser.getJavaScript());
                 }
                 else {
                     eval(nodes[i].firstChild.nodeValue);
                 }
             }
             
-            if(postRequest) {
-                postRequest(ajaxRequest);
+            if(ajaxRequest.getPostRequest()) {
+                var f = ajaxRequest.getPostRequest();
+                f(ajaxRequest);
             }
         }
-        else {
+        catch(exception) {
             if(errorHandler) {
-                errorHandler(self);
+                errorHandler(self, exception);
+            }
+            else {
+                throw exception;
             }
         }
     }
@@ -401,7 +435,7 @@ function AjaxRequest(url) {
                     }
                 }
                 
-                if(node.type.toLowerCase() == "text" || node.type.toLowerCase() == "hidden") {
+                if(node.type.toLowerCase() == "text" || node.type.toLowerCase() == "hidden" || node.type.toLowerCase() == "password") {
                     tempString = name + "=" + encodeURIComponent(node.value);
                 }
             }
@@ -489,6 +523,7 @@ function AjaxRequest(url) {
         return echoTextArea;
     }
     
+    
     /** @private */
     function echoRequestParams() {
         var qsTextBox = document.getElementById("qsTextBox");
@@ -516,6 +551,8 @@ function AjaxRequest(url) {
         document.getElementsByTagName("body")[0].appendChild(textBox);
         return textBox;
     }
+    
+    
 }
 
 /**

@@ -38,7 +38,7 @@ public class DefaultErrorRenderingCallback implements  ErrorRenderingCallback {
      * This renders the error as plain text.
      */
     public Component getRenderingComponent(ObjectError error, MessageSource messageSource, Locale locale) {
-        return new SimpleText(messageSource.getMessage(error.getCode(), null, error.getDefaultMessage(), locale));
+        return new SimpleText(messageSource.getMessage(error.getCode(), error.getArguments(), error.getDefaultMessage(), locale));
     }
     
     /**

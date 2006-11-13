@@ -1,11 +1,6 @@
-/**
- @fileoverview
- This JavaScript file represents the Taconite client-side parser, used for parsing and executing Taconite ajax actions.
- */
-
 // JavaScript Document
+var taconite_parser_version=1.502;
 var isIE=document.uniqueID;
-
 String.prototype.trim = function() {
     //skip leading and trailing whitespace
     //and return everything in between
@@ -15,10 +10,18 @@ String.prototype.trim = function() {
     return x;
 };
 
-function XhtmlToDOMParser(xml){
-    var xmlTagName=xml.tagName.toLowerCase();
-    var contextNode=document.getElementById(xml.getAttribute("contextNodeID"));
-    this.startParsing = function(){
+function requiresContextNode(xmlTagName) {
+    return !(xmlTagName == "taconite-execute-javascript" || xmlTagName == "taconite-redirect");
+}
+
+function XhtmlToDOMParser() {
+    
+    this.parseXhtml = function(xml){
+        var xmlTagName=xml.tagName.toLowerCase();
+        var contextNode=document.getElementById(xml.getAttribute("contextNodeID"));
+        if(contextNode == null && requiresContextNode(xmlTagName)){
+            return false;
+        }
         switch (xmlTagName) {
             case "taconite-append-as-children":
                 getReplaceChildren(contextNode,xml,false);
@@ -46,16 +49,14 @@ function XhtmlToDOMParser(xml){
                 xml.removeAttribute("parseInBrowser");
                 handleAttributes(contextNode,xml);
                 break;
-                
-            // New functions, By Sergio Bossa
-                
             case "taconite-redirect":
                 handleRedirect(xml);
                 break;
             case "taconite-execute-javascript":
                 executeJavascript(xml);
                 break;
-        }                      
+        }  
+        return true;
     };
     
     function isInlineMode(node) {
@@ -69,7 +70,7 @@ function XhtmlToDOMParser(xml){
             return true;
         }
         return false;
-    }
+    }  
     
     this.getJavaScript= function() {
         return "var dummy_taconite_variable=0";
@@ -82,7 +83,11 @@ function XhtmlToDOMParser(xml){
                 return handleElement(xmlNode);
             case 3:  //TEXT_NODE
             case 4:  //CDATA_SECTION_NODE
-                return document.createTextNode(xmlNode.nodeValue);
+                var textNode = document.createTextNode(xmlNode.nodeValue);
+                if(isIE) {
+                    textNode.nodeValue = textNode.nodeValue.replace(/\n/g, '\r'); 
+                }
+                return textNode;
         }      
         return null;
     }
@@ -112,9 +117,16 @@ function XhtmlToDOMParser(xml){
                 }							
                 return domElemNode;			
             }
+            
         }
         if(domElemNode == null){
-            domElemNode=document.createElement(xmlNodeTagName);
+            if(useIEFormElementCreationStrategy(xmlNodeTagName)) {
+                domElemNode = createFormElementsForIEStrategy(xmlNode);
+            }
+            else {
+                domElemNode = document.createElement(xmlNodeTagName);
+            }
+            
             handleAttributes(domElemNode,xmlNode);
             //Fix for IE Script tag: Unexpected call to method or property access error
             //IE don't allow script tag to have child
@@ -137,38 +149,81 @@ function XhtmlToDOMParser(xml){
         return domElemNode;
     }
     
-    function handleAttributes(domNode,xmlNode) {
+    function useIEFormElementCreationStrategy(xmlNodeTagName) {
+        var useIEStrategy = false;
+        
+        if (isIE && ( xmlNodeTagName.toLowerCase() == "form" ||
+        xmlNodeTagName.toLowerCase() == "input" ||
+        xmlNodeTagName.toLowerCase() == "textarea" ||
+        xmlNodeTagName.toLowerCase() == "select" ||
+        xmlNodeTagName.toLowerCase() == "a" ||
+        xmlNodeTagName.toLowerCase() == "applet" ||
+        xmlNodeTagName.toLowerCase() == "button" ||
+        xmlNodeTagName.toLowerCase() == "img" ||
+        xmlNodeTagName.toLowerCase() == "link" ||
+        xmlNodeTagName.toLowerCase() == "map" ||
+        xmlNodeTagName.toLowerCase() == "object")) {
+            
+            useIEStrategy = true;
+        }
+        
+        return useIEStrategy;
+    }
+    
+    function createFormElementsForIEStrategy(xmlNode) {
+        var attr = null;
+        var name = "";
+        var value = "";
+        for (var x = 0; x < xmlNode.attributes.length; x++) {
+            attr = xmlNode.attributes[x];
+            name = attr.name.trim();
+            if (name == "name") {
+                value = attr.value.trim();
+            }
+        }
+        
+        domElemNode = document.createElement("<" + xmlNode.tagName + " name='" + value + "' />"); // e.g. document.createElement("<input name='slot2'>");
+        
+        return domElemNode;
+    }
+    
+    function handleAttributes(domNode, xmlNode) {
         var attr = null;
         var attrString = "";
         var name = "";
         var value = "";
-        var returnAsText=false;
-        if(arguments.length==3) {
+        var returnAsText = false;
+        if(arguments.length == 3) {
             returnAsText = true;
         }
         
         for(var x = 0; x < xmlNode.attributes.length; x++) {
             attr = xmlNode.attributes[x];
-            name = attr.name.trim();
+            name = cleanAttributeName(attr.name.trim());
             value = attr.value.trim();
             if(!returnAsText){
                 if(name == "style") {
                     /* IE workaround */
-                    domNode.style.cssText=value;
+                    domNode.style.cssText = value;
                     /* Standards compliant */
-                    domNode.setAttribute(name,value);
+                    domNode.setAttribute(name, value);
                 }
                 else if(name.trim().toLowerCase().substring(0, 2) == "on") {
                     /* IE workaround for event handlers */
                     //domNode.setAttribute(name,value);
                     eval("domNode." + name.trim().toLowerCase() + "=function(){" + value + "}");
                 }
+                else if(name == "value") {
+                    /* IE workaround for the value attribute -- makes form elements selectable/editable */
+                    domNode.value = value;
+                }
+                else if(useIEFormElementCreationStrategy(xmlNode.tagName) && name == "name") {
+                    //Do nothing, as the "name" attribute was handled in the createFormElementsForIEStrategy function
+                    continue;
+                }
                 else {
                     /* Standards compliant */
-                    // But it doesn't seem to work ... - Fix By Sergio Bossa
-                    //domNode.setAttribute(name,value);
-                    eval("domNode." + name.trim().toLowerCase() + "='" + value + "'");
-                    
+                    domNode.setAttribute(name,value);
                 }
                 /* class attribute workaround for IE */
                 if(name == "class") {
@@ -226,7 +281,7 @@ function XhtmlToDOMParser(xml){
                 domNode.parentNode.insertBefore(domChildNode,domNode);
             }
         }              
-    }   
+    }      
     
     function getReplace(domNode,xml){
         getInsertAfter(domNode,xml);
@@ -240,8 +295,8 @@ function XhtmlToDOMParser(xml){
     function getReplaceChildren(domNode,xml,doRemoveChildren) {
         var domChildNode=null;
         if(doRemoveChildren){
-            while(contextNode.childNodes.length >0){
-                contextNode.removeChild(contextNode.childNodes[0]);
+            while(domNode.childNodes.length >0){
+                domNode.removeChild(domNode.childNodes[0]);
             }      
         }
         for(var i=0;i<xml.childNodes.length;i++){
@@ -251,8 +306,6 @@ function XhtmlToDOMParser(xml){
             }
         }              
     }
-    
-    // New functions, By Sergio Bossa
     
     function handleRedirect(xmlNode) {
         var targetUrl = xmlNode.getAttribute("targetUrl");
@@ -269,8 +322,30 @@ function XhtmlToDOMParser(xml){
             }
         }
     }
+    
+    function cleanAttributeName(name) {
+        if(isIE == false) {
+            return;
+        }
+        
+        // IE workaround to change cellspacing to cellSpacing, etc
+        var cleanName = name.toLowerCase();
+        if(cleanName == "cellspacing") {
+            cleanName = "cellSpacing";
+        }
+        else if(cleanName == "cellpadding") {
+            cleanName = "cellPadding";
+        }
+        else if(cleanName == "colspan") {
+            cleanName = "colSpan";
+        }
+        else if(cleanName == "tabindex") {
+            cleanName = "tabIndex";
+        }
+        else if(cleanName == "readonly") {
+            cleanName = "readOnly";
+        }
+        return cleanName;
+    }
+    
 }
-
-
-
-
