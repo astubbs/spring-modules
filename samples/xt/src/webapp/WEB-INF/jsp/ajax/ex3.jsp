@@ -52,6 +52,19 @@
                     </td>
                 </tr>
                 <tr>
+                    <td>Password :</td>
+                    <td>
+                        <spring:bind path="command.password">
+                            <input type="password" name="${status.expression}" value="${status.value}">
+                        </spring:bind>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="employee.short.password"/>
+                    </td>
+                </tr>
+                <tr>
                     <td>Select the employee office :</td>
                     <td>
                         <spring:bind path="command.office">

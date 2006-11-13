@@ -12,6 +12,8 @@ import org.springframework.validation.Validator;
  */
 public class EmployeeValidator implements Validator {
     
+    public static final int PASSWORD_MIN_LENGTH = 5;
+    
     public boolean supports(Class aClass) {
         return IEmployee.class.isAssignableFrom(aClass);
     }
@@ -23,6 +25,11 @@ public class EmployeeValidator implements Validator {
             // Validate matriculation code:
             if (emp.getMatriculationCode() == null || emp.getMatriculationCode().equals("")) {
                 errors.rejectValue("matriculationCode", EmployeeErrorCodes.NULL_CODE, "No Matriculation Code!");
+            }
+            
+            // Validate password:
+            if (emp.getPassword().length() < PASSWORD_MIN_LENGTH) {
+                errors.rejectValue("password", EmployeeErrorCodes.SHORT_PASSWORD, new Object[]{PASSWORD_MIN_LENGTH}, "Too short password!");
             }
         }
     }

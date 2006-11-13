@@ -12,21 +12,21 @@ public interface IOffice extends CopyAware, Serializable {
     
     public static final int MAX_EMPLOYEES = 3;
     
-    void addEmployee(IEmployee e);
+    public void addEmployee(IEmployee e);
     
-    void removeEmployee(IEmployee e);
+    public void removeEmployee(IEmployee e);
     
-    Set<IEmployee> getEmployees();
+    public Set<IEmployee> getEmployees();
 
-    String getName();
+    public String getName();
 
-    String getOfficeId();
+    public String getOfficeId();
     
-    void setOfficeId(String officeId);
+    public void setOfficeId(String officeId);
 
-    void setEmployees(Set<IEmployee> employees);
+    public void setEmployees(Set<IEmployee> employees);
 
-    void setName(String name);
+    public void setName(String name);
     
     public IOffice copy();
 }

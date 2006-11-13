@@ -13,6 +13,7 @@ public class Employee implements IEmployee {
     private String matriculationCode;
     private String firstname;
     private String surname;
+    private String password;
     
     public Employee() {}
     
@@ -42,6 +43,14 @@ public class Employee implements IEmployee {
     
     public void setMatriculationCode(String matriculationCode) {
         this.matriculationCode = matriculationCode;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
     
     public IEmployee copy() {

@@ -218,6 +218,9 @@
                 <prop key="java.lang.Exception">error</prop>
             </props>
         </property>
+        <property name="exceptionAttribute">
+            <value>exception</value>
+        </property>
     </bean>
     
 </beans>

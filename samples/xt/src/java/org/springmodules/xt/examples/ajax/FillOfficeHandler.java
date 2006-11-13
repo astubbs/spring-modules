@@ -16,6 +16,7 @@ import org.springmodules.xt.ajax.component.Option;
 import org.springmodules.xt.ajax.component.Select;
 import org.springmodules.xt.ajax.component.TableData;
 import org.springmodules.xt.ajax.component.TableRow;
+import org.springmodules.xt.ajax.component.support.BindStatusHelper;
 import org.springmodules.xt.ajax.support.AjaxCall;
 import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.domain.MemoryRepository;
@@ -37,8 +38,9 @@ public class FillOfficeHandler extends AbstractAjaxHandler {
         TableRow row = new TableRow();
         row.addAttribute("id", "row-" + employeeCounter);
 
-        // Create the employee selection box and add it to a column:
-        Select selectionList = new Select("employees");
+        // Create the employee selection box (binding to employees) and add it to a column:
+        BindStatusHelper helper = new BindStatusHelper("command.employees");
+        Select selectionList = new Select(helper.getStatusExpression());
         for (IEmployee emp : employees) {
             Option o = new Option(emp, "matriculationCode", "surname");
             selectionList.addOption(o);

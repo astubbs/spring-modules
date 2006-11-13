@@ -57,6 +57,21 @@
                         </spring:bind>
                     </td>
                 </tr>
+                <spring:bind path="command.password">
+                    <tr>
+                        <td>Password :</td>
+                        <td>
+                            <input type="password" name="${status.expression}" value="${status.value}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <c:forEach items="${status.errorMessages}" var="errorMessage">
+                                <c:out value="${errorMessage}"/><br>
+                            </c:forEach>
+                        </td>
+                    </tr>
+                </spring:bind>
                 <spring:bind path="command.office">
                     <tr>
                         <td>Select the employee office :</td>

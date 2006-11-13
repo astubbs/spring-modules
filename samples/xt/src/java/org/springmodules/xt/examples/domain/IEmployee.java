@@ -9,17 +9,21 @@ import java.io.Serializable;
  */
 public interface IEmployee extends CopyAware, Serializable {
     
-    String getFirstname();
+    public String getFirstname();
 
-    String getMatriculationCode();
+    public String getMatriculationCode();
 
-    String getSurname();
+    public String getSurname();
     
-    void setMatriculationCode(String matriculationCode);
+    public String getPassword();
+    
+    public void setMatriculationCode(String matriculationCode);
 
-    void setFirstname(String firstname);
+    public void setFirstname(String firstname);
 
-    void setSurname(String surname);
+    public void setSurname(String surname);
+    
+    public void setPassword(String password);
     
     public IEmployee copy();
 }

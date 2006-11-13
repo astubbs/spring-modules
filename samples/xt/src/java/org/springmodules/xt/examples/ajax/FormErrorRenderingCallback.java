@@ -15,7 +15,7 @@ import org.springmodules.xt.ajax.validation.support.DefaultErrorRenderingCallbac
 public class FormErrorRenderingCallback extends DefaultErrorRenderingCallback { 
     
     public Component getRenderingComponent(ObjectError error, MessageSource messageSource, Locale locale) {
-        TaggedText text = new TaggedText(messageSource.getMessage(error.getCode(), null, error.getDefaultMessage(), locale), TaggedText.Tag.SPAN);
+        TaggedText text = new TaggedText(messageSource.getMessage(error.getCode(), error.getArguments(), error.getDefaultMessage(), locale), TaggedText.Tag.SPAN);
         text.addAttribute("style","color : red;");
         return text;
     }
