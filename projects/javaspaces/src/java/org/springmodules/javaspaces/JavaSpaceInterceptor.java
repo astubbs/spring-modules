@@ -212,7 +212,7 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 
 	protected MethodResultEntry takeResult(AbstractMethodCallEntry call) throws Throwable {
 		MethodResultEntry result = null;
-		MethodResultEntry template = new MethodResultEntry((Method) null, call.uid, null);
+		MethodResultEntry template = createMethodResultEntry(call);
 
 		result = (MethodResultEntry) jsTemplate.take(template, timeoutMillis);
 
@@ -226,6 +226,15 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 			throw new RemoteAccessException("Couldn't get result for " + call);
 		}
 		return result;
+	}
+
+	/**
+	 * Create the specific method result entry
+	 * @param call the call entry method
+	 * @return the method result entry.
+	 */
+	protected MethodResultEntry createMethodResultEntry(AbstractMethodCallEntry call){
+		return new MethodResultEntry((Method) null, call.uid, null);
 	}
 
 	/**

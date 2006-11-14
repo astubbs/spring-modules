@@ -18,10 +18,14 @@ package org.springmodules.javaspaces.gigaspaces;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+import org.springframework.remoting.RemoteAccessException;
 import org.springmodules.javaspaces.JavaSpaceInterceptor;
+import org.springmodules.javaspaces.entry.AbstractMethodCallEntry;
+import org.springmodules.javaspaces.entry.MethodResultEntry;
 import org.springmodules.javaspaces.entry.RunnableMethodCallEntry;
 import org.springmodules.javaspaces.entry.ServiceSeekingMethodCallEntry;
 
+import org.springmodules.javaspaces.gigaspaces.remote.GigaSpacesMethodResultEntry;
 import org.springmodules.javaspaces.gigaspaces.remote.GigaSpacesRunnableMethodCallEntry;
 import org.springmodules.javaspaces.gigaspaces.remote.GigaSpacesServiceSeekingMethodCallEntry;
 
@@ -86,6 +90,16 @@ public class GigaSpacesInterceptor extends JavaSpaceInterceptor {
 		}
 		GigaSpacesRunnableMethodCallEntry runnableMethodCallEntry = new GigaSpacesRunnableMethodCallEntry(method, args, target, uid);
 		return runnableMethodCallEntry;
+	}
+
+
+	/**
+	 * Create the specific method result entry
+	 * @param call the call entry method
+	 * @return the method result entry.
+	 */
+	protected MethodResultEntry createMethodResultEntry(AbstractMethodCallEntry call){
+		return new GigaSpacesMethodResultEntry((Method) null, call.uid, null);
 	}
 
 }

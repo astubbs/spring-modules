@@ -16,8 +16,10 @@
 package org.springmodules.javaspaces.gigaspaces.remote;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.springmodules.javaspaces.entry.MethodResultEntry;
 import org.springmodules.javaspaces.entry.RunnableMethodCallEntry;
 
 /**
@@ -72,7 +74,22 @@ public class GigaSpacesRunnableMethodCallEntry extends RunnableMethodCallEntry{
         return indexedFields;
     }
 
+	
+	/**
+	 * Invoke the method ignoring the given delegate by using the internal target object.
+	 * @param delegate in this case the delegate object is not passed through the  client
+	 * but is in the server.
+	 * @see org.springmodules.javaspaces.entry.AbstractMethodCallEntry#doInvocation(java.lang.Object)
+	 */
+	protected MethodResultEntry doInvocation(Object delegate) throws InvocationTargetException, IllegalAccessException {
+		Method method = getMethod();
+		Object resultObject = method.invoke(target, getArguments());
+		return new GigaSpacesMethodResultEntry(method, uid, resultObject);
+	}
+	
+	
 	protected static String METHOD_STRING ="methodString";
 	protected static String UID ="uid";
 
+	
 }

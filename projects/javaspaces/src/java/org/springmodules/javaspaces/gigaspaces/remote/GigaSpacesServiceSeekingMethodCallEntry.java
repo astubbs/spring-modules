@@ -16,8 +16,10 @@
 package org.springmodules.javaspaces.gigaspaces.remote;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.springmodules.javaspaces.entry.MethodResultEntry;
 import org.springmodules.javaspaces.entry.ServiceSeekingMethodCallEntry;
 
 /**
@@ -69,4 +71,16 @@ public class GigaSpacesServiceSeekingMethodCallEntry extends ServiceSeekingMetho
         String[] indexedFields = {GigaSpacesRunnableMethodCallEntry.UID};
         return indexedFields;
     }
+
+	/**
+	 * Invoke the method using the given delegate (target).
+	 *
+	 * @see org.springmodules.javaspaces.entry.AbstractMethodCallEntry#doInvocation(java.lang.Object)
+	 */
+	protected MethodResultEntry doInvocation(Object delegate) throws InvocationTargetException, IllegalAccessException {
+		Method method = getMethod();
+		Object resultObject = method.invoke(delegate, getArguments());
+		return new GigaSpacesMethodResultEntry(method, uid, resultObject);
+	}
+
 }
