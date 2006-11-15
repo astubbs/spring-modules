@@ -75,12 +75,16 @@ public class AbstractMethodCallEntry extends MethodIdentifier implements Entry {
 			// Target method threw exception
 			// That needs to go into the space also to be thrown on the
 			// caller-side.
-			return new MethodResultEntry(ex.getTargetException(), getMethod(), uid);
+			return createMethodResultEntry(ex.getTargetException(), getMethod(), uid);
 		}
 	}
 
 	protected MethodResultEntry doInvocation(Object delegate) throws InvocationTargetException, IllegalAccessException {
 		throw new UnsupportedOperationException("subclasses have to extend this method");
+	}
+
+	protected  MethodResultEntry createMethodResultEntry(Throwable t, Method method, Serializable uid){
+		return new MethodResultEntry(t, getMethod(), uid);
 	}
 
 }

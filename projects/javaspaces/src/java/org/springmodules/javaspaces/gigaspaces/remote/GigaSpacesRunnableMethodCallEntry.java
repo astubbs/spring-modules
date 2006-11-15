@@ -74,7 +74,7 @@ public class GigaSpacesRunnableMethodCallEntry extends RunnableMethodCallEntry{
         return indexedFields;
     }
 
-	
+
 	/**
 	 * Invoke the method ignoring the given delegate by using the internal target object.
 	 * @param delegate in this case the delegate object is not passed through the  client
@@ -86,10 +86,13 @@ public class GigaSpacesRunnableMethodCallEntry extends RunnableMethodCallEntry{
 		Object resultObject = method.invoke(target, getArguments());
 		return new GigaSpacesMethodResultEntry(method, uid, resultObject);
 	}
-	
-	
+
+	protected  MethodResultEntry createMethodResultEntry(Throwable t, Method method, Serializable uid){
+		return new GigaSpacesMethodResultEntry(t, getMethod(), uid);
+	}
+
 	protected static String METHOD_STRING ="methodString";
 	protected static String UID ="uid";
 
-	
+
 }

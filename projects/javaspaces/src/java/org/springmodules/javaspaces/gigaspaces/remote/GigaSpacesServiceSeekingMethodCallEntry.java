@@ -82,5 +82,9 @@ public class GigaSpacesServiceSeekingMethodCallEntry extends ServiceSeekingMetho
 		Object resultObject = method.invoke(delegate, getArguments());
 		return new GigaSpacesMethodResultEntry(method, uid, resultObject);
 	}
+	
+	protected  MethodResultEntry createMethodResultEntry(Throwable t, Method method, Serializable uid){
+		return new GigaSpacesMethodResultEntry(t, getMethod(), uid);
+	}
 
 }
