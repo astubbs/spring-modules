@@ -9,15 +9,21 @@ import java.io.Serializable;
  */
 public interface IEmployee extends Serializable {
     
+    String getMatriculationCode();
+    
+    String getNickname();
+    
     String getFirstname();
 
-    String getMatriculationCode();
-
     String getSurname();
+    
+    String getPassword();
+    
+    void setMatriculationCode(String matriculationCode);
 
     void setFirstname(String firstname);
 
-    void setMatriculationCode(String matriculationCode);
-
     void setSurname(String surname);
+    
+    void setPassword(String password);
 }

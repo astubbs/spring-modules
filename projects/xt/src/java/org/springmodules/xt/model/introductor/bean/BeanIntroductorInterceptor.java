@@ -16,77 +16,53 @@
 
 package org.springmodules.xt.model.introductor.bean;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.springmodules.xt.model.introductor.support.IllegalReturnTypeException;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.log4j.Logger;
-import org.springframework.aop.IntroductionInterceptor;
-import org.springframework.beans.BeanUtils;
+import org.springmodules.xt.model.introductor.AbstractIntroductorInterceptor;
+import org.springmodules.xt.model.introductor.support.IllegalReturnTypeException;
 
 /**
  * Spring AOP Introduction Interceptor for dynamically constructing JavaBeans style classes with additional setter and getter methods.<br>
- * This causes a target object to implement a set of introduced interfaces.<br>
- * Methods on introduced interfaces will be automatically implemented by this interceptor.<br>
- * Methods not belonging to introduced interfaces will be executed on the target object.<br>
- * It is important to specify <b>all introduced interfaces</b>, even those that are superinterfaces of other ones.
  * 
  * @author Sergio Bossa
  */
-public class BeanIntroductorInterceptor implements IntroductionInterceptor {
+public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
     
     private static final Logger logger = Logger.getLogger(BeanIntroductorInterceptor.class);
     
-    private Set<Class> introducedInterfaces = new HashSet();
     private Map<String, Object> fields = new ConcurrentHashMap();
 
     /**
      * @param introducedInterfaces The interfaces to introduce.
      */
     public BeanIntroductorInterceptor(Class[] introducedInterfaces) {
-        Collections.addAll(this.introducedInterfaces, introducedInterfaces);
+        super(introducedInterfaces);
     }
     
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-        Method method = methodInvocation.getMethod();
         Object result = null;
-        if (this.isIntroduced(method)) {
-            logger.debug("Introducing method: " + method.toString());
-            try {
-                if (method.getName().startsWith("get")) {
-                    result = this.fields.get(method.getName().substring(3));
-                    if (result == null) {
-                        if (method.getReturnType().isPrimitive()) {
-                            throw new IllegalReturnTypeException("Return types of your introduced interfaces cannot be primitives.");
-                        }
-                    }
-                }
-                else if (method.getName().startsWith("set")) {
-                    String key = method.getName().substring(3);
-                    Object value = methodInvocation.getArguments()[0];
-                    // ConcurrentHashMap doesn't support null values: so, if the value is not null, proceed with setting:
-                    if (value != null)
-                        this.fields.put(key, value);
-                    // Else, remove it (this equals setting it null):
-                    else
-                        this.fields.remove(key); 
-                }
-                else {
-                    throw new UnsupportedOperationException("You can only invoke setter and getter methods.");
-                }
-            }
-            catch(Exception ex) {
-                logger.warn("Something wrong happened calling: " + method.toString());
-                logger.warn("Exception message: " + ex.getMessage());
-                throw ex;
-            }
+        Method invokedMethod = methodInvocation.getMethod();
+        if (this.shouldOverrideTarget(invokedMethod)) {
+            result = executeLocally(methodInvocation, invokedMethod);
+        }
+        else if (this.shouldMapToTargetField(invokedMethod)) {
+            result = executeOnTargetField(methodInvocation, invokedMethod);
         }
         else {
-            result =  methodInvocation.proceed();
+            Method targetMethod = this.getTargetMethod(methodInvocation);
+            if (this.isIntroduced(invokedMethod) && targetMethod != null) {
+                result = executeOnTargetMethod(methodInvocation, targetMethod);
+            }
+            else if (this.isIntroduced(invokedMethod)) {
+                result = executeLocally(methodInvocation, invokedMethod);
+            }
+            else {
+                result =  methodInvocation.proceed();
+            }
         }
         
         return result;
@@ -96,18 +72,71 @@ public class BeanIntroductorInterceptor implements IntroductionInterceptor {
         return this.isIntroduced(aClass);
     }
     
-    protected final boolean isIntroduced(Method aMethod) {
-        return this.isIntroduced(aMethod.getDeclaringClass());
+    private Object executeOnTargetMethod(MethodInvocation methodInvocation, Method method) throws Exception {
+        logger.debug("Executing on target; method: " + method.toString());
+        return method.invoke(methodInvocation.getThis(), methodInvocation.getArguments());
     }
     
-    protected final boolean isIntroduced(Class aClass) {
-        if (aClass.isInterface()) {
-            for (Class introduced : this.introducedInterfaces) {
-                if (aClass.equals(introduced)) {
-                    return true;
-                }
+    private Object executeOnTargetField(MethodInvocation methodInvocation, Method method) throws Exception {
+        logger.debug("Mapping to target field; method: " + method.toString());
+        Object result = null;
+        try {
+            Object target = methodInvocation.getThis();
+            if (method.getName().startsWith("get")) {
+                Field field = target.getClass().getDeclaredField(method.getName().substring(3));
+                field.setAccessible(true);
+                result = field.get(target);
+            }
+            else if (method.getName().startsWith("set")) {
+                Field field = target.getClass().getDeclaredField(method.getName().substring(3));
+                field.setAccessible(true);
+                field.set(target, methodInvocation.getArguments()[0]);
+            }
+            else {
+                throw new UnsupportedOperationException("The introduced interface must contain only setter and getter methods.");
             }
         }
-        return false;
+        catch(Exception ex) {
+            logger.warn("Something wrong happened calling: " + method.toString());
+            logger.warn("Exception message: " + ex.getMessage());
+            throw ex;
+        }
+        return result;
+    }
+    
+    private Object executeLocally(MethodInvocation methodInvocation, Method method) throws Exception {
+        logger.debug("Introducing method: " + method.toString());
+        Object result = null;
+        try {
+            if (method.getName().startsWith("get")) {
+                result = this.fields.get(method.getName().substring(3));
+                if (result == null) {
+                    if (method.getReturnType().isPrimitive()) {
+                        throw new IllegalReturnTypeException("Return types of your introduced interfaces cannot be primitives.");
+                    }
+                }
+            }
+            else if (method.getName().startsWith("set")) {
+                String key = method.getName().substring(3);
+                Object value = methodInvocation.getArguments()[0];
+                // ConcurrentHashMap doesn't support null values: so, if the value is not null, proceed with setting:
+                if (value != null) {
+                    this.fields.put(key, value);
+                }
+                // Else, remove it (this equals setting it null):
+                else {
+                    this.fields.remove(key); 
+                }
+            }
+            else {
+                throw new UnsupportedOperationException("The introduced interface must contain only setter and getter methods.");
+            }
+        }
+        catch(Exception ex) {
+            logger.warn("Something wrong happened calling: " + method.toString());
+            logger.warn("Exception message: " + ex.getMessage());
+            throw ex;
+        }
+        return result;
     }
 }

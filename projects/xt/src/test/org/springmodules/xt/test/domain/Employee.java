@@ -10,9 +10,11 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class Employee implements IEmployee {
 
+    private String password;
     private String matriculationCode;
     private String firstname;
     private String surname;
+    private String nickname;
 
     public String getFirstname() {
         return firstname;
@@ -36,6 +38,22 @@ public class Employee implements IEmployee {
 
     public void setMatriculationCode(String matriculationCode) {
         this.matriculationCode = matriculationCode;
+    }
+    
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
     
     public boolean equals(Object obj) {

@@ -40,10 +40,10 @@ public abstract class AbstractDynamicIntroductor implements DynamicIntroductor {
      * @see DynamicIntroductor#getTarget(Object )
      */
     public Object getTarget(Object proxy) {
-        return this._getTarget(proxy);
+        return this.internalGetTarget(proxy);
     }
     
-    private final Object _getTarget(Object proxy) {
+    private Object internalGetTarget(Object proxy) {
         Object target = null;
         
         try {
@@ -56,11 +56,11 @@ public abstract class AbstractDynamicIntroductor implements DynamicIntroductor {
             }
         }
         catch(Exception ex) {
-            throw new UnsupportedOperationException("Cannot obtain the target object from the given proxy");
+            throw new UnsupportedOperationException("Cannot obtain the target object from the given proxy.");
         }
         
         if (target == null) {
-            throw new UnsupportedOperationException("Cannot obtain the target object from the given proxy");
+            throw new UnsupportedOperationException("Cannot obtain the target object from the given proxy.");
         }
         
         return target;

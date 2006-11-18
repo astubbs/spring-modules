@@ -1,12 +1,12 @@
 /*
  * Copyright 2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,42 +17,39 @@
 package org.springmodules.xt.model.introductor.bean;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jmock.Mock;
+import org.jmock.cglib.MockObjectTestCase;
 import org.springmodules.xt.test.domain.Employee;
+import org.springmodules.xt.test.domain.EmployeeView;
+import org.springmodules.xt.test.domain.EmployeeView2;
+import org.springmodules.xt.test.domain.EmployeeView3;
 import org.springmodules.xt.test.domain.IEmployee;
 import org.springmodules.xt.test.domain.Office;
-import org.springmodules.xt.test.domain.EmployeeView;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class DynamicBeanIntroductorTest extends TestCase {
+public class DynamicBeanIntroductorTest extends MockObjectTestCase {
     
     private DynamicBeanIntroductor introductor;
     
     public DynamicBeanIntroductorTest(String testName) {
         super(testName);
     }
-
+    
     protected void setUp() throws Exception {
         this.introductor  = new DynamicBeanIntroductor();
     }
-
-    protected void tearDown() throws Exception {
-    }
-
+    
     public static Test suite() {
         TestSuite suite = new TestSuite(DynamicBeanIntroductorTest.class);
         
         return suite;
     }
-
-    /**
-     * Test of introduceInterfaces method, of class org.springmodules.xt.model.introductor.bean.DynamicBeanIntroductor.
-     */
-    public void testIntroduceInterfaces() {
+    
+    public void testIntroduceInterfacesPart1() {
         Employee target = new Employee();
         target.setFirstname("Sergio");
         target.setSurname("Bossa");
@@ -65,25 +62,129 @@ public class DynamicBeanIntroductorTest extends TestCase {
         
         EmployeeView view = (EmployeeView) introduced;
         
-        assertEquals(view.getFirstname(), "Sergio");
-        assertEquals(view.getSurname(), "Bossa");
+        assertEquals("Sergio", view.getFirstname());
+        assertEquals("Bossa", view.getSurname());
         
         view.setMatriculationCode("123");
         view.setOffice(new Office());
         
-        assertEquals(view.getMatriculationCode(), "123");
+        assertEquals("123", view.getMatriculationCode());
         assertNotNull(view.getOffice());
-        
-        Object introduced2 = this.introductor.introduceInterfaces(target, new Class[]{EmployeeView.class}, new Class[]{IEmployee.class});
-        
-        assertFalse(introduced2 instanceof Employee);
-        assertTrue(introduced2 instanceof  IEmployee);
-        assertTrue(introduced2 instanceof EmployeeView);
     }
     
-    /**
-     * Test of getTraget method, of class org.springmodules.xt.model.introductor.bean.DynamicBeanIntroductor.
-     */
+    public void testIntroduceInterfacesPart2() {
+        Employee target = new Employee();
+        target.setFirstname("Sergio");
+        target.setSurname("Bossa");
+        
+        Object introduced = this.introductor.introduceInterfaces(target, new Class[]{EmployeeView.class}, new Class[]{IEmployee.class});
+        
+        assertFalse(introduced instanceof Employee);
+        assertTrue(introduced instanceof  IEmployee);
+        assertTrue(introduced instanceof EmployeeView);
+        
+        EmployeeView view = (EmployeeView) introduced;
+        
+        assertEquals("Sergio", view.getFirstname());
+        assertEquals("Bossa", view.getSurname());
+        
+        view.setMatriculationCode("123");
+        view.setOffice(new Office());
+        
+        assertEquals("123", view.getMatriculationCode());
+        assertNotNull(view.getOffice());
+    }
+    
+    public void testIntroduceInterfacesWithInheritedInterface() {
+        Employee target = new Employee();
+        
+        Object introduced = this.introductor.introduceInterfaces(target, new Class[]{EmployeeView2.class});
+        
+        assertTrue(introduced instanceof Employee);
+        assertTrue(introduced instanceof IEmployee);
+        assertTrue(introduced instanceof EmployeeView);
+        assertTrue(introduced instanceof EmployeeView2);
+        
+        EmployeeView2 view = (EmployeeView2) introduced;
+        // Call to setOffice() and getOffice(), belonging to the inherited EmployeeView interface:
+        view.setOffice(new Office());
+        assertNotNull(view.getOffice());
+        
+        Object introduced2 = this.introductor.introduceInterfaces(target, new Class[]{EmployeeView2.class}, new Class[]{IEmployee.class});
+        
+        assertFalse(introduced2 instanceof Employee);
+        assertTrue(introduced2 instanceof IEmployee);
+        assertTrue(introduced2 instanceof EmployeeView);
+        assertTrue(introduced2 instanceof EmployeeView2);
+        
+        view = (EmployeeView2) introduced2;
+        // Call to setOffice() and getOffice(), belonging to the inherited EmployeeView interface:
+        view.setOffice(new Office());
+        assertNotNull(view.getOffice());
+    }
+    
+    public void testCallsDelegatedToTarget() {
+        Mock targetMock = mock(Employee.class);
+        
+        Object introduced = this.introductor.introduceInterfaces(targetMock.proxy(), new Class[]{EmployeeView2.class});
+        EmployeeView2 view = (EmployeeView2) introduced;
+        // Expects call to target:
+        targetMock.expects(once()).method("setNickname").with(eq("sb"));
+        view.setNickname("sb");
+        
+        targetMock.reset();
+        
+        introduced = this.introductor.introduceInterfaces(targetMock.proxy(), new Class[]{EmployeeView2.class}, new Class[]{IEmployee.class});
+        view = (EmployeeView2) introduced;
+        // Expects call to target:
+        targetMock.expects(once()).method("setNickname").with(eq("sb"));
+        view.setNickname("sb");
+    }
+    
+    public void testOverrideTarget() {
+        Mock targetMock = mock(Employee.class);
+        
+        Object introduced = this.introductor.introduceInterfaces(targetMock.proxy(), new Class[]{EmployeeView3.class});
+        EmployeeView3 view = (EmployeeView3) introduced;
+        // Expects no call to target:
+        targetMock.expects(never()).method("setNickname").with(eq("sb"));
+        targetMock.expects(never()).method("getNickname");
+        view.setNickname("sb");
+        assertEquals("sb", view.getNickname());
+        
+        targetMock.reset();
+        
+        introduced = this.introductor.introduceInterfaces(targetMock.proxy(), new Class[]{EmployeeView3.class}, new Class[]{IEmployee.class});
+        view = (EmployeeView3) introduced;
+        // Expects no call to target:
+        targetMock.expects(never()).method("setNickname").with(eq("sb"));
+        targetMock.expects(never()).method("getNickname");
+        view.setNickname("sb");
+        assertEquals("sb", view.getNickname());
+    }
+    
+    public void testMapToTargetField() {
+        Mock targetMock = mock(Employee.class);
+        
+        Object introduced = this.introductor.introduceInterfaces(targetMock.proxy(), new Class[]{EmployeeView3.class});
+        EmployeeView3 view = (EmployeeView3) introduced;
+        // Expects no call to target:
+        targetMock.expects(never()).method("setNickname").with(eq("sb"));
+        targetMock.expects(never()).method("getNickname");
+        view.setNickname("sb");
+        assertEquals("sb", view.getNickname());
+        
+        targetMock.reset();
+        
+        introduced = this.introductor.introduceInterfaces(targetMock.proxy(), new Class[]{EmployeeView3.class}, new Class[]{IEmployee.class});
+        view = (EmployeeView3) introduced;
+        // Expects no call to target:
+        targetMock.expects(never()).method("setNickname").with(eq("sb"));
+        targetMock.expects(never()).method("getNickname");
+        view.setNickname("sb");
+        assertEquals("sb", view.getNickname());
+    }
+    
     public void testGetTarget() {
         Employee target = new Employee();
         target.setFirstname("Sergio");

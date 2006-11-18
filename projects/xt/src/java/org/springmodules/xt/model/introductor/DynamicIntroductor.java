@@ -16,12 +16,15 @@
 
 package org.springmodules.xt.model.introductor;
 
-import java.util.Collection;
-
 /**
- * Interface for dynamically introducing additional interfaces to target objects.<br>
- * This will create a proxy object  which will implement the new interfaces and also a set of target interfaces if you specify them. If
- * you do not specify any target interface, the proxy object will automatically subclass the target object class.
+ * <p>
+ * Dynamically introduces additional interfaces to target objects.<br>
+ * This will create a proxy object  which will implement the new interfaces and also a set of target interfaces if you specify them.<br>
+ * If you do not specify any target interface, the proxy object will automatically subclass the target object class.
+ * </p>
+ * <p>
+ * <b>Please note</b> that the introductor introduces all interfaces with all relative subinterfaces.
+ * </p>
  * 
  * @author Sergio Bossa
  */
