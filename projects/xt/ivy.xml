@@ -1,51 +1,52 @@
 <ivy-module version="1.1">
-  <info organisation="springmodules" module="spring-modules-xt"/>
-
-  <configurations>
-    <!-- default configuration that 'by default' pulls in the global configuration -->
-    <conf name="default" extends="global"/>
-
-    <!-- core dependencies needed at compile-time, test-time, and runtime -->
-    <conf name="global" visibility="private"/>
-
-    <!-- additional dependencies needed only at build-time -->
-    <conf name="buildtime" visibility="private"/>
-
-    <!-- additional dependencies needed only at test-time -->
-    <conf name="test" visibility="private"/>
-  </configurations>
-
-  <dependencies defaultconf="global->default">
-
-    <!-- global (compile, test, runtime) dependencies -->
-
-    <dependency org="apache" name="commons-lang" rev="2.1"/>
-    <dependency org="apache" name="commons-collections" rev="3.1"/>
-    <dependency org="apache" name="commons-logging" rev="1.0.4"/>
+    <info organisation="springmodules" module="spring-modules-xt"/>
     
-    <dependency org="log4j" name="log4j" rev="1.2.8"/>
+    <configurations>
+        <!-- default configuration that 'by default' pulls in the global configuration -->
+        <conf name="default" extends="global"/>
+        <!-- core dependencies needed at compile-time, test-time, and runtime -->
+        <conf name="global" visibility="private"/>
+        <!-- additional dependencies needed only at build-time -->
+        <conf name="buildtime" visibility="private"/>
+        <!-- additional dependencies needed only at test-time -->
+        <conf name="test" visibility="private"/>
+    </configurations>
     
-    <dependency org="net.sf.json-lib" name="json-lib" rev="0.9"/>
+    <dependencies defaultconf="global->default">
+        
+        <!-- global (compile, test, runtime) dependencies -->
+
+        <dependency org="apache" name="commons-collections" rev="3.2"/>
+        <dependency org="apache" name="commons-lang" rev="2.1"/>
+        
+        <dependency org="log4j" name="log4j" rev="1.2.12"/>
+        
+        <dependency org="net.sf.json-lib" name="json-lib" rev="0.9"/>
+        
+        <dependency org="cglib" name="cglib" rev="2.1_3">
+            <artifact name="cglib-nodep" type="jar"/>
+        </dependency>
+        
+        <dependency org="springframework" name="springframework" rev="2.0">
+            <artifact name="spring-aop" type="jar"/>
+            <artifact name="spring-core" type="jar"/>
+            <artifact name="spring-mock" type="jar"/>
+        </dependency>
+        
+        <!-- build time dependencies -->
     
-    <dependency org="cglib" name="cglib" rev="2.1_3">
-      <artifact name="cglib-nodep" type="jar"/>
-    </dependency>
-    
-    <dependency org="springframework" name="springframework" rev="2.0">
-		<artifact name="spring" type="jar"/>
-        <artifact name="spring-mock" type="jar"/>
-    </dependency>
+        <dependency org="sun" name="javax.servlet" rev="2.4">
+            <artifact name="servlet-api" type="jar"/>
+        </dependency>
+        
+        <!-- test time only dependencies -->
 
-    <!-- build time dependencies -->
-    
-    <dependency org="sun" name="javax.servlet" rev="2.3">
-      <artifact name="servlet-api" type="jar"/>
-    </dependency>
-
-    <!-- test time only dependencies -->
-
-    <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
-    <dependency org="xmlunit" name="xmlunit" rev="1.0" conf="test->default"/>
-
-  </dependencies>
+        <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
+        <dependency org="xmlunit" name="xmlunit" rev="1.0" conf="test->default"/>
+        <dependency org="jmock" name="jmock" rev="1.1.0" conf="test->default">
+            <artifact name="jmock" type="jar"/>
+            <artifact name="jmock-cglib" type="jar"/>
+        </dependency>
+        
+    </dependencies>
 </ivy-module>
