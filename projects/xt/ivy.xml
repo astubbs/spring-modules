@@ -28,8 +28,7 @@
         </dependency>
         
         <dependency org="springframework" name="springframework" rev="2.0">
-            <artifact name="spring-aop" type="jar"/>
-            <artifact name="spring-core" type="jar"/>
+            <artifact name="spring" type="jar"/>
             <artifact name="spring-mock" type="jar"/>
         </dependency>
         
