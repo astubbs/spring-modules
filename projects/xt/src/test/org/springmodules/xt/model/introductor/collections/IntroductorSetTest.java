@@ -116,8 +116,8 @@ public class IntroductorSetTest extends TestCase {
     }
     
     private void internalTestAddAndRemove(IntroductorSet introductor) {
-        assertEquals(target.size(), 2);
-        assertEquals(introductor.size(), 2);
+        assertEquals(2, target.size());
+        assertEquals(2, introductor.size());
         
         Employee emp3 = new Employee();
         emp3.setMatriculationCode("3");
@@ -126,29 +126,29 @@ public class IntroductorSetTest extends TestCase {
         
         introductor.add(emp3);
         
-        assertEquals(target.size(), 3);
-        assertEquals(introductor.size(), 3);
+        assertEquals(3, target.size());
+        assertEquals(3, introductor.size());
         assertTrue(target.contains(emp3));
         assertTrue(introductor.contains(emp3));
         
         introductor.remove(emp3);
         
-        assertEquals(target.size(), 2);
-        assertEquals(introductor.size(), 2);
+        assertEquals(2, target.size());
+        assertEquals(2, introductor.size());
         
         // Add from introductor and remove from target ....
         
         introductor.add(emp3);
         
-        assertEquals(target.size(), 3);
-        assertEquals(introductor.size(), 3);
+        assertEquals(3, target.size());
+        assertEquals(3, introductor.size());
         assertTrue(target.contains(emp3));
         assertTrue(introductor.contains(emp3));
         
         target.remove(emp3);
         
-        assertEquals(target.size(), 2);
-        assertEquals(introductor.size(), 2);
+        assertEquals(2, target.size());
+        assertEquals(2, introductor.size());
     }
     
     private void internalTestIterateAndRemove(IntroductorSet introductor) {
@@ -158,8 +158,8 @@ public class IntroductorSetTest extends TestCase {
             assertTrue(o instanceof EmployeeView);
             it.remove();
         }
-        assertEquals(target.size(), 0);
-        assertEquals(introductor.size(), 0);
+        assertEquals(0, target.size());
+        assertEquals(0, introductor.size());
     }
     
     private void internalTestModifyAndIterate(IntroductorSet introductor) {
@@ -174,7 +174,7 @@ public class IntroductorSetTest extends TestCase {
         n = 0;
         for (Iterator it = introductor.iterator(); it.hasNext();) {
             EmployeeView v = (EmployeeView) it.next();
-            assertEquals(v.getOffice().getOfficeId(), "" + ++n);
+            assertEquals("" + ++n, v.getOffice().getOfficeId());
         }
     }
 }

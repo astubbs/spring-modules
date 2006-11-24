@@ -47,6 +47,7 @@ import org.springframework.aop.framework.ProxyFactory;
  * However, if you have a method on your introduced interface that is implemented by the target object,
  * this restriction doesn't apply.
  * </p>
+ * <p>This class is <b>thread-safe</b>, so you can use it for concurrently introducing multiple targets.</p>
  *
  * @author Sergio Bossa
  */

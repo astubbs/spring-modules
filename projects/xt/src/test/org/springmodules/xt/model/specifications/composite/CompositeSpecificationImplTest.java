@@ -183,8 +183,8 @@ public class CompositeSpecificationImplTest extends TestCase {
         assertFalse(notification.hasMessages(Message.Type.WARNING));
         assertFalse(notification.hasMessages(Message.Type.INFO));
         assertTrue(notification.getMessages(Message.Type.ERROR).length == 1);
-        assertEquals(notification.getMessages(Message.Type.ERROR)[0].getCode(), "wrong.office.id");
-        assertEquals(notification.getMessages(Message.Type.ERROR)[0].getDefaultMessage(), "Wrong Office Id");
+        assertEquals("wrong.office.id", notification.getMessages(Message.Type.ERROR)[0].getCode());
+        assertEquals("Wrong Office Id",notification.getMessages(Message.Type.ERROR)[0].getDefaultMessage());
     }
     
     /**
@@ -211,8 +211,8 @@ public class CompositeSpecificationImplTest extends TestCase {
         assertTrue(notification.hasMessages(Message.Type.WARNING));
         assertFalse(notification.hasMessages(Message.Type.INFO));
         assertTrue(notification.getMessages(Message.Type.WARNING).length == 1);
-        assertEquals(notification.getMessages(Message.Type.WARNING)[0].getCode(), "wrong.office.id");
-        assertEquals(notification.getMessages(Message.Type.WARNING)[0].getDefaultMessage(), "Wrong Office Id");
+        assertEquals("wrong.office.id", notification.getMessages(Message.Type.WARNING)[0].getCode());
+        assertEquals("Wrong Office Id", notification.getMessages(Message.Type.WARNING)[0].getDefaultMessage());
     }
     
     /**
