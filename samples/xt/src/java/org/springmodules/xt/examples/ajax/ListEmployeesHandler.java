@@ -9,7 +9,7 @@ import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
 import org.springmodules.xt.ajax.AjaxSubmitEvent;
 import org.springmodules.xt.ajax.action.ReplaceContentAction;
-import org.springmodules.xt.ajax.action.prototype.scriptaculous.HighlightAction;
+import org.springmodules.xt.ajax.action.prototype.scriptaculous.Effect;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.component.TableRow;
 import org.springmodules.xt.examples.domain.IEmployee;
@@ -37,7 +37,8 @@ public class ListEmployeesHandler extends AbstractAjaxHandler {
         // Create an ajax action for setting the message and hi:
         ReplaceContentAction setMessageAction = new ReplaceContentAction("message", message);
         // Create an highlighting effect action for the appearing message:
-        HighlightAction highlightAction = new HighlightAction("message", (float) 0.5);
+        Effect highlightAction = new Effect("Highlight", "message");
+        highlightAction.addOption("duration", 0.5);
         
         // Create the components to render (a list of html table rows):
         List rows = new LinkedList();

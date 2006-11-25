@@ -4,12 +4,16 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <script type="text/javascript" src='<c:url value="/js/springxt-min.js"/>'></script>
-        <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
-        <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects"/>'></script>
+        <script type="text/javascript" src='../js/springxt-min.js'></script>
+        <script type="text/javascript" src='../js/prototype.js'></script>
+        <script type="text/javascript" src='../js/scriptaculous.js?load=effects,dragdrop'></script>
         <script type="text/javascript">
             function showAlert(options) {
-            alert(options.message);
+                alert(options.message);
+            }
+            
+            function showAlertOnDrop(draggable, droppable) {
+                alert(draggable.id + " on " + droppable.id);
             }
         </script>
         <title>XT Ajax Framework : Example 1</title>
@@ -136,7 +140,7 @@
                 <tr>
                     <td>Press the corresponding button to apply an effect to the greetings message below :</td>
                     <td><input type="button" value="Highlight" onclick="doAjaxAction('highlightElement', this);"></td>
-                    <td><input type="button" value="Set Opacity" onclick="doAjaxAction('setOpacity', this);"></td>
+                    <td><input type="button" value="Puff" onclick="doAjaxAction('puffElement', this);"></td>
                     <td><input type="button" value="Pulsate" onclick="doAjaxAction('pulsateElement', this);"></td>
                     <td><input type="button" value="Shrink" onclick="doAjaxAction('shrinkElement', this);"></td>
                     <td><input type="button" value="Grow" onclick="doAjaxAction('growElement', this);"></td>
@@ -146,6 +150,23 @@
                         <div id="toApplyEffect" style="border-style: solid">
                             <div>Your greetings ...</div>
                             <div>Hello, Spring Modules user!</div>
+                        </div>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>Press the button to enable drag and drop below :</td>
+                    <td><input type="button" value="Enable" onclick="doAjaxAction('enableDnD', this);"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="draggable">
+                            Drag This
+                        </div>
+                    </td>
+                    <td>
+                        <div id="droppable" style="border-style: solid">
+                            Here
                         </div>
                     </td>
                 </tr>

@@ -4,9 +4,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>   
-        <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
-        <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects,dragdrop"/>'></script>
+        <script type="text/javascript" src='../js/springxt-min.js'></script>
+        <script type="text/javascript" src='../js/prototype.js'></script>
+        <script type="text/javascript" src='../js/scriptaculous.js?load=effects,dragdrop'></script>
         <script type="text/javascript">
             function onDropEmployee(employee, office) {
                 doAjaxAction("dragEmployee", null, {employeeId : employee.id});
@@ -55,7 +55,9 @@
                                 </ul>
                             </spring:bind>
                         </li>
-                        <script type="text/javascript">Droppables.add("office", {onDrop : onDropEmployee});</script>
+                        <script type="text/javascript">
+                            Droppables.add("office", {onDrop : function(draggable, droppable) { onDropEmployee(draggable, droppable); } });
+                        </script>
                     </ul>
                 </td>
             </tr>

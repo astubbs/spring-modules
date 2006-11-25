@@ -19,11 +19,9 @@ import org.springmodules.xt.ajax.action.ReplaceElementAction;
 import org.springmodules.xt.ajax.action.SetAttributeAction;
 import org.springmodules.xt.ajax.action.prototype.HideElementAction;
 import org.springmodules.xt.ajax.action.prototype.ShowElementAction;
-import org.springmodules.xt.ajax.action.prototype.scriptaculous.GrowAction;
-import org.springmodules.xt.ajax.action.prototype.scriptaculous.HighlightAction;
-import org.springmodules.xt.ajax.action.prototype.scriptaculous.OpacityAction;
-import org.springmodules.xt.ajax.action.prototype.scriptaculous.PulsateAction;
-import org.springmodules.xt.ajax.action.prototype.scriptaculous.ShrinkAction;
+import org.springmodules.xt.ajax.action.prototype.scriptaculous.AddDroppable;
+import org.springmodules.xt.ajax.action.prototype.scriptaculous.Draggable;
+import org.springmodules.xt.ajax.action.prototype.scriptaculous.Effect;
 import org.springmodules.xt.ajax.component.InputField;
 import org.springmodules.xt.ajax.component.SimpleText;
 import org.springmodules.xt.ajax.component.TaggedText;
@@ -166,7 +164,7 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     }
     
     public AjaxResponse executeFunction(AjaxActionEvent event) {
-        Map<String, String> options = new HashMap<String, String>();
+        Map<String, Object> options = new HashMap<String, Object>();
         options.put("message", "Greetings!");
         
         // Create an ajax action for executing a Javascript function: 
@@ -206,7 +204,7 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     
     public AjaxResponse highlightElement(AjaxActionEvent event) {
         // Create an ajax action for highlighting an element: 
-        HighlightAction action = new HighlightAction("toApplyEffect");
+        Effect action = new Effect("Highlight", "toApplyEffect");
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
@@ -216,9 +214,10 @@ public class TestActionsHandler extends AbstractAjaxHandler {
         return response;
     }
     
-    public AjaxResponse setOpacity(AjaxActionEvent event) {
-        // Create an ajax action for setting the opacity of an element: 
-        OpacityAction action = new OpacityAction("toApplyEffect", (float) 0.8, (float) 1.0, (float) 0.2);
+    public AjaxResponse puffElement(AjaxActionEvent event) {
+        // Create an ajax action for making an element puff: 
+        Effect action = new Effect("Puff", "toApplyEffect");
+        action.addOption("duration", "3");
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
@@ -230,7 +229,7 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     
     public AjaxResponse pulsateElement(AjaxActionEvent event) {
         // Create an ajax action for making pulsate an element: 
-        PulsateAction action = new PulsateAction("toApplyEffect");
+        Effect action = new Effect("Pulsate", "toApplyEffect");
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
@@ -242,7 +241,7 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     
     public AjaxResponse shrinkElement(AjaxActionEvent event) {
         // Create an ajax action for shrinking an element: 
-        ShrinkAction action = new ShrinkAction("toApplyEffect");
+        Effect action = new Effect("Shrink", "toApplyEffect");
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
@@ -254,12 +253,29 @@ public class TestActionsHandler extends AbstractAjaxHandler {
     
     public AjaxResponse growElement(AjaxActionEvent event) {
         // Create an ajax action for making grow an element: 
-        GrowAction action = new GrowAction("toApplyEffect");
+        Effect action = new Effect("Grow", "toApplyEffect");
         
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
         // Add the action:
         response.addAction(action);
+        
+        return response;
+    }
+    
+    public AjaxResponse enableDnD(AjaxActionEvent event) {
+        // Make the draggable:
+        Draggable action1 = new Draggable("draggable");
+        action1.addOption("revert", true);
+        // Add the droppable:
+        AddDroppable action2 = new AddDroppable("droppable");
+        action2.addOption("onDrop", "function(draggable, droppable) { showAlertOnDrop(draggable, droppable); }");
+        
+        // Create a concrete ajax response:
+        AjaxResponse response = new AjaxResponseImpl();
+        // Add the actions:
+        response.addAction(action1);
+        response.addAction(action2);
         
         return response;
     }

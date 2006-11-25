@@ -4,9 +4,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <script type="text/javascript" src='<c:url value="/js/springxt.js"/>'></script>   
-        <script type="text/javascript" src='<c:url value="/js/prototype.js"/>'></script>
-        <script type="text/javascript" src='<c:url value="/js/scriptaculous.js?load=effects"/>'></script>
+        <script type="text/javascript" src='../js/springxt-min.js'></script>
+        <script type="text/javascript" src='../js/prototype.js'></script>
+        <script type="text/javascript" src='../js/scriptaculous.js?load=effects'></script>
         <title>XT Ajax Framework : Example 4</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
