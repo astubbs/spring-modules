@@ -29,14 +29,14 @@ import net.sf.json.JSONObject;
 public class ExecuteJavascriptFunctionAction extends AbstractExecuteJavascriptAction {
     
     private String name;
-    private Map<String, String> options = new HashMap<String, String>();
+    private Map<String, Object> options = new HashMap<String, Object>();
     
     /**
      * Action constructor.
      * @param name The function name.
-     * @param options A map of strings representing function options.
+     * @param options A map of key/value pairs representing function options.
      */
-    public ExecuteJavascriptFunctionAction(String name, Map options) {
+    public ExecuteJavascriptFunctionAction(String name, Map<String, Object> options) {
         this.name = name;
         this.options = options;
     }

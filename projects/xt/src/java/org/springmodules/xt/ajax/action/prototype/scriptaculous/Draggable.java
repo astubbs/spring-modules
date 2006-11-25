@@ -22,42 +22,48 @@ import net.sf.json.JSONObject;
 import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
 
 /**
- * Ajax action for setting the opacity of an HTML element by its id.<br>
- * This action uses the Prototype Javascript library and the Scriptaculous Effects Javascript library, so you need to include them in your web pages.
+ * Ajax action for making a new Scriptaculous draggable element (see http://wiki.script.aculo.us/scriptaculous/show/Draggable).<br>
+ * This action uses the Prototype Javascript library and the Scriptaculous Drag and Drop Javascript library, so you need to include them in your web pages.
  *
  * @author Sergio Bossa
  */
-public class OpacityAction extends AbstractExecuteJavascriptAction {
-    
-    private static final String DURATION = new String("duration");
-    private static final String FROM = new String("from");
-    private static final String TO = new String("to");
+public class Draggable extends AbstractExecuteJavascriptAction {
     
     private String elementId;
-    private Map options = new HashMap();
+    private Map<String, Object> options = new HashMap<String, Object>();
     
     /**
-     * Action constructor.
-     * @param elementId The id of the element to set opacity for.
-     * @param duration The effect duration.
-     * @param from The start level of opacity.
-     * @param to The end level of opacity.
+     * Construct a Scriptaculous draggable element.<br>
+     *
+     * @param elementId The id of the element.
      */
-    public OpacityAction(String elementId, Float duration, Float from, Float to) {
+    public Draggable(String elementId) {
         this.elementId = elementId;
-        this.options.put(DURATION, duration);
-        this.options.put(FROM, from);
-        this.options.put(TO, to);
+    }
+    
+    /**
+     * Add an optional parameter to this effect, in the form of key/value pair.<br>
+     *
+     * @param key The key of the option (<b>case-sensitive</b>).
+     * @param value The value of the option.
+     */
+    public void addOption(String key, Object value) {
+        this.options.put(key, value);
     }
     
     protected String getJavascript() {
-        StringBuilder effect = new StringBuilder("new Effect.Opacity(\"");
+        StringBuilder effect = new StringBuilder("new Draggable");
         
-        effect.append(this.elementId).append("\"");
+        effect.append("(");
+        
+        effect.append("\"").append(this.elementId).append("\"");
+        
+        
         if (!this.options.isEmpty()) {
             JSONObject json = new JSONObject(this.options);
             effect.append(",").append(json.toString());
         }
+        
         effect.append(");");
         
         return effect.toString();

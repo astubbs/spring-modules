@@ -18,7 +18,7 @@ package org.springmodules.xt.ajax.validation.support;
 
 import java.util.Locale;
 import org.springmodules.xt.ajax.AjaxAction;
-import org.springmodules.xt.ajax.action.prototype.scriptaculous.HighlightAction;
+import org.springmodules.xt.ajax.action.prototype.scriptaculous.Effect;
 import org.springmodules.xt.ajax.component.Component;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.ObjectError;
@@ -46,6 +46,8 @@ public class DefaultErrorRenderingCallback implements  ErrorRenderingCallback {
      * This renders the error highlighting it in red.
      */
     public AjaxAction getRenderingAction(ObjectError error) {
-        return new HighlightAction(error.getCode(), null, "#FF0A0A", null, null);
+        Effect highlight = new Effect("Highlight", error.getCode());
+        highlight.addOption("startcolor", "#FF0A0A");
+        return highlight;
     }
 }

@@ -22,45 +22,48 @@ import net.sf.json.JSONObject;
 import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
 
 /**
- * Ajax action for making an HTML element growing, identifying it by its id.<br>
- * This action uses the Prototype Javascript library and the Scriptaculous Effects Javascript library, so you need to include them in your web pages.
+ * Ajax action for adding a new Scriptaculous droppable element (see http://wiki.script.aculo.us/scriptaculous/show/Droppables.add).<br>
+ * This action uses the Prototype Javascript library and the Scriptaculous Drag and Drop Javascript library, so you need to include them in your web pages.
  *
  * @author Sergio Bossa
  */
-public class GrowAction extends AbstractExecuteJavascriptAction {
-    
-    private static final String DIRECTION = new String("direction");
+public class AddDroppable extends AbstractExecuteJavascriptAction {
     
     private String elementId;
-    private Map options = new HashMap();
+    private Map<String, Object> options = new HashMap<String, Object>();
     
     /**
-     * Action constructor.
+     * Construct a Scriptaculous action for adding a droppable element.<br>
+     *
      * @param elementId The id of the element.
      */
-    public GrowAction(String elementId) {
+    public AddDroppable(String elementId) {
         this.elementId = elementId;
-        this.options.put(DIRECTION, "top-left");
     }
     
     /**
-     * Action constructor.
-     * @param elementId The id of the element.
-     * @param direction The effect direction.
+     * Add an optional parameter to this effect, in the form of key/value pair.<br>
+     *
+     * @param key The key of the option (<b>case-sensitive</b>).
+     * @param value The value of the option.
      */
-    public GrowAction(String elementId, String direction) {
-        this.elementId = elementId;
-        this.options.put(DIRECTION, direction);
+    public void addOption(String key, Object value) {
+        this.options.put(key, value);
     }
     
     protected String getJavascript() {
-        StringBuilder effect = new StringBuilder("new Effect.Grow(\"");
+        StringBuilder effect = new StringBuilder("Droppables.add");
         
-        effect.append(this.elementId).append("\"");
+        effect.append("(");
+        
+        effect.append("\"").append(this.elementId).append("\"");
+        
+        
         if (!this.options.isEmpty()) {
             JSONObject json = new JSONObject(this.options);
             effect.append(",").append(json.toString());
         }
+        
         effect.append(");");
         
         return effect.toString();

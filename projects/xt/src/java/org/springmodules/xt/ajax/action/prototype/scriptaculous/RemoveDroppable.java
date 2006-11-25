@@ -19,25 +19,33 @@ package org.springmodules.xt.ajax.action.prototype.scriptaculous;
 import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
 
 /**
- * Ajax action for making an HTML element shrinking, identifying it by its id.<br>
- * This action uses the Prototype Javascript library and the Scriptaculous Effects Javascript library, so you need to include them in your web pages.
+ * Ajax action for removing a Scriptaculous droppable element (see http://wiki.script.aculo.us/scriptaculous/show/Droppables.remove).<br>
+ * This action uses the Prototype Javascript library and the Scriptaculous Drag and Drop Javascript library, so you need to include them in your web pages.
  *
  * @author Sergio Bossa
  */
-public class ShrinkAction extends AbstractExecuteJavascriptAction {
+public class RemoveDroppable extends AbstractExecuteJavascriptAction {
     
     private String elementId;
     
     /**
-     * Action constructor.
-     * @param elementId The id of the element to shrink.
+     * Construct a Scriptaculous action for removing a droppable element.<br>
+     *
+     * @param elementId The id of the element.
      */
-    public ShrinkAction(String elementId) {
+    public RemoveDroppable(String elementId) {
         this.elementId = elementId;
     }
     
     protected String getJavascript() {
-        StringBuilder effect = new StringBuilder("new Effect.Shrink(\"").append(this.elementId).append("\"").append(");");
+        StringBuilder effect = new StringBuilder("Droppables.remove");
+        
+        effect.append("(");
+        
+        effect.append("${\"").append(this.elementId).append("\"}");
+        
+        effect.append(");");
+        
         return effect.toString();
     }
 }

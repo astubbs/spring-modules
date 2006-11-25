@@ -14,7 +14,7 @@ public class ExecuteJavascriptFunctionActionTest extends XMLEnhancedTestCase {
     }
     
     public void testRender() throws Exception {
-        Map<String, String> options = new HashMap<String, String>();
+        Map<String, Object> options = new HashMap<String, Object>();
         options.put("message", "Greetings!");
         
         ExecuteJavascriptFunctionAction action = new ExecuteJavascriptFunctionAction("test", options);
