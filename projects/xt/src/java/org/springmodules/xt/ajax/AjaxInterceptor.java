@@ -138,6 +138,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                         return false;
                     }
                     else {
+                        logger.info("Null Ajax response after Ajax action, proceeding with the request.");
                         return true;
                     }
                 }
@@ -155,7 +156,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     /**
      * Post-handle the http request and if it was an ajax request firing a submit, looks for a mapped ajax handler, executes it and
      * returns an ajax response.<br>
-     * Note: if the matching mapped handler returns a null ajax response, the interceptor proceed with the execution chain.
+     * Note: if the matching mapped handler returns a null ajax response, the interceptor redirects to the configured view.
      *
      * @throws IllegalStateException If the ajax request doesn't have an event id as request parameter.
      * @throws UnsupportedEventException If the event associated with this ajax request is not supported by any
@@ -211,12 +212,13 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     String view = modelAndView.getViewName();
                     if (ajaxResponse != null) {
                         if ((view == null) || (! view.equals(AJAX_VIEW_KEYWORD))) {
-                            // FIXME: Should we throw an exception?
                             StringBuilder msg = new StringBuilder("Warning: you should configure the ")
                             .append(AJAX_VIEW_KEYWORD)
                             .append(" keyword as model view name. Found: ")
                             .append(view);
                             logger.warn(msg);
+                            // This warning is raised because the user should configure the AJAX_VIEW_KEYWORD in order to
+                            // make it explicit that we are using Ajax for rendering.
                         }
                         // Need to clear the ModelAndView because we are handling the response by ourselves:
                         modelAndView.clear();
@@ -227,10 +229,9 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                             view = view.substring(AJAX_REDIRECT_PREFIX.length());
                         }
                         else {
-                            // FIXME: Should we throw an exception?
                             StringBuilder msg = new StringBuilder("After Ajax submit, no Ajax redirect prefix: ")
                             .append(AJAX_REDIRECT_PREFIX)
-                            .append(" configured, but handling ajax redirect to: ")
+                            .append(" configured, so we are handling an ajax redirect to: ")
                             .append(view);
                             logger.warn(msg);
                         }
@@ -352,14 +353,12 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     }
     
     /**
-      * Send the ajax response.
-      */
+     * Send the ajax response.
+     */
     protected void sendResponse(HttpServletResponse httpResponse, String response) 
     throws IOException {
         ServletOutputStream out = httpResponse.getOutputStream();
-        
-        logger.debug("Sending ajax response: " + response);
-        
+        logger.debug(new StringBuilder("Sending ajax response: ").append(response));
         httpResponse.setContentType("text/xml");
         httpResponse.setHeader("Cache-Control", "no-cache");
         out.print(response);
