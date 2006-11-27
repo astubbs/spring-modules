@@ -67,7 +67,8 @@
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr id="success" style="display: none;"></tr>
+            <tr id="buttons">
                 <td><input type="button" value="Submit" onclick="doAjaxSubmit('validate', this);"></td>
             </tr>
         </form>

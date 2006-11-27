@@ -50,7 +50,6 @@
                     <div id="office.full"/>
                 </td>
             </tr>
-            
             <tr>
                 <td>
                     <br/>
@@ -58,8 +57,8 @@
                     <br/>
                 </td>
             </tr>
-            
-            <tr>
+            <tr id="success" style="display: none;"></tr>
+            <tr id="buttons">
                 <td><input type="button" value="Add" onclick="doAjaxAction('addEmployee', this);"></td>&nbsp;
                 <td><input type="button" value="Fill" onclick="doAjaxSubmit('validate', this);"></td>
             </tr>

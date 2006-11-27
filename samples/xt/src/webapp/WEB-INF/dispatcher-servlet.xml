@@ -26,6 +26,15 @@
         </property>
     </bean>
     
+    <bean id="ajaxValidationHandler2" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler">
+        <property name="errorRenderingCallback">
+            <bean class="org.springmodules.xt.examples.ajax.FormErrorRenderingCallback"/>
+        </property>
+        <property name="successRenderingCallback">
+            <bean class="org.springmodules.xt.examples.ajax.FormSuccessRenderingCallback"/>
+        </property>
+    </bean>
+    
     <bean id="ajaxTestActionsHandler" class="org.springmodules.xt.examples.ajax.TestActionsHandler"/>
     
     <bean id="ajaxLoadOfficesHandler" class="org.springmodules.xt.examples.ajax.LoadOfficesHandler">
@@ -51,13 +60,12 @@
     <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
         <property name="handlerMappings">
             <props>
-                <prop key="/ajax/*.action">ajaxValidationHandler</prop>
-                <prop key="/ajax/ex*">ajaxLoadOfficesHandler</prop>
                 <prop key="/ajax/ex1.page">ajaxTestActionsHandler</prop>
-                <prop key="/ajax/ex2.page">ajaxSelectionHandler</prop>
+                <prop key="/ajax/ex2.page">ajaxLoadOfficesHandler, ajaxSelectionHandler</prop>
+                <prop key="/ajax/ex3.action">ajaxValidationHandler</prop>
                 <prop key="/ajax/ex4.action">ajaxListEmployeesHandler</prop>
-                <prop key="/ajax/ex5.action">ajaxFillOfficeHandler</prop>
-                <prop key="/ajax/ex6.action">ajaxFillOfficeWithDraggingHandler</prop>
+                <prop key="/ajax/ex5.action">ajaxFillOfficeHandler, ajaxValidationHandler2</prop>
+                <prop key="/ajax/ex6.action">ajaxFillOfficeWithDraggingHandler, ajaxValidationHandler2</prop>
             </props>
         </property>
     </bean>
@@ -102,39 +110,10 @@
         </property>  
     </bean>
     
-    <bean id="insertEmployeeControllerTwo" class="org.springmodules.xt.examples.mvc.InsertEmployeeController">
-        <property name="formView"><value>ajax/ex3</value></property>
-        <property name="successView"><value>ajax-redirect:/start.page</value></property>
-        <property name="validator"><ref bean="employeeValidator"/></property>
-        <property name="store"><ref bean="store"/></property>
-        <property name="customEditors">
-            <map>
-                <entry>
-                    <key><value>org.springmodules.xt.examples.domain.Office</value></key>
-                    <value>officeEditor</value>
-                </entry>
-            </map>
-        </property>  
-    </bean>
-    
     <bean id="removeEmployeeController" class="org.springmodules.xt.examples.mvc.RemoveEmployeeController">
         <property name="formView"><value>model/ex2</value></property>
         <property name="successView"><value>redirect:/start.page</value></property>
         <property name="store"><ref bean="store"/></property>
-    </bean>
-    
-    <bean id="listEmployeesController" class="org.springmodules.xt.examples.mvc.ListEmployeesController">
-        <property name="formView"><value>ajax/ex4</value></property>
-        <property name="successView"><value>ajax-view</value></property>
-        <property name="store"><ref bean="store"/></property>
-        <property name="customEditors">
-            <map>
-                <entry>
-                    <key><value>class:org.springmodules.xt.examples.domain.Office</value></key>
-                    <value>officeEditor</value>
-                </entry>
-            </map>
-        </property>  
     </bean>
     
     <bean id="insertOfficeController" class="org.springmodules.xt.examples.mvc.InsertOfficeController">
@@ -152,9 +131,39 @@
         </property>  
     </bean>
     
+    
+    <bean id="insertEmployeeControllerTwo" class="org.springmodules.xt.examples.mvc.InsertEmployeeController">
+        <property name="formView"><value>ajax/ex3</value></property>
+        <property name="successView"><value>ajax-redirect:/start.page</value></property>
+        <property name="validator"><ref bean="employeeValidator"/></property>
+        <property name="store"><ref bean="store"/></property>
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>org.springmodules.xt.examples.domain.Office</value></key>
+                    <value>officeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="listEmployeesController" class="org.springmodules.xt.examples.mvc.ListEmployeesController">
+        <property name="formView"><value>ajax/ex4</value></property>
+        <property name="successView"><value>ajax-view</value></property>
+        <property name="store"><ref bean="store"/></property>
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>class:org.springmodules.xt.examples.domain.Office</value></key>
+                    <value>officeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
     <bean id="fillOfficeController" class="org.springmodules.xt.examples.mvc.FillOfficeController">
         <property name="formView"><value>ajax/ex5</value></property>
-        <property name="successView"><value>ajax-redirect:/start.page</value></property>
+        <property name="successView"><value>ajax-view</value></property>
         <property name="validator"><ref bean="officeValidator"/></property>
         <property name="store"><ref bean="store"/></property>
         <property name="customEditors">
@@ -169,7 +178,7 @@
     
     <bean id="fillOfficeWithDraggingController" class="org.springmodules.xt.examples.mvc.FillOfficeWithDraggingController">
         <property name="formView"><value>ajax/ex6</value></property>
-        <property name="successView"><value>ajax-redirect:/start.page</value></property>
+        <property name="successView"><value>ajax-view</value></property>
         <property name="validator"><ref bean="officeValidator"/></property>
         <property name="store"><ref bean="store"/></property>
         <property name="customEditors">
