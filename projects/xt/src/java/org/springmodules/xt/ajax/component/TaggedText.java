@@ -36,6 +36,15 @@ public class TaggedText implements Component {
      * Construct the component.
      *
      * @param text The text.
+     */
+    public TaggedText(String text) {
+        this.text = text;
+    }
+    
+    /**
+     * Construct the component.
+     *
+     * @param text The text.
      * @param tag The tag to use for enclosing the given text.
      */
     public TaggedText(String text, TaggedText.Tag tag) {
@@ -44,7 +53,7 @@ public class TaggedText implements Component {
     }
     
     /**
-     * Add a generic attribute to the input field.
+     * Add a generic attribute to the surrounding tag.
      *
      * @param name The attribute name.
      * @param value The attribute value.

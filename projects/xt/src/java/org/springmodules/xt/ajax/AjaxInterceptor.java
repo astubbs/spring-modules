@@ -17,6 +17,7 @@
 package org.springmodules.xt.ajax;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,12 +25,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.SortedMap;
+import java.util.Set;
 import java.util.TreeMap;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.springmodules.xt.ajax.support.ModelHolder;
 import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
@@ -50,13 +53,20 @@ import org.springframework.web.util.UrlPathHelper;
  * <p>Spring web interceptor which intercepts http requests and handles ajax requests.<br> 
  * Ajax requests are identified by a particular request parameter, by default named "ajax-request": it can assume two different values, depending on the type of ajax request:
  * an "action request", causing no form submission, and a "submit request", causing form submission.</p>
- * <p>This interceptor delegates ajax requests handling to {@link AjaxHandler}s  configured via handler mappings (@see AjaxInterceptor#setHandlerMappings()). </p>
- * <p>Configured mappings are a {@link java.util.Properties} file / object where each entry associates an ANT based URL path with an {@link AjaxHandler}
- * configured in the Spring application context; you can also associate the same URL with multiple handlers: all handlers will be merged.</p>
+ *
+ * <p>This interceptor delegates ajax requests handling to {@link AjaxHandler}s  configured via handler mappings (@see AjaxInterceptor#setHandlerMappings()).</p>
+ *
+ * <p>Configured mappings are a {@link java.util.Properties} file / object where each entry associates an ANT based URL path with a comma separated list of 
+ * {@link AjaxHandler}s configured in the Spring application context; when associating the same URL pattern with multiple handlers, 
+ * all handlers will be merged.</p>
+ *
  * <p>When the interceptor receives an ajax request, it looks its mappings for an appropriate set of handlers: then, each handler will be evaluated following
  * the longest path match order, that is, an handler configured in the path "/test" will be evaluated prior to an handler configured in the path "/*".</p>
- * <p>Finally, the first handler supporting the ajax event associated with the request will be executed.</p>
- * <p>Note that if two handlers support the same event, the one configured for matching the longest path will be executed (in the example above,
+ *
+ * <p>Finally, the first handler supporting the ajax event associated with the request will be executed.<br>
+ * If the same URL is associated with more than one handler, the one supporting the current event will be executed.</p>
+ *
+ * <p>Note that if more handlers support the same event, the one configured for matching the longest path will be executed (in the example above,
  * the one configured for the path "/test"): this is useful for overriding event handlers.</p>
  *
  * @author Sergio Bossa
@@ -81,7 +91,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     private String elementIdParameter = "source-element-id";
     private String jsonParamsParameter = "json-params";
     
-    private SortedMap<String, String> handlerMappings = new TreeMap<String, String>();
+    private MultiMap handlerMappings;
     
     private ApplicationContext applicationContext;
     
@@ -254,16 +264,17 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     
     /**
      * Set mappings configured in the given {@link java.util.Properties} object.<br>
-     * Each mapping associates an ANT based URL path with the name of an {@link AjaxHandler} configured in the Spring Application Context.<br>
+     * Each mapping associates an ANT based URL path with a comma separated list of {@link AjaxHandler}s configured in the Spring Application Context.<br>
      * Mappings are ordered in a sorted map, following the longest path order (from the longest path to the shorter).<br>
+     * Please note that multiple mappings to the same URL are supported thanks to a {@link org.apache.commons.collections.map.MultiValueMap}.
      *
      * @param mappings A {@link java.util.Properties} containing handler mappings.
      */
     public void setHandlerMappings(Properties mappings) {
-        this.handlerMappings = new TreeMap<String, String>(new Comparator() {
+        this.handlerMappings = MultiValueMap.decorate(new TreeMap<String, String>(new Comparator() {
             public int compare(Object o1, Object o2) {
                 if (!(o1 instanceof String) && !(o2 instanceof String)) {
-                    throw new ClassCastException();
+                    throw new ClassCastException("You have to map an URL to a comma separated list of handler names.");
                 }
                 if (o1.equals(o2)) {
                     return 0;
@@ -275,10 +286,13 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     return 1;
                 }
             }
-        });
+        }));
         
         for (Map.Entry entry : mappings.entrySet()) {
-            this.handlerMappings.put((String) entry.getKey(), (String) entry.getValue());
+            String[] handlers = ((String) entry.getValue()).split(",");
+            for (String handler : handlers) {
+                this.handlerMappings.put((String) entry.getKey(), handler.trim());
+            }
         }
     }
     
@@ -334,6 +348,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      * both "/test" and "/team".</p>
      * <p>Remember that multiple matches are merged: e.g., if both "/test" and "/t*" match, 
      * mappings will be merged and evaluated following longest path order.</p>
+     * <p>Moreover, remember that multiple handlers can be mapped to the same URL.</p>
      *
      * @param request The current http request.
      * @return A {@link java.util.List} of {@link AjaxHandler}s associated with the URL of the given request, or null if no matching is found.
@@ -341,11 +356,19 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     protected List<AjaxHandler> lookupHandlers(HttpServletRequest request) {   
         String urlPath = this.urlPathHelper.getLookupPathForRequest(request);
         List<AjaxHandler> handlers = new LinkedList<AjaxHandler>();
-        for (Map.Entry<String, String> entry : this.handlerMappings.entrySet()) {
-            String configuredPath = entry.getKey();
+        for (Map.Entry entry : (Set<Map.Entry>) this.handlerMappings.entrySet()) {
+            String configuredPath = (String) entry.getKey();
             if (this.pathMatcher.match(configuredPath, urlPath)) {
-                AjaxHandler current = (AjaxHandler) this.applicationContext.getBean(entry.getValue());
-                if (current != null) handlers.add(current);
+                Collection handlerNames = (Collection) entry.getValue();
+                for (Object handlerName : handlerNames) {
+                    AjaxHandler current = (AjaxHandler) this.applicationContext.getBean((String) handlerName);
+                    if (current != null) { 
+                        handlers.add(current);
+                    } 
+                    else {
+                        logger.warn(new StringBuilder("Non-existent handler ").append(handlerName).append(" mapped at ").append(configuredPath));
+                    }
+                }
             }
         }
 

@@ -33,14 +33,22 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springmodules.xt.ajax.validation.support.DefaultErrorRenderingCallback;
+import org.springmodules.xt.ajax.validation.support.DefaultSuccessRenderingCallback;
 
 /**
+ * <p>
  * Ready-to-use Ajax handler for handling validation errors on submit.<br>
  * This handler manages {@link org.springmodules.xt.ajax.AjaxSubmitEvent}s with id equals to "validate": for each validation error, it looks for
- * an HTML element named after the error code, and replace its content with the related error message.<br>
- * The rendering of the error message can be customized through the {@link ErrorRenderingCallback}: by default it uses the
- * {@link org.springmodules.xt.ajax.validation.support.DefaultErrorRenderingCallback}.<br><br>
- * If the fired {@link org.springmodules.xt.ajax.AjaxSubmitEvent} has no validation errors, this handler returns a null response.
+ * an HTML element with id equals to the error code, and replace its content with the related error message.<br>
+ * The rendering of the error message can be customized through the configurable  {@link ErrorRenderingCallback}: by default it uses the
+ * {@link org.springmodules.xt.ajax.validation.support.DefaultErrorRenderingCallback}.
+ * </p>
+ * <p>
+ * If the validation succeeds, that is, the fired {@link org.springmodules.xt.ajax.AjaxSubmitEvent} has no validation errors, 
+ * this handler renders the actions returned by the configurable {@link SuccessRenderingCallback}: by default it uses the
+ * {@link org.springmodules.xt.ajax.validation.support.DefaultSuccessRenderingCallback}, which returns no action.<br>
+ * If no actions are found, the handler returns a <code>null</code> response.
+ * </p>
  *
  * @author Sergio Bossa
  */
@@ -50,6 +58,7 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     
     private MessageSource messageSource;
     private ErrorRenderingCallback errorRenderingCallback = new DefaultErrorRenderingCallback();
+    private SuccessRenderingCallback successRenderingCallback = new DefaultSuccessRenderingCallback();
     
     public AjaxResponse validate(AjaxSubmitEvent event) {
         AjaxResponseImpl response = null;
@@ -58,6 +67,15 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
             response = new AjaxResponseImpl();
             this.removeOldErrors(event, response);
             this.putNewErrors(event, response);
+        } 
+        else {
+            AjaxAction[] successActions = this.successRenderingCallback.getSuccessActions(event);
+            if (successActions != null && successActions.length > 0) {
+                response = new AjaxResponseImpl();
+                for (AjaxAction action : successActions) {
+                    response.addAction(action);
+                }
+            }
         }
         
         return response;
@@ -71,17 +89,19 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
         this.errorRenderingCallback = errorRenderingCallback;
     }
 
+    public void setSuccessRenderingCallback(SuccessRenderingCallback successRenderingCallback) {
+        this.successRenderingCallback = successRenderingCallback;
+    }
+
     private void removeOldErrors(AjaxSubmitEvent event, AjaxResponseImpl response) {
         HttpServletRequest request = event.getHttpRequest();
-        Errors errors = (Errors) request.getSession().getAttribute(request.getRequestURL().toString());
-         
-        logger.debug("Removing old errors for URL: " + request.getRequestURL().toString());
-        
+        Errors errors = (Errors) request.getSession(true).getAttribute(request.getRequestURL().toString());
         if (errors != null) {
             logger.debug("Found errors for URL: " + request.getRequestURL().toString());
-            
-            request.getSession().removeAttribute(request.getRequestURL().toString());
-            
+            logger.debug("Removing old errors.");
+            // Remove old errors from session:
+            request.getSession(true).removeAttribute(request.getRequestURL().toString());
+            // Remove old errors from HTML:
             for (Object o : errors.getAllErrors()) {
                 ObjectError error = (ObjectError) o;
                 RemoveContentAction action = new RemoveContentAction(error.getCode());
@@ -94,20 +114,18 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
         Errors errors = event.getValidationErrors();
         HttpServletRequest request = event.getHttpRequest();
         Locale locale = LocaleContextHolder.getLocale(); // <- Get the current Locale, if any ...
-        
-        // Put new Errors into http session for later retrieval:
-        request.getSession(true).setAttribute(request.getRequestURL().toString(), errors);
+        // Put new errors into http session for later retrieval:
         logger.debug("Putting errors in session for URL: " + request.getRequestURL().toString());
-        
+        request.getSession(true).setAttribute(request.getRequestURL().toString(), errors);
+        // Put new errors into HTML:
         for (Object o : errors.getAllErrors()) {
             ObjectError error = (ObjectError) o;
-            
+            // Get the component to render:
             Component renderingComponent = this.errorRenderingCallback.getRenderingComponent(error, this.messageSource, locale);
-            
-            AjaxAction renderingAction = this.errorRenderingCallback.getRenderingAction(error);
             ReplaceContentAction replaceAction = new ReplaceContentAction(error.getCode(), renderingComponent);
-            
             response.addAction(replaceAction);
+            // Get the action to execute *after* rendering the component:
+            AjaxAction renderingAction = this.errorRenderingCallback.getRenderingAction(error);
             response.addAction(renderingAction);
         }
     }

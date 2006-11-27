@@ -15,10 +15,12 @@
     <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
         <property name="handlerMappings">
             <props>
-                <prop key="/ajax/*.action">ajaxValidationHandler</prop>
                 <prop key="/ajax/test.action">dummyHandler</prop>
+                
+                <prop key="/ajax/submit.*">ajaxValidationHandler</prop>
                 <prop key="/ajax/submit.action">dummySubmitHandler</prop>
-                <prop key="/ajax/submit">dummySubmitHandler</prop>
+                
+                <prop key="/ajax/chainedSubmit.action">dummySubmitHandler, ajaxValidationHandler</prop>
             </props>
         </property>
     </bean>

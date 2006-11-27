@@ -136,13 +136,17 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         
         httpRequest = new MockHttpServletRequest("GET", "/ajax/test.action");
         handlers = ajaxInterceptor.lookupHandlers(httpRequest);
-        assertEquals(2, handlers.size());
-        
-        httpRequest = new MockHttpServletRequest("GET", "/ajax/submit");
-        handlers = ajaxInterceptor.lookupHandlers(httpRequest);
         assertEquals(1, handlers.size());
         
-        httpRequest = new MockHttpServletRequest("GET", "/ajax/no");
+        httpRequest = new MockHttpServletRequest("GET", "/ajax/submit.action");
+        handlers = ajaxInterceptor.lookupHandlers(httpRequest);
+        assertEquals(2, handlers.size());
+        
+        httpRequest = new MockHttpServletRequest("GET", "/ajax/chainedSubmit.action");
+        handlers = ajaxInterceptor.lookupHandlers(httpRequest);
+        assertEquals(2, handlers.size());
+        
+        httpRequest = new MockHttpServletRequest("GET", "/ajax/no.action");
         handlers = ajaxInterceptor.lookupHandlers(httpRequest);
         assertEquals(0, handlers.size());
     }
