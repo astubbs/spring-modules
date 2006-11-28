@@ -38,3 +38,10 @@ function createJSONQueryString(jsonObject) {
     }
     return qs;
 }
+
+var XT = {
+    
+    doAjaxAction : doAjaxAction,
+    
+    doAjaxSubmit : doAjaxSubmit
+};

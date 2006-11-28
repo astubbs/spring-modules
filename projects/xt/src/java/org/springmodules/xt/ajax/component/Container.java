@@ -17,44 +17,52 @@
 package org.springmodules.xt.ajax.component;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
- * Component implementing text surrounded by tags represented
- * by the {@link Tag} enumeration.
+ * Component implementing an HTML DIV or SPAN container of other
+ * {@link Component}s.
  *
  * @author Sergio Bossa
  */
-public class TaggedText implements Component {
+public class Container implements Component {
     
-    private String text;
-    private TaggedText.Tag tag = TaggedText.Tag.DIV;
+    private Container.Type type = Container.Type.DIV;
+    private List<Component> components = new LinkedList<Component>();
     private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
-     * Construct the component, using a DIV tag as a default.
+     * Construct the container.
      *
-     * @param text The text.
+     * @param type The container type.
      */
-    public TaggedText(String text) {
-        this.tag = TaggedText.Tag.DIV;
-        this.text = text;
+    public Container(Container.Type type) {
+        this.type = type;
     }
     
     /**
-     * Construct the component.
+     * Construct the container.
      *
-     * @param text The text.
-     * @param tag The tag to use for enclosing the given text.
+     * @param type The container type.
+     * @param components The {@link Component}s to add to.
      */
-    public TaggedText(String text, TaggedText.Tag tag) {
-        this.text = text;
-        this.tag = tag;
+    public Container(Container.Type type, List<Component> components) {
+        this.type = type;
+        this.components = components;
     }
     
     /**
-     * Add a generic attribute to the surrounding tag.
+     * Add a {@link Component} to this container.
+     */
+    public void addComponent(Component component) {
+        this.components.add(component);
+    }
+    
+    /**
+     * Add a generic attribute to the container.
      *
      * @param name The attribute name.
      * @param value The attribute value.
@@ -66,25 +74,27 @@ public class TaggedText implements Component {
     public String render() {
         StringBuilder response = new StringBuilder("<");
         
-        response.append(this.tag.getTagName());
+        response.append(this.type.getTagName());
         if (!this.attributes.isEmpty()) {
             ComponentUtils.appendAsAttributes(this.attributes, response);
         }
         response.append(">");
         
-        response.append(this.text);
+        for (Component c : this.components) {
+            response.append(c.render());
+        }
         
         response.append("</")
-        .append(this.tag.getTagName())
+        .append(this.type.getTagName())
         .append(">");
         
         return response.toString();
     }
     
     /**
-     * The wrapping tag.
+     * The container type.
      */
-    public enum Tag {
+    public enum Type {
         
         DIV {
             public String getTagName() {

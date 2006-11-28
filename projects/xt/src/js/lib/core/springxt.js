@@ -38,6 +38,13 @@ function createJSONQueryString(jsonObject) {
     }
     return qs;
 }
+
+var XT = {
+    
+    doAjaxAction : doAjaxAction,
+    
+    doAjaxSubmit : doAjaxSubmit
+};
 /**
  @fileoverview
  This JavaScript file represents the core browser-side functionality
