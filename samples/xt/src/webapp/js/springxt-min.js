@@ -6,7 +6,7 @@ if(sourceElement.id!=null&&sourceElement.id!=""){qs=qs+"&source-element-id="+sou
 return qs;}
 function createJSONQueryString(jsonObject){var qs="";if(jsonObject!=undefined&&jsonObject!=null){qs="&json-params="+escape(jsonObject.toJSONString());}
 return qs;}
-var taconite_client_version=1.6;function AjaxRequest(url){var self=this;var xmlHttp=createXMLHttpRequest();var queryString="";var requestURL=url;var method="GET";var preRequest=null;var postRequest=null;var debugResponse=false;var async=true;var errorHandler=null;this.getXMLHttpRequestObject=function(){return xmlHttp;}
+var XT={doAjaxAction:doAjaxAction,doAjaxSubmit:doAjaxSubmit};var taconite_client_version=1.6;function AjaxRequest(url){var self=this;var xmlHttp=createXMLHttpRequest();var queryString="";var requestURL=url;var method="GET";var preRequest=null;var postRequest=null;var debugResponse=false;var async=true;var errorHandler=null;this.getXMLHttpRequestObject=function(){return xmlHttp;}
 this.setPreRequest=function(func){preRequest=func;}
 this.setPostRequest=function(func){postRequest=func;}
 this.getPostRequest=function(){return postRequest;}

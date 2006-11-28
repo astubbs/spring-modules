@@ -34,7 +34,7 @@
                 </td>
             </tr>
             <tr>
-                <td><input type="button" value="List" onclick="doAjaxSubmit('listEmployees', this);"></td>
+                <td><input type="button" value="List" onclick="XT.doAjaxSubmit('listEmployees', this);"></td>
             </tr>
             <tr>
                 <td id="message"></td>

@@ -85,7 +85,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td><input type="button" value="Add" onclick="doAjaxSubmit('validate', this);"></td>
+                    <td><input type="button" value="Add" onclick="XT.doAjaxSubmit('validate', this);"></td>
                 </tr>
             </table>
         </form>

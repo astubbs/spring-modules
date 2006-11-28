@@ -19,12 +19,12 @@
             <table>
                 <tr>
                     <td>Press to load Offices :</td>
-                    <td><input type="button" value="Press" onclick="doAjaxAction('loadOffices', this);"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('loadOffices', this);"></td>
                 </tr>
                 <tr>
                     <td>Select an office :</td>
                     <td>
-                        <select id="offices" name="officeId" onchange="doAjaxAction('officeSelection', this);">
+                        <select id="offices" name="officeId" onchange="XT.doAjaxAction('officeSelection', this);">
                             <option>--- ---</option>
                         </select>
                     </td>
@@ -32,7 +32,7 @@
                 <tr>
                     <td>Select an employee :</td>
                     <td>
-                        <select id="employees" name="matriculationCode" onchange="doAjaxAction('employeeSelection', this);">
+                        <select id="employees" name="matriculationCode" onchange="XT.doAjaxAction('employeeSelection', this);">
                             <option>--- ---</option>
                         </select>
                     </td>

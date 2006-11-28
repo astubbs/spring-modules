@@ -9,7 +9,7 @@
         <script type="text/javascript" src='../js/scriptaculous.js?load=effects,dragdrop'></script>
         <script type="text/javascript">
             function onDropEmployee(employee, office) {
-                doAjaxAction("dragEmployee", null, {employeeId : employee.id});
+                XT.doAjaxAction("dragEmployee", null, {employeeId : employee.id});
             }
         </script>
         <title>XT Ajax Framework : Example 6</title>
@@ -69,7 +69,7 @@
             </tr>
             <tr id="success" style="display: none;"></tr>
             <tr id="buttons">
-                <td><input type="button" value="Submit" onclick="doAjaxSubmit('validate', this);"></td>
+                <td><input type="button" value="Submit" onclick="XT.doAjaxSubmit('validate', this);"></td>
             </tr>
         </form>
     </body>
