@@ -93,11 +93,11 @@
           <para><emphasis role="bold">Submit events</emphasis>, a special type
           of event handled by configured <link
           linkend="ajax-handlers">handlers</link> <emphasis
-          role="bold">after</emphasis> having called the Spring MVC controller
-          associated with the page: this event causes the submit of the page
-          and so the handling of the submit by the controller, and can be used
-          for further processing the submit in order to properly updating the
-          view.</para>
+          role="bold">after</emphasis> having executed the on submit method of
+          the Spring MVC controller associated with the page: this event
+          causes the submit of the page and so the handling of the submit by
+          the controller, and can be used for further processing the submit in
+          order to properly updating the view.</para>
         </listitem>
       </itemizedlist>
 
@@ -106,11 +106,12 @@
 
       <programlisting>
                 &lt;input type="button" value="Go" 
-                onclick="doAjaxAction('eventId', this, {'param1' : 'value1', 'param2' : 'value2'});"&gt; 
+                onclick="XT.doAjaxAction('eventId', this, {'param1' : 'value1', 'param2' : 'value2'});"&gt; 
             </programlisting>
 
-      <para>You have to simply call the (pre-implemented) <emphasis
-      role="bold">doAjaxAction</emphasis> JavaScript function, passing:</para>
+      <para>You have to simply call the <emphasis
+      role="bold">XT.doAjaxAction</emphasis> JavaScript function,
+      passing:</para>
 
       <itemizedlist>
         <listitem>
@@ -120,17 +121,25 @@
         </listitem>
 
         <listitem>
-          <para>The html element which fired the event, through the <emphasis
-          role="bold">this</emphasis> objects (optional).</para>
+          <para>The HTML element which fired the event, most of the time
+          through the <emphasis role="bold">this</emphasis> objects
+          (optional).</para>
         </listitem>
 
         <listitem>
           <para>A <ulink
           url="http://www.json.org/"><citetitle>JSON</citetitle></ulink>
-          string containing extra parameters you want to pass to the
-          server.</para>
+          string containing extra parameters you want to pass to the server
+          (optional).</para>
         </listitem>
       </itemizedlist>
+
+      <warning>
+        <para>The old way of executing an Ajax action, through the <emphasis
+        role="bold">doAjaxAction</emphasis> JavaScript function, is now
+        deprecated. It still works but will be removed in future
+        versions.</para>
+      </warning>
 
       <para>Once you receive the event in your server side handler, you can
       access the following information (see XT javadocs for more
@@ -148,7 +157,7 @@
         </listitem>
 
         <listitem>
-          <para>The name and id of the html element firing the event.</para>
+          <para>The name and id of the HTML element firing the event.</para>
         </listitem>
 
         <listitem>
@@ -199,12 +208,19 @@
 
       <programlisting>
                 &lt;input type="button" value="Press" 
-                onclick="doAjaxSubmit('eventId', this {'param1' : 'value1', 'param2' : 'value2'});"&gt; 
+                onclick="XT.doAjaxSubmit('eventId', this {'param1' : 'value1', 'param2' : 'value2'});"&gt; 
             </programlisting>
 
-      <para>You have to simply call the (pre-implemented) <emphasis
-      role="bold">doAjaxSubmit</emphasis> JavaScript function, passing it the
-      same information defined above.</para>
+      <para>You have to simply call the <emphasis
+      role="bold">XT.doAjaxSubmit</emphasis> JavaScript function, passing it
+      the same information defined above.</para>
+
+      <warning>
+        <para>The old way of executing an Ajax submit, through the <emphasis
+        role="bold">doAjaxSubmit</emphasis> JavaScript function, is now
+        deprecated. It still works but will be removed in future
+        versions.</para>
+      </warning>
 
       <para>Once you receive the event in your server side handler, you can
       access the following information in addition to those defined above (see
@@ -412,7 +428,7 @@
                 &lt;props&gt;
                 &lt;prop key="/ajax/ex*"&gt;genericAjaxHandler&lt;/prop&gt;
                 &lt;prop key="/ajax/ex1.page"&gt;ajaxHandler1&lt;/prop&gt;
-                &lt;prop key="/ajax/ex2.page"&gt;ajaxHandler2&lt;/prop&gt;
+                &lt;prop key="/ajax/ex2.page"&gt;ajaxHandler2, ajaxHandler3&lt;/prop&gt;
                 &lt;/props&gt;
                 &lt;/property&gt;
                 
@@ -420,13 +436,17 @@
             </programlisting>
 
       <para>The <emphasis>handlerMappings</emphasis> property is a list of
-      key/value entries associating a web path (the key) with an handler (the
-      value), which must be an AjaxHandler declared as a bean in the Spring
-      application context. As you can notice, the first entry associates the
-      handler with an Ant style pattern, while others associate handlers with
-      single pages. Doing so, you can also apply more handlers to the same
-      group of pages. When more handlers apply to the same event, the one
-      configured for matching the longest web path wins.</para>
+      key/value entries associating <emphasis role="bold">a web
+      path</emphasis> (the key) <emphasis role="bold">with a comma separated
+      list of handlers</emphasis> (the value), which must be declared as beans
+      in the Spring application context. </para>
+
+      <para>As you can notice, the first entry associates an handler with an
+      Ant style pattern, the second associates a single page with a single
+      handler, the third associates a single page with two handlers. So, you
+      can also apply more handlers to the same group of pages (or page). When
+      more handlers apply to the same event, the one configured for matching
+      the longest web path wins.</para>
 
       <para>Finally, the second step requires you to associate the
       AjaxInterceptor with the interceptors chain of your Spring MVC <ulink
@@ -504,16 +524,16 @@
       <title id="components-title">Components</title>
 
       <para>Generally speaking, <emphasis role="bold">components</emphasis>
-      represent web page parts; however, most of the time they represent html
-      elements, like input fields, tables and so. </para>
+      represent web page parts; however, most of the time they represent HTML
+      elements, like input fields, tables and so.</para>
 
       <para>XT Ajax Framework provides many useful components ready to be
-      used: </para>
+      used:</para>
 
       <itemizedlist>
         <listitem>
           <para><emphasis role="bold">Static components</emphasis>,
-          representing simple, static, html elements (see the
+          representing simple, static, HTML elements (see the
           <emphasis>org.springmodules.xt.ajax.component</emphasis> package for
           details).</para>
         </listitem>
@@ -522,7 +542,7 @@
           <para><emphasis role="bold">Dynamic components</emphasis>, capable
           of dynamically rendering page parts (see the
           <emphasis>org.springmodules.xt.ajax.component.dynamic</emphasis>
-          package for details). </para>
+          package for details).</para>
         </listitem>
       </itemizedlist>
 
@@ -587,19 +607,26 @@
         adding</emphasis>.</para>
       </note>
     </sect3>
+  </sect2>
 
-    <sect3 id="integration">
-      <title id="integration-title">XT Ajax Framework, Taconite and
-      integration with other JavaScript libraries</title>
+  <sect2>
+    <title>Advanced Concepts</title>
 
-      <para>The way XT Ajax Framework interacts with client web pages is based
-      on the wonderful <ulink
+    <sect3>
+      <title>Core Javascript libraries</title>
+
+      <para>The client side API of the XT Ajax Framework is based on the
+      <ulink
       url="http://taconite.sourceforge.net"><citetitle>Taconite</citetitle></ulink>
-      JavaScript library. So, for using the XT Ajax Framework you need to
-      include in your web pages Taconite, plus some other JavaScript library
-      you can find under the <emphasis>js</emphasis> directory. However, all
-      these core JavaScript libraries are put, at compile time, in the
-      <emphasis role="bold">springxt.js</emphasis> file under the
+      and <ulink
+      url="http://www.json.org/js.html"><citetitle>JSON</citetitle></ulink>
+      JavaScript libraries, plus some other JavaScript stuff.</para>
+
+      <para>These are the core XT Ajax Javascript libraries: you can find them
+      under the <emphasis>js</emphasis> directory.</para>
+
+      <para>They are put, at compile time, in the <emphasis
+      role="bold">springxt.js</emphasis> file under the
       <emphasis>js/lib/core</emphasis> directory. This is the only <emphasis
       role="bold">mandatory</emphasis> file you need to include in your web
       page:</para>
@@ -608,19 +635,37 @@
                 &lt;script type="text/javascript" src='springxt.js'&gt;&lt;/script&gt; 
             </programlisting>
 
-      <para>However, XT Ajax Framework integrates with other JavaScript
-      libraries for providing additional capabilities, like new kind of
-      actions: take a look at javadocs for more details. All these additional
-      libraries can be found under the <emphasis>js/lib/opt</emphasis>
-      directory.</para>
-
       <tip>
         <para>Under the <emphasis>js/lib/core</emphasis> you'll find also a
-        <emphasis role="bold"><emphasis>springxt-min.js</emphasis></emphasis>
-        file: it is a minified version of
-        <emphasis><emphasis>springxt.js</emphasis></emphasis> you can include
+        <emphasis role="bold">springxt-min.js</emphasis> file: it is a
+        minified version of <emphasis>springxt.js</emphasis> you can include
         in your pages for reducing the download size.</para>
       </tip>
+    </sect3>
+
+    <sect3>
+      <title>Optional Javascript libraries</title>
+
+      <para>XT Ajax Framework integrates with a number of other Javascript
+      libraries, in order to provide additional Ajax functionalities:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><ulink
+          url="http://prototype.conio.net/"><citetitle>Prototype</citetitle></ulink>
+          (version 1.5.0 rc1 or higher) : see javadocs for the
+          <emphasis>org.springmodules.xt.ajax.action.prototype</emphasis>
+          classes.</para>
+        </listitem>
+
+        <listitem>
+          <para><ulink
+          url="http://script.aculo.us/"><citetitle>Script.aculo.us</citetitle></ulink>
+          (version 1.6.4 or higher) : see javadocs for the
+          <emphasis>org.springmodules.xt.ajax.action.prototype.scriptaculous</emphasis>
+          classes.</para>
+        </listitem>
+      </itemizedlist>
     </sect3>
   </sect2>
 
@@ -993,7 +1038,7 @@
       <para>Ajax validation is a common use case, so the XT Ajax Framework
       provides the <emphasis
       role="bold">org.springmodules.xt.ajax.validation.DefaultValidationHandler</emphasis>
-      that let you do Ajax based validation in a very simple way.</para>
+      for doing Ajax based validation in a very simple way.</para>
 
       <para>In this tutorial we'll implement a simple Ajax validation use
       case, <emphasis role="bold">validating an employee matriculation
@@ -1016,22 +1061,35 @@
       <sect4 id="ajax-tutorial-3-step-1">
         <title>Step 1 : Using the DefaultValidationHandler.</title>
 
-        <para>The DefaultValidationHandler must only be configured and mapped
-        into the Spring application context as you'd usually do with any other
-        handler; here is how:</para>
+        <para>If you want to use the DefaultValidationHandler without any
+        customization, you must simply configure and map it into the Spring
+        application context as you'd usually do with any other handler:</para>
 
         <para><programlisting>
-                    &lt;bean id="ajaxValidationHandler" 
-                    class="org.springmodules.xt.ajax.validation.DefaultValidationHandler"&gt;
-                </programlisting><programlisting>
-                    &lt;bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor"&gt;
-                    &lt;property name="handlerMappings"&gt;
-                    &lt;props&gt;
-                    &lt;prop key="/ajax/tutorial3.page"&gt;ajaxValidationHandler&lt;/prop&gt;
-                    &lt;/props&gt;
-                    &lt;/property&gt;
-                    &lt;/bean&gt;
+                        &lt;bean id="ajaxValidationHandler" 
+                        class="org.springmodules.xt.ajax.validation.DefaultValidationHandler"&gt;
+                    </programlisting><programlisting>
+                        &lt;bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor"&gt;
+                        &lt;property name="handlerMappings"&gt;
+                        &lt;props&gt;
+                        &lt;prop key="/ajax/tutorial3.page"&gt;ajaxValidationHandler&lt;/prop&gt;
+                        &lt;/props&gt;
+                        &lt;/property&gt;
+                        &lt;/bean&gt;
                 </programlisting></para>
+
+        <para>By default, the DefaultValidationHandler displays and highlights
+        error messages in the submitted web page, and redirects to the success
+        page on successfull.</para>
+
+        <para>You can customize <emphasis role="bold">how error messages are
+        rendered</emphasis>, by providing a custom implementation of the
+        <emphasis
+        role="bold">org.springmodules.xt.ajax.validation.ErrorRenderingCallback</emphasis>
+        class, and how successfull validation is handled, by providing a
+        custom implementation of the <emphasis
+        role="bold">org.springmodules.xt.ajax.validation.SuccessRenderingCallback</emphasis>
+        class.</para>
       </sect4>
 
       <sect4 id="ajax-tutorial-3-step-2">
@@ -1044,20 +1102,20 @@
 
         <programlisting>
                     public class EmployeeValidator implements Validator {
-    
+                    
                     public boolean supports(Class aClass) {
-
+                    
                     return IEmployee.class.isAssignableFrom(aClass);
-
+                    
                     }
-
+                    
                     public void validate(Object object, Errors errors) {
-
+                    
                     if (this.supports(object.getClass())) {
                     IEmployee emp = (IEmployee) object;
                     // Validate matriculation code:
                     if (emp.getMatriculationCode() == null || 
-                       emp.getMatriculationCode().equals("")) {
+                    emp.getMatriculationCode().equals("")) {
                     errors.rejectValue("matriculationCode", 
                     "employee.null.code", 
                     "No Matriculation Code!");
@@ -1069,7 +1127,8 @@
                 </programlisting>
 
         <note>
-          <para>Please note the <emphasis>employee.null.code</emphasis> error
+          <para>Please note the <emphasis role="bold"><emphasis
+          role="bold">employee.null.code</emphasis></emphasis> error
           code.</para>
         </note>
       </sect4>
@@ -1077,26 +1136,31 @@
       <sect4 id="ajax-tutorial-3-step-3">
         <title>Step 3 : Writing the web page.</title>
 
-        <para>Writing a web page that will show the errors sent by your Ajax
-        validation requires only to <emphasis role="bold">write html elements
-        whose id is the same as the error codes you want to
-        show</emphasis>.</para>
+        <para>You have to call your DefaultValidationHandler in your web page
+        by firing an Ajax submit event in the following way:</para>
 
-        <para>In our sample, we have an
-        <emphasis>employee.null.code</emphasis> error code; so we have to
-        simply write in our page:</para>
+        <programlisting>
+                    &lt;input type="button" value="Fire" onclick="XT.doAjaxSubmit('validate', this);"&gt;
+                </programlisting>
+
+        <para>As you may note, the event name to use is
+        <emphasis>validate</emphasis>.</para>
+
+        <para>The, you have to mark in your web page the HTML elements where
+        to show the errors sent by the validator: this requires only to
+        <emphasis role="bold">write HTML elements whose id is the same as the
+        error codes you want to show</emphasis>.</para>
+
+        <para>In our sample, we have an <emphasis
+        role="bold">employee.null.code</emphasis> error code; so we have to
+        simply write, in our page:</para>
 
         <programlisting>
                     &lt;div id="employee.null.code"/&gt;
                 </programlisting>
 
-        <para>The <emphasis>div</emphasis> element above will be the html
+        <para>The <emphasis>div</emphasis> element above will be the HTML
         element where the error message will be rendered.</para>
-
-        <note>
-          <para>The way error messages are resolved doesn't depend on Ajax
-          validation.</para>
-        </note>
       </sect4>
     </sect3>
   </sect2>
