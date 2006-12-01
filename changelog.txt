@@ -4,6 +4,7 @@ http://springmodules.dev.java.net
 
 Changes in version 0.7 (in progress)
 ------------------------------------
+
 Package org.springmodules.cache
 * Updated dependency on spring to spring-2.0
 * HashCodeCalculator now generates hashes depending on argument count and values [MOD-157]
@@ -12,6 +13,22 @@ Package org.springmodules.cache
 * Improved debug message in AbstractCachingInterceptor: display method signature rather than method name [MOD-219]
 * Removed reference to java.io.Closeable in org.springmodules.cache.impl.Element [MOD-235]
 * OSCacheFacade.onGetFromCache calls cacheManager.cancelUpdate() to prevent blocking threads (thanks go to Stefan Armbruster) [MOD-208]
+
+Package org.springmodules.xt.model.introductor.bean
+* Resolved critical bug in DynamicBeanIntroductor [MOD-264].
+
+Package org.springmodules.xt.model.introductor.annotation
+* New MapToTargetField annotation.
+* New OverrideTarget annotation.
+
+Package org.springmodules.xt.ajax
+* Enhanced integration with Prototype and Scriptaculous JavaScript libraries.
+* New org.springmodules.xt.ajax.component.dynamic.JspComponent [MOD-212].
+* New container HTML component [MOD-198].
+* New binding helper class [MOD-237].
+* Support for mapping more handlers to the same web page (or web page path) [MOD-218].
+* Resolved critical [MOD-250] bug.
+* Several other fixes and enhancements.
 
 Changes in version 0.6 (19.09.2006)
 -----------------------------------
