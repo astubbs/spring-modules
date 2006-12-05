@@ -1,25 +1,27 @@
 /**
  * Created on Feb 14, 2006
  *
- * $Id: CommonsConfigurationTests.java,v 1.1 2006/02/14 10:55:51 costin Exp $
- * $Revision: 1.1 $
+ * $Id: CommonsConfigurationTests.java,v 1.2 2006/12/05 16:20:13 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.commons.configuration;
 
 import java.io.StringReader;
-import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import junit.framework.TestCase;
 
 import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 /**
  * Commons Configuration FactoryBean test.
  * @author Costin Leau
- *
+ * 
  */
 public class CommonsConfigurationTests extends TestCase {
 
@@ -70,5 +72,20 @@ public class CommonsConfigurationTests extends TestCase {
 		Properties props = (Properties) configurationFactory.getObject();
 		assertEquals("foo", props.getProperty("bar"));
 		assertEquals("bar", props.getProperty("foo"));
+	}
+
+	public void testLoadResources() throws Exception {
+		configurationFactory.setLocations(new Resource[] { new ClassPathResource("configuration.file") });
+		configurationFactory.setConfigurations(new Configuration[] { new BaseConfiguration() });
+		configurationFactory.afterPropertiesSet();
+		
+		Properties props = (Properties) configurationFactory.getObject();
+		assertEquals("satriani", props.getProperty("joe"));
+	}
+	
+	public void testInitialConfiguration() throws Exception {
+		configurationFactory = new CommonsConfigurationFactoryBean(new BaseConfiguration());
+		configurationFactory.afterPropertiesSet();
+		assertNotNull(configurationFactory.getConfiguration());
 	}
 }
