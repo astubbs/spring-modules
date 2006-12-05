@@ -178,16 +178,16 @@
 	<target name="dist.task">
 
 		<echo>projects=${projects}</echo>
-		<delete file="fail.log"/>
+		<delete file="${basedir}/fail.log"/>
 
-		<record name="fail.log" action="start"/>
+		<record name="${basedir}/fail.log" action="start"/>
 		<subant target="dist" inheritall="false" failonerror="false">
 			<buildpath refid="${projects}"/>
 		</subant>
-		<record name="fail.log" action="stop"/>
+		<record name="${basedir}/fail.log" action="stop"/>
 		
 		<condition property="subant.fail">
-			<isfileselected file="fail.log">
+			<isfileselected file="${basedir}/fail.log">
 				<contains text="Failure for target"/>
 			</isfileselected>
 		</condition>
@@ -196,7 +196,7 @@
 	
 	<target name="dist.fail" if="subant.fail">
 		<concat>
-			<filelist dir="." files="fail.log"/>
+			<filelist dir="." files="${basedir}/fail.log"/>
 			<header filtering="no" trimleading="yes">
 				Failures Summary:
 				=================
@@ -208,8 +208,8 @@
 			</filterchain>
 		</concat>
 		<fail if="subant.fail"
-			message="Oops, there was a failure: see fail.log for details."/>
-		<delete file="fail.log"/>
+			message="Oops, there was a failure: see ${basedir}/fail.log for details."/>
+		<delete file="${basedir}/fail.log"/>
 	</target>
 	
 	<target name="build-release-repo" depends="init"
