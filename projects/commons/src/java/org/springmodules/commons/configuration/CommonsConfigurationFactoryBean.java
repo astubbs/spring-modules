@@ -1,8 +1,8 @@
 /**
  * Created on Feb 13, 2006
  *
- * $Id: CommonsConfigurationFactoryBean.java,v 1.1 2006/02/14 10:55:51 costin Exp $
- * $Revision: 1.1 $
+ * $Id: CommonsConfigurationFactoryBean.java,v 1.2 2006/12/05 14:33:56 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.commons.configuration;
 
@@ -13,22 +13,31 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * FactoryBean which wraps a Commons CompositeConfiguration object for usage with PropertiesLoaderSupport.
- * This allows the configuration object to behave like a normal java.util.Properties object 
- * which can be passed on to setProperties() method allowing PropertyOverrideConfigurer and 
+ * FactoryBean which wraps a Commons CompositeConfiguration object for usage
+ * with PropertiesLoaderSupport. This allows the configuration object to behave
+ * like a normal java.util.Properties object which can be passed on to
+ * setProperties() method allowing PropertyOverrideConfigurer and
  * PropertyPlaceholderConfigurer to take advantage of Commons Configuration.
- * <p/>
- * Internally a CompositeConfiguration object is used for merging multiple Configuration objects.
+ * <p/> Internally a CompositeConfiguration object is used for merging multiple
+ * Configuration objects.
  * 
  * @see java.util.Properties
  * @see org.springframework.core.io.support.PropertiesLoaderSupport
  * @author Costin Leau
- *
+ * 
  */
 public class CommonsConfigurationFactoryBean implements InitializingBean, FactoryBean {
 
 	private CompositeConfiguration configuration;
+
 	private Configuration[] configurations;
+
+	public CommonsConfigurationFactoryBean() {
+	}
+
+	public CommonsConfigurationFactoryBean(CompositeConfiguration configuration) {
+		this.configuration = configuration;
+	}
 
 	/**
 	 * @see org.springframework.beans.factory.FactoryBean#getObject()
@@ -60,7 +69,7 @@ public class CommonsConfigurationFactoryBean implements InitializingBean, Factor
 
 	/**
 	 * Set the configurations objects which will be used as properties.
-	 *  
+	 * 
 	 * @param configurations
 	 */
 	public void setConfigurations(Configuration[] configurations) {
@@ -71,10 +80,11 @@ public class CommonsConfigurationFactoryBean implements InitializingBean, Factor
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (configurations == null || configurations.length == 0)
-			throw new IllegalArgumentException("at least one configuration");
+		if (configuration == null && (configurations == null || configurations.length == 0))
+			throw new IllegalArgumentException("at least one configuration is required");
 
-		configuration = new CompositeConfiguration();
+		if (configuration == null)
+			configuration = new CompositeConfiguration();
 
 		for (int i = 0; i < configurations.length; i++) {
 			configuration.addConfiguration(configurations[i]);
