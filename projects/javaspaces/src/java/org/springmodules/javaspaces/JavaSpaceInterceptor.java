@@ -140,7 +140,7 @@ public class JavaSpaceInterceptor implements MethodInterceptor {
 		if (log.isDebugEnabled())
 			log.debug("Invoke: Call is " + call);
 
-		jsTemplate.write(call, Lease.FOREVER);
+		jsTemplate.write(call, timeoutMillis);
 
 		// if synch do a blocking waiting
 		if (synchronous)
