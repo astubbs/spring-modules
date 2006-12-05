@@ -76,7 +76,7 @@ public class TouchingAfterReturningAdvice implements AfterReturningAdvice {
 			return;
 		}
 		
-		if (returnValue instanceof MethodInvoker.VoidType) {
+		if (returnValue instanceof Void) {
 			return;
 		} else if (returnValue instanceof Collection) {
 			touch(((Collection)returnValue).toArray(), properties);
