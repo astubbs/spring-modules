@@ -4,89 +4,86 @@
   A master build file for creating a release of Spring Modules (customised after Spring WebFlow)
   ==========================================================================
 -->
-<project name="build-spring-modules" default="release" xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
-
+<project name="build-spring-modules" default="release"
+	xmlns:ivy="antlib:fr.jayasoft.ivy.ant">
+	
 	<!-- Load local and user build preferences -->
-	<property file="build.properties" />
-	<property file="project.properties" />
-	<property file="${user.home}/build.properties" />
-	<property file="${common.build.dir}/build.properties" />
-    <property file="${common.build.dir}/project.properties" />
-
+	<property file="build.properties"/>
+	<property file="project.properties"/>
+	<property file="${user.home}/build.properties"/>
+	<property file="${common.build.dir}/build.properties"/>
+	<property file="${common.build.dir}/project.properties"/>
+	
 	<!-- try to load ivy here from local lib dir, in case the user has not already dropped
-		 it into ant's lib dir (note that the latter copy will always take precedence).
-	   	 We will not fail as long as local lib dir exists (it may be empty) and
-		 ivy is in at least one of ant's lib dir or the local lib dir. -->
+	it into ant's lib dir (note that the latter copy will always take precedence).
+	We will not fail as long as local lib dir exists (it may be empty) and
+	ivy is in at least one of ant's lib dir or the local lib dir. -->
 	<path id="ivy.lib.path">
-		<fileset dir="${common.build.dir}/lib" includes="*.jar" />
+		<fileset dir="${common.build.dir}/lib" includes="*.jar"/>
 	</path>
-
-	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml" uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path" />
-
+	
+	<taskdef resource="fr/jayasoft/ivy/ant/antlib.xml"
+		uri="antlib:fr.jayasoft.ivy.ant" classpathref="ivy.lib.path"/>
+	
 	<!-- simplistic pattern for zipping up sources -->
 	<selector id="project.source.zip.includes">
 		<or>
-			<filename name="common-build/**" />
+			<filename name="common-build/**"/>
 			<and>
 				<or>
-					<filename name="build-spring-webflow/**" />
-					<filename name="spring-binding/**" />
-					<filename name="spring-webflow/**" />
-					<filename name="spring-webflow-samples/**" />
+					<filename name="build-spring-webflow/**"/>
+					<filename name="spring-binding/**"/>
+					<filename name="spring-webflow/**"/>
+					<filename name="spring-webflow-samples/**"/>
 				</or>
 				<and>
 					<!-- exclude core project derived artifacts -->
 					<filename name="*/docs/**" negate="true"/>
-					<filename name="*/target/**" negate="true" />
-					<filename name="*/build.properties" negate="true" />
-					<filename name="*/lib/**" negate="true" />
+					<filename name="*/target/**" negate="true"/>
+					<filename name="*/build.properties" negate="true"/>
+					<filename name="*/lib/**" negate="true"/>
 				</and>
 				<and>
 					<!-- exclude sample project derived artifacts -->
 					<filename name="*/*/docs/**" negate="true"/>
-					<filename name="*/*/target/**" negate="true" />
-					<filename name="*/*/build.properties" negate="true" />
-					<filename name="*/*/lib/**" negate="true" />
+					<filename name="*/*/target/**" negate="true"/>
+					<filename name="*/*/build.properties" negate="true"/>
+					<filename name="*/*/lib/**" negate="true"/>
 				</and>
 			</and>
 		</or>
 	</selector>
-
+	
 	<!--
-        targets:  displays all targets suitable for developer use
-  -->
+	targets:  displays all targets suitable for developer use
+	-->
 	<target name="targets">
 		<echo>
-
-    Master build for Spring Modules.
-
-    Please execute
-      ant -p
-
-    to see a list of all relevant targets.
-    The default target is 'main'
-    </echo>
+			Master build for Spring Modules.
+			Please execute ant -p
+			to see a list of all relevant targets. The default target is 'main' </echo>
 	</target>
-
+	
 	<!--
-        init:  initializes some common settings
-  -->
-	<target name="init" unless="init.done" depends="init.pre, init.post" />
-
+	init:  initializes some common settings
+	-->
+	<target name="init" unless="init.done" depends="init.pre, init.post"/>
+	
 	<target name="init.pre">
-
+		
+		
 		<!-- ivy will determine the right order to build web flow main and samples -->
-
-		<property name="ivy.conf.dir" value="${common.build.dir}" />
-
-		<ivy:configure file="${ivy.conf.dir}/ivyconf.xml" />
-
+		
+		<property name="ivy.conf.dir" value="${common.build.dir}"/>
+		
+		<ivy:configure file="${ivy.conf.dir}/ivyconf.xml"/>
+		
 		<ivy:buildlist reference="modules">
 			<fileset dir="..">
 				
-				<exclude name="projects/common-build/build.xml" />
-				<exclude name="projects/common-build-bootstrap/build.xml" />
-				<include name="projects/*/build.xml" />
+				<exclude name="projects/common-build/build.xml"/>
+				<exclude name="projects/common-build-bootstrap/build.xml"/>
+				<include name="projects/*/build.xml"/>
 				
 				<!--  not building
 				<exclude name="projects/cache/build.xml" />
@@ -100,285 +97,333 @@
 				<!-- sandbox -->
 				<include name="sandbox/*/build.xml" if="include.sandbox"/>
 				<!-- exclude from sandbox -->
-			
+				
 			</fileset>
 		</ivy:buildlist>
 		
 		<tstamp>
-			<format property="build.timestamp" pattern="yyyyMMddHHmmss" />
+			<format property="build.timestamp" pattern="yyyyMMddHHmmss"/>
 		</tstamp>
 		<tstamp>
-			<format property="TSTAMPCOL" pattern="hh:mm" />
+			<format property="TSTAMPCOL" pattern="hh:mm"/>
 		</tstamp>
-
+		
+		
 		<!-- default the release version (used in release archive zips) to the current timestamp -->
-		<property name="release.version" value="${build.timestamp}" />
-
+		<property name="release.version" value="${build.timestamp}"/>
+		
 		<!-- root of build hierarchy -->
-		<property name="target.dir" value="${basedir}/target" />
-
+		<property name="target.dir" value="${basedir}/target"/>
+		
 		<!-- directory for release zips -->
-		<property name="target.release.dir" value="${target.dir}/release" />
-    
-    <!-- directory for Maven2 bundles zips -->
-    <property name="target.m2-bundles.dir" value="${target.dir}/m2-bundles" />
-
+		<property name="target.release.dir" value="${target.dir}/release"/>
+		
+		<!-- directory for Maven2 bundles zips -->
+		<property name="target.m2-bundles.dir" value="${target.dir}/m2-bundles"/>
+		
 		<!-- directory for release zips -->
-		<property name="zip.toplevel.dir" value="spring-modules-${release.version}" />
-		<property name="release.zip" value="spring-modules-${release.version}.zip" />
-
-		<echo message='user.dir = "${user.dir}"' />
-		<echo message='ant.file = "${ant.file}"' />
-		<echo message='ant.java.version = "${ant.java.version}"' />
-		<echo message='release.version = "${release.version}"' />
-
+		<property name="zip.toplevel.dir"
+			value="spring-modules-${release.version}"/>
+		<property name="release.zip"
+			value="spring-modules-${release.version}.zip"/>
+		
+		<echo message='user.dir = "${user.dir}"'/>
+		<echo message='ant.file = "${ant.file}"'/>
+		<echo message='ant.java.version = "${ant.java.version}"'/>
+		<echo message='release.version = "${release.version}"'/>
+		
 	</target>
-
+	
 	<target name="init.post">
-		<property name="projects" value="modules" />
-		<property name="projects.names" refid="modules" />
-		<property name="init.done" value="true" />
+		<property name="projects" value="modules"/>
+		<property name="projects.names" refid="modules"/>
+		<property name="init.done" value="true"/>
 	</target>
-
-	<target name="clean" depends="init" description="Cleans all build output files from all projects">
-        <delete dir="${target.dir}" />
+	
+	<target name="clean" depends="init"
+		description="Cleans all build output files from all projects">
+		<delete dir="${target.dir}"/>
 		<echo>projects=${projects}</echo>
 		<echo>projects.names=${projects.names}</echo>
 		<subant target="clean" inheritall="false" failonerror="false">
-			<buildpath refid="${projects}" />
+			<buildpath refid="${projects}"/>
 		</subant>
-
 		
 	</target>
-
-	<target name="clean-all" depends="init" description="Cleans all build output files from all projects, and also retrieved libs">
-        <delete dir="${target.dir}" />
+	
+	<target name="clean-all" depends="init"
+		description="Cleans all build output files from all projects, and also retrieved libs">
+		<delete dir="${target.dir}"/>
 		<echo>projects=${projects}</echo>
 		<subant target="clean-all" inheritall="false" failonerror="false">
-			<buildpath refid="${projects}" />
+			<buildpath refid="${projects}"/>
 		</subant>
 	</target>
-
-	<target name="publish" depends="init" description="Calls publish targets on each project">
+	
+	<target name="publish" depends="init"
+		description="Calls publish targets on each project">
 		<echo>projects=${projects}</echo>
 		<subant target="publish" inheritall="false" failonerror="false">
-			<buildpath refid="${projects}" />
+			<buildpath refid="${projects}"/>
 		</subant>
 	</target>
-
-	<target name="dist" depends="init" description="Calls dist targets on each project">
+	
+	<target name="dist" depends="init,dist.task,dist.fail,dist.clean"
+		description="Calls dist targets on each project"/>
+	
+	<target name="dist.clean" unless="subant.fail">
+		<delete file="fail.log"/>
+	</target>
+	
+	<target name="dist.task">
 
 		<echo>projects=${projects}</echo>
 		<delete file="fail.log"/>
+
 		<record name="fail.log" action="start"/>
 		<subant target="dist" inheritall="false" failonerror="false">
-			<buildpath refid="${projects}" />
+			<buildpath refid="${projects}"/>
 		</subant>
 		<record name="fail.log" action="stop"/>
-
-		<fail message="Oops, there was a failure: see fail.log for details.">
-			<condition>
-				<isfileselected file="fail.log">
-					<contains text="Failure for target"/>
-				</isfileselected>
-			</condition>
-		</fail>
-
-		<delete file="fail.log"/>
-
+		
+		<condition property="subant.fail">
+			<isfileselected file="fail.log">
+				<contains text="Failure for target"/>
+			</isfileselected>
+		</condition>
+		
 	</target>
-
-    <target name="build-release-repo" depends="init"
-             description="Builds repo of all dependencies for all projects">
-             <echo>projects=${projects}</echo>
-             <subant target="retrieve-to-repo" inheritall="false">
-         <property name="retrieve.to.repo.dir" value="${target.dir}/repo" />
-         <property name="retrieve.to.repo.pattern"
-                       value="${release.repo.ivy.retrieve.pattern}" />
-         <property name="retrieve.to.repo.pattern.ivy"
-                   value="${release.repo.ivy.retrieve.ivy.pattern}" />
-                     <buildpath refid="${projects}" />
-             </subant>
-     </target>
-
-
-	<target name="tests" depends="init" description="Calls test targets on each project">
+	
+	<target name="dist.fail" if="subant.fail">
+		<concat>
+			<filelist dir="." files="fail.log"/>
+			<header filtering="no" trimleading="yes">
+				Failures Summary:
+				=================
+			</header>
+			<filterchain>
+				<linecontains>
+					<contains value="Failure for target"/>
+				</linecontains>
+			</filterchain>
+		</concat>
+		<fail if="subant.fail"
+			message="Oops, there was a failure: see fail.log for details."/>
+		<delete file="fail.log"/>
+	</target>
+	
+	<target name="build-release-repo" depends="init"
+		description="Builds repo of all dependencies for all projects">
+		<echo>projects=${projects}</echo>
+		<subant target="retrieve-to-repo" inheritall="false">
+			<property name="retrieve.to.repo.dir" value="${target.dir}/repo"/>
+			<property name="retrieve.to.repo.pattern"
+				value="${release.repo.ivy.retrieve.pattern}"/>
+			<property name="retrieve.to.repo.pattern.ivy"
+				value="${release.repo.ivy.retrieve.ivy.pattern}"/>
+			<buildpath refid="${projects}"/>
+		</subant>
+	</target>
+	
+	<target name="tests" depends="init"
+		description="Calls test targets on each project">
 		<echo>projects=${projects}</echo>
 		<subant target="tests" inheritall="false" failonerror="true">
-			<buildpath refid="${projects}" />
+			<buildpath refid="${projects}"/>
 		</subant>
 	</target>
-
-	<target name="javadoc" depends="init" description="Calls javadoc targets on each project">
+	
+	<target name="javadoc" depends="init"
+		description="Calls javadoc targets on each project">
 		<echo>projects=${projects}</echo>
 		<subant target="javadoc" inheritall="false" failonerror="false">
-			<buildpath refid="${projects}" />
+			<buildpath refid="${projects}"/>
 		</subant>
 	</target>
-
-	<target name="doc" depends="init" description="Calls doc targets on applicable projects">
+	
+	<target name="doc" depends="init"
+		description="Calls doc targets on applicable projects">
 		<echo>projects=${projects}</echo>
 		<subant target="doc-all" inheritall="false" failonerror="false">
-			<buildpath refid="${projects}" />
+			<buildpath refid="${projects}"/>
 		</subant>
 		
 		<!-- generate documentation for the entire project -->
 		<ant antfile="${docs.dir}/build.xml" dir="${docs.dir}"/>
 	</target>
-  
-  <target name="m2-bundle" depends="init" description="Calls m2-bundle target on each project">
-    <echo>projects=${projects}</echo>
-    <mkdir dir="${target.m2-bundles.dir}" />
-    <subant target="m2-bundle" inheritall="false" failonerror="false">
-      <buildpath refid="${projects}" />
-    </subant>
-    <copy todir="${target.m2-bundles.dir}">
-      <fileset file="../projects/aop/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/cache/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/commons/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/flux/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/hivemind/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/javaspaces/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/jbpm30/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/jbpm31/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/jcr/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/jsr94/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/lucene/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/ojb/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/orbroker/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/osworkflow/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/springmvc-extra/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/tapestry/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/template/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/validation/target/m2-bundle/*.jar"/>
-      <fileset file="../projects/xt/target/m2-bundle/*.jar"/>
-    </copy>
-  </target>
-  
-  <target name="m2-clean" depends="init" description="Calls m2-clean target on each project">
-    <echo>projects=${projects}</echo>
-    <delete dir="${target.m2-bundles.dir}" />
-    <subant target="m2-clean" inheritall="false" failonerror="false">
-      <buildpath refid="${projects}" />
-    </subant>
-  </target>
-
-   <target name="get.scb" description="Retrieve spring common build">
-        <ant antfile="${bootstrap.dir}/build.xml" dir="${bootstrap.dir}"/>
-   </target>
-   
-	<target name="tomcat-copy-war" depends="init" description="Copies all war to tomcat webapp dir">
+	
+	<target name="m2-bundle" depends="init"
+		description="Calls m2-bundle target on each project">
+		<echo>projects=${projects}</echo>
+		<mkdir dir="${target.m2-bundles.dir}"/>
+		<subant target="m2-bundle" inheritall="false" failonerror="false">
+			<buildpath refid="${projects}"/>
+		</subant>
+		<copy todir="${target.m2-bundles.dir}">
+			<fileset file="../projects/aop/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/cache/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/commons/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/flux/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/hivemind/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/javaspaces/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/jbpm30/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/jbpm31/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/jcr/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/jsr94/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/lucene/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/ojb/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/orbroker/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/osworkflow/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/springmvc-extra/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/tapestry/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/template/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/validation/target/m2-bundle/*.jar"/>
+			<fileset file="../projects/xt/target/m2-bundle/*.jar"/>
+		</copy>
+	</target>
+	
+	<target name="m2-clean" depends="init"
+		description="Calls m2-clean target on each project">
+		<echo>projects=${projects}</echo>
+		<delete dir="${target.m2-bundles.dir}"/>
+		<subant target="m2-clean" inheritall="false" failonerror="false">
+			<buildpath refid="${projects}"/>
+		</subant>
+	</target>
+	
+	<target name="get.scb" description="Retrieve spring common build">
+		<ant antfile="${bootstrap.dir}/build.xml" dir="${bootstrap.dir}"/>
+	</target>
+	
+	<target name="tomcat-copy-war" depends="init"
+		description="Copies all war to tomcat webapp dir">
 		<echo>projects=${projects}</echo>
 		<subant target="tomcat-copy-war" inheritall="false" failonerror="no">
-			<buildpath refid="${projects}" />
+			<buildpath refid="${projects}"/>
 		</subant>
 	</target>
 	<!--
 	<target name="release" depends="dist, build-release-repo, javadoc, doc, gen.release.zip"
 	-->
 	<target name="release" depends="dist, javadoc, doc, gen.release.zip"
-	              description="Generate the springmodules release archive" />
-
-    
-    <target name="gen.release.jar" depends="init">
-    	<!-- create jar -->
-       	<copy todir="${target.release.dir}/tmp/jar">
-			<fileset dir="../projects/" includes="**/target/classes/**/*" excludes="**/*.html"/>
+		description="Generate the springmodules release archive"/>
+	
+	<target name="gen.release.jar" depends="init">
+		<!-- create jar -->
+		<copy todir="${target.release.dir}/tmp/jar">
+			<fileset dir="../projects/" includes="**/target/classes/**/*"
+				excludes="**/*.html"/>
 			<mapper type="regexp" from="^(.*)classes(.*)$$" to="\2"/>
 		</copy>
-    	<jar destfile="${target.release.dir}/tmp/${zip.toplevel.dir}-all.jar" basedir="${target.release.dir}/tmp/jar" includes="**/*"/>
-    	<delete dir="${target.release.dir}/tmp/jar" failonerror="false" />
-    </target>
-    
-    <target name="gen.release.javadoc" depends="init">
-    	<!-- copy sources under one folder -->
-       	<copy todir="${target.release.dir}/tmp/sources">
-			<fileset dir="../projects/" includes="**/src/java/**/*.java,**/src/java/**/package.html"/>
+		<jar destfile="${target.release.dir}/tmp/${zip.toplevel.dir}-all.jar"
+			basedir="${target.release.dir}/tmp/jar" includes="**/*"/>
+		<delete dir="${target.release.dir}/tmp/jar" failonerror="false"/>
+	</target>
+	
+	<target name="gen.release.javadoc" depends="init">
+		<!-- copy sources under one folder -->
+		<copy todir="${target.release.dir}/tmp/sources">
+			<fileset dir="../projects/"
+				includes="**/src/java/**/*.java,**/src/java/**/package.html"/>
 			<mapper type="regexp" from="^(.*)org(.*)$$" to="org\\\2"/>
 		</copy>
-
-        <javadoc destdir="${target.release.dir}/tmp/javadocs" author="true" version="true" windowtitle="${project.name} API" doctitle="${project.name}" bottom="${copyright}">
-          <sourcepath>
-            <pathelement location="${target.release.dir}/tmp/sources" />
-          </sourcepath>
-          <packageset dir="${target.release.dir}/tmp/sources">
-            <include name="**/*" />
-          </packageset>
-        </javadoc>
-    </target>
-
-    <target name="gen.release.samples" depends="init">
-      <property name="tmp.samples.dir" value="${target.release.dir}/tmp/samples" />
-      <mkdir dir="${tmp.samples.dir}"/>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-hivemind-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/hivemind/src">
-          <exclude name="test/**"/>
-        </fileset>
-      </zip>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-jcr-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/jcr/src">
-          <exclude name="test/**"/>
-        </fileset>
-      </zip>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-jsr94-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/jsr94/src">
-          <exclude name="test/**"/>
-        </fileset>
-      </zip>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-lucene-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/lucene/src">
-          <exclude name="test/**"/>
-        </fileset>
-      </zip>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-osworkflow-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/osworkflow/src">
-          <exclude name="test/**"/>
-        </fileset>
-      </zip>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-validation-bean-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/validation/validation-bean/src">
-          <exclude name="test/**"/>
-        </fileset>
-      </zip>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-validation-commons-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/validation/validation-commons/src">
-          <exclude name="test/**"/>
-        </fileset>
-      </zip>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-validation-valang-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/validation/validation-valang/src">
-          <exclude name="test/**"/>
-        </fileset>
-      </zip>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-xt-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/xt/src">
-          <exclude name="test/**"/>
-        </fileset>
-      </zip>
-      
-      <zip destfile="${tmp.samples.dir}/spring-modules-orm-petclinic-samples-src.zip">
-        <fileset dir="${common.build.dir}/../../samples/orm-petclinic">
-          <include name="db/**"/>
-          <include name="src/**"/>
-          <include name="war/**"/>
-        </fileset>
-      </zip>
-    </target>
+		
+		<javadoc destdir="${target.release.dir}/tmp/javadocs" author="true"
+			version="true" windowtitle="${project.name} API"
+			doctitle="${project.name}" bottom="${copyright}">
+			<sourcepath>
+				<pathelement location="${target.release.dir}/tmp/sources"/>
+			</sourcepath>
+			<packageset dir="${target.release.dir}/tmp/sources">
+				<include name="**/*"/>
+			</packageset>
+		</javadoc>
+	</target>
 	
-    <target name="gen.release.zip" depends="init, gen.release.jar, gen.release.javadoc, gen.release.samples"> <!--  -->
-        <delete file="${target.release.dir}" failonerror="false" />
-		<mkdir dir="${target.release.dir}" />
-		<delete file="${target.release.dir}/${release.zip}" />
-
+	<target name="gen.release.samples" depends="init">
+		<property name="tmp.samples.dir"
+			value="${target.release.dir}/tmp/samples"/>
+		<mkdir dir="${tmp.samples.dir}"/>
+		
+		<zip
+			destfile="${tmp.samples.dir}/spring-modules-hivemind-samples-src.zip">
+			<fileset dir="${common.build.dir}/../../samples/hivemind/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
+		
+		<zip destfile="${tmp.samples.dir}/spring-modules-jcr-samples-src.zip">
+			<fileset dir="${common.build.dir}/../../samples/jcr/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
+		
+		<zip destfile="${tmp.samples.dir}/spring-modules-jsr94-samples-src.zip">
+			<fileset dir="${common.build.dir}/../../samples/jsr94/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
+		
+		<zip destfile="${tmp.samples.dir}/spring-modules-lucene-samples-src.zip">
+			<fileset dir="${common.build.dir}/../../samples/lucene/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
+		
+		<zip
+			destfile="${tmp.samples.dir}/spring-modules-osworkflow-samples-src.zip">
+			<fileset dir="${common.build.dir}/../../samples/osworkflow/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
+		
+		<zip
+			destfile="${tmp.samples.dir}/spring-modules-validation-bean-samples-src.zip">
+			<fileset
+				dir="${common.build.dir}/../../samples/validation/validation-bean/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
+		
+		<zip
+			destfile="${tmp.samples.dir}/spring-modules-validation-commons-samples-src.zip">
+			<fileset
+				dir="${common.build.dir}/../../samples/validation/validation-commons/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
+		
+		<zip
+			destfile="${tmp.samples.dir}/spring-modules-validation-valang-samples-src.zip">
+			<fileset
+				dir="${common.build.dir}/../../samples/validation/validation-valang/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
+		
+		<zip destfile="${tmp.samples.dir}/spring-modules-xt-samples-src.zip">
+			<fileset dir="${common.build.dir}/../../samples/xt/src">
+				<exclude name="test/**"/>
+			</fileset>
+		</zip>
+		
+		<zip
+			destfile="${tmp.samples.dir}/spring-modules-orm-petclinic-samples-src.zip">
+			<fileset dir="${common.build.dir}/../../samples/orm-petclinic">
+				<include name="db/**"/>
+				<include name="src/**"/>
+				<include name="war/**"/>
+			</fileset>
+		</zip>
+	</target>
+	
+	<target name="gen.release.zip"
+		depends="init, gen.release.jar, gen.release.javadoc, gen.release.samples">
+		<!--  -->
+		<delete file="${target.release.dir}" failonerror="false"/>
+		<mkdir dir="${target.release.dir}"/>
+		<delete file="${target.release.dir}/${release.zip}"/>
+		
 		<copy todir="${target.release.dir}/tmp">
 			<fileset dir="../projects/" includes="**/target/artifacts/lib/*"/>
 			<mapper type="flatten"/>
@@ -386,35 +431,40 @@
 		
 		<zip zipfile="${target.release.dir}/${release.zip}">
 			<!-- important readme, license, and other text files -->
-			<zipfileset file="../changelog.txt" prefix="${zip.toplevel.dir}" />
+			<zipfileset file="../changelog.txt" prefix="${zip.toplevel.dir}"/>
 			<!-- binary files -->
-			<zipfileset dir="${target.release.dir}/tmp" includes="**/*.jar" prefix="${zip.toplevel.dir}" />
+			<zipfileset dir="${target.release.dir}/tmp" includes="**/*.jar"
+				prefix="${zip.toplevel.dir}"/>
 			
 			<!-- sources -->
-			<zipfileset dir="${target.release.dir}/tmp" excludes="samples/**" includes="**/*-src.zip" prefix="${zip.toplevel.dir}/sources" />
-
+			<zipfileset dir="${target.release.dir}/tmp" excludes="samples/**"
+				includes="**/*-src.zip" prefix="${zip.toplevel.dir}/sources"/>
+			
 			<!-- javadocs -->
-			<zipfileset dir="${target.release.dir}/tmp/javadocs" includes="**/*" prefix="${zip.toplevel.dir}/docs/javadoc" />
+			<zipfileset dir="${target.release.dir}/tmp/javadocs" includes="**/*"
+				prefix="${zip.toplevel.dir}/docs/javadoc"/>
 			
 			<!--
 			<zipfileset dir="../projects/**/target/dist/ivys" prefix="${zip.toplevel.dir}" />			
 			
 			<zipfileset dir="../projects/" includes="**/target/javadocs/**/*"
-			            prefix="${zip.toplevel.dir}/docs/api" />
-			-->    
+			prefix="${zip.toplevel.dir}/docs/api" />
+			-->
 			<!-- docs -->
-			<zipfileset dir="./target/docs/reference" 
-			            prefix="${zip.toplevel.dir}/docs/reference">
+			<zipfileset dir="./target/docs/reference"
+				prefix="${zip.toplevel.dir}/docs/reference">
 			</zipfileset>
 			
-      <!-- samples -->
-      <zipfileset dir="${target.release.dir}/tmp/samples" includes="**/*-src.zip" prefix="${zip.toplevel.dir}/samples/sources"/>
-      
-			<zipfileset dir="../projects/repository" 
-			            prefix="${zip.toplevel.dir}/repository" />
-			            
+			<!-- samples -->
+			<zipfileset dir="${target.release.dir}/tmp/samples"
+				includes="**/*-src.zip"
+				prefix="${zip.toplevel.dir}/samples/sources"/>
+			
+			<zipfileset dir="../projects/repository"
+				prefix="${zip.toplevel.dir}/repository"/>
+			
 		</zip>
-		<delete dir="${target.release.dir}/tmp" failonerror="false" />
+		<delete dir="${target.release.dir}/tmp" failonerror="false"/>
 	</target>
 	
 </project>
