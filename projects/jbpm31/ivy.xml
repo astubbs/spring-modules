@@ -21,15 +21,14 @@
         <dependency org="apache" name="log4j" rev="1.2.13"/>
         
         <dependency org="springframework" name="springframework"
-				rev="1.2.7" conf="global,test->default">
+				rev="2.0.1" conf="global,test->default">
 			<artifact name="spring-beans" type="jar" conf="global" />
 			<artifact name="spring-core" type="jar" conf="global" />
 			<artifact name="spring-context" type="jar" conf="global" />
 			<artifact name="spring-mock" type="jar" conf="test" />
 			<artifact name="spring-dao" type="jar" conf="global" />
 			<artifact name="spring-support" type="jar" conf="global" />
-			<artifact name="spring-orm" type="jar" conf="global" />
-			<artifact name="spring-hibernate" type="jar" conf="global" />			
+			<artifact name="spring-hibernate3" type="jar" conf="global" />			
 			<artifact name="spring-jdbc" type="jar" conf="global" />						
 			<artifact name="spring-aop" type="jar" conf="global" />					
 		</dependency>

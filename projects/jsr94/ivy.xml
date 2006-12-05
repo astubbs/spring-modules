@@ -21,7 +21,7 @@
 	<!-- global dependencies -->
 	<dependency org="apache" name="commons-logging" rev="1.0.4"/>
 
-    <dependency org="springframework" name="springframework" rev="1.2.7">
+    <dependency org="springframework" name="springframework" rev="2.0.1">
       <artifact name="spring-aop" type="jar" conf="global" />    
       <artifact name="spring-beans" type="jar" conf="global" />
       <artifact name="spring-context" type="jar" conf="global" />

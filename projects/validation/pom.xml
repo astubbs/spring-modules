@@ -5,10 +5,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
-    <artifactId>springmodules-validation</artifactId>
+    <artifactId>spring-modules-validation</artifactId>
     <packaging>jar</packaging>
     <version>0.6</version>
-    <name>springmodules-validation</name>
+    <name>spring-modules-validation</name>
     <url>https://springmodules.dev.java.net/</url>
     <licenses>
         <license>
@@ -63,12 +63,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
-            <version>2.0</version>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
-            <version>2.0</version>
+            <version>2.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>org.acegisecurity</groupId>
             <artifactId>acegi-security</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

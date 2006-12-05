@@ -29,7 +29,7 @@
 
         <dependency org="antlr" name="antlr" rev="2.7.6"/>
 
-        <dependency org="springframework" name="springframework" rev="2.0">
+        <dependency org="springframework" name="springframework" rev="2.0.1">
             <artifact name="spring" type="jar" conf="global"/>
             <artifact name="spring-mock" type="jar" conf="test"/>
         </dependency>
