@@ -31,9 +31,9 @@
           <artifact name="spring-support" type="jar" conf="global" />
           <artifact name="spring-mock" type="jar" conf="test" />
     </dependency>
-     <!--
+     <!-- -->
     <dependency org="ognl" name="ognl" rev="2.6.7"/>
-		-->
+		
 		
 	<!-- buildtime dependencies -->
 		

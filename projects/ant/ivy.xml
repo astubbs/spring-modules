@@ -18,7 +18,7 @@
 
     <dependencies defaultconf="global->default">
     
-	<!-- global dependencies 
+	<!-- global dependencies -->            
 	<dependency org="apache" name="commons-logging" rev="1.0.4"/>
 
     <dependency org="springframework" name="springframework"
@@ -27,7 +27,7 @@
           <artifact name="spring-context" type="jar" conf="global" />
           <artifact name="spring-core" type="jar" conf="global" />
     </dependency>
--->            
+
     <dependency org="ognl" name="ognl" rev="2.6.7"/>
     <dependency org="ant" name="ant" rev="1.6.5"/>
 		
