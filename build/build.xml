@@ -196,7 +196,7 @@
 	
 	<target name="dist.fail" if="subant.fail">
 		<concat>
-			<filelist dir="." files="${basedir}/fail.log"/>
+			<filelist dir="${basedir}" files="fail.log"/>
 			<header filtering="no" trimleading="yes">
 				Failures Summary:
 				=================
