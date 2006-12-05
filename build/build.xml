@@ -172,7 +172,7 @@
 		description="Calls dist targets on each project"/>
 	
 	<target name="dist.clean" unless="subant.fail">
-		<delete file="fail.log"/>
+		<delete file="${basedir}/fail.log"/>
 	</target>
 	
 	<target name="dist.task">
@@ -260,6 +260,7 @@
 			<buildpath refid="${projects}"/>
 		</subant>
 		<copy todir="${target.m2-bundles.dir}">
+			<fileset file="../projects/ant/target/m2-bundle/*.jar"/>			
 			<fileset file="../projects/aop/target/m2-bundle/*.jar"/>
 			<fileset file="../projects/cache/target/m2-bundle/*.jar"/>
 			<fileset file="../projects/commons/target/m2-bundle/*.jar"/>
