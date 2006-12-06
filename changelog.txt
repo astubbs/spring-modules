@@ -22,6 +22,10 @@ Package org.springmodules.commons.configuration
 Package org.springmodules.javaspaces
 * fixed timeout for writings done by the JavaSpaceInterceptor [MOD-239]
 
+Package org.springmodules.jbpm
+* JbpmHandlerProxy implements (and allows delegation to spring beans for) TaskControllerHandler interface
+* fixed beanFactory reference leaks that caused application context refresh to fail [MOD-266]
+
 Package org.springmodules.jcr
 * updated maven pom to include (thanks go to Marcel May) [MOD-229]
 * updated Jackrabbit to 1.1
