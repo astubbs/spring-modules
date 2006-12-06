@@ -6,15 +6,15 @@
  */
 package org.springmodules.workflow.jbpm31;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jbpm.context.exe.ContextInstance;
 import org.jbpm.graph.def.ActionHandler;
 import org.jbpm.graph.exe.ExecutionContext;
+import org.jbpm.graph.exe.Token;
 import org.jbpm.graph.node.DecisionHandler;
 import org.jbpm.taskmgmt.def.AssignmentHandler;
+import org.jbpm.taskmgmt.def.TaskControllerHandler;
 import org.jbpm.taskmgmt.exe.Assignable;
 import org.jbpm.taskmgmt.exe.TaskInstance;
 import org.springframework.beans.factory.BeanFactory;
@@ -22,26 +22,29 @@ import org.springframework.beans.factory.access.BeanFactoryLocator;
 import org.springframework.beans.factory.access.BeanFactoryReference;
 
 /**
- * Handler that allow retrieval of beans defined in the Spring container from within
- * jBPM. The class implements the family of jBPM handler interfaces namely: ActionHandler,
- * AssignmentHandler, DecisionHandler.
- * The class can be used through jBPM delegation facilities, for example:
+ * Handler that allow retrieval of beans defined in the Spring container from
+ * within jBPM. The class implements the family of jBPM handler interfaces
+ * namely: ActionHandler, AssignmentHandler, DecisionHandler,
+ * TaskControllerHandler. The class can be used through jBPM delegation
+ * facilities, for example:
+ * 
  * <pre>
- * 	&lt;action config-type="beanName" class="org.springframework.workflow.jbpm.SpringHandler">
- *		&lt;beanName>SpringJbpmAction&lt;/beanName>
- *      &lt;factoryKey>myFactoryInstance&lt;factoryName>
- *	&lt;/action>
+ *   	&lt;action config-type=&quot;beanName&quot; class=&quot;org.springframework.workflow.jbpm.SpringHandler&quot;&gt;
+ *  		&lt;beanName&gt;SpringJbpmAction&lt;/beanName&gt;
+ *        &lt;factoryKey&gt;myFactoryInstance&lt;factoryName&gt;
+ *  	&lt;/action&gt;
  * </pre>
  * 
- * where beanName represents a jBPM actionHandler defined inside Spring container using
- * it's capabilities (IoC, AOP, etc). The optional factoryKey parameter is used to specify
- * the key under which the bean factory can be found; if there is only one 
- * JbpmFactoryLocator inside the classloader, factoryKey can be skipped. 
+ * where beanName represents a jBPM actionHandler defined inside Spring
+ * container using it's capabilities (IoC, AOP, etc). The optional factoryKey
+ * parameter is used to specify the key under which the bean factory can be
+ * found; if there is only one JbpmFactoryLocator inside the classloader,
+ * factoryKey can be skipped.
  * 
  * @author Costin Leau
- *
+ * 
  */
-public class JbpmHandlerProxy implements ActionHandler, AssignmentHandler, DecisionHandler {
+public class JbpmHandlerProxy implements ActionHandler, AssignmentHandler, DecisionHandler, TaskControllerHandler {
 
 	private static final Log logger = LogFactory.getLog(JbpmHandlerProxy.class);
 
@@ -91,7 +94,12 @@ public class JbpmHandlerProxy implements ActionHandler, AssignmentHandler, Decis
 		if (factory == null)
 			throw new IllegalArgumentException("no beanFactory found under key=" + factoryKey);
 
-		return factory.getFactory();
+		try {
+			return factory.getFactory();
+		}
+		finally {
+			factory.release();
+		}
 	}
 
 	/**
@@ -114,19 +122,6 @@ public class JbpmHandlerProxy implements ActionHandler, AssignmentHandler, Decis
 	}
 
 	/**
-	 * @see org.jbpm.taskmgmt.def.TaskControllerHandler#getTaskFormParameters(org.jbpm.taskmgmt.exe.TaskInstance)
-	 */
-	public List getTaskFormParameters(TaskInstance taskInstance) {
-		return null;
-	}
-
-	/**
-	 * @see org.jbpm.taskmgmt.def.TaskControllerHandler#submitParameters(java.util.Map, org.jbpm.taskmgmt.exe.TaskInstance)
-	 */
-	public void submitParameters(Map parameters, TaskInstance taskInstance) {
-	}
-
-	/**
 	 * @see org.jbpm.graph.def.ActionHandler#execute(org.jbpm.graph.exe.ExecutionContext)
 	 */
 	public void execute(ExecutionContext executionContext) throws Exception {
@@ -139,7 +134,8 @@ public class JbpmHandlerProxy implements ActionHandler, AssignmentHandler, Decis
 	}
 
 	/**
-	 * @see org.jbpm.taskmgmt.def.AssignmentHandler#assign(org.jbpm.taskmgmt.exe.Assignable, org.jbpm.graph.exe.ExecutionContext)
+	 * @see org.jbpm.taskmgmt.def.AssignmentHandler#assign(org.jbpm.taskmgmt.exe.Assignable,
+	 * org.jbpm.graph.exe.ExecutionContext)
 	 */
 	public void assign(Assignable assignable, ExecutionContext executionContext) throws Exception {
 		AssignmentHandler handler = (AssignmentHandler) lookupBean(AssignmentHandler.class);
@@ -147,6 +143,30 @@ public class JbpmHandlerProxy implements ActionHandler, AssignmentHandler, Decis
 			logger.debug("using Spring-managed assignmentHandler=" + handler);
 
 		handler.assign(assignable, executionContext);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.jbpm.taskmgmt.def.TaskControllerHandler#initializeTaskVariables(org.jbpm.taskmgmt.exe.TaskInstance,
+	 * org.jbpm.context.exe.ContextInstance, org.jbpm.graph.exe.Token)
+	 */
+	public void initializeTaskVariables(TaskInstance taskInstance, ContextInstance contextInstance, Token token) {
+		TaskControllerHandler handler = (TaskControllerHandler) lookupBean(TaskControllerHandler.class);
+		if (logger.isDebugEnabled())
+			logger.debug("using Spring-managed taskControllerHandler=" + handler);
+		handler.initializeTaskVariables(taskInstance, contextInstance, token);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.jbpm.taskmgmt.def.TaskControllerHandler#submitTaskVariables(org.jbpm.taskmgmt.exe.TaskInstance,
+	 * org.jbpm.context.exe.ContextInstance, org.jbpm.graph.exe.Token)
+	 */
+	public void submitTaskVariables(TaskInstance taskInstance, ContextInstance contextInstance, Token token) {
+		TaskControllerHandler handler = (TaskControllerHandler) lookupBean(TaskControllerHandler.class);
+		if (logger.isDebugEnabled())
+			logger.debug("using Spring-managed taskControllerHandler=" + handler);
+		handler.submitTaskVariables(taskInstance, contextInstance, token);
 	}
 
 }

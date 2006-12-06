@@ -1,8 +1,8 @@
 /**
  * Created on Jan 24, 2006
  *
- * $Id: JbpmFactoryLocator.java,v 1.2 2006/06/09 09:20:48 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JbpmFactoryLocator.java,v 1.3 2006/12/06 14:13:18 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -23,31 +23,36 @@ import org.springframework.beans.factory.access.BeanFactoryLocator;
 import org.springframework.beans.factory.access.BeanFactoryReference;
 
 /**
- * BeanFactoryLocator used for injecting Spring application context into JBPM. The difference/advantage over the traditional
- * SingletonBeanFactoryLocator is that it does not parse a bean factory definition; it is used internally by the jbpmSessionFactoryBean 
- * and it will register the bean factory/application context containing it automatically under the name and 
- * and aliases of the bean. If there is only one BeanFactory registered then a null value can
- * be used with setBeanName method.
- * <p/> 
- * Note that in most cases, you don't have to use this class directly since 
- * it is used internally by LocalJbpmConfigurationFactoryBean.
+ * BeanFactoryLocator used for injecting Spring application context into JBPM.
+ * The difference/advantage over the traditional SingletonBeanFactoryLocator is
+ * that it does not parse a bean factory definition; it is used internally by
+ * the jbpmSessionFactoryBean and it will register the bean factory/application
+ * context containing it automatically under the name and and aliases of the
+ * bean. If there is only one BeanFactory registered then a null value can be
+ * used with setBeanName method. <p/> Note that in most cases, you don't have to
+ * use this class directly since it is used internally by
+ * LocalJbpmConfigurationFactoryBean.
  * 
  * @author Costin Leau
- *
+ * 
  */
 public class JbpmFactoryLocator implements BeanFactoryLocator, BeanFactoryAware, BeanNameAware {
 
 	private static final Log logger = LogFactory.getLog(JbpmFactoryLocator.class);
 
-	private String factoryName;
+	// default factory name (for nested classes)
+	private String factoryName = JbpmFactoryLocator.class.getName();
 
 	// alias/bean name to BeanFactory
 	protected static final Map beanFactories = new HashMap();
+
 	// beanfactory to alias/bean name map
 	protected static final Map beanFactoriesNames = new HashMap();
+
 	protected static final Map referenceCounter = new HashMap();
 
 	protected static boolean canUseDefaultBeanFactory = true;
+
 	protected static BeanFactory defaultFactory = null;
 
 	/**
@@ -83,19 +88,19 @@ public class JbpmFactoryLocator implements BeanFactoryLocator, BeanFactoryAware,
 		String[] aliases = beanFactory.getAliases(factoryName);
 		List names = new ArrayList(1 + aliases.length);
 		names.add(factoryName);
-		
+
 		for (int i = 0; i < aliases.length; i++) {
 			addToMap(aliases[i], beanFactory);
 			names.add(aliases[i]);
 		}
 
 		// append previous found names
-		List previousNames = (List)beanFactoriesNames.get(beanFactory);
+		List previousNames = (List) beanFactoriesNames.get(beanFactory);
 		if (previousNames != null)
 			names.addAll(previousNames);
-		
+
 		beanFactoriesNames.put(beanFactory, names);
-		
+
 	}
 
 	protected void addToMap(String fName, BeanFactory factory) {
@@ -105,8 +110,7 @@ public class JbpmFactoryLocator implements BeanFactoryLocator, BeanFactoryAware,
 		synchronized (beanFactories) {
 			// override check
 			if (beanFactories.containsKey(fName))
-				throw new IllegalArgumentException("a beanFactoryReference already exists for key "
-						+ factoryName);
+				throw new IllegalArgumentException("a beanFactoryReference already exists for key " + factoryName);
 			beanFactories.put(fName, factory);
 		}
 	}
@@ -122,9 +126,14 @@ public class JbpmFactoryLocator implements BeanFactoryLocator, BeanFactoryAware,
 					logger.debug("removing factory references under key " + factoryName);
 				referenceCounter.remove(factory);
 
+				// reset also default beanFactory
+				if (referenceCounter.isEmpty()) {
+					canUseDefaultBeanFactory = true;
+					defaultFactory = null;
+				}
 				List names = (List) beanFactoriesNames.get(factory);
 				beanFactoriesNames.remove(factory);
-				
+
 				synchronized (beanFactories) {
 					for (Iterator iter = names.iterator(); iter.hasNext();) {
 						beanFactories.remove(iter.next());

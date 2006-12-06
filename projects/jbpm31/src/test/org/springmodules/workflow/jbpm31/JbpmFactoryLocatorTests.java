@@ -1,8 +1,8 @@
 /**
  * Created on Jan 24, 2006
  *
- * $Id: JbpmFactoryLocatorTests.java,v 1.1 2006/03/02 14:56:04 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JbpmFactoryLocatorTests.java,v 1.2 2006/12/06 14:13:18 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -107,7 +107,7 @@ public class JbpmFactoryLocatorTests extends AbstractDependencyInjectionSpringCo
 			// it's okay
 		}
 	}
-	// fix this one
+	
 	public void testBeanFactoryLocatorContract() {
 		BeanFactoryReference factory1 = locator1.useBeanFactory(INSTANCE_1);
 		assertNotNull(factory1.getFactory());
@@ -125,4 +125,5 @@ public class JbpmFactoryLocatorTests extends AbstractDependencyInjectionSpringCo
 	public void testBeanFactoryRelease() {
 		// make sure the setUp is properly tearedDown
 	}
+	
 }

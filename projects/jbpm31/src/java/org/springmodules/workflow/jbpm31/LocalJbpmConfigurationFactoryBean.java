@@ -1,12 +1,11 @@
 /**
  * Created on Feb 21, 2006
  *
- * $Id: LocalJbpmConfigurationFactoryBean.java,v 1.3 2006/09/04 15:09:49 costin Exp $
- * $Revision: 1.3 $
+ * $Id: LocalJbpmConfigurationFactoryBean.java,v 1.4 2006/12/06 14:13:18 costin Exp $
+ * $Revision: 1.4 $
  */
 package org.springmodules.workflow.jbpm31;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
@@ -25,6 +24,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.access.BeanFactoryReference;
 import org.springframework.core.io.Resource;
 import org.springmodules.workflow.jbpm31.definition.ProcessDefinitionFactoryBean;
 
@@ -53,26 +53,40 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 	private static final Log logger = LogFactory.getLog(LocalJbpmConfigurationFactoryBean.class);
 
 	private JbpmConfiguration jbpmConfiguration;
+
 	private ObjectFactory objectFactory;
+
 	private Resource configuration;
+
 	private boolean createSchema;
+
 	private boolean dropSchema;
+
 	private boolean hasPersistenceService;
+
 	private String contextName = JbpmContext.DEFAULT_JBPM_CONTEXT_NAME;
+
 	private Resource[] processDefinitionsResources;
+
 	private ProcessDefinition[] processDefinitions;
+
 	private SessionFactory sessionFactory;
+
 	/**
 	 * FactoryLocator
 	 */
 	private JbpmFactoryLocator factoryLocator = new JbpmFactoryLocator();
+
+	private BeanFactoryReference reference;
+
+	private String factoryKey = JbpmFactoryLocator.class.getName();
 
 	/**
 	 * @see org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
 	 */
 	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
 		factoryLocator.setBeanFactory(beanFactory);
-
+		reference = factoryLocator.useBeanFactory(factoryKey);
 	}
 
 	/**
@@ -80,17 +94,21 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 	 */
 	public void setBeanName(String name) {
 		factoryLocator.setBeanName(name);
+		this.factoryKey = name;
 	}
 
 	/**
 	 * @see org.springframework.beans.factory.DisposableBean#destroy()
 	 */
 	public void destroy() throws Exception {
+		// trigger locator cleanup
+		reference.release();
 
 		if (dropSchema && hasPersistenceService) {
 			logger.info("dropping schema");
 			jbpmConfiguration.dropSchema(contextName);
 		}
+
 	}
 
 	/**
@@ -167,7 +185,8 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 		}
 
 		else {
-			logger.info("persistence unavailable not available - schema create/drop and process definition deployment disabled");
+			logger
+					.info("persistence unavailable not available - schema create/drop and process definition deployment disabled");
 		}
 
 	}
@@ -299,14 +318,24 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 	}
 
 	/**
-	 * Used for loading the process definition from resources when the configuration is created. This method is an alternative
-	 * to ProcesssDefinitionFactoryBean since when dealing with sub processes (inside the definitions), jBPM requires a 
-	 * JbpmContext to be active on its internal static stack.
-	 *  
-	 * @param processDefinitionsResources The processDefinitionsResources to set.
+	 * Used for loading the process definition from resources when the
+	 * configuration is created. This method is an alternative to
+	 * ProcesssDefinitionFactoryBean since when dealing with sub processes
+	 * (inside the definitions), jBPM requires a JbpmContext to be active on its
+	 * internal static stack.
+	 * 
+	 * @param processDefinitionsResources The processDefinitionsResources to
+	 * set.
 	 */
 	public void setProcessDefinitionsResources(Resource[] processDefinitionsResources) {
 		this.processDefinitionsResources = processDefinitionsResources;
 	}
 
+	/**
+	 * @return Returns the factoryLocator.
+	 */
+	protected JbpmFactoryLocator getFactoryLocator() {
+		return factoryLocator;
 	}
+
+}

@@ -13,6 +13,7 @@ import org.jbpm.JbpmContext;
 import org.jbpm.configuration.ObjectFactory;
 import org.jbpm.graph.def.ProcessDefinition;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springmodules.workflow.jbpm31.definition.ProcessDefinitionFactoryBean;
@@ -20,17 +21,18 @@ import org.springmodules.workflow.jbpm31.definition.ProcessDefinitionFactoryBean
 /**
  * Created on Feb 21, 2006
  *
- * $Id: LocalJbpmConfigurationFactoryBeanTests.java,v 1.2 2006/09/04 14:25:54 costin Exp $
- * $Revision: 1.2 $
+ * $Id: LocalJbpmConfigurationFactoryBeanTests.java,v 1.3 2006/12/06 14:13:18 costin Exp $
+ * $Revision: 1.3 $
  */
 
 /**
  * @author Costin Leau
- *
+ * 
  */
 public class LocalJbpmConfigurationFactoryBeanTests extends TestCase {
 
 	LocalJbpmConfigurationFactoryBean configuration;
+
 	Resource configurationResource;
 
 	/*
@@ -68,12 +70,11 @@ public class LocalJbpmConfigurationFactoryBeanTests extends TestCase {
 		BeanFactory beanFactory = (BeanFactory) beanFactoryControl.getMock();
 
 		JbpmContext context = new JbpmContext(null, mockFactory);
-		factoryControl.expectAndReturn(mockFactory.createObject(JbpmContext.DEFAULT_JBPM_CONTEXT_NAME),
-				context, 2);
+		factoryControl.expectAndReturn(mockFactory.createObject(JbpmContext.DEFAULT_JBPM_CONTEXT_NAME), context, 2);
 		beanFactoryControl.replay();
 		factoryControl.replay();
 
-		//configuration.setBeanFactory(beanFactory);
+		// configuration.setBeanFactory(beanFactory);
 		configuration.afterPropertiesSet();
 		JbpmConfiguration cfg = (JbpmConfiguration) configuration.getObject();
 
@@ -84,12 +85,13 @@ public class LocalJbpmConfigurationFactoryBeanTests extends TestCase {
 	}
 
 	public void testNoSpringObjectFactory() throws Exception {
-		//configuration.setUseSpringObjectFactory(false);
+		// configuration.setUseSpringObjectFactory(false);
 
 		MockControl factoryControl = MockControl.createControl(ObjectFactory.class);
 		ObjectFactory mockFactory = (ObjectFactory) factoryControl.getMock();
 
-		factoryControl.expectAndReturn(mockFactory.createObject(JbpmContext.DEFAULT_JBPM_CONTEXT_NAME), new JbpmContext(null, mockFactory));
+		factoryControl.expectAndReturn(mockFactory.createObject(JbpmContext.DEFAULT_JBPM_CONTEXT_NAME),
+				new JbpmContext(null, mockFactory));
 		factoryControl.replay();
 		configuration.setObjectFactory(mockFactory);
 		configuration.afterPropertiesSet();
@@ -102,17 +104,17 @@ public class LocalJbpmConfigurationFactoryBeanTests extends TestCase {
 	}
 
 	public void testLoadResource() throws Exception {
-		
+
 		configuration.setConfiguration(configurationResource);
-		//configuration.setUseSpringObjectFactory(false);
+		// configuration.setUseSpringObjectFactory(false);
 		configuration.afterPropertiesSet();
 		JbpmConfiguration cfg = (JbpmConfiguration) configuration.getObject();
 		JbpmContext context = cfg.createJbpmContext();
 	}
 
 	/**
-	 * Ugly hack to get the object factory directly from the jbpm configuration without going
-	 * through the jbpmContext.
+	 * Ugly hack to get the object factory directly from the jbpm configuration
+	 * without going through the jbpmContext.
 	 * 
 	 * @param cfg
 	 * @return
@@ -133,30 +135,63 @@ public class LocalJbpmConfigurationFactoryBeanTests extends TestCase {
 
 		MockControl sfCtrl = MockControl.createControl(SessionFactory.class);
 		SessionFactory sf = (SessionFactory) sfCtrl.getMock();
-	
+
 		MockControl sCtrl = MockControl.createNiceControl(Session.class);
 		Session session = (Session) sCtrl.getMock();
-		
+
 		MockControl queryCtrl = MockControl.createNiceControl(Query.class);
 		Query query = (Query) queryCtrl.getMock();
-		
+
 		session.getNamedQuery("");
 		sCtrl.setMatcher(MockControl.ALWAYS_MATCHER);
 		sCtrl.setReturnValue(query);
-		
+
 		sfCtrl.expectAndReturn(sf.openSession(), session);
 		sfCtrl.replay();
 		sCtrl.replay();
 		queryCtrl.replay();
-		
-		configuration.setProcessDefinitions(new ProcessDefinition[] { (ProcessDefinition)definition.getObject() });
+
+		configuration.setProcessDefinitions(new ProcessDefinition[] { (ProcessDefinition) definition.getObject() });
 		configuration.setConfiguration(configurationResource);
-		//configuration.setUseSpringObjectFactory(false);
+		// configuration.setUseSpringObjectFactory(false);
 		configuration.setSessionFactory(sf);
 		configuration.afterPropertiesSet();
-		
+
 		sfCtrl.verify();
 		sCtrl.verify();
 		queryCtrl.verify();
+	}
+
+	public void testBeanFactoryRelease() throws Exception {
+		BeanFactory beanFactory = new DefaultListableBeanFactory();
+		
+		configuration.setConfiguration(configurationResource);
+		configuration.setBeanFactory(beanFactory);
+		configuration.afterPropertiesSet();
+		
+		// make sure we have some sort of configuration
+		assertNotNull(configuration.getObject());
+		
+		JbpmFactoryLocator locator = configuration.getFactoryLocator();
+		JbpmHandlerProxy proxy = new JbpmHandlerProxy();
+		BeanFactory bf = proxy.retrieveBeanFactory();
+		assertSame(beanFactory, bf);
+	
+		// the reference to the bean factory locator should be removed 
+		configuration.destroy();
+		
+		// if the reference still exists, registering a new factoryBean will
+		// give an exception
+		
+		// create a new factory
+		configuration = new LocalJbpmConfigurationFactoryBean();
+		configuration.setConfiguration(configurationResource);
+		configuration.setBeanFactory(beanFactory);
+		configuration.afterPropertiesSet();
+		
+		assertNotNull(configuration.getObject());
+		proxy = new JbpmHandlerProxy();
+		bf = proxy.retrieveBeanFactory();
+		assertSame(beanFactory, bf);
 	}
 }
