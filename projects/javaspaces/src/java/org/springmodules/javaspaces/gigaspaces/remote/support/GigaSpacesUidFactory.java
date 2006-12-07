@@ -20,11 +20,11 @@ import java.rmi.RemoteException;
 
 import org.springframework.aop.framework.Advised;
 import org.springmodules.javaspaces.entry.UidFactory;
-
 import org.springmodules.javaspaces.gigaspaces.exception.GigaSpacesException;
+
 import com.j_spaces.core.IJSpace;
 import com.j_spaces.core.IRemoteJSpace;
-import com.j_spaces.core.client.AbstractSpaceProxy;
+import com.j_spaces.core.client.IDirectSpaceProxy;
 
 /**
  * <p>
@@ -55,7 +55,7 @@ public class GigaSpacesUidFactory implements UidFactory {
 		String genUid = null;
 		try{
 			if(remoteJSpace == null){
-				remoteJSpace = ((AbstractSpaceProxy) realSpace).getRemoteJSpace();
+				remoteJSpace = ((IDirectSpaceProxy) realSpace).getRemoteJSpace();
 			}
 			genUid = remoteJSpace.getUniqueID();
 		}
