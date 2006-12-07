@@ -21,6 +21,7 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springmodules.javaspaces.gigaspaces.GigaSpacesTemplate;
 import org.springmodules.javaspaces.gigaspaces.app.SimpleBean;
 
+
 import com.j_spaces.core.client.ExternalEntry;
 import com.j_spaces.core.client.UpdateModifiers;
 
@@ -92,7 +93,7 @@ public class GigaSpacesTemplateTest
 		SimpleBean templateBean = new SimpleBean(	"lior_IfExistsTakeWithTransaction",
 													1);
 		SimpleBean taken = (SimpleBean) template.takeIfExists(	templateBean/*bean*/,
-																Lease.FOREVER);
+																2000);
 		assertNotNull("Taken object is null!", taken);
 	}
 
@@ -221,7 +222,7 @@ public class GigaSpacesTemplateTest
 		SimpleBean taken = (SimpleBean) template.update(templateBean/*bean*/,
 
 														Lease.FOREVER,
-														2000);
+														Lease.FOREVER);
 		assertNotSame("The bean are equal!", templateBean, taken);
 	}
 
@@ -233,7 +234,7 @@ public class GigaSpacesTemplateTest
 		SimpleBean templateBean = new SimpleBean("lior_UpdateModifier2", 2);
 		SimpleBean taken = (SimpleBean) template.update(templateBean,
 														Lease.FOREVER,
-														2000,
+														Lease.FOREVER,
 														UpdateModifiers.UPDATE_OR_WRITE);
 		assertNotSame("The bean are equal!", templateBean, taken);
 	}
@@ -281,7 +282,7 @@ public class GigaSpacesTemplateTest
 		SimpleBean bean1 = new SimpleBean("lior_dropClass", 1);
 		template.write(bean1, Lease.FOREVER);
 		template.dropClass(SimpleBean.class.getName());
-		SimpleBean taken = (SimpleBean) template.take(bean1, -1);
+		SimpleBean taken = (SimpleBean) template.takeIfExists(bean1, 1000);
 		assertNull("The dropClass is not null!", taken);
 	}
 
@@ -353,7 +354,7 @@ public class GigaSpacesTemplateTest
 		SimpleBean templateBean = new SimpleBean("lior_ReadIfExists", 1);
 		SimpleBean taken = (SimpleBean) template.readIfExists(	templateBean/*bean*/,
 
-																Lease.FOREVER);
+																2000);
 		assertNotNull("Read object is null!", taken);
 	}
 	public void testNotify() throws Throwable

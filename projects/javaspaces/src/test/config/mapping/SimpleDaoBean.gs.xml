@@ -4,27 +4,26 @@
  -->
 <gigaspaces-mapping>
 	<class name="org.springmodules.javaspaces.gigaspaces.app.SimpleBean"
-		persist="true" replicate="false" fifo="true" timetolive="100">
-		<property name="name" index="false"
-			key="true" auto-generate-key="false" />
-		<property name="testLongObject" index="false" />
-		<property name="testDoubleObject" index="false" />
-		<property name="age" index="false" />
-		<property name="testFloatObject" index="false" />
-		<property name="testBooleanObject" index="false" />
-		<property name="testIntegerObject" index="false" />
+		persist="true" replicate="false" fifo="true">
+
+		<property name="testLongObject" index="none" />
+		<property name="testDoubleObject" index="none" />
+		<property name="age" index="none" />
+		<property name="testFloatObject" index="none" />
+		<property name="testBooleanObject" index="none" />
+		<property name="testIntegerObject" index="none" />
+		<id name="name" auto-generate="false" />
 		<reference
 			class-ref="org.springmodules.javaspaces.gigaspaces.app.BaseSimpleBean" />
 	</class>
 	<class
 		name="org.springmodules.javaspaces.gigaspaces.app.BaseSimpleBean"
-		persist="true" replicate="false" fifo="true" timetolive="100">
-		<property name="teststring" index="true"
-			key="false" auto-generate-key="false" />
-		<property name="testboolean" index="true" />
-		<property name="testlong" index="true" />
-		<property name="testfloat" index="false" />
-		<property name="testint" index="false" />
-		<property name="testdouble" index="false" />
+		persist="true" replicate="false" fifo="true">
+		<property name="teststring" index="basic"/>
+		<property name="testboolean" index="basic" />
+		<property name="testlong" index="basic" />
+		<property name="testfloat" index="none" />
+		<property name="testint" index="none" />
+		<property name="testdouble" index="none" />
 	</class>
 </gigaspaces-mapping>
