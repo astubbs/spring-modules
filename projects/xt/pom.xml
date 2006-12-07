@@ -3,7 +3,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-xt</artifactId>
     <packaging>jar</packaging>
-    <version>0.6</version>
+    <version>0.7</version>
     <name>spring-modules-xt</name>
     <url>https://springmodules.dev.java.net/</url>
     <licenses>
@@ -12,6 +12,11 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
+    <developers>
+        <developer>
+            <name>Sergio Bossa</name>
+        </developer>
+    </developers>
     <scm>
         <url>https://springmodules.dev.java.net/source/browse/springmodules/projects/xt</url>
     </scm>
@@ -19,12 +24,12 @@
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
-            <version>0.8</version>
+            <version>0.9</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.1</version>
+            <version>3.2</version>
         </dependency>   
         <dependency>
             <groupId>commons-lang</groupId>
@@ -44,7 +49,7 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.11</version>
+            <version>1.2.12</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -70,5 +75,36 @@
             <version>1.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jmock</groupId>
+            <artifactId>jmock-cglib</artifactId>
+            <version>1.1.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib-full</artifactId>
+                </exclusion>
+            </exclusions> 
+        </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerVersion>1.5</compilerVersion>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

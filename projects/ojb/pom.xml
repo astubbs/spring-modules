@@ -3,7 +3,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-ojb</artifactId>
     <packaging>jar</packaging>
-    <version>0.6</version>
+    <version>0.7</version>
     <name>spring-modules-ojb</name>
     <url>https://springmodules.dev.java.net/</url>
     <licenses>
@@ -59,5 +59,5 @@
             <version>1.1</version>
             <scope>test</scope>
         </dependency>
-  </dependencies>
+    </dependencies>
 </project>

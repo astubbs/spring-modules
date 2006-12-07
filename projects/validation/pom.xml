@@ -2,12 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-validation</artifactId>
     <packaging>jar</packaging>
-    <version>0.6</version>
+    <version>0.7</version>
     <name>spring-modules-validation</name>
     <url>https://springmodules.dev.java.net/</url>
     <licenses>

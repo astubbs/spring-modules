@@ -4,7 +4,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-jbpm30</artifactId>
     <packaging>jar</packaging>
-    <version>0.6</version>
+    <version>0.7</version>
     <name>spring-modules-jbpm30</name>
     <url>https://springmodules.dev.java.net/</url>
     <licenses>

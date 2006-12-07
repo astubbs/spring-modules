@@ -4,7 +4,7 @@
     <groupId>org.springmodules</groupId>
     <artifactId>spring-modules-javaspaces</artifactId>
     <packaging>jar</packaging>
-    <version>0.6</version>
+    <version>0.7</version>
     <name>spring-modules-javaspaces</name>
     <url>https://springmodules.dev.java.net/</url>
     <licenses>
@@ -30,12 +30,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring</artifactId>
-            <version>2.0-rc2</version>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
-            <version>2.0-rc2</version>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>cglib</groupId>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>gigaspaces</groupId>
             <artifactId>gigaspaces-ce</artifactId>
-            <version>5.1-1603-000</version>
+            <version>5.2-1706</version>
         </dependency>
         <dependency>
             <groupId>jini</groupId>
