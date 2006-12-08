@@ -24,6 +24,7 @@ import org.springmodules.xt.test.domain.Employee;
 import org.springmodules.xt.test.domain.EmployeeView;
 import org.springmodules.xt.test.domain.EmployeeView2;
 import org.springmodules.xt.test.domain.EmployeeView3;
+import org.springmodules.xt.test.domain.EmployeeView4;
 import org.springmodules.xt.test.domain.IEmployee;
 import org.springmodules.xt.test.domain.Office;
 
@@ -164,23 +165,15 @@ public class DynamicBeanIntroductorTest extends MockObjectTestCase {
     }
     
     public void testMapToTargetField() {
-        Mock targetMock = mock(Employee.class);
-        
-        Object introduced = this.introductor.introduceInterfaces(targetMock.proxy(), new Class[]{EmployeeView3.class});
-        EmployeeView3 view = (EmployeeView3) introduced;
-        // Expects no call to target:
-        targetMock.expects(never()).method("setNickname").with(eq("sb"));
-        targetMock.expects(never()).method("getNickname");
+        IEmployee employee = new Employee();
+        Object introduced = this.introductor.introduceInterfaces(employee, new Class[]{EmployeeView4.class});
+        EmployeeView4 view = (EmployeeView4) introduced;
         view.setNickname("sb");
         assertEquals("sb", view.getNickname());
         
-        targetMock.reset();
-        
-        introduced = this.introductor.introduceInterfaces(targetMock.proxy(), new Class[]{EmployeeView3.class}, new Class[]{IEmployee.class});
-        view = (EmployeeView3) introduced;
-        // Expects no call to target:
-        targetMock.expects(never()).method("setNickname").with(eq("sb"));
-        targetMock.expects(never()).method("getNickname");
+        employee = new Employee();
+        introduced = this.introductor.introduceInterfaces(employee, new Class[]{EmployeeView4.class}, new Class[]{IEmployee.class});
+        view = (EmployeeView4) introduced;
         view.setNickname("sb");
         assertEquals("sb", view.getNickname());
     }

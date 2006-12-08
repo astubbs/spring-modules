@@ -8,11 +8,11 @@ import org.springmodules.xt.model.introductor.annotation.OverrideTarget;
  *
  * @author Sergio Bossa
  */
-public interface EmployeeView3 extends EmployeeView {
+public interface EmployeeView4 extends EmployeeView {
     
-    @OverrideTarget
+    @MapToTargetField
     String getNickname();
     
-    @OverrideTarget
+    @MapToTargetField
     void setNickname(String nickname);
 }

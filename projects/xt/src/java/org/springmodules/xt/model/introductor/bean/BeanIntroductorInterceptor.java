@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.aopalliance.intercept.MethodInvocation;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springmodules.xt.model.introductor.AbstractIntroductorInterceptor;
 import org.springmodules.xt.model.introductor.support.IllegalReturnTypeException;
@@ -82,14 +83,13 @@ public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
         Object result = null;
         try {
             Object target = methodInvocation.getThis();
+            String fieldName = StringUtils.uncapitalize(method.getName().substring(3));
+            Field field = target.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
             if (method.getName().startsWith("get")) {
-                Field field = target.getClass().getDeclaredField(method.getName().substring(3));
-                field.setAccessible(true);
                 result = field.get(target);
             }
             else if (method.getName().startsWith("set")) {
-                Field field = target.getClass().getDeclaredField(method.getName().substring(3));
-                field.setAccessible(true);
                 field.set(target, methodInvocation.getArguments()[0]);
             }
             else {
