@@ -2,10 +2,13 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
-Changes in version 0.7 (in progress)
+Changes in version 0.7 (09.12.2006)
 ------------------------------------
 All modules
 * updated Spring dependency to 2.0.1 where possible [MOD-248]
+
+Package org.springmodules.ant
+* New Spring Ant integration module
 
 Package org.springmodules.cache
 * Updated dependency on spring to spring-2.0
