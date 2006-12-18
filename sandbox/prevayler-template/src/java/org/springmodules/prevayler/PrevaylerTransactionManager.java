@@ -71,7 +71,12 @@ public class PrevaylerTransactionManager extends AbstractPlatformTransactionMana
     
     protected boolean isExistingTransaction(Object transaction) throws TransactionException {
         PrevaylerTransactionObject txObject = (PrevaylerTransactionObject) transaction;
-        return (txObject.getSession() != null);
+        if (txObject.getSession() != null) {
+            return true;
+        } 
+        else {
+            return false;
+        }
     }
     
     protected void doCleanupAfterCompletion(Object transaction) {
