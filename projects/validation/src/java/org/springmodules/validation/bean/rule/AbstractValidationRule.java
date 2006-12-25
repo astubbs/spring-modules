@@ -19,6 +19,9 @@ package org.springmodules.validation.bean.rule;
 import org.springmodules.validation.bean.rule.resolver.ErrorArgumentsResolver;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.common.AlwaysTrueCondition;
+import org.springmodules.validation.bean.context.ValidationContextHolder;
+import org.springmodules.validation.bean.context.ValidationContext;
+import org.springmodules.validation.bean.context.ValidationContextUtils;
 
 /**
  * A super class for all specific validation rules.
@@ -34,6 +37,8 @@ public abstract class AbstractValidationRule implements ValidationRule {
     private ErrorArgumentsResolver errorArgumentsResolver;
 
     private Condition applicabilityCondition;
+
+    private String[] contextTokens;
 
     /**
      * Constructs a new AbstractValidationRule with a default error code. By default, the error arguments
@@ -56,6 +61,7 @@ public abstract class AbstractValidationRule implements ValidationRule {
         this.defaultErrorMessage = this.errorCode;
         this.errorArgumentsResolver = defaultErrorArgumentsResolver;
         this.applicabilityCondition = new AlwaysTrueCondition();
+        this.contextTokens = null;
     }
 
     /**
@@ -69,6 +75,9 @@ public abstract class AbstractValidationRule implements ValidationRule {
      * @see ValidationRule#isApplicable(Object)
      */
     public boolean isApplicable(Object obj) {
+        if (contextTokens != null && !checkContexts(contextTokens)) {
+            return false;
+        }
         if (obj == null && !supportsNullValues()) {
             return false;
         }
@@ -151,6 +160,16 @@ public abstract class AbstractValidationRule implements ValidationRule {
         this.applicabilityCondition = applicabilityCondition;
     }
 
+    /**
+     * Sets the validation contexts names in which this validation rule is applicable.
+     *
+     * @param contextTokens The validation context names in which this validation rule is applicable. <code>null</code>
+     *        represents applicability in any context (even if one doesn't exsit).
+     */
+    public void setContextTokens(String[] contextTokens) {
+        this.contextTokens = contextTokens;
+    }
+
     //=============================================== Helper Methods ===================================================
 
     /**
@@ -210,4 +229,9 @@ public abstract class AbstractValidationRule implements ValidationRule {
             }
         };
     }
+
+    protected static boolean checkContexts(String[] contextTokens) {
+        return ValidationContextUtils.tokensSupportedByCurrentContext(contextTokens);
+    }
+
 }

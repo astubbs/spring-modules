@@ -136,6 +136,8 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
 
     private static final String APPLY_IF_ATTR = "apply-if";
 
+    private static final String CONTEXTS_ATTR = "contexts";
+
     private static final String FOR_PROPERTY_ATTR = "for-property";
 
     private ValidationRuleElementHandlerRegistry handlerRegistry;
@@ -358,6 +360,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         String argsString = methodDefinition.getAttribute(ARGS_ATTR);
         String conditionString = methodDefinition.getAttribute(APPLY_IF_ATTR);
         String propertyName = methodDefinition.getAttribute(FOR_PROPERTY_ATTR);
+        String contextsString = methodDefinition.getAttribute(CONTEXTS_ATTR);
 
         ValidationMethodValidationRule rule = createMethodValidationRule(
             clazz,
@@ -365,6 +368,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             errorCode,
             message,
             argsString,
+            contextsString,
             conditionString
         );
 
@@ -382,6 +386,7 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
         String errorCode,
         String message,
         String argsString,
+        String contextsString,
         String applyIfString) {
 
         Method method = ReflectionUtils.findMethod(clazz, methodName);
@@ -405,11 +410,17 @@ public class DefaultXmlBeanValidationConfigurationLoader extends AbstractXmlBean
             applyIfCondition = conditionExpressionParser.parse(applyIfString);
         }
 
+        String[] contexts = null;
+        if (StringUtils.hasText(contextsString)) {
+            contexts = StringUtils.commaDelimitedListToStringArray(contextsString);
+        }
+
         ValidationMethodValidationRule rule = new ValidationMethodValidationRule(method);
         rule.setErrorCode(errorCode);
         rule.setDefaultErrorMessage(message);
         rule.setErrorArgumentsResolver(argsResolver);
         rule.setApplicabilityCondition(applyIfCondition);
+        rule.setContextTokens(contexts);
 
         return rule;
     }

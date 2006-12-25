@@ -18,6 +18,7 @@ import org.springmodules.validation.bean.conf.loader.xml.handler.PropertyValidat
 import org.springmodules.validation.bean.rule.PropertyValidationRule;
 import org.springmodules.validation.bean.rule.ValidationMethodValidationRule;
 import org.springmodules.validation.bean.rule.ValidationRule;
+import org.springmodules.validation.bean.context.ValidationContextUtils;
 import org.springmodules.validation.util.cel.ognl.OgnlConditionExpressionParser;
 import org.springmodules.validation.util.fel.parser.OgnlFunctionExpressionParser;
 import org.w3c.dom.Document;
@@ -206,6 +207,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
                 String errorCode,
                 String message,
                 String argsString,
+                String contextsString,
                 String applyIfString) {
 
                 assertEquals(TestBean.class, clazz);
@@ -214,7 +216,8 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
                 assertEquals("themessage", message);
                 assertEquals("a, b, c", argsString);
                 assertEquals("true", applyIfString);
-                return super.createMethodValidationRule(clazz, methodName, errorCode, message, argsString, applyIfString);
+                assertEquals("", contextsString);
+                return super.createMethodValidationRule(clazz, methodName, errorCode, message, argsString, contextsString, applyIfString);
             }
         };
         loader.setFunctionExpressionParser(new OgnlFunctionExpressionParser());
@@ -225,8 +228,8 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     public void testHandleMethodDefinition_WithProperty() throws Exception {
         Document document = document();
         Element methodElement = element(document, "method",
-            new String[]{"name", "for-property", "code", "message", "args", "apply-if"},
-            new String[]{"validate", "name", "thecode", "themessage", "a, b, c", "true"}
+            new String[]{"name", "for-property", "code", "message", "args", "contexts", "apply-if"},
+            new String[]{"validate", "name", "thecode", "themessage", "a, b, c", "bla", "true"}
         );
 
         // a hack to ensure the createMethodValidationRule method
@@ -242,6 +245,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
                 String errorCode,
                 String message,
                 String argsString,
+                String contextStrings,
                 String applyIfString) {
 
                 list.add("entered");
@@ -250,8 +254,9 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
                 assertEquals("thecode", errorCode);
                 assertEquals("themessage", message);
                 assertEquals("a, b, c", argsString);
+                assertEquals("bla", contextStrings);
                 assertEquals("true", applyIfString);
-                return super.createMethodValidationRule(clazz, methodName, errorCode, message, argsString, applyIfString);
+                return super.createMethodValidationRule(clazz, methodName, errorCode, message, argsString, contextStrings, applyIfString);
             }
         };
 
@@ -279,7 +284,7 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
     public void testCreateMethodValidationRule() throws Exception {
         loader.setFunctionExpressionParser(new OgnlFunctionExpressionParser());
         loader.setConditionExpressionParser(new OgnlConditionExpressionParser());
-        ValidationMethodValidationRule rule = loader.createMethodValidationRule(TestBean.class, "validate", "code", "message", "'a', 'b', 'c'", "true");
+        ValidationMethodValidationRule rule = loader.createMethodValidationRule(TestBean.class, "validate", "code", "message", "'a', 'b', 'c'", "bla", "true");
         TestBean testBean = new TestBean() {
             public boolean validate() {
                 return false;
@@ -288,7 +293,9 @@ public class DefaultXmlBeanValidationConfigurationLoaderTests extends TestCase {
 
         assertEquals("code", rule.getErrorCode());
         assertEquals("message", rule.getDefaultErrorMessage());
+        ValidationContextUtils.setContext("bla");
         assertTrue(rule.isApplicable(testBean));
+        ValidationContextUtils.clearContext();
 
         Object[] args = rule.getErrorArguments(testBean);
         assertEquals(3, args.length);

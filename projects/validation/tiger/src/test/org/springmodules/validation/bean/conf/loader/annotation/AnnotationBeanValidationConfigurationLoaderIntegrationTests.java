@@ -22,6 +22,8 @@ import java.util.Calendar;
 import junit.framework.TestCase;
 import org.springframework.validation.BindException;
 import org.springmodules.validation.bean.BeanValidator;
+import org.springmodules.validation.bean.context.ValidationContextHolder;
+import org.springmodules.validation.bean.context.DefaultValidationContext;
 
 /**
  * Integration tests for {@link AnnotationBeanValidationConfigurationLoader}.
@@ -74,5 +76,87 @@ public class AnnotationBeanValidationConfigurationLoaderIntegrationTests extends
         assertEquals("Address.street[not.null]", errors.getFieldError("address.street").getCode());
 
     }
+
+    public void testWithContext() throws Exception {
+
+        PersonWithContext person = new PersonWithContext();
+        person.setFirstName("a"); // invalid (ctx1) - must be at least 2 chars
+        person.setLastName("qwertyuiopasdfghjklzx"); // invalid (ctx1) - too long (max 20 chars)
+        person.setNickname("a"); // invalid (ctx1) - the PersonValidator should register a global error
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.HOUR, -3);
+        person.setBirthday(cal.getTime()); // valid (ctx1) - date in the past
+        person.setAge(-1); // invalid (ctx2) - must be 0 or more
+        person.setFather(null); // invalid (ctx1) - father cannot be null
+        person.setMother(new PersonWithContext()); // invalid (ctx2) - mother must be valid
+        person.setFriends(new ArrayList<PersonWithContext>()); // invalid (ctx1) - friends cannot be empty
+        person.setHomeless(false);
+        person.setAddress(new Address(null, "Amsterdam")); // (all contexts)
+        person.setNullableInteger(new Integer(3)); // invalid (ctx2) - min value is 10
+
+        AnnotationBeanValidationConfigurationLoader loader = new AnnotationBeanValidationConfigurationLoader();
+        BeanValidator validator = new BeanValidator(loader);
+
+        BindException errors = new BindException(person, "person");
+
+        setContext("ctx1");
+
+        validator.validate(person, errors);
+
+        assertTrue(errors.hasGlobalErrors());
+        assertEquals(2, errors.getGlobalErrorCount());
+        assertTrue(errors.hasFieldErrors());
+        assertTrue(errors.hasFieldErrors("firstName"));
+        assertTrue(errors.hasFieldErrors("lastName"));
+        assertEquals(1, errors.getFieldErrorCount("lastName"));
+        assertFalse(errors.hasFieldErrors("birthday"));
+        assertEquals(0, errors.getFieldErrorCount("age"));
+        assertTrue(errors.hasFieldErrors("father"));
+        assertTrue(errors.hasFieldErrors("mother.*"));
+        assertTrue(errors.hasFieldErrors("friends"));
+        assertTrue(errors.hasFieldErrors("address.street"));
+        assertFalse(errors.hasFieldErrors("nullableString"));
+        assertFalse(errors.hasFieldErrors("nullableInteger"));
+        assertEquals("Address.street[not.null]", errors.getFieldError("address.street").getCode());
+
+        clearContext();
+
+        setContext("ctx2");
+
+        errors = new BindException(person, "person");
+        validator.validate(person, errors);
+
+        assertFalse(errors.hasGlobalErrors());
+        assertTrue(errors.hasFieldErrors());
+        assertFalse(errors.hasFieldErrors("firstName"));
+        assertFalse(errors.hasFieldErrors("lastName"));
+        assertEquals(0, errors.getFieldErrorCount("lastName"));
+        assertTrue(errors.hasFieldErrors("birthday"));
+        assertEquals(1, errors.getFieldErrorCount("birthday"));
+        assertEquals(1, errors.getFieldErrorCount("age"));
+        assertEquals("PersonWithContext.age[just.another.error.code]", errors.getFieldError("age").getCode());
+        assertFalse(errors.hasFieldErrors("father"));
+        assertTrue(errors.hasFieldErrors("mother.*"));
+        assertFalse(errors.hasFieldErrors("friends"));
+        assertTrue(errors.hasFieldErrors("address.street"));
+        assertFalse(errors.hasFieldErrors("nullableString"));
+        assertTrue(errors.hasFieldErrors("nullableInteger"));
+        assertEquals("Address.street[not.null]", errors.getFieldError("address.street").getCode());
+
+        clearContext();
+
+    }
+
+
+    protected void setContext(String context) {
+        ValidationContextHolder.setValidationContext(new DefaultValidationContext(context));
+    }
+
+    protected void clearContext() {
+        ValidationContextHolder.clearContext();
+    }
+
+
 
 }

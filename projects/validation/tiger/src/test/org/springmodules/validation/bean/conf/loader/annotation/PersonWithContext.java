@@ -1,79 +1,62 @@
-/*
- * Copyright 2004-2005 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.springmodules.validation.bean.conf.loader.annotation;
+
+import org.springmodules.validation.bean.conf.loader.annotation.handler.*;
 
 import java.util.Date;
 import java.util.List;
-
-import org.springmodules.validation.bean.conf.loader.annotation.handler.*;
 
 /**
  * A Bean to test the validation annotations with.
  *
  * @author Uri Boness
  */
-@Validator(PersonValidator.class)
-@Expression(value = "father is not null")
-public class Person {
+@Expression(value = "father is not null", contexts = "ctx1")
+public class PersonWithContext {
 
-    @NotNull()
-    @Length(min = 2, max = 10)
+    @NotNull(contexts = "ctx1")
+    @Length(min = 2, max = 10, contexts = "ctx1")
     private String firstName;
 
-    @NotNull()
-    @Length(min = 2, max = 20)
+    @NotNull(contexts = "ctx1")
+    @Length(min = 2, max = 20, contexts = "ctx1")
     private String lastName;
 
-    @NotNull()
-    @NotBlank()
+    @NotNull(contexts = "ctx1")
+    @NotBlank(contexts = "ctx1")
     private String nickname;
 
-    @NotNull()
-    @InThePast()
+    @NotNull(contexts = "ctx1")
+    @InThePast(contexts = "ctx1")
     private Date birthday;
 
-    @NotNull()
-    @NotEmpty()
-    private List<Person> friends;
+    @NotNull(contexts = "ctx1")
+    @NotEmpty(contexts = "ctx1")
+    private List<PersonWithContext> friends;
 
-    @NotNull()
+    @NotNull(contexts = "ctx1")
     @CascadeValidation
-    private Person father;
+    private PersonWithContext father;
 
-    @NotNull()
+    @NotNull(contexts = "ctx2")
     @CascadeValidation
-    private Person mother;
+    private PersonWithContext mother;
 
     private boolean homeless;
 
     @CascadeValidation("homeless == false")
     private Address address;
 
-    @Expression(value = "? >= 0", applyIf = "true = false", scope = ExpressionScope.VALIDATED_VALUE)
-    @Min(value = 0, errorCode = "just.another.error.code")
+    @Expression(value = "? >= 0", applyIf = "true = false", scope = ExpressionScope.VALIDATED_VALUE, contexts = "ctx2")
+    @Min(value = 0, errorCode = "just.another.error.code", contexts = "ctx2")
     private int age;
 
-    @Length(min = 5)
+    @Length(min = 5, contexts = "ctx2")
     private String nullableString;
 
-    @Min(value = 10)
+    @Min(value = 10, contexts = "ctx2")
     private Integer nullableInteger;
 
-    @Min(value = 10, applyIf = "firstName is not null")
+    @Min(value = 10, applyIf = "firstName is not null", contexts = "ctx2")
     private int smallInteger = 5;
 
     public String getFirstName() {
@@ -108,27 +91,27 @@ public class Person {
         this.birthday = birthday;
     }
 
-    public List<Person> getFriends() {
+    public List<PersonWithContext> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<Person> friends) {
+    public void setFriends(List<PersonWithContext> friends) {
         this.friends = friends;
     }
 
-    public Person getFather() {
+    public PersonWithContext getFather() {
         return father;
     }
 
-    public void setFather(Person father) {
+    public void setFather(PersonWithContext father) {
         this.father = father;
     }
 
-    public Person getMother() {
+    public PersonWithContext getMother() {
         return mother;
     }
 
-    public void setMother(Person mother) {
+    public void setMother(PersonWithContext mother) {
         this.mother = mother;
     }
 
@@ -180,12 +163,12 @@ public class Person {
         this.smallInteger = smallInteger;
     }
 
-    @ValidationMethod
+    @ValidationMethod(contexts = "ctx1")
     public boolean validate() {
         return false;
     }
 
-    @ValidationMethod(forProperty = "birthday")
+    @ValidationMethod(forProperty = "birthday", contexts = "ctx2")
     public boolean validateBirthdayIsNull() {
         return birthday == null;
     }

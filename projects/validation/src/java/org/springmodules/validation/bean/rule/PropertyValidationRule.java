@@ -23,6 +23,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springmodules.validation.util.condition.AbstractCondition;
 import org.springmodules.validation.util.condition.Condition;
 import org.springmodules.validation.util.condition.Conditions;
+import org.springmodules.validation.bean.context.ValidationContextUtils;
 
 /**
  * A {@link ValidationRule} implementation that wraps another validation rule and is associated with a specific
@@ -42,6 +43,8 @@ public class PropertyValidationRule implements ValidationRule {
 
     private Condition applicabilityCondition;
 
+    private String[] contextTokens;
+
     /**
      * Constructs a new PropertyValidationRule (javabean support).
      */
@@ -59,6 +62,7 @@ public class PropertyValidationRule implements ValidationRule {
         this.propertyName = propertyName;
         this.rule = rule;
         applicabilityCondition = new DefaultApplicabilityCondition(propertyName, rule);
+        contextTokens = null;
     }
 
     /**
@@ -71,7 +75,7 @@ public class PropertyValidationRule implements ValidationRule {
      * @see ValidationRule#isApplicable(Object)
      */
     public boolean isApplicable(Object obj) {
-        return applicabilityCondition.check(obj);
+        return checkContext(contextTokens) && applicabilityCondition.check(obj);
     }
 
     /**
@@ -120,6 +124,13 @@ public class PropertyValidationRule implements ValidationRule {
         this.applicabilityCondition = applicabilityCondition;
     }
 
+    public void setContextTokens(String[] contextTokens) {
+        this.contextTokens = contextTokens;
+    }
+
+    protected static boolean checkContext(String[] tokens) {
+        return ValidationContextUtils.tokensSupportedByCurrentContext(tokens);
+    }
 
     //=================================================== Inner Classes ================================================
 

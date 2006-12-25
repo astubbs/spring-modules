@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<validation xmlns="http://www.springmodules.org/validation/bean"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.springmodules.org/validation/bean http://www.springmodules.org/validation/bean/validation.xsd">
+
+    <class name="org.springmodules.validation.bean.conf.loader.xml.Person">
+
+        <global>
+            <expression condition="password == confirmPassword" code="passwords.do.not.match" contexts="ctx1"/>
+        </global>
+
+        <property name="firstName">
+            <not-null contexts="ctx1"/>
+            <not-blank contexts="ctx1"/>
+        </property>
+
+        <property name="lastName">
+            <not-null contexts="ctx1"/>
+            <not-blank contexts="ctx1"/>
+        </property>
+
+        <property name="age">
+            <range min="0" code="min" contexts="ctx2"/>
+        </property>
+
+        <property name="email">
+            <email contexts="ctx2"/>
+        </property>
+
+        <property name="password">
+            <not-null contexts="ctx2"/>
+            <length min="3" contexts="ctx2"/>
+        </property>
+
+        <property name="smallInteger">
+            <range min="10" apply-if="firstName is not null" contexts="ctx2"/>
+        </property>
+
+        <method name="confirmPasswords" contexts="ctx2"/>
+
+        <method name="validateLastNameIsLongerThanTen" for-property="lastName" contexts="ctx1,ctx2"/>
+
+    </class>
+
+</validation>

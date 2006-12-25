@@ -44,6 +44,8 @@ public abstract class AbstractClassValidationElementHandler
 
     private static final String APPLY_IF_ATTR = "apply-if";
 
+    private static final String CONTEXTS_ATTR = "contexts";
+
     private String elementName;
 
     private String namespaceUrl;
@@ -137,6 +139,11 @@ public abstract class AbstractClassValidationElementHandler
             rule.setApplicabilityCondition(applicabilityCondition);
         }
 
+        String[] applicableContexts = extractApplicableContexts(element);
+        if (applicableContexts != null) {
+            rule.setContextTokens(applicableContexts);
+        }
+
         configuration.addGlobalRule(rule);
     }
 
@@ -198,6 +205,20 @@ public abstract class AbstractClassValidationElementHandler
     protected Condition extractApplicabilityCondition(Element element) {
         String expression = element.getAttribute(AbstractClassValidationElementHandler.APPLY_IF_ATTR);
         return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : null;
+    }
+
+    /**
+     * Extracts the names of the validation context in which the valiation rule is applicable. Expects a "contexts"
+     * attribute to hold a comma-separated list of context names. If no such attribute exists or if it holds an empty
+     * string, <code>null </code> is returned. As the contract of {@link AbstractValidationRule#setContextTokens(String[])}
+     * defines <code>null</code> means that the rule always applies regardless of the context.
+     *
+     * @param element The element that represents the validation rule.
+     * @return The names of the validation contexts in which the
+     */
+    protected String[] extractApplicableContexts(Element element) {
+        String contextString = element.getAttribute(CONTEXTS_ATTR);
+        return (StringUtils.hasText(contextString)) ? StringUtils.commaDelimitedListToStringArray(contextString) : null;
     }
 
     /**

@@ -43,4 +43,9 @@ public @interface MinLength {
      */
     String applyIf() default "";
 
+    /**
+     * A list of context in which this validation rule is applicable. Empty list means this rule is always applicable
+     * regardless the validation context.
+     */
+    String[] contexts() default {};
 }

@@ -55,6 +55,8 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
 
     public final static String ARGS_ATTR = "args";
 
+    public final static String CONTEXTS_ATTR = "contexts";
+
     private Class[] supportedAnnotationTypes;
 
     private ConditionExpressionParser conditionExpressionParser;
@@ -110,6 +112,11 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
         ErrorArgumentsResolver argumentsResolver = extractArgumentsResolver(annotation);
         if (argumentsResolver != null) {
             rule.setErrorArgumentsResolver(argumentsResolver);
+        }
+
+        String[] applicableContexts = extractApplicableContexts(annotation);
+        if (applicableContexts != null) {
+            rule.setContextTokens(applicableContexts);
         }
 
         Condition applicabilityCondition = extractApplicabilityContidion(annotation);
@@ -171,6 +178,20 @@ public abstract class AbstractClassValidationAnnotationHandler implements ClassV
     protected Condition extractApplicabilityContidion(Annotation annotation) {
         String expression = (String) extractAnnotationAttribute(annotation, APPLY_IF_ATTR);
         return (StringUtils.hasText(expression)) ? conditionExpressionParser.parse(expression) : null;
+    }
+
+    /**
+     * Extracts the names of the validation context in which the valiation rule is applicable. Expects a "contexts"
+     * attribute to hold an array of context names. If it holds an empty array, <code>null </code> is returned.
+     * As the contract of {@link AbstractValidationRule#setContextTokens(String[])}
+     * defines <code>null</code> means that the rule always applies regardless of the context.
+     *
+     * @param annotation The validation rule annoation.
+     * @return The names of the validation contexts in which the
+     */
+    protected String[] extractApplicableContexts(Annotation annotation) {
+        String[] contexts = (String[]) extractAnnotationAttribute(annotation, CONTEXTS_ATTR);
+        return (contexts.length > 0) ? contexts : null;
     }
 
     /**

@@ -86,10 +86,34 @@
     <!-- Validation Rule Elements -->
 
     <xs:attributeGroup name="common-rule-attributes">
-        <xs:attribute name="code" type="xs:string" use="optional"/>
-        <xs:attribute name="message" type="xs:string" use="optional"/>
-        <xs:attribute name="args" type="xs:string" use="optional"/>
-        <xs:attribute name="apply-if" type="xs:string" use="optional"/>
+        <xs:attribute name="code" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>
+                    The error code that is associated with this validation rule. Usually this code will be
+                    resolved to a real message using a resource bundle
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="message" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>A default error message to be used when the error code cannot be resolved</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="args" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>A comma-separated list of arguments to be used along with the error code</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="apply-if" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>A condition expression that determines when/whether this rule should be applied on the bean.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contexts" type="xs:string" use="optional">
+            <xs:annotation>
+                <xs:documentation>A comma-separated list of validation context tokens this rule is associated with</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:attributeGroup>
 
     <xs:element name="expression">
