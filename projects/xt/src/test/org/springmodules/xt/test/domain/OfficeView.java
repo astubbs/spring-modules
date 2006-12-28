@@ -12,4 +12,8 @@ public interface OfficeView extends IOffice {
     void setSelectableEmployees(Set employees);
     
     Set getSelectableEmployees();
+    
+    void setSelected(Boolean selected);
+    
+    Boolean isSelected();
 }

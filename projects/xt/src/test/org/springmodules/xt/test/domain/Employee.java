@@ -15,6 +15,13 @@ public class Employee implements IEmployee {
     private String firstname;
     private String surname;
     private String nickname;
+    
+    public Employee() {}
+    
+    public Employee(String nickname, String matriculationCode) {
+        this.nickname = nickname;
+        this.matriculationCode = matriculationCode;
+    }
 
     public String getFirstname() {
         return firstname;

@@ -26,7 +26,9 @@ import org.springmodules.xt.test.domain.EmployeeView2;
 import org.springmodules.xt.test.domain.EmployeeView3;
 import org.springmodules.xt.test.domain.EmployeeView4;
 import org.springmodules.xt.test.domain.IEmployee;
+import org.springmodules.xt.test.domain.IOffice;
 import org.springmodules.xt.test.domain.Office;
+import org.springmodules.xt.test.domain.OfficeView;
 
 /**
  *
@@ -176,6 +178,14 @@ public class DynamicBeanIntroductorTest extends MockObjectTestCase {
         view = (EmployeeView4) introduced;
         view.setNickname("sb");
         assertEquals("sb", view.getNickname());
+    }
+    
+    public void testBooleanProperties() {
+        Office office = new Office();
+        OfficeView introducedOffice = (OfficeView) this.introductor.introduceInterfaces(office, new Class[]{OfficeView.class}, new Class[]{IOffice.class});
+    
+        introducedOffice.setSelected(true);
+        assertTrue(introducedOffice.isSelected());
     }
     
     public void testGetTarget() {

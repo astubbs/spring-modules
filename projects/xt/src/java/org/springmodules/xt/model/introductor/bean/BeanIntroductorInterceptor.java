@@ -74,30 +74,44 @@ public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
     }
     
     private Object executeOnTargetMethod(MethodInvocation methodInvocation, Method method) throws Exception {
-        logger.debug("Executing on target; method: " + method.toString());
+        logger.debug("Executing on target; method: " + method.getName());
         return method.invoke(methodInvocation.getThis(), methodInvocation.getArguments());
     }
     
     private Object executeOnTargetField(MethodInvocation methodInvocation, Method method) throws Exception {
-        logger.debug("Mapping to target field; method: " + method.toString());
+        logger.debug("Mapping to target field; method: " + method.getName());
         Object result = null;
         try {
             Object target = methodInvocation.getThis();
-            String fieldName = StringUtils.uncapitalize(method.getName().substring(3));
-            Field field = target.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
             if (method.getName().startsWith("get")) {
+                String fieldName = StringUtils.uncapitalize(method.getName().substring(3));
+                Field field = target.getClass().getDeclaredField(fieldName);
+                field.setAccessible(true);
+                result = field.get(target);
+            }
+            else if (method.getName().startsWith("is")) {
+                String fieldName = StringUtils.uncapitalize(method.getName().substring(2));
+                Field field = target.getClass().getDeclaredField(fieldName);
+                field.setAccessible(true);
                 result = field.get(target);
             }
             else if (method.getName().startsWith("set")) {
-                field.set(target, methodInvocation.getArguments()[0]);
+                String fieldName = StringUtils.uncapitalize(method.getName().substring(3));
+                Field field = target.getClass().getDeclaredField(fieldName);
+                field.setAccessible(true);
+                if (methodInvocation.getArguments().length != 1) {
+                    throw new IllegalStateException("The setter method " + method.getName() + " must have only one argument!");
+                }
+                else {
+                    field.set(target, methodInvocation.getArguments()[0]);
+                }
             }
             else {
                 throw new UnsupportedOperationException("The introduced interface must contain only setter and getter methods.");
             }
         }
         catch(Exception ex) {
-            logger.warn("Something wrong happened calling: " + method.toString());
+            logger.warn("Something wrong happened calling: " + method.getName());
             logger.warn("Exception message: " + ex.getMessage());
             throw ex;
         }
@@ -105,27 +119,36 @@ public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
     }
     
     private Object executeLocally(MethodInvocation methodInvocation, Method method) throws Exception {
-        logger.debug("Introducing method: " + method.toString());
+        logger.debug("Introducing method: " + method.getName());
         Object result = null;
         try {
             if (method.getName().startsWith("get")) {
                 result = this.fields.get(method.getName().substring(3));
-                if (result == null) {
-                    if (method.getReturnType().isPrimitive()) {
-                        throw new IllegalReturnTypeException("Return types of your introduced interfaces cannot be primitives.");
-                    }
+                if ((result == null) && (method.getReturnType().isPrimitive())) {
+                    throw new IllegalReturnTypeException("Return types of your introduced interfaces cannot be primitives.");
+                }
+            }
+            else if (method.getName().startsWith("is")) {
+                result = this.fields.get(method.getName().substring(2));
+                if ((result == null) && (method.getReturnType().isPrimitive())) {
+                    throw new IllegalReturnTypeException("Return types of your introduced interfaces cannot be primitives.");
                 }
             }
             else if (method.getName().startsWith("set")) {
-                String key = method.getName().substring(3);
-                Object value = methodInvocation.getArguments()[0];
-                // ConcurrentHashMap doesn't support null values: so, if the value is not null, proceed with setting:
-                if (value != null) {
-                    this.fields.put(key, value);
+                if (methodInvocation.getArguments().length != 1) {
+                    throw new IllegalStateException("The setter method " + method.getName() + " must have only one argument!");
                 }
-                // Else, remove it (this equals setting it null):
                 else {
-                    this.fields.remove(key); 
+                    String key = method.getName().substring(3);
+                    Object value = methodInvocation.getArguments()[0];
+                    // ConcurrentHashMap doesn't support null values: so, if the value is not null, proceed with setting:
+                    if (value != null) {
+                        this.fields.put(key, value);
+                    }
+                    // Else, remove it (this equals setting it null):
+                    else {
+                        this.fields.remove(key); 
+                    }
                 }
             }
             else {
@@ -133,7 +156,7 @@ public class BeanIntroductorInterceptor extends AbstractIntroductorInterceptor {
             }
         }
         catch(Exception ex) {
-            logger.warn("Something wrong happened calling: " + method.toString());
+            logger.warn("Something wrong happened calling: " + method.getName());
             logger.warn("Exception message: " + ex.getMessage());
             throw ex;
         }
