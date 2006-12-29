@@ -29,6 +29,13 @@ public class ValidationContextUtils {
         ValidationContextHolder.setValidationContext(new DefaultValidationContext(supportedTokens));
     }
 
+    public static ValidationContext extendContext(String[] additionalTokens) {
+        ValidationContext context = ValidationContextHolder.getValidationContext();
+        ValidationContext newContext = new ExtendingValidationContext(additionalTokens, context);
+        ValidationContextHolder.setValidationContext(newContext);
+        return context;
+    }
+
     public static void clearContext() {
         ValidationContextHolder.clearContext();
     }

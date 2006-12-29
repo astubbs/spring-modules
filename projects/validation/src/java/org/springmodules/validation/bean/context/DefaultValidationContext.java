@@ -64,4 +64,11 @@ public class DefaultValidationContext implements ValidationContext {
         return false;
     }
 
+
+    //============================================== Setter/Getter =====================================================
+
+    public String[] getTokens() {
+        return tokens;
+    }
+
 }

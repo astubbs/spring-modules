@@ -35,7 +35,7 @@ public class LibraryUtils {
     public final static boolean HIBERNATE_VALIDATOR_IN_CLASSPATH = isClassInClasspath("org.hibernate.validator.Validator");
 
     /**
-     * Indicates whether the jdk supports java 5 annotations.
+     * Indicates whether the jdk supports java annotations.
      */
     public static final boolean JDK_ANNOTATIONS_SUPPORTED = SystemUtils.IS_JAVA_1_5 || SystemUtils.IS_JAVA_1_6;
 

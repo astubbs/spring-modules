@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+    <bean id="filter" class="org.springmodules.validation.bean.context.web.ValidationContextFilter">
+        <property name="validationContextUrlMappings">
+            <value>
+                /user/*=ctx1,ctx2
+                /admin/*=ctx3
+            </value>
+        </property>
+    </bean>
+
+</beans>

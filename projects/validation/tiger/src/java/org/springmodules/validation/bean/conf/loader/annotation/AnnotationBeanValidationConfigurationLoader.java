@@ -44,8 +44,8 @@ import org.springmodules.validation.bean.conf.loader.annotation.handler.Validati
 import org.springmodules.validation.util.lang.ReflectionUtils;
 
 /**
- * A {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader} implementation that creates validation configuration based on
- * validation rule extracted from class annoatations.
+ * A {@link org.springmodules.validation.bean.conf.loader.BeanValidationConfigurationLoader} implementation that
+ * creates validation configuration based on validation rule extracted from class annoatations.
  *
  * @author Uri Boness
  */
