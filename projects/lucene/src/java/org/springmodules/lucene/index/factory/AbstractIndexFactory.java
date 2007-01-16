@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,23 +29,29 @@ import org.apache.lucene.store.Directory;
  * parameters on the instance.
  * 
  * <p>The tuning parameters are set to default values defined as constants in the
- * class (DEFAULT_MERGE_FACTOR, DEFAULT_MAX_MERGE_DOCS, DEFAULT_MIN_MERGE_DOCS,
- * DEFAULT_MAX_FIELD_LENGTH)
+ * class (DEFAULT_MAX_BUFFERED_DOCS, DEFAULT_MAX_FIELD_LENGTH, DEFAULT_MAX_MERGE_DOCS,
+ * DEFAULT_MERGE_FACTOR, DEFAULT_TERM_INDEX_INTERVAL and DEFAULT_WRITE_LOCK_TIMEOUT).
  * 
  * @author Thierry Templier
  */
 public abstract class AbstractIndexFactory {
-	public final static int DEFAULT_MERGE_FACTOR=10;
-	public final static int DEFAULT_MAX_MERGE_DOCS=Integer.MAX_VALUE;
-	public final static int DEFAULT_MAX_FIELD_LENGTH=10000;
+	public final static int DEFAULT_MAX_BUFFERED_DOCS = 10;
+	public final static int DEFAULT_MAX_FIELD_LENGTH = 10000;
+	public final static int DEFAULT_MAX_MERGE_DOCS = Integer.MAX_VALUE;
+	public final static int DEFAULT_MERGE_FACTOR = 10;
+	public final static int DEFAULT_TERM_INDEX_INTERVAL = 128; 
+	public final static int DEFAULT_WRITE_LOCK_TIMEOUT = 1000; 
 
 	private Directory directory;
 	private Analyzer analyzer;
 
-	private boolean useCompoundFile=false;
-	private int mergeFactor=DEFAULT_MERGE_FACTOR;
-	private int maxMergeDocs=DEFAULT_MAX_MERGE_DOCS;
-	private int maxFieldLength=DEFAULT_MAX_FIELD_LENGTH;
+	private boolean useCompoundFile = false;
+	private int maxBufferedDocs = DEFAULT_MAX_BUFFERED_DOCS;
+	private int maxFieldLength = DEFAULT_MAX_FIELD_LENGTH;
+	private int maxMergeDocs = DEFAULT_MAX_MERGE_DOCS;
+	private int mergeFactor = DEFAULT_MERGE_FACTOR;
+	private int termIndexInterval = DEFAULT_TERM_INDEX_INTERVAL;
+	private int writeLockTimeout = DEFAULT_WRITE_LOCK_TIMEOUT;
 
 	/**
 	 * Set the Lucene Directory to be used.
@@ -81,9 +87,19 @@ public abstract class AbstractIndexFactory {
 	 */
 	protected void setIndexWriterParameters(IndexWriter writer) {
 		writer.setUseCompoundFile(useCompoundFile);
-		writer.setMergeFactor(mergeFactor);
-		writer.setMaxMergeDocs(maxMergeDocs);
+		writer.setMaxBufferedDocs(maxBufferedDocs);
 		writer.setMaxFieldLength(maxFieldLength);
+		writer.setMaxMergeDocs(maxMergeDocs);
+		writer.setMergeFactor(mergeFactor);
+		writer.setTermIndexInterval(termIndexInterval);
+		writer.setWriteLockTimeout(writeLockTimeout);
+	}
+
+	/**
+	 * @return
+	 */
+	public int getMaxBufferedDocs() {
+		return maxBufferedDocs;
 	}
 
 	/**
@@ -110,10 +126,31 @@ public abstract class AbstractIndexFactory {
 	/**
 	 * @return
 	 */
+	public int getTermIndexInterval() {
+		return termIndexInterval;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getWriteLockTimeout() {
+		return writeLockTimeout;
+	}
+
+	/**
+	 * @return
+	 */
 	public boolean isUseCompoundFile() {
 		return useCompoundFile;
 	}
 
+	/**
+	 * @param i
+	 */
+	public void setMaxBufferedDocs(int i) {
+		maxBufferedDocs = i;
+	}
+	
 	/**
 	 * @param i
 	 */
@@ -133,6 +170,20 @@ public abstract class AbstractIndexFactory {
 	 */
 	public void setMergeFactor(int i) {
 		mergeFactor = i;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setTermIndexInterval(int i) {
+		termIndexInterval = i;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setWriteLockTimeout(int i) {
+		writeLockTimeout = i;
 	}
 
 	/**
