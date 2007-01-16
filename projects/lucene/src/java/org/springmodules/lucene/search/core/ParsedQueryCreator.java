@@ -54,7 +54,7 @@ public abstract class ParsedQueryCreator implements QueryCreator {
 			QueryParser parser=new QueryParser(tokens[0],analyzer);
 			query=parser.parse(params.getTextToSearch());
 		} else {
-			query=MultiFieldQueryParser.parse(params.getTextToSearch(),tokens,analyzer);
+			query=MultiFieldQueryParser.parse(new String[] { params.getTextToSearch() }, tokens, analyzer);
 		}
 		setQueryProperties(query);
 		return query;
