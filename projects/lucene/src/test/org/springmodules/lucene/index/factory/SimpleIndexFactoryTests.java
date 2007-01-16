@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package org.springmodules.lucene.index.factory;
 
 import java.io.IOException;
 
+import junit.framework.TestCase;
+
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -25,8 +27,6 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.RAMDirectory;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
-
-import junit.framework.TestCase;
 
 /**
  * @author Thierry Templier
@@ -43,9 +43,9 @@ public class SimpleIndexFactoryTests extends TestCase {
 		this.directory=new RAMDirectory();
 		IndexWriter indexWriter=new IndexWriter(this.directory,new SimpleAnalyzer(),true);
 		Document document=new Document();
-		document.add(Field.Text("field", "a sample"));
-		document.add(Field.Text("filter", "a sample filter"));
-		document.add(Field.Keyword("sort", "2"));
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 		indexWriter.addDocument(document);
 		indexWriter.close();
 
@@ -156,9 +156,9 @@ public class SimpleIndexFactoryTests extends TestCase {
 			indexWriter=indexFactory.getIndexWriter();
 			assertNotNull(indexWriter);
 			Document document=new Document();
-			document.add(Field.Text("field", "a sample"));
-			document.add(Field.Text("filter", "a sample filter"));
-			document.add(Field.Keyword("sort", "3"));
+			document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+			document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+			document.add(new Field("sort", "3", Field.Store.YES, Field.Index.UN_TOKENIZED));
 			indexWriter.addDocument(document);
 		} finally {
 			closeIndexWriter(indexWriter);

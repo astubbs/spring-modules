@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -37,13 +35,12 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.store.RAMDirectory;
+import org.springmodules.lucene.AbstractLuceneTestCase;
 import org.springmodules.lucene.index.DocumentHandlerException;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 import org.springmodules.lucene.index.support.handler.AbstractDocumentHandler;
 import org.springmodules.lucene.index.support.handler.DefaultDocumentHandlerManager;
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
 import org.springmodules.lucene.index.support.handler.IdentityDocumentMatching;
 import org.springmodules.lucene.index.support.handler.file.AbstractInputStreamDocumentHandler;
 import org.springmodules.lucene.index.support.handler.file.MimeTypeDocumentHandlerManager;
@@ -57,48 +54,7 @@ import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
  * @author Brian McCallister
  * @author Thierry Templier
  */
-public class DefaultLuceneIndexTemplateTests extends TestCase {
-
-	private RAMDirectory directory;
-
-	/**
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		//Initialization of the index
-		this.directory=new RAMDirectory();
-		IndexWriter writer=new IndexWriter(directory,new SimpleAnalyzer(),true);
-		//Adding a document
-		Document document1=new Document();
-		document1.add(Field.Keyword("id", "1"));
-		document1.add(Field.Text("field", "a sample"));
-		document1.add(Field.Text("filter", "a sample filter"));
-		document1.add(Field.Keyword("sort", "2"));
-		writer.addDocument(document1);
-		//Adding a document
-		Document document2=new Document();
-		document2.add(Field.Keyword("id", "2"));
-		document2.add(Field.Text("field", "a Lucene support sample"));
-		document2.add(Field.Text("filter", "another sample filter"));
-		document2.add(Field.Keyword("sort", "3"));
-		writer.addDocument(document2);
-		//Adding a document
-		Document document3=new Document();
-		document3.add(Field.Keyword("id", "3"));
-		document3.add(Field.Text("field", "a different sample"));
-		document3.add(Field.Text("filter", "another sample filter"));
-		document3.add(Field.Keyword("sort", "1"));
-		writer.addDocument(document3);
-		writer.optimize();
-		writer.close();
-	}
-
-	/**
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		this.directory=null;
-	}
+public class DefaultLuceneIndexTemplateTests extends AbstractLuceneTestCase {
 
 	/*
 	 * Test for void deleteDocument(int)
@@ -245,9 +201,9 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 			public Document createDocument() throws IOException {
 				called[0] = true;
 				Document document=new Document();
-				document.add(Field.Text("field", "a sample"));
-				document.add(Field.Text("filter", "a sample filter"));
-				document.add(Field.Keyword("sort", "2"));
+				document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+				document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+				document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 				return document;
 			}
 		});
@@ -293,7 +249,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 			public Document createDocumentFromInputStream(InputStream inputStream) throws IOException {
 				called[1]=true;
 				Document document=new Document();
-				document.add(Field.Text("field", new InputStreamReader(inputStream)));
+				document.add(new Field("field", new InputStreamReader(inputStream)));
 				return document;
 			}
 		});
@@ -425,7 +381,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 			protected Document doGetDocument(Map description, Object object) throws Exception {
 				called[1]=true;
 				Document document=new Document();
-				document.add(Field.Text("text", (String)object));
+				document.add(new Field("text", (String)object, Field.Store.YES, Field.Index.TOKENIZED));
 				return document;
 			}
 		});
@@ -466,7 +422,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 			protected Document doGetDocument(Map description, Object object) throws Exception {
 				called[1]=true;
 				Document document=new Document();
-				document.add(Field.Text("text", (String)object));
+				document.add(new Field("text", (String)object, Field.Store.YES, Field.Index.TOKENIZED));
 				return document;
 			}
 		});
@@ -510,7 +466,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 			protected Document doGetDocument(Map description, Object object) throws Exception {
 				called[1]=true;
 				Document document=new Document();
-				document.add(Field.Text("text", (String)object));
+				document.add(new Field("text", (String)object, Field.Store.YES, Field.Index.TOKENIZED));
 				return document;
 			}
 		});
@@ -553,7 +509,7 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 			protected Document doGetDocument(Map description, Object object) throws Exception {
 				called[1]=true;
 				Document document=new Document();
-				document.add(Field.Text("text", (String)object));
+				document.add(new Field("text", (String)object, Field.Store.YES, Field.Index.TOKENIZED));
 				return document;
 			}
 		});
@@ -591,14 +547,14 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 				called[0] = true;
 				List documents=new ArrayList();
 				Document document1=new Document();
-				document1.add(Field.Text("field", "a sample 1"));
-				document1.add(Field.Text("filter", "a sample filter 1"));
-				document1.add(Field.Keyword("sort", "1"));
+				document1.add(new Field("field", "a sample 1", Field.Store.YES, Field.Index.TOKENIZED));
+				document1.add(new Field("filter", "a sample filter 1", Field.Store.YES, Field.Index.TOKENIZED));
+				document1.add(new Field("sort", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
 				documents.add(document1);
 				Document document2=new Document();
-				document2.add(Field.Text("field", "a sample 2"));
-				document2.add(Field.Text("filter", "a sample filter 2"));
-				document2.add(Field.Keyword("sort", "2"));
+				document2.add(new Field("field", "a sample 2", Field.Store.YES, Field.Index.TOKENIZED));
+				document2.add(new Field("filter", "a sample filter 2", Field.Store.YES, Field.Index.TOKENIZED));
+				document2.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 				documents.add(document2);
 				return documents;
 			}
@@ -632,10 +588,10 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 				String sort=document.get("sort");
 				
 				Document updatedDocument=new Document();
-				updatedDocument.add(Field.Keyword("id", id));
-				updatedDocument.add(Field.Text("field", "test"));
-				updatedDocument.add(Field.Text("filter", filter));
-				updatedDocument.add(Field.Keyword("sort", sort));
+				updatedDocument.add(new Field("id", id, Field.Store.YES, Field.Index.UN_TOKENIZED));
+				updatedDocument.add(new Field("field", "test", Field.Store.YES, Field.Index.TOKENIZED));
+				updatedDocument.add(new Field("filter", filter, Field.Store.YES, Field.Index.TOKENIZED));
+				updatedDocument.add(new Field("sort", sort, Field.Store.YES, Field.Index.UN_TOKENIZED));
 				return updatedDocument;
 			}
 		},new DocumentIdentifier() {
@@ -698,10 +654,10 @@ public class DefaultLuceneIndexTemplateTests extends TestCase {
 					String sort=document.get("sort");
 				
 					Document updatedDocument=new Document();
-					updatedDocument.add(Field.Keyword("id", id));
-					updatedDocument.add(Field.Text("field", "test"));
-					updatedDocument.add(Field.Text("filter", filter));
-					updatedDocument.add(Field.Keyword("sort", sort));
+					updatedDocument.add(new Field("id", id, Field.Store.YES, Field.Index.UN_TOKENIZED));
+					updatedDocument.add(new Field("field", "test", Field.Store.YES, Field.Index.TOKENIZED));
+					updatedDocument.add(new Field("filter", filter, Field.Store.YES, Field.Index.TOKENIZED));
+					updatedDocument.add(new Field("sort", sort, Field.Store.YES, Field.Index.UN_TOKENIZED));
 					updatedDocuments.add(updatedDocument);
 				}
 				return updatedDocuments;

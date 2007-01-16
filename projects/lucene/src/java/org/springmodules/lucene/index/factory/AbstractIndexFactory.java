@@ -37,7 +37,6 @@ import org.apache.lucene.store.Directory;
 public abstract class AbstractIndexFactory {
 	public final static int DEFAULT_MERGE_FACTOR=10;
 	public final static int DEFAULT_MAX_MERGE_DOCS=Integer.MAX_VALUE;
-	public final static int DEFAULT_MIN_MERGE_DOCS=10;
 	public final static int DEFAULT_MAX_FIELD_LENGTH=10000;
 
 	private Directory directory;
@@ -46,7 +45,6 @@ public abstract class AbstractIndexFactory {
 	private boolean useCompoundFile=false;
 	private int mergeFactor=DEFAULT_MERGE_FACTOR;
 	private int maxMergeDocs=DEFAULT_MAX_MERGE_DOCS;
-	private int minMergeDocs=DEFAULT_MIN_MERGE_DOCS;
 	private int maxFieldLength=DEFAULT_MAX_FIELD_LENGTH;
 
 	/**
@@ -85,8 +83,7 @@ public abstract class AbstractIndexFactory {
 		writer.setUseCompoundFile(useCompoundFile);
 		writer.setMergeFactor(mergeFactor);
 		writer.setMaxMergeDocs(maxMergeDocs);
-		//writer.setminMergeDocs=minMergeDocs;
-		writer.setMaxFieldLength(maxFieldLength)	;
+		writer.setMaxFieldLength(maxFieldLength);
 	}
 
 	/**
@@ -108,13 +105,6 @@ public abstract class AbstractIndexFactory {
 	 */
 	public int getMergeFactor() {
 		return mergeFactor;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getMinMergeDocs() {
-		return minMergeDocs;
 	}
 
 	/**
@@ -143,13 +133,6 @@ public abstract class AbstractIndexFactory {
 	 */
 	public void setMergeFactor(int i) {
 		mergeFactor = i;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setMinMergeDocs(int i) {
-		minMergeDocs = i;
 	}
 
 	/**

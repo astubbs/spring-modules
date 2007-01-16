@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007s the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,7 +181,7 @@ public class DatabaseIndexerTests extends TestCase {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
 				test[0]=true;
 				Document document=new Document();
-				document.add(Field.UnStored("contents", rs.getString("test_name")));
+				document.add(new Field("contents", rs.getString("test_name"), Field.Store.NO, Field.Index.TOKENIZED));
 				return document;
 			}
 		});
@@ -235,7 +235,7 @@ public class DatabaseIndexerTests extends TestCase {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
 				test[0]=true;
 				Document document=new Document();
-				document.add(Field.UnStored("contents", rs.getString("test_name")));
+				document.add(new Field("contents", rs.getString("test_name"), Field.Store.NO, Field.Index.TOKENIZED));
 				return document;
 			}
 		});
@@ -270,7 +270,7 @@ public class DatabaseIndexerTests extends TestCase {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
 				test[0]=true;
 				Document document=new Document();
-				document.add(Field.UnStored("contents", rs.getString("test_name")));
+				document.add(new Field("contents", rs.getString("test_name"), Field.Store.NO, Field.Index.TOKENIZED));
 				return document;
 			}
 		});

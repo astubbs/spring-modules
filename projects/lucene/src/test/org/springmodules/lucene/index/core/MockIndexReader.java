@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.springmodules.lucene.index.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -66,31 +65,6 @@ public class MockIndexReader extends IndexReader {
 	 */
 	public Document document(int arg0) throws IOException {
 		return target.document(arg0);
-	}
-
-	/**
-	 * @return
-	 * @throws java.io.IOException
-	 */
-	public Collection getFieldNames() throws IOException {
-		return target.getFieldNames();
-	}
-
-	/**
-	 * @param arg0
-	 * @return
-	 * @throws java.io.IOException
-	 */
-	public Collection getFieldNames(boolean arg0) throws IOException {
-		return target.getFieldNames(arg0);
-	}
-
-	/**
-	 * @param arg0
-	 * @return
-	 */
-	public Collection getIndexedFieldNames(boolean arg0) {
-		return target.getIndexedFieldNames(arg0);
 	}
 
 	/**
@@ -269,6 +243,13 @@ public class MockIndexReader extends IndexReader {
 		if( indexReaderEvent!=null ) {
 			indexReaderEvent.indexReaderClosed();
 		}
+	}
+
+	/**
+	 * @see org.apache.lucene.index.IndexReader#getFieldNames(org.apache.lucene.index.IndexReader.FieldOption)
+	 */
+	public Collection getFieldNames(FieldOption arg0) {
+		return target.getFieldNames(arg0);
 	}
 
 }

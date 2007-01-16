@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,10 @@ package org.springmodules.lucene.index.core;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.RAMDirectory;
-import org.springframework.jca.cci.core.CciTemplate;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springmodules.lucene.AbstractLuceneTestCase;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 import org.springmodules.resource.ResourceManager;
 import org.springmodules.resource.support.ResourceBindingManager;
@@ -38,45 +31,8 @@ import org.springmodules.resource.support.ResourceTemplate;
 /**
  * @author Thierry Templier
  */
-public class LuceneResourceManagementTests extends TestCase {
+public class LuceneResourceManagementTests extends AbstractLuceneTestCase {
 
-	private RAMDirectory directory;
-
-	/**
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		//Initialization of the index
-		this.directory=new RAMDirectory();
-		IndexWriter writer=new IndexWriter(directory,new SimpleAnalyzer(),true);
-		//Adding a document
-		Document document1=new Document();
-		document1.add(Field.Text("field", "a sample"));
-		document1.add(Field.Text("filter", "a sample filter"));
-		document1.add(Field.Keyword("sort", "2"));
-		writer.addDocument(document1);
-		//Adding a document
-		Document document2=new Document();
-		document2.add(Field.Text("field", "a Lucene support sample"));
-		document2.add(Field.Text("filter", "another sample filter"));
-		document2.add(Field.Keyword("sort", "3"));
-		writer.addDocument(document2);
-		//Adding a document
-		Document document3=new Document();
-		document3.add(Field.Text("field", "a different sample"));
-		document3.add(Field.Text("filter", "another sample filter"));
-		document3.add(Field.Keyword("sort", "1"));
-		writer.addDocument(document3);
-		writer.optimize();
-		writer.close();
-	}
-
-	/**
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		this.directory=null;
-	}
 
 	public void testLuceneReaderResourceManagement() {
 		//Initialization of the index
@@ -163,18 +119,18 @@ public class LuceneResourceManagementTests extends TestCase {
 				template.addDocument(new DocumentCreator() {
 					public Document createDocument() throws IOException {
 						Document document=new Document();
-						document.add(Field.Text("field", "a Lucene support sample"));
-						document.add(Field.Text("filter", "another sample filter"));
-						document.add(Field.Keyword("sort", "13"));
+						document.add(new Field("field", "a Lucene support sample", Field.Store.YES, Field.Index.TOKENIZED));
+						document.add(new Field("filter", "another sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+						document.add(new Field("sort", "13", Field.Store.YES, Field.Index.UN_TOKENIZED));
 						return document;
 					}
 				});
 				template.addDocument(new DocumentCreator() {
 					public Document createDocument() throws IOException {
 						Document document=new Document();
-						document.add(Field.Text("field", "a Lucene support sample"));
-						document.add(Field.Text("filter", "another sample filter"));
-						document.add(Field.Keyword("sort", "13"));
+						document.add(new Field("field", "a Lucene support sample", Field.Store.YES, Field.Index.TOKENIZED));
+						document.add(new Field("filter", "another sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+						document.add(new Field("sort", "13", Field.Store.YES, Field.Index.UN_TOKENIZED));
 						return document;
 					}
 				});
@@ -203,18 +159,18 @@ public class LuceneResourceManagementTests extends TestCase {
 		template.addDocument(new DocumentCreator() {
 			public Document createDocument() throws IOException {
 				Document document=new Document();
-				document.add(Field.Text("field", "a Lucene support sample"));
-				document.add(Field.Text("filter", "another sample filter"));
-				document.add(Field.Keyword("sort", "13"));
+				document.add(new Field("field", "a Lucene support sample", Field.Store.YES, Field.Index.TOKENIZED));
+				document.add(new Field("filter", "another sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+				document.add(new Field("sort", "13", Field.Store.YES, Field.Index.UN_TOKENIZED));
 				return document;
 			}
 		});
 		template.addDocument(new DocumentCreator() {
 			public Document createDocument() throws IOException {
 				Document document=new Document();
-				document.add(Field.Text("field", "a Lucene support sample"));
-				document.add(Field.Text("filter", "another sample filter"));
-				document.add(Field.Keyword("sort", "13"));
+				document.add(new Field("field", "a Lucene support sample", Field.Store.YES, Field.Index.TOKENIZED));
+				document.add(new Field("filter", "another sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+				document.add(new Field("sort", "13", Field.Store.YES, Field.Index.UN_TOKENIZED));
 				return document;
 			}
 		});
