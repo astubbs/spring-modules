@@ -101,7 +101,6 @@ public class ConcurrentLuceneIndexTemplateListener implements InitializingBean,D
 							LuceneChannelResponse response=new LuceneChannelResponse(returnObject);
 							channel.putResponse(response);
 						}
-						System.out.println(request);
 					}
 				} catch(InterruptedException ex) {
 					logger.error("An error occured on the channel.",ex);
@@ -136,8 +135,6 @@ public class ConcurrentLuceneIndexTemplateListener implements InitializingBean,D
 	private Object invokeMethod(LuceneChannelRequest request) {
 		try {
 			Method method=getMethod(request);
-			System.out.println("method = "+method);
-			System.err.println("Avant invoke");
 			return method.invoke(template,request.getMethodParameters());
 		} catch(Exception ex) {
 			// TODO Manage exception
@@ -154,7 +151,6 @@ public class ConcurrentLuceneIndexTemplateListener implements InitializingBean,D
 		// Stopping the listener
 		channel.executeWithoutReturn(new LuceneChannelRequest(STOP_LISTENER_KEYWORD,null,null,null));
 		logger.info("Concurent Lucene worker stopped.");
-		System.err.println("Concurent Lucene worker stopped.");
 	}
 
 }

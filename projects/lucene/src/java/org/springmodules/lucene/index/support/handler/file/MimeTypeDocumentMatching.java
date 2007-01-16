@@ -49,7 +49,6 @@ public class MimeTypeDocumentMatching implements DocumentMatching {
     public String getMimeType(String fileName) {
         MimeTable mt = MimeTable.getDefaultTable();
         String mimeType = mt.getContentTypeFor(fileName);
-        System.out.println(fileName+" -> "+mimeType);
         if (mimeType == null)
                 mimeType = "application/octet-stream";
         return mimeType;
@@ -63,8 +62,6 @@ public class MimeTypeDocumentMatching implements DocumentMatching {
 	 */
 	public boolean match(String name) {
 		String mimeType=getMimeType(name);
-		System.out.println("mimeType = "+mimeType);
-		System.out.println("this.mimeType = "+this.mimeType);
 		return mimeType.equals(this.mimeType);
 	}
 

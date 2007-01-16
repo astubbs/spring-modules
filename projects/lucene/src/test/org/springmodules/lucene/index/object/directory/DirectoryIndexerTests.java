@@ -58,7 +58,6 @@ public class DirectoryIndexerTests extends TestCase {
 	}
 
 	final public void testRegisterDocumentHandler() {
-		System.out.println("> testRegisterDocumentHandler");
 		//Initialization of the index
 		SimpleAnalyzer analyzer=new SimpleAnalyzer();
 		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
@@ -97,7 +96,6 @@ public class DirectoryIndexerTests extends TestCase {
 		} catch(Exception ex) {
 			fail();
 		}
-		System.out.println("< testRegisterDocumentHandler");
 	}
 
 	final public void testUnregisterDocumentHandler() {
