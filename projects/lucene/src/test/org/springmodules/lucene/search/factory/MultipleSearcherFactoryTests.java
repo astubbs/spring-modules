@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,21 +46,21 @@ public class MultipleSearcherFactoryTests extends TestCase {
 		IndexWriter writer=new IndexWriter(directory,new SimpleAnalyzer(),true);
 		//Adding a document
 		Document document1=new Document();
-		document1.add(Field.Text("field", "a sample"));
-		document1.add(Field.Text("filter", "a sample filter"));
-		document1.add(Field.Keyword("sort", "2"));
+		document1.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document1.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document1.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 		writer.addDocument(document1);
 		//Adding a document
 		Document document2=new Document();
-		document2.add(Field.Text("field", "a Lucene support sample"));
-		document2.add(Field.Text("filter", "another sample filter"));
-		document2.add(Field.Keyword("sort", "3"));
+		document2.add(new Field("field", "a Lucene support sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document2.add(new Field("filter", "another sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document2.add(new Field("sort", "3", Field.Store.YES, Field.Index.UN_TOKENIZED));
 		writer.addDocument(document2);
 		//Adding a document
 		Document document3=new Document();
-		document3.add(Field.Text("field", "a different sample"));
-		document3.add(Field.Text("filter", "another sample filter"));
-		document3.add(Field.Keyword("sort", "1"));
+		document3.add(new Field("field", "a different sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document3.add(new Field("filter", "another sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document3.add(new Field("sort", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
 		writer.addDocument(document3);
 		writer.optimize();
 		writer.close();

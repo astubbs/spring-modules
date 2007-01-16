@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.lucene.search.Similarity;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopFieldDocs;
+import org.apache.lucene.search.Weight;
 
 /**
  * @author Thierry Templier
@@ -181,6 +182,34 @@ public class MockSearcher extends Searcher {
 	 */
 	public void setSimilarity(Similarity arg0) {
 		target.setSimilarity(arg0);
+	}
+
+	/**
+	 * @see org.apache.lucene.search.Searcher#explain(Weight, int)
+	 */
+	public Explanation explain(Weight arg0, int arg1) throws IOException {
+		return target.explain(arg0, arg1);
+	}
+
+	/**
+	 * @see org.apache.lucene.search.Searcher#search(Weight, Filter, HitCollector)
+	 */
+	public void search(Weight arg0, Filter arg1, HitCollector arg2) throws IOException {
+		target.search(arg0, arg1, arg2);
+	}
+
+	/**
+	 * @see org.apache.lucene.search.Searcher#search(Weight, Filter, int)
+	 */
+	public TopDocs search(Weight arg0, Filter arg1, int arg2) throws IOException {
+		return target.search(arg0, arg1, arg2);
+	}
+
+	/**
+	 * @see org.apache.lucene.search.Searcher#search(Weight, Filter, int, Sort)
+	 */
+	public TopFieldDocs search(Weight arg0, Filter arg1, int arg2, Sort arg3) throws IOException {
+		return target.search(arg0, arg1, arg2, arg3);
 	}
 
 }
