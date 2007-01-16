@@ -83,10 +83,10 @@ public abstract class AbstractIndexFactory {
 	 */
 	protected void setIndexWriterParameters(IndexWriter writer) {
 		writer.setUseCompoundFile(useCompoundFile);
-		writer.mergeFactor=mergeFactor;
-		writer.maxMergeDocs=maxMergeDocs;
-		writer.minMergeDocs=minMergeDocs;
-		writer.maxFieldLength=maxFieldLength;
+		writer.setMergeFactor(mergeFactor);
+		writer.setMaxMergeDocs(maxMergeDocs);
+		//writer.setminMergeDocs=minMergeDocs;
+		writer.setMaxFieldLength(maxFieldLength)	;
 	}
 
 	/**

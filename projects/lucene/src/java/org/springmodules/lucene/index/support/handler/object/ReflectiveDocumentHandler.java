@@ -14,11 +14,11 @@ public class ReflectiveDocumentHandler extends AbstractObjectDocumentHandler {
 
 		Document document = new Document();
 		for(int cpt=0;cpt<methods.length;cpt++) {
-			String name=methods[cpt].getName();
+			String name = methods[cpt].getName();
 			if( name.startsWith(PREFIX_ACCESSOR) ) {
-				String fieldName=constructFieldName(name);
-				Object value=methods[cpt].invoke(object,new Object[] {});
-				document.add(Field.Text(fieldName,String.valueOf(value)));
+				String fieldName = constructFieldName(name);
+				Object value = methods[cpt].invoke(object,new Object[] {});
+				document.add(new Field(fieldName, String.valueOf(value), Field.Store.YES, Field.Index.TOKENIZED));
 			}
 		}
 		return document;

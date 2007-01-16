@@ -156,7 +156,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	public void deleteDocument(int internalDocumentId) {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
-			reader.delete(internalDocumentId);
+			reader.deleteDocument(internalDocumentId);
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during deleting a document.",ex);
 		} finally {
@@ -167,7 +167,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	public void deleteDocuments(Term term) {
 		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
-			reader.delete(term);
+			reader.deleteDocuments(term);
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during deleting a document.",ex);
 		} finally {

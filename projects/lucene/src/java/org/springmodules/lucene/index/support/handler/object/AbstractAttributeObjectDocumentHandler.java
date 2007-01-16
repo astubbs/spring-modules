@@ -117,11 +117,11 @@ public abstract class AbstractAttributeObjectDocumentHandler extends AbstractObj
 
 	private Field createField(String fieldName, IndexAttribute indexAtt, Object value) {
 		if( KEYWORD.equals(indexAtt.getType()) ) {
-			return Field.Keyword(fieldName,String.valueOf(value));
+			return new Field(fieldName, String.valueOf(value), Field.Store.YES, Field.Index.UN_TOKENIZED);
 		} else if( TEXT.equals(indexAtt.getType()) ) {
-			return Field.Text(fieldName,String.valueOf(value));
+			return new Field(fieldName, String.valueOf(value), Field.Store.YES, Field.Index.TOKENIZED);
 		} else {
-			return Field.Text(fieldName,String.valueOf(value));
+			return new Field(fieldName, String.valueOf(value), Field.Store.YES, Field.Index.TOKENIZED);
 		}
 	}
 
@@ -130,7 +130,7 @@ public abstract class AbstractAttributeObjectDocumentHandler extends AbstractObj
 		Method[] methods=clazz.getDeclaredMethods();
 
 		Document document = new Document();
-		document.add(Field.Keyword("class",clazz.getCanonicalName()));
+		document.add(new Field("class", clazz.getCanonicalName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
 		for(int cpt=0;cpt<methods.length;cpt++) {
 			String name=methods[cpt].getName();
 			IndexAttribute indexAtt=computeIndexAttribute(methods[cpt], clazz);

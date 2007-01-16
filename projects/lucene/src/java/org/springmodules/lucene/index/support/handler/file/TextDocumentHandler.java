@@ -60,10 +60,10 @@ public class TextDocumentHandler extends AbstractInputStreamDocumentHandler {
 	protected Document doGetDocumentWithInputStream(Map description,InputStream inputStream) {
 		Document document = new Document();
 		//The text is analyzed and indexed but not stored
-		document.add(Field.Text("contents", new InputStreamReader(inputStream)));
+		document.add(new Field("contents", new InputStreamReader(inputStream)));
 		if( description.get(FILENAME)!=null ) {
-			document.add(Field.Keyword("type", "file"));
-			document.add(Field.Keyword("filename", (String)description.get(FILENAME)));
+			document.add(new Field("type", "file", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			document.add(new Field("filename", (String)description.get(FILENAME), Field.Store.YES, Field.Index.UN_TOKENIZED));
 		}
 		return document;
 	}
