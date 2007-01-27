@@ -20,15 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.servlet.mvc.SimpleFormController;
+import org.springframework.web.servlet.mvc.AbstractWizardFormController;
 
 /**
- * Enhanced {@link org.springframework.web.servlet.mvc.SimpleFormController},
+ * Enhanced {@link org.springframework.web.servlet.mvc.AbstractWizardFormController},
  * providing facilities for configuring and setting property editors through the {@link BinderConfiguration}.<br>
  *
  * @author Sergio Bossa
  */
-public class EnhancedSimpleFormController extends SimpleFormController {
+public abstract class EnhancedAbstractWizardFormController extends AbstractWizardFormController {
     
     private BinderConfiguration binderConfiguration = new BinderConfiguration();
     private Map customEditors = new HashMap();

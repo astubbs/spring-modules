@@ -85,4 +85,49 @@
         </property>  
     </bean>
     
+    
+    
+    <bean id="testCustomEditorsWizardControllerOne" class="org.springmodules.web.servlet.mvc.DummyWizardController">
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>org.springmodules.web.test.domain.Office</value></key>
+                    <value>officeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="testCustomEditorsWizardControllerTwo" class="org.springmodules.web.servlet.mvc.DummyWizardController">
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>class:org.springmodules.web.test.domain.Office</value></key>
+                    <value>officeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="testCustomEditorsWizardControllerThree" class="org.springmodules.web.servlet.mvc.DummyWizardController">
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>property:office</value></key>
+                    <value>officeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
+    
+    <bean id="testCustomEditorsWizardControllerFour" class="org.springmodules.web.servlet.mvc.DummyWizardController">
+        <property name="customEditors">
+            <map>
+                <entry>
+                    <key><value>property:office</value></key>
+                    <value>singletonOfficeEditor</value>
+                </entry>
+            </map>
+        </property>  
+    </bean>
 </beans>
