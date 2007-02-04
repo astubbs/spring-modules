@@ -1,12 +1,16 @@
 
-function doAjaxAction(eventId,sourceElement,jsonObject){var ajaxRequest=new AjaxRequest(document.URL);ajaxRequest.addFormElementsByFormEl(document.forms[0]);ajaxRequest.setQueryString(ajaxRequest.getQueryString()+"&ajax-request=ajax-action"+"&event-id="+eventId+createSimpleQueryString(sourceElement)+createJSONQueryString(jsonObject));ajaxRequest.sendRequest();}
-function doAjaxSubmit(eventId,sourceElement,jsonObject){var ajaxRequest=new AjaxRequest(document.URL);ajaxRequest.addFormElementsByFormEl(document.forms[0]);ajaxRequest.setQueryString(ajaxRequest.getQueryString()+"&ajax-request=ajax-submit"+"&event-id="+eventId+createSimpleQueryString(sourceElement)+createJSONQueryString(jsonObject));ajaxRequest.setUsePOST();ajaxRequest.sendRequest();}
-function createSimpleQueryString(sourceElement){var qs="";if(sourceElement!=undefined&&sourceElement!=null){if(sourceElement.name!=null&&sourceElement.name!=""){qs=qs+"&source-element="+sourceElement.name;}
-if(sourceElement.id!=null&&sourceElement.id!=""){qs=qs+"&source-element-id="+sourceElement.id;}}
-return qs;}
-function createJSONQueryString(jsonObject){var qs="";if(jsonObject!=undefined&&jsonObject!=null){qs="&json-params="+escape(jsonObject.toJSONString());}
-return qs;}
-var XT={doAjaxAction:doAjaxAction,doAjaxSubmit:doAjaxSubmit};var taconite_client_version=1.6;function AjaxRequest(url){var self=this;var xmlHttp=createXMLHttpRequest();var queryString="";var requestURL=url;var method="GET";var preRequest=null;var postRequest=null;var debugResponse=false;var async=true;var errorHandler=null;this.getXMLHttpRequestObject=function(){return xmlHttp;}
+var XT={ajaxParameter:"ajax-request",eventParameter:"event-id",elementParameter:"source-element",elementIdParameter:"source-element-id",jsonParamsParameter:"json-params",createSimpleQueryString:function(sourceElement){var qs="";if(sourceElement!=undefined&&sourceElement!=null){if(sourceElement.name!=null){qs="&"+this.elementParameter+"="+sourceElement.name;}
+if(sourceElement.id!=null){qs=qs+"&"+this.elementIdParameter+"="+sourceElement.id;}}
+return qs;},createJSONQueryString:function(jsonObject){var qs="";if(jsonObject!=undefined&&jsonObject!=null){qs="&"+this.jsonParamsParameter+"="+escape(jsonObject.toJSONString());}
+return qs;},doAjaxAction:function(eventId,sourceElement,jsonObject){var ajaxRequest=new AjaxRequest(document.URL);ajaxRequest.addFormElementsByFormEl(document.forms[0]);ajaxRequest.setQueryString(ajaxRequest.getQueryString()
++"&"+this.ajaxParameter+"=ajax-action"
++"&"+this.eventParameter+"="+eventId
++this.createSimpleQueryString(sourceElement)
++this.createJSONQueryString(jsonObject));ajaxRequest.sendRequest();},doAjaxSubmit:function(eventId,sourceElement,jsonObject){var ajaxRequest=new AjaxRequest(document.URL);ajaxRequest.addFormElementsByFormEl(document.forms[0]);ajaxRequest.setQueryString(ajaxRequest.getQueryString()
++"&"+this.ajaxParameter+"=ajax-submit"
++"&"+this.eventParameter+"="+eventId
++this.createSimpleQueryString(sourceElement)
++this.createJSONQueryString(jsonObject));ajaxRequest.setUsePOST();ajaxRequest.sendRequest();}};var taconite_client_version=1.6;function AjaxRequest(url){var self=this;var xmlHttp=createXMLHttpRequest();var queryString="";var requestURL=url;var method="GET";var preRequest=null;var postRequest=null;var debugResponse=false;var async=true;var errorHandler=null;this.getXMLHttpRequestObject=function(){return xmlHttp;}
 this.setPreRequest=function(func){preRequest=func;}
 this.setPostRequest=function(func){postRequest=func;}
 this.getPostRequest=function(){return postRequest;}
@@ -79,13 +83,17 @@ else if(window.ActiveXObject){try{req=new ActiveXObject("Msxml2.XMLHTTP");}
 catch(e){try{req=new ActiveXObject("Microsoft.XMLHTTP");}
 catch(e){req=false;}}}
 return req;}
-var taconite_parser_version=1.502;var isIE=document.uniqueID;String.prototype.trim=function(){var x=this;x=x.replace(/^\s*(.*)/,"$1");x=x.replace(/(.*?)\s*$/,"$1");return x;};function requiresContextNode(xmlTagName){return!(xmlTagName=="taconite-execute-javascript"||xmlTagName=="taconite-redirect");}
-function XhtmlToDOMParser(){this.parseXhtml=function(xml){var xmlTagName=xml.tagName.toLowerCase();var contextNode=document.getElementById(xml.getAttribute("contextNodeID"));if(contextNode==null&&requiresContextNode(xmlTagName)){return false;}
-switch(xmlTagName){case"taconite-append-as-children":getReplaceChildren(contextNode,xml,false);break;case"taconite-delete":getDelete(contextNode,xml);break;case"taconite-append-as-first-child":getAppendAsFirstChild(contextNode,xml);break;case"taconite-insert-after":getInsertAfter(contextNode,xml);break;case"taconite-insert-before":getInsertBefore(contextNode,xml);break;case"taconite-replace-children":getReplaceChildren(contextNode,xml,true);break;case"taconite-replace":getReplace(contextNode,xml);break;case"taconite-set-attributes":xml.removeAttribute("contextNodeID");xml.removeAttribute("parseInBrowser");handleAttributes(contextNode,xml);break;case"taconite-redirect":handleRedirect(xml);break;case"taconite-execute-javascript":executeJavascript(xml);break;}
-return true;};function isInlineMode(node){var attrType;if(!node.tagName.toLowerCase()=="input"){return false;}
+var taconite_parser_version=1.502;var isIE=document.uniqueID;String.prototype.trim=function(){var x=this;x=x.replace(/^\s*(.*)/,"$1");x=x.replace(/(.*?)\s*$/,"$1");return x;};Document.prototype.getElementsByMatchingId=function(matchingId){function deepMatch(currentElement,matchingElements){if(currentElement.nodeType==Node.ELEMENT_NODE){var id=currentElement.getAttribute("id");if(id!=null){if(id.indexOf("_")==(id.length-1)){var pattern="^"+id.replace(/_$/,".*");var rexp=new RegExp(pattern);if(rexp.test(matchingId)){matchingElements.push(currentElement);}}else if(id==matchingId){matchingElements.push(currentElement);}}
+var children=currentElement.childNodes;for(var i=0;i<children.length;i++){deepMatch(children[i],matchingElements);}}}
+var root=this.body;var matchingElements=[];deepMatch(root,matchingElements);return matchingElements;};function XhtmlToDOMParser(){this.parseXhtml=function(xml){var xmlTagName=xml.tagName.toLowerCase();if(requiresContextNode(xmlTagName)){var xmlId=xml.getAttribute("contextNodeID");var multipleMatch=xml.getAttribute("multipleMatch");var contextNodes=[];if(xmlId!=null){if(multipleMatch=="true"){contextNodes=document.getElementsByMatchingId(xmlId);}else{var el=document.getElementById(xmlId);if(el!=null){contextNodes=[el];}}}else{return false;}
+if(contextNodes.length==0){return false;}
+xml.removeAttribute("contextNodeID");xml.removeAttribute("multipleMatch");xml.removeAttribute("parseInBrowser");for(var i=0;i<contextNodes.length;i++){var contextNode=contextNodes[i];switch(xmlTagName){case"taconite-append-as-children":getReplaceChildren(contextNode,xml,false);break;case"taconite-delete":getDelete(contextNode,xml);break;case"taconite-append-as-first-child":getAppendAsFirstChild(contextNode,xml);break;case"taconite-insert-after":getInsertAfter(contextNode,xml);break;case"taconite-insert-before":getInsertBefore(contextNode,xml);break;case"taconite-replace-children":getReplaceChildren(contextNode,xml,true);break;case"taconite-replace":getReplace(contextNode,xml);break;case"taconite-set-attributes":handleAttributes(contextNode,xml);break;}}
+return true;}else{switch(xmlTagName){case"taconite-redirect":handleRedirect(xml);break;case"taconite-execute-javascript":executeJavascript(xml);break;}
+return true;}};this.getJavaScript=function(){return"var dummy_taconite_variable=0";};function requiresContextNode(xmlTagName){return!(xmlTagName=="taconite-execute-javascript"||xmlTagName=="taconite-redirect");}
+function isInlineMode(node){var attrType;if(!node.tagName.toLowerCase()=="input"){return false;}
 attrType=node.getAttribute("type");if(attrType=="radio"||attrType=="checkbox"){return true;}
 return false;}
-this.getJavaScript=function(){return"var dummy_taconite_variable=0";};function handleNode(xmlNode){var nodeType=xmlNode.nodeType;switch(nodeType){case 1:return handleElement(xmlNode);case 3:case 4:var textNode=document.createTextNode(xmlNode.nodeValue);if(isIE){textNode.nodeValue=textNode.nodeValue.replace(/\n/g,'\r');}
+function handleNode(xmlNode){var nodeType=xmlNode.nodeType;switch(nodeType){case 1:return handleElement(xmlNode);case 3:case 4:var textNode=document.createTextNode(xmlNode.nodeValue);if(isIE){textNode.nodeValue=textNode.nodeValue.replace(/\n/g,'\r');}
 return textNode;}
 return null;}
 function handleElement(xmlNode){var domElemNode=null;var xmlNodeTagName=xmlNode.tagName.toLowerCase();if(isIE){if(isInlineMode(xmlNode)){return document.createElement("<INPUT "+handleAttributes(domElemNode,xmlNode,true)+">");}

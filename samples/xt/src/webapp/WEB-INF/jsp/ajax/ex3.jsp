@@ -22,6 +22,11 @@
         <form method="POST" action="">
             <table>
                 <tr>
+                    <td colspan="2">
+                        <div id="employee._"/>
+                    </td>
+                </tr>
+                <tr>
                     <td>Matriculation code :</td>
                     <td>
                         <spring:bind path="command.matriculationCode">
