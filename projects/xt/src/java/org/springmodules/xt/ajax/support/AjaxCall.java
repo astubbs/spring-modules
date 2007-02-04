@@ -34,7 +34,7 @@ public enum AjaxCall {
         }
         
         public String getCall(String event, Map parameters) {
-            StringBuilder call = new StringBuilder("doAjaxAction");
+            StringBuilder call = new StringBuilder("XT.doAjaxAction");
             call.append("(\"");
             call.append(event);
             call.append("\",");
@@ -54,7 +54,7 @@ public enum AjaxCall {
         }
         
         public String getCall(String event, Map parameters) {
-            StringBuilder call = new StringBuilder("doAjaxSubmit");
+            StringBuilder call = new StringBuilder("XT.doAjaxSubmit");
             call.append("(\"");
             call.append(event);
             call.append("\",");

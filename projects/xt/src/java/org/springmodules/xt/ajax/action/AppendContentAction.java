@@ -26,8 +26,8 @@ import org.springmodules.xt.ajax.component.Component;
  */
 public class AppendContentAction extends AbstractRenderingAction {
     
-    private static final String OPEN = new String("<taconite-append-as-children contextNodeID=\"$1\" parseInBrowser=\"true\">");
-    private static final String CLOSE = new String("</taconite-append-as-children>");
+    private static final String OPEN = "<taconite-append-as-children contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
+    private static final String CLOSE = "</taconite-append-as-children>";
     
     /**
      * Construct the action.

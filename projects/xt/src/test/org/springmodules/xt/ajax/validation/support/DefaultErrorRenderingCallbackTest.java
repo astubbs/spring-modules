@@ -33,9 +33,9 @@ public class DefaultErrorRenderingCallbackTest extends XMLEnhancedTestCase {
         this.messageSource = new DelegatingMessageSource();
     }
 
-    public void testGetRenderingComponent() {
+    public void testGetRenderingComponent() throws Exception {
         Component component = this.callback.getRenderingComponent(this.errors.getGlobalError(), this.messageSource, new Locale("it"));
-        assertEquals("Default Message 1", component.render());
+        assertXpathEvaluatesTo("Default Message 1", "//div", component.render());
     }
 
     public void testGetRenderingAction() throws Exception {

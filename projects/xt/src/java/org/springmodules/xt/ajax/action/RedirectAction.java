@@ -30,8 +30,8 @@ import org.springmodules.xt.ajax.AjaxAction;
  */
 public class RedirectAction implements AjaxAction {
     
-    private static final String OPEN = new String("<taconite-redirect targetUrl=\"$1\" parseInBrowser=\"true\">");
-    private static final String CLOSE = new String("</taconite-redirect>");
+    private static final String OPEN = "<taconite-redirect targetUrl=\"$1\" parseInBrowser=\"true\">";
+    private static final String CLOSE = "</taconite-redirect>";
     
     private StringBuilder targetUrl;
     private Map model;

@@ -16,17 +16,17 @@
 
 package org.springmodules.xt.ajax.action;
 
-import org.springmodules.xt.ajax.AjaxAction;
+import java.util.ArrayList;
 
 /**
  * Taconite based ajax action for removing a given element, identified by its id.
  *
  * @author Sergio Bossa
  */
-public class RemoveElementAction implements AjaxAction {
+public class RemoveElementAction extends AbstractRenderingAction {
     
-    private static final String OPEN = new String("<taconite-delete contextNodeID=\"$1\" parseInBrowser=\"true\">");
-    private static final String CLOSE = new String("</taconite-delete>");
+    private static final String OPEN = "<taconite-delete contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
+    private static final String CLOSE = "</taconite-delete>";
     
     private String elementId;
     
@@ -35,12 +35,14 @@ public class RemoveElementAction implements AjaxAction {
      * @param elementId The id of the html element to remove.
      */
     public RemoveElementAction(String elementId) {
-        this.elementId = elementId;
+        super(elementId, new ArrayList(0));
     }
     
-    public String execute() {
-        StringBuilder response = new StringBuilder(OPEN.replaceFirst("\\$1", this.elementId));
-        response.append(CLOSE);
-        return response.toString();
+    protected String getOpeningTag() {
+        return OPEN;
+    }
+    
+    protected String getClosingTag() {
+        return CLOSE;
     }
 }

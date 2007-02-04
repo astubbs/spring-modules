@@ -1,49 +1,63 @@
 /**
  @fileoverview
- This JavaScript file describes actions for sending ajax requests using Taconite.
- */
-
-function doAjaxAction(eventId, sourceElement, jsonObject) {
-    var ajaxRequest = new AjaxRequest(document.URL);
-    ajaxRequest.addFormElementsByFormEl(document.forms[0]);
-    ajaxRequest.setQueryString(ajaxRequest.getQueryString() + "&ajax-request=ajax-action" + "&event-id=" + eventId + createSimpleQueryString(sourceElement) + createJSONQueryString(jsonObject));
-    ajaxRequest.sendRequest();
-}
-
-function doAjaxSubmit(eventId, sourceElement, jsonObject) {
-    var ajaxRequest = new AjaxRequest(document.URL);
-    ajaxRequest.addFormElementsByFormEl(document.forms[0]);
-    ajaxRequest.setQueryString(ajaxRequest.getQueryString() + "&ajax-request=ajax-submit" + "&event-id=" + eventId + createSimpleQueryString(sourceElement) + createJSONQueryString(jsonObject));
-    ajaxRequest.setUsePOST();
-    ajaxRequest.sendRequest();
-}
-
-function createSimpleQueryString(sourceElement) {
-    var qs = "";
-    if (sourceElement != undefined && sourceElement != null) {
-        if (sourceElement.name != null && sourceElement.name != "") {
-            qs = qs + "&source-element=" + sourceElement.name;
-        }
-        if (sourceElement.id != null && sourceElement.id != "") {
-            qs = qs + "&source-element-id=" + sourceElement.id;
-        }
-    }
-    return qs;
-}
-
-function createJSONQueryString(jsonObject) {
-    var qs = "";
-    if (jsonObject != undefined && jsonObject != null) {
-        qs = "&json-params=" + escape(jsonObject.toJSONString());
-    }
-    return qs;
-}
+ This JavaScript file describes the XT object with actions for sending ajax requests using the XT Ajax Framework and Taconite.
+ **/
 
 var XT = {
     
-    doAjaxAction : doAjaxAction,
+    ajaxParameter : "ajax-request",
     
-    doAjaxSubmit : doAjaxSubmit
+    eventParameter : "event-id",
+    
+    elementParameter : "source-element",
+    
+    elementIdParameter : "source-element-id",
+    
+    jsonParamsParameter : "json-params",
+    
+    createSimpleQueryString : function(sourceElement) {
+        var qs = "";
+        if (sourceElement != undefined && sourceElement != null) {
+            if (sourceElement.name != null) {
+                qs = "&" + this.elementParameter + "=" + sourceElement.name;
+            }
+            if (sourceElement.id != null) {
+                qs = qs + "&" + this.elementIdParameter + "=" + sourceElement.id;
+            }
+        }
+        return qs;
+    },
+    
+    createJSONQueryString : function(jsonObject) {
+        var qs = "";
+        if (jsonObject != undefined && jsonObject != null) {
+            qs = "&" + this.jsonParamsParameter + "=" + escape(jsonObject.toJSONString());
+        }
+        return qs;
+    },
+    
+    doAjaxAction : function(eventId, sourceElement, jsonObject) {
+        var ajaxRequest = new AjaxRequest(document.URL);
+        ajaxRequest.addFormElementsByFormEl(document.forms[0]);
+        ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
+        + "&" + this.ajaxParameter + "=ajax-action" 
+        + "&" + this.eventParameter + "=" + eventId 
+        + this.createSimpleQueryString(sourceElement) 
+        + this.createJSONQueryString(jsonObject));
+        ajaxRequest.sendRequest();
+    },
+    
+    doAjaxSubmit : function(eventId, sourceElement, jsonObject) {
+        var ajaxRequest = new AjaxRequest(document.URL);
+        ajaxRequest.addFormElementsByFormEl(document.forms[0]);
+        ajaxRequest.setQueryString(ajaxRequest.getQueryString() 
+        + "&" + this.ajaxParameter + "=ajax-submit" 
+        + "&" + this.eventParameter + "=" + eventId 
+        + this.createSimpleQueryString(sourceElement) 
+        + this.createJSONQueryString(jsonObject));
+        ajaxRequest.setUsePOST();
+        ajaxRequest.sendRequest();
+    }
 };
 /**
  @fileoverview
@@ -632,6 +646,7 @@ function createXMLHttpRequest() {
 // JavaScript Document
 var taconite_parser_version=1.502;
 var isIE=document.uniqueID;
+
 String.prototype.trim = function() {
     //skip leading and trailing whitespace
     //and return everything in between
@@ -641,54 +656,113 @@ String.prototype.trim = function() {
     return x;
 };
 
-function requiresContextNode(xmlTagName) {
-    return !(xmlTagName == "taconite-execute-javascript" || xmlTagName == "taconite-redirect");
-}
+Document.prototype.getElementsByMatchingId = function(matchingId) {
+    
+    function deepMatch(currentElement, matchingElements) {
+        if (currentElement.nodeType == Node.ELEMENT_NODE) {
+            var id = currentElement.getAttribute("id");
+            if (id != null) {
+                if (id.indexOf("_") == (id.length - 1)) {
+                    var pattern = "^" + id.replace(/_$/, ".*");
+                    var rexp = new RegExp(pattern);
+                    if (rexp.test(matchingId)) {
+                        matchingElements.push(currentElement);
+                    }
+                } else if (id == matchingId) {
+                    matchingElements.push(currentElement);
+                }
+            }
+            var children = currentElement.childNodes;
+            for (var i = 0; i < children.length; i++) {
+                deepMatch(children[i], matchingElements);
+            }
+        }
+    }
+    
+    var root = this.body;
+    var matchingElements = [];
+    deepMatch(root, matchingElements);
+    return matchingElements;
+};
 
 function XhtmlToDOMParser() {
     
-    this.parseXhtml = function(xml){
-        var xmlTagName=xml.tagName.toLowerCase();
-        var contextNode=document.getElementById(xml.getAttribute("contextNodeID"));
-        if(contextNode == null && requiresContextNode(xmlTagName)){
-            return false;
+    this.parseXhtml = function(xml) {
+        var xmlTagName = xml.tagName.toLowerCase();
+        if (requiresContextNode(xmlTagName)) {
+            var xmlId = xml.getAttribute("contextNodeID");
+            var multipleMatch = xml.getAttribute("multipleMatch");
+            var contextNodes = [];
+            if (xmlId != null) {
+                if (multipleMatch == "true") {
+                    contextNodes = document.getElementsByMatchingId(xmlId);
+                } else {
+                    var el = document.getElementById(xmlId);
+                    if (el != null) {
+                        contextNodes = [el];
+                    }
+                }
+            } else {
+                return false;
+            }
+            if(contextNodes.length == 0) {
+                return false;
+            }
+            // Remove no more necessary attributes:
+            xml.removeAttribute("contextNodeID");
+            xml.removeAttribute("multipleMatch");
+            xml.removeAttribute("parseInBrowser");
+            //
+            for (var i = 0; i < contextNodes.length; i++) {
+                var contextNode = contextNodes[i];
+                switch (xmlTagName) {
+                    case "taconite-append-as-children":
+                        getReplaceChildren(contextNode,xml,false);
+                        break;
+                    case "taconite-delete":
+                        getDelete(contextNode,xml);
+                        break;
+                    case "taconite-append-as-first-child":
+                        getAppendAsFirstChild(contextNode,xml);
+                        break;                         
+                    case "taconite-insert-after":
+                        getInsertAfter(contextNode,xml);
+                        break;
+                    case "taconite-insert-before":
+                        getInsertBefore(contextNode,xml);
+                        break;                         
+                    case "taconite-replace-children":
+                        getReplaceChildren(contextNode,xml,true);
+                        break;
+                    case "taconite-replace":
+                        getReplace(contextNode,xml);
+                        break;                         
+                    case "taconite-set-attributes":
+                        handleAttributes(contextNode,xml);
+                        break;
+                }  
+            }
+            return true;
+        } else {
+            switch (xmlTagName) {
+                case "taconite-redirect":
+                    handleRedirect(xml);
+                    break;
+                case "taconite-execute-javascript":
+                    executeJavascript(xml);
+                    break;
+            }  
+            return true;
         }
-        switch (xmlTagName) {
-            case "taconite-append-as-children":
-                getReplaceChildren(contextNode,xml,false);
-                break;
-            case "taconite-delete":
-                getDelete(contextNode,xml);
-                break;
-            case "taconite-append-as-first-child":
-                getAppendAsFirstChild(contextNode,xml);
-                break;                         
-            case "taconite-insert-after":
-                getInsertAfter(contextNode,xml);
-                break;
-            case "taconite-insert-before":
-                getInsertBefore(contextNode,xml);
-                break;                         
-            case "taconite-replace-children":
-                getReplaceChildren(contextNode,xml,true);
-                break;
-            case "taconite-replace":
-                getReplace(contextNode,xml);
-                break;                         
-            case "taconite-set-attributes":
-                xml.removeAttribute("contextNodeID");
-                xml.removeAttribute("parseInBrowser");
-                handleAttributes(contextNode,xml);
-                break;
-            case "taconite-redirect":
-                handleRedirect(xml);
-                break;
-            case "taconite-execute-javascript":
-                executeJavascript(xml);
-                break;
-        }  
-        return true;
     };
+    
+    this.getJavaScript= function() {
+        return "var dummy_taconite_variable=0";
+    }; 
+    
+    function requiresContextNode(xmlTagName) {
+        return !(xmlTagName == "taconite-execute-javascript" || xmlTagName == "taconite-redirect");
+    }
     
     function isInlineMode(node) {
         var attrType;
@@ -702,10 +776,6 @@ function XhtmlToDOMParser() {
         }
         return false;
     }  
-    
-    this.getJavaScript= function() {
-        return "var dummy_taconite_variable=0";
-    }; 
     
     function handleNode(xmlNode){
         var nodeType = xmlNode.nodeType;               
@@ -978,7 +1048,6 @@ function XhtmlToDOMParser() {
         }
         return cleanName;
     }
-    
 }
 /*
     json.js

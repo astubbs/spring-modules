@@ -27,8 +27,8 @@ import org.springmodules.xt.ajax.component.Component;
  */
 public class InsertContentAfterAction extends AbstractRenderingAction {
     
-    private static final String OPEN = new String("<taconite-insert-after contextNodeID=\"$1\" parseInBrowser=\"true\">");
-    private static final String CLOSE = new String("</taconite-insert-after>");
+    private static final String OPEN = "<taconite-insert-after contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
+    private static final String CLOSE = "</taconite-insert-after>";
     
     /**
      * Construct the action.

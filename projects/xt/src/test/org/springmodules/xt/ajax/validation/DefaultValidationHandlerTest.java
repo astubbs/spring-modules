@@ -48,12 +48,14 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         rendering = response.getResponse();
         System.out.println(rendering);
         
-        assertXpathEvaluatesTo("Default Message 1", "//taconite-replace-children", rendering);
+        assertXpathEvaluatesTo("Default Message 1", "//taconite-append-as-children/div", rendering);
+        assertXpathEvaluatesTo("true", "//taconite-append-as-children/@multipleMatch", rendering);
         assertXpathEvaluatesTo("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});", "//taconite-execute-javascript/script", rendering);
+        
         
         handler.setErrorRenderingCallback(new DefaultErrorRenderingCallback() {
             public Component getRenderingComponent(ObjectError error, MessageSource messageSource, Locale locale) {
-                return new TaggedText(messageSource.getMessage(error.getCode(), null, error.getDefaultMessage(), locale), TaggedText.Tag.DIV);
+                return new TaggedText(messageSource.getMessage(error.getCode(), null, error.getDefaultMessage(), locale), TaggedText.Tag.SPAN);
             }
         });
         
@@ -61,7 +63,8 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         rendering = response.getResponse();
         System.out.println(rendering);
         
-        assertXpathEvaluatesTo("Default Message 1", "//taconite-replace-children/div", rendering);
+        assertXpathEvaluatesTo("Default Message 1", "//taconite-append-as-children/span", rendering);
+                assertXpathEvaluatesTo("true", "//taconite-append-as-children/@multipleMatch", rendering);
         assertXpathEvaluatesTo("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});", "//taconite-execute-javascript/script", rendering);
     }
 }

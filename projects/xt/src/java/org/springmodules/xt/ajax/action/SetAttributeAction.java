@@ -16,19 +16,18 @@
 
 package org.springmodules.xt.ajax.action;
 
-import org.springmodules.xt.ajax.AjaxAction;
+import java.util.ArrayList;
 
 /**
  * Taconite based ajax action for setting an attribute value.
  *
  * @author Sergio Bossa
  */
-public class SetAttributeAction implements AjaxAction {
+public class SetAttributeAction extends AbstractRenderingAction {
     
-    private static final String OPEN = new String("<taconite-set-attributes contextNodeID=\"$1\" parseInBrowser=\"true\" $2=\"$3\">");
-    private static final String CLOSE = new String("</taconite-set-attributes>");
+    private static final String OPEN = "<taconite-set-attributes contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\" $3=\"$4\">";
+    private static final String CLOSE = "</taconite-set-attributes>";
     
-    private String elementId;
     private String attribute;
     private String value;
     
@@ -39,14 +38,16 @@ public class SetAttributeAction implements AjaxAction {
      * @param value The value to set. 
      */
     public SetAttributeAction(String elementId, String attribute, String value) {
-        this.elementId = elementId;
+        super(elementId, new ArrayList(0));
         this.attribute = attribute;
         this.value = value;
     }
     
-    public String execute() {
-        StringBuilder response = new StringBuilder(OPEN.replaceFirst("\\$1", this.elementId).replaceFirst("\\$2", this.attribute).replaceFirst("\\$3", this.value));
-        response.append(CLOSE);
-        return response.toString();
+    protected String getOpeningTag() {
+        return OPEN.replaceFirst("\\$3", this.attribute).replaceFirst("\\$4", this.value);
+    }
+
+    protected  String getClosingTag() {
+        return CLOSE;
     }
 }

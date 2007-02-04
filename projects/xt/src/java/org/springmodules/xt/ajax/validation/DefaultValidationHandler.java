@@ -23,9 +23,9 @@ import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxSubmitEvent;
+import org.springmodules.xt.ajax.action.AppendContentAction;
 import org.springmodules.xt.ajax.component.Component;
 import org.springmodules.xt.ajax.action.RemoveContentAction;
-import org.springmodules.xt.ajax.action.ReplaceContentAction;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
@@ -39,7 +39,12 @@ import org.springmodules.xt.ajax.validation.support.DefaultSuccessRenderingCallb
  * <p>
  * Ready-to-use Ajax handler for handling validation errors on submit.<br>
  * This handler manages {@link org.springmodules.xt.ajax.AjaxSubmitEvent}s with id equals to "validate": for each validation error, it looks for
- * an HTML element with id equals to the error code, and replace its content with the related error message.<br>
+ * an HTML element with id equals to the error code, and append error messages to it.<br>
+ * The DefaultValidationHandler has also simple <b>wildcard matching</b> capabilities: if you want to put an error message into more
+ * than one HTML element, just put the '_' wildcard at the end of the HTML element id. I.E., an error message with code <i>error.code</i>
+ * will match both <i>error.code</i> and <i>error._</i> identifiers.
+ * </p>
+ * <p>
  * The rendering of the error message can be customized through the configurable  {@link ErrorRenderingCallback}: by default it uses the
  * {@link org.springmodules.xt.ajax.validation.support.DefaultErrorRenderingCallback}.
  * </p>
@@ -104,8 +109,9 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
             // Remove old errors from HTML:
             for (Object o : errors.getAllErrors()) {
                 ObjectError error = (ObjectError) o;
-                RemoveContentAction action = new RemoveContentAction(error.getCode());
-                response.addAction(action);
+                RemoveContentAction removeAction = new RemoveContentAction(error.getCode());
+                removeAction.setMultipleMatch(true);
+                response.addAction(removeAction);
             }
         }
     }
@@ -122,11 +128,14 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
             ObjectError error = (ObjectError) o;
             // Get the component to render:
             Component renderingComponent = this.errorRenderingCallback.getRenderingComponent(error, this.messageSource, locale);
-            ReplaceContentAction replaceAction = new ReplaceContentAction(error.getCode(), renderingComponent);
-            response.addAction(replaceAction);
+            AppendContentAction appendAction = new AppendContentAction(error.getCode(), renderingComponent);
+            appendAction.setMultipleMatch(true);
+            response.addAction(appendAction);
             // Get the action to execute *after* rendering the component:
             AjaxAction renderingAction = this.errorRenderingCallback.getRenderingAction(error);
-            response.addAction(renderingAction);
+            if (renderingAction != null) {
+                response.addAction(renderingAction);
+            }
         }
     }
 }

@@ -26,8 +26,8 @@ import org.springmodules.xt.ajax.component.Component;
  */
 public class ReplaceElementAction extends AbstractRenderingAction {
     
-    private static final String OPEN = new String("<taconite-replace contextNodeID=\"$1\" parseInBrowser=\"true\">");
-    private static final String CLOSE = new String("</taconite-replace>");
+    private static final String OPEN = "<taconite-replace contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
+    private static final String CLOSE = "</taconite-replace>";
     
     /**
      * Construct the action.

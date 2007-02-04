@@ -22,12 +22,12 @@ import org.springmodules.xt.ajax.action.prototype.scriptaculous.Effect;
 import org.springmodules.xt.ajax.component.Component;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.ObjectError;
-import org.springmodules.xt.ajax.component.SimpleText;
+import org.springmodules.xt.ajax.component.TaggedText;
 import org.springmodules.xt.ajax.validation.ErrorRenderingCallback;
 
 /**
- * {@link org.springmodules.xt.ajax.validation.ErrorRenderingCallback} default implementation which renders the error as simple
- * text and highlights it.
+ * {@link org.springmodules.xt.ajax.validation.ErrorRenderingCallback} default implementation which renders the error as a
+ * text surrounded by a DIV tag, and highlights it.
  *
  * @author Sergio Bossa
  */
@@ -38,7 +38,8 @@ public class DefaultErrorRenderingCallback implements  ErrorRenderingCallback {
      * This renders the error as plain text.
      */
     public Component getRenderingComponent(ObjectError error, MessageSource messageSource, Locale locale) {
-        return new SimpleText(messageSource.getMessage(error.getCode(), error.getArguments(), error.getDefaultMessage(), locale));
+        return new TaggedText(messageSource.getMessage(error.getCode(), error.getArguments(), error.getDefaultMessage(), locale),
+                TaggedText.Tag.DIV);
     }
     
     /**

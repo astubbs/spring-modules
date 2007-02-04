@@ -26,6 +26,9 @@ import org.springmodules.xt.ajax.component.Component;
  */
 public class ReplaceContentAction extends AbstractRenderingAction {
     
+    private static final String OPEN = "<taconite-replace-children contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
+    private static final String CLOSE = "</taconite-replace-children>";
+    
     /**
      * Construct the action.
      * @param elementId The id of the html element whose content must be replaced.
@@ -45,10 +48,10 @@ public class ReplaceContentAction extends AbstractRenderingAction {
     }
     
     protected String getOpeningTag() {
-        return "<taconite-replace-children contextNodeID=\"$1\" parseInBrowser=\"true\">";
+        return OPEN;
     }
 
     protected  String getClosingTag() {
-        return "</taconite-replace-children>";
+        return CLOSE;
     }
 }

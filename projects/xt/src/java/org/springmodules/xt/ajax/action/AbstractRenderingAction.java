@@ -1,12 +1,12 @@
 /*
  * Copyright 2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,13 +24,14 @@ import org.springmodules.xt.ajax.component.Component;
 /**
  * Taconite based action which refers a particular html element (identified by its id) and renders components acting on the referred element.<br>
  * The concrete rendering type (element replacing, content replacing etc.) is defined by subclasses via template methods.
- * 
+ *
  * @author Sergio Bossa
  */
 public abstract class AbstractRenderingAction implements AjaxAction {
     
     private String elementId;
     private List<Component> components = new LinkedList();
+    private boolean multipleMatch;
     
     /**
      * Construct the action.
@@ -51,16 +52,34 @@ public abstract class AbstractRenderingAction implements AjaxAction {
         this.elementId = elementId;
         this.components.add(component);
     }
+     /**
+      * If true, this action will match multiple elements with id matching the id 
+      * passed to this action.<br>
+      * An HTML element id matches if it is equals to this id, or if it contains
+      * the '*' wildcard.
+      */
+    public void setMultipleMatch(boolean multipleMatch) {
+        this.multipleMatch = multipleMatch;
+    }
     
+    public boolean isMultipleMatch() {
+        return this.multipleMatch;
+    }
+    
+    /**
+     * Execute the action, directly rendering into the web page.
+     */
     public String execute() {
-        StringBuilder response = new StringBuilder(this.getOpeningTag().replaceFirst("\\$1", elementId));
+        StringBuilder response = new StringBuilder(this.getOpeningTag()
+        .replaceFirst("\\$1", this.elementId)
+        .replaceFirst("\\$2", Boolean.toString(this.multipleMatch)));
         for (Component c : this.components) {
             response.append(c.render());
         }
         response.append(this.getClosingTag());
         return response.toString();
     }
-
+    
     protected abstract String getOpeningTag();
     
     protected abstract String getClosingTag();

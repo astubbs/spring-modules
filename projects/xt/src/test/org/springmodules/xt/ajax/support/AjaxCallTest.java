@@ -15,7 +15,7 @@ public class AjaxCallTest extends TestCase {
     }
 
     public void testAjaxActionGetCall() {
-        assertEquals("doAjaxAction(\"test\",this);", AjaxCall.AJAX_ACTION.getCall("test"));
+        assertEquals("XT.doAjaxAction(\"test\",this);", AjaxCall.AJAX_ACTION.getCall("test"));
         
         Map<String, String> params = new HashMap();
         params.put("param1", "value1");
@@ -26,7 +26,7 @@ public class AjaxCallTest extends TestCase {
     }
     
     public void testAjaxSubmitGetCall() {
-        assertEquals("doAjaxSubmit(\"test\",this);", AjaxCall.AJAX_SUBMIT.getCall("test"));
+        assertEquals("XT.doAjaxSubmit(\"test\",this);", AjaxCall.AJAX_SUBMIT.getCall("test"));
         
         Map<String, String> params = new HashMap();
         params.put("param1", "value1");
