@@ -17,10 +17,8 @@
 package org.springmodules.lucene.index.core;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,25 +28,23 @@ import java.util.Map;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
+import org.easymock.MockControl;
+import org.easymock.classextension.MockClassControl;
 import org.springmodules.lucene.AbstractLuceneTestCase;
-import org.springmodules.lucene.index.DocumentHandlerException;
-import org.springmodules.lucene.index.LuceneIndexAccessException;
-import org.springmodules.lucene.index.factory.SimpleIndexFactory;
+import org.springmodules.lucene.index.LuceneIndexingException;
+import org.springmodules.lucene.index.factory.IndexFactory;
+import org.springmodules.lucene.index.factory.LuceneIndexReader;
+import org.springmodules.lucene.index.factory.LuceneIndexWriter;
 import org.springmodules.lucene.index.support.handler.AbstractDocumentHandler;
 import org.springmodules.lucene.index.support.handler.DefaultDocumentHandlerManager;
+import org.springmodules.lucene.index.support.handler.DocumentHandler;
+import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
 import org.springmodules.lucene.index.support.handler.IdentityDocumentMatching;
 import org.springmodules.lucene.index.support.handler.file.AbstractInputStreamDocumentHandler;
-import org.springmodules.lucene.index.support.handler.file.MimeTypeDocumentHandlerManager;
-import org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate;
-import org.springmodules.lucene.search.core.HitExtractor;
-import org.springmodules.lucene.search.core.LuceneSearchTemplate;
-import org.springmodules.lucene.search.factory.SearcherFactory;
-import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
+import org.springmodules.lucene.search.factory.LuceneHits;
+import org.springmodules.lucene.search.factory.LuceneSearcher;
 
 /**
  * @author Brian McCallister
@@ -60,319 +56,495 @@ public class DefaultLuceneIndexTemplateTests extends AbstractLuceneTestCase {
 	 * Test for void deleteDocument(int)
 	 */
 	final public void testDeleteDocumentint() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
 
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.deleteDocument(0);
+		indexReaderControl.setVoidCallable(1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
 		template.deleteDocument(0);
 
-		//Check if a reader has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),1);
-		//Check if the document is marked for deletion
-		assertEquals(indexFactory.getReaderListener().getIndexReaderDeletedId(),0);
-		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
+		indexFactoryControl.verify();
+		indexReaderControl.verify();
 	}
 
 	/*
 	 * Test for void deleteDocument(Term)
 	 */
 	final public void testDeleteDocumentTerm() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
 
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.deleteDocuments(new Term("field","lucene"));
+		indexReaderControl.setReturnValue(1, 1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
 		template.deleteDocuments(new Term("field","lucene"));
 
-		//Check if a reader has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),1);
-		//Check if the document is marked for deletion
-		assertEquals(indexFactory.getReaderListener().getIndexReaderDeletedId(),1);
-		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
+		indexFactoryControl.verify();
+		indexReaderControl.verify();
 	}
 
 	final public void testUndeleteDocuments() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
 
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.undeleteAll();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
 		template.undeleteDocuments();
 
-		//Check if a reader has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),1);
-		//Check if the document is marked for deletion
-		assertTrue(indexFactory.getReaderListener().isIndexReaderUndeletedAll());
-		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
+		indexFactoryControl.verify();
+		indexReaderControl.verify();
 	}
 
 	final public void testIsDeleted() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
 
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.isDeleted(0);
+		indexReaderControl.setReturnValue(true, 1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		template.isDeleted(0);
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		boolean deleted = template.isDeleted(0);
 
-		//Check if a reader has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),1);
-		//Check if the document is marked for deletion
-		assertEquals(indexFactory.getReaderListener().getIndexReaderIsDeleted(),0);
-		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
+		indexFactoryControl.verify();
+		indexReaderControl.verify();
+		
+		assertTrue(deleted);
 	}
 
 	final public void testHasDeletions() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
 
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.hasDeletions();
+		indexReaderControl.setReturnValue(true, 1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		template.hasDeletions();
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		boolean deletions = template.hasDeletions();
 
-		//Check if a reader has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),1);
-		//Check if the document is marked for deletion
-		assertTrue(indexFactory.getReaderListener().isIndexReaderHasDeletions());
-		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
+		indexFactoryControl.verify();
+		indexReaderControl.verify();
+		
+		assertTrue(deletions);
 	}
 
 	final public void testGetMaxDoc() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
 
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.maxDoc();
+		indexReaderControl.setReturnValue(3, 1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		assertEquals(template.getMaxDoc(),3);
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		int maxDoc = template.getMaxDoc();
 
-		//Check if a reader has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),1);
-		//Check if the reader calls the maxDoc method
-		assertTrue(indexFactory.getReaderListener().isIndexReaderMaxDoc());
-		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
+		indexFactoryControl.verify();
+		indexReaderControl.verify();
+		
+		assertEquals(maxDoc, 3);
 	}
 
 	final public void testGetNumDocs() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
 
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.numDocs();
+		indexReaderControl.setReturnValue(3, 1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		assertEquals(template.getNumDocs(),3);
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		int numDoc = template.getNumDocs();
 
-		//Check if a reader has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),1);
-		//Check if the reader calls the maxDoc method
-		assertTrue(indexFactory.getReaderListener().isIndexReaderNumDocs());
-		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
+		indexFactoryControl.verify();
+		indexReaderControl.verify();
+		
+		assertEquals(numDoc, 3);
 	}
 
 	final public void testAddDocument() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl documentCreatorControl = MockControl.createStrictControl(DocumentCreator.class);
+		DocumentCreator documentCreator = (DocumentCreator)documentCreatorControl.getMock();
 
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
+		
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
+		documentCreator.createDocument();
+		documentCreatorControl.setReturnValue(document);
+		
+		indexWriter.addDocument(document);
+		indexWriterControl.setVoidCallable(1);
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		documentCreatorControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		final boolean[] called = {false};
-		template.addDocument(new DocumentCreator() {
-			public Document createDocument() throws IOException {
-				called[0] = true;
-				Document document=new Document();
-				document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
-				document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
-				document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
-				return document;
-			}
-		});
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		template.addDocument(documentCreator);
 
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
-		//Check if the writer calls the addDocument method
-		assertTrue(called[0]);
-		//Check if the writer calls the addDocument method
-		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
-	}
-
-	private File getFileFromClasspath(String filename) {
-		URL url=getClass().getClassLoader().getResource(
-					"org/springmodules/lucene/index/object/files/"+filename);
-		if( url==null ) {
-			return null;
-		}
-
-		return new File(url.getFile());
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		documentCreatorControl.verify();
 	}
 
 	final public void testAddDocumentWithInputStream() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl documentCreatorControl = MockControl.createStrictControl(InputStreamDocumentCreator.class);
+		InputStreamDocumentCreator documentCreator = (InputStreamDocumentCreator)documentCreatorControl.getMock();
+		MockControl inputStreamControl = MockClassControl.createStrictControl(InputStream.class);
+		InputStream inputStream = (InputStream)inputStreamControl.getMock();
 
-		//File to index
-		final File file=getFileFromClasspath("test.txt");
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
+		documentCreator.createInputStream();
+		documentCreatorControl.setReturnValue(inputStream, 1);
+		
+		documentCreator.createDocumentFromInputStream(inputStream);
+		documentCreatorControl.setReturnValue(document, 1);
+		
+		indexWriter.addDocument(document);
+		indexWriterControl.setVoidCallable(1);
+		
+		inputStream.close();
+		inputStreamControl.setVoidCallable(1);
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		documentCreatorControl.replay();
+		inputStreamControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		final boolean[] called = {false,false};
-		template.addDocument(new InputStreamDocumentCreator() {
-			public InputStream createInputStream() throws IOException {
-				called[0]=true;
-				return new FileInputStream(file);
-			}
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		template.addDocument(documentCreator);
 
-			public Document createDocumentFromInputStream(InputStream inputStream) throws IOException {
-				called[1]=true;
-				Document document=new Document();
-				document.add(new Field("field", new InputStreamReader(inputStream)));
-				return document;
-			}
-		});
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		documentCreatorControl.verify();
+		inputStreamControl.verify();
+	}
 
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
-		//Check if the writer calls the createInputStream and createDocumentFromInputStream methods
-		assertTrue(called[0]);
-		assertTrue(called[1]);
-		//Check if the writer calls the addDocument method
-		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+	private File getFileFromClasspath(String filename) {
+		URL url = getClass().getClassLoader().getResource(
+				"org/springmodules/lucene/index/object/files/"+filename);
+		if( url==null ) {
+			return null;
+		}
+		return new File(url.getFile());
 	}
 
 	final public void testAddDocumentWithInputStreamAndManager() throws Exception {
 		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-		MimeTypeDocumentHandlerManager manager=new MimeTypeDocumentHandlerManager();
-		manager.registerDefaultHandlers();
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl documentHandlerManagerControl = MockControl.createStrictControl(DocumentHandlerManager.class);
+		DocumentHandlerManager documentHandlerManager = (DocumentHandlerManager)documentHandlerManagerControl.getMock();
+		MockControl documentHandlerControl = MockControl.createStrictControl(DocumentHandler.class);
+		DocumentHandler documentHandler = (DocumentHandler)documentHandlerControl.getMock();
+		MockControl inputStreamControl = MockClassControl.createStrictControl(InputStream.class);
+		final InputStream inputStream = (InputStream)inputStreamControl.getMock();
 
-		//File to index
-		final File file=getFileFromClasspath("test.txt");
+		//file
+		final File file = getFileFromClasspath("test.txt");
+		final Map description = new HashMap();
+		description.put(AbstractInputStreamDocumentHandler.FILENAME, file.getPath());
+		//final FileInputStream inputStream = new FileInputStream(file);
 
+		//document
+		Document document=new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
+
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+
+		//DocumentHandler documentHandler = documentHandlerManager.getDocumentHandler(getResourceName());
+		documentHandlerManager.getDocumentHandler(file.getPath());
+		documentHandlerManagerControl.setReturnValue(documentHandler, 1);
+		//Document document = documentHandler.getDocument(getResourceDescription(),inputStream);
+		documentHandler.getDocument(description, inputStream);
+		documentHandlerControl.setReturnValue(document, 1);
+		
+		inputStream.close();
+		inputStreamControl.setVoidCallable(1);
+		
+		indexWriter.addDocument(document);
+		indexWriterControl.setVoidCallable(1);
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		documentHandlerManagerControl.replay();
+		documentHandlerControl.replay();
+		inputStreamControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		final boolean[] called = {false,false,false};
-		template.addDocument(new InputStreamDocumentCreatorWithManager(manager) {
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+		final boolean[] called = {false, false, false};
+		template.addDocument(new InputStreamDocumentCreatorWithManager(documentHandlerManager) {
 			protected String getResourceName() {
-				called[0]=true;
+				called[0] = true;
 				return file.getPath();
 			}
 
 			protected Map getResourceDescription() {
-				called[1]=true;
-				Map description=new HashMap();
-				description.put(AbstractInputStreamDocumentHandler.FILENAME,file.getPath());
+				called[1] = true;
 				return description;
 			}
 
 			public InputStream createInputStream() throws IOException {
-				called[2]=true;
-				return new FileInputStream(file);
+				called[2] = true;
+				return inputStream;
 			}
 		});
 
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
-		//Check if the writer calls the getResourceName, getResourceDescription and
-		//createInputStream methods
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		inputStreamControl.verify();
+		documentHandlerManagerControl.verify();
+		documentHandlerControl.verify();
+		inputStreamControl.verify();
+		
 		assertTrue(called[0]);
 		assertTrue(called[1]);
 		assertTrue(called[2]);
-		//Check if the writer calls the addDocument method
-		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
 	}
 
 	final public void testAddDocumentWithInputStreamAndManagerError() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
-		manager.registerDefaultHandlers();
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl documentHandlerManagerControl = MockControl.createStrictControl(DocumentHandlerManager.class);
+		DocumentHandlerManager documentHandlerManager = (DocumentHandlerManager)documentHandlerManagerControl.getMock();
+		MockControl documentHandlerControl = MockControl.createStrictControl(DocumentHandler.class);
+		DocumentHandler documentHandler = (DocumentHandler)documentHandlerControl.getMock();
+		MockControl inputStreamControl = MockClassControl.createStrictControl(InputStream.class);
+		final InputStream inputStream = (InputStream)inputStreamControl.getMock();
 
-		//File to index
-		final File file=getFileFromClasspath("test.foo");
+		//file
+		final File file = getFileFromClasspath("test.foo");
+		final Map description = new HashMap();
+		description.put(AbstractInputStreamDocumentHandler.FILENAME, file.getPath());
+		//final FileInputStream inputStream = new FileInputStream(file);
 
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
+
+		//indexFactory.getIndexWriter();
+		//indexFactoryControl.setReturnValue(indexWriter, 1);
+
+		//DocumentHandler documentHandler = documentHandlerManager.getDocumentHandler(getResourceName());
+		documentHandlerManager.getDocumentHandler(file.getPath());
+		documentHandlerManagerControl.setReturnValue(null, 1);
+		//Document document = documentHandler.getDocument(getResourceDescription(),inputStream);
+		/*documentHandler.getDocument(description, inputStream);
+		documentHandlerControl.setReturnValue(document, 1);*/
+		
+		/*inputStream.close();
+		inputStreamControl.setVoidCallable(1);
+		
+		indexWriter.addDocument(document);
+		indexWriterControl.setVoidCallable(1);
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);*/
+		
+		inputStream.close();
+		inputStreamControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		documentHandlerManagerControl.replay();
+		documentHandlerControl.replay();
+		inputStreamControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		final boolean[] called = {false,false,false};
+		final boolean[] called = {false, false, false};
 		try {
-			template.addDocument(new InputStreamDocumentCreatorWithManager(manager) {
+			LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+			template.addDocument(new InputStreamDocumentCreatorWithManager(documentHandlerManager) {
 				protected String getResourceName() {
-					called[0]=true;
+					called[0] = true;
 					return file.getPath();
 				}
-
+	
 				protected Map getResourceDescription() {
-					called[1]=true;
-					Map description=new HashMap();
-					description.put(AbstractInputStreamDocumentHandler.FILENAME,file.getPath());
+					called[1] = true;
 					return description;
 				}
-
+	
 				public InputStream createInputStream() throws IOException {
-					called[2]=true;
-					return new FileInputStream(file);
+					called[2] = true;
+					return inputStream;
 				}
 			});
 			fail();
-		} catch(DocumentHandlerException ex) {
-			//Check if a writer has been opened
-			assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),0);
-			//Check if the writer calls the getResourceName, getResourceDescription and
-			//createInputStream methods
-			assertTrue(called[0]);
-			assertFalse(called[1]);
-			assertTrue(called[2]);
-			//Check if the writer calls the addDocument method
-			assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),0);
-			//Check if the writer of the template is closed
-			assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),0);
+		} catch(LuceneIndexingException ex) {
 		}
 
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		inputStreamControl.verify();
+		documentHandlerManagerControl.verify();
+		documentHandlerControl.verify();
+		inputStreamControl.verify();
+		
+		assertTrue(called[0]);
+		assertFalse(called[1]);
+		assertTrue(called[2]);
 	}
 
 	final public void testAddDocumentWithManager() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+
+		DefaultDocumentHandlerManager manager = new DefaultDocumentHandlerManager();
 
 		//Object to index
-		final String text="a text";
+		final String text = "a text";
 
-		final boolean[] called = {false,false};
-		manager.registerDocumentHandler(new IdentityDocumentMatching("java.lang.String"),new AbstractDocumentHandler() {
+		//document
+		final Document document = new Document();
+		document.add(new Field("text", text, Field.Store.YES, Field.Index.TOKENIZED));
+
+
+		final boolean[] called = {false, false};
+		manager.registerDocumentHandler(new IdentityDocumentMatching("java.lang.String"), new AbstractDocumentHandler() {
 			public boolean supports(Class clazz) {
 				called[0]=true;
 				return true;
@@ -380,392 +552,488 @@ public class DefaultLuceneIndexTemplateTests extends AbstractLuceneTestCase {
 
 			protected Document doGetDocument(Map description, Object object) throws Exception {
 				called[1]=true;
-				Document document=new Document();
-				document.add(new Field("text", (String)object, Field.Store.YES, Field.Index.TOKENIZED));
 				return document;
 			}
 		});
 		
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+
+		indexWriter.addDocument(document);
+		indexWriterControl.setVoidCallable(1);
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		
 		//Lucene template
 		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		template.addDocument(new DocumentCreatorWithManager(manager,text));
+		template.addDocument(new DocumentCreatorWithManager(manager, text));
 
 		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
+		//Check if the writer calls the addDocument method
+		//Check if the writer of the template is closed
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		
 		//Check if the writer calls the getResourceName, getResourceDescription and
 		//createInputStream methods
 		assertTrue(called[0]);
 		assertTrue(called[1]);
-		//Check if the writer calls the addDocument method
-		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
 	}
 
 	final public void testAddDocumentWithManagerError() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+
 		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
 
 		//Object to index
 		final String text="a text";
 
-		final boolean[] called = {false,false};
-		manager.registerDocumentHandler(new IdentityDocumentMatching("text"),new AbstractDocumentHandler() {
+		//document
+		final Document document = new Document();
+		document.add(new Field("text", text, Field.Store.YES, Field.Index.TOKENIZED));
+
+		final boolean[] called = {false, false};
+		manager.registerDocumentHandler(new IdentityDocumentMatching("text"), new AbstractDocumentHandler() {
 			public boolean supports(Class clazz) {
-				called[0]=true;
+				called[0] = true;
 				return true;
 			}
 
 			protected Document doGetDocument(Map description, Object object) throws Exception {
-				called[1]=true;
-				Document document=new Document();
-				document.add(new Field("text", (String)object, Field.Store.YES, Field.Index.TOKENIZED));
+				called[1] = true;
 				return document;
 			}
 		});
 		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+
 		try {
 			//Lucene template
 			LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-			template.addDocument(new DocumentCreatorWithManager(manager,text));
+			template.addDocument(new DocumentCreatorWithManager(manager, text));
 			fail();
-		} catch(LuceneIndexAccessException ex) {
+		} catch(Exception ex) {
 			//Check if a writer has been opened
-			assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),0);
+			//Check if the writer calls the addDocument method
+			//Check if the writer of the template is closed
+			indexFactoryControl.verify();
+			indexWriterControl.verify();
+			
 			//Check if the writer calls the getResourceName, getResourceDescription and
 			//createInputStream methods
 			assertFalse(called[0]);
 			assertFalse(called[1]);
-			//Check if the writer calls the addDocument method
-			assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),0);
-			//Check if the writer of the template is closed
-			assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),0);
 		}
 	}
 
 	final public void testAddDocumentWithManagerAndName() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+
 		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
 
 		//Object to index
 		final String text="a text";
 
-		final boolean[] called = {false,false};
-		manager.registerDocumentHandler(new IdentityDocumentMatching("text"),new AbstractDocumentHandler() {
+		//document
+		final Document document = new Document();
+		document.add(new Field("text", text, Field.Store.YES, Field.Index.TOKENIZED));
+
+		final boolean[] called = {false, false};
+		manager.registerDocumentHandler(new IdentityDocumentMatching("text"), new AbstractDocumentHandler() {
 			public boolean supports(Class clazz) {
-				called[0]=true;
+				called[0] = true;
 				return true;
 			}
 
 			protected Document doGetDocument(Map description, Object object) throws Exception {
-				called[1]=true;
-				Document document=new Document();
-				document.add(new Field("text", (String)object, Field.Store.YES, Field.Index.TOKENIZED));
+				called[1] = true;
 				return document;
 			}
 		});
 		
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+
+		indexWriter.addDocument(document);
+		indexWriterControl.setVoidCallable(1);
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		template.addDocument(new DocumentCreatorWithManager(manager,"text",text));
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		template.addDocument(new DocumentCreatorWithManager(manager, "text", text));
 
 		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
+		//Check if the writer calls the addDocument method
+		//Check if the writer of the template is closed
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		
 		//Check if the writer calls the getResourceName, getResourceDescription and
 		//createInputStream methods
 		assertTrue(called[0]);
 		assertTrue(called[1]);
-		//Check if the writer calls the addDocument method
-		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
-
-		//fail();
 	}
 
 	final public void testAddDocumentWithManagerAndNameError() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+
 		DefaultDocumentHandlerManager manager=new DefaultDocumentHandlerManager();
 
 		//Object to index
 		final String text="a text";
 
-		final boolean[] called = {false,false};
-		manager.registerDocumentHandler(new IdentityDocumentMatching("text1"),new AbstractDocumentHandler() {
+		//document
+		final Document document = new Document();
+		document.add(new Field("text", text, Field.Store.YES, Field.Index.TOKENIZED));
+
+		final boolean[] called = {false, false};
+		manager.registerDocumentHandler(new IdentityDocumentMatching("text1"), new AbstractDocumentHandler() {
 			public boolean supports(Class clazz) {
-				called[0]=true;
+				called[0] = true;
 				return true;
 			}
 
 			protected Document doGetDocument(Map description, Object object) throws Exception {
-				called[1]=true;
-				Document document=new Document();
-				document.add(new Field("text", (String)object, Field.Store.YES, Field.Index.TOKENIZED));
+				called[1] = true;
 				return document;
 			}
 		});
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
 
 		try {
 			//Lucene template
-			LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-			template.addDocument(new DocumentCreatorWithManager(manager,"text",text));
+			LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+			template.addDocument(new DocumentCreatorWithManager(manager, "text", text));
 			fail();
-		} catch(LuceneIndexAccessException ex) {
+		} catch(Exception ex) {
 			//Check if a writer has been opened
-			assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),0);
+			//Check if the writer calls the addDocument method
+			//Check if the writer of the template is closed
+			indexFactoryControl.verify();
+			indexWriterControl.verify();
+			
 			//Check if the writer calls the getResourceName, getResourceDescription and
 			//createInputStream methods
 			assertFalse(called[0]);
 			assertFalse(called[1]);
-			//Check if the writer calls the addDocument method
-			assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),0);
-			//Check if the writer of the template is closed
-			assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),0);
 		}
 	}
 
 	final public void testAddDocuments() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl documentsCreatorControl = MockControl.createStrictControl(DocumentsCreator.class);
+		DocumentsCreator documentsCreator = (DocumentsCreator)documentsCreatorControl.getMock();
+		
+		//documents
+		List documents = new ArrayList();
+		Document document1 = new Document();
+		document1.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document1.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document1.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
+		documents.add(document1);
 
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
+		documentsCreator.createDocuments();
+		documentsCreatorControl.setReturnValue(documents, 1);
+		
+		indexWriter.addDocument(document1);
+		indexWriterControl.setVoidCallable();
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		documentsCreatorControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		final boolean[] called = {false};
-		template.addDocuments(new DocumentsCreator() {
-			public List createDocuments() throws IOException {
-				called[0] = true;
-				List documents=new ArrayList();
-				Document document1=new Document();
-				document1.add(new Field("field", "a sample 1", Field.Store.YES, Field.Index.TOKENIZED));
-				document1.add(new Field("filter", "a sample filter 1", Field.Store.YES, Field.Index.TOKENIZED));
-				document1.add(new Field("sort", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
-				documents.add(document1);
-				Document document2=new Document();
-				document2.add(new Field("field", "a sample 2", Field.Store.YES, Field.Index.TOKENIZED));
-				document2.add(new Field("filter", "a sample filter 2", Field.Store.YES, Field.Index.TOKENIZED));
-				document2.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
-				documents.add(document2);
-				return documents;
-			}
-		});
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+		template.addDocuments(documentsCreator);
 
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
-		//Check if the writer calls the addDocument method
-		assertTrue(called[0]);
-		//Check if the writer calls the addDocument method
-		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),2);
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		documentsCreatorControl.verify();
 	}
 
 	final public void testUpdateDocument() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
+		MockControl searcherControl = MockControl.createStrictControl(LuceneSearcher.class);
+		LuceneSearcher searcher = (LuceneSearcher)searcherControl.getMock();
+		MockControl documentModifierControl = MockControl.createStrictControl(DocumentModifier.class);
+		DocumentModifier documentModifier = (DocumentModifier)documentModifierControl.getMock();
+		MockControl hitsControl = MockControl.createStrictControl(LuceneHits.class);
+		LuceneHits hits = (LuceneHits)hitsControl.getMock();
+		
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 
+		Term term = new Term("id","2"); 
+		
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.createSearcher();
+		indexReaderControl.setReturnValue(searcher);
+		
+		searcher.search(new TermQuery(term));
+		searcherControl.setReturnValue(hits);
+		
+		hits.length();
+		hitsControl.setReturnValue(1, 2);
+		
+		hits.doc(0);
+		hitsControl.setReturnValue(document);
+		
+		documentModifier.updateDocument(document);
+		documentModifierControl.setReturnValue(document, 1);
+		
+		searcher.close();
+		searcherControl.setVoidCallable(1);
+
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.deleteDocuments(term);
+		indexReaderControl.setReturnValue(1, 1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
+		indexWriter.addDocument(document);
+		indexWriterControl.setVoidCallable();
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		indexWriterControl.replay();
+		searcherControl.replay();
+		documentModifierControl.replay();
+		hitsControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		final boolean[] called = {false,false};
-		template.updateDocument(new DocumentModifier() {
-			public Document updateDocument(Document document) throws IOException {
-				called[0]=true;
-				String id=document.get("id");
-				String field=document.get("field");
-				String filter=document.get("filter");
-				String sort=document.get("sort");
-				
-				Document updatedDocument=new Document();
-				updatedDocument.add(new Field("id", id, Field.Store.YES, Field.Index.UN_TOKENIZED));
-				updatedDocument.add(new Field("field", "test", Field.Store.YES, Field.Index.TOKENIZED));
-				updatedDocument.add(new Field("filter", filter, Field.Store.YES, Field.Index.TOKENIZED));
-				updatedDocument.add(new Field("sort", sort, Field.Store.YES, Field.Index.UN_TOKENIZED));
-				return updatedDocument;
-			}
-		},new DocumentIdentifier() {
-			public Term getIdentifier() {
-				called[1]=true;
-				return new Term("id","2");
-			}
-		});
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		template.updateDocument(term, documentModifier);
 
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),2);
-
-		//Check if the writer calls the updateDocument method
-		assertTrue(called[0]);
-		//Check if the writer calls the getIdentifier method
-		assertTrue(called[1]);
-
-		//Check if the writer calls the addDocument method
-		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
-		//Check if the reader calls the delete method
-		assertEquals(indexFactory.getReaderListener().getIndexReaderDeletedId(),1);
-
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),2);
-
-		SearcherFactory searcherFactory=new SimpleSearcherFactory(indexFactory);
-		LuceneSearchTemplate searchTemplate=new DefaultLuceneSearchTemplate(searcherFactory,analyzer);
-		List fields=searchTemplate.search(new TermQuery(new Term("id","2")),new HitExtractor() {
-			public Object mapHit(int id, Document document, float score) {
-				return document.get("field");
-			}
-		});
-		assertEquals(fields.size(),1);
-		assertEquals((String)fields.get(0),"test");
+		indexFactoryControl.verify();
+		indexReaderControl.verify();
+		indexWriterControl.verify();
+		searcherControl.verify();
+		documentModifierControl.verify();
+		hitsControl.verify();
 	}
 
 	final public void testUpdateDocuments() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
+		MockControl searcherControl = MockControl.createStrictControl(LuceneSearcher.class);
+		LuceneSearcher searcher = (LuceneSearcher)searcherControl.getMock();
+		MockControl documentsModifierControl = MockControl.createStrictControl(DocumentsModifier.class);
+		DocumentsModifier documentsModifier = (DocumentsModifier)documentsModifierControl.getMock();
+		MockControl hitsControl = MockControl.createStrictControl(LuceneHits.class);
+		LuceneHits hits = (LuceneHits)hitsControl.getMock();
+		
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 
-		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		final boolean[] called = {false,false};
-		template.updateDocuments(new DocumentsModifier() {
-			public List updateDocuments(Hits hits) throws IOException {
-				called[0]=true;
+		Term term = new Term("id","2");
+		List documents = new ArrayList();
+		
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.createSearcher();
+		indexReaderControl.setReturnValue(searcher);
+		
+		searcher.search(new TermQuery(term));
+		searcherControl.setReturnValue(hits);
+		
+		documentsModifier.updateDocuments(hits);
+		documentsModifierControl.setReturnValue(documents, 1);
+		
+		searcher.close();
+		searcherControl.setVoidCallable(1);
 
-				List updatedDocuments=new ArrayList();
-				for(int cpt=0;cpt<hits.length();cpt++) {
-					Document document=hits.doc(cpt);
-					String id=document.get("id");
-					String field=document.get("field");
-					String filter=document.get("filter");
-					String sort=document.get("sort");
-				
-					Document updatedDocument=new Document();
-					updatedDocument.add(new Field("id", id, Field.Store.YES, Field.Index.UN_TOKENIZED));
-					updatedDocument.add(new Field("field", "test", Field.Store.YES, Field.Index.TOKENIZED));
-					updatedDocument.add(new Field("filter", filter, Field.Store.YES, Field.Index.TOKENIZED));
-					updatedDocument.add(new Field("sort", sort, Field.Store.YES, Field.Index.UN_TOKENIZED));
-					updatedDocuments.add(updatedDocument);
-				}
-				return updatedDocuments;
-			}
-		},new DocumentsIdentifier() {
-			public Term getIdentifier() {
-				called[1]=true;
-				return new Term("id","2");
-			}
-		});
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
 
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),2);
-
-		//Check if the writer calls the updateDocument method
-		assertTrue(called[0]);
-		//Check if the writer calls the getIdentifier method
-		assertTrue(called[1]);
-
-		//Check if the writer calls the addDocument method
-		assertEquals(indexFactory.getWriterListener().getIndexWriterAddDocuments(),1);
-		//Check if the reader calls the delete method
-		assertEquals(indexFactory.getReaderListener().getIndexReaderDeletedId(),1);
-
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),2);
-
-		SearcherFactory searcherFactory=new SimpleSearcherFactory(indexFactory);
-		LuceneSearchTemplate searchTemplate=new DefaultLuceneSearchTemplate(searcherFactory,analyzer);
-		List fields=searchTemplate.search(new TermQuery(new Term("id","2")),new HitExtractor() {
-			public Object mapHit(int id, Document document, float score) {
-				return document.get("field");
-			}
-		});
-		assertEquals(fields.size(),1);
-		assertEquals((String)fields.get(0),"test");
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		indexReader.deleteDocuments(term);
+		indexReaderControl.setReturnValue(1, 1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
+		indexWriter.addDocument(document);
+		indexWriterControl.setVoidCallable();
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		indexWriterControl.replay();
+		searcherControl.replay();
+		documentsModifierControl.replay();
+		hitsControl.replay();
 	}
 
 	final public void testOptimize() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
+		indexWriter.optimize();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
 		template.optimize();
 
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
-		//Check if the writer calls the optimize method
-		assertTrue(indexFactory.getWriterListener().isIndexWriterOptimize());
-		//Check if the writer of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
 	}
 
+	/*
+	 * Test for Object read(ReaderCallback)
+	 */
 	final public void testRead() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexReaderControl = MockControl.createStrictControl(LuceneIndexReader.class);
+		LuceneIndexReader indexReader = (LuceneIndexReader)indexReaderControl.getMock();
+		MockControl readerCallbackControl = MockControl.createStrictControl(ReaderCallback.class);
+		ReaderCallback readerCallback = (ReaderCallback)readerCallbackControl.getMock();
+		
+		indexFactory.getIndexReader();
+		indexFactoryControl.setReturnValue(indexReader, 1);
+		
+		readerCallback.doWithReader(indexReader);
+		readerCallbackControl.setReturnValue("return", 1);
+		
+		indexReader.close();
+		indexReaderControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexReaderControl.replay();
+		readerCallbackControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		final boolean[] called = {false};
-		template.read(new ReaderCallback() {
-			public Object doWithReader(IndexReader reader) throws IOException {
-				called[0] = true;
-				assertNotNull(reader);
-				return null;
-			}
-		});
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		Object ret = template.read(readerCallback);
 
-		//Check if a reader has been opened
-		assertEquals(indexFactory.getReaderListener().getNumberReadersCreated(),1);
-		//Check if doWithReader is called
-		assertTrue(called[0]);
-		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getReaderListener().getNumberReadersClosed(),1);
+		indexFactoryControl.verify();
+		indexReaderControl.verify();
+		readerCallbackControl.verify();
+		
+		assertEquals(ret, "return");
 	}
 
+	/*
+	 * Test for Object write(WriterCallback)
+	 */
 	final public void testWrite() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl writerCallbackControl = MockControl.createStrictControl(WriterCallback.class);
+		WriterCallback writerCallback = (WriterCallback)writerCallbackControl.getMock();
+		
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
+		writerCallback.doWithWriter(indexWriter);
+		writerCallbackControl.setReturnValue("return", 1);
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		writerCallbackControl.replay();
+		
 		//Lucene template
-		LuceneIndexTemplate template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
-		final boolean[] called = {false};
-		template.write(new WriterCallback() {
-			public Object doWithWriter(IndexWriter writer) throws IOException {
-				called[0] = true;
-				assertNotNull(writer);
-				return null;
-			}
-		});
+		LuceneIndexTemplate template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
+		Object ret = template.write(writerCallback);
 
-		//Check if a writer has been opened
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
-		//Check if doWithReader is called
-		assertTrue(called[0]);
-		//Check if the reader of the template is closed
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		writerCallbackControl.verify();
+		
+		assertEquals(ret, "return");
 	}
 
 }

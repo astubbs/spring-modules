@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,13 @@ import junit.framework.TestCase;
 
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 import org.apache.lucene.store.RAMDirectory;
+import org.easymock.AbstractMatcher;
 import org.easymock.MockControl;
 import org.springmodules.lucene.index.LuceneIndexingException;
-import org.springmodules.lucene.index.core.MockSimpleIndexFactory;
-import org.springmodules.lucene.index.factory.SimpleIndexFactory;
+import org.springmodules.lucene.index.factory.IndexFactory;
+import org.springmodules.lucene.index.factory.LuceneIndexWriter;
 import org.springmodules.lucene.index.support.handler.DocumentHandler;
 import org.springmodules.lucene.index.support.handler.DocumentMatching;
 import org.springmodules.lucene.index.support.handler.file.ExtensionDocumentMatching;
@@ -47,27 +49,28 @@ public class DirectoryIndexerTests extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		//Initialization of the index
-		this.directory=new RAMDirectory();
+		this.directory = new RAMDirectory();
 	}
 
 	/**
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		this.directory=null;
+		this.directory = null;
 	}
 
 	final public void testRegisterDocumentHandler() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
 
+		indexFactoryControl.replay();
+		
 		//Indexer
-		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer = new DefaultDirectoryIndexer(indexFactory);
 
 		//Register a document handler
-		DocumentMatching matching=new DocumentMatching() {
+		DocumentMatching matching = new DocumentMatching() {
 			public boolean match(String name) {
 				return name.equals("test");
 			}
@@ -96,14 +99,17 @@ public class DirectoryIndexerTests extends TestCase {
 		} catch(Exception ex) {
 			fail();
 		}
+
+		indexFactoryControl.verify();
 	}
 
 	final public void testUnregisterDocumentHandler() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
 
+		indexFactoryControl.replay();
+		
 		//Indexer
 		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 
@@ -140,61 +146,69 @@ public class DirectoryIndexerTests extends TestCase {
 			assertNull(indexer.getDocumentHandler("test"));
 			fail();
 		} catch(Exception ex) {}
+
+		indexFactoryControl.verify();
 	}
 
 	final public void testAddListener() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
 
+		indexFactoryControl.replay();
+		
 		//Indexer
 		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
 
 		//Register a document handler
-		assertEquals(indexer.getListeners().size(),0);
+		assertEquals(indexer.getListeners().size(), 0);
 
-		FileDocumentIndexingListener listener=new FileDocumentIndexingListenerAdapter();
+		FileDocumentIndexingListener listener = new FileDocumentIndexingListenerAdapter();
 		indexer.addListener(listener);
-		assertEquals(indexer.getListeners().size(),1);
-		FileDocumentIndexingListener tmpListener=(FileDocumentIndexingListener)indexer.getListeners().get(0);
-		assertEquals(listener,tmpListener);
+		assertEquals(indexer.getListeners().size(), 1);
+		FileDocumentIndexingListener tmpListener = (FileDocumentIndexingListener)indexer.getListeners().get(0);
+		assertEquals(listener, tmpListener);
+
+		indexFactoryControl.verify();
 	}
 
 	final public void testRemoveListener() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
 
+		indexFactoryControl.replay();
+		
 		//Indexer
-		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer = new DefaultDirectoryIndexer(indexFactory);
 
 		//Register a document handler
-		FileDocumentIndexingListener listener=new FileDocumentIndexingListenerAdapter();
+		FileDocumentIndexingListener listener = new FileDocumentIndexingListenerAdapter();
 		indexer.addListener(listener);
-		assertEquals(indexer.getListeners().size(),1);
-		FileDocumentIndexingListener tmpListener=(FileDocumentIndexingListener)indexer.getListeners().get(0);
-		assertEquals(listener,tmpListener);
+		assertEquals(indexer.getListeners().size(), 1);
+		FileDocumentIndexingListener tmpListener = (FileDocumentIndexingListener)indexer.getListeners().get(0);
+		assertEquals(listener, tmpListener);
 
 		//Unregister a document handler
 		indexer.removeListener(listener);
-		assertEquals(indexer.getListeners().size(),0);
+		assertEquals(indexer.getListeners().size(), 0);
+
+		indexFactoryControl.verify();
 	}
 
 	private File getBaseDirectoryToIndex() {
-		URL url=getClass().getClassLoader().getResource(
+		URL url = getClass().getClassLoader().getResource(
 					"org/springmodules/lucene/index/object/files/");
 		if( url==null ) {
 			return null;
 		}
 
-		String filename=url.getFile();
+		String filename = url.getFile();
 		return new File(filename);
 	}
 
 	private File getFileFromClasspath(String filename) {
-		URL url=getClass().getClassLoader().getResource(
+		URL url = getClass().getClassLoader().getResource(
 					"org/springmodules/lucene/index/object/files/"+filename);
 		if( url==null ) {
 			return null;
@@ -207,14 +221,23 @@ public class DirectoryIndexerTests extends TestCase {
 	 * Test pour void index(String)
 	 */
 	final public void testIndexString() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock(); 
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock(); 
+		MockControl listenerControl = MockControl.createStrictControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener = (FileDocumentIndexingListener)listenerControl.getMock();
 
-		MockControl listenerControl=MockControl.createControl(FileDocumentIndexingListener.class);
-		FileDocumentIndexingListener listener=(FileDocumentIndexingListener)listenerControl.getMock();
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
@@ -227,66 +250,113 @@ public class DirectoryIndexerTests extends TestCase {
 		listener.beforeIndexingFile(getFileFromClasspath("test.txt"));
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.addDocument(document);
+		indexWriterControl.setMatcher(new AbstractMatcher() {
+			protected boolean argumentMatches(Object expected, Object actual) {
+				if( expected instanceof Document && actual instanceof Document ) {
+					return true;
+				} else {
+					return expected.equals(actual);
+				}
+			}
+		});
+		indexWriterControl.setVoidCallable(1);
+		
 		listener.afterIndexingFile(getFileFromClasspath("test.txt"));
 		listenerControl.setVoidCallable(1);
 
 		listener.afterIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
 		listenerControl.replay();
 
 		//Indexer
-		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer = new DefaultDirectoryIndexer(indexFactory);
 		indexer.addListener(listener);
-		File baseDirectory=getBaseDirectoryToIndex();
+		File baseDirectory = getBaseDirectoryToIndex();
 		indexer.index(baseDirectory.getAbsolutePath());
 
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
 		listenerControl.verify();
-		assertEquals(indexFactory.getWriterListener().getNumberWritersCreated(),1);
-		assertEquals(indexFactory.getWriterListener().getNumberWritersClosed(),1);
-		assertFalse(indexFactory.getWriterListener().isIndexWriterOptimize());
 	}
 
 	/*
 	 * Test for void index(String) with document handler registered
 	 */
 	final public void testIndexStringDocumentHandler() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock(); 
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock(); 
+		MockControl listenerControl = MockControl.createStrictControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener = (FileDocumentIndexingListener)listenerControl.getMock();
 
-		MockControl listenerControl=MockControl.createControl(FileDocumentIndexingListener.class);
-		FileDocumentIndexingListener listener=(FileDocumentIndexingListener)listenerControl.getMock();
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
 		listener.beforeIndexingFile(getFileFromClasspath("test.foo"));
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.addDocument(document);
+		indexWriterControl.setMatcher(new AbstractMatcher() {
+			protected boolean argumentMatches(Object expected, Object actual) {
+				if( expected instanceof Document && actual instanceof Document ) {
+					return true;
+				} else {
+					return expected.equals(actual);
+				}
+			}
+		});
+		indexWriterControl.setVoidCallable(1);
+		
 		listener.afterIndexingFile(getFileFromClasspath("test.foo"));
 		listenerControl.setVoidCallable(1);
 
 		listener.beforeIndexingFile(getFileFromClasspath("test.txt"));
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.addDocument(document);
+		indexWriterControl.setVoidCallable(1);
+		
 		listener.afterIndexingFile(getFileFromClasspath("test.txt"));
 		listenerControl.setVoidCallable(1);
+
 		listener.afterIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
 		listenerControl.replay();
 
 		//Indexer
-		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer = new DefaultDirectoryIndexer(indexFactory);
 		indexer.registerDocumentHandler(new ExtensionDocumentMatching("foo"),
-		                                new TextDocumentHandler());
+										new TextDocumentHandler());
 		indexer.addListener(listener);
-		File baseDirectory=getBaseDirectoryToIndex();
+		File baseDirectory = getBaseDirectoryToIndex();
 		indexer.index(baseDirectory.getAbsolutePath());
 
-		//fail();
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
 		listenerControl.verify();
 	}
 
@@ -294,82 +364,115 @@ public class DirectoryIndexerTests extends TestCase {
 	 * Test pour void index(String) with document handler registered
 	 */
 	final public void testIndexStringListener() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock(); 
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock(); 
+		MockControl listener1Control = MockControl.createStrictControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener1 = (FileDocumentIndexingListener)listener1Control.getMock();
+		MockControl listener2Control = MockControl.createStrictControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener2 = (FileDocumentIndexingListener)listener2Control.getMock();
 
-		//Listener 1
-		MockControl listener1Control=MockControl.createControl(FileDocumentIndexingListener.class);
-		FileDocumentIndexingListener listener1=(FileDocumentIndexingListener)listener1Control.getMock();
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
 		listener1.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listener1Control.setVoidCallable(1);
-
-		listener1.beforeIndexingFile(getFileFromClasspath("test.foo"));
-		listener1Control.setVoidCallable(1);
-
-		listener1.onNotAvailableHandler(getFileFromClasspath("test.foo"));
-		listener1Control.setVoidCallable(1);
-
-		listener1.beforeIndexingFile(getFileFromClasspath("test.txt"));
-		listener1Control.setVoidCallable(1);
-
-		listener1.afterIndexingFile(getFileFromClasspath("test.txt"));
-		listener1Control.setVoidCallable(1);
-
-		listener1.afterIndexingDirectory(getBaseDirectoryToIndex());
-		listener1Control.setVoidCallable(1);
-
-		//Listener 2
-		MockControl listener2Control=MockControl.createControl(FileDocumentIndexingListener.class);
-		FileDocumentIndexingListener listener2=(FileDocumentIndexingListener)listener2Control.getMock();
 
 		listener2.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listener2Control.setVoidCallable(1);
 
+		listener1.beforeIndexingFile(getFileFromClasspath("test.foo"));
+		listener1Control.setVoidCallable(1);
+
 		listener2.beforeIndexingFile(getFileFromClasspath("test.foo"));
 		listener2Control.setVoidCallable(1);
+
+		listener1.onNotAvailableHandler(getFileFromClasspath("test.foo"));
+		listener1Control.setVoidCallable(1);
 
 		listener2.onNotAvailableHandler(getFileFromClasspath("test.foo"));
 		listener2Control.setVoidCallable(1);
 
+		listener1.beforeIndexingFile(getFileFromClasspath("test.txt"));
+		listener1Control.setVoidCallable(1);
+
 		listener2.beforeIndexingFile(getFileFromClasspath("test.txt"));
 		listener2Control.setVoidCallable(1);
+
+		indexWriter.addDocument(document);
+		indexWriterControl.setMatcher(new AbstractMatcher() {
+			protected boolean argumentMatches(Object expected, Object actual) {
+				if( expected instanceof Document && actual instanceof Document ) {
+					return true;
+				} else {
+					return expected.equals(actual);
+				}
+			}
+		});
+		indexWriterControl.setVoidCallable(1);
+		
+		listener1.afterIndexingFile(getFileFromClasspath("test.txt"));
+		listener1Control.setVoidCallable(1);
 
 		listener2.afterIndexingFile(getFileFromClasspath("test.txt"));
 		listener2Control.setVoidCallable(1);
 
+		listener1.afterIndexingDirectory(getBaseDirectoryToIndex());
+		listener1Control.setVoidCallable(1);
+
 		listener2.afterIndexingDirectory(getBaseDirectoryToIndex());
 		listener2Control.setVoidCallable(1);
 
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
 		listener1Control.replay();
 		listener2Control.replay();
 
 		//Indexer
-		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer = new DefaultDirectoryIndexer(indexFactory);
 		indexer.addListener(listener1);
 		indexer.addListener(listener2);
-		File baseDirectory=getBaseDirectoryToIndex();
+		File baseDirectory = getBaseDirectoryToIndex();
 		indexer.index(baseDirectory.getAbsolutePath());
 
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
 		listener1Control.verify();
 		listener2Control.verify();
-		assertFalse(indexFactory.getWriterListener().isIndexWriterOptimize());
 	}
 
 	/*
 	 * Test pour void index(String, boolean)
 	 */
-	final public void testIndexStringboolean() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+	final public void testIndexStringboolean() throws Exception {
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createNiceControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock(); 
+		MockControl indexWriterControl = MockControl.createNiceControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock(); 
+		MockControl listenerControl = MockControl.createNiceControl(FileDocumentIndexingListener.class);
+		FileDocumentIndexingListener listener = (FileDocumentIndexingListener)listenerControl.getMock();
 
-		MockControl listenerControl=MockControl.createControl(FileDocumentIndexingListener.class);
-		FileDocumentIndexingListener listener=(FileDocumentIndexingListener)listenerControl.getMock();
+		//document
+		Document document = new Document();
+		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
+		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
 		listener.beforeIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
@@ -382,42 +485,66 @@ public class DirectoryIndexerTests extends TestCase {
 		listener.beforeIndexingFile(getFileFromClasspath("test.txt"));
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.addDocument(document);
+		indexWriterControl.setMatcher(new AbstractMatcher() {
+			protected boolean argumentMatches(Object expected, Object actual) {
+				if( expected instanceof Document && actual instanceof Document ) {
+					return true;
+				} else {
+					return expected.equals(actual);
+				}
+			}
+		});
+		indexWriterControl.setVoidCallable(1);
+		
 		listener.afterIndexingFile(getFileFromClasspath("test.txt"));
 		listenerControl.setVoidCallable(1);
 
 		listener.afterIndexingDirectory(getBaseDirectoryToIndex());
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.optimize();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
 		listenerControl.replay();
 
 		//Indexer
-		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
+		DefaultDirectoryIndexer indexer = new DefaultDirectoryIndexer(indexFactory);
 		indexer.addListener(listener);
-		File baseDirectory=getBaseDirectoryToIndex();
-		indexer.index(baseDirectory.getAbsolutePath(),true);
+		File baseDirectory = getBaseDirectoryToIndex();
+		indexer.index(baseDirectory.getAbsolutePath(), true);
 
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
 		listenerControl.verify();
-		assertTrue(indexFactory.getWriterListener().isIndexWriterOptimize());
 	}
 
 	/*
 	 * Test pour void index(String)
 	 */
 	final public void testIndexStringIfDirectoryNotExist() throws Exception {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		SimpleAnalyzer analyzer = new SimpleAnalyzer();
+		MockControl indexFactoryControl = MockControl.createControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
 
+		indexFactoryControl.replay();
+		
 		//Indexer
-		DefaultDirectoryIndexer indexer=new DefaultDirectoryIndexer(indexFactory);
-		File baseDirectory=getBaseDirectoryToIndex();
-		File wrongBaseDirectory=new File(baseDirectory.getCanonicalPath()+"/test");
+		DefaultDirectoryIndexer indexer = new DefaultDirectoryIndexer(indexFactory);
+		File baseDirectory = getBaseDirectoryToIndex();
+		File wrongBaseDirectory = new File(baseDirectory.getCanonicalPath()+"/test");
 
 		try {
 			indexer.index(wrongBaseDirectory.getAbsolutePath());
 			fail();
 		} catch(LuceneIndexingException ex) {
 		}
+		
+		indexFactoryControl.verify();
 	}
 }

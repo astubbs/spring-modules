@@ -10,8 +10,8 @@ import junit.framework.TestCase;
 public class DefaultDocumentHandlerManagerTests extends TestCase {
 
 	public void testGetDocumentHandler() {
-		DocumentHandlerManager manager=new DefaultDocumentHandlerManager();
-		DocumentHandler documentHandler=new DocumentHandler() {
+		DocumentHandlerManager manager = new DefaultDocumentHandlerManager();
+		DocumentHandler documentHandler = new DocumentHandler() {
 			public boolean supports(Class clazz) {
 				return false;
 			}
@@ -20,13 +20,13 @@ public class DefaultDocumentHandlerManagerTests extends TestCase {
 				return null;
 			}
 		};
-		manager.registerDocumentHandler(new IdentityDocumentMatching("test"),documentHandler);
+		manager.registerDocumentHandler(new IdentityDocumentMatching("test"), documentHandler);
 		assertNotNull(manager.getDocumentHandler("test"));
 	}
 
 	public void testGetDocumentHandlerNotFound() {
-		DocumentHandlerManager manager=new DefaultDocumentHandlerManager();
-		DocumentHandler documentHandler=new DocumentHandler() {
+		DocumentHandlerManager manager = new DefaultDocumentHandlerManager();
+		DocumentHandler documentHandler = new DocumentHandler() {
 			public boolean supports(Class clazz) {
 				return false;
 			}
@@ -35,11 +35,11 @@ public class DefaultDocumentHandlerManagerTests extends TestCase {
 				return null;
 			}
 		};
-		manager.registerDocumentHandler(new IdentityDocumentMatching("test"),documentHandler);
+		manager.registerDocumentHandler(new IdentityDocumentMatching("test"), documentHandler);
 		try {
 			manager.getDocumentHandler("test1");
 			fail();
-		} catch (DocumentHandlerException e) {
+		} catch (DocumentHandlerException ex) {
 		}
 	}
 
@@ -50,11 +50,11 @@ public class DefaultDocumentHandlerManagerTests extends TestCase {
 		try {
 			manager.getDocumentHandler("test");
 			fail();
-		} catch (DocumentHandlerException e) {
+		} catch (DocumentHandlerException ex) {
 		}
 
 		//Add a new one
-		DocumentHandler documentHandler=new DocumentHandler() {
+		DocumentHandler documentHandler = new DocumentHandler() {
 			public boolean supports(Class clazz) {
 				return false;
 			}
@@ -63,16 +63,16 @@ public class DefaultDocumentHandlerManagerTests extends TestCase {
 				return null;
 			}
 		};
-		manager.registerDocumentHandler(new IdentityDocumentMatching("test"),documentHandler);
+		manager.registerDocumentHandler(new IdentityDocumentMatching("test"), documentHandler);
 
 		//One document handler now
 		assertNotNull(manager.getDocumentHandler("test"));
 	}
 
 	public void testUnregisterDocumentHandler() {
-		DocumentHandlerManager manager=new DefaultDocumentHandlerManager();
+		DocumentHandlerManager manager = new DefaultDocumentHandlerManager();
 
-		DocumentHandler documentHandler=new DocumentHandler() {
+		DocumentHandler documentHandler = new DocumentHandler() {
 			public boolean supports(Class clazz) {
 				return false;
 			}
@@ -81,7 +81,7 @@ public class DefaultDocumentHandlerManagerTests extends TestCase {
 				return null;
 			}
 		};
-		manager.registerDocumentHandler(new IdentityDocumentMatching("test"),documentHandler);
+		manager.registerDocumentHandler(new IdentityDocumentMatching("test"), documentHandler);
 
 		//One document handler
 		assertNotNull(manager.getDocumentHandler("test"));
@@ -93,7 +93,7 @@ public class DefaultDocumentHandlerManagerTests extends TestCase {
 		try {
 			manager.getDocumentHandler("test");
 			fail();
-		} catch (DocumentHandlerException e) {
+		} catch (DocumentHandlerException ex) {
 		}
 	}
 

@@ -12,9 +12,9 @@ import junit.framework.TestCase;
 public class DocumentHandlerManagerFactoryBeanTests extends TestCase {
 
 	public void testDefaultConfigurationDocumentHandlerManager() throws Exception {
-		DocumentHandlerManagerFactoryBean documentHandlerManagerFactoryBean=new DocumentHandlerManagerFactoryBean();
-		Map documentHandlers=new HashMap();
-		DocumentHandler documentHandler=new DocumentHandler() {
+		DocumentHandlerManagerFactoryBean documentHandlerManagerFactoryBean = new DocumentHandlerManagerFactoryBean();
+		Map documentHandlers = new HashMap();
+		DocumentHandler documentHandler = new DocumentHandler() {
 			public boolean supports(Class clazz) {
 				return false;
 			}
@@ -23,15 +23,15 @@ public class DocumentHandlerManagerFactoryBeanTests extends TestCase {
 				return null;
 			}
 		};
-		documentHandlers.put("test",documentHandler);
+		documentHandlers.put("test", documentHandler);
 		documentHandlerManagerFactoryBean.setDocumentHandlers(documentHandlers);
 		documentHandlerManagerFactoryBean.afterPropertiesSet();
 		
-		DocumentHandlerManager documentHandlerManager=(DocumentHandlerManager)documentHandlerManagerFactoryBean.getObject();
-		assertEquals(documentHandlerManager.getClass(),DefaultDocumentHandlerManager.class);
+		DocumentHandlerManager documentHandlerManager = (DocumentHandlerManager)documentHandlerManagerFactoryBean.getObject();
+		assertEquals(documentHandlerManager.getClass(), DefaultDocumentHandlerManager.class);
 		
 		//An handler must match with test
-		assertEquals(documentHandlerManager.getDocumentHandler("test"),documentHandler);
+		assertEquals(documentHandlerManager.getDocumentHandler("test"), documentHandler);
 
 		//An handler must not match with test1
 		try {
@@ -41,11 +41,11 @@ public class DocumentHandlerManagerFactoryBeanTests extends TestCase {
 	}
 
 	public void testSpecificConfigurationDocumentHandlerManager1() throws Exception {
-		DocumentHandlerManagerFactoryBean documentHandlerManagerFactoryBean=new DocumentHandlerManagerFactoryBean();
+		DocumentHandlerManagerFactoryBean documentHandlerManagerFactoryBean = new DocumentHandlerManagerFactoryBean();
 		documentHandlerManagerFactoryBean.setDocumentHandlerManagerClass(TestDocumentHandlerManager.class);
 		documentHandlerManagerFactoryBean.setDocumentMatchingClass(TestDocumentMatching.class);
-		Map documentHandlers=new HashMap();
-		DocumentHandler documentHandler=new DocumentHandler() {
+		Map documentHandlers = new HashMap();
+		DocumentHandler documentHandler = new DocumentHandler() {
 			public boolean supports(Class clazz) {
 				return false;
 			}
@@ -54,23 +54,23 @@ public class DocumentHandlerManagerFactoryBeanTests extends TestCase {
 				return null;
 			}
 		};
-		documentHandlers.put("test",documentHandler);
+		documentHandlers.put("test", documentHandler);
 		documentHandlerManagerFactoryBean.setDocumentHandlers(documentHandlers);
 		documentHandlerManagerFactoryBean.afterPropertiesSet();
 		
-		DocumentHandlerManager documentHandlerManager=(DocumentHandlerManager)documentHandlerManagerFactoryBean.getObject();
-		assertEquals(documentHandlerManager.getClass(),TestDocumentHandlerManager.class);
+		DocumentHandlerManager documentHandlerManager = (DocumentHandlerManager)documentHandlerManagerFactoryBean.getObject();
+		assertEquals(documentHandlerManager.getClass(), TestDocumentHandlerManager.class);
 		
 		//An handler must not match with test
-		assertEquals(documentHandlerManager.getDocumentHandler("test"),null);
+		assertEquals(documentHandlerManager.getDocumentHandler("test"), null);
 	}
 
 	public void testSpecificConfigurationDocumentHandlerManager2() throws Exception {
-		DocumentHandlerManagerFactoryBean documentHandlerManagerFactoryBean=new DocumentHandlerManagerFactoryBean();
+		DocumentHandlerManagerFactoryBean documentHandlerManagerFactoryBean = new DocumentHandlerManagerFactoryBean();
 		documentHandlerManagerFactoryBean.setDocumentHandlerManagerClass(TestDocumentHandlerManager.class);
 		documentHandlerManagerFactoryBean.setDocumentMatchingClass(TestMatchAllDocumentMatching.class);
-		Map documentHandlers=new HashMap();
-		DocumentHandler documentHandler=new DocumentHandler() {
+		Map documentHandlers = new HashMap();
+		DocumentHandler documentHandler = new DocumentHandler() {
 			public boolean supports(Class clazz) {
 				return false;
 			}
@@ -79,15 +79,15 @@ public class DocumentHandlerManagerFactoryBeanTests extends TestCase {
 				return null;
 			}
 		};
-		documentHandlers.put("test",documentHandler);
+		documentHandlers.put("test", documentHandler);
 		documentHandlerManagerFactoryBean.setDocumentHandlers(documentHandlers);
 		documentHandlerManagerFactoryBean.afterPropertiesSet();
 		
 		DocumentHandlerManager documentHandlerManager=(DocumentHandlerManager)documentHandlerManagerFactoryBean.getObject();
-		assertEquals(documentHandlerManager.getClass(),TestDocumentHandlerManager.class);
+		assertEquals(documentHandlerManager.getClass(), TestDocumentHandlerManager.class);
 		
 		//An handler must not match with test
-		assertEquals(documentHandlerManager.getDocumentHandler("test"),documentHandler);
+		assertEquals(documentHandlerManager.getDocumentHandler("test"), documentHandler);
 	}
 
 	private static class TestDocumentHandlerManager implements DocumentHandlerManager {
@@ -97,9 +97,9 @@ public class DocumentHandlerManagerFactoryBeanTests extends TestCase {
 		}
 
 		public DocumentHandler getDocumentHandler(String name) {
-			Set keys=documentHandlers.keySet();
-			for(Iterator i=keys.iterator();i.hasNext();) {
-				DocumentMatching matching=(DocumentMatching)i.next();
+			Set keys = documentHandlers.keySet();
+			for(Iterator i=keys.iterator(); i.hasNext();) {
+				DocumentMatching matching = (DocumentMatching)i.next();
 				if( matching.match(name) ) {
 					return (DocumentHandler)documentHandlers.get(matching);
 				}

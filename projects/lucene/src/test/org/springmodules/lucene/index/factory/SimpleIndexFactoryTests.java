@@ -40,9 +40,9 @@ public class SimpleIndexFactoryTests extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		//Initialization of the index
-		this.directory=new RAMDirectory();
-		IndexWriter indexWriter=new IndexWriter(this.directory,new SimpleAnalyzer(),true);
-		Document document=new Document();
+		this.directory = new RAMDirectory();
+		IndexWriter indexWriter = new IndexWriter(this.directory,new SimpleAnalyzer(),true);
+		Document document = new Document();
 		document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
 		document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
 		document.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
@@ -56,6 +56,26 @@ public class SimpleIndexFactoryTests extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		this.directory=null;
+	}
+
+	private void closeIndexReader(LuceneIndexReader indexReader) {
+		if( indexReader!=null ) {
+			try {
+				indexReader.close();
+			} catch (IOException ex) {
+				fail();
+			}
+		}
+	}
+
+	private void closeIndexWriter(LuceneIndexWriter indexWriter) {
+		if( indexWriter!=null ) {
+			try {
+				indexWriter.close();
+			} catch (IOException ex) {
+				fail();
+			}
+		}
 	}
 
 	private void closeIndexReader(IndexReader indexReader) {
@@ -79,7 +99,7 @@ public class SimpleIndexFactoryTests extends TestCase {
 	}
 
 	final public void testGetIndexFactoryReader() {
-		SimpleIndexFactory indexFactory=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 
 		try {
 			indexFactory.getIndexReader();
@@ -88,7 +108,7 @@ public class SimpleIndexFactoryTests extends TestCase {
 	}
 
 	final public void testGetIndexFactoryWriter() {
-		SimpleIndexFactory indexFactory=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 
 		try {
 			indexFactory.getIndexWriter();
@@ -97,10 +117,10 @@ public class SimpleIndexFactoryTests extends TestCase {
 	}
 
 	final public void testGetIndexReader() {
-		SimpleIndexFactory indexFactory=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 		indexFactory.setDirectory(this.directory);
 
-		IndexReader indexReader=null;
+		LuceneIndexReader indexReader = null;
 		try {
 			indexReader=indexFactory.getIndexReader();
 			assertNotNull(indexReader);
@@ -111,15 +131,15 @@ public class SimpleIndexFactoryTests extends TestCase {
 	}
 
 	final public void testIndexLockingWithReader() throws Exception {
-		SimpleIndexFactory indexFactory=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 		indexFactory.setDirectory(this.directory);
 
-		IndexWriter indexWriter=null;
-		IndexReader indexReader=null;
+		IndexWriter indexWriter = null;
+		LuceneIndexReader indexReader = null;
 		try {
-			indexWriter=new IndexWriter(this.directory,new SimpleAnalyzer(),false);
+			indexWriter = new IndexWriter(this.directory,new SimpleAnalyzer(),false);
 
-			indexReader=indexFactory.getIndexReader();
+			indexReader = indexFactory.getIndexReader();
 			fail();
 		} catch(LuceneIndexAccessException ex) {
 		} finally {
@@ -129,16 +149,16 @@ public class SimpleIndexFactoryTests extends TestCase {
 	}
 
 	final public void testIndexLockingResolvingWithReader() throws Exception {
-		SimpleIndexFactory indexFactory=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 		indexFactory.setDirectory(this.directory);
 		indexFactory.setResolveLock(true);
 
-		IndexWriter indexWriter=null;
-		IndexReader indexReader=null;
+		IndexWriter indexWriter = null;
+		LuceneIndexReader indexReader = null;
 		try {
-			indexWriter=new IndexWriter(this.directory,new SimpleAnalyzer(),false);
+			indexWriter = new IndexWriter(this.directory,new SimpleAnalyzer(),false);
 
-			indexReader=indexFactory.getIndexReader();
+			indexReader = indexFactory.getIndexReader();
 		} catch(LuceneIndexAccessException ex) {
 		} finally {
 			closeIndexReader(indexReader);
@@ -147,15 +167,15 @@ public class SimpleIndexFactoryTests extends TestCase {
 	}
 
 	final public void testGetIndexWriter() throws Exception {
-		SimpleIndexFactory indexFactory=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 		indexFactory.setDirectory(this.directory);
 		indexFactory.setAnalyzer(new SimpleAnalyzer());
 
-		IndexWriter indexWriter=null;
+		LuceneIndexWriter indexWriter = null;
 		try {
-			indexWriter=indexFactory.getIndexWriter();
+			indexWriter = indexFactory.getIndexWriter();
 			assertNotNull(indexWriter);
-			Document document=new Document();
+			Document document = new Document();
 			document.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
 			document.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
 			document.add(new Field("sort", "3", Field.Store.YES, Field.Index.UN_TOKENIZED));
@@ -166,15 +186,15 @@ public class SimpleIndexFactoryTests extends TestCase {
 	}
 
 	final public void testIndexLockingWithWrier() throws Exception {
-		SimpleIndexFactory indexFactory=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 		indexFactory.setDirectory(this.directory);
 
-		IndexWriter indexWriter1=null;
-		IndexWriter indexWriter2=null;
+		IndexWriter indexWriter1 = null;
+		LuceneIndexWriter indexWriter2 = null;
 		try {
-			indexWriter1=new IndexWriter(this.directory,new SimpleAnalyzer(),false);
+			indexWriter1 = new IndexWriter(this.directory,new SimpleAnalyzer(),false);
 
-			indexWriter2=indexFactory.getIndexWriter();
+			indexWriter2 = indexFactory.getIndexWriter();
 			fail();
 		} catch(LuceneIndexAccessException ex) {
 		} finally {
@@ -184,16 +204,16 @@ public class SimpleIndexFactoryTests extends TestCase {
 	}
 
 	final public void testIndexLockingResolvingWithWriter() throws Exception {
-		SimpleIndexFactory indexFactory=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 		indexFactory.setDirectory(this.directory);
 		indexFactory.setResolveLock(true);
 
-		IndexWriter indexWriter1=null;
-		IndexWriter indexWriter2=null;
+		IndexWriter indexWriter1 = null;
+		LuceneIndexWriter indexWriter2 = null;
 		try {
-			indexWriter1=new IndexWriter(this.directory,new SimpleAnalyzer(),false);
+			indexWriter1 = new IndexWriter(this.directory,new SimpleAnalyzer(),false);
 
-			indexWriter2=indexFactory.getIndexWriter();
+			indexWriter2 = indexFactory.getIndexWriter();
 		} catch(LuceneIndexAccessException ex) {
 		} finally {
 			closeIndexWriter(indexWriter2);

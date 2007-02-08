@@ -9,9 +9,9 @@ import org.springmodules.lucene.index.support.handler.DocumentHandler;
 
 public class ReflectiveDocumentHandlerTests extends TestCase {
 	public void testGetDocument() throws Exception {
-		DocumentHandler documentHandler=new ReflectiveDocumentHandler();
+		DocumentHandler documentHandler = new ReflectiveDocumentHandler();
 
-		TestBean bean=new TestBean();
+		TestBean bean = new TestBean();
 		bean.setField1("field1");
 		bean.setField2(2);
 		bean.setField3("field3");

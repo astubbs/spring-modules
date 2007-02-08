@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2007s the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,17 @@ import java.sql.SQLException;
 
 import junit.framework.TestCase;
 
-import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.store.RAMDirectory;
+import org.easymock.AbstractMatcher;
 import org.easymock.MockControl;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springmodules.lucene.index.core.MockSimpleIndexFactory;
-import org.springmodules.lucene.index.factory.SimpleIndexFactory;
+import org.springmodules.lucene.index.factory.IndexFactory;
+import org.springmodules.lucene.index.factory.LuceneIndexWriter;
 import org.springmodules.lucene.index.support.handler.database.SqlDocumentHandler;
 import org.springmodules.lucene.index.support.handler.database.SqlRequest;
 
@@ -38,7 +40,6 @@ import org.springmodules.lucene.index.support.handler.database.SqlRequest;
  */
 public class DatabaseIndexerTests extends TestCase {
 
-	private RAMDirectory directory;
 	private DriverManagerDataSource dataSource;
 	private JdbcTemplate template;
 
@@ -46,27 +47,25 @@ public class DatabaseIndexerTests extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		//Initialization of the index
-		this.directory=new RAMDirectory();
 		//Initialization of the datasource
-		this.dataSource=new DriverManagerDataSource();
+		this.dataSource = new DriverManagerDataSource();
 		this.dataSource.setDriverClassName("org.hsqldb.jdbcDriver");
 		this.dataSource.setUrl("jdbc:hsqldb:test");
 		this.dataSource.setUsername("sa");
 		this.dataSource.setPassword("");
-		this.template=new JdbcTemplate(this.dataSource);
+		this.template = new JdbcTemplate(this.dataSource);
 
 		//Creation of the schema
-		StringBuffer requestCreate=new StringBuffer();
+		StringBuffer requestCreate = new StringBuffer();
 		requestCreate.append("create table TEST ( TEST_ID INT not null,");
 		requestCreate.append(" TEST_NAME VARCHAR(255) not null,");
 		requestCreate.append(" constraint PK_TEST primary key (TEST_ID) )");
 		this.template.execute(requestCreate.toString());
 
 		//Insertion of tuples
-		StringBuffer requestInsertion=new StringBuffer();
-		requestInsertion.append("insert into TEST (TEST_ID,TEST_NAME)");
-		requestInsertion.append(" values(1,'this is a test')");
+		StringBuffer requestInsertion = new StringBuffer();
+		requestInsertion.append("insert into TEST (TEST_ID, TEST_NAME)");
+		requestInsertion.append(" values(1, 'this is a test')");
 		this.template.execute(requestInsertion.toString());
 	}
 
@@ -74,26 +73,25 @@ public class DatabaseIndexerTests extends TestCase {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		//Finalization of the index
-		this.directory=null;
 		//Destoy the schema
 		this.template.execute("drop table TEST");
+
 		//Finalization of the datasource
-		this.dataSource=null;
-		this.template=null;
+		this.dataSource = null;
+		this.template = null;
 	}
 
 	final public void testRegisterDocumentHandler() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
 
+		indexFactoryControl.replay();
+		
 		//Indexer
-		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer = new DefaultDatabaseIndexer(indexFactory);
 
 		//Register a document handler
-		SqlRequest request=new SqlRequest("select * from test");
+		SqlRequest request = new SqlRequest("select * from test");
 		assertNull(indexer.getDocumentHandler(request));
 
 		indexer.registerDocumentHandler(request,new SqlDocumentHandler() {
@@ -101,21 +99,26 @@ public class DatabaseIndexerTests extends TestCase {
 				return null;
 			}
 		});
+		
+		Analyzer a = null;
+		
+
+		indexFactoryControl.verify();
 		assertNotNull(indexer.getDocumentHandler(request));
 	}
 
 	final public void testUnregisterDocumentHandler() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
 
+		indexFactoryControl.replay();
+		
 		//Indexer
-		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer = new DefaultDatabaseIndexer(indexFactory);
 
 		//Register a document handler
-		SqlRequest request=new SqlRequest("select * from test");
-		indexer.registerDocumentHandler(request,new SqlDocumentHandler() {
+		SqlRequest request = new SqlRequest("select * from test");
+		indexer.registerDocumentHandler(request, new SqlDocumentHandler() {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
 				return null;
 			}
@@ -125,81 +128,89 @@ public class DatabaseIndexerTests extends TestCase {
 		//Unregister a document handler
 		indexer.unregisterDocumentHandler(request);
 		assertNull(indexer.getDocumentHandler(request));
+
+		indexFactoryControl.verify();
 	}
 
 	final public void testAddListener() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
 
+		indexFactoryControl.replay();
+		
 		//Indexer
-		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer = new DefaultDatabaseIndexer(indexFactory);
 
 		//Register a document handler
-		assertEquals(indexer.getListeners().size(),0);
+		assertEquals(indexer.getListeners().size(), 0);
 
-		DatabaseIndexingListener listener=new DatabaseIndexingListenerAdapter();
+		DatabaseIndexingListener listener = new DatabaseIndexingListenerAdapter();
 		indexer.addListener(listener);
-		assertEquals(indexer.getListeners().size(),1);
-		DatabaseIndexingListener tmpListener=(DatabaseIndexingListener)indexer.getListeners().get(0);
-		assertEquals(listener,tmpListener);
+		assertEquals(indexer.getListeners().size(), 1);
+		DatabaseIndexingListener tmpListener = (DatabaseIndexingListener)indexer.getListeners().get(0);
+		assertEquals(listener, tmpListener);
+		
+		indexFactoryControl.verify();
 	}
 
 	final public void testRemoveListener() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
 
+		indexFactoryControl.replay();
+		
 		//Indexer
-		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
+		DefaultDatabaseIndexer indexer = new DefaultDatabaseIndexer(indexFactory);
 
 		//Register a document handler
-		DatabaseIndexingListener listener=new DatabaseIndexingListenerAdapter();
+		DatabaseIndexingListener listener = new DatabaseIndexingListenerAdapter();
 		indexer.addListener(listener);
-		assertEquals(indexer.getListeners().size(),1);
-		DatabaseIndexingListener tmpListener=(DatabaseIndexingListener)indexer.getListeners().get(0);
-		assertEquals(listener,tmpListener);
+		assertEquals(indexer.getListeners().size(), 1);
+		DatabaseIndexingListener tmpListener = (DatabaseIndexingListener)indexer.getListeners().get(0);
+		assertEquals(listener, tmpListener);
 
 		//Unregister a document handler
 		indexer.removeListener(listener);
-		assertEquals(indexer.getListeners().size(),0);
+		assertEquals(indexer.getListeners().size(), 0);
+
+		indexFactoryControl.verify();
 	}
 
-	final public void testIndexDataSource() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
+	final public void testIndexDataSource() throws Exception {
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl listenerControl = MockControl.createControl(DatabaseIndexingListener.class);
+		DatabaseIndexingListener listener = (DatabaseIndexingListener)listenerControl.getMock();
 
-		//Indexer
-		final boolean[] test=new boolean[] { false,false };
-		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
-		SqlRequest request1=new SqlRequest("select * from test");
-		indexer.registerDocumentHandler(request1,new SqlDocumentHandler() {
-			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
-				test[0]=true;
-				Document document=new Document();
-				document.add(new Field("contents", rs.getString("test_name"), Field.Store.NO, Field.Index.TOKENIZED));
-				return document;
-			}
-		});
-		SqlRequest request2=new SqlRequest("select * from test");
-		indexer.registerDocumentHandler(request2,new SqlDocumentHandler() {
-			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
-				test[1]=true;
-				return null;
-			}
-		});
+		//requests
+		SqlRequest request1 = new SqlRequest("select * from test");
+		SqlRequest request2 = new SqlRequest("select * from test");
 
-		MockControl listenerControl=MockControl.createControl(DatabaseIndexingListener.class);
-		DatabaseIndexingListener listener=(DatabaseIndexingListener)listenerControl.getMock();
+		//documents
+		final Document document1 = new Document();
+		document1.add(new Field("contents", "test_name", Field.Store.NO, Field.Index.TOKENIZED));
+		final Document document2 = new Document();
+		document2.add(new Field("contents", "test_name", Field.Store.NO, Field.Index.TOKENIZED));
 
-		indexer.addListener(listener);
-
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
 		listener.beforeIndexingRequest(request1);
 		listenerControl.setVoidCallable(1);
+		
+		indexWriter.addDocument(document1);
+		indexWriterControl.setMatcher(new AbstractMatcher() {
+			protected boolean argumentMatches(Object expected, Object actual) {
+				if( expected instanceof Document && actual instanceof Document ) {
+					return true;
+				} else {
+					return expected.equals(actual);
+				}
+			}
+		});
+		indexWriterControl.setVoidCallable(1);
 
 		listener.afterIndexingRequest(request1);
 		listenerControl.setVoidCallable(1);
@@ -207,88 +218,147 @@ public class DatabaseIndexerTests extends TestCase {
 		listener.beforeIndexingRequest(request2);
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.addDocument(document2);
+		indexWriterControl.setVoidCallable(1);
+
 		listener.afterIndexingRequest(request2);
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
 		listenerControl.replay();
-
-		//Index
-		indexer.index(this.dataSource);
-
-		listenerControl.verify();
-		assertTrue(test[0]);
-		assertTrue(test[1]);
-		assertFalse(indexFactory.getWriterListener().isIndexWriterOptimize());
-	}
-
-	final public void testIndexDataSourceWithSqlError() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-
+		
 		//Indexer
-		final boolean[] test=new boolean[] { false,false };
-		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
-		SqlRequest request1=new SqlRequest("select * from test1");
-		indexer.registerDocumentHandler(request1,new SqlDocumentHandler() {
+		final boolean[] called = new boolean[] { false, false };
+		DefaultDatabaseIndexer indexer = new DefaultDatabaseIndexer(indexFactory);
+		indexer.registerDocumentHandler(request1, new SqlDocumentHandler() {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
-				test[0]=true;
-				Document document=new Document();
-				document.add(new Field("contents", rs.getString("test_name"), Field.Store.NO, Field.Index.TOKENIZED));
-				return document;
+				called[0] = true;
+				return document1;
 			}
 		});
-
-		MockControl listenerControl=MockControl.createControl(DatabaseIndexingListener.class);
-		DatabaseIndexingListener listener=(DatabaseIndexingListener)listenerControl.getMock();
-
-		indexer.addListener(new DatabaseIndexingListenerAdapter() {
-			public void onErrorIndexingRequest(SqlRequest request, Exception ex) {
-				test[1]=true;
-			}
-		});
-
-		//Index
-		indexer.index(this.dataSource);
-
-		assertFalse(test[0]);
-		assertTrue(test[1]);
-	}
-
-	final public void testIndexDataSourceboolean() {
-		//Initialization of the index
-		SimpleAnalyzer analyzer=new SimpleAnalyzer();
-		SimpleIndexFactory targetIndexFactory=new SimpleIndexFactory(directory,analyzer);
-		MockSimpleIndexFactory indexFactory=new MockSimpleIndexFactory(targetIndexFactory);
-
-		//Indexer
-		final boolean[] test=new boolean[] { false,false };
-		DefaultDatabaseIndexer indexer=new DefaultDatabaseIndexer(indexFactory);
-		SqlRequest request1=new SqlRequest("select * from test");
-		indexer.registerDocumentHandler(request1,new SqlDocumentHandler() {
+		indexer.registerDocumentHandler(request2, new SqlDocumentHandler() {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
-				test[0]=true;
-				Document document=new Document();
-				document.add(new Field("contents", rs.getString("test_name"), Field.Store.NO, Field.Index.TOKENIZED));
-				return document;
+				called[1] = true;
+				return document2;
 			}
 		});
-		SqlRequest request2=new SqlRequest("select * from test");
-		indexer.registerDocumentHandler(request2,new SqlDocumentHandler() {
-			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
-				test[1]=true;
-				return null;
-			}
-		});
-
-		MockControl listenerControl=MockControl.createControl(DatabaseIndexingListener.class);
-		DatabaseIndexingListener listener=(DatabaseIndexingListener)listenerControl.getMock();
-
 		indexer.addListener(listener);
 
+		//Index
+		indexer.index(this.dataSource);
+
+		assertTrue(called[0]);
+		assertTrue(called[1]);
+
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		listenerControl.verify();
+	}
+
+	final public void testIndexDataSourceWithSqlError() throws Exception {
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl listenerControl = MockControl.createControl(DatabaseIndexingListener.class);
+		DatabaseIndexingListener listener = (DatabaseIndexingListener)listenerControl.getMock();
+		
+		//requests
+		SqlRequest request1 = new SqlRequest("select * from test1");
+
+		//documents
+		final Document document1 = new Document();
+		document1.add(new Field("contents", "test_name", Field.Store.NO, Field.Index.TOKENIZED));
+		
+		//exception
+		BadSqlGrammarException ex = new BadSqlGrammarException("arg1", "arg2", null);
+
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
 		listener.beforeIndexingRequest(request1);
 		listenerControl.setVoidCallable(1);
+		
+		listener.onErrorIndexingRequest(request1, ex);
+		listenerControl.setMatcher(new AbstractMatcher() {
+			protected boolean argumentMatches(Object expected, Object actual) {
+				if( expected instanceof DataAccessException && actual instanceof DataAccessException ) {
+					return true;
+				} else {
+					return expected.equals(actual);
+				}
+			}
+		});
+
+		listenerControl.setVoidCallable(1);
+
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
+		listenerControl.replay();
+		
+		//Indexer
+		final boolean[] called = new boolean[] { false };
+		DefaultDatabaseIndexer indexer = new DefaultDatabaseIndexer(indexFactory);
+		indexer.registerDocumentHandler(request1, new SqlDocumentHandler() {
+			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
+				called[0] = true;
+				return document1;
+			}
+		});
+		indexer.addListener(listener);
+
+		//Index
+		indexer.index(this.dataSource);
+
+		assertFalse(called[0]);
+
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
+		listenerControl.verify();
+	}
+
+	final public void testIndexDataSourceboolean() throws Exception {
+		MockControl indexFactoryControl = MockControl.createStrictControl(IndexFactory.class);
+		IndexFactory indexFactory = (IndexFactory)indexFactoryControl.getMock();
+		MockControl indexWriterControl = MockControl.createStrictControl(LuceneIndexWriter.class);
+		LuceneIndexWriter indexWriter = (LuceneIndexWriter)indexWriterControl.getMock();
+		MockControl listenerControl = MockControl.createControl(DatabaseIndexingListener.class);
+		DatabaseIndexingListener listener = (DatabaseIndexingListener)listenerControl.getMock();
+
+		//requests
+		SqlRequest request1 = new SqlRequest("select * from test");
+		SqlRequest request2 = new SqlRequest("select * from test");
+
+		//documents
+		final Document document1 = new Document();
+		document1.add(new Field("contents", "test_name", Field.Store.NO, Field.Index.TOKENIZED));
+		final Document document2 = new Document();
+		document2.add(new Field("contents", "test_name", Field.Store.NO, Field.Index.TOKENIZED));
+
+		indexFactory.getIndexWriter();
+		indexFactoryControl.setReturnValue(indexWriter, 1);
+		
+		listener.beforeIndexingRequest(request1);
+		listenerControl.setVoidCallable(1);
+		
+		indexWriter.addDocument(document1);
+		indexWriterControl.setMatcher(new AbstractMatcher() {
+			protected boolean argumentMatches(Object expected, Object actual) {
+				if( expected instanceof Document && actual instanceof Document ) {
+					return true;
+				} else {
+					return expected.equals(actual);
+				}
+			}
+		});
+		indexWriterControl.setVoidCallable(1);
 
 		listener.afterIndexingRequest(request1);
 		listenerControl.setVoidCallable(1);
@@ -296,18 +366,48 @@ public class DatabaseIndexerTests extends TestCase {
 		listener.beforeIndexingRequest(request2);
 		listenerControl.setVoidCallable(1);
 
+		indexWriter.addDocument(document2);
+		indexWriterControl.setVoidCallable(1);
+
 		listener.afterIndexingRequest(request2);
 		listenerControl.setVoidCallable(1);
+		
+		indexWriter.optimize();
+		indexWriterControl.setVoidCallable(1);
 
+		indexWriter.close();
+		indexWriterControl.setVoidCallable(1);
+		
+		indexFactoryControl.replay();
+		indexWriterControl.replay();
 		listenerControl.replay();
+		
+		//Indexer
+		final boolean[] called = new boolean[] { false, false };
+		DefaultDatabaseIndexer indexer = new DefaultDatabaseIndexer(indexFactory);
+		indexer.registerDocumentHandler(request1, new SqlDocumentHandler() {
+			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
+				called[0] = true;
+				return document1;
+			}
+		});
+		indexer.registerDocumentHandler(request2, new SqlDocumentHandler() {
+			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
+				called[1] = true;
+				return document2;
+			}
+		});
+		indexer.addListener(listener);
 
 		//Index
-		indexer.index(this.dataSource,true);
+		indexer.index(this.dataSource, true);
 
+		assertTrue(called[0]);
+		assertTrue(called[1]);
+
+		indexFactoryControl.verify();
+		indexWriterControl.verify();
 		listenerControl.verify();
-		assertTrue(test[0]);
-		assertTrue(test[1]);
-		assertTrue(indexFactory.getWriterListener().isIndexWriterOptimize());
 	}
 
 }
