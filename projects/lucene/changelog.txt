@@ -1,0 +1,13 @@
+Spring Modules - Lucene
+
+
+Changes in version 0.7 (15.02.2007)
+-------------------------------------
+
+- Removed the two Document(s)Identifier interfaces. These informations are now
+  parameters of methods modifyDocument(s) of the template.
+- Introduction of LuceneIndexReader and LuceneIndexWriter interfaces.
+- Update of the callacks to support LuceneIndexReader and LuceneIndexWriter.
+- Introduction of LuceneSearcher interface.
+- Update of the callack to support LuceneSearcher.
+- Update templates in order to support Lucene 2.
