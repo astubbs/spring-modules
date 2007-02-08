@@ -44,21 +44,21 @@ public class ParallelMultipleSearcherFactoryTests extends TestCase {
 	private RAMDirectory directory2;
 
 	private void setUpDirectory(Directory directory) throws IOException {
-		IndexWriter writer=new IndexWriter(directory,new SimpleAnalyzer(),true);
+		IndexWriter writer = new IndexWriter(directory,new SimpleAnalyzer(),true);
 		//Adding a document
-		Document document1=new Document();
+		Document document1 = new Document();
 		document1.add(new Field("field", "a sample", Field.Store.YES, Field.Index.TOKENIZED));
 		document1.add(new Field("filter", "a sample filter", Field.Store.YES, Field.Index.TOKENIZED));
 		document1.add(new Field("sort", "2", Field.Store.YES, Field.Index.UN_TOKENIZED));
 		writer.addDocument(document1);
 		//Adding a document
-		Document document2=new Document();
+		Document document2 = new Document();
 		document2.add(new Field("field", "a Lucene support sample", Field.Store.YES, Field.Index.TOKENIZED));
 		document2.add(new Field("filter", "another sample filter", Field.Store.YES, Field.Index.TOKENIZED));
 		document2.add(new Field("sort", "3", Field.Store.YES, Field.Index.UN_TOKENIZED));
 		writer.addDocument(document2);
 		//Adding a document
-		Document document3=new Document();
+		Document document3 = new Document();
 		document3.add(new Field("field", "a different sample", Field.Store.YES, Field.Index.TOKENIZED));
 		document3.add(new Field("filter", "another sample filter", Field.Store.YES, Field.Index.TOKENIZED));
 		document3.add(new Field("sort", "1", Field.Store.YES, Field.Index.UN_TOKENIZED));
@@ -72,14 +72,14 @@ public class ParallelMultipleSearcherFactoryTests extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		//Initialization of the indexes
-		this.directory1=new RAMDirectory();
+		this.directory1 = new RAMDirectory();
 		setUpDirectory(this.directory1);
-		this.directory2=new RAMDirectory();
+		this.directory2 = new RAMDirectory();
 		setUpDirectory(this.directory2);
 	}
 
 	final public void testGetSearcher() throws Exception {
-		ParallelMultipleSearcherFactory searcherFactory=new ParallelMultipleSearcherFactory();
+		ParallelMultipleSearcherFactory searcherFactory = new ParallelMultipleSearcherFactory();
 		try {
 			searcherFactory.getSearcher();
 			fail();
@@ -87,15 +87,15 @@ public class ParallelMultipleSearcherFactoryTests extends TestCase {
 	}
 
 	final public void testGetSearcherWithDirectories() throws Exception {
-		ParallelMultipleSearcherFactory searcherFactory=new ParallelMultipleSearcherFactory();
-		searcherFactory.setDirectories(new Directory[] {directory1,directory2});
+		ParallelMultipleSearcherFactory searcherFactory = new ParallelMultipleSearcherFactory();
+		searcherFactory.setDirectories(new Directory[] {directory1, directory2});
 
-		Searcher searcher=null;
+		LuceneSearcher searcher = null;
 		try {
-			searcher=searcherFactory.getSearcher();
+			searcher = searcherFactory.getSearcher();
 			assertNotNull(searcher);
-			Hits hits=searcher.search(new TermQuery(new Term("field","sample")));
-			assertEquals(hits.length(),6);
+			LuceneHits hits = searcher.search(new TermQuery(new Term("field", "sample")));
+			assertEquals(hits.length(), 6);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			fail();
@@ -107,20 +107,20 @@ public class ParallelMultipleSearcherFactoryTests extends TestCase {
 	}
 
 	final public void testGetSearcherWithIndexFactories() throws Exception {
-		SimpleIndexFactory indexFactory1=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory1 = new SimpleIndexFactory();
 		indexFactory1.setDirectory(directory1);
-		SimpleIndexFactory indexFactory2=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory2 = new SimpleIndexFactory();
 		indexFactory2.setDirectory(directory2);
 
-		ParallelMultipleSearcherFactory searcherFactory=new ParallelMultipleSearcherFactory();
-		searcherFactory.setIndexFactories(new IndexFactory[] {indexFactory1,indexFactory2});
+		ParallelMultipleSearcherFactory searcherFactory = new ParallelMultipleSearcherFactory();
+		searcherFactory.setIndexFactories(new IndexFactory[] {indexFactory1, indexFactory2});
 
-		Searcher searcher=null;
+		LuceneSearcher searcher = null;
 		try {
-			searcher=searcherFactory.getSearcher();
+			searcher = searcherFactory.getSearcher();
 			assertNotNull(searcher);
-			Hits hits=searcher.search(new TermQuery(new Term("field","sample")));
-			assertEquals(hits.length(),6);
+			LuceneHits hits = searcher.search(new TermQuery(new Term("field", "sample")));
+			assertEquals(hits.length(), 6);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			fail();
@@ -132,19 +132,19 @@ public class ParallelMultipleSearcherFactoryTests extends TestCase {
 	}
 
 	final public void testGetSearcherWithDirectoryAndIndexFactory() throws Exception {
-		SimpleIndexFactory indexFactory1=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory1 = new SimpleIndexFactory();
 		indexFactory1.setDirectory(directory1);
 
-		ParallelMultipleSearcherFactory searcherFactory=new ParallelMultipleSearcherFactory();
+		ParallelMultipleSearcherFactory searcherFactory = new ParallelMultipleSearcherFactory();
 		searcherFactory.setIndexFactories(new IndexFactory[] {indexFactory1});
 		searcherFactory.setDirectories(new Directory[] {directory2});
 
-		Searcher searcher=null;
+		LuceneSearcher searcher = null;
 		try {
-			searcher=searcherFactory.getSearcher();
+			searcher = searcherFactory.getSearcher();
 			assertNotNull(searcher);
-			Hits hits=searcher.search(new TermQuery(new Term("field","sample")));
-			assertEquals(hits.length(),6);
+			LuceneHits hits = searcher.search(new TermQuery(new Term("field", "sample")));
+			assertEquals(hits.length(), 6);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			fail();

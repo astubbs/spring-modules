@@ -18,7 +18,6 @@ package org.springmodules.lucene.search.factory;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TermQuery;
 import org.springmodules.lucene.AbstractLuceneTestCase;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;
@@ -30,7 +29,7 @@ import org.springmodules.lucene.search.LuceneSearchException;
 public class SimpleSearcherFactoryTests extends AbstractLuceneTestCase {
 
 	final public void testGetSearcher() throws Exception {
-		SimpleSearcherFactory searcherFactory=new SimpleSearcherFactory();
+		SimpleSearcherFactory searcherFactory = new SimpleSearcherFactory();
 		try {
 			searcherFactory.getSearcher();
 			fail();
@@ -38,15 +37,15 @@ public class SimpleSearcherFactoryTests extends AbstractLuceneTestCase {
 	}
 
 	final public void testGetSearcherWithDirectory() throws Exception {
-		SimpleSearcherFactory searcherFactory=new SimpleSearcherFactory();
+		SimpleSearcherFactory searcherFactory = new SimpleSearcherFactory();
 		searcherFactory.setDirectory(directory);
 
-		Searcher searcher=null;
+		LuceneSearcher searcher = null;
 		try {
-			searcher=searcherFactory.getSearcher();
+			searcher = searcherFactory.getSearcher();
 			assertNotNull(searcher);
-			Hits hits=searcher.search(new TermQuery(new Term("field","sample")));
-			assertEquals(hits.length(),3);
+			LuceneHits hits = searcher.search(new TermQuery(new Term("field","sample")));
+			assertEquals(hits.length(), 3);
 		} catch(Exception ex) {
 			fail();
 		} finally {
@@ -57,18 +56,18 @@ public class SimpleSearcherFactoryTests extends AbstractLuceneTestCase {
 	}
 
 	final public void testGetSearcherWithIndexFactory() throws Exception {
-		SimpleIndexFactory indexFactory=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
 		indexFactory.setDirectory(directory);
 
-		SimpleSearcherFactory searcherFactory=new SimpleSearcherFactory();
+		SimpleSearcherFactory searcherFactory = new SimpleSearcherFactory();
 		searcherFactory.setIndexFactory(indexFactory);
 
-		Searcher searcher=null;
+		LuceneSearcher searcher = null;
 		try {
-			searcher=searcherFactory.getSearcher();
+			searcher = searcherFactory.getSearcher();
 			assertNotNull(searcher);
-			Hits hits=searcher.search(new TermQuery(new Term("field","sample")));
-			assertEquals(hits.length(),3);
+			LuceneHits hits = searcher.search(new TermQuery(new Term("field","sample")));
+			assertEquals(hits.length(), 3);
 		} catch(Exception ex) {
 			fail();
 		} finally {

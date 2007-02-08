@@ -21,8 +21,8 @@ import java.util.List;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.springmodules.lucene.AbstractLuceneTestCase;
-import org.springmodules.lucene.search.core.MockSimpleSearcherFactory;
 import org.springmodules.lucene.search.core.ParsedQueryCreator.QueryParams;
+import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
 
 /**
@@ -32,13 +32,12 @@ public class ParsedLuceneSearchQueryTests extends AbstractLuceneTestCase {
 
 	final public void testSearch() {
 		//Initialization of the searcher
-		SimpleSearcherFactory targetSearcherFactory=new SimpleSearcherFactory(directory);
-		MockSimpleSearcherFactory searcherFactory=new MockSimpleSearcherFactory(targetSearcherFactory);
+		SearcherFactory searcherFactory = new SimpleSearcherFactory(directory);
 
 		//Initialization of the query
 		LuceneSearchQuery query=new ParsedLuceneSearchQuery(searcherFactory,new SimpleAnalyzer()) {
 			protected QueryParams configureSearchQuery(String textToSearch) {
-				return new QueryParams("field",textToSearch);
+				return new QueryParams("field", textToSearch);
 			}
 
 			protected Object extractResultHit(int id, Document document, float score) {
@@ -49,19 +48,15 @@ public class ParsedLuceneSearchQueryTests extends AbstractLuceneTestCase {
 		//First search
 		List results=query.search("lucene");
 
-		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),1);
-		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),1);
 		assertEquals(results.size(),1);
-		assertEquals((String)results.get(0),"a Lucene support sample");
+		assertEquals((String)results.get(0), "a Lucene support sample");
 
 		//Second search
 		results=query.search("sample");
 
-		assertEquals(searcherFactory.getListener().getNumberSearchersCreated(),2);
-		assertEquals(searcherFactory.getListener().getNumberSearchersClosed(),2);
 		assertEquals(results.size(),3);
-		assertEquals((String)results.get(0),"a sample");
-		assertEquals((String)results.get(1),"a Lucene support sample");
-		assertEquals((String)results.get(2),"a different sample");
+		assertEquals((String)results.get(0), "a sample");
+		assertEquals((String)results.get(1), "a Lucene support sample");
+		assertEquals((String)results.get(2), "a different sample");
 	}
 }

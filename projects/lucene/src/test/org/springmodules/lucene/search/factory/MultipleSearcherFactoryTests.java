@@ -89,11 +89,11 @@ public class MultipleSearcherFactoryTests extends TestCase {
 		MultipleSearcherFactory searcherFactory=new MultipleSearcherFactory();
 		searcherFactory.setDirectories(new Directory[] {directory1,directory2});
 
-		Searcher searcher=null;
+		LuceneSearcher searcher = null;
 		try {
-			searcher=searcherFactory.getSearcher();
+			searcher = searcherFactory.getSearcher();
 			assertNotNull(searcher);
-			Hits hits=searcher.search(new TermQuery(new Term("field","sample")));
+			LuceneHits hits = searcher.search(new TermQuery(new Term("field", "sample")));
 			assertEquals(hits.length(),6);
 		} catch(Exception ex) {
 			ex.printStackTrace();
@@ -106,20 +106,20 @@ public class MultipleSearcherFactoryTests extends TestCase {
 	}
 
 	final public void testGetSearcherWithIndexFactories() throws Exception {
-		SimpleIndexFactory indexFactory1=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory1 = new SimpleIndexFactory();
 		indexFactory1.setDirectory(directory1);
-		SimpleIndexFactory indexFactory2=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory2 = new SimpleIndexFactory();
 		indexFactory2.setDirectory(directory2);
 
-		MultipleSearcherFactory searcherFactory=new MultipleSearcherFactory();
-		searcherFactory.setIndexFactories(new IndexFactory[] {indexFactory1,indexFactory2});
+		MultipleSearcherFactory searcherFactory = new MultipleSearcherFactory();
+		searcherFactory.setIndexFactories(new IndexFactory[] {indexFactory1, indexFactory2});
 
-		Searcher searcher=null;
+		LuceneSearcher searcher = null;
 		try {
-			searcher=searcherFactory.getSearcher();
+			searcher = searcherFactory.getSearcher();
 			assertNotNull(searcher);
-			Hits hits=searcher.search(new TermQuery(new Term("field","sample")));
-			assertEquals(hits.length(),6);
+			LuceneHits hits = searcher.search(new TermQuery(new Term("field", "sample")));
+			assertEquals(hits.length(), 6);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			fail();
@@ -131,18 +131,18 @@ public class MultipleSearcherFactoryTests extends TestCase {
 	}
 
 	final public void testGetSearcherWithDirectoryAndIndexFactory() throws Exception {
-		SimpleIndexFactory indexFactory1=new SimpleIndexFactory();
+		SimpleIndexFactory indexFactory1 = new SimpleIndexFactory();
 		indexFactory1.setDirectory(directory1);
 
-		MultipleSearcherFactory searcherFactory=new MultipleSearcherFactory();
+		MultipleSearcherFactory searcherFactory = new MultipleSearcherFactory();
 		searcherFactory.setIndexFactories(new IndexFactory[] {indexFactory1});
 		searcherFactory.setDirectories(new Directory[] {directory2});
 
-		Searcher searcher=null;
+		LuceneSearcher searcher = null;
 		try {
-			searcher=searcherFactory.getSearcher();
+			searcher = searcherFactory.getSearcher();
 			assertNotNull(searcher);
-			Hits hits=searcher.search(new TermQuery(new Term("field","sample")));
+			LuceneHits hits = searcher.search(new TermQuery(new Term("field", "sample")));
 			assertEquals(hits.length(),6);
 		} catch(Exception ex) {
 			ex.printStackTrace();
