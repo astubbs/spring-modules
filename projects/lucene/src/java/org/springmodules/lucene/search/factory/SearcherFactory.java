@@ -18,8 +18,6 @@ package org.springmodules.lucene.search.factory;
 
 import java.io.IOException;
 
-import org.apache.lucene.search.Searcher;
-
 /**
  * <p>This is the searcher factory abstraction to get searcher
  * instances to make searchs on a Lucene index. These instances can be used
@@ -39,5 +37,5 @@ public interface SearcherFactory {
 	 * on the index.
 	 * @return the Searcher instance
 	 */
-	public Searcher getSearcher() throws IOException;
+	public LuceneSearcher getSearcher() throws IOException;
 }

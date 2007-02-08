@@ -30,17 +30,17 @@ import org.apache.lucene.search.Searcher;
  */
 public class SearcherHolder {
 
-	private Searcher searcher;
+	private LuceneSearcher searcher;
 
-	public SearcherHolder(Searcher searcher) {
+	public SearcherHolder(LuceneSearcher searcher) {
 		this.searcher = searcher;
 	}
 
-	public Searcher getSearcher() {
+	public LuceneSearcher getSearcher() {
 		return this.searcher;
 	}
 
-	public void setSearcher(Searcher searcher) {
+	public void setSearcher(LuceneSearcher searcher) {
 		this.searcher = searcher;
 	}
 

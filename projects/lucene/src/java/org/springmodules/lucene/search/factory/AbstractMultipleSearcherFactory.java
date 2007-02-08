@@ -17,15 +17,13 @@
 package org.springmodules.lucene.search.factory;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
+import org.springmodules.lucene.index.factory.LuceneIndexReader;
 import org.springmodules.lucene.search.LuceneSearchException;
 
 /**
@@ -79,28 +77,31 @@ public abstract class AbstractMultipleSearcherFactory {
 			throw new LuceneSearchException("Either Directories or Indexreaders must be specified.");
 		}
 
-		int size=0;
+		int size = 0;
 		if( directories!=null ) {
-			size=directories.length;
+			size = directories.length;
 		}
 		if( indexFactories!=null ) {
-			size+=indexFactories.length;
+			size += indexFactories.length;
 		}
-		Searcher[] searchers=new Searcher[size];
+		Searcher[] searchers = new Searcher[size];
 
 		if( directories!=null ) {
-			for(int index=0;index<directories.length;index++) {
-				searchers[index]=new IndexSearcher(directories[index]);
+			for(int index=0; index<directories.length; index++) {
+				searchers[index] = new IndexSearcher(directories[index]);
 			}
 		}
 		if( indexFactories!=null ) {
-			int startSearchersIndex=0;
+			int startSearchersIndex = 0;
 			if( directories!=null ) {
-				startSearchersIndex=directories.length;
+				startSearchersIndex = directories.length;
 			}
-			for(int index=0;index<indexFactories.length;index++) {
-				IndexReader indexReader=IndexReaderFactoryUtils.getIndexReader(indexFactories[index]);
-				searchers[index+startSearchersIndex]=new IndexSearcher(indexReader);
+			for(int index=0; index<indexFactories.length; index++) {
+				LuceneIndexReader indexReader = IndexReaderFactoryUtils.getIndexReader(indexFactories[index]);
+				Searcher searcher = indexReader.createNativeSearcher();
+				if( searcher!=null ) {
+					searchers[index+startSearchersIndex] = searcher;
+				}
 			}
 		}
 		return searchers;

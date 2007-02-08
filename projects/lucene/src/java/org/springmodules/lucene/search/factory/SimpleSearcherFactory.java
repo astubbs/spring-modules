@@ -18,12 +18,12 @@ package org.springmodules.lucene.search.factory;
 
 import java.io.IOException;
 
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
+import org.springmodules.lucene.index.factory.LuceneIndexReader;
 import org.springmodules.lucene.search.LuceneSearchException;
 
 /**
@@ -70,12 +70,14 @@ public class SimpleSearcherFactory extends AbstractSingleSearcherFactory impleme
 	 * @return a Searcher instance
 	 * @see org.springmodules.lucene.search.SearcherFactory#getSearcher()
 	 */
-	public Searcher getSearcher() throws IOException {
+	public LuceneSearcher getSearcher() throws IOException {
 		if( getDirectory()!=null ) {
-			return new IndexSearcher(getDirectory());
+			Searcher indexSearcher = new IndexSearcher(getDirectory()); 
+			return new SimpleLuceneSearcher(indexSearcher);
 		} else if( getIndexFactory()!=null ) {
-			IndexReader indexReader=IndexReaderFactoryUtils.getIndexReader(getIndexFactory());
-			return new IndexSearcher(indexReader);
+			LuceneIndexReader indexReader = IndexReaderFactoryUtils.getIndexReader(getIndexFactory());
+			Searcher indexSearcher = indexReader.createNativeSearcher(); 
+			return new SimpleLuceneSearcher(indexSearcher);
 		} else {
 			throw new LuceneSearchException("Either a Directory or an Indexreader must be specified.");
 		}

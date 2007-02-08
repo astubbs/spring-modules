@@ -81,9 +81,10 @@ public class MultipleSearcherFactory extends AbstractMultipleSearcherFactory imp
 	 * @return a Searcher instance
 	 * @see org.springmodules.lucene.search.SearcherFactory#getSearcher()
 	 */
-	public Searcher getSearcher() throws IOException {
+	public LuceneSearcher getSearcher() throws IOException {
 		Searcher[] searchers = createSearchers();
-		return new MultiSearcher(searchers);
+		MultiSearcher multiSearcher = new MultiSearcher(searchers); 
+		return new SimpleLuceneSearcher(multiSearcher);
 	}
 
 }

@@ -81,9 +81,10 @@ public class ParallelMultipleSearcherFactory extends AbstractMultipleSearcherFac
 	 * @return a Searcher instance
 	 * @see org.springmodules.lucene.search.SearcherFactory#getSearcher()
 	 */
-	public Searcher getSearcher() throws IOException {
+	public LuceneSearcher getSearcher() throws IOException {
 		Searcher[] searchers = createSearchers();
-		return new ParallelMultiSearcher(searchers);
+		ParallelMultiSearcher parallelMultiSearcher = new ParallelMultiSearcher(searchers);
+		return new SimpleLuceneSearcher(parallelMultiSearcher);
 	}
 
 }

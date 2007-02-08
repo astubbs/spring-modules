@@ -55,7 +55,7 @@ public abstract class SearcherFactoryUtils {
 	 * @see #doGetSearcher(SearcherFactory)
 	 * @see org.springmodules.lucene.search.core.LuceneSearcherResourceManager
 	 */
-	public static Searcher getSearcher(SearcherFactory searcherFactory) {
+	public static LuceneSearcher getSearcher(SearcherFactory searcherFactory) {
 		try {
 			return doGetSearcher(searcherFactory);
 		} catch (IOException ex) {
@@ -70,13 +70,13 @@ public abstract class SearcherFactoryUtils {
 	 * @return a Lucene Searcher from the given SearcherFactory
 	 * @throws IOException if thrown by Lucene API methods
 	 */
-	public static Searcher doGetSearcher(SearcherFactory searcherFactory) throws IOException {
+	public static LuceneSearcher doGetSearcher(SearcherFactory searcherFactory) throws IOException {
 		SearcherHolder searcherHolder = (SearcherHolder) ResourceBindingManager.getResource(searcherFactory);
 		if (searcherHolder != null && searcherHolder.getSearcher()!=null ) {
 			return searcherHolder.getSearcher();
 		}
 
-		Searcher searcher = searcherFactory.getSearcher();
+		LuceneSearcher searcher = searcherFactory.getSearcher();
 		if( searcherHolder!=null ) {
 			//Lazily open the search if there is an IndexHolder
 			searcherHolder.setSearcher(searcher);
@@ -93,9 +93,9 @@ public abstract class SearcherFactoryUtils {
 	 * (if this is null, the call will be ignored)
 	 * @see #doReleaseSearcher(SearcherFactory, Searcher) 
 	 */
-	public static void releaseSearcher(SearcherFactory searcherFactory,Searcher searcher) {
+	public static void releaseSearcher(SearcherFactory searcherFactory, LuceneSearcher searcher) {
 		try {
-			doReleaseSearcher(searcherFactory,searcher);
+			doReleaseSearcher(searcherFactory, searcher);
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Unable to close index searcher",ex);
 		}
@@ -108,7 +108,7 @@ public abstract class SearcherFactoryUtils {
 	 * @param searcher Searcher to close if necessary
 	 * @throws IOException if thrown by Lucene methods
 	 */
-	public static void doReleaseSearcher(SearcherFactory searcherFactory,Searcher searcher) throws IOException {
+	public static void doReleaseSearcher(SearcherFactory searcherFactory, LuceneSearcher searcher) throws IOException {
 		if (searcher == null || ResourceBindingManager.hasResource(searcherFactory)) {
 			return;
 		}
@@ -116,7 +116,7 @@ public abstract class SearcherFactoryUtils {
 		if (!(searcherFactory instanceof SmartSearcherFactory)
 				|| ((SmartSearcherFactory) searcherFactory).shouldClose(searcher)) {
 			logger.debug("Closing Lucene Searcher");
-			searcher.close();
+			releaseSearcher(searcher);
 		}
 	}
 
@@ -125,7 +125,7 @@ public abstract class SearcherFactoryUtils {
 	 * @param searcher Searcher to close if necessary
 	 * (if this is null, the call will be ignored)
 	 */
-	public static void releaseSearcher(Searcher searcher) {
+	public static void releaseSearcher(LuceneSearcher searcher) {
 		try {
 			if( searcher==null ) {
 				return;

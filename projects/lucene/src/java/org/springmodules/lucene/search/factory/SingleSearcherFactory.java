@@ -18,7 +18,6 @@ package org.springmodules.lucene.search.factory;
 
 import java.io.IOException;
 
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.store.Directory;
@@ -26,6 +25,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
+import org.springmodules.lucene.index.factory.LuceneIndexReader;
 import org.springmodules.lucene.search.LuceneSearchException;
 import org.springmodules.lucene.search.core.SmartSearcherFactory;
 
@@ -36,9 +36,9 @@ import org.springmodules.lucene.search.core.SmartSearcherFactory;
  * @author Thierry Templier
  * @see org.springmodules.lucene.search.factory.SearcherFactory
  */
-public class SingleSearcherFactory extends AbstractSingleSearcherFactory implements InitializingBean,DisposableBean,SmartSearcherFactory {
+public class SingleSearcherFactory extends AbstractSingleSearcherFactory implements InitializingBean, DisposableBean, SmartSearcherFactory {
 
-	private IndexSearcher indexSearcher;
+	private LuceneSearcher indexSearcher;
 
 	/**
 	 * Construct a new SingleSearcherFactory for bean usage.
@@ -76,10 +76,12 @@ public class SingleSearcherFactory extends AbstractSingleSearcherFactory impleme
 	 */
 	public void afterPropertiesSet() throws Exception {
 		if( getDirectory()!=null ) {
-			this.indexSearcher=new IndexSearcher(getDirectory());
+			Searcher searcher = new IndexSearcher(getDirectory());
+			this.indexSearcher = new SimpleLuceneSearcher(searcher);
 		} else if( getIndexFactory()!=null ) {
-			IndexReader indexReader=IndexReaderFactoryUtils.getIndexReader(getIndexFactory());
-			this.indexSearcher=new IndexSearcher(indexReader);
+			LuceneIndexReader indexReader = IndexReaderFactoryUtils.getIndexReader(getIndexFactory());
+			Searcher searcher = indexReader.createNativeSearcher();
+			this.indexSearcher = new SimpleLuceneSearcher(searcher);
 		} else {
 			throw new LuceneSearchException("Either a Directory or an IndexReader must be specified.");
 		}
@@ -100,7 +102,7 @@ public class SingleSearcherFactory extends AbstractSingleSearcherFactory impleme
 	 * @return a Searcher instance
 	 * @see org.springmodules.lucene.search.SearcherFactory#getSearcher()
 	 */
-	public Searcher getSearcher() throws IOException {
+	public LuceneSearcher getSearcher() throws IOException {
 		return indexSearcher;
 	}
 
@@ -108,7 +110,7 @@ public class SingleSearcherFactory extends AbstractSingleSearcherFactory impleme
 	 * As there is a single instance of the searcher, this one must
 	 * be closed only when the context is closed.
 	 */
-	public boolean shouldClose(Searcher searcher) {
+	public boolean shouldClose(LuceneSearcher searcher) {
 		return false;
 	}
 
