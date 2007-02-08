@@ -17,6 +17,7 @@
 package org.springmodules.lucene.search.core;
 
 import org.apache.lucene.search.Searcher;
+import org.springmodules.lucene.search.factory.LuceneSearcher;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 
 /**
@@ -45,5 +46,5 @@ public interface SmartSearcherFactory extends SearcherFactory {
 	 * @param searcher the Searcher to check
 	 * @return whether the given searcher should be closed
 	 */
-	public boolean shouldClose(Searcher searcher);
+	public boolean shouldClose(LuceneSearcher searcher);
 }

@@ -31,6 +31,7 @@ import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.LuceneIndexingException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
+import org.springmodules.lucene.index.factory.LuceneIndexWriter;
 import org.springmodules.lucene.index.object.AbstractDocumentManagerIndexer;
 import org.springmodules.lucene.index.support.handler.DocumentHandler;
 import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
@@ -90,7 +91,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @param indexFactory IndexFactory to obtain IndexWriter
 	 */
 	public DefaultDirectoryIndexer(IndexFactory indexFactory) {
-		this(indexFactory,null);
+		this(indexFactory, null);
 	}
 
 	/**
@@ -100,14 +101,14 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @param indexFactory IndexFactory to obtain IndexWriter
 	 * @param documentHandlerManager DocumentHandlerManager which will be used by the indexer
 	 */
-	public DefaultDirectoryIndexer(IndexFactory indexFactory,DocumentHandlerManager documentHandlerManager) {
+	public DefaultDirectoryIndexer(IndexFactory indexFactory, DocumentHandlerManager documentHandlerManager) {
 		setIndexFactory(indexFactory);
 		init(documentHandlerManager);
 	}
 
 	protected void init(DocumentHandlerManager documentHandlerManager) {
 		super.init(documentHandlerManager);
-		this.listeners=new ArrayList();
+		this.listeners = new ArrayList();
 	}
 
 	/**
@@ -152,8 +153,8 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @param file the directory which will be indexed
 	 */
 	protected void fireListenersOnBeforeDirectory(File file) {
-		for(Iterator i=listeners.iterator();i.hasNext();) {
-			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
+		for(Iterator i = listeners.iterator(); i.hasNext();) {
+			FileDocumentIndexingListener listener = (FileDocumentIndexingListener)i.next();
 			listener.beforeIndexingDirectory(file);
 		}
 	}
@@ -168,8 +169,8 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @param file the directory which has been indexed
 	 */
 	protected void fireListenersOnAfterDirectory(File file) {
-		for(Iterator i=listeners.iterator();i.hasNext();) {
-			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
+		for(Iterator i = listeners.iterator(); i.hasNext();) {
+			FileDocumentIndexingListener listener = (FileDocumentIndexingListener)i.next();
 			listener.afterIndexingDirectory(file);
 		}
 	}
@@ -184,8 +185,8 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @param file the file which will be indexed
 	 */
 	protected void fireListenersOnBeforeFile(File file) {
-		for(Iterator i=listeners.iterator();i.hasNext();) {
-			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
+		for(Iterator i = listeners.iterator(); i.hasNext();) {
+			FileDocumentIndexingListener listener = (FileDocumentIndexingListener)i.next();
 			listener.beforeIndexingFile(file);
 		}
 	}
@@ -200,8 +201,8 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @param file the file which have been indexed
 	 */
 	protected void fireListenersOnAfterFile(File file) {
-		for(Iterator i=listeners.iterator();i.hasNext();) {
-			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
+		for(Iterator i = listeners.iterator(); i.hasNext();) {
+			FileDocumentIndexingListener listener = (FileDocumentIndexingListener)i.next();
 			listener.afterIndexingFile(file);
 		}
 	}
@@ -215,8 +216,8 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @param file the file on which the error occurs
 	 */
 	protected void fireListenersOnErrorFile(File file,Exception ex) {
-		for(Iterator i=listeners.iterator();i.hasNext();) {
-			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
+		for(Iterator i = listeners.iterator(); i.hasNext();) {
+			FileDocumentIndexingListener listener = (FileDocumentIndexingListener)i.next();
 			listener.onErrorIndexingFile(file,ex);
 		}
 	}
@@ -231,8 +232,8 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @param file the file to index
 	 */
 	protected void fireListenersOnNoHandlerAvailable(File file) {
-		for(Iterator i=listeners.iterator();i.hasNext();) {
-			FileDocumentIndexingListener listener=(FileDocumentIndexingListener)i.next();
+		for(Iterator i = listeners.iterator(); i.hasNext();) {
+			FileDocumentIndexingListener listener = (FileDocumentIndexingListener)i.next();
 			listener.onNotAvailableHandler(file);
 		}
 	}
@@ -253,10 +254,10 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * to a LuceneManipulateIndexException
 	 * @see DocumentIndexingListener
 	 */
-	private void indexDirectory(IndexWriter writer,File dirToParse) throws IOException {
+	private void indexDirectory(LuceneIndexWriter writer, File dirToParse) throws IOException {
 		fireListenersOnBeforeDirectory(dirToParse);
 		File[] files = dirToParse.listFiles();
-		for(int cpt=0;cpt<files.length;cpt++) {
+		for(int cpt=0; cpt<files.length; cpt++) {
 			File currentFile = files[cpt];
 			if (currentFile.isDirectory()) {
 				indexDirectory(writer, currentFile);
@@ -280,9 +281,9 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * to a LuceneManipulateIndexException
 	 */
 	private Document doCallHandler(File file,FileInputStream inputStream,DocumentHandler handler) throws Exception {
-		Map description=new HashMap();
-		description.put(AbstractInputStreamDocumentHandler.FILENAME,file.getAbsolutePath());
-		return handler.getDocument(description,inputStream);
+		Map description = new HashMap();
+		description.put(AbstractInputStreamDocumentHandler.FILENAME, file.getAbsolutePath());
+		return handler.getDocument(description, inputStream);
 	}
 
 	/**
@@ -304,23 +305,23 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @see #doCallHandler(File, FileInputStream, DocumentHandler)
 	 * @see DocumentIndexingListener
 	 */
-	private void indexFile(IndexWriter writer,File file) throws IOException {
+	private void indexFile(LuceneIndexWriter writer, File file) throws IOException {
 		fireListenersOnBeforeFile(file);
 		DocumentHandler handler = doGetDocumentHandler(file);
 		if( handler!=null ) {
-			FileInputStream inputStream=null;
+			FileInputStream inputStream = null;
 			try {
-				inputStream=new FileInputStream(file);
-				Document document=doCallHandler(file,inputStream,handler);
+				inputStream = new FileInputStream(file);
+				Document document = doCallHandler(file, inputStream, handler);
 				if( document!=null ) {
 					writer.addDocument(document);
 				}
 				fireListenersOnAfterFile(file);
 			} catch(IOException ex) {
-				fireListenersOnErrorFile(file,ex);
+				fireListenersOnErrorFile(file, ex);
 			} catch(Exception ex) {
-				logger.error("Error during indexing the file "+file.getName(),ex);
-				fireListenersOnErrorFile(file,ex);
+				logger.error("Error during indexing the file "+file.getName(), ex);
+				fireListenersOnErrorFile(file, ex);
 			} finally {
 				IOUtils.closeInputStream(inputStream);
 			}
@@ -357,7 +358,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @see #index(String, boolean)
 	 */
 	public void index(String dirToParse) {
-		index(dirToParse,false);
+		index(dirToParse, false);
 	}
 
 	/**
@@ -367,7 +368,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @return true if it exists, otherwise false
 	 */
 	private boolean checkBaseDirectory(String dirToParse) {
-		File dir=new File(dirToParse);
+		File dir = new File(dirToParse);
 		return dir.exists();
 	}
 
@@ -392,29 +393,29 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @see IndexWriterFactoryUtils#getIndexWriter(IndexFactory)
 	 * @see IndexWriterFactoryUtils#releaseIndexWriter(IndexFactory, IndexWriter)
 	 */
-	public void index(String dirToParse,boolean optimizeIndex) {
+	public void index(String dirToParse, boolean optimizeIndex) {
 		if( !checkBaseDirectory(dirToParse) ) {
 			throw new LuceneIndexingException("The base directory doesn't exist!");
 		}
 
-		IndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(getIndexFactory());
+		LuceneIndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(getIndexFactory());
 		try {
-			File file=new File(dirToParse);
+			File file = new File(dirToParse);
 			//Indexing the directory
 			if( file.isDirectory() ) {
-				indexDirectory(writer,new File(dirToParse));
+				indexDirectory(writer, new File(dirToParse));
 			} else {
-				indexFile(writer,file);
+				indexFile(writer, file);
 			}
 			//Optimize the index
 			if( optimizeIndex ) {
 				writer.optimize();
 			}
 		} catch(IOException ex) {
-			logger.error("Error during indexing the directory : "+dirToParse,ex);
-			throw new LuceneIndexAccessException("Error during indexing the directory : "+dirToParse,ex);
+			logger.error("Error during indexing the directory : "+dirToParse, ex);
+			throw new LuceneIndexAccessException("Error during indexing the directory : "+dirToParse, ex);
 		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(getIndexFactory(),writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(getIndexFactory(), writer);
 		}
 	}
 

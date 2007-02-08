@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.LuceneIndexingException;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
+import org.springmodules.lucene.index.factory.LuceneIndexWriter;
 import org.springmodules.lucene.index.object.AbstractIndexer;
 import org.springmodules.lucene.index.support.handler.DocumentHandler;
 import org.springmodules.lucene.index.support.handler.database.SqlDocumentHandler;
@@ -112,9 +113,9 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	 * @param sqlRequest the request to execute
 	 * @param handler the handler to index the rows
 	 */
-	public void registerDocumentHandler(SqlRequest sqlRequest,SqlDocumentHandler handler) {
+	public void registerDocumentHandler(SqlRequest sqlRequest, SqlDocumentHandler handler) {
 		if( sqlRequest!=null && handler!=null ) {
-			requestDocumentHandlers.put(sqlRequest,handler);
+			requestDocumentHandlers.put(sqlRequest, handler);
 		}
 	}
 
@@ -266,14 +267,13 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	 * @param writer the IndexWriter instance to use
 	 * @param documents the list of documents to add
 	 */
-	private void addDocumentsInIndex(IndexWriter writer, List documents) throws IOException{
-		for(Iterator i=documents.iterator();i.hasNext();) {
-			Document document=(Document)i.next();
+	private void addDocumentsInIndex(LuceneIndexWriter writer, List documents) throws IOException{
+		for(Iterator i=documents.iterator(); i.hasNext();) {
+		Document document = (Document)i.next();
 			if( document!=null ) {
 				writer.addDocument(document);
 			}
 		}
-		
 	}
 
 	/**
@@ -297,21 +297,21 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	 * @see #fireListenersOnAfterRequest(SqlRequest)
 	 * @see #fireListenersOnErrorRequest(SqlRequest, Exception)
 	 */
-	private void doHandleRequest(IndexWriter writer,DataSource dataSource,SqlRequest request,
-												SqlDocumentHandler handler) {
+	private void doHandleRequest(LuceneIndexWriter writer, DataSource dataSource,
+									SqlRequest request, SqlDocumentHandler handler) {
 		try {
 			fireListenersOnBeforeRequest(request);
-			List documents=indexResultSql(dataSource,request,handler);
+			List documents = indexResultSql(dataSource, request, handler);
 			if( documents!=null ) {
-				addDocumentsInIndex(writer,documents);
+				addDocumentsInIndex(writer, documents);
 			}
 			fireListenersOnAfterRequest(request);
 		} catch(DataAccessException ex) {
-			logger.error("Error during indexing the request",ex);
-			fireListenersOnErrorRequest(request,ex);
+			logger.error("Error during indexing the request", ex);
+			fireListenersOnErrorRequest(request, ex);
 		} catch(IOException ex) {
-			logger.error("Error during indexing the request",ex);
-			fireListenersOnErrorRequest(request,ex);
+			logger.error("Error during indexing the request", ex);
+			fireListenersOnErrorRequest(request, ex);
 		}
 	}
 
@@ -325,7 +325,7 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	 * @see #index(DataSource, boolean)
 	 */
 	public void index(DataSource dataSource) {
-		index(dataSource,false);
+		index(dataSource, false);
 	}
 
 	/**
@@ -344,24 +344,27 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 	 * the request indexing
 	 * @see #doHandleRequest(DataSource, SqlRequest, SqlDocumentHandler, boolean)
 	 */
-	public void index(DataSource dataSource,boolean optimizeIndex) {
-		IndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(getIndexFactory());
+	public void index(DataSource dataSource, boolean optimizeIndex) {
+		LuceneIndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(getIndexFactory());
 		try {
-			Set requests=requestDocumentHandlers.keySet();
-			for(Iterator i=requests.iterator();i.hasNext();) {
-				SqlRequest request=(SqlRequest)i.next();
-				SqlDocumentHandler handler=(SqlDocumentHandler)requestDocumentHandlers.get(request);
-				doHandleRequest(writer,dataSource,request,handler);
+			Set requests = requestDocumentHandlers.keySet();
+			for(Iterator i=requests.iterator(); i.hasNext();) {
+				SqlRequest request = (SqlRequest)i.next();
+				SqlDocumentHandler handler = (SqlDocumentHandler)requestDocumentHandlers.get(request);
+				doHandleRequest(writer, dataSource, request, handler);
 			}
 			//Optimize the index
 			if( optimizeIndex ) {
 				writer.optimize();
 			}
-		} catch(IOException ex) {
-			logger.error("Error during indexing the datasource",ex);
-			throw new LuceneIndexAccessException("Error during indexing the datasource",ex);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			logger.error("Error during indexing the datasource", ex);
+			throw new LuceneIndexAccessException("Error during indexing the datasource", ex);
+		} catch(Throwable t) {
+			t.printStackTrace();
 		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(getIndexFactory(),writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(getIndexFactory(), writer);
 		}
 	}
 
@@ -377,11 +380,11 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 
 		public IndexingMappingQuery(DataSource ds,SqlRequest request,DocumentHandler handler) {
 			super(ds, request.getSql());
-			this.request=request;
-			this.handler=handler;
-			int[] types=request.getTypes();
+			this.request = request;
+			this.handler = handler;
+			int[] types = request.getTypes();
 			if( types!=null ) {
-				for(int cpt=0;cpt<types.length;cpt++) {
+				for(int cpt=0; cpt<types.length; cpt++) {
 					super.declareParameter(new SqlParameter(types[cpt]));
 				}
 			}
@@ -390,11 +393,11 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 
 		public Object mapRow(ResultSet rs, int rowNumber) throws SQLException {
 			try {
-				return handler.getDocument(request.getDescription(),rs);
+				return handler.getDocument(request.getDescription(), rs);
 			} catch (SQLException ex) {
 				throw ex;
 			} catch (Exception ex) {
-				throw new LuceneIndexingException("Error during the indexing of the ResultSet.",ex);
+				throw new LuceneIndexingException("Error during the indexing of the ResultSet.", ex);
 			}
 		} 
 	}

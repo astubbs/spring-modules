@@ -18,6 +18,7 @@ package org.springmodules.lucene.search.core;
 
 import org.apache.lucene.search.Searcher;
 import org.springframework.beans.factory.InitializingBean;
+import org.springmodules.lucene.search.factory.LuceneSearcher;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
 import org.springmodules.lucene.search.factory.SearcherHolder;
@@ -100,7 +101,7 @@ public class LuceneSearcherResourceManager extends AbstractResourceManager imple
 		ResourceBindingManager.unbindResource(this.searcherFactory);
 
 		// Close searcher.
-		Searcher searcher = holder.getSearcher();
+		LuceneSearcher searcher = holder.getSearcher();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Closing Lucene searcher [" + searcher + "]");
 		}

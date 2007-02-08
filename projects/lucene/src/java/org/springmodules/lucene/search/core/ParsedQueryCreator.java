@@ -47,14 +47,14 @@ public abstract class ParsedQueryCreator implements QueryCreator {
 	 * @see #configureQuery()
 	 */
 	public final Query createQuery(Analyzer analyzer) throws ParseException {
-		QueryParams params=configureQuery();
-		String[] tokens=params.getToken();
-		Query query=null;
+		QueryParams params = configureQuery();
+		String[] tokens = params.getToken();
+		Query query = null;
 		if( tokens.length==1 ) {
-			QueryParser parser=new QueryParser(tokens[0],analyzer);
-			query=parser.parse(params.getTextToSearch());
+			QueryParser parser = new QueryParser(tokens[0],analyzer);
+			query = parser.parse(params.getTextToSearch());
 		} else {
-			query=MultiFieldQueryParser.parse(new String[] { params.getTextToSearch() }, tokens, analyzer);
+			query = MultiFieldQueryParser.parse(new String[] { params.getTextToSearch() }, tokens, analyzer);
 		}
 		setQueryProperties(query);
 		return query;

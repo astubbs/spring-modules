@@ -26,9 +26,10 @@ import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Sort;
 import org.springmodules.lucene.search.LuceneSearchException;
+import org.springmodules.lucene.search.factory.LuceneHits;
+import org.springmodules.lucene.search.factory.LuceneSearcher;
 import org.springmodules.lucene.search.factory.SearcherFactory;
 import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
 
@@ -133,10 +134,10 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 	 * @return the search results extracted
 	 * @throws IOException exception occuring when accessing documents
 	 */
-	private List extractHits(Hits hits,HitExtractor extractor) throws IOException {
-		List list=new ArrayList();
-		for(int cpt=0;cpt<hits.length();cpt++) {
-			list.add(extractor.mapHit(hits.id(cpt),hits.doc(cpt),hits.score(cpt)));
+	private List extractHits(LuceneHits hits, HitExtractor extractor) throws IOException {
+		List list = new ArrayList();
+		for(int cpt=0; cpt<hits.length(); cpt++) {
+			list.add(extractor.mapHit(hits.id(cpt), hits.doc(cpt), hits.score(cpt)));
 		}
 		return list;
 	}
@@ -155,36 +156,36 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 		}
 	}
 
-	public List search(QueryCreator queryCreator,HitExtractor extractor) {
-		return doSearch(createQuery(queryCreator),extractor,null,null);
+	public List search(QueryCreator queryCreator, HitExtractor extractor) {
+		return doSearch(createQuery(queryCreator), extractor, null, null);
 	}
 
-	public List search(Query query,HitExtractor extractor) {
-		return doSearch(query,extractor,null,null);
+	public List search(Query query, HitExtractor extractor) {
+		return doSearch(query, extractor, null, null);
 	}
 
-	public List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter) {
-		return doSearch(createQuery(queryCreator),extractor,filter,null);
+	public List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter) {
+		return doSearch(createQuery(queryCreator), extractor, filter, null);
 	}
 
-	public List search(Query query,HitExtractor extractor,Filter filter) {
-		return doSearch(query,extractor,filter,null);
+	public List search(Query query, HitExtractor extractor, Filter filter) {
+		return doSearch(query, extractor, filter, null);
 	}
 
-	public List search(QueryCreator queryCreator,HitExtractor extractor,Sort sort) {
-		return doSearch(createQuery(queryCreator),extractor,null,sort);
+	public List search(QueryCreator queryCreator, HitExtractor extractor, Sort sort) {
+		return doSearch(createQuery(queryCreator), extractor, null, sort);
 	}
 
-	public List search(Query query,HitExtractor extractor,Sort sort) {
-		return doSearch(query,extractor,null,sort);
+	public List search(Query query, HitExtractor extractor, Sort sort) {
+		return doSearch(query, extractor, null, sort);
 	}
 
-	public List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter,Sort sort) {
-		return doSearch(createQuery(queryCreator),extractor,filter,sort);
+	public List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter, Sort sort) {
+		return doSearch(createQuery(queryCreator), extractor, filter, sort);
 	}
 
-	public List search(Query query,HitExtractor extractor,Filter filter,Sort sort) {
-		return doSearch(query,extractor,filter,sort);
+	public List search(Query query, HitExtractor extractor, Filter filter, Sort sort) {
+		return doSearch(query, extractor, filter, sort);
 	}
 
 	/**
@@ -200,42 +201,42 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 	 * @param sort the query sorter
 	 * @return the search results
 	 */
-	private List doSearch(Query query,HitExtractor extractor,Filter filter,Sort sort) {
-		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
+	private List doSearch(Query query, HitExtractor extractor, Filter filter, Sort sort) {
+		LuceneSearcher searcher = SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
-			Hits hits=null;
+			LuceneHits hits = null;
 			if( filter!=null && sort!=null ) {
-				hits=searcher.search(query,filter,sort);
+				hits = searcher.search(query, filter, sort);
 			} else if( filter!=null ) { 
-				hits=searcher.search(query,filter);
+				hits = searcher.search(query, filter);
 			} else if( sort!=null ) { 
-				hits=searcher.search(query,sort);
+				hits = searcher.search(query, sort);
 			} else { 
-				hits=searcher.search(query);
+				hits = searcher.search(query);
 			}
-			return extractHits(hits,extractor);
+			return extractHits(hits, extractor);
 		} catch (IOException ex) {
-			throw new LuceneSearchException("Error during the search",ex);
+			throw new LuceneSearchException("Error during the search", ex);
 		} finally {
-			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(),searcher);
+			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(), searcher);
 		}
 	}
 
-	public void search(QueryCreator queryCreator,HitCollector results) {
-		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
+	public void search(QueryCreator queryCreator, HitCollector results) {
+		LuceneSearcher searcher = SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
-			searcher.search(queryCreator.createQuery(getAnalyzer()),results);
+			searcher.search(queryCreator.createQuery(getAnalyzer()), results);
 		} catch (IOException ex) {
-			throw new LuceneSearchException("Error during the search",ex);
+			throw new LuceneSearchException("Error during the search", ex);
 		} catch (ParseException ex) {
-			throw new LuceneSearchException("Error during the parse of the query",ex);
+			throw new LuceneSearchException("Error during the parse of the query", ex);
 		} finally {
-			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(),searcher);
+			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(), searcher);
 		}
 	}
 
 	public Object search(SearcherCallback callback) {
-		Searcher searcher=SearcherFactoryUtils.getSearcher(getSearcherFactory());
+		LuceneSearcher searcher = SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
 			return callback.doWithSearcher(searcher);
 		} catch (IOException ex) {

@@ -47,8 +47,8 @@ public abstract class SimpleLuceneSearchQuery extends LuceneSearchQuery {
 	 * @param searcherFactory SearcherFactory to obtain Searcher
 	 * @param analyzer Lucene analyzer used by the queries
 	 */
-	public SimpleLuceneSearchQuery(SearcherFactory searcherFactory,Analyzer analyzer) {
-		super(searcherFactory,analyzer);
+	public SimpleLuceneSearchQuery(SearcherFactory searcherFactory, Analyzer analyzer) {
+		super(searcherFactory, analyzer);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public abstract class SimpleLuceneSearchQuery extends LuceneSearchQuery {
 	 * @see #extractResultHit(int, Document, float)
 	 */
 	public final List search(String textToSearch) {
-		return getTemplate().search(new QueryContructorImpl(textToSearch),new HitExtractorImpl());
+		return getTemplate().search(new QueryContructorImpl(textToSearch), new HitExtractorImpl());
 	}
 
 	/**
@@ -109,7 +109,7 @@ public abstract class SimpleLuceneSearchQuery extends LuceneSearchQuery {
 	 */
 	protected class HitExtractorImpl implements HitExtractor {
 		public Object mapHit(int id, Document document, float score) {
-			return extractResultHit(id,document,score);
+			return extractResultHit(id, document, score);
 		}
 	}
 }

@@ -19,7 +19,7 @@ package org.springmodules.lucene.search.core;
 import java.io.IOException;
 
 import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.Searcher;
+import org.springmodules.lucene.search.factory.LuceneSearcher;
 
 /**
  * Generic callback interface for code that operates on a Lucene Searcher.
@@ -50,5 +50,5 @@ public interface SearcherCallback {
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneSearchException
 	 */
-    public Object doWithSearcher(Searcher searcher) throws IOException,ParseException;
+    public Object doWithSearcher(LuceneSearcher searcher) throws IOException,ParseException;
 }

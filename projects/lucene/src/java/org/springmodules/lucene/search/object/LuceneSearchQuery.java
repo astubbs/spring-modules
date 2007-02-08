@@ -43,7 +43,7 @@ public abstract class LuceneSearchQuery {
 	 * @param searcherFactory SearcherFactory to obtain Searcher
 	 * @param analyzer Lucene analyzer used by the queries
 	 */
-	public LuceneSearchQuery(SearcherFactory searcherFactory,Analyzer analyzer) {
+	public LuceneSearchQuery(SearcherFactory searcherFactory, Analyzer analyzer) {
 		this.template.setSearcherFactory(searcherFactory);
 		this.template.setAnalyzer(analyzer);
 	}

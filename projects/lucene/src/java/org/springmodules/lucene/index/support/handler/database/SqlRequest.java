@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,24 +42,24 @@ public class SqlRequest {
 	private int[] types;
 
 	public SqlRequest(String sql) {
-		this(sql,null,null);
+		this(sql, null, null);
 	}
 
-	public SqlRequest(String sql,Object[] params,int[] types) {
-		this.sql=sql;
-		this.params=params;
-		this.types=types;
+	public SqlRequest(String sql, Object[] params, int[] types) {
+		this.sql = sql;
+		this.params = params;
+		this.types = types;
 	}
 
 	public SqlRequest(Map description) {
-		this.sql=(String)description.get(SqlRequest.SQL_REQUEST);
-		this.params=(Object[])description.get(SqlRequest.REQUEST_PARAMETERS);
+		this.sql = (String)description.get(SqlRequest.SQL_REQUEST);
+		this.params = (Object[])description.get(SqlRequest.REQUEST_PARAMETERS);
 		if( this.params==null ) {
-			this.params=new Object[0];
+			this.params = new Object[0];
 		}
-		this.types=(int[])description.get(SqlRequest.REQUEST_PARAMETER_TYPES);
+		this.types = (int[])description.get(SqlRequest.REQUEST_PARAMETER_TYPES);
 		if( this.types==null ) {
-			this.types=new int[0];
+			this.types = new int[0];
 		}
 	}
 	
@@ -76,10 +76,10 @@ public class SqlRequest {
 	}
 
 	public Map getDescription() {
-		Map description=new HashMap();
-		description.put(SQL_REQUEST,sql);
-		description.put(REQUEST_PARAMETERS,params);
-		description.put(REQUEST_PARAMETER_TYPES,types);
+		Map description = new HashMap();
+		description.put(SQL_REQUEST, sql);
+		description.put(REQUEST_PARAMETERS, params);
+		description.put(REQUEST_PARAMETER_TYPES, types);
 		return description;
 	}
 	

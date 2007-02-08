@@ -47,5 +47,5 @@ public interface HitExtractor {
 	 * @param score the score of the document in the search
 	 * @return a result object
 	 */
-	public Object mapHit(int id,Document document,float score);
+	public Object mapHit(int id, Document document, float score);
 }
