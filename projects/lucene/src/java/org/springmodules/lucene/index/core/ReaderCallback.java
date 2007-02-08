@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.springmodules.lucene.index.core;
 
 import java.io.IOException;
 
-import org.apache.lucene.index.IndexReader;
+import org.springmodules.lucene.index.factory.LuceneIndexReader;
 
 /**
  * Generic callback interface for code that operates on a Lucene IndexReader.
@@ -49,5 +49,5 @@ public interface ReaderCallback {
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneIndexAccessException
 	 */
-	Object doWithReader(IndexReader reader) throws IOException;
+	Object doWithReader(LuceneIndexReader reader) throws IOException;
 }

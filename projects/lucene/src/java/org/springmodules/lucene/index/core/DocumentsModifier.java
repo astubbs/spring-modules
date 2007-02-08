@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package org.springmodules.lucene.index.core;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.analysis.Analyzer;
+import org.springmodules.lucene.search.factory.LuceneHits;
 
 /**
  * Callback interface for update Lucene document instances. In fact,
@@ -46,5 +47,5 @@ public interface DocumentsModifier {
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneManipulateIndexException
 	 */
-	List updateDocuments(Hits hits) throws IOException;
+	List updateDocuments(LuceneHits hits) throws IOException;
 }

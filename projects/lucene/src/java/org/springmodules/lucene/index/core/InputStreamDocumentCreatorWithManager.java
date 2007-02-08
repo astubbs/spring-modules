@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public abstract class InputStreamDocumentCreatorWithManager implements InputStre
 	 * @param indexFactory a configured DocumentHandlerManager instance to index resources
 	 */
 	public InputStreamDocumentCreatorWithManager(DocumentHandlerManager documentHandlerManager) {
-		this.documentHandlerManager=documentHandlerManager;
+		this.documentHandlerManager = documentHandlerManager;
 	}
 
 	/**
@@ -106,9 +106,9 @@ public abstract class InputStreamDocumentCreatorWithManager implements InputStre
 	 */
 	public final Document createDocumentFromInputStream(
 	                          InputStream inputStream) throws Exception {
-		DocumentHandler documentHandler=documentHandlerManager.getDocumentHandler(getResourceName());
+		DocumentHandler documentHandler = documentHandlerManager.getDocumentHandler(getResourceName());
 		if( documentHandler!=null ) {
-			Document document=documentHandler.getDocument(getResourceDescription(),inputStream);
+			Document document = documentHandler.getDocument(getResourceDescription(), inputStream);
 			addFields(document);
 			return document;
 		} else {

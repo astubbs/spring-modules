@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,7 +176,7 @@ public interface LuceneIndexTemplate {
 	 * @param analyzer the Lucene analyzer to use to index
 	 * @see InputStreamDocumentCreator
 	 */
-	void addDocument(InputStreamDocumentCreator documentCreator,Analyzer analyzer);
+	void addDocument(InputStreamDocumentCreator documentCreator, Analyzer analyzer);
 
 	/**
 	 * Add a list of documents created outside the template to the index. In this case,
@@ -225,7 +225,7 @@ public interface LuceneIndexTemplate {
 	 * @param creator the implementation of DocumentCreator that creates the document to add
 	 * @param analyzer the Lucene analyzer to use to index
 	 */
-	void addDocuments(DocumentsCreator creator,Analyzer analyzer);
+	void addDocuments(DocumentsCreator creator, Analyzer analyzer);
 
 	/**
 	 * Update a document thanks to a callback method defined in the
@@ -238,7 +238,7 @@ public interface LuceneIndexTemplate {
 	 * @param documentModifier the implementation of DocumentModifier to get the modified document
 	 * @param identifierthe implementation of DocumentIdentifier to identify the document to modify
 	 */
-	void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier);
+	void updateDocument(Term identifierTerm, DocumentModifier documentModifier);
 
 	/**
 	 * Update a document thanks to a callback method defined in the
@@ -253,7 +253,7 @@ public interface LuceneIndexTemplate {
 	 * @param identifierthe implementation of DocumentIdentifier to identify the document to modify
 	 * @param analyzer the Lucene analyzer to use to index
 	 */
-	void updateDocument(DocumentModifier documentUpdater,DocumentIdentifier identifier,Analyzer analyzer);
+	void updateDocument(Term identifierTerm, DocumentModifier documentUpdater, Analyzer analyzer);
 
 	/**
 	 * Update documents thanks to a callback method defined in the
@@ -265,9 +265,8 @@ public interface LuceneIndexTemplate {
 	 * This method does the remove and the add operations for you with
 	 * a specified analyzer.
 	 * @param documentModifier the implementation of DocumentsModifier to get the modified documents
-	 * @param identifierthe implementation of DocumentIdentifier to identify the documents to modify
 	 */
-	void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier);
+	void updateDocuments(Term identifierTerm, DocumentsModifier documentsModifier);
 
 	/**
 	 * Update documents thanks to a callback method defined in the
@@ -279,10 +278,9 @@ public interface LuceneIndexTemplate {
 	 * This method does the remove and the add operations for you with
 	 * a specified analyzer.
 	 * @param documentModifier the implementation of DocumentsModifier to get the modified documents
-	 * @param identifierthe implementation of DocumentIdentifier to identify the documents to modify
 	 * @param analyzer the Lucene analyzer to use to index
 	 */
-	void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier,Analyzer analyzer);
+	void updateDocuments(Term identifierTerm, DocumentsModifier documentsModifier, Analyzer analyzer);
 
 	/**
 	 * Add an index created outside the template to the index. In this case,

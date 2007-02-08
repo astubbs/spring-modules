@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,8 @@ import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexHolder;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
+import org.springmodules.lucene.index.factory.LuceneIndexReader;
+import org.springmodules.lucene.index.factory.LuceneIndexWriter;
 import org.springmodules.resource.AbstractResourceManager;
 import org.springmodules.resource.support.ResourceBindingManager;
 
@@ -90,7 +92,7 @@ public class LuceneIndexResourceManager extends AbstractResourceManager implemen
 	 */
 	public void doOpen() {
 		//The Lucene reader and writer will opened lazily at their first use 
-		IndexHolder holder=new IndexHolder(null,null);
+		IndexHolder holder=new IndexHolder(null, null);
 		ResourceBindingManager.bindResource(getIndexFactory(), holder);
 	}
 
@@ -108,13 +110,13 @@ public class LuceneIndexResourceManager extends AbstractResourceManager implemen
 		ResourceBindingManager.unbindResource(this.indexFactory);
 
 		// Close index.
-		IndexReader indexReader = holder.getIndexReader();
+		LuceneIndexReader indexReader = holder.getIndexReader();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Closing Lucene indexReader [" + indexReader + "]");
 		}
 		IndexReaderFactoryUtils.releaseIndexReader(this.indexFactory,indexReader);
 
-		IndexWriter indexWriter = holder.getIndexWriter();
+		LuceneIndexWriter indexWriter = holder.getIndexWriter();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Closing Lucene indexWriter [" + indexWriter + "]");
 		}

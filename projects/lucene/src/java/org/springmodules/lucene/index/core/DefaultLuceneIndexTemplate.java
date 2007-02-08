@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,29 +23,19 @@ import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Hits;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
 import org.springmodules.lucene.index.DocumentHandlerException;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.LuceneIndexingException;
-import org.springmodules.lucene.index.core.DocumentCreator;
-import org.springmodules.lucene.index.core.DocumentIdentifier;
-import org.springmodules.lucene.index.core.DocumentModifier;
-import org.springmodules.lucene.index.core.DocumentsCreator;
-import org.springmodules.lucene.index.core.DocumentsIdentifier;
-import org.springmodules.lucene.index.core.DocumentsModifier;
-import org.springmodules.lucene.index.core.InputStreamDocumentCreator;
-import org.springmodules.lucene.index.core.LuceneIndexTemplate;
-import org.springmodules.lucene.index.core.ReaderCallback;
-import org.springmodules.lucene.index.core.WriterCallback;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexReaderFactoryUtils;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
+import org.springmodules.lucene.index.factory.LuceneIndexReader;
+import org.springmodules.lucene.index.factory.LuceneIndexWriter;
+import org.springmodules.lucene.search.factory.LuceneHits;
+import org.springmodules.lucene.search.factory.LuceneSearcher;
 import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
 import org.springmodules.lucene.util.IOUtils;
 
@@ -154,7 +144,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	//-------------------------------------------------------------------------
 
 	public void deleteDocument(int internalDocumentId) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			reader.deleteDocument(internalDocumentId);
 		} catch(IOException ex) {
@@ -165,7 +155,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public void deleteDocuments(Term term) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			reader.deleteDocuments(term);
 		} catch(IOException ex) {
@@ -176,7 +166,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public void undeleteDocuments() {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			reader.undeleteAll();
 		} catch(IOException ex) {
@@ -187,7 +177,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public boolean isDeleted(int internalDocumentId) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			return reader.isDeleted(internalDocumentId);
 		} finally {
@@ -196,7 +186,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public boolean hasDeletions() {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			return reader.hasDeletions();
 		} finally {
@@ -209,7 +199,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	//-------------------------------------------------------------------------
 
 	public int getMaxDoc() {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			return reader.maxDoc();
 		} finally {
@@ -218,7 +208,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public int getNumDocs() {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			return reader.numDocs();
 		} finally {
@@ -247,13 +237,13 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public void addDocument(Document document) {
-		addDocument(document,null);
+		addDocument(document, null);
 	}
 
-	public void addDocument(Document document,Analyzer analyzer) {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
+	public void addDocument(Document document, Analyzer analyzer) {
+		LuceneIndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(indexFactory);
 		try {
-			doAddDocument(writer,document,null);
+			doAddDocument(writer, document, null);
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during adding a document.",ex);
 		} finally {
@@ -262,41 +252,43 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public void addDocument(DocumentCreator creator) {
-		addDocument(createDocument(creator),null);
+		addDocument(createDocument(creator), null);
 	}
 
 	public void addDocument(DocumentCreator documentCreator,Analyzer analyzer) {
-		addDocument(createDocument(documentCreator),analyzer);
+		addDocument(createDocument(documentCreator), analyzer);
 	}
 
 	public void addDocument(InputStreamDocumentCreator creator) {
-		addDocument(creator,null);
+		addDocument(creator, null);
 	}
 
-	public void addDocument(InputStreamDocumentCreator documentCreator,Analyzer analyzer) {
-		InputStream inputStream=null;
+	public void addDocument(InputStreamDocumentCreator documentCreator, Analyzer analyzer) {
+		InputStream inputStream = null;
 		try {
-			inputStream=documentCreator.createInputStream();
-			addDocument(documentCreator.createDocumentFromInputStream(inputStream),analyzer);
+			inputStream = documentCreator.createInputStream();
+			if( inputStream!=null ) {
+				addDocument(documentCreator.createDocumentFromInputStream(inputStream), analyzer);
+			}
 		} catch(DocumentHandlerException ex) {
 			throw ex;
 		} catch(Exception ex) {
-			throw new LuceneIndexingException("Error during adding a document.",ex);
+			throw new LuceneIndexingException("Error during adding a document.", ex);
 		} finally {
 			IOUtils.closeInputStream(inputStream);
 		}
 	}
 
 	public void addDocuments(List documents) {
-		addDocuments(documents,null);
+		addDocuments(documents, null);
 	}
 
-	public void addDocuments(List documents,Analyzer analyzer) {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
+	public void addDocuments(List documents, Analyzer analyzer) {
+		LuceneIndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(indexFactory);
 		try {
 			for(Iterator i=documents.iterator();i.hasNext();) {
 				Document document=(Document)i.next();
-				doAddDocument(writer,document,analyzer);
+				doAddDocument(writer, document, analyzer);
 			}
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during adding a document.",ex);
@@ -306,14 +298,14 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public void addDocuments(DocumentsCreator creator) {
-		addDocuments(creator,null);
+		addDocuments(creator, null);
 	}
 
-	public void addDocuments(DocumentsCreator creator,Analyzer analyzer) {
-		addDocuments(createDocuments(creator),analyzer);
+	public void addDocuments(DocumentsCreator creator, Analyzer analyzer) {
+		addDocuments(createDocuments(creator), analyzer);
 	}
 
-	private void doAddDocument(IndexWriter writer,Document document,
+	private void doAddDocument(LuceneIndexWriter writer, Document document,
 								Analyzer analyzer) throws IOException {
 		if( document!=null ) {
 			if( analyzer==null ) {
@@ -321,9 +313,9 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 			} else if( getAnalyzer()==null ) {
 				writer.addDocument(document);
 			} else if( analyzer!=null ) {
-				writer.addDocument(document,analyzer);
+				writer.addDocument(document, analyzer);
 			} else if( getAnalyzer()!=null ) {
-				writer.addDocument(document,getAnalyzer());
+				writer.addDocument(document, getAnalyzer());
 			} else {
 				writer.addDocument(document);
 			}
@@ -336,7 +328,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	// Methods dealing with document updates
 	//-------------------------------------------------------------------------
 
-	private void checkHitsForUpdate(Hits hits) {
+	private void checkHitsForUpdate(LuceneHits hits) {
 		if( hits.length()==0 ) {
 			throw new LuceneIndexAccessException("The identifier returns no document.");
 		}
@@ -345,51 +337,51 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 		}
 	}
 
-	public void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier) {
-		updateDocument(documentModifier,identifier,null);
+	public void updateDocument(Term identifierTerm, DocumentModifier documentModifier) {
+		updateDocument(identifierTerm, documentModifier, null);
 	}
 
-	public void updateDocument(DocumentModifier documentModifier,DocumentIdentifier identifier,Analyzer analyzer) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		IndexSearcher searcher=new IndexSearcher(reader);
-		Term identifierTerm=identifier.getIdentifier();
-		Document updatedDocument=null;
+	public void updateDocument(Term identifierTerm, DocumentModifier documentModifier, Analyzer analyzer) {
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		//TODO: à revoir
+		LuceneSearcher searcher = reader.createSearcher();
+		Document document = null;
+		Document updatedDocument = null;
 		try {
-			Hits hits=searcher.search(new TermQuery(identifierTerm));
+			LuceneHits hits = searcher.search(new TermQuery(identifierTerm));
 			checkHitsForUpdate(hits);
-			updatedDocument=documentModifier.updateDocument(hits.doc(0));
+			updatedDocument = documentModifier.updateDocument(hits.doc(0));
 		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during updating a document.",ex);
+			throw new LuceneIndexAccessException("Error during updating a document.", ex);
 		} finally {
 			SearcherFactoryUtils.releaseSearcher(searcher);
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory, reader);
 		}
 
 		deleteDocuments(identifierTerm);
-		addDocument(updatedDocument,analyzer);
+		addDocument(updatedDocument, analyzer);
 	}
 
-	public void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier) {
-		updateDocuments(documentsModifier,identifier,null);
+	public void updateDocuments(Term identifierTerm, DocumentsModifier documentsModifier) {
+		updateDocuments(identifierTerm, documentsModifier, null);
 	}
 
-	public void updateDocuments(DocumentsModifier documentsModifier,DocumentsIdentifier identifier,Analyzer analyzer) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
-		IndexSearcher searcher=new IndexSearcher(reader);
-		Term identifierTerm=identifier.getIdentifier();
-		List updatedDocuments=null;
+	public void updateDocuments(Term identifierTerm, DocumentsModifier documentsModifier, Analyzer analyzer) {
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		LuceneSearcher searcher = reader.createSearcher();
+		List updatedDocuments = null;
 		try {
-			Hits hits=searcher.search(new TermQuery(identifierTerm));
-			updatedDocuments=documentsModifier.updateDocuments(hits);
+			LuceneHits hits = searcher.search(new TermQuery(identifierTerm));
+			updatedDocuments = documentsModifier.updateDocuments(hits);
 		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during updating a document.",ex);
+			throw new LuceneIndexAccessException("Error during updating a document.", ex);
 		} finally {
 			SearcherFactoryUtils.releaseSearcher(searcher);
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory, reader);
 		}
 
 		deleteDocuments(identifierTerm);
-		addDocuments(updatedDocuments,analyzer);
+		addDocuments(updatedDocuments, analyzer);
 	}
 
 
@@ -402,13 +394,13 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	}
 
 	public void addIndexes(Directory[] directories) {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
+		LuceneIndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(indexFactory);
 		try {
 			writer.addIndexes(directories);
 		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during adding indexes.",ex);
+			throw new LuceneIndexAccessException("Error during adding indexes.", ex);
 		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory, writer);
 		}
 	}
 
@@ -417,13 +409,13 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	//-------------------------------------------------------------------------
 
 	public void optimize() {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
+		LuceneIndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(indexFactory);
 		try {
 			writer.optimize();
 		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during optimize the index.",ex);
+			throw new LuceneIndexAccessException("Error during optimize the index.", ex);
 		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory, writer);
 		}
 	}
 
@@ -432,24 +424,24 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 	//-------------------------------------------------------------------------
 
 	public Object read(ReaderCallback callback) {
-		IndexReader reader=IndexReaderFactoryUtils.getIndexReader(indexFactory);
+		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			return callback.doWithReader(reader);
 		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during using the IndexReader.",ex);
+			throw new LuceneIndexAccessException("Error during using the IndexReader.", ex);
 		} finally {
-			IndexReaderFactoryUtils.releaseIndexReader(indexFactory,reader);
+			IndexReaderFactoryUtils.releaseIndexReader(indexFactory, reader);
 		}
 	}
 
 	public Object write(WriterCallback callback) {
-		IndexWriter writer=IndexWriterFactoryUtils.getIndexWriter(indexFactory);
+		LuceneIndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(indexFactory);
 		try {
 			return callback.doWithWriter(writer);
 		} catch(IOException ex) {
-			throw new LuceneIndexAccessException("Error during using the IndexWriter.",ex);
+			throw new LuceneIndexAccessException("Error during using the IndexWriter.", ex);
 		} finally {
-			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory,writer);
+			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory, writer);
 		}
 	}
 
