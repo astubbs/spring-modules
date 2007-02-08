@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public abstract class IndexWriterFactoryUtils {
 	 * @see #doGetIndexWriter(IndexFactory)
 	 * @see org.springmodules.lucene.index.core.LuceneIndexResourceManager
 	 */
-	public static IndexWriter getIndexWriter(IndexFactory indexFactory) {
+	public static LuceneIndexWriter getIndexWriter(IndexFactory indexFactory) {
 		try {
 			return doGetIndexWriter(indexFactory);
 		} catch (IOException ex) {
@@ -70,13 +70,13 @@ public abstract class IndexWriterFactoryUtils {
 	 * @return a Lucene IndexWriter from the given IndexFactory
 	 * @throws IOException if thrown by Lucene API methods
 	 */
-	public static IndexWriter doGetIndexWriter(IndexFactory indexFactory) throws IOException {
+	public static LuceneIndexWriter doGetIndexWriter(IndexFactory indexFactory) throws IOException {
 		IndexHolder indexHolder = (IndexHolder) ResourceBindingManager.getResource(indexFactory);
 		if (indexHolder != null && indexHolder.getIndexWriter()!=null ) {
 			return indexHolder.getIndexWriter();
 		}
 
-		IndexWriter writer = indexFactory.getIndexWriter();
+		LuceneIndexWriter writer = indexFactory.getIndexWriter();
 		if( indexHolder!=null ) {
 			//Lazily open the reader if there is an IndexHolder
 			indexHolder.setIndexWriter(writer);
@@ -93,7 +93,7 @@ public abstract class IndexWriterFactoryUtils {
 	 * (if this is null, the call will be ignored)
 	 * @see #doReleaseIndexWriter(IndexFactory, IndexWriter)
 	 */
-	public static void releaseIndexWriter(IndexFactory indexFactory,IndexWriter indexWriter) {
+	public static void releaseIndexWriter(IndexFactory indexFactory, LuceneIndexWriter indexWriter) {
 		try {
 			doReleaseIndexWriter(indexFactory,indexWriter);
 		} catch(IOException ex) {
@@ -108,7 +108,7 @@ public abstract class IndexWriterFactoryUtils {
 	 * @param indexWriter IndexWriter to close if necessary
 	 * @throws IOException if thrown by Lucene methods
 	 */
-	public static void doReleaseIndexWriter(IndexFactory indexFactory,IndexWriter indexWriter) throws IOException {
+	public static void doReleaseIndexWriter(IndexFactory indexFactory, LuceneIndexWriter indexWriter) throws IOException {
 		if (indexWriter == null || ResourceBindingManager.hasResource(indexFactory)) {
 			return;
 		}

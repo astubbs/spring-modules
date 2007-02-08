@@ -48,13 +48,13 @@ public abstract class IndexReaderFactoryUtils {
 	 * when using LuceneIndexResourceManager. Will set an IndexReader on an IndexHolder bound
 	 * to the thread.
 	 * @param indexFactory IndexFactory to get IndexReader from
-	 * @return a Lucene IndexReader from the given IndexFactory
+	 * @return a LuceneIndexReader from the given IndexFactory
 	 * @throws LuceneIndexAccessException
 	 * if the attempt to get an IndexReader failed
 	 * @see #doGetIndexReader(IndexFactory)
 	 * @see org.springmodules.lucene.index.core.LuceneIndexResourceManager
 	 */
-	public static IndexReader getIndexReader(IndexFactory indexFactory) {
+	public static LuceneIndexReader getIndexReader(IndexFactory indexFactory) {
 		try {
 			return doGetIndexReader(indexFactory);
 		} catch (IOException ex) {
@@ -69,13 +69,13 @@ public abstract class IndexReaderFactoryUtils {
 	 * @return a Lucene IndexReader from the given IndexFactory
 	 * @throws IOException if thrown by Lucene API methods
 	 */
-	public static IndexReader doGetIndexReader(IndexFactory indexFactory) throws IOException {
+	public static LuceneIndexReader doGetIndexReader(IndexFactory indexFactory) throws IOException {
 		IndexHolder indexHolder = (IndexHolder) ResourceBindingManager.getResource(indexFactory);
 		if (indexHolder != null && indexHolder.getIndexReader()!=null ) {
 			return indexHolder.getIndexReader();
 		}
 
-		IndexReader reader = indexFactory.getIndexReader();
+		LuceneIndexReader reader = indexFactory.getIndexReader();
 		if( indexHolder!=null ) {
 			//Lazily open the reader if there is an IndexHolder
 			indexHolder.setIndexReader(reader);
@@ -92,7 +92,7 @@ public abstract class IndexReaderFactoryUtils {
 	 * (if this is null, the call will be ignored)
 	 * @see #doReleaseIndexReader(IndexFactory, IndexReader)
 	 */
-	public static void releaseIndexReader(IndexFactory indexFactory,IndexReader indexReader) {
+	public static void releaseIndexReader(IndexFactory indexFactory, LuceneIndexReader indexReader) {
 		try {
 			doReleaseIndexReader(indexFactory,indexReader);
 		} catch(IOException ex) {
@@ -107,7 +107,7 @@ public abstract class IndexReaderFactoryUtils {
 	 * @param indexReader IndexReader to close if necessary
 	 * @throws IOException if thrown by Lucene methods
 	 */
-	public static void doReleaseIndexReader(IndexFactory indexFactory,IndexReader indexReader) throws IOException {
+	public static void doReleaseIndexReader(IndexFactory indexFactory, LuceneIndexReader indexReader) throws IOException {
 		if (indexReader == null || ResourceBindingManager.hasResource(indexFactory)) {
 			return;
 		}

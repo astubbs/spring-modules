@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,14 +115,14 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	 * @return a new reader instance on the index
 	 * @see org.springmodules.lucene.index.factory.IndexFactory#getIndexReader()
 	 */
-	public IndexReader getIndexReader() {
+	public LuceneIndexReader getIndexReader() {
 		try {
 			checkDirectory();
 			checkIndexLocking();
 
 			boolean exist = IndexReader.indexExists(getDirectory());
 			if( exist ) {
-				return IndexReader.open(getDirectory());
+				return new SimpleLuceneIndexReader(IndexReader.open(getDirectory()));
 			} else {
 				throw new LuceneIndexAccessException("The index doesn't exist for the specified directory");
 			}
@@ -143,7 +143,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	 * @see org.springmodules.lucene.index.factory.AbstractIndexFactory#setIndexWriterParameters(IndexWriter)
 	 * @see IndexReader#indexExists(org.apache.lucene.store.Directory)
 	 */
-	public IndexWriter getIndexWriter() {
+	public LuceneIndexWriter getIndexWriter() {
 		try {
 			checkDirectory();
 			checkIndexLocking();
@@ -151,7 +151,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 			boolean create = !IndexReader.indexExists(getDirectory());
 			IndexWriter writer = new IndexWriter(getDirectory(),getAnalyzer(),create);
 			setIndexWriterParameters(writer);
-			return writer;
+			return new SimpleLuceneIndexWriter(writer);
 		} catch(IOException ex) {
 			throw new LuceneIndexAccessException("Error during creating the writer",ex);
 		}

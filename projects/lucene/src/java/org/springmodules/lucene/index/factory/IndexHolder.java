@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.springmodules.lucene.index.factory;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 
 /**
  * Index holder, wrapping both Lucene IndexReader and IndexWriter.
@@ -31,31 +29,31 @@ import org.apache.lucene.index.IndexWriter;
  */
 public class IndexHolder {
 
-	private IndexReader indexReader;
-	private IndexWriter indexWriter;
+	private LuceneIndexReader indexReader;
+	private LuceneIndexWriter indexWriter;
 
-	public IndexHolder(IndexReader indexReader,IndexWriter indexWriter) {
+	public IndexHolder(LuceneIndexReader indexReader, LuceneIndexWriter indexWriter) {
 		this.indexReader = indexReader;
 		this.indexWriter = indexWriter;
 	}
 
-	public IndexReader getIndexReader() {
+	public LuceneIndexReader getIndexReader() {
 		return this.indexReader;
 	}
 
-	public IndexWriter getIndexWriter() {
+	public LuceneIndexWriter getIndexWriter() {
 		return this.indexWriter;
 	}
 
-	public void setIndexReader(IndexReader indexReader) {
+	public void setIndexReader(LuceneIndexReader indexReader) {
 		if( this.indexReader==null ) {
-			this.indexReader=indexReader;
+			this.indexReader = indexReader;
 		}
 	}
 
-	public void setIndexWriter(IndexWriter indexWriter) {
+	public void setIndexWriter(LuceneIndexWriter indexWriter) {
 		if( this.indexWriter==null ) {
-			this.indexWriter=indexWriter;
+			this.indexWriter = indexWriter;
 		}
 	}
 }

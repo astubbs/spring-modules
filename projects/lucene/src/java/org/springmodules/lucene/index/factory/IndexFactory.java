@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 package org.springmodules.lucene.index.factory;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 
 /**
  * <p>This is the index factory abstraction to get reader and writer
@@ -40,7 +38,7 @@ public interface IndexFactory {
 	 * operations on the index. 
 	 * @return the IndexReader instance
 	 */
-	IndexReader getIndexReader();
+	LuceneIndexReader getIndexReader();
 
 	/**
 	 * Contruct an IndexWriter instance. This instance will be used by both
@@ -48,5 +46,5 @@ public interface IndexFactory {
 	 * optimize it.
 	 * @return the IndexWriter instance
 	 */
-	IndexWriter getIndexWriter();
+	LuceneIndexWriter getIndexWriter();
 }

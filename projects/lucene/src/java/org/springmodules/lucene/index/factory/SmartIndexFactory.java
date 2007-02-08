@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@
 
 package org.springmodules.lucene.index.factory;
 
-import java.io.IOException;
-
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 
 /**
  * <p>This is the index factory abstraction to get reader and writer
@@ -38,5 +34,5 @@ public interface SmartIndexFactory extends IndexFactory {
 	 * @param indexReader the IndexReader to check
 	 * @return whether the given index reader should be closed
 	 */
-	boolean shouldCloseIndexReader(IndexReader indexReader);
+	boolean shouldCloseIndexReader(LuceneIndexReader indexReader);
 }
