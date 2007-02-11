@@ -28,7 +28,10 @@ public interface AjaxHandler {
      *
      * @param event The {@link AjaxEvent} to handle.
      * @return The resulting {@link AjaxResponse}.
-     * @throws {@link UnsupportedEventException} This unchecked exception is thrown if this handler doesn't support the given event.
+     * @throws org.springmodules.xt.ajax.support.UnsupportedEventException
+     * Unchecked exception thrown if this handler doesn't support the given event.
+     * @throws org.springmodules.xt.ajax.support.EventHandlingException
+     * Unchecked exception thrown during event handling.
      */
     public AjaxResponse handle(AjaxEvent event);
 
@@ -36,7 +39,7 @@ public interface AjaxHandler {
      * Check if this handler supports the handling of the given event.
      *
      * @param event The {@link AjaxEvent} to check for.
-     * @return True this handler supports the event, false otherwise.
+     * @return True if this handler supports the event, false otherwise.
      */
     public boolean supports(AjaxEvent event);
 }

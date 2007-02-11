@@ -33,18 +33,34 @@ public class RedirectAction implements AjaxAction {
     private static final String OPEN = "<taconite-redirect targetUrl=\"$1\" parseInBrowser=\"true\">";
     private static final String CLOSE = "</taconite-redirect>";
     
-    private StringBuilder targetUrl;
+    private StringBuilder redirectUrl;
     private Map model;
     
     /** 
      * Construct the action.
-     * @param url The target url.
-     * @param model The view model, containing parameters to pass to the new view. 
+     * @param url The redirect url.
+     * @param model The view model as a {@link org.springframework.web.servlet.ModelAndView} object, 
+     * containing parameters to pass to the new view. 
      */
     public RedirectAction(String url, ModelAndView model) {
-        this.targetUrl = new StringBuilder(url);
-        if (model.getModel() != null) {
-            this.model= new HashMap(model.getModel());
+        this.redirectUrl = new StringBuilder(url);
+        if (model != null && model.getModel() != null) {
+            this.model = new HashMap(model.getModel());
+        }
+        else {
+            this.model = new HashMap(1);
+        }
+    }
+    
+    /** 
+     * Construct the action.
+     * @param url The redirect url.
+     * @param model The view model as a map object, containing parameters to pass to the new view. 
+     */
+    public RedirectAction(String url, Map model) {
+        this.redirectUrl = new StringBuilder(url);
+        if (model != null) {
+            this.model = model;
         }
         else {
             this.model= new HashMap(1);
@@ -53,13 +69,13 @@ public class RedirectAction implements AjaxAction {
     
     public String execute() {
         try {
-            this.appendQueryProperties(this.targetUrl, this.model, "UTF-8");
+            this.appendQueryProperties(this.model, "UTF-8");
         }
         catch(UnsupportedEncodingException ex) {
             // FIXME : Unexpected ....
             throw new RuntimeException("Unexpected", ex);
         }
-        StringBuilder response = new StringBuilder(OPEN.replaceFirst("\\$1", this.targetUrl.toString()));
+        StringBuilder response = new StringBuilder(OPEN.replaceFirst("\\$1", this.redirectUrl.toString()));
         response.append(CLOSE);
         return response.toString();
     }
@@ -68,24 +84,23 @@ public class RedirectAction implements AjaxAction {
      * Append query properties to the redirect URL.
      * Stringifies, URL-encodes and formats model attributes as query properties.
      */
-    protected void appendQueryProperties(StringBuilder targetUrl, Map model, String encodingScheme)
+    protected void appendQueryProperties(Map model, String encodingScheme)
     throws UnsupportedEncodingException {
         // if there are not already some parameters, we need a ?
-        boolean first = (this.targetUrl.toString().indexOf('?') < 0);
+        boolean first = (this.redirectUrl.toString().indexOf('?') < 0);
         Iterator entries = model.entrySet().iterator();
         while (entries.hasNext()) {
             if (first) {
-                targetUrl.append('?');
+                this.redirectUrl.append('?');
                 first = false;
             }
             else {
-                targetUrl.append("&amp;");
+                this.redirectUrl.append("&amp;");
             }
             Map.Entry entry = (Map.Entry) entries.next();
             String encodedKey = URLEncoder.encode(entry.getKey().toString(), encodingScheme);
-            String encodedValue =
-                (entry.getValue() != null ? URLEncoder.encode(entry.getValue().toString(), encodingScheme) : "");
-            targetUrl.append(encodedKey).append('=').append(encodedValue);
+            String encodedValue = (entry.getValue() != null ? URLEncoder.encode(entry.getValue().toString(), encodingScheme) : "");
+            this.redirectUrl.append(encodedKey).append('=').append(encodedValue);
         }
     }
 }

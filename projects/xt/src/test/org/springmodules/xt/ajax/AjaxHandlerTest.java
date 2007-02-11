@@ -2,15 +2,21 @@ package org.springmodules.xt.ajax;
 
 import junit.framework.*;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springmodules.xt.ajax.support.EventHandlingException;
 
 /**
  *
  * @author Sergio Bossa
  */
-public class AbstractAjaxHandlerTest extends TestCase {
+public class AjaxHandlerTest extends TestCase {
     
-    public AbstractAjaxHandlerTest(String testName) {
+    public AjaxHandlerTest(String testName) {
         super(testName);
+    }
+    
+    public static Test suite() {
+        TestSuite suite = new TestSuite(AjaxHandlerTest.class);   
+        return suite;
     }
 
     public void testHandleAjaxEvent() {
@@ -116,5 +122,22 @@ public class AbstractAjaxHandlerTest extends TestCase {
         AjaxSubmitEvent event = new AjaxSubmitEventImpl("testEvent", new MockHttpServletRequest());
         
         assertFalse(handler.supports(event));
+    }
+    
+    public void testThrowingExceptionDuringEventHandling() {
+        AbstractAjaxHandler handler = new AbstractAjaxHandler() {
+            public AjaxResponse testEvent(AjaxActionEvent e) {
+                throw new IllegalStateException("Nested exception.");
+            }
+        };
+        
+        AjaxActionEvent event = new AjaxActionEventImpl("testEvent", new MockHttpServletRequest());
+        
+        try {
+            handler.handle(event);
+            fail("Should throw: " + EventHandlingException.class);
+        } 
+        catch(EventHandlingException ex) {
+        }
     }
 }

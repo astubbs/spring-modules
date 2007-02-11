@@ -12,6 +12,14 @@
     
     <bean id="ajaxValidationHandler" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler"/>
     
+    <bean id="redirectExResolver1" class="org.springmodules.xt.ajax.support.RedirectExceptionResolver">
+        <property name="redirectUrl" value="/test/redirect1.html"/>
+    </bean>
+    
+    <bean id="redirectExResolver2" class="org.springmodules.xt.ajax.support.RedirectExceptionResolver">
+        <property name="redirectUrl" value="/test/redirect2.html"/>
+    </bean>
+    
     <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
         <property name="handlerMappings">
             <props>
@@ -22,6 +30,21 @@
                 
                 <prop key="/ajax/chainedSubmit.action">dummySubmitHandler, ajaxValidationHandler</prop>
             </props>
+        </property>
+    </bean>
+    
+    <bean id="ajaxInterceptorWithExceptionMappings" class="org.springmodules.xt.ajax.AjaxInterceptor">
+        <property name="handlerMappings">
+            <props>
+                <prop key="/ajax/test.action">dummyHandler</prop>
+                <prop key="/ajax/submit.action">dummySubmitHandler</prop>
+            </props>
+        </property>
+        <property name="exceptionMappings">
+            <map>
+                <entry key="org.springmodules.xt.ajax.support.UnsupportedEventException" value-ref="redirectExResolver1"/>
+                <entry key="org.springmodules.xt.ajax.support.EventHandlingException" value-ref="redirectExResolver2"/>
+            </map>
         </property>
     </bean>
     

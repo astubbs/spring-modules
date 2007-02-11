@@ -19,4 +19,8 @@ public class DummySubmitHandler extends AbstractAjaxHandler {
         response.addAction(action);
         return response;
     }
+    
+    public AjaxResponse submitWithException(AjaxSubmitEvent e) throws Exception {
+        throw new Exception();
+    }
 }

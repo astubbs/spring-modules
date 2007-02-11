@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.springmodules.xt.ajax.support.ModelHolder;
-import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
-import org.springmodules.xt.ajax.support.UnsupportedEventException;
-import org.springmodules.xt.ajax.action.RedirectAction;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -48,13 +45,18 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.BaseCommandController;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.util.UrlPathHelper;
+import org.springmodules.xt.ajax.support.ModelHolder;
+import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
+import org.springmodules.xt.ajax.support.UnsupportedEventException;
+import org.springmodules.xt.ajax.action.RedirectAction;
 
 /**
  * <p>Spring web interceptor which intercepts http requests and handles ajax requests.<br> 
  * Ajax requests are identified by a particular request parameter, by default named "ajax-request": it can assume two different values, depending on the type of ajax request:
  * an "action request", causing no form submission, and a "submit request", causing form submission.</p>
  *
- * <p>This interceptor delegates ajax requests handling to {@link AjaxHandler}s  configured via handler mappings (@see AjaxInterceptor#setHandlerMappings()).</p>
+ * <p>This interceptor delegates ajax requests handling to {@link AjaxHandler}s configured via handler mappings 
+ * (see {@link #setHandlerMappings(Properties)}).</p>
  *
  * <p>Configured mappings are a {@link java.util.Properties} file / object where each entry associates an ANT based URL path with a comma separated list of 
  * {@link AjaxHandler}s configured in the Spring application context; when associating the same URL pattern with multiple handlers, 
@@ -63,11 +65,15 @@ import org.springframework.web.util.UrlPathHelper;
  * <p>When the interceptor receives an ajax request, it looks its mappings for an appropriate set of handlers: then, each handler will be evaluated following
  * the longest path match order, that is, an handler configured in the path "/test" will be evaluated prior to an handler configured in the path "/*".</p>
  *
- * <p>Finally, the first handler supporting the ajax event associated with the request will be executed.<br>
+ * <p>The first handler supporting the ajax event associated with the request will be executed.<br>
  * If the same URL is associated with more than one handler, the one supporting the current event will be executed.</p>
  *
  * <p>Note that if more handlers support the same event, the one configured for matching the longest path will be executed (in the example above,
  * the one configured for the path "/test"): this is useful for overriding event handlers.</p>
+ *
+ * <p>Finally, you can deal with exceptions occurred while processing the Ajax request by setting the exception mappings 
+ * (see {@link #setExceptionMappings(Map)}): here you can associate an exception class with an {@link AjaxExceptionResolver}
+ * that will be used to resolve the exception in a response delivered to clients.</p>
  *
  * @author Sergio Bossa
  */
@@ -91,75 +97,102 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     private String elementIdParameter = "source-element-id";
     private String jsonParamsParameter = "json-params";
     
-    private MultiMap handlerMappings;
+    private MultiMap handlerMappings = new MultiValueMap();
+    private Map<Class<? extends Exception>, AjaxExceptionResolver> exceptionMappings = new LinkedHashMap<Class<? extends Exception>, AjaxExceptionResolver>();
     
     private ApplicationContext applicationContext;
     
     /**
      * Pre-handle the http request and if this is an ajax request firing an action, looks for a mapped ajax handler, executes it and
      * returns an ajax response.<br>
-     * Note: if the matching mapped handler returns a null ajax response, the interceptor proceed with the execution chain.
+     * <b>Note</b>: if the matching mapped handler returns a <b>null</b> ajax response, the interceptor <b>proceed</b> with the execution chain.
      *
-     * @throws IllegalStateException If the ajax request doesn't have an event id as request parameter.
      * @throws UnsupportedEventException If the event associated with this ajax request is not supported by any
-     * mapped handler.
-     * @throws NoMatchingHandlerException If no mapped handler matching the URL can be found.
+     * mapped handler, and if this exception is not resolved by any {@link AjaxExceptionResolver}.
+     * @throws EventHandlingException If an error occurred during event handling, and if this exception is 
+     * not resolved by any {@link AjaxExceptionResolver}.
+     * @throws NoMatchingHandlerException If no mapped handler matching the URL can be found, and if this exception is not 
+     * resolved by any {@link AjaxExceptionResolver}.
      */
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) 
     throws Exception {
-        String requestType = request.getParameter(this.ajaxParameter);
-        if (requestType != null && requestType.equals(AJAX_ACTION_REQUEST)) {
-            String eventId = request.getParameter(this.eventParameter);
-            if (eventId == null) {
-                throw new IllegalStateException("Event id cannot be null.");
-            }
-            logger.info(new StringBuilder("Pre-handling ajax request for event: ").append(eventId));
-            
-            List<AjaxHandler> handlers = this.lookupHandlers(request);
-            if (handlers != null) {
-                AjaxActionEvent event = new AjaxActionEventImpl(eventId, request);
-                AjaxResponse ajaxResponse = null;
-                boolean supported = false;
-                for (AjaxHandler ajaxHandler : handlers) {
-                    if (ajaxHandler.supports(event)) {
-                        // Set base event properties:
-                        this.initEvent(event, request);
-                        if (handler instanceof BaseCommandController) {
-                            // Get the command name:
-                            String commandName = ((BaseCommandController) handler).getCommandName();
-                            // Set the command object:
-                            Map model = AjaxInterceptor.modelHolder.getModel();
-                            if (model != null) {
-                                event.setCommandObject(model.get(commandName));
+        try {
+            String requestType = request.getParameter(this.ajaxParameter);
+            if (requestType != null && requestType.equals(AJAX_ACTION_REQUEST)) {
+                String eventId = request.getParameter(this.eventParameter);
+                if (eventId == null) {
+                    throw new IllegalStateException("Event id cannot be null.");
+                }
+
+                logger.info(new StringBuilder("Pre-handling ajax request for event: ").append(eventId));
+
+                List<AjaxHandler> handlers = this.lookupHandlers(request);
+                if (handlers != null) {
+                    AjaxActionEvent event = new AjaxActionEventImpl(eventId, request);
+                    AjaxResponse ajaxResponse = null;
+                    boolean supported = false;
+                    for (AjaxHandler ajaxHandler : handlers) {
+                        if (ajaxHandler.supports(event)) {
+                            // Set base event properties:
+                            this.initEvent(event, request);
+                            if (handler instanceof BaseCommandController) {
+                                Map model = AjaxInterceptor.modelHolder.getModel();
+                                // Get the command name:
+                                String commandName = ((BaseCommandController) handler).getCommandName();
+                                // Set the command object:
+                                if (model != null) {
+                                    event.setCommandObject(model.get(commandName));
+                                }
                             }
+                            // Handling event:
+                            ajaxResponse = ajaxHandler.handle(event);
+                            supported = true;
+                            break;
                         }
-                        // Handling event:
-                        ajaxResponse = ajaxHandler.handle(event);
-                        supported = true;
-                        break;
                     }
-                }
-                if (!supported) {
-                    throw new UnsupportedEventException("Cannot handling the given event with id: " + eventId);
-                }
-                else {
-                    if (ajaxResponse != null) {
-                        this.sendResponse(response, ajaxResponse.getResponse());
-                        return false;
+                    if (!supported) {
+                        throw new UnsupportedEventException("Cannot handling the given event with id: " + eventId);
                     }
                     else {
-                        logger.info("Null Ajax response after Ajax action, proceeding with the request.");
-                        return true;
+                        if (ajaxResponse != null) {
+                            this.sendResponse(response, ajaxResponse.getResponse());
+                            return false;
+                        }
+                        else {
+                            logger.info("Null Ajax response after Ajax action, proceeding with the request.");
+                            return true;
+                        }
                     }
+                }
+                else {
+                    throw new NoMatchingHandlerException("Cannot find an handler matching the request: " + 
+                            this.urlPathHelper.getLookupPathForRequest(request));
                 }
             }
             else {
-                throw new NoMatchingHandlerException("Cannot find an handler matching the request: " + 
-                        this.urlPathHelper.getLookupPathForRequest(request));
+                return true;
             }
         }
-        else {
-            return true;
+        catch(Exception ex) {
+            logger.error(ex.getMessage(), ex);
+            
+            AjaxExceptionResolver resolver = this.lookupExceptionResolver(ex);
+            if (resolver != null) {
+                logger.info(new StringBuilder("Resolving exception of type : ").append(ex.getClass()));
+                AjaxResponse ajaxResponse = resolver.resolve(request, ex);
+                if (ajaxResponse != null) {
+                    this.sendResponse(response, ajaxResponse.getResponse());
+                    return false;
+                }
+                else {
+                    logger.info("Null Ajax response after resolving exception, proceeding by re-throwing exception.");
+                    throw ex;
+                }
+            } 
+            else {
+                logger.info("No exception resolver found, proceeding by re-throwing exception.");
+                throw ex;
+            }
         }
     }
 
@@ -168,96 +201,122 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      * returns an ajax response.<br>
      * Note: if the matching mapped handler returns a null ajax response, the interceptor redirects to the configured view.
      *
-     * @throws IllegalStateException If the ajax request doesn't have an event id as request parameter.
      * @throws UnsupportedEventException If the event associated with this ajax request is not supported by any
-     * mapped handler.
-     * @throws NoMatchingHandlerException If no mapped handler matching the URL can be found.
+     * mapped handler, and if this exception is not resolved by any {@link AjaxExceptionResolver}.
+     * @throws EventHandlingException If an error occurred during event handling, and if this exception is 
+     * not resolved by any {@link AjaxExceptionResolver}.
+     * @throws NoMatchingHandlerException If no mapped handler matching the URL can be found, and if this exception 
+     * is not resolved by any {@link AjaxExceptionResolver}.
      */
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) 
     throws Exception {
-        // Set the model map:
-        AjaxInterceptor.modelHolder.set(modelAndView.getModel());
-        // Continue processing:
-        String requestType = request.getParameter(this.ajaxParameter);
-        if (requestType != null && requestType.equals(AJAX_SUBMIT_REQUEST)) {
-            String eventId = request.getParameter(this.eventParameter); 
-            if (eventId == null) {
-                throw new IllegalStateException("Event id cannot be null.");
-            }
-            logger.info(new StringBuilder("Post-handling ajax request for event: ").append(eventId));
-            
-            List<AjaxHandler> handlers = this.lookupHandlers(request);
-            if (handlers != null) {
-                AjaxSubmitEvent event = new AjaxSubmitEventImpl(eventId, request);
-                AjaxResponse ajaxResponse = null;
-                boolean supported = false;
-                for (AjaxHandler ajaxHandler : handlers) {
-                    if (ajaxHandler.supports(event)) {
-                        // Set base event properties:
-                        this.initEvent(event, request);
-                        if (handler instanceof BaseCommandController) {
-                            // Get the command name:
-                            String commandName = ((BaseCommandController) handler).getCommandName();
-                            // Set validation errors:
-                            RequestContext requestContext = new RequestContext(request, modelAndView.getModel());
-                            event.setValidationErrors(requestContext.getErrors(commandName));
-                            // Set the command object:
-                            Map model = AjaxInterceptor.modelHolder.getModel();
-                            if (model != null) {
-                                event.setCommandObject(model.get(commandName));
+        try {
+            // Set the model map:
+            AjaxInterceptor.modelHolder.set(modelAndView.getModel());
+            // Continue processing:
+            String requestType = request.getParameter(this.ajaxParameter);
+            if (requestType != null && requestType.equals(AJAX_SUBMIT_REQUEST)) {
+                String eventId = request.getParameter(this.eventParameter); 
+                if (eventId == null) {
+                    throw new IllegalStateException("Event id cannot be null.");
+                }
+
+                logger.info(new StringBuilder("Post-handling ajax request for event: ").append(eventId));
+
+                List<AjaxHandler> handlers = this.lookupHandlers(request);
+                if (handlers != null) {
+                    AjaxSubmitEvent event = new AjaxSubmitEventImpl(eventId, request);
+                    AjaxResponse ajaxResponse = null;
+                    boolean supported = false;
+                    for (AjaxHandler ajaxHandler : handlers) {
+                        if (ajaxHandler.supports(event)) {
+                            // Set base event properties:
+                            this.initEvent(event, request);
+                            if (handler instanceof BaseCommandController) {
+                                Map model = modelAndView.getModel();
+                                // Get the command name:
+                                String commandName = ((BaseCommandController) handler).getCommandName();
+                                // Set validation errors:
+                                RequestContext requestContext = new RequestContext(request, model);
+                                event.setValidationErrors(requestContext.getErrors(commandName));
+                                // Set the command object:
+                                if (model != null) {
+                                    event.setCommandObject(model.get(commandName));
+                                }
                             }
+                            // Set the model:
+                            event.setModel(AjaxInterceptor.modelHolder.getModel());
+                            // Handling event: 
+                            ajaxResponse = ajaxHandler.handle(event);
+                            supported = true;
+                            break;
                         }
-                        // Set the model:
-                        event.setModel(AjaxInterceptor.modelHolder.getModel());
-                        // Handling event: 
-                        ajaxResponse = ajaxHandler.handle(event);
-                        supported = true;
-                        break;
                     }
-                }
-                if (!supported) {
-                    throw new UnsupportedEventException("Cannot handling the given event with id: " + eventId);
-                }
-                else {
-                    String view = modelAndView.getViewName();
-                    if (ajaxResponse != null) {
-                        if ((view == null) || (! view.equals(AJAX_VIEW_KEYWORD))) {
-                            StringBuilder msg = new StringBuilder("Warning: you should configure the ")
-                            .append(AJAX_VIEW_KEYWORD)
-                            .append(" keyword as model view name. Found: ")
-                            .append(view);
-                            logger.warn(msg);
-                            // This warning is raised because the user should configure the AJAX_VIEW_KEYWORD in order to
-                            // make it explicit that we are using Ajax for rendering.
-                        }
-                        // Need to clear the ModelAndView because we are handling the response by ourselves:
-                        modelAndView.clear();
-                        this.sendResponse(response, ajaxResponse.getResponse());
+                    if (!supported) {
+                        throw new UnsupportedEventException("Cannot handling the given event with id: " + eventId);
                     }
                     else {
-                        if ((view != null) && (view.startsWith(AJAX_REDIRECT_PREFIX))) {
-                            view = view.substring(AJAX_REDIRECT_PREFIX.length());
+                        String view = modelAndView.getViewName();
+                        if (ajaxResponse != null) {
+                            if ((view == null) || (! view.equals(AJAX_VIEW_KEYWORD))) {
+                                StringBuilder msg = new StringBuilder("Warning: you should configure the ")
+                                .append(AJAX_VIEW_KEYWORD)
+                                .append(" keyword as model view name. Found: ")
+                                .append(view);
+                                logger.warn(msg);
+                                // This warning is raised because the user should configure the AJAX_VIEW_KEYWORD in order to
+                                // make it explicit that we are using Ajax for rendering.
+                            }
+                            // Need to clear the ModelAndView because we are handling the response by ourselves:
+                            modelAndView.clear();
+                            this.sendResponse(response, ajaxResponse.getResponse());
                         }
                         else {
-                            StringBuilder msg = new StringBuilder("After Ajax submit, no Ajax redirect prefix: ")
-                            .append(AJAX_REDIRECT_PREFIX)
-                            .append(" configured, so we are handling an ajax redirect to: ")
-                            .append(view);
-                            logger.warn(msg);
+                            if ((view != null) && (view.startsWith(AJAX_REDIRECT_PREFIX))) {
+                                view = view.substring(AJAX_REDIRECT_PREFIX.length());
+                            }
+                            else {
+                                StringBuilder msg = new StringBuilder("After Ajax submit, no Ajax redirect prefix: ")
+                                .append(AJAX_REDIRECT_PREFIX)
+                                .append(" configured, so we are handling an ajax redirect to: ")
+                                .append(view);
+                                logger.warn(msg);
+                            }
+                            // Creating Ajax redirect action:
+                            AjaxResponse ajaxRedirect = new AjaxResponseImpl();
+                            AjaxAction ajaxAction = new RedirectAction(new StringBuilder(request.getContextPath()).append(view).toString(), modelAndView);
+                            ajaxRedirect.addAction(ajaxAction);
+                            // Need to clear the ModelAndView because we are handling the response by ourselves:
+                            modelAndView.clear();
+                            this.sendResponse(response, ajaxRedirect.getResponse());
                         }
-                        // Creating Ajax redirect action:
-                        AjaxResponse ajaxRedirect = new AjaxResponseImpl();
-                        AjaxAction ajaxAction = new RedirectAction(new StringBuilder(request.getContextPath()).append(view).toString(), modelAndView);
-                        ajaxRedirect.addAction(ajaxAction);
-                        // Need to clear the ModelAndView because we are handling the response by ourselves:
-                        modelAndView.clear();
-                        this.sendResponse(response, ajaxRedirect.getResponse());
                     }
                 }
+                else {
+                    throw new NoMatchingHandlerException("Cannot find an handler matching the request: " + 
+                            this.urlPathHelper.getLookupPathForRequest(request));
+                }
             }
+        }
+        catch(Exception ex) {
+            logger.error(ex.getMessage(), ex);
+            
+            AjaxExceptionResolver resolver = this.lookupExceptionResolver(ex);
+            if (resolver != null) {
+                logger.info(new StringBuilder("Resolving exception of type : ").append(ex.getClass()));
+                AjaxResponse ajaxResponse = resolver.resolve(request, ex);
+                if (ajaxResponse != null) {
+                    modelAndView.clear();
+                    this.sendResponse(response, ajaxResponse.getResponse());
+                }
+                else {
+                    logger.info("Null Ajax response after resolving exception, proceeding by re-throwing exception.");
+                    throw ex;
+                }
+            } 
             else {
-                throw new NoMatchingHandlerException("Cannot find an handler matching the request: " + 
-                        this.urlPathHelper.getLookupPathForRequest(request));
+                logger.info("No exception resolver found, proceeding by re-throwing exception.");
+                throw ex;
             }
         }
     }
@@ -294,6 +353,15 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 this.handlerMappings.put((String) entry.getKey(), handler.trim());
             }
         }
+    }
+    
+    /**
+     * Set the mappings that associate exception classes to {@link AjaxExceptionResolver}s.
+     *
+     * @param mappings A map containing exception to resolver mappings.
+     */
+    public void setExceptionMappings(Map<Class<? extends Exception>, AjaxExceptionResolver> mappings) {
+        this.exceptionMappings = mappings;
     }
     
     public void setAjaxParameter(String ajaxParameter) {
@@ -373,6 +441,32 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         }
 
         return handlers;
+    }
+    
+    /**
+     * Lookup the best {@link AjaxExceptionResolver} for the given exception.<br>
+     * The lookup is done using the actual exception class: if a resolver is
+     * configured for both the actual exception class, and one of its superclasses,
+     * the resolver configured for the actual exception class will be used.
+     *
+     * @param ex The exception to use for looking up the resolver.
+     * @return The {@link AjaxExceptionResolver}, or null if no resolver
+     * is found for the given exception.
+     */
+    protected AjaxExceptionResolver lookupExceptionResolver(Exception ex) {
+        Class bestMatch = null;
+        for (Class current : this.exceptionMappings.keySet()) {
+            if (current.isAssignableFrom(ex.getClass())) {
+                if (bestMatch == null || (bestMatch != null && bestMatch.isAssignableFrom(current))) {
+                    bestMatch = current;
+                }
+            }
+        }
+        if (bestMatch != null) {
+            return this.exceptionMappings.get(bestMatch);
+        } else {
+            return null;
+        }
     }
     
     /**
