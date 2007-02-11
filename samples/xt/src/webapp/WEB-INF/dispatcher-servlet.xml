@@ -57,6 +57,8 @@
         <property name="store" ref="store"/>
     </bean>
     
+    <bean id="ajaxHandlerWithException" class="org.springmodules.xt.examples.ajax.TestActionsHandler"/>
+    
     <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
         <property name="handlerMappings">
             <props>
@@ -66,8 +68,19 @@
                 <prop key="/ajax/ex4.action">ajaxListEmployeesHandler</prop>
                 <prop key="/ajax/ex5.action">ajaxFillOfficeHandler, ajaxValidationHandler2</prop>
                 <prop key="/ajax/ex6.action">ajaxFillOfficeWithDraggingHandler, ajaxValidationHandler2</prop>
+                <prop key="/ajax/ex7.action">ajaxHandlerWithException</prop>
             </props>
         </property>
+        <property name="exceptionMappings">
+            <map>
+                <entry key="java.lang.Exception" value-ref="redirectExceptionResolver"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="redirectExceptionResolver" class="org.springmodules.xt.ajax.support.RedirectExceptionResolver">
+        <property name="redirectUrl" value="/error.page"/>
+        <property name="exceptionMessageAttribute" value="exceptionMessage"/>
     </bean>
     
     <!-- Property Editors -->

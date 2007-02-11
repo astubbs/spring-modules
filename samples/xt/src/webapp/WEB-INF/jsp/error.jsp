@@ -17,7 +17,12 @@
         <p>
             Error message:
             <p>
-                <c:out value="${exception.message}"/>
+                <c:if test="${exception != null}">
+                      <c:out value="${exception.message}"/>
+                </c:if>
+                <c:if test="${param.exceptionMessage != null}">
+                      <c:out value="${param.exceptionMessage}"/>
+                </c:if>
             </p>
         </p>
     </body>
