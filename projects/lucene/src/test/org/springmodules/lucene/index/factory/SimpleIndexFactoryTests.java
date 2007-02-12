@@ -137,7 +137,7 @@ public class SimpleIndexFactoryTests extends TestCase {
 		IndexWriter indexWriter = null;
 		LuceneIndexReader indexReader = null;
 		try {
-			indexWriter = new IndexWriter(this.directory,new SimpleAnalyzer(),false);
+			indexWriter = new IndexWriter(this.directory, new SimpleAnalyzer(), false);
 
 			indexReader = indexFactory.getIndexReader();
 			fail();
@@ -156,7 +156,7 @@ public class SimpleIndexFactoryTests extends TestCase {
 		IndexWriter indexWriter = null;
 		LuceneIndexReader indexReader = null;
 		try {
-			indexWriter = new IndexWriter(this.directory,new SimpleAnalyzer(),false);
+			indexWriter = new IndexWriter(this.directory, new SimpleAnalyzer(), false);
 
 			indexReader = indexFactory.getIndexReader();
 		} catch(LuceneIndexAccessException ex) {
@@ -192,7 +192,7 @@ public class SimpleIndexFactoryTests extends TestCase {
 		IndexWriter indexWriter1 = null;
 		LuceneIndexWriter indexWriter2 = null;
 		try {
-			indexWriter1 = new IndexWriter(this.directory,new SimpleAnalyzer(),false);
+			indexWriter1 = new IndexWriter(this.directory, new SimpleAnalyzer(), false);
 
 			indexWriter2 = indexFactory.getIndexWriter();
 			fail();
@@ -211,7 +211,7 @@ public class SimpleIndexFactoryTests extends TestCase {
 		IndexWriter indexWriter1 = null;
 		LuceneIndexWriter indexWriter2 = null;
 		try {
-			indexWriter1 = new IndexWriter(this.directory,new SimpleAnalyzer(),false);
+			indexWriter1 = new IndexWriter(this.directory, new SimpleAnalyzer(), false);
 
 			indexWriter2 = indexFactory.getIndexWriter();
 		} catch(LuceneIndexAccessException ex) {
@@ -221,4 +221,61 @@ public class SimpleIndexFactoryTests extends TestCase {
 		}
 	}
 
+	final public void testIndexNoCreationWithReader() throws Exception {
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
+		indexFactory.setDirectory(new RAMDirectory());
+		indexFactory.setCreate(false);
+		
+		LuceneIndexReader indexReader = null;
+		try {
+			indexReader = indexFactory.getIndexReader();
+			fail();
+		} catch(LuceneIndexAccessException ex) {
+		} finally {
+			closeIndexReader(indexReader);
+		}
+	}
+
+	final public void testIndexCreationWithReader() throws Exception {
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
+		indexFactory.setDirectory(new RAMDirectory());
+		indexFactory.setCreate(true);
+		
+		LuceneIndexReader indexReader = null;
+		try {
+			indexReader = indexFactory.getIndexReader();
+			fail();
+		} catch(LuceneIndexAccessException ex) {
+		} finally {
+			closeIndexReader(indexReader);
+		}
+	}
+
+	final public void testIndexNoCreationWithWriter() throws Exception {
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
+		indexFactory.setDirectory(new RAMDirectory());
+		indexFactory.setCreate(false);
+		
+		LuceneIndexWriter indexWriter = null;
+		try {
+			indexWriter = indexFactory.getIndexWriter();
+			fail();
+		} catch(LuceneIndexAccessException ex) {
+		} finally {
+			closeIndexWriter(indexWriter);
+		}
+	}
+
+	final public void testIndexCreationWithWriter() throws Exception {
+		SimpleIndexFactory indexFactory = new SimpleIndexFactory();
+		indexFactory.setDirectory(new RAMDirectory());
+		indexFactory.setCreate(true);
+		
+		LuceneIndexWriter indexWriter = null;
+		try {
+			indexWriter = indexFactory.getIndexWriter();
+		} finally {
+			closeIndexWriter(indexWriter);
+		}
+	}
 }
