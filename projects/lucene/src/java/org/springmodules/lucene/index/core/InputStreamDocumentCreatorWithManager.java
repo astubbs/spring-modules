@@ -22,8 +22,8 @@ import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.springmodules.lucene.index.FileExtensionNotSupportedException;
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
-import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
+import org.springmodules.lucene.index.document.handler.DocumentHandler;
+import org.springmodules.lucene.index.document.handler.DocumentHandlerManager;
 
 /**
  * Implementation of the DocumentCreator callback interface for creating a

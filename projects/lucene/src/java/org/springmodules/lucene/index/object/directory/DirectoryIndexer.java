@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package org.springmodules.lucene.index.object.directory;
 
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
-import org.springmodules.lucene.index.support.handler.DocumentMatching;
+import org.springmodules.lucene.index.document.handler.DocumentHandler;
+import org.springmodules.lucene.index.document.handler.DocumentMatching;
 
 /**
  * @author Thierry Templier
@@ -33,9 +33,7 @@ public interface DirectoryIndexer {
 	 * @param matching the DocumentMatching associated with the handler
 	 * @param handler the handler to register
 	 */
-	public abstract void registerDocumentHandler(
-		DocumentMatching matching,
-		DocumentHandler handler);
+	void registerDocumentHandler(DocumentMatching matching, DocumentHandler handler);
 
 	/**
 	 * This method is used to unregister the document handler corresponding the
@@ -43,7 +41,7 @@ public interface DirectoryIndexer {
 	 * 
 	 * @param matching the DocumentMatching associated with the handler
 	 */
-	public abstract void unregisterDocumentHandler(DocumentMatching matching);
+	void unregisterDocumentHandler(DocumentMatching matching);
 
 	/**
 	 * This method is used to add a listener to be notified during the
@@ -51,14 +49,14 @@ public interface DirectoryIndexer {
 	 * 
 	 * @param listener the listener to add
 	 */
-	public abstract void addListener(FileDocumentIndexingListener listener);
+	void addListener(FileDocumentIndexingListener listener);
 
 	/**
 	 * This method is used to remove a specifed listener.
 	 * 
 	 * @param listener the listener to remove
 	 */
-	public abstract void removeListener(FileDocumentIndexingListener listener);
+	void removeListener(FileDocumentIndexingListener listener);
 
 	/**
 	 * This method is the entry point to index a directory recursively. It uses
@@ -68,7 +66,7 @@ public interface DirectoryIndexer {
 	 *  
 	 * @param dirToParse the directory to index recursively
 	 */
-	public abstract void index(String dirToParse);
+	void index(String dirToParse);
 
 	/**
 	 * This method is the entry point to index a directory recursively. It uses
@@ -87,5 +85,5 @@ public interface DirectoryIndexer {
 	 * @param optimizeIndex if the index must be optmized after
 	 * the request indexing
 	 */
-	public abstract void index(String dirToParse, boolean optimizeIndex);
+	void index(String dirToParse, boolean optimizeIndex);
 }

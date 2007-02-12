@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.springmodules.lucene.index.object.database;
 
 import javax.sql.DataSource;
 
-import org.springmodules.lucene.index.support.handler.database.SqlDocumentHandler;
-import org.springmodules.lucene.index.support.handler.database.SqlRequest;
+import org.springmodules.lucene.index.document.handler.database.SqlDocumentHandler;
+import org.springmodules.lucene.index.document.handler.database.SqlRequest;
 
 /**
  * @author Thierry Templier
@@ -38,16 +38,14 @@ public interface DatabaseIndexer {
 	 * @param sqlRequest the request to execute
 	 * @param handler the handler to index the rows
 	 */
-	public abstract void registerDocumentHandler(
-		SqlRequest sqlRequest,
-		SqlDocumentHandler handler);
+	void registerDocumentHandler(SqlRequest sqlRequest, SqlDocumentHandler handler);
 
 	/**
 	 * This method is used to unregister a request.
 	 * 
 	 * @param sqlRequest the request to execute
 	 */
-	public abstract void unregisterDocumentHandler(SqlRequest sqlRequest);
+	void unregisterDocumentHandler(SqlRequest sqlRequest);
 
 	/**
 	 * This method is used to add a listener to be notified during the
@@ -55,14 +53,14 @@ public interface DatabaseIndexer {
 	 * 
 	 * @param listener the listener to add
 	 */
-	public abstract void addListener(DatabaseIndexingListener listener);
+	void addListener(DatabaseIndexingListener listener);
 
 	/**
 	 * This method is used to remove a specifed listener.
 	 * 
 	 * @param listener the listener to remove
 	 */
-	public abstract void removeListener(DatabaseIndexingListener listener);
+	void removeListener(DatabaseIndexingListener listener);
 
 	/**
 	 * This method is the entry point to index a database using the specified
@@ -72,7 +70,7 @@ public interface DatabaseIndexer {
 	 *  
 	 * @param dataSource the datasource to use
 	 */
-	public abstract void index(DataSource dataSource);
+	void index(DataSource dataSource);
 
 	/**
 	 * This method is the entry point to index a database using the specified
@@ -89,5 +87,5 @@ public interface DatabaseIndexer {
 	 * @param optimizeIndex if the index must be optmized after
 	 * the request indexing
 	 */
-	public abstract void index(DataSource dataSource, boolean optimizeIndex);
+	void index(DataSource dataSource, boolean optimizeIndex);
 }

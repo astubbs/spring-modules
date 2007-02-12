@@ -27,9 +27,12 @@ import org.apache.lucene.search.Similarity;
 import org.apache.lucene.store.Directory;
 
 /**
- * Interface representing the contract of the Lucene IndexWriter. It
+ * Interface representing the contract of the Lucene IndexWriter class. It
  * allows unit tests with this resource and improves management of this
  * kind of resources.
+ * 
+ * All the method of the IndexWriter class are present in this interface
+ * and, so allow to make all the operations of this class. 
  *  
  * @author Thierry Templier
  * @see IndexWriter

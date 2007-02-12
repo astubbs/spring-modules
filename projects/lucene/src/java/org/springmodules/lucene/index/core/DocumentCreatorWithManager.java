@@ -20,8 +20,8 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.lucene.document.Document;
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
-import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
+import org.springmodules.lucene.index.document.handler.DocumentHandler;
+import org.springmodules.lucene.index.document.handler.DocumentHandlerManager;
 
 /**
  * Implementation of the DocumentCreator callback interface for creating a
@@ -57,8 +57,8 @@ public class DocumentCreatorWithManager implements DocumentCreator {
 	 * @param documentHandlerManager a configured DocumentHandlerManager instance to index resources
 	 * @param object the object to use to create a Lucene document
 	 */
-	public DocumentCreatorWithManager(DocumentHandlerManager documentHandlerManager,Object object) {
-		this(documentHandlerManager,object.getClass().getCanonicalName(),object);
+	public DocumentCreatorWithManager(DocumentHandlerManager documentHandlerManager, Object object) {
+		this(documentHandlerManager, object.getClass().getCanonicalName(), object);
 	}
 
 	/**
@@ -69,10 +69,10 @@ public class DocumentCreatorWithManager implements DocumentCreator {
 	 * @param name the name associated with the object
 	 * @param object the object to use to create a Lucene document
 	 */
-	public DocumentCreatorWithManager(DocumentHandlerManager documentHandlerManager,String name, Object object) {
-		this.documentHandlerManager=documentHandlerManager;
-		this.name=name;
-		this.object=object;
+	public DocumentCreatorWithManager(DocumentHandlerManager documentHandlerManager, String name, Object object) {
+		this.documentHandlerManager = documentHandlerManager;
+		this.name = name;
+		this.object = object;
 	}
 
 	/**
@@ -98,8 +98,8 @@ public class DocumentCreatorWithManager implements DocumentCreator {
 	 * @see org.springmodules.lucene.index.DocumentHandlerException
 	 */
 	public final Document createDocument() throws Exception {
-		DocumentHandler documentHandler=documentHandlerManager.getDocumentHandler(name);
-		return documentHandler.getDocument(null,object);
+		DocumentHandler documentHandler = documentHandlerManager.getDocumentHandler(name);
+		return documentHandler.getDocument(null, object);
 	}
 
 }

@@ -29,13 +29,13 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.LuceneIndexingException;
+import org.springmodules.lucene.index.document.handler.DocumentHandler;
+import org.springmodules.lucene.index.document.handler.DocumentHandlerManager;
+import org.springmodules.lucene.index.document.handler.file.AbstractInputStreamDocumentHandler;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 import org.springmodules.lucene.index.factory.LuceneIndexWriter;
 import org.springmodules.lucene.index.object.AbstractDocumentManagerIndexer;
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
-import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
-import org.springmodules.lucene.index.support.handler.file.AbstractInputStreamDocumentHandler;
 import org.springmodules.lucene.util.IOUtils;
 
 /**
@@ -280,7 +280,7 @@ public class DefaultDirectoryIndexer extends AbstractDocumentManagerIndexer impl
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneManipulateIndexException
 	 */
-	private Document doCallHandler(File file,FileInputStream inputStream,DocumentHandler handler) throws Exception {
+	private Document doCallHandler(File file,FileInputStream inputStream, DocumentHandler handler) throws Exception {
 		Map description = new HashMap();
 		description.put(AbstractInputStreamDocumentHandler.FILENAME, file.getAbsolutePath());
 		return handler.getDocument(description, inputStream);

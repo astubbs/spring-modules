@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 
 package org.springmodules.lucene.index.object.database;
 
-import org.springmodules.lucene.index.support.handler.database.SqlRequest;
-
+import org.springmodules.lucene.index.document.handler.database.SqlRequest;
 
 /**
  * Database indexing listener to be notified when the indexing of the request
@@ -41,19 +40,19 @@ public interface DatabaseIndexingListener {
 	 * and indexing each resulting rows.
 	 * @param request the sql request which will be executed
 	 */
-	public void beforeIndexingRequest(SqlRequest request);
+	void beforeIndexingRequest(SqlRequest request);
 
 	/**
 	 * This callback method is called after executing the sql request
 	 * and indexing each resulting rows if it is successful.
 	 * @param request the sql request which will be executed
 	 */
-	public void afterIndexingRequest(SqlRequest request);
+	void afterIndexingRequest(SqlRequest request);
 
 	/**
 	 * This callback method is called after executing the sql request
 	 * and indexing each resulting rows if there are errors.
 	 * @param request the sql request which will be executed
 	 */
-	public void onErrorIndexingRequest(SqlRequest request,Exception ex);
+	void onErrorIndexingRequest(SqlRequest request,Exception ex);
 }

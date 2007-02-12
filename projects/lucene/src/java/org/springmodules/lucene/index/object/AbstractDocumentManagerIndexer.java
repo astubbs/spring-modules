@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package org.springmodules.lucene.index.object;
 
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
-import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
-import org.springmodules.lucene.index.support.handler.DocumentMatching;
-import org.springmodules.lucene.index.support.handler.file.ExtensionDocumentHandlerManager;
+import org.springmodules.lucene.index.document.handler.DocumentHandler;
+import org.springmodules.lucene.index.document.handler.DocumentHandlerManager;
+import org.springmodules.lucene.index.document.handler.DocumentMatching;
+import org.springmodules.lucene.index.document.handler.file.ExtensionDocumentHandlerManager;
 
 /**
  * This is the base abstract class for every indexers. It is used
@@ -49,7 +49,7 @@ public abstract class AbstractDocumentManagerIndexer extends AbstractIndexer {
 	 * @param matching the DocumentMatching associated with the handler
 	 * @param handler the handler to register
 	 */
-	public void registerDocumentHandler(DocumentMatching matching,DocumentHandler handler) {
+	public void registerDocumentHandler(DocumentMatching matching, DocumentHandler handler) {
 		documentHandlerManager.registerDocumentHandler(matching,handler);
 	}
 

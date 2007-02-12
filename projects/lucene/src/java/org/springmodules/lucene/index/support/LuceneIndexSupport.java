@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springmodules.lucene.index.core.DefaultLuceneIndexTemplate;
 import org.springmodules.lucene.index.core.LuceneIndexTemplate;
+import org.springmodules.lucene.index.document.handler.DocumentHandlerManager;
 import org.springmodules.lucene.index.factory.IndexFactory;
-import org.springmodules.lucene.index.support.handler.DocumentHandlerManager;
 
 /**
  * Convenient super class for objects using Lucene indexing
@@ -122,7 +122,7 @@ public abstract class LuceneIndexSupport implements InitializingBean {
 		}
 
 		if( this.template==null ) {
-			this.template=new DefaultLuceneIndexTemplate(indexFactory,analyzer);
+			this.template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
 		}
 	}
 

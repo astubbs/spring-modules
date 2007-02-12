@@ -23,7 +23,6 @@ import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.QueryFilter;
@@ -34,7 +33,6 @@ import org.springmodules.lucene.AbstractLuceneTestCase;
 import org.springmodules.lucene.search.factory.LuceneHits;
 import org.springmodules.lucene.search.factory.LuceneSearcher;
 import org.springmodules.lucene.search.factory.SearcherFactory;
-import org.springmodules.lucene.search.factory.SimpleSearcherFactory;
 
 /**
  * @author Brian McCallister

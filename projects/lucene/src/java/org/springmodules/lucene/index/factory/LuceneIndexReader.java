@@ -31,9 +31,12 @@ import org.apache.lucene.store.Directory;
 import org.springmodules.lucene.search.factory.LuceneSearcher;
 
 /**
- * Interface representing the contract of the Lucene IndexReader. It
+ * Interface representing the contract of the Lucene IndexReader class. It
  * allows unit tests with this resource and improves management of this
  * kind of resources.
+ *  
+ * All the method of the IndexReader class are present in this interface
+ * and, so allow to make all the operations of this class. 
  *  
  * @author Thierry Templier
  * @see IndexReader

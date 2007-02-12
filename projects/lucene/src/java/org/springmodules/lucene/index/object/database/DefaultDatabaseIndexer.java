@@ -35,13 +35,13 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.MappingSqlQuery;
 import org.springmodules.lucene.index.LuceneIndexAccessException;
 import org.springmodules.lucene.index.LuceneIndexingException;
+import org.springmodules.lucene.index.document.handler.DocumentHandler;
+import org.springmodules.lucene.index.document.handler.database.SqlDocumentHandler;
+import org.springmodules.lucene.index.document.handler.database.SqlRequest;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.IndexWriterFactoryUtils;
 import org.springmodules.lucene.index.factory.LuceneIndexWriter;
 import org.springmodules.lucene.index.object.AbstractIndexer;
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
-import org.springmodules.lucene.index.support.handler.database.SqlDocumentHandler;
-import org.springmodules.lucene.index.support.handler.database.SqlRequest;
 
 /**
  * <b>This is the central class in the lucene database indexing package.</b>
@@ -378,7 +378,7 @@ public class DefaultDatabaseIndexer extends AbstractIndexer implements DatabaseI
 		private SqlRequest request;
 		private DocumentHandler handler;
 
-		public IndexingMappingQuery(DataSource ds,SqlRequest request,DocumentHandler handler) {
+		public IndexingMappingQuery(DataSource ds, SqlRequest request, DocumentHandler handler) {
 			super(ds, request.getSql());
 			this.request = request;
 			this.handler = handler;

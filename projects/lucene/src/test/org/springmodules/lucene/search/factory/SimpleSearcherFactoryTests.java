@@ -17,7 +17,6 @@
 package org.springmodules.lucene.search.factory;
 
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.TermQuery;
 import org.springmodules.lucene.AbstractLuceneTestCase;
 import org.springmodules.lucene.index.factory.SimpleIndexFactory;

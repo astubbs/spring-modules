@@ -30,10 +30,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springmodules.lucene.index.document.handler.database.SqlDocumentHandler;
+import org.springmodules.lucene.index.document.handler.database.SqlRequest;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.LuceneIndexWriter;
-import org.springmodules.lucene.index.support.handler.database.SqlDocumentHandler;
-import org.springmodules.lucene.index.support.handler.database.SqlRequest;
 
 /**
  * @author Thierry Templier

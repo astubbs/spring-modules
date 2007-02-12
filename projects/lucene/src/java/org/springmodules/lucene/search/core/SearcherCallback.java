@@ -33,6 +33,7 @@ import org.springmodules.lucene.search.factory.LuceneSearcher;
  * @author Brian McCallister
  * @author Thierry Templier
  * @see org.springmodules.lucene.search.core.DefaultLuceneSearchTemplate
+ * @see LuceneSearcher
  */
 public interface SearcherCallback {
 
@@ -45,7 +46,7 @@ public interface SearcherCallback {
 	 * RuntimeException is treated as application exception: it gets propagated
 	 * to the caller of the template.
 	 * 
-	 * @param searcher an active Searcher
+	 * @param searcher an LuceneSearcher instance
 	 * @return a result object, or null if none
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneSearchException

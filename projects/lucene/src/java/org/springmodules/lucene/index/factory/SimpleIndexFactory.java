@@ -149,7 +149,7 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 			checkIndexLocking();
 
 			boolean create = !IndexReader.indexExists(getDirectory());
-			IndexWriter writer = new IndexWriter(getDirectory(),getAnalyzer(),create);
+			IndexWriter writer = new IndexWriter(getDirectory(), getAnalyzer(), create);
 			setIndexWriterParameters(writer);
 			return new SimpleLuceneIndexWriter(writer);
 		} catch(IOException ex) {

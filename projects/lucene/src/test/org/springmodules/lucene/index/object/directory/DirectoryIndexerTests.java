@@ -30,12 +30,12 @@ import org.apache.lucene.store.RAMDirectory;
 import org.easymock.AbstractMatcher;
 import org.easymock.MockControl;
 import org.springmodules.lucene.index.LuceneIndexingException;
+import org.springmodules.lucene.index.document.handler.DocumentHandler;
+import org.springmodules.lucene.index.document.handler.DocumentMatching;
+import org.springmodules.lucene.index.document.handler.file.ExtensionDocumentMatching;
+import org.springmodules.lucene.index.document.handler.file.TextDocumentHandler;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.factory.LuceneIndexWriter;
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
-import org.springmodules.lucene.index.support.handler.DocumentMatching;
-import org.springmodules.lucene.index.support.handler.file.ExtensionDocumentMatching;
-import org.springmodules.lucene.index.support.handler.file.TextDocumentHandler;
 
 /**
  * @author Thierry Templier
