@@ -107,7 +107,7 @@ public class SimpleIndexFactoryBean implements FactoryBean,InitializingBean {
 		if (getDirectory() == null) {
 			throw new IllegalArgumentException("directory is required");
 		}
-		this.factory=new SimpleIndexFactory(getDirectory(),getAnalyzer());
+		this.factory = new SimpleIndexFactory(getDirectory(), getAnalyzer());
 		this.factory.setResolveLock(resolveLock);
 	}
 

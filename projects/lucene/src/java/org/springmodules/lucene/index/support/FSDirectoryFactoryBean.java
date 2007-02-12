@@ -62,7 +62,6 @@ public class FSDirectoryFactoryBean implements FactoryBean, InitializingBean {
                     "location must be a directory");
         }
 
-        System.out.println("create : "+create);
         directory = FSDirectory.getDirectory(locationFile, create);
     }
 
