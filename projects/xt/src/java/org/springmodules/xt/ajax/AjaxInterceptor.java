@@ -31,6 +31,7 @@ import java.util.TreeMap;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import net.sf.json.JSONObject;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
@@ -45,7 +46,6 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.BaseCommandController;
 import org.springframework.web.servlet.support.RequestContext;
 import org.springframework.web.util.UrlPathHelper;
-import org.springmodules.xt.ajax.support.ModelHolder;
 import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
 import org.springmodules.xt.ajax.action.RedirectAction;
@@ -84,9 +84,9 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     public static final String AJAX_REDIRECT_PREFIX = "ajax-redirect:";
     public static final String AJAX_VIEW_KEYWORD = "ajax-view";
     
-    private static final Logger logger = Logger.getLogger(AjaxInterceptor.class);
+    private static final String MODEL_KEY = AjaxInterceptor.class.getName() + ".MODEL_KEY";
     
-    private static final ModelHolder modelHolder = new ModelHolder();
+    private static final Logger logger = Logger.getLogger(AjaxInterceptor.class);
     
     private UrlPathHelper urlPathHelper = new UrlPathHelper();
     private PathMatcher pathMatcher = new AntPathMatcher();
@@ -136,7 +136,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                             // Set base event properties:
                             this.initEvent(event, request);
                             if (handler instanceof BaseCommandController) {
-                                Map model = AjaxInterceptor.modelHolder.getModel();
+                                Map model = this.getModel(request.getSession());
                                 // Get the command name:
                                 String commandName = ((BaseCommandController) handler).getCommandName();
                                 // Set the command object:
@@ -211,9 +211,11 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) 
     throws Exception {
         try {
-            // Set the model map:
-            AjaxInterceptor.modelHolder.set(modelAndView.getModel());
+            // Store the model map:
+            this.storeModel(request.getSession(), modelAndView.getModel());
+            //
             // Continue processing:
+            //
             String requestType = request.getParameter(this.ajaxParameter);
             if (requestType != null && requestType.equals(AJAX_SUBMIT_REQUEST)) {
                 String eventId = request.getParameter(this.eventParameter); 
@@ -245,7 +247,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                                 }
                             }
                             // Set the model:
-                            event.setModel(AjaxInterceptor.modelHolder.getModel());
+                            event.setModel(modelAndView.getModel());
                             // Handling event: 
                             ajaxResponse = ajaxHandler.handle(event);
                             supported = true;
@@ -320,7 +322,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
             }
         }
     }
-    
+
     /**
      * Set mappings configured in the given {@link java.util.Properties} object.<br>
      * Each mapping associates an ANT based URL path with a comma separated list of {@link AjaxHandler}s configured in the Spring Application Context.<br>
@@ -481,6 +483,26 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         out.print(response);
         out.close();
     }
+    
+    /**
+     * Store the model map for later access and usage.
+     */
+    protected void storeModel(HttpSession session, Map model) {
+        session.setAttribute(MODEL_KEY, model);
+    }
+    
+    /**
+     * Get the model map.
+     */
+    protected Map getModel(HttpSession session) {
+        Map model = (Map) session.getAttribute(MODEL_KEY);
+        if (model == null) {
+            logger.warn("Null model map for session: " + session.getId());
+        } 
+        return model;
+    }
+    
+    /*** Private class internals ***/
     
     private void initEvent(AjaxEvent event, HttpServletRequest request) {
         String paramsString = request.getParameter(this.jsonParamsParameter);
