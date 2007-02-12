@@ -11,3 +11,5 @@ Changes in version 0.7 (15.02.2007)
 - Introduction of LuceneSearcher interface.
 - Update of the callack to support LuceneSearcher.
 - Update templates in order to support Lucene 2.
+- Change the package name org.springmodules.lucene.index.support.handler to
+  org.springmodules.lucene.index.document.handler
