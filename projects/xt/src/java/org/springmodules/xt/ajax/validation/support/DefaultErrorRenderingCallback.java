@@ -27,7 +27,8 @@ import org.springmodules.xt.ajax.validation.ErrorRenderingCallback;
 
 /**
  * {@link org.springmodules.xt.ajax.validation.ErrorRenderingCallback} default implementation which renders the error as a
- * text surrounded by a DIV tag, and highlights it.
+ * text surrounded by a DIV tag, and highlights it.<br>
+ * It needs the Prototype and Scriptaculous Effects Javascript libraries, so you need to import them in your web pages.
  *
  * @author Sergio Bossa
  */
