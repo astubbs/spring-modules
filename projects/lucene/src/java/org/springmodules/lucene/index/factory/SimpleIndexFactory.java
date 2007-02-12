@@ -47,6 +47,7 @@ import org.springmodules.lucene.index.LuceneIndexAccessException;
 public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFactory {
 
 	private boolean resolveLock;
+	private boolean create;
 
 	/**
 	 * Construct a new SimpleIndexFactory for bean usage.
@@ -80,6 +81,20 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 	 */
 	public boolean isResolveLock() {
 		return resolveLock;
+	}
+
+	/**
+	 * Set if the index must be created if it does not exist.
+	 */
+	public void setCreate(boolean create) {
+		this.create = create;
+	}
+
+	/**
+	 * Return if the index must be created if it does not exist.
+	 */
+	public boolean isCreate() {
+		return create;
 	}
 
 	/**
@@ -148,8 +163,13 @@ public class SimpleIndexFactory extends AbstractIndexFactory implements IndexFac
 			checkDirectory();
 			checkIndexLocking();
 
-			boolean create = !IndexReader.indexExists(getDirectory());
-			IndexWriter writer = new IndexWriter(getDirectory(), getAnalyzer(), create);
+			boolean exists = IndexReader.indexExists(getDirectory());
+			if( !exists && !create ) {
+					throw new LuceneIndexAccessException("The index doesn't exist for the specified directory. "+
+									"To allow the creation of the index, set the create property to true.");
+			}
+
+			IndexWriter writer = new IndexWriter(getDirectory(), getAnalyzer(), !exists);
 			setIndexWriterParameters(writer);
 			return new SimpleLuceneIndexWriter(writer);
 		} catch(IOException ex) {
