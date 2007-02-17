@@ -1,5 +1,6 @@
 // JavaScript Document
 var taconite_parser_version=1.502;
+var taconite_parser_xt_version=20070217;
 var isIE=document.uniqueID;
 
 String.prototype.trim = function() {

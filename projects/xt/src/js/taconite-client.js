@@ -30,6 +30,7 @@
  will be sent.
  */
 var taconite_client_version=1.6;
+var taconite_client_xt_version=20070217;
 function AjaxRequest(url) {
     /** @private */
     var self = this;
