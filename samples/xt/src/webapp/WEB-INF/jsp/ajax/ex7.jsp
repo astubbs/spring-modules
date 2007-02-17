@@ -14,13 +14,16 @@
         <h3 align="center">Take a look at XT Ajax exception mapping ...</h3>
         <p>
             This example shows how XT Ajax Framework can map exceptions originated
-            during Ajax request pricessing to proper resolvers that will take care of
+            during Ajax request processing to proper resolvers that will take care of
             making some given actions.
         </p>
         <form method="POST" action="">
             <table>
                 <tr>
-                    <td><input type="button" value="Raise exception" onclick="XT.doAjaxSubmit('raiseException', this);"></td>
+                    <td><input type="button" value="Raise exception during event handling" onclick="XT.doAjaxSubmit('raiseException', this);"></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Raise exception because of no ajax-redirect prefix" onclick="XT.doAjaxSubmit('returnNoResponse', this);"></td>
                 </tr>
             </table>
         </form>

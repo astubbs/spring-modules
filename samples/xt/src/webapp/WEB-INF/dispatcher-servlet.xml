@@ -57,7 +57,7 @@
         <property name="store" ref="store"/>
     </bean>
     
-    <bean id="ajaxHandlerWithException" class="org.springmodules.xt.examples.ajax.TestActionsHandler"/>
+    <bean id="ajaxHandlerWithException" class="org.springmodules.xt.examples.ajax.AjaxHandlerWithException"/>
     
     <bean id="ajaxInterceptor" class="org.springmodules.xt.ajax.AjaxInterceptor">
         <property name="handlerMappings">
@@ -162,7 +162,6 @@
     
     <bean id="listEmployeesController" class="org.springmodules.xt.examples.mvc.ListEmployeesController">
         <property name="formView"><value>ajax/ex4</value></property>
-        <property name="successView"><value>ajax-view</value></property>
         <property name="store"><ref bean="store"/></property>
         <property name="customEditors">
             <map>
@@ -176,7 +175,6 @@
     
     <bean id="fillOfficeController" class="org.springmodules.xt.examples.mvc.FillOfficeController">
         <property name="formView"><value>ajax/ex5</value></property>
-        <property name="successView"><value>ajax-view</value></property>
         <property name="validator"><ref bean="officeValidator"/></property>
         <property name="store"><ref bean="store"/></property>
         <property name="customEditors">
@@ -191,7 +189,6 @@
     
     <bean id="fillOfficeWithDraggingController" class="org.springmodules.xt.examples.mvc.FillOfficeWithDraggingController">
         <property name="formView"><value>ajax/ex6</value></property>
-        <property name="successView"><value>ajax-view</value></property>
         <property name="validator"><ref bean="officeValidator"/></property>
         <property name="store"><ref bean="store"/></property>
         <property name="customEditors">
@@ -202,6 +199,11 @@
                 </entry>
             </map>
         </property>    
+    </bean>
+    
+    <bean id="noOpController1" class="org.springmodules.xt.examples.mvc.NoOpController">
+        <property name="formView"><value>ajax/ex7</value></property>
+        <property name="successView"><value>/start.page</value></property>
     </bean>
     
     <!-- Url Mappings -->
@@ -222,6 +224,7 @@
                 <prop key="/ajax/ex4.action">listEmployeesController</prop>
                 <prop key="/ajax/ex5.action">fillOfficeController</prop>
                 <prop key="/ajax/ex6.action">fillOfficeWithDraggingController</prop>
+                <prop key="/ajax/ex7.action">noOpController1</prop>
             </props>
         </property>
     </bean>

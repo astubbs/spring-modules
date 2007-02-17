@@ -13,6 +13,7 @@ import org.springmodules.xt.examples.domain.MemoryRepository;
 import org.springmodules.xt.examples.mvc.form.OfficeView;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springmodules.web.servlet.XTModelAndView;
 import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
 import org.springmodules.xt.examples.domain.BusinessException;
 
@@ -60,7 +61,7 @@ public class RemoveEmployeeController extends EnhancedSimpleFormController {
             return this.showForm(request, response, errors);
         }
         
-        return new ModelAndView(this.getSuccessView());
+        return new XTModelAndView(this.getSuccessView(), errors);
     }
     
     public void setStore(MemoryRepository store) {

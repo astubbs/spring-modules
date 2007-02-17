@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springmodules.web.servlet.XTModelAndView;
 import org.springmodules.web.servlet.mvc.EnhancedSimpleFormController;
 import org.springmodules.xt.examples.domain.BusinessException;
 import org.springmodules.xt.examples.domain.Error;
@@ -54,7 +55,7 @@ public class FillOfficeController extends EnhancedSimpleFormController {
             return this.showForm(request, response, errors);
         }
         
-        return new ModelAndView(this.getSuccessView(), errors.getModel());
+        return new XTModelAndView(this.getSuccessView(), errors);
     }
     
     public void setStore(MemoryRepository store) {

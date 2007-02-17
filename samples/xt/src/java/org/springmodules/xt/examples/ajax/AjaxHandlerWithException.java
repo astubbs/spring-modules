@@ -14,4 +14,8 @@ public class AjaxHandlerWithException extends AbstractAjaxHandler {
     public AjaxResponse raiseException(AjaxSubmitEvent event) throws Exception {
         throw new Exception("This is a mapped exception.");
     }
+    
+    public AjaxResponse returnNoResponse(AjaxSubmitEvent event) throws Exception {
+        return null;
+    }
 }

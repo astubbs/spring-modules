@@ -26,7 +26,7 @@
             <li><a href='<c:url value="/ajax/ex5.action"/>'/>Example 5</a></li>
             <li><a href='<c:url value="/ajax/ex6.action?officeId=1"/>'/>Example 6, Part 1</a></li>
             <li><a href='<c:url value="/ajax/ex6.action?officeId=2"/>'/>Example 6, Part 2</a></li>
-            <li><a href='<c:url value="/ajax/ex7.page"/>'/>Example 7</a></li>
+            <li><a href='<c:url value="/ajax/ex7.action"/>'/>Example 7</a></li>
         </ul>
     </body>
 </html>
