@@ -91,6 +91,7 @@ var XT = {
  will be sent.
  */
 var taconite_client_version=1.6;
+var taconite_client_xt_version=20070217;
 function AjaxRequest(url) {
     /** @private */
     var self = this;
@@ -645,6 +646,7 @@ function createXMLHttpRequest() {
 }
 // JavaScript Document
 var taconite_parser_version=1.502;
+var taconite_parser_xt_version=20070217;
 var isIE=document.uniqueID;
 
 String.prototype.trim = function() {
