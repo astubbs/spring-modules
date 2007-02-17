@@ -157,7 +157,7 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         httpResponse = new MockHttpServletResponse();
         
         controller = new SimpleFormController();
-        mv = new ModelAndView(AjaxInterceptor.AJAX_VIEW_KEYWORD);
+        mv = new ModelAndView("");
         
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
         
@@ -215,7 +215,7 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         
-        ModelAndView mv = new ModelAndView(AjaxInterceptor.AJAX_VIEW_KEYWORD);
+        ModelAndView mv = new ModelAndView("");
         SimpleFormController controller = new SimpleFormController();
         
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
@@ -238,7 +238,7 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         httpResponse = new MockHttpServletResponse();
         
         controller = new SimpleFormController();
-        mv = new ModelAndView(AjaxInterceptor.AJAX_VIEW_KEYWORD);
+        mv = new ModelAndView("");
         
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
         

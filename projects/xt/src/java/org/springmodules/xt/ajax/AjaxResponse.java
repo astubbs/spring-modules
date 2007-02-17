@@ -38,4 +38,11 @@ public interface AjaxResponse {
      * @return The response of all added actions.
      */
     public String getResponse();
+    
+    /**
+     * Check if this response is empty, that is, has no actions.
+     *
+     * @return True if empty, false otherwise.
+     */
+    public boolean isEmpty();
 }

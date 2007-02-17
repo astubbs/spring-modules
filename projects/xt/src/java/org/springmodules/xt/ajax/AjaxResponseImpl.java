@@ -45,4 +45,8 @@ public class AjaxResponseImpl implements AjaxResponse {
         response.append(CLOSE_RESPONSE);
         return response.toString();
     }
+
+    public boolean isEmpty() {
+        return this.actions.isEmpty();
+    }
 }

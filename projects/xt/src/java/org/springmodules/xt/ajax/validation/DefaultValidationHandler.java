@@ -61,6 +61,8 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
     
     private static final Logger logger = Logger.getLogger(DefaultValidationHandler.class);
     
+    private static final String ERRORS_PREFIX = DefaultValidationHandler.class.getName() + " - ";
+    
     private MessageSource messageSource;
     private ErrorRenderingCallback errorRenderingCallback = new DefaultErrorRenderingCallback();
     private SuccessRenderingCallback successRenderingCallback = new DefaultSuccessRenderingCallback();
@@ -100,12 +102,12 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
 
     private void removeOldErrors(AjaxSubmitEvent event, AjaxResponseImpl response) {
         HttpServletRequest request = event.getHttpRequest();
-        Errors errors = (Errors) request.getSession(true).getAttribute(request.getRequestURL().toString());
+        Errors errors = (Errors) request.getSession(true).getAttribute(this.getErrorsAttributeName(request));
         if (errors != null) {
             logger.debug("Found errors for URL: " + request.getRequestURL().toString());
             logger.debug("Removing old errors.");
             // Remove old errors from session:
-            request.getSession(true).removeAttribute(request.getRequestURL().toString());
+            request.getSession(true).removeAttribute(this.getErrorsAttributeName(request));
             // Remove old errors from HTML:
             for (Object o : errors.getAllErrors()) {
                 ObjectError error = (ObjectError) o;
@@ -122,7 +124,7 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
         Locale locale = LocaleContextHolder.getLocale(); // <- Get the current Locale, if any ...
         // Put new errors into http session for later retrieval:
         logger.debug("Putting errors in session for URL: " + request.getRequestURL().toString());
-        request.getSession(true).setAttribute(request.getRequestURL().toString(), errors);
+        request.getSession(true).setAttribute(this.getErrorsAttributeName(request), errors);
         // Put new errors into HTML:
         for (Object o : errors.getAllErrors()) {
             ObjectError error = (ObjectError) o;
@@ -137,5 +139,9 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
                 response.addAction(renderingAction);
             }
         }
+    }
+    
+    private String getErrorsAttributeName(HttpServletRequest request) {
+        return new StringBuilder(ERRORS_PREFIX).append(request.getRequestURL().toString()).toString();
     }
 }
