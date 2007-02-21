@@ -20,10 +20,13 @@
         <form method="POST" action="">
             <table>
                 <tr>
-                    <td><input type="button" value="Raise exception during event handling" onclick="XT.doAjaxSubmit('raiseException', this);"></td>
+                    <td><input type="submit" name="ex" value="Raise exception during normal request handling"></td>
                 </tr>
                 <tr>
-                    <td><input type="button" value="Raise exception because of no ajax-redirect prefix" onclick="XT.doAjaxSubmit('returnNoResponse', this);"></td>
+                    <td><input type="button" value="Raise exception during Ajax request processing" onclick="XT.doAjaxSubmit('raiseException', this);"></td>
+                </tr>
+                <tr>
+                    <td><input type="button" value="Raise exception after Ajax request processing because of no ajax-redirect prefix" onclick="XT.doAjaxSubmit('returnNoResponse', this);"></td>
                 </tr>
             </table>
         </form>

@@ -71,11 +71,6 @@
                 <prop key="/ajax/ex7.action">ajaxHandlerWithException</prop>
             </props>
         </property>
-        <property name="exceptionMappings">
-            <map>
-                <entry key="java.lang.Exception" value-ref="redirectExceptionResolver"/>
-            </map>
-        </property>
     </bean>
     
     <bean id="redirectExceptionResolver" class="org.springmodules.xt.ajax.support.RedirectExceptionResolver">
@@ -237,7 +232,15 @@
         <property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
     </bean>
     
-    <bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <bean id="ajaxExceptionResolver" class="org.springmodules.xt.ajax.AjaxExceptionHandler">
+        <property name="exceptionMappings">
+            <map>
+                <entry key="java.lang.Exception" value-ref="redirectExceptionResolver"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="standardExceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="exceptionMappings">
             <props>
                 <prop key="java.lang.Exception">error</prop>

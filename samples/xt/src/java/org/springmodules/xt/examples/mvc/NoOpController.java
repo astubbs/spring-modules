@@ -1,6 +1,7 @@
 package org.springmodules.xt.examples.mvc;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -18,7 +19,10 @@ public class NoOpController extends SimpleFormController {
         return new NoOpForm();
     }
 
-    protected ModelAndView onSubmit(Object command, BindException errors) throws Exception {
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
+        if (request.getParameter("ex") != null) {
+            throw new Exception("Exception occurred in controller!");
+        }
         return new XTModelAndView("/start.page", errors);
     }
 }
