@@ -16,55 +16,24 @@
 
 package org.springmodules.xt.ajax.component;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
-
 /**
  * Component implementing an HTML list item.
  *
  * @author Sergio Bossa
+ * @author Peter Bona
  */
-public class ListItem implements Component {
-    
-    private Component content;
-    private Map<String, String> attributes = new HashMap<String, String>();
+public class ListItem extends SimpleHTMLComponent {
     
     /**
      * Construct the list item.
-     * 
+     *
      * @param content The item content.
      */
     public ListItem(Component content) {
-        this.content = content;
+        super(content);
     }
     
-    /**
-     * Add a generic attribute.
-     * @param name The attribute name.
-     * @param value The attribute value.
-     */
-    public void addAttribute(String name, String value) {
-        this.attributes.put(name, value);
-    }
-    
-    public String render() {
-        StringBuilder response = new StringBuilder();
-        
-        response.append("<li");
-        
-        if (!this.attributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.attributes, response);
-        }
-
-        response.append(">");
-        
-        if (this.content != null) {
-            response.append(this.content.render());
-        }
-        
-        response.append("</li>");
-        
-        return response.toString();
+    protected String getTagName() {
+        return "li";
     }
 }

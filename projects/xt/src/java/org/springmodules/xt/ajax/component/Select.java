@@ -16,22 +16,15 @@
 
 package org.springmodules.xt.ajax.component;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing a select HTML element, containing {@link Option} components.
  *
  * @author Sergio Bossa
+ * @author Peter Bona
  */
-public class Select implements Component {
-    
-    private String name;
-    private List<Option> optionList = new LinkedList<Option>();
-    private Map<String, String> attributes = new HashMap<String, String>();
+public class Select extends SimpleHTMLComponent {
     
     /**
      * Construct an empty select list with a name.
@@ -39,7 +32,7 @@ public class Select implements Component {
      * @param name The name.
      */
     public Select(String name) {
-        this.name = name;
+        this.addAttribute("name", name);
     }
     
     /**
@@ -49,8 +42,10 @@ public class Select implements Component {
      * @param optionList The list of {@link Option} elements.
      */
     public Select(String name, List<Option> optionList) {
-        this.name = name;
-        this.optionList = optionList;
+        this.addAttribute("name", name);
+        for (Option option : optionList) {
+            this.internalAddContent(option);
+        }
     }
     
     /**
@@ -59,36 +54,10 @@ public class Select implements Component {
      * @param option The option to add.
      */
     public void addOption(Option option) {
-        this.optionList.add(option);
+        this.internalAddContent(option);
     }
     
-    /**
-     * Add a generic attribute.
-     *
-     * @param name The attribute name.
-     * @param value The attribute value.
-     */
-    public void addAttribute(String name, String value) {
-        this.attributes.put(name, value);
-    }
-    
-    public String render() {
-        StringBuilder response = new StringBuilder();
-        
-        response.append("<select name=\"")
-        .append(this.name)
-        .append("\"");
-        if (!this.attributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.attributes, response);
-        }
-        response.append(">");
-        
-        for (Option o : this.optionList) {
-            response.append(o.render());
-        }
-        
-        response.append("</select>");
-        
-        return response.toString();
+    protected String getTagName() {
+        return "select";
     }
 }

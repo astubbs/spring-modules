@@ -42,7 +42,7 @@ public class SelectTest extends XMLEnhancedTestCase {
         assertXpathEvaluatesTo("content2", "/select/option[@value = 'value2']", rendering);
     }
 
-    public void testRender() throws Exception {
+    public void testSelectConstructor() throws Exception {
         Option option1 = new Option("value1", "content1");
         Option option2 = new Option("value2", "content2");
         List<Option> optionList = new LinkedList<Option>();

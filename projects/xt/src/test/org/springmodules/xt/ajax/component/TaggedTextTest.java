@@ -29,21 +29,6 @@ public class TaggedTextTest extends XMLEnhancedTestCase {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(TaggedTextTest.class);
-        
-        return suite;
-    }
-
-    /**
-     * Test of render method, of class org.springmodules.xt.ajax.component.SimpleText.
-     */
     public void testRender() throws Exception {
         TaggedText text = new TaggedText("Test Text", TaggedText.Tag.DIV);
         text.addAttribute("class", "myText");

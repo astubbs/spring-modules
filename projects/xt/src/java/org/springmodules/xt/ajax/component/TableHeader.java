@@ -16,68 +16,71 @@
 
 package org.springmodules.xt.ajax.component;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
+import java.util.List;
 
 /**
  * Component implementing a table header.
  *
  * @author Sergio Bossa
  */
-public class TableHeader implements Component {
-    
-    private String[] headers;
-    private Map<String, String> rowAttributes = new HashMap<String, String>();
-    private Map<String, String> columnAttributes = new HashMap<String, String>();
+public class TableHeader extends SimpleHTMLComponent {
     
     /**
      * Construct the component.
      *
-     * @param columns An array of strings representing headers text.
+     * @param headers An array of strings representing headers text.
      */
     public TableHeader(String[] headers) {
-        this.headers = headers;
+        for (String header : headers) {
+            this.internalAddContent(new TableHeaderData(new SimpleText(header)));
+        }
     }
     
     /**
-     * Add a generic attribute to the header row.
+     * Construct the component.
+     *
+     * @param headers An array of {@link TableHeaderData} objects that will render the headers.
+     */
+    public TableHeader(List<TableHeaderData> headers) {
+        for (TableHeaderData data : headers) {
+            this.internalAddContent(data);
+        }
+    }
+    
+    /**
+     * Add a generic attribute to the header row.<br>
+     * Same as {@link #addAttribute(String, String)}.
+     *
      * @param name The attribute name.
      * @param value The attribute value.
      */
     public void addRowAttribute(String name, String value) {
-        this.rowAttributes.put(name, value);
+        this.addAttribute(name, value);
     }
     
     /**
-     * Add a generic attribute to every header column.
+     * Add a generic attribute to all header columns.
+     *
      * @param name The attribute name.
      * @param value The attribute value.
      */
     public void addColumnAttribute(String name, String value) {
-        this.columnAttributes.put(name, value);
+        for (Component c : this.internalGetContents()) {
+            TableHeaderData data = (TableHeaderData) c;
+            data.addAttribute(name, value);
+        }
     }
     
-    public String render() {
-        StringBuilder row = new StringBuilder("<tr");
-        
-        if (!this.rowAttributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.rowAttributes, row);
-        }
-        row.append(">");
-        
-        for (int i = 0; i < this.headers.length; i++) {
-            StringBuilder column = new StringBuilder("<th");
-            if (!this.columnAttributes.isEmpty()) {
-                ComponentUtils.appendAsAttributes(this.columnAttributes, column);
-            }
-            column.append(">");
-            column.append(this.headers[i]);
-            column.append("</th>");
-            row.append(column);
-        }
-        row.append("</tr>");
-        
-        return row.toString();
+    /**
+     * Add a {@link TableHeaderData} to this header row.
+     *
+     * @param data The table header data to add.
+     */
+    public void addTableHeaderData(TableHeaderData data) {
+        this.internalAddContent(data);
+    }
+    
+    protected String getTagName() {
+        return "tr";
     }
 }

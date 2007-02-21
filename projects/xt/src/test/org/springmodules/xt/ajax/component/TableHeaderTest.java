@@ -16,6 +16,8 @@
 
 package org.springmodules.xt.ajax.component;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import junit.framework.*;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
@@ -25,61 +27,62 @@ import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
  */
 public class TableHeaderTest extends XMLEnhancedTestCase {
     
-    private TableHeader tableHeader;
-    
     public TableHeaderTest(String testName) {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-        this.tableHeader = new TableHeader(new String[]{"Header 1", "Header 2"});
-    }
-
-    protected void tearDown() throws Exception {
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(TableHeaderTest.class);
-        
-        return suite;
-    }
-
-    /**
-     * Test of addRowAttribute method, of class org.springmodules.xt.ajax.component.TableHeader.
-     */
     public void testAddRowAttribute() throws Exception {
-        this.tableHeader.addRowAttribute("class", "testClass");
+        TableHeader tableHeader = new TableHeader(new String[]{"Header 1", "Header 2"});
+        tableHeader.addRowAttribute("class", "testClass");
         
-        System.out.println(this.tableHeader.render());
+        System.out.println(tableHeader.render());
+        String rendering = this.encloseIntoRoot(tableHeader.render());
         
-        String rendering = this.encloseIntoRoot(this.tableHeader.render());
-        
-        assertXpathEvaluatesTo("testClass", "/root/tr/@class", rendering);
+        assertXpathEvaluatesTo("testClass", "//tr/@class", rendering);
     }
 
-    /**
-     * Test of addColumnAttribute method, of class org.springmodules.xt.ajax.component.TableHeader.
-     */
     public void testAddColumnAttribute() throws Exception {
-        this.tableHeader.addColumnAttribute("class", "testClass");
+        TableHeader tableHeader = new TableHeader(new String[]{"Header 1", "Header 2"});
+        tableHeader.addColumnAttribute("class", "testClass");
         
-        System.out.println(this.tableHeader.render());
+        System.out.println(tableHeader.render());
+        String rendering = this.encloseIntoRoot(tableHeader.render());
         
-        String rendering = this.encloseIntoRoot(this.tableHeader.render());
+        assertXpathEvaluatesTo("testClass", "//tr/th[1]/@class", rendering);
+        assertXpathEvaluatesTo("testClass", "//tr/th[2]/@class", rendering);
+    }
+    
+    public void testAddTableHeaderData() throws Exception {
+        TableHeader tableHeader = new TableHeader(new String[]{"Header 1", "Header 2"});
+        TableHeaderData data = new TableHeaderData(new SimpleText("Header 3"));
+        tableHeader.addTableHeaderData(data);
         
-        assertXpathEvaluatesTo("testClass", "/root/tr/th[1]/@class", rendering);
-        assertXpathEvaluatesTo("testClass", "/root/tr/th[2]/@class", rendering);
+        System.out.println(tableHeader.render());
+        String rendering = this.encloseIntoRoot(tableHeader.render());
+        
+        assertXpathEvaluatesTo("Header 1", "//tr/th[1]", rendering);
+        assertXpathEvaluatesTo("Header 2", "//tr/th[2]", rendering);
+        assertXpathEvaluatesTo("Header 3", "//tr/th[3]", rendering);
     }
 
-    /**
-     * Test of render method, of class org.springmodules.xt.ajax.component.TableHeader.
-     */
-    public void testRender() throws Exception {
-        System.out.println(this.tableHeader.render());
+    public void testRender1() throws Exception {
+        TableHeader tableHeader = new TableHeader(new String[]{"Header 1", "Header 2"});
         
-        String rendering = this.encloseIntoRoot(this.tableHeader.render());
+        System.out.println(tableHeader.render());
+        String rendering = this.encloseIntoRoot(tableHeader.render());
         
-        assertXpathEvaluatesTo("Header 1", "/root/tr/th[1]", rendering);
-        assertXpathEvaluatesTo("Header 2", "/root/tr/th[2]", rendering);
+        assertXpathEvaluatesTo("Header 1", "//tr/th[1]", rendering);
+        assertXpathEvaluatesTo("Header 2", "//tr/th[2]", rendering);
+    }   
+    
+    public void testRender2() throws Exception {
+        TableHeader tableHeader = new TableHeader(
+                new LinkedList<TableHeaderData>(Arrays.asList(new TableHeaderData(new SimpleText("Header 1")), new TableHeaderData(new SimpleText("Header 2")))));
+        
+        System.out.println(tableHeader.render());
+        String rendering = this.encloseIntoRoot(tableHeader.render());
+        
+        assertXpathEvaluatesTo("Header 1", "//tr/th[1]", rendering);
+        assertXpathEvaluatesTo("Header 2", "//tr/th[2]", rendering);
     }   
 }

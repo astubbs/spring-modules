@@ -18,8 +18,6 @@ package org.springmodules.xt.ajax.component;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
@@ -32,22 +30,7 @@ public class ContainerTest extends XMLEnhancedTestCase {
         super(testName);
     }
 
-    protected void setUp() throws Exception {
-    }
-
-    protected void tearDown() throws Exception {
-    }
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(ContainerTest.class);
-        
-        return suite;
-    }
-
-    /**
-     * Test of render method, of class org.springmodules.xt.ajax.component.SimpleText.
-     */
-    public void testRender() throws Exception {
+    public void testRender1() throws Exception {
         Container container = new Container(Container.Type.DIV, new LinkedList<Component>(Arrays.asList(new TaggedText("Text1"))));
         container.addAttribute("class", "myDivClass");
         container.addComponent(new TaggedText("Text2"));
@@ -57,15 +40,23 @@ public class ContainerTest extends XMLEnhancedTestCase {
         String rendering = container.render();
         assertXpathExists("/div/div[position()=1]", rendering);
         assertXpathExists("/div/div[position()=2]", rendering);
-        
-        container = new Container(Container.Type.SPAN, new LinkedList<Component>(Arrays.asList(new TaggedText("Text1", TaggedText.Tag.SPAN))));
+        assertXpathEvaluatesTo("myDivClass", "/div/@class", rendering);
+        assertXpathEvaluatesTo("Text1", "/div/div[position()=1]", rendering);
+        assertXpathEvaluatesTo("Text2", "/div/div[position()=2]", rendering);
+    } 
+    
+    public void testRender2() throws Exception {
+        Container container = new Container(Container.Type.SPAN, new LinkedList<Component>(Arrays.asList(new TaggedText("Text1", TaggedText.Tag.SPAN))));
         container.addAttribute("class", "mySpanClass");
         container.addComponent(new TaggedText("Text2", TaggedText.Tag.SPAN));
         
         System.out.println(container.render());
         
-        rendering = container.render();
+        String rendering = container.render();
         assertXpathExists("/span/span[position()=1]", rendering);
         assertXpathExists("/span/span[position()=2]", rendering);
+        assertXpathEvaluatesTo("mySpanClass", "/span/@class", rendering);
+        assertXpathEvaluatesTo("Text1", "/span/span[position()=1]", rendering);
+        assertXpathEvaluatesTo("Text2", "/span/span[position()=2]", rendering);
     } 
 }

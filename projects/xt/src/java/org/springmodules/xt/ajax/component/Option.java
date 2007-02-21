@@ -16,23 +16,18 @@
 
 package org.springmodules.xt.ajax.component;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing an option element.
  *
  * @author Sergio Bossa
+ * @author Peter Bona
  */
-public class Option implements Component {
+public class Option extends SimpleHTMLComponent {
     
-    private String value;
-    private String content;
     private boolean selected;
-    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the option.
@@ -41,8 +36,9 @@ public class Option implements Component {
      * @param content The option content.
      */
     public Option(String value, String content) {
-        this.value = value;
-        this.content = content;
+        super();
+        this.addAttribute("value", value);
+        this.internalAddContent(new SimpleText(content));
     }
     
     /**
@@ -57,21 +53,23 @@ public class Option implements Component {
     public Option(Object optionObject, String valueProperty, String contentProperty) {
         if (optionObject != null) {
             BeanWrapper wrapper = new BeanWrapperImpl(optionObject);
+            
             Object tmp = wrapper.getPropertyValue(valueProperty);
             if (tmp != null) {
-                this.value = tmp.toString();
-            }
+                this.addAttribute("value", tmp.toString());
+            } 
             else {
-                this.value = "";
+                this.addAttribute("value", "");
             }
+            
             tmp = wrapper.getPropertyValue(contentProperty);
             if (tmp != null) {
-                this.content = tmp.toString();
-            }
+                this.internalAddContent(new SimpleText(tmp.toString()));
+            } 
             else {
-                this.content = "";
+                this.internalAddContent(new SimpleText(""));
             }
-        }
+        } 
         else {
             throw new IllegalArgumentException("The object to render in the option component cannot be null!");
         }
@@ -89,39 +87,10 @@ public class Option implements Component {
      */
     public void setSelected(boolean selected) {
         this.selected = selected;
+        this.addAttribute("selected", Boolean.toString(selected));
     }
     
-    /**
-     * Add a generic attribute to the option.
-     *
-     * @param name The attribute name.
-     * @param value The attribute value.
-     */
-    public void addAttribute(String name, String value) {
-        this.attributes.put(name, value);
-    }
-    
-    public String render() {
-        StringBuilder response = new StringBuilder();
-        
-        response.append("<option value=\"")
-        .append(this.value)
-        .append("\"");
-        
-        if (selected) {
-            response.append(" selected=\"true\"");
-        }
-        
-        if (! this.attributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.attributes, response);
-        }
-        
-        response.append(">");
-        
-        response.append(this.content);
-        
-        response.append("</option>");
-        
-        return response.toString();
+    protected String getTagName() {
+        return "option";
     }
 }

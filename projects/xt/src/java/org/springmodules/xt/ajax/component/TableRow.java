@@ -16,21 +16,14 @@
 
 package org.springmodules.xt.ajax.component;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing an HTML table row, containing {@link TableData} objects.
  *
  * @author Sergio Bossa
  */
-public class TableRow implements Component {
-    
-    private List<TableData> tableDataList = new LinkedList<TableData>();
-    private Map<String, String> attributes = new HashMap<String, String>();
+public class TableRow extends SimpleHTMLComponent {
     
     /**
      * Construct the component (an empty row).
@@ -44,7 +37,9 @@ public class TableRow implements Component {
      * @param tableDataList The list of {@link TableData} (columns) to render into this row.
      */
     public TableRow(List<TableData> tableDataList) {
-        this.tableDataList = tableDataList;
+        for (TableData data : tableDataList) {
+            this.internalAddContent(data);
+        }
     }
     
     /**
@@ -59,7 +54,7 @@ public class TableRow implements Component {
     public TableRow(Object rowObject, String[] properties, TextRenderingCallback textRenderingCallback) {
         for (int i = 0; i < properties.length; i++) {
             TableData data = new TableData(rowObject, properties[i], textRenderingCallback);
-            this.tableDataList.add(data);
+            this.internalAddContent(data);
         }
     }
     
@@ -69,34 +64,10 @@ public class TableRow implements Component {
      * @param data The table data to add.
      */
     public void addTableData(TableData data) {
-        this.tableDataList.add(data);
+        this.internalAddContent(data);
     }
     
-    /**
-     * Add a generic attribute to this row.
-     *
-     * @param name The attribute name.
-     * @param value The attribute value.
-     */
-    public void addAttribute(String name, String value) {
-        this.attributes.put(name, value);
-    }
-    
-    public String render() {
-        StringBuilder response = new StringBuilder();
-        
-        response.append("<tr");
-        if (!this.attributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.attributes, response);
-        }
-        response.append(">");
-        
-        for (TableData td : this.tableDataList) {
-            response.append(td.render());
-        }
-        
-        response.append("</tr>");
-        
-        return response.toString();
+    protected String getTagName() {
+        return "tr";
     }
 }

@@ -16,19 +16,17 @@ public class OptionTest extends XMLEnhancedTestCase {
     public void testAddAttribute() throws Exception {
         Option option = new Option("value", "content");
         option.addAttribute("id", "testId");
-        String rendering = option.render();
         
+        String rendering = option.render();
         System.out.println(rendering);
         
         assertXpathEvaluatesTo("testId", "/option/@id", rendering);
-        assertXpathEvaluatesTo("value", "/option/@value", rendering);
-        assertXpathEvaluatesTo("content", "/option", rendering);
     }
 
     public void testRenderPart1() throws Exception {
         Option option = new Option("value", "content");
-        String rendering = option.render();
         
+        String rendering = option.render();
         System.out.println(rendering);
         
         assertXpathEvaluatesTo("value", "/option/@value", rendering);
@@ -42,8 +40,8 @@ public class OptionTest extends XMLEnhancedTestCase {
         emp.setSurname("Bossa");
         
         Option option = new Option(emp, "matriculationCode", "surname");
-        String rendering = option.render();
         
+        String rendering = option.render();
         System.out.println(rendering);
         
         assertXpathEvaluatesTo("123", "/option/@value", rendering);

@@ -16,62 +16,33 @@
 
 package org.springmodules.xt.ajax.component;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
-
 /**
  * Component implementing an input field, whose type depends on its {@link InputType}.
  *
  * @author Sergio Bossa
+ * @author Peter Bona
  */
-public class InputField implements Component {
-    
-    private String name;
-    private String value;
-    private InputField.InputType type;
-    private Map<String, String> attributes = new HashMap<String, String>();
+public class InputField extends SimpleHTMLComponent {
     
     /**
      * Construct the component.
+     *
      * @param name The input field name.
      * @param value The input field value.
      * @param type The input field type.
      */
     public InputField(String name, String value, InputField.InputType type) {
-        this.name = name;
-        this.value = value;
-        this.type = type;
+        this.addAttribute("name", name);
+        this.addAttribute("value", value);
+        this.addAttribute("type", type.toString());
     }
     
-    /**
-     * Add a generic attribute to the input field.
-     * @param name The attribute name.
-     * @param value The attribute value.
-     */
-    public void addAttribute(String name, String value) {
-        this.attributes.put(name, value);
-    }
-    
-    public String render() {
-        StringBuilder response = new StringBuilder("<input name=\"")
-        .append(this.name)
-        .append("\" value=\"")
-        .append(this.value)
-        .append("\" type=\"")
-        .append(this.type)
-        .append("\"");
-        
-        if (!this.attributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.attributes, response);
-        }
-        
-        response.append("/>");
-        return response.toString();
-    }
+    protected String getTagName() {
+        return "input";
+    };
     
     /**
      * Input field type.
      */
-    public enum InputType { TEXT, CHECKBOX, RADIO, HIDDEN, PASSWORD, BUTTON };
+    public enum InputType { TEXT, CHECKBOX, RADIO, HIDDEN, PASSWORD, BUTTON }
 }

@@ -28,8 +28,6 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.springmodules.xt.ajax.support.EventHandlingException;
-import org.springmodules.xt.ajax.support.RedirectExceptionResolver;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
 import org.springmodules.xt.test.ajax.DummyHandler;
 import org.springmodules.xt.test.ajax.DummySubmitHandler;
@@ -82,40 +80,6 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
             fail("Should throw UnsupportedEventException!");
         }
         catch(UnsupportedEventException ex) {}
-    }
-    
-    public void testPreHandleWithException() throws Exception {
-        AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptorWithExceptionMappings");
-        
-        MockHttpServletRequest httpRequest = new MockHttpServletRequest("GET", "/ajax/test.action");
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
-        SimpleFormController controller = new SimpleFormController();
-        httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_ACTION_REQUEST);        
-        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "unsupportedEvent");
-        
-        ajaxInterceptor.preHandle(httpRequest, httpResponse, controller);
-        
-        String response = httpResponse.getContentAsString();
-        
-        assertTrue(response.contains("/test/redirect1.html"));
-        
-        System.out.println(response);
-        
-        // New test:
-        
-        httpRequest = new MockHttpServletRequest("GET", "/ajax/test.action");
-        httpResponse = new MockHttpServletResponse();
-        controller = new SimpleFormController();
-        httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_ACTION_REQUEST);        
-        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "actionWithException");
-        
-        ajaxInterceptor.preHandle(httpRequest, httpResponse, controller);
-        
-        response = httpResponse.getContentAsString();
-        
-        assertTrue(response.contains("/test/redirect2.html"));
-        
-        System.out.println(response);
     }
 
     public void testPostHandleSucceeds() throws Exception {
@@ -196,59 +160,6 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         catch(UnsupportedEventException ex) {}
     }
     
-    public void testPostHandleWithException() throws Exception {
-        AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptorWithExceptionMappings");
-        
-        XmlWebApplicationContext springContext = new XmlWebApplicationContext();
-        MockServletContext servletContext = new MockServletContext();
-        springContext.setConfigLocations(this.getConfigLocations());
-        springContext.setServletContext(servletContext);
-        springContext.refresh();
-        servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
-        
-        MockHttpServletRequest httpRequest = new MockHttpServletRequest(servletContext, "POST", "/ajax/submit.action");
-        MockHttpSession session = new MockHttpSession(servletContext);
-        httpRequest.setSession(session);
-        httpRequest.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
-        httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_SUBMIT_REQUEST);        
-        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "unsupportedEvent");
-        
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
-        
-        ModelAndView mv = new ModelAndView("");
-        SimpleFormController controller = new SimpleFormController();
-        
-        ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
-        
-        String response = httpResponse.getContentAsString();
-        
-        assertTrue(response.contains("/test/redirect1.html"));
-        
-        System.out.println(response);
-        
-        // New test:
-        
-        httpRequest = new MockHttpServletRequest(servletContext, "POST", "/ajax/submit.action");
-        session = new MockHttpSession(servletContext);
-        httpRequest.setSession(session);
-        httpRequest.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
-        httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_SUBMIT_REQUEST);        
-        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "submitWithException");
-        
-        httpResponse = new MockHttpServletResponse();
-        
-        controller = new SimpleFormController();
-        mv = new ModelAndView("");
-        
-        ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
-        
-        response = httpResponse.getContentAsString();
-        
-        assertTrue(response.contains("/test/redirect2.html"));
-        
-        System.out.println(response);
-    }
-    
     public void testLookupHandlers() throws Exception {
         AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptor");
         
@@ -270,22 +181,6 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         httpRequest = new MockHttpServletRequest("GET", "/ajax/no.action");
         handlers = ajaxInterceptor.lookupHandlers(httpRequest);
         assertEquals(0, handlers.size());
-    }
-    
-    public void testLookupExceptionResolver() {
-        AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptorWithExceptionMappings");
-        
-        AjaxExceptionResolver resolver = null;
-        
-        resolver = ajaxInterceptor.lookupExceptionResolver(new UnsupportedEventException("exception"));
-        assertNotNull(resolver);
-        assertTrue(resolver instanceof RedirectExceptionResolver);
-        assertEquals("/test/redirect1.html", ((RedirectExceptionResolver) resolver).getRedirectUrl());
-        
-        resolver = ajaxInterceptor.lookupExceptionResolver(new EventHandlingException("exception"));
-        assertNotNull(resolver);
-        assertTrue(resolver instanceof RedirectExceptionResolver);
-        assertEquals("/test/redirect2.html", ((RedirectExceptionResolver) resolver).getRedirectUrl());
     }
     
     protected String[] getConfigLocations() {

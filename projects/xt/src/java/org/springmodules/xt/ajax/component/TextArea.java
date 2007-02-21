@@ -17,32 +17,37 @@
 package org.springmodules.xt.ajax.component;
 
 /**
- * Component representing an HTML anchor, that is, an HTML link.
+ * Component implementing an HTML text area.
  *
- * @author Sergio Bossa
  * @author Peter Bona
+ * @author Sergio Bossa
  */
-public class Anchor extends SimpleHTMLComponent {
+public class TextArea extends SimpleHTMLComponent {
     
     /**
-     * Construct the component.
-     * @param link The anchor link.
+     * Constructor taking the number of rows and columns.
+     *
+     * @param rows The number of rows.
+     * @param cols The number of columns.
      */
-    public Anchor(String link) {
-        this.addAttribute("href", link);
+    public TextArea(int rows, int cols) {
+        this.addAttribute("rows", Integer.toString(rows));
+        this.addAttribute("cols", Integer.toString(cols));
     }
     
     /**
-     * Construct the component.
-     * @param link The anchor link.
-     * @param content The anchor content.
+     * Constructor taking the number of rows and columns and the text content of the area.
+     *
+     * @param rows The number of rows.
+     * @param cols The number of columns.
+     * @param text The text area content.
      */
-    public Anchor(String link, Component content) {
-        super(content);
-        this.addAttribute("href", link);
+    public TextArea(int rows, int cols, String text) {
+        this(rows,cols);
+        this.internalAddContent(new SimpleText(text));
     }
     
     protected String getTagName() {
-        return "a";
+        return "textarea";
     }
 }

@@ -16,19 +16,16 @@
 
 package org.springmodules.xt.ajax;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -50,6 +47,7 @@ import org.springmodules.xt.ajax.support.IllegalViewException;
 import org.springmodules.xt.ajax.support.NoMatchingHandlerException;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
 import org.springmodules.xt.ajax.action.RedirectAction;
+import org.springmodules.xt.ajax.util.InternalAjaxResponseSender;
 
 /**
  * <p>Spring web interceptor which intercepts http requests and handles ajax requests.<br>
@@ -71,10 +69,6 @@ import org.springmodules.xt.ajax.action.RedirectAction;
  *
  * <p>Note that if more handlers support the same event, the one configured for matching the longest path will be executed (in the example above,
  * the one configured for the path "/test"): this is useful for overriding event handlers.</p>
- *
- * <p>Finally, you can deal with exceptions occurred while processing the Ajax request by setting the exception mappings
- * (see {@link #setExceptionMappings(Map)}): here you can associate an exception class with an {@link AjaxExceptionResolver}
- * that will be used to resolve the exception in a response delivered to clients.</p>
  *
  * @author Sergio Bossa
  */
@@ -99,7 +93,6 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     private String jsonParamsParameter = "json-params";
     
     private MultiMap handlerMappings = new MultiValueMap();
-    private Map<Class<? extends Exception>, AjaxExceptionResolver> exceptionMappings = new LinkedHashMap<Class<? extends Exception>, AjaxExceptionResolver>();
     
     private ApplicationContext applicationContext;
     
@@ -109,11 +102,9 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      * If the matching mapped handler returns a <b>null</b> or empty ajax response, the interceptor <b>proceed</b> with the execution chain.
      *
      * @throws UnsupportedEventException If the event associated with this ajax request is not supported by any
-     * mapped handler, and if this exception is not resolved by any {@link AjaxExceptionResolver}.
-     * @throws EventHandlingException If an error occurred during event handling, and if this exception is
-     * not resolved by any {@link AjaxExceptionResolver}.
-     * @throws NoMatchingHandlerException If no mapped handler matching the URL can be found, and if this exception is not
-     * resolved by any {@link AjaxExceptionResolver}.
+     * mapped handler.
+     * @throws EventHandlingException If an error occurred during event handling.
+     * @throws NoMatchingHandlerException If no mapped handler matching the URL can be found.
      */
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
     throws Exception {
@@ -156,7 +147,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                     } else {
                         if (ajaxResponse != null && ! ajaxResponse.isEmpty()) {
                             logger.info("Sending Ajax response after Ajax action.");
-                            this.sendResponse(response, ajaxResponse.getResponse());
+                            InternalAjaxResponseSender.sendResponse(response, ajaxResponse.getResponse());
                             return false;
                         } else {
                             logger.info("Null or empty Ajax response after Ajax action, proceeding with the request.");
@@ -172,22 +163,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
             }
         } catch(Exception ex) {
             logger.error(ex.getMessage(), ex);
-            
-            AjaxExceptionResolver resolver = this.lookupExceptionResolver(ex);
-            if (resolver != null) {
-                logger.info(new StringBuilder("Resolving exception of type : ").append(ex.getClass()));
-                AjaxResponse ajaxResponse = resolver.resolve(request, ex);
-                if (ajaxResponse != null) {
-                    this.sendResponse(response, ajaxResponse.getResponse());
-                    return false;
-                } else {
-                    logger.info("Null Ajax response after resolving exception, proceeding by re-throwing exception.");
-                    throw ex;
-                }
-            } else {
-                logger.info("No exception resolver found, proceeding by re-throwing exception.");
-                throw ex;
-            }
+            throw ex;
         }
     }
     
@@ -199,13 +175,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
      * {@link #AJAX_REDIRECT_PREFIX}, an exception is thrown.
      *
      * @throws UnsupportedEventException If the event associated with this ajax request is not supported by any
-     * mapped handler, and if this exception is not resolved by any {@link AjaxExceptionResolver}.
-     * @throws EventHandlingException If an error occurred during event handling, and if this exception is
-     * not resolved by any {@link AjaxExceptionResolver}.
-     * @throws NoMatchingHandlerException If no mapped handler matching the URL can be found, and if this exception
-     * is not resolved by any {@link AjaxExceptionResolver}.
-     * @throws IllegalViewException If the view to which redirect to doesn't contain the {@link #AJAX_REDIRECT_PREFIX}, and if this exception
-     * is not resolved by any {@link AjaxExceptionResolver}.
+     * mapped handler.
+     * @throws EventHandlingException If an error occurred during event handling.
+     * @throws NoMatchingHandlerException If no mapped handler matching the URL can be found.
+     * @throws IllegalViewException If the view to which redirect to doesn't contain the {@link #AJAX_REDIRECT_PREFIX}.
      */
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
     throws Exception {
@@ -259,7 +232,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                         if (ajaxResponse != null && ! ajaxResponse.isEmpty()) {
                             // Need to clear the ModelAndView because we are handling the response by ourselves:
                             modelAndView.clear();
-                            this.sendResponse(response, ajaxResponse.getResponse());
+                            InternalAjaxResponseSender.sendResponse(response, ajaxResponse.getResponse());
                         } else {
                             String view = modelAndView.getViewName();
                             if ((view != null) && (view.startsWith(AJAX_REDIRECT_PREFIX))) {
@@ -270,7 +243,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                                 ajaxRedirect.addAction(ajaxAction);
                                 // Need to clear the ModelAndView because we are handling the response by ourselves:
                                 modelAndView.clear();
-                                this.sendResponse(response, ajaxRedirect.getResponse());
+                                InternalAjaxResponseSender.sendResponse(response, ajaxRedirect.getResponse());
                             } else {
                                 throw new IllegalViewException("No Ajax redirect prefix: " + AJAX_REDIRECT_PREFIX + " found for view: " + view);
                             }
@@ -284,22 +257,19 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
             }
         } catch(Exception ex) {
             logger.error(ex.getMessage(), ex);
-            
-            AjaxExceptionResolver resolver = this.lookupExceptionResolver(ex);
-            if (resolver != null) {
-                logger.info(new StringBuilder("Resolving exception of type : ").append(ex.getClass()));
-                AjaxResponse ajaxResponse = resolver.resolve(request, ex);
-                if (ajaxResponse != null) {
-                    modelAndView.clear();
-                    this.sendResponse(response, ajaxResponse.getResponse());
-                } else {
-                    logger.info("Null Ajax response after resolving exception, proceeding by re-throwing exception.");
-                    throw ex;
-                }
-            } else {
-                logger.info("No exception resolver found, proceeding by re-throwing exception.");
-                throw ex;
-            }
+            throw ex;
+        }
+    }
+    
+    /**
+     * Return true if the given request is an Ajax one, false otherwise.
+     */
+    public boolean isAjaxRequest(HttpServletRequest request) {
+        String requestType = request.getParameter(this.ajaxParameter);
+        if (requestType != null && (requestType.equals(AJAX_ACTION_REQUEST) || requestType.equals(AJAX_SUBMIT_REQUEST))) {
+            return true;
+        } else {
+            return false;
         }
     }
     
@@ -333,15 +303,6 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                 this.handlerMappings.put((String) entry.getKey(), handler.trim());
             }
         }
-    }
-    
-    /**
-     * Set the mappings that associate exception classes to {@link AjaxExceptionResolver}s.
-     *
-     * @param mappings A map containing exception to resolver mappings.
-     */
-    public void setExceptionMappings(Map<Class<? extends Exception>, AjaxExceptionResolver> mappings) {
-        this.exceptionMappings = mappings;
     }
     
     public void setAjaxParameter(String ajaxParameter) {
@@ -389,6 +350,8 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         this.applicationContext = applicationContext;
     }
     
+    /*** Protected stuff ***/
+    
     /**
      * Look up ajax handlers associated with the URL path of the given request.
      * <p>Supports direct matches, e.g.  "/test" matches "/test",
@@ -420,45 +383,6 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         }
         
         return handlers;
-    }
-    
-    /**
-     * Lookup the best {@link AjaxExceptionResolver} for the given exception.<br>
-     * The lookup is done using the actual exception class: if a resolver is
-     * configured for both the actual exception class, and one of its superclasses,
-     * the resolver configured for the actual exception class will be used.
-     *
-     * @param ex The exception to use for looking up the resolver.
-     * @return The {@link AjaxExceptionResolver}, or null if no resolver
-     * is found for the given exception.
-     */
-    protected AjaxExceptionResolver lookupExceptionResolver(Exception ex) {
-        Class bestMatch = null;
-        for (Class current : this.exceptionMappings.keySet()) {
-            if (current.isAssignableFrom(ex.getClass())) {
-                if (bestMatch == null || (bestMatch != null && bestMatch.isAssignableFrom(current))) {
-                    bestMatch = current;
-                }
-            }
-        }
-        if (bestMatch != null) {
-            return this.exceptionMappings.get(bestMatch);
-        } else {
-            return null;
-        }
-    }
-    
-    /**
-     * Send the ajax response.
-     */
-    protected void sendResponse(HttpServletResponse httpResponse, String response)
-    throws IOException {
-        ServletOutputStream out = httpResponse.getOutputStream();
-        logger.debug(new StringBuilder("Sending ajax response: ").append(response));
-        httpResponse.setContentType("text/xml");
-        httpResponse.setHeader("Cache-Control", "no-cache");
-        out.print(response);
-        out.close();
     }
     
     /**

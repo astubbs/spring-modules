@@ -16,21 +16,16 @@
 
 package org.springmodules.xt.ajax.component;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
-
 /**
  * Component implementing text surrounded by tags represented
  * by the {@link Tag} enumeration.
  *
  * @author Sergio Bossa
+ * @author Peter Bona
  */
-public class TaggedText implements Component {
+public class TaggedText extends SimpleHTMLComponent {
     
-    private String text;
     private TaggedText.Tag tag = TaggedText.Tag.DIV;
-    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the component, using a DIV tag as a default.
@@ -39,7 +34,7 @@ public class TaggedText implements Component {
      */
     public TaggedText(String text) {
         this.tag = TaggedText.Tag.DIV;
-        this.text = text;
+        this.internalAddTextContent(text);
     }
     
     /**
@@ -49,36 +44,16 @@ public class TaggedText implements Component {
      * @param tag The tag to use for enclosing the given text.
      */
     public TaggedText(String text, TaggedText.Tag tag) {
-        this.text = text;
         this.tag = tag;
+        this.internalAddTextContent(text);
     }
     
-    /**
-     * Add a generic attribute to the surrounding tag.
-     *
-     * @param name The attribute name.
-     * @param value The attribute value.
-     */
-    public void addAttribute(String name, String value) {
-        this.attributes.put(name, value);
+    protected String getTagName() {
+        return this.tag.getTagName();
     }
     
-    public String render() {
-        StringBuilder response = new StringBuilder("<");
-        
-        response.append(this.tag.getTagName());
-        if (!this.attributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.attributes, response);
-        }
-        response.append(">");
-        
-        response.append(this.text);
-        
-        response.append("</")
-        .append(this.tag.getTagName())
-        .append(">");
-        
-        return response.toString();
+    private void internalAddTextContent(String content) {
+        this.internalAddContent(new SimpleText(content));
     }
     
     /**
@@ -99,5 +74,5 @@ public class TaggedText implements Component {
         };
         
         public abstract String getTagName();
-    };
+    }
 }

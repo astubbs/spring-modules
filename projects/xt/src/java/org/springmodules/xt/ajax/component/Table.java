@@ -27,11 +27,10 @@ import org.springmodules.xt.ajax.component.support.ComponentUtils;
  *
  * @author Sergio Bossa
  */
-public class Table implements Component {
+public class Table extends BaseHTMLComponent {
     
     private TableHeader tableHeader;
     private List<TableRow> tableRowList = new LinkedList<TableRow>();
-    private Map<String, String> tableAttributes = new HashMap<String, String>();
     private Map<String, String> tableHeaderAttributes = new HashMap<String, String>();
     private Map<String, String> tableBodyAttributes = new HashMap<String, String>();
     
@@ -87,12 +86,14 @@ public class Table implements Component {
     }
     
     /**
-     * Add a generic attribute to this table.
+     * Add a generic attribute to this table.<br>
+     * Same as {@link #addAttribute(String, String)}.
+     *
      * @param name The attribute name.
      * @param value The attribute value.
      */
     public void addTableAttribute(String name, String value) {
-        this.tableAttributes.put(name, value);
+        this.addAttribute(name, value);
     }
     
     /**
@@ -113,15 +114,8 @@ public class Table implements Component {
         this.tableHeaderAttributes.put(name, value);
     }
     
-    public String render() {
+    protected String renderBody() {
         StringBuilder response = new StringBuilder();
-        
-        // Open Table
-        response.append("<table");
-        if (!this.tableAttributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.tableAttributes, response);
-        }
-        response.append(">");
         
         // Header
         response.append("<thead");
@@ -134,7 +128,7 @@ public class Table implements Component {
         }
         response.append("</thead>");
         
-        // Body
+        // Table Body
         response.append("<tbody");
         if (!this.tableBodyAttributes.isEmpty()) {
             ComponentUtils.appendAsAttributes(this.tableBodyAttributes, response);
@@ -144,11 +138,12 @@ public class Table implements Component {
             response.append(tr.render());
         }
         response.append("</tbody>");
-        
-        // Close Table
-        response.append("</table>");
-        
+
         // Return response:
         return response.toString();
+    }
+
+    protected String getTagName() {
+        return "table";
     }
 }

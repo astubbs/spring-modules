@@ -16,23 +16,18 @@
 
 package org.springmodules.xt.ajax.component;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
- * Component implementing an HTML DIV or SPAN container of other
+ * Component implementing an HTML DIV or SPAN acting as a container of other
  * {@link Component}s.
  *
  * @author Sergio Bossa
+ * @author Peter Bona
  */
-public class Container implements Component {
+public class Container extends SimpleHTMLComponent {
     
     private Container.Type type = Container.Type.DIV;
-    private List<Component> components = new LinkedList<Component>();
-    private Map<String, String> attributes = new HashMap<String, String>();
     
     /**
      * Construct the container.
@@ -50,46 +45,20 @@ public class Container implements Component {
      * @param components The {@link Component}s to add to.
      */
     public Container(Container.Type type, List<Component> components) {
+        super(components);
         this.type = type;
-        this.components = components;
     }
     
     /**
      * Add a {@link Component} to this container.
      */
     public void addComponent(Component component) {
-        this.components.add(component);
+        this.internalAddContent(component);
     }
     
-    /**
-     * Add a generic attribute to the container.
-     *
-     * @param name The attribute name.
-     * @param value The attribute value.
-     */
-    public void addAttribute(String name, String value) {
-        this.attributes.put(name, value);
-    }
-    
-    public String render() {
-        StringBuilder response = new StringBuilder("<");
-        
-        response.append(this.type.getTagName());
-        if (!this.attributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.attributes, response);
-        }
-        response.append(">");
-        
-        for (Component c : this.components) {
-            response.append(c.render());
-        }
-        
-        response.append("</")
-        .append(this.type.getTagName())
-        .append(">");
-        
-        return response.toString();
-    }
+    protected String getTagName() {
+		return this.type.getTagName();
+	}
     
     /**
      * The container type.
@@ -109,5 +78,5 @@ public class Container implements Component {
         };
         
         public abstract String getTagName();
-    };
+    }
 }

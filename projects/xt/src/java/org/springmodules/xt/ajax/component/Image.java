@@ -16,51 +16,25 @@
 
 package org.springmodules.xt.ajax.component;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
-
 /**
  * Component representing an HTML inline image.
  *
  * @author Sergio Bossa
+ * @author Peter Bona
  */
-public class Image implements Component {
-    
-    private String location;
-    private String alternateText;
-    private Map<String, String> attributes = new HashMap<String, String>();
+public class Image extends SimpleHTMLComponent {
     
     /**
      * Construct the component.
-     * @param location The image location.
+     * @param location The image location (source).
      * @param alternateText The alternate text for this image.
      */
     public Image(String location, String alternateText) {
-        this.location = location;
-        this.alternateText = alternateText;
+        this.addAttribute("src", location);
+        this.addAttribute("alt", alternateText);
     }
     
-    /**
-     * Add a generic attribute.
-     * @param name The attribute name.
-     * @param value The attribute value.
-     */
-    public void addAttribute(String name, String value) {
-        this.attributes.put(name, value);
-    }
-    
-    public String render() {
-        StringBuilder response = new StringBuilder("<img");
-        response.append(" src=\"").append(this.location).append("\"");
-        response.append(" alt=\"").append(this.alternateText).append("\"");
-        if (!this.attributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.attributes, response);
-        }
-        response.append(">");
-        
-        response.append("</img>");
-        
-        return response.toString();
+    protected String getTagName() {
+        return "img";
     }
 }

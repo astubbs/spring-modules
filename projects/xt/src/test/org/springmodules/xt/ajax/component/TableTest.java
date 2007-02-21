@@ -39,7 +39,6 @@ public class TableTest extends XMLEnhancedTestCase {
         table.addTableRow(tableRow2);
         
         String rendering = table.render();
-        
         System.out.println(rendering);
         
         assertXpathEvaluatesTo("matriculationCode", "/table[@id = 'table']/thead[@id = 'thead']/tr/th[position() = 1]", rendering);

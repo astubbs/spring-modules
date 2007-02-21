@@ -17,21 +17,21 @@
 package org.springmodules.xt.ajax.component;
 
 /**
- * Component implementing HTML table data inside a {@link TableRow}.
+ * Component implementing HTML table data inside a {@link TableHeader}.
  *
  * @author Sergio Bossa
  */
-public class TableData extends AbstractTableData {
+public class TableHeaderData extends AbstractTableData {
     
-    public TableData(Component data) {
+    public TableHeaderData(Component data) {
     	super(data);
     }
     
-    public TableData(Object dataObject, String property, TextRenderingCallback textRenderingCallback) {
+    public TableHeaderData(Object dataObject, String property, TextRenderingCallback textRenderingCallback) {
         super(dataObject, property, textRenderingCallback);
     }
 
 	protected String getTagName() {
-		return "td";
+		return "th";
 	}
 }

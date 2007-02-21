@@ -33,13 +33,7 @@
         </property>
     </bean>
     
-    <bean id="ajaxInterceptorWithExceptionMappings" class="org.springmodules.xt.ajax.AjaxInterceptor">
-        <property name="handlerMappings">
-            <props>
-                <prop key="/ajax/test.action">dummyHandler</prop>
-                <prop key="/ajax/submit.action">dummySubmitHandler</prop>
-            </props>
-        </property>
+    <bean id="ajaxExceptionHandler" class="org.springmodules.xt.ajax.AjaxExceptionHandler">
         <property name="exceptionMappings">
             <map>
                 <entry key="org.springmodules.xt.ajax.support.UnsupportedEventException" value-ref="redirectExResolver1"/>
