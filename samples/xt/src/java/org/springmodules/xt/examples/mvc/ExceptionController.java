@@ -13,14 +13,14 @@ import org.springmodules.xt.examples.mvc.form.NoOpForm;
  *
  * @author Sergio Bossa
  */
-public class NoOpController extends SimpleFormController {
+public class ExceptionController extends SimpleFormController {
     
     protected Object formBackingObject(HttpServletRequest request) throws Exception {
         return new NoOpForm();
     }
 
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        if (request.getParameter("ex") != null) {
+        if (request.getParameter("source-element").equals("b1")) {
             throw new Exception("Exception occurred in controller!");
         }
         return new XTModelAndView("/start.page", errors);

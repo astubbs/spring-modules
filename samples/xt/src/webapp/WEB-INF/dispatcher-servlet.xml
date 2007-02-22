@@ -196,7 +196,7 @@
         </property>    
     </bean>
     
-    <bean id="noOpController1" class="org.springmodules.xt.examples.mvc.NoOpController">
+    <bean id="exceptionController" class="org.springmodules.xt.examples.mvc.ExceptionController">
         <property name="formView"><value>ajax/ex7</value></property>
         <property name="successView"><value>/start.page</value></property>
     </bean>
@@ -219,7 +219,7 @@
                 <prop key="/ajax/ex4.action">listEmployeesController</prop>
                 <prop key="/ajax/ex5.action">fillOfficeController</prop>
                 <prop key="/ajax/ex6.action">fillOfficeWithDraggingController</prop>
-                <prop key="/ajax/ex7.action">noOpController1</prop>
+                <prop key="/ajax/ex7.action">exceptionController</prop>
             </props>
         </property>
     </bean>
