@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Component implementing an HTML table.
@@ -120,7 +119,7 @@ public class Table extends BaseHTMLComponent {
         // Header
         response.append("<thead");
         if (!this.tableHeaderAttributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.tableHeaderAttributes, response);
+            this.renderAttributes(this.tableHeaderAttributes, response);
         }
         response.append(">");
         if (this.tableHeader != null) {
@@ -131,7 +130,7 @@ public class Table extends BaseHTMLComponent {
         // Table Body
         response.append("<tbody");
         if (!this.tableBodyAttributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.tableBodyAttributes, response);
+            this.renderAttributes(this.tableBodyAttributes, response);
         }
         response.append("> ");
         for (TableRow tr : this.tableRowList) {

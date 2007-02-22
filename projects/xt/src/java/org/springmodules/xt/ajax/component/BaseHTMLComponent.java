@@ -17,20 +17,19 @@ package org.springmodules.xt.ajax.component;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.springmodules.xt.ajax.component.support.ComponentUtils;
 
 /**
  * Abstract class helping the implementation of HTML components.<br>
  * Subclasses will have to provide only the component HTML tag name (see {@link #getTagName()})
- * and the rendering implementation of the HTML body (see {@link #renderBody()}). 
- * 
+ * and the rendering implementation of the HTML body (see {@link #renderBody()}).
+ *
  * @author Sergio Bossa
  * @author Peter Bona
  */
 public abstract class BaseHTMLComponent implements Component {
     
     private Map<String, String> attributes = new HashMap<String, String>();
-
+    
     /**
      * Construct an HTML component.
      */
@@ -49,7 +48,7 @@ public abstract class BaseHTMLComponent implements Component {
     
     /**
      * Render the start and end tags of the HTML component, delegating the
-     * rendering of the body to the {@link #renderBody()} method.. 
+     * rendering of the body to the {@link #renderBody()} method..
      */
     final public String render() {
         StringBuilder response = new StringBuilder();
@@ -57,7 +56,7 @@ public abstract class BaseHTMLComponent implements Component {
         response.append("<");
         response.append(this.getTagName());
         if (! this.attributes.isEmpty()) {
-            ComponentUtils.appendAsAttributes(this.attributes, response);
+            this.renderAttributes(this.attributes, response);
         }
         response.append(">");
         
@@ -68,6 +67,16 @@ public abstract class BaseHTMLComponent implements Component {
         response.append(">");
         
         return response.toString();
+    }
+    
+    protected void renderAttributes(Map<String, String> attributes, StringBuilder component) {
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            component.append(" ")
+            .append(entry.getKey())
+            .append("=\"")
+            .append(entry.getValue().replaceAll("\\\"", "&quot;"))
+            .append("\"");
+        }
     }
     
     /**
