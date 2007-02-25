@@ -1,0 +1,42 @@
+<ivy-module version="1.1">
+
+    <info organisation="springmodules" module="spring-modules-db4o"/>
+
+    <configurations>
+
+        <conf name="default" extends="global"/>
+        <conf name="global" visibility="private"/>
+        <conf name="buildtime" visibility="private"/>
+        <conf name="test" visibility="private"/>
+
+    </configurations>
+
+    <dependencies defaultconf="global->default">
+
+        <dependency org="apache" name="commons-logging" rev="1.0.4"/>
+        <dependency org="apache" name="log4j" rev="1.2.13"/>
+
+        <dependency org="db4o" name="db4o" rev="6.1-java1.2"/>
+        
+        <dependency org="springframework" name="springframework"
+				rev="2.0.2" conf="global,test->default">
+			<artifact name="spring-beans" type="jar" conf="global" />
+			<artifact name="spring-core" type="jar" conf="global" />
+			<artifact name="spring-mock" type="jar" conf="test" />
+			<artifact name="spring-dao" type="jar" conf="global" />
+		</dependency>
+		
+        <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
+
+	    <dependency org="easymock" name="easymock" rev="1.2_Java1.3"
+		      conf="test->default"/>
+
+	    <dependency org="easymock" name="easymockclassextension" rev="1.2"
+		      conf="test->default"/>
+    
+		<dependency org="cglib" name="cglib" rev="2.1_3">
+    	  <artifact name="cglib-nodep" type="jar"/>
+        </dependency>    
+    </dependencies>
+
+</ivy-module>
