@@ -38,7 +38,7 @@
 	<dependency org="jini" name="jsk-platform" rev="2.1"/>
 	-->
 
-	<dependency org="blitz" name="blitz" rev="1.26"/>
+	<dependency org="blitz" name="blitz" rev="1.29"/>
 
 
 	<dependency org="gigaspaces" name="gigaspaces-ce" rev="5.2-1706"/>

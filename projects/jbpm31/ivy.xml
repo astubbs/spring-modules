@@ -56,7 +56,7 @@
             <artifact name="cglib-nodep" type="jar"/>
         </dependency>
 
-        <dependency org="jboss" name="jbpm" rev="3.1.1"/>
+        <dependency org="jboss" name="jbpm" rev="3.1.4"/>
 
     </dependencies>
 
