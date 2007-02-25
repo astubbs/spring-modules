@@ -2,6 +2,18 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
+Changes in version 0.8 (02.03.2007)
+------------------------------------
+
+Package org.springmodules.orm.db4o
+* new db4o integration module (former db4o-spring.dev.java.net project)
+
+Package org.springmodules.jbpm
+* updated jbpm 3.1.x library to 3.1.4
+
+Package org.springmodules.javaspaces
+* updated Blitz spaces library to 1.29
+
 Changes in version 0.7 (09.12.2006)
 ------------------------------------
 All modules
