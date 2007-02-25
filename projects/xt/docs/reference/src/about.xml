@@ -26,12 +26,14 @@
   domain model</citetitle></ulink>.</para>
 
   <para>The XT Framework aims at solving this mismatch providing the so called
-  XT Modeling Framework for developing <emphasis>rich domain
-  models</emphasis>, which gracefully adapt to other layers.</para>
+  <emphasis role="bold">XT Modeling Framework</emphasis> for developing
+  <emphasis>rich domain models</emphasis>, which gracefully adapt to other
+  layers.</para>
 
   <para>And if you have a rich domain model, why not having a <emphasis>rich
-  user interface</emphasis>? The XT Framework provides also the XT Ajax
-  Framework, which integrates Spring and its MVC framework with <ulink
+  user interface</emphasis>? The XT Framework provides also the <emphasis
+  role="bold">XT Ajax Framework</emphasis>, which integrates Spring and its
+  MVC framework with <ulink
   url="http://adaptivepath.com/publications/essays/archives/000385.php"><citetitle>AJAX</citetitle></ulink>
   technologies.</para>
 
@@ -43,26 +45,38 @@
   <sect2 id="modeling-framework">
     <title id="modeling-framework-title">XT Modeling Framework</title>
 
-    <para>XT Modeling Framework provides components for developing rich domain
-    models and making them collaborate with other application layers without
-    violating DDD principles. At the moment it provides: <itemizedlist>
+    <para>XT Modeling Framework provides components for helping in developing
+    rich domain models and making them collaborate with other application
+    layers without violating DDD principles. At the moment it provides:
+    <itemizedlist>
         <listitem>
-          <para><emphasis role="bold">DynamicIntroductor</emphasis> : Generic
+          <para><emphasis role="bold">Dynamic Introductor</emphasis> : Generic
           interface for introducing additional interfaces into plain old Java
           objects.</para>
         </listitem>
 
         <listitem>
           <para><emphasis role="bold">Bean Introductor</emphasis> : Built on
-          top of Spring AOP and DynamicIntroductor interface, it introduces
-          JavaBeans style interfaces with getter/setter methods into domain
-          objects, for adapting/decorating them.</para>
+          top of Spring AOP, it introduces JavaBeans style interfaces with
+          getter/setter methods into domain objects, for adapting/decorating
+          them.</para>
         </listitem>
 
         <listitem>
           <para><emphasis role="bold">Introductor Collections</emphasis> :
           Standard Java collections decorators for introducing interfaces into
           objects stored in collections.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Dynamic Generator</emphasis> : Generic
+          interface for dynamically generating Java objects.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis role="bold">Dynamic Factory Generator</emphasis> :
+          Dynamic Generator that let you generate factory objects on the fly,
+          providing only the factory interface.</para>
         </listitem>
 
         <listitem>
