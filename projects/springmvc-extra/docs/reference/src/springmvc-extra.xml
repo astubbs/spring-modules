@@ -93,15 +93,16 @@
       objects.</para>
     </sect2>
 
-    <sect2 id="EnhancedSimpleFormController">
-      <title>Using EnhancedSimpleFormController</title>
+    <sect2 id="EnhancedSimpleFormController-EnhancedAbstractWizardFormController">
+      <title>Using EnhancedSimpleFormController and
+      EnhancedAbstractWizardFormController</title>
 
-      <para>The <emphasis>the
+      <para>The<emphasis>
       org.springmodules.web.servlet.mvc.EnhancedSimpleFormController</emphasis>
-      is a <ulink
-      url="http://www.springframework.org/docs/api/org/springframework/web/servlet/mvc/SimpleFormController.html"><citetitle>form
-      controller</citetitle></ulink> which provides facilities for setting
-      custom <ulink
+      and
+      <emphasis>org.springmodules.web.servlet.mvc.EnhancedAbstractWizardFormController</emphasis>
+      are Spring MVC controllers which provide facilities for setting custom
+      <ulink
       url="http://java.sun.com/j2se/1.4.2/docs/api/java/beans/PropertyEditor.html"><citetitle>property
       editors</citetitle></ulink> in a declarative way. Using the
       <emphasis>setCustomEditor(Map )</emphasis> method you can set a map of
@@ -162,6 +163,9 @@
      &lt;/map&gt;
    &lt;/property&gt;  
 &lt;/bean&gt;     </programlisting>
+
+      <para>The same applies to the
+      EnhancedAbstractWizardFormController.</para>
     </sect2>
 
     <sect2 id="FullPathUrlFilenameViewController">
