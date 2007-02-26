@@ -44,10 +44,10 @@
 		<!-- build time only dependencies -->
         
         <!-- test time only dependencies -->
-		<dependency org="easymock" name="easymock" rev="1.1" conf="test->*">
-			<artifact name="easymock" type="jar"/>
-			<artifact name="easymockclassextension" type="jar"/>
-		</dependency>
+		<dependency org="easymock" name="easymock" rev="1.2_Java1.3" conf="test->*"/>
+        <dependency org="easymock" name="easymockclassextension" rev="1.2"
+		      conf="test->default"/>		
+		      
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
         <dependency org="hsqldb" name="hsqldb" rev="1.7.1" conf="test->default"/>
     </dependencies>
