@@ -3,7 +3,7 @@
  This JavaScript file describes the XT object with actions for sending ajax requests using the XT Ajax Framework and Taconite.
  **/
 
-var springxt-taconite_version=20070226;
+var springxt_taconite_version=20070226;
 
 var XT = {
     
