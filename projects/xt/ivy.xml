@@ -27,7 +27,7 @@
             <artifact name="cglib-nodep" type="jar"/>
         </dependency>
         
-        <dependency org="springframework" name="springframework" rev="2.0.1">
+        <dependency org="springframework" name="springframework" rev="2.0.2">
             <artifact name="spring" type="jar"/>
             <artifact name="spring-mock" type="jar"/>
         </dependency>
