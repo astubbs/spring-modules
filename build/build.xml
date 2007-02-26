@@ -233,6 +233,14 @@
 		</subant>
 	</target>
 	
+	<target name="tests-dist" depends="init"
+		description="Calls tests-dist targets on each project">
+		<echo>projects=${projects}</echo>
+		<subant target="tests-dist" inheritall="false" failonerror="true">
+			<buildpath refid="${projects}"/>
+		</subant>
+	</target>
+	
 	<target name="javadoc" depends="init"
 		description="Calls javadoc targets on each project">
 		<echo>projects=${projects}</echo>
