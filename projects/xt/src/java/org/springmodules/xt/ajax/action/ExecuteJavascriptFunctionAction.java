@@ -28,6 +28,8 @@ import net.sf.json.JSONObject;
  */
 public class ExecuteJavascriptFunctionAction extends AbstractExecuteJavascriptAction {
     
+    private static final long serialVersionUID = 26L;
+    
     private String name;
     private Map<String, Object> options = new HashMap<String, Object>();
     

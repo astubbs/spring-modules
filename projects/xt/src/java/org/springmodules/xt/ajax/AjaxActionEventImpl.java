@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Sergio Bossa
  */
 public class AjaxActionEventImpl extends BaseAjaxEvent implements AjaxActionEvent {
+    
+    private static final long serialVersionUID = 26L;
 
     private Object commandObject;
    

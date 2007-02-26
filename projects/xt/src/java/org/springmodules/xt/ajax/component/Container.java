@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class Container extends SimpleHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     private Container.Type type = Container.Type.DIV;
     
     /**

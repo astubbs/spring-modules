@@ -27,6 +27,8 @@ import org.springmodules.xt.ajax.component.Component;
  */
 public class InsertContentBeforeAction extends AbstractRenderingAction {
     
+    private static final long serialVersionUID = 26L;
+    
     private static final String OPEN = "<taconite-insert-before contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
     private static final String CLOSE = "</taconite-insert-before>";
     

@@ -27,6 +27,8 @@ import org.springframework.beans.BeanWrapperImpl;
  */
 public class Option extends SimpleHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     private boolean selected;
     
     /**

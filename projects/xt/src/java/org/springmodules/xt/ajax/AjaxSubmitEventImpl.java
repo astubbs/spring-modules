@@ -27,6 +27,8 @@ import org.springframework.validation.Errors;
  */
 public class AjaxSubmitEventImpl extends BaseAjaxEvent implements AjaxSubmitEvent {
     
+    private static final long serialVersionUID = 26L;
+    
     private Errors validationErrors;
     private Object commandObject;
     private Map model;

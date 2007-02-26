@@ -16,6 +16,7 @@
 
 package org.springmodules.xt.ajax;
 
+import java.io.Serializable;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
  * 
  * @author Sergio Bossa
  */
-public interface AjaxEvent {
+public interface AjaxEvent extends Serializable {
     
     /**
      * Get the event id.

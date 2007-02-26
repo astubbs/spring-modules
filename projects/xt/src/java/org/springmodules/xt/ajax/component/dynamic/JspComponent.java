@@ -31,6 +31,8 @@ import org.springmodules.xt.ajax.component.support.RenderingException;
  */
 public class JspComponent implements Component {
     
+    private static final long serialVersionUID = 26L;
+    
     private HttpServletRequest request;
     private String path;
     

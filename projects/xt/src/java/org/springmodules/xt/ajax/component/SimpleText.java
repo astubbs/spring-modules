@@ -23,6 +23,8 @@ package org.springmodules.xt.ajax.component;
  */
 public class SimpleText implements Component {
     
+    private static final long serialVersionUID = 26L;
+    
     private String text;
     
     /**

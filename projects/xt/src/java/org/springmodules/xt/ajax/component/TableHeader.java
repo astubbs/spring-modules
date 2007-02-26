@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class TableHeader extends SimpleHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     /**
      * Construct the component.
      *

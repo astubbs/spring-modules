@@ -16,11 +16,14 @@
 
 package org.springmodules.xt.ajax.component;
 
+import java.io.Serializable;
+
 /**
  * Callback to implement for rendering text into a {@link Component}.
  *
  * @author Sergio Bossa
  */
-public interface TextRenderingCallback {
+public interface TextRenderingCallback extends Serializable {
+    
     public Component getRenderingComponent(String text);
 }

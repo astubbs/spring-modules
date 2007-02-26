@@ -24,6 +24,8 @@ package org.springmodules.xt.ajax.component;
  */
 public class Anchor extends SimpleHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     /**
      * Construct the component.
      * @param link The anchor link.

@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class AjaxResponseImpl implements AjaxResponse {
     
+    private static final long serialVersionUID = 26L;
+    
     private static final String OPEN_RESPONSE = new String("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> ");
     private static final String CLOSE_RESPONSE = new String(" </taconite-root>");
     

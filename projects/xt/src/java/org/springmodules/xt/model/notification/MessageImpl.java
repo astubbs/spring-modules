@@ -26,6 +26,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class MessageImpl implements Message {
     
+    private static final long serialVersionUID = 26L;
+    
     private String code;
     private Message.Type type;
     private String propertyName;

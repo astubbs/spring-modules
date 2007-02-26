@@ -16,12 +16,14 @@
 
 package org.springmodules.xt.ajax;
 
+import java.io.Serializable;
+
 /**
  * Interface representing an ajax action to be executed in the context of an ajax response.
  *
  * @author Sergio Bossa
  */
-public interface AjaxAction {
+public interface AjaxAction extends Serializable {
    
     /**
      * Execute this action.

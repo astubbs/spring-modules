@@ -26,6 +26,8 @@ import java.util.List;
  */
 public class Select extends SimpleHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     /**
      * Construct an empty select list with a name.
      *

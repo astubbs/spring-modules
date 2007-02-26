@@ -16,12 +16,14 @@
 
 package org.springmodules.xt.ajax.component;
 
+import java.io.Serializable;
+
 /**
  * Interface representing an HTML component to render.
  *
  * @author Sergio Bossa
  */
-public interface Component {
+public interface Component extends Serializable {
     
     /**
      * Render this HTML component.

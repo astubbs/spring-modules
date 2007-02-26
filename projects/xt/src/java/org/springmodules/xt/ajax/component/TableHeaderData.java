@@ -23,6 +23,8 @@ package org.springmodules.xt.ajax.component;
  */
 public class TableHeaderData extends AbstractTableData {
     
+    private static final long serialVersionUID = 26L;
+    
     public TableHeaderData(Component data) {
     	super(data);
     }

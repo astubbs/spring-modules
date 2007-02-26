@@ -26,6 +26,8 @@ package org.springmodules.xt.ajax.component;
  */
 public class List extends SimpleHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     private List.ListType type;
     
     /**

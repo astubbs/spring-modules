@@ -26,6 +26,8 @@ import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
  */
 public class HideElementAction extends AbstractExecuteJavascriptAction {
     
+    private static final long serialVersionUID = 26L;
+    
     private String elementId;
     
     /**

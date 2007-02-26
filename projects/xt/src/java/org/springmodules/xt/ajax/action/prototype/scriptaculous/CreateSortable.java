@@ -29,6 +29,8 @@ import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
  */
 public class CreateSortable extends AbstractExecuteJavascriptAction {
     
+    private static final long serialVersionUID = 26L;
+    
     private String elementId;
     private Map<String, Object> options = new HashMap<String, Object>();
     

@@ -24,6 +24,8 @@ package org.springmodules.xt.ajax.component;
  */
 public class ListItem extends SimpleHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     /**
      * Construct the list item.
      *

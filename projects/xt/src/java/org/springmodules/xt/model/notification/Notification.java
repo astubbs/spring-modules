@@ -16,6 +16,8 @@
 
 package org.springmodules.xt.model.notification;
 
+import java.io.Serializable;
+
 /**
  * Interface representing a message notification.<br>
  * Every notification can contain various {@link Message}s of different types ({@link Message.Type}).<br>
@@ -23,7 +25,7 @@ package org.springmodules.xt.model.notification;
  *
  * @author Sergio Bossa
  */
-public interface Notification {
+public interface Notification extends Serializable {
     
     /**
      * Add a message.

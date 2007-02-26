@@ -24,6 +24,8 @@ package org.springmodules.xt.ajax.component;
  */
 public class TextArea extends SimpleHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     /**
      * Constructor taking the number of rows and columns.
      *

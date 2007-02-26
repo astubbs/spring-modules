@@ -16,6 +16,8 @@
 
 package org.springmodules.xt.model.notification;
 
+import java.io.Serializable;
+
 /**
  * Interface representing a message to be notified.<br>
  * Each message has a code, a default message string and a type.<br>
@@ -23,7 +25,7 @@ package org.springmodules.xt.model.notification;
  *
  * @author Sergio Bossa
  */
-public interface Message {
+public interface Message extends Serializable {
     
     public enum Type { ERROR, WARNING, INFO };
     

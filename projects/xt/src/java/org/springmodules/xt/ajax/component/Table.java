@@ -28,6 +28,8 @@ import java.util.Map;
  */
 public class Table extends BaseHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     private TableHeader tableHeader;
     private List<TableRow> tableRowList = new LinkedList<TableRow>();
     private Map<String, String> tableHeaderAttributes = new HashMap<String, String>();

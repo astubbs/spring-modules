@@ -25,6 +25,8 @@ import java.util.ArrayList;
  */
 public class SetAttributeAction extends AbstractRenderingAction {
     
+    private static final long serialVersionUID = 26L;
+    
     private static final String OPEN = "<taconite-set-attributes contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\" $3=\"$4\">";
     private static final String CLOSE = "</taconite-set-attributes>";
     

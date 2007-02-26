@@ -16,6 +16,8 @@
 
 package org.springmodules.xt.ajax;
 
+import java.io.Serializable;
+
 /**
  * <p>Represents an ajax response.</p>
  * <p>An ajax response is a set of ajax actions taking effect on the client.<br>
@@ -23,7 +25,7 @@ package org.springmodules.xt.ajax;
  *
  * @author Sergio Bossa
  */
-public interface AjaxResponse {
+public interface AjaxResponse extends Serializable {
     
     /**
      * Add an action to perform in the context of this response, e.g. setting an input field, an element attribute and so.

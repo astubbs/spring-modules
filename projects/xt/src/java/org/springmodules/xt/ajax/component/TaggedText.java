@@ -25,6 +25,8 @@ package org.springmodules.xt.ajax.component;
  */
 public class TaggedText extends SimpleHTMLComponent {
     
+    private static final long serialVersionUID = 26L;
+    
     private TaggedText.Tag tag = TaggedText.Tag.DIV;
     
     /**

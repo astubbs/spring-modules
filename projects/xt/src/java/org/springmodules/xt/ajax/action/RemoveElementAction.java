@@ -25,6 +25,8 @@ import java.util.ArrayList;
  */
 public class RemoveElementAction extends AbstractRenderingAction {
     
+    private static final long serialVersionUID = 26L;
+    
     private static final String OPEN = "<taconite-delete contextNodeID=\"$1\" multipleMatch=\"$2\" parseInBrowser=\"true\">";
     private static final String CLOSE = "</taconite-delete>";
     

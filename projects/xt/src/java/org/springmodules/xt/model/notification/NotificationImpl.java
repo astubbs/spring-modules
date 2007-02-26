@@ -30,6 +30,8 @@ import org.apache.commons.collections.CollectionUtils;
  */
 public class NotificationImpl implements Notification {
     
+    private static final long serialVersionUID = 26L;
+    
     private Map<Message.Type, List<Message>> messagesMap = new HashMap();
    
     public NotificationImpl() {

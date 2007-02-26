@@ -32,6 +32,8 @@ import org.springmodules.xt.ajax.action.AbstractExecuteJavascriptAction;
  */
 public class Effect extends AbstractExecuteJavascriptAction {
     
+    private static final long serialVersionUID = 26L;
+    
     private String effect;
     private String elementId;
     private List<String> requiredParameters = new LinkedList<String>();
