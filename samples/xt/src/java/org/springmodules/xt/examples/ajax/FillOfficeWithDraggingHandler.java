@@ -1,11 +1,13 @@
 package org.springmodules.xt.examples.ajax;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxActionEvent;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
 import org.springmodules.xt.ajax.action.AppendContentAction;
+import org.springmodules.xt.ajax.component.Component;
 import org.springmodules.xt.ajax.component.InputField;
 import org.springmodules.xt.ajax.component.ListItem;
 import org.springmodules.xt.ajax.component.SimpleText;
@@ -36,7 +38,7 @@ public class FillOfficeWithDraggingHandler extends AbstractAjaxHandler {
             ListItem item = new ListItem(new SimpleText(draggedEmployee.getFirstname() + " " + draggedEmployee.getSurname()));
             InputField hidden = new InputField(helper.getStatusExpression(), draggedEmployee.getMatriculationCode(), InputField.InputType.HIDDEN);
             
-            AppendContentAction appendAction = new AppendContentAction("employees", Arrays.asList(item, hidden));
+            AppendContentAction appendAction = new AppendContentAction("employees", new LinkedList<Component>(Arrays.asList(item, hidden)));
             
             AjaxResponse response = new AjaxResponseImpl();
             response.addAction(appendAction);
