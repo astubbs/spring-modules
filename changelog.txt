@@ -14,6 +14,21 @@ Package org.springmodules.jbpm
 Package org.springmodules.javaspaces
 * updated Blitz spaces library to 1.29
 
+Package org.springmodules.xt
+* Made Serializable Ajax response, events, actions and components, plus Message and Notification objects
+
+Package org.springmodules.xt.ajax
+* Implemented handling of exceptions occurred during Ajax request processing (see [MOD-286])
+* Implemented Ajax actions multiple matching (see [MOD-287])
+* Simplified Ajax request processing flow (see [MOD-290])
+* Refactored components (see [MOD-293])
+* Updated Javascript springxt files
+* Javascript springxt-taconite.js file updated and no more back compatible
+* Several other fixes and enhancements
+
+Package org.springmodules.xt.model.generator
+* Implemented DynamicGenerator and DynamicFactoryGenerator (see [MOD-262])
+
 Changes in version 0.7 (09.12.2006)
 ------------------------------------
 All modules
