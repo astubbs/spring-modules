@@ -1,10 +1,10 @@
-package org.springmodules.orm.db4o;
+package org.springmodules.db4o;
 
 import junit.framework.TestCase;
 
-import org.springmodules.orm.db4o.Db4oCallback;
-import org.springmodules.orm.db4o.Db4oTemplate;
-import org.springmodules.orm.db4o.Db4oTransactionManager;
+import org.springmodules.db4o.Db4oCallback;
+import org.springmodules.db4o.Db4oTemplate;
+import org.springmodules.db4o.Db4oTransactionManager;
 import org.easymock.MockControl;
 import org.springframework.transaction.InvalidIsolationLevelException;
 import org.springframework.transaction.PlatformTransactionManager;

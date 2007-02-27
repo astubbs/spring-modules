@@ -1,8 +1,8 @@
-package org.springmodules.orm.db4o.support;
+package org.springmodules.db4o.support;
 
 import junit.framework.TestCase;
 
-import org.springmodules.orm.db4o.Db4oTemplate;
+import org.springmodules.db4o.Db4oTemplate;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
 

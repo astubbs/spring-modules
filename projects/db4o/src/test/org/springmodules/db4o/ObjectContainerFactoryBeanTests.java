@@ -1,6 +1,6 @@
-package org.springmodules.orm.db4o;
+package org.springmodules.db4o;
 
-import org.springmodules.orm.db4o.ObjectContainerFactoryBean;
+import org.springmodules.db4o.ObjectContainerFactoryBean;
 
 import junit.framework.TestCase;
 

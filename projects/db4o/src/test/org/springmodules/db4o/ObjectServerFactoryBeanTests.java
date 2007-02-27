@@ -1,4 +1,4 @@
-package org.springmodules.orm.db4o;
+package org.springmodules.db4o;
 
 import junit.framework.TestCase;
 
