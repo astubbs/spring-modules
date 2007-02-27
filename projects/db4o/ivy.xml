@@ -11,7 +11,7 @@
 
     </configurations>
 
-    <dependencies defaultconf="global->default">
+    <dependencies defaultconf="global->*">
 
         <dependency org="apache" name="commons-logging" rev="1.0.4"/>
         <dependency org="apache" name="log4j" rev="1.2.13"/>
@@ -19,7 +19,7 @@
         <dependency org="db4o" name="db4o" rev="6.1-java1.2"/>
         
         <dependency org="springframework" name="springframework"
-				rev="2.0.2" conf="global,test->default">
+				rev="2.0.2">
 			<artifact name="spring-beans" type="jar" conf="global" />
 			<artifact name="spring-core" type="jar" conf="global" />
 			<artifact name="spring-mock" type="jar" conf="test" />
