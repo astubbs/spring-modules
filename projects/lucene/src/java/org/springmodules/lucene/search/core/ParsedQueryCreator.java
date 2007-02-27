@@ -17,6 +17,7 @@
 package org.springmodules.lucene.search.core;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -85,15 +86,15 @@ public abstract class ParsedQueryCreator implements QueryCreator {
 		private String[] token;
 		private String textToSearch;
 
-		public QueryParams(String token,String textToSearch) {
-			this.token=new String[1];
-			this.token[0]=token;
-			this.textToSearch=textToSearch;
+		public QueryParams(String token, String textToSearch) {
+			this.token = new String[1];
+			this.token[0] = token;
+			this.textToSearch = textToSearch;
 		}
 
-		public QueryParams(String[] token,String textToSearch) {
-			this.token=token;
-			this.textToSearch=textToSearch;
+		public QueryParams(String[] token, String textToSearch) {
+			this.token = token;
+			this.textToSearch = textToSearch;
 		}
 
 		public String[] getToken() {
