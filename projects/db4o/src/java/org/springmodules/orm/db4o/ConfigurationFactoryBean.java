@@ -1,102 +1,218 @@
 /**
  * Created on Nov 5, 2005
  *
- * $Id: ConfigurationFactoryBean.java,v 1.1 2007/02/25 18:45:10 costin Exp $
- * $Revision: 1.1 $
+ * $Id: ConfigurationFactoryBean.java,v 1.2 2007/02/27 12:12:59 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.orm.db4o;
 
+import java.io.PrintStream;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.Constants;
 
 import com.db4o.Db4o;
+import com.db4o.config.Alias;
 import com.db4o.config.Configuration;
 import com.db4o.io.IoAdapter;
 import com.db4o.reflect.Reflector;
 
 /**
- * Factory Bean used for settings db4o Configuration object. Note that Configuration are
- * singleton (one per VM) and changing the parameters affects all db4o engines started afterwards
- * inside that VM. This class is needed as db4o configuration object doesn't respect
- * JavaBeans conventions and thus Spring can't inject the properties.
- *  
+ * Factory Bean used for settings db4o {@link com.db4o.config.Configuration}
+ * object.
+ * 
+ * <p/> By default, this class will use a 'fresh' configuration. However, it's
+ * possible to use this FactoryBean to modify the global Configuration object for the
+ * running JVM session or clone the existing one. It is also possible to pass a
+ * Configuration object directly to this FactoryBean, which bypasses the
+ * creation process.
+ * 
+ * This class is needed as db4o configuration object doesn't respect JavaBeans
+ * conventions and thus Spring can't inject the properties.
+ * 
  * @author Costin Leau
- *
+ * 
  */
 public class ConfigurationFactoryBean implements InitializingBean, FactoryBean {
 
+	private static final Log log = LogFactory.getLog(ConfigurationFactoryBean.class);
+
+	/**
+	 * Constant indicating that this factory works on a new/fresh db4o
+	 * configuration.
+	 */
+	public static final int CONFIGURATION_NEW = 2 ^ 0;
+
+	/**
+	 * Constant indicating that this factory works on a JVM-cloned db4o
+	 * configuration.
+	 */
+	public static final int CONFIGURATION_CLONED = 2 ^ 1;
+
+	/**
+	 * Constant indicating that this factory works on the global JVM db4o
+	 * configuration.
+	 */
+	public static final int CONFIGURATION_GLOBAL = 2 ^ 2;
+
+	private static final String CREATION_MODE_PREFIX = "CONFIGURATION_";
+
+	private static final Constants CONFIGURATION_CREATION_MODE = new Constants(ConfigurationFactoryBean.class);
+
+	/**
+	 * Configuration to use.
+	 */
 	private Configuration configuration;
+
+	/**
+	 * Configuration creation mode.
+	 */
+	private int configurationCreationMode = CONFIGURATION_NEW;
 
 	// db4o configuration defaults
 	private Integer activationDepth = null;
+
+	private Alias[] aliases = new Alias[0];
+
+	private Boolean allowVersionUpdates = null;
+
 	private Boolean automaticShutDown = null;
+
 	private Integer blockSize = null;
+
+	private Integer bTreeCacheHeight = null;
+
+	private Integer bTreeNodeSize = null;
+
 	private Boolean callbacks = null;
+
 	private Boolean callConstructors = null;
+
 	private Boolean classActivationDepthConfigurable = null;
+
 	private Boolean detectSchemaChanges = null;
-	private Integer discardFreeSpace = null;
-	private Boolean encrypt = null;
+
+	private Boolean disableCommitRecovery = null;
+
 	private Boolean exceptionsOnNotStorable = null;
+
+	private Boolean flushFileBuffers = null;
+
 	private Integer generateUUIDs = null;
+
 	private Integer generateVersionNumbers = null;
+
 	private IoAdapter ioAdapter = null;
-	private String markTransient = null;
-	private Integer messageLevel = null;
+
 	private Boolean lockDatabaseFile = null;
-	private String password = null;
+
+	private String markTransient = null;
+
+	private Integer messageLevel = null;
+
+	private Boolean optimizeNativeQueries = null;
+
 	private Boolean readOnly = null;
+
 	private Reflector reflector = null;
+
 	private Long reserveStorageSpace = null;
+
 	private String blobPath = null;
+
+	private PrintStream out = null;
+
+	private Boolean testConstructors = null;
+
+	private Boolean unicode = null;
+
+	private Integer updateDepth = null;
+
+	private Integer weakReferenceCollectionInterval = null;
+
+	private Boolean weakReferences = null;
 
 	/**
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		Configuration config = Db4o.configure();
+
+		if (configuration == null) {
+			log.debug("no configuration given; creating one...");
+			configuration = createConfiguration(configurationCreationMode);
+		}
+
 		if (activationDepth != null)
-			config.activationDepth(activationDepth.intValue());
+			configuration.activationDepth(activationDepth.intValue());
+		if (allowVersionUpdates != null)
+			configuration.allowVersionUpdates(allowVersionUpdates.booleanValue());
 		if (automaticShutDown != null)
-			config.automaticShutDown(automaticShutDown.booleanValue());
+			configuration.automaticShutDown(automaticShutDown.booleanValue());
 		if (blockSize != null)
-			config.blockSize(blockSize.intValue());
+			configuration.blockSize(blockSize.intValue());
+		if (bTreeCacheHeight != null)
+			configuration.bTreeCacheHeight(bTreeCacheHeight.intValue());
+		if (bTreeNodeSize != null)
+			configuration.bTreeNodeSize(bTreeNodeSize.intValue());
 		if (callbacks != null)
-			config.callbacks(callbacks.booleanValue());
+			configuration.callbacks(callbacks.booleanValue());
 		if (callConstructors != null)
-			config.callConstructors(callConstructors.booleanValue());
+			configuration.callConstructors(callConstructors.booleanValue());
 		if (classActivationDepthConfigurable != null)
-			config.classActivationDepthConfigurable(classActivationDepthConfigurable.booleanValue());
+			configuration.classActivationDepthConfigurable(classActivationDepthConfigurable.booleanValue());
 		if (detectSchemaChanges != null)
-			config.detectSchemaChanges(detectSchemaChanges.booleanValue());
-		if (discardFreeSpace != null)
-			config.discardFreeSpace(discardFreeSpace.intValue());
-		if (encrypt != null)
-			config.encrypt(encrypt.booleanValue());
+			configuration.detectSchemaChanges(detectSchemaChanges.booleanValue());
+		if (disableCommitRecovery != null)
+			if (disableCommitRecovery.booleanValue())
+				configuration.disableCommitRecovery();
 		if (exceptionsOnNotStorable != null)
-			config.exceptionsOnNotStorable(exceptionsOnNotStorable.booleanValue());
+			configuration.exceptionsOnNotStorable(exceptionsOnNotStorable.booleanValue());
+		if (flushFileBuffers != null)
+			configuration.flushFileBuffers(flushFileBuffers.booleanValue());
 		if (generateUUIDs != null)
-			config.generateUUIDs(generateUUIDs.intValue());
+			configuration.generateUUIDs(generateUUIDs.intValue());
 		if (generateVersionNumbers != null)
-			config.generateVersionNumbers(generateVersionNumbers.intValue());
+			configuration.generateVersionNumbers(generateVersionNumbers.intValue());
 		if (ioAdapter != null)
-			config.io(ioAdapter);
+			configuration.io(ioAdapter);
 		if (markTransient != null)
-			config.markTransient(markTransient);
+			configuration.markTransient(markTransient);
 		if (messageLevel != null)
-			config.messageLevel(messageLevel.intValue());
+			configuration.messageLevel(messageLevel.intValue());
+
+		if (optimizeNativeQueries != null)
+			configuration.optimizeNativeQueries(optimizeNativeQueries.booleanValue());
+
 		if (lockDatabaseFile != null)
-			config.lockDatabaseFile(lockDatabaseFile.booleanValue());
-		if (password != null)
-			config.password(password);
+			configuration.lockDatabaseFile(lockDatabaseFile.booleanValue());
 		if (readOnly != null)
-			config.readOnly(readOnly.booleanValue());
+			configuration.readOnly(readOnly.booleanValue());
 		if (reflector != null)
-			config.reflectWith(reflector);
+			configuration.reflectWith(reflector);
 		if (reserveStorageSpace != null)
-			config.reserveStorageSpace(reserveStorageSpace.longValue());
+			configuration.reserveStorageSpace(reserveStorageSpace.longValue());
 		if (blobPath != null)
-			config.setBlobPath(blobPath);
+			configuration.setBlobPath(blobPath);
+
+		if (out != null)
+			configuration.setOut(out);
+		if (testConstructors != null)
+			configuration.testConstructors(testConstructors.booleanValue());
+		if (unicode != null)
+			configuration.unicode(unicode.booleanValue());
+		if (updateDepth != null)
+			configuration.updateDepth(updateDepth.intValue());
+		if (weakReferenceCollectionInterval != null)
+			configuration.weakReferenceCollectionInterval(weakReferenceCollectionInterval.intValue());
+		if (weakReferences != null)
+			configuration.weakReferences(weakReferences.booleanValue());
+
+		for (int i = 0; aliases != null && i < aliases.length; i++) {
+			configuration.addAlias(aliases[i]);
+		}
 	}
 
 	/**
@@ -118,6 +234,31 @@ public class ConfigurationFactoryBean implements InitializingBean, FactoryBean {
 	 */
 	public boolean isSingleton() {
 		return true;
+	}
+
+	/**
+	 * Creates a db4o configuration based on the configuration mode.
+	 * 
+	 * @param configuration mode
+	 * 
+	 * @return a db4o configuration object
+	 */
+	protected Configuration createConfiguration(int creationMode) {
+		switch (creationMode) {
+		case CONFIGURATION_NEW:
+			log.info("using a new db4o configuration");
+			return Db4o.newConfiguration();
+		case CONFIGURATION_CLONED:
+			log.info("using a jvm-cloned db4o configuration");
+			return Db4o.cloneConfiguration();
+		case CONFIGURATION_GLOBAL:
+			log.info("using the global jvm db4o configuration");
+			return Db4o.configure();
+		default:
+			// just in case
+			throw new IllegalArgumentException("unknown creation mode:" + creationMode);
+		}
+
 	}
 
 	/**
@@ -163,13 +304,16 @@ public class ConfigurationFactoryBean implements InitializingBean, FactoryBean {
 	}
 
 	/**
-	 * @param classActivationDepthConfigurable The classActivationDepthConfigurable to set.
+	 * @param classActivationDepthConfigurable The
+	 * classActivationDepthConfigurable to set.
 	 */
 	public void setClassActivationDepthConfigurable(Boolean classActivationDepthConfigurable) {
 		this.classActivationDepthConfigurable = classActivationDepthConfigurable;
 	}
 
 	/**
+	 * Set the db4o configuration to use for this FactoryBean.
+	 * 
 	 * @param configuration The configuration to set.
 	 */
 	public void setConfiguration(Configuration configuration) {
@@ -181,20 +325,6 @@ public class ConfigurationFactoryBean implements InitializingBean, FactoryBean {
 	 */
 	public void setDetectSchemaChanges(Boolean detectSchemaChanges) {
 		this.detectSchemaChanges = detectSchemaChanges;
-	}
-
-	/**
-	 * @param discardFreeSpace The discardFreeSpace to set.
-	 */
-	public void setDiscardFreeSpace(Integer discardFreeSpace) {
-		this.discardFreeSpace = discardFreeSpace;
-	}
-
-	/**
-	 * @param encrypt The encrypt to set.
-	 */
-	public void setEncrypt(Boolean encrypt) {
-		this.encrypt = encrypt;
 	}
 
 	/**
@@ -247,13 +377,6 @@ public class ConfigurationFactoryBean implements InitializingBean, FactoryBean {
 	}
 
 	/**
-	 * @param password The password to set.
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
 	 * @param readOnly The readOnly to set.
 	 */
 	public void setReadOnly(Boolean readOnly) {
@@ -272,6 +395,131 @@ public class ConfigurationFactoryBean implements InitializingBean, FactoryBean {
 	 */
 	public void setReserveStorageSpace(Long reserveStorageSpace) {
 		this.reserveStorageSpace = reserveStorageSpace;
+	}
+
+	/**
+	 * @param aliases The aliases to set.
+	 */
+	public void setAliases(Alias[] aliases) {
+		this.aliases = aliases;
+	}
+
+	/**
+	 * @param allowVersionUpdates The allowVersionUpdates to set.
+	 */
+	public void setAllowVersionUpdates(Boolean allowVersionUpdates) {
+		this.allowVersionUpdates = allowVersionUpdates;
+	}
+
+	/**
+	 * @param treeCacheHeight The bTreeCacheHeight to set.
+	 */
+	public void setBTreeCacheHeight(Integer treeCacheHeight) {
+		bTreeCacheHeight = treeCacheHeight;
+	}
+
+	/**
+	 * @param treeNodeSize The bTreeNodeSize to set.
+	 */
+	public void setBTreeNodeSize(Integer treeNodeSize) {
+		bTreeNodeSize = treeNodeSize;
+	}
+
+	/**
+	 * @param disableCommitRecovery The disableCommitRecovery to set.
+	 */
+	public void setDisableCommitRecovery(Boolean disableCommitRecovery) {
+		this.disableCommitRecovery = disableCommitRecovery;
+	}
+
+	/**
+	 * @param flushFileBuffers The flushFileBuffers to set.
+	 */
+	public void setFlushFileBuffers(Boolean flushFileBuffers) {
+		this.flushFileBuffers = flushFileBuffers;
+	}
+
+	/**
+	 * @param optimizeNativeQueries The optimizeNativeQueries to set.
+	 */
+	public void setOptimizeNativeQueries(Boolean optimizeNativeQueries) {
+		this.optimizeNativeQueries = optimizeNativeQueries;
+	}
+
+	/**
+	 * @param out The out to set.
+	 */
+	public void setOut(PrintStream out) {
+		this.out = out;
+	}
+
+	/**
+	 * @param testConstructors The testConstructors to set.
+	 */
+	public void setTestConstructors(Boolean testConstructors) {
+		this.testConstructors = testConstructors;
+	}
+
+	/**
+	 * @param unicode The unicode to set.
+	 */
+	public void setUnicode(Boolean unicode) {
+		this.unicode = unicode;
+	}
+
+	/**
+	 * @param updateDepth The updateDepth to set.
+	 */
+	public void setUpdateDepth(Integer updateDepth) {
+		this.updateDepth = updateDepth;
+	}
+
+	/**
+	 * @param weakReferenceCollectionInterval The
+	 * weakReferenceCollectionInterval to set.
+	 */
+	public void setWeakReferenceCollectionInterval(Integer weakReferenceCollectionInterval) {
+		this.weakReferenceCollectionInterval = weakReferenceCollectionInterval;
+	}
+
+	/**
+	 * @param weakReferences The weakReferences to set.
+	 */
+	public void setWeakReferences(Boolean weakReferences) {
+		this.weakReferences = weakReferences;
+	}
+
+	/**
+	 * Set the configuration creation mode. This factoryBean can work on a newly
+	 * created configuration, a JVM cloned one or directly on the global JVM
+	 * configuration.
+	 * 
+	 * @see #CONFIGURATION_NEW
+	 * @see #CONFIGURATION_CLONED
+	 * @see #CONFIGURATION_GLOBAL
+	 * @see #setConfigurationCreationModeNumber(int)
+	 * 
+	 * @param mode the configuration mode as a string
+	 */
+	public void setConfigurationCreationMode(String mode) {
+		if (mode != null) {
+			mode = mode.toUpperCase();
+			if (!mode.startsWith(CREATION_MODE_PREFIX))
+				mode = CREATION_MODE_PREFIX + mode;
+			this.configurationCreationMode = CONFIGURATION_CREATION_MODE.asNumber(mode).intValue();
+		}
+
+	}
+
+	/**
+	 * Set the configuration creation mode.
+	 * 
+	 * @param mode the configuration mode as an int
+	 */
+	public void setConfigurationCreationModeNumber(int mode) {
+		if (!CONFIGURATION_CREATION_MODE.getValues(CREATION_MODE_PREFIX).contains(new Integer(mode)))
+			throw new IllegalArgumentException("invalid configurationCreationModeNumber");
+		this.configurationCreationMode = mode;
 	}
 
 }

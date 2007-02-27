@@ -4,9 +4,6 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.springmodules.orm.db4o.Db4oCallback;
-import org.springmodules.orm.db4o.Db4oOperations;
-import org.springmodules.orm.db4o.Db4oTemplate;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
 import org.springframework.dao.DataAccessResourceFailureException;

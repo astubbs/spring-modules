@@ -1,8 +1,8 @@
 /**
  * Created on Nov 5, 2005
  *
- * $Id: ObjectServerFactoryBean.java,v 1.1 2007/02/25 18:45:10 costin Exp $
- * $Revision: 1.1 $
+ * $Id: ObjectServerFactoryBean.java,v 1.2 2007/02/27 12:12:59 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.orm.db4o;
 
@@ -18,25 +18,37 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.util.ObjectUtils;
 
 import com.db4o.Db4o;
 import com.db4o.ObjectServer;
+import com.db4o.config.Configuration;
 
 /**
- * FactoryBean for creating ObjectServers. This class adds support for configuring user access through
- * the userAccess property which takes a Properties object with key the user name and value the password.
+ * FactoryBean for creating {@link ObjectServer}s. This class adds support for
+ * configuring user access through the userAccess property which takes a
+ * Properties object with key the user name and value the password.
+ * 
+ * <p/> Accepts a {@link Configuration} object for local configurations. If none
+ * is given, the global db4o configuration will be used.
  * 
  * 
+ * @see com.db4o.Db4o
  * @author Costin Leau
- *
+ * 
  */
 public class ObjectServerFactoryBean implements InitializingBean, DisposableBean, FactoryBean {
 
 	private static final Log log = LogFactory.getLog(ObjectServerFactoryBean.class);
 
 	private Properties userAccess;
+
 	private ObjectServer server;
+
 	private Resource databaseFile;
+
+	private Configuration configuration;
+
 	private int port;
 
 	/**
@@ -70,9 +82,14 @@ public class ObjectServerFactoryBean implements InitializingBean, DisposableBean
 			throw new IllegalArgumentException("port must be greater then or equal to 0");
 
 		log.info("Database file is " + databaseFile.getFile().getAbsolutePath());
-		server = Db4o.openServer(databaseFile.getFile().getAbsolutePath(), port);
+		
+		// initialize the configuration to use only one method variant
+		if (configuration == null)
+			configuration = Db4o.configure();
+		server = Db4o.openServer(configuration, databaseFile.getFile().getAbsolutePath(), port);
+		
 		log.info(Db4o.version());
-		log.info("opened db4o server @" + System.identityHashCode(server));
+		log.info("opened db4o server @" + ObjectUtils.getIdentityHexString(server));
 
 		if (userAccess != null) {
 			boolean debug = log.isDebugEnabled();
@@ -80,11 +97,8 @@ public class ObjectServerFactoryBean implements InitializingBean, DisposableBean
 				Entry entry = (Entry) iter.next();
 				server.grantAccess((String) entry.getKey(), (String) entry.getValue());
 				if (debug)
-					log.debug("grated access to user `"
-							+ entry.getKey()
-							+ "` with password `"
-							+ maskString(((String) entry.getValue()))
-							+ "`");
+					log.debug("grated access to user `" + entry.getKey() + "` with password `"
+							+ maskString(((String) entry.getValue())) + "`");
 			}
 		}
 	}
@@ -106,7 +120,7 @@ public class ObjectServerFactoryBean implements InitializingBean, DisposableBean
 	 * @see org.springframework.beans.factory.DisposableBean#destroy()
 	 */
 	public void destroy() throws Exception {
-		log.info("closing object server @" + System.identityHashCode(server));
+		log.info("closing object server @" + ObjectUtils.getIdentityHexString(server));
 		server.close();
 	}
 
@@ -116,7 +130,7 @@ public class ObjectServerFactoryBean implements InitializingBean, DisposableBean
 	public void setUserAccess(Properties userAccess) {
 		this.userAccess = userAccess;
 	}
-	
+
 	public void setUserAccessLocation(Resource userAccess) {
 		this.userAccess = new Properties();
 		try {
@@ -153,6 +167,16 @@ public class ObjectServerFactoryBean implements InitializingBean, DisposableBean
 	 */
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	/**
+	 * Set the configuration object to be used when creating the server. If none
+	 * is specified, the global db4o configuration is used.
+	 * 
+	 * @param configuration The configuration to set.
+	 */
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
 	}
 
 }

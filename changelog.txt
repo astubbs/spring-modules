@@ -3,10 +3,15 @@ SPRING MODULES CHANGELOG
 http://springmodules.dev.java.net
 
 Changes in version 0.8 (02.03.2007)
-------------------------------------
+-----------------------------------
 
 Package org.springmodules.orm.db4o
 * new db4o integration module (former db4o-spring.dev.java.net project)
+* added new setters for Configuration properties available in 6.1 and removed the deprecated ones
+* several db4o configuration creation mode added
+* replaced System.identityHashCode with Spring's ObjectUtils.getIdentityHexString
+* added local configuration to ObjectContainerFactoryBean
+* OldFormatException added to ObjectServerUtils
 
 Package org.springmodules.jbpm
 * updated jbpm 3.1.x library to 3.1.4
@@ -15,27 +20,27 @@ Package org.springmodules.javaspaces
 * updated Blitz spaces library to 1.29
 
 Package org.springmodules.xt
-* Made Serializable Ajax response, events, actions and components, plus Message and Notification objects
+* made Serializable Ajax response, events, actions and components, plus Message and Notification objects
 
 Package org.springmodules.xt.ajax
-* Implemented handling of exceptions occurred during Ajax request processing (see [MOD-286])
-* Implemented Ajax actions multiple matching (see [MOD-287])
-* Simplified Ajax request processing flow (see [MOD-290])
-* Refactored components (see [MOD-293])
-* Updated Javascript springxt files
-* Javascript springxt-taconite.js file updated and no more back compatible
-* Several other fixes and enhancements
+* implemented handling of exceptions occurred during Ajax request processing (see [MOD-286])
+* implemented Ajax actions multiple matching (see [MOD-287])
+* simplified Ajax request processing flow (see [MOD-290])
+* refactored components (see [MOD-293])
+* updated Javascript springxt files
+* javascript springxt-taconite.js file updated and no more back compatible
+* several other fixes and enhancements
 
 Package org.springmodules.xt.model.generator
-* Implemented DynamicGenerator and DynamicFactoryGenerator (see [MOD-262])
+* implemented DynamicGenerator and DynamicFactoryGenerator (see [MOD-262])
 
 Changes in version 0.7 (09.12.2006)
-------------------------------------
+-----------------------------------
 All modules
 * updated Spring dependency to 2.0.1 where possible [MOD-248]
 
 Package org.springmodules.ant
-* New Spring Ant integration module
+* new Spring Ant integration module
 
 Package org.springmodules.cache
 * Updated dependency on spring to spring-2.0

@@ -1,8 +1,8 @@
 /**
  * Created on Nov 5, 2005
  *
- * $Id: ObjectContainerFactoryBean.java,v 1.1 2007/02/25 18:45:10 costin Exp $
- * $Revision: 1.1 $
+ * $Id: ObjectContainerFactoryBean.java,v 1.2 2007/02/27 12:12:59 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.orm.db4o;
 
@@ -12,36 +12,50 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
+import org.springframework.util.ObjectUtils;
 
 import com.db4o.Db4o;
 import com.db4o.ObjectContainer;
 import com.db4o.ObjectServer;
+import com.db4o.config.Configuration;
 import com.db4o.ext.ExtDb4o;
 import com.db4o.ext.MemoryFile;
 
 /**
- * Class used for creating an ObjectContainer in a singleton manner as these are thread-safe.
- * The factory bean will try to create using the available properties in the following order:
+ * Class used for creating an {@link ObjectContainer} in a singleton manner as
+ * these are thread-safe.
+ * 
+ * <p/> The factory bean will try to create using the available properties in
+ * the following order:
  * <ol>
  * <li>if databaseFile is set, a local file based client will be created.</li>
- * <li>if memory file is set, a local memory based client will be created.<li> 
- * <li>if server is set, a client within the same VM as the server will be created.</li>
- * <li>if all the above fail the client will be opened using hostName, port, user, password to a remote
- * server.</li>
+ * <li>if memory file is set, a local memory based client will be created.
+ * <li>
+ * <li>if server is set, a client within the same VM as the server will be
+ * created.</li>
+ * <li>if all the above fail the client will be opened using hostName, port,
+ * user, password to a remote server.</li>
  * </ol>
  * 
+ * 
+ * <p/> Accepts a {@link Configuration} object for local configurations. If none
+ * is given, the global db4o configuration will be used.
+ * 
+ * @see com.db4o.Db4o
  * @author Costin Leau
- *
+ * 
  */
 public class ObjectContainerFactoryBean implements FactoryBean, InitializingBean, DisposableBean {
 
 	private static final Log log = LogFactory.getLog(ObjectContainerFactoryBean.class);
 
 	private ObjectContainer container;
+
 	// Local mode
 
 	// file based
 	private Resource databaseFile;
+
 	// memory based
 	private MemoryFile memoryFile;
 
@@ -52,7 +66,10 @@ public class ObjectContainerFactoryBean implements FactoryBean, InitializingBean
 
 	// remote server mode
 	private String hostName, user, password;
+
 	private int port;
+
+	private Configuration configuration;
 
 	/**
 	 * @see org.springframework.beans.factory.FactoryBean#getObject()
@@ -79,19 +96,22 @@ public class ObjectContainerFactoryBean implements FactoryBean, InitializingBean
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	public void afterPropertiesSet() throws Exception {
+		// initialize the configuration to use only one method variant
+		if (configuration == null)
+			configuration = Db4o.configure();
 
 		if (databaseFile != null) {
-			container = Db4o.openFile(databaseFile.getFile().getAbsolutePath());
-			log.info("opened db4o local file-based objectContainer @" + System.identityHashCode(container));
+			container = Db4o.openFile(configuration, databaseFile.getFile().getAbsolutePath());
+			
+			log.info("opened db4o local file-based objectContainer @" + ObjectUtils.getIdentityHexString(container));
 		}
 		else if (memoryFile != null) {
-			container = ExtDb4o.openMemoryFile(memoryFile);
-			log.info("opened db4o local memory-based objectContainer @" + System.identityHashCode(container));
+			container = ExtDb4o.openMemoryFile(configuration, memoryFile);
+			log.info("opened db4o local memory-based objectContainer @" + ObjectUtils.getIdentityHexString(container));
 		}
 		else if (server != null) {
 			container = server.openClient();
-			log.info("opened db4o embedded server-based objectContainer @"
-					+ System.identityHashCode(container));
+			log.info("opened db4o embedded server-based objectContainer @" + ObjectUtils.getIdentityHexString(container));
 
 		}
 		else {
@@ -100,8 +120,8 @@ public class ObjectContainerFactoryBean implements FactoryBean, InitializingBean
 				throw new IllegalArgumentException(
 						"mandatory fields are not set; databaseFile or memoryFile or container or (hostName, port, user) are required");
 			}
-			container = Db4o.openClient(hostName, port, user, password);
-			log.info("opened db4o remote server-based objectContainer @" + System.identityHashCode(container));
+			container = Db4o.openClient(configuration, hostName, port, user, password);
+			log.info("opened db4o remote server-based objectContainer @" + ObjectUtils.getIdentityHexString(container));
 		}
 		log.info(Db4o.version());
 	}
@@ -110,15 +130,8 @@ public class ObjectContainerFactoryBean implements FactoryBean, InitializingBean
 	 * @see org.springframework.beans.factory.DisposableBean#destroy()
 	 */
 	public void destroy() throws Exception {
-		log.info("closing object container " + System.identityHashCode(container));
+		log.info("closing object container " + ObjectUtils.getIdentityHexString(container));
 		container.close();
-	}
-
-	/**
-	 * @return Returns the file.
-	 */
-	public Resource getDatabaseFile() {
-		return databaseFile;
 	}
 
 	/**
@@ -129,24 +142,10 @@ public class ObjectContainerFactoryBean implements FactoryBean, InitializingBean
 	}
 
 	/**
-	 * @return Returns the hostName.
-	 */
-	public String getHostName() {
-		return hostName;
-	}
-
-	/**
 	 * @param hostName The hostName to set.
 	 */
 	public void setHostName(String hostName) {
 		this.hostName = hostName;
-	}
-
-	/**
-	 * @return Returns the password.
-	 */
-	public String getPassword() {
-		return password;
 	}
 
 	/**
@@ -157,24 +156,10 @@ public class ObjectContainerFactoryBean implements FactoryBean, InitializingBean
 	}
 
 	/**
-	 * @return Returns the port.
-	 */
-	public int getPort() {
-		return port;
-	}
-
-	/**
 	 * @param port The port to set.
 	 */
 	public void setPort(int port) {
 		this.port = port;
-	}
-
-	/**
-	 * @return Returns the server.
-	 */
-	public ObjectServer getServer() {
-		return server;
 	}
 
 	/**
@@ -185,24 +170,10 @@ public class ObjectContainerFactoryBean implements FactoryBean, InitializingBean
 	}
 
 	/**
-	 * @return Returns the user.
-	 */
-	public String getUser() {
-		return user;
-	}
-
-	/**
 	 * @param user The user to set.
 	 */
 	public void setUser(String user) {
 		this.user = user;
-	}
-
-	/**
-	 * @return Returns the memoryFile.
-	 */
-	public MemoryFile getMemoryFile() {
-		return memoryFile;
 	}
 
 	/**
@@ -212,4 +183,13 @@ public class ObjectContainerFactoryBean implements FactoryBean, InitializingBean
 		this.memoryFile = memoryFile;
 	}
 
+	/**
+	 * Set the configuration object to be used when creating the client. If none
+	 * is specified, the global db4o configuration is used.
+	 * 
+	 * @param configuration The configuration to set.
+	 */
+	public void setConfiguration(Configuration configuration) {
+		this.configuration = configuration;
+	}
 }
