@@ -71,7 +71,7 @@
 							</fo:block>
 
 							<fo:block font-family="Helvetica" font-size="10pt" padding="2mm">
-								<xsl:text>Copyright (c) 2005 - 2006</xsl:text>
+								<xsl:text>Copyright Spring Modules Team (c) 2005 - 2007</xsl:text>
 							</fo:block>
 							
 							<fo:block font-family="Helvetica" font-size="10pt" padding="1mm">

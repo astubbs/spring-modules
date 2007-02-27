@@ -23,6 +23,9 @@
     <!ENTITY springmvc-extra  	SYSTEM "../../../projects/springmvc-extra/docs/reference/src/springmvc-extra.xml">
     <!ENTITY orbroker    		SYSTEM "../../../projects/orbroker/docs/reference/src/orbroker.xml">
     <!ENTITY ojb    			SYSTEM "../../../projects/ojb/docs/reference/src/ojb.xml">
+	<!ENTITY commons  			SYSTEM "../../../projects/commons/docs/reference/src/commons.xml">    
+	<!ENTITY ant  			SYSTEM "../../../projects/ant/docs/reference/src/ant.xml">    	
+	<!ENTITY db4o  			SYSTEM "../../../projects/db4o/docs/reference/src/db4o.xml">	
 	]>
 
 
@@ -31,8 +34,14 @@
 
 	&overview;
 
+	&ant;
+	
 	&cache;
+	
+	&commons;
 
+	&db4o;
+	
     &flux;
 
     &hivemind;
