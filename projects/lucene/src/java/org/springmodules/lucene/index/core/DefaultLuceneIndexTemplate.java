@@ -351,7 +351,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 			LuceneHits hits = searcher.search(new TermQuery(identifierTerm));
 			checkHitsForUpdate(hits);
 			updatedDocument = documentModifier.updateDocument(hits.doc(0));
-		} catch(IOException ex) {
+		} catch(Exception ex) {
 			throw new LuceneIndexAccessException("Error during updating a document.", ex);
 		} finally {
 			SearcherFactoryUtils.releaseSearcher(searcher);
@@ -373,7 +373,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 		try {
 			LuceneHits hits = searcher.search(new TermQuery(identifierTerm));
 			updatedDocuments = documentsModifier.updateDocuments(hits);
-		} catch(IOException ex) {
+		} catch(Exception ex) {
 			throw new LuceneIndexAccessException("Error during updating a document.", ex);
 		} finally {
 			SearcherFactoryUtils.releaseSearcher(searcher);

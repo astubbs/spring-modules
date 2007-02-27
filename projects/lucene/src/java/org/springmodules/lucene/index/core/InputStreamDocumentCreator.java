@@ -48,7 +48,7 @@ public interface InputStreamDocumentCreator {
 	 * @return the created InputStream
 	 * @throws IOException
 	 */
-	public InputStream createInputStream() throws IOException;
+	InputStream createInputStream() throws IOException;
 
 	/**
 	 * This method must be implemented to specify how to index
@@ -59,6 +59,6 @@ public interface InputStreamDocumentCreator {
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneManipulateIndexException
 	 */
-	public Document createDocumentFromInputStream(
+	Document createDocumentFromInputStream(
 								InputStream inputStream) throws Exception;
 }

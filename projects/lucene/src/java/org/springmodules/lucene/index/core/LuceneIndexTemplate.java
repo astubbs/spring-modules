@@ -145,7 +145,7 @@ public interface LuceneIndexTemplate {
 	 * @param analyzer the Lucene analyzer to use to index
 	 * @see DocumentCreator
 	 */
-	void addDocument(DocumentCreator documentCreator,Analyzer analyzer);
+	void addDocument(DocumentCreator documentCreator, Analyzer analyzer);
 
 	/**
 	 * Add a document thanks to a callback method defined in the

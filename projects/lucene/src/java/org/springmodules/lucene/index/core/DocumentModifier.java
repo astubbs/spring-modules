@@ -45,5 +45,5 @@ public interface DocumentModifier {
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneManipulateIndexException
 	 */
-	Document updateDocument(Document document) throws IOException;
+	Document updateDocument(Document document) throws Exception;
 }
