@@ -53,7 +53,7 @@ public class LuceneIndexSupportTests extends TestCase {
 		
 		luceneIndex.afterPropertiesSet();
 		
-		LuceneIndexTemplate template = luceneIndex.getTemplate();
+		LuceneIndexTemplate template = luceneIndex.getLuceneIndexTemplate();
 		assertNotNull(template);
 		assertEquals(template.getClass(), DefaultLuceneIndexTemplate.class);
 	}
@@ -63,11 +63,11 @@ public class LuceneIndexSupportTests extends TestCase {
 		LuceneIndexTemplate luceneIndexTemplate = (LuceneIndexTemplate)luceneIndexTemplateControl.getMock();
 
 		LuceneIndexSupport luceneIndex = new LuceneIndexSupport() {};
-		luceneIndex.setTemplate(luceneIndexTemplate);
+		luceneIndex.setLuceneIndexTemplate(luceneIndexTemplate);
 		
 		luceneIndex.afterPropertiesSet();
 		
-		LuceneIndexTemplate template = luceneIndex.getTemplate();
+		LuceneIndexTemplate template = luceneIndex.getLuceneIndexTemplate();
 		assertNotNull(template);
 		assertEquals(template.getClass(), luceneIndexTemplate.getClass());
 	}

@@ -87,14 +87,14 @@ public abstract class LuceneIndexSupport implements InitializingBean {
 	/**
 	 * Set a configured template.
 	 */
-	public void setTemplate(LuceneIndexTemplate template) {
+	public void setLuceneIndexTemplate(LuceneIndexTemplate template) {
 		this.template = template;
 	}
 
 	/**
 	 * Return the LuceneIndexTemplate to use.
 	 */
-	public LuceneIndexTemplate getTemplate() {
+	public LuceneIndexTemplate getLuceneIndexTemplate() {
 		return template;
 	}
 
