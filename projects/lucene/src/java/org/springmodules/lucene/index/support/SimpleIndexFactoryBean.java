@@ -33,7 +33,8 @@ import org.springmodules.lucene.index.factory.SimpleIndexFactory;
 public class SimpleIndexFactoryBean implements FactoryBean,InitializingBean {
 
 	private SimpleIndexFactory factory;
-	private boolean resolveLock=false;
+	private boolean resolveLock = false;
+	private boolean create = false;
 	private Directory directory;
 	private Analyzer analyzer;
 
@@ -85,6 +86,21 @@ public class SimpleIndexFactoryBean implements FactoryBean,InitializingBean {
 	public boolean isResolveLock() {
 		return resolveLock;
 	}
+
+	/**
+	 * Set if the index must be created if it don't exist
+	 */
+	public void setCreate(boolean create) {
+		this.create = create;
+	}
+
+	/**
+	 * Return if the index must be created if it don't exist
+	 */
+	public boolean isCreate() {
+		return create;
+	}
+
 	/**
 	 * Set the Lucene Analyzer used by the IndexFactory.
 	 */
@@ -109,6 +125,7 @@ public class SimpleIndexFactoryBean implements FactoryBean,InitializingBean {
 		}
 		this.factory = new SimpleIndexFactory(getDirectory(), getAnalyzer());
 		this.factory.setResolveLock(resolveLock);
+		this.factory.setCreate(create);
 	}
 
 }
