@@ -41,7 +41,7 @@ public class DefaultDocumentHandlerManager implements DocumentHandlerManager {
 	 * handlers.
 	 */
 	public DefaultDocumentHandlerManager() {
-		this.documentHandlers=new HashMap();
+		this.documentHandlers = new HashMap();
 	}
 
 	/**
@@ -65,9 +65,9 @@ public class DefaultDocumentHandlerManager implements DocumentHandlerManager {
 	 * @see org.springmodules.lucene.index.object.file.DocumentHandlerManager#getDocumentHandler(java.lang.String)
 	 */
 	public DocumentHandler getDocumentHandler(String name) {
-		Set keys=documentHandlers.keySet();
-		for(Iterator i=keys.iterator();i.hasNext();) {
-			DocumentMatching matching=(DocumentMatching)i.next();
+		Set keys = documentHandlers.keySet();
+		for(Iterator i=keys.iterator(); i.hasNext();) {
+			DocumentMatching matching = (DocumentMatching)i.next();
 			if( matching.match(name) ) {
 				return (DocumentHandler)documentHandlers.get(matching);
 			}
@@ -88,7 +88,7 @@ public class DefaultDocumentHandlerManager implements DocumentHandlerManager {
 	 */
 	public void registerDocumentHandler(DocumentMatching matching, DocumentHandler handler) {
 		if( matching!=null && handler!=null ) {
-			documentHandlers.put(matching,handler);
+			documentHandlers.put(matching, handler);
 		}
 	}
 

@@ -37,13 +37,13 @@ public interface DocumentHandlerManager {
 	 * @return the document handler to use
 	 * @see DocumentMatching#match(String)
 	 */
-	public DocumentHandler getDocumentHandler(String name);
+	DocumentHandler getDocumentHandler(String name);
 
 	/**
 	 * This method registers the default document handlers and
 	 * must be called by the implementation during the initialization.
 	 */
-	public void registerDefaultHandlers();
+	void registerDefaultHandlers();
 
 	/**
 	 * This method registers a document handler associated with a
@@ -55,7 +55,7 @@ public interface DocumentHandlerManager {
 	 * @param matching the associated document matching
 	 * @param handler the document handler to register
 	 */
-	public void registerDocumentHandler(DocumentMatching matching,DocumentHandler handler);
+	void registerDocumentHandler(DocumentMatching matching, DocumentHandler handler);
 
 	/**
 	 * This method is used to unregister a document handler associated
@@ -63,5 +63,5 @@ public interface DocumentHandlerManager {
 	 * 
 	 * @param matching the associated document matching
 	 */
-	public void unregisterDocumentHandler(DocumentMatching matching);
+	void unregisterDocumentHandler(DocumentMatching matching);
 }

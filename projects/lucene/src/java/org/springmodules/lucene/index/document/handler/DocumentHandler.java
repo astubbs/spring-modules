@@ -48,5 +48,5 @@ public interface DocumentHandler {
 	 * @param description the description of the resource to index
 	 * @param inputStream the input stream which will be used to index
 	 */
-	Document getDocument(Map description,Object object) throws Exception;
+	Document getDocument(Map description, Object object) throws Exception;
 }

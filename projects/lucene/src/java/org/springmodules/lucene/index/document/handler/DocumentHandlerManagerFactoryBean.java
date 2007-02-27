@@ -54,8 +54,8 @@ public class DocumentHandlerManagerFactoryBean implements FactoryBean,Initializi
 	private DocumentHandlerManager documentHandlerManager;
 	private Map documentHandlers;
 
-	private Class documentHandlerManagerClass=DefaultDocumentHandlerManager.class;
-	private Class documentMatchingClass=IdentityDocumentMatching.class;
+	private Class documentHandlerManagerClass = DefaultDocumentHandlerManager.class;
+	private Class documentMatchingClass = IdentityDocumentMatching.class;
 	private Constructor documentMatchingConstructor;
 	
 	/**
@@ -89,7 +89,7 @@ public class DocumentHandlerManagerFactoryBean implements FactoryBean,Initializi
 						IllegalArgumentException, InvocationTargetException,
 						SecurityException, NoSuchMethodException {
 		if( documentMatchingConstructor==null ) {
-			documentMatchingConstructor=documentMatchingClass.getConstructor(
+			documentMatchingConstructor = documentMatchingClass.getConstructor(
 													new Class[] { String.class });
 		}
 		return (DocumentMatching)documentMatchingConstructor.newInstance(
@@ -104,12 +104,12 @@ public class DocumentHandlerManagerFactoryBean implements FactoryBean,Initializi
 	 * @see DocumentHandlerManager#registerDefaultHandlers()
 	 */
 	public void afterPropertiesSet() throws Exception {
-		documentHandlerManager=instanciateDocumentHandlerManager();
+		documentHandlerManager = instanciateDocumentHandlerManager();
 		documentHandlerManager.registerDefaultHandlers();
 		if( documentHandlers!=null ) {
-			Set documentHandlersKeys=documentHandlers.keySet();
-			for(Iterator i=documentHandlersKeys.iterator();i.hasNext();) {
-				String key=(String)i.next();
+			Set documentHandlersKeys = documentHandlers.keySet();
+			for(Iterator i = documentHandlersKeys.iterator(); i.hasNext();) {
+				String key = (String)i.next();
 				documentHandlerManager.registerDocumentHandler(
 								instanciateDocumentMatching(key),
 								(DocumentHandler)documentHandlers.get(key));
