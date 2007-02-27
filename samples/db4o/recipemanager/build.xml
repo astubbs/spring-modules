@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<project name="springmodules-db4o-sample-recipemanager" default="war">
+    <property file="build.properties" />
+    <property file="project.properties" />
+    <property file="${common.build.dir}/build.properties" />
+    <property file="${common.build.dir}/project.properties" />
+    <property file="${user.home}/build.properties" />
+
+    <import file="${common.build.dir}/common-targets.xml" />
+    <import file="${common.build.dir}/clover-targets.xml" />
+    <import file="${common.build.dir}/doc-targets.xml" />
+    <import file="${common.build.dir}/tomcat-targets.xml" />    
+
+</project>

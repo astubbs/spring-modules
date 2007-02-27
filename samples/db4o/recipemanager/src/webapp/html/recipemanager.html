@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head></head>
+<body>
+	<h1 style="text-align: center;">The Spring Db4o Recipe Manager Application</h1>
+	<h2>Introduction</h2>
+
+	<p> Spring Db4o is an add-on library to Spring in order to support the object database Db4o.
+		This includes translation of Db4o specific exceptions to Spring's unchecked
+		DataAccessException hierarchy, a template-like class for interaction with the
+		database, a transaction manager and the possibility to configure db4o within your
+		Spring application-context.xml file. </p>
+	
+<br>
+<h2>Recipe Manager Sample Application Requirements</h2>
+The sample application supports the following:<br>
+<br>
+<span style="font-weight: bold;">Use Cases:</span><br>
+<ul>
+  <li>Create a new recipe (that's actually only its title)</li>
+  <li>View a list of available recipes</li>
+</ul>
+	
+<h2>RecipeManager Sample Application Design</h2>
+<span style="font-weight: bold; text-decoration: underline;">Server
+Technology</span><br>
+The sample application should be usable with any J2EE web application
+container that is compatible with the Servet 2.3 and JSP 1.2
+specifications. The view technologies that are to be used for rendering 
+the application are Java Server Pages (JSP) along with the 
+Java Standard Tag Library (JSTL).<br>
+<br>
+<span style="font-weight: bold; text-decoration: underline;">Database
+Technology</span><br>
+The sample application uses the object-oriented database management
+system <a href="http://www.db4o.com">db4o</a> for data storage.
+<br>
+<span style="font-weight: bold; text-decoration: underline;">Development
+Environment</span><br>
+A copy of all necessary jar files is provided with the
+sample application. The developer will need to obtain the following 
+tools externally, all of
+which are freely available:<br>
+<ul>
+  <li>Java SDK 1.4.x</li>
+  <li>Ant 1.6.x</li>
+  <li>Tomcat 5.5.x, or some other web application container</li>
+</ul>
+<span style="font-weight: bold;">NOTE:</span> The version numbers
+listed are those that were used in the development of the RecipeManager
+application. Other versions of the same tools may or may not work.<br>
+<br>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - DispatcherServlet application context for RecipeManager's web tier.
+  -->
+<beans>
+
+	<!-- ========================= MESSAGE SOURCE DEFINITION ========================= -->
+
+	<!--
+		- Message source for this context, loaded from localized "messages_xx" files.
+		- Could also reside in the root application context, as it is generic,
+		- but is currently just used within RecipeManager's web tier.
+    -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages"/>
+	</bean>
+
+
+	<!-- ========================= MAPPING DEFINITIONS ========================= -->
+
+	<!--
+	  - This bean provides explicit View mappings in a resource bundle instead of the
+	  - default InternalResourceViewResolver. It fetches the view mappings from
+	  - localized "views_xx" classpath files, i.e. "/WEB-INF/classes/views.properties"
+	  - or "/WEB-INF/classes/views_de.properties".
+	  -
+	  - Symbolic view names returned by Controllers will be resolved by this bean
+	  - using the respective properties file, which defines arbitrary mappings between
+	  - view names and resources.
+	  -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver">
+		<property name="basename" value="views"/>
+	</bean>
+
+	<!--
+	  - This bean resolves specific types of exception to corresponding error views.
+		- The default behaviour of DispatcherServlet is to propagate all exceptions to the
+		- servlet container: This will happen here with all other types of exception.
+		-->
+	<!--
+	<bean id="exceptionResolver" class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="org.springframework.dao.DataAccessException">dataAccessFailure</prop>
+				<prop key="org.springframework.transaction.TransactionException">dataAccessFailure</prop>
+			</props>
+		</property>
+	</bean>
+	-->
+
+	<!--
+	 - This bean is an explicit URL mapper that is used by the "recipemanager" DispatcherServlet
+	 - It is used instead of the default BeanNameUrlHandlerMapping.
+	 -->
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/welcome.htm">recipeController</prop>
+				<prop key="/list.htm">recipeController</prop>
+				<prop key="/create.htm">newRecipeController</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<!-- ========================= CONTROLLER DEFINITIONS ========================= -->
+	
+	<bean id="newRecipeController" class="org.springmodules.db4o.examples.recipemanager.web.NewRecipeController">
+		<property name="recipeManager" ref="recipeManager"/>
+		<property name="sessionForm"><value>true</value></property>
+		<property name="commandName"><value>recipe</value></property>
+		<property name="commandClass"><value>org.springmodules.db4o.examples.recipemanager.domain.Recipe</value>
+			</property>
+		<!-- <property name="validator"><ref bean="teilnehmerRueckkehrValidator"/></property> -->
+		<property name="formView"><value>createRecipeView</value></property>
+		<property name="successView"><value>list.htm</value></property>
+		<property name="requireSession" value="true"/>
+	</bean>
+
+	<!--
+	  - This bean is a MultiActionController that manages general View rendering.
+	  - It uses the "recipeControllerResolver" bean below for method name resolution.
+	  -->
+	<bean id="recipeController" class="org.springmodules.db4o.examples.recipemanager.web.RecipeController">
+		<property name="methodNameResolver" ref="recipeControllerResolver"/>
+		<property name="recipeManager" ref="recipeManager"/>
+	</bean>
+
+	<!--
+	  - This bean is a MethodNameResolver definition for a MultiActionController.
+	  - It maps URLs to methods for the "recipeController" bean.
+	  -->
+	<bean id="recipeControllerResolver" class="org.springframework.web.servlet.mvc.multiaction.PropertiesMethodNameResolver">
+		<property name="mappings">
+		<props>
+			<prop key="/welcome.htm">welcomeHandler</prop>
+			<prop key="/list.htm">recipesHandler</prop>
+		</props>
+		</property>
+	</bean>
+</beans>

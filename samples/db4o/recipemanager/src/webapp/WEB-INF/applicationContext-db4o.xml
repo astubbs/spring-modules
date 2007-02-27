@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<!--
+  - Application context definition for Recipe Manager on Db4o
+  -->
+<beans>
+	<bean id="container" class="org.springmodules.db4o.ObjectContainerFactoryBean">
+		<!-- <property name="userAccessLocation" value="/WEB-INF/db-credentials.properties"/> -->
+		<property name="databaseFile" value="db4o.db"/>
+	</bean>
+	
+	<bean id="db4oTransactionManager" class="org.springmodules.db4o.Db4oTransactionManager">
+		<property name="objectContainer" ref="container"/>
+	</bean>
+	
+	<!-- transaction proxy for db4o services/facades -->
+	<bean id="txProxyTemplate" abstract="true" 
+        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="proxyTargetClass">
+            <value>true</value>
+        </property>
+        <property name="transactionManager" ref="db4oTransactionManager"/>
+        <property name="transactionAttributes">
+			<props>
+                <prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED, readOnly</prop>
+			</props>
+		</property>
+    </bean>
+	
+	<bean id="recipeManager" class="org.springmodules.db4o.examples.recipemanager.persistence.db4o.Db4oRecipeManager">
+		<property name="objectContainer" ref="container"/>
+	</bean>
+</beans>

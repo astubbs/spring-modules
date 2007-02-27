@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+    "http://www.springframework.org/dtd/spring-beans.dtd">
+<!--
+    $Id: applicationContext-db4o.xml,v 1.1 2007/02/27 16:42:14 costin Exp $
+    -->    
+<beans>
+
+	<!-- not used -->
+	<bean id="server" class="org.springmodules.db4o.ObjectServerFactoryBean">
+		<property name="userAccessLocation" value="user-access.properties"/>
+		<property name="databaseFile" value="file://./db4o.db"/>
+		<property name="port" value="0"/>
+	</bean>
+	
+	<bean id="container" class="org.springmodules.db4o.ObjectContainerFactoryBean">
+		<property name="memoryFile">
+			<bean class="com.db4o.ext.MemoryFile"/>
+		</property>
+	</bean>
+
+	<bean id="db4oTemplate" class="org.springmodules.db4o.Db4oTemplate">	
+		<property name="objectContainer" ref="container"/>
+	</bean>
+	
+	<bean id="db4oTransactionManager" class="org.springmodules.db4o.Db4oTransactionManager">
+		<property name="objectContainer" ref="container"/>
+	</bean>
+	
+	<!-- transaction proxy for db4o services/facades -->
+	<bean id="txProxyTemplate" abstract="true" 
+        class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="proxyTargetClass">
+            <value>true</value>
+        </property>
+        <property name="transactionManager" ref="db4oTransactionManager"/>
+        <property name="transactionAttributes">
+			<props>
+                <prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED, readOnly</prop>
+			</props>
+		</property>
+    </bean>
+	
+	<bean id="db4oService" parent="txProxyTemplate">
+		<property name="target">
+			<bean class="org.springmodules.db4o.examples.Db4oService">
+				<property name="template" ref="db4oTemplate"/>
+			</bean>
+		</property>
+	</bean>		
+
+</beans>
