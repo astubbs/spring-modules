@@ -16,6 +16,7 @@
 
 package org.springmodules.lucene.index.document.handler.file;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -42,9 +43,9 @@ public abstract class AbstractInputStreamDocumentHandler extends AbstractDocumen
 		return (InputStream.class).isAssignableFrom(clazz);
 	}
 
-	protected final Document doGetDocument(Map description, Object object) {
+	protected final Document doGetDocument(Map description, Object object) throws Exception {
 		return doGetDocumentWithInputStream(description, (InputStream)object);
 	}
 
-	protected abstract Document doGetDocumentWithInputStream(Map description, InputStream inputStream);
+	protected abstract Document doGetDocumentWithInputStream(Map description, InputStream inputStream) throws IOException;
 }
