@@ -11,23 +11,13 @@ package org.springmodules.javaspaces.gigaspaces;
 
 import java.io.Serializable;
 
-import net.jini.core.entry.Entry;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.support.AopUtils;
-import org.springmodules.beans.ITestBean;
-import org.springmodules.javaspaces.DelegatingWorker;
-import org.springmodules.javaspaces.JavaSpaceInterceptor;
-import org.springmodules.javaspaces.PutTests.PerformanceMonitorInterceptor;
-import org.springmodules.javaspaces.entry.MethodResultEntry;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springframework.util.StopWatch;
-import com.j_spaces.core.IJSpace;
-
-import org.springmodules.javaspaces.gigaspaces.GigaSpacesInterceptor;
-import org.springmodules.javaspaces.gigaspaces.GigaSpacesTemplate;
+import org.springmodules.beans.ITestBean;
+import org.springmodules.javaspaces.DelegatingWorker;
 
 
 
@@ -85,11 +75,14 @@ public class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringCon
 		GigaSpacesInterceptor gigaSpacesInterceptor = (GigaSpacesInterceptor)applicationContext.getBean("javaSpaceInterceptor");
 		gigaSpacesInterceptor.setSynchronous(false);
 		ITestBean lazyResult = proxy.getSpouse();
-		assertTrue(AopUtils.isCglibProxy(lazyResult));
+		
 		System.out.println("should not be initialized");
 		System.out.println(lazyResult.getClass());
 		System.out.println(lazyResult.hashCode());
 		System.out.println("should not be initialized");
+		System.out.println("classname is " + lazyResult.getClass());
+		assertTrue(AopUtils.isCglibProxyClass(lazyResult.getClass()));
+
 		System.out.println("The lazy result"+lazyResult);
 		System.out.println("should be initialized");
 		System.out.println("the name " +lazyResult.getName());
@@ -107,7 +100,7 @@ public class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringCon
 		}
 		catch (IllegalArgumentException e) {
 			// can't proxy strings
-			e.printStackTrace();
+			// expected
 		}
 	}
 

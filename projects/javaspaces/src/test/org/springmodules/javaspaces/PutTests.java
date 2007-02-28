@@ -125,7 +125,8 @@ public class PutTests extends AbstractDependencyInjectionSpringContextTests {
 		// nothing before the call
 		assertNull(template.getSpace().readIfExists(new MethodResultEntry(), template.getCurrentTransaction(), 100));
 		ITestBean lazyResult = proxy.getSpouse();
-		assertTrue(AopUtils.isCglibProxy(lazyResult));
+		System.out.println("spouse name is " + lazyResult.getClass());
+		assertTrue(AopUtils.isCglibProxyClass(lazyResult.getClass()));
 		System.out.println("should not be initialized");
 		System.out.println(lazyResult.getClass());
 		System.out.println(lazyResult.hashCode());
