@@ -37,5 +37,5 @@ public interface SearcherFactory {
 	 * on the index.
 	 * @return the Searcher instance
 	 */
-	public LuceneSearcher getSearcher() throws IOException;
+	LuceneSearcher getSearcher() throws IOException;
 }
