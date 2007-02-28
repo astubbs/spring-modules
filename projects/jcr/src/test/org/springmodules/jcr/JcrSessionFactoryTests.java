@@ -94,12 +94,15 @@ public class JcrSessionFactoryTests extends TestCase {
 		MockControl repoCtrl2;
 		Repository repo2;
 
-		repoCtrl2 = MockControl.createControl(Repository.class);
+		repoCtrl2 = MockControl.createNiceControl(Repository.class);
 		repo2 = (Repository) repoCtrl2.getMock();
 
+		repoCtrl2.replay();
+		repoCtrl.replay();
+		
 		JcrSessionFactory fact2 = new JcrSessionFactory();
 		fact2.setRepository(repo2);
-		assertEquals(factory, fact2);
+		assertFalse(factory.equals(fact2));
 	}
 
 	public void testAddListeners() throws RepositoryException {
@@ -169,16 +172,12 @@ public class JcrSessionFactoryTests extends TestCase {
 		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
 		wsCtrl.expectAndReturn(ws.getNamespaceRegistry(), registry);
 		
+		nrCtrl.expectAndReturn(registry.getURI("foo"), null);
+		nrCtrl.expectAndReturn(registry.getURI("hocus"), null);
+		
 		// destroy
-		repoCtrl.expectAndReturn(repo.login(null, null), session);
-		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
-		wsCtrl.expectAndReturn(ws.getNamespaceRegistry(), registry);
-
 		registry.registerNamespace("foo", "bar");
 		registry.registerNamespace("hocus", "pocus");
-		
-		registry.unregisterNamespace("hocus");
-		registry.unregisterNamespace("foo");
 		
 
 		nrCtrl.replay();
@@ -204,6 +203,8 @@ public class JcrSessionFactoryTests extends TestCase {
 
 		factory.setNamespaces(namespaces);
 		factory.setForceNamespacesRegistration(true);
+		factory.setSkipRegisteredNamespace(false);
+		factory.setKeepRegisteredNamespaces(false);
 
 		MockControl sessionCtrl = MockControl.createControl(Session.class);
 		Session session = (Session) sessionCtrl.getMock();
@@ -213,7 +214,7 @@ public class JcrSessionFactoryTests extends TestCase {
 
 		MockControl nrCtrl = MockControl.createControl(NamespaceRegistry.class);
 		NamespaceRegistry registry = (NamespaceRegistry) nrCtrl.getMock();
-
+		
 		// afterPropertiesSet
 		repoCtrl.expectAndReturn(repo.login(null, null), session);
 		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
@@ -258,7 +259,7 @@ public class JcrSessionFactoryTests extends TestCase {
 		namespaces.put("hocus", "pocus");
 
 		factory.setNamespaces(namespaces);
-		factory.setKeepNamespaces(true);
+		factory.setKeepRegisteredNamespaces(true);
 
 		MockControl sessionCtrl = MockControl.createControl(Session.class);
 		Session session = (Session) sessionCtrl.getMock();
@@ -274,11 +275,51 @@ public class JcrSessionFactoryTests extends TestCase {
 		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
 		wsCtrl.expectAndReturn(ws.getNamespaceRegistry(), registry);
 		
-		// destroy
+		nrCtrl.expectAndReturn(registry.getURI("foo"), null);
+		nrCtrl.expectAndReturn(registry.getURI("hocus"), null);
 
 		registry.registerNamespace("foo", "bar");
 		registry.registerNamespace("hocus", "pocus");
 		
+
+		nrCtrl.replay();
+		wsCtrl.replay();
+		sessionCtrl.replay();
+		repoCtrl.replay();
+
+		factory.afterPropertiesSet();
+		
+		factory.destroy();
+
+		nrCtrl.verify();
+		wsCtrl.verify();
+		sessionCtrl.verify();
+	}
+	
+	public void testSkipRegisteredNamespaces() throws RepositoryException {
+		Properties namespaces = new Properties();
+		namespaces.put("foo", "bar");
+		namespaces.put("hocus", "pocus");
+
+		factory.setNamespaces(namespaces);
+		factory.setSkipRegisteredNamespace(false);
+
+		MockControl sessionCtrl = MockControl.createControl(Session.class);
+		Session session = (Session) sessionCtrl.getMock();
+
+		MockControl wsCtrl = MockControl.createControl(Workspace.class);
+		Workspace ws = (Workspace) wsCtrl.getMock();
+
+		MockControl nrCtrl = MockControl.createControl(NamespaceRegistry.class);
+		NamespaceRegistry registry = (NamespaceRegistry) nrCtrl.getMock();
+
+		// afterPropertiesSet
+		repoCtrl.expectAndReturn(repo.login(null, null), session);
+		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
+		wsCtrl.expectAndReturn(ws.getNamespaceRegistry(), registry);
+		
+		registry.registerNamespace("foo", "bar");
+		registry.registerNamespace("hocus", "pocus");
 
 		nrCtrl.replay();
 		wsCtrl.replay();

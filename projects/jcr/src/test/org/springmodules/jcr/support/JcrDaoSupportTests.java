@@ -1,8 +1,8 @@
 /**
  * Created on Sep 12, 2005
  *
- * $Id: JcrDaoSupportTests.java,v 1.2 2006/03/07 13:09:31 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JcrDaoSupportTests.java,v 1.3 2007/02/28 13:06:07 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.jcr.support;
 
@@ -80,9 +80,9 @@ public class JcrDaoSupportTests extends TestCase {
 			};
 		};
 
-		dao.setJcrTemplate(template);
+		dao.setTemplate(template);
 		dao.afterPropertiesSet();
-		assertEquals("Correct JcrTemplate", template, dao.getJcrTemplate());
+		assertEquals("Correct JcrTemplate", template, dao.getTemplate());
 	}
 
 	public void testAfterPropertiesSet() {
@@ -158,8 +158,8 @@ public class JcrDaoSupportTests extends TestCase {
 		RepositoryException ex = new RepositoryException();
 
 		tCtrl.expectAndReturn(t.convertJcrAccessException(ex), null);
-		dao.setJcrTemplate(t);
-		dao.convertJCRAccessException(ex);
+		dao.setTemplate(t);
+		dao.convertJcrAccessException(ex);
 
 	}
 

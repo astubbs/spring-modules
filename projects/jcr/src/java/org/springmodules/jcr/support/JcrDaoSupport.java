@@ -6,6 +6,7 @@ import javax.jcr.Session;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.support.DaoSupport;
+import org.springframework.util.Assert;
 import org.springmodules.jcr.JcrTemplate;
 import org.springmodules.jcr.SessionFactory;
 import org.springmodules.jcr.SessionFactoryUtils;
@@ -19,8 +20,7 @@ import org.springmodules.jcr.SessionFactoryUtils;
  */
 public abstract class JcrDaoSupport extends DaoSupport {
 
-	private JcrTemplate jcrTemplate;
-	private SessionFactory sessionFactory;
+	private JcrTemplate template;
 
 	/**
 	 * Set the JCR SessionFactory to be used by this DAO.
@@ -29,28 +29,14 @@ public abstract class JcrDaoSupport extends DaoSupport {
 	 * @see #setJcrTemplate
 	 */
 	public final void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
-	/**
-	 * Create a JcrTemplate for the given JcrSessionFactory.
-	 * Only invoked if populating the DAO with a SessionFactory reference!
-	 * <p>Can be overridden in subclasses to provide a JcrTemplate instance
-	 * with different configuration, or a custom JcrTemplate subclass.
-	 * 
-	 * @param sessionFactory the JCR SessionFactory to create a JcrTemplate for
-	 * @return the new JcrTemplate instance
-	 * @see #setSessionFactory
-	 */
-	protected JcrTemplate createJcrTemplate(SessionFactory sessionFactory) {
-		return new JcrTemplate(sessionFactory);
+		this.template = new JcrTemplate(sessionFactory);
 	}
 
 	/**
 	 * Return the Jcr SessionFactory used by this DAO.
 	 */
 	public final SessionFactory getSessionFactory() {
-		return sessionFactory;
+		return (template != null ? template.getSessionFactory() : null);
 	}
 
 	/**
@@ -58,22 +44,20 @@ public abstract class JcrDaoSupport extends DaoSupport {
 	 * as an alternative to specifying a SessionFactory.
 	 * @see #setSessionFactory
 	 */
-	public final void setJcrTemplate(JcrTemplate jcrTemplate) {
-		this.jcrTemplate = jcrTemplate;
+	public final void setTemplate(JcrTemplate jcrTemplate) {
+		this.template = jcrTemplate;
 	}
 
 	/**
 	 * Return the JcrTemplate for this DAO, pre-initialized
 	 * with the SessionFactory or set explicitly.
 	 */
-	public final JcrTemplate getJcrTemplate() {
-		return jcrTemplate;
+	public final JcrTemplate getTemplate() {
+		return template;
 	}
 
 	protected final void checkDaoConfig() {
-		if (this.jcrTemplate == null && this.sessionFactory == null) {
-			throw new IllegalArgumentException("sessionFactory or jcrTemplate is required");
-		}
+		Assert.notNull(template, "sessionFactory or jcrTemplate is required");
 	}
 
 	/**
@@ -86,7 +70,7 @@ public abstract class JcrDaoSupport extends DaoSupport {
 	 * @see org.springmodules.jcr.SessionFactoryUtils#getSession
 	 */
 	protected final Session getSession() {
-		return getSession(this.jcrTemplate.isAllowCreate());
+		return getSession(this.template.isAllowCreate());
 	}
 
 	/**
@@ -113,8 +97,8 @@ public abstract class JcrDaoSupport extends DaoSupport {
 	 * @see #setJCRTemplate
 	 * @see org.springmodules.jcr.JcrTemplate#convertJCRAccessException
 	 */
-	protected final DataAccessException convertJCRAccessException(RepositoryException ex) {
-		return this.jcrTemplate.convertJcrAccessException(ex);
+	protected final DataAccessException convertJcrAccessException(RepositoryException ex) {
+		return this.template.convertJcrAccessException(ex);
 	}
 
 	/**
@@ -127,15 +111,4 @@ public abstract class JcrDaoSupport extends DaoSupport {
 		SessionFactoryUtils.releaseSession(session, getSessionFactory());
 	}
 
-	/**
-	 * @see org.springframework.dao.support.DaoSupport#initDao()
-	 */
-	protected final void initDao() throws Exception {
-		// the template is null - we at least have the sessionFactory
-		if (this.jcrTemplate == null) {
-			this.jcrTemplate = createJcrTemplate(sessionFactory);
-		}
-		if (this.sessionFactory == null)
-			setSessionFactory(this.jcrTemplate.getSessionFactory());
-	}
 }

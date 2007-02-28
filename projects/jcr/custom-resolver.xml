@@ -6,9 +6,9 @@
 			<!-- apache incubator maven / made an url to respect the naming
 			<ibiblio name="apache-incubator" root="http://cvs.apache.org/dist/incubator/"/>
 			-->
-			<!---->
-			<url name="apache-dist">			
-				<artifact pattern="http://www.apache.org/dist/java-repository/org.apache.jackrabbit/jars/[artifact]-[revision].[ext]" />				
+			<!--required since ivy complains about jackrabbit-core pom-->
+			<url name="mave2-jackrabbit-core-shortcut">			
+				<artifact pattern="http://mirrors.ibiblio.org/pub/mirrors/maven2/org/apache/jackrabbit/[artifact]/[revision]/[artifact]-[revision].[ext]" />				
 			</url>
 			<!-- 
 			<ibiblio name="apache-maven" m2compatible="false" root="http://www.apache.org/dist/java-repository"/>
