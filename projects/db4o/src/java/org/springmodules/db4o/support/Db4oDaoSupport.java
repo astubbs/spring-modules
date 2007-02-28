@@ -1,9 +1,8 @@
 package org.springmodules.db4o.support;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springmodules.db4o.Db4oTemplate;
 import org.springframework.dao.support.DaoSupport;
+import org.springframework.util.Assert;
+import org.springmodules.db4o.Db4oTemplate;
 
 import com.db4o.ObjectContainer;
 
@@ -19,12 +18,10 @@ import com.db4o.ObjectContainer;
  * passed in.
  * 
  * @author Daniel Mitterdorfer
- * @since 07.12.2005
+ * @author Costin Leau
  * 
  */
-public class Db4oDaoSupport extends DaoSupport {
-	protected final Log logger = LogFactory.getLog(getClass());
-
+public abstract class Db4oDaoSupport extends DaoSupport {
 	private Db4oTemplate template;
 
 	/**
@@ -35,7 +32,7 @@ public class Db4oDaoSupport extends DaoSupport {
 	 * @see #setDb4oTemplate
 	 */
 	public final void setObjectContainer(ObjectContainer container) {
-		this.template = createDb4oTemplate(container);
+		template = createDb4oTemplate(container);
 	}
 
 	/**
@@ -45,8 +42,7 @@ public class Db4oDaoSupport extends DaoSupport {
 	 * Can be overridden in subclasses to provide a Db4oTemplate instance with
 	 * different configuration, or a custom Db4oTemplate subclass.
 	 * 
-	 * @param container
-	 *            the Db4o ObjectContainer to create a Db4oTemplate for
+	 * @param container the Db4o ObjectContainer to create a Db4oTemplate for
 	 * @return the new Db4oTemplate instance
 	 * @see #setObjectContainer
 	 */
@@ -56,12 +52,12 @@ public class Db4oDaoSupport extends DaoSupport {
 
 	/**
 	 * @return A valid object container if #setObjectContainer or #setTemplate
-	 *         have been invoked previously. This should ever be the case if you
-	 *         configure this class in your application context file and let
-	 *         Spring wire up the dependencies. If there was no previous call, null is returned.
+	 * have been invoked previously. This should ever be the case if you
+	 * configure this class in your application context file and let Spring wire
+	 * up the dependencies. If there was no previous call, null is returned.
 	 */
 	public final ObjectContainer getObjectContainer() {
-		return (this.template != null) ? this.template.getObjectContainer() : null;
+		return (template != null) ? template.getObjectContainer() : null;
 	}
 
 	/**
@@ -71,20 +67,28 @@ public class Db4oDaoSupport extends DaoSupport {
 	 * @see #setObjectContainer
 	 */
 
-	public final void setDb4oTemplate(Db4oTemplate template) {
-		this.template = template;
+	public final void setDb4oTemplate(Db4oTemplate db4oTemplate) {
+		template = db4oTemplate;
 	}
 
 	public final Db4oTemplate getDb4oTemplate() {
-		return this.template;
+		return template;
 	}
 
 	/**
 	 * @see org.springframework.dao.support.DaoSupport#checkDaoConfig()
 	 */
 	protected final void checkDaoConfig() {
-		if (this.template == null) {
-			throw new IllegalArgumentException("objectContainer or db4oTemplate is required");
-		}
+		Assert.notNull(template, "objectContainer or db4oTemplate is required");
+	}
+
+	/**
+	 * Convert the given db4o exception into a Spring unchecked DAO exception.
+	 * 
+	 * @param ex
+	 * @return
+	 */
+	protected final RuntimeException convertDb4oException(Exception ex) {
+		return template.convertDb4oAccessException(ex);
 	}
 }
