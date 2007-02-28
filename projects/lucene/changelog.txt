@@ -1,7 +1,7 @@
 Spring Modules - Lucene
 
 
-Changes in version 0.7 (15.02.2007)
+Changes in version 0.8 (01.03.2007)
 -------------------------------------
 
 - Removed the two Document(s)Identifier interfaces. These informations are now
@@ -13,3 +13,7 @@ Changes in version 0.7 (15.02.2007)
 - Update templates in order to support Lucene 2.
 - Change the package name org.springmodules.lucene.index.support.handler to
   org.springmodules.lucene.index.document.handler
+- Renamed getTemplate/setTemplate methods to getLuceneIndexTemplate/setLuceneIndexTemplate in
+  the LuceneIndexTemplate interface
+- Renamed getTemplate/setTemplate methods to getLuceneSearchTemplate/setLuceneSearchTemplate in
+  the LuceneSearchTemplate interface
