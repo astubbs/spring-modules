@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,28 +22,28 @@ import java.util.Map;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.springmodules.lucene.index.support.handler.handler.DocumentHandler;
+import org.springmodules.lucene.index.document.handler.file.AbstractInputStreamDocumentHandler;
 
 /**
  * @author Thierry Templier
  */
-public abstract class AbstractDocumentHandler {
+public abstract class AbstractDocumentTypeFileHandler extends AbstractInputStreamDocumentHandler {
 
 	protected abstract String extractText(InputStream inputStream) throws IOException;
 
 	/**
 	 * @see org.springmodules.lucene.index.object.file.FileDocumentHandler#getDocument(java.io.File, java.io.FileReader)
 	 */
-	public final Document getDocument(Map description, InputStream inputStream) throws IOException {
-		Document document=new Document();
-		String text=extractText(inputStream);
+	public final Document doGetDocumentWithInputStream(Map description, InputStream inputStream) throws IOException {
+		Document document = new Document();
+		String text = extractText(inputStream);
 		if( text!=null && text.length()>0 ) {
 			//The text is analyzed and indexed but not stored
-			document.add(Field.UnStored("contents",text));
+			document.add(new Field("contents", text, Field.Store.NO, Field.Index.TOKENIZED));
 		}
-		if( description.get(DocumentHandler.FILENAME)!=null ) {
-			document.add(Field.Keyword("type", "file"));
-			document.add(Field.Keyword("filename", (String)description.get(DocumentHandler.FILENAME)));
+		if( description.get(AbstractInputStreamDocumentHandler.FILENAME)!=null ) {
+			document.add(new Field("type", "file", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			document.add(new Field("filename", (String)description.get(AbstractInputStreamDocumentHandler.FILENAME), Field.Store.YES, Field.Index.UN_TOKENIZED));
 		}
 		return document;
 	}

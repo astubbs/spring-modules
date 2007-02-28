@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class CategoryDaoImpl extends JdbcDaoSupport implements CategoryDao {
 		}
 
 		public Object mapRow(ResultSet rs, int rowNumber) throws SQLException {
-			DocumentCategory category=new DocumentCategory(rs.getInt("CATEGORY_ID"),
+			DocumentCategory category = new DocumentCategory(rs.getInt("CATEGORY_ID"),
 													rs.getString("CATEGORY_NAME"));
 			return category;
 		} 
@@ -57,20 +57,20 @@ public class CategoryDaoImpl extends JdbcDaoSupport implements CategoryDao {
 		}
 
 		public Object mapRow(ResultSet rs, int rowNumber) throws SQLException {
-			DocumentCategory category=new DocumentCategory(rs.getInt("CATEGORY_ID"),
+			DocumentCategory category = new DocumentCategory(rs.getInt("CATEGORY_ID"),
 													rs.getString("CATEGORY_NAME"));
 			return category;
 		} 
 	}
 
 	public List getCategories() {
-		CategoriesMappingQuery query=new CategoriesMappingQuery(getDataSource());
+		CategoriesMappingQuery query = new CategoriesMappingQuery(getDataSource());
 		return query.execute();
 	}
 
 	public DocumentCategory getCategory(int id) {
-		CategoryMappingQuery query=new CategoryMappingQuery(getDataSource());
-		List categories=query.execute(new Object[] {new Integer(id)});
+		CategoryMappingQuery query = new CategoryMappingQuery(getDataSource());
+		List categories = query.execute(new Object[] {new Integer(id)});
 		if( categories.size()==1 ) {
 			return (DocumentCategory)categories.get(0);
 		} else {
@@ -79,30 +79,30 @@ public class CategoryDaoImpl extends JdbcDaoSupport implements CategoryDao {
 	}
 
 	public void addCategory(DocumentCategory category) {
-		SqlFunction sqlFunction=new SqlFunction(getDataSource(),
+		SqlFunction sqlFunction = new SqlFunction(getDataSource(),
 									"select category_id from category");
 		sqlFunction.compile();
-		int categoryId=sqlFunction.run()+1;
+		int categoryId = sqlFunction.run()+1;
 		category.setId(categoryId);
 
 		getJdbcTemplate().update(
 			"insert into category (category_id,category_name) values(?,?)",
-			new Object[] {new Integer(category.getId()),category.getName()},
-			new int[] {Types.INTEGER,Types.VARCHAR});
+			new Object[] {new Integer(category.getId()), category.getName()},
+			new int[] { Types.INTEGER, Types.VARCHAR });
 	}
 
 	public void updateCategory(DocumentCategory category) {
 		getJdbcTemplate().update(
 			"update category set category_id=?,category_name=? where category_id=?",
-			new Object[] {new Integer(category.getId()),category.getName(),
+			new Object[] {new Integer(category.getId()), category.getName(),
 							new Integer(category.getId())},
-			new int[] {Types.INTEGER,Types.VARCHAR,Types.INTEGER});
+			new int[] {Types.INTEGER, Types.VARCHAR,Types.INTEGER });
 	}
 
 	public void deleteCategory(DocumentCategory category) {
 		getJdbcTemplate().update(
 			"delete from category where category_id=?",
-			new Object[] {new Integer(category.getId())},
-			new int[] {Types.INTEGER});
+			new Object[] { new Integer(category.getId()) },
+			new int[] { Types.INTEGER });
 	}
 }

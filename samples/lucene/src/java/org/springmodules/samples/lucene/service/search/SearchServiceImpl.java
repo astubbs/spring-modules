@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,18 +40,18 @@ import org.springmodules.samples.lucene.bean.search.SearchResult;
 public class SearchServiceImpl extends LuceneSearchSupport implements SearchService {
 
 	public List search(final String fieldName,final String textToSearch) {
-		List results=getTemplate().search(new ParsedQueryCreator() {
+		List results = getLuceneSearcherTemplate().search(new ParsedQueryCreator() {
 			public QueryParams configureQuery() {
-				return new QueryParams(fieldName,textToSearch);
+				return new QueryParams(fieldName, textToSearch);
 			}
 		},new HitExtractor() {
 			public Object mapHit(int id, Document document, float score) {
 				if( document.get("request")!=null ) {
-					return new SearchResult(document.get("id"),document.get("request"),
+					return new SearchResult(document.get("id"), document.get("request"),
 											score,document.get("category"));
 				} else {
-					return new SearchResult(document.get("id"),document.get("filename"),
-											score,document.get("category"));
+					return new SearchResult(document.get("id"), document.get("filename"),
+											score, document.get("category"));
 				}
 			}
 		});
@@ -59,17 +59,17 @@ public class SearchServiceImpl extends LuceneSearchSupport implements SearchServ
 	}
 
 	public List getDocumentFields(final String fieldIdentifier,final String fieldValue) {
-		List fieldsDocuments=getTemplate().search(new QueryCreator() {
+		List fieldsDocuments = getLuceneSearcherTemplate().search(new QueryCreator() {
 			public Query createQuery(Analyzer analyzer) throws ParseException {
-				return new TermQuery(new Term(fieldIdentifier,fieldValue));
+				return new TermQuery(new Term(fieldIdentifier, fieldValue));
 			}
 		},new HitExtractor() {
 			public Object mapHit(int id, Document document, float score) {
-				List fields=new ArrayList();
-				for(Enumeration e=document.fields();e.hasMoreElements();) {
-					Field field=(Field)e.nextElement();
-					DocumentField documentField=new DocumentField(field.name(),field.stringValue(),
-														field.isIndexed(),field.isStored());
+				List fields = new ArrayList();
+				for(Enumeration e=document.fields(); e.hasMoreElements();) {
+					Field field = (Field)e.nextElement();
+					DocumentField documentField = new DocumentField(field.name(), field.stringValue(),
+														field.isIndexed(), field.isStored());
 					fields.add(documentField);
 				}
 				return fields;
@@ -77,7 +77,7 @@ public class SearchServiceImpl extends LuceneSearchSupport implements SearchServ
 		});
 
 		if( fieldsDocuments.size()==1 ) {
-			List fields=(List)fieldsDocuments.get(0);
+			List fields = (List)fieldsDocuments.get(0);
 			return fields;
 		}
 		return null;

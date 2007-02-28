@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,10 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.rtf.RTFEditorKit;
 
-import org.springmodules.lucene.index.support.handler.handler.DocumentHandler;
-
 /**
  * @author Thierry Templier
  */
-public class DefaultRtfDocumentHandler extends AbstractDocumentHandler implements DocumentHandler {
+public class DefaultRtfDocumentHandler extends AbstractDocumentTypeFileHandler {
 
 	protected String extractText(InputStream inputStream) throws IOException {
 		DefaultStyledDocument styledDoc = new DefaultStyledDocument();

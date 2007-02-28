@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,18 +25,18 @@ import org.springframework.jdbc.object.SqlFunction;
 public class DocumentIdDaoImpl extends JdbcDaoSupport implements DocumentIdDao {
 
 	public long getNextDocumentId() {
-		SqlFunction sqlFunction=new SqlFunction(getDataSource(),
+		SqlFunction sqlFunction = new SqlFunction(getDataSource(),
 									"select next_document_id from document_id");
 		sqlFunction.compile();
 		return sqlFunction.run();
 	}
 
 	public void incrementDocumentId() {
-		SqlFunction sqlFunction=new SqlFunction(getDataSource(),
+		SqlFunction sqlFunction = new SqlFunction(getDataSource(),
 									"select next_document_id from document_id");
 		sqlFunction.compile();
-		int nextDocumentId=sqlFunction.run();
+		int nextDocumentId = sqlFunction.run();
 		getJdbcTemplate().update("update document_id set next_document_id=?",
-									new Object[] { new Integer(nextDocumentId+1)});
+									new Object[] { new Integer(nextDocumentId+1) });
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,22 +23,19 @@ import java.util.Map;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.pdfbox.searchengine.lucene.LucenePDFDocument;
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
+import org.springmodules.lucene.index.document.handler.file.AbstractInputStreamDocumentHandler;
 
 /**
  * @author Thierry Templier
  */
-public class PdfBoxDocumentHandler implements DocumentHandler {
+public class PdfBoxDocumentHandler extends AbstractInputStreamDocumentHandler {
 
-	/**
-	 * @see org.springmodules.lucene.index.object.file.FileDocumentHandler#getDocument(java.io.File, java.io.FileReader)
-	 */
-	public Document getDocument(Map description, InputStream inputStream) throws IOException {
+	protected Document doGetDocumentWithInputStream(Map description, InputStream inputStream) throws IOException {
 		//The text is analyzed and indexed but not stored
-		Document document=LucenePDFDocument.getDocument(inputStream);
-		if( description.get(DocumentHandler.FILENAME)!=null ) {
-			document.add(Field.Keyword("type", "file"));
-			document.add(Field.Keyword("filename", (String)description.get(DocumentHandler.FILENAME)));
+		Document document = LucenePDFDocument.getDocument(inputStream);
+		if( description.get(AbstractInputStreamDocumentHandler.FILENAME)!=null ) {
+			document.add(new Field("type", "file", Field.Store.YES, Field.Index.UN_TOKENIZED));
+			document.add(new Field("filename", (String)description.get(AbstractInputStreamDocumentHandler.FILENAME), Field.Store.YES, Field.Index.UN_TOKENIZED));
 		}
 		return document;
 	}

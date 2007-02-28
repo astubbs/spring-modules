@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.poi.hdf.extractor.WordDocument;
-import org.springmodules.lucene.index.support.handler.DocumentHandler;
 
 /**
  * @author Thierry Templier
  */
-public class PoiWordDocumentHandler extends AbstractDocumentHandler implements DocumentHandler {
+public class PoiWordDocumentHandler extends AbstractDocumentTypeFileHandler {
 
 	protected String extractText(InputStream inputStream) throws IOException {
-		WordDocument wordDocument=new WordDocument(inputStream);
-		StringWriter textWriter=new StringWriter();
+		WordDocument wordDocument = new WordDocument(inputStream);
+		StringWriter textWriter = new StringWriter();
 		wordDocument.writeAllText(new PrintWriter(textWriter));
 		textWriter.close();
 		return textWriter.toString();

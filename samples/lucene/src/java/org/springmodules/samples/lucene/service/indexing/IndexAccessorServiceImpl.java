@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,13 +35,13 @@ public class IndexAccessorServiceImpl implements IndexAccessorService {
 
 	public void addDocument(String title,
 							String text,String category) {
-		long documentId=documentIdDao.getNextDocumentId();
-		indexAccessorDao.addDocument(String.valueOf(documentId),title,text,category);
+		long documentId = documentIdDao.getNextDocumentId();
+		indexAccessorDao.addDocument(String.valueOf(documentId), title, text, category);
 		documentIdDao.incrementDocumentId();
 	}
 
 	public void addDocument(FileDocumentHolder holder) {
-		long documentId=documentIdDao.getNextDocumentId();
+		long documentId = documentIdDao.getNextDocumentId();
 		holder.setId(String.valueOf(documentId));
 		indexAccessorDao.addDocument(holder);
 		documentIdDao.incrementDocumentId();

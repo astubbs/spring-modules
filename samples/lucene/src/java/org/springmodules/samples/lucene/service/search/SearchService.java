@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,6 @@ import java.util.List;
  * @author Thierry Templier
  */
 public interface SearchService {
-	public List search(String fieldName,String textToSearch);
-	public List getDocumentFields(String fieldIdentifier,String fieldValue);
+	List search(String fieldName, String textToSearch);
+	List getDocumentFields(String fieldIdentifier, String fieldValue);
 }
