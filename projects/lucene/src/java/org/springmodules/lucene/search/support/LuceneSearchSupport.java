@@ -72,14 +72,14 @@ public abstract class LuceneSearchSupport implements InitializingBean {
 	/**
 	 * Set a configured template.
 	 */
-	public void setTemplate(LuceneSearchTemplate template) {
+	public void setLuceneSearcherTemplate(LuceneSearchTemplate template) {
 		this.template = template;
 	}
 
 	/**
 	 * Return the LuceneSearchTemplate to use.
 	 */
-	public LuceneSearchTemplate getTemplate() {
+	public LuceneSearchTemplate getLuceneSearcherTemplate() {
 		return template;
 	}
 
@@ -88,13 +88,13 @@ public abstract class LuceneSearchSupport implements InitializingBean {
 	 * and analyzer properties if it is not injected. 
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if (this.searcherFactory == null)
-			throw new BeanInitializationException("directory property required");
-		if (this.analyzer == null)
-			throw new BeanInitializationException("analyzer property required");        
-
 		if( this.template==null ) {
-			this.template=new DefaultLuceneSearchTemplate(searcherFactory,analyzer);
+			if (this.searcherFactory == null)
+				throw new BeanInitializationException("directory property required");
+			if (this.analyzer == null)
+				throw new BeanInitializationException("analyzer property required");        
+
+			this.template = new DefaultLuceneSearchTemplate(searcherFactory, analyzer);
 		}
 	}
 

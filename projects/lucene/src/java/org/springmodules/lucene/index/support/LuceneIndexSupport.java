@@ -117,11 +117,11 @@ public abstract class LuceneIndexSupport implements InitializingBean {
 	 * and analyzer properties if it is not injected. 
 	 */
 	public void afterPropertiesSet() throws Exception {
-		if( this.template==null && this.indexFactory==null ) {
-			throw new BeanInitializationException("indexFactory property required");
-		}
-
 		if( this.template==null ) {
+			if( this.indexFactory==null ) {
+				throw new BeanInitializationException("indexFactory property required");
+			}
+
 			this.template = new DefaultLuceneIndexTemplate(indexFactory, analyzer);
 		}
 	}
