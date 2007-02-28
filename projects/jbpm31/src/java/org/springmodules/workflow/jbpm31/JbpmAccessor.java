@@ -1,8 +1,8 @@
 /**
  * Created on Feb 21, 2006
  *
- * $Id: JbpmAccessor.java,v 1.2 2006/03/02 16:01:13 costin Exp $
- * $Revision: 1.2 $
+ * $Id: JbpmAccessor.java,v 1.3 2007/02/28 13:05:02 costin Exp $
+ * $Revision: 1.3 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -41,7 +41,7 @@ public class JbpmAccessor implements InitializingBean{
 	 * @param ex
 	 * @return
 	 */
-	public static RuntimeException convertJbpmException(JbpmException ex) {
+	public RuntimeException convertJbpmException(JbpmException ex) {
 		// decode nested exceptions
 		if (ex.getCause() instanceof HibernateException) {
 			DataAccessException rootCause = SessionFactoryUtils.convertHibernateAccessException((HibernateException) ex.getCause());
