@@ -14,31 +14,197 @@
     architecture based on distributed indexes and provides several kinds of
     indexes (in-memory, file-system based, database based).</para>
 
-    <para>Spring Modules offers a Lucene support to provide more flexibility
-    in its APIs use. It adds some new abstractions to facilitate the
-    management of <emphasis>IndexReader</emphasis>,
+    <para>Spring Modules offers a Lucene support in order to provide more
+    flexibility in its APIs use. It adds some new abstractions to facilitate
+    the management of <emphasis>IndexReader</emphasis>,
     <emphasis>IndexWriter</emphasis> and <emphasis>Searcher</emphasis>, the
     index locking and concurrent accesses, the query creation and the results
     extraction. It provides too facilities to index easily sets of files and
     database rows.</para>
+
+    <para>The support provides too a thin layer upon the Lucene API in order
+    to hide the underlying resources and to make easier unit tests of classes
+    using Lucene. As a matter of fact, Lucene does not use interfaces and is
+    essentially based on concrete entities.</para>
+
+    <para>On the other hand, the support provides a generic document handling
+    feature in order to offer dedicated entities to create documents . This
+    feature manages too the document and handler association. The handler has
+    the responsability to create a document from an object or an
+    <emphasis>InputStream</emphasis>. The feature is particularly useful to
+    manage the indexing of different file formats.</para>
+
+    <para>The Open Source community provides too an interesting tool which
+    makes easier the use of Lucene, the Compass framework. The Lucene support
+    of Spring Modules is different from this tool because the later hides all
+    the interactions with the index by using a
+    <emphasis>CompassSession</emphasis>, an entity similar to the Hibernate
+    <emphasis>Session</emphasis>. The aim of the Lucene support is to leave
+    access to the root resources of Lucene for more flexibilty.</para>
+
+    <para>On the other hand, if you are looking for a tool to manage paradigm
+    conversions like object, resource or xml to index, the Compass framework
+    is the right tool for you. This later provides too supports and
+    integrations with different tools and frameworks like Hibernate with its
+    GPS feature and allows the use of transactions upon Lucene, feature not
+    supported natively by Lucene.</para>
   </sect1>
 
   <sect1>
     <title>Indexing</title>
 
-    <sect2>
-      <title>IndexFactory</title>
+    <para>In this section, we will describe how the Lucene support makes
+    easier the manage of a Lucene index. We firtly deal with the root entities
+    of the support and the way to configure them, then show how to interact
+    with the index and finally describe how to manage concurrency.</para>
 
-      <para>The Lucene support introduces a new abstraction to hide the
-      getting of index reader and writer behind a factory. This abstraction is
-      the <emphasis>IndexFactory</emphasis> class. It allows the support to be
-      more flexible, to facilitate the use of design patterns and the index
-      management.</para>
+    <sect2>
+      <title>Root entities</title>
+
+      <para>Lucene provides two main root entities in order to interact with
+      an index and index documents, the classes
+      <emphasis>IndexReader</emphasis> and <emphasis>IndexWriter</emphasis>.
+      These classes are concrete and can make difficult the implementation of
+      the tests unit. That's why the Lucene support introduces two interfaces,
+      respectively the interfaces <emphasis>LuceneIndexReader</emphasis> and
+      <emphasis>LuceneIndexWriter</emphasis>, in order to define the contracts
+      of those classes. So these interfaces offers the same methods as the
+      Lucene classes <emphasis>IndexReader</emphasis> and
+      <emphasis>IndexWriter</emphasis>.</para>
+
+      <para>The following code describes the methods offered by the
+      <emphasis>LuceneIndexReader</emphasis> interface:</para>
+
+      <programlisting>public interface LuceneIndexReader {
+    void close() throws IOException;
+    void deleteDocument(int docNum) throws IOException;
+    int deleteDocuments(Term term) throws IOException;
+    Directory directory();
+    int docFreq(Term t) throws IOException;
+    Document document(int n) throws IOException;
+    Collection getFieldNames(IndexReader.FieldOption fldOption);
+    TermFreqVector getTermFreqVector(int docNumber, String field) throws IOException;
+    TermFreqVector[] getTermFreqVectors(int docNumber) throws IOException;
+    long getVersion();
+    boolean hasDeletions();
+    boolean hasNorms(String field) throws IOException;
+    boolean isCurrent() throws IOException;
+    boolean isDeleted(int n);
+    int maxDoc();
+    byte[] norms(String field) throws IOException;
+    void norms(String field, byte[] bytes, int offset) throws IOException;
+    int numDocs();
+    void setNorm(int doc, String field, byte value) throws IOException;
+    void setNorm(int doc, String field, float value) throws IOException;
+    TermDocs termDocs() throws IOException;
+    TermDocs termDocs(Term term) throws IOException;
+    TermPositions termPositions() throws IOException;
+    TermPositions termPositions(Term term) throws IOException;
+    TermEnum terms() throws IOException;
+    TermEnum terms(Term t) throws IOException;
+    void undeleteAll() throws IOException;
+    LuceneSearcher createSearcher();
+    Searcher createNativeSearcher();
+}</programlisting>
+
+      <para>The following code describes the methods offered by the
+      <emphasis>LuceneIndexWriter</emphasis> interface:</para>
+
+      <programlisting>public interface LuceneIndexWriter {
+    void addDocument(Document doc) throws IOException;
+    void addDocument(Document doc, Analyzer analyzer) throws IOException;
+    void addIndexes(Directory[] dirs) throws IOException;
+    void addIndexes(IndexReader[] readers) throws IOException;
+    void close() throws IOException;
+    int docCount();
+    Analyzer getAnalyzer();
+    long getCommitLockTimeout();
+    Directory getDirectory();
+    PrintStream getInfoStream();
+    int getMaxBufferedDocs();
+    int getMaxFieldLength();
+    int getMaxMergeDocs();
+    int getMergeFactor();
+    Similarity getSimilarity();
+    int getTermIndexInterval();
+    boolean getUseCompoundFile();
+    long getWriteLockTimeout();
+    void optimize() throws IOException;
+    void setCommitLockTimeout(long commitLockTimeout);
+    void setInfoStream(PrintStream infoStream);
+    void setMaxBufferedDocs(int maxBufferedDocs);
+    void setMaxFieldLength(int maxFieldLength);
+    void setMaxMergeDocs(int maxMergeDocs);
+    void setMergeFactor(int mergeFactor);
+    void setSimilarity(Similarity similarity);
+    void setTermIndexInterval(int interval);
+    void setUseCompoundFile(boolean value);
+    void setWriteLockTimeout(long writeLockTimeout);
+}</programlisting>
+
+      <para>The main advantage of this mechanism is the possibility to
+      dissociate logical and physiacal resources. The physical resources are
+      the Lucene resources which directly interact with the index, i.e. the
+      instances of <emphasis>IndexReader</emphasis> and
+      <emphasis>IndexWriter</emphasis>.</para>
+
+      <para>The logical resources are high level resources which allow a more
+      flexible management of resources in order to integrate concurrency and
+      transaction managements. The logical resources are not provided by
+      Lucene but interfaces of the Lucene support, the interfaces
+      <emphasis>LuceneIndexReader</emphasis> and
+      <emphasis>LuceneIndexWriter</emphasis>.</para>
+
+      <para>In order to create these resources, the Lucene support implements
+      the factory pattern based on the <emphasis>IndexFactory</emphasis>
+      interface. This interface allows and hide the creation of logical
+      resources. So, with this mechanism, you only need to configure an
+      implementation of this interface in order to specify the strategy of
+      resource management.</para>
+
+      <para>The following code describes the methods offered by the
+      <emphasis>IndexFactory</emphasis> interface:</para>
 
       <programlisting>public interface IndexFactory {
-  IndexReader getIndexReader();
-  IndexWriter getIndexWriter();
+    LuceneIndexReader getIndexReader();
+    LuceneIndexWriter getIndexWriter();
 }</programlisting>
+
+      <para>Because the factory handle only logical resources, it do not
+      provide directly instances of <emphasis>IndexReader</emphasis> and
+      <emphasis>IndexWriter</emphasis>. The latters are managed
+      implementations of the <emphasis>LuceneIndexReader</emphasis> and
+      <emphasis>LuceneIndexWriter</emphasis>.</para>
+
+      <para>The Lucene support introduces the following implementations of the
+      <emphasis>IndexFactory</emphasis> interface:</para>
+
+      <table frame="all">
+        <title>Different implementations of the IndexFactory interface</title>
+
+        <tgroup cols="3">
+          <thead>
+            <row>
+              <entry align="center">IndexFactory implementation</entry>
+
+              <entry align="center">Logical resource implementations</entry>
+
+              <entry align="center">Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry align="center">SimpleIndexFactory</entry>
+
+              <entry align="center">SimpleLuceneIndexReader and
+              SimpleLuceneIndexWriter</entry>
+
+              <entry>Simple wrapping of the physical ressources.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
     </sect2>
 
     <sect2>
@@ -46,171 +212,387 @@
 
       <para>Spring Modules provides at this time only one index factory based
       on a directory and an analyzer. It provides too support for configuring
-      several directory types.</para>
+      the main directory types.</para>
 
       <sect3>
         <title>Configuring directories</title>
 
-        <para>The base Lucene concept is directory: It represents the index.
-        There are several index types and the Lucene support allow you to
-        configure a RAM directory and a file system directory with dedicated
-        <emphasis>FactoryBean</emphasis>.</para>
+        <para>The root Lucene concept is the <emphasis>Directory</emphasis>
+        which represents physically the index. Lucene supports different types
+        of storage of the index. The Lucene support allows to configure an
+        in-memory index (a RAM directory) and a persistent index (file system
+        directory) with dedicated Spring
+        <emphasis>FactoryBeans</emphasis>.</para>
 
-        <para>To configure a RAM directory, you need to use the
-        <emphasis>RAMDirectoryFactoryBean</emphasis> class.</para>
+        <para>The first type of <emphasis>Directory</emphasis>, the RAM
+        directory, can be configured using the
+        <emphasis>RAMDirectoryFactoryBean</emphasis> class, as in the
+        following code:</para>
 
-        <programlisting>&lt;bean id="ramDirectory"
-      class="org.springmodules.lucene.index.support.RAMDirectoryFactoryBean"/&gt;</programlisting>
+        <programlisting>&lt;bean id="ramDirectory" class="org.springmodules.lucene.index.support.RAMDirectoryFactoryBean"/&gt;</programlisting>
 
-        <para><emphasis>Important note</emphasis>: Remember that a RAM
-        directory is not a persistent index.</para>
+        <para>You must be careful when you use this type of storage because
+        all the informations of the index are in memory and are never persist
+        on the disk.</para>
 
-        <para>To configure a filesystem directory, you need to use the
-        <emphasis>FSDirectoryFactoryBean</emphasis> class. The only mandatory
-        property is the directory location of the index.</para>
+        <para>The second type of <emphasis>Directory</emphasis>, the file
+        system directory, can be configure using the
+        <emphasis>FSDirectoryFactoryBean</emphasis> class. This class is much
+        more advanced because it allows to manage the creation of the index.
+        The only mandatory property is location which specifies the location
+        of the index on the disk basing on the facilities of the
+        <emphasis>Resource</emphasis> interface of Spring.</para>
 
-        <programlisting>&lt;bean id="fsDirectory"
-      class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/temp/lucene&lt;/value&gt;&lt;/property&gt;
+        <para>The following code describes how to configure a directory of
+        this type:</para>
+
+        <programlisting>&lt;bean id="fsDirectory" class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
+    &lt;property name="location" value="/temp/lucene"/&gt;
 &lt;/bean&gt;</programlisting>
 
-        <para><emphasis>Important note</emphasis>: The sandbox of the Lucene
-        project defines other directories like a database one. Spring Modules
-        doesn't support these kind of directories at this time.</para>
+        <para>The sandbox of the Lucene project defines other kinds of
+        directory (database...) which are not supported by the Lucene support
+        at this time.</para>
       </sect3>
 
       <sect3>
         <title>Configuring a SimpleIndexFactory</title>
 
         <para>The <emphasis>SimpleIndexFactory</emphasis> class is the default
-        factory to manipulate index. It is based on a Lucene directory and a
-        default analyzer. To configure it in Spring, you need to use the
-        corresponding <emphasis>SimpleIndexFactoryBean</emphasis>
-        class.</para>
+        factory to manipulate index. This entity provides logical resources
+        which simply wrap the physical resources on the index basing on the
+        <emphasis>SimpleLuceneIndexReader</emphasis> and
+        <emphasis>SimpleLuceneIndexWriter</emphasis> classes.</para>
+
+        <para>This factory must be configured with the Lucene directory to
+        access and eventually a default analyzer. In order to configure this
+        class in a Spring application context, the support provides the
+        <emphasis>SimpleIndexFactoryBean</emphasis> class whose configuration
+        is described below:</para>
 
         <programlisting>&lt;bean id="fsDirectory" class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/temp/lucene&lt;/value&gt;&lt;/property&gt;
+    &lt;property name="location" value="C:/temp/lucene"/&gt;
 &lt;/bean&gt;
 
 &lt;bean id="indexFactory" class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean"&gt;
-  &lt;property name="directory"&gt;&lt;ref local="fsDirectory" /&gt;&lt;/property&gt;
-  &lt;property name="analyzer"&gt;
-    &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
-  &lt;/property&gt;
+    &lt;property name="directory" ref="fsDirectory"/&gt;
+    &lt;property name="analyzer"&gt;
+        &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
+    &lt;/property&gt;
 &lt;/bean&gt;</programlisting>
+
+        <para>The SimpleIndexFactory class allows too to management the
+        creation and the locking of the index using respectively the
+        <emphasis>resolveLock</emphasis> and <emphasis>create</emphasis>
+        properties. The default values of these properties are
+        <emphasis>false</emphasis>. The first one specifies that the index
+        will be automaticaly unlock if it is lock during the first resource
+        creation. The second specifies that the index structure will be
+        created if not during the creation of the first
+        <emphasis>IndexWriter</emphasis>.</para>
 
         <para>This factory is based on the
         <emphasis>IndexReaderFactoryUtils</emphasis> and
         <emphasis>IndexWriterFactoryUtils</emphasis> classes to manage the
-        <emphasis>IndexReader</emphasis> and <emphasis>IndexWriter</emphasis>
-        creation or getting. You must be aware that opening an index in a
-        write mode will lock it until the writer is closed. Moreover some
-        operations are forbidden between the reader and the writer (for
-        example, a document delete using the reader and document addition
-        using the writing).</para>
+        <emphasis>LuceneIndexReader</emphasis> and
+        <emphasis>LuceneIndexWriter</emphasis> creation and getting. However,
+        no concurrency management is provided by this entity. You must be
+        aware that opening an index in a write mode will lock it until the
+        writer is closed. Moreover some operations are forbidden between the
+        reader and the writer (for example, a document delete using the reader
+        and document addition using the writing).</para>
 
         <para>For more informations, see the following section about the
         <emphasis>IndexFactory</emphasis> management.</para>
+      </sect3>
+
+      <sect3>
+        <title>Dedicated namespace</title>
+
+        <para>The Lucene support provides a dedicated namespace which make
+        easier the configuration of an index and its associated
+        <emphasis>IndexFactory</emphasis>.</para>
+
+        <para>//TODO: finish to implement to namespace and describe it</para>
+
+        <programlisting>&lt;beans&gt;
+    &lt;lucene:index dir="c:/..." analyzer-ref=""/&gt;
+&lt;/beans&gt;</programlisting>
       </sect3>
     </sect2>
 
     <sect2>
       <title>Document type handling</title>
 
-      <para>The support provides a generic way to handle different file
-      formats. It allows the indexer to be extended and supports other file
-      formats. To make a new handler, we only need to implement the
-      <emphasis>DocumentHandler</emphasis> interface which specifies the way
-      to construct a Lucene document from an <emphasis>InputStream</emphasis>.
-      You can pass informations about the source with the
-      <emphasis>description</emphasis> parameter.</para>
+      <para>The informations used to populate the index can come from
+      different sources (types of files, objects...). An unified support is
+      provided in order to</para>
+
+      <para>The central entity of this unified support is the interface
+      <emphasis>DocumentHandler</emphasis> which defines the contract to
+      create a document from an object. <emphasis>DocumentHandler</emphasis>
+      is an high level interface while it does not tie to any source: it have
+      no dependency with the Java IO API. The following code describes this
+      interface:</para>
 
       <programlisting>public interface DocumentHandler {
-  public Document getDocument(Map description,
-                      InputStream inputStream) throws IOException;
+    boolean supports(Class clazz);
+    Document getDocument(Map description, Object object) throws Exception;
 }</programlisting>
 
-      <para>The support provides too a dedicated manager with the
-      <emphasis>DocumentHandlerManager</emphasis> interface and its default
-      implementation,
-      <emphasis>SimpleDocumentHandlerManager</emphasis>.</para>
+      <para>The interface provides two different methods. The first, the
+      method <emphasis>supports</emphasis>, specifies which class the
+      implementation of the interface will be able to handle. The second, the
+      method <emphasis>getDocument</emphasis>, has the responsability to
+      create a document from an object and different other
+      informations.</para>
 
-      <para>By default, the text handler is only registred in the manager but
-      you can use the registration methods to add
-      (<emphasis>registerDocumentHandler</emphasis> method) or remove
-      (<emphasis>unregisterDocumentHandler</emphasis> method) one or more
-      other handlers. You can get too the handler that match to a string with
-      the <emphasis>getDocumentHandler</emphasis> method. If there is no
-      matching handler, the method returns null.</para>
+      <para>Different implementations of the interface DocumentHandler are
+      provided in the support to handle file formats, as shown in the
+      following table:</para>
+
+      <table frame="all">
+        <title>Different implementations of the DocumentHandler
+        interface</title>
+
+        <tgroup cols="3">
+          <thead>
+            <row>
+              <entry align="center">Format</entry>
+
+              <entry align="center">Tool</entry>
+
+              <entry align="center">Implementation</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry align="center">Texte</entry>
+
+              <entry align="center">-</entry>
+
+              <entry align="center">TextDocumentHandler</entry>
+            </row>
+
+            <row>
+              <entry align="center">PDF</entry>
+
+              <entry align="center">PdfBox</entry>
+
+              <entry align="center">PdfBoxDocumentHandler</entry>
+            </row>
+
+            <row>
+              <entry align="center">Rtf</entry>
+
+              <entry align="center">-</entry>
+
+              <entry align="center">DefaultRtfDocumentHandler</entry>
+            </row>
+
+            <row>
+              <entry align="center">Excel</entry>
+
+              <entry align="center">JExcel</entry>
+
+              <entry align="center">JExcelDocumentHandler</entry>
+            </row>
+
+            <row>
+              <entry align="center">Excel</entry>
+
+              <entry align="center">POI</entry>
+
+              <entry align="center">POIExcelDocumentHandler</entry>
+            </row>
+
+            <row>
+              <entry align="center">Word</entry>
+
+              <entry align="center">POI</entry>
+
+              <entry align="center">POIWordDocumentHandler</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>Other implementations are also provided in order to create Lucene
+      documents from POJO. The informations to index are determined used
+      metadatas configured from different ways, as shown in the following
+      table:</para>
+
+      <table frame="all">
+        <title>Different implementations of the DocumentHandler
+        interface</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Metadatas</entry>
+
+              <entry align="center">Implementation</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry align="center">Properties file</entry>
+
+              <entry align="center">PropertiesDocumentHandler</entry>
+            </row>
+
+            <row>
+              <entry align="center">Object (with reflection)</entry>
+
+              <entry align="center">ReflectiveDocumentHandler</entry>
+            </row>
+
+            <row>
+              <entry align="center">Annotations</entry>
+
+              <entry align="center">AnnotationDocumentHandler</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>The support offers too a generic entity which allows to handle the
+      association between entities and document handlers. The aim is .</para>
+
+      <para>This mechanism is by the
+      <emphasis>DocumentHandlerManager</emphasis> interface which allows to
+      determine the document handler to use in order to create a Lucene
+      document from a file or an object. If no document handler is available,
+      a <emphasis>DocumentHandlerException</emphasis> is thrown. Other methods
+      are provided too in order to register and unregister document handlers.
+      The following code shows the code of the
+      <emphasis>DocumentHandlerManager</emphasis> interface:</para>
 
       <programlisting>public interface DocumentHandlerManager {
-  DocumentHandler getDocumentHandler(String name);
-  void registerDefautHandlers();
-  void registerDocumentHandler(DocumentMatching matching,
-                               FileDocumentHandler handler);
-  void unregisterDocumentHandler(DocumentMatching matching);
+    DocumentHandler getDocumentHandler(String name);
+    void registerDefaultHandlers();
+    void registerDocumentHandler(DocumentMatching matching, DocumentHandler handler);
+    void unregisterDocumentHandler(DocumentMatching matching);
 }</programlisting>
 
-      <para>As you can see in the method signatures, we need to use the
-      <emphasis>DocumentMatching</emphasis> interface to specify when the
-      handler can be used. It only defines a match method which takes a string
-      as parameter. It could be a file name for example.</para>
+      <para>In order to determine with which document handler a entity type is
+      associated, the <emphasis>DocumentMatching</emphasis> interface is
+      introduced. The latter defines only one method which allows to check if
+      a String corresponds to an internal criteria, as shown in the following
+      code:</para>
 
       <programlisting>public interface DocumentMatching {
-  boolean match(String name);
+    boolean match(String name);
 }</programlisting>
 
-      <para>The support provides an implementation,
-      <emphasis>DocumentExtensionMatching</emphasis>, that takes into account
-      the file extensions. You only have to specify the extension that handler
-      the class.</para>
+      <para>This mechanism allows to make correspond several entities to one
+      document handle based on a criteria like an regexp for example.
+      Different implementations of this interface are provided by the support,
+      as shown in the following table:</para>
 
-      <para><emphasis>Note</emphasis>: This implementation is interesting for
-      an indexing that works directly on files. If you work on streams,
-      perhaps this isn't the implementation to use.</para>
+      <table frame="all">
+        <title>Different implementations of the DocumentHandler
+        interface</title>
 
-      <para>Endly, you can configure in Spring the handlers supporting by the
-      manager with the dedicated <emphasis>FactoryBean</emphasis>,
-      <emphasis>ExtensionDocumentHandlerManagerFactoryBean</emphasis> and then
-      inject it in your components. Here is an example of configuration with
-      file extension:</para>
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Implementation</entry>
 
-      <programlisting>&lt;bean id="documentHandlerManager" class=
-  "org.springmodules.lucene.index.object.file.ExtensionDocumentHandlerManagerFactoryBean"&gt;
-  &lt;property name="documentHandlers"&gt;
-    &lt;map&gt;
-      &lt;entry key="pdf"&gt;
-        &lt;bean class=
-            "org.springmodules.samples.lucene.index.file.handlers.PdfBoxDocumentHandler"/&gt;
-      &lt;/entry&gt;
-      &lt;entry key="rtf"&gt;
-        &lt;bean class=
-         "org.springmodules.samples.lucene.index.file.handlers.DefaultRtfDocumentHandler"/&gt;
-      &lt;/entry&gt;
-      &lt;entry key="xls"&gt;
-        &lt;bean class=
-            "org.springmodules.samples.lucene.index.file.handlers.JExcelDocumentHandler"/&gt;
-      &lt;/entry&gt;
-      &lt;entry key="doc"&gt;
-        &lt;bean class=
-            "org.springmodules.samples.lucene.index.file.handlers.PoiWordDocumentHandler"/&gt;
-      &lt;/entry&gt;
-    &lt;/map&gt;
-  &lt;/property&gt;
+              <entry align="center">Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry align="center">IdentityDocumentMatching</entry>
+
+              <entry align="center">PropertiesDocumentHandler</entry>
+            </row>
+
+            <row>
+              <entry align="center">Object (with reflection)</entry>
+
+              <entry align="center">ReflectiveDocumentHandler</entry>
+            </row>
+
+            <row>
+              <entry align="center">Annotations</entry>
+
+              <entry align="center">AnnotationDocumentHandler</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>According to the method signatures of the
+      <emphasis>DocumentHandlerManager</emphasis> and
+      <emphasis>DocumentMatching</emphasis> interfaces, the support offers the
+      possibility to use different implementations of the
+      <emphasis>DocumentMatching</emphasis> interface with the same
+      <emphasis>DocumentHandlerManager</emphasis> entity.</para>
+
+      <para>Endly, a dedicated <emphasis>FactoryBean</emphasis> is provided by
+      the support in order to configure programmatically
+      <emphasis>DocumentHandler</emphasis> and when use them. This
+      <emphasis>FactoryBean</emphasis> is generic and corresponds to a
+      <emphasis>DocumentHandlerManager</emphasis>. In order to configure it,
+      you must specify the implementations of
+      <emphasis>DocumentHandlerManager</emphasis> and
+      <emphasis>DocumentMatching</emphasis> interfaces to use basing
+      respectively on the <emphasis>documentHandlerManagerClass</emphasis> and
+      <emphasis>documentMatchingClass</emphasis> properties. By default, the
+      implementations of these entities are
+      <emphasis>DefaultDocumentHandlerManager</emphasis> and
+      <emphasis>IdentityDocumentMatching</emphasis>.</para>
+
+      <para>The following code shows how to configure this
+      <emphasis>FactoryBean</emphasis>:</para>
+
+      <programlisting>&lt;bean id="documentHandlerManager"
+      class="org.springmodules.lucene.index.document.handler.DocumentHandlerManagerFactoryBean"&gt;
+    &lt;property name="documentHandlerManagerClass"
+         value="org.springmodules.lucene.index.document.handler.DefaultDocumentHandlerManager"/&gt;
+    &lt;property name="documentMatchingClass"
+        value="org.springmodules.lucene.index.document.handler.file.ExtensionDocumentMatching"/&gt;
+    (...)
 &lt;/bean&gt;</programlisting>
 
-      <para><emphasis>Important note</emphasis>: This manager can be used in
-      both template and object approach.</para>
+      <para>The <emphasis>FactoryBean</emphasis> registers automatically the
+      default handlers of the <emphasis>DocumentHandlerManager</emphasis> by
+      calling its <emphasis>registerDefaultHandlers </emphasis>method. You can
+      too register programmatically other
+      <emphasis>DocumentHandler</emphasis>, as shown in the following
+      code:</para>
+
+      <programlisting>&lt;bean id="documentHandlerManager"
+      class="org.springmodules.lucene.index.document.handler.DocumentHandlerManagerFactoryBean"&gt;
+    &lt;property name="documentMatchingClass"
+        value="org.springmodules.lucene.index.document.handler.file.ExtensionDocumentMatching"/&gt;
+    &lt;property name="documentHandlers"&gt;
+        &lt;map&gt;
+            &lt;entry key="pdf"&gt;
+                org.springmodules.lucene.index.document.handler.file.PdfBoxDocumentHandler
+            &lt;/entry&gt;
+            (...)
+        &lt;/map&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+      <para>We will see later that all these entities can be use directly or
+      internally by templates.</para>
     </sect2>
 
     <sect2>
       <title>Template approach</title>
 
-      <para>The Lucene support provides a template approach like Spring for
-      JDBC, JMS... to manipulate index.</para>
+      <para>The Lucene support provides a template approach like Spring JDBC
+      to make easier the use and the manipulation of an index.</para>
 
-      <para><emphasis>LuceneIndexTemplate</emphasis> is the central class of
-      the Lucene support core package
+      <para><emphasis>LuceneIndexTemplate</emphasis> is the central interface
+      of the Lucene support core package
       (<emphasis>org.springmodules.lucene.index.core</emphasis>) for the
       indexing. It simplifies the use of the corresponding Lucene APIs since
       it handles the creation and release of resources and allow you to
@@ -221,104 +603,341 @@
       (numDoc property, optimization of an index, deleted
       documents...).</para>
 
-      <para><emphasis>Important note</emphasis>: You must be aware that some
-      operations have sense only when the index resources are shared between
-      several method calls (<emphasis>hasDeletions</emphasis>,
-      <emphasis>isDeleted</emphasis>, <emphasis>undeleteDocuments</emphasis>)
-      and other are incompatible in the latter context (for example, add
-      document and delete one when resources are shared between several
-      calls).</para>
+      <para>The Lucene support provides a default implementation of this
+      interface, the <emphasis>DefaultLuceneIndexTemplate</emphasis> class,
+      which is created and used by default.</para>
 
-      <para><emphasis>Important note</emphasis>: This template can can have an
-      index reader and writer opened at the same time.</para>
+      <sect3>
+        <title>Template configuration and getting</title>
 
-      <para>The template uses the <emphasis>DocumentCreator</emphasis> and
-      <emphasis>DocumentsCreator</emphasis> abstractions to create one or more
-      Lucene documents that will be added to an index. For that, they
-      respectively define a <emphasis>createDocument</emphasis> and
-      <emphasis>createDocuments</emphasis> methods.</para>
+        <para>In order to configure and get an instance of a
+        LuceneIndexTemplate, the support provides the
+        <emphasis>LuceneIndexSupport</emphasis> class. It allows to inject
+        instances of the <emphasis>IndexFactory</emphasis> and
+        <emphasis>DocumentHandlerManager</emphasis> interfaces and of the
+        <emphasis>Analyzer</emphasis> class. These entities are used to create
+        an instance of a template which can be reached by using the
+        <emphasis>getTemplate</emphasis> method.</para>
 
-      <programlisting>public interface DocumentCreator {
-  Document createDocument() throws IOException;
+        <para>The following code shows a class based on the
+        <emphasis>LuceneIndexSupport</emphasis> class:</para>
+
+        <programlisting>public class TestIndexImpl extends LuceneIndexSupport implements TestIndex {
+    public void getElement() {
+        LuceneIndexTemplate template = getLuceneIndexTemplate();
+        (...)
+    }
 }</programlisting>
 
-      <programlisting>public interface DocumentsCreator {
-  List createDocuments() throws IOException;
+        <para>The following code shows the configuration of the
+        <emphasis>TestIndexImpl</emphasis> class in a Spring application
+        context:</para>
+
+        <programlisting>&lt;bean id="indexFactory" class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean"&gt;
+    (...)
+&lt;/bean&gt;
+
+&lt;bean id="testIndex" class="org.springmodules.lucene.samples.index.TestIndexImpl"&gt;
+    &lt;property name="indexFactory" ref="indexFactory"/&gt;
+&lt;/bean&gt;</programlisting>
+      </sect3>
+
+      <sect3>
+        <title>Basic operations</title>
+
+        <para>The <emphasis>LuceneIndexTemplate</emphasis> class provides the
+        basic operations in order to manipulate an index: create, update and
+        delete documents. Different groups of methods can be distinguished, as
+        shown in the following code:</para>
+
+        <programlisting>public interface LuceneIndexTemplate {
+    (...)
+    /* Document(s) addition(s) */
+    void addDocument(Document document);
+    void addDocument(Document document, Analyzer analyzer);
+    void addDocument(DocumentCreator creator);
+    void addDocument(DocumentCreator documentCreator, Analyzer analyzer);
+    void addDocuments(List documents);
+    void addDocuments(List documents, Analyzer analyzer);
+    void addDocuments(DocumentsCreator creator);
+    void addDocuments(DocumentsCreator creator, Analyzer analyzer);
+
+    /* Document(s) update(s) */
+    void updateDocument(Term identifierTerm, DocumentModifier documentModifier);
+    void updateDocument(Term identifierTerm, DocumentModifier documentUpdater, Analyzer analyzer);
+    void updateDocuments(Term identifierTerm, DocumentsModifier documentsModifier);
+    void updateDocuments(Term identifierTerm, DocumentsModifier documentsModifier, Analyzer analyzer);
+
+    /* Document(s) deletion(s) */
+    void deleteDocument(int internalDocumentId);
+    void deleteDocuments(Term term);
+    void undeleteDocuments();
+    boolean isDeleted(int internalDocumentId);
+    boolean hasDeletions();
+    (...)
 }</programlisting>
 
-      <para>If you need to create a Lucene <emphasis>Document</emphasis> from
-      an <emphasis>InputStream</emphasis>, you must necessarily manage the
-      stream outside the template class because the stream must be opened when
-      it calls the <emphasis>addDocument</emphasis> method of the Lucene
-      <emphasis>IndexWriter</emphasis> class. To allow the management of the
-      <emphasis>InputStream</emphasis> by the template, the support introduces
-      the <emphasis>InputStreamDocumentCreator</emphasis> interface. Its
-      subclasses must implement the self-explanatory
-      <emphasis>createInputStream</emphasis> and
-      <emphasis>createDocumentFromInputStream</emphasis> methods.</para>
+        <para>The first group of methods allows to create and add documents to
+        an index. Lucene document can be used as parameters of the
+        <emphasis>addDocument</emphasis> methods. The Lucene support provides
+        too the interface <emphasis>DocumentCreator</emphasis> which defines
+        the way to create the document, exceptions thrown during the creation
+        of a document are now managed by the template. The following code
+        describes this interface:</para>
 
-      <programlisting>public interface InputStreamDocumentCreator {
-  public InputStream createInputStream() throws IOException;
-  public Document createDocumentFromInputStream(
-                InputStream inputStream) throws IOException;
+        <programlisting>public interface DocumentCreator {
+    Document createDocument() throws Exception;
 }</programlisting>
 
-      <para>An interesting implementation is the
-      <emphasis>InputStreamDocumentCreatorWithManager</emphasis> abstract
-      class which allows to delegate the document creation to a
-      <emphasis>DocumentHandler</emphasis> for the resource. Its subclasses
-      must implement the <emphasis>getResourceName</emphasis> method to allow
-      the <emphasis>DocumentHandlerManager</emphasis> to select the right
-      <emphasis>DocumentHandler</emphasis> and the
-      <emphasis>getResourceDescription</emphasis> method to specify its
-      mandatory fields.</para>
+        <para>The same mechanism is available to create and add several
+        documents and the interface used is DocumentsCreator which returns a
+        list of documents. The following code describes this interface:</para>
 
-      <programlisting>public abstract class InputStreamDocumentCreatorWithManager
-                                implements InputStreamDocumentCreator {
-  public InputStreamDocumentCreatorWithManager(
-                  DocumentHandlerManager documentHandlerManager) { ... }
-  protected abstract String getResourceName();
-  protected abstract Map getResourceDescription();
-  public final Document createDocumentFromInputStream(
-                     InputStream inputStream) throws IOException { ... }
+        <programlisting>public interface DocumentsCreator {
+    List createDocuments() throws Exception;
 }</programlisting>
 
-      <para>The template provides several methods to manipulate an
-      index.</para>
+        <para>The following code shows an example of creation of a document
+        based on an <emphasis>addDocument</emphasis> method of the
+        template:</para>
 
-      <programlisting>public class LuceneIndexTemplate {
-  //...
-  public void deleteDocument(int internalDocumentId) { ... }
-  public void deleteDocument(Term term) { ... }
-  public void undeleteDocuments() { ... }
-  public boolean isDeleted(int internalDocumentId) { ... }
-  public boolean hasDeletions() { ... }
-  public void flushDeletes() { ... }
-  public int getMaxDoc() { ... }
-  public int getNumDocs() { ... }
-  public void addDocument(Document document) { ... }
-  public void addDocument(Document document,Analyzer analyzer) { ... }
-  public void addDocument(DocumentCreator creator) { ... }
-  public void addDocument(DocumentCreator creator,Analyzer analyzer) { ... }
-  public void addDocument(InputStreamDocumentCreator creator) { ... }
-  public void addDocument(InputStreamDocumentCreator creator,Analyzer analyzer) { ... }
-  public void addDocuments(List documents) { ... }
-  public void addDocuments(List documents,Analyzer) { ... }
-  public void addDocuments(DocumentsCreator creator) { ... }
-  public void addDocuments(DocumentsCreator creator,Analyzer) { ... }
-  public void optimize() { ... }
-  //...
+        <programlisting>getLuceneIndexTemplate().addDocument(new DocumentCreator() {
+    public Document createDocument() throws Exception {
+        Document newDocument = new Document();
+        (...)
+        return newDocument;
+    }
+});</programlisting>
+
+        <para>Lucene do not provide support in order to modify a document in
+        the index. An addition and a deletion must be made successively and
+        you need to use an <emphasis>IndexReader</emphasis> instance and then
+        an <emphasis>IndexWriter</emphasis> instance. The Lucene support
+        provide an interface, the interface
+        <emphasis>DocumentModifier</emphasis>, in order to specify how to
+        update a document, as shown in the following code:</para>
+
+        <programlisting>public interface DocumentModifier {
+    Document updateDocument(Document document) throws Exception;
 }</programlisting>
 
-      <para>Here is a summary table to show which Lucene resource is used by a
-      template method:<table frame="all">
+        <para>You can use then the <emphasis>updateDocument</emphasis> method
+        to really update the document basing on this interface. The first
+        parameter of these method, a parameter of type
+        <emphasis>Term</emphasis>, is used to identify the document to update.
+        It must identify only one document.</para>
+
+        <para>The template provides too two other methods in order to update
+        several documents at the same time, the
+        <emphasis>updateDocuments</emphasis> methods. These later use the same
+        mechanism as the <emphasis>updateDocument</emphasis> method and are
+        based on the <emphasis>DocumentsModifier</emphasis> interface which
+        takes a list of documents to update, as shown in the following
+        code:</para>
+
+        <programlisting>public interface DocumentsModifier {
+    List updateDocuments(LuceneHits hits) throws IOException;
+}</programlisting>
+
+        <para>You can use then the <emphasis>updateDocument</emphasis>s method
+        to really update a set of documents basing on this interface. The
+        first parameter of these method, a parameter of type
+        <emphasis>Term</emphasis>, is used to identify the set of documents to
+        update.</para>
+
+        <para>The following code shows a example of use of the
+        <emphasis>updateDocument</emphasis> method:</para>
+
+        <programlisting>getLuceneIndexTemplate.updateDocument(new Term("id", "anId"), new DocumentModifier() {
+    public Document updateDocument(Document document) throws Exception {
+        Document newDocument = new Document();
+        (...)
+        return newDocument;
+    }
+});</programlisting>
+
+        <para>The last group of methods can be used to delete documents in the
+        index. The <emphasis>deleteDocument</emphasis> method deletes only one
+        document based on its internal identifier whereas the
+        <emphasis>deleteDocuments</emphasis> deletes several documents based
+        on a <emphasis>Term</emphasis>. The following code shows an example of
+        use of this method:</para>
+
+        <programlisting>getLuceneIndexTemplate.deleteDocument(new Term("attribute", "a value"));</programlisting>
+      </sect3>
+
+      <sect3>
+        <title>Usage of InputStreams with templates</title>
+
+        <para>The template offers the possibility to create a document basing
+        on an <emphasis>InputStream</emphasis> with two different
+        <emphasis>addDocument</emphasis> methods, as shown in the following
+        code:</para>
+
+        <programlisting>public interface LuceneIndexTemplate {
+    (...)
+    void addDocument(InputStreamDocumentCreator creator);
+    void addDocument(InputStreamDocumentCreator documentCreator, Analyzer analyzer);
+    (...)
+}</programlisting>
+
+        <para>These later methods are the responsability to manage the
+        <emphasis>InputStream</emphasis>, i.e. to get an instance of it, to
+        manage <emphasis>IOExceptions</emphasis> and to close the
+        <emphasis>InputStream</emphasis>.</para>
+
+        <para>These <emphasis>addDocument</emphasis> methods are based on the
+        InputStreamDocumentCreator which specifies how to initialize the
+        <emphasis>InputStream</emphasis> and use it in order to create a
+        document. The following code shows the detail of this interface and
+        its two methods, <emphasis>createInputStream</emphasis> and
+        <emphasis>createDocumentFromInputStream</emphasis>:</para>
+
+        <programlisting>public interface InputStreamDocumentCreator {
+    InputStream createInputStream() throws IOException;
+    Document createDocumentFromInputStream(InputStream inputStream) throws Exception;
+}</programlisting>
+
+        <para>The following code shows a sample use of this interface within
+        the <emphasis>addDocument</emphasis> of the template:</para>
+
+        <programlisting>final String fileName = "textFile.txt";
+
+getTemplate().addDocument(new InputStreamDocumentCreator() {
+    public InputStream createInputStream() throws IOException {
+        return new FileInputStream(fileName);
+    }
+
+    public Document createDocumentFromInputStream(InputStream inputStream) throws Exception {
+        Document document = new Document();
+        String contents = IOUtils.getContents(inputStream);
+        document.add(new Field("contents", contents, Field.Store.YES, Field.Index.TOKENIZED));
+        document.add(new Field("fileName", fileName, Field.Store.YES, Field.Index.UN_TOKENIZED));
+        return document;
+    }
+});</programlisting>
+      </sect3>
+
+      <sect3>
+        <title>Usage of the DocumentHandler support with templates</title>
+
+        <para>The template offers the possibility to use the
+        <emphasis>DocumentHandler</emphasis> support in order to create a
+        document basing on an <emphasis>InputStream</emphasis>. This feature
+        is based on the mechanism described in the previous section. An
+        dedicated implementation of the
+        <emphasis>InputStreamDocumentCreator</emphasis>, the
+        <emphasis>InputStreamDocumentCreatorWithManager</emphasis> class, is
+        provided. This class takes an instance of the
+        <emphasis>DocumentHandlerManager</emphasis> interface and selects the
+        right <emphasis>DocumentHandler</emphasis> to use in order to create
+        the document from an <emphasis>InputStream</emphasis>.</para>
+
+        <para>The <emphasis>InputStreamDocumentCreatorWithManager</emphasis>
+        class defines two abstract methods in order to select the name and the
+        description of the resource associated with the
+        <emphasis>InputStream</emphasis>, as following in the following
+        code:</para>
+
+        <programlisting>public abstract class InputStreamDocumentCreatorWithManager implements InputStreamDocumentCreator {
+    (...)
+    public InputStreamDocumentCreatorWithManager(DocumentHandlerManager documentHandlerManager) {
+        this.documentHandlerManager = documentHandlerManager;
+    }
+
+    protected abstract String getResourceName();
+    protected abstract Map getResourceDescription();
+    (...)
+}</programlisting>
+
+        <para>Note that the InputStreamDocumentCreatorWithManager class must
+        be initialized with an instance of the
+        <emphasis>DocumentHandlerManager</emphasis> interface.</para>
+
+        <para>The following code shows an example of use of this class with an
+        <emphasis>addDocument</emphasis> method of the template:</para>
+
+        <programlisting>DocumentHandlerManager manager = (...)
+
+final String fileName = "textFile.txt";
+getLuceneIndexTemplate.addDocument(new InputStreamDocumentCreatorWithManager(manager) {
+    public InputStream createInputStream() throws IOException {
+        return new FileInputStream(fileName);
+    }
+
+    protected String getResourceName() {
+        return fileName;
+    }
+
+    protected Map getResourceDescription() {
+        return null;
+    }
+});</programlisting>
+      </sect3>
+
+      <sect3>
+        <title>Work with root entities</title>
+
+        <para>Some other methods of the template allow you to work directly on
+        logical resources of the index basing on callback interfaces and
+        methods. The template uses these callbacks in order to provide
+        instances of <emphasis>LuceneIndexReader</emphasis> and
+        <emphasis>LuceneIndexWriter</emphasis> to the application. The
+        following code describes the <emphasis>read</emphasis> and
+        <emphasis>write</emphasis> methods of the template which are based on
+        these callbak interfaces:</para>
+
+        <programlisting>public interface LuceneIndexTemplate {
+    (...)
+    Object read(ReaderCallback callback);
+    Object write(WriterCallback callback);
+    (...)
+}</programlisting>
+
+        <para>These two methods are based on the
+        <emphasis>ReaderCallback</emphasis> and
+        <emphasis>WriterCallback</emphasis> which allow the template to give
+        the resources to the application. The following code describes these
+        two interfaces:</para>
+
+        <programlisting>public interface ReaderCallback {
+    Object doWithReader(LuceneIndexReader reader) throws Exception;
+}
+
+public interface WriterCallback {
+    Object doWithWriter(LuceneIndexWriter writer) throws Exception;
+}</programlisting>
+
+        <para>The following code shows an sample of use of the
+        <emphasis>WriterCallback</emphasis> interface with the template in
+        order to index documents:</para>
+
+        <programlisting>LuceneIndexTemplate template = (...)
+template.write(new WriterCallback() {
+    public Object doWithWriter(LuceneIndexWriter writer) throws IOException {
+        Document document = new Document();
+        (...)
+        writer.addDocument(document);
+        return null;
+    }
+});</programlisting>
+      </sect3>
+
+      <sect3>
+        <title>Template and used resources</title>
+
+        <para>The <emphasis>LuceneIndexTemplate</emphasis> hides the resource
+        used in order to execute an operation and its managment. The developer
+        has now no need to know the Lucene API. The following table shows the
+        underlying resources used by the template's methods:</para>
+
+        <table frame="all">
           <title>Resource used by the template methods</title>
 
           <tgroup cols="2">
             <thead>
               <row>
-                <entry align="center">LuceneIndexTemplate method
-                signature</entry>
+                <entry align="center">LuceneIndexTemplate method group</entry>
 
                 <entry align="center">Corresponding resource used</entry>
               </row>
@@ -326,152 +945,38 @@
 
             <tbody>
               <row>
-                <entry align="center">void deleteDocument(int)</entry>
+                <entry align="center">deletion methods</entry>
 
                 <entry align="center">IndexReader</entry>
               </row>
 
               <row>
-                <entry align="center">void deleteDocument(Term)</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">void undeleteDocuments()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">boolean isDeleted(int)</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">boolean hasDeletions()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">void flushDeletes()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">int getMaxDoc()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">int getNumDocs()</entry>
-
-                <entry align="center">IndexReader</entry>
-              </row>
-
-              <row>
-                <entry align="center">addDocument methods</entry>
+                <entry align="center">addition methods</entry>
 
                 <entry align="center">IndexWriter</entry>
               </row>
 
               <row>
-                <entry align="center">addDocuments methods</entry>
+                <entry align="center">get methods</entry>
 
-                <entry align="center">IndexWriter</entry>
+                <entry align="center">IndexReader</entry>
               </row>
 
               <row>
-                <entry align="center">void optimize()</entry>
+                <entry align="center">optimize methods</entry>
 
                 <entry align="center">IndexWriter</entry>
               </row>
             </tbody>
           </tgroup>
-        </table></para>
+        </table>
+      </sect3>
 
-      <para>Here is a using example of the
-      <emphasis>LuceneIndexTemplate</emphasis> class use with both the
-      <emphasis>DocumentCreator</emphasis> and
-      <emphasis>InputStreamDocumentCreator</emphasis> interfaces:</para>
-
-      <programlisting>public class IndexAccessorImpl extends LuceneIndexSupport implements IndexAccessor {
-  public void addDocument(final String text) {
-    getTemplate().addDocument(new DocumentCreator() {
-      public Document createDocument() throws IOException {
-        Document document = new Document();
-        document.add(Field.UnStored("contents", text));
-        document.add(Field.Keyword("type", "text"));
-        document.add(Field.Keyword("filename", title));
-        return document;
-    });
-  }
-
-  public void addDocument(final File file) {
-    getTemplate().addDocument(new InputStreamDocumentCreatorWithManager(
-                                                getDocumentHandlerManager()) {
-      public InputStream createInputStream() throws IOException {
-        return new FileInputStream(file);
-      }
-      protected String getResourceName() {
-        return file.getPath();
-      }
-      protected Map getResourceDescription() {
-        Map description=new HashMap();
-        description.put(DocumentHandler.FILENAME,file.getPath());
-        return description;
-      }
-    });
-  }
-}</programlisting>
-
-      <para>and the corresponding Spring configuration:</para>
-
-      <programlisting>&lt;bean id="fsDirectory"
-      class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/lucene/index&lt;/value&gt;&lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="indexFactory"
-      class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean"&gt;
-  &lt;property name="directory"&gt;&lt;ref local="fsDirectory"/&gt;&lt;/property&gt;
-  &lt;property name="analyzer"&gt;
-    &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="indexAccessor"
-      class="org.springmodules.samples.lucene.index.service.IndexAccessorImpl"&gt;
-  &lt;property name="indexFactory"&gt;&lt;ref local="indexFactory"/&gt;&lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-      <para>Finally the index template provides you two callbacks to work
-      directly on a <emphasis>IndexReader</emphasis> or
-      <emphasis>IndexWriter</emphasis> instance. These callback are based on
-      the <emphasis>ReaderCallBack</emphasis> interface:</para>
-
-      <programlisting>public interface ReaderCallback {
-  Object doWithReader(IndexReader reader) throws IOException;
-}</programlisting>
-
-      <para>and the <emphasis>WriterCallback</emphasis> interface:</para>
-
-      <programlisting>public interface WriterCallback {
-  Object doWithWriter(IndexWriter writer) throws IOException;
-}</programlisting>
-
-      <para>and are used by two dedicated methods of the template:</para>
-
-      <programlisting>public class LuceneIndexTemplate {
-  //...
-  public void read(ReaderCallback callback) { ... }
-  public void write(WriterCallback callback) { ... }
-  // ...
-}</programlisting>
+      <para>In the context of the <emphasis>LuceneIndexTemplate</emphasis>,
+      the calls of different methods have sense only if the underlying
+      resources stay opened during several calls. For exemple, the call of the
+      <emphasis>hasDeletion</emphasis> method always returns false if
+      resources are used only for the call of a method.</para>
     </sect2>
 
     <sect2>
@@ -512,10 +1017,10 @@
         handler.</para>
 
         <programlisting>public class DirectoryIndexer extends AbstractIndexer {
-  //...
-  public void index(String dirToParse) { ... }
-  public void index(String dirToParse,boolean optimizeIndex) { ... }
-  //...
+    (...)
+    public void index(String dirToParse) { ... }
+    public void index(String dirToParse,boolean optimizeIndex) { ... }
+    (...)
 }</programlisting>
 
         <para><emphasis>Important note</emphasis>: If you set the
@@ -564,105 +1069,105 @@
         </itemizedlist>
 
         <programlisting>public interface DocumentIndexingListener {
-  public void beforeIndexingDirectory(File file);
-  public void afterIndexingDirectory(File file);
+    void beforeIndexingDirectory(File file);
+    void afterIndexingDirectory(File file);
 
-  public void beforeIndexingFile(File file);
-  public void afterIndexingFile(File file);
-  public void onErrorIndexingFile(File file,Exception ex);
-  public void onNotAvailableHandler(File file);
+    void beforeIndexingFile(File file);
+    void afterIndexingFile(File file);
+    void onErrorIndexingFile(File file,Exception ex);
+    void onNotAvailableHandler(File file);
 }</programlisting>
 
         <para>To associate a listener with the indexer, you can simply use its
         <emphasis>addListener</emphasis> method and to remove one, the
-        <emphasis>removeListener</emphasis> method.</para>
+        <emphasis>removeListener</emphasis> method. The following code
+        describes these two methods:</para>
 
         <programlisting>public class DirectoryIndexer extends AbstractIndexer {
-  //...
-  public void addListener(DocumentIndexingListener listener) { ... }
-  public void removeListener(DocumentIndexingListener listener) { ... }
-  //...
+    (...)
+    public void addListener(DocumentIndexingListener listener) { ... }
+    public void removeListener(DocumentIndexingListener listener) { ... }
+    (...)
 }</programlisting>
 
-        <para>Here is an example of use:</para>
+        <para>The following code shows of use of all these entities:</para>
 
         <programlisting>public class SimpleDirectoryIndexingImpl
                 implements DirectoryIndexing,InitializingBean {
-  private IndexFactory indexFactory;
-  private DocumentHandlerManager documentHandlerManager;
-  private DirectoryIndexer indexer;
+    private IndexFactory indexFactory;
+    private DocumentHandlerManager documentHandlerManager;
+    private DirectoryIndexer indexer;
 
-  public SimpleDirectoryIndexingImpl() {}
+    public SimpleDirectoryIndexingImpl() {}
 
-  public void afterPropertiesSet() throws Exception {
-    if( indexFactory!=null ) {
-      throw new IllegalArgumentException("indexFactory is required");
+    public void afterPropertiesSet() throws Exception {
+        if( indexFactory!=null ) {
+            throw new IllegalArgumentException("indexFactory is required");
+        }
+        this.indexer = new DirectoryIndexer(indexFactory,documentHandlerManager);
     }
-    this.indexer=new DirectoryIndexer(indexFactory,documentHandlerManager);
-  }
 
-  public void indexDirectory(String directory) { indexer.index(directory,true); }
+    public void indexDirectory(String directory) { indexer.index(directory,true); }
 
-  public void prepareListeners() {
-    DocumentIndexingListener listener=new DocumentIndexingListener() {
-      public void beforeIndexingDirectory(File file) {
-        System.out.println("Indexing the directory : "+file.getPath()+" ...");
-      }
-      public void afterIndexingDirectory(File file) {
-        System.out.println(" -&gt; Directory indexed.");
-      }
-      public void beforeIndexingFile(File file) {
-        System.out.println("Indexing the file : "+file.getPath()+" ...");
-      }
-      public void afterIndexingFile(File file) {
-        System.out.println(" -&gt; File indexed ("+duration+").");
-      }
-      public void onErrorIndexingFile(File file, Exception ex) {
-        System.out.println(" -&gt; Error during the indexing : "+ex.getMessage());
-      }
-      public void onNotAvailableHandler(File file) {
-        System.out.println("No handler registred for the file : "+file.getPath()+" ...");
-      }
-    };
-    indexer.addListener(listener);
-  }
+    public void prepareListeners() {
+        DocumentIndexingListener listener = new DocumentIndexingListener() {
+            public void beforeIndexingDirectory(File file) {
+                System.out.println("Indexing the directory : "+file.getPath()+" ...");
+            }
+            public void afterIndexingDirectory(File file) {
+                System.out.println(" -&gt; Directory indexed.");
+            }
+            public void beforeIndexingFile(File file) {
+                System.out.println("Indexing the file : "+file.getPath()+" ...");
+            }
+            public void afterIndexingFile(File file) {
+                System.out.println(" -&gt; File indexed ("+duration+").");
+            }
+            public void onErrorIndexingFile(File file, Exception ex) {
+                System.out.println(" -&gt; Error during the indexing : "+ex.getMessage());
+            }
+            public void onNotAvailableHandler(File file) {
+                System.out.println("No handler registred for the file : "+file.getPath()+" ...");
+            }
+        };
+        indexer.addListener(listener);
+    }
 
-  public IndexFactory getIndexFactory() { return indexFactory; }
-  public void setIndexFactory(IndexFactory factory) { indexFactory = factory; }
-  public DocumentHandlerManager getDocumentHandlerManager() {
-    return documentHandlerManager;
-  }
-  public void setDocumentHandlerManager(DocumentHandlerManager manager) {
-    documentHandlerManager = manager;
-  }
+    public IndexFactory getIndexFactory() { return indexFactory; }
+    public void setIndexFactory(IndexFactory factory) { indexFactory = factory; }
+    public DocumentHandlerManager getDocumentHandlerManager() {
+        return documentHandlerManager;
+    }
+    public void setDocumentHandlerManager(DocumentHandlerManager manager) {
+        documentHandlerManager = manager;
+    }
 }</programlisting>
 
-        <para>and the corresponding Spring configuration:</para>
+        <para>The following code describes the configuration of the later
+        class in a Spring application context:</para>
 
         <programlisting>&lt;bean id="fsDirectory"
       class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/temp/lucene&lt;/value&gt;&lt;/property&gt;
-    &lt;/bean&gt;
+    &lt;property name="location" value="/temp/lucene"/&gt;
+&lt;/bean&gt;
 
 &lt;bean id="indexFactory"
       class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean"&gt;
-  &lt;property name="directory"&gt;&lt;ref local="fsDirectory" /&gt;&lt;/property&gt;
-  &lt;property name="analyzer"&gt;
-    &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
-  &lt;/property&gt;
+    &lt;property name="directory" ref="fsDirectory"/&gt;
+    &lt;property name="analyzer"&gt;
+        &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
+    &lt;/property&gt;
 &lt;/bean&gt;
 
 &lt;bean id="documentHandlerManager" class=
  "org.springmodules.lucene.index.object.file.ExtensionDocumentHandlerManagerFactoryBean"&gt;
-  ...
+    (...)
 &lt;/bean&gt;
 
 &lt;bean id="indexingDirectory"
   class="org.springmodules.samples.lucene.index.console.SimpleDirectoryIndexingImpl"&gt;
-  &lt;property name="indexFactory"&gt;&lt;ref local="indexFactory"/&gt;&lt;/property&gt;
-  &lt;property name="documentHandlerManager"&gt;
-    &lt;ref local="documentHandlerManager"/&gt;
-  &lt;/property&gt;
+    &lt;property name="indexFactory" ref="indexFactory"/&gt;
+    &lt;property name="documentHandlerManager" ref="documentHandlerManager"/&gt;
 &lt;/bean&gt;</programlisting>
       </sect3>
 
@@ -677,10 +1182,10 @@
         resultsets with the dedicated request handlers.</para>
 
         <programlisting>public class DatabaseIndexer extends AbstractIndexer {
-  //...
-  public void index(DataSource dataSource) { ... }
-  public void index(DataSource dataSource,boolean optimizeIndex) { ... }
-  //...
+    (...)
+    void index(DataSource dataSource) { ... }
+    void index(DataSource dataSource,boolean optimizeIndex) { ... }
+    (...)
 }</programlisting>
 
         <para><emphasis>Important note</emphasis>: If you set the
@@ -694,7 +1199,7 @@
         way to construct a Lucene document from a result set.</para>
 
         <programlisting>public interface SqlDocumentHandler {
-  public Document getDocument(SqlRequest request,ResultSet rs) throws SQLException;
+    Document getDocument(SqlRequest request,ResultSet rs) throws SQLException;
 }</programlisting>
 
         <para>As you can see in the method signatures, we need to use the
@@ -703,22 +1208,23 @@
         the request (with or without parameters):</para>
 
         <programlisting>public class SqlRequest {
-  //...
-  public SqlRequest(String sql) { ... }
-  public SqlRequest(String sql,Object[] params,int[] types) { ... }
-  //...
+    (...)
+    public SqlRequest(String sql) { ... }
+    public SqlRequest(String sql,Object[] params,int[] types) { ... }
+    (...)
 }</programlisting>
 
         <para>To add and remove requests, you can respectively use the
         <emphasis>registerDocumentHandler</emphasis> and
-        <emphasis>unregisterDocumentHandler</emphasis> methods.</para>
+        <emphasis>unregisterDocumentHandler</emphasis> methods. The following
+        code describes these two methods:</para>
 
         <programlisting>public class DatabaseIndexer extends AbstractIndexer {
-  //...
-  public void registerDocumentHandler(SqlRequest sqlRequest,
+    (...)
+    public void registerDocumentHandler(SqlRequest sqlRequest,
                                       SqlDocumentHandler handler) { ... }
-  public void unregisterDocumentHandler(SqlRequest sqlRequest) { ... }
-  //...
+    public void unregisterDocumentHandler(SqlRequest sqlRequest) { ... }
+    (...)
 }</programlisting>
 
         <para>You can add too listeners to be aware of requests processing. In
@@ -743,131 +1249,112 @@
         </itemizedlist>
 
         <programlisting>public interface DatabaseIndexingListener {
-  public void beforeIndexingRequest(SqlRequest request);
-  public void afterIndexingRequest(SqlRequest request);
-  public void onErrorIndexingRequest(SqlRequest request,Exception ex);
+    void beforeIndexingRequest(SqlRequest request);
+    void afterIndexingRequest(SqlRequest request);
+    void onErrorIndexingRequest(SqlRequest request,Exception ex);
 }</programlisting>
 
         <para>To associate a listener with the indexer, you can simply use its
         <emphasis>addListener</emphasis> method.</para>
 
         <programlisting>public class DatabaseIndexer extends AbstractIndexer {
-  //...
-  public void addListener(DatabaseIndexingListener listener) { ... }
-  public void removeListener(DatabaseIndexingListener listener) { ... }
-  //...
+    (...)
+    public void addListener(DatabaseIndexingListener listener) { ... }
+    public void removeListener(DatabaseIndexingListener listener) { ... }
+    (...)
 }</programlisting>
 
-        <para>Here is an example of use:</para>
+        <para>The following code shows of use of all these entities:</para>
 
         <programlisting>public class SimpleDatabaseIndexingImpl
-                  implements DatabaseIndexing,InitializingBean {
+                  implements DatabaseIndexing, InitializingBean {
 
-  private DataSource dataSource;
-  private IndexFactory indexFactory;
-  private DatabaseIndexer indexer;
+    private DataSource dataSource;
+    private IndexFactory indexFactory;
+    private DatabaseIndexer indexer;
 
-  public SimpleDatabaseIndexingImpl() {}
+    public SimpleDatabaseIndexingImpl() {}
 
-  public void afterPropertiesSet() throws Exception {
-    if( indexFactory!=null ) {
-      throw new IllegalArgumentException("indexFactory is required");
+    public void afterPropertiesSet() throws Exception {
+        if( indexFactory!=null ) {
+            throw new IllegalArgumentException("indexFactory is required");
+        }
+        this.indexer=new DatabaseIndexer(indexFactory);
     }
-    this.indexer=new DatabaseIndexer(indexFactory);
-  }
 
-  public void prepareDatabaseHandlers() {
-    //Register the request handler for book_page table without parameters
-    this.indexer.registerDocumentHandler(
-            new SqlRequest("select book_page_text from book_page"),
-            new SqlDocumentHandler() {
-      public Document getDocument(SqlRequest request,
-                                  ResultSet rs) throws SQLException {
-        Document document=new Document();
-        document.add(Field.Text("contents", rs.getString("book_page_text")));
-        document.add(Field.Keyword("request", request.getSql()));
-        return document;
-      }
-    });
+    public void prepareDatabaseHandlers() {
+        //Register the request handler for book_page table without parameters
+        this.indexer.registerDocumentHandler(
+                new SqlRequest("select book_page_text from book_page"),
+                new SqlDocumentHandler() {
+            public Document getDocument(SqlRequest request,
+                                        ResultSet rs) throws SQLException {
+                Document document=new Document();
+                document.add(Field.Text("contents", rs.getString("book_page_text")));
+                document.add(Field.Keyword("request", request.getSql()));
+                return document;
+            }
+        });
+    }
 
-    //Register the request handler for book_page table with parameters
-    /*this.indexer.registerDocumentHandler(
-           new SqlRequest("select book_page_text from book_page where book_id=?",
-                        new Object[] {new Integer(1)},new int[] {Types.INTEGER}),
-           new SqlDocumentHandler() {
-      public Document getDocument(SqlRequest request,
-                                  ResultSet rs) throws SQLException {
-         Document document=new Document();
-         document.add(Field.Text("contents", rs.getString("book_page_text")));
-         document.add(Field.Keyword("request", sql));
-         return document;
-       }
-    });*/
-  }
+    public void indexDatabase() {
+        indexer.index(dataSource,true);
+    }
 
-  public void indexDatabase() {
-    indexer.index(dataSource,true);
-  }
+    public void prepareListeners() {
+        DatabaseIndexingListener listener=new DatabaseIndexingListener() {
+            public void beforeIndexingRequest(SqlRequest request) {
+                System.out.println("Indexing the request : "+request.getSql()+" ...");
+            }
+            public void afterIndexingRequest(SqlRequest request) {
+                System.out.println(" -&gt; request indexed.");
+            }
+            public void onErrorIndexingRequest(SqlRequest request, Exception ex) {
+                System.out.println(" -&gt; Error during the indexing : "+ex.getMessage());
+            }
+        };
+        indexer.addListener(listener);
+    }
 
-  public void prepareListeners() {
-    DatabaseIndexingListener listener=new DatabaseIndexingListener() {
-      public void beforeIndexingRequest(SqlRequest request) {
-        System.out.println("Indexing the request : "+request.getSql()+" ...");
-      }
-      public void afterIndexingRequest(SqlRequest request) {
-        System.out.println(" -&gt; request indexed.");
-      }
-      public void onErrorIndexingRequest(SqlRequest request, Exception ex) {
-        System.out.println(" -&gt; Error during the indexing : "+ex.getMessage());
-      }
-    };
-    indexer.addListener(listener);
-  }
-
-  public IndexFactory getIndexFactory() { return indexFactory; }
-  public void setIndexFactory(IndexFactory factory) { indexFactory = factory; }
-  public DataSource getDataSource() { return dataSource; }
-  public void setDataSource(DataSource source) { dataSource = source; }
+    public IndexFactory getIndexFactory() { return indexFactory; }
+    public void setIndexFactory(IndexFactory factory) { indexFactory = factory; }
+    public DataSource getDataSource() { return dataSource; }
+    public void setDataSource(DataSource source) { dataSource = source; }
 }</programlisting>
 
-        <para>and the corresponding Spring configuration:</para>
+        <para>The following code describes the configuration of the later
+        class in a Spring application context:</para>
 
         <programlisting>&lt;bean id="dataSource"
       class="org.springframework.jdbc.datasource.DriverManagerDataSource"&gt;
-  &lt;property name="driverClassName"&gt;
-    &lt;value&gt;org.hsqldb.jdbcDriver&lt;/value&gt;
-  &lt;/property&gt;
-  &lt;property name="url"&gt;
-    &lt;value&gt;jdbc:hsqldb:hsql://localhost:9001&lt;/value&gt;
-  &lt;/property&gt;
-  &lt;property name="username"&gt;&lt;value&gt;sa&lt;/value&gt;&lt;/property&gt;
-  &lt;property name="password"&gt;&lt;value/&gt;&lt;/property&gt;
+    &lt;property name="driverClassName" value="org.hsqldb.jdbcDriver"/&gt;
+    &lt;property name="url" value="jdbc:hsqldb:hsql://localhost:9001"/&gt;
+    &lt;property name="username" value="sa"/&gt;
+    &lt;property name="password" value=""/&gt;
 &lt;/bean&gt;
 
 &lt;bean id="fsDirectory"
       class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/temp/lucene&lt;/value&gt;&lt;/property&gt;
+    &lt;property name="location" value="/temp/lucene"/&gt;
 &lt;/bean&gt;
 
 &lt;bean id="indexFactory"
       class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean"&gt;
-  &lt;property name="directory"&gt;&lt;ref local="fsDirectory" /&gt;&lt;/property&gt;
-  &lt;property name="analyzer"&gt;
-    &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
-  &lt;/property&gt;
+    &lt;property name="directory" ref="fsDirectory"/&gt;
+    &lt;property name="analyzer"&gt;
+        &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
+    &lt;/property&gt;
 &lt;/bean&gt;
 
 &lt;bean id="indexingDatabase"
    class="org.springmodules.samples.lucene.index.console.SimpleDatabaseIndexingImpl"&gt;
-  &lt;property name="indexFactory"&gt;&lt;ref local="indexFactory"/&gt;&lt;/property&gt;
-  &lt;property name="dataSource"&gt;&lt;ref local="dataSource"/&gt;&lt;/property&gt;
+    &lt;property name="indexFactory" ref="indexFactory"/&gt;
+    &lt;property name="dataSource" ref="dataSource"/&gt;
 &lt;/bean&gt;</programlisting>
-
-        <para>[TODO: indexing of blob database row field]</para>
       </sect3>
     </sect2>
 
-    <sect2>
+    <!-- sect2>
       <title>IndexFactory management</title>
 
       <para>Spring Modules provides support to keep opened
@@ -892,31 +1379,91 @@
       or one yet opened).</para>
 
       <para>[TO FINISH]</para>
-    </sect2>
+    </sect2 -->
   </sect1>
 
   <sect1>
     <title>Search</title>
 
+    <para>In this section, we will describe how the Lucene support makes
+    easier the search on a Lucene index. We firtly deal with the root entities
+    of the support and the way to configure them, then show how to make a
+    search on the index.</para>
+
     <sect2>
-      <title>SearchFactory</title>
+      <title>Root entities</title>
 
-      <para>The Lucene support introduces a new abstraction to hide the
-      getting of index searchers in a dedicated factory. This abstraction is
-      the <emphasis>SearcherFactory</emphasis> class. It allows the support to
-      be more flexible and configure directly the used
-      <emphasis>Searcher</emphasis> in Spring. The factory instance will be
-      then injected in every component to make searchs across one or several
-      indexes.</para>
+      <para>Lucene provides two entities in order to make search on index, the
+      classes <emphasis>Searcher</emphasis> and <emphasis>Hits</emphasis>.
+      These classes are concrete and can make difficult the implementation of
+      the tests unit. That's why the Lucene support introduces two interfaces,
+      respectively the interfaces <emphasis>LuceneSearcher</emphasis> and
+      <emphasis>LuceneHits</emphasis>, in order to define the contracts of
+      those classes. So these interfaces offers the same methods as the Lucene
+      classes <emphasis>Searcher</emphasis> and Hits.</para>
 
-      <programlisting>public interface SearcherFactory {
-  Searcher getSearcher() throws IOException;
+      <para>The following code describes the methods offered by the
+      <emphasis>LuceneSearcher</emphasis> interface:</para>
+
+      <programlisting>public interface LuceneSearcher {
+    void close() throws IOException;
+    Document doc(int i) throws IOException;
+    int docFreq(Term term) throws IOException;
+    int[] docFreqs(Term[] terms) throws IOException;
+    Explanation explain(Query query, int doc) throws IOException;
+    Explanation explain(Weight weight, int doc) throws IOException;
+    Similarity getSimilarity();
+    int maxDoc() throws IOException;
+    Query rewrite(Query query) throws IOException;
+    LuceneHits search(Query query) throws IOException;
+    LuceneHits search(Query query, Filter filter) throws IOException;
+    void search(Query query, Filter filter, HitCollector results) throws IOException;
+    TopDocs search(Query query, Filter filter, int n) throws IOException;
+    TopFieldDocs search(Query query, Filter filter, int n, Sort sort) throws IOException;
+    LuceneHits search(Query query, Filter filter, Sort sort) throws IOException;
+    void search(Query query, HitCollector results) throws IOException;
+    LuceneHits search(Query query, Sort sort) throws IOException;
+    void search(Weight weight, Filter filter, HitCollector results) throws IOException;
+    TopDocs search(Weight weight, Filter filter, int n) throws IOException;
+    TopFieldDocs search(Weight weight, Filter filter, int n, Sort sort) throws IOException;
+    void setSimilarity(Similarity similarity);
+    IndexReader getIndexReader();
 }</programlisting>
 
-      <para><emphasis>Note</emphasis>: If you need to call methods only
-      available in sub classes, you cn use the
-      <emphasis>SearcherCallback</emphasis> and cast the searcher to this sub
-      class. We describe the callback feature in a later section.</para>
+      <para>The following code describes the methods offered by the
+      <emphasis>LuceneHits</emphasis> interface:</para>
+
+      <programlisting>public interface LuceneHits {
+    int length();
+    Document doc(int n) throws IOException;
+    float score(int n) throws IOException;
+    int id(int n) throws IOException;
+    Iterator iterator();
+}</programlisting>
+
+      <para>The main advantage of this mechanism is the possibility to
+      dissociate logical and physiacal resources. The physical resources are
+      the Lucene resources which directly make search on the index, i.e. the
+      instances of <emphasis>Searcher</emphasis>.</para>
+
+      <para>In order to create these resources, the Lucene support implements
+      the factory pattern based on the <emphasis>SearcerFactory</emphasis>
+      interface. This interface allows and hide the creation of logical
+      resources. So, with this mechanism, you only need to configure an
+      implementation of this interface in order to specify the strategy of
+      resource management.</para>
+
+      <para>The following code describes the methods offered by the
+      <emphasis>SearcherFactory</emphasis> interface:</para>
+
+      <programlisting>public interface SearcherFactory {
+    LuceneSearcher getSearcher() throws IOException;
+}</programlisting>
+
+      <para>Because the factory handle only logical resources, it do not
+      provide directly instances of <emphasis>Searcher</emphasis>. The latters
+      are managed implementations of the
+      <emphasis>LuceneSearcher</emphasis>.</para>
     </sect2>
 
     <sect2>
@@ -929,266 +1476,266 @@
       <sect3>
         <title>Configuring a SimpleSearcherFactory</title>
 
-        <para>This class is the simplest factory to get a searcher. This
-        factory is only based on a single index.</para>
+        <para>The <emphasis>SimpleSearcherFactory</emphasis> class is the
+        simplest factory in order to get instances of the
+        <emphasis>LuceneSearcher</emphasis> interface. This factory is only
+        based on a single <emphasis>Directory</emphasis>. Its configuration is
+        described in the following code:</para>
 
         <programlisting>&lt;bean id="fsDirectory"
       class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/lucene/index1/&lt;/value&gt;&lt;/property&gt;
+    &lt;property name="location" value="/lucene/index1/"/&gt;
 &lt;/bean&gt;
 
 &lt;bean id="searcherFactory"
       class="org.springmodules.lucene.search.factory.SimpleSearcherFactory"&gt;
-  &lt;property name="directory"&gt;&lt;ref local="fsDirectory" /&gt;&lt;/property&gt;
+    &lt;property name="directory" ref="fsDirectory"/&gt;
 &lt;/bean&gt;</programlisting>
       </sect3>
 
       <sect3>
         <title>Configuring a MultipleSearcherFactory</title>
 
-        <para>This class allows you to make searchs across several indexes. It
-        is based on the Lucene <emphasis>MultiSearcher</emphasis>
-        class.</para>
+        <para>The <emphasis>MultipleSearcherFactory</emphasis> class allows to
+        make searchs across several indexes. It is based on the Lucene
+        <emphasis>MultiSearcher</emphasis> class and can be configured with
+        several <emphasis>Directory</emphasis>, as shown in the following
+        example:</para>
 
         <programlisting>&lt;bean id="fsDirectory1"
       class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/lucene/index1/&lt;/value&gt;&lt;/property&gt;
+    &lt;property name="location" value="/lucene/index1/"/&gt;
 &lt;/bean&gt;
 
 &lt;bean id="fsDirectory2"
       class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/lucene/index2/&lt;/value&gt;&lt;/property&gt;
+    &lt;property name="location" value="/lucene/index2/"/&gt;
 &lt;/bean&gt;
 
 &lt;bean id="searcherFactory"
       class="org.springmodules.lucene.search.factory.MultipleSearcherFactory"&gt;
-  &lt;property name="directories"&gt;
-    &lt;list&gt;
-      &lt;ref local="fsDirectory1"/&gt;
-      &lt;ref local="fsDirectory2"/&gt;
-    &lt;/list&gt;
-  &lt;/property&gt;
+    &lt;property name="directories"&gt;
+        &lt;list&gt;
+            &lt;ref local="fsDirectory1"/&gt;
+            &lt;ref local="fsDirectory2"/&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
 &lt;/bean&gt;</programlisting>
       </sect3>
 
       <sect3>
         <title>Configuring a ParallelMultipleSearcherFactory</title>
 
-        <para>This class allows you to make searchs across several indexes in
-        a parallel manner. It is based on the Lucene
-        <emphasis>ParallelMultiSearcher</emphasis> class.</para>
+        <para>The <emphasis>MultipleSearcherFactory</emphasis> class allows to
+        make searchs across several indexes in a parallel manner. It is based
+        on the Lucene <emphasis>ParallelMultiSearcher</emphasis> class and can
+        be configured with several <emphasis>Directory</emphasis>, as shown in
+        the following example:</para>
 
         <programlisting>&lt;bean id="fsDirectory1"
       class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/lucene/index1/&lt;/value&gt;&lt;/property&gt;
+    &lt;property name="location" value="/lucene/index1/"/&gt;
 &lt;/bean&gt;
 
 &lt;bean id="fsDirectory2"
       class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/lucene/index2/&lt;/value&gt;&lt;/property&gt;
+    &lt;property name="location" value="/lucene/index2/"/&gt;
 &lt;/bean&gt;
 
 &lt;bean id="searcherFactory"
    class="org.springmodules.lucene.search.factory.ParallelMultipleSearcherFactory"&gt;
-  &lt;property name="directories"&gt;
-    &lt;list&gt;
-      &lt;ref local="fsDirectory1"/&gt;
-      &lt;ref local="fsDirectory2"/&gt;
-    &lt;/list&gt;
-  &lt;/property&gt;
+    &lt;property name="directories"&gt;
+        &lt;list&gt;
+            &lt;ref local="fsDirectory1"/&gt;
+            &lt;ref local="fsDirectory2"/&gt;
+        &lt;/list&gt;
+    &lt;/property&gt;
 &lt;/bean&gt;</programlisting>
-      </sect3>
-
-      <sect3>
-        <title>Configuring a remote SearcherFactory</title>
-
-        <para>[TODO]</para>
       </sect3>
     </sect2>
 
     <sect2>
-      <title>Make a search</title>
+      <title>Template approach</title>
 
-      <sect3>
-        <title>Template approach</title>
+      <para>The Lucene support provides a template approach like Spring for
+      JDBC, JMS... to make searchs. The developer has not to know how to
+      interact with the Lucene API in order to make searchs.</para>
 
-        <para>The Lucene support provides a template approach like Spring for
-        JDBC, JMS... to make searchs.</para>
+      <para><emphasis>LuceneSearchTemplate</emphasis> is the central class of
+      the Lucene support core package
+      (<emphasis>org.springmodules.lucene.search.core</emphasis>) for the
+      search. It simplifies the use of the corresponding Lucene APIs since it
+      handles the creation and release of resources. This helps to avoid
+      common errors like forgetting to always close the searcher. It executes
+      the search leaving application code the way to create a search query and
+      extract datas from results.</para>
 
-        <para><emphasis>LuceneSearchTemplate</emphasis> is the central class
-        of the Lucene support core package
-        (<emphasis>org.springmodules.lucene.search.core</emphasis>) for the
-        search. It simplifies the use of the corresponding Lucene APIs since
-        it handles the creation and release of resources. This helps to avoid
-        common errors like forgetting to always close the searcher. It
-        executes the search leaving application code the way to create a
-        search query and extract datas from results.</para>
+      <para>The template uses the <emphasis>QueryCreator</emphasis>
+      abstraction to create a query basing on its
+      <emphasis>createQuery</emphasis> method which must be contain the way to
+      create the query. The following code describes the definition of this
+      interface:</para>
 
-        <para>The template uses the <emphasis>QueryCreator</emphasis>
-        abstraction to create a query. For that, it defines a
-        <emphasis>createQuery</emphasis> method which must be
-        implemented.</para>
-
-        <programlisting>public interface QueryCreator {
-  public Query createQuery(Analyzer analyzer) throws ParseException;
+      <programlisting>public interface QueryCreator {
+    Query createQuery(Analyzer analyzer) throws ParseException;
 }</programlisting>
 
-        <para><emphasis>Note</emphasis>: If you don't inject an
-        <emphasis>Analyzer</emphasis> instance in the template, this parameter
-        will be null, but perhaps you don't need it to construct your
-        query.</para>
+      <para>If you don't inject an <emphasis>Analyzer</emphasis> instance in
+      the template, this <emphasis>analyzer</emphasis> parameter of the method
+      <emphasis>createQuery</emphasis> will be null. As a matter of fact, an
+      analyzer isn't always mandatory to create a query.</para>
 
-        <para>The support provides a <emphasis>ParsedQueryCreator</emphasis>
-        implementation to help to construct a query based on a
-        <emphasis>QueryParser</emphasis> or a
-        <emphasis>MultiFieldQueryParser</emphasis>. It uses an inner class
-        <emphasis>QueryParams</emphasis> to hold the document fields to use
-        and the query string. This class is used at the query creation and
-        must be created by the <emphasis>configureQuery</emphasis> method. If
-        you need to configure the created query (for example with a call of
-        the <emphasis>setBoost</emphasis> method), you must overwrite the
-        <emphasis>setQueryProperties</emphasis> method which gives it as
-        method parameter.</para>
+      <para>The support provides a <emphasis>ParsedQueryCreator</emphasis>
+      implementation to help to construct a query based on a
+      <emphasis>QueryParser</emphasis> or a
+      <emphasis>MultiFieldQueryParser</emphasis>. It uses an inner class
+      <emphasis>QueryParams</emphasis> to hold the document fields to use and
+      the query string. This class is used at the query creation and must be
+      created by the <emphasis>configureQuery</emphasis> method. If you need
+      to configure the created query (for example with a call of the
+      <emphasis>setBoost</emphasis> method), you must overwrite the
+      <emphasis>setQueryProperties</emphasis> method which gives it as method
+      parameter.</para>
 
-        <programlisting>public abstract class ParsedQueryCreator implements QueryCreator {
-  public abstract QueryParams configureQuery();
-  protected void setQueryProperties(Query query) { }
+      <programlisting>public abstract class ParsedQueryCreator implements QueryCreator {
+    public abstract QueryParams configureQuery();
+    protected void setQueryProperties(Query query) { }
 
-  public final Query createQuery(Analyzer analyzer)
-                                     throws ParseException { ... }
+    public final Query createQuery(Analyzer analyzer) throws ParseException { (...) }
 }</programlisting>
 
-        <para>The template provides several methods to make a search for
-        different usages (use of <emphasis>Filter</emphasis>,
-        <emphasis>Sort</emphasis> and
-        <emphasis>HitCollector</emphasis>):</para>
+      <para>In order to construct a collection of objects from the result of a
+      search, the Lucene support provides the
+      <emphasis>HitExtractor</emphasis> interface, as described in the
+      following code:</para>
 
-        <programlisting>public class LuceneSearchTemplate {
-  //...
-  public List search(QueryCreator queryCreator,HitExtractor extractor) { ... }
-  public List search(QueryCreator queryCreator,
-                                   HitExtractor extractor,Filter filter) { ... }
-  public List search(QueryCreator queryCreator,
-                                       HitExtractor extractor,Sort sort) { ... }
-  public List search(QueryCreator queryCreator,
-                         HitExtractor extractor,Filter filter,Sort sort) { ... }
-  public void search(QueryCreator queryCreator,HitCollector results) { ... }
-  // ...
+      <programlisting>public interface HitExtractor {
+    Object mapHit(int id, Document document, float score);
 }</programlisting>
 
-        <para>The following example constructs a query (basing on the
-        <emphasis>QueryParser</emphasis> class) to search a text in the
-        "contents" property of indexed documents. Then it constructs
-        <emphasis>SearchResult</emphasis> objects with the search results.
-        These objects will be added in a list by the support.</para>
+      <para>The <emphasis>LuceneSearcherTemplate</emphasis> class provides
+      several <emphasis>search</emphasis> methods in order to make a search on
+      the index. These methods use as parameters different entities of Lucene
+      (Query, Fitler, Sort and HitCollector) and the Lucene support
+      (QueryCreator, HitExtractor and SearcherCallback). The following code
+      describes the <emphasis>LuceneSearchTemplate</emphasis>
+      interface:</para>
 
-        <para>Here is the service class using the search template:</para>
+      <programlisting>public interface LuceneSearchTemplate {
+    List search(QueryCreator queryCreator, HitExtractor extractor);
+    List search(Query query, HitExtractor extractor);
+    List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter);
+    List search(Query query, HitExtractor extractor, Filter filter);
+    List search(QueryCreator queryCreator, HitExtractor extractor, Sort sort);
+    List search(Query query, HitExtractor extractor, Sort sort);
+    List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter, Sort sort);
+    List search(Query query, HitExtractor extractor, Filter filter, Sort sort);
+    void search(QueryCreator queryCreator, HitCollector results);
+    Object search(SearcherCallback callback);
+}</programlisting>
 
-        <programlisting>public class SearchServiceImpl extends LuceneSearchSupport
-                                    implements SearchService {
-  public List search(final String textToSearch) {
-    List results=getTemplate().search(new ParsedQueryCreator() {
-      public QueryParams configureQuery() {
-        return new QueryParams("contents",textToSearch);
-      }
-    },new HitExtractor() {
-      public Object mapHit(int id, Document document, float score) {
-        return new SearchResult(document.get("filename"),score);
-      }
+      <para>The following example constructs a query (basing on the
+      <emphasis>QueryParser</emphasis> class) to search a text in the
+      "contents" property of indexed documents. Then it constructs
+      <emphasis>SearchResult</emphasis> objects with the search results. These
+      objects will be added in a list by the support.</para>
+
+      <para>The following code describes an example of use of a
+      <emphasis>search</emphasis> method of the template:</para>
+
+      <programlisting>final String textToSearch = (...)
+List results = getTemplate().search(new ParsedQueryCreator() {
+    public QueryParams configureQuery() {
+        return new QueryParams("contents", textToSearch);
     }
-  });
-  return results;
-  }
+}, new HitExtractor() {
+    public Object mapHit(int id, Document document, float score) {
+        return new SearchResult(document.get("filename"), score);
+    }
+});</programlisting>
+
+      <para>Finally the search template provides a callback order to work
+      directly on a <emphasis>LuceneSearcher</emphasis> instance, the logical
+      resource to use to make searchs.The callback is based on the
+      <emphasis>SearcherCallback</emphasis> interface, as shown in the
+      following code:</para>
+
+      <programlisting>public interface SearcherCallback {
+    Object doWithSearcher(LuceneSearcher searcher) throws Exception;
 }</programlisting>
 
-        <para>and the corresponding Spring configuration:</para>
+      <para>The callback interface is used by a dedicated
+      <emphasis>search</emphasis> method of the LuceneSearchTemplate
+      interface, as show in the following code:</para>
 
-        <programlisting>&lt;bean id="fsDirectory"
-      class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean"&gt;
-  &lt;property name="location"&gt;&lt;value&gt;C:/lucene/index&lt;/value&gt;&lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="searcherFactory"
-      class="org.springmodules.lucene.search.factory.SimpleSearcherFactory"&gt;
-  &lt;property name="directory"&gt;&lt;ref local="fsDirectory"/&gt;&lt;/property&gt;
-&lt;/bean&gt;
-
-&lt;bean id="searchService"
-      class="org.springmodules.samples.lucene.searching.service.SearchServiceImpl"&gt;
-  &lt;property name="searcherFactory"&gt;&lt;ref bean="searcherFactory" /&gt;&lt;/property&gt;
-  &lt;property name="analyzer"&gt;
-    &lt;bean class="org.apache.lucene.analysis.SimpleAnalyzer"/&gt;
-  &lt;/property&gt;
-&lt;/bean&gt;</programlisting>
-
-        <para>Finally the search template provides you a callback to work
-        directly on a <emphasis>Searcher</emphasis> instance. You can use this
-        method to cast the Searcher to its current implementation and call
-        methods that aren't available at the <emphasis>Searcher</emphasis>
-        level. The callback is based on the
-        <emphasis>SearcherCallback</emphasis> interface:</para>
-
-        <programlisting>public interface SearcherCallback {
-  public Object doWithSearcher(Searcher searcher)
-                             throws IOException,ParseException;
+      <programlisting>public class LuceneSearchTemplate {
+    (...)
+    Object search(SearcherCallback callback);
+    (...)
 }</programlisting>
 
-        <para>and is used by a dedicated <emphasis>search</emphasis> method of
-        the template:</para>
+      <para>The following code describes an example of use of this
+      <emphasis>search</emphasis> method of the template:</para>
 
-        <programlisting>public class LuceneSearchTemplate {
-  //...
-  public Object search(SearcherCallback callback) { ... }
-  // ...
+      <programlisting>final String textToSearch = (...)
+List results = getTemplate().search(new SearcherCallback() {
+    public Object doWithSearcher(LuceneSearcher searcher) throws Exception {
+        Query query = new TermQuery(new Term("attribute", textToSearch));
+        Hits hits = searcher.search(query);
+        (...)
+    }
+});</programlisting>
+    </sect2>
+
+    <sect2>
+      <title>Object approach</title>
+
+      <para>The Lucene support allows the creation of search queries. Every
+      classes of this approach are internally based on the
+      <emphasis>LuceneSearchTemplate</emphasis> class and its
+      mechanisms.</para>
+
+      <para>The base class is <emphasis>LuceneSearchQuery</emphasis> of the
+      queries. The internal LuceneSearchTemplate instance is configured by
+      injecting the <emphasis>SearcherFactory</emphasis> and
+      <emphasis>Analyzer</emphasis> instances to use. As this class is
+      abstract, you must implement the <emphasis>search</emphasis> method in
+      order to specify the way to make your search and how handle the
+      results.</para>
+
+      <programlisting>public abstract class LuceneSearchQuery {
+    private LuceneSearchTemplate template = new LuceneSearchTemplate();
+
+    public LuceneSearchTemplate getTemplate() { (...) }
+    public void setAnalyzer(Analyzer analyzer) { (...) }
+    public void setSearcherFactory(SearcherFactory factory) { (...) }
+
+    public abstract List search(String textToSearch);
 }</programlisting>
-      </sect3>
 
-      <sect3>
-        <title>Object approach</title>
+      <para>As this class is very generic, Spring Modules providers a simple
+      sub class to help you to implement your search queries. The abstract
+      <emphasis>SimpleLuceneSearchQuery</emphasis> class implements the search
+      methods leaving you to construct the query and specify the way to
+      extract the results.</para>
 
-        <para>The Lucene support provides the conception of search queries as
-        object. Every classes of this approach are based on the
-        <emphasis>LuceneSearchTemplate</emphasis> class.</para>
-
-        <para>The base class is <emphasis>LuceneSearchQuery</emphasis>. It
-        configures the template by allowing you to inject the
-        <emphasis>SearcherFactory</emphasis> and <emphasis>Analyzer</emphasis>
-        you want to use. As this class is abstract, you must implement the
-        <emphasis>search</emphasis> method to specify the way to make your
-        search and how handle the results.</para>
-
-        <programlisting>public abstract class LuceneSearchQuery {
-  private LuceneSearchTemplate template = new LuceneSearchTemplate();
-
-  public LuceneSearchTemplate getTemplate() { ... }
-  public void setAnalyzer(Analyzer analyzer) { ... }
-  public void setSearcherFactory(SearcherFactory factory) { ... }
-
-  public abstract List search(String textToSearch);
-}</programlisting>
-
-        <para>As this class is very generic, Spring Modules providers a simple
-        sub class to help you to implement your search queries. The abstract
-        <emphasis>SimpleLuceneSearchQuery</emphasis> class implements the
-        search methods leaving you to construct the query and specify the way
-        to extract the results.</para>
-
-        <programlisting>public abstract class SimpleLuceneSearchQuery extends LuceneSearchQuery {
-  protected abstract Query constructSearchQuery(
+      <programlisting>public abstract class SimpleLuceneSearchQuery extends LuceneSearchQuery {
+    protected abstract Query constructSearchQuery(
                              String textToSearch) throws ParseException;
-  protected abstract Object extractResultHit(int id,
+    protected abstract Object extractResultHit(int id,
                                         Document document, float score);
 
-  public final List search(String textToSearch) { ... }
+    public final List search(String textToSearch) { ... }
 }</programlisting>
 
-        <para>Here is an example of use:</para>
+      <para>The following code describes an exampel of use based on the
+      <emphasis>SimpleLuceneSearchQuery</emphasis> class:</para>
 
-        <programlisting>String textToSearch=...;
-LuceneSearchQuery query=new SimpleLuceneSearchQuery() {
-  protected abstract Query constructSearchQuery(
+      <programlisting>String textToSearch = (...)
+LuceneSearchQuery query = new SimpleLuceneSearchQuery() {
+    protected abstract Query constructSearchQuery(
                              String textToSearch) throws ParseException;
-    QueryParser parser=new QueryParser("contents",getAnalyzer());
+    QueryParser parser = new QueryParser("contents",getAnalyzer());
     return parser.parse(textToSearch);
   }
 
@@ -1197,11 +1744,10 @@ LuceneSearchQuery query=new SimpleLuceneSearchQuery() {
     return document.get("filename");
   }
 };
-List results=query.search(textToSearch);</programlisting>
-      </sect3>
+List results = query.search(textToSearch);</programlisting>
     </sect2>
 
-    <sect2>
+    <!-- sect2>
       <title>SearchFactory management</title>
 
       <para>Spring Modules provides support to keep opened
@@ -1222,6 +1768,6 @@ List results=query.search(textToSearch);</programlisting>
       or one yet opened).</para>
 
       <para>[TO FINISH]</para>
-    </sect2>
+    </sect2 -->
   </sect1>
 </chapter>
