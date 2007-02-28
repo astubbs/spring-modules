@@ -27,7 +27,23 @@ Package org.springmodules.jcr
 * reworked JcrDaoSupport to allow subclasses to perform custom initializations [MOD-292]
 * fixed JcrDaoSupport typo (convertJCRAccessException - > convertJcrAccessException)
 * added skipRegisteredNamespace flag to JcrSessionFactory to avoid namespace unregistration
+* added JackrabbitSessionFactory to deal with node types registration [MOD-303]
 
+Package org.springmodules.lucene
+* removed the two Document(s)Identifier interfaces. These informations are now
+  parameters of methods modifyDocument(s) of the template
+* introduction of LuceneIndexReader and LuceneIndexWriter interfaces
+* update of the callacks to support LuceneIndexReader and LuceneIndexWriter
+* introduction of LuceneSearcher interface
+* update of the callack to support LuceneSearcher
+* update templates in order to support Lucene 2
+* change the package name org.springmodules.lucene.index.support.handler to
+  org.springmodules.lucene.index.document.handler
+* renamed getTemplate/setTemplate methods to getLuceneIndexTemplate/setLuceneIndexTemplate in
+  the LuceneIndexTemplate interface
+* renamed getTemplate/setTemplate methods to getLuceneSearchTemplate/setLuceneSearchTemplate in
+  the LuceneSearchTemplate interface
+  
 Package org.springmodules.xt
 * made Serializable Ajax response, events, actions and components, plus Message and Notification objects
 
