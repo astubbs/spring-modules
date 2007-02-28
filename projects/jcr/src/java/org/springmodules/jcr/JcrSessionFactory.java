@@ -107,14 +107,6 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 		this.workspaceName = workspaceName;
 		this.credentials = credentials;
 		this.sessionHolderProviderManager = sessionHolderProviderManager;
-
-		try {
-			afterPropertiesSet();
-		}
-		catch (RepositoryException ex) {
-			// convert the exception
-			throw SessionFactoryUtils.translateException(ex);
-		}
 	}
 
 	/**
@@ -123,13 +115,14 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	public JcrSessionFactory() {
 	}
 
-	public void afterPropertiesSet() throws RepositoryException {
+	public void afterPropertiesSet() throws Exception {
 		Assert.notNull(getRepository(), "repository is required");
 
 		if (eventListeners != null && eventListeners.length > 0 && !JcrUtils.supportsObservation(getRepository()))
 			throw new IllegalArgumentException("repository " + getRepositoryInfo()
 					+ " does NOT support Observation; remove Listener definitions");
 
+		registerNodeTypes();
 		registerNamespaces();
 
 		// determine the session holder provider
@@ -143,12 +136,23 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	}
 
 	/**
+	 * Hook for registering node types on the underlying repository. Since this
+	 * process is not covered by the spec, each implementation requires its own
+	 * subclass.
+	 * 
+	 * By default, this method doesn't do anything.
+	 */
+	protected void registerNodeTypes() throws Exception {
+		// do nothing
+	}
+
+	/**
 	 * Register the namespaces.
 	 * 
 	 * @param session
 	 * @throws RepositoryException
 	 */
-	protected void registerNamespaces() throws RepositoryException {
+	protected void registerNamespaces() throws Exception {
 
 		if (namespaces == null || namespaces.isEmpty())
 			return;
