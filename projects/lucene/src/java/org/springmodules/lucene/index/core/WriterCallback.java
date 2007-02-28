@@ -50,5 +50,5 @@ public interface WriterCallback {
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneIndexAccessException
 	 */
-	Object doWithWriter(LuceneIndexWriter writer) throws IOException;
+	Object doWithWriter(LuceneIndexWriter writer) throws Exception;
 }

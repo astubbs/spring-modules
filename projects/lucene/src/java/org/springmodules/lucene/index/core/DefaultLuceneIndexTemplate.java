@@ -427,7 +427,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 		LuceneIndexReader reader = IndexReaderFactoryUtils.getIndexReader(indexFactory);
 		try {
 			return callback.doWithReader(reader);
-		} catch(IOException ex) {
+		} catch(Exception ex) {
 			throw new LuceneIndexAccessException("Error during using the IndexReader.", ex);
 		} finally {
 			IndexReaderFactoryUtils.releaseIndexReader(indexFactory, reader);
@@ -438,7 +438,7 @@ public class DefaultLuceneIndexTemplate implements LuceneIndexTemplate {
 		LuceneIndexWriter writer = IndexWriterFactoryUtils.getIndexWriter(indexFactory);
 		try {
 			return callback.doWithWriter(writer);
-		} catch(IOException ex) {
+		} catch(Exception ex) {
 			throw new LuceneIndexAccessException("Error during using the IndexWriter.", ex);
 		} finally {
 			IndexWriterFactoryUtils.releaseIndexWriter(indexFactory, writer);

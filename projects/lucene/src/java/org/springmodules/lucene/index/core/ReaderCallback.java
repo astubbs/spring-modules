@@ -50,5 +50,5 @@ public interface ReaderCallback {
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneIndexAccessException
 	 */
-	Object doWithReader(LuceneIndexReader reader) throws IOException;
+	Object doWithReader(LuceneIndexReader reader) throws Exception;
 }

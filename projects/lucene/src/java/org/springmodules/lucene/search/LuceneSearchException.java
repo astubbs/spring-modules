@@ -51,16 +51,7 @@ public class LuceneSearchException extends LuceneException {
 	 * @param msg message
 	 * @param ex root cause
 	 */
-	public LuceneSearchException(String msg,IOException ex) {
-		super(msg,ex);
-	}
-
-	/**
-	 * Constructor for LuceneSearchException.
-	 * @param msg message
-	 * @param ex root cause
-	 */
-	public LuceneSearchException(String msg,ParseException ex) {
+	public LuceneSearchException(String msg, Exception ex) {
 		super(msg,ex);
 	}
 
