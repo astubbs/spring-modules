@@ -92,6 +92,100 @@
       listeners and has utility methods for determing the underlying
       repository properties - see the javadoc and the samples for more
       information.</para>
+
+      <sect3>
+        <title>Namespace registration</title>
+
+        <para>The <literal>JcrSessionFactory</literal> allows namespace
+        registration based on the standard JSR-170 API. It is possible to
+        override the existing namespaces (if any) and register namespaces just
+        during the existence of the <literal>JcrSessionFactory</literal>. By
+        default, the given namespaces are registered only if they occupy free
+        prefixes and be kept in the repository even after the
+        <literal>SessionFactory</literal> shuts down. </para>
+
+        <para>To register the namespaces, simply pass them as a property
+        object, with the key representing the prefix and the value,
+        representing the namespace:</para>
+
+        <programlisting>&lt;bean id="sessionFactory" class="org.springmodules.jcr.JcrSessionFactory"&gt;
+  ...
+ &lt;property name="namespaces"&gt;
+  &lt;props&gt;
+    &lt;prop key="foo"&gt;http://bar.com/jcr&lt;/prop&gt;
+    &lt;prop key="hocus"&gt;http://pocus.com/jcr&lt;/prop&gt;
+   &lt;/props&gt;
+ &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+        <para>One can customize the behavior of the
+        <literal>JcrSessionFactory</literal> using 3 flags:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis>forceNamespacesRegistration</emphasis> - indicates
+            if namespaces already registered under the given prefixes will be
+            overridden or not(default). If <literal>true</literal>, the
+            existing namespaces will be unregistered before registering the
+            new ones. Note however that most (if not all) JCR implementations
+            do not support namespace registration.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis>keepNewNamespaces</emphasis> - indicates if the
+            given namespaces are kept, after being registered (default) or
+            unregistered on the <literal>SessionFactory</literal> destruction.
+            If <literal>true</literal>, the namespaces unregistered during the
+            registration process will be registered back on the repository.
+            Again, as noted above, this requires the JCR implementation to
+            support namespace un-registration.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis>skipExistingNamespaces</emphasis> - indicates if
+            the during the registration process, the existing namespaces are
+            being skipped (default) or not. This flag is used as a workaround
+            for repositories that don't support namespace un-registration
+            (which render the <emphasis>forceNamespacesRegistration</emphasis>
+            and <emphasis>keepNewNamespaces</emphasis> useless). If
+            <literal>true</literal>, will allow registration of new namespaces
+            only if they use a free prefix; if the prefix is taken, the
+            namespace registration is skipped.</para>
+          </listitem>
+        </itemizedlist>
+      </sect3>
+
+      <sect3>
+        <title>Event Listeners</title>
+
+        <para>JSR-170 repositories which support
+        <emphasis>Observation</emphasis>, allow the developer to monitor
+        various event types inside a workspace. However, any potential
+        listener has to be register per-session basis which makes the session
+        creation difficult. <literal>JcrSessionFactory</literal> eases the
+        process by supporting global (across all sessions) listeners through
+        its <literal>EventListenerDefinition</literal>, a simple wrapper class
+        which associates a JCR <literal>EventListener</literal> with event
+        types, node paths and uuids (which allows, if desired, the same
+        <literal>EventListener</literal> instance to be reused across the
+        sessions and event types).</para>
+
+        <para>Configuring the listener is straight forward:</para>
+
+        <programlisting>&lt;bean id="sessionFactory" class="org.springmodules.jcr.JcrSessionFactory"&gt;
+  ...
+  &lt;property name="eventListeners"&gt;
+   &lt;list&gt;
+    &lt;bean class="org.springmodules.jcr.EventListenerDefinition"&gt;
+     &lt;property name="listener"&gt;
+      &lt;bean class="org.springmodules.examples.jcr.DummyEventListener"/&gt;
+     &lt;/property&gt;
+     &lt;property name="absPath" value="/rootNode/someFolder/someLeaf"/&gt;
+    &lt;/bean&gt;
+   &lt;/list&gt;
+  &lt;/property&gt;
+&lt;/property&gt;</programlisting>
+      </sect3>
     </sect2>
 
     <sect2>
@@ -147,7 +241,7 @@
     public void saveSmth()
             throws DataAccessException, MyException {
 
-        Session session = getSession(getSessionFactory(), false);
+        Session session = getSession();
         try {
                 Node root = session.getRootNode();
                 log.info("starting from root node " + root);
@@ -158,7 +252,7 @@
                 return null;
         }
         catch (RepositoryException ex) {
-            throw convertJCRAccessException(ex);
+            throw convertJcrAccessException(ex);
         }
     }
 }</programlisting>The major advantage of such direct JCR access code is that
