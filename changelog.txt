@@ -5,34 +5,43 @@ http://springmodules.dev.java.net
 Changes in version 0.8 (02.03.2007)
 -----------------------------------
 
-Package org.springmodules.orm.db4o
+Package org.springmodules.db4o
 * new db4o integration module (former db4o-spring.dev.java.net project)
 * added new setters for Configuration properties available in 6.1 and removed the deprecated ones
 * several db4o configuration creation mode added
 * replaced System.identityHashCode with Spring's ObjectUtils.getIdentityHexString
 * added local configuration to ObjectContainerFactoryBean
 * OldFormatException added to ObjectServerUtils
-
-Package org.springmodules.jbpm
-* updated jbpm 3.1.x library to 3.1.4
+* added convertDb4oException to Db4oDaoSupport
+* samples for db4o (webapp and standalone) use Spring Modules common build infrastructure
 
 Package org.springmodules.javaspaces
 * updated Blitz spaces library to 1.29
+
+Package org.springmodules.jbpm31
+* updated jbpm 3.1.x library to 3.1.4 [MOD-298]
+* added JbpmDaoSupport [MOD-270]
+
+Package org.springmodules.jcr
+* upgraded Jackrabbit to 1.2.x branch (1.2.2)
+* reworked JcrDaoSupport to allow subclasses to perform custom initializations [MOD-292]
+* fixed JcrDaoSupport typo (convertJCRAccessException - > convertJcrAccessException)
+* added skipRegisteredNamespace flag to JcrSessionFactory to avoid namespace unregistration
 
 Package org.springmodules.xt
 * made Serializable Ajax response, events, actions and components, plus Message and Notification objects
 
 Package org.springmodules.xt.ajax
-* implemented handling of exceptions occurred during Ajax request processing (see [MOD-286])
-* implemented Ajax actions multiple matching (see [MOD-287])
-* simplified Ajax request processing flow (see [MOD-290])
-* refactored components (see [MOD-293])
+* implemented handling of exceptions occurred during Ajax request processing [MOD-286]
+* implemented Ajax actions multiple matching [MOD-287]
+* simplified Ajax request processing flow [MOD-290]
+* refactored components [MOD-293]
 * updated Javascript springxt files
 * javascript springxt-taconite.js file updated and no more back compatible
 * several other fixes and enhancements
 
 Package org.springmodules.xt.model.generator
-* implemented DynamicGenerator and DynamicFactoryGenerator (see [MOD-262])
+* implemented DynamicGenerator and DynamicFactoryGenerator [MOD-262]
 
 Changes in version 0.7 (09.12.2006)
 -----------------------------------
