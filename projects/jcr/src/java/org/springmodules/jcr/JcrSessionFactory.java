@@ -509,5 +509,19 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 		return skipExistingNamespaces;
 	}
 
+	/**
+	 * @return Returns the credentials.
+	 */
+	public Credentials getCredentials() {
+		return credentials;
+	}
+
+	/**
+	 * @return Returns the workspaceName.
+	 */
+	public String getWorkspaceName() {
+		return workspaceName;
+	}
+
 	
 }
