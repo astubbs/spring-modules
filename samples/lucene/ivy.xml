@@ -19,37 +19,27 @@
     <dependencies defaultconf="global->default">
 		
 	    <!-- global (compile, test, runtime) dependencies -->
-		<dependency org="apache" name="commons-logging" rev="1.0.4"/>
-    	<dependency org="apache" name="log4j" rev="1.2.13"/>
-		
-        <dependency org="springframework" name="springframework" rev="1.2.6" conf="global,test->default">
-			<artifact name="spring-support" type="jar" conf="global"/>
-			<artifact name="spring-beans" type="jar" conf="global"/>				
-			<artifact name="spring-context" type="jar" conf="global"/>		
-			<artifact name="spring-core" type="jar" conf="global"/>						
-			<artifact name="spring-web" type="jar" conf="global"/>
-			<artifact name="spring-webmvc" type="jar" conf="global" />										
-			<artifact name="spring-mock" type="jar" conf="test" />
-			<artifact name="spring-dao" type="jar" conf="global" />	
-			<artifact name="spring-jdbc" type="jar" conf="global" />	
-        </dependency>
-		
-        <dependency org="apache" name="lucene" rev="1.4.3"/>
-        <dependency org="concurrent" name="concurrent" rev="1.3.4"/>
-        
-       <dependency org="apache" name="struts" rev="1.1"/>
-       <dependency org="pdfbox" name="pdfbox" rev="0.7.1"/> 
-        <dependency org="apache" name="commons-fileupload" rev="1.1"/>
-        <dependency org="apache" name="poi" rev="2.5.1-final-20040804">
-        	<artifact name="poi" type="jar" />            
-            <artifact name="poi-scratchpad" type="jar"/>
-        </dependency>
-        <dependency org="jexcelapi" name="jxl" rev="2.4.2"/>
+		<dependency org="springframework" name="springframework" rev="2.0">
+			<artifact name="spring" type="jar"/>
+		</dependency>
 
-		<dependency org="springmodules" name="spring-modules-lucene" rev="latest.integration"/>        
-		<dependency org="sun" name="javax.servlet" rev="2.3">
+		<dependency org="pdfbox" name="pdfbox" rev="0.7.1"/> 
+		<dependency org="apache" name="commons-fileupload" rev="1.1"/>
+		<dependency org="apache" name="poi" rev="2.5.1-final-20040804">
+			<artifact name="poi" type="jar" />            
+			<artifact name="poi-scratchpad" type="jar"/>
+		</dependency>
+		<dependency org="jexcelapi" name="jxl" rev="2.4.2"/>
+
+		<dependency org="sun" name="javax.servlet" rev="2.4">
 			<artifact name="servlet-api" type="jar"/> 		
-	    </dependency>
+		</dependency>
+
+		<dependency org="jstl" name="jstl" rev="1.1.2" />
+
+		<dependency org="taglibs" name="standard" rev="1.1.2" />
+
+		<dependency org="springmodules" name="spring-modules-lucene" rev="latest.integration"/>
         
 		<!-- build time only dependencies -->
         
