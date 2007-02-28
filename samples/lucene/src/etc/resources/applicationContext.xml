@@ -9,18 +9,10 @@
 	-->
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName">
-			<value>org.hsqldb.jdbcDriver</value>
-		</property>
-		<property name="url">
-			<value>jdbc:hsqldb:hsql://localhost:9001</value>
-		</property>
-		<property name="username">
-			<value>sa</value>
-		</property>
-		<property name="password">
-			<value/>
-		</property>
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+		<property name="url" value="jdbc:hsqldb:hsql://localhost:9001"/>
+		<property name="username" value="sa"/>
+		<property name="password" value=""/>
     </bean>
 
 	<!--
@@ -28,19 +20,15 @@
 	-->
 
     <bean id="fsDirectory" class="org.springmodules.lucene.index.support.FSDirectoryFactoryBean">
-    	<property name="location">
-    		<value>file://\C:/temp/lucene</value>
-    	</property>
+    	<property name="location" value="file://\C:/temp/lucene"/>
     </bean>
 
 	<bean id="indexFactory" class="org.springmodules.lucene.index.support.SimpleIndexFactoryBean">
-        <property name="directory"><ref local="fsDirectory" /></property>
+        <property name="directory" ref="fsDirectory"/>
         <property name="analyzer">
             <bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
         </property>
-        <property name="resolveLock">
-        	<value>true</value>
-        </property>
+        <property name="resolveLock" value="true"/>
 	</bean>
 
 	<!--
@@ -51,38 +39,34 @@
 		<property name="documentHandlers">
 			<map>
 				<entry key="pdf"><bean class="org.springmodules.samples.lucene.index.file.handlers.PdfBoxDocumentHandler"/></entry>
-				<entry key="rtf"><bean class="org.springmodules.samples.lucene.index.file.handlers.DefaultRtfDocumentHandler"/></entry>
-				<entry key="xls"><bean class="org.springmodules.samples.lucene.index.file.handlers.JExcelDocumentHandler"/></entry>
-				<entry key="doc"><bean class="org.springmodules.samples.lucene.index.file.handlers.PoiWordDocumentHandler"/></entry>
+				<entry key="rtf"><bean class="org.springmodules.lucene.index.document.handler.file.DefaultRtfDocumentHandler"/></entry>
+				<entry key="xls"><bean class="org.springmodules.lucene.index.document.handler.file.JExcelDocumentHandler"/></entry>
+				<entry key="doc"><bean class="org.springmodules.lucene.index.document.handler.file.PoiWordDocumentHandler"/></entry>
 			</map>
 		</property>
 	</bean>
 
 	<bean id="indexAccessorDao" class="org.springmodules.samples.lucene.dao.indexing.IndexAccessorDaoImpl">
-    	<property name="indexFactory"><ref local="indexFactory"/></property>
-    	<property name="documentHandlerManager"><ref local="documentHandlerManager"/></property>
+    	<property name="indexFactory" ref="indexFactory"/>
+    	<property name="documentHandlerManager" ref="documentHandlerManager"/>
 	</bean>
 
 	<bean id="documentIdDao" class="org.springmodules.samples.lucene.dao.indexing.DocumentIdDaoImpl">
-    	<property name="dataSource"><ref local="dataSource"/></property>
+    	<property name="dataSource" ref="dataSource"/>
 	</bean>
 
 	<bean id="indexAccessorServiceTarget" class="org.springmodules.samples.lucene.service.indexing.IndexAccessorServiceImpl">
-    	<property name="documentIdDao"><ref local="documentIdDao"/></property>
-    	<property name="indexAccessorDao"><ref local="indexAccessorDao"/></property>
+    	<property name="documentIdDao" ref="documentIdDao"/>
+    	<property name="indexAccessorDao" ref="indexAccessorDao"/>
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource"><ref local="dataSource"/></property>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
 	<bean id="indexAccessorService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-    	<property name="transactionManager">
-        	<ref bean="transactionManager"/>
-	    </property>
-	    <property name="target">
-	        <ref bean="indexAccessorServiceTarget"/>
-	    </property>
+    	<property name="transactionManager" ref="transactionManager"/>
+	    <property name="target" ref="indexAccessorServiceTarget"/>
 	    <property name="transactionAttributes">
 	        <props>
 	            <prop key="addDocument*">PROPAGATION_REQUIRED</prop>
@@ -95,7 +79,7 @@
 	-->
 
     <bean id="searcherFactory" class="org.springmodules.lucene.search.factory.SimpleSearcherFactory">
-        <property name="directory"><ref local="fsDirectory" /></property>
+        <property name="directory" ref="fsDirectory"/>
     </bean>
 
     <!--bean id="multiSearcherFactory" class="org.springmodules.lucene.search.support.MultipleSearcherFactory">
@@ -108,8 +92,8 @@
     </bean-->
 
 	<bean id="searchService" class="org.springmodules.samples.lucene.service.search.SearchServiceImpl">
-        <!--property name="searcherFactory"><ref bean="multiSearcherFactory" /></property-->
-        <property name="searcherFactory"><ref bean="searcherFactory" /></property>
+        <!--property name="searcherFactory" ref="multiSearcherFactory" /-->
+        <property name="searcherFactory" ref="searcherFactory"/>
         <property name="analyzer">
             <bean class="org.apache.lucene.analysis.SimpleAnalyzer"/>
         </property>
@@ -120,11 +104,11 @@
 	-->
 
 	<bean id="categoryDao" class="org.springmodules.samples.lucene.dao.category.CategoryDaoImpl">
-		<property name="dataSource"><ref local="dataSource"/></property>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
 	<bean id="categoryService" class="org.springmodules.samples.lucene.service.category.CategoryServiceImpl">
-		<property name="categoryDao"><ref local="categoryDao"/></property>
+		<property name="categoryDao" ref="categoryDao"/>
 	</bean>
 
 </beans>
