@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springmodules.lucene.index.document.handler.database.SqlDocumentHandler;
+import org.springmodules.lucene.index.document.handler.database.SqlRequest;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.object.database.DatabaseIndexingListener;
 import org.springmodules.lucene.index.object.database.DefaultDatabaseIndexer;
-import org.springmodules.lucene.index.support.database.SqlDocumentHandler;
-import org.springmodules.lucene.index.support.database.SqlRequest;
 
 /**
  * Main class to index all datas (directories and databases)
@@ -52,7 +52,7 @@ public class SimpleDatabaseIndexingImpl implements DatabaseIndexing,Initializing
 		if( indexFactory==null ) {
 			throw new IllegalArgumentException("indexFactory is required");
 		}
-		this.indexer=new DefaultDatabaseIndexer(indexFactory);
+		this.indexer = new DefaultDatabaseIndexer(indexFactory);
 	}
 
 	public void prepareDatabaseHandlers() {
@@ -60,9 +60,9 @@ public class SimpleDatabaseIndexingImpl implements DatabaseIndexing,Initializing
 		this.indexer.registerDocumentHandler(new SqlRequest("select book_page_text from book_page"),
 		new SqlDocumentHandler() {
 			public Document getDocument(SqlRequest request, ResultSet rs) throws SQLException {
-				Document document=new Document();
-				document.add(Field.Text("contents", rs.getString("book_page_text")));
-				document.add(Field.Keyword("request", request.getSql()));
+				Document document = new Document();
+				document.add(new Field("contents", rs.getString("book_page_text"), Field.Store.YES, Field.Index.TOKENIZED));
+				document.add(new Field("request", request.getSql(), Field.Store.YES, Field.Index.UN_TOKENIZED));
 				return document;
 			}
 		});
@@ -87,7 +87,7 @@ public class SimpleDatabaseIndexingImpl implements DatabaseIndexing,Initializing
 	}
 
 	public void prepareListeners() {
-		DatabaseIndexingListener listener=new DatabaseIndexingListener() {
+		DatabaseIndexingListener listener = new DatabaseIndexingListener() {
 			public void beforeIndexingRequest(SqlRequest request) {
 				System.out.println("Indexing the request : "+request.getSql()+" ...");
 			}
@@ -105,9 +105,9 @@ public class SimpleDatabaseIndexingImpl implements DatabaseIndexing,Initializing
 	}
 
 	public static void main(String[] args) {
-		ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext(
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
 						new String[] {"/applicationContext.xml","/applicationContext-console.xml"});
-		DatabaseIndexing indexing=(DatabaseIndexing)ctx.getBean("indexingDatabase");
+		DatabaseIndexing indexing = (DatabaseIndexing)ctx.getBean("indexingDatabase");
 		indexing.prepareDatabaseHandlers();
 		indexing.prepareListeners();
 		indexing.indexDatabase();

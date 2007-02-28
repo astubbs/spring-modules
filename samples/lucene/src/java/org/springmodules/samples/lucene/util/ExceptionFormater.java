@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public class ExceptionFormater {
 	private Exception ex;
 
 	public ExceptionFormater(Exception ex) {
-		this.ex=ex;
+		this.ex = ex;
 	}
 
 	public String getMessage() {
@@ -35,7 +35,7 @@ public class ExceptionFormater {
 	}
 
 	public String getStackTrace() {
-		StringWriter writer=new StringWriter();
+		StringWriter writer = new StringWriter();
 		ex.printStackTrace(new PrintWriter(writer));
 		return writer.toString();
 	}

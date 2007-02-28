@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,16 +25,16 @@ public class ExecutionTimeUtils {
     private static long beginningTime=0;
 
     public static void executionBeginning() {
-    	Date dateBeginning=new Date();
+    	Date dateBeginning = new Date();
 		executionBeginning(dateBeginning.getTime());
     }
 
     private static void executionBeginning(long beginning) {
-		beginningTime=beginning;
+		beginningTime = beginning;
     }
 
     public static long getExecutionTime() {
-    	Date endDate=new Date();
+    	Date endDate = new Date();
         return getExecutionTime(endDate.getTime());
     }
 
@@ -43,35 +43,35 @@ public class ExecutionTimeUtils {
     }
 
     public static String showExecutionTime() {
-    	Date endTime=new Date();
-        long executionTime=endTime.getTime()-beginningTime;
+    	Date endTime = new Date();
+        long executionTime = endTime.getTime()-beginningTime;
         return showExecutionTime(executionTime);
     }
 
     public static String showExecutionTime(long executionTime) {
-        int heures=0;
-        int minutes=0;
-        int secondes=0;
-        int millisecondes=0;
-        long tmp=executionTime;
+        int heures = 0;
+        int minutes = 0;
+        int secondes = 0;
+        int millisecondes = 0;
+        long tmp = executionTime;
 
         //Calcul des millisecondes
-        millisecondes=(int)tmp%1000;
+        millisecondes = (int)tmp%1000;
         tmp=tmp/1000;
 
         //Calcul des secondes
-        secondes=(int)tmp%60;
+        secondes = (int)tmp%60;
         tmp=tmp/60;
 
         //Calcul des minutes
-        minutes=(int)tmp%60;
+        minutes = (int)tmp%60;
         tmp=tmp/60;
 
         //Calcul des heures
-        heures=(int)tmp%60;
+        heures = (int)tmp%60;
         tmp=tmp/60;
 
-        StringBuffer executionTimeString=new StringBuffer();
+        StringBuffer executionTimeString = new StringBuffer();
         if( heures!=0 ) {
 			executionTimeString.append(heures+"h ");
         }

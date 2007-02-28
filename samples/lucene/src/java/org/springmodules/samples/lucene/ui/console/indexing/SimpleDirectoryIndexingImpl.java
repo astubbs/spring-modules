@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import java.io.File;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springmodules.lucene.index.document.handler.DocumentHandlerManager;
 import org.springmodules.lucene.index.factory.IndexFactory;
 import org.springmodules.lucene.index.object.directory.DefaultDirectoryIndexer;
 import org.springmodules.lucene.index.object.directory.FileDocumentIndexingListener;
-import org.springmodules.lucene.index.support.file.DocumentHandlerManager;
 import org.springmodules.samples.lucene.util.ExecutionTimeUtils;
 
 /**
@@ -47,17 +47,17 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 		if( indexFactory==null ) {
 			throw new IllegalArgumentException("indexFactory is required");
 		}
-		this.indexer=new DefaultDirectoryIndexer(indexFactory,documentHandlerManager);
+		this.indexer = new DefaultDirectoryIndexer(indexFactory,documentHandlerManager);
 	}
 
 	public void indexDirectory(String directory) {
-		indexer.index(directory,true);
+		indexer.index(directory, true);
 	}
 
 	public void prepareListeners() {
-		FileDocumentIndexingListener listener=new FileDocumentIndexingListener() {
-			private long indexingBeginningTime=0;
-			private long indexingDocumentBeginningTime=0;
+		FileDocumentIndexingListener listener = new FileDocumentIndexingListener() {
+			private long indexingBeginningTime = 0;
+			private long indexingDocumentBeginningTime = 0;
 
 			public void beforeIndexingDirectory(File file) {
 				System.out.println("Indexing the directory : "+file.getPath()+" ...");
@@ -73,7 +73,7 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 			}
 
 			public void afterIndexingFile(File file) {
-				String duration=ExecutionTimeUtils.showExecutionTime();
+				String duration = ExecutionTimeUtils.showExecutionTime();
 				System.out.println(" -> File indexed ("+duration+").");
 			}
 
@@ -90,11 +90,11 @@ public class SimpleDirectoryIndexingImpl implements DirectoryIndexing,Initializi
 	}
 
 	public static void main(String[] args) {
-		ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext(
-						new String[] {"/applicationContext.xml","/applicationContext-console.xml"});
-		DirectoryIndexing indexing=(DirectoryIndexing)ctx.getBean("indexingDirectory");
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(
+						new String[] {"/applicationContext.xml", "/applicationContext-console.xml"});
+		DirectoryIndexing indexing = (DirectoryIndexing)ctx.getBean("indexingDirectory");
 		indexing.prepareListeners();
-		String directory="c:/temp/lucene-documents";
+		String directory = "c:/temp/lucene-documents";
 		if( args.length==1 ) {
 			directory=args[0];
 		}

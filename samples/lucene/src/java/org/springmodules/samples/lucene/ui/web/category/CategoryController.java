@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,20 +34,20 @@ public class CategoryController extends MultiActionController {
 	private CategoryService categoryService;
 
 	private int getId(HttpServletRequest request) {
-		String tmpId=request.getParameter("id");
+		String tmpId = request.getParameter("id");
 		return Integer.parseInt(tmpId);
 	}
 
 	public ModelAndView list(HttpServletRequest request,
 							  HttpServletResponse response) throws Exception {
-		List categories=categoryService.getCategories();
-		return new ModelAndView("category/categories","categories",categories);
+		List categories = categoryService.getCategories();
+		return new ModelAndView("category/categories", "categories", categories);
 	}
 
 	public ModelAndView showCategory(HttpServletRequest request,
 							  HttpServletResponse response) throws Exception {
-		DocumentCategory category=categoryService.getCategory(getId(request));
-		return new ModelAndView("category/category","category",category);
+		DocumentCategory category = categoryService.getCategory(getId(request));
+		return new ModelAndView("category/category", "category", category);
 	}
 
 	public CategoryService getCategoryService() {

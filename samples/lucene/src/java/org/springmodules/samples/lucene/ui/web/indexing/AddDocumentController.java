@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ public class AddDocumentController extends SimpleFormController {
 
 	public ModelAndView onSubmit(Object command) throws Exception {
 		if( command instanceof TextDocumentHolder ) {
-			TextDocumentHolder holder=(TextDocumentHolder)command;
+			TextDocumentHolder holder = (TextDocumentHolder)command;
 			indexAccessorService.addDocument(holder.getTitle(),
-									holder.getText(),holder.getCategory());
+									holder.getText(), holder.getCategory());
 		}
 		return new ModelAndView("indexing/documentAdded");
 	}

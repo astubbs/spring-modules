@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,17 +33,17 @@ public class SearchController extends SimpleFormController {
 	private SearchService searchService;
 
 	public ModelAndView onSubmit(Object command) throws Exception {
-		List results=null;
+		List results = null;
 		if( command instanceof WebQuery ) {
-			WebQuery query=(WebQuery)command;
-			results=searchService.search(query.getFieldName(),query.getString());
+			WebQuery query = (WebQuery)command;
+			results  =searchService.search(query.getFieldName(),query.getString());
 		} else {
-			results=new ArrayList();
+			results = new ArrayList();
 		}
-		Map model=new HashMap();
-		model.put("results",results);
-		model.put("query",command);
-		return new ModelAndView("search/results",model);
+		Map model = new HashMap();
+		model.put("results", results);
+		model.put("query", command);
+		return new ModelAndView("search/results", model);
 	}
 
 	public SearchService getSearchService() {

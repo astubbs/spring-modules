@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,15 +35,13 @@ public class DocumentInformationsController implements Controller {
 	private SearchService searchService;
 
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String identifierName=request.getParameter("identifierName");
-		String identifierValue=request.getParameter("identifierValue");
-		List fields=searchService.getDocumentFields(identifierName,identifierValue);
-		Map model=new HashMap();
-		model.put("identifierName",identifierName);
-		model.put("identifierValue",identifierValue);
-		model.put("fields",fields);
-		System.out.println("identifierName = "+identifierName);
-		System.out.println("identifierValue = "+identifierValue);
+		String identifierName = request.getParameter("identifierName");
+		String identifierValue = request.getParameter("identifierValue");
+		List fields = searchService.getDocumentFields(identifierName,identifierValue);
+		Map model = new HashMap();
+		model.put("identifierName", identifierName);
+		model.put("identifierValue", identifierValue);
+		model.put("fields", fields);
 		return new ModelAndView("search/documentInformations",model);
 	}
 

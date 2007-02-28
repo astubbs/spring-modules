@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,9 @@ public class SimpleErrorResolver implements HandlerExceptionResolver,Ordered {
 	private int order; 
 
 	public ModelAndView resolveException(HttpServletRequest request, 
-										 HttpServletResponse response, 
-										 Object handler,Exception ex) { 
-		ExceptionFormater exceptionFormater=new ExceptionFormater(ex);
-		return new ModelAndView("error","exception",exceptionFormater);
+						HttpServletResponse response, Object handler, Exception ex) { 
+		ExceptionFormater exceptionFormater = new ExceptionFormater(ex);
+		return new ModelAndView("error","exception", exceptionFormater);
 	}
 
 	public int getOrder() {

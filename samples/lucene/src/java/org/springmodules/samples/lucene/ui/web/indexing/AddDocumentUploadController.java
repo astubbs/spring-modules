@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,9 +44,9 @@ public class AddDocumentUploadController extends SimpleFormController {
 		try {
 			indexAccessorService.addDocument(holder);
 		} catch(FileExtensionNotSupportedException ex) {
-			return new ModelAndView("indexing/documentNotAdded","filename",holder.getFilename());
+			return new ModelAndView("indexing/documentNotAdded", "filename", holder.getFilename());
 		}
-		return new ModelAndView("indexing/documentAdded","filename",holder.getFilename());
+		return new ModelAndView("indexing/documentAdded", "filename", holder.getFilename());
 	}
 
 	public IndexAccessorService getIndexAccessorService() {

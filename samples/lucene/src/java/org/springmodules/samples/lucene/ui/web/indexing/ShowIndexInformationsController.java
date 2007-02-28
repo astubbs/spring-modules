@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,13 +37,14 @@ public class ShowIndexInformationsController implements Controller {
 	private IndexAccessorService indexAccessorService;
 	private CategoryService categoryService;
 
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		IndexInformations infos=indexAccessorService.getIndexInformations();
-		List categories=categoryService.getCategories();
-		Map model=new HashMap();
-		model.put("infos",infos);
-		model.put("categories",categories);
-		return new ModelAndView("indexing/indexInfos",model);
+	public ModelAndView handleRequest(HttpServletRequest request,
+								HttpServletResponse response) throws Exception {
+		IndexInformations infos = indexAccessorService.getIndexInformations();
+		List categories = categoryService.getCategories();
+		Map model = new HashMap();
+		model.put("infos", infos);
+		model.put("categories", categories);
+		return new ModelAndView("indexing/indexInfos", model);
 	}
 
 	public IndexAccessorService getIndexAccessorService() {

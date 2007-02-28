@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,21 +37,21 @@ public class SimpleSearcherImpl implements Searcher {
 	 */
 	private void displayResults(String textToSearch,List hits) {
 		System.out.println("Results of the search on the query \""+textToSearch+"\"");
-		for(Iterator i=hits.iterator();i.hasNext();) {
-			String source=(String)i.next();
+		for(Iterator i = hits.iterator(); i.hasNext();) {
+			String source = (String)i.next();
 			System.out.println(" -- source : "+source);
 		}
 	}
 
 	public void search() {
-		final String textToSearch="references";
-		List results=searchService.search("contents",textToSearch);
-		displayResults(textToSearch,results);
+		final String textToSearch = "references";
+		List results=searchService.search("contents", textToSearch);
+		displayResults(textToSearch, results);
 	}
 
 	public static void main(String[] args) {
-		ClassPathXmlApplicationContext ctx=new ClassPathXmlApplicationContext("/applicationContext.xml");
-		Searcher searcher=(Searcher)ctx.getBean("searcher");
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("/applicationContext.xml");
+		Searcher searcher = (Searcher)ctx.getBean("searcher");
 		searcher.search();
 	}
 
