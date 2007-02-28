@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE descriptor-repository PUBLIC "-//Apache Software Foundation//DTD OJB Repository//EN"
+ 		"OJB-repository.dtd">
+
+<!--
+  - Repository file for the OJB implementation of the Clinic interface.
+	-->
+<descriptor-repository version="1.0">
+
+	<jdbc-connection-descriptor jcd-alias="dataSource" default-connection="true" useAutoCommit="1"/>
+	<!-- 
+	platform="Hsqldb"
+		<sequence-manager className="org.apache.ojb.broker.util.sequence.SequenceManagerNativeImpl"/>
+	</jdbc-connection-descriptor>
+ -->
+</descriptor-repository>

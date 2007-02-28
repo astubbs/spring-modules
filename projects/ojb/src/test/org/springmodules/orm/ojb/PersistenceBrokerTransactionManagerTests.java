@@ -27,6 +27,8 @@ import org.apache.ojb.broker.PersistenceBroker;
 import org.apache.ojb.broker.accesslayer.ConnectionManagerIF;
 import org.apache.ojb.broker.accesslayer.LookupException;
 import org.easymock.MockControl;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -39,6 +41,11 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @since 08.07.2004
  */
 public class PersistenceBrokerTransactionManagerTests extends TestCase {
+
+	protected void setUp() throws Exception {
+		Resource res = new ClassPathResource("OJB.properties");
+		System.setProperty("OJB.properties", res.getFile().getAbsolutePath());
+	}
 
 	public void testTransactionCommit() throws LookupException, SQLException {
 		MockControl pbControl = MockControl.createControl(PersistenceBroker.class);

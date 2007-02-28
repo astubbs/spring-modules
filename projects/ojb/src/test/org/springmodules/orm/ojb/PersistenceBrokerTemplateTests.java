@@ -30,6 +30,8 @@ import org.apache.ojb.broker.PersistenceBrokerFactory;
 import org.apache.ojb.broker.query.Query;
 import org.apache.ojb.broker.query.QueryByCriteria;
 import org.easymock.MockControl;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springmodules.beans.TestBean;
 
 /**
@@ -37,6 +39,11 @@ import org.springmodules.beans.TestBean;
  * @since 08.07.2004
  */
 public class PersistenceBrokerTemplateTests extends TestCase {
+
+	protected void setUp() throws Exception {
+		Resource res = new ClassPathResource("OJB.properties");
+		System.setProperty("OJB.properties", res.getFile().getAbsolutePath());
+	}
 
 	public void testPbKey() {
 		PersistenceBrokerTemplate template = new PersistenceBrokerTemplate();
