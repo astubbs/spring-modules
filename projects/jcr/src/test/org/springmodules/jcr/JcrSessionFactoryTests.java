@@ -151,7 +151,7 @@ public class JcrSessionFactoryTests extends TestCase {
 		omCtrl.verify();
 	}
 
-	public void testRegisterNamespaces() throws RepositoryException {
+	public void testRegisterNamespaces() throws Exception {
 		Properties namespaces = new Properties();
 		namespaces.put("foo", "bar");
 		namespaces.put("hocus", "pocus");
@@ -195,7 +195,7 @@ public class JcrSessionFactoryTests extends TestCase {
 
 	}
 
-	public void testForceRegistryNamespace() throws RepositoryException {
+	public void testForceRegistryNamespace() throws Exception {
 		String foo = "foo";
 		Properties namespaces = new Properties();
 		namespaces.put(foo, "bar");
@@ -203,8 +203,8 @@ public class JcrSessionFactoryTests extends TestCase {
 
 		factory.setNamespaces(namespaces);
 		factory.setForceNamespacesRegistration(true);
-		factory.setSkipRegisteredNamespace(false);
-		factory.setKeepRegisteredNamespaces(false);
+		factory.setSkipExistingNamespaces(false);
+		factory.setKeepNewNamespaces(false);
 
 		MockControl sessionCtrl = MockControl.createControl(Session.class);
 		Session session = (Session) sessionCtrl.getMock();
@@ -253,13 +253,13 @@ public class JcrSessionFactoryTests extends TestCase {
 		sessionCtrl.verify();
 	}
 
-	public void testKeepRegistryNamespace() throws RepositoryException {
+	public void testKeepRegistryNamespace() throws Exception {
 		Properties namespaces = new Properties();
 		namespaces.put("foo", "bar");
 		namespaces.put("hocus", "pocus");
 
 		factory.setNamespaces(namespaces);
-		factory.setKeepRegisteredNamespaces(true);
+		factory.setKeepNewNamespaces(true);
 
 		MockControl sessionCtrl = MockControl.createControl(Session.class);
 		Session session = (Session) sessionCtrl.getMock();
@@ -296,13 +296,13 @@ public class JcrSessionFactoryTests extends TestCase {
 		sessionCtrl.verify();
 	}
 	
-	public void testSkipRegisteredNamespaces() throws RepositoryException {
+	public void testSkipRegisteredNamespaces() throws Exception {
 		Properties namespaces = new Properties();
 		namespaces.put("foo", "bar");
 		namespaces.put("hocus", "pocus");
 
 		factory.setNamespaces(namespaces);
-		factory.setSkipRegisteredNamespace(false);
+		factory.setSkipExistingNamespaces(false);
 
 		MockControl sessionCtrl = MockControl.createControl(Session.class);
 		Session session = (Session) sessionCtrl.getMock();
