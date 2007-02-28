@@ -40,10 +40,10 @@ import org.springmodules.jcr.support.GenericSessionHolderProvider;
  * 
  * One can change this behavior using the
  * {@link #setForceNamespacesRegistration(boolean)},
- * {@link #setKeepRegisteredNamespaces(boolean) and
+ * {@link #setKeepNewNamespaces(boolean) and
  * {@link #skipRegisteredNamespace(boolean)} methods.
  * 
- * If 'forceNamespacesRegistration' is true and 'keepNamespaces' false, the
+ * If 'forceNamespacesRegistration' is true and 'keepNewNamespaces' false, the
  * overwritten namespaces are registered back when the factory is destroyed.
  * 
  * @author Costin Leau
@@ -68,9 +68,9 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 
 	private boolean forceNamespacesRegistration = false;
 
-	private boolean keepRegisteredNamespaces = true;
+	private boolean keepNewNamespaces = true;
 
-	private boolean skipRegisteredNamespace = true;
+	private boolean skipExistingNamespaces = true;
 
 	/**
 	 * session holder provider manager - optional.
@@ -145,6 +145,17 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	protected void registerNodeTypes() throws Exception {
 		// do nothing
 	}
+	
+	/**
+	 * Hook for un-registering node types on the underlying repository. Since this
+	 * process is not covered by the spec, each implementation requires its own
+	 * subclass.
+	 * 
+	 * By default, this method doesn't do anything.
+	 */
+	protected void unregisterNodeTypes() throws Exception {
+		// do nothing
+	}
 
 	/**
 	 * Register the namespaces.
@@ -166,7 +177,7 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 		if (forceNamespacesRegistration) {
 
 			// save the old namespace only if it makes sense
-			if (!keepRegisteredNamespaces)
+			if (!keepNewNamespaces)
 				overwrittenNamespaces = new HashMap(namespaces.size());
 			// do the lookup, so we avoid exceptions
 			String[] prefixes = registry.getPrefixes();
@@ -181,7 +192,7 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 					if (log.isDebugEnabled()) {
 						log.debug("prefix " + prefix + " was already registered; unregistering it");
 					}
-					if (!keepRegisteredNamespaces) {
+					if (!keepNewNamespaces) {
 						// save old namespace
 						overwrittenNamespaces.put(prefix, registry.getURI(prefix));
 					}
@@ -196,7 +207,7 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 			Map.Entry namespace = (Map.Entry) iter.next();
 			String prefix = (String) namespace.getKey();
 			String ns = (String) namespace.getValue();
-			if (skipRegisteredNamespace && registry.getURI(prefix) != null) {
+			if (skipExistingNamespaces && registry.getURI(prefix) != null) {
 				log.debug("namespace already registered under [" + prefix + "]; skipping registration");
 			}
 			else {
@@ -209,8 +220,9 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	/**
 	 * @see org.springframework.beans.factory.DisposableBean#destroy()
 	 */
-	public void destroy() throws RepositoryException {
+	public void destroy() throws Exception {
 		unregisterNamespaces();
+		unregisterNodeTypes();
 	}
 
 	/**
@@ -218,9 +230,9 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 * 
 	 * @param session
 	 */
-	protected void unregisterNamespaces() throws RepositoryException {
+	protected void unregisterNamespaces() throws Exception {
 
-		if (namespaces == null || namespaces.isEmpty() || keepRegisteredNamespaces)
+		if (namespaces == null || namespaces.isEmpty() || keepNewNamespaces)
 			return;
 
 		if (log.isDebugEnabled())
@@ -296,24 +308,10 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	}
 
 	/**
-	 * @return Returns the workspaceName.
-	 */
-	public String getWorkspaceName() {
-		return workspaceName;
-	}
-
-	/**
 	 * @param workspaceName The workspaceName to set.
 	 */
 	public void setWorkspaceName(String workspaceName) {
 		this.workspaceName = workspaceName;
-	}
-
-	/**
-	 * @return Returns the credentials.
-	 */
-	public Credentials getCredentials() {
-		return credentials;
 	}
 
 	/**
@@ -358,7 +356,7 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 		buffer.append("SessionFactory for ");
 		buffer.append(getRepositoryInfo());
 		buffer.append("|workspace=");
-		buffer.append(getWorkspaceName());
+		buffer.append(workspaceName);
 		return buffer.toString();
 	}
 
@@ -450,8 +448,8 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 * @see #forceNamespacesRegistration
 	 * @param keepNamespaces The keepNamespaces to set.
 	 */
-	public void setKeepRegisteredNamespaces(boolean keepNamespaces) {
-		this.keepRegisteredNamespaces = keepNamespaces;
+	public void setKeepNewNamespaces(boolean keepNamespaces) {
+		this.keepNewNamespaces = keepNamespaces;
 	}
 
 	/**
@@ -460,7 +458,7 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 * cause unregistration for the namespaces that will be modified.
 	 * 
 	 * <p/> However, depending on the
-	 * {@link #setKeepRegisteredNamespaces(boolean)} setting, the old namespaces
+	 * {@link #setKeepNewNamespaces(boolean)} setting, the old namespaces
 	 * can be registered back once the application context is destroyed.
 	 * 
 	 * False by default.
@@ -486,8 +484,30 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 * 
 	 * @param skipRegisteredNamespace The skipRegisteredNamespace to set.
 	 */
-	public void setSkipRegisteredNamespace(boolean skipRegisteredNamespace) {
-		this.skipRegisteredNamespace = skipRegisteredNamespace;
+	public void setSkipExistingNamespaces(boolean skipRegisteredNamespace) {
+		this.skipExistingNamespaces = skipRegisteredNamespace;
 	}
 
+	/**
+	 * @return Returns the forceNamespacesRegistration.
+	 */
+	public boolean isForceNamespacesRegistration() {
+		return forceNamespacesRegistration;
+	}
+
+	/**
+	 * @return Returns the keepNewNamespaces.
+	 */
+	public boolean isKeepNewNamespaces() {
+		return keepNewNamespaces;
+	}
+
+	/**
+	 * @return Returns the skipExistingNamespaces.
+	 */
+	public boolean isSkipExistingNamespaces() {
+		return skipExistingNamespaces;
+	}
+
+	
 }
