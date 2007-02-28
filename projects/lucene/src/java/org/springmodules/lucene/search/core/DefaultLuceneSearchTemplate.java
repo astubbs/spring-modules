@@ -239,10 +239,10 @@ public class DefaultLuceneSearchTemplate implements LuceneSearchTemplate {
 		LuceneSearcher searcher = SearcherFactoryUtils.getSearcher(getSearcherFactory());
 		try {
 			return callback.doWithSearcher(searcher);
-		} catch (IOException ex) {
-			throw new LuceneSearchException("Error during searching",ex);
 		} catch (ParseException ex) {
-			throw new LuceneSearchException("Error during parsing query",ex);
+			throw new LuceneSearchException("Error during parsing query", ex);
+		} catch (Exception ex) {
+			throw new LuceneSearchException("Error during searching", ex);
 		} finally {
 			SearcherFactoryUtils.releaseSearcher(getSearcherFactory(),searcher);
 		}

@@ -51,5 +51,5 @@ public interface SearcherCallback {
 	 * @throws IOException if thrown by a Lucene method, to be auto-converted
 	 * to a LuceneSearchException
 	 */
-    public Object doWithSearcher(LuceneSearcher searcher) throws IOException,ParseException;
+    Object doWithSearcher(LuceneSearcher searcher) throws Exception;
 }

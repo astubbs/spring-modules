@@ -16,21 +16,14 @@
 
 package org.springmodules.lucene.search.core;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.HitCollector;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.Sort;
-import org.springmodules.lucene.search.LuceneSearchException;
-import org.springmodules.lucene.search.factory.SearcherFactory;
-import org.springmodules.lucene.search.factory.SearcherFactoryUtils;
 
 /**
  * <b>This is the central class in the lucene search core package.</b>
@@ -68,7 +61,7 @@ public interface LuceneSearchTemplate {
 	 * @return the search results
 	 * @see QueryCreator#createQuery(Analyzer)
 	 */
-	List search(QueryCreator queryCreator,HitExtractor extractor);
+	List search(QueryCreator queryCreator, HitExtractor extractor);
 
 	/**
 	 * Search the index basing a Lucene query created outside the template.
@@ -77,7 +70,7 @@ public interface LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	List search(Query query,HitExtractor extractor);
+	List search(Query query, HitExtractor extractor);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -89,7 +82,7 @@ public interface LuceneSearchTemplate {
 	 * @return the search results
 	 * @see QueryCreator#createQuery(Analyzer)
 	 */
-	List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter);
+	List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter);
 
 	/**
 	 * Search the index basing a Lucene query created outside the template using
@@ -98,7 +91,7 @@ public interface LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	List search(Query query,HitExtractor extractor,Filter filter);
+	List search(Query query, HitExtractor extractor, Filter filter);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -110,7 +103,7 @@ public interface LuceneSearchTemplate {
 	 * @return the search results
 	 * @see QueryCreator#createQuery(Analyzer)
 	 */
-	List search(QueryCreator queryCreator,HitExtractor extractor,Sort sort);
+	List search(QueryCreator queryCreator, HitExtractor extractor, Sort sort);
 
 	/**
 	 * Search the index basing a Lucene query created outside the template using
@@ -119,7 +112,7 @@ public interface LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	List search(Query query,HitExtractor extractor,Sort sort);
+	List search(Query query, HitExtractor extractor, Sort sort);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -131,7 +124,7 @@ public interface LuceneSearchTemplate {
 	 * @return the search results
 	 * @see QueryCreator#createQuery(Analyzer)
 	 */
-	List search(QueryCreator queryCreator,HitExtractor extractor,Filter filter,Sort sort);
+	List search(QueryCreator queryCreator, HitExtractor extractor, Filter filter, Sort sort);
 
 	/**
 	 * Search the index basing a Lucene query created outside the template using
@@ -141,7 +134,7 @@ public interface LuceneSearchTemplate {
 	 * @param extractor the extractor of hit informations
 	 * @return the search results
 	 */
-	List search(Query query,HitExtractor extractor,Filter filter,Sort sort);
+	List search(Query query, HitExtractor extractor, Filter filter, Sort sort);
 
 	/**
 	 * Search the index basing a Lucene query created thanks to a callback
@@ -153,7 +146,7 @@ public interface LuceneSearchTemplate {
 	 * @see QueryCreator#createQuery(Analyzer)
 	 * @see org.apache.lucene.search.HitCollector
 	 */
-	void search(QueryCreator queryCreator,HitCollector results);
+	void search(QueryCreator queryCreator, HitCollector results);
 
 	/**
 	 * Execute the action specified by the given action object within a
