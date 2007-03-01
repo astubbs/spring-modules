@@ -102,7 +102,7 @@
         during the existence of the <literal>JcrSessionFactory</literal>. By
         default, the given namespaces are registered only if they occupy free
         prefixes and be kept in the repository even after the
-        <literal>SessionFactory</literal> shuts down. </para>
+        <literal>SessionFactory</literal> shuts down.</para>
 
         <para>To register the namespaces, simply pass them as a property
         object, with the key representing the prefix and the value,
@@ -185,6 +185,33 @@
    &lt;/list&gt;
   &lt;/property&gt;
 &lt;/property&gt;</programlisting>
+      </sect3>
+
+      <sect3>
+        <title>NodeTypeDefinition registration</title>
+
+        <para>JCR 1.0 specifications allows custom node types to be registered
+        in a repository but it doesn't standardises the process, thus each JCR
+        implementation comes with its own approach. For Jackrabbit, the JCR
+        module provides a dedicated <literal>SessionFactory</literal>, the
+        <literal>JackrabbitSessionFactory</literal> which allows node type
+        definitions in the <ulink
+        url="http://jackrabbit.apache.org/doc/nodetype/cnd.html">CND</ulink>
+        format, to be added to the repository:</para>
+
+        <programlisting>&lt;bean id="jackrabbitSessionFactory" class="org.springmodules.jcr.jackrabbit.JackrabbitSessionFactory"&gt;
+  ...
+  &lt;property name="nodeDefinitions"&gt;
+    &lt;list&gt;
+     &lt;value&gt;classpath:/nodeTypes/wikiTypes.cnd&lt;/value&gt;
+     &lt;value&gt;classpath:/nodeTypes/clientATypes.cnd&lt;/value&gt;
+    &lt;/list&gt;
+  &lt;/property&gt;
+&lt;/bean&gt;</programlisting>
+
+        <para>If there is no need to register any custom node types, it's
+        recommended that the <literal>JcrSessionFactory</literal> is used
+        since it works on all JCR repositories.</para>
       </sect3>
     </sect2>
 
@@ -497,13 +524,13 @@
     Mapping support for the JCR seems to be the next logical step but the
     software market doesn't seem to offer any mature solution. The current
     package offers support for <ulink
-    url="http://incubator.apache.org/graffito/project-structure.html">jcr-mapping</ulink>which
-    is part of <ulink url="http://incubator.apache.org/graffito/">Graffito
-    project</ulink> which belongs to the Apache foundation. However, Graffito
-    itself is still in the incubator and the jcr-mapping is described as a
-    prototype. The current support provides some base functionality taken from
-    a snapshot which can be found inside the distribtution which most probably
-    is old.</para>
+    url="http://incubator.apache.org/graffito/project-structure.html">jcr-mapping</ulink>
+    which is part of <ulink
+    url="http://incubator.apache.org/graffito/">Graffito project</ulink> which
+    belongs to the Apache foundation. However, Graffito itself is still in the
+    incubator and the jcr-mapping is described as a prototype. The current
+    support provides some base functionality taken from a snapshot which can
+    be found inside the distribtution which most probably is old.</para>
 
     <para>Moreover as jcr-mapping is clearly in alpha stage and a work in
     progress, users should not invest too much in this area but are encouraged
@@ -513,5 +540,64 @@
     <literal>MappingDescriptors</literal> (which allows using more then one
     mapping file which is not possible at the moment in the jcr-mapping
     project).</para>
+  </sect1>
+
+  <sect1>
+    <title>Working with JSR-170 products</title>
+
+    <para>Even though the documentation uses as examples stand-alone JSR-170
+    implementations, the JCR module can work against any library/product which
+    supports the JCR API. The only difference is that the JCR repository
+    retrieval, which has to be changed based on the product used settings.
+    Usually, reading the product documentation suffices however, to ease
+    integration, this documentation includes hints for major JCR-compatible
+    products (if you are working with a major product which is not mentioned
+    below, please contribute the instructions through the project <ulink
+    url="http://opensource.atlassian.com/projects/spring/browse/MOD">issue
+    tracker</ulink>).</para>
+
+    <sect2>
+      <title>Alfresco</title>
+
+      <para><ulink url="http://www.alfresco.com/">Alfresco</ulink> is an
+      open-source enterprise content managment system which uses <ulink
+      url="http://www.springframework.org">Spring framework</ulink> as its
+      core. To get a hold of the JCR connector, one can:</para>
+
+      <para>bootstrap Alfresco application context and do a dependency
+      lookup:</para>
+
+      <programlisting>ApplicationContext context = new ClassPathXmlApplicationContext("classpath:alfresco/application-context.xml");
+Repository repository = (Repository)context.getBean("JCR.Repository");</programlisting>
+
+      <para>- or -</para>
+
+      <para>let the container inject the dependency:</para>
+
+      <programlisting>&lt;bean id="myBean" class="myBeanImplementation"&gt;
+  &lt;property name="JCRRepository"&gt;&lt;ref bean="JCR.Repository"/&gt;&lt;/property&gt;
+  ...
+&lt;/bean&gt;</programlisting>
+
+      <para>For more information, see Alfresco <ulink
+      url="http://wiki.alfresco.com/wiki/Introducing_the_Alfresco_Java_Content_Repository_API#Repository_Configuration">JCR
+      documentation</ulink>.</para>
+    </sect2>
+
+    <sect2>
+      <title>Magnolia</title>
+
+      <para><ulink url="http://www.magnolia.info/">Magnolia</ulink> aims to
+      make Enterprise Content Management simple by being user-friendly,
+      battle-tested, enterprise-ready and open-source. Mangnolia itself is not
+      a repository and replies on a JCR implementation(Jackrabbit in
+      particular) for its backend. Thus, connecting through JSR-170 to
+      Magnolia is identical to connecting to a Jackrabbit repository. See
+      Magnolia <ulink
+      url="http://www.magnolia.info/en/products/faq.html">FAQ</ulink>, for
+      <ulink
+      url="http://www.magnolia.info/en/products/faq.html#DoyouprovideaJCRJSR170level2readw">more
+      information</ulink>.</para>
+    </sect2>
   </sect1>
 </chapter>

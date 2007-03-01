@@ -15,22 +15,13 @@
  */
 package org.springmodules.jcr.jackrabbit;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Iterator;
-import java.util.List;
-
 import javax.jcr.Workspace;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.jackrabbit.core.nodetype.NodeTypeDef;
-import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
-import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
-import org.apache.jackrabbit.core.nodetype.compact.CompactNodeTypeDefReader;
-import org.apache.jackrabbit.name.QName;
+import org.apache.jackrabbit.api.JackrabbitNodeTypeManager;
 import org.springframework.core.io.Resource;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springmodules.jcr.JcrSessionFactory;
 
@@ -51,6 +42,8 @@ public class JackrabbitSessionFactory extends JcrSessionFactory {
 	 */
 	private Resource[] nodeDefinitions;
 
+	private String contentType = JackrabbitNodeTypeManager.TEXT_XML;
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.springmodules.jcr.JcrSessionFactory#registerNodeTypes()
@@ -63,48 +56,15 @@ public class JackrabbitSessionFactory extends JcrSessionFactory {
 			// Note that it must be cast from the generic JCR NodeTypeManager to
 			// the
 			// Jackrabbit-specific implementation.
-			NodeTypeManagerImpl nodeTypeManager = (NodeTypeManagerImpl) ws.getNodeTypeManager();
-
-			// Acquire the NodeTypeRegistry
-			NodeTypeRegistry nodeTypeRegistry = nodeTypeManager.getNodeTypeRegistry();
+			JackrabbitNodeTypeManager nodeTypeManager = (JackrabbitNodeTypeManager) ws.getNodeTypeManager();
 
 			boolean debug = log.isDebugEnabled();
 			for (int i = 0; i < nodeDefinitions.length; i++) {
 				Resource resource = nodeDefinitions[i];
 				if (debug)
 					log.debug("adding node type definitions from " + resource.getDescription());
-				Reader reader = null;
-				try {
-					reader = new InputStreamReader(resource.getInputStream());
-					// Create a CompactNodeTypeDefReader
-					CompactNodeTypeDefReader cndReader = new CompactNodeTypeDefReader(reader, resource.getDescription());
 
-					List ntdList = cndReader.getNodeTypeDefs();
-
-					// Loop through the prepared NodeTypeDefs
-					for (Iterator iter = ntdList.iterator(); iter.hasNext();) {
-
-						// Get the NodeTypeDef...
-						NodeTypeDef ntd = (NodeTypeDef) iter.next();
-						QName nodeTypeName = ntd.getName();
-
-						// register only if allowed
-						if (!(isSkipExistingNamespaces() && nodeTypeRegistry.isRegistered(nodeTypeName))) {
-							if (debug)
-								log.debug("adding node type " + nodeTypeName);
-							nodeTypeRegistry.registerNodeType(ntd);
-						}
-					}
-				}
-				finally {
-					try {
-						if (reader != null)
-							reader.close();
-					}
-					catch (IOException ex) {
-						// ignore
-					}
-				}
+				nodeTypeManager.registerNodeTypes(resource.getInputStream(), contentType);
 			}
 		}
 	}
@@ -114,6 +74,20 @@ public class JackrabbitSessionFactory extends JcrSessionFactory {
 	 */
 	public void setNodeDefinitions(Resource[] nodeDefinitions) {
 		this.nodeDefinitions = nodeDefinitions;
+	}
+
+	/**
+	 * Indicate the node definition content type (by default,
+	 * JackrabbitNodeTypeManager#TEXT_XML).
+	 * 
+	 * @see JackrabbitNodeTypeManager#TEXT_X_JCR_CND
+	 * @see JackrabbitNodeTypeManager#TEXT_XML
+	 * 
+	 * @param contentType The contentType to set.
+	 */
+	public void setContentType(String contentType) {
+		Assert.hasText(contentType, "contentType is required");
+		this.contentType = contentType;
 	}
 
 }
