@@ -19,14 +19,15 @@
 package org.springmodules.cache.provider;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.Socket;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.logging.LogFactory;
 import org.easymock.MockControl;
 import org.easymock.classextension.MockClassControl;
-
 import org.springmodules.cache.CacheException;
 import org.springmodules.cache.CachingModel;
 import org.springmodules.cache.FatalCacheException;
@@ -46,7 +47,7 @@ public final class CacheProviderFacadeTests extends TestCase {
 
   private AbstractCacheProviderFacade cacheProviderFacade;
 
-  private MockClassControl cacheProviderFacadeControl;
+  private MockControl cacheProviderFacadeControl;
 
   private CachingModel cachingModel;
 
@@ -532,8 +533,14 @@ public final class CacheProviderFacadeTests extends TestCase {
     cacheProviderFacadeControl = MockClassControl.createStrictControl(
         classToMock, null, null, methodsToMock);
 
+//    cacheProviderFacadeControl = MockClassControl.createNiceControl(classToMock, methodsToMock);
     cacheProviderFacade = (AbstractCacheProviderFacade) cacheProviderFacadeControl
         .getMock();
+//    
+    // initialize logger (avoid EasyMock ClassExt issue)
+//    Field logger = classToMock.getDeclaredField("logger");
+//    logger.setAccessible(true);
+//    logger.set(cacheProviderFacade, LogFactory.getLog(classToMock));
   }
 
 }
