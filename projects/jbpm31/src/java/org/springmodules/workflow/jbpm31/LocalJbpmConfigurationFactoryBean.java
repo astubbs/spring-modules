@@ -1,8 +1,8 @@
 /**
  * Created on Feb 21, 2006
  *
- * $Id: LocalJbpmConfigurationFactoryBean.java,v 1.4 2006/12/06 14:13:18 costin Exp $
- * $Revision: 1.4 $
+ * $Id: LocalJbpmConfigurationFactoryBean.java,v 1.5 2007/03/01 12:28:40 costin Exp $
+ * $Revision: 1.5 $
  */
 package org.springmodules.workflow.jbpm31;
 
@@ -132,31 +132,27 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 
 		jbpmConfiguration = new JbpmConfiguration(jbpmObjectFactory);
 
-		// 2. inject the HB session factory if it is the case
-		if (sessionFactory != null) {
-			logger.info("using given Hibernate session factory");
-			JbpmContext context = jbpmConfiguration.createJbpmContext(contextName);
-			try {
+		JbpmContext context = null;
+		try {
+			// 2. inject the HB session factory if it is the case
+			context = jbpmConfiguration.createJbpmContext(contextName);
+
+			if (sessionFactory != null) {
+				logger.info("using given Hibernate session factory");
 				context.setSessionFactory(sessionFactory);
 			}
-			finally {
-				context.close();
-			}
-		}
 
-		// 3. execute persistence operations
-		hasPersistenceService = JbpmUtils.hasPersistenceService(jbpmConfiguration, contextName);
+			// 3. execute persistence operations
+			hasPersistenceService = JbpmUtils.hasPersistenceService(jbpmConfiguration, contextName);
 
-		if (hasPersistenceService) {
-			logger.info("persistence service available...");
-			if (createSchema) {
-				logger.info("creating schema");
-				jbpmConfiguration.createSchema(contextName);
-			}
+			if (hasPersistenceService) {
+				logger.info("persistence service available...");
+				if (createSchema) {
+					logger.info("creating schema");
+					jbpmConfiguration.createSchema(contextName);
+				}
 
-			if (processDefinitions != null || processDefinitionsResources != null) {
-				JbpmContext context = jbpmConfiguration.createJbpmContext(contextName);
-				try {
+				if (processDefinitions != null || processDefinitionsResources != null) {
 					if (processDefinitions != null) {
 						String toString = Arrays.asList(processDefinitions).toString();
 						logger.info("deploying process definitions:" + toString);
@@ -178,15 +174,17 @@ public class LocalJbpmConfigurationFactoryBean implements InitializingBean, Disp
 						}
 					}
 				}
-				finally {
-					context.close();
-				}
 			}
-		}
 
-		else {
-			logger
-					.info("persistence unavailable not available - schema create/drop and process definition deployment disabled");
+			else {
+				logger
+						.info("persistence unavailable not available - schema create/drop and process definition deployment disabled");
+			}
+
+		}
+		finally {
+			if (context != null)
+				context.close();
 		}
 
 	}

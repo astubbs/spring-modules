@@ -21,8 +21,8 @@ import org.springmodules.workflow.jbpm31.definition.ProcessDefinitionFactoryBean
 /**
  * Created on Feb 21, 2006
  *
- * $Id: LocalJbpmConfigurationFactoryBeanTests.java,v 1.3 2006/12/06 14:13:18 costin Exp $
- * $Revision: 1.3 $
+ * $Id: LocalJbpmConfigurationFactoryBeanTests.java,v 1.4 2007/03/01 12:28:40 costin Exp $
+ * $Revision: 1.4 $
  */
 
 /**
@@ -70,7 +70,7 @@ public class LocalJbpmConfigurationFactoryBeanTests extends TestCase {
 		BeanFactory beanFactory = (BeanFactory) beanFactoryControl.getMock();
 
 		JbpmContext context = new JbpmContext(null, mockFactory);
-		factoryControl.expectAndReturn(mockFactory.createObject(JbpmContext.DEFAULT_JBPM_CONTEXT_NAME), context, 2);
+		factoryControl.expectAndReturn(mockFactory.createObject(JbpmContext.DEFAULT_JBPM_CONTEXT_NAME), context, 3);
 		beanFactoryControl.replay();
 		factoryControl.replay();
 
@@ -91,7 +91,7 @@ public class LocalJbpmConfigurationFactoryBeanTests extends TestCase {
 		ObjectFactory mockFactory = (ObjectFactory) factoryControl.getMock();
 
 		factoryControl.expectAndReturn(mockFactory.createObject(JbpmContext.DEFAULT_JBPM_CONTEXT_NAME),
-				new JbpmContext(null, mockFactory));
+				new JbpmContext(null, mockFactory), 2);
 		factoryControl.replay();
 		configuration.setObjectFactory(mockFactory);
 		configuration.afterPropertiesSet();
