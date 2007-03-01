@@ -28,6 +28,8 @@ Package org.springmodules.jcr
 * fixed JcrDaoSupport typo (convertJCRAccessException - > convertJcrAccessException)
 * added skipRegisteredNamespace flag to JcrSessionFactory to avoid namespace unregistration
 * added JackrabbitSessionFactory to deal with node types registration [MOD-303]
+* improved documentation by adding a new section on jsr-170 product integration 
+  (Alfresco and Mangolia mentioned so far).
 
 Package org.springmodules.lucene
 * removed the two Document(s)Identifier interfaces. These informations are now
