@@ -31,6 +31,9 @@ Package org.springmodules.jcr
 * improved documentation by adding a new section on jsr-170 product integration 
   (Alfresco and Mangolia mentioned so far).
 
+Package org.springmodules.ojb
+* added OJB configuration for testing to make OJB tests pass when using Spring 2.0.x
+
 Package org.springmodules.lucene
 * removed the two Document(s)Identifier interfaces. These informations are now
   parameters of methods modifyDocument(s) of the template
