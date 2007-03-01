@@ -6,3 +6,5 @@ target
 .project
 .springBeans
 build.ajproperties
+jakarta-turbine-stratum
+logs
