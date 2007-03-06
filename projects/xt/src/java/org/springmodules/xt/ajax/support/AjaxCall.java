@@ -73,7 +73,7 @@ public enum AjaxCall {
     public abstract String getCall(String event, Map parameters);
     
     protected  String getJSONString(Map parameters) {
-        JSONObject json = new JSONObject(parameters);
+        JSONObject json = JSONObject.fromMap(parameters);
         return  json.toString();
     }
 }

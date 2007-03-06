@@ -21,7 +21,9 @@
         
         <dependency org="log4j" name="log4j" rev="1.2.12"/>
         
-        <dependency org="net.sf.json-lib" name="json-lib" rev="0.9"/>
+        <dependency org="json-lib" name="json-lib" rev="1.0.1-jdk15"/>
+        
+        <dependency org="ezmorph" name="ezmorph" rev="1.0.1"/>
         
         <dependency org="cglib" name="cglib" rev="2.1_3">
             <artifact name="cglib-nodep" type="jar"/>

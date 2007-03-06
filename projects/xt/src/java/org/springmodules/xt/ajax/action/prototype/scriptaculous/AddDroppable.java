@@ -62,7 +62,7 @@ public class AddDroppable extends AbstractExecuteJavascriptAction {
         
         
         if (!this.options.isEmpty()) {
-            JSONObject json = new JSONObject(this.options);
+            JSONObject json = JSONObject.fromMap(this.options);
             effect.append(",").append(json.toString());
         }
         

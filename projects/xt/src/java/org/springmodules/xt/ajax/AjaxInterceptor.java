@@ -409,7 +409,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         String paramsString = request.getParameter(this.jsonParamsParameter);
         if (paramsString != null) {
             Map<String, String> parameters = new HashMap<String, String>();
-            JSONObject json = new JSONObject(paramsString);
+            JSONObject json = JSONObject.fromString(paramsString);
             Iterator keys = json.keys();
             while (keys.hasNext()) {
                 String key = keys.next().toString();
