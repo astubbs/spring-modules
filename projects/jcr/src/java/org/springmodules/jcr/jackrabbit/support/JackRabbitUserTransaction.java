@@ -1,8 +1,8 @@
 /**
  * Created on Sep 8, 2005
  *
- * $Id: JackRabbitUserTransaction.java,v 1.1 2005/12/20 17:38:19 costin Exp $
- * $Revision: 1.1 $
+ * $Id: JackRabbitUserTransaction.java,v 1.2 2007/03/06 21:45:55 costin Exp $
+ * $Revision: 1.2 $
  */
 package org.springmodules.jcr.jackrabbit.support;
 
@@ -107,7 +107,7 @@ public class JackRabbitUserTransaction implements UserTransaction {
         } catch (XAException e) {
 
             if (e.errorCode >= XAException.XA_RBBASE && e.errorCode <= XAException.XA_RBEND) {
-                throw new RollbackException();
+                throw new RollbackException(e.toString());
             }
 
             throw new SystemException("Unable to commit transaction: " + "XA_ERR=" + e.errorCode);
@@ -212,6 +212,6 @@ public class JackRabbitUserTransaction implements UserTransaction {
      * @param counter The counter to set.
      */
     public void setCounter(byte counter) {
-        this.counter = counter;
+    	JackRabbitUserTransaction.counter = counter;
     }
 }
