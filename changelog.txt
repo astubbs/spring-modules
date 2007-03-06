@@ -29,7 +29,8 @@ Package org.springmodules.jcr
 * added skipRegisteredNamespace flag to JcrSessionFactory to avoid namespace unregistration
 * added JackrabbitSessionFactory to deal with node types registration [MOD-303]
 * improved documentation by adding a new section on jsr-170 product integration 
-  (Alfresco and Mangolia mentioned so far).
+  (Alfresco and Mangolia mentioned so far)
+* fixed transaction exception swallowing [MOD-307]
 
 Package org.springmodules.ojb
 * added OJB configuration for testing to make OJB tests pass when using Spring 2.0.x
