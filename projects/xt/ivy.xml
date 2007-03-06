@@ -15,6 +15,7 @@
     <dependencies defaultconf="global->default">
         
         <!-- global (compile, test, runtime) dependencies -->
+        <dependency org="apache" name="commons-logging" rev="1.1"/>
 
         <dependency org="apache" name="commons-collections" rev="3.2"/>
         <dependency org="apache" name="commons-lang" rev="2.1"/>
