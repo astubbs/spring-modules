@@ -43,6 +43,8 @@
         
         <!-- test time only dependencies -->
 
+        <dependency org="apache" name="commons-beanutils" rev="1.7" conf="test->default"/>
+
         <dependency org="junit" name="junit" rev="3.8.1" conf="test->default"/>
         <dependency org="xmlunit" name="xmlunit" rev="1.0" conf="test->default"/>
         <dependency org="jmock" name="jmock" rev="1.1.0" conf="test->default">
