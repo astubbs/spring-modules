@@ -164,8 +164,8 @@
                             Drag This
                         </div>
                     </td>
-                    <td>
-                        <div id="droppable" style="border-style: solid">
+                    <td id="droppable">
+                        <div style="border-style: solid">
                             Here
                         </div>
                     </td>

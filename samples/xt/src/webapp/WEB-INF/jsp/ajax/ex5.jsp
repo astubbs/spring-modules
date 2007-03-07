@@ -57,8 +57,7 @@
                     <br/>
                 </td>
             </tr>
-            <tr id="success" style="display: none;"></tr>
-            <tr id="buttons">
+            <tr>
                 <td><input type="button" value="Add" onclick="XT.doAjaxAction('addEmployee', this);"></td>&nbsp;
                 <td><input type="button" value="Fill" onclick="XT.doAjaxSubmit('validate', this);"></td>
             </tr>

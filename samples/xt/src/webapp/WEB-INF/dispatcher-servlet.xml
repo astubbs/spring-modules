@@ -26,15 +26,6 @@
         </property>
     </bean>
     
-    <bean id="ajaxValidationHandler2" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler">
-        <property name="errorRenderingCallback">
-            <bean class="org.springmodules.xt.examples.ajax.FormErrorRenderingCallback"/>
-        </property>
-        <property name="successRenderingCallback">
-            <bean class="org.springmodules.xt.examples.ajax.FormSuccessRenderingCallback"/>
-        </property>
-    </bean>
-    
     <bean id="ajaxTestActionsHandler" class="org.springmodules.xt.examples.ajax.TestActionsHandler"/>
     
     <bean id="ajaxLoadOfficesHandler" class="org.springmodules.xt.examples.ajax.LoadOfficesHandler">
@@ -66,8 +57,8 @@
                 <prop key="/ajax/ex2.page">ajaxLoadOfficesHandler, ajaxSelectionHandler</prop>
                 <prop key="/ajax/ex3.action">ajaxValidationHandler</prop>
                 <prop key="/ajax/ex4.action">ajaxListEmployeesHandler</prop>
-                <prop key="/ajax/ex5.action">ajaxFillOfficeHandler, ajaxValidationHandler2</prop>
-                <prop key="/ajax/ex6.action">ajaxFillOfficeWithDraggingHandler, ajaxValidationHandler2</prop>
+                <prop key="/ajax/ex5.action">ajaxFillOfficeHandler, ajaxValidationHandler</prop>
+                <prop key="/ajax/ex6.action">ajaxFillOfficeWithDraggingHandler, ajaxValidationHandler</prop>
                 <prop key="/ajax/ex7.action">ajaxHandlerWithException</prop>
             </props>
         </property>
@@ -170,6 +161,7 @@
     
     <bean id="fillOfficeController" class="org.springmodules.xt.examples.mvc.FillOfficeController">
         <property name="formView"><value>ajax/ex5</value></property>
+        <property name="successView"><value>ajax-redirect:/start.page</value></property>
         <property name="validator"><ref bean="officeValidator"/></property>
         <property name="store"><ref bean="store"/></property>
         <property name="customEditors">
@@ -184,6 +176,7 @@
     
     <bean id="fillOfficeWithDraggingController" class="org.springmodules.xt.examples.mvc.FillOfficeWithDraggingController">
         <property name="formView"><value>ajax/ex6</value></property>
+        <property name="successView"><value>ajax-redirect:/start.page</value></property>
         <property name="validator"><ref bean="officeValidator"/></property>
         <property name="store"><ref bean="store"/></property>
         <property name="customEditors">

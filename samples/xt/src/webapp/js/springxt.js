@@ -648,7 +648,7 @@ function createXMLHttpRequest() {
 }
 // JavaScript Document
 var taconite_parser_version=1.502;
-var taconite_parser_xt_version=20070217;
+var taconite_parser_xt_version=20070307;
 var isIE=document.uniqueID;
 
 String.prototype.trim = function() {
@@ -660,12 +660,12 @@ String.prototype.trim = function() {
     return x;
 };
 
-Document.prototype.getElementsByMatchingId = function(matchingId) {
+document.getElementsByMatchingId = function(matchingId) {
     
     function deepMatch(currentElement, matchingElements) {
-        if (currentElement.nodeType == Node.ELEMENT_NODE) {
+        if (currentElement.nodeType == 1) {
             var id = currentElement.getAttribute("id");
-            if (id != null) {
+            if (id != null && id != "") {
                 if (id.indexOf("_") == (id.length - 1)) {
                     var pattern = "^" + id.replace(/_$/, ".*");
                     var rexp = new RegExp(pattern);

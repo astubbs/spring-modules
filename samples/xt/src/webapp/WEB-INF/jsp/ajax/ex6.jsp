@@ -40,9 +40,9 @@
             <tr>
                 <td>To this office ...</td>
             </tr>
-            <tr>
+            <tr id="office">
                 <td>
-                    <ul id="office">
+                    <ul>
                         <li>${command.name}
                             <spring:bind path="command.employees">
                                 <ul id="employees">
@@ -67,8 +67,7 @@
                     </div>
                 </td>
             </tr>
-            <tr id="success" style="display: none;"></tr>
-            <tr id="buttons">
+            <tr>
                 <td><input type="button" value="Submit" onclick="XT.doAjaxSubmit('validate', this);"></td>
             </tr>
         </form>
