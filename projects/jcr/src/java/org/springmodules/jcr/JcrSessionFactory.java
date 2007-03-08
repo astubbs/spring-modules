@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springmodules.jcr.support.GenericSessionHolderProvider;
 
 /**
@@ -145,11 +146,11 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	protected void registerNodeTypes() throws Exception {
 		// do nothing
 	}
-	
+
 	/**
-	 * Hook for un-registering node types on the underlying repository. Since this
-	 * process is not covered by the spec, each implementation requires its own
-	 * subclass.
+	 * Hook for un-registering node types on the underlying repository. Since
+	 * this process is not covered by the spec, each implementation requires its
+	 * own subclass.
 	 * 
 	 * By default, this method doesn't do anything.
 	 */
@@ -173,16 +174,17 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 
 		NamespaceRegistry registry = getSession().getWorkspace().getNamespaceRegistry();
 
+		// do the lookup, so we avoid exceptions
+		String[] prefixes = registry.getPrefixes();
+		// sort the array
+		Arrays.sort(prefixes);
+
 		// unregister namespaces if told so
 		if (forceNamespacesRegistration) {
 
 			// save the old namespace only if it makes sense
 			if (!keepNewNamespaces)
 				overwrittenNamespaces = new HashMap(namespaces.size());
-			// do the lookup, so we avoid exceptions
-			String[] prefixes = registry.getPrefixes();
-			// sort the array
-			Arrays.sort(prefixes);
 
 			// search occurences
 			for (Iterator iter = namespaces.keySet().iterator(); iter.hasNext();) {
@@ -207,7 +209,10 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 			Map.Entry namespace = (Map.Entry) iter.next();
 			String prefix = (String) namespace.getKey();
 			String ns = (String) namespace.getValue();
-			if (skipExistingNamespaces && registry.getURI(prefix) != null) {
+
+			int position = Arrays.binarySearch(prefixes, prefix);
+
+			if (skipExistingNamespaces && position >= 0) {
 				log.debug("namespace already registered under [" + prefix + "]; skipping registration");
 			}
 			else {
@@ -457,9 +462,9 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 	 * already registered in the repository under the same prefix. This will
 	 * cause unregistration for the namespaces that will be modified.
 	 * 
-	 * <p/> However, depending on the
-	 * {@link #setKeepNewNamespaces(boolean)} setting, the old namespaces
-	 * can be registered back once the application context is destroyed.
+	 * <p/> However, depending on the {@link #setKeepNewNamespaces(boolean)}
+	 * setting, the old namespaces can be registered back once the application
+	 * context is destroyed.
 	 * 
 	 * False by default.
 	 * 
@@ -523,5 +528,4 @@ public class JcrSessionFactory implements InitializingBean, DisposableBean, Sess
 		return workspaceName;
 	}
 
-	
 }

@@ -18,7 +18,7 @@ import org.springmodules.jcr.support.ListSessionHolderProviderManager;
 
 public class JcrSessionFactoryTests extends TestCase {
 
-	JcrSessionFactory factory;
+	private JcrSessionFactory factory;
 
 	private MockControl repoCtrl;
 
@@ -35,7 +35,6 @@ public class JcrSessionFactoryTests extends TestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-
 
 		try {
 			repoCtrl.verify();
@@ -99,7 +98,7 @@ public class JcrSessionFactoryTests extends TestCase {
 
 		repoCtrl2.replay();
 		repoCtrl.replay();
-		
+
 		JcrSessionFactory fact2 = new JcrSessionFactory();
 		fact2.setRepository(repo2);
 		assertFalse(factory.equals(fact2));
@@ -109,8 +108,7 @@ public class JcrSessionFactoryTests extends TestCase {
 		EventListenerDefinition def1 = new EventListenerDefinition();
 		EventListenerDefinition def2 = new EventListenerDefinition();
 
-		EventListenerDefinition listeners[] = new EventListenerDefinition[] {
-				def1, def2 };
+		EventListenerDefinition listeners[] = new EventListenerDefinition[] { def1, def2 };
 		factory.setEventListeners(listeners);
 
 		MockControl sessionCtrl = MockControl.createControl(Session.class);
@@ -119,8 +117,7 @@ public class JcrSessionFactoryTests extends TestCase {
 		MockControl wsCtrl = MockControl.createControl(Workspace.class);
 		Workspace ws = (Workspace) wsCtrl.getMock();
 
-		MockControl omCtrl = MockControl
-				.createControl(ObservationManager.class);
+		MockControl omCtrl = MockControl.createControl(ObservationManager.class);
 		ObservationManager oManager = (ObservationManager) omCtrl.getMock();
 
 		repoCtrl.expectAndReturn(repo.login(null, null), session);
@@ -128,12 +125,10 @@ public class JcrSessionFactoryTests extends TestCase {
 
 		wsCtrl.expectAndReturn(ws.getObservationManager(), oManager);
 
-		oManager.addEventListener(def1.getListener(), def1.getEventTypes(),
-				def1.getAbsPath(), def1.isDeep(), def1.getUuid(), def1
-						.getNodeTypeName(), def1.isNoLocal());
-		oManager.addEventListener(def2.getListener(), def2.getEventTypes(),
-				def2.getAbsPath(), def2.isDeep(), def2.getUuid(), def2
-						.getNodeTypeName(), def2.isNoLocal());
+		oManager.addEventListener(def1.getListener(), def1.getEventTypes(), def1.getAbsPath(), def1.isDeep(), def1
+				.getUuid(), def1.getNodeTypeName(), def1.isNoLocal());
+		oManager.addEventListener(def2.getListener(), def2.getEventTypes(), def2.getAbsPath(), def2.isDeep(), def2
+				.getUuid(), def2.getNodeTypeName(), def2.isNoLocal());
 
 		repoCtrl.replay();
 		sessionCtrl.replay();
@@ -172,13 +167,11 @@ public class JcrSessionFactoryTests extends TestCase {
 		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
 		wsCtrl.expectAndReturn(ws.getNamespaceRegistry(), registry);
 		
-		nrCtrl.expectAndReturn(registry.getURI("foo"), null);
-		nrCtrl.expectAndReturn(registry.getURI("hocus"), null);
-		
+		nrCtrl.expectAndReturn(registry.getPrefixes(), new String[0]);
+
 		// destroy
 		registry.registerNamespace("foo", "bar");
 		registry.registerNamespace("hocus", "pocus");
-		
 
 		nrCtrl.replay();
 		wsCtrl.replay();
@@ -186,7 +179,7 @@ public class JcrSessionFactoryTests extends TestCase {
 		repoCtrl.replay();
 
 		factory.afterPropertiesSet();
-		
+
 		factory.destroy();
 
 		nrCtrl.verify();
@@ -214,7 +207,7 @@ public class JcrSessionFactoryTests extends TestCase {
 
 		MockControl nrCtrl = MockControl.createControl(NamespaceRegistry.class);
 		NamespaceRegistry registry = (NamespaceRegistry) nrCtrl.getMock();
-		
+
 		// afterPropertiesSet
 		repoCtrl.expectAndReturn(repo.login(null, null), session);
 		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
@@ -224,22 +217,21 @@ public class JcrSessionFactoryTests extends TestCase {
 		repoCtrl.expectAndReturn(repo.login(null, null), session);
 		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
 		wsCtrl.expectAndReturn(ws.getNamespaceRegistry(), registry);
-		
-		
+
 		// registry record
 		String[] prefixes = new String[] { foo };
 		String oldURI = "old bar";
 		nrCtrl.expectAndReturn(registry.getPrefixes(), prefixes);
-		nrCtrl.expectAndReturn(registry.getURI(foo), oldURI); 
+		nrCtrl.expectAndReturn(registry.getURI(foo), oldURI);
 		registry.unregisterNamespace(foo);
-		
+
 		registry.registerNamespace(foo, "bar");
 		registry.registerNamespace("hocus", "pocus");
 
 		registry.unregisterNamespace("foo");
 		registry.unregisterNamespace("hocus");
 		registry.registerNamespace(foo, oldURI);
-		
+
 		nrCtrl.replay();
 		wsCtrl.replay();
 		sessionCtrl.replay();
@@ -274,13 +266,11 @@ public class JcrSessionFactoryTests extends TestCase {
 		repoCtrl.expectAndReturn(repo.login(null, null), session);
 		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
 		wsCtrl.expectAndReturn(ws.getNamespaceRegistry(), registry);
-		
-		nrCtrl.expectAndReturn(registry.getURI("foo"), null);
-		nrCtrl.expectAndReturn(registry.getURI("hocus"), null);
+
+		nrCtrl.expectAndReturn(registry.getPrefixes(), new String[0]);
 
 		registry.registerNamespace("foo", "bar");
 		registry.registerNamespace("hocus", "pocus");
-		
 
 		nrCtrl.replay();
 		wsCtrl.replay();
@@ -288,14 +278,14 @@ public class JcrSessionFactoryTests extends TestCase {
 		repoCtrl.replay();
 
 		factory.afterPropertiesSet();
-		
+
 		factory.destroy();
 
 		nrCtrl.verify();
 		wsCtrl.verify();
 		sessionCtrl.verify();
 	}
-	
+
 	public void testSkipRegisteredNamespaces() throws Exception {
 		Properties namespaces = new Properties();
 		namespaces.put("foo", "bar");
@@ -317,17 +307,18 @@ public class JcrSessionFactoryTests extends TestCase {
 		repoCtrl.expectAndReturn(repo.login(null, null), session);
 		sessionCtrl.expectAndReturn(session.getWorkspace(), ws);
 		wsCtrl.expectAndReturn(ws.getNamespaceRegistry(), registry);
-		
+
 		registry.registerNamespace("foo", "bar");
 		registry.registerNamespace("hocus", "pocus");
 
+		nrCtrl.expectAndReturn(registry.getPrefixes(), new String[0]);
 		nrCtrl.replay();
 		wsCtrl.replay();
 		sessionCtrl.replay();
 		repoCtrl.replay();
 
 		factory.afterPropertiesSet();
-		
+
 		factory.destroy();
 
 		nrCtrl.verify();
@@ -341,15 +332,13 @@ public class JcrSessionFactoryTests extends TestCase {
 		SessionHolder holder = factory.getSessionHolder(session);
 		assertSame(SessionHolder.class, holder.getClass());
 		// default session holder provider
-		assertSame(SessionHolder.class, factory.getSessionHolder(null)
-				.getClass());
+		assertSame(SessionHolder.class, factory.getSessionHolder(null).getClass());
 	}
 
 	public void testSessionHolder() throws Exception {
 		final String REPO_NAME = "hocus_pocus";
 
-		repoCtrl.expectAndReturn(repo.getDescriptor(Repository.REP_NAME_DESC),
-				REPO_NAME);
+		repoCtrl.expectAndReturn(repo.getDescriptor(Repository.REP_NAME_DESC), REPO_NAME);
 
 		MockControl sessionCtrl = MockControl.createControl(Session.class);
 		Session session = (Session) sessionCtrl.getMock();
@@ -387,8 +376,7 @@ public class JcrSessionFactoryTests extends TestCase {
 
 		Session sess = factory.getSession();
 		assertSame(session, sess);
-		assertSame(CustomSessionHolder.class, factory.getSessionHolder(sess)
-				.getClass());
+		assertSame(CustomSessionHolder.class, factory.getSessionHolder(sess).getClass());
 
 		repoCtrl.verify();
 		sessionCtrl.verify();
