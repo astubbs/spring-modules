@@ -441,9 +441,8 @@ public AjaxResponse eventId(AjaxSubmitEvent )
     <sect3 id="ajax-actions">
       <title id="ajax-actions-title">Ajax Actions</title>
 
-      <para>Ajax actions are created by handlers and act on the client: more
-      specifically, they act on the web page that fired the event, interacting
-      with its elements.</para>
+      <para>Ajax actions are created by handlers and act on client web
+      pages.</para>
 
       <para>XT Ajax Framework provides many useful actions ready to be used
       (see the <emphasis>org.springmodules.xt.ajax.action</emphasis> package
@@ -460,7 +459,9 @@ public interface AjaxAction {
       <para>The <emphasis>execute()</emphasis> method is the one you call for
       producing the action result.</para>
 
-      <para>But ... how can actions identify page parts to modify?</para>
+      <para>Most of the actions will act on web pages by rendering components
+      and so modifying page parts. But ... how can actions identify page parts
+      to modify?</para>
     </sect3>
 
     <sect3 id="identifying-page-parts">
@@ -495,17 +496,30 @@ public interface AjaxAction {
         </listitem>
 
         <listitem>
-          <para><emphasis role="bold">Wildcard matching</emphasis> : the
-          action matches id attributes ending with the <emphasis role="bold">_
+          <para><emphasis role="bold">Wildcard match</emphasis> : the action
+          matches id attributes ending with the <emphasis role="bold">_
           (underscore)</emphasis> wildcard; an action constructed with a
           "toFill" id to match, matches also an element with a "to_" id
-          attribute. Please note that the underscore wildcard is applied to
-          the HTML element id.</para>
+          attribute. Please note that the <emphasis>underscore</emphasis>
+          wildcard must be placed in the HTML element id.</para>
         </listitem>
       </itemizedlist>
 
       <para>Wildcard matching is useful for updating more page parts with the
       same action.</para>
+
+      <programlisting>
+&lt;select id="toFill"&gt;
+&lt;/select&gt;
+</programlisting>
+
+      <programlisting>
+&lt;select id="to_"&gt;
+&lt;/select&gt;
+</programlisting>
+
+      <para>An action constructed with a "toFill" id to match, will actually
+      match both elements above.</para>
     </sect3>
 
     <sect3 id="components">
