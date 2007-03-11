@@ -22,7 +22,7 @@
 	<dependency org="apache" name="commons-logging" rev="1.0.4"/>
 	<dependency org="aopalliance" name="aopalliance" rev="1.0"/>
 
-    <dependency org="springframework" name="springframework" rev="2.0.1">
+    <dependency org="springframework" name="springframework" rev="2.0.3">
       <artifact name="spring-aop" type="jar" conf="global" />    
       <artifact name="spring-beans" type="jar" conf="global" />
       <artifact name="spring-context" type="jar" conf="global" />

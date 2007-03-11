@@ -22,7 +22,7 @@
 	<dependency org="apache" name="commons-logging" rev="1.0.4"/>
 
     <dependency org="springframework" name="springframework"
-          rev="2.0.1" conf="global,test->default">
+          rev="2.0.3" conf="global,test->default">
           <artifact name="spring-beans" type="jar" conf="global" />
           <artifact name="spring-context" type="jar" conf="global" />
           <artifact name="spring-core" type="jar" conf="global" />

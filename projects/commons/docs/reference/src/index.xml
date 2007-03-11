@@ -6,11 +6,12 @@
 	<!ENTITY preface	SYSTEM "../../../../../docs/reference/src/preface.xml">
 	<!ENTITY authors	SYSTEM "authors.xml">
 	<!ENTITY validator	SYSTEM "validator.xml">
+	<!ENTITY commons	SYSTEM "commons.xml">
 	]>
 
 <book>
 
 	&index;
-	&validator;
+	&commons;
 	
 </book>

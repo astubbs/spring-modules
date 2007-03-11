@@ -19,7 +19,7 @@
         <dependency org="db4o" name="db4o" rev="6.1-java1.2"/>
         
         <dependency org="springframework" name="springframework"
-				rev="2.0.2">
+				rev="2.0.3">
 			<artifact name="spring-beans" type="jar" conf="global" />
 			<artifact name="spring-core" type="jar" conf="global" />
 			<artifact name="spring-mock" type="jar" conf="test" />
