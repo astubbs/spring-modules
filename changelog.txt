@@ -2,7 +2,10 @@ SPRING MODULES CHANGELOG
 ========================
 http://springmodules.dev.java.net
 
-Changes in version 0.8 (02.03.2007)
+Changes in version 0.9 (in progress)
+------------------------------------
+
+Changes in version 0.8 (2007.03.11)
 -----------------------------------
 
 Package org.springmodules.db4o
@@ -65,7 +68,7 @@ Package org.springmodules.xt.ajax
 Package org.springmodules.xt.model.generator
 * implemented DynamicGenerator and DynamicFactoryGenerator [MOD-262]
 
-Changes in version 0.7 (09.12.2006)
+Changes in version 0.7 (2006.12.09)
 -----------------------------------
 All modules
 * updated Spring dependency to 2.0.1 where possible [MOD-248]
@@ -113,7 +116,7 @@ Package org.springmodules.xt.ajax
 * Resolved critical [MOD-250] bug
 * Several other fixes and enhancements
 
-Changes in version 0.6 (19.09.2006)
+Changes in version 0.6 (2006.09.19)
 -----------------------------------
 Package org.springmodules.commons
 * Basic support for Jakarta commons-chain added
@@ -183,7 +186,7 @@ Package org.springmodules.xt.ajax
   DefaultValidationHandler.
 
 
-Changes in version 0.5 (14.07.2006)
+Changes in version 0.5 (2007.07.14)
 -----------------------------------
 Package org.springmodules.bpm.flux
 * Added XML Engine bean.
@@ -269,7 +272,7 @@ Package org.springmodules.validation.valang.parser
 * Updated valang.jj and introduced new token aliasses (JIRA MOD-125)
 
 
-Changes in version 0.3 (12.05.2006)
+Changes in version 0.3 (2006.05.12)
 -----------------------------------
 
 Package org.springmodules.cache.provider.jboss
@@ -299,7 +302,7 @@ Package org.springmodules.workflow.jbpm31
 Package org.springmodules.workflow.osworkflow.v28
 * Support for OsWorkflow 2.8
 
-Changes in version 0.2 (21.05.2005)
+Changes in version 0.2 (2005.05.21)
 -----------------------------------
 
 Package org.springmodules.cache
@@ -323,7 +326,7 @@ Package org.springmodules.workflow.osworkflow.web
 * Added DefaultWorkflowContextHandlerInterceptor to transparently map OSWorkflow caller to current Prinicpal when using container-managed security.
 * Added AcegiWorkflowContextHandlerInterceptor to transparently map OSWorkflow caller to current Acegi authenticated user.
 
-Changes in version 0.1 (20.04.2005)
+Changes in version 0.1 (2005.04.20)
 -----------------------------------
 
 Package org.springmodules.commons.validator
