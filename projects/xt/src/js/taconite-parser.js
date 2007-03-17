@@ -1,6 +1,6 @@
 // JavaScript Document
 var taconite_parser_version=1.502;
-var taconite_parser_xt_version=20070307;
+var taconite_parser_xt_version=20070317;
 var isIE=document.uniqueID;
 
 String.prototype.trim = function() {
@@ -366,7 +366,7 @@ function XhtmlToDOMParser() {
     
     function handleRedirect(xmlNode) {
         var targetUrl = xmlNode.getAttribute("targetUrl");
-        window.location.replace(targetUrl);
+        window.location.href = targetUrl;
     }
     
     function executeJavascript(xmlNode) {
