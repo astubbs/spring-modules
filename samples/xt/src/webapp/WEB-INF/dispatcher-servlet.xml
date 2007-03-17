@@ -64,7 +64,7 @@
         </property>
     </bean>
     
-    <bean id="redirectExceptionResolver" class="org.springmodules.xt.ajax.support.RedirectExceptionResolver">
+    <bean id="redirectExceptionHandler" class="org.springmodules.xt.ajax.support.RedirectExceptionHandler">
         <property name="redirectUrl" value="/error.page"/>
         <property name="exceptionMessageAttribute" value="exceptionMessage"/>
     </bean>
@@ -225,10 +225,10 @@
         <property name="viewClass"><value>org.springframework.web.servlet.view.JstlView</value></property>
     </bean>
     
-    <bean id="ajaxExceptionResolver" class="org.springmodules.xt.ajax.AjaxExceptionHandler">
+    <bean id="ajaxExceptionResolver" class="org.springmodules.xt.ajax.AjaxExceptionHandlerResolver">
         <property name="exceptionMappings">
             <map>
-                <entry key="java.lang.Exception" value-ref="redirectExceptionResolver"/>
+                <entry key="java.lang.Exception" value-ref="redirectExceptionHandler"/>
             </map>
         </property>
     </bean>
