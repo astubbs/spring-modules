@@ -21,34 +21,34 @@ import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 import org.springmodules.xt.ajax.support.EventHandlingException;
-import org.springmodules.xt.ajax.support.RedirectExceptionResolver;
+import org.springmodules.xt.ajax.support.RedirectExceptionHandler;
 import org.springmodules.xt.ajax.support.UnsupportedEventException;
 
 /**
  *
  * @author sergio
  */
-public class AjaxExceptionHandlerTest extends AbstractDependencyInjectionSpringContextTests {
+public class AjaxExceptionHandlerResolverTest extends AbstractDependencyInjectionSpringContextTests {
     
-    public AjaxExceptionHandlerTest(String testName) {
+    public AjaxExceptionHandlerResolverTest(String testName) {
         super(testName);
     }
 
     public void testResolveException1() throws Exception {
-        AjaxExceptionHandler ajaxExceptionHandler = (AjaxExceptionHandler) this.applicationContext.getBean("ajaxExceptionHandler");
+        AjaxExceptionHandlerResolver ajaxExceptionResolver = (AjaxExceptionHandlerResolver) this.applicationContext.getBean("ajaxExceptionResolver");
         
         MockHttpServletRequest httpRequest = new MockHttpServletRequest("GET", "/ajax/test.action");
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
         SimpleFormController controller = new SimpleFormController();
         httpRequest.setParameter("ajax-request", "ajax-action");
         
-        ModelAndView mv = ajaxExceptionHandler.resolveException(httpRequest, httpResponse, controller, new UnsupportedEventException("exception"));
+        ModelAndView mv = ajaxExceptionResolver.resolveException(httpRequest, httpResponse, controller, new UnsupportedEventException("exception"));
         
         assertTrue(mv.wasCleared());
     }
     
     public void testResolveException2() throws Exception {
-        AjaxExceptionHandler ajaxExceptionHandler = (AjaxExceptionHandler) this.applicationContext.getBean("ajaxExceptionHandler");
+        AjaxExceptionHandlerResolver ajaxExceptionHandler = (AjaxExceptionHandlerResolver) this.applicationContext.getBean("ajaxExceptionResolver");
         
         MockHttpServletRequest httpRequest = new MockHttpServletRequest("GET", "/ajax/test.action");
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
@@ -61,7 +61,7 @@ public class AjaxExceptionHandlerTest extends AbstractDependencyInjectionSpringC
     }
     
     public void testDoNotResolveException() throws Exception {
-        AjaxExceptionHandler ajaxExceptionHandler = (AjaxExceptionHandler) this.applicationContext.getBean("ajaxExceptionHandler");
+        AjaxExceptionHandlerResolver ajaxExceptionHandler = (AjaxExceptionHandlerResolver) this.applicationContext.getBean("ajaxExceptionResolver");
         
         MockHttpServletRequest httpRequest = new MockHttpServletRequest("GET", "/test.action");
         MockHttpServletResponse httpResponse = new MockHttpServletResponse();
@@ -73,19 +73,19 @@ public class AjaxExceptionHandlerTest extends AbstractDependencyInjectionSpringC
     }
     
     public void testLookupExceptionResolver() {
-        AjaxExceptionHandler ajaxExceptionHandler = (AjaxExceptionHandler) this.applicationContext.getBean("ajaxExceptionHandler");
+        AjaxExceptionHandlerResolver ajaxExceptionHandler = (AjaxExceptionHandlerResolver) this.applicationContext.getBean("ajaxExceptionResolver");
         
-        AjaxExceptionResolver resolver = null;
+        AjaxExceptionHandler resolver = null;
         
-        resolver = ajaxExceptionHandler.lookupExceptionResolver(new UnsupportedEventException("exception"));
+        resolver = ajaxExceptionHandler.lookupExceptionHandler(new UnsupportedEventException("exception"));
         assertNotNull(resolver);
-        assertTrue(resolver instanceof RedirectExceptionResolver);
-        assertEquals("/test/redirect1.html", ((RedirectExceptionResolver) resolver).getRedirectUrl());
+        assertTrue(resolver instanceof RedirectExceptionHandler);
+        assertEquals("/test/redirect1.html", ((RedirectExceptionHandler) resolver).getRedirectUrl());
         
-        resolver = ajaxExceptionHandler.lookupExceptionResolver(new EventHandlingException("exception"));
+        resolver = ajaxExceptionHandler.lookupExceptionHandler(new EventHandlingException("exception"));
         assertNotNull(resolver);
-        assertTrue(resolver instanceof RedirectExceptionResolver);
-        assertEquals("/test/redirect2.html", ((RedirectExceptionResolver) resolver).getRedirectUrl());
+        assertTrue(resolver instanceof RedirectExceptionHandler);
+        assertEquals("/test/redirect2.html", ((RedirectExceptionHandler) resolver).getRedirectUrl());
     }
     
     protected String[] getConfigLocations() {

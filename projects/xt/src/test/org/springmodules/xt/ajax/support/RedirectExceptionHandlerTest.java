@@ -21,29 +21,22 @@ import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.test.xml.XMLEnhancedTestCase;
 
 /**
- *
  * @author Sergio Bossa
  */
-public class RedirectExceptionResolverTest extends XMLEnhancedTestCase {
+public class RedirectExceptionHandlerTest extends XMLEnhancedTestCase {
     
-    public RedirectExceptionResolverTest(String testName) {
+    public RedirectExceptionHandlerTest(String testName) {
         super(testName);
-    }
-    
-    public static Test suite() {
-        TestSuite suite = new TestSuite(RedirectExceptionResolverTest.class);
-        
-        return suite;
     }
 
     public void testResolve() throws Exception {
         MockHttpServletRequest httpRequest = new MockHttpServletRequest("GET", "/ajax/exception.action");
         Exception ex = new Exception("exception");
         
-        RedirectExceptionResolver resolver = new RedirectExceptionResolver();
-        resolver.setRedirectUrl("/ajax/exception.action");
+        RedirectExceptionHandler handler = new RedirectExceptionHandler();
+        handler.setRedirectUrl("/ajax/exception.action");
         
-        AjaxResponse response = resolver.resolve(httpRequest, ex);
+        AjaxResponse response = handler.handle(httpRequest, ex);
         assertNotNull(response);
         assertXpathExists("//taconite-redirect/@targetUrl", response.getResponse());
     }

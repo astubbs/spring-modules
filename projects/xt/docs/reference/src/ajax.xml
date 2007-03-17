@@ -703,50 +703,60 @@ public interface AjaxResponse {
       <para>The XT Ajax Framework deals with exceptions occurred during Ajax
       requests in the same way, by using a special HandlerExceptionResolver:
       the <emphasis
-      role="bold">org.springmodules.xt.ajax.AjaxExceptionHandler.
+      role="bold">org.springmodules.xt.ajax.AjaxExceptionHandlerResolver.
       </emphasis></para>
 
       <para>It works by mapping exception classes to instances of <emphasis
-      role="bold">AjaxExceptionResolver</emphasis> beans (see
-      <emphasis>org.springmodules.xt.ajax.AjaxExceptionResolver</emphasis>
+      role="bold">AjaxExceptionHandler</emphasis> beans (see
+      <emphasis>org.springmodules.xt.ajax.AjaxExceptionHandler</emphasis>
       javadoc) configured in the Spring context.</para>
 
-      <para>Here is a sample AjaxExceptionHandler configuration
+      <para>Here is a sample AjaxExceptionHandlerResolver configuration
       snippet:</para>
 
       <programlisting>
-&lt;bean id="ajaxExceptionHandler" class="org.springmodules.xt.ajax.AjaxExceptionHandler"&gt;
+&lt;bean id="ajaxExceptionResolver" class="<emphasis role="bold">org.springmodules.xt.ajax.AjaxExceptionHandlerResolver</emphasis>"&gt;
     &lt;property name="exceptionMappings"&gt;
         &lt;map&gt;
-            <emphasis role="bold">&lt;entry key="java.lang.Exception" value-ref="exceptionResolver"/&gt;</emphasis>
+            <emphasis role="bold">&lt;entry key="java.lang.Exception" value-ref="exceptionHandler"/&gt;</emphasis>
         &lt;/map&gt;
     &lt;/property&gt;
 &lt;/bean&gt;
 </programlisting>
 
-      <para>The AjaxExceptionResolver then takes care of resolving the
+      <para>The AjaxExceptionHandler bean then takes care of resolving the
       exception to an AjaxResponse to send to clients. Here is its
       interface:</para>
 
       <programlisting>
-public interface AjaxExceptionResolver {
+public interface AjaxExceptionHandler {
 
-    public AjaxResponse resolve(HttpServletRequest request, Exception ex);
+    public AjaxResponse handle(HttpServletRequest request, Exception ex);
 }
 </programlisting>
 
       <para>Out of the box, XT Ajax Framework provides the <emphasis
-      role="bold">RedirectExceptionResolver</emphasis> (see
-      <emphasis>org.springmodules.xt.ajax.support.RedirectExceptionResolver</emphasis>
-      javadoc), an AjaxExceptionResolver implementation for redirecting to a
+      role="bold">RedirectExceptionHandler</emphasis> (see
+      <emphasis>org.springmodules.xt.ajax.support.RedirectExceptionHandler</emphasis>
+      javadoc), an AjaxExceptionHandler implementation for redirecting to a
       given error page. Here is a sample configuration snippet:</para>
 
       <programlisting>
-&lt;bean id="exceptionResolver" class="org.springmodules.xt.ajax.support.RedirectExceptionResolver"&gt;
+&lt;bean id="exceptionHandler" class="<emphasis role="bold">org.springmodules.xt.ajax.support.RedirectExceptionHandler</emphasis>"&gt;
     &lt;property name="redirectUrl" value="/error.page"/&gt;
     &lt;property name="exceptionMessageAttribute" value="exceptionMessage"/&gt;
 &lt;/bean&gt;
 </programlisting>
+
+      <warning>
+        <para>Starting from 0.9 version, the old
+        org.springmodules.xt.ajax.AjaxExceptionHandler is now called
+        org.springmodules.xt.ajax.AjaxExceptionHandlerResolver, while the old
+        org.springmodules.xt.ajax.AjaxExceptionResolver and
+        org.springmodules.xt.ajax.support.RedirectExceptionResolver are
+        respectively called org.springmodules.xt.ajax.AjaxExceptionHandler and
+        org.springmodules.xt.ajax.support.RedirectExceptionHandler.</para>
+      </warning>
     </sect3>
   </sect2>
 

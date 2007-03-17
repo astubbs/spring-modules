@@ -12,11 +12,11 @@
     
     <bean id="ajaxValidationHandler" class="org.springmodules.xt.ajax.validation.DefaultValidationHandler"/>
     
-    <bean id="redirectExResolver1" class="org.springmodules.xt.ajax.support.RedirectExceptionResolver">
+    <bean id="redirectExHandler1" class="org.springmodules.xt.ajax.support.RedirectExceptionHandler">
         <property name="redirectUrl" value="/test/redirect1.html"/>
     </bean>
     
-    <bean id="redirectExResolver2" class="org.springmodules.xt.ajax.support.RedirectExceptionResolver">
+    <bean id="redirectExHandler2" class="org.springmodules.xt.ajax.support.RedirectExceptionHandler">
         <property name="redirectUrl" value="/test/redirect2.html"/>
     </bean>
     
@@ -33,11 +33,11 @@
         </property>
     </bean>
     
-    <bean id="ajaxExceptionHandler" class="org.springmodules.xt.ajax.AjaxExceptionHandler">
+    <bean id="ajaxExceptionResolver" class="org.springmodules.xt.ajax.AjaxExceptionHandlerResolver">
         <property name="exceptionMappings">
             <map>
-                <entry key="org.springmodules.xt.ajax.support.UnsupportedEventException" value-ref="redirectExResolver1"/>
-                <entry key="org.springmodules.xt.ajax.support.EventHandlingException" value-ref="redirectExResolver2"/>
+                <entry key="org.springmodules.xt.ajax.support.UnsupportedEventException" value-ref="redirectExHandler1"/>
+                <entry key="org.springmodules.xt.ajax.support.EventHandlingException" value-ref="redirectExHandler2"/>
             </map>
         </property>
     </bean>

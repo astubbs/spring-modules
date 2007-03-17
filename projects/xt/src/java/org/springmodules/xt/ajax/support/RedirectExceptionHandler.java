@@ -6,25 +6,25 @@ import javax.servlet.http.HttpServletRequest;
 import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
-import org.springmodules.xt.ajax.AjaxExceptionResolver;
+import org.springmodules.xt.ajax.AjaxExceptionHandler;
 import org.springmodules.xt.ajax.action.RedirectAction;
 
 /**
- * {@link AjaxExceptionResolver} that produces an {@link AjaxResponse} 
+ * {@link AjaxExceptionHandler} that produces an {@link AjaxResponse} 
  * for redirecting to a given URL.<br>
  * It exposes the exception message as a request attribute under the name
  * defined by {@link #setExceptionMessageAttribute(String)}.
- *
+ * 
  * @author Sergio Bossa
  */
-public class RedirectExceptionResolver implements AjaxExceptionResolver {
+public class RedirectExceptionHandler implements AjaxExceptionHandler {
     
     public static final String DEFAULT_EXCEPTION_MESSAGE_ATTRIBUTE = "exceptionMessage";
     
     private String redirectUrl;
     private String exceptionMessageAttribute = DEFAULT_EXCEPTION_MESSAGE_ATTRIBUTE;
     
-    public AjaxResponse resolve(HttpServletRequest request, Exception ex) {
+    public AjaxResponse handle(HttpServletRequest request, Exception ex) {
         // Expose the exception message:
         Map model = new HashMap(1);
         model.put(this.exceptionMessageAttribute, ex.getMessage());
