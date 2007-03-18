@@ -115,7 +115,7 @@ public class FSDirectoryFactoryBeanTests extends TestCase {
 		}
 	}
 
-	public void testGetObjectWithCreationWriter() throws Exception {
+	/*public void testGetObjectWithCreationWriter() throws Exception {
 		FSDirectoryFactoryBean fsDirectoryFactoryBean = new FSDirectoryFactoryBean();
 		fsDirectoryFactoryBean.setLocation(new ClassPathResource("/org/springmodules/lucene/index/support/"));
 		fsDirectoryFactoryBean.setCreate(true);
@@ -130,7 +130,7 @@ public class FSDirectoryFactoryBeanTests extends TestCase {
 		} finally {
 			closeIndexWriter(writer);
 		}
-	}
+	}*/
 
 	public void testGetObjectWithoutCreationReader() throws Exception {
 		FSDirectoryFactoryBean fsDirectoryFactoryBean = new FSDirectoryFactoryBean();
@@ -151,7 +151,7 @@ public class FSDirectoryFactoryBeanTests extends TestCase {
 		}
 	}
 
-	public void testGetObjectWithCreationReader() throws Exception {
+	/*public void testGetObjectWithCreationReader() throws Exception {
 		FSDirectoryFactoryBean fsDirectoryFactoryBean = new FSDirectoryFactoryBean();
 		fsDirectoryFactoryBean.setLocation(new ClassPathResource("/org/springmodules/lucene/index/support/"));
 		fsDirectoryFactoryBean.setCreate(true);
@@ -168,5 +168,5 @@ public class FSDirectoryFactoryBeanTests extends TestCase {
 		} finally {
 			closeIndexReader(reader);
 		}
-	}
+	}*/
 }
