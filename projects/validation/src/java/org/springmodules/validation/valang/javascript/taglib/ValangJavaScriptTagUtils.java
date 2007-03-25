@@ -17,6 +17,8 @@
 package org.springmodules.validation.valang.javascript.taglib;
 
 import java.util.Map;
+import java.util.Collection;
+import java.util.ArrayList;
 
 import org.springframework.util.Assert;
 import org.springframework.validation.Validator;
@@ -28,6 +30,7 @@ import org.springmodules.validation.valang.ValangValidator;
  * that is is accessible to the JSP custom tag {@link ValangValidateTag}.
  *
  * @author Oliver Hutchison
+ * @author Uri Boness
  */
 public abstract class ValangJavaScriptTagUtils {
 
@@ -54,7 +57,8 @@ public abstract class ValangJavaScriptTagUtils {
 
     /**
      * Inserts the provided validator into the model using the provided command
-     * name as the validation rule's key.
+     * name as the validation rule's key. If there some rules that are already associated with the given command, the
+     * new rules will be added to them.
      *
      * @param commandName the command name
      * @param validator the valang validator
@@ -63,6 +67,12 @@ public abstract class ValangJavaScriptTagUtils {
     public static void addValangRulesToModel(String commandName, ValangValidator validator, Map model) {
         Assert.notNull(commandName, "commandName is required.");
         Assert.notNull(validator, "validator is required.");
-        model.put(ValangValidateTag.VALANG_RULES_KEY_PREFIX + commandName, validator.getRules());
+        String key = ValangValidateTag.VALANG_RULES_KEY_PREFIX + commandName;
+        Collection rules = (Collection)model.get(key);
+        if (rules == null) {
+            rules = new ArrayList();
+        }
+        rules.addAll(validator.getRules());
+        model.put(key, rules);
     }
 }

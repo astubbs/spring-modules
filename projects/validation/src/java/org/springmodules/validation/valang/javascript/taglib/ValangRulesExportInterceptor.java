@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.mvc.BaseCommandController;
+import org.springframework.validation.Validator;
 import org.springmodules.validation.valang.ValangValidator;
 
 /**
@@ -34,11 +35,11 @@ import org.springmodules.validation.valang.ValangValidator;
  * <code>ValangValidateTag</code>.
  * <p/>
  * <p>Does nothing if the intercepted handler is not an instance of
- * <code>BaseCommandController</code>, if the handler's validator
- * implementation is not an instance of <code>ValangValidator</code> or
- * if the handler did not export a command object into the model.
+ * <code>BaseCommandController</code> or if the handler did not export a command object into the model. Obviously
+ * the rules will only be picked up from all validators of type {@link ValangValidator}.
  *
  * @author Oliver Hutchison
+ * @author Uri Boness
  * @see ValangValidateTag
  * @see ValangValidator
  */
@@ -46,34 +47,44 @@ public class ValangRulesExportInterceptor extends HandlerInterceptorAdapter {
 
     private static final Log logger = LogFactory.getLog(ValangRulesExportInterceptor.class);
 
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+    public void postHandle(HttpServletRequest request,
+                           HttpServletResponse response,
+                           Object handler,
                            ModelAndView modelAndView) throws Exception {
-        if (handler instanceof BaseCommandController) {
-            BaseCommandController controller = (BaseCommandController) handler;
-            if (controller.getValidator() instanceof ValangValidator) {
-                Map model = modelAndView.getModel();
-                if (model == null || !model.containsKey(controller.getCommandName())) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Handler '" + handler + "' did not export command object '" + controller.getCommandName()
-                            + "'; no rules added to model");
-                    }
-                } else {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Adding Valang rules from handler '" + handler + "' to model");
-                    }
-                    ValangJavaScriptTagUtils.addValangRulesToModel(controller, model);
-                }
-            } else {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Handler '" + handler
-                        + "' does not have a validator of type 'ValangValidator'; no rules added to model");
-                }
+
+        if (!BaseCommandController.class.isInstance(handler)) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Handler '" + handler +
+                    "' is not an instance of BaseCommandController; no rules added to model");
             }
-        } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Handler '" + handler
-                    + "' is not an instance of BaseCommandController; no rules added to model");
-            }
+            return;
         }
+
+
+        BaseCommandController controller = (BaseCommandController) handler;
+        Map model = modelAndView.getModel();
+        String commandName = controller.getCommandName();
+        if (model == null || !model.containsKey(commandName)) {
+            if (logger.isWarnEnabled()) {
+                logger.debug("Handler '" + handler + "' did not export command object '" + controller.getCommandName()
+                    + "'; no rules added to model");
+            }
+            return;
+        }
+
+        Validator[] validators = controller.getValidators();
+        for (int i=0; i<validators.length; i++) {
+            if (!ValangValidator.class.isInstance(validators[i])) {
+                continue;
+            }
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Adding Valang rules from handler '" + handler + "' to model");
+            }
+
+            ValangValidator validator = (ValangValidator)validators[i];
+            ValangJavaScriptTagUtils.addValangRulesToModel(commandName, validator,  model);
+        }
+
     }
 }

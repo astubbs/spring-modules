@@ -46,7 +46,12 @@
 
     <bean id="personController" class="org.springmodules.samples.validation.valang.web.PersonFormController">
 		<property name="formView" value="person"/>
-		<property name="validator" ref="beanValidator"/>
+		<property name="validators">
+            <list>
+                <ref bean="beanValidator"/>
+                <ref bean="beanValidator2"/>
+            </list>
+        </property>
         <property name="commandName" value="person"/>
         <property name="commandClass" value="org.springmodules.samples.validation.valang.web.PersonData"/>
     </bean>
@@ -61,6 +66,15 @@
                 <![CDATA[
                     { password : ? is not blank : 'Password is required' : 'errors.required' }
                     { verifyPassword : ? == password : 'Passwords do not match' : 'errors.password.not.matching' }
+                ]]>
+            </value>
+        </property>
+	</bean>
+
+    <bean id="beanValidator2" class="org.springmodules.validation.valang.ValangValidator">
+		<property name="valang">
+            <value>
+                <![CDATA[
                     { firstName : ? is not blank : 'First Name is required' : 'errors.required' }
                     { lastName : ? is not blank : 'Last Name is required' : 'errors.required' }
                     { email : ? is not blank : 'Email is required' : 'errors.required' }
