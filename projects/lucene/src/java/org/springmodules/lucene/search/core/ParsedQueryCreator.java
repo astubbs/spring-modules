@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2005 the original author or authors.
+ * Copyright 2002-2007 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package org.springmodules.lucene.search.core;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -52,10 +51,11 @@ public abstract class ParsedQueryCreator implements QueryCreator {
 		String[] tokens = params.getToken();
 		Query query = null;
 		if( tokens.length==1 ) {
-			QueryParser parser = new QueryParser(tokens[0],analyzer);
+			QueryParser parser = new QueryParser(tokens[0], analyzer);
 			query = parser.parse(params.getTextToSearch());
 		} else {
-			query = MultiFieldQueryParser.parse(new String[] { params.getTextToSearch() }, tokens, analyzer);
+			QueryParser parser = new MultiFieldQueryParser(tokens, analyzer);
+			query = parser.parse(params.getTextToSearch());
 		}
 		setQueryProperties(query);
 		return query;
