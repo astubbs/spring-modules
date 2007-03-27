@@ -160,6 +160,28 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         catch(UnsupportedEventException ex) {}
     }
     
+    public void testPostHandleStopsBecauseOfNoModelAndView() throws Exception {
+        AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptor");
+        
+        XmlWebApplicationContext springContext = new XmlWebApplicationContext();
+        MockServletContext servletContext = new MockServletContext();
+        springContext.setConfigLocations(this.getConfigLocations());
+        springContext.setServletContext(servletContext);
+        springContext.refresh();
+        servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
+        
+        MockHttpServletRequest httpRequest = new MockHttpServletRequest(servletContext, "POST", "/ajax/simple.page");
+        MockHttpSession session = new MockHttpSession(servletContext);
+        httpRequest.setSession(session);
+        httpRequest.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
+        
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        
+        SimpleFormController controller = new SimpleFormController();
+        
+        ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, null);
+    }
+    
     public void testLookupHandlers() throws Exception {
         AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptor");
         

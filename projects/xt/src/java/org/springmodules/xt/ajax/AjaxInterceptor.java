@@ -183,6 +183,13 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
     throws Exception {
         try {
+            // If modelAndView object is null, it means that the controller handled the request by itself ...
+            // See : http://static.springframework.org/spring/docs/2.0.x/api/org/springframework/web/servlet/mvc/Controller.html#handleRequest(javax.servlet.http.HttpServletRequest,%20javax.servlet.http.HttpServletResponse)
+            if (modelAndView == null) {
+                logger.info("Null ModelAndView object, proceeding without Ajax processing ...");
+                return;
+            }
+            //
             // Store the model map:
             this.storeModel(request.getSession(), modelAndView.getModel());
             //
@@ -207,7 +214,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                             // Set base event properties:
                             this.initEvent(event, request);
                             if (handler instanceof BaseCommandController) {
-                                Map model = modelAndView.getModel();
+                                Map model = this.getModel(request.getSession());
                                 // Get the command name:
                                 String commandName = ((BaseCommandController) handler).getCommandName();
                                 // Set validation errors:
