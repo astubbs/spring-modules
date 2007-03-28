@@ -3,7 +3,7 @@
  This JavaScript file describes the XT object with actions for sending ajax requests using the XT Ajax Framework and Taconite.
  **/
 
-var springxt_taconite_version=20070226;
+var springxt_taconite_version=20070328;
 
 var XT = {
     
@@ -33,7 +33,7 @@ var XT = {
     createJSONQueryString : function(jsonObject) {
         var qs = "";
         if (jsonObject != undefined && jsonObject != null) {
-            qs = "&" + this.jsonParamsParameter + "=" + escape(jsonObject.toJSONString());
+            qs = "&" + this.jsonParamsParameter + "=" + encodeURIComponent(jsonObject.toJSONString());
         }
         return qs;
     },
@@ -93,7 +93,7 @@ var XT = {
  will be sent.
  */
 var taconite_client_version=1.6;
-var taconite_client_xt_version=20070217;
+var taconite_client_xt_version=20070328;
 function AjaxRequest(url) {
     /** @private */
     var self = this;
@@ -420,6 +420,10 @@ function AjaxRequest(url) {
         if(ajaxRequest.getXMLHttpRequestObject().readyState != 4) {
             return;
         }
+        if(ajaxRequest.getXMLHttpRequestObject().status != 200) {
+            errorHandler(self);
+            return;
+        }
         try {
             var debug = ajaxRequest.isEchoDebugInfo();
             if(debug) {
@@ -485,17 +489,18 @@ function AjaxRequest(url) {
         for(var i = 0; i < elements.length; i++) {
             tempString = "";
             node = elements[i];
-            name = node.getAttribute("name");
             
+            name = node.getAttribute("name");
             //use id if name is null
             if (!name) {
                 name = node.getAttribute("id");
             }
+            name = encodeURIComponent(name);
             
             if(node.tagName.toLowerCase() == "input") {
                 if(node.type.toLowerCase() == "radio" || node.type.toLowerCase() == "checkbox") {
                     if(node.checked) {
-                        tempString = name + "=" + node.value;
+                        tempString = name + "=" + encodeURIComponent(node.value);
                     }
                 }
                 
@@ -538,7 +543,7 @@ function AjaxRequest(url) {
             option = options[x];
             
             if(option.selected) {
-                tempString = select.name + "=" + option.value;
+                tempString = encodeURIComponent(select.name) + "=" + encodeURIComponent(option.value);
             }
             
             if(tempString != "") {

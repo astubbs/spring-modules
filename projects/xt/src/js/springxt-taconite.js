@@ -3,7 +3,7 @@
  This JavaScript file describes the XT object with actions for sending ajax requests using the XT Ajax Framework and Taconite.
  **/
 
-var springxt_taconite_version=20070226;
+var springxt_taconite_version=20070328;
 
 var XT = {
     
@@ -33,7 +33,7 @@ var XT = {
     createJSONQueryString : function(jsonObject) {
         var qs = "";
         if (jsonObject != undefined && jsonObject != null) {
-            qs = "&" + this.jsonParamsParameter + "=" + escape(jsonObject.toJSONString());
+            qs = "&" + this.jsonParamsParameter + "=" + encodeURIComponent(jsonObject.toJSONString());
         }
         return qs;
     },
