@@ -1,7 +1,7 @@
 
-var springxt_taconite_version=20070226;var XT={ajaxParameter:"ajax-request",eventParameter:"event-id",elementParameter:"source-element",elementIdParameter:"source-element-id",jsonParamsParameter:"json-params",createSimpleQueryString:function(sourceElement){var qs="";if(sourceElement!=undefined&&sourceElement!=null){if(sourceElement.name!=null){qs="&"+this.elementParameter+"="+sourceElement.name;}
+var springxt_taconite_version=20070328;var XT={ajaxParameter:"ajax-request",eventParameter:"event-id",elementParameter:"source-element",elementIdParameter:"source-element-id",jsonParamsParameter:"json-params",createSimpleQueryString:function(sourceElement){var qs="";if(sourceElement!=undefined&&sourceElement!=null){if(sourceElement.name!=null){qs="&"+this.elementParameter+"="+sourceElement.name;}
 if(sourceElement.id!=null){qs=qs+"&"+this.elementIdParameter+"="+sourceElement.id;}}
-return qs;},createJSONQueryString:function(jsonObject){var qs="";if(jsonObject!=undefined&&jsonObject!=null){qs="&"+this.jsonParamsParameter+"="+escape(jsonObject.toJSONString());}
+return qs;},createJSONQueryString:function(jsonObject){var qs="";if(jsonObject!=undefined&&jsonObject!=null){qs="&"+this.jsonParamsParameter+"="+encodeURIComponent(jsonObject.toJSONString());}
 return qs;},doAjaxAction:function(eventId,sourceElement,jsonObject){var ajaxRequest=new AjaxRequest(document.URL);ajaxRequest.addFormElementsByFormEl(document.forms[0]);ajaxRequest.setQueryString(ajaxRequest.getQueryString()
 +"&"+this.ajaxParameter+"=ajax-action"
 +"&"+this.eventParameter+"="+eventId
@@ -10,7 +10,7 @@ return qs;},doAjaxAction:function(eventId,sourceElement,jsonObject){var ajaxRequ
 +"&"+this.ajaxParameter+"=ajax-submit"
 +"&"+this.eventParameter+"="+eventId
 +this.createSimpleQueryString(sourceElement)
-+this.createJSONQueryString(jsonObject));ajaxRequest.setUsePOST();ajaxRequest.sendRequest();}};var taconite_client_version=1.6;var taconite_client_xt_version=20070217;function AjaxRequest(url){var self=this;var xmlHttp=createXMLHttpRequest();var queryString="";var requestURL=url;var method="GET";var preRequest=null;var postRequest=null;var debugResponse=false;var async=true;var errorHandler=null;this.getXMLHttpRequestObject=function(){return xmlHttp;}
++this.createJSONQueryString(jsonObject));ajaxRequest.setUsePOST();ajaxRequest.sendRequest();}};var taconite_client_version=1.6;var taconite_client_xt_version=20070328;function AjaxRequest(url){var self=this;var xmlHttp=createXMLHttpRequest();var queryString="";var requestURL=url;var method="GET";var preRequest=null;var postRequest=null;var debugResponse=false;var async=true;var errorHandler=null;this.getXMLHttpRequestObject=function(){return xmlHttp;}
 this.setPreRequest=function(func){preRequest=func;}
 this.setPostRequest=function(func){postRequest=func;}
 this.getPostRequest=function(){return postRequest;}
@@ -46,6 +46,7 @@ else{throw exception;}}
 if(!async){handleStateChange(self);}
 if(self.isEchoDebugInfo()){echoRequestParams();}}
 handleStateChange=function(ajaxRequest){if(ajaxRequest.getXMLHttpRequestObject().readyState!=4){return;}
+if(ajaxRequest.getXMLHttpRequestObject().status!=200){errorHandler(self);return;}
 try{var debug=ajaxRequest.isEchoDebugInfo();if(debug){echoResponse(ajaxRequest);}
 var nodes=null;if(ajaxRequest.getXMLHttpRequestObject().responseXML!=null){nodes=ajaxRequest.getXMLHttpRequestObject().responseXML.documentElement.childNodes;}
 else{nodes=new Array();}
@@ -57,14 +58,14 @@ catch(exception){if(errorHandler){errorHandler(self,exception);}
 else{throw exception;}}}
 function isTaconiteTag(node){return node.tagName.substring(0,9)=="taconite-";}
 function toQueryString(elements){var node=null;var qs="";var name="";var tempString="";for(var i=0;i<elements.length;i++){tempString="";node=elements[i];name=node.getAttribute("name");if(!name){name=node.getAttribute("id");}
-if(node.tagName.toLowerCase()=="input"){if(node.type.toLowerCase()=="radio"||node.type.toLowerCase()=="checkbox"){if(node.checked){tempString=name+"="+node.value;}}
+name=encodeURIComponent(name);if(node.tagName.toLowerCase()=="input"){if(node.type.toLowerCase()=="radio"||node.type.toLowerCase()=="checkbox"){if(node.checked){tempString=name+"="+encodeURIComponent(node.value);}}
 if(node.type.toLowerCase()=="text"||node.type.toLowerCase()=="hidden"||node.type.toLowerCase()=="password"){tempString=name+"="+encodeURIComponent(node.value);}}
 else if(node.tagName.toLowerCase()=="select"){tempString=getSelectedOptions(node);}
 else if(node.tagName.toLowerCase()=="textarea"){tempString=name+"="+encodeURIComponent(node.value);}
 if(tempString!=""){if(qs==""){qs=tempString;}
 else{qs=qs+"&"+tempString;}}}
 return qs;}
-function getSelectedOptions(select){var options=select.options;var option=null;var qs="";var tempString="";for(var x=0;x<options.length;x++){tempString="";option=options[x];if(option.selected){tempString=select.name+"="+option.value;}
+function getSelectedOptions(select){var options=select.options;var option=null;var qs="";var tempString="";for(var x=0;x<options.length;x++){tempString="";option=options[x];if(option.selected){tempString=encodeURIComponent(select.name)+"="+encodeURIComponent(option.value);}
 if(tempString!=""){if(qs==""){qs=tempString;}
 else{qs=qs+"&"+tempString;}}}
 return qs;}
