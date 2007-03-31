@@ -16,6 +16,7 @@
 
 package org.springmodules.xt.ajax;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -78,6 +79,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     public static final String AJAX_SUBMIT_REQUEST = "ajax-submit";
     
     public static final String AJAX_REDIRECT_PREFIX = "ajax-redirect:";
+    public static final String STANDARD_REDIRECT_PREFIX = "redirect:";
     
     private static final String MODEL_KEY = AjaxInterceptor.class.getName() + ".MODEL_KEY";
     
@@ -241,16 +243,14 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                             modelAndView.clear();
                             InternalAjaxResponseSender.sendResponse(response, ajaxResponse.getResponse());
                         } else {
+                            // No response, so try an Ajax redirect:
                             String view = modelAndView.getViewName();
-                            if ((view != null) && (view.startsWith(AJAX_REDIRECT_PREFIX))) {
+                            if (view != null && view.startsWith(AJAX_REDIRECT_PREFIX)) {
                                 view = view.substring(AJAX_REDIRECT_PREFIX.length());
-                                // Creating Ajax redirect action:
-                                AjaxResponse ajaxRedirect = new AjaxResponseImpl();
-                                AjaxAction ajaxAction = new RedirectAction(new StringBuilder(request.getContextPath()).append(view).toString(), modelAndView);
-                                ajaxRedirect.addAction(ajaxAction);
-                                // Need to clear the ModelAndView because we are handling the response by ourselves:
-                                modelAndView.clear();
-                                InternalAjaxResponseSender.sendResponse(response, ajaxRedirect.getResponse());
+                                this.redirectToView(view, request, response, modelAndView);
+                            } else if (view != null && view.startsWith(STANDARD_REDIRECT_PREFIX)) {
+                                view = view.substring(STANDARD_REDIRECT_PREFIX.length());
+                                this.redirectToView(view, request, response, modelAndView);
                             } else {
                                 throw new IllegalViewException("No Ajax redirect prefix: " + AJAX_REDIRECT_PREFIX + " found for view: " + view);
                             }
@@ -427,5 +427,15 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
         
         event.setElementName(request.getParameter(this.elementParameter));
         event.setElementId(request.getParameter(this.elementIdParameter));
+    }
+    
+    private void redirectToView(String view, HttpServletRequest request, HttpServletResponse response, ModelAndView modelAndView) throws IOException {
+        // Creating Ajax redirect action:
+        AjaxResponse ajaxRedirect = new AjaxResponseImpl();
+        AjaxAction ajaxAction = new RedirectAction(new StringBuilder(request.getContextPath()).append(view).toString(), modelAndView);
+        ajaxRedirect.addAction(ajaxAction);
+        // Need to clear the ModelAndView because we are handling the response by ourselves:
+        modelAndView.clear();
+        InternalAjaxResponseSender.sendResponse(response, ajaxRedirect.getResponse());
     }
 }

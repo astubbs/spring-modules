@@ -97,31 +97,11 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         httpRequest.setSession(session);
         httpRequest.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
         httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_SUBMIT_REQUEST);        
-        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "validate");
-        
-        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
-        
-        ModelAndView mv = new ModelAndView("ajax-redirect:/ajax/success.page");
-        SimpleFormController controller = new SimpleFormController();
-        
-        ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
-        
-        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\" parseInBrowser=\"true\"></taconite-redirect> </taconite-root>", 
-                httpResponse.getContentAsString());
-        
-        // New test:
-        
-        httpRequest = new MockHttpServletRequest(servletContext, "POST", "/ajax/submit.action");
-        session = new MockHttpSession(servletContext);
-        httpRequest.setSession(session);
-        httpRequest.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
-        httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_SUBMIT_REQUEST);        
         httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "submit");
         
-        httpResponse = new MockHttpServletResponse();
-        
-        controller = new SimpleFormController();
-        mv = new ModelAndView("");
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        SimpleFormController controller = new SimpleFormController();
+        ModelAndView mv = new ModelAndView("");
         
         ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
         
@@ -129,6 +109,60 @@ public class AjaxInterceptorTest extends AbstractDependencyInjectionSpringContex
         String response2 = new DummySubmitHandler().submit(new AjaxSubmitEventImpl("submit", httpRequest)).getResponse();
         
         assertEquals(response1, response2);
+    }
+    
+    public void testPostHandleWithAjaxRedirectPrefix() throws Exception {
+        AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptor");
+        
+        XmlWebApplicationContext springContext = new XmlWebApplicationContext();
+        MockServletContext servletContext = new MockServletContext();
+        springContext.setConfigLocations(this.getConfigLocations());
+        springContext.setServletContext(servletContext);
+        springContext.refresh();
+        servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
+        
+        MockHttpServletRequest httpRequest = new MockHttpServletRequest(servletContext, "POST", "/ajax/submit.action");
+        MockHttpSession session = new MockHttpSession(servletContext);
+        httpRequest.setSession(session);
+        httpRequest.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
+        httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_SUBMIT_REQUEST);        
+        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "validate");
+        
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        ModelAndView mv = new ModelAndView("ajax-redirect:/ajax/success.page");
+        SimpleFormController controller = new SimpleFormController();
+        
+        ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
+        
+        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\" parseInBrowser=\"true\"></taconite-redirect> </taconite-root>", 
+                httpResponse.getContentAsString());
+    }
+    
+    public void testPostHandleWithStandardRedirectPrefix() throws Exception {
+        AjaxInterceptor ajaxInterceptor = (AjaxInterceptor) this.applicationContext.getBean("ajaxInterceptor");
+        
+        XmlWebApplicationContext springContext = new XmlWebApplicationContext();
+        MockServletContext servletContext = new MockServletContext();
+        springContext.setConfigLocations(this.getConfigLocations());
+        springContext.setServletContext(servletContext);
+        springContext.refresh();
+        servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
+        
+        MockHttpServletRequest httpRequest = new MockHttpServletRequest(servletContext, "POST", "/ajax/submit.action");
+        MockHttpSession session = new MockHttpSession(servletContext);
+        httpRequest.setSession(session);
+        httpRequest.setAttribute(DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE, springContext);
+        httpRequest.setParameter(ajaxInterceptor.getAjaxParameter(), ajaxInterceptor.AJAX_SUBMIT_REQUEST);        
+        httpRequest.setParameter(ajaxInterceptor.getEventParameter(), "validate");
+        
+        MockHttpServletResponse httpResponse = new MockHttpServletResponse();
+        ModelAndView mv = new ModelAndView("redirect:/ajax/success.page");
+        SimpleFormController controller = new SimpleFormController();
+        
+        ajaxInterceptor.postHandle(httpRequest, httpResponse, controller, mv);
+        
+        assertEquals("<?xml version=\"1.0\"?> <taconite-root xml:space=\"preserve\"> <taconite-redirect targetUrl=\"/ajax/success.page\" parseInBrowser=\"true\"></taconite-redirect> </taconite-root>", 
+                httpResponse.getContentAsString());
     }
     
     public void testPostHandleFails() throws Exception {

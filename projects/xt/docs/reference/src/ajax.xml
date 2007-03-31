@@ -587,6 +587,8 @@ public interface AjaxResponse {
     public void addAction(AjaxAction action); 
 
     public String getResponse(); 
+
+    public boolean isEmpty();
 } 
 </programlisting>
 
@@ -600,6 +602,11 @@ public interface AjaxResponse {
         <listitem>
           <para><emphasis>public String getResponse()</emphasis> : This method
           executes the added actions and returns their result.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis>public boolean isEmpty()</emphasis> : This method
+          tells if the response has no actions to return.</para>
         </listitem>
       </itemizedlist>
 
@@ -687,8 +694,10 @@ public interface AjaxResponse {
           automatically tries to redirect to the view configured in your
           ModelAndView object. The view must contain the <emphasis
           role="bold">ajax-redirect</emphasis> prefix (i.e. :
-          <emphasis>ajax-redirect:/start.page</emphasis>); if the view doesn't
-          contain such a prefix, an exception is thrown.</para>
+          <emphasis>ajax-redirect:/start.page</emphasis>) or the standard
+          <emphasis role="bold">redirect</emphasis> prefix (i.e. :
+          <emphasis>redirect:/start.page</emphasis>); if the view doesn't
+          contain such prefixes, an exception is thrown.</para>
         </listitem>
       </orderedlist>
     </sect3>
