@@ -2,8 +2,10 @@ package org.springmodules.xt.ajax.validation.support;
 
 import java.util.Locale;
 import org.springframework.context.support.DelegatingMessageSource;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.validation.BindException;
 import org.springmodules.xt.ajax.AjaxAction;
+import org.springmodules.xt.ajax.AjaxSubmitEventImpl;
 import org.springmodules.xt.ajax.component.Component;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.ObjectError;
@@ -41,5 +43,16 @@ public class DefaultErrorRenderingCallbackTest extends XMLEnhancedTestCase {
     public void testGetRenderingAction() throws Exception {
         AjaxAction action = this.callback.getRenderingAction(this.errors.getGlobalError());
         assertXpathEvaluatesTo("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});", "//taconite-execute-javascript/script", action.execute());
+    }   
+    
+    public void testGetErrorComponent() throws Exception {
+        Component component = this.callback.getErrorComponent(new AjaxSubmitEventImpl("submit", new MockHttpServletRequest()), this.errors.getGlobalError(), this.messageSource, new Locale("it"));
+        assertXpathEvaluatesTo("Default Message 1", "//div", component.render());
+    }
+
+    public void testGetErrosActions() throws Exception {
+        AjaxAction[] actions = this.callback.getErrorActions(new AjaxSubmitEventImpl("submit", new MockHttpServletRequest()), this.errors.getGlobalError());
+        assertEquals(1, actions.length);
+        assertXpathEvaluatesTo("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});", "//taconite-execute-javascript/script", actions[0].execute());
     }   
 }

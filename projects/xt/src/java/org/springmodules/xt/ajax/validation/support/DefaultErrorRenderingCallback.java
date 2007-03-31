@@ -1,12 +1,12 @@
 /*
  * Copyright 2006 the original author or authors.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@ import org.springmodules.xt.ajax.action.prototype.scriptaculous.Effect;
 import org.springmodules.xt.ajax.component.Component;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.ObjectError;
+import org.springmodules.xt.ajax.AjaxSubmitEvent;
 import org.springmodules.xt.ajax.component.TaggedText;
 import org.springmodules.xt.ajax.validation.ErrorRenderingCallback;
 
@@ -35,21 +36,38 @@ import org.springmodules.xt.ajax.validation.ErrorRenderingCallback;
 public class DefaultErrorRenderingCallback implements  ErrorRenderingCallback {
     
     /**
-     * Get the default rendering component.<br> 
+     * Deprecated : use {@link #getErrorComponent(AjaxSubmitEvent, ObjectError, MessageSource, Locale)}.
+     */
+    @Deprecated
+    public Component getRenderingComponent(ObjectError error, MessageSource messageSource, Locale locale) {
+        return this.getErrorComponent(null, error, messageSource, locale);
+    }
+    
+    /**
+     * Deprecated : use {@link #getErrorActions(AjaxSubmitEvent, ObjectError)}.
+     */
+    @Deprecated
+    public AjaxAction getRenderingAction(ObjectError error) {
+        AjaxAction[] actions = this.getErrorActions(null, error);
+        return actions[0];
+    }
+    
+    /**
+     * Get the default error component.<br>
      * This renders the error as plain text.
      */
-    public Component getRenderingComponent(ObjectError error, MessageSource messageSource, Locale locale) {
+    public Component getErrorComponent(AjaxSubmitEvent event, ObjectError error, MessageSource messageSource, Locale locale) {
         return new TaggedText(messageSource.getMessage(error.getCode(), error.getArguments(), error.getDefaultMessage(), locale),
                 TaggedText.Tag.DIV);
     }
     
     /**
-     * Get the default rendering action.<br> 
-     * This renders the error highlighting it in red.
+     * Get the default error action.<br>
+     * This renders the error by highlighting it in red.
      */
-    public AjaxAction getRenderingAction(ObjectError error) {
+    public AjaxAction[] getErrorActions(AjaxSubmitEvent event, ObjectError error){
         Effect highlight = new Effect("Highlight", error.getCode());
         highlight.addOption("startcolor", "#FF0A0A");
-        return highlight;
+        return new AjaxAction[]{highlight};
     }
 }

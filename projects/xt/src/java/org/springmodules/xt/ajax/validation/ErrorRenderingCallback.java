@@ -21,9 +21,10 @@ import org.springmodules.xt.ajax.AjaxAction;
 import org.springmodules.xt.ajax.component.Component;
 import org.springframework.context.MessageSource;
 import org.springframework.validation.ObjectError;
+import org.springmodules.xt.ajax.AjaxSubmitEvent;
 
 /**
- * Callback to implement for rendering validation errors.
+ * Callback to implement for rendering validation errors <b>after</b> validation.
  *
  * @author Sergio Bossa
  */
@@ -36,6 +37,7 @@ public interface ErrorRenderingCallback {
      * @param messageSource A Spring MessageSource for looking up messages related to this error.
      * @param locale The locale to use for messages.
      */
+    @Deprecated
     public Component getRenderingComponent(ObjectError error, MessageSource messageSource, Locale locale);
     
     /**
@@ -43,5 +45,24 @@ public interface ErrorRenderingCallback {
      *
      * @param error The error object.
      */
+    @Deprecated
     public AjaxAction getRenderingAction(ObjectError error);
+    
+    /**
+     * Get the component that will render the given error object.
+     *
+     * @param event The submit event.
+     * @param error The error object.
+     * @param messageSource A Spring MessageSource for looking up messages related to this error.
+     * @param locale The locale to use for messages.
+     */
+    public Component getErrorComponent(AjaxSubmitEvent event, ObjectError error, MessageSource messageSource, Locale locale);
+    
+    /**
+     * Get the actions that will be executed <b>after</b> rendering the error component.
+     *
+     * @param event The submit event.
+     * @param error The error object.
+     */
+    public AjaxAction[] getErrorActions(AjaxSubmitEvent event, ObjectError error);
 }

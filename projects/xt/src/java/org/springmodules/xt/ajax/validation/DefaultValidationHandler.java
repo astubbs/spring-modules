@@ -129,14 +129,16 @@ public class DefaultValidationHandler extends AbstractAjaxHandler implements Mes
         for (Object o : errors.getAllErrors()) {
             ObjectError error = (ObjectError) o;
             // Get the component to render:
-            Component renderingComponent = this.errorRenderingCallback.getRenderingComponent(error, this.messageSource, locale);
+            Component renderingComponent = this.errorRenderingCallback.getErrorComponent(event, error, this.messageSource, locale);
             AppendContentAction appendAction = new AppendContentAction(error.getCode(), renderingComponent);
             appendAction.setMultipleMatch(true);
             response.addAction(appendAction);
-            // Get the action to execute *after* rendering the component:
-            AjaxAction renderingAction = this.errorRenderingCallback.getRenderingAction(error);
-            if (renderingAction != null) {
-                response.addAction(renderingAction);
+            // Get the actions to execute *after* rendering the component:
+            AjaxAction[] renderingActions = this.errorRenderingCallback.getErrorActions(event, error);
+            if (renderingActions != null) {
+                for (AjaxAction renderingAction : renderingActions) {
+                    response.addAction(renderingAction);
+                }
             }
         }
     }

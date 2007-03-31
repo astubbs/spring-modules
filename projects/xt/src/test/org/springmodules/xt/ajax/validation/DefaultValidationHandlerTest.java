@@ -38,7 +38,7 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         this.submitEvent.setValidationErrors(errors);
     }
     
-    public void testValidate() throws Exception {
+    public void testValidatePart1() throws Exception {
         AjaxResponse response = null;
         String rendering = null;
         DefaultValidationHandler handler = new DefaultValidationHandler();
@@ -51,11 +51,16 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         assertXpathEvaluatesTo("Default Message 1", "//taconite-append-as-children/div", rendering);
         assertXpathEvaluatesTo("true", "//taconite-append-as-children/@multipleMatch", rendering);
         assertXpathEvaluatesTo("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});", "//taconite-execute-javascript/script", rendering);
-        
-        
+    }
+    
+    public void testValidatePart2() throws Exception {
+        AjaxResponse response = null;
+        String rendering = null;
+        DefaultValidationHandler handler = new DefaultValidationHandler();
+        handler.setMessageSource(new DelegatingMessageSource());
         handler.setErrorRenderingCallback(new DefaultErrorRenderingCallback() {
-            public Component getRenderingComponent(ObjectError error, MessageSource messageSource, Locale locale) {
-                return new TaggedText(messageSource.getMessage(error.getCode(), null, error.getDefaultMessage(), locale), TaggedText.Tag.SPAN);
+            public Component getErrorComponent(AjaxSubmitEvent event, ObjectError error, MessageSource messageSource, Locale locale) {
+                return new TaggedText(messageSource.getMessage(error.getCode(), null, error.getDefaultMessage() + " for event : " + event.getEventId(), locale), TaggedText.Tag.SPAN);
             }
         });
         
@@ -63,8 +68,8 @@ public class DefaultValidationHandlerTest extends XMLEnhancedTestCase {
         rendering = response.getResponse();
         System.out.println(rendering);
         
-        assertXpathEvaluatesTo("Default Message 1", "//taconite-append-as-children/span", rendering);
-                assertXpathEvaluatesTo("true", "//taconite-append-as-children/@multipleMatch", rendering);
+        assertXpathEvaluatesTo("Default Message 1 for event : submitEvent", "//taconite-append-as-children/span", rendering);
+        assertXpathEvaluatesTo("true", "//taconite-append-as-children/@multipleMatch", rendering);
         assertXpathEvaluatesTo("new Effect.Highlight(\"ErrorCode1\",{\"startcolor\":\"#FF0A0A\"});", "//taconite-execute-javascript/script", rendering);
     }
 }
