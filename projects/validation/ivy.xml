@@ -52,7 +52,7 @@
             <artifact name="servlet-api" type="jar" conf="test"/>
         </dependency>
 
-        <dependency org="org.springframework" name="spring-mock" rev="2.0.1">
+        <dependency org="org.springframework" name="spring-mock" rev="2.0.1" transitive="false">
             <artifact name="spring-mock" type="jar" conf="test->default"/>
         </dependency>
 
