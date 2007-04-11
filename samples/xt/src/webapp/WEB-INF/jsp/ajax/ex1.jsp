@@ -31,7 +31,8 @@
                 
                 <tr>
                     <td>Press to append a random number :</td>
-                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('appendNumber', this);"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('appendNumber', this, null, {'loadingElementId' : 'loading1', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading1"></div></td>
                 </tr>
                 <tr>
                     <td id="num" colspan="2"></td>
@@ -39,17 +40,20 @@
                 
                 <tr>
                     <td>Press to replace all numbers above with a single number :</td>
-                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('replaceNumbers', this);"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('replaceNumbers', this, null, {'loadingElementId' : 'loading2', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading2"></div></td>
                 </tr>
                 
                 <tr>
                     <td>Press to remove all numbers above :</td>
-                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('removeNumbers', this);"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('removeNumbers', this, null, {'loadingElementId' : 'loading3', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading3"></div></td>
                 </tr>
                 
                 <tr>
                     <td>Press to replace the text below, sorrounded by a <i>span</i> element, with an input field :</td>
-                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('replaceElement', this);"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('replaceElement', this, null, {'loadingElementId' : 'loading4', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading4"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2"><span id="toReplace" style="color: red;">Text to be replaced</span></td>
@@ -57,7 +61,8 @@
                 
                 <tr>
                     <td>Press to remove the text below, sorrouned by a <i>span</i> element :</td>
-                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('removeElement', this);"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('removeElement', this, null, {'loadingElementId' : 'loading5', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading5"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2"><span id="toRemove" style="color: red;">Text to be removed</span></td>
@@ -65,7 +70,8 @@
                 
                 <tr>
                     <td>Press to complete the greetings message below :</td>
-                    <td><input id="insertAfterButton" type="button" value="Press" onclick="XT.doAjaxAction('insertAfter', this);"></td>
+                    <td><input id="insertAfterButton" type="button" value="Press" onclick="XT.doAjaxAction('insertAfter', this, null, {'loadingElementId' : 'loading6', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading6"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -75,7 +81,8 @@
                 
                 <tr>
                     <td>Press to complete the greetings message below :</td>
-                    <td><input id="insertBeforeButton" type="button" value="Press" onclick="XT.doAjaxAction('insertBefore', this);"></td>
+                    <td><input id="insertBeforeButton" type="button" value="Press" onclick="XT.doAjaxAction('insertBefore', this, null, {'loadingElementId' : 'loading7', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading7"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -85,7 +92,8 @@
                 
                 <tr>
                     <td>Press to complete the greetings message below :</td>
-                    <td><input id="appendAsFirstButton" type="button" value="Press" onclick="XT.doAjaxAction('appendAsFirst', this);"></td>
+                    <td><input id="appendAsFirstButton" type="button" value="Press" onclick="XT.doAjaxAction('appendAsFirst', this, null, {'loadingElementId' : 'loading8', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading8"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -97,7 +105,8 @@
                 
                 <tr>
                     <td>Press to include external dynamic content through a Jsp:</td>
-                    <td><input id="includeJsp" type="button" value="Press" onclick="XT.doAjaxAction('includeJsp', this);"></td>
+                    <td><input id="includeJsp" type="button" value="Press" onclick="XT.doAjaxAction('includeJsp', this, null, {'loadingElementId' : 'loading9', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading9"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -108,12 +117,14 @@
                 
                 <tr>
                     <td>Press to show an alert message (by executing a javascript function) :</td>
-                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('executeFunction', this);"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('executeFunction', this, null, {'loadingElementId' : 'loading10', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading10"></div></td>
                 </tr>
                 
                 <tr>
                     <td>Press to show a greetings message (hidden using a CSS inline rule) :</td>
-                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('showElement', this);"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('showElement', this, null, {'loadingElementId' : 'loading11', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading11"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -126,7 +137,8 @@
                 
                 <tr>
                     <td>Press to hide the greetings message below :</td>
-                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('hideElement', this);"></td>
+                    <td><input type="button" value="Press" onclick="XT.doAjaxAction('hideElement', this, null, {'loadingElementId' : 'loading12', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading12"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2">
@@ -139,11 +151,12 @@
                 
                 <tr>
                     <td>Press the corresponding button to apply an effect to the greetings message below :</td>
-                    <td><input type="button" value="Highlight" onclick="XT.doAjaxAction('highlightElement', this);"></td>
-                    <td><input type="button" value="Puff" onclick="XT.doAjaxAction('puffElement', this);"></td>
-                    <td><input type="button" value="Pulsate" onclick="XT.doAjaxAction('pulsateElement', this);"></td>
-                    <td><input type="button" value="Shrink" onclick="XT.doAjaxAction('shrinkElement', this);"></td>
-                    <td><input type="button" value="Grow" onclick="XT.doAjaxAction('growElement', this);"></td>
+                    <td><input type="button" value="Highlight" onclick="XT.doAjaxAction('highlightElement', this, null, {'loadingElementId' : 'loading13', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><input type="button" value="Puff" onclick="XT.doAjaxAction('puffElement', this, null, {'loadingElementId' : 'loading13', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><input type="button" value="Pulsate" onclick="XT.doAjaxAction('pulsateElement', this, null, {'loadingElementId' : 'loading13', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><input type="button" value="Shrink" onclick="XT.doAjaxAction('shrinkElement', this, null, {'loadingElementId' : 'loading13', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><input type="button" value="Grow" onclick="XT.doAjaxAction('growElement', this, null, {'loadingElementId' : 'loading13', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading13"></div></td>
                 </tr>
                 <tr>
                     <td colspan="6">
@@ -156,7 +169,8 @@
                 
                 <tr>
                     <td>Press the button to enable drag and drop below :</td>
-                    <td><input type="button" value="Enable" onclick="XT.doAjaxAction('enableDnD', this);"></td>
+                    <td><input type="button" value="Enable" onclick="XT.doAjaxAction('enableDnD', this, null, {'loadingElementId' : 'loading14', 'loadingImage' : '../images/loading.gif'});"></td>
+                    <td><div id="loading14"></div></td>
                 </tr>
                 <tr>
                     <td>

@@ -5,6 +5,7 @@
 <html>
     <head>
         <script type="text/javascript" src='../js/springxt-min.js'></script>
+        <script type="text/javascript" src='../js/custom.js'></script>
         <title>XT Ajax Framework : Example 7</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
@@ -27,6 +28,9 @@
                 </tr>
                 <tr>
                     <td><input type="button" name="b3" value="Raise exception after Ajax request processing because of no ajax-redirect prefix" onclick="XT.doAjaxSubmit('returnNoResponse', this);"></td>
+                </tr>
+                <tr>
+                    <td><div id="loading"></div></td>
                 </tr>
             </table>
         </form>

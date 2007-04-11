@@ -5,6 +5,7 @@
 <html>
     <head>
         <script type="text/javascript" src='../js/springxt-min.js'></script>
+        <script type="text/javascript" src='../js/custom.js'></script>
         <script type="text/javascript" src='../js/prototype.js'></script>
         <script type="text/javascript" src='../js/scriptaculous.js?load=effects,dragdrop'></script>
         <script type="text/javascript">
@@ -69,6 +70,9 @@
             </tr>
             <tr>
                 <td><input type="button" value="Submit" onclick="XT.doAjaxSubmit('validate', this);"></td>
+            </tr>
+            <tr>
+                <td><div id="loading"></div></td>
             </tr>
         </form>
     </body>

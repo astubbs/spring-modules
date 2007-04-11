@@ -5,6 +5,7 @@
 <html>
     <head>
         <script type="text/javascript" src='../js/springxt-min.js'></script> 
+        <script type="text/javascript" src='../js/custom.js'></script>
         <title>XT Ajax Framework : Example 2</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
@@ -48,6 +49,9 @@
                     <td>
                         <input id="surname" type="text" name="surname" value="">
                     </td>
+                </tr>
+                <tr>
+                    <td><div id="loading"></div></td>
                 </tr>
             </table>
         </form>
