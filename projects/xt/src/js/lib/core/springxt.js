@@ -693,9 +693,9 @@ function createXMLHttpRequest() {
     }
     return req;
 }
-// JavaScript Document
-var taconite_parser_version=1.502;
-var taconite_parser_xt_version=20070317;
+var taconite_parser_version=1.6;
+var taconite_parser_xt_version=20070411;
+
 var isIE=document.uniqueID;
 
 String.prototype.trim = function() {
@@ -764,34 +764,55 @@ function XhtmlToDOMParser() {
             xml.removeAttribute("multipleMatch");
             xml.removeAttribute("parseInBrowser");
             //
-            for (var i = 0; i < contextNodes.length; i++) {
-                var contextNode = contextNodes[i];
-                switch (xmlTagName) {
-                    case "taconite-append-as-children":
+            switch (xmlTagName) {
+                case "taconite-append-as-children":
+                    for (var i = 0; i < contextNodes.length; i++) {
+                        var contextNode = contextNodes[i];
                         getReplaceChildren(contextNode,xml,false);
-                        break;
-                    case "taconite-delete":
+                    }
+                    break;
+                case "taconite-delete":
+                    for (var i = 0; i < contextNodes.length; i++) {
+                        var contextNode = contextNodes[i];
                         getDelete(contextNode,xml);
-                        break;
-                    case "taconite-append-as-first-child":
+                    }
+                    break;
+                case "taconite-append-as-first-child":
+                    for (var i = 0; i < contextNodes.length; i++) {
+                        var contextNode = contextNodes[i];
                         getAppendAsFirstChild(contextNode,xml);
-                        break;                         
-                    case "taconite-insert-after":
+                    }
+                    break;                         
+                case "taconite-insert-after":
+                    for (var i = 0; i < contextNodes.length; i++) {
+                        var contextNode = contextNodes[i];
                         getInsertAfter(contextNode,xml);
-                        break;
-                    case "taconite-insert-before":
+                    }
+                    break;
+                case "taconite-insert-before":
+                    for (var i = 0; i < contextNodes.length; i++) {
+                        var contextNode = contextNodes[i];
                         getInsertBefore(contextNode,xml);
-                        break;                         
-                    case "taconite-replace-children":
+                    }
+                    break;                         
+                case "taconite-replace-children":
+                    for (var i = 0; i < contextNodes.length; i++) {
+                        var contextNode = contextNodes[i];
                         getReplaceChildren(contextNode,xml,true);
-                        break;
-                    case "taconite-replace":
+                    }
+                    break;
+                case "taconite-replace":
+                    for (var i = 0; i < contextNodes.length; i++) {
+                        var contextNode = contextNodes[i];
                         getReplace(contextNode,xml);
-                        break;                         
-                    case "taconite-set-attributes":
+                    }
+                    break;                         
+                case "taconite-set-attributes":
+                    for (var i = 0; i < contextNodes.length; i++) {
+                        var contextNode = contextNodes[i];
                         handleAttributes(contextNode,xml);
-                        break;
-                }  
+                    }
+                    break;
             }
             return true;
         } else {
@@ -816,13 +837,15 @@ function XhtmlToDOMParser() {
     }
     
     function isInlineMode(node) {
-        var attrType;
-        if(!node.tagName.toLowerCase() == "input") {
-            return false;
-        }
-        attrType=node.getAttribute("type");
+        var lowerCaseTag = node.tagName.toLowerCase();
         
-        if(attrType=="radio" || attrType=="checkbox") {
+        if(lowerCaseTag == "button") {
+            return true;
+        }
+        
+        var attrType = node.getAttribute("type");
+        
+        if(lowerCaseTag == "input" && (attrType == "radio" || attrType == "checkbox")) {
             return true;
         }
         return false;
@@ -849,7 +872,7 @@ function XhtmlToDOMParser() {
         var xmlNodeTagName=xmlNode.tagName.toLowerCase();
         if(isIE){
             if(isInlineMode(xmlNode)) {
-                return document.createElement("<INPUT " + handleAttributes(domElemNode,xmlNode,true) + ">");
+                return document.createElement("<" + xmlNodeTagName + " " + handleAttributes(domElemNode, xmlNode, true) + ">");
             }
             if(xmlNodeTagName == "style"){
                 //In internet explorer, we have to use styleSheets array.		
@@ -904,18 +927,18 @@ function XhtmlToDOMParser() {
     function useIEFormElementCreationStrategy(xmlNodeTagName) {
         var useIEStrategy = false;
         
-        if (isIE && ( xmlNodeTagName.toLowerCase() == "form" ||
-        xmlNodeTagName.toLowerCase() == "input" ||
-        xmlNodeTagName.toLowerCase() == "textarea" ||
-        xmlNodeTagName.toLowerCase() == "select" ||
-        xmlNodeTagName.toLowerCase() == "a" ||
-        xmlNodeTagName.toLowerCase() == "applet" ||
-        xmlNodeTagName.toLowerCase() == "button" ||
-        xmlNodeTagName.toLowerCase() == "img" ||
-        xmlNodeTagName.toLowerCase() == "link" ||
-        xmlNodeTagName.toLowerCase() == "map" ||
-        xmlNodeTagName.toLowerCase() == "object")) {
-            
+        var nodeName = xmlNodeTagName.toLowerCase();
+        if (isIE && (nodeName == "form" ||
+        nodeName == "input" ||
+        nodeName == "textarea" ||
+        nodeName == "select" ||
+        nodeName == "a" ||
+        nodeName == "applet" ||
+        nodeName == "button" ||
+        nodeName == "img" ||
+        nodeName == "link" ||
+        nodeName == "map" ||
+        nodeName == "object")) {
             useIEStrategy = true;
         }
         
@@ -962,8 +985,12 @@ function XhtmlToDOMParser() {
                 }
                 else if(name.trim().toLowerCase().substring(0, 2) == "on") {
                     /* IE workaround for event handlers */
-                    //domNode.setAttribute(name,value);
-                    eval("domNode." + name.trim().toLowerCase() + "=function(){" + value + "}");
+                    if(isIE) { 
+                        eval("domNode." + name.trim().toLowerCase() + "=function(){" + value + "}"); 
+                    }
+                    else { 
+                        domNode.setAttribute(name,value); 
+                    }                  
                 }
                 else if(name == "value") {
                     /* IE workaround for the value attribute -- makes form elements selectable/editable */
