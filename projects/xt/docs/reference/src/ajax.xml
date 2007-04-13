@@ -647,11 +647,18 @@ public interface AjaxResponse {
 
         <listitem>
           <para>After handling, if the handler returns a not null and not
-          empty AjaxResponse, it is rendered and the AjaxInterceptor stops the
-          execution chain, otherwise the AjaxInterceptor proceed its execution
-          chain.</para>
+          empty AjaxResponse, it is actually rendered. Anyway, <emphasis
+          role="bold">since version 0.9</emphasis>, the AjaxInterceptor
+          <emphasis role="bold">stops</emphasis> the execution chain after
+          processing any Ajax request.</para>
         </listitem>
       </orderedlist>
+
+      <important>
+        <para>Since version 0.9, the AjaxInterceptor stops the execution chain
+        <emphasis role="bold">even after</emphasis> an empty or null
+        AjaxResponse. </para>
+      </important>
 
       <para><emphasis role="bold">On Ajax Submit Events :</emphasis></para>
 

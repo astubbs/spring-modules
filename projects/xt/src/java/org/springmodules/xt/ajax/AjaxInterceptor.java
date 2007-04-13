@@ -101,7 +101,7 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
     /**
      * Pre-handle the http request and if this is an ajax request firing an action, looks for a mapped ajax handler, executes it and
      * returns an ajax response.<br>
-     * If the matching mapped handler returns a <b>null</b> or empty ajax response, the interceptor <b>proceed</b> with the execution chain.
+     * Important: if the matching mapped handler returns a <b>null</b> or empty ajax response, the interceptor <b>does not proceed</b> with the execution chain.
      *
      * @throws UnsupportedEventException If the event associated with this ajax request is not supported by any
      * mapped handler.
@@ -150,11 +150,10 @@ public class AjaxInterceptor extends HandlerInterceptorAdapter implements Applic
                         if (ajaxResponse != null && ! ajaxResponse.isEmpty()) {
                             logger.info("Sending Ajax response after Ajax action.");
                             InternalAjaxResponseSender.sendResponse(response, ajaxResponse.getResponse());
-                            return false;
                         } else {
-                            logger.info("Null or empty Ajax response after Ajax action, proceeding with the request.");
-                            return true;
+                            InternalAjaxResponseSender.sendResponse(response, new AjaxResponseImpl().getResponse());
                         }
+                        return false;
                     }
                 } else {
                     throw new NoMatchingHandlerException("Cannot find an handler matching the request: " +
