@@ -1,23 +1,18 @@
 package org.springmodules.xt.examples.ajax;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 import org.springmodules.xt.ajax.AbstractAjaxHandler;
 import org.springmodules.xt.ajax.AjaxActionEvent;
 import org.springmodules.xt.ajax.AjaxResponse;
 import org.springmodules.xt.ajax.AjaxResponseImpl;
 import org.springmodules.xt.ajax.action.AppendContentAction;
-import org.springmodules.xt.ajax.action.RemoveContentAction;
-import org.springmodules.xt.ajax.action.RemoveElementAction;
-import org.springmodules.xt.ajax.action.SetAttributeAction;
 import org.springmodules.xt.ajax.component.InputField;
 import org.springmodules.xt.ajax.component.Option;
 import org.springmodules.xt.ajax.component.Select;
 import org.springmodules.xt.ajax.component.TableData;
 import org.springmodules.xt.ajax.component.TableRow;
 import org.springmodules.xt.ajax.component.support.BindStatusHelper;
-import org.springmodules.xt.ajax.support.AjaxCall;
 import org.springmodules.xt.examples.domain.IEmployee;
 import org.springmodules.xt.examples.domain.MemoryRepository;
 
@@ -31,12 +26,12 @@ public class FillOfficeHandler extends AbstractAjaxHandler {
     private MemoryRepository store;
     
     public AjaxResponse addEmployee(AjaxActionEvent event) {
-        int employeeCounter = Integer.parseInt(event.getHttpRequest().getParameter("counter"), 10);
         Collection<IEmployee> employees = this.store.getEmployees();
 
-        // Create the row:
+        // Create the row, with a given rowId:
         TableRow row = new TableRow();
-        row.addAttribute("id", "row-" + employeeCounter);
+        String rowId = Long.toString(new Date().getTime());
+        row.addAttribute("id", rowId);
 
         // Create the employee selection box (binding to employees) and add it to a column:
         BindStatusHelper helper = new BindStatusHelper("command.employees");
@@ -50,45 +45,22 @@ public class FillOfficeHandler extends AbstractAjaxHandler {
         // Create the remove button and add it to another column:
         InputField removeButton = new InputField("toRemove", "Remove", InputField.InputType.BUTTON);
         TableData td2 = new TableData(removeButton);
-        Map actionParams = new HashMap();
-        actionParams.put("row", "row-" + employeeCounter);
-        td2.addAttribute("onclick", AjaxCall.AJAX_ACTION.getCall("removeRow", actionParams));
 
         // Add the two columns to the row:
         row.addTableData(td1);
         row.addTableData(td2);
+        
+        // Add an onclick event to the remove button, which executes a client side javascript function for actually
+        // removing the row:
+        removeButton.addAttribute("onclick", new StringBuilder("removeRow('").append(rowId).append("');").toString());
 
         // Create an ajax action for appending the new row:
         AppendContentAction appendRowAction = new AppendContentAction("employees", row);
-        // Create an ajax action for updating the employees counter:
-        SetAttributeAction updateCounterAction = new SetAttributeAction("counter", "value", "" + (employeeCounter + 1));
 
         // Create a concrete ajax response:
         AjaxResponse response = new AjaxResponseImpl();
         // Add actions:
         response.addAction(appendRowAction);
-        response.addAction(updateCounterAction);
-
-        return response;
-    }
-    
-    public AjaxResponse removeRow(AjaxActionEvent event) {
-        int employeeCounter = Integer.parseInt(event.getHttpRequest().getParameter("counter"), 10);
-        String row = event.getParameters().get("row");
-        
-        // Remove the row passed as paramater in the ajax request:
-        RemoveElementAction removeRowAction = new RemoveElementAction(row);
-        // Remove the message (if any):
-        RemoveContentAction removeMessageContentAction = new RemoveContentAction("message");
-        // Decrement the employee counter:
-        SetAttributeAction updateCounterAction = new SetAttributeAction("counter", "value", "" + (employeeCounter - 1));
-        
-        // Create a concrete ajax response:
-        AjaxResponse response = new AjaxResponseImpl();
-        // Add actions:
-        response.addAction(removeRowAction);
-        response.addAction(removeMessageContentAction);
-        response.addAction(updateCounterAction);
 
         return response;
     }

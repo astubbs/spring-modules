@@ -8,6 +8,14 @@
         <script type="text/javascript" src='../js/custom.js'></script>
         <script type="text/javascript" src='../js/prototype.js'></script>
         <script type="text/javascript" src='../js/scriptaculous.js?load=effects'></script>
+        <script type="text/javascript">
+            function removeRow(rowId) {
+                var row = document.getElementById(rowId);
+                if (row != null) {
+                    row.parentNode.removeChild(row);
+                }
+            }
+        </script>
         <title>XT Ajax Framework : Example 5</title>
         <link href='<c:url value="/springxt.css"/>' rel="stylesheet" type="text/css">
     </head>
@@ -43,7 +51,6 @@
                         <tbody id="employees">
                         </tbody>
                     </table>
-                    <input type="hidden" name="counter" id="counter" value="0"/>
                 </td>
             </tr>
             <tr>
@@ -52,14 +59,8 @@
                 </td>
             </tr>
             <tr>
-                <td>
-                    <br/>
-                    <div id="message"/>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td><input type="button" value="Add" onclick="XT.doAjaxAction('addEmployee', this);"></td>&nbsp;
+                <td><input type="button" value="Add" onclick="XT.doAjaxAction('addEmployee', this);"></td>
+                &nbsp;
                 <td><input type="button" value="Fill" onclick="XT.doAjaxSubmit('validate', this);"></td>
             </tr>
             <tr>
