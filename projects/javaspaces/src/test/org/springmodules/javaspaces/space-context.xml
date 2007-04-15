@@ -65,7 +65,7 @@
 		singleton="false" >
 		<property name="javaSpaceTemplate"><ref local="javaSpaceTemplate"/></property>
 		<property name="delegate">
-			<bean class="org.springmodules.javaspaces.FactoryTests$TestOrdered" />
+			<bean class="org.springmodules.javaspaces.FactoryTests$TestOrdered" singleton="false"/>
 		</property>
 		<property name="businessInterface"><value>org.springframework.core.Ordered</value></property>
 	</bean>
@@ -91,7 +91,7 @@
 	<bean id="spaceInterceptor"
 		class="org.springmodules.javaspaces.JavaSpaceInterceptor">
 		<property name="javaSpaceTemplate"><ref local="javaSpaceTemplate"/></property>
-		<property name="timeoutMillis"><value>500</value></property>
+		<property name="timeoutMillis"><value>10000</value></property>
 
 		<!--
 			Causes this target to be passed to space in a RunnableMethodEntry.

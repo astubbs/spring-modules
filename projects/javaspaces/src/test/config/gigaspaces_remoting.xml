@@ -43,7 +43,7 @@
 	<bean id="javaSpaceInterceptor"
 		class="org.springmodules.javaspaces.gigaspaces.GigaSpacesInterceptor">
 		<property name="javaSpaceTemplate" ref="gigaSpacesTemplate"/>
-		<property name="timeoutMillis"><value>5000</value></property>
+		<property name="timeoutMillis"><value>10000</value></property>
 		<property name="uidFactory" ref="gigaSpacesUidFactory"/>
 
 
