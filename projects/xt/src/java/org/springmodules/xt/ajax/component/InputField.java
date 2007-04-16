@@ -46,5 +46,5 @@ public class InputField extends SimpleHTMLComponent {
     /**
      * Input field type.
      */
-    public enum InputType { TEXT, CHECKBOX, RADIO, HIDDEN, PASSWORD, BUTTON }
+    public enum InputType { TEXT, CHECKBOX, RADIO, HIDDEN, PASSWORD, BUTTON, IMAGE, RESET, FILE }
 }
