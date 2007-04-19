@@ -21,7 +21,7 @@ import org.springmodules.javaspaces.DelegatingWorker;
 
 
 
-public class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringContextTests {
+public abstract class GigaSpacesRemotingTest extends AbstractDependencyInjectionSpringContextTests {
 	//member for gigaspaces template
 	private GigaSpacesTemplate template;
 	//The delegator worker
